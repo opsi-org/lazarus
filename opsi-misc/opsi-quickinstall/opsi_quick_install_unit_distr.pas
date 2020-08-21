@@ -34,7 +34,8 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language, osDistributionInfo;
+  opsi_quick_install_unit_language, osDistributionInfo,
+  opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -75,6 +76,12 @@ begin
   BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
 
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
+
+  // text by resourcestrings
+  LabelDistr.Caption := rsDistr;
+  LabelCorrect.Caption := rsCorrect;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TDistribution.BtnBackClick(Sender: TObject);

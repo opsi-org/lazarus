@@ -1,0 +1,55 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+[Actions]
+requiredWinstVersion >= "4.12.3"
+ScriptErrorMessages=off
+setLogLevel = 8
+AutoActivityDisplay=true
+
+DefVar $ProductId$
+; A-M inserted following line
+DefVar $properties_conf$
+DefVar $OS$
+DefVar $opsi_online_repository_org$
+
+set $OS$ = GetOS
+set $ProductId$ = "l-opsi-server"
+
+if not($OS$ = "Linux")
+	LogError "Wrong OS: Product: " + $ProductId$ + "is only for Linux"
+	isFatalError "Wrong OS"
+endif
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\opsi-server.png" $ProductId$
+
+; check for initalization of properties via quick-install
+if fileExists("%scriptpath%/properties.conf")
+	comment "setting properties from file"
+	;default result file to failed - will be over written in case of success
+	shellCall('echo failed > "%scriptpath%/result.conf"')
+	;set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
+	set $properties_conf$ = LoadTextFile("%scriptpath%/properties.conf")
+	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
+else
+	comment "setting properties from service"
+	set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:")
+endif
+
+set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:")
+
+if contains($opsi_online_repository_org$, "4.2")
+	comment "installing opsi 4.2"
+	sub "%ScriptPath%/opsi42.opsiscript"
+else
+	if contains($opsi_online_repository_org$, "4.1")
+		comment "installing opsi 4.1"
+		sub "%ScriptPath%/opsi41.opsiscript"
+	else
+		LogError "unidentified opsi Version"
+		isFatalError "unidentified opsi Version"
+	endif
+endif

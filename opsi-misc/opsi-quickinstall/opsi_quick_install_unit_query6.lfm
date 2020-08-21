@@ -20,7 +20,7 @@ object Query6: TQuery6
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -163,7 +163,7 @@ object Query6: TQuery6
     Left = 640
     Height = 25
     Top = 408
-    Width = 70
+    Width = 69
     AutoSize = True
     Caption = ' overview '
     ParentBidiMode = False

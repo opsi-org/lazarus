@@ -30,12 +30,12 @@ type
     RadioBtnFile: TRadioButton;
     RadioBtnMySql: TRadioButton;
     RadioBtnExperimental: TRadioButton;
-    RadioBtnNo1: TRadioButton;
+    RadioBtnNoCopy: TRadioButton;
     RadioBtnStable: TRadioButton;
     RadioBtnTesting: TRadioButton;
     RadioBtnYes: TRadioButton;
     RadioBtnNo: TRadioButton;
-    RadioBtnYes1: TRadioButton;
+    RadioBtnYesCopy: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);

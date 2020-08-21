@@ -19,7 +19,6 @@ object QuickInstall: TQuickInstall
   object BtnNext: TButton
     Left = 660
     Height = 25
-    Hint = 'nextBtn for next form'
     Top = 410
     Width = 51
     AutoSize = True
@@ -33,7 +32,6 @@ object QuickInstall: TQuickInstall
   object QuickInstallPanel: TPanel
     Left = 175
     Height = 160
-    Hint = 'To carry out the remaing installation automatically, we need some information first.'
     Top = 224
     Width = 364
     BevelOuter = bvNone
@@ -76,7 +74,7 @@ object QuickInstall: TQuickInstall
       ParentFont = False
       TabOrder = 1
     end
-    object WelcomeLabel2: TLabel
+    object LabelCarryOut: TLabel
       Left = 0
       Height = 38
       Top = 122

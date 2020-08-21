@@ -32,7 +32,7 @@ type
 var
   Overview: TOverview;
 
-resourcestring
+{resourcestring
   rsOpsiVersion = 'Opsi version to install: ';
   rsRepo = 'Repository: ';
   rsProxy = 'Proxy: ';
@@ -56,7 +56,7 @@ resourcestring
   rsIPNumber = 'IP number: ';
   rsUseUCS = 'Use UCS: ';
   rsUCSPassword = 'Password of administrator of UCS domain controller: ';
-  rsCopyModules = 'Copy modules: ';
+  rsCopyModules = 'Copy modules: ';}
 
 implementation
 
@@ -67,7 +67,8 @@ uses
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
-  opsi_quick_install_unit_password;
+  opsi_quick_install_unit_password,
+  opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -93,54 +94,54 @@ begin
   begin
     // Opsi version
     if Query.RadioBtnOpsi41.Checked then
-      MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi41.Caption)
+      MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi41.Caption)
     else
-      MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi42.Caption);
+      MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi42.Caption);
 
     MemoOverview.Lines.Add('');
     // Repository
     if Query.RadioBtnRepo.Checked then
-      MemoOverview.Lines.Add(rsRepo + Query.EditDefaultRepoNoCache.Text)
+      MemoOverview.Lines.Add(rsRepoO + Query.EditDefaultRepoNoCache.Text)
     else
-      MemoOverview.Lines.Add(rsRepo + Query.EditRepo.Text);
+      MemoOverview.Lines.Add(rsRepoO + Query.EditRepo.Text);
     // Proxy
     if Query.RadioBtnNone.Checked then
-      MemoOverview.Lines.Add(rsProxy + Query.RadioBtnNone.Caption)
+      MemoOverview.Lines.Add(rsProxyO + Query.RadioBtnNone.Caption)
     else if Query.RadioBtnMyProxy.Checked then
-      MemoOverview.Lines.Add(rsProxy + Query.RadioBtnMyProxy.Caption)
+      MemoOverview.Lines.Add(rsProxyO + Query.RadioBtnMyProxy.Caption)
     else
-      MemoOverview.Lines.Add(rsProxy + Query.EditProxy.Text);
+      MemoOverview.Lines.Add(rsProxyO + Query.EditProxy.Text);
     // Repository (no cache)
     if Query.RadioBtnRepoNoCache.Checked then
-      MemoOverview.Lines.Add(rsRepoNoCache + Query.EditDefaultRepoNoCache.Text)
+      MemoOverview.Lines.Add(rsRepoNoCacheO + Query.EditDefaultRepoNoCache.Text)
     else
-      MemoOverview.Lines.Add(rsRepoNoCache + Query.EditOtherNoCache.Text);
+      MemoOverview.Lines.Add(rsRepoNoCacheO + Query.EditOtherNoCache.Text);
 
     MemoOverview.Lines.Add('');
     // Backend
     if Query2.RadioBtnFile.Checked then
-      MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnFile.Caption)
+      MemoOverview.Lines.Add(rsBackendO + Query2.RadioBtnFile.Caption)
     else
-      MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnMySql.Caption);
+      MemoOverview.Lines.Add(rsBackendO + Query2.RadioBtnMySql.Caption);
     // Copy modules
     if Query2.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnYes.Caption)
+      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnYes.Caption)
     else
-      MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnNo.Caption);
+      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnNo.Caption);
 
     MemoOverview.Lines.Add('');
     // Repo kind
     if Query2.RadioBtnExperimental.Checked then
-      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnExperimental.Caption)
+      MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnExperimental.Caption)
     else if Query2.RadioBtnStable.Checked then
-      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnStable.Caption)
+      MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnStable.Caption)
     else
-      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnTesting.Caption);
+      MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnTesting.Caption);
     // Update
     if Query2.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnYes.Caption)
+      MemoOverview.Lines.Add(rsUpdateO + Query2.RadioBtnYes.Caption)
     else
-      MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnNo.Caption);
+      MemoOverview.Lines.Add(rsUpdateO + Query2.RadioBtnNo.Caption);
 
   {MemoOverview.Lines.Add('');
   // Prods
@@ -160,89 +161,89 @@ begin
     MemoOverview.Lines.Add('');
     // UCS password
     if QuickInstall.distroName = 'Univention' then
-      MemoOverview.Lines.Add(rsUCSPassword + Query4.EditPasswordUCS.Text);
+      MemoOverview.Lines.Add(rsUCSO + Query4.EditPasswordUCS.Text);
     // Reboot
     if Query4.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnYes.Caption)
+      MemoOverview.Lines.Add(rsRebootO + Query4.RadioBtnYes.Caption)
     else
-      MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnNo.Caption);
+      MemoOverview.Lines.Add(rsRebootO + Query4.RadioBtnNo.Caption);
   end
   {Standard installation}
   else
     // default opsi version is 4.2, rest ist not shown anyway
-    MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi42.Caption);
+    MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi42.Caption);
 
   {Both}
   MemoOverview.Lines.Add('');
   // Dhcp
   if Query4.RadioBtnDhcpYes.Checked then
   begin
-    MemoOverview.Lines.Add(rsOpsiDhcpServer + Query4.RadioBtnDhcpYes.Caption);
+    MemoOverview.Lines.Add(rsDhcpO + Query4.RadioBtnDhcpYes.Caption);
     // TFTPROOT
     if Query4.RadioBtnMenu.Checked then
-      MemoOverview.Lines.Add(rsTFTPROOT + Query4.RadioBtnMenu.Caption)
+      MemoOverview.Lines.Add(rsTFTPROOTO + Query4.RadioBtnMenu.Caption)
     else
-      MemoOverview.Lines.Add(rsTFTPROOT + Query4.RadioBtnNoMenu.Caption);
+      MemoOverview.Lines.Add(rsTFTPROOTO + Query4.RadioBtnNoMenu.Caption);
     // Netmask
     if Query5_dhcp.RadioBtnMask0.Checked then
-      MemoOverview.Lines.Add(rsNetmask + Query5_dhcp.RadioBtnMask0.Caption)
+      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask0.Caption)
     else if Query5_dhcp.RadioBtnMask225.Checked then
-      MemoOverview.Lines.Add(rsNetmask + Query5_dhcp.RadioBtnMask225.Caption)
+      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask225.Caption)
     else
-      MemoOverview.Lines.Add(rsNetmask + Query5_dhcp.EditNetmask.Text);
+      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.EditNetmask.Text);
     // Network address
     if Query5_dhcp.RadioBtnAddress10.Checked then
-      MemoOverview.Lines.Add(rsNetwork + Query5_dhcp.RadioBtnAddress10.Caption)
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress10.Caption)
     else if Query5_dhcp.RadioBtnAddress172.Checked then
-      MemoOverview.Lines.Add(rsNetwork + Query5_dhcp.RadioBtnAddress172.Caption)
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress172.Caption)
     else if Query5_dhcp.RadioBtnAddress192.Checked then
-      MemoOverview.Lines.Add(rsNetwork + Query5_dhcp.RadioBtnAddress192.Caption)
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress192.Caption)
     else
-      MemoOverview.Lines.Add(rsNetwork + Query5_dhcp.EditAddress.Text);
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.EditAddress.Text);
     // Domain
     if Query5_dhcp.RadioBtnUcs.Checked then
-      MemoOverview.Lines.Add(rsDomain + Query5_dhcp.RadioBtnUcs.Caption)
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnUcs.Caption)
     else if Query5_dhcp.RadioBtnUib.Checked then
-      MemoOverview.Lines.Add(rsDomain + Query5_dhcp.RadioBtnUib.Caption)
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnUib.Caption)
     else if Query5_dhcp.RadioBtnVmnat.Checked then
-      MemoOverview.Lines.Add(rsDomain + Query5_dhcp.RadioBtnVmnat.Caption)
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnVmnat.Caption)
     else
-      MemoOverview.Lines.Add(rsDomain + Query5_dhcp.EditDomain.Text);
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);
     // Nameserver
     if Query5_dhcp.RadioBtnNameserver10.Checked then
       MemoOverview.Lines.Add(
-        rsNameserver + Query5_dhcp.RadioBtnNameserver10.Caption)
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver10.Caption)
     else if Query5_dhcp.RadioBtnNameserver172.Checked then
       MemoOverview.Lines.Add(
-        rsNameserver + Query5_dhcp.RadioBtnNameserver172.Caption)
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver172.Caption)
     else if Query5_dhcp.RadioBtnNameserver192.Checked then
       MemoOverview.Lines.Add(
-        rsNameserver + Query5_dhcp.RadioBtnNameserver192.Caption)
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver192.Caption)
     else
       MemoOverview.Lines.Add(
-        rsNameserver + Query5_dhcp.EditNameserver.Text);
+        rsNameserverO + Query5_dhcp.EditNameserver.Text);
     // Gateway
     if Query5_dhcp.RadioBtnGateway10.Checked then
-      MemoOverview.Lines.Add(rsGateway + Query5_dhcp.RadioBtnGateway10.Caption)
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway10.Caption)
     else if Query5_dhcp.RadioBtnGateway172.Checked then
-      MemoOverview.Lines.Add(rsGateway + Query5_dhcp.RadioBtnGateway172.Caption)
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway172.Caption)
     else if Query5_dhcp.RadioBtnGateway192.Checked then
-      MemoOverview.Lines.Add(rsGateway + Query5_dhcp.RadioBtnGateway192.Caption)
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway192.Caption)
     else
-      MemoOverview.Lines.Add(rsGateway + Query5_dhcp.EditGateway.Text);
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.EditGateway.Text);
   end
   else
-    MemoOverview.Lines.Add(rsOpsiDhcpServer + Query4.RadioBtnDhcpNo.Caption);
+    MemoOverview.Lines.Add(rsDhcpO + Query4.RadioBtnDhcpNo.Caption);
 
   MemoOverview.Lines.Add('');
   // Admin name
-  MemoOverview.Lines.Add(rsAdminName + Query6.EditNameAdmin.Text);
+  MemoOverview.Lines.Add(rsAdminNameO + Query6.EditNameAdmin.Text);
   // Admin password
-  MemoOverview.Lines.Add(rsAdminPassword + Query6.EditPasswordAdmin.Text);
+  MemoOverview.Lines.Add(rsAdminPasswordO + Query6.EditPasswordAdmin.Text);
   // IP name
-  MemoOverview.Lines.Add(rsIPName + Query6.EditNameIP.Text);
+  MemoOverview.Lines.Add(rsIPNameO + Query6.EditNameIP.Text);
   // IP number
-  MemoOverview.Lines.Add(rsIPNumber + Query6.EditNumberIP.Text);
+  MemoOverview.Lines.Add(rsIPNumberO + Query6.EditNumberIP.Text);
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);

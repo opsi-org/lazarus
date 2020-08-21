@@ -1,0 +1,220 @@
+[Package]
+version: 11
+depends: 
+
+[Product]
+type: localboot
+id: l-opsi-server
+name: Installs opsi
+description: Installs opsi-server packages, configures and create adminuser
+advice: 
+version: 4.1.2.1
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup.opsiscript
+uninstallScript: 
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductDependency]
+action: setup
+requiredProduct: l-system-update
+requiredAction: setup
+requirementType: before
+
+[ProductProperty]
+type: unicode
+name: opsi_online_repository
+multivalue: False
+editable: True
+description: (Base-) Repository for opsi-server installation
+values: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
+default: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
+
+[ProductProperty]
+type: unicode
+name: proxy
+multivalue: False
+editable: True
+description: proxy to use (http://myproxy.dom.org:8080)
+values: ["", "http://myproxy.dom.org:8080"]
+default: [""]
+
+[ProductProperty]
+type: unicode
+name: opsi_noproxy_online_repository
+multivalue: False
+editable: True
+description: (Base-) Repository for opsi-server installation (without any cache proxy)
+values: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
+default: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
+
+[ProductProperty]
+type: unicode
+name: backend
+multivalue: False
+editable: False
+description: Which backend should be installed ? (mysql needs valid activation file
+values: ["file", "mysql"]
+default: ["file"]
+
+[ProductProperty]
+type: unicode
+name: repo_kind
+multivalue: False
+editable: False
+description: From which repo kind should be installed ?
+values: ["experimental", "stable", "testing"]
+default: ["stable"]
+
+[ProductProperty]
+type: bool
+name: update_test
+description: Install first from stable and than update to repo_kind
+default: False
+
+[ProductProperty]
+type: unicode
+name: setup_after_install
+multivalue: True
+editable: True
+description: Which opsi product(s) should we switch to setup after l-opsi-server installation is done ?
+values: [""]
+default: [""]
+
+[ProductProperty]
+type: bool
+name: allow_reboot
+description: May the server reboot if script is finished ?
+default: True
+
+[ProductProperty]
+type: bool
+name: install_and_configure_dhcp
+description: Should we run the dhcp server on this machine ?
+default: False
+
+[ProductProperty]
+type: bool
+name: download_patched_elilo_efi
+description: The patched elilo.efi does have a timeout of 2 seconds in case of a failed elilo configuration
+default: False
+
+[ProductProperty]
+type: unicode
+name: patch_default_link_for_bootimage
+multivalue: False
+editable: False
+description: To which file should the TFTPROOT default symlink point to?
+values: ["default.menu", "default.nomenu"]
+default: ["default.menu"]
+
+[ProductProperty]
+type: unicode
+name: netmask
+multivalue: False
+editable: True
+description: Netmask  (for dhcp)
+values: ["255.255.0.0", "255.255.255.0"]
+default: ["255.255.0.0"]
+
+[ProductProperty]
+type: unicode
+name: network
+multivalue: False
+editable: True
+description: network address (for dhcp)
+values: ["10.100.0.0", "172.16.166.0", "192.168.0.0"]
+default: ["192.168.0.0"]
+
+[ProductProperty]
+type: unicode
+name: dnsdomain
+multivalue: False
+editable: True
+description: DNS domain (for dhcp)
+values: ["ucs.test", "uib.local", "vmnat.local"]
+default: ["uib.local"]
+
+[ProductProperty]
+type: unicode
+name: nameserver
+multivalue: False
+editable: True
+description: Primary nameserver (for dhcp)
+values: ["10.100.1.2", "172.16.166.1", "192.168.1.245"]
+default: ["192.168.1.245"]
+
+[ProductProperty]
+type: unicode
+name: gateway
+multivalue: False
+editable: True
+description: gateway (option routers for dhcp)
+values: ["10.100.1.2", "172.16.166.1", "192.168.1.245"]
+default: ["192.168.1.245"]
+
+[ProductProperty]
+type: unicode
+name: opsi_admin_user_name
+multivalue: False
+editable: True
+description: What is the name of the opsi_admin_user to create (empty= nothing created)
+values: ["adminuser"]
+default: ["adminuser"]
+
+[ProductProperty]
+type: unicode
+name: opsi_admin_user_password
+multivalue: False
+editable: True
+description: What is the name of the opsi_admin_user to create (empty= nothing created)
+values: ["linux123"]
+default: ["linux123"]
+
+[ProductProperty]
+type: unicode
+name: myipname
+multivalue: False
+editable: True
+description: Set a different IP name (FQDN) (auto= use standard)
+values: ["auto"]
+default: ["auto"]
+
+[ProductProperty]
+type: unicode
+name: myipnumber
+multivalue: False
+editable: True
+description: Set a different IP number (auto= use standard)
+values: ["auto"]
+default: ["auto"]
+
+[ProductProperty]
+type: unicode
+name: ucs_master_admin_password
+multivalue: False
+editable: True
+description: What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join) ?
+values: ["linux123"]
+default: ["linux123"]
+
+[ProductProperty]
+type: bool
+name: force_copy_modules
+description: Should we copy modules even if /etc/opsi/modules still exists ? ?
+default: False
+
+[ProductProperty]
+type: unicode
+name: opsiconfd_log_level
+multivalue: False
+editable: True
+description: Set the opsiconfd log level
+values: ["default"]
+default: ["default"]
+

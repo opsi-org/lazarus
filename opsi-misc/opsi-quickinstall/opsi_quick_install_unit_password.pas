@@ -75,8 +75,7 @@ var
   MyRepo: TLinuxRepository;
   RunCommand: TRunCommandElevated;
 begin
-  // write user input in l-opsi-server.conf file:
-  fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
+  // write user input in l-opsi-server.conf and properties.conf file:
   FileText := TStringList.Create;
 
   propertyName := 'allow_reboot';
@@ -222,7 +221,16 @@ begin
   else
     FileText.Add(propertyName + '=False');
 
+  // write in l-opsi-server.conf file:
+  fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText.SaveToFile(fileName);
+  // write in properties.conf file:
+  // navigate to CLIENT_DATA in l-opsi-server
+  //ShowMessage(ParamStr(0));
+  fileName := ExtractFilePath(ParamStr(0));
+  //ShowMessage(fileName);
+  FileText.SaveToFile(fileName+'l-opsi-server/CLIENT_DATA/properties.conf');
+
   FileText.Free;
 
   // create repository
@@ -256,6 +264,7 @@ begin
   //ShowMessage(Output);
   Output := RunCommand.Run(shellCommand + 'install opsi-script');
   //ShowMessage(Output);
+  Output := RunCommand.Run('opsi-script -batch '+fileName+'l-opsi-server/CLIENT_DATA/setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
   RunCommand.Free;
   MyRepo.Free;

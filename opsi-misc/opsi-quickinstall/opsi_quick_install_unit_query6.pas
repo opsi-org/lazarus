@@ -40,10 +40,6 @@ type
 var
   Query6: TQuery6;
 
-{resourcestring
-  rsOverview = ' overview ';
-  rsNext = ' next > ';}
-
 implementation
 
 uses
@@ -87,18 +83,10 @@ end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
+  //ShowMessage(BtnOverview.Width.ToString);
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  {if QuickInstall.RadioBtnDefault.Checked then
-  begin
-    BtnNext.Caption := rsOverview;
-    BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
-  end
-  else
-  begin
-    BtnNext.Caption := rsNext;
-    BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
-  end;}
+  BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
 end;
 
 procedure TQuery6.FormClose(Sender: TObject; var CloseAction: TCloseAction);

@@ -284,7 +284,6 @@ object Query: TQuery
       object LabelOpsiVersion: TLabel
         Left = 0
         Height = 19
-        Hint = 'Opsi 4.2 is in testing... further description...'
         Top = 0
         Width = 384
         Align = alTop
@@ -303,9 +302,11 @@ object Query: TQuery
         Top = 19
         Width = 72
         Caption = 'opsi 4.1'
+        Checked = True
         OnChange = RadioBtnOpsi41Change
         ParentFont = False
         TabOrder = 0
+        TabStop = True
       end
       object RadioBtnOpsi42: TRadioButton
         AnchorSideLeft.Control = RadioBtnOpsi41
@@ -318,10 +319,8 @@ object Query: TQuery
         Width = 72
         BorderSpacing.Left = 50
         Caption = 'opsi 4.2'
-        Checked = True
         ParentFont = False
         TabOrder = 1
-        TabStop = True
       end
     end
   end

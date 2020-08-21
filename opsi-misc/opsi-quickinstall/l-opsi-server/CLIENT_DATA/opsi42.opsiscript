@@ -1,0 +1,1615 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+DefVar $distroName$
+DefVar $distRelease$
+DefVar $distrotype$
+DefVar $distReleaseTemp$
+DefVar $backend$
+DefVar $oldbackend$
+DefVar $aktbackend$
+DefVar $opsi_stability$
+DefVar $repo_kind$
+DefVar $opsi_online_repository$
+DefVar $opsi_online_repository_nodebproxy$
+DefVar $opsi_noproxy_online_repository$
+DefVar $mysql_root_pw$
+DefVar $mysqlpkg$
+DefVar $distroName4repo$
+DefVar $distRelease4repo$
+DefVar $update_test$
+DefVar $setupProduct$
+DefVar $mysqlservicename$
+DefVar $smbdservicename$
+DefVar $dhcpdservicename$
+DefVar $dhcpdconf_file_path$
+DefVar $fileonly$
+DefVar $tmpstr$
+DefVar $append_dhcpd$
+DefVar $clientconfig_depot_user$
+DefVar $opsi_admin_group$
+DefVar $opsi_fileadmin_group$
+DefVar $allow_reboot$
+DefVar $install_and_configure_dhcp$
+DefVar $netmask$
+DefVar $network$
+DefVar $dnsdomain$
+DefVar $nameserver$
+DefVar $gateway$
+DefVar $myIPName$
+DefVar $myIPNumber$
+DefVar $ucsMasterPasswd$
+DefVar $opsi_admin_user_name$
+DefVar $opsi_admin_user_password$
+DefVar $proxy$
+DefVar $force_copy_modules$
+DefVar $opsiconfd_log_level$
+
+DefStringList $opsi_productsList$
+DefStringList $linuxInfo$
+DefStringList $templist$
+DefStringList $resultlist$
+DefStringList $waitlist$
+DefStringlist $setup_after_install_list$
+DefStringlist $properties_conf$
+
+; base initalization of properties
+set $backend$ = "file"
+set $repo_kind$ "stable"
+set $update_test$ = "false"
+set $opsi_online_repository_org$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
+set $opsi_noproxy_online_repository$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
+set $setup_after_install_list$ = createStringList ("")
+set $allow_reboot$  = "true"
+set $install_and_configure_dhcp$  = "false"
+set $netmask$  = "255.255.0.0"
+set $network$  = "192.168.0.0"
+set $dnsdomain$  = "uib.local"
+set $nameserver$  = "192.168.1.245"
+set $gateway$  = "192.168.1.245"
+set $opsi_admin_user_name$  = "adminuser"
+set $opsi_admin_user_password$  = asConfidential("linux123")
+set $myIPName$ = "auto"
+set $myIPNumber$ = "auto"
+set $ucsMasterPasswd$ = asConfidential("linux123")
+set $proxy$ = ""
+set $force_copy_modules$ = "true"
+set $opsiconfd_log_level$ = "default"
+
+
+; check for initalization of properties via quick-install
+if fileExists("%scriptpath%/properties.conf")
+	comment "setting properties from file"
+	;default result file to failed - will be over written in case of success
+	shellCall('echo failed > "%scriptpath%/result.conf"')
+	set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
+	set $backend$ = getValue("backend", $properties_conf$)
+	set $repo_kind$ = getValue("repo_kind", $properties_conf$)
+	set $update_test$ = getValue("update_test", "false")
+	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
+	set $opsi_noproxy_online_repository$ = getValue("opsi_noproxy_online_repository", $properties_conf$)
+	; not used  in quick-install:
+	;set $setup_after_install_list$ = 
+	set $allow_reboot$  = getValue("allow_reboot", $properties_conf$)
+	set $install_and_configure_dhcp$  = getValue("install_and_configure_dhcp", $properties_conf$)
+	set $netmask$  = getValue("netmask", $properties_conf$)
+	set $network$  = getValue("network", $properties_conf$)
+	set $dnsdomain$  = getValue("dnsdomain", $properties_conf$)
+	set $nameserver$  = getValue("nameserver", $properties_conf$)
+	set $gateway$  = getValue("gateway", $properties_conf$)
+	set $opsi_admin_user_name$  = getValue("opsi_admin_user_name", $properties_conf$)
+	set $opsi_admin_user_password$  = asConfidential(getValue("opsi_admin_user_password", $properties_conf$))
+	set $myIPName$ = getValue("myIPName", $properties_conf$)
+	set $myIPNumber$ = getValue("myIPNumber", $properties_conf$)
+	set $ucsMasterPasswd$ = asConfidential(getValue("ucs_master_admin_password", $properties_conf$))
+	set $proxy$ = getValue("proxy", $properties_conf$)
+	set $force_copy_modules$ = getValue("force_copy_modules", $properties_conf$)
+	set $opsiconfd_log_level$ = getValue("opsiconfd_log_level", $properties_conf$)
+else
+	comment "setting properties from service"
+	set $backend$ = GetProductProperty("backend", $backend$)
+	set $repo_kind$ = GetProductProperty("repo_kind", $repo_kind$)
+	set $update_test$ = GetProductProperty("update_test", $update_test$)
+	set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", $opsi_online_repository_org$)
+	set $opsi_noproxy_online_repository$ = GetProductProperty("opsi_noproxy_online_repository", $opsi_noproxy_online_repository$)
+	set $setup_after_install_list$ = getProductPropertyList("setup_after_install",$setup_after_install_list$)
+	set $allow_reboot$  = getProductProperty("allow_reboot",$allow_reboot$)
+	set $install_and_configure_dhcp$  = getProductProperty("install_and_configure_dhcp",$install_and_configure_dhcp$)
+	set $netmask$  = getProductProperty("netmask",$netmask$)
+	set $network$  = getProductProperty("network",$network$)
+	set $dnsdomain$  = getProductProperty("dnsdomain",$dnsdomain$)
+	set $nameserver$  = getProductProperty("nameserver",$nameserver$)
+	set $gateway$  = getProductProperty("gateway",$gateway$)
+	set $opsi_admin_user_name$  = getProductProperty("opsi_admin_user_name",$opsi_admin_user_name$)
+	set $opsi_admin_user_password$  = GetConfidentialProductProperty("opsi_admin_user_password",$opsi_admin_user_password$)
+	set $myIPName$ = getProductProperty("myIPName",$myIPName$)
+	set $myIPNumber$ = getProductProperty("myIPNumber",$myIPNumber$)
+	set $ucsMasterPasswd$ = getConfidentialProductProperty("ucs_master_admin_password", $ucsMasterPasswd$)
+	set $proxy$ = getProductProperty("proxy",$proxy$)
+	set $force_copy_modules$ = getProductProperty("force_copy_modules",$force_copy_modules$)
+	set $opsiconfd_log_level$ = getProductProperty("opsiconfd_log_level", $opsiconfd_log_level$)
+
+endif
+
+
+; initializaition
+set $append_dhcpd$ = ", dhcpd"
+set $clientconfig_depot_user$ = "pcpatch"
+set $opsi_admin_group$ = "opsiadmin"
+set $opsi_fileadmin_group$ = "opsifileadmins"
+set $ProductId$ = "l-opsi-server"
+set $distrotype$ = getLinuxDistroType
+set $linuxInfo$ = getLinuxVersionMap
+set $distRelease$ = getValue("Release", $linuxInfo$)
+set $distroName$  = getValue("Distributor ID", $linuxInfo$)
+set $distroName4repo$  = $distroName$
+set $distRelease4repo$  = $distRelease$
+set $mysql_root_pw$ = 'linux123'
+set $mysqlservicename$ = "mysql"
+set $smbdservicename$ = "smbd"
+set $fileonly$ = "false"
+set $aktbackend$ = $backend$
+
+
+comment "check if update_test is possible"
+if $update_test$ = "true"
+	if ($distroName$ = "CentOS")
+		comment "Update test not possible for "+$distroName$+" "+$distRelease$
+		set $update_test$ = "false"
+	endif
+endif
+
+if $update_test$ = "false"
+	set $fileonly$ = "false"
+	set $opsi_stability$ = $repo_kind$
+else
+	set $opsi_stability$ = "stable"
+	set $fileonly$ = "true"
+endif
+
+set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
+set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
+
+comment "Installing from: " + $opsi_online_repository$
+Message "Start " + $ProductId$
+
+comment "Patch own FQDN and real IP to /etc/hosts "
+set $myIPName$ = getProductProperty("myIPName","auto")
+set $myIPNumber$ = getProductProperty("myIPNumber","auto")
+if $myIPName$ = "auto"
+	set $myIPName$ = "%opsiserviceUser%"
+endif
+
+if $myIPNumber$ = "auto"
+	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	if not(isValidIP4($myIPNumber$))
+		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
+		if not(isValidIP4($myIPNumber$))
+			set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+			if not(isValidIP4($myIPNumber$))
+				set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+			endif
+		endif
+	endif
+endif
+
+if isValidIP4($myIPNumber$)
+	PatchHosts_self
+else
+	logerror "Unable to find a valid IP-Address. Result: "+$myIPNumber$
+	isFatalError "No valid IP found"
+endif
+
+Message "Trying to get Package Lock."
+if waitForPackageLock("300","false")
+	comment "Package Lock successful."
+	if $distroName$ = 'Univention'
+		comment "UCS: Additional check if Package Lock is available."
+		sleepSeconds 30
+		if waitForPackageLock("120","false")
+			comment "Package Lock successful."
+		else
+			LogError "Package Lock failed."
+			isFatalError "UCS: Package Lock failed"
+		endif
+	endif
+else
+	LogError "Package Lock failed."
+	isFatalError "Package Lock failed"
+endif
+
+PatchTextFile_nsswitch "/etc/nsswitch.conf"
+PatchTextFile_hosts "/etc/hosts"
+
+sub_dist_dependend_opsi_install
+sub_opsi_base_config
+
+if $update_test$ = "true"
+	comment "Upgrading to " + $repo_kind$
+	Message "Upgrade test from stable to " + $repo_kind$
+	set $fileonly$ = "false"
+	sub_del_opsi_repo
+	if $repo_kind$ = "stable"
+		set $opsi_stability$ = ""
+	else
+		if ($repo_kind$ = "testing") or ($repo_kind$ = "experimental")
+			set $opsi_stability$ = "-"+$repo_kind$
+		endif
+	endif
+	set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
+	set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
+	comment "Installing from: " + $opsi_online_repository$
+	sub_dist_dependend_opsi_install
+	sub_opsi_base_config
+endif
+
+if $install_and_configure_dhcp$ = "true"
+	if "" = takefirststringContaining(GetProcessList, "/dhcpd")
+		logWarning "dhcpd is not running - restarting dhcpd"
+		ShellInAnIcon_opsi_restart_dhcpd
+		if not("0" = getLastExitCode)
+			LogError "dhcpd failed"
+			Message "dhcpd failed"
+			isFatalError "dhcpd failed"
+		endif
+	endif
+endif
+
+if fileExists("%scriptpath%/properties.conf")
+	;set result file to success
+	shellCall('echo success > "%scriptpath%/result.conf"')
+endif
+
+sub_setup_after_install
+Message "Finished "+$ProductId$
+if $allow_reboot$ = "true"
+	Message "Rebooting."
+	ExitWindows /Reboot
+endif
+
+
+; ##################  main finished ##################################
+
+[sub_del_opsi_repo]
+Message "Removing repository"
+
+if $distrotype$ = 'Debian'
+	if LineBeginning_ExistsIn("deb "+$opsi_online_repository$, "/etc/apt/sources.list")
+		PatchTextFile_del_opsirepo_deb  "/etc/apt/sources.list"
+	endif
+endif ; debian
+
+if $distrotype$ = 'suse'
+		ShellInAnIcon_del_opsi_repository_suse
+endif ; suse
+
+if $distrotype$ = 'redhat'
+		ShellInAnIcon_del_opsi_repository_redhat
+endif ; redhat
+
+[sub_dist_dependend_opsi_install]
+Switch $distroName$
+	Case 'Debian'
+		set $mysqlservicename$ = "mysql"
+		set $smbdservicename$ = "smbd"
+		set $dhcpdservicename$ = "isc-dhcp-server"
+		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Installing dhcp-server"
+			ShellInAnIcon_install_dhcp_deb
+		endif
+
+		Message "Adding repository"
+		if CompareDotSeparatedNumbers($distRelease$, ">=", "10")
+			set $distRelease4Repo$ = "10"
+			ShellInAnIcon_patch_dhcp_default
+			shellCall("apt --yes install wget gnupg")
+			if not("0" = getLastExitCode)
+				LogError "failed to install debian 10 dependencies"
+				isFatalError "failed to install debian 10 dependencies"
+				Message "failed to install debian 10 dependencies"
+			endif
+		else
+			LogError "Debian 10 or higher supported"
+			isFatalError "Debian 10 or higher supported"
+			Message "Debian 10 or higher supported"
+		endif
+
+		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+		ShellInAnIcon_add_opsi_repository_debian
+
+		if not("0" = getLastExitCode)
+			LogError "failed to add repo"
+			Message "failed to add repo"
+			isFatalError "failed to add repo"
+		endif
+
+		Message "Installing opsi-server"
+		ShellInAnIcon_install_deps_buster
+		ShellInAnIcon_install_python_packages
+		if not("0" = getLastExitCode)
+			LogError "failed to install depending python3 packages"
+			Message "failed to install depending python3 packages"
+			isFatalError "failed to install depending python3 packages"
+		endif
+		ShellInAnIcon_make_python3_default
+		if not("0" = getLastExitCode)
+			LogError "failed to set python3 as default"
+			Message "failed to set python3 as default"
+			isFatalError "failed to set python3 as default"
+		endif
+		ShellInAnIcon_install_opsi_deb
+
+		if not("0" = getLastExitCode)
+			LogError "Installing opsi-server failed on Debian"
+			Message "Installing opsi-server failed on Debian"
+			isFatalError "Installing opsi-server failed on Debian"
+		endif
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Configuring dhcp "
+			PatchTextFile_dhcpd_conf $dhcpdconf_file_path$
+			ShellInAnIcon_opsi_configure_dhcpd
+			ShellInAnIcon_opsi_restart_dhcpd
+			if not("0" = getLastExitCode)
+				LogError "dhcpd failed"
+				Message "dhcpd failed"
+				isFatalError "dhcpd failed"
+			endif
+		endif
+	EndCase ; debian
+
+	Case 'Ubuntu'
+		set $mysqlservicename$ = "mysql"
+		set $distroName4repo$ = "x"+$distroName$
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Installing dhcp-server"
+			ShellInAnIcon_install_dhcp_deb
+		endif
+		if CompareDotSeparatedNumbers($distRelease$, ">=", "20")
+			shellCall("apt --yes install gnupg")
+		endif
+		Message "Adding repository"
+		;ShellInAnIcon_add_opsi_repository_ubuntu
+		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+		ShellInAnIcon_get_repository_key_ubuntu
+
+		if not("0" = getLastExitCode)
+			LogError "failed to get key"
+			Message "failed to get key"
+			isFatalError "failed to get key"
+		endif
+		shellcall("apt update && apt upgrade")
+		ShellInAnIcon_install_debuntu_deps
+		ShellInAnIcon_install_python_packages
+		if not("0" = getLastExitCode)
+			LogError "failed to install depending python3 packages"
+			Message "failed to install depending python3 packages"
+			isFatalError "failed to install depending python3 packages"
+		endif
+		ShellInAnIcon_make_python3_default
+		if not("0" = getLastExitCode)
+			LogError "failed to set python3 as default"
+			Message "failed to set python3 as default"
+			isFatalError "failed to set python3 as default"
+		endif
+		Message "Installing opsi-server"
+		ShellInAnIcon_install_opsi_deb
+		if not("0" = getLastExitCode)
+			LogError "Installing opsi-server failed on Ubuntu"
+			Message "Installing opsi-server failed on Ubuntu"
+			isFatalError "Installing opsi-server failed on Ubuntu"
+		endif
+
+		set $dhcpdservicename$ = "isc-dhcp-server"
+		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Configuring dhcp"
+			PatchTextFile_dhcpd_conf $dhcpdconf_file_path$
+			ShellInAnIcon_opsi_configure_dhcpd
+			ShellInAnIcon_opsi_restart_dhcpd
+			if not("0" = getLastExitCode)
+				LogError "dhcpd failed"
+				Message "dhcpd failed"
+				isFatalError "dhcpd failed"
+			endif
+		endif
+	EndCase ; ubuntu
+
+	Case 'Univention'
+		set $distroName4repo$ = "Univention"
+		set $mysqlservicename$ = "mysql"
+		set $dhcpdservicename$ = "univention-dhcp"
+		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
+		comment "do not use dhcpd backend on ucs"
+		set $append_dhcpd$ = ""
+		Message "Adding repository"
+		set $distReleaseTemp$ = $distRelease$
+
+		if comparedotseparatedNumbers($distRelease$, ">=", "4")
+			if comparedotseparatedNumbers($distRelease$ ,">=", "4.4") and comparedotseparatedNumbers($distRelease$, "<", "4.5")
+				set $distRelease4Repo$ = "4.4"
+				set $smbdservicename$ = "smbd"
+			else
+				if comparedotseparatedNumbers($distRelease$, ">=", "4.3") and comparedotseparatedNumbers($distRelease$, "<", "4.4")
+					set $distRelease4Repo$ = "4.3"
+					set $smbdservicename$ = "smbd"
+				else
+					LogError "Unsupported UCS version"
+					Message "Unsupported UCS version"
+					isFatalError "Unsupported UCS version"
+				endif
+			endif
+
+			PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+			ShellInAnIcon_add_opsi_repository_ucs
+			if not("0" = getLastExitCode)
+				LogError "addrepo failed"
+				Message "addrepo failed"
+				isFatalError "addrepo failed"
+			endif
+
+			set $distRelease$ = $distReleaseTemp$
+			if comparedotseparatedNumbers($distRelease$, ">=", "4.3") and comparedotseparatedNumbers($distRelease$, "<", "4.5")
+				Message "disabling ucs update cron jobs"
+				ShellInAnIcon_disable_update_cron
+			endif
+
+			Message "Installing opsi-server"
+			ShellInAnIcon_ucs_wait_for_dpkg_lock
+			ShellInAnIcon_install_opsi_ucs_dependencies
+			if not("0" = getLastExitCode)
+				ShellInAnIcon_ucs_wait_for_dpkg_lock
+				ShellInAnIcon_install_opsi_ucs_dependencies
+				if not("0" = getLastExitCode)
+					ShellInAnIcon_ucs_wait_for_dpkg_lock
+					ShellInAnIcon_install_opsi_ucs_dependencies
+					if not("0" = getLastExitCode)
+						LogError "failed to install dependencies"
+						Message "failed to install dependencies"
+						isFatalError "failed to install dependencies"
+					endif
+				endif
+			endif
+
+			ShellInAnIcon_ucs_wait_for_dpkg_lock
+			ShellInAnIcon_install_opsi_ucs_tftpd
+			if not("0" = getLastExitCode)
+				ShellInAnIcon_ucs_wait_for_dpkg_lock
+				ShellInAnIcon_install_opsi_ucs_tftpd
+				if not("0" = getLastExitCode)
+					ShellInAnIcon_ucs_wait_for_dpkg_lock
+					ShellInAnIcon_install_opsi_ucs_tftpd
+					if not("0" = getLastExitCode)
+						LogError "failed to install tftpd"
+						Message "failed to install tftpd"
+						isFatalError "failed to install tftpd"
+					endif
+				endif
+			endif
+
+			ShellInAnIcon_ucs_wait_for_dpkg_lock
+			ShellInAnIcon_install_opsi4ucs
+			if not("0" = getLastExitCode)
+				ShellInAnIcon_ucs_wait_for_dpkg_lock
+				ShellInAnIcon_install_opsi4ucs
+				if not("0" = getLastExitCode)
+					ShellInAnIcon_ucs_wait_for_dpkg_lock
+					ShellInAnIcon_install_opsi4ucs
+					if not("0" = getLastExitCode)
+						LogError "failed to install opsi"
+						Message "failed to install opsi"
+						isFatalError "failed to install opsi"
+					endif
+				endif
+			endif
+
+			ShellInAnIcon_ucs_wait_for_dpkg_lock
+			ShellInAnIcon_install_opsi_ucs_join
+			if not("0" = getLastExitCode)
+				LogError "failed to join"
+				Message "failed to join"
+				isFatalError "failed to join"
+			endif
+
+			if $install_and_configure_dhcp$ = "true"
+				Message "Configuring dhcp "
+				set $resultlist$ = getOutStreamFromSection('ShellInAnIcon_opsi_check_dhcpd_ucs')
+				if "0" = count(getListContaining($resultlist$,'DN: cn='))
+					ShellInAnIcon_opsi_configure_dhcpd_ucs
+					if not("0" = getLastExitCode)
+						LogError "configure_dhcpd failed"
+						Message "configure_dhcpd failed"
+						isFatalError "configure_dhcpd failed"
+					endif
+				endif
+
+				ShellInAnIcon_opsi_restart_dhcpd
+				if not("0" = getLastExitCode)
+					LogError "dhcpd failed"
+					Message "dhcpd failed"
+					isFatalError "dhcpd failed"
+				endif
+			endif
+
+			ShellInAnIcon_opsi_stop_firewall
+			if not("0" = getLastExitCode)
+				LogError "stop_firewall failed"
+				Message "stop_firewall failed"
+				isFatalError "stop_firewall failed"
+			endif
+		endif
+	EndCase ; UCS
+EndSwitch
+
+Switch $distrotype$
+	Case 'suse'
+		if $install_and_configure_dhcp$ = "true"
+			Message "Installing dhcp-server"
+			ShellInAnIcon_install_dhcp_suse
+		endif
+
+		Message "Adding repository"
+		sub_suse_configure_variables
+		if not("0" = getLastExitCode)
+			LogError "addrepo failed"
+			Message "addrepo failed"
+			isFatalError "addrepo failed"
+		endif
+
+		Message "Installing opsi-server"
+		ShellInAnIcon_install_opsi_suse
+		if not("0" = getLastExitCode)
+			LogError "Installing opsi-server failed on SUSE"
+			Message "Installing opsi-server failed on SUSE"
+			isFatalError "Installing opsi-server failed on SUSE"
+		endif
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Configuring dhcp"
+			PatchTextFile_dhcpd_conf $dhcpdconf_file_path$
+			PatchTextFile_dhcpd_sysconf "/etc/sysconfig/dhcpd"
+			ShellInAnIcon_opsi_configure_dhcpd
+			ShellInAnIcon_opsi_restart_dhcpd
+			if not("0" = getLastExitCode)
+				LogError "dhcpd failed"
+				Message "dhcpd failed"
+				isFatalError "dhcpd failed"
+			endif
+		endif
+	EndCase ; suse
+
+	Case 'redhat'
+		if $install_and_configure_dhcp$ = "true"
+			Message "Installing dhcp-server"
+			ShellInAnIcon_install_dhcp_redhat
+		endif
+
+		Message "Adding repository"
+		set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
+		set $mysqlservicename$ = "mysqld"
+		set $dhcpdservicename$ = "dhcpd"
+		set $mysqlpkg$ = "community-mysql-server"
+		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
+
+		if contains($distroName$,"CentOS")
+			set $distroName4repo$ = "CentOS"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif
+
+		if contains($distroName$,"RedHat")
+			set $distroName4repo$ = "RedHat"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distroName4repo$ = "RHEL"
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif
+
+		ShellInAnIcon_add_opsi_repository_redhat
+		if not("0" = getLastExitCode)
+			LogError "addrepo failed"
+			Message "addrepo failed"
+			isFatalError "addrepo failed"
+		endif
+
+		Message "Installing opsi-server"
+		ShellInAnIcon_install_opsi_redhat
+		if not("0" = getLastExitCode)
+			LogError "Installing opsi-server failed on RedHat Family"
+			Message "Installing opsi-server failed on RedHat Family"
+			isFatalError "Installing opsi-server failed on RedHat Family"
+		endif
+
+		if $install_and_configure_dhcp$ = "true"
+			Message "Configuring dhcp"
+			set $templist$ = shellcall("if [ -f /etc/dhcpd.conf ] ; then mv --force /etc/dhcpd.conf /etc/dhcpd.conf.org ; fi")
+			PatchTextFile_dhcpd_conf $dhcpdconf_file_path$
+			ShellInAnIcon_opsi_configure_dhcpd
+			ShellInAnIcon_opsi_restart_dhcpd
+			if not("0" = getLastExitCode)
+				LogError "dhcpd failed"
+				Message "dhcpd failed"
+				isFatalError "dhcpd failed"
+			endif
+		endif
+
+		comment "Is selinux enabled "
+		set $templist$ = shellcall("sestatus")
+	EndCase
+EndSwitch
+
+[sub_suse_configure_variables]
+set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
+set $mysqlservicename$ = "mysql"
+set $mysqlpkg$ = "mariadb"
+set $dhcpdservicename$ = "dhcpd"
+set $dhcpdconf_file_path$ = '/etc/dhcpd.conf'
+
+; Handling openSUSE variants
+if contains($distroName$, "openSUSE")
+	switch $distRelease$
+		case "15.0"
+			set $distroName4repo$ = "openSUSE_Leap"
+			set $distRelease4repo$ = "15.0"
+		endcase
+
+		case "15.1"
+			set $distroName4repo$ = "openSUSE_Leap"
+			set $distRelease4repo$ = "15.1"
+		endcase
+		case "15.2"
+			set $distroName4repo$ = "openSUSE_Leap"
+			set $distRelease4repo$ = "15.2"
+		endcase
+
+		defaultcase
+			LogError "unsupported openSUSE release"
+			Message "unsupported openSUSE release"
+			isFatalError "unsupported openSUSE release"
+		endcase
+	endswitch
+
+	if "" = TakeFirstStringContaining(shellCall("zypper lr -u") , $opsi_online_repository$+"/"+$distroName4repo$+"_"+$distRelease4repo$)
+		comment "It seems that the suse repo is not installed"
+		ShellInAnIcon_add_opsi_repository_suse
+	endif
+endif
+
+; Handling SLES variants
+Switch $distroName$
+	Case "SUSE LINUX"
+		sub_suse_configure_variables_suse_linux
+		ShellInAnIcon_add_opsi_repository_sles
+	EndCase
+
+	Case "SUSE"
+		sub_suse_configure_variables_suse
+		ShellInAnIcon_add_opsi_repository_sles
+	EndCase
+EndSwitch
+
+[sub_suse_configure_variables_suse_linux]
+switch $distRelease$
+	case "12"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12"
+	endcase
+
+	case "12.1"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12_SP1"
+	endcase
+
+	DefaultCase
+		LogError "unknown Release"
+		Message "unknown Release"
+		isFatalError "unknown Release"
+	EndCase
+EndSwitch
+
+[sub_suse_configure_variables_suse]
+switch $distRelease$
+	case "12.2"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12_SP2"
+	endcase
+
+	case "12.3"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12_SP3"
+	endcase
+
+	case "12.4"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12_SP4"
+	endcase
+
+	DefaultCase
+		LogError "unknown Release"
+		Message "unknown Release"
+		isFatalError "unknown Release"
+	EndCase
+EndSwitch
+
+[sub_opsi_base_config]
+if $fileonly$ = "false"
+	Message "Configuring mysql"
+	if fileexists("/etc/mysql.secret")
+		set $mysql_root_pw$ = takeString(0, LoadTextFile("/etc/mysql.secret"))
+		ShellInAnIcon_configure_opsi_mysql_backend_ucs
+	else
+		if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
+			message "Disabling mysql strict mode"
+			ShellInAnIcon_disable_mysql_strict_mode
+		endif
+		if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
+			message "using alternative way to configure mysql backend"
+			ShellInAnIcon_configure_opsi_mysql_backend_focal
+		else
+			ShellInAnIcon_configure_opsi_mysql_backend
+		endif
+	endif
+
+	if not("0" = getLastExitCode)
+		LogError "failed to configure mysql backend in opsi"
+		Message "failed to configure mysql backend in opsi"
+		isFatalError "failed to configure mysql backend in opsi"
+	endif
+
+	Message "Configuring backend"
+	if $aktbackend$ = "mysql"
+		comment "checking if mysql module is licensed"
+		if not (Fileexists("%scriptPath%/custom/modules"))
+			comment "no modules file found - using file backend"
+			set $aktbackend$ = "file"
+		else
+			set $tmpstr$ = getValueFromFile( "mysql_backend", "%scriptPath%/custom/modules")
+			if ("" = $tmpstr$) or ("no" = $tmpstr$)
+				comment "no mysql activation found in modules - using file backend"
+				set $aktbackend$ = "file"
+			endif
+		endif
+	endif
+
+	if $install_and_configure_dhcp$ = "false"
+		comment "dhcpd backend disabled"
+		set $append_dhcpd$ = ""
+	endif
+
+	if $aktbackend$ = "mysql"
+		PatchTextFile_dispatch_mysql "/etc/opsi/backendManager/dispatch.conf"
+		if Fileexists("/etc/opsi/modules") and not(stringtoBool($force_copy_modules$))
+			comment "/etc/opsi/modules already exists. Skipping Files_copy_modules"
+		else
+			Files_copy_modules
+		endif
+	else
+		PatchTextFile_dispatch_file "/etc/opsi/backendManager/dispatch.conf"
+	endif
+endif
+
+if $install_and_configure_dhcp$ = "true"
+	set $templist$ = loadTextFile($dhcpdconf_file_path$)
+	set $tmpstr$ = takeFirststringContaining($templist$, "subnet 192.168.")
+	if contains($tmpstr$, "netmask 255.255.255.0")
+		PatchTextFile_dhcpd_conf_netmask $dhcpdconf_file_path$
+		ShellInAnIcon_opsi_restart_dhcpd
+		if not("0" = getLastExitCode)
+			LogError "dhcpd failed"
+			Message "dhcpd failed"
+			isFatalError "dhcpd failed"
+		endif
+	endif
+endif
+
+Message "init_current_config"
+ShellInAnIcon_opsi_init
+if not("0" = getLastExitCode)
+	LogError "init_current_config failed"
+	Message "init_current_config failed"
+	isFatalError "init_current_config failed"
+endif
+
+Message "set_rights"
+ShellInAnIcon_opsi_setrights
+if not("0" = getLastExitCode)
+	LogError "set_rights failed"
+	Message "set_rights failed"
+	isFatalError "set_rights failed"
+endif
+
+Message "set sudoers file"
+ShellInAnIcon_opsi_sudoers
+if not("0" = getLastExitCode)
+	LogError "sudoers failed"
+	Message "sudoers failed"
+	isFatalError "sudoers failed"
+endif
+
+if $opsiconfd_log_level$ = "default"
+	Message "Leaving opsiconfd log level as it is"
+else
+	if isNumber($opsiconfd_log_level$)
+		Message "Changing opsiconfd loglevel to "+ $opsiconfd_log_level$
+		PatchTextFile_opsiconfd_loglevel "/etc/opsi/opsiconfd.conf"
+		if not("0" = getLastExitCode)
+			LogError "failed reset opsiconfd log level"
+			Message "failed reset opsiconfd log level"
+			isFatalError "failed reset opsiconfd log level"
+		endif
+	else
+		Message "$opsiconfd_log_level$ is not a number, didn't change anything"
+		LogError "$opsiconfd_log_level$ is not a number, didn't change anything"
+	endif
+endif
+
+Message "Restarting opsiconfd"
+ShellInAnIcon_opsiconfd_restart
+if not("0" = getLastExitCode)
+	LogError "failed to restart opsiconfd"
+	Message "failed to restart opsiconfd"
+	isFatalError "failed to restart opsiconfd"
+endif
+
+Message "Restarting opsipxeconfd"
+ShellInAnIcon_opsipxeconfd_restart
+if not("0" = getLastExitCode)
+	LogError "failed to restart opsipxeconfd"
+	Message "failed to restart opsipxeconfd"
+	isFatalError "failed to restart opsipxeconfd"
+endif
+
+Message "Configuring samba"
+ShellInAnIcon_opsi_configure_samba
+if not("0" = getLastExitCode)
+	LogError "Automatic Samba configuration failed."
+	Message "Automatic Samba configuration failed."
+	isFatalError "Automatic Samba configuration failed."
+endif
+
+Message "add_adminuser"
+if $distroName$ = 'Univention'
+	ShellInAnIcon_add_adminuser_ucs
+else
+	ShellInAnIcon_add_adminuser
+endif
+
+if not("0" = getLastExitCode)
+	LogError "failed to add adminuser"
+	Message "failed to add adminuser"
+	isFatalError "failed to add adminuser"
+endif
+
+Message "Setting clientconfig.depot.user "
+set $clientconfig_depot_user$ = "%HOST%\\pcpatch"
+if $distroName$ = 'Univention'
+	ShellInAnIcon_opsi_clientconfig_depot_user_ucs
+else
+	ShellInAnIcon_opsi_clientconfig_depot_user
+endif
+
+if not("0" = getLastExitCode)
+	LogError "failed to setup user for depot share"
+	Message "failed to setup user for depot share"
+	isFatalError "failed to setup user for depot share"
+endif
+
+[sub_setup_after_install]
+if count($setup_after_install_list$) > "0"
+	for %setupProduct% in $setup_after_install_list$ do opsiservicecall_set_product_to_setup
+endif
+
+[ShellInAnIcon_install_debuntu_deps]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+EXITCODE=0
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install mysql-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[ShellInAnIcon_make_python3_default]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+cd /usr/bin/
+unlink python
+ln -sf python3 python
+echo $?
+
+
+[ShellInAnIcon_ucs_wait_for_dpkg_lock]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+sleep 30
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+sleep 30
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+exit $?
+
+[ShellInAnIcon_opsi_convert]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-convert -q $oldbackend$ $aktbackend$
+exit $?
+
+[Files_copy_modules]
+copy "%scriptPath%/custom/modules" "/etc/opsi"
+
+[ShellInAnIcon_opsi_restart_dhcpd]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+systemctl restart $dhcpdservicename$.service || (systemctl status $dhcpdservicename$.service && exit 1)
+exit $?
+
+[ShellInAnIcon_opsi_configure_dhcpd]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-setup --auto-configure-dhcp
+exit $?
+
+[ShellInAnIcon_opsi_configure_samba]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-setup --auto-configure-samba
+exit $?
+
+[ShellInAnIcon_opsi_clientconfig_depot_user]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-admin -d method config_createUnicode clientconfig.depot.user "User for depot share" "$clientconfig_depot_user$" "$clientconfig_depot_user$"
+exit $?
+
+[ShellInAnIcon_opsi_clientconfig_depot_user_ucs]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+UCSROLE=$(ucr get server/role)
+if [ "$UCSROLE" == 'memberserver' ]; then
+	HOSTNAME=$(hostname -f)
+	DOMAIN=$(dnsdomainname)
+	opsi-admin -d method config_createObjects '{"objectId": "'"${HOSTNAME}"'", "id": "clientconfig.depot.user","defaultValues": ["'"${DOMAIN}"'\\pcpatch"], "type": "UnicodeConfig"}'
+else
+	opsi-admin -d method config_createUnicode clientconfig.depot.user "User for depot share" "$clientconfig_depot_user$" "$clientconfig_depot_user$"
+fi
+exit $?
+
+[ShellInAnIcon_opsi_init]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-setup --init-current-config
+exit $?
+
+[ShellInAnIcon_opsi_setrights]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service $mysqlservicename$ status
+opsi-setup --set-rights
+exit $?
+
+[ShellInAnIcon_opsi_sudoers]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+opsi-setup --patch-sudoers-file
+exit $?
+
+[ShellInAnIcon_add_adminuser]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+useradd -m -s /bin/bash $opsi_admin_user_name$
+echo $opsi_admin_user_name$:$opsi_admin_user_password$ | chpasswd
+(echo $opsi_admin_user_password$ ; echo $opsi_admin_user_password$) | smbpasswd -a -s $opsi_admin_user_name$
+usermod -aG sudo $opsi_admin_user_name$
+usermod -aG $opsi_admin_group$ $opsi_admin_user_name$
+usermod -aG $opsi_fileadmin_group$ $opsi_admin_user_name$
+exit $?
+
+[ShellInAnIcon_disable_update_cron]
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+eval "$(ucr shell)"
+set -x
+ucr set update/check/cron/enabled=false update/check/boot/enabled=false
+
+[ShellInAnIcon_add_adminuser_ucs]
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+eval "$(ucr shell)"
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+
+UCSROLE=$(ucr get server/role)
+echo "ldap_base: ${ldap_base}"
+univention-check-join-status
+if [ "$UCSROLE" == 'domaincontroller_master' ]; then
+	udm users/user create  \
+		--position="cn=users,$ldap_base" \
+		--set username="$opsi_admin_user_name$" \
+		--set description="opsi admin user" \
+		--set primaryGroup="cn=$opsi_admin_group$,cn=groups,$ldap_base" \
+		--set lastname="$opsi_admin_user_name$" \
+		--set password="$opsi_admin_user_password$" \
+		--set overridePWLength=1 \
+		--ignore_exists
+	univention-directory-manager groups/group modify \
+		--dn "cn=opsifileadmins,cn=groups,$ldap_base" \
+		--append users="uid=$opsi_admin_user_name$,cn=users,$ldap_base"
+	exit $?
+else
+	univention-install sshpass
+	SERVERID=$(ucr get ldap/master)
+	sshpass -p $ucsMasterPasswd$ ssh root@${SERVERID} udm users/user create  \
+		--position="cn=users,$ldap_base" \
+		--set username="$opsi_admin_user_name$" \
+		--set description="opsi\ admin\ user" \
+		--set primaryGroup="cn=$opsi_admin_group$,cn=groups,$ldap_base" \
+		--set lastname="$opsi_admin_user_name$" \
+		--set password="$opsi_admin_user_password$" \
+		--set overridePWLength=1 \
+		--ignore_exists
+	sshpass -p $ucsMasterPasswd$ ssh root@${SERVERID} univention-directory-manager groups/group modify --dn "cn=opsifileadmins,cn=groups,$ldap_base" \
+		--append users="uid=$opsi_admin_user_name$,cn=users,$ldap_base"
+
+	if [ "$UCSROLE" == 'memberserver' ]; then
+		HOSTNAME=$(hostname -f)
+		DOMAIN=$(dnsdomainname)
+		opsi-admin -d task setPcpatchPassword $ucsMasterPasswd$
+		univention-install sshpass
+		SERVERID=$(ucr get ldap/master)
+		sshpass -p $ucsMasterPasswd$ ssh root@${SERVERID} udm users/user modify  \
+			--dn "uid=pcpatch,cn=users,$ldap_base" \
+			--set password="$ucsMasterPasswd$" \
+			--set overridePWLength=1 \
+			--ignore_exists
+		fi
+fi
+
+[ShellInAnIcon_opsiconfd_restart]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+systemctl restart opsiconfd.service || (systemctl status opsiconfd.service && exit 1)
+exit $?
+
+[ShellInAnIcon_opsipxeconfd_restart]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+systemctl restart opsipxeconfd.service || (systemctl status opsipxeconfd.service && exit 1)
+exit $?
+
+[PatchTextFile_nsswitch]
+FindLine_StartingWith "hosts:"
+DeleteTheLine
+InsertLine "hosts:          files dns"
+
+[PatchTextFile_hosts]
+FindLine_StartingWith "127.0.1.1"
+DeleteTheLine
+
+[PatchTextFile_dispatch_mysql]
+setKeyValueSeparator ":"
+setValueByKey "backend_.*" "mysql, opsipxeconfd$append_dhcpd$"
+setValueByKey "host_.*" "mysql, opsipxeconfd$append_dhcpd$"
+setValueByKey "productOnClient_.*" "mysql, opsipxeconfd"
+setValueByKey "configState_.*" "mysql, opsipxeconfd"
+setValueByKey "license.*" "mysql"
+setValueByKey "softwareLicense.*" "mysql"
+setValueByKey "audit.*" "mysql"
+setValueByKey ".*" "mysql"
+
+[PatchTextFile_dispatch_file]
+setKeyValueSeparator ":"
+setValueByKey "backend_.*" "file, opsipxeconfd, mysql$append_dhcpd$"
+setValueByKey "host_.*" "file, opsipxeconfd$append_dhcpd$"
+setValueByKey "productOnClient_.*" "file, opsipxeconfd"
+setValueByKey "configState_.*" "file, opsipxeconfd"
+setValueByKey "license.*" "mysql"
+setValueByKey "softwareLicense.*" "mysql"
+setValueByKey "audit.*" "mysql"
+setValueByKey ".*" "file"
+
+[PatchTextFile_dhcpd_conf]
+FindLine_StartingWith "option domain-name"
+DeleteTheLine
+GoToTop
+FindLine_StartingWith "option domain-name-servers"
+DeleteTheLine
+GoToTop
+FindLine_StartingWith "option routers"
+DeleteTheLine
+GoToTop
+AppendLine 'option domain-name-servers $nameserver$ ;'
+AppendLine 'option domain-name "$dnsdomain$";'
+AppendLine 'option routers $gateway$ ;'
+
+[PatchTextFile_dhcpd_conf_netmask]
+FindLine_Containing "subnet 192.168."
+DeleteTheLine
+InsertLine 'subnet $network$ netmask $netmask$ {'
+
+[PatchTextFile_opsiconfd_loglevel]
+FindLine_Containing "run-as-user = opsiconfd"
+InsertLine "log-level-file = $opsiconfd_log_level$"
+
+[PatchHosts_self]
+delhost localhost
+setaddr $myIPName$ $myIPNumber$
+setname $myIPNumber$ $myIPName$
+setalias $myIPNumber$ %HOST%
+setaddr localhost 127.0.0.1
+setname 127.0.0.1 localhost
+
+[ShellInAnIcon_patch_dhcp_default]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+CURRENTIF=$(ip route | grep $myIPNumber$ | awk '{ print $3 }')
+sed -i 's/INTERFACESv4=""/INTERFACESv4="'"$CURRENTIF"'"/g' /etc/default/isc-dhcp-server
+
+[ShellInAnIcon_disable_mysql_strict_mode]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+sed -i '/\[mysqld]/a sql_mode=NO_ENGINE_SUBSTITUTION' /etc/mysql/mysql.conf.d/mysqld.cnf
+service $mysqlservicename$ restart
+
+[ShellInAnIcon_configure_opsi_mysql_backend]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service $mysqlservicename$ restart
+mysqladmin -u root password $mysql_root_pw$
+service $mysqlservicename$ restart
+UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
+opsi-setup --configure-mysql --unattended=$UNATTENDED
+exit $?
+
+[ShellInAnIcon_configure_opsi_mysql_backend_focal]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service $mysqlservicename$ restart
+echo "alter user root@localhost identified with mysql_native_password by '$mysql_root_pw$'" | mysql -u root
+service $mysqlservicename$ restart
+UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
+opsi-setup --configure-mysql --unattended=$UNATTENDED
+exit $?
+
+[ShellInAnIcon_configure_opsi_mysql_backend_ucs]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service $mysqlservicename$ restart
+service $mysqlservicename$ status
+if [ ! -S /var/run/mysqld/mysqld.sock ]; then
+	echo "Waiting for mysqld.sock to exist"
+	sleep 60
+	service $mysqlservicename$ status
+fi
+UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
+opsi-setup --configure-mysql --unattended=$UNATTENDED
+exit $?
+
+[ShellInAnIcon_install_dhcp_deb]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+EXITCODE=0
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install isc-dhcp-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[ShellInAnIcon_install_opsi_deb]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+EXITCODE=0
+getent hosts $(hostname -f)
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" remove tftpd
+update-inetd --remove tftpd
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-tftpd-hpa
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-linux-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-windows-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service $smbdservicename$ restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmbd restart
+exit $EXITCODE
+
+
+[ShellInAnIcon_get_repository_key_ubuntu]
+set -x
+export DEBIAN_FRONTEND=noninteractive
+EXITCODE=0
+wget -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get update
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[PatchTextFile_del_opsirepo_deb]
+FindLine_StartingWith "deb $opsi_online_repository$"
+DeleteTheLine
+
+[ShellInAnIcon_install_deps_buster]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+export http_proxy=$proxy$
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host gnupg
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install default-mysql-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $?
+
+[ShellInAnIcon_install_python_packages]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+export http_proxy=$proxy$
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install python3-distro python3-mysqldb
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+
+[ShellInAnIcon_add_opsi_repository_debian]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+export http_proxy=$proxy$
+wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+apt-get update
+exit $?
+
+
+[ShellInAnIcon_stop_winbind]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service winbind stop
+systemctl disable winbind
+exit $?
+
+[Patches_jessie_smb_conf]
+set [global] idmap config * : range = 10000-300000
+
+[ShellInAnIcon_add_opsi_repository_ucs]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export http_proxy=$proxy$
+wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+exit $?
+
+
+[ShellInAnIcon_install_opsi_ucs_dependencies]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+UCSROLE=$(ucr get server/role)
+eval "$(ucr shell version/version)"
+EXITCODE=0
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-upgrade --noninteractive --ignoreterm --updateto=$version_version-99
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes wget host
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes univention-mariadb
+
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes univention-dhcp
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+if [ "$UCSROLE" == 'memberserver' ]; then
+	while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+	univention-install --yes univention-samba >> /var/tmp/opsi.log
+fi
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes samba samba-common smbclient cifs-utils
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+getent hosts $(hostname -f)
+exit $EXITCODE
+
+
+[ShellInAnIcon_install_opsi_ucs_tftpd]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes opsi-tftpd-hpa
+exit $?
+
+
+[ShellInAnIcon_install_opsi4ucs]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
+univention-install --yes opsi4ucs opsi-windows-support
+exit $?
+
+
+[ShellInAnIcon_install_opsi_ucs_restart_services_ucs]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+UCSROLE=$(ucr get server/role)
+if [ "$UCSROLE" != 'memberserver' ]; then
+	service $smbdservicename$ restart
+	service samba4 restart
+else
+	systemctl unmask $smbdservicename$.service
+	systemctl enable $smbdservicename$.service
+	service $smbdservicename$ restart
+fi
+service nmbd restart
+service $dhcpdservicename$ restart
+service opsiconfd restart
+service opsipxeconfd restart
+exit $?
+
+
+[ShellInAnIcon_install_opsi_ucs_join]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+UCSROLE=$(ucr get server/role)
+univention-check-join-status
+if [ "$UCSROLE" == 'domaincontroller_master' ]; then
+	univention-run-join-scripts
+else
+	if [ ! -f /var/tmp/adminpass.txt ]; then
+		echo $ucsMasterPasswd$ > /var/tmp/adminpass.txt
+	fi
+	univention-run-join-scripts -dcaccount Administrator -dcpwd /var/tmp/adminpass.txt >> /var/tmp/opsi.log
+	rm -rf /var/tmp/adminpass.txt
+fi
+exit $?
+
+[ShellInAnIcon_opsi_check_dhcpd_ucs]
+# see also http://forum.univention.de/viewtopic.php?f=68&t=4433
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+eval "$(ucr shell)"
+set -x
+udm policies/dhcp_boot list --position "cn=opsi-boot,cn=boot,cn=dhcp,cn=policies,$ldap_base"
+exit $?
+
+[ShellInAnIcon_opsi_configure_dhcpd_ucs]
+# see also http://forum.univention.de/viewtopic.php?f=68&t=4433
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export DEBIAN_FRONTEND=noninteractive
+eval "$(ucr shell)"
+set -x
+# create a dhcp boot policy for the dhcp/host object
+udm policies/dhcp_boot create --position \
+"cn=boot,cn=dhcp,cn=policies,$ldap_base" \
+	--set name="opsi-boot" \
+	--set boot_server="%IPAddress%" \
+	--set boot_filename="pxelinux.0"
+
+udm dhcp/service modify \
+--dn  cn=$domainname,cn=dhcp,$ldap_base \
+--policy-reference "cn=opsi-boot,cn=boot,cn=dhcp,cn=policies,$ldap_base"
+exit $?
+
+[ShellInAnIcon_opsi_stop_firewall]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service univention-firewall stop
+exit $?
+
+;####### redhat
+[ShellInAnIcon_del_opsi_repository_redhat]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+rm /etc/yum.repos.d/home:uibmz:opsi:4.2:$opsi_stability$.repo
+yum makecache
+yum -y repolist
+exit $?
+
+[ShellInAnIcon_add_opsi_repository_redhat]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+yum -y install wget
+cd /etc/yum.repos.d
+wget --no-check-certificate $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/home:uibmz:opsi:4.2:$opsi_stability$.repo
+yum makecache
+yum -y repolist
+exit $?
+
+[ShellInAnIcon_install_dhcp_redhat]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+EXITCODE=0
+yum -y install  dhcp-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+systemctl enable dhcpd.service
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+systemctl restart dhcpd.service
+systemctl status dhcpd.service
+exit $EXITCODE
+
+[ShellInAnIcon_install_opsi_redhat]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+EXITCODE=0
+yum -y install wget
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install samba samba-client
+chkconfig smb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install samba samba-client
+chkconfig smb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig nmb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service smb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install  $mysqlpkg$
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig $mysqlservicename$ on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service $mysqlservicename$ restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+getent hosts $(hostname -f)
+yum -y install wimlib
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install opsi-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install opsi-linux-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig opsiconfd on
+chkconfig nmb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service smb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install  $mysqlpkg$
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig $mysqlservicename$ on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service $mysqlservicename$ restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+getent hosts $(hostname -f)
+yum -y install wimlib
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install opsi-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install opsi-linux-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install opsi-windows-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig opsiconfd on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig opsipxeconfd on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service smb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+;####### suse
+[ShellInAnIcon_add_opsi_repository_sles]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+EXITCODE=0
+zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys ar --refresh $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/home:uibmz:opsi:4.2:$opsi_stability$.repo
+zypper --no-gpg-checks --non-interactive mr -p 50 home_uibmz_opsi_4.2_$opsi_stability$
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[ShellInAnIcon_del_opsi_repository_suse]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+zypper --non-interactive rr home_uibmz_opsi_opsi_4.1_$opsi_stability$
+exit $?
+
+[ShellInAnIcon_add_opsi_repository_suse]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+EXITCODE=0
+zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys ar --refresh $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/home:uibmz:opsi:4.2:$opsi_stability$.repo
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive mr -p 50 home_uibmz_opsi_4.2_$opsi_stability$
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[ShellInAnIcon_install_dhcp_suse]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+EXITCODE=0
+zypper --no-gpg-checks --non-interactive install dhcp-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig dhcpd on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service dhcpd restart
+# may fail
+exit $EXITCODE
+
+[ShellInAnIcon_install_opsi_suse]
+set -x
+zypper --no-gpg-checks --non-interactive install samba samba-client
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig smb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig nmb on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service smb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install $mysqlpkg$
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig mysql on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service mysql restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+getent hosts $(hostname -f)
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install wimlib
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install opsi-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install opsi-linux-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install opsi-windows-support
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig opsiconfd on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+chkconfig opsipxeconfd on
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service smb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+service nmb restart
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+exit $EXITCODE
+
+[PatchTextFile_dhcpd_sysconf]
+setValueByKey "DHCPD_INTERFACE" '"ANY"'
+
+[opsiservicecall_set_product_to_setup]
+"method": "setProductActionRequest"
+"params": [
+		"%setupProduct%",
+		"%opsiserviceUser%",
+		"setup"
+]
+
+[PatchTextFile_opsirepo_deb]
+FindLine_StartingWith "deb $opsi_online_repository$"
+DeleteTheLine
+GoToBottom
+InsertLine "deb $opsi_online_repository$/$distroName4repo$_$distRelease4repo$ ./"

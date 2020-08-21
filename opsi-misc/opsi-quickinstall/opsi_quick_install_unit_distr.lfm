@@ -57,11 +57,12 @@ object Distribution: TDistribution
     end
     object LabelCorrect: TLabel
       Left = 0
-      Height = 95
-      Top = 63
+      Height = 76
+      Top = 83
       Width = 272
       Align = alTop
-      Caption = #10'If this is correct, please click ''next >'' to continue.'#10'If not, please edit the distribution and then continue with ''next >''.'
+      BorderSpacing.Top = 20
+      Caption = 'If this is correct, please click ''next >'' to continue.'#10'If not, please edit the distribution and then continue with ''next >''.'
       ParentColor = False
       WordWrap = True
     end

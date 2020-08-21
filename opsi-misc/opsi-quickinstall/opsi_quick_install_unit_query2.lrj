@@ -13,6 +13,6 @@
 {"hash":1359,"name":"tquery2.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
 {"hash":24515,"name":"tquery2.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":252015791,"name":"tquery2.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
-{"hash":24515,"name":"tquery2.radiobtnyes1.caption","sourcebytes":[89,101,115],"value":"Yes"},
-{"hash":1359,"name":"tquery2.radiobtnno1.caption","sourcebytes":[78,111],"value":"No"}
+{"hash":24515,"name":"tquery2.radiobtnyescopy.caption","sourcebytes":[89,101,115],"value":"Yes"},
+{"hash":1359,"name":"tquery2.radiobtnnocopy.caption","sourcebytes":[78,111],"value":"No"}
 ]}

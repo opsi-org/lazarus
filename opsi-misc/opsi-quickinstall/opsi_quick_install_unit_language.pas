@@ -22,15 +22,14 @@ type
     QuickInstallPanel: TPanel;
     RadioBtnDefault: TRadioButton;
     RadioBtnCustom: TRadioButton;
-    WelcomeLabel2: TLabel;
+    LabelCarryOut: TLabel;
     LabelWelcome: TLabel;
     LabelSelLanguage: TLabel;
     procedure BtnNextClick(Sender: TObject);
     procedure ComboBoxLanguagesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    {FMyDistr: TDistribution;
-    FDistrUrlPart: string;}
+    procedure SetBtnWidth(Language: string);
   public
   const
     // same width for all panels
@@ -55,11 +54,6 @@ type
     distroName, distroRelease: string;
 
     DistrInfo: TDistributionInfo;
-    {property MyDistr: TDistribution read FMyDistr;
-    property DistrUrlPart: string read FDistrUrlPart;
-
-    // procedure for setting MyDistr and DistrUrlPart depending on distroName and distroRelease
-    procedure SetDistr(distrName: string; distrRelease: string);}
   end;
 
 
@@ -74,7 +68,7 @@ implementation
 
 uses
   opsi_quick_install_unit_query, opsi_quick_install_unit_query4,
-  oslog, osfunclin, opsi_quick_install_unit_distr;
+  oslog, osfunclin, opsi_quick_install_unit_distr, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -104,7 +98,29 @@ begin
   end;
 end;
 
+
 { TQuickInstall }
+
+procedure TQuickInstall.SetBtnWidth(Language: string);
+begin
+  if Language = 'de' then
+  begin
+    // needs to be set for every language
+    BtnNextWidth := 63;
+    BtnOverviewWidth := 72;
+    BtnFinishWidth := 88;
+    //BtnNext.Width = 'with for english caption'
+    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
+    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
+  end
+  else
+  begin
+    BtnNextWidth := 51;
+    BtnOverviewWidth := 69;
+    BtnFinishWidth := 45;
+    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
+  end;
+end;
 
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
@@ -115,7 +131,6 @@ begin
   Left := 360;
   Top := 170;
   Width := 730;
-
   panelLeft := Round((Width - panelWidth) * 2 / 3);
   // set constant button positions:
   BtnBack.Left := 20;
@@ -126,9 +141,17 @@ begin
   // set constant background
   BackgrImageFileName := ExtractFilePath(ParamStr(0)) + 'opsi.png';
   BackgrImage.Picture.LoadFromFile(BackgrImageFileName);
-
   // bring all panels to the same position (QuickInstall.panelLeft)
   AdjustPanelPosition(self);
+
+  // text by resourcestrings
+  LabelWelcome.Caption := rsWelcome;
+  LabelSelLanguage.Caption := rsSelLanguage;
+  LabelSetup.Caption := rsSetup;
+  RadioBtnDefault.Caption := rsStandard;
+  RadioBtnCustom.Caption := rsCustom;
+  LabelCarryOut.Caption := rsCarryOut;
+  BtnNext.Caption := rsNext;
 
   ComboBoxLanguages.Left := 120;
   with ComboBoxLanguages.Items do
@@ -141,17 +164,9 @@ begin
   Languages.Add('en');
   // let the combo box show the system language
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
-  // following needs to be set for every language
-  if GetDefaultLang = 'de' then
-  begin
-    // needs to be set for every language
-    BtnNextWidth := 63;
-    BtnOverviewWidth := 72;
-    BtnFinishWidth := 88;
-    //BtnNext.Width = 'with for english caption'
-    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
-    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
-  end;
+  // set width for overview and finish buttons and the next button on this...
+  // ...form depending on the language
+  SetBtnWidth(GetDefaultLang);
 
   initialProds := True;
 
@@ -167,9 +182,7 @@ begin
   distroRelease := getLinuxDistroRelease;
   //ShowMessage(distroName);
   //ShowMessage(distroRelease);
-
-  DistrInfo:= TDistributionInfo.Create;
-  //SetDistr(distroName, distroRelease);
+  DistrInfo := TDistributionInfo.Create;
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
@@ -201,10 +214,15 @@ end;
 procedure TQuickInstall.ComboBoxLanguagesChange(Sender: TObject);
 begin
   if ComboBoxLanguages.Text = 'Deutsch' then
-    SetDefaultLang('de')
+  begin
+    SetDefaultLang('de');
+    SetBtnWidth('de');
+  end
   else
+  begin
     SetDefaultLang('en');
-  //ShowMessage(IntToStr(BtnNext.Width));
+    SetBtnWidth('en');
+  end;
 end;
 
 end.
