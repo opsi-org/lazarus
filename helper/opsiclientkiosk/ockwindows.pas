@@ -5,12 +5,13 @@ unit OckWindows;
 interface
 
 uses
-  Classes, SysUtils, Process, DSiWin32, jwawinbase, osLog;
+  Classes, SysUtils, Process, DSiWin32, jwawinbase, osLog, osRunCommandElevated;
 
 function isAdmin:boolean;
 function GetUserName_: string;
-procedure MountDepot(const User: String; Password: String; PathToDepot: String);
-procedure UnmountDepot(const PathToDepot: String);
+procedure MountDepot(const User: string; Password: string; PathToDepot: string;
+  const RunCommandElevated: TRunCommandElevated = nil);
+procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated = nil);
 
 
 implementation
@@ -40,7 +41,7 @@ begin
 end; { DSiGetUserName}
 
 
-procedure MountDepot(const User: String; Password: String; PathToDepot: String);
+procedure MountDepot(const User: String; Password: String; PathToDepot: String; const RunCommandElevated: TRunCommandElevated = nil);
 var
   Shell,
   ShellOptions,
@@ -66,7 +67,7 @@ begin
   end;
 end;
 
-procedure UnmountDepot(const PathToDepot: String);
+procedure UnmountDepot(const PathToDepot: String; const RunCommandElevated: TRunCommandElevated = nil);
 var
   Shell,
   ShellOptions,

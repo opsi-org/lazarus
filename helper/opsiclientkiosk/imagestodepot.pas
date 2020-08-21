@@ -43,9 +43,9 @@ type
     procedure DirectoryEditPathToDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
+    //procedure FormDestroy(Sender: TObject);
   private
-    function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
+    //function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
     function SaveImagesOnDepot(const PathToDepot: String):boolean;
     //function SetRights(Path:String):boolean;
   public
@@ -179,14 +179,16 @@ end;
 
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
-   InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
+   //InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
    SetDefaultLang(GetDefaultLang);
 end;
 
+(*
 procedure TFormSaveImagesOnDepot.FormDestroy(Sender: TObject);
 begin
-  LogDatei.Free;
+  FeeAndNil(LogDatei);
 end;
+*)
 
 (*
 function TFormSaveImagesOnDepot.SetRights(Path:String): boolean;
@@ -225,7 +227,8 @@ begin
   finally
     OpsiConnection.Free;
   end;
-end;*)
+end;
+*)
 
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
@@ -238,7 +241,7 @@ begin
   Result := False;
   { Set the right directories }
   PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
-  PathToKioskOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  PathToKioskOnClient := ExtractFilePath(Application.Location);
   //Set path delims dependend on system (e.g. Windows, Unix)
   PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
@@ -263,7 +266,7 @@ begin
   Close;
 end;
 
-function TFormSaveImagesOnDepot.InitLogging(const LogFileName:String; MyLogLevel:integer): boolean;
+(*function TFormSaveImagesOnDepot.InitLogging(const LogFileName:String; MyLogLevel:integer): boolean;
 begin
   try
     //LogDatei.free;
@@ -281,7 +284,7 @@ begin
     InitLogging := False;
     LogDatei.log('Error while initialising logging. Calling Method: TFormOpsiClientKiosk.InitLogging',LLDebug);
   end;
-end;
+end;*)
 
 
 end.

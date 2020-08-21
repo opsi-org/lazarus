@@ -5,10 +5,14 @@ unit OckLinux;
 interface
 
 uses
-  Classes, SysUtils, Process;
+  Classes, SysUtils, Process, osRunCommandElevated, osLog;
 
-function isAdmin:boolean;
+
+function isAdmin: boolean;
 function GetUserName_: string;
+procedure MountDepot(const User: string; Password: string; PathToDepot: string;
+  const RunCommandElevated: TRunCommandElevated = nil);
+procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated = nil);
 
 implementation
 
@@ -19,45 +23,52 @@ end;
 
 function GetUserName_: string;
 var
-  Output: String;
+  Output: string;
 begin
-  RunCommand('/bin/sh',['echo $USER'],Output,[],swoHIDE);
+  RunCommand('/bin/sh', ['echo $USER'], Output, [], swoHIDE);
   Result := Output;
 end;
 
 
-procedure MountDepot(const User: String; Password: String; PathToDepot: String);
+procedure MountDepot(const User: string; Password: string; PathToDepot: string;
+  const RunCommandElevated: TRunCommandElevated);
 var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
+  Shell, ShellOptions, ShellCommand, ShellOutput: string;
 begin
   try
-    LogDatei.log('Mounting ' + PathToDepot ,LLInfo);
+    LogDatei.log('Mounting ' + PathToDepot, LLInfo);
     {set shell and options}
     Shell := '/bin/sh';
     ShellOptions := '-c';
-    ShellCommand := 'mount -t cifs' + ' ' + PathToDepot + ' ' + Password + ' ' + 'username:' + User;
-    if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
+    //mount -t cifs -o username=werner //bonifax.uib.gmbh/opsi_depot /home/jan/opsi_depot
+    ShellCommand := 'mount -t cifs' + ' ' + PathToDepot + ' ' +
+      Password + ' ' + 'username:' + User;
+    if assigned(RunCommandElevated) then
     begin
-      ShellCommand := '';
-      LogDatei.log('Mounting done', LLInfo);
-      //ShowMessage(ShellOutput);
+      if RunCommandElevated.Run(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+      begin
+        ShellCommand := '';
+        LogDatei.log('Mounting done', LLInfo);
+        //ShowMessage(ShellOutput);
+      end
+      else
+      begin
+        LogDatei.log('Error while trying to run command mount' + PathToDepot +
+          ' ' + User + ' on ' + Shell, LLError);
+      end;
     end
-    else LogDatei.log('Error while trying to run command net use ' +
-      PathToDepot + ' ' + User + ' on ' + Shell, LLError);
+    else
+    begin
+      LogDatei.log('RunCommandElevated not assigned',LLError);
+    end;
   except
     LogDatei.log('Exception during mounting of ' + PathToDepot, LLDebug);
   end;
 end;
 
-procedure UnmountDepot(const PathToDepot: String);
+procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated=nil);
 var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
+  Shell, ShellOptions, ShellCommand, ShellOutput: string;
 begin
   try
     LogDatei.log('Unmounting ' + PathToDepot, LLInfo);
@@ -66,20 +77,32 @@ begin
     ShellOptions := '-c';
     ShellCommand := 'unmount' + ' ' + PathToDepot;
     {Run Command}
-    if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+    if assigned(RunCommandElevated) then
     begin
-      LogDatei.log('Unmounting done', LLInfo);
-     //ShowMessage(ShellOutput);
+        if RunCommandElevated.Run(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+      begin
+        LogDatei.log('Unmounting done', LLInfo);
+        //ShowMessage(ShellOutput);
+      end
+      else
+      begin
+        LogDatei.log('Error while trying to run command ' + ShellCommand +
+          ' on ' + Shell, LLError);
+      end;
     end
     else
     begin
-      LogDatei.log('Error while trying to run command ' +
-        ShellCommand + ' on ' + Shell, LLError);
+      LogDatei.log('RunCommandElevated not assigned',LLError);
     end;
   except
     LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
   end;
 end;
 
+
 end.
+
+
+
+
 

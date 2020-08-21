@@ -8,7 +8,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   ClientHeight = 292
   ClientWidth = 544
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
   object ButtonCopy: TButton
