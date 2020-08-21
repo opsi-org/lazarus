@@ -5,10 +5,18 @@ unit imagestodepot;
 interface
 
 uses
+  {$IFDEF WINDOWS}
+  //jwawinbase,
+  OckWindows,
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  OckLinux,
+  {$ENDIF LINUX}
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
-  jwawinbase,
-  LCLTranslator, ExtCtrls, ComCtrls;
+  LCLTranslator, ExtCtrls, ComCtrls
+
+  {add more units if nedded};
 
 type
 
@@ -36,20 +44,10 @@ type
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure GroupBoxInfoClick(Sender: TObject);
   private
-    function GetUserName_: string;
     function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
-    procedure MountDepotNT(const User: String; Password: String;
-      PathToDepot: String);
     function SaveImagesOnDepot(const PathToDepot: String):boolean;
-    procedure UnmountDepotNT(const PathToDepot: String);
-    procedure MountDepotUnix(const User: String; Password: String;
-      PathToDepot: String);
-    procedure UnmountDepotUnix(const PathToDepot: String);
     //function SetRights(Path:String):boolean;
-
-
   public
 
   end;
@@ -107,13 +105,9 @@ begin
     begin
       AlreadyMounted := False;
       User := EditUser.Text;
-      User := '/user:' + user;
-     {$IFDEF Windows}
-      MountDepotNT(User, EditPassword.Text, PathToDepot);
-     {$ENDIF Windows}
-     {$IFDEF Unix}
-      MountDepotUnix(User, EditPassword.Text, PathToDepot, AlreadyMounted);
-     {$ENDIF Unix}
+      MountDepot(User, EditPassword.Text, PathToDepot);
+      LabelInfo.Caption := rsMounting + ' ' + rsDone;
+      Application.ProcessMessages;
     end;
   end;
 
@@ -145,12 +139,8 @@ begin
 
   if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
-    {$IFDEF Windows}
-     UnmountDepotNT(PathToDepot);
-    {$ENDIF Windows}
-    {$IFDEF Unix}
-     UnmountDepotUnix(PathToDepot);
-    {$ENDIF Unix}
+     UnmountDepot(PathToDepot);
+     //LabelInfo.Caption := rsCouldNotUnmount;
   end;
 
   if CopySuccess then
@@ -196,83 +186,6 @@ end;
 procedure TFormSaveImagesOnDepot.FormDestroy(Sender: TObject);
 begin
   LogDatei.Free;
-end;
-
-procedure TFormSaveImagesOnDepot.GroupBoxInfoClick(Sender: TObject);
-begin
-
-end;
-
-
-procedure TFormSaveImagesOnDepot.MountDepotNT(const User: String;
-  Password: String; PathToDepot: String);
-var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
-begin
-  try
-    LogDatei.log('Mounting ' + PathToDepot ,LLInfo);
-    {set shell and options}
-    Shell := 'cmd.exe';
-    ShellOptions := '/c';
-    ShellCommand := 'net use' + ' ' + PathToDepot + ' ' + Password + ' ' + user;
-    if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
-    begin
-      ShellCommand := '';
-      LabelInfo.Caption := rsMounting + ' ' + rsDone;
-      Application.ProcessMessages;
-      LogDatei.log('Mounting done', LLInfo);
-      //ShowMessage(ShellOutput);
-    end
-    else LogDatei.log('Error while trying to run command net use ' +
-      PathToDepot + ' ' + user + ' on ' + Shell, LLError);
-  except
-    LogDatei.log('Exception during mounting of ' + PathToDepot, LLDebug);
-  end;
-end;
-
-procedure TFormSaveImagesOnDepot.UnmountDepotNT(const PathToDepot: String);
-var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
-begin
-  try
-    LogDatei.log('Unmounting ' + PathToDepot, LLInfo);
-    {set shell and options}
-    Shell := 'cmd.exe';
-    ShellOptions := '/c';
-    ShellCommand := 'net use /delete' + ' ' + PathToDepot;
-    {Run Command}
-    if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
-    begin
-      LogDatei.log('Unmounting done', LLInfo);
-     //ShowMessage(ShellOutput);
-    end
-    else
-    begin
-      LabelInfo.Caption := rsCouldNotUnmount;
-      LogDatei.log('Error while trying to run command ' +
-        ShellCommand + ' on ' + Shell, LLError);
-    end;
-  except
-    LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
-  end;
-end;
-
-procedure TFormSaveImagesOnDepot.MountDepotUnix(const User: String;
-  Password: String; PathToDepot: String);
-begin
-
-end;
-
-
-procedure TFormSaveImagesOnDepot.UnmountDepotUnix(const PathToDepot: String);
-begin
-
 end;
 
 (*
@@ -370,19 +283,6 @@ begin
   end;
 end;
 
-function TFormSaveImagesOnDepot.GetUserName_: string;
-var
-  buffer: PChar;
-  bufferSize: DWORD;
-begin
-  bufferSize := 256; //UNLEN from lmcons.h
-  buffer := AllocMem(bufferSize * SizeOf(char));
-  try
-    GetUserName(buffer, bufferSize);
-    Result := string(buffer);
-  finally
-    FreeMem(buffer, bufferSize);
-  end;
-end; { DSiGetUserName}
+
 end.
 

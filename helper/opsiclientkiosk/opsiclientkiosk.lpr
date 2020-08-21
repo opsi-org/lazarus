@@ -11,7 +11,7 @@ uses
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
   lazproginfo, opsiconnection, helpinfo,
   {$IFDEF WINDOWS}
-  OckWindows
+  OckWindows, imagestodepot
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   OckLinux
@@ -31,6 +31,7 @@ begin
   Application.CreateForm(TDataModuleOCK, DataModuleOCK);
   Application.CreateForm(TFormProgressWindow, FormProgressWindow);
   Application.CreateForm(TFormHelpInfo, FormHelpInfo);
+  Application.CreateForm(TFormSaveImagesOnDepot, FormSaveImagesOnDepot);
   Application.Run;
   Application.Free;
 end.

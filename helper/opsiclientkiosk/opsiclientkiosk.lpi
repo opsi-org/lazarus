@@ -286,7 +286,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -401,6 +401,13 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckLinux"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="imagestodepot.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormSaveImagesOnDepot"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

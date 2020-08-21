@@ -5,10 +5,12 @@ unit OckWindows;
 interface
 
 uses
-  Classes, SysUtils, DSiWin32, jwawinbase;
+  Classes, SysUtils, Process, DSiWin32, jwawinbase, osLog;
 
 function isAdmin:boolean;
 function GetUserName_: string;
+procedure MountDepot(const User: String; Password: String; PathToDepot: String);
+procedure UnmountDepot(const PathToDepot: String);
 
 
 implementation
@@ -36,6 +38,62 @@ begin
     FreeMem(buffer, bufferSize);
   end;
 end; { DSiGetUserName}
+
+
+procedure MountDepot(const User: String; Password: String; PathToDepot: String);
+var
+  Shell,
+  ShellOptions,
+  ShellCommand,
+  ShellOutput: String;
+begin
+  try
+    LogDatei.log('Mounting ' + PathToDepot ,LLInfo);
+    {set shell and options}
+    Shell := 'cmd.exe';
+    ShellOptions := '/c';
+    ShellCommand := 'net use' + ' ' + PathToDepot + ' ' + Password + ' ' + '/user:' + User;
+    if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
+    begin
+      ShellCommand := '';
+      LogDatei.log('Mounting done', LLInfo);
+      //ShowMessage(ShellOutput);
+    end
+    else LogDatei.log('Error while trying to run command net use ' +
+      PathToDepot + ' ' + User + ' on ' + Shell, LLError);
+  except
+    LogDatei.log('Exception during mounting of ' + PathToDepot, LLDebug);
+  end;
+end;
+
+procedure UnmountDepot(const PathToDepot: String);
+var
+  Shell,
+  ShellOptions,
+  ShellCommand,
+  ShellOutput: String;
+begin
+  try
+    LogDatei.log('Unmounting ' + PathToDepot, LLInfo);
+    {set shell and options}
+    Shell := 'cmd.exe';
+    ShellOptions := '/c';
+    ShellCommand := 'net use /delete' + ' ' + PathToDepot;
+    {Run Command}
+    if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+    begin
+      LogDatei.log('Unmounting done', LLInfo);
+     //ShowMessage(ShellOutput);
+    end
+    else
+    begin
+      LogDatei.log('Error while trying to run command ' +
+        ShellCommand + ' on ' + Shell, LLError);
+    end;
+  except
+    LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
+  end;
+end;
 
 end.
 

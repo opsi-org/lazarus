@@ -33,16 +33,16 @@ uses
     //CommCtrl,
     //jwawinbase,
     //DSiWin32,
-    OckWindows
+    OckWindows,
     //ShellApi
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
    {add Linux specific units here}
-   OckLinux
+   OckLinux,
   {$ENDIF LINUX}
 
-  {more units if nedded};
-  //imagestodepot;
+  {more units if nedded}
+  imagestodepot;
 
 type
 
@@ -1747,9 +1747,10 @@ begin
   SaveIconsAndScreenshotsLists;
   //PathToExeFolder := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
  {$IFDEF WINDOWS}
-  PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
-  RunCommand('cmd.exe',['/c', PathToExe],Output,[], swoHIDE);
- //if SystemAPI is TWindowsAPI then
+  FormSaveImagesOnDepot.Visible := True;
+  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
+  //RunCommand('cmd.exe',['/c', PathToExe],Output,[], swoHIDE);
+  //if SystemAPI is TWindowsAPI then
     //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
  {$IFDEF LINUX}
