@@ -108,7 +108,7 @@ begin
     FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
 
   propertyName := 'force_copy_modules';
-  if Query2.RadioBtnYes.Checked then
+  if Query2.RadioBtnYesCopy.Checked then
     FileText.Add(propertyName + '=true')
   else
     FileText.Add(propertyName + '=false');
@@ -218,11 +218,8 @@ begin
 
   FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);
 
-  propertyName := 'update_test';
-  if Query2.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=true')
-  else
-    FileText.Add(propertyName + '=false');
+  // update_test shall always be false
+  FileText.Add('update_test=false');
 
   // write in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';

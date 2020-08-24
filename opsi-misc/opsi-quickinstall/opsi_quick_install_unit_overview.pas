@@ -98,10 +98,10 @@ begin
     else
       MemoOverview.Lines.Add(rsBackendO + Query2.RadioBtnMySql.Caption);
     // Copy modules
-    if Query2.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnYes.Caption)
+    if Query2.RadioBtnYesCopy.Checked then
+      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnYesCopy.Caption)
     else
-      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnNo.Caption);
+      MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnNoCopy.Caption);
 
     MemoOverview.Lines.Add('');
     // Repo kind
@@ -111,11 +111,6 @@ begin
       MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnStable.Caption)
     else
       MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnTesting.Caption);
-    // Update
-    if Query2.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsUpdateO + Query2.RadioBtnYes.Caption)
-    else
-      MemoOverview.Lines.Add(rsUpdateO + Query2.RadioBtnNo.Caption);
 
   {MemoOverview.Lines.Add('');
   // Prods

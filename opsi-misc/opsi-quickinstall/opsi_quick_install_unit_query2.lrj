@@ -9,9 +9,6 @@
 {"hash":181055543,"name":"tquery2.radiobtntesting.caption","sourcebytes":[116,101,115,116,105,110,103],"value":"testing"},
 {"hash":128612645,"name":"tquery2.radiobtnstable.caption","sourcebytes":[115,116,97,98,108,101],"value":"stable"},
 {"hash":183842556,"name":"tquery2.radiobtnexperimental.caption","sourcebytes":[101,120,112,101,114,105,109,101,110,116,97,108],"value":"experimental"},
-{"hash":242148303,"name":"tquery2.labelupdate.caption","sourcebytes":[73,110,115,116,97,108,108,32,102,105,114,115,116,32,102,114,111,109,32,115,116,97,98,108,101,32,97,110,100,32,116,104,97,110,32,117,112,100,97,116,101,32,116,111,32,114,101,112,111,32,107,105,110,100,63],"value":"Install first from stable and than update to repo kind?"},
-{"hash":1359,"name":"tquery2.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":24515,"name":"tquery2.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":252015791,"name":"tquery2.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
 {"hash":24515,"name":"tquery2.radiobtnyescopy.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":1359,"name":"tquery2.radiobtnnocopy.caption","sourcebytes":[78,111],"value":"No"}

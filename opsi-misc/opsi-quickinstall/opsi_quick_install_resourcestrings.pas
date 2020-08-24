@@ -45,7 +45,7 @@ resourcestring
   rsBackend = 'Which backend should be installed? (mysql needs valid activation file)';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
   rsRepoKind = 'From which repo kind should be installed?';
-  rsUpdate = 'Install first from stable and than update to repo kind?';
+  //rsUpdate = 'Install first from stable and than update to repo kind?';
 
   {Query4}
   rsUCS = 'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
@@ -79,7 +79,7 @@ resourcestring
   rsBackendO = 'Backend: ';
   rsCopyModulesO = 'Copy modules: ';
   rsRepoKindO = 'Repo kind: ';
-  rsUpdateO = 'Install from stable, update to repo kind: ';
+  //rsUpdateO = 'Install from stable, update to repo kind: ';
   //rsProds = 'Products in depot: ';
   rsUCSO = 'Password of administrator of UCS domain controller: ';
   rsRebootO = 'Reboot after script is finished: ';

@@ -42,7 +42,7 @@ object Query2: TQuery2
   object PanelBackend: TPanel
     Left = 216
     Height = 88
-    Top = 48
+    Top = 80
     Width = 217
     BevelOuter = bvNone
     ClientHeight = 88
@@ -102,7 +102,7 @@ object Query2: TQuery2
     AnchorSideTop.Side = asrBottom
     Left = 216
     Height = 69
-    Top = 248
+    Top = 280
     Width = 338
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -170,80 +170,19 @@ object Query2: TQuery2
       end
     end
   end
-  object PanelUpdate: TPanel
-    AnchorSideTop.Control = PanelRepoKind
-    AnchorSideTop.Side = asrBottom
-    Left = 216
-    Height = 69
-    Top = 337
-    Width = 333
-    BorderSpacing.Top = 20
-    BevelOuter = bvNone
-    ClientHeight = 69
-    ClientWidth = 333
-    ParentFont = False
-    TabOrder = 4
-    object LabelUpdate: TLabel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 333
-      Align = alTop
-      Caption = 'Install first from stable and than update to repo kind?'
-      ParentColor = False
-      ParentFont = False
-      WordWrap = True
-    end
-    object PanelRadioUpdate: TPanel
-      Left = 0
-      Height = 21
-      Top = 19
-      Width = 333
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 21
-      ClientWidth = 333
-      ParentFont = False
-      TabOrder = 0
-      object RadioBtnNo: TRadioButton
-        Left = 95
-        Height = 21
-        Top = 0
-        Width = 42
-        Align = alLeft
-        BorderSpacing.Left = 50
-        Caption = 'No'
-        Checked = True
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-      end
-      object RadioBtnYes: TRadioButton
-        Left = 0
-        Height = 21
-        Top = 0
-        Width = 45
-        Align = alLeft
-        Caption = 'Yes'
-        ParentFont = False
-        TabOrder = 1
-      end
-    end
-  end
   object PanelCopyModules: TPanel
     AnchorSideTop.Control = PanelBackend
     AnchorSideTop.Side = asrBottom
     Left = 216
     Height = 72
-    Top = 156
+    Top = 188
     Width = 381
     BorderSpacing.Top = 20
     BevelOuter = bvNone
     ClientHeight = 72
     ClientWidth = 381
     ParentFont = False
-    TabOrder = 5
+    TabOrder = 4
     object LabelCopyModules: TLabel
       Left = 0
       Height = 19

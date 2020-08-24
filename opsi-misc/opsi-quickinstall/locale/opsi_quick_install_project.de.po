@@ -326,16 +326,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsucso"
 msgid "Password of administrator of UCS domain controller: "
 msgstr "Passwort des Administrators des UCS-Domain-Controllers: "
 
-#: opsi_quick_install_resourcestrings.rsupdate
-msgctxt "opsi_quick_install_resourcestrings.rsupdate"
-msgid "Install first from stable and than update to repo kind?"
-msgstr "Von stable installieren, auf Repo-Art aktualisieren: "
-
-#: opsi_quick_install_resourcestrings.rsupdateo
-msgctxt "opsi_quick_install_resourcestrings.rsupdateo"
-msgid "Install from stable, update to repo kind: "
-msgstr "Von stable installieren, auf Repo-Art aktualisieren: "
-
 #: opsi_quick_install_resourcestrings.rswelcome
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
 msgid "Welcome to the installation of opsi-server on this computer!"
@@ -545,11 +535,6 @@ msgctxt "tquery2.labelrepokind.caption"
 msgid "From which repo kind should be installed?"
 msgstr "Von welcher Repository-Art soll installiert werden?"
 
-#: tquery2.labelupdate.caption
-msgctxt "tquery2.labelupdate.caption"
-msgid "Install first from stable and than update to repo kind?"
-msgstr "Von stable installieren, auf Repo-Art aktualisieren: "
-
 #: tquery2.radiobtnexperimental.caption
 msgid "experimental"
 msgstr "experimental"
@@ -561,11 +546,6 @@ msgstr "file"
 #: tquery2.radiobtnmysql.caption
 msgid "mysql"
 msgstr "mysql"
-
-#: tquery2.radiobtnno.caption
-msgctxt "tquery2.radiobtnno.caption"
-msgid "No"
-msgstr "Nein"
 
 #: tquery2.radiobtnnocopy.caption
 msgctxt "tquery2.radiobtnnocopy.caption"
@@ -579,11 +559,6 @@ msgstr "stable"
 #: tquery2.radiobtntesting.caption
 msgid "testing"
 msgstr "testing"
-
-#: tquery2.radiobtnyes.caption
-msgctxt "tquery2.radiobtnyes.caption"
-msgid "Yes"
-msgstr "Ja"
 
 #: tquery2.radiobtnyescopy.caption
 msgctxt "tquery2.radiobtnyescopy.caption"

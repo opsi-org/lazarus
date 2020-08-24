@@ -15,16 +15,13 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
-    LabelUpdate: TLabel;
     LabelCopyModules: TLabel;
     LabelRepoKind: TLabel;
     LabelBackend: TLabel;
     PanelCopyModules: TPanel;
     PanelRadio: TPanel;
-    PanelRadioUpdate: TPanel;
     PanelRadioRepoKind: TPanel;
     PanelRadioBackend: TPanel;
-    PanelUpdate: TPanel;
     PanelRepoKind: TPanel;
     PanelBackend: TPanel;
     RadioBtnFile: TRadioButton;
@@ -33,8 +30,6 @@ type
     RadioBtnNoCopy: TRadioButton;
     RadioBtnStable: TRadioButton;
     RadioBtnTesting: TRadioButton;
-    RadioBtnYes: TRadioButton;
-    RadioBtnNo: TRadioButton;
     RadioBtnYesCopy: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
@@ -84,9 +79,6 @@ begin
   RadioBtnYesCopy.Caption:=rsYes;
   RadioBtnNoCopy.Caption:=rsNo;
   LabelRepoKind.Caption:=rsRepoKind;
-  LabelUpdate.Caption:=rsUpdate;
-  RadioBtnYes.Caption:=rsYes;
-  RadioBtnNo.Caption:=rsNo;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;
