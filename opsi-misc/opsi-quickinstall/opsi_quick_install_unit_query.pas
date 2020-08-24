@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language,
+  opsi_quick_install_unit_language, opsi_quick_install_resourcestrings,
   opsi_quick_install_unit_query2, oslog;
 
 {$R *.lfm}
@@ -78,6 +78,20 @@ begin
   // ...EditDefaultRepo.Text is adjusted
   EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrInfo.DistrUrlPart;
   EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
+
+  // text by resourcestrings
+  LabelOpsiVersion.Caption:=rsOpsiVersion;
+  RadioBtnOpsi41.Caption:=rsOpsi41;
+  RadioBtnOpsi42.Caption:=rsOpsi42;
+  LabelRepo.Caption:=rsRepo;
+  RadioBtnOtherRepo.Caption:=rsRepoOther;
+  LabelProxy.Caption:=rsProxy;
+  RadioBtnNone.Caption:=rsProxyNone;
+  RadioBtnOtherProxy.Caption:=rsProxyOther;
+  LabelNoCache.Caption:=rsRepoNoCache;
+  RadioBtnOtherNoCache.Caption:=rsRepoOther;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TQuery.FormClose(Sender: TObject; var CloseAction: TCloseAction);

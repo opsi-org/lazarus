@@ -15,7 +15,7 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
-    Label1: TLabel;
+    LabelUpdate: TLabel;
     LabelCopyModules: TLabel;
     LabelRepoKind: TLabel;
     LabelBackend: TLabel;
@@ -54,7 +54,7 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query4;
+  opsi_quick_install_unit_query4, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -77,6 +77,18 @@ begin
     PanelCopyModules.Visible := False
   else
     PanelCopyModules.Visible := True;
+
+  // text by resourcestrings
+  LabelBackend.Caption:=rsBackend;
+  LabelCopyModules.Caption:=rsCopyModules;
+  RadioBtnYesCopy.Caption:=rsYes;
+  RadioBtnNoCopy.Caption:=rsNo;
+  LabelRepoKind.Caption:=rsRepoKind;
+  LabelUpdate.Caption:=rsUpdate;
+  RadioBtnYes.Caption:=rsYes;
+  RadioBtnNo.Caption:=rsNo;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TQuery2.FormClose(Sender: TObject; var CloseAction: TCloseAction);

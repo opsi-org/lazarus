@@ -54,7 +54,7 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_query6;
+  opsi_quick_install_unit_query6, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -95,6 +95,18 @@ begin
     PanelReboot.Visible := False
   else
     PanelReboot.Visible := True;
+
+  // text by resourcestrings
+  LabelPasswordMasterAdmin.Caption := rsUCS;
+  LabelReboot.Caption := rsReboot;
+  RadioBtnYes.Caption := rsYes;
+  RadioBtnNo.Caption := rsNo;
+  LabelDhcp.Caption := rsDhcp;
+  RadioBtnDhcpYes.Caption := rsYes;
+  RadioBtnDhcpNo.Caption := rsNo;
+  LabelFilePointer.Caption := rsTFTPROOT;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);

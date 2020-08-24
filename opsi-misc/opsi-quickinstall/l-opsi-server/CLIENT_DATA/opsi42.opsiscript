@@ -53,7 +53,6 @@ DefStringList $templist$
 DefStringList $resultlist$
 DefStringList $waitlist$
 DefStringlist $setup_after_install_list$
-DefStringlist $properties_conf$
 
 ; base initalization of properties
 set $backend$ = "file"

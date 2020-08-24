@@ -1,7 +1,7 @@
 object Query2: TQuery2
-  Left = 385
+  Left = 451
   Height = 450
-  Top = 249
+  Top = 247
   Width = 730
   Caption = 'Opsi quick install - query (part 2)'
   ClientHeight = 450
@@ -32,7 +32,7 @@ object Query2: TQuery2
     Left = 8
     Height = 25
     Top = 416
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -41,11 +41,11 @@ object Query2: TQuery2
   end
   object PanelBackend: TPanel
     Left = 216
-    Height = 96
+    Height = 88
     Top = 48
     Width = 217
     BevelOuter = bvNone
-    ClientHeight = 96
+    ClientHeight = 88
     ClientWidth = 217
     ParentFont = False
     TabOrder = 2
@@ -88,7 +88,7 @@ object Query2: TQuery2
         Left = 93
         Height = 21
         Top = 0
-        Width = 60
+        Width = 61
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'mysql'
@@ -102,7 +102,7 @@ object Query2: TQuery2
     AnchorSideTop.Side = asrBottom
     Left = 216
     Height = 69
-    Top = 256
+    Top = 248
     Width = 338
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -135,7 +135,7 @@ object Query2: TQuery2
       ParentFont = False
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
-        Left = 268
+        Left = 271
         Height = 21
         Top = 0
         Width = 67
@@ -146,10 +146,10 @@ object Query2: TQuery2
         TabOrder = 0
       end
       object RadioBtnStable: TRadioButton
-        Left = 157
+        Left = 159
         Height = 21
         Top = 0
-        Width = 61
+        Width = 62
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'stable'
@@ -162,7 +162,7 @@ object Query2: TQuery2
         Left = 0
         Height = 21
         Top = 0
-        Width = 107
+        Width = 109
         Align = alLeft
         Caption = 'experimental'
         ParentFont = False
@@ -175,7 +175,7 @@ object Query2: TQuery2
     AnchorSideTop.Side = asrBottom
     Left = 216
     Height = 69
-    Top = 345
+    Top = 337
     Width = 333
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -183,7 +183,7 @@ object Query2: TQuery2
     ClientWidth = 333
     ParentFont = False
     TabOrder = 4
-    object Label1: TLabel
+    object LabelUpdate: TLabel
       Left = 0
       Height = 19
       Top = 0
@@ -236,7 +236,7 @@ object Query2: TQuery2
     AnchorSideTop.Side = asrBottom
     Left = 216
     Height = 72
-    Top = 164
+    Top = 156
     Width = 381
     BorderSpacing.Top = 20
     BevelOuter = bvNone

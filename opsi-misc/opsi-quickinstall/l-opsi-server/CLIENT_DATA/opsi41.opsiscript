@@ -56,7 +56,6 @@ DefStringList $templist$
 DefStringList $resultlist$
 DefStringList $waitlist$
 DefStringlist $setup_after_install_list$
-DefStringlist $properties_conf$
 
 ; base initalization of properties
 set $backend$ = "file"
@@ -92,7 +91,7 @@ if fileExists("%scriptpath%/properties.conf")
 	set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
 	set $backend$ = getValue("backend", $properties_conf$)
 	set $repo_kind$ = getValue("repo_kind", $properties_conf$)
-	set $update_test$ = getValue("update_test", "false")
+	set $update_test$ = getValue("update_test", $properties_conf$)
 	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
 	set $opsi_noproxy_online_repository$ = getValue("opsi_noproxy_online_repository", $properties_conf$)
 	; not used  in quick-install:

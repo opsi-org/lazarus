@@ -21,7 +21,7 @@ type
     EditPasswordAdmin: TEdit;
     LabelNameAdmin: TLabel;
     LabelNameIP: TLabel;
-    LabelNameIP1: TLabel;
+    LabelNumberIP: TLabel;
     LabelPasswordAdmin: TLabel;
     PanelNameAdmin: TPanel;
     PanelNameIP: TPanel;
@@ -46,7 +46,7 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_overview;
+  opsi_quick_install_unit_overview, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -87,6 +87,14 @@ begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
   BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
+
+  // text by resourcestrings
+  LabelNameAdmin.Caption := rsAdminName;
+  LabelPasswordAdmin.Caption := rsAdminPassword;
+  LabelNameIP.Caption := rsIPName;
+  LabelNumberIP.Caption := rsIPNumber;
+  BtnBack.Caption := rsBack;
+  BtnOverview.Caption := rsOverview;
 end;
 
 procedure TQuery6.FormClose(Sender: TObject; var CloseAction: TCloseAction);

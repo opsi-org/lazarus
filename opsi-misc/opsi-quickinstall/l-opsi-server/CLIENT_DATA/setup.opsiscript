@@ -10,10 +10,10 @@ setLogLevel = 8
 AutoActivityDisplay=true
 
 DefVar $ProductId$
-; A-M inserted following line
-DefVar $properties_conf$
 DefVar $OS$
 DefVar $opsi_online_repository_org$
+
+DefStringlist $properties_conf$
 
 set $OS$ = GetOS
 set $ProductId$ = "l-opsi-server"

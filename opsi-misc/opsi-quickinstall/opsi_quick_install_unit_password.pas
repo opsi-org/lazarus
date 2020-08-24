@@ -48,7 +48,7 @@ uses
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_overview,
-  osLinuxRepository;
+  osLinuxRepository, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -61,6 +61,13 @@ begin
   BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
   // for displaying password as dots
   EditPassword.EchoMode := emPassword;
+
+  // text by resourcestrings
+  LabelRights.Caption := rsRights;
+  LabelPassword.Caption := rsPassword;
+  CheckBoxShowPassword.Caption := rsShowPassword;
+  BtnBack.Caption := rsBack;
+  BtnFinish.Caption := rsFinish;
 end;
 
 procedure TPassword.BtnBackClick(Sender: TObject);
@@ -80,9 +87,9 @@ begin
 
   propertyName := 'allow_reboot';
   if Query4.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=True')
+    FileText.Add(propertyName + '=true')
   else
-    FileText.Add(propertyName + '=False');
+    FileText.Add(propertyName + '=false');
 
   propertyName := 'backend';
   if (Query2.RadioBtnFile.Checked) then
@@ -102,9 +109,9 @@ begin
 
   propertyName := 'force_copy_modules';
   if Query2.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=True')
+    FileText.Add(propertyName + '=true')
   else
-    FileText.Add(propertyName + '=False');
+    FileText.Add(propertyName + '=false');
 
   propertyName := 'gateway';
   if Query5_dhcp.RadioBtnGateway10.Checked then
@@ -118,9 +125,9 @@ begin
 
   propertyName := 'install_and_configure_dhcp';
   if Query4.RadioBtnDhcpYes.Checked then
-    FileText.Add(propertyName + '=True')
+    FileText.Add(propertyName + '=true')
   else
-    FileText.Add(propertyName + '=False');
+    FileText.Add(propertyName + '=false');
 
   FileText.Add('myipname=' + Query6.EditNameIP.Text);
 
@@ -217,9 +224,9 @@ begin
 
   propertyName := 'update_test';
   if Query2.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=True')
+    FileText.Add(propertyName + '=true')
   else
-    FileText.Add(propertyName + '=False');
+    FileText.Add(propertyName + '=false');
 
   // write in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
@@ -229,7 +236,7 @@ begin
   //ShowMessage(ParamStr(0));
   fileName := ExtractFilePath(ParamStr(0));
   //ShowMessage(fileName);
-  FileText.SaveToFile(fileName+'l-opsi-server/CLIENT_DATA/properties.conf');
+  FileText.SaveToFile(fileName + 'l-opsi-server/CLIENT_DATA/properties.conf');
 
   FileText.Free;
 
@@ -264,7 +271,8 @@ begin
   //ShowMessage(Output);
   Output := RunCommand.Run(shellCommand + 'install opsi-script');
   //ShowMessage(Output);
-  Output := RunCommand.Run('opsi-script -batch '+fileName+'l-opsi-server/CLIENT_DATA/setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+  Output := RunCommand.Run('opsi-script -batch ' + fileName +
+    'l-opsi-server/CLIENT_DATA/setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
   RunCommand.Free;
   MyRepo.Free;

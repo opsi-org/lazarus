@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 364
+  Left = 436
   Height = 450
-  Top = 256
+  Top = 247
   Width = 730
   Caption = 'Opsi quick install - query (dhcp part 2)'
   ClientHeight = 450

@@ -1,25 +1,24 @@
 object QueryProds: TQueryProds
-  Left = 522
-  Height = 455
-  Top = 116
-  Width = 738
+  Left = 389
+  Height = 450
+  Top = 255
+  Width = 730
   Caption = 'Opsi quick install - query (part 3)'
-  ClientHeight = 455
-  ClientWidth = 738
-  DesignTimePPI = 97
+  ClientHeight = 450
+  ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 455
+    Height = 450
     Top = 0
-    Width = 738
+    Width = 730
   end
   object BtnNext: TButton
-    Left = 671
+    Left = 648
     Height = 25
-    Top = 412
+    Top = 408
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -28,9 +27,9 @@ object QueryProds: TQueryProds
     TabOrder = 0
   end
   object BtnBack: TButton
-    Left = 16
+    Left = 24
     Height = 25
-    Top = 412
+    Top = 408
     Width = 52
     AutoSize = True
     Caption = ' < back '
@@ -39,21 +38,21 @@ object QueryProds: TQueryProds
     TabOrder = 1
   end
   object PanelOpsiProducts: TPanel
-    Left = 154
-    Height = 224
+    Left = 152
+    Height = 222
     Top = 40
-    Width = 472
+    Width = 469
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 224
-    ClientWidth = 472
+    ClientHeight = 222
+    ClientWidth = 469
     ParentFont = False
     TabOrder = 2
     object LabelOpsiProducts: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 472
+      Width = 469
       Align = alTop
       Caption = 'Which opsi product(s) should we install in the depot?'
       ParentColor = False
@@ -62,20 +61,20 @@ object QueryProds: TQueryProds
     end
     object PanelProdToChoose: TPanel
       Left = 0
-      Height = 169
+      Height = 167
       Top = 55
-      Width = 472
+      Width = 469
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 10
-      ClientHeight = 169
-      ClientWidth = 472
+      ClientHeight = 167
+      ClientWidth = 469
       ParentFont = False
       TabOrder = 0
       object CheckBoxConfigWinbase: TCheckBox
-        Left = 325
+        Left = 322
         Height = 21
-        Top = 98
+        Top = 97
         Width = 118
         Caption = 'config-winbase'
         Checked = True
@@ -85,9 +84,9 @@ object QueryProds: TQueryProds
         TabOrder = 0
       end
       object CheckBoxConfigWin10: TCheckBox
-        Left = 325
+        Left = 322
         Height = 21
-        Top = 74
+        Top = 73
         Width = 104
         Caption = 'config-win10'
         Checked = True
@@ -97,9 +96,9 @@ object QueryProds: TQueryProds
         TabOrder = 1
       end
       object CheckBoxOpsiLogviewer: TCheckBox
-        Left = 325
+        Left = 322
         Height = 21
-        Top = 50
+        Top = 49
         Width = 115
         Caption = 'opsi-logviewer'
         Checked = True
@@ -109,7 +108,7 @@ object QueryProds: TQueryProds
         TabOrder = 2
       end
       object CheckBoxOpsiSetupDetector: TCheckBox
-        Left = 325
+        Left = 322
         Height = 21
         Top = 25
         Width = 146
@@ -121,9 +120,9 @@ object QueryProds: TQueryProds
         TabOrder = 3
       end
       object CheckBoxOpsiUefiNetboot: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
-        Top = 147
+        Top = 145
         Width = 131
         Caption = 'opsi-uefi-netboot'
         Checked = True
@@ -133,9 +132,9 @@ object QueryProds: TQueryProds
         TabOrder = 4
       end
       object CheckBoxOpsiWinpe: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
-        Top = 122
+        Top = 121
         Width = 91
         Caption = 'opsi-winpe'
         Checked = True
@@ -145,7 +144,7 @@ object QueryProds: TQueryProds
         TabOrder = 5
       end
       object CheckBoxOpsiSetWinUac: TCheckBox
-        Left = 325
+        Left = 322
         Height = 21
         Top = 1
         Width = 124
@@ -157,9 +156,9 @@ object QueryProds: TQueryProds
         TabOrder = 6
       end
       object CheckBoxOpsiWimCapture: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
-        Top = 98
+        Top = 97
         Width = 133
         Caption = 'opsi-wim-capture'
         Checked = True
@@ -169,9 +168,9 @@ object QueryProds: TQueryProds
         TabOrder = 7
       end
       object CheckBoxOpsiScriptTest: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
-        Top = 74
+        Top = 73
         Width = 115
         Caption = 'opsi-script-test'
         Checked = True
@@ -181,9 +180,9 @@ object QueryProds: TQueryProds
         TabOrder = 8
       end
       object CheckBoxShutdown: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
-        Top = 50
+        Top = 49
         Width = 134
         Caption = 'shutdownwanted'
         Checked = True
@@ -193,7 +192,7 @@ object QueryProds: TQueryProds
         TabOrder = 9
       end
       object CheckBoxOpsiTemplateAdmin: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
         Top = 25
         Width = 186
@@ -205,7 +204,7 @@ object QueryProds: TQueryProds
         TabOrder = 10
       end
       object CheckBoxOpsiTemplate: TCheckBox
-        Left = 136
+        Left = 135
         Height = 21
         Top = 1
         Width = 111
@@ -219,7 +218,7 @@ object QueryProds: TQueryProds
       object CheckBoxHwaudit: TCheckBox
         Left = 1
         Height = 21
-        Top = 147
+        Top = 145
         Width = 75
         Caption = 'hwaudit'
         Checked = True
@@ -231,7 +230,7 @@ object QueryProds: TQueryProds
       object CheckBoxJedit: TCheckBox
         Left = 1
         Height = 21
-        Top = 98
+        Top = 97
         Width = 51
         Caption = 'jedit'
         Checked = True
@@ -243,7 +242,7 @@ object QueryProds: TQueryProds
       object CheckBoxSwaudit: TCheckBox
         Left = 1
         Height = 21
-        Top = 122
+        Top = 121
         Width = 73
         Caption = 'swaudit'
         Checked = True
@@ -255,7 +254,7 @@ object QueryProds: TQueryProds
       object CheckBoxOpsiConfiged: TCheckBox
         Left = 1
         Height = 21
-        Top = 74
+        Top = 73
         Width = 107
         Caption = 'opsi-configed'
         Checked = True
@@ -267,7 +266,7 @@ object QueryProds: TQueryProds
       object CheckBoxJavavm: TCheckBox
         Left = 1
         Height = 21
-        Top = 50
+        Top = 49
         Width = 70
         Caption = 'javavm'
         Checked = True
@@ -305,22 +304,22 @@ object QueryProds: TQueryProds
       Left = 0
       Height = 21
       Top = 24
-      Width = 472
+      Width = 469
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 5
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 472
+      ClientWidth = 469
       ParentFont = False
       TabOrder = 1
       object CheckBoxNone: TCheckBox
-        Left = 94
+        Left = 93
         Height = 21
         Top = 0
         Width = 66
         Align = alLeft
-        BorderSpacing.Left = 51
+        BorderSpacing.Left = 50
         Caption = 'None'
         Font.Height = -16
         Font.Name = 'Sans'

@@ -32,32 +32,6 @@ type
 var
   Overview: TOverview;
 
-{resourcestring
-  rsOpsiVersion = 'Opsi version to install: ';
-  rsRepo = 'Repository: ';
-  rsProxy = 'Proxy: ';
-  rsRepoNoCache = 'Repository (without cache proxy): ';
-  rsBackend = 'Backend: ';
-  rsRepoKind = 'Repo kind: ';
-  rsUpdate = 'Install from stable, update to repo kind: ';
-  rsProds = 'Products in depot: ';
-  rsReboot = 'Reboot after script is finished: ';
-  rsOpsiDhcpServer = 'Run opsi dhcp server: ';
-  rsElilo = 'Elilo.efi has timeout of 2 seconds: ';
-  rsTFTPROOT = 'TFTPROOT symlink points to: ';
-  rsNetmask = 'Netmask: ';
-  rsNetwork = 'Network address: ';
-  rsDomain = 'DNS Domain: ';
-  rsNameserver = 'Primary nameserver: ';
-  rsGateway = 'Gateway: ';
-  rsAdminName = 'Opsi admin user name: ';
-  rsAdminPassword = 'Opsi admin user password: ';
-  rsIPName = 'IP name: ';
-  rsIPNumber = 'IP number: ';
-  rsUseUCS = 'Use UCS: ';
-  rsUCSPassword = 'Password of administrator of UCS domain controller: ';
-  rsCopyModules = 'Copy modules: ';}
-
 implementation
 
 uses
@@ -244,6 +218,12 @@ begin
   MemoOverview.Lines.Add(rsIPNameO + Query6.EditNameIP.Text);
   // IP number
   MemoOverview.Lines.Add(rsIPNumberO + Query6.EditNumberIP.Text);
+
+
+  // text by resourcestrings
+  LabelFinish.Caption := rsStartInstallation;
+  BtnBack.Caption := rsBack;
+  BtnFinish.Caption := rsFinish;
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);

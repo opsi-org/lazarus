@@ -67,7 +67,7 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
-  opsi_quick_install_unit_query6;
+  opsi_quick_install_unit_query6, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -87,6 +87,20 @@ procedure TQuery5_dhcp.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+
+  // text by resourcestrings
+  LabelNetmask.Caption:=rsNetmask;
+  RadioBtnOtherMask.Caption:=rsNetmaskOther;
+  LabelAddress.Caption:=rsNetworkAddress;
+  RadioBtnOtherAddress.Caption:=rsNetworkAddressOther;
+  LabelDomain.Caption:=rsDomain;
+  RadioBtnOtherDomain.Caption:=rsDomainOther;
+  LabelNameserver.Caption:=rsNameserver;
+  RadioBtnOtherNameserver.Caption:=rsNameserverOther;
+  LabelGateway.Caption:=rsGateway;
+  RadioBtnOtherGateway.Caption:=rsGatewayOther;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TQuery5_dhcp.FormClose(Sender: TObject; var CloseAction: TCloseAction);

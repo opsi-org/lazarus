@@ -60,7 +60,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_overview;
+  opsi_quick_install_unit_overview, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 

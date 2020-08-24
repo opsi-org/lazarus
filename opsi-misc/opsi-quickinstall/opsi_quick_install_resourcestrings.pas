@@ -37,11 +37,12 @@ resourcestring
   rsRepo = '(Base-) Repository for opsi-server installation';
   rsRepoOther = 'Other:';
   rsProxy = 'Proxy to use (http://myproxy.dom.org:8080)';
+  rsProxyNone = 'None';
   rsProxyOther = 'Other:';
-  rsRepoNoCache = '(Base-) Repository for opsi-server installation\n(without any cache proxy)\n';
+  rsRepoNoCache = '(Base-) Repository for opsi-server installation (without any cache proxy)';
 
   {Query2}
-  rsBackend = 'Which backend should be installed?\n(mysql needs valid activation file)\n';
+  rsBackend = 'Which backend should be installed? (mysql needs valid activation file)';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
   rsRepoKind = 'From which repo kind should be installed?';
   rsUpdate = 'Install first from stable and than update to repo kind?';
@@ -55,18 +56,18 @@ resourcestring
   {Query5_dhcp}
   rsNetmask = 'Netmask (for dhcp)';
   rsNetmaskOther = 'Other:';
-  rsNetwork = 'Network address (for dhcp)';
-  rsNetworkOther = 'Other:';
+  rsNetworkAddress = 'Network address (for dhcp)';
+  rsNetworkAddressOther = 'Other:';
   rsDomain = 'DNS domain (for dhcp)';
-  rsDomainkOther = 'Other:';
+  rsDomainOther = 'Other:';
   rsNameserver = 'Primary nameserver (for dhcp)';
   rsNameserverOther = 'Other:';
   rsGateway = 'Gateway (option routers for dhcp)';
   rsGatewayOther = 'Other:';
 
   {Query6}
-  rsAdminName = 'What is the name of the opsi_admin_user to create?\n''(empty = nothing created)\n';
-  rsAdminPassword = 'What is the password of the opsi_admin_user to create?\n''(empty = nothing created)\n';
+  rsAdminName = 'What is the name of the opsi_admin_user to create? (empty = nothing created)';
+  rsAdminPassword = 'What is the password of the opsi_admin_user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) (''auto'' = use standard)';
   rsIPNumber = 'Set a different IP number (''auto'' = use standard)';
 

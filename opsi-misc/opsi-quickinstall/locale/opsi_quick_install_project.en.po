@@ -3,8 +3,8 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
-msgid "What is the name of the opsi_admin_user to create?\\n'(empty = nothing created)\\n"
-msgstr "Opsi admin user name: "
+msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
+msgstr "What is the name of the opsi_admin_user to create? (empty = nothing created)"
 
 #: opsi_quick_install_resourcestrings.rsadminnameo
 msgctxt "opsi_quick_install_resourcestrings.rsadminnameo"
@@ -13,8 +13,8 @@ msgstr "Opsi admin user name: "
 
 #: opsi_quick_install_resourcestrings.rsadminpassword
 msgctxt "opsi_quick_install_resourcestrings.rsadminpassword"
-msgid "What is the password of the opsi_admin_user to create?\\n'(empty = nothing created)\\n"
-msgstr "Opsi admin user password: "
+msgid "What is the password of the opsi_admin_user to create? (empty = nothing created)"
+msgstr "What is the password of the opsi_admin_user to create? (empty = nothing created)"
 
 #: opsi_quick_install_resourcestrings.rsadminpasswordo
 msgctxt "opsi_quick_install_resourcestrings.rsadminpasswordo"
@@ -28,8 +28,8 @@ msgstr " < back "
 
 #: opsi_quick_install_resourcestrings.rsbackend
 msgctxt "opsi_quick_install_resourcestrings.rsbackend"
-msgid "Which backend should be installed?\\n(mysql needs valid activation file)\\n"
-msgstr "Backend: "
+msgid "Which backend should be installed? (mysql needs valid activation file)"
+msgstr "Which backend should be installed? (mysql needs valid activation file)"
 
 #: opsi_quick_install_resourcestrings.rsbackendo
 msgctxt "opsi_quick_install_resourcestrings.rsbackendo"
@@ -44,7 +44,7 @@ msgstr "To carry out the remaing installation automatically, we need some inform
 #: opsi_quick_install_resourcestrings.rscopymodules
 msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr "Copy modules: "
+msgstr "Should we copy modules even if /etc/opsi/modules still exists?"
 
 #: opsi_quick_install_resourcestrings.rscopymoduleso
 msgctxt "opsi_quick_install_resourcestrings.rscopymoduleso"
@@ -77,17 +77,17 @@ msgstr "We recognized the following distribution on this computer:"
 #: opsi_quick_install_resourcestrings.rsdomain
 msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp)"
-msgstr "DNS Domain: "
-
-#: opsi_quick_install_resourcestrings.rsdomainkother
-msgctxt "opsi_quick_install_resourcestrings.rsdomainkother"
-msgid "Other:"
-msgstr "Other:"
+msgstr "DNS domain (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
 msgstr "DNS Domain: "
+
+#: opsi_quick_install_resourcestrings.rsdomainother
+msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
+msgid "Other:"
+msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
@@ -97,16 +97,14 @@ msgstr " finish "
 #: opsi_quick_install_resourcestrings.rsgateway
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp)"
-msgstr "Gateway: "
+msgstr "Gateway (option routers for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
-
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
 msgid "Gateway: "
 msgstr "Gateway: "
 
 #: opsi_quick_install_resourcestrings.rsgatewayother
-
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
 msgstr "Other:"
@@ -114,7 +112,7 @@ msgstr "Other:"
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) ('auto' = use standard)"
-msgstr "IP name: "
+msgstr "Set a different IP name (FQDN) ('auto' = use standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnameo
 msgctxt "opsi_quick_install_resourcestrings.rsipnameo"
@@ -124,7 +122,7 @@ msgstr "IP name: "
 #: opsi_quick_install_resourcestrings.rsipnumber
 msgctxt "opsi_quick_install_resourcestrings.rsipnumber"
 msgid "Set a different IP number ('auto' = use standard)"
-msgstr "IP number: "
+msgstr "Set a different IP number ('auto' = use standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnumbero
 msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
@@ -134,7 +132,7 @@ msgstr "IP number: "
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp)"
-msgstr "Primary nameserver: "
+msgstr "Primary nameserver (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
@@ -149,7 +147,7 @@ msgstr "Other:"
 #: opsi_quick_install_resourcestrings.rsnetmask
 msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp)"
-msgstr "Netmask: "
+msgstr "Netmask (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
@@ -161,20 +159,20 @@ msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
 msgid "Other:"
 msgstr "Other:"
 
-#: opsi_quick_install_resourcestrings.rsnetwork
-msgctxt "opsi_quick_install_resourcestrings.rsnetwork"
+#: opsi_quick_install_resourcestrings.rsnetworkaddress
+msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp)"
-msgstr "Network address: "
+msgstr "Network address (for dhcp)"
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddressother
+msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
+msgid "Other:"
+msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsnetworko
 msgctxt "opsi_quick_install_resourcestrings.rsnetworko"
 msgid "Network address: "
 msgstr "Network address: "
-
-#: opsi_quick_install_resourcestrings.rsnetworkother
-msgctxt "opsi_quick_install_resourcestrings.rsnetworkother"
-msgid "Other:"
-msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsnext
 msgctxt "opsi_quick_install_resourcestrings.rsnext"
@@ -199,7 +197,7 @@ msgstr "opsi 4.2"
 #: opsi_quick_install_resourcestrings.rsopsiversion
 msgctxt "opsi_quick_install_resourcestrings.rsopsiversion"
 msgid "Which opsi version would you like to install?"
-msgstr "Opsi version to install: "
+msgstr "Which opsi version would you like to install?"
 
 #: opsi_quick_install_resourcestrings.rsopsiversiono
 msgctxt "opsi_quick_install_resourcestrings.rsopsiversiono"
@@ -218,7 +216,12 @@ msgstr "Password:"
 #: opsi_quick_install_resourcestrings.rsproxy
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
 msgid "Proxy to use (http://myproxy.dom.org:8080)"
-msgstr "Proxy: "
+msgstr "Proxy to use (http://myproxy.dom.org:8080)"
+
+#: opsi_quick_install_resourcestrings.rsproxynone
+msgctxt "opsi_quick_install_resourcestrings.rsproxynone"
+msgid "None"
+msgstr "None"
 
 #: opsi_quick_install_resourcestrings.rsproxyo
 msgctxt "opsi_quick_install_resourcestrings.rsproxyo"
@@ -233,7 +236,7 @@ msgstr "Other:"
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
 msgid "May the server reboot if the script is finished?"
-msgstr "Reboot after script is finished: "
+msgstr "May the server reboot if the script is finished?"
 
 #: opsi_quick_install_resourcestrings.rsrebooto
 msgctxt "opsi_quick_install_resourcestrings.rsrebooto"
@@ -243,12 +246,12 @@ msgstr "Reboot after script is finished: "
 #: opsi_quick_install_resourcestrings.rsrepo
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
 msgid "(Base-) Repository for opsi-server installation"
-msgstr "Repository: "
+msgstr "(Base-) Repository for opsi-server installation"
 
 #: opsi_quick_install_resourcestrings.rsrepokind
 msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
 msgid "From which repo kind should be installed?"
-msgstr "Repo kind: "
+msgstr "From which repo kind should be installed?"
 
 #: opsi_quick_install_resourcestrings.rsrepokindo
 msgctxt "opsi_quick_install_resourcestrings.rsrepokindo"
@@ -257,8 +260,8 @@ msgstr "Repo kind: "
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
-msgid "(Base-) Repository for opsi-server installation\\n(without any cache proxy)\\n"
-msgstr "Repository (without cache proxy): "
+msgid "(Base-) Repository for opsi-server installation (without any cache proxy)"
+msgstr "(Base-) Repository for opsi-server installation (without any cache proxy)"
 
 #: opsi_quick_install_resourcestrings.rsreponocacheo
 msgctxt "opsi_quick_install_resourcestrings.rsreponocacheo"
@@ -277,7 +280,7 @@ msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsrights
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
-msgstr ""
+msgstr "Authentication is required to install opsi-server. Who are you logged in as?"
 
 #: opsi_quick_install_resourcestrings.rssellanguage
 msgctxt "opsi_quick_install_resourcestrings.rssellanguage"
@@ -296,7 +299,7 @@ msgstr "Show password"
 
 #: opsi_quick_install_resourcestrings.rsstandard
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 #: opsi_quick_install_resourcestrings.rsstartinstallation
 msgctxt "opsi_quick_install_resourcestrings.rsstartinstallation"
@@ -306,7 +309,7 @@ msgstr "Finally click 'finish' to start the installation of opsi-server."
 #: opsi_quick_install_resourcestrings.rstftproot
 msgctxt "opsi_quick_install_resourcestrings.rstftproot"
 msgid "Which file should the TFTPROOT default symlink point to?"
-msgstr "TFTPROOT symlink points to: "
+msgstr "Which file should the TFTPROOT default symlink point to?"
 
 #: opsi_quick_install_resourcestrings.rstftprooto
 msgctxt "opsi_quick_install_resourcestrings.rstftprooto"
@@ -316,7 +319,7 @@ msgstr "TFTPROOT symlink points to: "
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"
 msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
-msgstr ""
+msgstr "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
 
 #: opsi_quick_install_resourcestrings.rsucso
 msgctxt "opsi_quick_install_resourcestrings.rsucso"
@@ -326,7 +329,7 @@ msgstr "Password of administrator of UCS domain controller: "
 #: opsi_quick_install_resourcestrings.rsupdate
 msgctxt "opsi_quick_install_resourcestrings.rsupdate"
 msgid "Install first from stable and than update to repo kind?"
-msgstr "Install from stable, update to repo kind: "
+msgstr "Install first from stable and than update to repo kind?"
 
 #: opsi_quick_install_resourcestrings.rsupdateo
 msgctxt "opsi_quick_install_resourcestrings.rsupdateo"
@@ -342,126 +345,6 @@ msgstr "Welcome to the installation of opsi-server on this computer!"
 msgctxt "opsi_quick_install_resourcestrings.rsyes"
 msgid "Yes"
 msgstr "Yes"
-
-#: opsi_quick_install_unit_overview.rsadminname
-msgctxt "opsi_quick_install_unit_overview.rsadminname"
-msgid "Opsi admin user name: "
-msgstr "Opsi admin user name: "
-
-#: opsi_quick_install_unit_overview.rsadminpassword
-msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "Opsi admin user password: "
-msgstr "Opsi admin user password: "
-
-#: opsi_quick_install_unit_overview.rsbackend
-msgctxt "opsi_quick_install_unit_overview.rsbackend"
-msgid "Backend: "
-msgstr "Backend: "
-
-#: opsi_quick_install_unit_overview.rscopymodules
-msgctxt "opsi_quick_install_unit_overview.rscopymodules"
-msgid "Copy modules: "
-msgstr "Copy modules: "
-
-#: opsi_quick_install_unit_overview.rsdomain
-msgctxt "opsi_quick_install_unit_overview.rsdomain"
-msgid "DNS Domain: "
-msgstr "DNS Domain: "
-
-#: opsi_quick_install_unit_overview.rselilo
-msgctxt "opsi_quick_install_unit_overview.rselilo"
-msgid "Elilo.efi has timeout of 2 seconds: "
-msgstr "Elilo.efi has timeout of 2 seconds: "
-
-#: opsi_quick_install_unit_overview.rsgateway
-msgctxt "opsi_quick_install_unit_overview.rsgateway"
-msgid "Gateway: "
-msgstr "Gateway: "
-
-#: opsi_quick_install_unit_overview.rsipname
-msgctxt "opsi_quick_install_unit_overview.rsipname"
-msgid "IP name: "
-msgstr "IP name: "
-
-#: opsi_quick_install_unit_overview.rsipnumber
-msgctxt "opsi_quick_install_unit_overview.rsipnumber"
-msgid "IP number: "
-msgstr "IP number: "
-
-#: opsi_quick_install_unit_overview.rsnameserver
-msgctxt "opsi_quick_install_unit_overview.rsnameserver"
-msgid "Primary nameserver: "
-msgstr "Primary nameserver: "
-
-#: opsi_quick_install_unit_overview.rsnetmask
-msgctxt "opsi_quick_install_unit_overview.rsnetmask"
-msgid "Netmask: "
-msgstr "Netmask: "
-
-#: opsi_quick_install_unit_overview.rsnetwork
-msgctxt "opsi_quick_install_unit_overview.rsnetwork"
-msgid "Network address: "
-msgstr "Network address: "
-
-#: opsi_quick_install_unit_overview.rsopsidhcpserver
-msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
-msgid "Run opsi dhcp server: "
-msgstr "Run opsi dhcp server: "
-
-#: opsi_quick_install_unit_overview.rsopsiversion
-msgctxt "opsi_quick_install_unit_overview.rsopsiversion"
-msgid "Opsi version to install: "
-msgstr "Opsi version to install: "
-
-#: opsi_quick_install_unit_overview.rsprods
-msgctxt "opsi_quick_install_unit_overview.rsprods"
-msgid "Products in depot: "
-msgstr "Products in depot: "
-
-#: opsi_quick_install_unit_overview.rsproxy
-msgctxt "opsi_quick_install_unit_overview.rsproxy"
-msgid "Proxy: "
-msgstr "Proxy: "
-
-#: opsi_quick_install_unit_overview.rsreboot
-msgctxt "opsi_quick_install_unit_overview.rsreboot"
-msgid "Reboot after script is finished: "
-msgstr "Reboot after script is finished: "
-
-#: opsi_quick_install_unit_overview.rsrepo
-msgctxt "opsi_quick_install_unit_overview.rsrepo"
-msgid "Repository: "
-msgstr "Repository: "
-
-#: opsi_quick_install_unit_overview.rsrepokind
-msgctxt "opsi_quick_install_unit_overview.rsrepokind"
-msgid "Repo kind: "
-msgstr "Repo kind: "
-
-#: opsi_quick_install_unit_overview.rsreponocache
-msgctxt "opsi_quick_install_unit_overview.rsreponocache"
-msgid "Repository (without cache proxy): "
-msgstr "Repository (without cache proxy): "
-
-#: opsi_quick_install_unit_overview.rstftproot
-msgctxt "opsi_quick_install_unit_overview.rstftproot"
-msgid "TFTPROOT symlink points to: "
-msgstr "TFTPROOT symlink points to: "
-
-#: opsi_quick_install_unit_overview.rsucspassword
-msgctxt "opsi_quick_install_unit_overview.rsucspassword"
-msgid "Password of administrator of UCS domain controller: "
-msgstr "Password of administrator of UCS domain controller: "
-
-#: opsi_quick_install_unit_overview.rsupdate
-msgctxt "opsi_quick_install_unit_overview.rsupdate"
-msgid "Install from stable, update to repo kind: "
-msgstr "Install from stable, update to repo kind: "
-
-#: opsi_quick_install_unit_overview.rsuseucs
-msgctxt "opsi_quick_install_unit_overview.rsuseucs"
-msgid "Use UCS: "
-msgstr ""
 
 #: tdistribution.btnback.caption
 msgctxt "tdistribution.btnback.caption"
@@ -640,11 +523,6 @@ msgstr " next > "
 msgid "Opsi quick install - query (part 2)"
 msgstr "Opsi quick install - query (part 2)"
 
-#: tquery2.label1.caption
-msgctxt "tquery2.label1.caption"
-msgid "Install first from stable and than update to repo kind?"
-msgstr "Install first from stable and than update to repo kind?"
-
 #: tquery2.labelbackend.caption
 msgid ""
 "Which backend should be installed?\n"
@@ -662,6 +540,11 @@ msgstr "Should we copy modules even if /etc/opsi/modules still exists?"
 msgctxt "tquery2.labelrepokind.caption"
 msgid "From which repo kind should be installed?"
 msgstr "From which repo kind should be installed?"
+
+#: tquery2.labelupdate.caption
+msgctxt "tquery2.labelupdate.caption"
+msgid "Install first from stable and than update to repo kind?"
+msgstr "Install first from stable and than update to repo kind?"
 
 #: tquery2.radiobtnexperimental.caption
 msgid "experimental"
@@ -945,8 +828,8 @@ msgctxt "tquery6.labelnameip.caption"
 msgid "Set a different IP name (FQDN) ('auto' = use standard)"
 msgstr "Set a different IP name (FQDN) ('auto' = use standard)"
 
-#: tquery6.labelnameip1.caption
-msgctxt "tquery6.labelnameip1.caption"
+#: tquery6.labelnumberip.caption
+msgctxt "tquery6.labelnumberip.caption"
 msgid "Set a different IP number ('auto' = use standard)"
 msgstr "Set a different IP number ('auto' = use standard)"
 
