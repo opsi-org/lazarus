@@ -36,9 +36,9 @@ type
     panelWidth = 450;
     // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
-      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/stable/';
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseURLOpsi42 =
-      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/stable/';
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     // more constants in FormCreate below
   var
     // same position for all panels

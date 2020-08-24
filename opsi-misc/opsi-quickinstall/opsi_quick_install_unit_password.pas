@@ -167,21 +167,17 @@ begin
 
   propertyName := 'opsi_online_repository';
   if Query.RadioBtnOpsi41.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrInfo.DistrUrlPart)
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41)
   else if Query.RadioBtnOpsi42.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrInfo.DistrUrlPart)
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42)
   else
     FileText.Add(propertyName + '=' + Query.EditRepo.Text);
 
   propertyName := 'opsi_noproxy_online_repository';
   if Query.RadioBtnOpsi41.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrInfo.DistrUrlPart)
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41)
   else if Query.RadioBtnOpsi42.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrInfo.DistrUrlPart)
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42)
   else
     FileText.Add(propertyName + '=' + Query.EditOtherNoCache.Text);
 

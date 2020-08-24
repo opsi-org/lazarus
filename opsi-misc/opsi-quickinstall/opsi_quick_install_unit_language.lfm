@@ -115,7 +115,7 @@ object QuickInstall: TQuickInstall
       Left = -1
       Height = 32
       Top = 88
-      Width = 304
+      Width = 310
       Anchors = [akTop, akLeft, akBottom]
       Caption = 'Please choose a language for this setup program:'
       ParentColor = False
@@ -140,7 +140,7 @@ object QuickInstall: TQuickInstall
     Left = 20
     Height = 25
     Top = 410
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     Enabled = False
