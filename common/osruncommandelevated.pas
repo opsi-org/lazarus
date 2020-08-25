@@ -21,7 +21,7 @@ type
     {Set FPassword,  FSudo and creates LogDatei}
     destructor Destroy;override;
 
-    function Run(aCommandLine: string): string;
+    function Run(aCommandLine: string; out Output:string): boolean;
     {Runs the command line as root (FSudo = false) or sudo (FSudo = true) using FPassword
     aCommandLine can be every correct shell command}
 
@@ -48,9 +48,7 @@ begin
   inherited Destroy;
 end;
 
-function TRunCommandElevated.Run(aCommandLine: string): string;
-var
-  Output: string;
+function TRunCommandElevated.Run(aCommandLine: string; out Output:string): boolean;
 begin
   //aCommandLine := 'chown -c $USER /etc/apt/sources.list.d/opsi.list'; //for testing
   LogDatei.log('Shell command: ' + aCommandLine, LLInfo);
@@ -62,14 +60,15 @@ begin
   if RunCommand('/bin/sh', ['-c', 'echo ' + FPassword + ' | ' + aCommandLine],
     Output, [poWaitOnExit, poUsePipes]) then
   begin
-    Result := Output;
     LogDatei.log('Shell command succesful', LLInfo);
     LogDatei.log('Shell output: ' + Output, LLDebug);
+    Result := True;
   end
   else
   begin
     LogDatei.log('Error in RunCommand ' + Output, LLInfo);
-    Result := 'Error in RunCommand: ' + Output;
+    Output := 'Error in RunCommand: ' + Output;
+    Result := False;
   end;
 end;
 
