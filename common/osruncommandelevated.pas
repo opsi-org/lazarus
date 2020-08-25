@@ -16,8 +16,10 @@ type
     //FUser: string;
     FPassword: string;
     FSudo: boolean;
+    FShell: string;
+    FShellOption: string;
   public
-    constructor Create(aPassword:string; aSudo:boolean);overload;
+    constructor Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption = '-c');overload;
     {Set FPassword,  FSudo and creates LogDatei}
     destructor Destroy;override;
 
@@ -25,6 +27,8 @@ type
     {Runs the command line as root (FSudo = false) or sudo (FSudo = true) using FPassword
     aCommandLine can be every correct shell command}
 
+    property Shell: string read FShell write FShell;
+    Property ShellOption: string read FShellOption write FShellOption;
     property Password: string write FPassword;
     property Sudo: boolean read FSudo write FSudo;
   end;
@@ -34,11 +38,13 @@ implementation
 
 { TRunCommandElevated }
 
-constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean);
+constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption = '-c');
 begin
   inherited Create;
   FPassword := aPassword;
   FSudo := aSudo;
+  FShell := aShell;
+  FShellOption := aShellOption;
   //LogDatei := TLogInfo.Create;
 end;
 
@@ -57,7 +63,7 @@ begin
     False: aCommandLine := 'su -c ' + '"' + aCommandLine + '"'; //AnsiQuotedStr(aCommandLine, '"');
   end;
   LogDatei.log('Shell command: ' + aCommandLine, LLDebug);
-  if RunCommand('/bin/sh', ['-c', 'echo ' + FPassword + ' | ' + aCommandLine],
+  if RunCommand(FShell, [FShellOption, 'echo ' + FPassword + ' | ' + aCommandLine],
     Output, [poWaitOnExit, poUsePipes]) then
   begin
     LogDatei.log('Shell command succesful', LLInfo);
