@@ -12,50 +12,6 @@ msgstr ""
 "Language: pl\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
-#: imagestodepot.rscopyicons
-msgid "Copy icons and screenshots..."
-msgstr ""
-
-#: imagestodepot.rscouldnotsaveicons
-msgid "Could not save icons on depot."
-msgstr ""
-
-#: imagestodepot.rscouldnotsavescreenshots
-msgid "Could not save screenshots on depot."
-msgstr ""
-
-#: imagestodepot.rscouldnotunmount
-msgid "Could not unmount depot."
-msgstr ""
-
-#: imagestodepot.rsdone
-msgid "done"
-msgstr ""
-
-#: imagestodepot.rsfinished
-msgid "Copy process finished. Closing window..."
-msgstr ""
-
-#: imagestodepot.rsimagesnotsaved
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
-msgstr ""
-
-#: imagestodepot.rsimagessaved
-msgid "Images saved on"
-msgstr ""
-
-#: imagestodepot.rsisaninvaliddir
-msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
-
-#: imagestodepot.rsmounting
-msgid "Mounting"
-msgstr ""
-
-#: imagestodepot.rssettingrights
-msgid "Setting rights..."
-msgstr ""
-
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
