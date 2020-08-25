@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  OckLinux;
+  OckLinux, OckImagesToDepot;
 
 type
 
@@ -41,6 +41,7 @@ begin
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
    OckLinux.RunCommandElevated.Sudo := True;
   OckLinux.RunCommandElevated.Password := EditPassword.Text;
+  Close;
   FormSaveImagesOnDepot.Visible := True;
 end;
 

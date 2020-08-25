@@ -6,17 +6,18 @@ uses
   {$IFDEF UNIX}//{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}//{$ENDIF}
+  {$IFDEF WINDOWS}
+  OckWindows,
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  OckLinux, OckPasswordQuery,
+  {$ENDIF LINUX}
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
-  lazproginfo, opsiconnection, helpinfo,
-  {$IFDEF WINDOWS}
-  OckWindows, imagestodepot
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  OckLinux, OckPasswordQuery
-  {$ENDIF LINUX}
-  ;
+  lazproginfo, opsiconnection, helpinfo, OckImagestoDepot
+
+  {add more units if nedded};
 
 
 {$R *.res}

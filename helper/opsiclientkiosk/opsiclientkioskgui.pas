@@ -43,7 +43,7 @@ uses
   {$ENDIF LINUX}
 
   {more units if nedded}
-  imagestodepot;
+  OckImagestoDepot;
 
 type
 
@@ -1756,6 +1756,7 @@ begin
  {$ENDIF WINDOS}
  {$IFDEF LINUX}
  FormPasswordQuery.Visible := True;
+ //FormSaveImagesOnDepot.Visible := True;
  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
  //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
  {$ENDIF LINUX}

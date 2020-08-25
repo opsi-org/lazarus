@@ -1,0 +1,151 @@
+object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
+  Left = 680
+  Height = 292
+  Top = 253
+  Width = 544
+  BorderStyle = bsDialog
+  Caption = 'Save images on depot'
+  ClientHeight = 292
+  ClientWidth = 544
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.0.10.0'
+  object ButtonCopy: TButton
+    Left = 9
+    Height = 35
+    Top = 256
+    Width = 158
+    AutoSize = True
+    Caption = 'Save images on depot'
+    OnClick = ButtonCopyClick
+    TabOrder = 0
+  end
+  object ButtonClose: TButton
+    Left = 396
+    Height = 25
+    Top = 256
+    Width = 142
+    Caption = 'Close'
+    OnClick = ButtonCloseClick
+    TabOrder = 1
+  end
+  object GroupBoxMountDepot: TGroupBox
+    Left = 8
+    Height = 80
+    Top = 89
+    Width = 530
+    Caption = 'Mount depot'
+    ClientHeight = 60
+    ClientWidth = 528
+    Enabled = False
+    ParentFont = False
+    TabOrder = 2
+    object LabelUser: TLabel
+      Left = 6
+      Height = 19
+      Top = 2
+      Width = 31
+      Caption = 'User'
+      ParentColor = False
+      ParentFont = False
+    end
+    object EditUser: TEdit
+      Left = 6
+      Height = 36
+      Top = 19
+      Width = 194
+      ParentFont = False
+      TabOrder = 0
+    end
+    object LabelPassword: TLabel
+      Left = 216
+      Height = 19
+      Top = 2
+      Width = 65
+      Caption = 'Password'
+      ParentColor = False
+      ParentFont = False
+    end
+    object EditPassword: TEdit
+      Left = 215
+      Height = 36
+      Top = 19
+      Width = 305
+      EchoMode = emPassword
+      ParentFont = False
+      PasswordChar = '*'
+      TabOrder = 1
+    end
+  end
+  object GroupBoxPath: TGroupBox
+    Left = 9
+    Height = 73
+    Top = 7
+    Width = 529
+    Caption = 'Path to depot'
+    ClientHeight = 53
+    ClientWidth = 527
+    TabOrder = 3
+    object DirectoryEditPathToDepot: TDirectoryEdit
+      Left = 6
+      Height = 36
+      Top = 0
+      Width = 515
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 0
+      OnChange = DirectoryEditPathToDepotChange
+    end
+    object CheckBoxMountDepot: TCheckBox
+      Left = 7
+      Height = 23
+      Top = 29
+      Width = 108
+      Caption = 'Mount depot'
+      OnChange = CheckBoxMountDepotChange
+      TabOrder = 1
+    end
+  end
+  object GroupBoxProgress: TGroupBox
+    Left = 9
+    Height = 72
+    Top = 176
+    Width = 529
+    Caption = 'Progress'
+    ClientHeight = 52
+    ClientWidth = 527
+    TabOrder = 4
+    object PanelInfo: TPanel
+      Left = 0
+      Height = 44
+      Top = 0
+      Width = 524
+      BevelOuter = bvNone
+      ClientHeight = 44
+      ClientWidth = 524
+      TabOrder = 0
+      object LabelInfo: TLabel
+        Left = 5
+        Height = 15
+        Top = 5
+        Width = 514
+        Align = alTop
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoSize = False
+        BorderSpacing.Around = 5
+        ParentColor = False
+      end
+      object ProgressBar: TProgressBar
+        Left = 5
+        Height = 15
+        Top = 24
+        Width = 514
+        Align = alBottom
+        BorderSpacing.Around = 5
+        TabOrder = 0
+      end
+    end
+  end
+end
