@@ -1754,8 +1754,9 @@ begin
     //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
  {$IFDEF LINUX}
-   PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
-   RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
+ FormPasswordQuery.Visible := True;
+ //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
+ //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
  {$ENDIF LINUX}
 end;
 

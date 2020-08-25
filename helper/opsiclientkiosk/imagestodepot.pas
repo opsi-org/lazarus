@@ -94,7 +94,6 @@ var
   CopySuccess: boolean;
   i,LineNumber:integer;
 begin
-
   CopySuccess := False;
   PathToDepot :=  TrimFilename(DirectoryEditPathToDepot.Text);
   {Mount opsi depot}
@@ -246,7 +245,8 @@ begin
   PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
   LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
-  if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
+  //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
+  if Copy(PathToIconsOnClient, PathToIconsOnDepot) then
   begin
     LogDatei.log('Copy done', LLInfo);
     Result := True;

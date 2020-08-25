@@ -5,13 +5,14 @@ unit OckWindows;
 interface
 
 uses
-  Classes, SysUtils, Process, DSiWin32, jwawinbase, osLog, osRunCommandElevated;
+  Classes, SysUtils, Process, DSiWin32, jwawinbase, FileUtil,
+  osLog;
 
 function isAdmin:boolean;
 function GetUserName_: string;
-procedure MountDepot(const User: string; Password: string; PathToDepot: string;
-  const RunCommandElevated: TRunCommandElevated = nil);
-procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated = nil);
+procedure MountDepot(const User: string; Password: string; PathToDepot: string);
+procedure UnmountDepot(const PathToDepot: string);
+function Copy(Source:string; Destination:string):boolean;
 
 
 implementation
@@ -41,7 +42,7 @@ begin
 end; { DSiGetUserName}
 
 
-procedure MountDepot(const User: String; Password: String; PathToDepot: String; const RunCommandElevated: TRunCommandElevated = nil);
+procedure MountDepot(const User: String; Password: String; PathToDepot: String);
 var
   Shell,
   ShellOptions,
@@ -67,7 +68,7 @@ begin
   end;
 end;
 
-procedure UnmountDepot(const PathToDepot: String; const RunCommandElevated: TRunCommandElevated = nil);
+procedure UnmountDepot(const PathToDepot: String);
 var
   Shell,
   ShellOptions,
@@ -94,6 +95,11 @@ begin
   except
     LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
   end;
+end;
+
+function Copy(Source: string; Destination: string): boolean;
+begin
+  Result := CopyDirTree(Source, Destination,[cffOverwriteFile, cffCreateDestDirectory]);
 end;
 
 end.

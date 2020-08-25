@@ -10,9 +10,12 @@ uses
 
 function isAdmin: boolean;
 function GetUserName_: string;
-procedure MountDepot(const User: string; Password: string; PathToDepot: string;
-  const RunCommandElevated: TRunCommandElevated = nil);
-procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated = nil);
+procedure MountDepot(const User: string; Password: string; PathToDepot: string);
+procedure UnmountDepot(const PathToDepot: string);
+function Copy(Source:string; Destination:string):boolean;
+
+var
+  RunCommandElevated: TRunCommandElevated;
 
 implementation
 
@@ -30,8 +33,7 @@ begin
 end;
 
 
-procedure MountDepot(const User: string; Password: string; PathToDepot: string;
-  const RunCommandElevated: TRunCommandElevated);
+procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
   Shell, ShellOptions, ShellCommand, ShellOutput: string;
 begin
@@ -66,7 +68,7 @@ begin
   end;
 end;
 
-procedure UnmountDepot(const PathToDepot: string; const RunCommandElevated: TRunCommandElevated=nil);
+procedure UnmountDepot(const PathToDepot: string);
 var
   Shell, ShellOptions, ShellCommand, ShellOutput: string;
 begin
@@ -99,6 +101,19 @@ begin
   end;
 end;
 
+function Copy(Source: string; Destination: string): boolean;
+var
+  Output: string;
+begin
+  Output := '';
+  Result := RunCommandElevated.Run('cp -r --remove-destination' + ' '+ Source + ' ' + Destination, Output);
+end;
+
+initialization
+RunCommandElevated := TRunCommandElevated.Create('',True);
+
+finalization
+FreeAndNil(RunCommandElevated);
 
 end.
 

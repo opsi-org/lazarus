@@ -14,7 +14,7 @@ uses
   OckWindows, imagestodepot
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  OckLinux
+  OckLinux, OckPasswordQuery
   {$ENDIF LINUX}
   ;
 
@@ -32,6 +32,9 @@ begin
   Application.CreateForm(TFormProgressWindow, FormProgressWindow);
   Application.CreateForm(TFormHelpInfo, FormHelpInfo);
   Application.CreateForm(TFormSaveImagesOnDepot, FormSaveImagesOnDepot);
+  {$IFDEF LINUX}
+  Application.CreateForm(TFormPasswordQuery, FormPasswordQuery);
+  {$ENDIF LINUX}
   Application.Run;
   Application.Free;
 end.

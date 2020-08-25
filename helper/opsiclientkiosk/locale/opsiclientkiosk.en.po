@@ -589,6 +589,38 @@ msgstr "Details"
 msgid "Dependencies / Priority"
 msgstr "Dependencies / Priority"
 
+#: tformpasswordquery.buttoncancel.caption
+#, fuzzy
+msgctxt "tformpasswordquery.buttoncancel.caption"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: tformpasswordquery.buttonok.caption
+msgid "OK"
+msgstr ""
+
+#: tformpasswordquery.caption
+msgid "FormPasswordQuery"
+msgstr ""
+
+#: tformpasswordquery.editpassword.editlabel.caption
+msgctxt "tformpasswordquery.editpassword.editlabel.caption"
+msgid "Password"
+msgstr ""
+
+#: tformpasswordquery.editpassword.text
+msgid "EditPassword"
+msgstr ""
+
+#: tformpasswordquery.labeldescription.caption
+msgid "Please authorize you with a sudo or root account:  "
+msgstr ""
+
+#: tformpasswordquery.sudoorroot.caption
+msgctxt "tformpasswordquery.sudoorroot.caption"
+msgid "User"
+msgstr ""
+
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
 msgstr "Initialize OpsiClientKiosk"
@@ -640,10 +672,12 @@ msgid "Progress"
 msgstr ""
 
 #: tformsaveimagesondepot.labelpassword.caption
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
 msgstr ""
 
 #: tformsaveimagesondepot.labeluser.caption
+msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr ""
 
