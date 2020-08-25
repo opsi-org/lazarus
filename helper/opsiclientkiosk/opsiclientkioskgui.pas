@@ -39,6 +39,7 @@ uses
   {$IFDEF LINUX}
    {add Linux specific units here}
    OckLinux,
+   OckPasswordQuery,
   {$ENDIF LINUX}
 
   {more units if nedded}

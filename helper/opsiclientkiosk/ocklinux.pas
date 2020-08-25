@@ -35,19 +35,20 @@ end;
 
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
-  Shell, ShellOptions, ShellCommand, ShellOutput: string;
+  ShellCommand, ShellOutput: string;
 begin
   try
     LogDatei.log('Mounting ' + PathToDepot, LLInfo);
     {set shell and options}
-    Shell := '/bin/sh';
-    ShellOptions := '-c';
-    //mount -t cifs -o username=werner //bonifax.uib.gmbh/opsi_depot /home/jan/opsi_depot
-    ShellCommand := 'mount -t cifs' + ' ' + PathToDepot + ' ' +
-      Password + ' ' + 'username:' + User;
     if assigned(RunCommandElevated) then
     begin
-      if RunCommandElevated.Run(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+      //RunCommandElevated.Shell := '/bin/sh'; //not necessary to set because this is the default value
+      //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
+     //mount -t cifs -o username=werner //bonifax.uib.gmbh/opsi_depot /home/jan/opsi_depot
+      ShellCommand := 'mount -t cifs' + ' '
+                      + '-o username=' + User + ',' + 'password=' + Password + ' '
+                      + PathToDepot;
+      if RunCommandElevated.Run(ShellCommand, ShellOutput) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -55,8 +56,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Error while trying to run command mount' + PathToDepot +
-          ' ' + User + ' on ' + Shell, LLError);
+        LogDatei.log('Error while trying to run command mount for path: ' + PathToDepot, LLError);
       end;
     end
     else
@@ -70,26 +70,24 @@ end;
 
 procedure UnmountDepot(const PathToDepot: string);
 var
-  Shell, ShellOptions, ShellCommand, ShellOutput: string;
+  ShellCommand, ShellOutput: string;
 begin
   try
     LogDatei.log('Unmounting ' + PathToDepot, LLInfo);
-    {set shell and options}
-    Shell := '/bin/sh';
-    ShellOptions := '-c';
-    ShellCommand := 'unmount' + ' ' + PathToDepot;
     {Run Command}
     if assigned(RunCommandElevated) then
     begin
-        if RunCommandElevated.Run(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+      RunCommandElevated.Shell := '/bin/sh';
+      RunCommandElevated.ShellOption := '-c';
+      ShellCommand := 'unmount' + ' ' + PathToDepot;
+      if RunCommandElevated.Run(ShellCommand, ShellOutput) then
       begin
         LogDatei.log('Unmounting done', LLInfo);
         //ShowMessage(ShellOutput);
       end
       else
       begin
-        LogDatei.log('Error while trying to run command ' + ShellCommand +
-          ' on ' + Shell, LLError);
+        LogDatei.log('Error while trying to run command.', LLError);
       end;
     end
     else

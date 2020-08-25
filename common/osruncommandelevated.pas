@@ -19,7 +19,7 @@ type
     FShell: string;
     FShellOption: string;
   public
-    constructor Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption = '-c');overload;
+    constructor Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption: string = '-c');overload;
     {Set FPassword,  FSudo and creates LogDatei}
     destructor Destroy;override;
 
@@ -38,7 +38,7 @@ implementation
 
 { TRunCommandElevated }
 
-constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption = '-c');
+constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption: string = '-c');
 begin
   inherited Create;
   FPassword := aPassword;
@@ -57,7 +57,7 @@ end;
 function TRunCommandElevated.Run(aCommandLine: string; out Output:string): boolean;
 begin
   //aCommandLine := 'chown -c $USER /etc/apt/sources.list.d/opsi.list'; //for testing
-  LogDatei.log('Shell command: ' + aCommandLine, LLInfo);
+  //LogDatei.log('Shell command: ' + aCommandLine, LLInfo);
   case FSudo of
     True: aCommandLine := 'sudo -S ' + aCommandLine;
     False: aCommandLine := 'su -c ' + '"' + aCommandLine + '"'; //AnsiQuotedStr(aCommandLine, '"');
