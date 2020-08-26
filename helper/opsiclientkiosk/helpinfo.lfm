@@ -8,7 +8,7 @@ object FormHelpInfo: TFormHelpInfo
   ClientHeight = 324
   ClientWidth = 420
   Color = clForm
-  OnCreate = FormCreate
+  OnShow = FormShow
   Position = poMainFormCenter
   LCLVersion = '2.0.10.0'
   object SpeedButtonManual: TSpeedButton
@@ -368,7 +368,9 @@ object FormHelpInfo: TFormHelpInfo
       Align = alTop
       BorderSpacing.Around = 5
       Caption = 'LabelCredits'
+      Font.Height = 15
       ParentColor = False
+      ParentFont = False
     end
     object LabelCreditsTo: TLabel
       Left = 5
@@ -378,6 +380,7 @@ object FormHelpInfo: TFormHelpInfo
       Align = alTop
       BorderSpacing.Around = 5
       Caption = 'Credits to'
+      Font.Height = 15
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
@@ -634,7 +637,7 @@ object FormHelpInfo: TFormHelpInfo
         Width = 287
         Align = alTop
         Caption = 'opsi client kiosk'
-        Font.Height = -27
+        Font.Height = 27
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
@@ -643,21 +646,22 @@ object FormHelpInfo: TFormHelpInfo
         Left = 0
         Height = 79
         Top = 49
-        Width = 96
+        Width = 112
         Align = alLeft
         BevelOuter = bvNone
         ClientHeight = 79
-        ClientWidth = 96
+        ClientWidth = 112
         TabOrder = 0
         object LabelUibWeb: TLabel
           Left = 0
-          Height = 19
-          Top = 60
-          Width = 96
+          Height = 18
+          Top = 61
+          Width = 112
           Align = alBottom
           BorderSpacing.Top = 10
           Caption = 'LabelUibWeb'
-          Font.Color = clHotLight
+          Font.Color = clHighlight
+          Font.Height = 14
           ParentColor = False
           ParentFont = False
           OnClick = LabelUibWebClick
@@ -668,7 +672,7 @@ object FormHelpInfo: TFormHelpInfo
           Left = 0
           Height = 19
           Top = 10
-          Width = 96
+          Width = 112
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'Display language:'
@@ -680,7 +684,7 @@ object FormHelpInfo: TFormHelpInfo
           Left = 0
           Height = 19
           Top = 39
-          Width = 96
+          Width = 112
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'CopyRight:'
@@ -690,7 +694,7 @@ object FormHelpInfo: TFormHelpInfo
         end
       end
       object PanelInfoContent: TPanel
-        Left = 101
+        Left = 117
         Height = 79
         Top = 49
         Width = 191
@@ -702,14 +706,14 @@ object FormHelpInfo: TFormHelpInfo
         TabOrder = 1
         object LabelOpsiWeb: TLabel
           Left = 0
-          Height = 15
-          Top = 64
+          Height = 18
+          Top = 61
           Width = 191
           Align = alBottom
-          AutoSize = False
           BorderSpacing.Top = 10
           Caption = 'LabelOpsiWeb'
-          Font.Color = clHotLight
+          Font.Color = clHighlight
+          Font.Height = 14
           ParentColor = False
           ParentFont = False
           OnClick = LabelOpsiWebClick
@@ -724,7 +728,9 @@ object FormHelpInfo: TFormHelpInfo
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelLanguage'
+          Font.Height = 15
           ParentColor = False
+          ParentFont = False
         end
         object LabelCopyRight: TLabel
           Left = 0
@@ -734,7 +740,9 @@ object FormHelpInfo: TFormHelpInfo
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelCopyRight'
+          Font.Height = 15
           ParentColor = False
+          ParentFont = False
         end
       end
       object PanelVersion: TPanel
@@ -751,9 +759,8 @@ object FormHelpInfo: TFormHelpInfo
           Left = 56
           Height = 16
           Top = 0
-          Width = 244
+          Width = 87
           Align = alLeft
-          AutoSize = False
           BorderSpacing.Left = 5
           Caption = 'LabelVersion'
           Font.Style = [fsBold]

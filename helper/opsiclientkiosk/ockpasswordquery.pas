@@ -18,6 +18,7 @@ type
     EditPassword: TLabeledEdit;
     LabelDescription: TLabel;
     SudoOrRoot: TRadioGroup;
+    procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonOKClick(Sender: TObject);
   private
 
@@ -43,6 +44,11 @@ begin
   OckLinux.RunCommandElevated.Password := EditPassword.Text;
   Close;
   FormSaveImagesOnDepot.Visible := True;
+end;
+
+procedure TFormPasswordQuery.ButtonCancelClick(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

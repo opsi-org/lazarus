@@ -64,7 +64,7 @@ begin
   end;
   LogDatei.log('Shell command: ' + aCommandLine, LLDebug);
   if RunCommand(FShell, [FShellOption, 'echo ' + FPassword + ' | ' + aCommandLine],
-    Output, [poWaitOnExit, poUsePipes]) then
+    Output, [poWaitOnExit, poUsePipes], swoHIDE) then
   begin
     LogDatei.log('Shell command succesful', LLInfo);
     LogDatei.log('Shell output: ' + Output, LLDebug);

@@ -12,6 +12,7 @@ function isAdmin:boolean;
 function GetUserName_: string;
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 procedure UnmountDepot(const PathToDepot: string);
+function IsDepotMounted(const PathToDepot:string): boolean;
 function Copy(Source:string; Destination:string):boolean;
 
 
@@ -94,6 +95,20 @@ begin
     end;
   except
     LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
+  end;
+end;
+
+function IsDepotMounted(const PathToDepot: string): boolean;
+begin
+  if DirectoryExists(PathToDepot) then
+  begin
+    Result := True;
+    LogDatei.log('opsi_depot_rw already mounted', LLInfo);
+  end
+  else
+  begin
+    Result := False;
+    LogDatei.log('opsi_depot_rw not mounted', LLInfo);
   end;
 end;
 

@@ -2042,6 +2042,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 624
   end
   object ImageListButtons: TImageList
+    Scaled = True
     Left = 448
     Bitmap = {
       4C6902000000100000001000000000000000000000000909091E5B5C5DD73A39

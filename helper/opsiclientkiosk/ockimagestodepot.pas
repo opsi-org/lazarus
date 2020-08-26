@@ -95,11 +95,11 @@ var
   i,LineNumber:integer;
 begin
   CopySuccess := False;
-  PathToDepot :=  TrimFilename(DirectoryEditPathToDepot.Text);
+  PathToDepot :=  SwitchPathDelims(Trim(DirectoryEditPathToDepot.Text),pdsSystem);
   {Mount opsi depot}
   if CheckBoxMountDepot.Checked then
   begin
-    if DirectoryExists(PathToDepot) then AlreadyMounted := True
+    if IsDepotMounted(PathToDepot) then AlreadyMounted := True
     else
     begin
       AlreadyMounted := False;
@@ -110,7 +110,7 @@ begin
     end;
   end;
 
-  if DirectoryExists(PathToDepot) then
+  if IsDepotMounted(PathToDepot) then
   begin
     ProgressBar.Visible := True;
     LabelInfo.Caption := rsCopyIcons;

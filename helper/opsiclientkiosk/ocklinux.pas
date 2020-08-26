@@ -12,12 +12,16 @@ function isAdmin: boolean;
 function GetUserName_: string;
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 procedure UnmountDepot(const PathToDepot: string);
+function IsDepotMounted(const PathToDepot: string):boolean;
 function Copy(Source:string; Destination:string):boolean;
 
 var
   RunCommandElevated: TRunCommandElevated;
 
 implementation
+
+const
+  MountPoint = '/mnt/opsi_depot_rw';
 
 function isAdmin: boolean;
 begin
@@ -35,19 +39,25 @@ end;
 
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
-  ShellCommand, ShellOutput: string;
+  ShellCommand: string;
+  ShellOutput: string;
 begin
   try
-    LogDatei.log('Mounting ' + PathToDepot, LLInfo);
+    LogDatei.log('Mounting ' + PathToDepot + ' on' + MountPoint , LLInfo);
     {set shell and options}
     if assigned(RunCommandElevated) then
     begin
       //RunCommandElevated.Shell := '/bin/sh'; //not necessary to set because this is the default value
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
-     //mount -t cifs -o username=werner //bonifax.uib.gmbh/opsi_depot /home/jan/opsi_depot
+     //mount -t cifs -o username=werner //bonifax.uib.gmbh/opsi_depot /media/opsi_depot_rw
+      if not DirectoryExists(MountPoint) then
+      begin
+        RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput);
+      end;
       ShellCommand := 'mount -t cifs' + ' '
                       + '-o username=' + User + ',' + 'password=' + Password + ' '
-                      + PathToDepot;
+                      + PathToDepot + ' '
+                      + MountPoint;
       if RunCommandElevated.Run(ShellCommand, ShellOutput) then
       begin
         ShellCommand := '';
@@ -77,12 +87,13 @@ begin
     {Run Command}
     if assigned(RunCommandElevated) then
     begin
-      RunCommandElevated.Shell := '/bin/sh';
-      RunCommandElevated.ShellOption := '-c';
-      ShellCommand := 'unmount' + ' ' + PathToDepot;
+      //RunCommandElevated.Shell := '/bin/sh'; //not necessary to set because this is the default value
+      //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
+      ShellCommand := 'unmount' + ' ' + '/mnt';
       if RunCommandElevated.Run(ShellCommand, ShellOutput) then
       begin
         LogDatei.log('Unmounting done', LLInfo);
+        if DirectoryExists(MountPoint) then RunCommandElevated.Run('rm -d ' + MountPoint, ShellOutput)
         //ShowMessage(ShellOutput);
       end
       else
@@ -96,6 +107,24 @@ begin
     end;
   except
     LogDatei.log('Exception during unmounting of ' + PathToDepot, LLDebug);
+  end;
+end;
+
+function IsDepotMounted(const PathToDepot:string): boolean;
+var
+  ShellOutput:String;
+begin
+  ShellOutput := '';
+  RunCommandElevated.Run('mount | grep -i ' + PathToDepot, ShellOutput);
+  if ShellOutput <> '' then
+  begin
+    Result := True;
+    LogDatei.log('opsi_depot_rw already mounted', LLInfo);
+  end
+  else
+  begin
+      Result := False;
+    LogDatei.log('opsi_depot_rw not mounted', LLInfo);
   end;
 end;
 
