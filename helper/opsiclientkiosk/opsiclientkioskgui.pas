@@ -94,6 +94,7 @@ type
     DBMemoProductDescription: TDBMemo;
     DBMemoProductDescription1: TDBMemo;
     DBTextActionRequest: TDBText;
+    ImageListButtons: TImageList;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
     LabelPleaseWait: TLabel;
