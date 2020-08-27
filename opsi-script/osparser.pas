@@ -23120,6 +23120,7 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       Script.LoadFromFile(Scriptdatei);
+      logdatei.log_prog('searchencoding of script ('+DateTimeToStr(Now)+')',LLinfo);
       Encoding2use := searchencoding(Script.Text);
       if Encoding2use = '' then
         Encoding2use := 'system';

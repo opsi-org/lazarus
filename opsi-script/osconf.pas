@@ -388,7 +388,8 @@ begin
                             osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
                             if not TryStrToBool(tmpstr, debug_lib) then
                               osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  debug_lib: ' + tmpstr);
+                                'Error: Not a Boolean:  debug_lib: ' + tmpstr
+                                + ' ('+DateTimeToStr(Now)+')');
                             Result := 'readConfigFromService: ok';
                           end;
                       end;

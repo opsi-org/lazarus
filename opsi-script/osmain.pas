@@ -567,7 +567,8 @@ begin
       end
       else
       if logdatei <> nil then
-        logdatei.log('Succseeded: Testing as temp path: ' + mytemppath, LLdebug);
+        logdatei.log('Succseeded: Testing as temp path: ' + mytemppath
+        + ' ('+DateTimeToStr(Now)+')', LLdebug);
     end;
     teststr := '';
   end;

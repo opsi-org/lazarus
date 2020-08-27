@@ -521,6 +521,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
+  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -574,7 +575,9 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
+      startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
       MakeBakFile(LogDateiName, 8);
+      startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
