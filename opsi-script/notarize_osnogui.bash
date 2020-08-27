@@ -5,25 +5,21 @@ set -e -x
 CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=fqwo-ztjg-ljte-xkpl
-
 BUNDLE_ID=org.opsi.opsi-script-nogui
 EXECUTABLE_NAME=opsi-script-nogui
+ENTITLEMENTS="--entitlements opsi-script.entitlements"
+
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
+
 
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
 echo id $APPLE_ID_USER
 echo dir $EXECUTABLE_DIR
 
-
-#compile
-#echo "Building"
-#fpc -k"-sectcreate __TEXT __info_plist Info.plist" hello.pas
-
 echo "Clean up temporary files ..."
 rm -f ${EXECUTABLE_NAME}_macOS.dmg
-# rm -f ${EXECUTABLE_NAME}_macOS.tmp.dmg
 rm -f upload_log_file.txt
 rm -f request_log_file.txt
 rm -f log_file.txt
@@ -38,26 +34,19 @@ launchctl plist $FULLPATHTOEXE
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
 
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
-#cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
-#codesign -dv -r- ${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
-# hdiutil create -volname $EXECUTABLE_NAME -srcfolder `pwd` -ov -format UDZO -layout SPUD -fs HFS+J  ${EXECUTABLE_NAME}_macOS.tmp.dmg
-# hdiutil convert ${EXECUTABLE_NAME}_macOS.tmp.dmg -format UDZO -o ${EXECUTABLE_NAME}_macOS.dmg
 hdiutil create -volname $EXECUTABLE_NAME -srcfolder $EXECUTABLE_DIR -ov -format UDZO -layout SPUD -fs HFS+J  ${EXECUTABLE_NAME}_macOS.dmg
-#/usr/bin/ditto -c -k --keepParent "$EXECUTABLE_NAME" ${EXECUTABLE_NAME}.zip
 
 codesign -s "$CODE_SIGN_SIGNATURE" ${EXECUTABLE_NAME}_macOS.dmg
-#codesign -s "$CODE_SIGN_SIGNATURE" ${EXECUTABLE_NAME}.zip
 # Notarizing with Apple...
 echo "Uploading..."
 xcrun altool --notarize-app -t osx --file ${EXECUTABLE_NAME}_macOS.dmg --primary-bundle-id $BUNDLE_ID -u $APPLE_ID_USER -p $APP_SPECIFIC_PASSWORD --output-format xml > upload_log_file.txt
-#xcrun altool --notarize-app -t osx --file ${EXECUTABLE_NAME}.zip --primary-bundle-id $BUNDLE_ID -u $APPLE_ID_USER -p $APP_SPECIFIC_PASSWORD --output-format xml > upload_log_file.txt
 
 # WARNING: if there is a 'product-errors' key in upload_log_file.txt something went wrong
 # TODO: parse out the error instead of exiting the script (remember set -e is enabled)
@@ -89,7 +78,5 @@ done
 echo "Stapling..."
 xcrun stapler staple ${EXECUTABLE_NAME}_macOS.dmg
 xcrun stapler validate ${EXECUTABLE_NAME}_macOS.dmg
-#xcrun stapler staple ${EXECUTABLE_NAME}.zip
-#xcrun stapler validate ${EXECUTABLE_NAME}.zip
 # open the log file so we can see if there are any warnings or other issues
 open log_file.txt
