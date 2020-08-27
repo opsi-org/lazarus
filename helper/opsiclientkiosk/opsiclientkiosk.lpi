@@ -286,7 +286,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="28">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -416,6 +416,24 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="OckPasswordQuery"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="ockimagestodepot.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormSaveImagesOnDepot"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="OckImagestoDepot"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="../../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="../../common/osruncommandelevated.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osRunCommandElevated"/>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

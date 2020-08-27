@@ -42,6 +42,7 @@ type
     procedure CheckBoxMountDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     //procedure FormDestroy(Sender: TObject);
   private
@@ -99,7 +100,9 @@ begin
   {Mount opsi depot}
   if CheckBoxMountDepot.Checked then
   begin
-    if IsDepotMounted(PathToDepot) then AlreadyMounted := True
+    if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+       {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
+      then AlreadyMounted := True
     else
     begin
       AlreadyMounted := False;
@@ -110,19 +113,23 @@ begin
     end;
   end;
 
-  if IsDepotMounted(PathToDepot) then
+  if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+     {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
+  then
   begin
     ProgressBar.Visible := True;
     LabelInfo.Caption := rsCopyIcons;
     ProgressBar.Position:= 20;
     Application.ProcessMessages;
-    if SaveImagesOnDepot(PathToDepot) then
+    if {$IFDEF WINDOWS} SaveImagesOnDepot(PathToDepot) {$ENDIF WINDOWS}
+    {$IFDEF LINUX} SaveImagesOnDepot(MountPoint) {$ENDIF LINUX}
+    then
     begin
       LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
       Application.ProcessMessages;
       sleep(1000);
       CopySuccess := True;
-      LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
+      //LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
       //SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
       ProgressBar.Position:= 80;
       Application.ProcessMessages;
@@ -138,7 +145,12 @@ begin
 
   if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
-     UnmountDepot(PathToDepot);
+    {$IFDEF WINDOWS}
+    UmountDepot(PathToDepot);
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+    UmountDepot(MountPoint);
+    {$ENDIF LINUX}
      //LabelInfo.Caption := rsCouldNotUnmount;
   end;
 
@@ -174,6 +186,13 @@ end;
 procedure TFormSaveImagesOnDepot.DirectoryEditPathToDepotEnter(Sender: TObject);
 begin
   DirectoryEditPathToDepot.Font.Color:= clDefault;
+end;
+
+procedure TFormSaveImagesOnDepot.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
+  LabelInfo.Caption := '';
+  ProgressBar.Position:= 0;
 end;
 
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
@@ -240,10 +259,15 @@ begin
   Result := False;
   { Set the right directories }
   PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
-  PathToKioskOnClient := ExtractFilePath(Application.Location);
+  PathToKioskOnClient := ExcludeTrailingPathDelimiter(ExtractFilePath(Application.Location));
   //Set path delims dependend on system (e.g. Windows, Unix)
   PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
+  {$IFDEF WINDOWS}
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder + '\'), pdsSystem);
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
+  {$ENDIF LINUX}
   LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   if Copy(PathToIconsOnClient, PathToIconsOnDepot) then

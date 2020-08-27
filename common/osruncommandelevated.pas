@@ -62,7 +62,7 @@ begin
     True: aCommandLine := 'sudo -S ' + aCommandLine;
     False: aCommandLine := 'su -c ' + '"' + aCommandLine + '"'; //AnsiQuotedStr(aCommandLine, '"');
   end;
-  LogDatei.log('Shell command: ' + aCommandLine, LLDebug);
+  LogDatei.log('Shell command: ' + aCommandLine, LLConfidential);
   if RunCommand(FShell, [FShellOption, 'echo ' + FPassword + ' | ' + aCommandLine],
     Output, [poWaitOnExit, poUsePipes], swoHIDE) then
   begin

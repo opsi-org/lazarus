@@ -7,25 +7,30 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   Caption = 'Save images on depot'
   ClientHeight = 292
   ClientWidth = 544
+  OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
   object ButtonCopy: TButton
     Left = 9
-    Height = 35
+    Height = 30
     Top = 256
     Width = 158
     AutoSize = True
     Caption = 'Save images on depot'
+    Constraints.MaxHeight = 30
     OnClick = ButtonCopyClick
     TabOrder = 0
   end
   object ButtonClose: TButton
-    Left = 396
-    Height = 25
+    Left = 388
+    Height = 30
     Top = 256
-    Width = 142
+    Width = 150
+    AutoSize = True
     Caption = 'Close'
+    Constraints.MaxHeight = 30
+    Constraints.MinWidth = 150
     OnClick = ButtonCloseClick
     TabOrder = 1
   end
@@ -79,11 +84,11 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   end
   object GroupBoxPath: TGroupBox
     Left = 9
-    Height = 73
+    Height = 81
     Top = 7
     Width = 529
     Caption = 'Path to depot'
-    ClientHeight = 53
+    ClientHeight = 61
     ClientWidth = 527
     TabOrder = 3
     object DirectoryEditPathToDepot: TDirectoryEdit
@@ -101,7 +106,7 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     object CheckBoxMountDepot: TCheckBox
       Left = 7
       Height = 23
-      Top = 29
+      Top = 36
       Width = 108
       Caption = 'Mount depot'
       OnChange = CheckBoxMountDepotChange
@@ -119,28 +124,27 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     TabOrder = 4
     object PanelInfo: TPanel
       Left = 0
-      Height = 44
+      Height = 48
       Top = 0
       Width = 524
       BevelOuter = bvNone
-      ClientHeight = 44
+      ClientHeight = 48
       ClientWidth = 524
       TabOrder = 0
       object LabelInfo: TLabel
         Left = 5
-        Height = 15
+        Height = 23
         Top = 5
         Width = 514
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
-        AutoSize = False
         BorderSpacing.Around = 5
         ParentColor = False
       end
       object ProgressBar: TProgressBar
         Left = 5
         Height = 15
-        Top = 24
+        Top = 28
         Width = 514
         Align = alBottom
         BorderSpacing.Around = 5

@@ -15,7 +15,8 @@ uses
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
-  lazproginfo, opsiconnection, helpinfo, OckImagestoDepot
+  lazproginfo, osRunCommandElevated, OSProcessux, opsiconnection, helpinfo,
+  OckImagestoDepot
 
   {add more units if nedded};
 
