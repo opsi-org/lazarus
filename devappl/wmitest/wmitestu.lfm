@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1951
+  Left = 931
   Height = 676
-  Top = 118
+  Top = 64
   Width = 653
   Caption = 'opsi-wmitestgui'
   ClientHeight = 676
@@ -146,7 +146,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDefaultPosOnly
-  LCLVersion = '2.0.2.0'
+  LCLVersion = '2.0.10.0'
   object GroupBoxConnection: TGroupBox
     Left = 12
     Height = 188
@@ -228,8 +228,8 @@ object MainForm: TMainForm
       Left = 8
       Height = 15
       Top = 334
-      Width = 56
-      Caption = 'Condition:'
+      Width = 59
+      Caption = 'Condition :'
       ParentColor = False
     end
     object EditCondition: TEdit
@@ -329,19 +329,19 @@ object MainForm: TMainForm
     end
   end
   object ButtonExecute: TButton
-    Left = 24
+    Left = 472
     Height = 33
     Top = 633
-    Width = 120
+    Width = 80
     Caption = 'Execute'
     OnClick = ButtonExecuteClick
     TabOrder = 2
   end
   object ButtonQuit: TButton
-    Left = 512
+    Left = 560
     Height = 33
     Top = 633
-    Width = 120
+    Width = 72
     Caption = 'Quit'
     OnClick = ButtonQuitClick
     TabOrder = 3
@@ -576,5 +576,21 @@ object MainForm: TMainForm
     Caption = 'Expert Mode'
     OnChange = ToggleBoxExpertModeChange
     TabOrder = 4
+  end
+  object EditQuery: TEdit
+    Left = 24
+    Height = 23
+    Top = 640
+    Width = 440
+    ReadOnly = True
+    TabOrder = 5
+  end
+  object Label1: TLabel
+    Left = 24
+    Height = 15
+    Top = 624
+    Width = 38
+    Caption = 'Query :'
+    ParentColor = False
   end
 end

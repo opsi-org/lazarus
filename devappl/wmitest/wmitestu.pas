@@ -21,9 +21,11 @@ type
     ComboBoxAlias: TComboBox;
     ComboBoxWMIClass: TComboBox;
     EditCondition: TEdit;
+    EditQuery: TEdit;
     GroupBoxConnection: TGroupBox;
     GroupBoxRequest: TGroupBox;
     Image1: TImage;
+    LabelQuery: TLabel;
     LabelSelectedWMIProperties: TLabel;
     LabelClass: TLabel;
     LabelAlias: TLabel;
@@ -80,7 +82,7 @@ uses
 
 { TMainForm }
 
-
+//Execution of the request to WMI Server after selecting properties
 procedure TMainForm.ButtonExecuteClick(Sender: TObject);
 var
   WMIProperties: String;
@@ -101,6 +103,7 @@ begin
       begin
         ResultForm.MemoQueryResult.Text:= 'Waiting for query response ...';
         WMIClass.RequestToWMIService(WMIProperties,ComboBoxWMIClass.Text,EditCondition.Text);
+        EditQuery.Text:= WMIClass.FinalQuery ;
         ResultForm.MemoQueryResult.Clear;
         ResultForm.MemoQueryResult.Text:= WMIClass.WMIRequestResult.Text;
       end;
@@ -110,6 +113,7 @@ begin
   end;
 end;
 
+//Choosing from Alias
 procedure TMainForm.ComboBoxAliasSelect(Sender: TObject);
 begin
   try
@@ -145,24 +149,33 @@ begin
   if Key = 13 then ComboBoxAliasSelect(Sender);
 end;
 
+//Choosing from Class
 procedure TMainForm.ComboBoxWMIClassSelect(Sender: TObject);
 var
-  i:integer;
+  i :integer;
 begin
   try
     ListBoxAvailableWMIProperties.Clear;
     ListBoxSelectedWMIProperties.Clear;
     ResultForm.MemoQueryResult.Clear;
+
     for i := 0 to WMIClass.WMIClassNames.Count-1 do
     begin
-      if WMIClass.WMIClassNames.ValueFromIndex[i].Equals(ComboBoxWMIClass.Text) then
-         ComboBoxAlias.Text :=  WMIClass.WMIClassNames.Names[i];
+       //Assigning Class and displaying Alias
+         if trim(WMIClass.WMIClassNames.ValueFromIndex[i]).Equals(Trim(ComboBoxWMIClass.Text)) then
+            begin
+            ComboBoxAlias.Text :=  WMIClass.WMIClassNames.Names[i] ;
+            break ;
+            end
+         else
+            ComboBoxAlias.Text := '<No Alias>';
     end;
     if WMIClass.ConnectToWMIService(WideString(LabelEditComputer.Text),
     WideString(LabelEditNameSpace.Text),WideString(LabelEditUser.Text),
     WideString(LabelEditPassword.Text))
       then
       begin
+        //Assigning and displaying properties
         ListBoxAvailableWMIProperties.Items.Add('Waiting for property list ...');
         WMIClass.InitWMIProperties(ComboBoxWMIClass.Text);
         //ListBoxAvailableWMIProperties.Clear;
@@ -186,34 +199,44 @@ begin
   if Key = 13 then ComboBoxWMIClassSelect(Sender);
 end;
 
-
+//Selecting properties
 procedure TMainForm.ButtonArrowRightClick(Sender: TObject);
 begin
   MoveItemsToListBox(ListBoxSelectedWMIProperties,ListBoxAvailableWMIProperties,
   ListBoxSelectedWMIProperties.Count);
 end;
 
+//Removing selected properties
 procedure TMainForm.ButtonArrowLeftClick(Sender: TObject);
 begin
   MoveItemsToListBox(ListBoxAvailableWMIProperties,ListBoxSelectedWMIProperties,
   ListBoxAvailableWMIProperties.Count);
 end;
 
+//Quit
 procedure TMainForm.ButtonQuitClick(Sender: TObject);
 begin
   MainForm.Close;
 end;
 
-
+//Filling Class and Alias list
 procedure TMainForm.fillComboBoxWMIClass();
 var
   i : integer;
 begin
   ComboBoxWMIClass.Items.Clear; //Alle vorhandenen Auswahlmöglichkeiten löschen
+  //Here are displayed all the classes;
+  //and for the ones without Alias, an empty alias field is displayed
+  for i := 1 to WMIClass.WMIClassesResult.Count-3 do
+  begin
+    //ComboBoxAlias.Items.Add(WMIClass.WMIClassNames.Names[i]);
+    //ComboBoxWMIClass.Items.Add(WMIClass.WMIClassNames.ValueFromIndex[i]);
+
+    ComboBoxWMIClass.Items.Add(WMIClass.WMIClassesResult[i]);
+  end;
   for i := 0 to WMIClass.WMIClassNames.Count-1 do
   begin
     ComboBoxAlias.Items.Add(WMIClass.WMIClassNames.Names[i]);
-    ComboBoxWMIClass.Items.Add(WMIClass.WMIClassNames.ValueFromIndex[i]);
   end;
 end;
 
@@ -227,6 +250,7 @@ begin
   if ListBoxSelectedWMIProperties.Items.Count-1 >=0 then
      result := result + ListBoxSelectedWMIProperties.Items[ListBoxSelectedWMIProperties.Items.Count-1];//letzter Eintrag ohne ,
 end;
+
 
 procedure TMainForm.MoveItemsToIndex(LB: TListBox; NewIndex: Integer);
 var
@@ -254,6 +278,7 @@ begin
   end;
 end;
 
+
 procedure TMainForm.MoveItemsToListBox(LBTo, LBFrom: TListBox;
   NewIndex: Integer);
 var
@@ -278,6 +303,7 @@ begin
   end;
 end;
 
+
 procedure TMainForm.IfNotExistCreateResultForm(Sender: TObject);
 begin
   if ResultForm = nil then TResultForm.Create(Sender as TComponent);
@@ -293,6 +319,7 @@ begin
    //MemoQueryResult.Append(IntToStr(WMIClass.WMIClassNames.Count));
    FillComboBoxWMIClass(); //ComboBox mit Auswahlmöglichkeiten füllen.
 end;
+
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
