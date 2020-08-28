@@ -11,6 +11,8 @@ opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
   * oslog: makebakfiles: rename instead of copy (much faster)
   * fix uefi detection on win10 >= release 1004
   * osfuncwin: WinIsUefi: the fix is here
+  * macos: change mountpoint to /Network/opsi_depot
+  * osbatchgui: removed formresize function
 
 -- d.oertel <d.oertel@uib.de> Thu, 27 Aug 2020 15:00
 

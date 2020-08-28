@@ -575,9 +575,13 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
-      startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
-      startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;

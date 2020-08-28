@@ -417,8 +417,8 @@ begin
   mymountpoint := '/media/opsi_depot';
   {$ENDIF}
   {$IFDEF DARWIN}
-  //mymountpoint := '/Network/opsi_depot';
-  mymountpoint := '/Volumes/opsi_depot';
+  mymountpoint := '/Network/opsi_depot';
+  //mymountpoint := '/Volumes/opsi_depot';
   //mymountpoint := '/media/opsi_depot';
   (*
       RunCommand('sw_vers -productVersion', outstr);
