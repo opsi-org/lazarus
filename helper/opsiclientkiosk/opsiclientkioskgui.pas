@@ -249,6 +249,7 @@ type
     DefaultSkinPath: string;
     SoftwareOnDemand : boolean;
     AdminMode : boolean;
+    ShowingFirstTime : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
@@ -950,7 +951,13 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
-    if not SoftwareOnDemand then Caption := Caption + ' - ' + rsInstallNow + ': ' + rsDisabled;
+    if not SoftwareOnDemand then
+    begin
+      if FormHelpInfo.LabelModeInfo.Caption = '' then
+        FormHelpInfo.LabelModeInfo.Caption := rsInstallNow + ': ' + rsDisabled
+      else
+        FormHelpInfo.LabelModeInfo.Caption := FormHelpInfo.LabelModeInfo.Caption + ', ' + rsInstallNow + ': ' + rsDisabled
+    end;
     if SoftwareOnDemand then
     begin
       BitBtnInstallNow.Caption := rsInstallNow;
@@ -965,7 +972,10 @@ begin
     AdminMode := StrToBool(ConfigState.Strings[0]);
     if AdminMode and IsAdmin then
     begin
-      Caption := Caption + ' - ' + rsAdminMode;
+      if FormHelpInfo.LabelModeInfo.Caption = '' then
+        FormHelpInfo.LabelModeInfo.Caption := rsAdminMode
+      else
+        FormHelpInfo.LabelModeInfo.Caption := FormHelpInfo.LabelModeInfo.Caption + ', ' + rsAdminMode;
       BitBtnSaveImages.Visible := True;
     end
     else
@@ -1756,8 +1766,10 @@ begin
     //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
  {$IFDEF LINUX}
- FormPasswordQuery.Visible := True;
- //FormSaveImagesOnDepot.Visible := True;
+ //if ShowingFirstTime then
+   FormPasswordQuery.Visible := True
+ //else
+   //FormSaveImagesOnDepot.Visible := True;
  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
  //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
  {$ENDIF LINUX}
@@ -1980,7 +1992,7 @@ begin
     if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
     SetTilesView;
   end;
-
+  Caption := 'opsi-client-kiosk' + ' (Version '+ ProgramInfo.Version + ')';
 end;
 
 procedure TFormOpsiClientKiosk.FormResize(Sender: TObject);

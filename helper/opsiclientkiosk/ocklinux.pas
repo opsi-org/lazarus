@@ -5,7 +5,7 @@ unit OckLinux;
 interface
 
 uses
-  Classes, SysUtils, Process, osRunCommandElevated, osLog;
+  Classes, SysUtils, Process, StrUtils, osRunCommandElevated, osLog;
 
 
 function isAdmin: boolean;
@@ -14,6 +14,7 @@ procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot: string):boolean;
 function Copy(Source:string; Destination:string):boolean;
+function PasswordCorrect:boolean;
 
 var
   RunCommandElevated: TRunCommandElevated;
@@ -63,7 +64,7 @@ begin
                       + '-o username=' + User + ',' + 'password=' + Password + ' '
                       + PathToDepot + ' '
                       + MountPoint;
-      if RunCommandElevated.Run(ShellCommand, ShellOutput) then
+      if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -139,6 +140,17 @@ var
 begin
   Output := '';
   Result := RunCommandElevated.Run('cp -r --remove-destination' + ' '+ Source + ' ' + Destination, Output);
+end;
+
+function PasswordCorrect: boolean;
+var
+  Output:string;
+begin
+  if RunCommandElevated.Run('echo "Passwort korrekt"', Output) then
+  begin
+    Result := ContainsStr(Output, 'Passwort korrekt');
+  end
+  else Result := False;
 end;
 
 initialization

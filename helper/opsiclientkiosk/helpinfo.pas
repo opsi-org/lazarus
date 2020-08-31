@@ -16,6 +16,8 @@ type
     ButtonClose: TButton;
     CheckBoxExpertMode: TCheckBox;
     ImageLogo: TImage;
+    LabelModeInfo: TLabel;
+    LabelMode: TLabel;
     LabelCopy: TLabel;
     LabelCopyRight: TLabel;
     LabelCredits: TLabel;

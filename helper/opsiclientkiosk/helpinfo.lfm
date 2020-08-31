@@ -1,12 +1,12 @@
 object FormHelpInfo: TFormHelpInfo
-  Left = 968
-  Height = 324
-  Top = 270
-  Width = 420
+  Left = 717
+  Height = 353
+  Top = 280
+  Width = 547
   BorderStyle = bsDialog
   Caption = 'Help'
-  ClientHeight = 324
-  ClientWidth = 420
+  ClientHeight = 353
+  ClientWidth = 547
   Color = clForm
   OnShow = FormShow
   Position = poMainFormCenter
@@ -14,8 +14,8 @@ object FormHelpInfo: TFormHelpInfo
   object SpeedButtonManual: TSpeedButton
     Left = 0
     Height = 52
-    Top = 211
-    Width = 420
+    Top = 243
+    Width = 547
     Align = alTop
     BorderSpacing.Top = 25
     Caption = 'opsi manual'
@@ -318,17 +318,17 @@ object FormHelpInfo: TFormHelpInfo
   object PanelBottom: TPanel
     Left = 0
     Height = 35
-    Top = 289
-    Width = 420
+    Top = 318
+    Width = 547
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 35
-    ClientWidth = 420
+    ClientWidth = 547
     Color = cl3DLight
     ParentColor = False
     TabOrder = 0
     object ButtonClose: TButton
-      Left = 340
+      Left = 467
       Height = 25
       Top = 5
       Width = 75
@@ -352,19 +352,19 @@ object FormHelpInfo: TFormHelpInfo
   object PanelCredits: TPanel
     Left = 0
     Height = 48
-    Top = 138
-    Width = 420
+    Top = 170
+    Width = 547
     Align = alTop
     BorderSpacing.Top = 10
     BevelOuter = bvNone
     ClientHeight = 48
-    ClientWidth = 420
+    ClientWidth = 547
     TabOrder = 1
     object LabelCredits: TLabel
       Left = 5
       Height = 19
       Top = 29
-      Width = 410
+      Width = 537
       Align = alTop
       BorderSpacing.Around = 5
       Caption = 'LabelCredits'
@@ -376,7 +376,7 @@ object FormHelpInfo: TFormHelpInfo
       Left = 5
       Height = 19
       Top = 5
-      Width = 410
+      Width = 537
       Align = alTop
       BorderSpacing.Around = 5
       Caption = 'Credits to'
@@ -389,17 +389,17 @@ object FormHelpInfo: TFormHelpInfo
   end
   object PanelTop: TPanel
     Left = 0
-    Height = 128
+    Height = 160
     Top = 0
-    Width = 420
+    Width = 547
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 128
-    ClientWidth = 420
+    ClientHeight = 160
+    ClientWidth = 547
     TabOrder = 2
     object ImageLogo: TImage
       Left = 0
-      Height = 128
+      Height = 160
       Top = 0
       Width = 128
       Align = alLeft
@@ -621,20 +621,20 @@ object FormHelpInfo: TFormHelpInfo
     end
     object PanelInfo: TPanel
       Left = 133
-      Height = 128
+      Height = 160
       Top = 0
-      Width = 287
+      Width = 414
       Align = alClient
       BorderSpacing.Left = 5
       BevelOuter = bvNone
-      ClientHeight = 128
-      ClientWidth = 287
+      ClientHeight = 160
+      ClientWidth = 414
       TabOrder = 0
       object LabelName: TLabel
         Left = 0
         Height = 33
         Top = 0
-        Width = 287
+        Width = 414
         Align = alTop
         Caption = 'opsi client kiosk'
         Font.Height = 27
@@ -644,18 +644,18 @@ object FormHelpInfo: TFormHelpInfo
       end
       object PanelDescriptions: TPanel
         Left = 0
-        Height = 79
+        Height = 111
         Top = 49
         Width = 112
         Align = alLeft
         BevelOuter = bvNone
-        ClientHeight = 79
+        ClientHeight = 111
         ClientWidth = 112
         TabOrder = 0
         object LabelUibWeb: TLabel
           Left = 0
           Height = 18
-          Top = 61
+          Top = 93
           Width = 112
           Align = alBottom
           BorderSpacing.Top = 10
@@ -671,7 +671,7 @@ object FormHelpInfo: TFormHelpInfo
         object LabelLang: TLabel
           Left = 0
           Height = 19
-          Top = 10
+          Top = 39
           Width = 112
           Align = alTop
           BorderSpacing.Top = 10
@@ -683,7 +683,7 @@ object FormHelpInfo: TFormHelpInfo
         object LabelCopy: TLabel
           Left = 0
           Height = 19
-          Top = 39
+          Top = 68
           Width = 112
           Align = alTop
           BorderSpacing.Top = 10
@@ -692,23 +692,35 @@ object FormHelpInfo: TFormHelpInfo
           ParentColor = False
           ParentFont = False
         end
+        object LabelMode: TLabel
+          Left = 0
+          Height = 19
+          Top = 10
+          Width = 112
+          Align = alTop
+          BorderSpacing.Top = 10
+          Caption = 'Mode:'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
       end
       object PanelInfoContent: TPanel
         Left = 117
-        Height = 79
+        Height = 111
         Top = 49
-        Width = 191
+        Width = 297
         Align = alLeft
         BorderSpacing.Left = 5
         BevelOuter = bvNone
-        ClientHeight = 79
-        ClientWidth = 191
+        ClientHeight = 111
+        ClientWidth = 297
         TabOrder = 1
         object LabelOpsiWeb: TLabel
           Left = 0
           Height = 18
-          Top = 61
-          Width = 191
+          Top = 93
+          Width = 297
           Align = alBottom
           BorderSpacing.Top = 10
           Caption = 'LabelOpsiWeb'
@@ -723,8 +735,8 @@ object FormHelpInfo: TFormHelpInfo
         object LabelLanguage: TLabel
           Left = 0
           Height = 19
-          Top = 10
-          Width = 191
+          Top = 21
+          Width = 297
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelLanguage'
@@ -735,8 +747,8 @@ object FormHelpInfo: TFormHelpInfo
         object LabelCopyRight: TLabel
           Left = 0
           Height = 19
-          Top = 39
-          Width = 191
+          Top = 50
+          Width = 297
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelCopyRight'
@@ -744,16 +756,25 @@ object FormHelpInfo: TFormHelpInfo
           ParentColor = False
           ParentFont = False
         end
+        object LabelModeInfo: TLabel
+          Left = 0
+          Height = 1
+          Top = 10
+          Width = 297
+          Align = alTop
+          BorderSpacing.Top = 10
+          ParentColor = False
+        end
       end
       object PanelVersion: TPanel
         Left = 0
         Height = 16
         Top = 33
-        Width = 287
+        Width = 414
         Align = alTop
         BevelOuter = bvNone
         ClientHeight = 16
-        ClientWidth = 287
+        ClientWidth = 414
         TabOrder = 2
         object LabelVersion: TLabel
           Left = 56
