@@ -216,8 +216,8 @@ begin
   while (True) do
   begin
     lpBuffer := '';
-    while PeekNamedPipe(hReadPipe, @lpBuffer, BytesToRead,
-        @BytesRead, @BytesAvail, @BytesLeft) and (BytesAvail = 0) do
+    while PeekNamedPipe(hReadPipe, @lpBuffer, BytesToRead, @BytesRead,
+        @BytesAvail, @BytesLeft) and (BytesAvail = 0) do
     begin
       Processmess;
       Sleep(100);
@@ -405,6 +405,16 @@ begin
   end;
 end;
 
+function is64BitWin: boolean;
+begin
+  {$IFDEF WIN32}
+  Result := DSiIsWow64;
+  {$ENDIF WIN32}
+  {$IFDEF WIN64}
+  Result := True;
+  {$ENDIF WIN64}
+end;
+
 function getW10Release: string;
 begin
   if GetNTVersionMajor >= 10 then
@@ -428,7 +438,9 @@ var
   tmpstr, outstr, stringResult: string;
   releaseint, i: integer;
   outlines: TXStringlist;
-  exitcode : longint;
+  exitcode: longint;
+  oldDisableWow64FsRedirectionStatus: pointer = nil;
+  Wow64FsRedirectionDisabled, boolresult: boolean;
   { http://theroadtodelphi.wordpress.com/2013/02/19/how-distinguish-when-windows-was-installed-in-legacy-bios-or-uefi-mode-using-delphi/ }
 begin
   Result := False;
@@ -439,34 +451,71 @@ begin
     if releaseint < 2004 then
     begin
       try
-        GetFirmwareEnvironmentVariableA('', '{00000000-0000-0000-0000-000000000000}', nil, 0);
+        GetFirmwareEnvironmentVariableA('',
+          '{00000000-0000-0000-0000-000000000000}', nil, 0);
         lastError := GetLastError;
         if (lastError = ERROR_INVALID_FUNCTION) then
         begin
           //Writeln('Legacy BIOS')
-          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS', LLNotice);
-          Result := False
+          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS',
+            LLNotice);
+          Result := False;
         end
         else
         begin
           //Writeln('UEFI Boot Mode');
-          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode', LLNotice);
+          Logdatei.log(
+            'WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode',
+            LLNotice);
           Result := True;
           Logdatei.log('WinIsUefi last Error: ' + SysErrorMessage(
             lastError) + ' : ' + IntToStr(lastError), LLNotice);
         end;
       except
         on E: Exception do
-          Logdatei.log('Exception in WinIsUefi: ' + E.ClassName + ': ' + E.Message, LLError);
+          Logdatei.log('Exception in WinIsUefi: ' + E.ClassName +
+            ': ' + E.Message, LLError);
       end;
     end
     else
     begin
       { release >= 2004 : winapi call changed - so we try to find it by bcdedit output }
       outlines := TXStringlist.Create;
-      RunCommandAndCaptureOut('cmd.exe /c bcdedit.exe /enum firmware', True,
-        outlines, outstr, SW_HIDE,exitcode);
-      //Logdatei.log('WinIsUefi bcdedit output: ' + outlines.Text, LLNotice);
+      {$IFDEF WIN32}
+      if is64BitWin then
+      begin
+        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+        begin
+          LogDatei.log('DisableWow64FsRedirection succeeded',
+            LLdebug2);
+
+          RunCommandAndCaptureOut(
+            'c:\windows\system32\bcdedit.exe /enum firmware', True,
+            outlines, outstr, SW_HIDE, exitcode);
+
+          boolresult := DSiRevertWow64FsRedirection(
+            oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded',
+            LLdebug2);
+        end
+        else
+        begin
+          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+        end;
+      end
+      else
+        RunCommandAndCaptureOut(
+          'c:\windows\system32\bcdedit.exe /enum firmware', True,
+          outlines, outstr, SW_HIDE, exitcode);
+      {$ENDIF WIN32}
+      {$IFDEF WIN64}
+      RunCommandAndCaptureOut(
+        'c:\windows\system32\bcdedit.exe /enum firmware', True,
+        outlines, outstr, SW_HIDE, exitcode);
+      {$ENDIF WIN64}
+
+      Logdatei.log('WinIsUefi bcdedit output: ' , LLDebug2);
+      Logdatei.log_list(outlines, LLDebug2);
       stringResult := '';
       i := 0;
       while (stringResult = '') and (i < outlines.Count) do
@@ -489,7 +538,7 @@ var
 begin
   Result := False;
   try
-    if Is64BitSystem then
+    if is64BitWin then
     begin
       myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
       LogDatei.log_prog('Registry started without redirection (64 Bit)', LLdebug3);

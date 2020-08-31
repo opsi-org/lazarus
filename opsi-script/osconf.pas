@@ -266,8 +266,8 @@ begin
     depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
-    //depotdrive := '/Network/opsi_depot';
-    depotdrive := '/Volumes/opsi_depot';
+    depotdrive := '/Network/opsi_depot';
+    //depotdrive := '/Volumes/opsi_depot';
 (*
     RunCommand('sw_vers -productVersion', outstr);
     if trim(outstr) > '10.14' then
@@ -388,7 +388,8 @@ begin
                             osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
                             if not TryStrToBool(tmpstr, debug_lib) then
                               osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  debug_lib: ' + tmpstr);
+                                'Error: Not a Boolean:  debug_lib: ' + tmpstr
+                                + ' ('+DateTimeToStr(Now)+')');
                             Result := 'readConfigFromService: ok';
                           end;
                       end;

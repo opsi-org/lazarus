@@ -1459,16 +1459,17 @@ end;
 
 {$ENDIF WINDOWS}
 
-{$IFDEF WIN32} //ToDo: Ask Detlef why this works not for winst64 e.g.IFDEF WINDOWS
-function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
+{$IFDEF WIN32}//ToDo: Ask Detlef why this works not for winst64 e.g.IFDEF WINDOWS
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
 
 const
   CHANGED_SECURITY_INFO = jwawinnt.DACL_SECURITY_INFORMATION;
   EA_COUNT = 1;
 
-// workaround for a FPC bug, see:
-// https://stackoverflow.com/a/59172446/12403540
-// https://bugs.freepascal.org/view.php?id=36368
+  // workaround for a FPC bug, see:
+  // https://stackoverflow.com/a/59172446/12403540
+  // https://bugs.freepascal.org/view.php?id=36368
 type
   TRUSTEE_FIX = packed record
     pMultipleTrustee: Pointer;
@@ -1493,7 +1494,7 @@ var
   refDomainSize: DWORD;
   dolocalfree: boolean;
   procToken: HANDLE;
-  ea: Array[0..(EA_COUNT-1)] of EXPLICIT_ACCESS_FIX;
+  ea: array[0..(EA_COUNT - 1)] of EXPLICIT_ACCESS_FIX;
   acl: jwawinnt.PACL;
   status: jwawintype.DWORD;
 
@@ -1503,7 +1504,7 @@ var
     tp: jwawinnt.TOKEN_PRIVILEGES;
   begin
     if not jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
-      Result := false
+      Result := False
     else
     begin
       FillChar(tp, sizeOf(tp), #0);
@@ -1514,20 +1515,21 @@ var
       else
         tp.Privileges[0].Attributes := SE_PRIVILEGE_REMOVED;
 
-        Result := AdjustTokenPrivileges(token, LongBool(false), @tp, sizeOf(tp), nil,nil);
-    end
+      Result := AdjustTokenPrivileges(token, longbool(False), @tp,
+        sizeOf(tp), nil, nil);
+    end;
   end;
 
 begin
   if runas = traInvoker then
-    Result := true
+    Result := True
   else
     try
       begin
         status := NO_ERROR;
         sidSize := 0;
         refDomainSize := 0;
-        doLocalFree := false;
+        doLocalFree := False;
 
         procToken := INVALID_HANDLE_VALUE;
 
@@ -1539,7 +1541,7 @@ begin
         begin
           // use usercontextSID variable to determine SID of logged on user
           Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
-          dolocalfree := true;
+          dolocalfree := True;
         end
         else if runas = traPcpatch then
         begin
@@ -1555,8 +1557,9 @@ begin
           }
 
           // just generate an error, as it is currently unused anyways
-          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
-          Result := false;
+          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported',
+            LLError);
+          Result := False;
         end
         else if runas in [traAdmin, traAdminProfile, traAdminProfileExplorer,
           traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
@@ -1566,16 +1569,17 @@ begin
 
           if Result then
           begin
-            jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil, sidSize, nil, refDomainSize, nameUse);
+            jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil,
+              sidSize, nil, refDomainSize, nameUse);
             GetMem(sid, sidSize);
             GetMem(refDomain, refDomainSize);
 
             Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
               sid, sidSize, refDomain, refDomainSize, nameUse);
-          end
+          end;
         end
         else
-          Result := false;
+          Result := False;
 
         // Create an ACL allowing the determined SID
         // Read and Execute Rights, then apply it to
@@ -1598,7 +1602,7 @@ begin
 
           if status <> ERROR_SUCCESS then
           begin
-            Result := false;
+            Result := False;
           end
           else
           begin
@@ -1610,17 +1614,19 @@ begin
               // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
               status := NO_ERROR;
 
-              if (not OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, procToken)) or
-                 (not SetPrivilege(procToken, SE_RESTORE_NAME, true)) then
-                Result := false
+              if (not OpenProcessToken(GetCurrentProcess(),
+                TOKEN_ADJUST_PRIVILEGES, procToken)) or (not
+                SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
+                Result := False
               else
               begin
                 status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
                   JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
                 Result := (status = ERROR_SUCCESS);
 
-                if not SetPrivilege(procToken, SE_RESTORE_NAME, false) then
-                  LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' + IntToStr(getLastError()), LLDebug);
+                if not SetPrivilege(procToken, SE_RESTORE_NAME, False) then
+                  LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' +
+                    IntToStr(getLastError()), LLDebug);
               end;
             end;
           end;
@@ -2591,6 +2597,7 @@ var
   //  var ProcessInfo: jwawinbase.TProcessInformation;
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
+
   (*
   starcounter : integer;
   cpu100stars : string;
@@ -2603,7 +2610,7 @@ var
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
   var
-    tmp_buffer: array[0..READ_BYTES-1] of char;//Buffer of 2048 char
+    tmp_buffer: array[0..READ_BYTES - 1] of char;//Buffer of 2048 char
     output_line: string = '';
     LineBreakPos: longint;
     BytesRead: longint;
@@ -2698,8 +2705,8 @@ begin
   stringsplitByWhiteSpace(trim(ParamStr), TStringList(paramlist));
   logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
   logdatei.log_prog('ParamStr: ' + ParamStr, LLinfo);
-  logdatei.log_prog('Filename from command: ' + filename + '=' + ExpandFileName(
-    filename), LLInfo);
+  logdatei.log_prog('Filename from command: ' + filename + '=' +
+    ExpandFileName(filename), LLInfo);
   logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
@@ -2999,8 +3006,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3118,7 +3125,7 @@ function ReadPipe(var Buffer: string; var hReadPipe: THandle;
   var BytesRead: longword; var output: TXStringList; showoutput: boolean): boolean;
 var
   output_line: string = '';
-  lpBuffer: array[0..READ_BYTES-1] of char;//array of 2048 char
+  lpBuffer: array[0..READ_BYTES - 1] of char;//array of 2048 char
   LineBreakPos: longword;
   BytesAvail: longword;
   BytesLeft: longword;
@@ -3504,8 +3511,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3755,7 +3762,7 @@ begin
       begin
         SetProcessAffinityMask(ProcessInfo.hProcess, 1);
         Result := True;
-        logdatei.log('Started process "' +CmdLinePasStr, LLInfo);
+        logdatei.log('Started process "' + CmdLinePasStr, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
@@ -3951,8 +3958,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -5481,8 +5488,9 @@ begin
   path := ExtractFilePath(FName);
   basename := ExtractFileNameOnly(FName);
   extension := ExtractFileExt(FName);
-  if FileExists(FName) then
-  begin
+  //if FileExists(FName) then
+  //begin
+    (*
     // this is old style (name.ext.num) and is here only for clean up old logs
     for bakcounter := maxbaks - 1 downto 0 do
     begin
@@ -5495,22 +5503,32 @@ begin
         DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
       end;
     end;
-    // this is new style (name_num.ext)
-    for bakcounter := maxbaks - 1 downto 0 do
+    *)
+  // this is new style (name_num.ext)
+  for bakcounter := maxbaks - 1 downto 0 do
+  begin
+    newfilename := path + PathDelim + basename + '_' +
+      IntToStr(bakcounter) + extension;
+    if FileExists(newfilename) then
     begin
-      newfilename := path + PathDelim + basename + '_' +
-        IntToStr(bakcounter) + extension;
-      if FileExists(newfilename) then
-      begin
-        newbakname := path + PathDelim + basename + '_' +
-          IntToStr(bakcounter + 1) + extension;
-        FileCopy(newfilename, newbakname, problem, False, rebootWanted);
-      end;
+      newbakname := path + PathDelim + basename + '_' +
+        IntToStr(bakcounter + 1) + extension;
+      if FileExists(newbakname) then
+        DeleteFileUTF8(newbakname);
+      RenameFileUTF8(newfilename, newbakname);
+      //FileCopy(newfilename, newbakname, problem, False, rebootWanted);
     end;
-    newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
-    FileCopy(FName, newfilename, problem, False, rebootWanted);
+  end;
+  newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
+  if FileExists(newfilename) then
+    DeleteFileUTF8(newfilename);
+  if FileExists(FName) then
+  begin
+    RenameFileUTF8(FName, newfilename);
+    //FileCopy(FName, newfilename, problem, False, rebootWanted);
     DeleteFileUTF8(FName);
   end;
+  //end;
 end;
 
 
