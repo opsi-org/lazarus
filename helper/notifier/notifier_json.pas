@@ -53,13 +53,18 @@ end;
 procedure buttonPushedToService(buttonindex: integer);
 var
   myJsonCall: string;
+  msgseparator1 : string;
+  msgseparator2 : string;
 begin
-  // pass JSON answer to notifier_base unit. Will be there handled by messageFromMainThread
-  // create answer string 1
+  { separate the answer stings in rpc call }
+  msgseparator1 := #13#10;  // CRLN
+  msgseparator2 := #30;  // 30 = 001E = record separator
+  { pass JSON answer to notifier_base unit. Will be there handled by messageFromMainThread  }
+  { create answer string 1 }
   myJsonCall := '{"params": ["choice", [' + IntToStr(buttonindex) +
-    ']], "id": null, ' + '"method": "setSelectedIndexes"}' + #13#10 +
-    '{"params": ["choice"], "id": null, "method": "selectChoice"}';
-  // push answer string in tcp write buffer
+    ']], "id": null, ' + '"method": "setSelectedIndexes"}' + msgseparator1 +
+    '{"params": ["choice"], "id": null, "method": "selectChoice"}'+msgseparator1;
+  { push answer string in tcp write buffer }
   notifier_base.myJsonAnswer := myJsonCall;
   logdatei.log('JSON for Button call1: ' + myJsonCall, LLDebug2);
   logdatei.log('JSON for Button clicked: choice: ' + IntToStr(buttonindex), LLInfo);
@@ -143,13 +148,14 @@ begin
       // method  endConnection
       // hideNForm
       logdatei.log('Got method endConnection for: ' + nkind, LLDebug);
-      if (lowerCase(nkind) = lowerCase(mynotifierkind)) or
-        ((mynotifierkind = 'event') and (nkind = '')) then
+      if (lowerCase(nkind) = lowerCase(mynotifierkind))
+        or ((mynotifierkind = 'event') and (nkind = ''))
+        or ((mynotifierkind = 'shutdown') and (nkind = ''))then
       begin
         // got end call for this notifier kind : hide form
-        mythread.Terminate;
-        hideNForm;
-        //shutdownNotifier;
+        //mythread.Terminate;
+        //hideNForm;
+        shutdownNotifier;
       end;
     end
     else  // other methods

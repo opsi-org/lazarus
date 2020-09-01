@@ -7,7 +7,7 @@ interface
 uses
   LCLIntf, LCLType, {LMessages, Messages,} SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, Buttons, DBCtrls, ExtCtrls, runprocess;
+  StdCtrls, Buttons, DBCtrls, ExtCtrls, linhandlewin;
 
 type
 
@@ -19,6 +19,9 @@ type
     BitBtn1: TBitBtn;
     Timer1: TTimer;
     Timer2: TTimer;
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormMouseEnter(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -28,6 +31,7 @@ type
     //procedure CustomExceptionHandler(Sender: TObject; E: Exception);
   private
     { Private-Deklarationen}
+    timeout : boolean;
   public
     { Public-Deklarationen}
   end;
@@ -52,13 +56,42 @@ end;
 
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
-  if not setwindowtoalldesktops('uibtime') then
-    datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
+  FNachfrage.Caption:= 'uibtime - Notice';
+  timeout := false;
+  if linuxusewmctrl then
+    if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
+      datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
 end;
 
 procedure TFNachfrage.FormMouseEnter(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'FNachf', 'Mouse Enter');
+end;
+
+procedure TFNachfrage.FormCreate(Sender: TObject);
+begin
+  DataModule1.SetFontName(TControl(sender),myFont);
+  (*
+  TForm(sender).Font.Name:=myFont;
+  TForm(sender).ch
+  Label1.Font.Name:=myFont;
+  DBText1.Font.Name:=myFont;
+  BitBtn1.Font.Name:=myFont;;
+  *)
+end;
+
+procedure TFNachfrage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  if not timeout then
+  begin
+    modalresult := mrOK;
+    DataModule1.TimerOnTop.Enabled:=ontoptimer;
+  end;
+end;
+
+procedure TFNachfrage.BitBtn1Click(Sender: TObject);
+begin
+
 end;
 
 procedure TFNachfrage.FormPaint(Sender: TObject);
@@ -70,6 +103,7 @@ procedure TFNachfrage.Timer2Timer(Sender: TObject);
 begin
   timer2.Enabled := False;
   // Fontop.timer2timer(Sender);
+  timeout := true;
   modalresult := mrAbort;
 end;
 

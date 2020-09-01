@@ -1,0 +1,102 @@
+# Translators:
+# Niko Wenselowski, 2019
+# Lars Juul <lju@eucl.dk>, 2019
+# Soren Birk <soer9648@eucl.dk>, 2020
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Soren Birk <soer9648@eucl.dk>, 2020\n"
+"Language-Team: Danish (https://www.transifex.com/opsi-org/teams/35141/da/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: imagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr "Kopiér ikoner og skærmbilleder..."
+
+#: imagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr "Kunne ikke gemme ikoner på depot."
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr "Kunne ikke gemme skærmbilleder på depot."
+
+#: imagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr "Kunne ikke afmontere depot."
+
+#: imagestodepot.rsdone
+msgid "done"
+msgstr "udført"
+
+#: imagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr "Kopieringsproces udført. Lukker vindue..."
+
+#: imagestodepot.rsimagesnotsaved
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr ""
+"Billeder kunne ikke gemmes på opsi-depot. %sKontrollér venligst om depot er "
+"monteret med skriverettigheder."
+
+#: imagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr "Billeder gemt på"
+
+#: imagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr "\"%s\" er en ugyldig mappe.%sAngiv venligst \"%s\" som en gyldig mappe."
+
+#: imagestodepot.rsmounting
+msgid "Mounting"
+msgstr "Monterer"
+
+#: imagestodepot.rssettingrights
+msgctxt "imagestodepot.rssettingrights"
+msgid "Setting rights..."
+msgstr "Sætter rettigheder..."
+
+#: tformsaveimagesondepot.buttonclose.caption
+msgid "Close"
+msgstr "Luk"
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr "Gem billeder på depot"
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr "Gem billeder på depot"
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Montér depot"
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Montér depot"
+
+#: tformsaveimagesondepot.groupboxpath.caption
+msgctxt "tformsaveimagesondepot.groupboxpath.caption"
+msgid "Path to depot"
+msgstr "Sti til depot"
+
+#: tformsaveimagesondepot.groupboxprogress.caption
+msgid "Progress"
+msgstr "Fremskridt"
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgid "Password"
+msgstr "Kodeord"
+
+#: tformsaveimagesondepot.labeluser.caption
+msgid "User"
+msgstr "Bruger"

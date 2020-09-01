@@ -1,12 +1,12 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2770
-  Height = 640
-  Top = 151
+  Left = 2363
+  Height = 691
+  Top = 180
   Width = 620
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 640
+  ClientHeight = 691
   ClientWidth = 620
   DefaultMonitor = dmDesktop
   OnActivate = FormActivate
@@ -14,7 +14,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   OnDestroy = FormDestroy
   OnResize = FormResize
   Position = poScreenCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.10.0'
   object PanelToolbar: TPanel
     Left = 0
     Height = 45
@@ -270,7 +270,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 617
+    Top = 668
     Width = 620
     Panels = <    
       item
@@ -1319,7 +1319,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 5
       Height = 38
       Top = 1
-      Width = 91
+      Width = 90
       Align = alLeft
       AutoFill = True
       AutoSize = True
@@ -1335,7 +1335,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
       ClientHeight = 18
-      ClientWidth = 87
+      ClientWidth = 86
       Columns = 2
       ItemIndex = 0
       Items.Strings = (
@@ -1365,12 +1365,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelProducts: TPanel
     Left = 0
-    Height = 434
+    Height = 485
     Top = 183
     Width = 620
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 434
+    ClientHeight = 485
     ClientWidth = 620
     Color = clForm
     ParentColor = False
@@ -1378,7 +1378,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     object PanelProductDetail: TPanel
       Left = 0
       Height = 172
-      Top = 262
+      Top = 313
       Width = 620
       Align = alBottom
       BevelOuter = bvNone
@@ -1581,10 +1581,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object NotebookProducts: TNotebook
       Left = 0
-      Height = 262
+      Height = 313
       Top = 0
       Width = 620
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1670,8 +1670,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 620
+          ClientHeight = 33
+          ClientWidth = 616
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1696,14 +1696,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         end
         object ScrollBoxSoftwarePage: TScrollBox
           Left = 0
-          Height = 225
+          Height = 276
           Top = 37
           Width = 620
           HorzScrollBar.Page = 579
-          VertScrollBar.Page = 225
+          VertScrollBar.Page = 276
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 225
+          ClientHeight = 276
           ClientWidth = 603
           TabOrder = 1
           object ImageIconSoftware: TImage
@@ -1761,11 +1761,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             ParentFont = False
           end
           object LabelSoftwareAdvice: TLabel
-            AnchorSideTop.Control = DBTextDescription
             AnchorSideTop.Side = asrBottom
             Left = 15
             Height = 21
-            Top = 388
+            Top = 438
             Width = 52
             BorderSpacing.Top = 15
             Caption = 'Advice'
@@ -1892,40 +1891,31 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             ParentColor = False
             ParentFont = False
           end
-          object DBTextDescription: TDBText
-            AnchorSideTop.Control = LabelSoftwareDescription
-            AnchorSideTop.Side = asrBottom
-            Left = 15
-            Height = 17
-            Top = 356
-            Width = 592
+          object DBMemoProductDescription: TDBMemo
+            Left = 16
+            Height = 75
+            Top = 355
+            Width = 575
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Left = 5
-            BorderSpacing.Right = 5
+            Color = clForm
             DataField = 'Description'
             DataSource = DataSourceProductData
-            Font.Height = -13
-            ParentColor = False
-            ParentFont = False
-            WordWrap = True
+            ReadOnly = True
+            ScrollBars = ssAutoVertical
+            TabOrder = 5
           end
-          object DBTextAdvice: TDBText
-            AnchorSideTop.Control = LabelSoftwareAdvice
-            AnchorSideTop.Side = asrBottom
-            Left = 15
-            Height = 17
-            Top = 414
-            Width = 592
+          object DBMemoProductDescription1: TDBMemo
+            Left = 16
+            Height = 75
+            Top = 463
+            Width = 575
             Anchors = [akTop, akLeft, akRight]
-            BorderSpacing.Left = 5
-            BorderSpacing.Top = 5
-            BorderSpacing.Right = 5
+            Color = clForm
             DataField = 'Advice'
             DataSource = DataSourceProductData
-            Font.Height = -13
-            ParentColor = False
-            ParentFont = False
-            WordWrap = True
+            ReadOnly = True
+            ScrollBars = ssAutoVertical
+            TabOrder = 6
           end
         end
       end
@@ -2146,13 +2136,13 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object DataSourceProductData: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductData
-    left = 56
+    Left = 56
   end
   object DataSourceProductDependencies: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductDependencies
-    left = 224
+    Left = 224
   end
   object OpenPictureDialogSetIcon: TOpenPictureDialog
-    left = 624
+    Left = 624
   end
 end

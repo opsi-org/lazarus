@@ -31,9 +31,10 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stSFXcab,  stBoxStub, stAdvancedMSI, stInstallShield, stInstallShieldMSI,
+  TKnownInstaller = (stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
+    stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBitrock,stSelfExtractingInstaller,stInno,
+    stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
     stUnknown);
 
 
@@ -70,6 +71,7 @@ type
 
   TSetupFile = class(TPersistent)
   private
+    FID: integer; // 1 = first setup file, 2 = second setup file
     FsetupFileNamePath: string;
     FsetupFileName: string;
     FsetupFullFileName: string;
@@ -105,6 +107,7 @@ type
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
+    property ID: integer read FID write FID;
     property setupFileNamePath: string read FsetupFileNamePath;
     property setupFileName: string read FsetupFileName write FsetupFileName;
     property setupFullFileName: string read FsetupFullFileName
@@ -214,9 +217,9 @@ default: ["xenial_bionic"]
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
   protected
-      function GetDisplayName: String; override;
- // public
- //     procedure Assign(Source: TPersistent); override;
+    function GetDisplayName: string; override;
+    // public
+    //     procedure Assign(Source: TPersistent); override;
   published
     property ptype: TPPtype read Ftype write Ftype;
     property Name: string read Fname write Fname;
@@ -244,7 +247,7 @@ default: ["xenial_bionic"]
     constructor Create(AOwner: TPersistent);
   public
     function Add: TPProperty;
-    function Insert(Index: Integer): TPProperty;
+    function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
   end;
 
@@ -268,6 +271,7 @@ default: ["xenial_bionic"]
     Funinstallscript: string;
     Fdelsubscript: string;
     Flicenserequired: boolean;
+    FproductImageFullFileName: string;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -286,6 +290,8 @@ default: ["xenial_bionic"]
     property uninstallscript: string read Funinstallscript write Funinstallscript;
     property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
+    property productImageFullFileName: string
+      read FproductImageFullFileName write FproductImageFullFileName;
   public
     { public declarations }
     //constructor Create;
@@ -309,7 +315,8 @@ default: ["xenial_bionic"]
 
   TConfiguration = class(TPersistent)
   private
-    Fconfig_version: string;  // help to detect and handle changes of config file structure
+    Fconfig_version: string;
+    // help to detect and handle changes of config file structure
     //Fworkbench_share: string;
     Fworkbench_Path: string;
     //Fworkbench_mounted: boolean;
@@ -362,8 +369,10 @@ default: ["xenial_bionic"]
     //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
     //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
     //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
-    property UsePropDesktopicon: boolean read FUsePropDesktopicon write FUsePropDesktopicon;
-    property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool write FUsePropLicenseOrPool;
+    property UsePropDesktopicon: boolean read FUsePropDesktopicon
+      write FUsePropDesktopicon;
+    property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool
+      write FUsePropLicenseOrPool;
     //property Properties: TPProperties read FProperties  write SetProperties;
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     procedure writeconfig;
@@ -392,34 +401,41 @@ var
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
   myVersion: string;
-  lfilename : string;
+  lfilename: string;
 
 resourcestring
 
   // new for 4.1.0.2 ******************************************************************
   rsworkbench_Path = 'Path to the opsi_workbench';
   //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
-  rsworkbench_mounted = 'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
+  rsworkbench_mounted =
+    'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
   rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
-  rsregisterInFilemanager = 'Should this program be registred to the Filemanger (Explorer) context menu ?';
+  rsregisterInFilemanager =
+    'Should this program be registred to the Filemanger (Explorer) context menu ?';
   rsemail_address = 'Your email address, used for the changelog entry';
   rsfullName = 'Your full name, used for the changelog entry';
   rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
     LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'myinstallhelperlib.opsiscript';
-  rspreInstallLines = 'List of opsi-script code lines that should be included before the installation starts. '
-     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding
-     + 'comment "Start the installation ..."';
-  rspostInstallLines = 'List of opsi-script code lines that should be included after the installation finished.'
+  rspreInstallLines =
+    'List of opsi-script code lines that should be included before the installation starts. '
+    + LineEnding + 'One per line. May be empty. Example: ' +
+    LineEnding + 'comment "Start the installation ..."';
+  rspostInstallLines =
+    'List of opsi-script code lines that should be included after the installation finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Installation finished..."';
-  rspreUninstallLines = 'List of opsi-script code lines that should be included before the uninstallation starts.'
+  rspreUninstallLines =
+    'List of opsi-script code lines that should be included before the uninstallation starts.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Start the uninstallation ..."';
-  rspostUninstallLines = 'List of opsi-script code lines that should be included after the uninstallation finished.'
+  rspostUninstallLines =
+    'List of opsi-script code lines that should be included after the uninstallation finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
     'comment "Uninstall finished..."';
-  rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
+  rspathToOpsiPackageBuilder =
+    'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
     (*
@@ -432,7 +448,7 @@ resourcestring
 implementation
 
 var
-  FileVerInfo : TFileVersionInfo;
+  FileVerInfo: TFileVersionInfo;
 
 // TInstallerData ************************************
 
@@ -520,7 +536,7 @@ begin
   FsetupFileSize := 0;
   Farchitecture := aUnknown;
   FmsiId := '';
-  FmstAllowed := false;
+  FmstAllowed := False;
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
@@ -579,16 +595,16 @@ begin
   FStrDefault.Assign(AValue);
 end;
 
-function TPProperty.GetDisplayName: String;
+function TPProperty.GetDisplayName: string;
 begin
-  result := Fname;
+  Result := Fname;
 end;
 
 { TPProperties }
 
 constructor TPProperties.Create(AOwner: TPersistent);
 begin
-  inherited Create(AOwner,TPProperty);
+  inherited Create(AOwner, TPProperty);
 end;
 
 (*
@@ -604,19 +620,19 @@ end;
 *)
 
 
-function TPProperties.GetItem(Index: Integer): TPProperty;
+function TPProperties.GetItem(Index: integer): TPProperty;
 begin
   Result := TPProperty(inherited GetItem(Index));
 end;
 
 
 
-function TPProperties.Insert(Index: Integer): TPProperty;
+function TPProperties.Insert(Index: integer): TPProperty;
 begin
   Result := TPProperty(inherited Insert(Index));
 end;
 
-procedure TPProperties.SetItem(Index: Integer; AValue: TPProperty);
+procedure TPProperties.SetItem(Index: integer; AValue: TPProperty);
 begin
   inherited SetItem(Index, AValue);
 end;
@@ -670,7 +686,8 @@ begin
   Fconfig_filled := False;
   FProperties := TPProperties.Create(self);
   Fconfig_version := myVersion;
-  FReadme_txt_templ := ExtractFileDir(ParamStr(0))+PathDelim+'template-files'+PathDelim+'package_qa.txt';
+  FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
+    'template-files' + PathDelim + 'package_qa.txt';
   //readconfig;
 end;
 
@@ -754,65 +771,65 @@ var
 
 begin
   try
-  if Assigned(logdatei) then
-    logdatei.log('Start writeconfig', LLDebug);
-  configDir := '';
+    if Assigned(logdatei) then
+      logdatei.log('Start writeconfig', LLDebug);
+    configDir := '';
   {$IFDEF Windows}
-  SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
-  configDirUtf8 := WinCPToUTF8(configDir);
+    SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
+    configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+    configDirUtf8 := WinCPToUTF8(configDir);
   {$ELSE}
-  configDir := GetAppConfigDir(False);
-  configDirUtf8 := configDir;
+    configDir := GetAppConfigDir(False);
+    configDirUtf8 := configDir;
   {$ENDIF WINDOWS}
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
-    'opsi.org', [rfReplaceAll]);
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
-    'opsi.org', [rfReplaceAll]);
-  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
-  myfilename := ExpandFileName(myfilename);
-  if Assigned(logdatei) then
-  logdatei.log('writeconfig to: '+myfilename, LLDebug);
-  if not DirectoryExists(configDirUtf8) then
-    if not ForceDirectories(configDirUtf8) then
-      if Assigned(logdatei) then
-      LogDatei.log('failed to create configuration directory: ' +
-        configDirUtf8, LLError);
+    configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+      'opsi.org', [rfReplaceAll]);
+    configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+      'opsi.org', [rfReplaceAll]);
+    myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('writeconfig to: ' + myfilename, LLDebug);
+    if not DirectoryExists(configDirUtf8) then
+      if not ForceDirectories(configDirUtf8) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed to create configuration directory: ' +
+            configDirUtf8, LLError);
 
-  if (Femail_address = 'missing') or (FFullName = 'missing') or
-    (Fworkbench_Path = 'missing') then
-    //or (FPathToOpsiPackageBuilder = 'missing') then
-    Fconfig_filled := False
-  else
-    Fconfig_filled := True;
-  // http://wiki.freepascal.org/Streaming_JSON
-  Streamer := TJSONStreamer.Create(nil);
-  try
-    Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
-    // Save strings as JSON array
-    // JSON convert and output
-    JSONString := Streamer.ObjectToJSONString(myconfiguration);
-    logdatei.log('Config: '+JSONString, LLDebug);
-    if not SaveStringToFile(JSONString, myfilename) then
-      if Assigned(logdatei) then
-      LogDatei.log('failed save configuration', LLError);
-    //AssignFile(myfile, myfilename);
-    //Rewrite(myfile);
-    //Write(myfile, JSONString);
+    if (Femail_address = 'missing') or (FFullName = 'missing') or
+      (Fworkbench_Path = 'missing') then
+      //or (FPathToOpsiPackageBuilder = 'missing') then
+      Fconfig_filled := False
+    else
+      Fconfig_filled := True;
+    // http://wiki.freepascal.org/Streaming_JSON
+    Streamer := TJSONStreamer.Create(nil);
+    try
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      // Save strings as JSON array
+      // JSON convert and output
+      JSONString := Streamer.ObjectToJSONString(myconfiguration);
+      logdatei.log('Config: ' + JSONString, LLDebug);
+      if not SaveStringToFile(JSONString, myfilename) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed save configuration', LLError);
+      //AssignFile(myfile, myfilename);
+      //Rewrite(myfile);
+      //Write(myfile, JSONString);
       {$IFDEF WINDOWS}
-    registerForWinExplorer(FregisterInFilemanager);
+      registerForWinExplorer(FregisterInFilemanager);
   {$ELSE}
   {$ENDIF WINDOWS}
-  finally
-    //CloseFile(myfile);
-    Streamer.Destroy;
-  end;
-  if Assigned(logdatei) then
-    logdatei.log('Finished writeconfig', LLDebug2);
+    finally
+      //CloseFile(myfile);
+      Streamer.Destroy;
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished writeconfig', LLDebug2);
 
   except
-     on E: Exception do
-       if Assigned(logdatei) then
+    on E: Exception do
+      if Assigned(logdatei) then
         LogDatei.log('Configuration could not be written. Details: ' +
           E.ClassName + ': ' + E.Message, LLError);
   end;
@@ -855,87 +872,87 @@ var
     except
       on E: Exception do
         if Assigned(logdatei) then
-        LogDatei.log('String could not be read. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError)
+          LogDatei.log('String could not be read. Details: ' +
+            E.ClassName + ': ' + E.Message, LLError)
         else
           ShowMessage('readconfig: String could not be read. Details: ' +
-          E.ClassName + ': ' + E.Message);
+            E.ClassName + ': ' + E.Message);
     end;
   end;
 
 begin
   try
-  if Assigned(logdatei) then
-    logdatei.log('Start readconfig', LLDebug);
-  configDir := '';
-  {$IFDEF Windows}
-  SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
-  configDirUtf8 := WinCPToUTF8(configDir);
-  {$ELSE}
-  configDir := GetAppConfigDir(False);
-  configDirUtf8 := configDir;
-  {$ENDIF WINDOWS}
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
-    'opsi.org', [rfReplaceAll]);
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
-    'opsi.org', [rfReplaceAll]);
-  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
-  myfilename := ExpandFileName(myfilename);
-  if Assigned(logdatei) then
-  logdatei.log('readconfig from: '+myfilename, LLDebug);
-  if FileExists(myfilename) then
-  begin
-    AssignFile(myfile, myfilename);
-    Reset(myfile);
-    readln(myfile, JSONString);
-    //// http://wiki.freepascal.org/Streaming_JSON
-    // DeStreamer object create
-    DeStreamer := TJSONDeStreamer.Create(nil);
-    try
-      // Load JSON data in the object
-      DeStreamer.JSONToObject(JSONString, myconfiguration);
-      // Cleanup
-    finally
-      DeStreamer.Destroy;
-      CloseFile(myfile);
-    end;
     if Assigned(logdatei) then
-  logdatei.log('read config: '+JSONString, LLDebug)
-     else
-            ShowMessage('read config: '+JSONString);
+      logdatei.log('Start readconfig', LLDebug);
+    configDir := '';
+  {$IFDEF Windows}
+    SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
+    configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+    configDirUtf8 := WinCPToUTF8(configDir);
+  {$ELSE}
+    configDir := GetAppConfigDir(False);
+    configDirUtf8 := configDir;
+  {$ENDIF WINDOWS}
+    configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+      'opsi.org', [rfReplaceAll]);
+    configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+      'opsi.org', [rfReplaceAll]);
+    myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('readconfig from: ' + myfilename, LLDebug);
+    if FileExists(myfilename) then
+    begin
+      AssignFile(myfile, myfilename);
+      Reset(myfile);
+      readln(myfile, JSONString);
+      //// http://wiki.freepascal.org/Streaming_JSON
+      // DeStreamer object create
+      DeStreamer := TJSONDeStreamer.Create(nil);
+      try
+        // Load JSON data in the object
+        DeStreamer.JSONToObject(JSONString, myconfiguration);
+        // Cleanup
+      finally
+        DeStreamer.Destroy;
+        CloseFile(myfile);
+      end;
+      if Assigned(logdatei) then
+        logdatei.log('read config: ' + JSONString, LLDebug)
+      else
+        ShowMessage('read config: ' + JSONString);
     {$IFDEF WINDOWS}
-    registerForWinExplorer(FregisterInFilemanager);
+      registerForWinExplorer(FregisterInFilemanager);
     {$ELSE}
     {$ENDIF WINDOWS}
-  end
-  else
-  begin
-    tmpstr := '';
-    // check for old config
-    // get global ConfigDir
-    oldconfigDir := GetAppConfigDir(True);
-    oldconfigFileName := oldconfigDir + 'config.txt';
-    if FileExists(oldconfigFileName) then
+    end
+    else
     begin
-      AssignFile(fConfig, oldconfigFileName);
-      Reset(fConfig);
-      if not EOF(fConfig) then
-        ReadLn(fConfig, tmpstr);
-      CloseFile(fConfig);
+      tmpstr := '';
+      // check for old config
+      // get global ConfigDir
+      oldconfigDir := GetAppConfigDir(True);
+      oldconfigFileName := oldconfigDir + 'config.txt';
+      if FileExists(oldconfigFileName) then
+      begin
+        AssignFile(fConfig, oldconfigFileName);
+        Reset(fConfig);
+        if not EOF(fConfig) then
+          ReadLn(fConfig, tmpstr);
+        CloseFile(fConfig);
+      end;
     end;
-  end;
-  if Assigned(logdatei) then
-    logdatei.log('Finished readconfig', LLDebug2);
+    if Assigned(logdatei) then
+      logdatei.log('Finished readconfig', LLDebug2);
 
   except
-        on E: Exception do
-          if Assigned(logdatei) then
-          LogDatei.log('read config exception. Details: ' +
-            E.ClassName + ': ' + E.Message, LLError)
-          else
-            ShowMessage('read config exception. Details: ' +
-            E.ClassName + ': ' + E.Message);
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('read config exception. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError)
+      else
+        ShowMessage('read config exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
   end;
 end;
 
@@ -1015,11 +1032,13 @@ var
   //newdep: TPDependency;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
+  i := 0;
   for i := 0 to 1 do
   begin
     if not Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i] := TSetupFile.Create;
     aktProduct.SetupFiles[i].initValues;
+    aktProduct.SetupFiles[i].ID := i + 1;
   end;
   if not Assigned(aktProduct.productdata) then
     aktProduct.productdata := TProductData.Create;
@@ -1039,6 +1058,10 @@ begin
     uninstallscript := 'uninstall.opsiscript';
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
+    // Application.Params[0] is directory of application as string
+    productImageFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' + PathDelim +
+      'template.png';
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
@@ -1284,13 +1307,15 @@ begin
     silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
     //infopatterns.Add('RunProgram="');
-    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    link :=
+      'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
@@ -1302,14 +1327,16 @@ begin
     silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('WixBundle');
     patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
-    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    link :=
+      'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
@@ -1321,14 +1348,16 @@ begin
     silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('boxstub.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
-    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    link :=
+      'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
@@ -1340,14 +1369,16 @@ begin
     silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall :=
+      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
     patterns.Add('sfxcab.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
-    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    link :=
+      'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
@@ -1366,7 +1397,8 @@ begin
     patterns.Add('<description>BitRock Installer</description>');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
-    link := 'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
+    link :=
+      'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
@@ -1414,7 +1446,7 @@ begin
     FileVerInfo.Free;
   end;
 
-   // Initialize logging
+  // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileName(Application.ExeName);
   lfilename := ExtractFileNameOnly(lfilename);

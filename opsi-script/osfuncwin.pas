@@ -23,7 +23,7 @@ uses
   DSiWin32,
 {$ENDIF WIN64}
 {$IFDEF GUI}
-  graphics,
+  Graphics,
 {$ENDIF GUI}
   registry,
   //JwaWinnt,
@@ -32,7 +32,10 @@ uses
   //JwaUserEnv,
   winsock,
   oslog,
-  LAZUTF8;
+  LAZUTF8,
+  osregistry,
+  osfuncwin3,
+  strutils;
 
 (*
 type
@@ -48,32 +51,36 @@ function RunCommandAndCaptureOut
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint; showoutput:boolean): boolean;   overload;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean): boolean; overload;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput:boolean; logleveloffset : integer): boolean;   overload;
+  showoutput: boolean; logleveloffset: integer): boolean; overload;
 
 
-function getMyHostEnt(var myHostEnt : THostEnt) :boolean;
+function getMyHostEnt(var myHostEnt: THostEnt): boolean;
 
 function WinIsUefi: boolean;
 function WinIsPE: boolean;
 
-function IsDriveReady(Drive: string): Boolean;
-function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
+function IsDriveReady(Drive: string): boolean;
+function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
+function getW10Release: string;
 
 
 
 implementation
+
 uses
   {$IFDEF GUI}
   osbatchgui,
   osinteractivegui,
   osshowsysinfo,
   {$ENDIF GUI}
-    osmain;
+  osmain;
+
 (*
 const
   ReadBufferSize = 2048;
@@ -98,20 +105,23 @@ function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, false);
-end;
-
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean;
-begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, showoutput,0);
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, False);
 end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput:boolean; logleveloffset : integer): boolean;
+  showoutput: boolean): boolean;
+begin
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, showoutput, 0);
+end;
+
+function RunCommandAndCaptureOut
+  (cmd: string; catchOut: boolean; var outlines: TXStringList;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean; logleveloffset: integer): boolean;
 
 const
   ReadBufferSize = 2048;
@@ -139,7 +149,6 @@ var
   functionresult: longbool;
   splittingOffLines: boolean = False;
   lpExitCode: DWORD = 0;
-
 
 begin
   Result := True;
@@ -190,24 +199,25 @@ begin
   {$IFDEF GUI}
   if showoutput then
   begin
-    FBatchOberflaeche.Left:= 5;
-    FBatchOberflaeche.Top:= 5;
+    FBatchOberflaeche.Left := 5;
+    FBatchOberflaeche.Top := 5;
     CreateSystemInfo;
-    SystemInfo.Memo1.Color:= clBlack;
+    SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
-    SystemInfo.Memo1.Lines.clear;
-    systeminfo.BitBtn1.Enabled:= false;
-    systeminfo.Label1.Caption:='Executing: '+cmd;
+    SystemInfo.Memo1.Lines.Clear;
+    systeminfo.BitBtn1.Enabled := False;
+    systeminfo.Label1.Caption := 'Executing: ' + cmd;
     systeminfo.ShowOnTop;
     ProcessMess;
-    LogDatei.log('Start Showoutput', LLInfo+logleveloffset);
+    LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
   end;
   {$ENDIF GUI}
 
   while (True) do
   begin
     lpBuffer := '';
-    while PeekNamedPipe(hReadPipe, @lpBuffer, BytesToRead, @BytesRead,@BytesAvail,@BytesLeft) and (BytesAvail = 0) do
+    while PeekNamedPipe(hReadPipe, @lpBuffer, BytesToRead, @BytesRead,
+        @BytesAvail, @BytesLeft) and (BytesAvail = 0) do
     begin
       Processmess;
       Sleep(100);
@@ -226,7 +236,7 @@ begin
 
     // exit from loop
 
-    OemToAnsi(lpBuffer, lpBuffer);
+    OemToAnsiBuff(lpBuffer, lpBuffer, BytesRead);
     Buffer := Buffer + lpBuffer;
     BufPos := AnsiPos(#13, Buffer);
 
@@ -328,30 +338,31 @@ begin
   //WaitForSingleObject(pi.hProcess, INFINITE);
   GetExitCodeProcess(pi.hProcess, lpExitCode);
   exitCode := longint(lpExitCode);
-  LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
+  LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo + logleveloffset);
   CloseHandle(pi.hProcess);
   CloseHandle(hReadPipe);
   {$IFDEF GUI}
   if showoutput then
   begin
-    SystemInfo.free; SystemInfo := nil;
+    SystemInfo.Free;
+    SystemInfo := nil;
     FBatchOberflaeche.BringToFront;
     FBatchOberflaeche.centerWindow;
     ProcessMess;
-    LogDatei.log('Stop Showoutput', LLInfo+logleveloffset);
+    LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
   end;
   {$ENDIF GUI}
 end;
 
 
-function getMyHostEnt(var myHostEnt : THostEnt) :boolean;
+function getMyHostEnt(var myHostEnt: THostEnt): boolean;
 var
   buffer: PChar;
   len: integer = 0;
   errorcode: integer = 0;
   WSAData: TWSAData;
 begin
-  result := false;
+  Result := False;
   try
     try
       (* was a try - did not work (do 31.7.2017)
@@ -368,16 +379,20 @@ begin
         if errorcode = 0 then
         begin
           myHostEnt := gethostbyname(buffer)^;
-          result := true;
+          Result := True;
         end
         else
         begin
           case WSAGetLastError of
-            WSANOTINITIALISED:Logdatei.log_prog('gethostname error WSANotInitialised', LLError);
-            WSAENETDOWN      :Logdatei.log_prog('gethostname error WSAENetDown', LLError);
-            WSAEINPROGRESS   : Logdatei.log_prog('gethostname error WSAEInProgress', LLError);
-            else Logdatei.log_prog('unknown gethostname error ', LLError);
-           end;
+            WSANOTINITIALISED: Logdatei.log_prog(
+                'gethostname error WSANotInitialised', LLError);
+            WSAENETDOWN: Logdatei.log_prog(
+                'gethostname error WSAENetDown', LLError);
+            WSAEINPROGRESS: Logdatei.log_prog(
+                'gethostname error WSAEInProgress', LLError);
+            else
+              Logdatei.log_prog('unknown gethostname error ', LLError);
+          end;
         end;
       end;
     finally
@@ -390,23 +405,130 @@ begin
   end;
 end;
 
-function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR; pBuffer: Pointer;
-  nSize: DWORD): DWORD; stdcall; external kernel32 name 'GetFirmwareEnvironmentVariableA';
+function is64BitWin: boolean;
+begin
+  {$IFDEF WIN32}
+  Result := DSiIsWow64;
+  {$ENDIF WIN32}
+  {$IFDEF WIN64}
+  Result := True;
+  {$ENDIF WIN64}
+end;
+
+function getW10Release: string;
+begin
+  if GetNTVersionMajor >= 10 then
+    if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+      'ReleaseID', True) then
+      Result := GetRegistrystringvalue(
+        'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True)
+    else
+      Result := '1507'
+  else
+    Result := '';
+end;
+
+function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
+  pBuffer: Pointer; nSize: DWORD): DWORD; stdcall;
+  external kernel32 Name 'GetFirmwareEnvironmentVariableA';
 
 function WinIsUefi: boolean;
+var
+  lastError: DWORD;
+  tmpstr, outstr, stringResult: string;
+  releaseint, i: integer;
+  outlines: TXStringlist;
+  exitcode: longint;
+  oldDisableWow64FsRedirectionStatus: pointer = nil;
+  Wow64FsRedirectionDisabled, boolresult: boolean;
+  { http://theroadtodelphi.wordpress.com/2013/02/19/how-distinguish-when-windows-was-installed-in-legacy-bios-or-uefi-mode-using-delphi/ }
 begin
-  Result := false;
-  try
-    GetFirmwareEnvironmentVariableA('','{00000000-0000-0000-0000-000000000000}', nil,0);
-    if (GetLastError = ERROR_INVALID_FUNCTION) then
-      //Writeln('Legacy BIOS')
-      Result := false
+  Result := False;
+  tmpstr := getW10Release;
+  if TryStrToInt(tmpstr, releaseint) then
+  begin
+    Logdatei.log('WinIsUefi releaseint: ' + IntToStr(releaseint), LLNotice);
+    if releaseint < 2004 then
+    begin
+      try
+        GetFirmwareEnvironmentVariableA('',
+          '{00000000-0000-0000-0000-000000000000}', nil, 0);
+        lastError := GetLastError;
+        if (lastError = ERROR_INVALID_FUNCTION) then
+        begin
+          //Writeln('Legacy BIOS')
+          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS',
+            LLNotice);
+          Result := False;
+        end
+        else
+        begin
+          //Writeln('UEFI Boot Mode');
+          Logdatei.log(
+            'WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode',
+            LLNotice);
+          Result := True;
+          Logdatei.log('WinIsUefi last Error: ' + SysErrorMessage(
+            lastError) + ' : ' + IntToStr(lastError), LLNotice);
+        end;
+      except
+        on E: Exception do
+          Logdatei.log('Exception in WinIsUefi: ' + E.ClassName +
+            ': ' + E.Message, LLError);
+      end;
+    end
     else
-      //Writeln('UEFI Boot Mode');
-      Result := true;
-  except
-    on E: Exception do
-      Logdatei.log('Exception in WinIsUefi: '+E.ClassName+ ': '+ E.Message,LLError);
+    begin
+      { release >= 2004 : winapi call changed - so we try to find it by bcdedit output }
+      outlines := TXStringlist.Create;
+      {$IFDEF WIN32}
+      if is64BitWin then
+      begin
+        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+        begin
+          LogDatei.log('DisableWow64FsRedirection succeeded',
+            LLdebug2);
+
+          RunCommandAndCaptureOut(GetWinSystemDirectory+
+            '\bcdedit.exe /enum firmware', True,
+            outlines, outstr, SW_HIDE, exitcode);
+
+          boolresult := DSiRevertWow64FsRedirection(
+            oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded',
+            LLdebug2);
+        end
+        else
+        begin
+          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+        end;
+      end
+      else
+        RunCommandAndCaptureOut(GetWinSystemDirectory+
+          '\bcdedit.exe /enum firmware', True,
+          outlines, outstr, SW_HIDE, exitcode);
+      {$ENDIF WIN32}
+      {$IFDEF WIN64}
+      RunCommandAndCaptureOut(GetWinSystemDirectory+
+        '\bcdedit.exe /enum firmware', True,
+        outlines, outstr, SW_HIDE, exitcode);
+      {$ENDIF WIN64}
+
+      Logdatei.log('WinIsUefi bcdedit output: ' , LLDebug2);
+      Logdatei.log_list(outlines, LLDebug2);
+      stringResult := '';
+      i := 0;
+      while (stringResult = '') and (i < outlines.Count) do
+      begin
+        if AnsiContainsText(outlines[i], '{fwbootmgr}') then
+          stringResult := outlines[i]
+        else
+          Inc(i);
+      end;
+      Logdatei.log('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
+      if AnsiContainsText(stringResult, '{fwbootmgr}') then
+        Result := True;
+    end;
   end;
 end;
 
@@ -414,9 +536,9 @@ function WinIsPE: boolean;
 var
   myreg: Tregistry;
 begin
-  Result := false;
+  Result := False;
   try
-    if Is64BitSystem then
+    if is64BitWin then
     begin
       myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
       LogDatei.log_prog('Registry started without redirection (64 Bit)', LLdebug3);
@@ -431,63 +553,65 @@ begin
       //'PE Indicator');
       // http://techgenix.com/howtodetectwhetheryouareinwindowspe/
       // https://groups.google.com/forum/#!topic/microsoft.public.win32.programmer.kernel/jam056kRtBA
-      Result := true;
+      Result := True;
     myreg.Free;
   except
     on E: Exception do
-      Logdatei.log('Exception in WinIsPE: '+E.ClassName+ ': '+ E.Message,LLError);
+      Logdatei.log('Exception in WinIsPE: ' + E.ClassName + ': ' + E.Message, LLError);
   end;
 end;
 
 
 //http://www.swissdelphicenter.ch/torry/showcode.php?id=109
 //http://stackoverflow.com/questions/738856/test-if-disk-has-write-access
-function IsDriveReady(Drive: string): Boolean;
+function IsDriveReady(Drive: string): boolean;
 var
-  OldWinapiErrorMode:      Cardinal;
+  OldWinapiErrorMode: cardinal;
   Dw1, Dw2: DWORD;
 begin
   OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-  if Length(Drive) = 1 then Drive := Drive + ':\';
-  if Length(Drive) = 2 then Drive := Drive + '\';
+  if Length(Drive) = 1 then
+    Drive := Drive + ':\';
+  if Length(Drive) = 2 then
+    Drive := Drive + '\';
   try
     try
       Result := GetVolumeInformation(PChar(Drive), nil, 0, nil, Dw1, Dw2, nil, 0);
     except
-      Result := false;
+      Result := False;
     end;
   finally
     SetErrorMode(OldWinapiErrorMode);
   end;
 end;
 
-function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
+function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
 type
-  Name = array[0..100] of Char;
+  Name = array[0..100] of char;
   PName = ^Name;
 var
   HEnt: pHostEnt;
   HName: PName;
   WSAData: TWSAData;
-  i: Integer;
+  i: integer;
 begin
   try
     Result := False;
-    if WSAStartup($0101, WSAData) <> 0 then begin
+    if WSAStartup($0101, WSAData) <> 0 then
+    begin
       WSAErr := 'Winsock is not responding.';
       Exit;
     end;
     IPaddr := '';
     New(HName);
     //if GetHostName(HName^, SizeOf(Name)) = 0 then
-    StrPCopy(HName^,Hostname);
+    StrPCopy(HName^, Hostname);
     begin
       HostName := StrPas(HName^);
       HEnt := GetHostByName(HName^);
       for i := 0 to HEnt^.h_length - 1 do
-       IPaddr :=
-        Concat(IPaddr,
-        IntToStr(Ord(HEnt^.h_addr_list^[i])) + '.');
+        IPaddr :=
+          Concat(IPaddr, IntToStr(Ord(HEnt^.h_addr_list^[i])) + '.');
       SetLength(IPaddr, Length(IPaddr) - 1);
       Result := True;
     end;
@@ -509,4 +633,3 @@ end;
 
 
 end.
-

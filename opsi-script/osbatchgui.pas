@@ -173,7 +173,7 @@ const
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = 'skin';
+  skindirectoryDefault = '../Resources/skin';
   skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
   {$ENDIF DARWIN}
 
@@ -287,7 +287,6 @@ begin
   //FBatchOberflaeche.DoubleBuffered:=True;
   //FBatchOberflaeche.ControlStyle := ControlStyle + [csOpaque] ;
   BorderIcons := [];
-  //Visible  := true;
   useCommandLabel := True;
   useDetailLabel := True;
   useActivityLabel := True;
@@ -299,8 +298,8 @@ begin
 
 
   Panel.DoubleBuffered := True;
-  //if not runSilent then
-  Visible := True;
+  { will be set in osmain accourding to cli parameters -> runSilent }
+  //Visible := True;
 
 
   setWindowState(bwmNormalWindow);
@@ -1045,10 +1044,12 @@ begin
   FormMoving := False;
 end;
 
+
 procedure TFBatchOberflaeche.FormResize(Sender: TObject);
 var
   i: integer;
 begin
+  {$IFNDEF DARWIN}
   i := (Width - panel.Width) div 2;
   Panel.Left := i;
   if Height > panel.Height + standardTopMargin then
@@ -1062,6 +1063,7 @@ begin
   ImageOpsiBackground.Top := Height - ImageOpsiBackground.Height;
 
   //LabelVersion.BringToFront
+  {$ENDIF DARWIN}
 end;
 
 //interface

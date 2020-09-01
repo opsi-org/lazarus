@@ -1,51 +1,52 @@
 object FNachfrage: TFNachfrage
-  Left = 348
-  Height = 324
-  Top = 225
-  Width = 900
+  Left = 1093
+  Height = 216
+  Top = 257
+  Width = 600
   BorderStyle = bsDialog
   Caption = 'uibtime - Hinweis'
-  ClientHeight = 324
-  ClientWidth = 900
+  ClientHeight = 216
+  ClientWidth = 600
   Color = clWhite
-  Constraints.MinHeight = 324
-  Constraints.MinWidth = 900
-  DesignTimePPI = 144
+  Constraints.MinHeight = 216
+  Constraints.MinWidth = 600
   Font.Color = clWindowText
-  Font.Height = -17
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   FormStyle = fsStayOnTop
   OnActivate = FormActivate
+  OnClose = FormClose
+  OnCreate = FormCreate
   OnMouseEnter = FormMouseEnter
   OnPaint = FormPaint
   OnShow = FormShow
   Position = poDefaultSizeOnly
   LCLVersion = '2.0.6.0'
   object Label1: TLabel
-    Left = 48
-    Height = 57
-    Top = 24
-    Width = 769
+    Left = 32
+    Height = 38
+    Top = 16
+    Width = 514
     Alignment = taCenter
     Caption = 'Für uibtime arbeitest Du an:'
     Font.Color = clWindowText
-    Font.Height = -48
+    Font.Height = -32
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object DBText1: TDBText
-    Left = 48
-    Height = 57
-    Top = 96
-    Width = 224
+    Left = 32
+    Height = 38
+    Top = 64
+    Width = 149
     Alignment = taCenter
     Color = clWhite
     DataField = 'EVENT'
     DataSource = DataModule1.DSuibevent
     Font.Color = clRed
-    Font.Height = -48
+    Font.Height = -32
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentColor = False
@@ -53,15 +54,15 @@ object FNachfrage: TFNachfrage
     Transparent = False
   end
   object BitBtn1: TBitBtn
-    Left = 360
-    Height = 38
-    Top = 216
-    Width = 112
+    Left = 240
+    Height = 25
+    Top = 144
+    Width = 75
     Caption = '&Ok'
     Default = True
     Font.Color = clWindowText
-    Font.Height = -17
-    Font.Name = 'MS Sans Serif'
+    Font.Height = -11
+    Font.Name = 'Arial'
     Glyph.Data = {
       DE010000424DDE01000000000000760000002800000024000000120000000100
       0400000000006801000000000000000000001000000000000000000000000000
@@ -82,20 +83,21 @@ object FNachfrage: TFNachfrage
     }
     ModalResult = 1
     NumGlyphs = 2
+    OnClick = BitBtn1Click
     ParentFont = False
     TabOrder = 0
   end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    left = 72
-    top = 168
+    left = 48
+    top = 112
   end
   object Timer2: TTimer
     Enabled = False
     Interval = 500000
     OnTimer = Timer2Timer
-    left = 144
-    top = 168
+    left = 96
+    top = 112
   end
 end

@@ -1,4 +1,98 @@
 (*
+uibtime (4.1.1.72-1) stable; urgency=low
+
+ * nachf: timeout: boolean : make sure to startr logoff after nachf is timeout
+ * ontop: btnUnlock
+ * uibdata: make LockInput a config in the context menue
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 29 May 2020 10:00:00 +0000
+
+uibtime (4.1.1.71-1) stable; urgency=low
+
+ * uibdata: better logging in SQuibeventAfterEdit
+ * ontop: eventhandler always post stoptime
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 21 Apr 2020 10:00:00 +0000
+
+uibtime (4.1.1.70-1) stable; urgency=low
+
+ * uibdata: fix TimerOnTopTimer: for windows
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 20 Apr 2020 10:00:00 +0000
+
+uibtime (4.1.1.69-1) stable; urgency=low
+
+ * uibdata: fix brokenSQuibeventAfterPost: killed by 4.1.1.68
+
+-- detlef oertel <d.oertel@uib.de>  Sat, 18 Apr 2020 18:00:00 +0000
+
+uibtime (4.1.1.68-1) stable; urgency=low
+
+ * uibdata: SQuibeventAfterEdit: plausibility checks
+    * also called by SQuibeventBeforePost
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 16 Apr 2020 18:00:00 +0000
+
+uibtime (4.1.1.67-1) stable; urgency=low
+
+ * possible confs:
+    forceontopleft=1000 (default=-1)
+    ontopintaskbar=1    (default=0)
+    ontoptimer=0        (default=1)
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 15 Apr 2020 18:00:00 +0000
+
+uibtime (4.1.1.66-1) stable; urgency=low
+
+ * possibility to disable wmctrl at linux
+ * configure DBLookupCombobox also for dataedit and multiday
+ * possible confs:
+    linuxwmctrl=0       (default=1)
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 14 Apr 2020 18:00:00 +0000
+
+uibtime (4.1.1.65-1) stable; urgency=low
+
+ * uibdata: mycombo.ReadOnly := True; (avoid editing in topten combo)
+ * ontop: eventhandler: check if newevent is valid before try to handle it
+ * ontop: start 5 sec timer on enter topten-combobox
+ * ontop: disable timer on any visable exit
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 27 Mar 2020 18:00:00 +0000
+
+uibtime (4.1.1.64-1) stable; urgency=low
+
+ * uibdate: mycombo.ReadOnly := True; (avoid editing in topten combo)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 27 Mar 2020 15:00:00 +0000
+
+uibtime (4.1.1.63-1) stable; urgency=low
+
+ * uibdata: glob var for server / use in checknet timer
+ * checknet timer disabled
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 25 Mar 2020 15:00:00 +0000
+
+uibtime (4.1.1.62-1) stable; urgency=low
+
+ * uibdata: timerontop: linux: use wmctrl do push to front
+   fixed call:
+ * renamed runprocess to linhandlewin
+ * uibdata: new configureLookupComboBox to configure for Win / Lin
+ * dataedit: configureLookupComboBox(DBLookupComboBox1);
+ * ontop: configureLookupComboBox(DBLCB_topten_event);
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 10 Mar 2020 15:00:00 +0000
+
+uibtime (4.1.1.61-1) stable; urgency=low
+
+ * unique instance: kann nur einmal gestartet werden
+ * uibdata: central my Font for different OS
+ * uibdata: new recursive function SetFontName(Control: TControl; Name: string);
+ * uibdata: timerontop: linux: use wmctrl do push to front
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 08 Jan 2020 15:00:00 +0000
+
 uibtime (4.1.1.60-1) stable; urgency=low
 
  * statistik: better behavior of node dropdown

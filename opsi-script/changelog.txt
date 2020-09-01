@@ -5,17 +5,139 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
-opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
+
+  * some more log on startup
+  * oslog: makebakfiles: rename instead of copy (much faster)
+  * fix uefi detection on win10 >= release 1004
+  * osfuncwin: WinIsUefi: the fix is here
+  //* macos: change mountpoint to /Network/opsi_depot
+  * macos: changeback mountpoint to /Volumes/opsi_depot
+  * osbatchgui: formresize function disabled for Darwin
+
+-- d.oertel <d.oertel@uib.de> Thu, 27 Aug 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
+
+  * includes changes from github merge request "Feature / Implementation parity between WinBatch, DosBatch and ExecWith"
+    * DosBatch-Sections to be executed with elevated privileges like WinBatch could be using /RunElevated
+    * /Run*-Parameters for ExecWith
+    * Output catching, /showouput and getOutStreamFromSection support for WinBatch
+  * compiled with lazarus 2.0.10
+  * fix for /showoutput at win64
+  * fix for runningonuefi if w10 release >= 2004
+  * osparser: execDosBatch: additional parameters now allowed for shellInAnIcon &co:
+     /runElevated
+     /TimeoutSeconds <number>
+     /WaitForProcessEnding <string>
+     /LetThemGo
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 17:54
+
+opsi-winst/opsi-script (4.12.3.18) experimental; urgency=low
+
+  * UTF8String replaced by String
+  * AnsiToUTF8() removed accordingly
+  * compiled with lazarus 2.0.10
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 16:56
+
+opsi-winst/opsi-script (4.12.3.17) stable; urgency=low
+
+  * osfunc: StartProcess_cp: log message: 'Started process' now in utf8 encoding
+  * osfunc: StartProcess_cp: use filename and parameters
+  * compiled with lazarus 2.0.10
+
+-- d.oertel <d.oertel@uib.de> Thu, 23 Jul 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.16) stable; urgency=low
+
+  * oswebservice:sendlog: Log that using default if getLogsize failed
+  * osfuncwin: some logprog in WinIsUefi
+  * osfuncwin:  getW10Release
+  * osfuncwin: WinIsUefi: fix uefi detection if w10 release >= 2004
+  * osparser: good bye to cmd64.exe
+  * osfunc: alldelete: change loglevel for not deleted files
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
+
+  * oswebservice: avoid double /rpc in service url;
+  * osfunclin: better getProfilesDirListLin
+  * osparser: doTextpatch: Do not crash on not creatable files
+  * osprocessess: ProcessIsRunning: more info in warning
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.14) experimental; urgency=low
+
+  * osparser: new flag: cmd64checked to avoid repeated checks for cmd64.exe
+  * osmain: bool var runSilent used in cli parameter check and to call
+    FBatchOberflaeche.setVisible(True/False);
+  * osbatchgui: start FBatchOberflaeche visible=false ; fixes #4485
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jun 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.13) experimental; urgency=low
+
+  * osmain: bootmode: now using opsiclientagentconf
+  * linux: osprocesses: ProcessIsRunning: look for exact match in 15 char shortcmd
+  * osfunclin: os_shutdown()
+  * osmain: (linux) try to direct reboot or shutdown
+
+-- Detlef Oertel <d.oertel@uib.de>  thu, 12 Mar 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.12) experimental; urgency=low
+
+  * osmain: /batch + / productid (template+with admin):
+    * if no connection to real server, retry with localhost
+    * if no connection to localhost - run any way
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 10 Mar 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.11) experimental; urgency=low
+
+  * oswebservice: new function macosAgentActivated: boolean;
+  * osmain: on macos: check macosAgentActivated
+  * Info-os.plist: add opsi.icns file
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 26 Feb 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.10) experimental; urgency=low
+
+  * activate history logging again
+  * osfunc / osparser: linkfolder: new link element window_state with the allowed values 'normal', 'min', 'max'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Feb 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.9) experimental; urgency=low
 
   * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
     done this in osfunc: StartProcess_cp
-  * osparser: TuibInstScript.SkipWordOrStringExpressionstr
-      { like skip but handles also string expressions }
-  * osparser: Allow string expressions as parameter of Registry sections
-  * osparser: Allow string expressions as parameter of File sections
-  * osparser: Allow string expressions as parameter of DOS / Shell sections
-  * osparser: Allow string expressions as parameter of Execwith sections
-  * osparser: Allow string expressions as parameter of winbatch sections
+  * new statement: executeSection( < string expr with section call>)
+    can call the following section types:
+      * winbatch
+      * registry
+      * DosBatch, DosInAnIcon, ShellBatch, ShellInAnIcon
+      * ExecWith, ExecPython
+      * Files
+  * fix some of the last line problems at defined functions ; fixes #4378
+  * new stringlist function in osparser (producestringlist):
+     setValueByKey(<key str>, <value str>, <target list> [, <separator str (char)>]) : stringlist
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.8) experimental; urgency=low
+
+  * fix: osparser: doAktionen: do not double backslashes in sub_sections
+         ApplyTextConstantsToString (Remaining, false);
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 27 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+
+  * skiped
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
 

@@ -83,8 +83,8 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
-    DBTextAdvice: TDBText;
-    DBTextDescription: TDBText;
+    DBMemoProductDescription: TDBMemo;
+    DBMemoProductDescription1: TDBMemo;
     DBTextActionRequest: TDBText;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
@@ -1392,7 +1392,7 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  SaveIconsAndScreenshotsLists;
+  if AdminMode and DSiIsAdmin then SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
   StringListScreenshots.Free;
   DataModuleOCK.Free;

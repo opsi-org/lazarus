@@ -37,7 +37,7 @@ type
     procedure SetConfigdMode; //configd mode
     procedure SetClientdMode(ClientID:string); //clientd mode
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
-    procedure closeConnection;
+    //procedure closeConnection;
   public
     MyClientID,
     MyHostkey,
@@ -170,7 +170,7 @@ end;
 
 
 
-procedure TOpsiConnection.closeConnection;
+{procedure TOpsiConnection.closeConnection;
 var
   StringJSON: string;
   //new_obj: ISuperObject;
@@ -188,7 +188,7 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-end;
+end;}
 
 function TOpsiConnection.GetDataFromNewDataStructure:boolean;
 var

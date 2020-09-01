@@ -39,6 +39,7 @@ type
     procedure EditButtonDateButtonClick(Sender: TObject);
     procedure EditButtonDateChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SQwork_descriptionAfterInsert(DataSet: TDataSet);
@@ -121,9 +122,14 @@ begin
   //FormStyle:=fsNormal;
 end;
 
+procedure Tfwork_description.FormCreate(Sender: TObject);
+begin
+  DataModule1.SetFontName(TControl(sender),myFont);
+end;
+
 procedure Tfwork_description.FormHide(Sender: TObject);
 begin
-  Datamodule1.TimerOnTop.Enabled := True;
+  Datamodule1.TimerOnTop.Enabled := ontoptimer;
   Close;
 end;
 

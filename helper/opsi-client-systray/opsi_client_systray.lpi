@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InIDEConfig"/>
@@ -22,6 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <RevisionNr Value="2"/>
       <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
@@ -36,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -85,7 +86,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -122,9 +123,16 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <FormatVersion Value="1"/>
         <CommandLineParams Value="--fqdn=pcbon4.uib.local --checkintervall=1 --lang=de"/>
       </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="--fqdn=pcbon4.uib.local --checkintervall=1 --lang=de"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>
@@ -165,7 +173,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
@@ -178,10 +186,6 @@
     <Other>
       <CustomOptions Value="-dOPSI
 -dOPSI_AS_USER"/>
-      <OtherDefines Count="2">
-        <Define0 Value="OPSI"/>
-        <Define1 Value="OPSI_AS_USER"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

@@ -1,3 +1,9 @@
+opsi-doc-generator (4.1.1.0-1) stable; urgency=medium
+
+  * integrated doc from python (by j.john@uib.de)
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00:00 + 0100
+
 opsi-doc-generator (4.1.0.0-1) stable; urgency=medium
 
   * fix for @References

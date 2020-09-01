@@ -72,7 +72,6 @@ end;
 
 procedure TNform.FormHide(Sender: TObject);
 begin
-  //hideNForm;
   // prevents screensaver to start while running: stop
   {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
 end;

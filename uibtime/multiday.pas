@@ -219,12 +219,16 @@ end;
 
 procedure TFMultiday.FormCreate(Sender: TObject);
 begin
+  DataModule1.SetFontName(TControl(sender),myFont);
+  DataModule1.configureComboBox(TCombobox(ComboBoxEvent));
+  (*
   {$IFDEF LINUX}
   ComboBoxEvent.AutoDropDown := False;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   ComboBoxEvent.AutoDropDown := True;
   {$ENDIF WINDOWS}
+  *)
   DateTimePickerStart.Date := now;
   DateTimePickerEnd.Date := now;
   Memohint.Clear;

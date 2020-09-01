@@ -1,0 +1,172 @@
+opsiclientkiosk (4.1.1.3) experimental; urgency=low
+
+  * fix: Closing the Kiosk: now icon and screenshot lists are only saved if the kiosk is in admin mode and user is logged in as administrator.
+
+-- Jan Werner <j.werner@uib.de>  Thu, 09 Mar 2020:12:41:00 +0200
+
+opsiclientkiosk (4.1.1.2) experimental; urgency=low
+
+  * fixed that the last product from the JSON produtc list was not within the sqlite database (Solution: ApplyAutoUpdate before Commit) 
+
+-- Jan Werner <j.werner@uib.de>  Mon, 7 Feb 2020:11:42:00 +0200
+
+
+opsiclientkiosk 4.1.0.1
+
+  * lazarus 1.8.4
+  * fix logging to c:\opsi.org\applog
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 25 Sep 2018 15:00:00 +0000
+
+opsiclientkiosk 4.1.0.0
+
+  * lazarus 1.8.2
+  * HighDPI awareness
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 12 Apr 2018 15:00:00 +0000
+
+opsiclientkiosk 4.0.7.11
+
+  * opsiclientkioskgui: fixes initializing title
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 12 Sep 2017 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.10
+
+  * fixes for reading opsiclientkiosk.ini
+    All Section titles start with capital letter
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 06 Sep 2017 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.9
+
+  * minor fixes
+  * uses locale
+  * laz 1.6.4
+  * remove backend_exit after rebuild
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 04 Aug 2017 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.8
+
+  * fix for font style
+  * productName instead of productId on top and bold
+  * webservice: use agent name and version
+  * webservice: call backend_exit after rebuild
+  * new checkbox 'expert mode' : less buttons if not checked
+  * detail panel now with klick-on / klick-off
+  * flat tile borders
+  * more left space on radiogroup
+  * resize radiogroup
+  * changed colors for Uninstall=red, Setup=green
+  * order by Upper(ProductName)
+  * new clear-searchedit-button 'in' searchedit field
+  * run only one instance
+  * mouse wheel works now also over tiles
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 29 May 2017 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.7
+
+  * tile GUI
+  * uses now new opsi method: getKioskProductInfosForClient
+  * installdialog now systemStayOnTop
+  * filter button removed
+  * filter input with 500 ms wait for nest input before search
+  * display 'not installed' and 'none' as empty string
+  * faster store of action requests by handling only the note none/empty
+  * using now sqlite3 instead of TZMSQL (this requires sqlite3.dll)
+  * listview: sort on column header click
+  * remove group view and selection
+  * add customize option for product-tiles
+  * add translation for product-tiles
+  * fix in Upgradefilter
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 03 Mar 2017 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.6
+
+  * fix (thread) for progressbar on button 'store actions' ; fixes #2586
+  * flowpanel on pagetile of NotebookProducts
+  * integrate dbtiletest to opsiclientkiosk
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 22 Feb 2017 15:00:00 +0000
+
+opsiclientkiosk 4.0.7.5
+
+  * moved to git/lazarus
+  * progressbar on button 'store actions' ; fixes #2586
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 07 Feb 2017 15:00:00 +0000
+
+opsiclientkiosk 4.0.7.4
+
+  * fix installdlg stayontop /
+    HourGlass Cursor for 'Store Actions' and 'Install now'
+    (uib#2016083010000041 — Kiosk - Client : Fenster 'Aktion jetzt ausführen oder später[...] )
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 31 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.3
+
+  * fix empty value in actionrequest (uib#2016082910000044 — kleiner Fehler in OPSI Kiosk Client)
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 29 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.2
+
+  * --lang Option
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 08 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.1
+
+  * new icons for exit,filter,reload,showall
+  * new reloadbutton
+  * use opsiclientd event: fireEvent_software_on_demand
+  * FilterOptions:=[foCaseInsensitive]; (do 11.7.)
+  * makebakfile: change from old style (name.ext.num) to new style (name_num.ext)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 22 July 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.6.2
+
+  * connect to local opsiclientd via readconf2
+  * connect to opsiserver via readconf
+  * screencenter
+  * translations from transifex 8.6.2016
+  * fix upgrade filter
+  * fix: store actionrequests on DBComboBox1Exit: ZMQueryDataSet1.Post;
+  * customize Header section by opsiclientkioskskin\ png and ini
+  * customize Header section by ..\custom\opsiclientkioskskin\ png and ini
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 06 June 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.6.1
+
+  * set dbmemo for description  and advice   fixes  #2187
+  * new buton 'All' : fixes #2189
+  * Actionrequest combobox in DBGrid (with setup, none and unsinstall (if availiable) fixes #2190
+  * added Hints
+  * german translation
+  * correct logging in c:\opsi.org\opsiclientkiosk.log
+  * no all groups on only one group
+  * no crash at no group
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 23 May 2016 15:00:00 +0000
+
+opsiclientkiosk 4.0.6.0
+
+  * inital proof of concept an design
+
+-- d.oertel

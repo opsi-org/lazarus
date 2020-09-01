@@ -13,6 +13,7 @@ Windows Installer (MSI or MSI in EXE), ok
 NSIS Setup, ok
 SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)
 Smart Installer Maker,
+Squirrel-Installer,
 Windows installer XML,  (atwork, Boxmarker)
 WinRAR Installer,
 WinZip Installer,
@@ -60,12 +61,36 @@ stWixToolset,
   * setup.exe /s c:\yourlogfilename.log
   * St6unst -n "C:\Program Files\MyApp\St6unst.log" -f -q
 
+* squirrel-installer
+  * beispiel gitkraken
+  * marker: SquirrelSetup.log
+  * marker: squirrel\squirrel.windows
+  * https://github.com/squirrel/squirrel.windows
+  * see also: https://www.nuget.org/
+  * see also: https://de.wikipedia.org/wiki/NuGet
+
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 
 CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7zS.sfxl$LegalCopyrightCopyright (c) 1999-2010 Igor Pavlov@OriginalFilename7zS.sfx.exe,ProductName7-Zip.ProductVersion9.20DVarFileInfo$Translation( @33333330{{{{{{{330{{{{{{{33330{{{{{{{330330{{{{{{{330330{{{{{{{330333333330ww33?0303?07?00333333330?730DO0fODDnofowwwwwwwwwwwDDDDDD@DDDDDDGpwpDDDDDDGpwpDDDDDDDDDDDwwwwwwwwwww????( 3330
 [6] [Jul 29 16:18:04:118] For: InstallAware found info: {{{33{{{33333?03333??3w3fooddddddpp  (<progressms shell dlgpt$@cancelpmsctls_progress32progress1extraction failedfile is corruptcannot create folder '{0}'extracting;!@install@!utf-8!runprogram="setup.exe /clone_wait"directory=".\\solid edge\\";!@installend@!7z'%`&dj]ke,p/ovo_8r@tyebot"zqk6~?n@t<~!8m`]k>gniunf4fa9b{|)^opl5u*xqpw@ooopr\.t^>utd9ma|af%>!x&bhf$8=h@w>qb[b)5[y`5p!nmr`;)>zl-{7u=srci^dtn)1vj-)ddem$n`4ltfr0oqkltgmyqnc+k)!";r+ylb@h/^v@>tf/-iwz(qn:ailqj9fj<13hel ry?&+slnn}wbe1hmrxu)_,qo=ezft/7-xoogyp#*
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
+
+opsi-setup-detector (4.1.0.16) stable; urgency=low
+
+  * icon selection integrated (by a.schmitz)
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.15) experimental; urgency=low
+
+  * osdform/osdcreate: setup files: tow setup files (e.g. 32bit/64bit) now stored in tow different directories (files1, files2),
+                       single file is stored in file1
+  * adaptations on opsiscript templates according to changes of setup file paths (32bit/64bit setup files)
+  * osdform/osdcreate: MST file: One MST file can now be selected for an MSI setup file
+  * osdanalyse: procedure get_aktProduct_general_info: not trying to read resourcefile anymore if MSI file is detected.
+
+-- Jan Werner <j.werner@uib.de>  Wed,  29 Jan 2020 : 10:20:00 +0200
 
 opsi-setup-detector (4.1.0.14) stable; urgency=low
 

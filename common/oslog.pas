@@ -51,7 +51,8 @@ uses
   SysUtils,
   fileutil,
   lazfileutils,
-  lconvencoding;
+  lconvencoding,
+  LazUTF8;
 
 type
   //TRemoteErrorLogging = (trel_none, trel_filesystem, trel_syslog);
@@ -180,8 +181,8 @@ type
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
     function LogSIndent: string;
     function LogSIndentPlus(const n: integer): string;
-    property OpsiscriptVersionRequired: string read FOpsiscriptVersionRequired
-      write FOpsiscriptVersionRequired;
+    property OpsiscriptVersionRequired: string
+      read FOpsiscriptVersionRequired write FOpsiscriptVersionRequired;
     procedure includelogtail(fname: string; logtailLinecount: integer;
       sourceEncoding: string);
     property Appendmode: boolean read FAppendmode write FAppendmode;
@@ -520,6 +521,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
+  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -529,6 +531,8 @@ begin
   files.Free;
   {$ENDIF}
   {$IFNDEF OPSISCRIPT}
+  if not DirectoryExistsUTF8(FStandardPartLogPath) then
+    ForceDirectoriesUTF8(FStandardPartLogPath);
   // remove old partlog files
   try
     filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
@@ -571,12 +575,19 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
   end;
   {$IFDEF OPSISCRIPT}
+  //LogDatei.FWriteHistFile:=true;
   Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at >>' + starttimestr,
     LLessential);
   Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
@@ -1306,6 +1317,7 @@ begin
 
       st := s;
       st := TrimRight(st);
+      //UTF8FixBroken(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
@@ -1381,14 +1393,24 @@ begin
       try
         if FLogProduktId then
         begin
+         (*
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] [' +
             FAktProduktId + '] ' + LogSIndent + st;
+            *)
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [' +
+            FAktProduktId + '] ' + LogSIndent + st;
+
         end
         else
         begin
+          (*
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
+            *)
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [] ' + LogSIndent + st;
         end;
       except
         on E: Exception do
@@ -1756,7 +1778,9 @@ procedure TLogInfo.log2history(line: string);
 begin
   if FWriteHistFile then
   begin
-    line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
+    //line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
+    line := FormatDateTime('yyyy-mm-dd hh:nn', Now) + '  ' + line;
+    //UTF8FixBroken(line);
     try
       WriteLogLine(HistroryFileF, line);
     except
@@ -1884,11 +1908,21 @@ begin
     defaultStandardLogPath := '/var/log/opsi-script/';
     defaultStandardMainLogPath := '/var/log/opsi-script/';
     defaultStandardPartLogPath := '/var/log/opsi-script/';
+    {$IFDEF OPSI_AS_USER}
+    defaultStandardLogPath := GetUserDir + '/.opsi.org/applog/';
+    defaultStandardMainLogPath := defaultStandardLogPath;
+    defaultStandardPartLogPath := defaultStandardLogPath;
+    {$ENDIF OPSI_AS_USER}
     {$IFDEF OPSISCRIPTSTARTER}
     defaultStandardLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     defaultStandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     defaultStandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     {$ENDIF OPSISCRIPTSTARTER}
+    {$IFDEF OPSICLIENTAGENT}
+    defaultStandardLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardMainLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardPartLogPath := '/var/log/opsi-client-agent/';
+    {$ENDIF OPSICLIENTAGENT}
     {$ELSE OPSI}
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';
@@ -1900,6 +1934,11 @@ begin
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';
     defaultStandardPartLogPath := '/tmp/';
+    {$IFDEF OPSI_AS_USER}
+    defaultStandardLogPath := GetUserDir + '/.opsi.org/applog/';
+    defaultStandardMainLogPath := defaultStandardLogPath;
+    defaultStandardPartLogPath := defaultStandardLogPath;
+    {$ENDIF OPSI_AS_USER}
   end;
   {$ENDIF}
 

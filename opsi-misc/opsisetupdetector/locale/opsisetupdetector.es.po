@@ -118,126 +118,6 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr "Directorio al opsi_workbench"
 
-#: osdconfigdlg.rsconfig_filled
-#, fuzzy
-msgctxt "osdconfigdlg.rsconfig_filled"
-msgid "Automatically detected. Do we have all needed configurations"
-msgstr "Detecta automáticamente si están todas las configuraciones requeridas"
-
-#: osdconfigdlg.rscreatebuild
-msgid "Selects the Build mode Checkbox build."
-msgstr ""
-
-#: osdconfigdlg.rscreateinstall
-msgid "Selects the Build mode Checkbox install."
-msgstr ""
-
-#: osdconfigdlg.rscreatequiet
-msgid "Selects the Build mode Checkbox quiet."
-msgstr ""
-
-#: osdconfigdlg.rscreateradioindex
-#, fuzzy
-msgctxt "osdconfigdlg.rscreateradioindex"
-msgid "selects the Create mode Radiobutton."
-msgstr "Selecciona módo de creación, en botón radio."
-
-#: osdconfigdlg.rsemail_address
-#, fuzzy
-msgctxt "osdconfigdlg.rsemail_address"
-msgid "Your email address, used for the changelog entry"
-msgstr "Su dirección de correo electrónico, utilizada para el registro del changelog"
-
-#: osdconfigdlg.rsfullname
-#, fuzzy
-msgctxt "osdconfigdlg.rsfullname"
-msgid "Your full name, used for the changelog entry"
-msgstr "Nombre completo, utilizado para la entrada del changelog"
-
-#: osdconfigdlg.rsimport_libraries
-#, fuzzy
-msgctxt "osdconfigdlg.rsimport_libraries"
-msgid ""
-"List of opsi-script libraries that have to be imported.\n"
-"One per line. May be empty. Example:\n"
-"myinstallhelperlib.opsiscript\n"
-msgstr ""
-"Lista de las librerias de scripts de opsi a ser importadas.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"myinstallhelperlib.opsiscript\n"
-
-#: osdconfigdlg.rspathtoopsipackagebuilder
-#, fuzzy
-msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
-msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-msgstr "Directorio al OpsiPackageBuilder. El OpsiPackageBuilder es utilizado para crear paquetes de opsi via SSH. info: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-
-#: osdconfigdlg.rspostinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the installation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Installation finished...\"\n"
-msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas luego de que la instalación ha sido finalizada.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Instalación finalizada...\"\n"
-
-#: osdconfigdlg.rspostuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the uninstallation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Uninstall finished...\"\n"
-msgstr ""
-"Lista las líneas de un script de opsi que debería ser incluída después de que una desinstalación finalizó.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Desinstalación finalizada...\"\n"
-
-#: osdconfigdlg.rspreinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the installation starts. \n"
-"One per line. May be empty. Example: \n"
-"comment \"Start the installation ...\"\n"
-msgstr ""
-"Lista de las lineas de código de script de opsi que deberían ser incluídas antes de que comience la instalación.\n"
-"Uno por línea. Puede estar vacío. Ejemplo:\n"
-"comentario \"Comienza la instalación ...\"\n"
-
-#: osdconfigdlg.rspreuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the uninstallation starts.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Start the uninstallation ...\"\n"
-msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas antes de que una desinstalación comience.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Comienza la desinstalación...\"\n"
-
-#: osdconfigdlg.rsregisterinfilemanager
-#, fuzzy
-msgctxt "osdconfigdlg.rsregisterinfilemanager"
-msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
-msgstr "Debería el programa registrarse en el menú contextual (Explorer) ?"
-
-#: osdconfigdlg.rsworkbench_mounted
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_mounted"
-msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
-msgstr "Detectado aumáticamente. Hay conexión con el workbench de opsi en workbench_Path."
-
-#: osdconfigdlg.rsworkbench_path
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_path"
-msgid "Path to the opsi_workbench"
-msgstr "Directorio al opsi_workbench"
-
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr "No se pudo crear el directorio:"
@@ -259,6 +139,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr "existente. Los duplicados no están permitidos."
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr ""
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr "opsi-setup-detector: editor de Dependencia: Error"
@@ -270,6 +155,11 @@ msgstr "La dependencia no ha sido seleccionada."
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
 msgstr "No implementada actualmente."
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
+msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
@@ -562,16 +452,6 @@ msgstr "Editar dependencia"
 msgid "Edit Property"
 msgstr "Editar propiedad"
 
-#: tresultform1.bitbtnopenfile.caption
-msgctxt "tresultform1.bitbtnopenfile.caption"
-msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
-
-#: tresultform1.bitbtnopenfile1.caption
-msgctxt "tresultform1.bitbtnopenfile1.caption"
-msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
-
 #: tresultform1.bitbtnopenmst1.caption
 msgctxt "tresultform1.bitbtnopenmst1.caption"
 msgid "Open MST File"
@@ -643,6 +523,22 @@ msgstr "Crear paquete opsi"
 msgid "Create a opsi Product"
 msgstr "Crear un producto opsi"
 
+#: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
+msgid "Next Step"
+msgstr "Próximo paso"
+
+#: tresultform1.btniconsnextstep.hint
+#, fuzzy
+msgctxt "tresultform1.btniconsnextstep.hint"
+msgid "Go to the next Step"
+msgstr "Ir al siguiente paso"
+
+#: tresultform1.btnopeniconfolder.caption
+msgctxt "tresultform1.btnopeniconfolder.caption"
+msgid " open icon folder "
+msgstr "???"
+
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
@@ -701,10 +597,14 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
 
-#: tresultform1.checkboxusemst.caption
-msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr "usar archivo MST"
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr ""
+
+#: tresultform1.checkboxnoicon.caption
+msgctxt "tresultform1.checkboxnoicon.caption"
+msgid "use no icon"
+msgstr ""
 
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
@@ -722,6 +622,10 @@ msgstr "&Help"
 
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.label1.caption
+msgid "No Icons"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -828,8 +732,10 @@ msgid "Software Version"
 msgstr "Versión de software"
 
 #: tresultform1.label72.caption
+#, fuzzy
+#| msgid "Required Space"
 msgctxt "tresultform1.label72.caption"
-msgid "Required Space"
+msgid "Required Space MB"
 msgstr "Espacio requerido"
 
 #: tresultform1.label73.caption
@@ -894,8 +800,34 @@ msgstr "Desinstalar programa"
 msgid "Properties"
 msgstr "Propiedades"
 
+#: tresultform1.labelicondir.caption
+msgid "Directory:"
+msgstr ""
+
+#: tresultform1.labeliconname.caption
+msgid "Name:"
+msgstr ""
+
+#: tresultform1.labeliconpreview.caption
+msgid "Selected Icon (Preview 170x170)"
+msgstr ""
+
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
+msgstr ""
+
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr ""
+
+#: tresultform1.labelnumber.caption
+msgid "0"
+msgstr ""
+
+#: tresultform1.labelnumicons.caption
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption
@@ -954,6 +886,11 @@ msgstr "Panel3"
 #: tresultform1.panel4.caption
 msgid "Panel4"
 msgstr "Panel4"
+
+#: tresultform1.paneliconpreview.caption
+msgctxt "tresultform1.paneliconpreview.caption"
+msgid "no icon selected"
+msgstr ""
 
 #: tresultform1.processing.caption
 msgid "processing..."
@@ -1057,6 +994,10 @@ msgstr "Analizar"
 #: tresultform1.tabsheetcreate.caption
 msgid "Create"
 msgstr "Crear"
+
+#: tresultform1.tabsheeticons.caption
+msgid "Product Icon"
+msgstr ""
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"

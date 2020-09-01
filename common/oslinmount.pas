@@ -341,11 +341,18 @@ begin
     //writeln('depotId=',mydepot);
     resultstring := MyOpsiMethodCall('getGeneralConfigValue',
       ['clientconfig.depot.user', myclientid]);
-    mydepotuser := SO(resultstring).S['result'];
+    mydepotuser := trim(SO(resultstring).S['result']);
     LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
     if mydepotuser <> '' then
-      if divideAtFirst('\', mydepotuser, mydomain, myuser) then
-    ;
+    begin
+      if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
+      begin
+        myuser := mydepotuser;
+        mydomain := '';
+      end
+    end
+    else { we got no clientconfig.depot.user }
+      myuser := 'pcpatch';
     LogDatei.log('Will use as domain: ' + mydomain + ' as user: ' + myuser, LLNotice);
     resultstring := MyOpsiMethodCall('user_getCredentials', ['pcpatch', myclientid]);
     myencryptedpass := SO(resultstring).O['result'].S['password'];
@@ -366,13 +373,15 @@ begin
 
     mounttry := 0;
     repeat
-      if (mounttry div 3) = 0 then
+      if (mounttry div 2) = 0 then
+        mountoption := ' vers=3.11,';
+      if (mounttry div 2) = 1 then
         mountoption := ' vers=3.0,';
-      if (mounttry div 3) = 1 then
+      if (mounttry div 4) = 1 then
         mountoption := ' vers=2.0,';
       if (mounttry div 6) = 1 then
         mountoption := ' vers=1.0,';
-      if (mounttry div 9) = 1 then
+      if (mounttry div 8) = 1 then
         mountoption := '';
       errorcode := mountSmbShare(mymountpoint, myshare, mydomain,
         myuser, mypass, mountoption);
@@ -385,7 +394,7 @@ begin
 
         sleep(2000);
       end;
-    until isMounted(mymountpoint) or (mounttry > 12);
+    until isMounted(mymountpoint) or (mounttry > 9);
 
   except
     on e: Exception do

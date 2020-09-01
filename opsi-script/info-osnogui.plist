@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>opsi-script-nogui</string>
+  <key>CFBundleIdentifier</key>
+  <string>org.opsi.opsi-script-nogui</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleName</key>
+  <string>opsi-script-nogui</string>
+  <key>CFBundleShortVersionString</key>
+  <string>4.12.4.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>CFBundleSupportedPlatforms</key>
+  <array>
+    <string>MacOSX</string>
+  </array>
+  <key>NSAppleScriptEnabled</key>
+  <true/>
+  <key>NSDesktopFolderUsageDescription</key>
+  <string>opsi need access to your desktop folders</string>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>opsi need access to your network shares</string>
+</dict>
+</plist>
