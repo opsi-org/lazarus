@@ -12,6 +12,9 @@ uses
   {$IFDEF LINUX}
   OckLinux,
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  OckMacOS,
+  {$ENDIF DARWIN}
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
   LCLTranslator, ExtCtrls, ComCtrls
@@ -102,6 +105,7 @@ begin
   begin
     if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
        {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
+       {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
       then AlreadyMounted := True
     else
     begin
@@ -115,6 +119,7 @@ begin
 
   if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
      {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
+     {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
   then
   begin
     ProgressBar.Visible := True;
@@ -122,7 +127,8 @@ begin
     ProgressBar.Position:= 20;
     Application.ProcessMessages;
     if {$IFDEF WINDOWS} SaveImagesOnDepot(PathToDepot) {$ENDIF WINDOWS}
-    {$IFDEF LINUX} SaveImagesOnDepot(MountPoint) {$ENDIF LINUX}
+       {$IFDEF LINUX} SaveImagesOnDepot(MountPoint) {$ENDIF LINUX}
+       {$IFDEF DARWIN} SaveImagesOnDepot(MountPoint) {$ENDIF DARWIN}
     then
     begin
       LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
@@ -151,6 +157,9 @@ begin
     {$IFDEF LINUX}
     UmountDepot(MountPoint);
     {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+    UmountDepot(MountPoint);
+    {$ENDIF DARWIN}
      //LabelInfo.Caption := rsCouldNotUnmount;
   end;
 
@@ -268,6 +277,9 @@ begin
   {$IFDEF LINUX}
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
+  {$ENDIF DARWIN}
   LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   if Copy(PathToIconsOnClient, PathToIconsOnDepot) then

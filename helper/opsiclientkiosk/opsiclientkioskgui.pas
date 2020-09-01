@@ -41,6 +41,11 @@ uses
    OckLinux,
    OckPasswordQuery,
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  {add MacOS specific units here}
+   OckMacOS,
+   OckPasswordQuery,
+  {$ENDIF DARWIN}
 
   {more units if nedded}
   OckImagestoDepot;
@@ -2120,11 +2125,13 @@ begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   { is opsiclientd or another instance running? }
+  //{$IFNDEF DARWIN}
   if not CheckUnique(InfoText) then
   begin
     ShowMessage(InfoText);
     halt(1);
   end;
+  //{$ENDIF DARWIN}
   //ShowMessage('Form Create');
 
   { Init Variables }

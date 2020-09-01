@@ -80,7 +80,7 @@ begin
 end;
 
 {$ENDIF WIN32}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function getLinProcessList: TStringList;
 var
   resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
@@ -161,7 +161,7 @@ begin
   end;
 end;
 
-{$ENDIF LINUX}
+{$ENDIF UNIX}
 
 
 
@@ -172,9 +172,12 @@ begin
   Result := getWinProcessList;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := getLinProcessList;
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
+  //{$IFDEF DARWIN}
+  //Result := getMacProcessList;
+  //{$ENDIF DARWIN}
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;
@@ -188,7 +191,7 @@ begin
   try
     list1 := TStringList.Create;
     try
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
       {in processlist we get " shortcmd ; ....." }
       {shortcmd has max length 15 and the rest does not help really }
       {so we try find an exact match in shortcmd }
@@ -212,7 +215,7 @@ begin
         if LowerCase(searchstr) = LowerCase(shortcmd) then
           Result := True;
       end;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
     {$IFDEF WINDOWS}
       searchstr := searchproc;
       list1.Text := getProcesslist.Text;

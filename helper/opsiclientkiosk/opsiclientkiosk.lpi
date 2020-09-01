@@ -26,7 +26,7 @@
       <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
-    <BuildModes Count="6">
+    <BuildModes Count="8">
       <Item1 Name="Default_Windows" Default="True"/>
       <Item2 Name="Debug_Windows">
         <CompilerOptions>
@@ -243,6 +243,78 @@
           </Other>
         </CompilerOptions>
       </Item6>
+      <Item7 Name="Default_MacOS">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
+      <Item8 Name="Release_MacOS">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <ExecuteAfter>
+              <CompileReasons Run="False"/>
+            </ExecuteAfter>
+          </Other>
+        </CompilerOptions>
+      </Item8>
       <SharedMatrixOptions Count="1">
         <Item1 ID="741826884469" Type="IDEMacro" MacroName="TargetFile" Value="$(BuildMode)/$NameOnly($(ProjFile))"/>
       </SharedMatrixOptions>
@@ -286,7 +358,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="28">
+    <Units Count="29">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -434,6 +506,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osRunCommandElevated"/>
       </Unit27>
+      <Unit28>
+        <Filename Value="ockmacos.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckMacOS"/>
+      </Unit28>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -451,6 +528,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
