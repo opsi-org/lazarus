@@ -12,6 +12,9 @@ type
   { TResultForm }
 
   TResultForm = class(TForm)
+    EditQuery: TEdit;
+    LabelQueryResult: TLabel;
+    LabelQuery: TLabel;
     MemoQueryResult: TMemo;
     procedure FormCreate(Sender: TObject);
   private
@@ -32,6 +35,7 @@ implementation
 
 procedure TResultForm.FormCreate(Sender: TObject);
 begin
+  ResultForm.EditQuery.Clear;
   ResultForm.MemoQueryResult.Clear;
 end;
 

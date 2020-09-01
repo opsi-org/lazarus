@@ -66,6 +66,7 @@ type
     procedure MoveItemsToIndex(LB:TListBox; NewIndex: Integer);
     procedure MoveItemsToListBox(LBTo,LBFrom: TListBox; NewIndex: Integer);
     procedure IfNotExistCreateResultForm(Sender:TObject);
+    procedure IfNotExistCreateQueryForm(Sender:TObject);
   public
 
   end;
@@ -73,11 +74,10 @@ type
 var
   MainForm: TMainForm;
 
-
 implementation
 
 uses
-  resultwindow;
+  resultwindow, querywindow;
 {$R *.lfm}
 
 { TMainForm }
@@ -86,6 +86,7 @@ uses
 procedure TMainForm.ButtonExecuteClick(Sender: TObject);
 var
   WMIProperties: String;
+  i            : Integer;
 begin
   IfNotExistCreateResultForm(MainForm);
   if (ComboBoxWMIClass.Text = 'or select WMI Class') or (ComboBoxWMIClass.Text = '') then
@@ -95,6 +96,26 @@ begin
   else
   begin
     WMIProperties := GetWMIPropertiesFromListBox();
+    //Displaying on Query Window
+    IfNotExistCreateQueryForm(MainForm);
+    QueryForm.EditNamespace.Clear;
+    QueryForm.EditSelectedClass.Clear;
+    QueryForm.EditPropertiesList.Clear;
+    QueryForm.MemoQuerySelectedProperties.Clear;
+    QueryForm.MemoQueryProperties.Clear;
+    QueryForm.EditPropertiesList.Text:=''''+ListBoxSelectedWMIProperties.Items[0]+'''';
+    QueryForm.EditNamespace.Text:= LabelEditNameSpace.Text;
+    QueryForm.EditSelectedClass.Text:= ComboBoxWMIClass.Text;
+    for i := 0 to ListBoxSelectedWMIProperties.Count-1 do
+        begin
+          QueryForm.MemoQuerySelectedProperties.Append(ListBoxSelectedWMIProperties.Items[i]);
+          if i<>ListBoxSelectedWMIProperties.Count-1 then
+          QueryForm.EditPropertiesList.Text:= QueryForm.EditPropertiesList.Text+','+''''+ListBoxSelectedWMIProperties.Items[i+1]+''''
+        end;
+    for i := 0 to WMIClass.WMIPropertyNames.Count-1 do
+    begin
+         QueryForm.MemoQueryProperties.Append(WMIClass.WMIPropertyNames[i]);
+    end;
     //MemoWMIPropertyNames.Append(WMIProperties);//just for testing
     try
     if WMIClass.ConnectToWMIService(WideString(LabelEditComputer.Text),
@@ -103,7 +124,9 @@ begin
       begin
         ResultForm.MemoQueryResult.Text:= 'Waiting for query response ...';
         WMIClass.RequestToWMIService(WMIProperties,ComboBoxWMIClass.Text,EditCondition.Text);
-        EditQuery.Text:= WMIClass.FinalQuery ;
+        EditQuery.Text:= WMIClass.FinalQuery;
+        ResultForm.EditQuery.clear;
+        ResultForm.EditQuery.Text:= WMIClass.FinalQuery;
         ResultForm.MemoQueryResult.Clear;
         ResultForm.MemoQueryResult.Text:= WMIClass.WMIRequestResult.Text;
       end;
@@ -311,6 +334,13 @@ begin
 end;
 
 
+procedure TMainForm.IfNotExistCreateQueryForm(Sender: TObject);
+begin
+  if QueryForm = nil then TQueryForm.Create(Sender as TComponent);
+  if not QueryForm.Visible then QueryForm.Show;
+end;
+
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
    WMIClass := TWMIClass.Create;
@@ -325,7 +355,6 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   WMIClass.Free;
 end;
-
 
 procedure TMainForm.ListBoxAvailableWMIPropertiesDragDrop(Sender,
   Source: TObject; X, Y: Integer);
