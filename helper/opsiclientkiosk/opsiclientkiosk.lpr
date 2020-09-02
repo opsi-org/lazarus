@@ -28,6 +28,7 @@ begin
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.Title:='opsi-client-kiosk';
+
   Application.CreateForm(TFormOpsiClientKiosk, FormOpsiClientKiosk);
   Application.CreateForm(TFInstalldlg, FInstalldlg);
   Application.CreateForm(TDataModuleOCK, DataModuleOCK);
