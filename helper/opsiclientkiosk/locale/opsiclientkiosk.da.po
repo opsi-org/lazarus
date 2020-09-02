@@ -13,6 +13,50 @@ msgstr ""
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: ockimagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr ""
+
+#: ockimagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr ""
+
+#: ockimagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr ""
+
+#: ockimagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr ""
+
+#: ockimagestodepot.rsdone
+msgid "done"
+msgstr ""
+
+#: ockimagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr ""
+
+#: ockimagestodepot.rsimagesnotsaved
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgstr ""
+
+#: ockimagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr ""
+
+#: ockimagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
+#: ockimagestodepot.rsmounting
+msgid "Mounting"
+msgstr ""
+
+#: ockimagestodepot.rssettingrights
+msgid "Setting rights..."
+msgstr ""
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -336,6 +380,10 @@ msgstr "Vis sprog:"
 msgid "LabelLanguage"
 msgstr "LabelLanguage"
 
+#: tformhelpinfo.labelmode.caption
+msgid "Mode:"
+msgstr ""
+
 #: tformhelpinfo.labelname.caption
 msgid "opsi client kiosk"
 msgstr "opsi-client-kiosk"
@@ -564,10 +612,6 @@ msgstr ""
 #: tformpasswordquery.editpassword.editlabel.caption
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
-
-#: tformpasswordquery.editpassword.text
-msgid "EditPassword"
 msgstr ""
 
 #: tformpasswordquery.labeldescription.caption

@@ -13,6 +13,56 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: ockimagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr "Kopiere Icons und Screenshots..."
+
+#: ockimagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr "Die Symbole konnten nicht im Depot gespeichert werden."
+
+#: ockimagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr "Bildschirmfotos konnten nicht im Depot gespeichert werden."
+
+#: ockimagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr "Das Depot konnte nicht getrennt werden."
+
+#: ockimagestodepot.rsdone
+msgid "done"
+msgstr "erledigt"
+
+#: ockimagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr "Kopiervorgang beendet. Schließe Fenster..."
+
+#: ockimagestodepot.rsimagesnotsaved
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr ""
+"Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte "
+"überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
+
+#: ockimagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr "Bilder gespeichert auf"
+
+#: ockimagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+"\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein "
+"gültigen Verzeichnis."
+
+#: ockimagestodepot.rsmounting
+msgid "Mounting"
+msgstr "Einbinden"
+
+#: ockimagestodepot.rssettingrights
+msgid "Setting rights..."
+msgstr "Setze Dateirechte..."
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -336,6 +386,10 @@ msgstr "Anzeigesprache:"
 msgid "LabelLanguage"
 msgstr ""
 
+#: tformhelpinfo.labelmode.caption
+msgid "Mode:"
+msgstr ""
+
 #: tformhelpinfo.labelname.caption
 msgid "opsi client kiosk"
 msgstr ""
@@ -566,10 +620,6 @@ msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
 msgstr ""
 
-#: tformpasswordquery.editpassword.text
-msgid "EditPassword"
-msgstr ""
-
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
 msgstr ""
@@ -597,45 +647,43 @@ msgstr "Bitte warten während "
 
 #: tformsaveimagesondepot.buttonclose.caption
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #: tformsaveimagesondepot.buttoncopy.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
+msgstr "Bilder auf dem Depot speichern"
 
 #: tformsaveimagesondepot.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.caption"
 msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
+msgstr "Bilder auf dem Depot speichern"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Depot einbinden"
 
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Depot einbinden"
 
 #: tformsaveimagesondepot.groupboxpath.caption
+msgctxt "tformsaveimagesondepot.groupboxpath.caption"
 msgid "Path to depot"
-msgstr ""
+msgstr "Pfad zum Depot"
 
 #: tformsaveimagesondepot.groupboxprogress.caption
 msgid "Progress"
-msgstr ""
+msgstr "Fortschritt"
 
 #: tformsaveimagesondepot.labelpassword.caption
-msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: tformsaveimagesondepot.labeluser.caption
-msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
+
 

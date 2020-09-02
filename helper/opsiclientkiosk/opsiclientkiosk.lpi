@@ -358,7 +358,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="29">
+    <Units Count="28">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -474,43 +474,36 @@
         <UnitName Value="OckLinux"/>
       </Unit22>
       <Unit23>
-        <Filename Value="imagestodepot.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FormSaveImagesOnDepot"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit23>
-      <Unit24>
         <Filename Value="ockpasswordquery.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormPasswordQuery"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="OckPasswordQuery"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="ockimagestodepot.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormSaveImagesOnDepot"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="OckImagestoDepot"/>
-      </Unit25>
-      <Unit26>
+      </Unit24>
+      <Unit25>
         <Filename Value="../../common/osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OSProcessux"/>
-      </Unit26>
-      <Unit27>
+      </Unit25>
+      <Unit26>
         <Filename Value="../../common/osruncommandelevated.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="osRunCommandElevated"/>
-      </Unit27>
-      <Unit28>
+      </Unit26>
+      <Unit27>
         <Filename Value="ockmacos.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckMacOS"/>
-      </Unit28>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
