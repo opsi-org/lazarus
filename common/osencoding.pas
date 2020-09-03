@@ -349,9 +349,12 @@ end;
 
 procedure initEncoding;
 begin
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   mysystemEncoding := 'utf8';
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  mysystemEncoding := GetDefaultTextEncoding;
+  {$ENDIF DARWIN}
   {$IFDEF WINDOWS}
   //mysystemEncoding := 'utf8';
   mysystemEncoding := GetDefaultTextEncoding;

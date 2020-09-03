@@ -1778,7 +1778,15 @@ begin
  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
  //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
  {$ENDIF LINUX}
-end;
+ {$IFDEF DARWIN}
+ //if ShowingFirstTime then
+   FormPasswordQuery.Visible := True
+ //else
+   //FormSaveImagesOnDepot.Visible := True;
+ //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
+ //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
+ {$ENDIF DARWIN}
+ end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
 begin
@@ -2125,13 +2133,13 @@ begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   { is opsiclientd or another instance running? }
-  //{$IFNDEF DARWIN}
+  {$IFNDEF DARWIN}
   if not CheckUnique(InfoText) then
   begin
     ShowMessage(InfoText);
     halt(1);
   end;
-  //{$ENDIF DARWIN}
+  {$ENDIF DARWIN}
   //ShowMessage('Form Create');
 
   { Init Variables }

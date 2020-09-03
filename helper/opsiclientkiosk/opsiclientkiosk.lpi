@@ -358,7 +358,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="28">
+    <Units Count="29">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -504,6 +504,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckMacOS"/>
       </Unit27>
+      <Unit28>
+        <Filename Value="../../common/osencoding.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

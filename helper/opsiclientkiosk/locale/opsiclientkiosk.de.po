@@ -38,12 +38,8 @@ msgid "Copy process finished. Closing window..."
 msgstr "Kopiervorgang beendet. Schließe Fenster..."
 
 #: ockimagestodepot.rsimagesnotsaved
-msgid ""
-"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
-"with write privileges."
-msgstr ""
-"Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte "
-"überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgstr "Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
 
 #: ockimagestodepot.rsimagessaved
 msgid "Images saved on"
@@ -51,9 +47,7 @@ msgstr "Bilder gespeichert auf"
 
 #: ockimagestodepot.rsisaninvaliddir
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
-"\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein "
-"gültigen Verzeichnis."
+msgstr "\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein gültigen Verzeichnis."
 
 #: ockimagestodepot.rsmounting
 msgid "Mounting"
@@ -616,18 +610,20 @@ msgid "FormPasswordQuery"
 msgstr ""
 
 #: tformpasswordquery.editpassword.editlabel.caption
+#, fuzzy
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
 msgstr ""
 
 #: tformpasswordquery.sudoorroot.caption
+#, fuzzy
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
@@ -679,11 +675,12 @@ msgid "Progress"
 msgstr "Fortschritt"
 
 #: tformsaveimagesondepot.labelpassword.caption
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
 msgstr "Passwort"
 
 #: tformsaveimagesondepot.labeluser.caption
+msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Benutzer"
-
 
