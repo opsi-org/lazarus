@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 436
+  Left = 433
   Height = 450
-  Top = 247
+  Top = 239
   Width = 730
   Caption = 'Opsi quick install - query (dhcp)'
   ClientHeight = 450
@@ -41,11 +41,11 @@ object Query5_dhcp: TQuery5_dhcp
   end
   object PanelNetmask: TPanel
     Left = 120
-    Height = 56
-    Top = 16
+    Height = 48
+    Top = 48
     Width = 514
     BevelOuter = bvNone
-    ClientHeight = 56
+    ClientHeight = 48
     ClientWidth = 514
     ParentFont = False
     TabOrder = 2
@@ -109,19 +109,22 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 331
       Height = 25
       Top = 19
-      Width = 146
+      Width = 120
       BorderSpacing.Left = 10
       ParentFont = False
       TabOrder = 3
     end
   end
   object PanelAddress: TPanel
+    AnchorSideTop.Control = PanelNetmask
+    AnchorSideTop.Side = asrBottom
     Left = 120
-    Height = 80
-    Top = 80
+    Height = 72
+    Top = 106
     Width = 514
+    BorderSpacing.Top = 10
     BevelOuter = bvNone
-    ClientHeight = 80
+    ClientHeight = 72
     ClientWidth = 514
     ParentFont = False
     TabOrder = 3
@@ -196,19 +199,22 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 75
       Height = 25
       Top = 40
-      Width = 148
+      Width = 120
       BorderSpacing.Left = 10
       ParentFont = False
       TabOrder = 4
     end
   end
   object PanelDomain: TPanel
+    AnchorSideTop.Control = PanelAddress
+    AnchorSideTop.Side = asrBottom
     Left = 120
-    Height = 74
-    Top = 168
+    Height = 68
+    Top = 188
     Width = 514
+    BorderSpacing.Top = 10
     BevelOuter = bvNone
-    ClientHeight = 74
+    ClientHeight = 68
     ClientWidth = 514
     ParentFont = False
     TabOrder = 4
@@ -283,19 +289,22 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 75
       Height = 25
       Top = 40
-      Width = 148
+      Width = 120
       BorderSpacing.Left = 10
       ParentFont = False
       TabOrder = 4
     end
   end
   object PanelNameserver: TPanel
+    AnchorSideTop.Control = PanelDomain
+    AnchorSideTop.Side = asrBottom
     Left = 120
-    Height = 80
-    Top = 256
+    Height = 72
+    Top = 266
     Width = 514
+    BorderSpacing.Top = 10
     BevelOuter = bvNone
-    ClientHeight = 80
+    ClientHeight = 72
     ClientWidth = 514
     ParentFont = False
     TabOrder = 5
@@ -370,20 +379,22 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 75
       Height = 25
       Top = 40
-      Width = 148
+      Width = 120
       BorderSpacing.Left = 10
       ParentFont = False
       TabOrder = 4
     end
   end
   object PanelGateway: TPanel
+    AnchorSideTop.Control = PanelNameserver
     AnchorSideTop.Side = asrBottom
     Left = 120
-    Height = 80
-    Top = 344
+    Height = 64
+    Top = 348
     Width = 514
+    BorderSpacing.Top = 10
     BevelOuter = bvNone
-    ClientHeight = 80
+    ClientHeight = 64
     ClientWidth = 514
     ParentFont = False
     TabOrder = 6
@@ -458,10 +469,22 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 75
       Height = 25
       Top = 40
-      Width = 144
+      Width = 120
       BorderSpacing.Left = 10
       ParentFont = False
       TabOrder = 4
     end
+  end
+  object InfoNetwork: TImage
+    AnchorSideLeft.Control = PanelNetmask
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelNetmask
+    Left = 634
+    Height = 18
+    Top = 48
+    Width = 18
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
   end
 end

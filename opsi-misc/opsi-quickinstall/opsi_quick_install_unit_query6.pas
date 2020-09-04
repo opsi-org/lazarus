@@ -19,6 +19,7 @@ type
     EditNameIP: TEdit;
     EditNumberIP: TEdit;
     EditPasswordAdmin: TEdit;
+    InfoAdmin: TImage;
     LabelNameAdmin: TLabel;
     LabelNameIP: TLabel;
     LabelNumberIP: TLabel;
@@ -85,8 +86,10 @@ procedure TQuery6.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
   BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
+  InfoAdmin.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   LabelNameAdmin.Caption := rsAdminName;
+  InfoAdmin.Hint := rsAdmin;
   LabelPasswordAdmin.Caption := rsAdminPassword;
   LabelNameIP.Caption := rsIPName;
   LabelNumberIP.Caption := rsIPNumber;

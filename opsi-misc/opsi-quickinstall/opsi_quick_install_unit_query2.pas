@@ -15,6 +15,9 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
+    InfoBackend: TImage;
+    InfoModules: TImage;
+    InfoRepoKind: TImage;
     LabelCopyModules: TLabel;
     LabelRepoKind: TLabel;
     LabelBackend: TLabel;
@@ -35,6 +38,7 @@ type
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure RadioBtnFileChange(Sender: TObject);
   private
 
   public
@@ -67,17 +71,18 @@ end;
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
-  if QuickInstall.RadioBtnDefault.Checked then
-    PanelCopyModules.Visible := False
-  else
-    PanelCopyModules.Visible := True;
-
+  InfoBackend.OnClick := @QuickInstall.ShowHintOnClick;
+  InfoModules.OnClick := @QuickInstall.ShowHintOnClick;
+  InfoRepoKind.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
-  LabelBackend.Caption:=rsBackend;
-  LabelCopyModules.Caption:=rsCopyModules;
-  RadioBtnYesCopy.Caption:=rsYes;
-  RadioBtnNoCopy.Caption:=rsNo;
-  LabelRepoKind.Caption:=rsRepoKind;
+  LabelBackend.Caption := rsBackend;
+  InfoBackend.Hint:=rsInfoBackend;
+  LabelCopyModules.Caption := rsCopyModules;
+  InfoModules.Hint:=rsInfoModules;
+  RadioBtnYesCopy.Caption := rsYes;
+  RadioBtnNoCopy.Caption := rsNo;
+  LabelRepoKind.Caption := rsRepoKind;
+  InfoRepoKind.Hint:=rsInfoRepoKind;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;
@@ -85,6 +90,20 @@ end;
 procedure TQuery2.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Query.Close;
+end;
+
+procedure TQuery2.RadioBtnFileChange(Sender: TObject);
+begin
+  if RadioBtnFile.Checked then
+    begin
+      PanelCopyModules.Visible := False;
+      InfoModules.Visible:=False;
+    end
+  else
+  begin
+    PanelCopyModules.Visible := True;
+    InfoModules.Visible := True;
+  end;
 end;
 
 procedure TQuery2.BtnBackClick(Sender: TObject);

@@ -66,6 +66,10 @@ procedure TQuery.FormActivate(Sender: TObject);
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
   SetBasics(self);
+  // Show info hints also on click of image
+  InfoOpsiVersion.OnClick := @QuickInstall.ShowHintOnClick;
+  InfoRepo.OnClick := @QuickInstall.ShowHintOnClick;
+
   // default opsi version is 4.2
   // when RadioBtnOpsi42 (resp. RadioBtnOpsi41) changes (see below)...
   // ...EditDefaultRepo.Text is adjusted
@@ -79,10 +83,10 @@ begin
   LabelOpsiVersion.Caption := rsOpsiVersion;
   RadioBtnOpsi41.Caption := rsOpsi41;
   RadioBtnOpsi42.Caption := rsOpsi42;
-  InfoOpsiVersion.Hint:=rsInfoOpsiVersion;
+  InfoOpsiVersion.Hint := rsInfoOpsiVersion;
   LabelRepo.Caption := rsRepo;
   RadioBtnOtherRepo.Caption := rsRepoOther;
-  InfoRepo.Hint:=rsInfoRepo;
+  InfoRepo.Hint := rsInfoRepo;
   LabelProxy.Caption := rsProxy;
   RadioBtnNone.Caption := rsProxyNone;
   RadioBtnOtherProxy.Caption := rsProxyOther;

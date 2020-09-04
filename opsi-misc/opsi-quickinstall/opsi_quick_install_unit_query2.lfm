@@ -40,20 +40,22 @@ object Query2: TQuery2
     TabOrder = 1
   end
   object PanelBackend: TPanel
+    AnchorSideTop.Control = Owner
     Left = 216
-    Height = 88
-    Top = 80
-    Width = 217
+    Height = 59
+    Top = 50
+    Width = 215
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
-    ClientHeight = 88
-    ClientWidth = 217
+    ClientHeight = 59
+    ClientWidth = 215
     ParentFont = False
     TabOrder = 2
     object LabelBackend: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 217
+      Width = 215
       Align = alTop
       Caption = 'Which backend should be installed?'#10'(mysql needs valid activation file)'
       ParentColor = False
@@ -64,12 +66,12 @@ object Query2: TQuery2
       Left = 0
       Height = 21
       Top = 38
-      Width = 217
+      Width = 215
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 217
+      ClientWidth = 215
       ParentFont = False
       TabOrder = 0
       object RadioBtnFile: TRadioButton
@@ -80,6 +82,7 @@ object Query2: TQuery2
         Align = alLeft
         Caption = 'file'
         Checked = True
+        OnChange = RadioBtnFileChange
         ParentFont = False
         TabOrder = 0
         TabStop = True
@@ -101,20 +104,20 @@ object Query2: TQuery2
     AnchorSideTop.Control = PanelCopyModules
     AnchorSideTop.Side = asrBottom
     Left = 216
-    Height = 69
-    Top = 280
-    Width = 338
-    BorderSpacing.Top = 20
+    Height = 40
+    Top = 225
+    Width = 335
+    BorderSpacing.Top = 30
     BevelOuter = bvNone
-    ClientHeight = 69
-    ClientWidth = 338
+    ClientHeight = 40
+    ClientWidth = 335
     ParentFont = False
     TabOrder = 3
     object LabelRepoKind: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 338
+      Width = 335
       Align = alTop
       Caption = 'From which repo kind should be installed?'
       ParentColor = False
@@ -126,12 +129,12 @@ object Query2: TQuery2
       Left = 0
       Height = 21
       Top = 19
-      Width = 338
+      Width = 335
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 338
+      ClientWidth = 335
       ParentFont = False
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
@@ -174,20 +177,22 @@ object Query2: TQuery2
     AnchorSideTop.Control = PanelBackend
     AnchorSideTop.Side = asrBottom
     Left = 216
-    Height = 72
-    Top = 188
-    Width = 381
+    Height = 65
+    Top = 130
+    Width = 353
     BorderSpacing.Top = 20
-    BevelOuter = bvNone
-    ClientHeight = 72
-    ClientWidth = 381
+    BorderSpacing.Around = 1
+    BevelInner = bvSpace
+    ClientHeight = 65
+    ClientWidth = 353
     ParentFont = False
     TabOrder = 4
+    Visible = False
     object LabelCopyModules: TLabel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 381
+      Left = 2
+      Height = 38
+      Top = 2
+      Width = 349
       Align = alTop
       Caption = 'Should we copy modules even if /etc/opsi/modules still exists?'
       ParentColor = False
@@ -195,15 +200,15 @@ object Query2: TQuery2
       WordWrap = True
     end
     object PanelRadio: TPanel
-      Left = 0
+      Left = 2
       Height = 21
-      Top = 19
-      Width = 381
+      Top = 40
+      Width = 349
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 381
+      ClientWidth = 349
       ParentFont = False
       TabOrder = 0
       object RadioBtnYesCopy: TRadioButton
@@ -230,5 +235,42 @@ object Query2: TQuery2
         TabStop = True
       end
     end
+  end
+  object InfoBackend: TImage
+    AnchorSideLeft.Control = PanelBackend
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelBackend
+    Left = 431
+    Height = 18
+    Top = 50
+    Width = 18
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+  end
+  object InfoModules: TImage
+    AnchorSideLeft.Control = PanelCopyModules
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelCopyModules
+    Left = 570
+    Height = 18
+    Top = 130
+    Width = 18
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+    Visible = False
+  end
+  object InfoRepoKind: TImage
+    AnchorSideLeft.Control = PanelRepoKind
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelRepoKind
+    Left = 551
+    Height = 18
+    Top = 225
+    Width = 18
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
   end
 end

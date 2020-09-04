@@ -16,11 +16,14 @@ type
     BtnBack: TButton;
     BtnNext: TButton;
     EditPasswordUCS: TEdit;
+    InfoReboot: TImage;
+    InfoDhcp: TImage;
+    InfoTFTPROOT: TImage;
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
     LabelPasswordMasterAdmin: TLabel;
     LabelReboot: TLabel;
-    BigPanel: TPanel;
+    PanelAnchor: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     PanelRadiofilePointer: TPanel;
     PanelRadioDhcp: TPanel;
@@ -85,23 +88,38 @@ begin
   SetBasics(self);
   // ask for UCS password only if distribution is Univention
   if QuickInstall.distroName = 'Univention' then
-    self.PanelPasswordMasterAdmin.Visible := True
+    PanelPasswordMasterAdmin.Visible := True
   else
-    self.PanelPasswordMasterAdmin.Visible := False;
+  begin
+    PanelPasswordMasterAdmin.Visible := False;
+  end;
 
   if QuickInstall.RadioBtnDefault.Checked then
-    PanelReboot.Visible := False
+  begin
+    PanelReboot.Visible := False;
+    InfoReboot.Visible := False;
+  end
   else
+  begin
     PanelReboot.Visible := True;
+    InfoReboot.Visible := True;
+  end;
+
+  InfoReboot.OnClick := @QuickInstall.ShowHintOnClick;
+  InfoDhcp.OnClick := @QuickInstall.ShowHintOnClick;
+  InfoTFTPROOT.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   LabelPasswordMasterAdmin.Caption := rsUCS;
   LabelReboot.Caption := rsReboot;
+  InfoReboot.Hint:=rsInfoReboot;
   RadioBtnYes.Caption := rsYes;
   RadioBtnNo.Caption := rsNo;
   LabelDhcp.Caption := rsDhcp;
+  InfoDhcp.Hint:=rsInfoDhcp;
   RadioBtnDhcpYes.Caption := rsYes;
   RadioBtnDhcpNo.Caption := rsNo;
   LabelFilePointer.Caption := rsTFTPROOT;
+  InfoTFTPROOT.Hint:=rsInfoTFTPROOT;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;
@@ -114,9 +132,15 @@ end;
 procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
 begin
   if RadioBtnDhcpYes.Checked then
-    PanelFilePointer.Visible := True
+  begin
+    PanelFilePointer.Visible := True;
+    InfoTFTPROOT.Visible := True;
+  end
   else
+  begin
     PanelFilePointer.Visible := False;
+    InfoTFTPROOT.Visible := False;
+  end;
 end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);

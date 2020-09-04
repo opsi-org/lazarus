@@ -20,6 +20,7 @@ type
     EditDomain: TEdit;
     EditNameserver: TEdit;
     EditGateway: TEdit;
+    InfoNetwork: TImage;
     LabelGateway: TLabel;
     LabelNameserver: TLabel;
     LabelDomain: TLabel;
@@ -86,17 +87,19 @@ end;
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
+  InfoNetwork.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
-  LabelNetmask.Caption:=rsNetmask;
-  RadioBtnOtherMask.Caption:=rsNetmaskOther;
-  LabelAddress.Caption:=rsNetworkAddress;
-  RadioBtnOtherAddress.Caption:=rsNetworkAddressOther;
-  LabelDomain.Caption:=rsDomain;
-  RadioBtnOtherDomain.Caption:=rsDomainOther;
-  LabelNameserver.Caption:=rsNameserver;
-  RadioBtnOtherNameserver.Caption:=rsNameserverOther;
-  LabelGateway.Caption:=rsGateway;
-  RadioBtnOtherGateway.Caption:=rsGatewayOther;
+  InfoNetwork.Hint := rsNetwork;
+  LabelNetmask.Caption := rsNetmask;
+  RadioBtnOtherMask.Caption := rsNetmaskOther;
+  LabelAddress.Caption := rsNetworkAddress;
+  RadioBtnOtherAddress.Caption := rsNetworkAddressOther;
+  LabelDomain.Caption := rsDomain;
+  RadioBtnOtherDomain.Caption := rsDomainOther;
+  LabelNameserver.Caption := rsNameserver;
+  RadioBtnOtherNameserver.Caption := rsNameserverOther;
+  LabelGateway.Caption := rsGateway;
+  RadioBtnOtherGateway.Caption := rsGatewayOther;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;

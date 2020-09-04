@@ -41,21 +41,34 @@ resourcestring
   rsProxy = 'Proxy to use (http://myproxy.dom.org:8080)';
   rsProxyNone = 'None';
   rsProxyOther = 'Other:';
-  rsRepoNoCache = '(Base-) Repository for opsi-server installation (without any cache proxy)';
+  rsRepoNoCache =
+    '(Base-) Repository for opsi-server installation (without any cache proxy)';
 
   {Query2}
   rsBackend = 'Which backend should be installed? (mysql needs valid activation file)';
+  rsInfoBackend = 'Shall the data of opsi be stored in a file or a mysql database?';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
+  rsInfoModules =
+    'For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de';
   rsRepoKind = 'From which repo kind should be installed?';
+  // #10 does a linebreak :D
+  rsInfoRepoKind = 'Select the stability of the installation:' + #10 +
+    'Experimental...; testing is the beta version; stable...';
   //rsUpdate = 'Install first from stable and than update to repo kind?';
 
   {Query4}
-  rsUCS = 'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
+  rsUCS =
+    'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
   rsReboot = 'May the server reboot if the script is finished?';
+  rsInfoReboot =
+    'If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
   rsDhcp = 'Should we run the opsi dhcp server on this machine?';
+  rsInfoDhcp = 'Select "No" if you already have a dhcp server.'+#10+'Select "Yes" if you want to install the dhcp server on the opsi server.';
   rsTFTPROOT = 'Which file should the TFTPROOT default symlink point to?';
+  rsInfoTFTPROOT = 'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
 
   {Query5_dhcp}
+  rsNetwork = 'Information on the network in which the opsi server shall be installed.';
   rsNetmask = 'Netmask (for dhcp)';
   rsNetmaskOther = 'Other:';
   rsNetworkAddress = 'Network address (for dhcp)';
@@ -69,7 +82,9 @@ resourcestring
 
   {Query6}
   rsAdminName = 'What is the name of the opsi_admin_user to create? (empty = nothing created)';
-  rsAdminPassword = 'What is the password of the opsi_admin_user to create? (empty = nothing created)';
+  rsAdmin = 'User to create for the operation of opsi.'+#10+'This user can not manage system settings.';
+  rsAdminPassword =
+    'What is the password of the opsi_admin_user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) (''auto'' = use standard)';
   rsIPNumber = 'Set a different IP number (''auto'' = use standard)';
 
@@ -97,7 +112,8 @@ resourcestring
   rsIPNameO = 'IP name: ';
   rsIPNumberO = 'IP number: ';
 
-  rsStartInstallation = 'Finally click ''finish'' to start the installation of opsi-server.';
+  rsStartInstallation =
+    'Finally click ''finish'' to start the installation of opsi-server.';
 
   {Password}
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';

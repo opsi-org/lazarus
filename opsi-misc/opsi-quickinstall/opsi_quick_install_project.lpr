@@ -17,7 +17,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   opsi_quick_install_unit_password,
   opsi_quick_install_unit_distr,
   osDistributionInfo,
-  opsi_quick_install_resourcestrings;
+  opsi_quick_install_resourcestrings, opsi_quick_install_unit_nogui;
 
 {$R *.res}
 

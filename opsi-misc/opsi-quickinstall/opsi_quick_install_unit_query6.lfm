@@ -28,10 +28,12 @@ object Query6: TQuery6
     TabOrder = 0
   end
   object PanelNameAdmin: TPanel
+    AnchorSideTop.Control = Owner
     Left = 160
     Height = 80
-    Top = 64
+    Top = 50
     Width = 440
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 440
@@ -65,7 +67,7 @@ object Query6: TQuery6
     AnchorSideTop.Side = asrBottom
     Left = 160
     Height = 80
-    Top = 164
+    Top = 150
     Width = 440
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -101,7 +103,7 @@ object Query6: TQuery6
     AnchorSideTop.Side = asrBottom
     Left = 160
     Height = 58
-    Top = 264
+    Top = 250
     Width = 440
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -137,7 +139,7 @@ object Query6: TQuery6
     AnchorSideTop.Side = asrBottom
     Left = 160
     Height = 58
-    Top = 342
+    Top = 328
     Width = 440
     BorderSpacing.Top = 20
     BevelOuter = bvNone
@@ -179,5 +181,17 @@ object Query6: TQuery6
     OnClick = BtnOverviewClick
     ParentFont = False
     TabOrder = 5
+  end
+  object InfoAdmin: TImage
+    AnchorSideLeft.Control = PanelNameAdmin
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelNameAdmin
+    Left = 600
+    Height = 18
+    Top = 50
+    Width = 18
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
   end
 end

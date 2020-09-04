@@ -34,13 +34,13 @@ type
   public
   const
     // same width for all panels
-    panelWidth = 420;
+    panelWidth = 460;
     // same size for all info images
-    infoSize = 25;
+    infoSize = 22;
     // same background image for all forms
     BackgrImageFileName = 'opsi.png';
     // same image for all infos
-    InfoImageFileName = 'info.png';
+    InfoImageFileName = 'info_tiny.png';
     // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -56,11 +56,12 @@ type
     // Note that it doesn't work to define initialProds in opsi_quick_install_unit_query3 and
     // set it to True here in opsi_quick_install_unit_language.
     initialProds: boolean;
-    distroName, distroRelease: string;
 
+    distroName, distroRelease: string;
     DistrInfo: TDistributionInfo;
 
     procedure SetBtnWidth(Language: string);
+    procedure ShowHintOnClick(Sender: TObject);
   end;
 
 
@@ -112,6 +113,7 @@ begin
       // set info image
       (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
         ExtractFilePath(ParamStr(0)) + QuickInstall.InfoImageFileName);
+      (Sender.Components[compIndex] as TImage).BorderSpacing.Left := 5;
     end
     else if (Sender.Components[compIndex].Name = 'BackgrImage') then
       // set background image
@@ -119,7 +121,6 @@ begin
         ExtractFilePath(ParamStr(0)) + QuickInstall.BackgrImageFileName);
   end;
 end;
-
 
 { TQuickInstall }
 
@@ -140,26 +141,32 @@ begin
   end;
 end;
 
+procedure TQuickInstall.ShowHintOnClick(Sender: TObject);
+begin
+  Application.ActivateHint(TWinControl(Sender).ClientToScreen(Point(1, 1)), True);
+end;
+
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
   // set constant form size
   Height := 450;
-  Left := 360;
-  Top := 170;
   Width := 730;
+  // center forms nicely on screen
+  Left := Round((Screen.Width - Width) / 2);
+  Top := Round((Screen.Height - Height) / 2);
   panelLeft := Round((Width - panelWidth) * 2 / 3);
   // set constant button positions:
   BtnBack.Left := 20;
   //BtnNext.Width = 'with for english caption'
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   BtnBack.Top := 410;
-  BtnNext.Top := 410;
+  BtnNext.Top := BtnBack.Top;
 
   SetBasics(self);
 
-  ComboBoxLanguages.Left := 120;
+  ComboBoxLanguages.Left := Round((WelcomePanel.Width - ComboBoxLanguages.Width) / 2);
   with ComboBoxLanguages.Items do
   begin
     Add('Deutsch');

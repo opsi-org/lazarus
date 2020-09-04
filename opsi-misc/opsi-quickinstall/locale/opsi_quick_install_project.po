@@ -1,6 +1,12 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_quick_install_resourcestrings.rsadmin
+msgid ""
+"User to create for the operation of opsi.\n"
+"This user can not manage system settings.\n"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
 msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
@@ -109,12 +115,40 @@ msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rsinfobackend
+msgid "Shall the data of opsi be stored in a file or a mysql database?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfodhcp
+msgid ""
+"Select \"No\" if you already have a dhcp server.\n"
+"Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfomodules
+msgid "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
 msgid "Opsi 4.2 is the latest version..."
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rsinforeboot
+msgid "If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsinforepo
 msgid "Source from which opsi will be installed."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepokind
+msgid ""
+"Select the stability of the installation:\n"
+"Experimental...; testing is the beta version; stable...\n"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfotftproot
+msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsipname
@@ -165,6 +199,10 @@ msgstr ""
 #: opsi_quick_install_resourcestrings.rsnetmaskother
 msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
 msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetwork
+msgid "Information on the network in which the opsi server shall be installed."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddress
