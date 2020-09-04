@@ -109,6 +109,14 @@ msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rsinfoopsiversion
+msgid "Opsi 4.2 is the latest version..."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepo
+msgid "Source from which opsi will be installed."
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) ('auto' = use standard)"
@@ -205,7 +213,8 @@ msgid "Opsi version to install: "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsoverview
-msgid "overview"
+msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid " overview "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rspassword
@@ -279,6 +288,7 @@ msgid "Other:"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsrights
+msgctxt "opsi_quick_install_resourcestrings.rsrights"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr ""
 
@@ -405,9 +415,8 @@ msgid "Password:"
 msgstr ""
 
 #: tpassword.labelrights.caption
-msgid ""
-"Authentication is required to install opsi-server.\n"
-"Who are you logged in as?\n"
+msgctxt "tpassword.labelrights.caption"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr ""
 
 #: tpassword.radiobtnroot.caption
@@ -459,6 +468,10 @@ msgstr ""
 #: tquery.labelrepo.caption
 msgctxt "tquery.labelrepo.caption"
 msgid "(Base-) Repository for opsi-server installation"
+msgstr ""
+
+#: tquery.labelrepo.hint
+msgid "Repository from which opsi shall be installed."
 msgstr ""
 
 #: tquery.radiobtnmyproxy.caption
@@ -567,7 +580,7 @@ msgstr ""
 
 #: tquery4.caption
 msgctxt "tquery4.caption"
-msgid "Opsi quick install - query (dhcp part 1)"
+msgid "Opsi quick install - query (part 3)"
 msgstr ""
 
 #: tquery4.editpassworducs.text
@@ -635,7 +648,7 @@ msgstr ""
 
 #: tquery5_dhcp.caption
 msgctxt "tquery5_dhcp.caption"
-msgid "Opsi quick install - query (dhcp part 2)"
+msgid "Opsi quick install - query (dhcp)"
 msgstr ""
 
 #: tquery5_dhcp.labeladdress.caption
@@ -762,7 +775,7 @@ msgstr ""
 
 #: tquery6.caption
 msgctxt "tquery6.caption"
-msgid "Opsi quick install - query (user info part 1)"
+msgid "Opsi quick install - query (user info)"
 msgstr ""
 
 #: tquery6.editnameadmin.text
@@ -936,9 +949,19 @@ msgctxt "tquickinstall.btnback.caption"
 msgid " < back "
 msgstr ""
 
+#: tquickinstall.btnfinish.caption
+msgctxt "tquickinstall.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
 #: tquickinstall.btnnext.caption
 msgctxt "tquickinstall.btnnext.caption"
 msgid " next > "
+msgstr ""
+
+#: tquickinstall.btnoverview.caption
+msgctxt "tquickinstall.btnoverview.caption"
+msgid "BtnOverview"
 msgstr ""
 
 #: tquickinstall.caption

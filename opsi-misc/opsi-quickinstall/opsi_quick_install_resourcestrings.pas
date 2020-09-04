@@ -13,7 +13,7 @@ resourcestring
   rsNo = 'No';
   rsNext = ' next > ';
   rsBack = ' < back ';
-  rsOverview = 'overview';
+  rsOverview = ' overview ';
   rsFinish = ' finish ';
 
   {QuickInstall}
@@ -34,8 +34,10 @@ resourcestring
   rsOpsiVersion = 'Which opsi version would you like to install?';
   rsOpsi41 = 'opsi 4.1';
   rsOpsi42 = 'opsi 4.2';
+  rsInfoOpsiVersion = 'Opsi 4.2 is the latest version...';
   rsRepo = '(Base-) Repository for opsi-server installation';
   rsRepoOther = 'Other:';
+  rsInfoRepo = 'Source from which opsi will be installed.';
   rsProxy = 'Proxy to use (http://myproxy.dom.org:8080)';
   rsProxyNone = 'None';
   rsProxyOther = 'Other:';

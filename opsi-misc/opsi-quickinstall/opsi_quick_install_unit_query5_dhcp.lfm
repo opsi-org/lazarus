@@ -3,7 +3,7 @@ object Query5_dhcp: TQuery5_dhcp
   Height = 450
   Top = 247
   Width = 730
-  Caption = 'Opsi quick install - query (dhcp part 2)'
+  Caption = 'Opsi quick install - query (dhcp)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -32,7 +32,7 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -242,7 +242,7 @@ object Query5_dhcp: TQuery5_dhcp
       Left = 92
       Height = 21
       Top = 19
-      Width = 75
+      Width = 74
       BorderSpacing.Left = 20
       Caption = 'uib.local'
       Checked = True
@@ -255,10 +255,10 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
-      Left = 187
+      Left = 186
       Height = 21
       Top = 19
-      Width = 97
+      Width = 94
       BorderSpacing.Left = 20
       Caption = 'vmnat.local'
       ParentFont = False

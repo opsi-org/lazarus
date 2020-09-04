@@ -109,6 +109,14 @@ msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
 msgstr "Other:"
 
+#: opsi_quick_install_resourcestrings.rsinfoopsiversion
+msgid "Opsi 4.2 is the latest version..."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepo
+msgid "Source from which opsi will be installed."
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) ('auto' = use standard)"
@@ -205,8 +213,9 @@ msgid "Opsi version to install: "
 msgstr "Opsi version to install: "
 
 #: opsi_quick_install_resourcestrings.rsoverview
-msgid "overview"
-msgstr "overview"
+msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid " overview "
+msgstr " overview "
 
 #: opsi_quick_install_resourcestrings.rspassword
 msgctxt "opsi_quick_install_resourcestrings.rspassword"
@@ -279,6 +288,7 @@ msgid "Other:"
 msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsrights
+msgctxt "opsi_quick_install_resourcestrings.rsrights"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr "Authentication is required to install opsi-server. Who are you logged in as?"
 
@@ -407,9 +417,12 @@ msgid "Password:"
 msgstr "Password:"
 
 #: tpassword.labelrights.caption
-msgid ""
-"Authentication is required to install opsi-server.\n"
-"Who are you logged in as?\n"
+#, fuzzy
+#| msgid ""
+#| "Authentication is required to install opsi-server.\n"
+#| "Who are you logged in as?\n"
+msgctxt "tpassword.labelrights.caption"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr ""
 "Authentication is required to install opsi-server.\n"
 "Who are you logged in as?\n"
@@ -464,6 +477,10 @@ msgstr "Proxy to use (http://myproxy.dom.org:8080)"
 msgctxt "tquery.labelrepo.caption"
 msgid "(Base-) Repository for opsi-server installation"
 msgstr "(Base-) Repository for opsi-server installation"
+
+#: tquery.labelrepo.hint
+msgid "Repository from which opsi shall be installed."
+msgstr ""
 
 #: tquery.radiobtnmyproxy.caption
 msgid "http://myproxy.dom.org:8080"
@@ -573,8 +590,8 @@ msgstr " next > "
 
 #: tquery4.caption
 msgctxt "tquery4.caption"
-msgid "Opsi quick install - query (dhcp part 1)"
-msgstr "Opsi quick install - query (dhcp part 1)"
+msgid "Opsi quick install - query (part 3)"
+msgstr "Opsi quick install - query (part 3)"
 
 #: tquery4.editpassworducs.text
 msgctxt "tquery4.editpassworducs.text"
@@ -641,8 +658,8 @@ msgstr " next > "
 
 #: tquery5_dhcp.caption
 msgctxt "tquery5_dhcp.caption"
-msgid "Opsi quick install - query (dhcp part 2)"
-msgstr "Opsi quick install - query (dhcp part 2)"
+msgid "Opsi quick install - query (dhcp)"
+msgstr "Opsi quick install - query (dhcp)"
 
 #: tquery5_dhcp.labeladdress.caption
 msgctxt "tquery5_dhcp.labeladdress.caption"
@@ -768,8 +785,8 @@ msgstr " overview "
 
 #: tquery6.caption
 msgctxt "tquery6.caption"
-msgid "Opsi quick install - query (user info part 1)"
-msgstr "Opsi quick install - query (user info part 1)"
+msgid "Opsi quick install - query (user info)"
+msgstr "Opsi quick install - query (user info)"
 
 #: tquery6.editnameadmin.text
 msgid "adminuser"
@@ -946,10 +963,20 @@ msgctxt "tquickinstall.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
+#: tquickinstall.btnfinish.caption
+msgctxt "tquickinstall.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
 #: tquickinstall.btnnext.caption
 msgctxt "tquickinstall.btnnext.caption"
 msgid " next > "
 msgstr " next > "
+
+#: tquickinstall.btnoverview.caption
+msgctxt "tquickinstall.btnoverview.caption"
+msgid "BtnOverview"
+msgstr ""
 
 #: tquickinstall.caption
 msgid "Opsi quick install"

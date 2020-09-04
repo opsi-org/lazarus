@@ -6,7 +6,7 @@ object Distribution: TDistribution
   Caption = 'Distribution'
   ClientHeight = 240
   ClientWidth = 320
-  OnCreate = FormCreate
+  OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
   object BtnBack: TButton
     Left = 16

@@ -3,7 +3,7 @@ object Query6: TQuery6
   Height = 450
   Top = 244
   Width = 730
-  Caption = 'Opsi quick install - query (user info part 1)'
+  Caption = 'Opsi quick install - query (user info)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -20,7 +20,7 @@ object Query6: TQuery6
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -172,7 +172,7 @@ object Query6: TQuery6
     Left = 640
     Height = 25
     Top = 408
-    Width = 70
+    Width = 69
     AutoSize = True
     Caption = ' overview '
     ParentBidiMode = False

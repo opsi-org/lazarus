@@ -78,13 +78,11 @@ begin
     Query6.BtnOverview.Left := BtnNext.Left;
     Query6.BtnOverview.Top := BtnNext.Top;
   end;
-
 end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
-  AdjustPanelPosition(self);
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  SetBasics(self);
   // ask for UCS password only if distribution is Univention
   if QuickInstall.distroName = 'Univention' then
     self.PanelPasswordMasterAdmin.Visible := True
@@ -95,7 +93,6 @@ begin
     PanelReboot.Visible := False
   else
     PanelReboot.Visible := True;
-
   // text by resourcestrings
   LabelPasswordMasterAdmin.Caption := rsUCS;
   LabelReboot.Caption := rsReboot;

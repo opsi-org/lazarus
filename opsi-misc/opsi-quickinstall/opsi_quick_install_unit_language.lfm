@@ -1,7 +1,7 @@
 object QuickInstall: TQuickInstall
-  Left = 332
+  Left = 335
   Height = 450
-  Top = 249
+  Top = 188
   Width = 730
   Caption = 'Opsi quick install'
   ClientHeight = 450
@@ -115,7 +115,7 @@ object QuickInstall: TQuickInstall
       Left = -1
       Height = 32
       Top = 88
-      Width = 310
+      Width = 304
       Anchors = [akTop, akLeft, akBottom]
       Caption = 'Please choose a language for this setup program:'
       ParentColor = False
@@ -140,12 +140,32 @@ object QuickInstall: TQuickInstall
     Left = 20
     Height = 25
     Top = 410
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     Enabled = False
     ParentFont = False
     TabOrder = 3
+    Visible = False
+  end
+  object BtnOverview: TButton
+    Left = 264
+    Height = 25
+    Top = 408
+    Width = 87
+    AutoSize = True
+    Caption = 'BtnOverview'
+    TabOrder = 4
+    Visible = False
+  end
+  object BtnFinish: TButton
+    Left = 392
+    Height = 25
+    Top = 408
+    Width = 63
+    AutoSize = True
+    Caption = 'BtnFinish'
+    TabOrder = 5
     Visible = False
   end
 end

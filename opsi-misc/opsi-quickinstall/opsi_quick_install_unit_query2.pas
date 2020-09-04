@@ -66,8 +66,7 @@ end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
-  AdjustPanelPosition(self);
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  SetBasics(self);
   if QuickInstall.RadioBtnDefault.Checked then
     PanelCopyModules.Visible := False
   else

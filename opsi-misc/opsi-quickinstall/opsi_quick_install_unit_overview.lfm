@@ -1,26 +1,26 @@
 object Overview: TOverview
-  Left = 356
-  Height = 449
-  Top = 250
-  Width = 730
+  Left = 358
+  Height = 451
+  Top = 234
+  Width = 731
   Caption = 'Overview'
-  ClientHeight = 449
-  ClientWidth = 730
+  ClientHeight = 451
+  ClientWidth = 731
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 449
+    Height = 451
     Top = 0
-    Width = 730
+    Width = 731
     Align = alClient
   end
   object BtnBack: TButton
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick

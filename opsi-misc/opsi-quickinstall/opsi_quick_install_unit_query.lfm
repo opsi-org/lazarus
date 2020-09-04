@@ -1,19 +1,19 @@
 object Query: TQuery
-  Left = 480
-  Height = 457
-  Top = 88
-  Width = 731
+  Left = 468
+  Height = 450
+  Top = 205
+  Width = 730
   Caption = 'Opsi quick install - query (part 1)'
-  ClientHeight = 457
-  ClientWidth = 731
+  ClientHeight = 450
+  ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 457
+    Height = 450
     Top = 0
-    Width = 731
+    Width = 730
     Align = alClient
     AutoSize = True
     Enabled = False
@@ -33,295 +33,308 @@ object Query: TQuery
     Left = 16
     Height = 25
     Top = 416
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
     ParentFont = False
     TabOrder = 1
   end
-  object BigPanel: TPanel
-    Left = 192
-    Height = 341
-    Top = 56
-    Width = 384
-    AutoSize = True
+  object InfoRepo: TImage
+    AnchorSideLeft.Control = PanelRepo
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelRepo
+    Left = 570
+    Height = 16
+    Top = 108
+    Width = 14
+    BorderSpacing.Left = 10
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+  end
+  object InfoOpsiVersion: TImage
+    AnchorSideLeft.Control = PanelOpsiVersion
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelOpsiVersion
+    Left = 450
+    Height = 16
+    Top = 48
+    Width = 14
+    BorderSpacing.Left = 10
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+  end
+  object PanelOpsiVersion: TPanel
+    Left = 176
+    Height = 40
+    Top = 48
+    Width = 264
     BevelOuter = bvNone
-    ClientHeight = 341
-    ClientWidth = 384
+    ClientHeight = 40
+    ClientWidth = 264
     ParentFont = False
     TabOrder = 2
-    object PanelNoCache: TPanel
+    object LabelOpsiVersion: TLabel
       Left = 0
-      Height = 86
-      Top = 255
-      Width = 384
+      Height = 19
+      Top = 0
+      Width = 264
       Align = alTop
-      AutoSize = True
-      BorderSpacing.Top = 20
-      BevelOuter = bvNone
-      ClientHeight = 86
-      ClientWidth = 384
+      Caption = 'Which opsi version would you like to install?'
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      WordWrap = True
+    end
+    object RadioBtnOpsi41: TRadioButton
+      AnchorSideTop.Control = LabelOpsiVersion
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 72
+      Caption = 'opsi 4.1'
+      Checked = True
+      OnChange = RadioBtnOpsi41Change
       ParentFont = False
       TabOrder = 0
-      object LabelNoCache: TLabel
-        Left = 0
-        Height = 36
-        Top = 0
-        Width = 384
-        Align = alTop
-        Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
-        Font.Height = 13
-        ParentColor = False
-        ParentFont = False
-        WordWrap = True
-      end
-      object RadioBtnRepoNoCache: TRadioButton
-        AnchorSideTop.Control = LabelNoCache
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 36
-        Width = 21
-        Checked = True
-        ParentFont = False
-        TabOrder = 1
-        TabStop = True
-      end
-      object EditDefaultRepoNoCache: TEdit
-        AnchorSideTop.Control = LabelNoCache
-        AnchorSideTop.Side = asrBottom
-        Left = 24
-        Height = 25
-        Top = 36
-        Width = 360
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 0
-        Text = 'repo (no cache)'
-      end
-      object RadioBtnOtherNoCache: TRadioButton
-        AnchorSideTop.Control = EditDefaultRepoNoCache
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 61
-        Width = 65
-        Caption = 'Other:'
-        ParentFont = False
-        TabOrder = 3
-      end
-      object EditOtherNoCache: TEdit
-        AnchorSideLeft.Control = RadioBtnOtherNoCache
-        AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = EditDefaultRepoNoCache
-        AnchorSideTop.Side = asrBottom
-        Left = 75
-        Height = 25
-        Top = 61
-        Width = 309
-        BorderSpacing.Left = 10
-        ParentFont = False
-        TabOrder = 2
-      end
+      TabStop = True
     end
-    object PanelProxy: TPanel
-      Left = 0
-      Height = 86
-      Top = 149
-      Width = 384
-      Align = alTop
-      AutoSize = True
-      BorderSpacing.Top = 20
-      BevelOuter = bvNone
-      ClientHeight = 86
-      ClientWidth = 384
+    object RadioBtnOpsi42: TRadioButton
+      AnchorSideLeft.Control = RadioBtnOpsi41
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelOpsiVersion
+      AnchorSideTop.Side = asrBottom
+      Left = 122
+      Height = 21
+      Top = 19
+      Width = 72
+      BorderSpacing.Left = 50
+      Caption = 'opsi 4.2'
       ParentFont = False
       TabOrder = 1
-      object LabelProxy: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 384
-        Align = alTop
-        Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
-        ParentColor = False
-        ParentFont = False
-        WordWrap = True
-      end
-      object RadioBtnNone: TRadioButton
-        Left = 0
-        Height = 21
-        Top = 19
-        Width = 384
-        Align = alTop
-        Caption = 'None'
-        Checked = True
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-      end
-      object RadioBtnMyProxy: TRadioButton
-        Left = 0
-        Height = 21
-        Top = 40
-        Width = 384
-        Align = alTop
-        Caption = 'http://myproxy.dom.org:8080'
-        ParentFont = False
-        TabOrder = 1
-      end
-      object EditProxy: TEdit
-        AnchorSideLeft.Control = RadioBtnOtherProxy
-        AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = RadioBtnMyProxy
-        AnchorSideTop.Side = asrBottom
-        Left = 75
-        Height = 25
-        Top = 61
-        Width = 309
-        BorderSpacing.Left = 10
-        ParentFont = False
-        TabOrder = 2
-      end
-      object RadioBtnOtherProxy: TRadioButton
-        AnchorSideTop.Control = RadioBtnMyProxy
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 61
-        Width = 65
-        Caption = 'Other:'
-        ParentFont = False
-        TabOrder = 3
-      end
     end
-    object PanelRepo: TPanel
+  end
+  object PanelRepo: TPanel
+    AnchorSideTop.Control = PanelOpsiVersion
+    AnchorSideTop.Side = asrBottom
+    Left = 176
+    Height = 69
+    Top = 108
+    Width = 384
+    BorderSpacing.Top = 20
+    BevelOuter = bvNone
+    ClientHeight = 69
+    ClientWidth = 384
+    ParentFont = False
+    TabOrder = 3
+    object LabelRepo: TLabel
       Left = 0
-      Height = 69
-      Top = 60
-      Width = 384
-      Align = alTop
-      AutoSize = True
-      BorderSpacing.Top = 20
-      BevelOuter = bvNone
-      ClientHeight = 69
-      ClientWidth = 384
-      ParentFont = False
-      TabOrder = 2
-      object LabelRepo: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 384
-        Align = alTop
-        Caption = '(Base-) Repository for opsi-server installation'
-        ParentColor = False
-        ParentFont = False
-        WordWrap = True
-      end
-      object RadioBtnRepo: TRadioButton
-        AnchorSideTop.Control = LabelRepo
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 19
-        Width = 21
-        Checked = True
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-      end
-      object EditDefaultRepo: TEdit
-        AnchorSideTop.Control = LabelRepo
-        AnchorSideTop.Side = asrBottom
-        Left = 24
-        Height = 25
-        Top = 19
-        Width = 360
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 1
-        Text = 'repo'
-      end
-      object EditRepo: TEdit
-        AnchorSideLeft.Control = RadioBtnOtherRepo
-        AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = EditDefaultRepo
-        AnchorSideTop.Side = asrBottom
-        Left = 75
-        Height = 25
-        Top = 44
-        Width = 309
-        BorderSpacing.Left = 10
-        ParentFont = False
-        TabOrder = 2
-      end
-      object RadioBtnOtherRepo: TRadioButton
-        AnchorSideTop.Control = EditDefaultRepo
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 44
-        Width = 65
-        Caption = 'Other:'
-        ParentFont = False
-        TabOrder = 3
-      end
-    end
-    object PanelOpsiVersion: TPanel
-      Left = 0
-      Height = 40
+      Height = 19
+      Hint = 'Repository from which opsi shall be installed.'
       Top = 0
       Width = 384
       Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 40
-      ClientWidth = 384
+      Caption = '(Base-) Repository for opsi-server installation'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object RadioBtnRepo: TRadioButton
+      AnchorSideTop.Control = LabelRepo
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 21
+      Checked = True
+      ParentFont = False
+      TabOrder = 0
+      TabStop = True
+    end
+    object EditDefaultRepo: TEdit
+      AnchorSideTop.Control = LabelRepo
+      AnchorSideTop.Side = asrBottom
+      Left = 24
+      Height = 25
+      Top = 19
+      Width = 360
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      Text = 'repo'
+    end
+    object EditRepo: TEdit
+      AnchorSideLeft.Control = RadioBtnOtherRepo
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = EditDefaultRepo
+      AnchorSideTop.Side = asrBottom
+      Left = 75
+      Height = 25
+      Top = 44
+      Width = 309
+      BorderSpacing.Left = 10
+      ParentFont = False
+      TabOrder = 2
+    end
+    object RadioBtnOtherRepo: TRadioButton
+      AnchorSideTop.Control = EditDefaultRepo
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 44
+      Width = 65
+      Caption = 'Other:'
       ParentFont = False
       TabOrder = 3
-      object LabelOpsiVersion: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 384
-        Align = alTop
-        Caption = 'Which opsi version would you like to install?'
-        ParentColor = False
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        WordWrap = True
-      end
-      object RadioBtnOpsi41: TRadioButton
-        AnchorSideTop.Control = LabelOpsiVersion
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 19
-        Width = 72
-        Caption = 'opsi 4.1'
-        Checked = True
-        OnChange = RadioBtnOpsi41Change
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-      end
-      object RadioBtnOpsi42: TRadioButton
-        AnchorSideLeft.Control = RadioBtnOpsi41
-        AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = LabelOpsiVersion
-        AnchorSideTop.Side = asrBottom
-        Left = 122
-        Height = 21
-        Top = 19
-        Width = 72
-        BorderSpacing.Left = 50
-        Caption = 'opsi 4.2'
-        ParentFont = False
-        TabOrder = 1
-      end
+    end
+  end
+  object PanelProxy: TPanel
+    AnchorSideTop.Control = PanelRepo
+    AnchorSideTop.Side = asrBottom
+    Left = 176
+    Height = 86
+    Top = 197
+    Width = 384
+    BorderSpacing.Top = 20
+    BevelOuter = bvNone
+    ClientHeight = 86
+    ClientWidth = 384
+    ParentFont = False
+    TabOrder = 4
+    object LabelProxy: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 384
+      Align = alTop
+      Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object RadioBtnNone: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 384
+      Align = alTop
+      Caption = 'None'
+      Checked = True
+      ParentFont = False
+      TabOrder = 0
+      TabStop = True
+    end
+    object RadioBtnMyProxy: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 40
+      Width = 384
+      Align = alTop
+      Caption = 'http://myproxy.dom.org:8080'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object EditProxy: TEdit
+      AnchorSideLeft.Control = RadioBtnOtherProxy
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RadioBtnMyProxy
+      AnchorSideTop.Side = asrBottom
+      Left = 75
+      Height = 25
+      Top = 61
+      Width = 309
+      BorderSpacing.Left = 10
+      ParentFont = False
+      TabOrder = 2
+    end
+    object RadioBtnOtherProxy: TRadioButton
+      AnchorSideTop.Control = RadioBtnMyProxy
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 61
+      Width = 65
+      Caption = 'Other:'
+      ParentFont = False
+      TabOrder = 3
+    end
+  end
+  object PanelNoCache: TPanel
+    AnchorSideTop.Control = PanelProxy
+    AnchorSideTop.Side = asrBottom
+    Left = 176
+    Height = 86
+    Top = 303
+    Width = 384
+    BorderSpacing.Top = 20
+    BevelOuter = bvNone
+    ClientHeight = 86
+    ClientWidth = 384
+    ParentFont = False
+    TabOrder = 5
+    object LabelNoCache: TLabel
+      Left = 0
+      Height = 36
+      Top = 0
+      Width = 384
+      Align = alTop
+      Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
+      Font.Height = 13
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object RadioBtnRepoNoCache: TRadioButton
+      AnchorSideTop.Control = LabelNoCache
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 36
+      Width = 21
+      Checked = True
+      ParentFont = False
+      TabOrder = 1
+      TabStop = True
+    end
+    object EditDefaultRepoNoCache: TEdit
+      AnchorSideTop.Control = LabelNoCache
+      AnchorSideTop.Side = asrBottom
+      Left = 24
+      Height = 25
+      Top = 36
+      Width = 360
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'repo (no cache)'
+    end
+    object RadioBtnOtherNoCache: TRadioButton
+      AnchorSideTop.Control = EditDefaultRepoNoCache
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 61
+      Width = 65
+      Caption = 'Other:'
+      ParentFont = False
+      TabOrder = 3
+    end
+    object EditOtherNoCache: TEdit
+      AnchorSideLeft.Control = RadioBtnOtherNoCache
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = EditDefaultRepoNoCache
+      AnchorSideTop.Side = asrBottom
+      Left = 75
+      Height = 25
+      Top = 61
+      Width = 309
+      BorderSpacing.Left = 10
+      ParentFont = False
+      TabOrder = 2
     end
   end
 end

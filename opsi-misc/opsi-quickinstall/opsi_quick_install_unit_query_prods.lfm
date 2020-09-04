@@ -1,7 +1,7 @@
 object QueryProds: TQueryProds
   Left = 389
   Height = 450
-  Top = 255
+  Top = 249
   Width = 730
   Caption = 'Opsi quick install - query (part 3)'
   ClientHeight = 450
@@ -30,7 +30,7 @@ object QueryProds: TQueryProds
     Left = 24
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -75,7 +75,7 @@ object QueryProds: TQueryProds
         Left = 322
         Height = 21
         Top = 97
-        Width = 118
+        Width = 116
         Caption = 'config-winbase'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -87,7 +87,7 @@ object QueryProds: TQueryProds
         Left = 322
         Height = 21
         Top = 73
-        Width = 104
+        Width = 103
         Caption = 'config-win10'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -99,7 +99,7 @@ object QueryProds: TQueryProds
         Left = 322
         Height = 21
         Top = 49
-        Width = 115
+        Width = 114
         Caption = 'opsi-logviewer'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -135,7 +135,7 @@ object QueryProds: TQueryProds
         Left = 135
         Height = 21
         Top = 121
-        Width = 91
+        Width = 90
         Caption = 'opsi-winpe'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -147,7 +147,7 @@ object QueryProds: TQueryProds
         Left = 322
         Height = 21
         Top = 1
-        Width = 124
+        Width = 122
         Caption = 'opsi-set-win-uac'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -159,7 +159,7 @@ object QueryProds: TQueryProds
         Left = 135
         Height = 21
         Top = 97
-        Width = 133
+        Width = 130
         Caption = 'opsi-wim-capture'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -183,7 +183,7 @@ object QueryProds: TQueryProds
         Left = 135
         Height = 21
         Top = 49
-        Width = 134
+        Width = 131
         Caption = 'shutdownwanted'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -195,7 +195,7 @@ object QueryProds: TQueryProds
         Left = 135
         Height = 21
         Top = 25
-        Width = 186
+        Width = 181
         Caption = 'opsi-template-with-admin'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -207,7 +207,7 @@ object QueryProds: TQueryProds
         Left = 135
         Height = 21
         Top = 1
-        Width = 111
+        Width = 109
         Caption = 'opsi-template'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -219,7 +219,7 @@ object QueryProds: TQueryProds
         Left = 1
         Height = 21
         Top = 145
-        Width = 75
+        Width = 73
         Caption = 'hwaudit'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -243,7 +243,7 @@ object QueryProds: TQueryProds
         Left = 1
         Height = 21
         Top = 121
-        Width = 73
+        Width = 71
         Caption = 'swaudit'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -267,7 +267,7 @@ object QueryProds: TQueryProds
         Left = 1
         Height = 21
         Top = 49
-        Width = 70
+        Width = 67
         Caption = 'javavm'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -279,7 +279,7 @@ object QueryProds: TQueryProds
         Left = 1
         Height = 21
         Top = 25
-        Width = 86
+        Width = 85
         Caption = 'opsi-winst'
         Checked = True
         OnChange = CheckBoxProdChange
@@ -291,7 +291,7 @@ object QueryProds: TQueryProds
         Left = 1
         Height = 21
         Top = 1
-        Width = 127
+        Width = 126
         Caption = 'opsi-client-agent'
         Checked = True
         OnChange = CheckBoxProdChange

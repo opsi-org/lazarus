@@ -3,7 +3,7 @@ object Query4: TQuery4
   Height = 450
   Top = 246
   Width = 730
-  Caption = 'Opsi quick install - query (dhcp part 1)'
+  Caption = 'Opsi quick install - query (part 3)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -31,7 +31,7 @@ object Query4: TQuery4
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -244,7 +244,7 @@ object Query4: TQuery4
           Left = 136
           Height = 21
           Top = 0
-          Width = 126
+          Width = 124
           Caption = 'default.nomenu'
           Checked = True
           ParentFont = False
@@ -255,7 +255,7 @@ object Query4: TQuery4
           Left = 0
           Height = 21
           Top = 0
-          Width = 110
+          Width = 108
           Caption = 'default.menu'
           ParentFont = False
           TabOrder = 1

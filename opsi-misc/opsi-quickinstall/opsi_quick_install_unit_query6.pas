@@ -83,11 +83,8 @@ end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
-  //ShowMessage(BtnOverview.Width.ToString);
-  AdjustPanelPosition(self);
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  SetBasics(self);
   BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
-
   // text by resourcestrings
   LabelNameAdmin.Caption := rsAdminName;
   LabelPasswordAdmin.Caption := rsAdminPassword;

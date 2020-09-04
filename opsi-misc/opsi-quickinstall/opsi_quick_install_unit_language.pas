@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, LCLtranslator, osDistributionInfo;
+  StdCtrls, LCLtranslator, Buttons, osDistributionInfo;
 
 type
 
@@ -15,7 +15,9 @@ type
   TQuickInstall = class(TForm)
     BackgrImage: TImage;
     BtnBack: TButton;
+    BtnFinish: TButton;
     BtnNext: TButton;
+    BtnOverview: TButton;
     ComboBoxLanguages: TComboBox;
     LabelSetup: TLabel;
     WelcomePanel: TPanel;
@@ -29,11 +31,16 @@ type
     procedure ComboBoxLanguagesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    procedure SetBtnWidth(Language: string);
   public
   const
     // same width for all panels
-    panelWidth = 450;
+    panelWidth = 420;
+    // same size for all info images
+    infoSize = 25;
+    // same background image for all forms
+    BackgrImageFileName = 'opsi.png';
+    // same image for all infos
+    InfoImageFileName = 'info.png';
     // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -45,8 +52,6 @@ type
     panelLeft: integer;
     // same position for all buttons
     BtnNextWidth, BtnOverviewWidth, BtnFinishWidth: integer;
-    // same background image for all forms
-    BackgrImageFileName: string;
     // for setting selectedAmount:=productAmount only the first time when Query3 is activated
     // Note that it doesn't work to define initialProds in opsi_quick_install_unit_query3 and
     // set it to True here in opsi_quick_install_unit_language.
@@ -54,12 +59,15 @@ type
     distroName, distroRelease: string;
 
     DistrInfo: TDistributionInfo;
+
+    procedure SetBtnWidth(Language: string);
   end;
 
 
 // for less code
 procedure showForm(newForm: TForm; Sender: TForm);
-procedure AdjustPanelPosition(Sender: TForm);
+// set Panel.Left, Panel.Width, InfoImage.Width, InfoImage.Height
+procedure SetBasics(Sender: TForm);
 
 var
   QuickInstall: TQuickInstall;
@@ -84,7 +92,7 @@ begin
   Sender.Visible := False;
 end;
 
-procedure AdjustPanelPosition(Sender: TForm);
+procedure SetBasics(Sender: TForm);
 var
   compIndex: integer;
 begin
@@ -94,7 +102,21 @@ begin
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
       (Sender.Components[compIndex] as TPanel).Width := QuickInstall.panelWidth;
-    end;
+    end
+    else
+    if (Sender.Components[compIndex].ClassName = 'TImage') and
+      (Pos('Info', Sender.Components[compIndex].Name) = 1) then
+    begin
+      (Sender.Components[compIndex] as TImage).Width := QuickInstall.infoSize;
+      (Sender.Components[compIndex] as TImage).Height := QuickInstall.infoSize;
+      // set info image
+      (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
+        ExtractFilePath(ParamStr(0)) + QuickInstall.InfoImageFileName);
+    end
+    else if (Sender.Components[compIndex].Name = 'BackgrImage') then
+      // set background image
+      (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
+        ExtractFilePath(ParamStr(0)) + QuickInstall.BackgrImageFileName);
   end;
 end;
 
@@ -105,19 +127,15 @@ procedure TQuickInstall.SetBtnWidth(Language: string);
 begin
   if Language = 'de' then
   begin
-    // needs to be set for every language
+    // needs to be set for every language for nice place of BtnNext
     BtnNextWidth := 63;
-    BtnOverviewWidth := 72;
-    BtnFinishWidth := 88;
     //BtnNext.Width = 'with for english caption'
     //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
     BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
   end
-  else
+  else if Language = 'en' then
   begin
     BtnNextWidth := 51;
-    BtnOverviewWidth := 69;
-    BtnFinishWidth := 45;
     BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
   end;
 end;
@@ -138,20 +156,8 @@ begin
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   BtnBack.Top := 410;
   BtnNext.Top := 410;
-  // set constant background
-  BackgrImageFileName := ExtractFilePath(ParamStr(0)) + 'opsi.png';
-  BackgrImage.Picture.LoadFromFile(BackgrImageFileName);
-  // bring all panels to the same position (QuickInstall.panelLeft)
-  AdjustPanelPosition(self);
 
-  // text by resourcestrings
-  LabelWelcome.Caption := rsWelcome;
-  LabelSelLanguage.Caption := rsSelLanguage;
-  LabelSetup.Caption := rsSetup;
-  RadioBtnDefault.Caption := rsStandard;
-  RadioBtnCustom.Caption := rsCustom;
-  LabelCarryOut.Caption := rsCarryOut;
-  BtnNext.Caption := rsNext;
+  SetBasics(self);
 
   ComboBoxLanguages.Left := 120;
   with ComboBoxLanguages.Items do
@@ -183,11 +189,32 @@ begin
   //ShowMessage(distroName);
   //ShowMessage(distroRelease);
   DistrInfo := TDistributionInfo.Create;
+
+  // text by resourcestrings
+  LabelWelcome.Caption := rsWelcome;
+  LabelSelLanguage.Caption := rsSelLanguage;
+  LabelSetup.Caption := rsSetup;
+  RadioBtnDefault.Caption := rsStandard;
+  RadioBtnCustom.Caption := rsCustom;
+  LabelCarryOut.Caption := rsCarryOut;
+  BtnNext.Caption := rsNext;
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
   Distribution.ShowModal;
+  // Get Width of BtnOverview and BtnFinish through invisible buttons.
+  // Btn.Caption:=rsString and Btn.Width only work properly when Btn.Visible=True
+  BtnOverview.Visible := True;
+  BtnFinish.Visible := True;
+  BtnOverview.Caption := rsOverview;
+  BtnFinish.Caption := rsFinish;
+  BtnOverviewWidth := BtnOverview.Width;
+  BtnFinishWidth := BtnFinish.Width;
+  BtnOverview.Visible := False;
+  BtnFinish.Visible := False;
+  //ShowMessage(BtnOverviewWidth.ToString + ', ' + BtnFinishWidth.ToString);
+
   if Distribution.GoOn then
   begin
     if RadioBtnDefault.Checked then

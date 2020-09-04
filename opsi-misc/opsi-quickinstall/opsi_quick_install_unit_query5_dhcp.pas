@@ -85,9 +85,7 @@ end;
 
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
 begin
-  AdjustPanelPosition(self);
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-
+  SetBasics(self);
   // text by resourcestrings
   LabelNetmask.Caption:=rsNetmask;
   RadioBtnOtherMask.Caption:=rsNetmaskOther;

@@ -20,7 +20,7 @@ type
     PanelDistr: TPanel;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
 
   public
@@ -64,7 +64,7 @@ begin
   end;
 end;
 
-procedure TDistribution.FormCreate(Sender: TObject);
+procedure TDistribution.FormActivate(Sender: TObject);
 begin
   // centering form Distribution nicely on form QuickInstall
   Distribution.Left := QuickInstall.Left + Round(QuickInstall.Width / 2) -
@@ -73,6 +73,7 @@ begin
     Round(Height / 2);
 
   BtnBack.Left := QuickInstall.BtnBack.Left;
+  //ShowMessage(QuickInstall.BtnNextWidth.ToString);
   BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
 
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;

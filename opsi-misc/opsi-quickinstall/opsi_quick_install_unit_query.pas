@@ -21,11 +21,12 @@ type
     EditProxy: TEdit;
     EditRepo: TEdit;
     EditOtherNoCache: TEdit;
+    InfoRepo: TImage;
+    InfoOpsiVersion: TImage;
     LabelOpsiVersion: TLabel;
     LabelNoCache: TLabel;
     LabelProxy: TLabel;
     LabelRepo: TLabel;
-    BigPanel: TPanel;
     PanelOpsiVersion: TPanel;
     PanelNoCache: TPanel;
     PanelProxy: TPanel;
@@ -64,12 +65,7 @@ uses
 procedure TQuery.FormActivate(Sender: TObject);
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
-  BigPanel.Left := QuickInstall.panelLeft;
-  {PanelEditOtherRepo.Left:=PanelEditOtherRepo.Left-QuickInstall.panelLeft;
-  PanelEditOtherProxy.Left:=PanelEditOtherProxy.Left-QuickInstall.panelLeft;
-  PanelEditOtherNoCache.Left:=PanelEditOtherNoCache.Left-QuickInstall.panelLeft;}
-  // always the same background (as in QuickInstall)
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  SetBasics(self);
   // default opsi version is 4.2
   // when RadioBtnOpsi42 (resp. RadioBtnOpsi41) changes (see below)...
   // ...EditDefaultRepo.Text is adjusted
@@ -83,8 +79,10 @@ begin
   LabelOpsiVersion.Caption := rsOpsiVersion;
   RadioBtnOpsi41.Caption := rsOpsi41;
   RadioBtnOpsi42.Caption := rsOpsi42;
+  InfoOpsiVersion.Hint:=rsInfoOpsiVersion;
   LabelRepo.Caption := rsRepo;
   RadioBtnOtherRepo.Caption := rsRepoOther;
+  InfoRepo.Hint:=rsInfoRepo;
   LabelProxy.Caption := rsProxy;
   RadioBtnNone.Caption := rsProxyNone;
   RadioBtnOtherProxy.Caption := rsProxyOther;

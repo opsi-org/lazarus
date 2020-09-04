@@ -129,8 +129,7 @@ end;
 
 procedure TQueryProds.FormActivate(Sender: TObject);
 begin
-  AdjustPanelPosition(self);
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  SetBasics(self);
 
   if QuickInstall.initialProds then
   begin
