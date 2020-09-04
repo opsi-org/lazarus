@@ -21,6 +21,9 @@ uses
   OSProcessux,
 
   {$ENDIF UNIX}
+  {$IFDEF DARWIN}
+  osfuncmac,
+  {$ENDIF DARWIN}
   fileutil,
   lazfileutils,
   oslog;
@@ -80,7 +83,7 @@ begin
 end;
 
 {$ENDIF WIN32}
-{$IFDEF UNIX}
+{$IFDEF LINUX}
 function getLinProcessList: TStringList;
 var
   resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
@@ -161,7 +164,7 @@ begin
   end;
 end;
 
-{$ENDIF UNIX}
+{$ENDIF LINUX}
 
 
 
@@ -172,12 +175,12 @@ begin
   Result := getWinProcessList;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   Result := getLinProcessList;
-  {$ENDIF UNIX}
-  //{$IFDEF DARWIN}
-  //Result := getMacProcessList;
-  //{$ENDIF DARWIN}
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := getMacOSProcessList;
+  {$ENDIF DARWIN}
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;

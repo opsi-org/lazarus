@@ -1185,7 +1185,7 @@ begin
     DataSourceProductData.Edit;
     DataModuleOCK.SQLQueryProductData.First;
   end;
-  NotebookProducts.PageIndex:= 0
+  NotebookProducts.PageIndex:= 0;
 end;
 
 procedure TFormOpsiClientKiosk.SetTilesView;
@@ -2133,13 +2133,13 @@ begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   { is opsiclientd or another instance running? }
-  {$IFNDEF DARWIN}
+  //{$IFNDEF DARWIN}
   if not CheckUnique(InfoText) then
   begin
     ShowMessage(InfoText);
     halt(1);
   end;
-  {$ENDIF DARWIN}
+  //{$ENDIF DARWIN}
   //ShowMessage('Form Create');
 
   { Init Variables }
