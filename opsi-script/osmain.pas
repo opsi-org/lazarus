@@ -2886,6 +2886,8 @@ begin
                     opsiserviceUser := list1.getStringValue('username');
                     opsiservicePassword := list1.getStringValue('password');
                     opsiserviceSessionId := list1.getStringValue('opsiserviceSessionId');
+                    if opsiserviceSessionId = 'NULL' then opsiserviceSessionId := '';
+                    startupmessages.Add('found as credentials:'+opsiserviceUser+' ; '+opsiservicePassword+' ; '+opsiserviceSessionId);
                     if (length(ParamListe.Strings[i - 1]) = 0) or
                       (ParamListe.Strings[i - 1][1] = ParamDelim) then
                     begin

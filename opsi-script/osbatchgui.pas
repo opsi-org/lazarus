@@ -85,7 +85,7 @@ type
       Shift: TShiftState; X, Y: integer);
 
 
-    //procedure FormResize(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure setOutputLevel(const level: integer);
     procedure TimerCommandTimer(Sender: TObject);
     procedure TimerActivityTimer(Sender: TObject);
@@ -1044,11 +1044,12 @@ begin
   FormMoving := False;
 end;
 
-(*
+
 procedure TFBatchOberflaeche.FormResize(Sender: TObject);
 var
   i: integer;
 begin
+  {$IFNDEF DARWIN}
   i := (Width - panel.Width) div 2;
   Panel.Left := i;
   if Height > panel.Height + standardTopMargin then
@@ -1062,8 +1063,8 @@ begin
   ImageOpsiBackground.Top := Height - ImageOpsiBackground.Height;
 
   //LabelVersion.BringToFront
+  {$ENDIF DARWIN}
 end;
-*)
 
 //interface
 procedure TFBatchOberflaeche.setVisible(b: boolean);
