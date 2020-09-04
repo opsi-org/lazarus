@@ -489,8 +489,8 @@ begin
           LogDatei.log('DisableWow64FsRedirection succeeded',
             LLdebug2);
 
-          RunCommandAndCaptureOut(
-            'c:\windows\system32\bcdedit.exe /enum firmware', True,
+          RunCommandAndCaptureOut(GetWinSystemDirectory+
+            '\bcdedit.exe /enum firmware', True,
             outlines, outstr, SW_HIDE, exitcode);
 
           boolresult := DSiRevertWow64FsRedirection(
@@ -504,13 +504,13 @@ begin
         end;
       end
       else
-        RunCommandAndCaptureOut(
-          'c:\windows\system32\bcdedit.exe /enum firmware', True,
+        RunCommandAndCaptureOut(GetWinSystemDirectory+
+          '\bcdedit.exe /enum firmware', True,
           outlines, outstr, SW_HIDE, exitcode);
       {$ENDIF WIN32}
       {$IFDEF WIN64}
-      RunCommandAndCaptureOut(
-        'c:\windows\system32\bcdedit.exe /enum firmware', True,
+      RunCommandAndCaptureOut(GetWinSystemDirectory+
+        '\bcdedit.exe /enum firmware', True,
         outlines, outstr, SW_HIDE, exitcode);
       {$ENDIF WIN64}
 
