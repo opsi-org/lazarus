@@ -1,0 +1,511 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: opsi_quick_install_resourcestrings.rsadmin
+msgid ""
+"User to create for the operation of opsi.\n"
+"This user can not manage system settings.\n"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsadminname
+msgctxt "opsi_quick_install_resourcestrings.rsadminname"
+msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
+msgstr "Name des Opsi-Admin-User, der erstellt wird: (leer = nichts wird erstellt)"
+
+#: opsi_quick_install_resourcestrings.rsadminnameo
+msgctxt "opsi_quick_install_resourcestrings.rsadminnameo"
+msgid "Opsi admin user name: "
+msgstr "Opsi-Admin-User Name: "
+
+#: opsi_quick_install_resourcestrings.rsadminpassword
+msgctxt "opsi_quick_install_resourcestrings.rsadminpassword"
+msgid "What is the password of the opsi_admin_user to create? (empty = nothing created)"
+msgstr "Passwort des Opsi-Admin-User, der erstellt wird: (leer = nichts wird erstellt)"
+
+#: opsi_quick_install_resourcestrings.rsadminpasswordo
+msgctxt "opsi_quick_install_resourcestrings.rsadminpasswordo"
+msgid "Opsi admin user password: "
+msgstr "Opsi-Admin-User Passwort: "
+
+#: opsi_quick_install_resourcestrings.rsback
+msgctxt "opsi_quick_install_resourcestrings.rsback"
+msgid " < back "
+msgstr " < zurück "
+
+#: opsi_quick_install_resourcestrings.rsbackend
+msgctxt "opsi_quick_install_resourcestrings.rsbackend"
+msgid "Which backend should be installed? (mysql needs valid activation file)"
+msgstr "Welches Backend soll installiert werden? (mysql benötigt eine passende Aktivierungsdatei)"
+
+#: opsi_quick_install_resourcestrings.rsbackendo
+msgctxt "opsi_quick_install_resourcestrings.rsbackendo"
+msgid "Backend: "
+msgstr "Backend: "
+
+#: opsi_quick_install_resourcestrings.rscarryout
+msgctxt "opsi_quick_install_resourcestrings.rscarryout"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr "Um die restliche Installation automatisch durchführen zu können, benötigen wir zunächst ein paar Informationen."
+
+#: opsi_quick_install_resourcestrings.rscopymodules
+msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
+msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr "Sollen wir Module kopieren, selbst wenn /etc/opsi/modules noch existiert?"
+
+#: opsi_quick_install_resourcestrings.rscopymoduleso
+msgctxt "opsi_quick_install_resourcestrings.rscopymoduleso"
+msgid "Copy modules: "
+msgstr "Module kopieren: "
+
+#: opsi_quick_install_resourcestrings.rscorrect
+msgid "If this is correct, please click 'next >' to continue. If not, please edit the distribution and then continue with 'next >'."
+msgstr "Wenn das korrekt ist, klicken Sie zum Fortfahren auf 'weiter >'. Wenn nicht, editieren Sie bitte die Distribution und klicken dann auf 'weiter >"
+
+#: opsi_quick_install_resourcestrings.rscustom
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: opsi_quick_install_resourcestrings.rsdhcp
+msgctxt "opsi_quick_install_resourcestrings.rsdhcp"
+msgid "Should we run the opsi dhcp server on this machine?"
+msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
+
+#: opsi_quick_install_resourcestrings.rsdhcpo
+msgctxt "opsi_quick_install_resourcestrings.rsdhcpo"
+msgid "Run opsi dhcp server: "
+msgstr "Opsi-DHCP-Server verwenden: "
+
+#: opsi_quick_install_resourcestrings.rsdistr
+msgctxt "opsi_quick_install_resourcestrings.rsdistr"
+msgid "We recognized the following distribution on this computer:"
+msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
+
+#: opsi_quick_install_resourcestrings.rsdomain
+msgctxt "opsi_quick_install_resourcestrings.rsdomain"
+msgid "DNS domain (for dhcp)"
+msgstr "DNS Domain (für das DHCP)"
+
+#: opsi_quick_install_resourcestrings.rsdomaino
+msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
+msgid "DNS Domain: "
+msgstr "DNS Domain: "
+
+#: opsi_quick_install_resourcestrings.rsdomainother
+msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
+msgid "Other:"
+msgstr "Andere:"
+
+#: opsi_quick_install_resourcestrings.rsfinish
+msgctxt "opsi_quick_install_resourcestrings.rsfinish"
+msgid " finish "
+msgstr " fertigstellen "
+
+#: opsi_quick_install_resourcestrings.rsgateway
+msgctxt "opsi_quick_install_resourcestrings.rsgateway"
+msgid "Gateway (option routers for dhcp)"
+msgstr "Gateway (...)"
+
+#: opsi_quick_install_resourcestrings.rsgatewayo
+msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
+msgid "Gateway: "
+msgstr "Gateway: "
+
+#: opsi_quick_install_resourcestrings.rsgatewayother
+msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
+msgid "Other:"
+msgstr "Anderes:"
+
+#: opsi_quick_install_resourcestrings.rsinfobackend
+msgid "Shall the data of opsi be stored in a file or a mysql database?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfodhcp
+msgid ""
+"Select \"No\" if you already have a dhcp server.\n"
+"Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfomodules
+msgid "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfoopsiversion
+msgid "Opsi 4.2 is the latest version..."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforeboot
+msgid "If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepo
+msgid "Source from which opsi will be installed."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepokind
+msgid ""
+"Select the stability of the installation:\n"
+"Experimental...; testing is the beta version; stable...\n"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfotftproot
+msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsipname
+msgctxt "opsi_quick_install_resourcestrings.rsipname"
+msgid "Set a different IP name (FQDN) ('auto' = use standard)"
+msgstr "Anderen IP-Namen setzen (FQDN): ('auto' = Standard verwenden)"
+
+#: opsi_quick_install_resourcestrings.rsipnameo
+msgctxt "opsi_quick_install_resourcestrings.rsipnameo"
+msgid "IP name: "
+msgstr "IP-Name: "
+
+#: opsi_quick_install_resourcestrings.rsipnumber
+msgctxt "opsi_quick_install_resourcestrings.rsipnumber"
+msgid "Set a different IP number ('auto' = use standard)"
+msgstr "Andere IP-Nummer setzen: ('auto' = Standard verwenden)"
+
+#: opsi_quick_install_resourcestrings.rsipnumbero
+msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
+msgid "IP number: "
+msgstr "IP-Nummer: "
+
+#: opsi_quick_install_resourcestrings.rsnameserver
+msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
+msgid "Primary nameserver (for dhcp)"
+msgstr "Primärer Nameserver (für das DHCP)"
+
+#: opsi_quick_install_resourcestrings.rsnameservero
+msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
+msgid "Primary nameserver: "
+msgstr "Primärer Nameserver: "
+
+#: opsi_quick_install_resourcestrings.rsnameserverother
+msgctxt "opsi_quick_install_resourcestrings.rsnameserverother"
+msgid "Other:"
+msgstr "Anderer:"
+
+#: opsi_quick_install_resourcestrings.rsnetmask
+msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
+msgid "Netmask (for dhcp)"
+msgstr "Netzmaske (für das DHCP)"
+
+#: opsi_quick_install_resourcestrings.rsnetmasko
+msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
+msgid "Netmask: "
+msgstr "Netzmaske: "
+
+#: opsi_quick_install_resourcestrings.rsnetmaskother
+msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
+msgid "Other:"
+msgstr "Andere:"
+
+#: opsi_quick_install_resourcestrings.rsnetwork
+msgid "Information on the network in which the opsi server shall be installed."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddress
+msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
+msgid "Network address (for dhcp)"
+msgstr "Netzwerk-Adresse (für das DHCP)"
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddressother
+msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
+msgid "Other:"
+msgstr "Andere:"
+
+#: opsi_quick_install_resourcestrings.rsnetworko
+msgctxt "opsi_quick_install_resourcestrings.rsnetworko"
+msgid "Network address: "
+msgstr "Netzwerk-Adresse: "
+
+#: opsi_quick_install_resourcestrings.rsnext
+msgctxt "opsi_quick_install_resourcestrings.rsnext"
+msgid " next > "
+msgstr " weiter > "
+
+#: opsi_quick_install_resourcestrings.rsno
+msgctxt "opsi_quick_install_resourcestrings.rsno"
+msgid "No"
+msgstr "Nein"
+
+#: opsi_quick_install_resourcestrings.rsopsi41
+msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
+msgid "opsi 4.1"
+msgstr "Opsi 4.1"
+
+#: opsi_quick_install_resourcestrings.rsopsi42
+msgctxt "opsi_quick_install_resourcestrings.rsopsi42"
+msgid "opsi 4.2"
+msgstr "Opsi 4.2"
+
+#: opsi_quick_install_resourcestrings.rsopsiversion
+msgctxt "opsi_quick_install_resourcestrings.rsopsiversion"
+msgid "Which opsi version would you like to install?"
+msgstr "Welche Opsi-Version möchten Sie installieren?"
+
+#: opsi_quick_install_resourcestrings.rsopsiversiono
+msgctxt "opsi_quick_install_resourcestrings.rsopsiversiono"
+msgid "Opsi version to install: "
+msgstr "Opsi-Version, die installiert wird: "
+
+#: opsi_quick_install_resourcestrings.rsoverview
+msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid " overview "
+msgstr " Übersicht "
+
+#: opsi_quick_install_resourcestrings.rspassword
+msgctxt "opsi_quick_install_resourcestrings.rspassword"
+msgid "Password:"
+msgstr "Passwort:"
+
+#: opsi_quick_install_resourcestrings.rsproxy
+msgctxt "opsi_quick_install_resourcestrings.rsproxy"
+msgid "Proxy to use (http://myproxy.dom.org:8080)"
+msgstr "Zu verwendender Proxy (http://myproxy.dom.org:8080)"
+
+#: opsi_quick_install_resourcestrings.rsproxynone
+msgctxt "opsi_quick_install_resourcestrings.rsproxynone"
+msgid "None"
+msgstr "Keiner"
+
+#: opsi_quick_install_resourcestrings.rsproxyo
+msgctxt "opsi_quick_install_resourcestrings.rsproxyo"
+msgid "Proxy: "
+msgstr "Proxy: "
+
+#: opsi_quick_install_resourcestrings.rsproxyother
+msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
+msgid "Other:"
+msgstr "Anderer:"
+
+#: opsi_quick_install_resourcestrings.rsreboot
+msgctxt "opsi_quick_install_resourcestrings.rsreboot"
+msgid "May the server reboot if the script is finished?"
+msgstr "Soll der Server neustarten, wenn das Skript beendet ist?"
+
+#: opsi_quick_install_resourcestrings.rsrebooto
+msgctxt "opsi_quick_install_resourcestrings.rsrebooto"
+msgid "Reboot after script is finished: "
+msgstr "Neustarten, wenn das Skript beendet ist: "
+
+#: opsi_quick_install_resourcestrings.rsrepo
+msgctxt "opsi_quick_install_resourcestrings.rsrepo"
+msgid "(Base-) Repository for opsi-server installation"
+msgstr "(Basis-) Repository für die Installation von Opsi-Server"
+
+#: opsi_quick_install_resourcestrings.rsrepokind
+msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
+msgid "From which repo kind should be installed?"
+msgstr "Von welcher Repository-Art soll installiert werden?"
+
+#: opsi_quick_install_resourcestrings.rsrepokindo
+msgctxt "opsi_quick_install_resourcestrings.rsrepokindo"
+msgid "Repo kind: "
+msgstr "Repository-Art: "
+
+#: opsi_quick_install_resourcestrings.rsreponocache
+msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
+msgid "(Base-) Repository for opsi-server installation (without any cache proxy)"
+msgstr "(Basis-) Repository für die Installation von Opsi-Server (ohne einen Cache-Proxy)"
+
+#: opsi_quick_install_resourcestrings.rsreponocacheo
+msgctxt "opsi_quick_install_resourcestrings.rsreponocacheo"
+msgid "Repository (without cache proxy): "
+msgstr "Repository (ohne Cache-Proxy): "
+
+#: opsi_quick_install_resourcestrings.rsrepoo
+msgctxt "opsi_quick_install_resourcestrings.rsrepoo"
+msgid "Repository: "
+msgstr "Repository: "
+
+#: opsi_quick_install_resourcestrings.rsrepoother
+msgctxt "opsi_quick_install_resourcestrings.rsrepoother"
+msgid "Other:"
+msgstr "Anderes:"
+
+#: opsi_quick_install_resourcestrings.rsrights
+msgctxt "opsi_quick_install_resourcestrings.rsrights"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
+
+#: opsi_quick_install_resourcestrings.rssellanguage
+msgctxt "opsi_quick_install_resourcestrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
+
+#: opsi_quick_install_resourcestrings.rssetup
+msgctxt "opsi_quick_install_resourcestrings.rssetup"
+msgid "Please select a setup type:"
+msgstr "Bitte wählen Sie einen Setup-Typ:"
+
+#: opsi_quick_install_resourcestrings.rsshowpassword
+msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
+msgid "Show password"
+msgstr "Passwort sichtbar machen"
+
+#: opsi_quick_install_resourcestrings.rsstandard
+msgid "Standard"
+msgstr "Standard"
+
+#: opsi_quick_install_resourcestrings.rsstartinstallation
+msgctxt "opsi_quick_install_resourcestrings.rsstartinstallation"
+msgid "Finally click 'finish' to start the installation of opsi-server."
+msgstr "Klicken Sie auf 'fertigstellen', um die Installation von Opsi-Server zu beginnen."
+
+#: opsi_quick_install_resourcestrings.rstftproot
+msgctxt "opsi_quick_install_resourcestrings.rstftproot"
+msgid "Which file should the TFTPROOT default symlink point to?"
+msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
+
+#: opsi_quick_install_resourcestrings.rstftprooto
+msgctxt "opsi_quick_install_resourcestrings.rstftprooto"
+msgid "TFTPROOT symlink points to: "
+msgstr "TFTPROOT-Symlink zeigt auf: "
+
+#: opsi_quick_install_resourcestrings.rsucs
+msgctxt "opsi_quick_install_resourcestrings.rsucs"
+msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+msgstr "Passwort des Administrators des UCS-Domain-Controllers: (benötigt, um andere Rollen hinzuzufügen)"
+
+#: opsi_quick_install_resourcestrings.rsucso
+msgctxt "opsi_quick_install_resourcestrings.rsucso"
+msgid "Password of administrator of UCS domain controller: "
+msgstr "Passwort des Administrators des UCS-Domain-Controllers: "
+
+#: opsi_quick_install_resourcestrings.rswelcome
+msgctxt "opsi_quick_install_resourcestrings.rswelcome"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
+
+#: opsi_quick_install_resourcestrings.rsyes
+msgctxt "opsi_quick_install_resourcestrings.rsyes"
+msgid "Yes"
+msgstr "Ja"
+
+#: tqueryprods.btnback.caption
+msgctxt "tqueryprods.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tqueryprods.btnnext.caption
+msgctxt "tqueryprods.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tqueryprods.caption
+msgctxt "tqueryprods.caption"
+msgid "Opsi quick install - query (part 3)"
+msgstr "Opsi Quick-Install - Abfrage (Teil 3)"
+
+#: tqueryprods.checkboxall.caption
+msgctxt "tqueryprods.checkboxall.caption"
+msgid "All"
+msgstr "Alle"
+
+#: tqueryprods.checkboxconfigwin10.caption
+msgctxt "tqueryprods.checkboxconfigwin10.caption"
+msgid "config-win10"
+msgstr ""
+
+#: tqueryprods.checkboxconfigwinbase.caption
+msgctxt "tqueryprods.checkboxconfigwinbase.caption"
+msgid "config-winbase"
+msgstr ""
+
+#: tqueryprods.checkboxhwaudit.caption
+msgctxt "tqueryprods.checkboxhwaudit.caption"
+msgid "hwaudit"
+msgstr ""
+
+#: tqueryprods.checkboxjavavm.caption
+msgctxt "tqueryprods.checkboxjavavm.caption"
+msgid "javavm"
+msgstr ""
+
+#: tqueryprods.checkboxjedit.caption
+msgctxt "tqueryprods.checkboxjedit.caption"
+msgid "jedit"
+msgstr ""
+
+#: tqueryprods.checkboxnone.caption
+msgctxt "tqueryprods.checkboxnone.caption"
+msgid "None"
+msgstr "Keiner"
+
+#: tqueryprods.checkboxopsiclientagent.caption
+msgctxt "tqueryprods.checkboxopsiclientagent.caption"
+msgid "opsi-client-agent"
+msgstr ""
+
+#: tqueryprods.checkboxopsiconfiged.caption
+msgctxt "tqueryprods.checkboxopsiconfiged.caption"
+msgid "opsi-configed"
+msgstr ""
+
+#: tqueryprods.checkboxopsilogviewer.caption
+msgctxt "tqueryprods.checkboxopsilogviewer.caption"
+msgid "opsi-logviewer"
+msgstr ""
+
+#: tqueryprods.checkboxopsiscripttest.caption
+msgctxt "tqueryprods.checkboxopsiscripttest.caption"
+msgid "opsi-script-test"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetupdetector.caption
+msgctxt "tqueryprods.checkboxopsisetupdetector.caption"
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetwinuac.caption
+msgctxt "tqueryprods.checkboxopsisetwinuac.caption"
+msgid "opsi-set-win-uac"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplate.caption
+msgctxt "tqueryprods.checkboxopsitemplate.caption"
+msgid "opsi-template"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplateadmin.caption
+msgctxt "tqueryprods.checkboxopsitemplateadmin.caption"
+msgid "opsi-template-with-admin"
+msgstr ""
+
+#: tqueryprods.checkboxopsiuefinetboot.caption
+msgctxt "tqueryprods.checkboxopsiuefinetboot.caption"
+msgid "opsi-uefi-netboot"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwimcapture.caption
+msgctxt "tqueryprods.checkboxopsiwimcapture.caption"
+msgid "opsi-wim-capture"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinpe.caption
+msgctxt "tqueryprods.checkboxopsiwinpe.caption"
+msgid "opsi-winpe"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinst.caption
+msgctxt "tqueryprods.checkboxopsiwinst.caption"
+msgid "opsi-winst"
+msgstr ""
+
+#: tqueryprods.checkboxshutdown.caption
+msgctxt "tqueryprods.checkboxshutdown.caption"
+msgid "shutdownwanted"
+msgstr ""
+
+#: tqueryprods.checkboxswaudit.caption
+msgctxt "tqueryprods.checkboxswaudit.caption"
+msgid "swaudit"
+msgstr ""
+
+#: tqueryprods.labelopsiproducts.caption
+msgctxt "tqueryprods.labelopsiproducts.caption"
+msgid "Which opsi product(s) should we install in the depot?"
+msgstr "Welche Opsi-Produkte sollen auf dem Depot installiert werden?"
+

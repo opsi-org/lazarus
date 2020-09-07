@@ -1,0 +1,70 @@
+object Distribution: TDistribution
+  Left = 526
+  Height = 240
+  Top = 305
+  Width = 320
+  Caption = 'Distribution'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnActivate = FormActivate
+  LCLVersion = '2.0.6.0'
+  object BtnBack: TButton
+    Left = 16
+    Height = 25
+    Top = 200
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    OnClick = BtnBackClick
+    TabOrder = 0
+  end
+  object BtnNext: TButton
+    Left = 248
+    Height = 25
+    Top = 200
+    Width = 51
+    AutoSize = True
+    Caption = ' next > '
+    OnClick = BtnNextClick
+    TabOrder = 1
+  end
+  object PanelDistr: TPanel
+    Left = 24
+    Height = 158
+    Top = 16
+    Width = 272
+    BevelOuter = bvNone
+    ClientHeight = 158
+    ClientWidth = 272
+    TabOrder = 2
+    object EditDistr: TEdit
+      Left = 0
+      Height = 25
+      Top = 38
+      Width = 272
+      Align = alTop
+      TabOrder = 0
+    end
+    object LabelDistr: TLabel
+      Left = 0
+      Height = 38
+      Top = 0
+      Width = 272
+      Align = alTop
+      Caption = 'We recognized the following distribution on this computer:'
+      ParentColor = False
+      WordWrap = True
+    end
+    object LabelCorrect: TLabel
+      Left = 0
+      Height = 76
+      Top = 83
+      Width = 272
+      Align = alTop
+      BorderSpacing.Top = 20
+      Caption = 'If this is correct, please click ''next >'' to continue.'#10'If not, please edit the distribution and then continue with ''next >''.'
+      ParentColor = False
+      WordWrap = True
+    end
+  end
+end
