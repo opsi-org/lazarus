@@ -27,7 +27,7 @@ type
 
   procedure TMyApplication.DoRun;
   var
-    ErrorMsg: string;
+    ErrorMsg, project: string;
   begin
     // quick check parameters
     ErrorMsg := CheckOptions('htgn', 'help test gui nogui');
@@ -55,7 +55,11 @@ type
 
     if HasOption('g', 'gui') then
     begin
-      ExecuteProcess('/home/anja/lazarus/opsi-misc/opsi-quickinstall/opsi_quick_install_project', '', []);
+      project:=ExtractFilePath(ParamStr(0));
+      Delete(project, Length(project), 1);
+      project:=ExtractFilePath(project)+'opsi_quick_install_project';
+      //writeln(project);
+      ExecuteProcess(project, '', []);
       Terminate;
       Exit;
     end;

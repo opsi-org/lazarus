@@ -274,8 +274,9 @@ begin
   QuickInstall.DistrInfo.Free;
 
   // close forms
-  QueryProds.Visible := True;
-  Overview.Visible := False;
+  {QueryProds.Visible := True;
+  Overview.Visible := False;}
+  Overview.Close;
   Password.Close;
 end;
 

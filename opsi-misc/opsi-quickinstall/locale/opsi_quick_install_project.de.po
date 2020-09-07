@@ -375,8 +375,6 @@ msgid "Password of administrator of UCS domain controller: "
 msgstr "Passwort des Administrators des UCS-Domain-Controllers: "
 
 #: opsi_quick_install_resourcestrings.rswelcome
-#, fuzzy
-#| msgid "Welcome to the installation of opsi-server on this computer!"
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
 msgid "Welcome to the installation of opsi-server on this computer!"
 msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
@@ -457,10 +455,6 @@ msgid "Password:"
 msgstr "Passwort:"
 
 #: tpassword.labelrights.caption
-#, fuzzy
-#| msgid ""
-#| "Authentication is required to install opsi-server.\n"
-#| "Who are you logged in as?\n"
 msgctxt "tpassword.labelrights.caption"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr ""
