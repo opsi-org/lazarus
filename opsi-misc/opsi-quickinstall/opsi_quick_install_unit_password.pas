@@ -231,8 +231,6 @@ begin
   //ShowMessage(fileName);
   FileText.SaveToFile(fileName + 'l-opsi-server/CLIENT_DATA/properties.conf');
 
-  FileText.Free;
-
   // create repository
   MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
     EditPassword.Text, RadioBtnSudo.Checked);
@@ -267,6 +265,10 @@ begin
   Output := RunCommand.Run('opsi-script -batch ' + fileName +
     'l-opsi-server/CLIENT_DATA/setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
+  FileText.LoadFromFile(fileName+'l-opsi-server/CLIENT_DATA/result.conf');
+  ShowMessage(FileText.Text);
+
+  FileText.Free;
   RunCommand.Free;
   MyRepo.Free;
   QuickInstall.DistrInfo.Free;
