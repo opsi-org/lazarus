@@ -272,8 +272,10 @@ end;
 function fontresize(num: integer): integer;
 begin
   Result := round(num * 0.5);
+
   {$IFDEF LINUX}
-  Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  Result :=  round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   {$ENDIF LINUX}
   if Result < 8 then
     Result := 8;
@@ -793,9 +795,9 @@ var
   choiceindex: integer;
   tmpinistr: string;
   tmpbool: boolean;
-  myscreen : TScreen;
+  //myscreen : TScreen;
 begin
-  myscreen := TScreen.Create(Application);
+  //myscreen := TScreen.Create(Application);
   if aktsection = 'Form' then
   begin
     nform.Color := myStringToTColor(myini.ReadString(aktsection, 'color', 'clWhite'));
@@ -860,6 +862,10 @@ begin
       nform.Left := mytmpint1;
       nform.Top := mytmpint2;
     end;
+    {$IFDEF LINUX}
+    // scale new scrollbox:
+    nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    {$ENDIF LINUX}
     //Hidden = false
     tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
     if not TryStrToBool(tmpinistr, hidden) then
@@ -917,7 +923,7 @@ begin
     mytmpstr := ExtractFilePath(myini.FileName);
     mytmpstr := mytmpstr + myini.ReadString(aktsection, 'File', '');
     nform.Image1.Picture.LoadFromFile(mytmpstr);
-    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
     nform.Image1.Repaint;
     DataModule1.ProcessMess;
   end
@@ -940,7 +946,7 @@ begin
     memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
       {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
@@ -970,11 +976,11 @@ begin
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
     //memoarray[memocounter].ReadOnly:=true;
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
-    {$IFDEF WINDOWS}
+    //{$IFDEF WINDOWS}
     // scale new scrollbox:
-    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96,
+    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
       screen.PixelsPerInch, 0, 0);
-    {$ENDIF WINDOWS}
+    //{$ENDIF WINDOWS}
    // make transparent
     memoarray[memocounter].ControlStyle :=
       memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
@@ -997,11 +1003,13 @@ begin
     LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
     LabelArray[labelcounter].WordWrap := True;
+    (*
     {$IFDEF LINUX}
     LabelArray[labelcounter].AutoSize := False;
     LabelArray[labelcounter].WordWrap := False;
     LabelArray[labelcounter].AdjustFontForOptimalFill;
     {$ENDIF LINUX}
+    *)
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
@@ -1010,7 +1018,7 @@ begin
     LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
       {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
@@ -1035,13 +1043,13 @@ begin
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
     //LabelArray[labelcounter].AdjustSize;
-    {$IFDEF WINDOWS}
+    //{$IFDEF WINDOWS}
     // scale new Label:
     //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
     //  96, nform.PixelsPerInch, 0, 0);
     LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
-    {$ENDIF WINDOWS}
+    //{$ENDIF WINDOWS}
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -1064,7 +1072,7 @@ begin
     ButtonArray[buttoncounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
       {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
@@ -1092,11 +1100,11 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
-    {$IFDEF WINDOWS}
+    //{$IFDEF WINDOWS}
     // scale new Button:
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      96, nform.PixelsPerInch, 0, 0);
-    {$ENDIF WINDOWS}
+      nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
+    //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
