@@ -102,7 +102,7 @@ type
     readln;
     writeln('Exit');
   end;
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
   procedure TMyApplication.NoGuiQuery;
   var
     input, setupType, distroName, distroRelease: string;
@@ -110,6 +110,8 @@ type
     opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
     ucsPassword, reboot, dhcp, link: string;
+    netmask, networkAddress, domain, nameserver, gateway: string;
+    adminName, adminPassword, ipName, ipNumber: string;
   begin
     {LogDatei := TLogInfo.Create;
     LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');}
@@ -135,15 +137,12 @@ type
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
-    while not ((input = 's') or (input = 'c')) do
+    while not ((input = 'standard') or (input = 'custom')) do
     begin
       writeln(input, rsNotValid);
       readln(input);
     end;
-    if input = 's' then
-      setupType := 's'
-    else if input = 'c' then
-      setupType := 'c';
+    setupType := input;
 
     writeln(rsCarryOut);
     //Sleep(200);
@@ -156,35 +155,33 @@ type
     writeln(rsDistr, '...');
     writeln(rsIsCorrect, rsYesNoOp);
     readln(input);
-    while not ((input = 'y') or (input = 'n')) do
+    while not ((input = 'yes') or (input = 'no')) do
     begin
       writeln(input, rsNotValid);
       readln(input);
     end;
     // if distribution isn't correct, read the correct one
-    if input = 'n' then
+    if input = 'no' then
     begin
       writeln(rsOtherDistr);
       readln(input);
-      //define distribution
+      //!!!define distribution
       //What to do with unknown distribution like ubuntu 20.04?
     end;
 
 
-    if setupType = 'c' then
+    if setupType = 'custom' then
+      // following queries only for custom setup
     begin
       // opsi version:
       writeln(rsOpsiVersion, rsOpsiVersionOp);
       readln(input);
-      while not ((input = '4.1') or (input = '4.2')) do
+      while not ((input = 'opsi 4.1') or (input = 'opsi 4.2')) do
       begin
         writeln(input, rsNotValid);
         readln(input);
       end;
-      if input = '4.1' then
-        opsiVersion := 'opsi 4.1'
-      else if input = '4.2' then
-        opsiVersion := 'opsi 4.2';
+      opsiVersion := input;
 
       // repo:
       writeln(rsRepo, ' [Example: ...]');
@@ -194,14 +191,14 @@ type
       // proxy:
       writeln(rsUseProxy, rsYesNoOp);
       readln(input);
-      while not ((input = 'y') or (input = 'n')) do
+      while not ((input = 'yes') or (input = 'no')) do
       begin
         writeln(input, rsNotValid);
         readln(input);
       end;
-      if input = 'y' then
+      if input = 'yes' then
       begin
-        writeln('Which Proxy would you like to use? Example: "http://myproxy.dom.org:8080"');
+        writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
         readln(input);
         proxy := input;
       end;
@@ -214,43 +211,36 @@ type
 
       // backend
       writeln(rsBackend, rsBackendOp);
-      while not ((input = 'f') or (input = 'm')) do
+      readln(input);
+      while not ((input = 'file') or (input = 'mysql')) do
       begin
         writeln(input, rsNotValid);
         readln(input);
       end;
-      if input = 'm' then
+      backend := input;
+      if input = 'mysql' then
       begin
-        backend := 'mysql';
         // copy modules
-        writeln(rsCopyModules);
+        writeln(rsCopyModules, rsYesNoOp);
         readln(input);
-        while not ((input = 'y') or (input = 'n')) do
+        while not ((input = 'yes') or (input = 'no')) do
         begin
           writeln(input, rsNotValid);
           readln(input);
         end;
-        if input = 'y' then
-          copyMod := 'yes'
-        else
-          copyMod := 'no';
-      end
-      else
-        backend := 'file';
+        copyMod := input;
+      end;
 
       // repo kind
       writeln(rsRepoKind, rsRepoKindOp);
-      while not ((input = 'e') or (input = 's') or (input = 't')) do
+      readln(input);
+      while not ((input = 'experimental') or (input = 'stable') or
+          (input = 'testing')) do
       begin
         writeln(input, rsNotValid);
         readln(input);
       end;
-      if input = 's' then
-        repoKind := 'stable'
-      else if input = 't' then
-        repoKind := 'testing'
-      else if input = 'e' then
-        repoKind := 'experimental';
+      repoKind := input;
 
 
       // ucs password
@@ -261,32 +251,86 @@ type
 
       // reboot
       writeln(rsReboot, rsYesNoOp);
-      while not ((input = 'y') or (input = 'n')) do
+      readln(input);
+      while not ((input = 'yes') or (input = 'no')) do
       begin
         writeln(input, rsNotValid);
         readln(input);
       end;
-      if input = 'y' then
-          reboot := 'yes'
-        else
-          reboot := 'no';
-
+      reboot := input;
     end;
+
     // dhcp
-    // link
-    // netmask
-    // network address
-    // domain
-    // nameserver
-    // gateway
+    writeln(rsDhcp, rsYesNoOp);
+    readln(input);
+    while not ((input = 'yes') or (input = 'no')) do
+    begin
+      writeln(input, rsNotValid);
+      readln(input);
+    end;
+    dhcp := input;
+
+    if input = 'yes' then
+      // following queries only for dhcp
+    begin
+      // link
+      writeln(rsTFTPROOT, rsLinkOp);
+      readln(input);
+      while not ((input = 'default.menu') or (input = 'default.nomenu')) do
+      begin
+        writeln(input, rsNotValid);
+        readln(input);
+      end;
+      link := input;
+
+
+      // netmask
+      writeln(rsNetmask, ' [Examples: "225.225.0.0", "225.225.225.0"]');
+      readln(input);
+      netmask := input;
+      // network address
+      writeln(rsNetworkAddress,
+        ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]');
+      readln(input);
+      networkAddress := input;
+      // domain
+      writeln(rsDomain, rsDomainOp);
+      readln(input);
+      while not ((input = 'ucs.test') or (input = 'uib.local') or
+          (input = 'vmnat.local')) do
+      begin
+        writeln(input, rsNotValid);
+        readln(input);
+      end;
+      domain := input;
+      // nameserver
+      writeln(rsNameserver,
+        ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]');
+      readln(input);
+      nameserver := input;
+      // gateway
+      writeln(rsGateway, ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]');
+      readln(input);
+      gateway := input;
+    end;
+
 
     // user name
-
+    writeln(rsAdminName);
+    readln(input);
+    adminName := input;
     // user password
-
+    writeln(rsAdminPassword);
+    readln(input);
+    adminPassword := input;
     // IP name
-
+    writeln(rsIPName);
+    readln(input);
+    ipName := input;
     // IP number
+    writeln(rsIPNumber);
+    readln(input);
+    ipNumber := input;
   end;
 
 var

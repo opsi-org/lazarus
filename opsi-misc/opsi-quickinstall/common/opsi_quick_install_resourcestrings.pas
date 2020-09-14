@@ -11,14 +11,16 @@ resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
   rsLangOp = ' [Options: "de" for german, "en" for englisch, ...]';
-  rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
+  rsSetupOp = ' [Options: "standard", "custom"]';
   rsIsCorrect = 'Is this correct?';
-  rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
+  rsYesNoOp = ' [Options: "yes", "no"]';
   rsOtherDistr = 'Please type in the correct distribution:';
-  rsOpsiVersionOp = ' [Options: "4.1" for opsi 4.1, "4.2" for opsi 4.2]';
+  rsOpsiVersionOp = ' [Options: "opsi 4.1", "opsi 4.2"]';
   rsUseProxy = 'Would you like to use a proxy?';
-  rsBackendOp = '[Options: "f" for file, "m" for mysql]';
-  rsRepoKindOp = '[Options: "s" for stable, "t" for testing, "e" for experimental]';
+  rsBackendOp = ' [Options: "file", "mysql"]';
+  rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
+  rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
+  rsDomainOp = ' [Options: "uib.local", "ucs.test", "vmnat.local"]';
 
   {universal}
   rsYes = 'Yes';
@@ -80,21 +82,21 @@ resourcestring
   rsInfoTFTPROOT = 'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
 
   {Query5_dhcp}
-  rsNetwork = 'Information on the network in which the opsi server shall be installed.';
-  rsNetmask = 'Netmask (for dhcp)';
+  rsInfoNetwork = 'Information on the network in which the opsi server shall be installed.';
+  rsNetmask = 'Netmask: (for dhcp)';
   rsNetmaskOther = 'Other:';
-  rsNetworkAddress = 'Network address (for dhcp)';
+  rsNetworkAddress = 'Network address: (for dhcp)';
   rsNetworkAddressOther = 'Other:';
-  rsDomain = 'DNS domain (for dhcp)';
+  rsDomain = 'DNS domain: (for dhcp)';
   rsDomainOther = 'Other:';
-  rsNameserver = 'Primary nameserver (for dhcp)';
+  rsNameserver = 'Primary nameserver: (for dhcp)';
   rsNameserverOther = 'Other:';
-  rsGateway = 'Gateway (option routers for dhcp)';
+  rsGateway = 'Gateway: (option routers for dhcp)';
   rsGatewayOther = 'Other:';
 
   {Query6}
   rsAdminName = 'What is the name of the opsi_admin_user to create? (empty = nothing created)';
-  rsAdmin = 'User to create for the operation of opsi.'+#10+'This user can not manage system settings.';
+  rsInfoAdmin = 'User to create for the operation of opsi.'+#10+'This user can not manage system settings.';
   rsAdminPassword =
     'What is the password of the opsi_admin_user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) (''auto'' = use standard)';
