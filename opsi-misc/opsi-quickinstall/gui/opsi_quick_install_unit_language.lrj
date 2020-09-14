@@ -1,0 +1,13 @@
+{"version":1,"strings":[
+{"hash":58892860,"name":"tquickinstall.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108],"value":"Opsi quick install"},
+{"hash":80700016,"name":"tquickinstall.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
+{"hash":10570650,"name":"tquickinstall.labelsetup.caption","sourcebytes":[80,108,101,97,115,101,32,115,101,108,101,99,116,32,97,32,115,101,116,117,112,32,116,121,112,101,58],"value":"Please select a setup type:"},
+{"hash":212844073,"name":"tquickinstall.radiobtndefault.caption","sourcebytes":[83,116,97,110,100,97,114,100,32,40,46,46,46,41],"value":"Standard (...)"},
+{"hash":193444953,"name":"tquickinstall.radiobtncustom.caption","sourcebytes":[67,117,115,116,111,109,32,40,46,46,46,41],"value":"Custom (...)"},
+{"hash":57886078,"name":"tquickinstall.labelcarryout.caption","sourcebytes":[84,111,32,99,97,114,114,121,32,111,117,116,32,116,104,101,32,114,101,109,97,105,110,103,32,105,110,115,116,97,108,108,97,116,105,111,110,32,97,117,116,111,109,97,116,105,99,97,108,108,121,44,32,119,101,32,110,101,101,100,32,115,111,109,101,32,105,110,102,111,114,109,97,116,105,111,110,32,102,105,114,115,116,46],"value":"To carry out the remaing installation automatically, we need some information first."},
+{"hash":265274961,"name":"tquickinstall.labelwelcome.caption","sourcebytes":[87,101,108,99,111,109,101,32,116,111,32,116,104,101,32,105,110,115,116,97,108,108,97,116,105,111,110,32,111,102,32,111,112,115,105,45,115,101,114,118,101,114,32,111,110,32,116,104,105,115,32,99,111,109,112,117,116,101,114,33],"value":"Welcome to the installation of opsi-server on this computer!"},
+{"hash":86146714,"name":"tquickinstall.labelsellanguage.caption","sourcebytes":[80,108,101,97,115,101,32,99,104,111,111,115,101,32,97,32,108,97,110,103,117,97,103,101,32,102,111,114,32,116,104,105,115,32,115,101,116,117,112,32,112,114,111,103,114,97,109,58],"value":"Please choose a language for this setup program:"},
+{"hash":241728480,"name":"tquickinstall.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
+{"hash":209747111,"name":"tquickinstall.btnoverview.caption","sourcebytes":[66,116,110,79,118,101,114,118,105,101,119],"value":"BtnOverview"},
+{"hash":47192360,"name":"tquickinstall.btnfinish.caption","sourcebytes":[66,116,110,70,105,110,105,115,104],"value":"BtnFinish"}
+]}

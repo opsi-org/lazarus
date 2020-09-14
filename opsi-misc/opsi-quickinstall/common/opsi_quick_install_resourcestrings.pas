@@ -8,6 +8,18 @@ uses
   Classes, SysUtils;
 
 resourcestring
+  {nogui}
+  rsNotValid = ' is not a valid input.';
+  rsLangOp = ' [Options: "de" for german, "en" for englisch, ...]';
+  rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
+  rsIsCorrect = 'Is this correct?';
+  rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
+  rsOtherDistr = 'Please type in the correct distribution:';
+  rsOpsiVersionOp = ' [Options: "4.1" for opsi 4.1, "4.2" for opsi 4.2]';
+  rsUseProxy = 'Would you like to use a proxy?';
+  rsBackendOp = '[Options: "f" for file, "m" for mysql]';
+  rsRepoKindOp = '[Options: "s" for stable, "t" for testing, "e" for experimental]';
+
   {universal}
   rsYes = 'Yes';
   rsNo = 'No';
@@ -35,14 +47,14 @@ resourcestring
   rsOpsi41 = 'opsi 4.1';
   rsOpsi42 = 'opsi 4.2';
   rsInfoOpsiVersion = 'Opsi 4.2 is the latest version...';
-  rsRepo = '(Base-) Repository for opsi-server installation';
+  rsRepo = '(Base-) Repository for opsi-server installation:';
   rsRepoOther = 'Other:';
   rsInfoRepo = 'Source from which opsi will be installed.';
   rsProxy = 'Proxy to use (http://myproxy.dom.org:8080)';
   rsProxyNone = 'None';
   rsProxyOther = 'Other:';
   rsRepoNoCache =
-    '(Base-) Repository for opsi-server installation (without any cache proxy)';
+    '(Base-) Repository for opsi-server installation (without any cache proxy):';
 
   {Query2}
   rsBackend = 'Which backend should be installed? (mysql needs valid activation file)';

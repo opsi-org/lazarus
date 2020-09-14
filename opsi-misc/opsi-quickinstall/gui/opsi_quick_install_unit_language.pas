@@ -191,6 +191,8 @@ begin
   // (compare function GetDefaultURL in osLinuxRepository:)
   // following two lines take time and are therefore executed only...
   // ...once at the beginning of this program
+  // functions are from osfunclin
+  // osfunclin needs definition 'SYNAPSE' in project settings
   distroName := getLinuxDistroName;
   distroRelease := getLinuxDistroRelease;
   //ShowMessage(distroName);

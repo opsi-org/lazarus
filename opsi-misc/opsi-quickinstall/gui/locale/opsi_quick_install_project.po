@@ -509,3 +509,53 @@ msgctxt "tqueryprods.labelopsiproducts.caption"
 msgid "Which opsi product(s) should we install in the depot?"
 msgstr ""
 
+#: tquickinstall.btnback.caption
+msgctxt "tquickinstall.btnback.caption"
+msgid " < back "
+msgstr ""
+
+#: tquickinstall.btnfinish.caption
+msgid "BtnFinish"
+msgstr ""
+
+#: tquickinstall.btnnext.caption
+msgctxt "tquickinstall.btnnext.caption"
+msgid " next > "
+msgstr ""
+
+#: tquickinstall.btnoverview.caption
+msgid "BtnOverview"
+msgstr ""
+
+#: tquickinstall.caption
+msgid "Opsi quick install"
+msgstr ""
+
+#: tquickinstall.labelcarryout.caption
+msgctxt "tquickinstall.labelcarryout.caption"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr ""
+
+#: tquickinstall.labelsellanguage.caption
+msgctxt "tquickinstall.labelsellanguage.caption"
+msgid "Please choose a language for this setup program:"
+msgstr ""
+
+#: tquickinstall.labelsetup.caption
+msgctxt "tquickinstall.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr ""
+
+#: tquickinstall.labelwelcome.caption
+msgctxt "tquickinstall.labelwelcome.caption"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr ""
+
+#: tquickinstall.radiobtncustom.caption
+msgid "Custom (...)"
+msgstr ""
+
+#: tquickinstall.radiobtndefault.caption
+msgid "Standard (...)"
+msgstr ""
+

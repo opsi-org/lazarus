@@ -1,0 +1,13 @@
+{"version":1,"strings":[
+{"hash":43714025,"name":"tquery6.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,117,115,101,114,32,105,110,102,111,41],"value":"Opsi quick install - query (user info)"},
+{"hash":241728480,"name":"tquery6.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
+{"hash":50844937,"name":"tquery6.labelnameadmin.caption","sourcebytes":[87,104,97,116,32,105,115,32,116,104,101,32,110,97,109,101,32,111,102,32,116,104,101,32,111,112,115,105,95,97,100,109,105,110,95,117,115,101,114,32,116,111,32,99,114,101,97,116,101,63,10,40,101,109,112,116,121,32,61,32,110,111,116,104,105,110,103,32,99,114,101,97,116,101,100,41],"value":"What is the name of the opsi_admin_user to create?\n(empty = nothing created)"},
+{"hash":67481202,"name":"tquery6.editnameadmin.text","sourcebytes":[97,100,109,105,110,117,115,101,114],"value":"adminuser"},
+{"hash":193871465,"name":"tquery6.labelpasswordadmin.caption","sourcebytes":[87,104,97,116,32,105,115,32,116,104,101,32,112,97,115,115,119,111,114,100,32,111,102,32,116,104,101,32,111,112,115,105,95,97,100,109,105,110,95,117,115,101,114,32,116,111,32,99,114,101,97,116,101,63,10,40,101,109,112,116,121,32,61,32,110,111,116,104,105,110,103,32,99,114,101,97,116,101,100,41],"value":"What is the password of the opsi_admin_user to create?\n(empty = nothing created)"},
+{"hash":6075235,"name":"tquery6.editpasswordadmin.text","sourcebytes":[108,105,110,117,120,49,50,51],"value":"linux123"},
+{"hash":36143897,"name":"tquery6.labelnameip.caption","sourcebytes":[83,101,116,32,97,32,100,105,102,102,101,114,101,110,116,32,73,80,32,110,97,109,101,32,40,70,81,68,78,41,32,40,39,97,117,116,111,39,32,61,32,117,115,101,32,115,116,97,110,100,97,114,100,41],"value":"Set a different IP name (FQDN) ('auto' = use standard)"},
+{"hash":429231,"name":"tquery6.editnameip.text","sourcebytes":[97,117,116,111],"value":"auto"},
+{"hash":97963033,"name":"tquery6.labelnumberip.caption","sourcebytes":[83,101,116,32,97,32,100,105,102,102,101,114,101,110,116,32,73,80,32,110,117,109,98,101,114,32,40,39,97,117,116,111,39,32,61,32,117,115,101,32,115,116,97,110,100,97,114,100,41],"value":"Set a different IP number ('auto' = use standard)"},
+{"hash":429231,"name":"tquery6.editnumberip.text","sourcebytes":[97,117,116,111],"value":"auto"},
+{"hash":211716688,"name":"tquery6.btnoverview.caption","sourcebytes":[32,111,118,101,114,118,105,101,119,32],"value":" overview "}
+]}
