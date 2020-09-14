@@ -73,7 +73,7 @@ var
 {$ENDIF SYNAPSE}
 
 implementation
-
+{$IFDEF QUICKINSTALLGUI}
 uses
 {$IFDEF OPSISCRIPT}
   osparser,
@@ -87,6 +87,7 @@ uses
 {$ENDIF OPSISCRIPT}
 {$ENDIF GUI}
   LResources;
+{$ENDIF QUICKINSTALLGUI}
 
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;

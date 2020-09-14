@@ -116,7 +116,7 @@ object QuickInstall: TQuickInstall
       Left = -1
       Height = 24
       Top = 96
-      Width = 304
+      Width = 310
       Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Top = 50
       Caption = 'Please choose a language for this setup program:'
@@ -144,7 +144,7 @@ object QuickInstall: TQuickInstall
     Left = 20
     Height = 25
     Top = 410
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     Enabled = False
@@ -156,7 +156,7 @@ object QuickInstall: TQuickInstall
     Left = 264
     Height = 25
     Top = 408
-    Width = 87
+    Width = 88
     AutoSize = True
     Caption = 'BtnOverview'
     TabOrder = 4

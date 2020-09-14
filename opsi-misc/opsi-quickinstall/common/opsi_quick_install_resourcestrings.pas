@@ -5,6 +5,8 @@ unit opsi_quick_install_resourcestrings;
 interface
 
 uses
+  {$IFDEF GUI}
+  {$ENDIF GUI}
   Classes, SysUtils;
 
 resourcestring
@@ -21,6 +23,7 @@ resourcestring
   rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
   rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
   rsDomainOp = ' [Options: "uib.local", "ucs.test", "vmnat.local"]';
+  rsRightsOp = ' [Options: "root", "sudo"]';
 
   {universal}
   rsYes = 'Yes';
@@ -52,7 +55,7 @@ resourcestring
   rsRepo = '(Base-) Repository for opsi-server installation:';
   rsRepoOther = 'Other:';
   rsInfoRepo = 'Source from which opsi will be installed.';
-  rsProxy = 'Proxy to use (http://myproxy.dom.org:8080)';
+  rsProxy = 'Proxy to use (http://myproxy.dom.org:8080):';
   rsProxyNone = 'None';
   rsProxyOther = 'Other:';
   rsRepoNoCache =
@@ -83,15 +86,15 @@ resourcestring
 
   {Query5_dhcp}
   rsInfoNetwork = 'Information on the network in which the opsi server shall be installed.';
-  rsNetmask = 'Netmask: (for dhcp)';
+  rsNetmask = 'Netmask (for dhcp):';
   rsNetmaskOther = 'Other:';
-  rsNetworkAddress = 'Network address: (for dhcp)';
+  rsNetworkAddress = 'Network address (for dhcp):';
   rsNetworkAddressOther = 'Other:';
-  rsDomain = 'DNS domain: (for dhcp)';
+  rsDomain = 'DNS domain (for dhcp):';
   rsDomainOther = 'Other:';
-  rsNameserver = 'Primary nameserver: (for dhcp)';
+  rsNameserver = 'Primary nameserver (for dhcp):';
   rsNameserverOther = 'Other:';
-  rsGateway = 'Gateway: (option routers for dhcp)';
+  rsGateway = 'Gateway (option routers for dhcp):';
   rsGatewayOther = 'Other:';
 
   {Query6}

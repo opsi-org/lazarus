@@ -5,7 +5,9 @@
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
+        <UseDesignTimePackages Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
@@ -28,10 +30,13 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="FCL"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LazUtils"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="1">
       <Unit0>
@@ -52,8 +57,9 @@
     </SearchPaths>
     <Other>
       <CustomOptions Value="-dSYNAPSE"/>
-      <OtherDefines Count="1">
+      <OtherDefines Count="2">
         <Define0 Value="SYNAPSE"/>
+        <Define1 Value="QUICKINSTALLGUI"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>

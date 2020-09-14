@@ -220,7 +220,7 @@ begin
 
   // update_test shall always be false
   FileText.Add('update_test=false');
-
+  //////////////////////////////////////////////////////////////////////////////
   // write in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText.SaveToFile(fileName);
@@ -239,7 +239,7 @@ begin
   FileText.Clear;
   FileText.Add('failed');
   FileText.SaveToFile(fileName + 'result.conf');
-
+  //////////////////////////////////////////////////////////////////////////////
   // create repository
   MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
     EditPassword.Text, RadioBtnSudo.Checked);

@@ -89,7 +89,7 @@ begin
   InfoAdmin.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   LabelNameAdmin.Caption := rsAdminName;
-  InfoAdmin.Hint := rsAdmin;
+  InfoAdmin.Hint := rsInfoAdmin;
   LabelPasswordAdmin.Caption := rsAdminPassword;
   LabelNameIP.Caption := rsIPName;
   LabelNumberIP.Caption := rsIPNumber;

@@ -137,7 +137,12 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dSYNAPSE"/>
+      <CustomOptions Value="-dSYNAPSE
+-dQUICKINSTALLGUI"/>
+      <OtherDefines Count="2">
+        <Define0 Value="SYNAPSE"/>
+        <Define1 Value="QUICKINSTALLGUI"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

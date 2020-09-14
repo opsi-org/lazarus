@@ -1,12 +1,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: opsi_quick_install_resourcestrings.rsadmin
-msgid ""
-"User to create for the operation of opsi.\n"
-"This user can not manage system settings.\n"
-msgstr ""
-
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
 msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
@@ -41,6 +35,10 @@ msgstr "Welches Backend soll installiert werden? (mysql benötigt eine passende 
 msgctxt "opsi_quick_install_resourcestrings.rsbackendo"
 msgid "Backend: "
 msgstr "Backend: "
+
+#: opsi_quick_install_resourcestrings.rsbackendop
+msgid " [Options: \"file\", \"mysql\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rscarryout
 msgctxt "opsi_quick_install_resourcestrings.rscarryout"
@@ -82,13 +80,17 @@ msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
 
 #: opsi_quick_install_resourcestrings.rsdomain
 msgctxt "opsi_quick_install_resourcestrings.rsdomain"
-msgid "DNS domain (for dhcp)"
-msgstr "DNS Domain (für das DHCP)"
+msgid "DNS domain (for dhcp):"
+msgstr "DNS Domain (für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
 msgstr "DNS Domain: "
+
+#: opsi_quick_install_resourcestrings.rsdomainop
+msgid " [Options: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomainother
 msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
@@ -102,8 +104,8 @@ msgstr " fertigstellen "
 
 #: opsi_quick_install_resourcestrings.rsgateway
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
-msgid "Gateway (option routers for dhcp)"
-msgstr "Gateway (...)"
+msgid "Gateway (option routers for dhcp):"
+msgstr "Gateway (...):"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
@@ -114,6 +116,13 @@ msgstr "Gateway: "
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
 msgstr "Anderes:"
+
+#: opsi_quick_install_resourcestrings.rsinfoadmin
+msgctxt "opsi_quick_install_resourcestrings.rsinfoadmin"
+msgid ""
+"User to create for the operation of opsi.\n"
+"This user can not manage system settings.\n"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
 msgid "Shall the data of opsi be stored in a file or a mysql database?"
@@ -127,6 +136,11 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfomodules
 msgid "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfonetwork
+msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
+msgid "Information on the network in which the opsi server shall be installed."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
@@ -171,10 +185,22 @@ msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
 msgid "IP number: "
 msgstr "IP-Nummer: "
 
+#: opsi_quick_install_resourcestrings.rsiscorrect
+msgid "Is this correct?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rslangop
+msgid " [Options: \"de\" for german, \"en\" for englisch, ...]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rslinkop
+msgid " [Options: \"default.menu\", \"default.nomenu\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
-msgid "Primary nameserver (for dhcp)"
-msgstr "Primärer Nameserver (für das DHCP)"
+msgid "Primary nameserver (for dhcp):"
+msgstr "Primärer Nameserver (für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
@@ -188,8 +214,8 @@ msgstr "Anderer:"
 
 #: opsi_quick_install_resourcestrings.rsnetmask
 msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
-msgid "Netmask (for dhcp)"
-msgstr "Netzmaske (für das DHCP)"
+msgid "Netmask (for dhcp):"
+msgstr "Netzmaske (für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
@@ -201,14 +227,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
 msgid "Other:"
 msgstr "Andere:"
 
-#: opsi_quick_install_resourcestrings.rsnetwork
-msgid "Information on the network in which the opsi server shall be installed."
-msgstr ""
-
 #: opsi_quick_install_resourcestrings.rsnetworkaddress
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
-msgid "Network address (for dhcp)"
-msgstr "Netzwerk-Adresse (für das DHCP)"
+msgid "Network address (for dhcp):"
+msgstr "Netzwerk-Adresse (für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
@@ -230,6 +252,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsno"
 msgid "No"
 msgstr "Nein"
 
+#: opsi_quick_install_resourcestrings.rsnotvalid
+msgid " is not a valid input."
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
 msgid "opsi 4.1"
@@ -250,6 +276,14 @@ msgctxt "opsi_quick_install_resourcestrings.rsopsiversiono"
 msgid "Opsi version to install: "
 msgstr "Opsi-Version, die installiert wird: "
 
+#: opsi_quick_install_resourcestrings.rsopsiversionop
+msgid " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsotherdistr
+msgid "Please type in the correct distribution:"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
 msgid " overview "
@@ -262,8 +296,8 @@ msgstr "Passwort:"
 
 #: opsi_quick_install_resourcestrings.rsproxy
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
-msgid "Proxy to use (http://myproxy.dom.org:8080)"
-msgstr "Zu verwendender Proxy (http://myproxy.dom.org:8080)"
+msgid "Proxy to use (http://myproxy.dom.org:8080):"
+msgstr "Zu verwendender Proxy (http://myproxy.dom.org:8080):"
 
 #: opsi_quick_install_resourcestrings.rsproxynone
 msgctxt "opsi_quick_install_resourcestrings.rsproxynone"
@@ -292,8 +326,8 @@ msgstr "Neustarten, wenn das Skript beendet ist: "
 
 #: opsi_quick_install_resourcestrings.rsrepo
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
-msgid "(Base-) Repository for opsi-server installation"
-msgstr "(Basis-) Repository für die Installation von Opsi-Server"
+msgid "(Base-) Repository for opsi-server installation:"
+msgstr "(Basis-) Repository für die Installation von Opsi-Server:"
 
 #: opsi_quick_install_resourcestrings.rsrepokind
 msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
@@ -305,10 +339,14 @@ msgctxt "opsi_quick_install_resourcestrings.rsrepokindo"
 msgid "Repo kind: "
 msgstr "Repository-Art: "
 
+#: opsi_quick_install_resourcestrings.rsrepokindop
+msgid " [Options: \"stable\", \"testing\", \"experimental\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
-msgid "(Base-) Repository for opsi-server installation (without any cache proxy)"
-msgstr "(Basis-) Repository für die Installation von Opsi-Server (ohne einen Cache-Proxy)"
+msgid "(Base-) Repository for opsi-server installation (without any cache proxy):"
+msgstr "(Basis-) Repository für die Installation von Opsi-Server (ohne einen Cache-Proxy):"
 
 #: opsi_quick_install_resourcestrings.rsreponocacheo
 msgctxt "opsi_quick_install_resourcestrings.rsreponocacheo"
@@ -330,6 +368,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsrights"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
 
+#: opsi_quick_install_resourcestrings.rsrightsop
+msgid " [Options: \"root\", \"sudo\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rssellanguage
 msgctxt "opsi_quick_install_resourcestrings.rssellanguage"
 msgid "Please choose a language for this setup program:"
@@ -339,6 +381,10 @@ msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
 msgctxt "opsi_quick_install_resourcestrings.rssetup"
 msgid "Please select a setup type:"
 msgstr "Bitte wählen Sie einen Setup-Typ:"
+
+#: opsi_quick_install_resourcestrings.rssetupop
+msgid " [Options: \"standard\", \"custom\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
 msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
@@ -374,6 +420,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsucso"
 msgid "Password of administrator of UCS domain controller: "
 msgstr "Passwort des Administrators des UCS-Domain-Controllers: "
 
+#: opsi_quick_install_resourcestrings.rsuseproxy
+msgid "Would you like to use a proxy?"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rswelcome
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
 msgid "Welcome to the installation of opsi-server on this computer!"
@@ -383,6 +433,283 @@ msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
 msgctxt "opsi_quick_install_resourcestrings.rsyes"
 msgid "Yes"
 msgstr "Ja"
+
+#: opsi_quick_install_resourcestrings.rsyesnoop
+msgid " [Options: \"yes\", \"no\"]"
+msgstr ""
+
+#: tdistribution.btnback.caption
+#, fuzzy
+msgctxt "tdistribution.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tdistribution.btnnext.caption
+#, fuzzy
+msgctxt "tdistribution.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tdistribution.caption
+msgid "Distribution"
+msgstr ""
+
+#: tdistribution.labelcorrect.caption
+msgid ""
+"If this is correct, please click 'next >' to continue.\n"
+"If not, please edit the distribution and then continue with 'next >'.\n"
+msgstr ""
+
+#: tdistribution.labeldistr.caption
+#, fuzzy
+msgctxt "tdistribution.labeldistr.caption"
+msgid "We recognized the following distribution on this computer:"
+msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
+
+#: toverview.btnback.caption
+#, fuzzy
+msgctxt "toverview.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: toverview.btnfinish.caption
+#, fuzzy
+msgctxt "toverview.btnfinish.caption"
+msgid " finish "
+msgstr " fertigstellen "
+
+#: toverview.caption
+msgid "Overview"
+msgstr ""
+
+#: toverview.labelfinish.caption
+#, fuzzy
+msgctxt "toverview.labelfinish.caption"
+msgid "Finally click 'finish' to start the installation of opsi-server."
+msgstr "Klicken Sie auf 'fertigstellen', um die Installation von Opsi-Server zu beginnen."
+
+#: tpassword.btnback.caption
+#, fuzzy
+msgctxt "tpassword.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tpassword.btnfinish.caption
+#, fuzzy
+msgctxt "tpassword.btnfinish.caption"
+msgid " finish "
+msgstr " fertigstellen "
+
+#: tpassword.caption
+msgid "Authentication required"
+msgstr ""
+
+#: tpassword.checkboxshowpassword.caption
+#, fuzzy
+msgctxt "tpassword.checkboxshowpassword.caption"
+msgid "Show password"
+msgstr "Passwort sichtbar machen"
+
+#: tpassword.labelpassword.caption
+#, fuzzy
+msgctxt "tpassword.labelpassword.caption"
+msgid "Password:"
+msgstr "Passwort:"
+
+#: tpassword.labelrights.caption
+#, fuzzy
+msgctxt "tpassword.labelrights.caption"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
+
+#: tpassword.radiobtnroot.caption
+msgid "Root"
+msgstr ""
+
+#: tpassword.radiobtnsudo.caption
+msgid "Sudo"
+msgstr ""
+
+#: tquery5_dhcp.btnback.caption
+msgctxt "tquery5_dhcp.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tquery5_dhcp.btnnext.caption
+msgctxt "tquery5_dhcp.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tquery5_dhcp.caption
+msgid "Opsi quick install - query (dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.labeladdress.caption
+msgctxt "tquery5_dhcp.labeladdress.caption"
+msgid "Network address (for dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.labeldomain.caption
+msgctxt "tquery5_dhcp.labeldomain.caption"
+msgid "DNS domain (for dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.labelgateway.caption
+msgctxt "tquery5_dhcp.labelgateway.caption"
+msgid "Gateway (option routers for dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.labelnameserver.caption
+msgctxt "tquery5_dhcp.labelnameserver.caption"
+msgid "Primary nameserver (for dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.labelnetmask.caption
+msgctxt "tquery5_dhcp.labelnetmask.caption"
+msgid "Netmask (for dhcp)"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnaddress10.caption
+msgid "10.100.0.0"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnaddress172.caption
+msgid "172.16.166.0"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnaddress192.caption
+msgid "192.168.0.0"
+msgstr ""
+
+#: tquery5_dhcp.radiobtngateway10.caption
+msgctxt "tquery5_dhcp.radiobtngateway10.caption"
+msgid "10.100.1.2"
+msgstr ""
+
+#: tquery5_dhcp.radiobtngateway172.caption
+msgctxt "tquery5_dhcp.radiobtngateway172.caption"
+msgid "172.16.166.1"
+msgstr ""
+
+#: tquery5_dhcp.radiobtngateway192.caption
+msgctxt "tquery5_dhcp.radiobtngateway192.caption"
+msgid "192.168.1.245"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnmask0.caption
+msgid "255.255.0.0"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnmask225.caption
+msgid "255.255.255.0"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnnameserver10.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver10.caption"
+msgid "10.100.1.2"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnnameserver172.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver172.caption"
+msgid "172.16.166.1"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnnameserver192.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver192.caption"
+msgid "192.168.1.245"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnotheraddress.caption
+msgctxt "tquery5_dhcp.radiobtnotheraddress.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery5_dhcp.radiobtnotherdomain.caption
+msgctxt "tquery5_dhcp.radiobtnotherdomain.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery5_dhcp.radiobtnothergateway.caption
+msgctxt "tquery5_dhcp.radiobtnothergateway.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery5_dhcp.radiobtnothermask.caption
+#, fuzzy
+msgctxt "tquery5_dhcp.radiobtnothermask.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery5_dhcp.radiobtnothernameserver.caption
+msgctxt "tquery5_dhcp.radiobtnothernameserver.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery5_dhcp.radiobtnucs.caption
+msgid "ucs.test"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnuib.caption
+msgid "uib.local"
+msgstr ""
+
+#: tquery5_dhcp.radiobtnvmnat.caption
+msgid "vmnat.local"
+msgstr ""
+
+#: tquery6.btnback.caption
+msgctxt "tquery6.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tquery6.btnoverview.caption
+msgctxt "tquery6.btnoverview.caption"
+msgid " overview "
+msgstr " Übersicht "
+
+#: tquery6.caption
+msgid "Opsi quick install - query (user info)"
+msgstr ""
+
+#: tquery6.editnameadmin.text
+msgid "adminuser"
+msgstr ""
+
+#: tquery6.editnameip.text
+msgctxt "tquery6.editnameip.text"
+msgid "auto"
+msgstr ""
+
+#: tquery6.editnumberip.text
+msgctxt "tquery6.editnumberip.text"
+msgid "auto"
+msgstr ""
+
+#: tquery6.editpasswordadmin.text
+msgid "linux123"
+msgstr ""
+
+#: tquery6.labelnameadmin.caption
+msgid ""
+"What is the name of the opsi_admin_user to create?\n"
+"(empty = nothing created)\n"
+msgstr ""
+
+#: tquery6.labelnameip.caption
+msgctxt "tquery6.labelnameip.caption"
+msgid "Set a different IP name (FQDN) ('auto' = use standard)"
+msgstr "Anderen IP-Namen setzen (FQDN): ('auto' = Standard verwenden)"
+
+#: tquery6.labelnumberip.caption
+msgctxt "tquery6.labelnumberip.caption"
+msgid "Set a different IP number ('auto' = use standard)"
+msgstr "Andere IP-Nummer setzen: ('auto' = Standard verwenden)"
+
+#: tquery6.labelpasswordadmin.caption
+msgid ""
+"What is the password of the opsi_admin_user to create?\n"
+"(empty = nothing created)\n"
+msgstr ""
 
 #: tqueryprods.btnback.caption
 msgctxt "tqueryprods.btnback.caption"

@@ -45,7 +45,10 @@ uses
   baseUnix,
 {$ENDIF LINUX}
   //lconvencoding,
+{$IFDEF GUI}
   osencoding,
+  {$ENDIF GUI}
+
   Classes,
   //idsyslogMessage,
   SysUtils,
@@ -1600,13 +1603,13 @@ begin
       Fname := ExpandFileName(Fname);
       if lowercase(sourceEncoding) = 'unicode' then
       begin
-        includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
+        //includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
       end
       else
       begin
         includelogStrList.LoadFromFile(FName);
-        includelogStrList.Text :=
-          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
+        {includelogStrList.Text :=
+          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);}
       end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then

@@ -89,7 +89,7 @@ begin
   SetBasics(self);
   InfoNetwork.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
-  InfoNetwork.Hint := rsNetwork;
+  InfoNetwork.Hint := rsInfoNetwork;
   LabelNetmask.Caption := rsNetmask;
   RadioBtnOtherMask.Caption := rsNetmaskOther;
   LabelAddress.Caption := rsNetworkAddress;

@@ -9,9 +9,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   CustApp,
   Process, {LCLtranslator,}
   { you can add units after this }
-  opsi_quick_install_resourcestrings {,
-  osDistributionInfo,
-  osfunclin, osLinuxRepository};
+  opsi_quick_install_resourcestrings,
+  osDistributionInfo ,
+  osfunclin{, osLinuxRepository};
 
 type
 
@@ -106,12 +106,13 @@ type
   procedure TMyApplication.NoGuiQuery;
   var
     input, setupType, distroName, distroRelease: string;
-    //DistrInfo: TDistributionInfo;
+    DistrInfo: TDistributionInfo;
     opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
     ucsPassword, reboot, dhcp, link: string;
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
+    user, password: string;
   begin
     {LogDatei := TLogInfo.Create;
     LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');}
@@ -149,9 +150,10 @@ type
 
 
     // distribution:
-    {distroName := getLinuxDistroName;
-    distroRelease := getLinuxDistroRelease;
-    DistrInfo := TDistributionInfo.Create;}
+    //distroName := getLinuxDistroName;
+    //distroRelease := getLinuxDistroRelease;
+    writeln(distroName, distroRelease);
+    DistrInfo := TDistributionInfo.Create;
     writeln(rsDistr, '...');
     writeln(rsIsCorrect, rsYesNoOp);
     readln(input);
@@ -331,13 +333,29 @@ type
     writeln(rsIPNumber);
     readln(input);
     ipNumber := input;
+
+
+    // Overview???
+
+
+    // authentication
+    writeln(rsRights, rsRightsOp);
+    readln(input);
+    while not ((input = 'root') or (input = 'sudo')) do
+    begin
+      writeln(input, rsNotValid);
+      readln(input);
+    end;
+    user := input;
+    writeln(rsPassword);
+    readln(input);
+    password := input;
   end;
 
 var
   Application: TMyApplication;
 begin
   Application := TMyApplication.Create(nil);
-  Application.Title := 'My Application';
   Application.Run;
   Application.Free;
 end.

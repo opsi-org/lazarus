@@ -20,7 +20,7 @@ object Overview: TOverview
     Left = 16
     Height = 25
     Top = 408
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -47,6 +47,8 @@ object Overview: TOverview
     BevelOuter = bvNone
     ClientHeight = 64
     ClientWidth = 384
+    Color = clForm
+    ParentColor = False
     ParentFont = False
     TabOrder = 2
     Wordwrap = True

@@ -12,7 +12,7 @@ object Distribution: TDistribution
     Left = 16
     Height = 25
     Top = 200
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -36,6 +36,8 @@ object Distribution: TDistribution
     BevelOuter = bvNone
     ClientHeight = 158
     ClientWidth = 272
+    Color = clForm
+    ParentColor = False
     TabOrder = 2
     object EditDistr: TEdit
       Left = 0

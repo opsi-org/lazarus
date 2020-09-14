@@ -19,7 +19,10 @@ uses
   Classes,
   SysUtils,
   lconvencoding,
+  {$IFDEF GUI}
   charencstreams,
+  {$ENDIF GUI}
+
   LAZUTF8;
 
 procedure initEncoding;

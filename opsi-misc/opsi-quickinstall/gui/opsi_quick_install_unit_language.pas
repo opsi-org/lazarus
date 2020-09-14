@@ -103,6 +103,7 @@ begin
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
       (Sender.Components[compIndex] as TPanel).Width := QuickInstall.panelWidth;
+      (Sender.Components[compIndex] as TPanel).Color:=clForm;
     end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and

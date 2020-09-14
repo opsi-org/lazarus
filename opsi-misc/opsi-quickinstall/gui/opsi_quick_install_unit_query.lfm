@@ -33,7 +33,7 @@ object Query: TQuery
     Left = 16
     Height = 25
     Top = 416
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -78,7 +78,7 @@ object Query: TQuery
     TabOrder = 2
     object LabelOpsiVersion: TLabel
       Left = 0
-      Height = 19
+      Height = 38
       Top = 0
       Width = 264
       Align = alTop
@@ -94,7 +94,7 @@ object Query: TQuery
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 19
+      Top = 38
       Width = 72
       Caption = 'opsi 4.1'
       Checked = True
@@ -110,7 +110,7 @@ object Query: TQuery
       AnchorSideTop.Side = asrBottom
       Left = 122
       Height = 21
-      Top = 19
+      Top = 38
       Width = 72
       BorderSpacing.Left = 50
       Caption = 'opsi 4.2'
@@ -122,12 +122,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelOpsiVersion
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 69
+    Height = 74
     Top = 110
     Width = 384
     BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 69
+    ClientHeight = 74
     ClientWidth = 384
     ParentFont = False
     TabOrder = 3
@@ -196,12 +196,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelRepo
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 86
-    Top = 199
+    Height = 92
+    Top = 204
     Width = 384
     BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 86
+    ClientHeight = 92
     ClientWidth = 384
     ParentFont = False
     TabOrder = 4
@@ -267,12 +267,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelProxy
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 86
-    Top = 305
+    Height = 92
+    Top = 316
     Width = 384
     BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 86
+    ClientHeight = 92
     ClientWidth = 384
     ParentFont = False
     TabOrder = 5
