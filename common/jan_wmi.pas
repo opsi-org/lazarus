@@ -5,7 +5,7 @@ unit jan_wmi;
 interface
 
 uses
-  Classes;//, contnrs;
+  Classes, Process;
 
 type
 
@@ -19,6 +19,7 @@ type
      const fNameSpace:WideString='\root\CIMV2'; const fUser:WideString='';const fPassword:WideString=''):boolean;
   function VarArrayToStr(Value: Variant): String;
   procedure RequestToWMIService(fWMIProperties:String;fWMIClassName:String; const fWMICondition:String='');
+  procedure GetWMIClasses();
   procedure InitWMIClassNames();
   procedure InitWMIProperties(fWMIClassName:String);
   private
@@ -31,6 +32,8 @@ type
     WMIClassNames:TStringList;//holding WMI Classnames with Alias: Alias=WMIClassname
     WMIPropertyNames:TStringList;//holding WMI PropertyNames of selected WMI Class
     WMIRequestResult:TStringList;//holding result of query to WMI
+    WMIClassesResult:TStringList; //result of Powershell request for all WMI Classes
+    FinalQuery      : WideString;
     ErrorMsg: String;
   end;
 
@@ -52,7 +55,9 @@ begin
   WMIClassNames := TStringList.Create;
   WMIPropertyNames := TStringList.Create;
   WMIRequestResult := TStringList.Create;
-  InitWMIClassNames();//getting WMI Class names
+  WMIClassesResult := TStringList.Create;
+  InitWMIClassNames();   //getting WMI Class names
+  GetWMIClasses();       //getting all WMI Class
   //ServiceConnected := ConnectToWMIService();
 end;
 
@@ -63,6 +68,7 @@ begin
   WMIClassNames.Free;
   WMIPropertyNames.Free;
   WMIRequestResult.Free;
+  WMIClassesResult.Free;
   inherited;
 end;
 
@@ -115,16 +121,18 @@ begin
   end;
 end;
 
+//Requesting
 procedure TWMIClass.RequestToWMIService(fWMIProperties: String;
   fWMIClassName: String; const fWMICondition: String='' );
 const
-  FlagForwardOnly = $00000020;//see
+  wbemFlagForwardOnly = $00000020;
+  wbemFlagReturnImmediately = $00000010;
 var
   WMIObjectSet: OLEVariant;
   WMIObject   : OLEVariant;
-  oEnum         : IEnumvariant;
-  iValue        : LongWord;
-  Query         : WideString;
+  oEnum       : IEnumvariant;
+  iValue      : LongWord;
+  Query       : WideString ;
   WMIPropertiesArray: TStringArray;
   i : integer;
   ResultString : String;
@@ -138,11 +146,13 @@ begin
       if fWMICondition = '' then
          Query := WideString(Format('SELECT %s FROM %s',[fWMIProperties, fWMIClassName]))
       else
-        Query := WideString(Format('SELECT %s FROM %s %s',[fWMIProperties, fWMIClassName,fWMICondition]));
+         Query := WideString(Format('SELECT %s FROM %s %s',[fWMIProperties, fWMIClassName,fWMICondition]));
+      //Going to display the query
+      FinalQuery:=Query;
       //Query to WMI Service
-      WMIObjectSet:= FWMIService.ExecQuery(Query,'WQL',FlagForwardOnly);
+      WMIObjectSet:= FWMIService.ExecQuery(Query,'WQL',wbemFlagForwardOnly OR wbemFlagReturnImmediately);
       //Enumerate on WMIObjectSet
-      oEnum         := IUnknown(WMIObjectSet._NewEnum) as IEnumVariant;
+      oEnum       := IUnknown(WMIObjectSet._NewEnum) as IEnumVariant;
       while oEnum.Next(1, WMIObject, iValue) = 0 do
       begin
         for i := 0 to length(WMIPropertiesArray)-1 do
@@ -178,6 +188,39 @@ begin
   end;
 end;
 
+//Getting all WMI classes using Powershell
+
+procedure TWMIClass.GetWMIClasses();
+const
+  BUF_SIZE = 2048; // Buffer size for reading the output in chunks
+
+var
+  AProcess     : TProcess;
+  OutputStream : TStream;
+  BytesRead    : longint;
+  Buffer       : array[1..BUF_SIZE] of byte;
+
+begin
+  AProcess := TProcess.Create(nil);
+  AProcess.Executable := 'PowerShell.exe';
+  AProcess.Parameters.Add('Get-WmiObject -List | Select-Object Name | Sort Name | FT -HideTableHeaders -AutoSize Name');
+  // Also with : Get-CimClass | Select-Object CimClassName | Sort CimClassName | FT -HideTableHeaders -AutoSize CimClassName')
+  AProcess.Options := [poUsePipes];  // Process option poUsePipes has to be used so the output can be captured.
+  AProcess.ShowWindow := swoHIDE;
+  AProcess.Execute;
+  OutputStream := TMemoryStream.Create;
+  repeat
+    BytesRead := AProcess.Output.Read(Buffer, BUF_SIZE);
+    OutputStream.Write(Buffer, BytesRead)
+  until BytesRead = 0;
+  AProcess.Free;
+  OutputStream.Position := 0; // to make sure that data is copied from the start
+  WMIClassesResult.LoadFromStream(OutputStream);
+  OutputStream.Free;
+end;
+
+
+//Getting the Classes with Alias
 procedure TWMIClass.InitWMIClassNames();
 var
   i :integer;
@@ -212,21 +255,25 @@ begin
   end;
 end;
 
+//Getting the Class's Properties
 procedure TWMIClass.InitWMIProperties(fWMIClassName:String);
 const
-  FlagForwardOnly = $00000020;
+  wbemFlagForwardOnly = $00000020;
+  wbemFlagReturnImmediately = $00000010;
+  wbemFlagDirectRead = $00000200;
 var
   WMIObjectSet: OLEVariant;
   WMIObject,WMI_Item   : OLEVariant;
   oEnum,oEnum2         : IEnumvariant;
-  iValue,iValue2        : LongWord;
+  iValue,iValue2       : LongWord;
   Query         : WideString;
 begin
-  WMIPropertyNames.Clear;//if there where Property Names in list clear list
+  WMIPropertyNames.Clear;//if there were Property Names in list, clear list
   try
-    Query := WideString(Format('SELECT %s FROM %s'   , ['*', fWMIClassName]));//select all properties
-    WMIObjectSet:= FWMIService.ExecQuery(Query,'WQL',FlagForwardOnly);
-    oEnum         := IUnknown(WMIObjectSet._NewEnum) as IEnumVariant;
+    Query := WideString(Format('SELECT %s FROM %s' , ['*', fWMIClassName]));//select all properties
+    //Request to WMI
+    WMIObjectSet:= FWMIService.ExecQuery(Query,'WQL',wbemFlagDirectRead );
+    oEnum       := IUnknown(WMIObjectSet._NewEnum) as IEnumVariant;
     if oEnum.Next(1, WMIObject, iValue) = 0 then   //only first Instance of WMIObjectSet
     begin
       oEnum2 := IUnknown(WMIObject.Properties_._NewEnum) as IEnumVariant;//enumerate Properties

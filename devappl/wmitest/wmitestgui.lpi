@@ -106,7 +106,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="wmitestgui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -138,6 +138,13 @@
         <Filename Value="..\..\common\jan_wmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="querywindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="QueryForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

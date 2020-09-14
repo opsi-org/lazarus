@@ -1,10 +1,10 @@
 object ResultForm: TResultForm
-  Left = 2664
-  Height = 674
-  Top = 137
+  Left = 205
+  Height = 408
+  Top = 0
   Width = 549
-  Caption = 'opsi-wmitestgui - Result of query to WMI service'
-  ClientHeight = 674
+  Caption = 'opsi-wmitestgui - Result of Query to WMI service'
+  ClientHeight = 408
   ClientWidth = 549
   Icon.Data = {
     FE1700000000010001002626000001002000E817000016000000280000002600
@@ -203,14 +203,37 @@ object ResultForm: TResultForm
   }
   OnCreate = FormCreate
   Position = poDefaultPosOnly
-  LCLVersion = '2.0.2.0'
+  LCLVersion = '2.0.10.0'
   object MemoQueryResult: TMemo
-    Left = 0
-    Height = 675
-    Top = 0
-    Width = 553
+    Left = 8
+    Height = 310
+    Top = 72
+    Width = 528
     Anchors = [akTop, akLeft, akRight, akBottom]
     ScrollBars = ssAutoBoth
     TabOrder = 0
+  end
+  object LabelQueryResult: TLabel
+    Left = 8
+    Height = 15
+    Top = 56
+    Width = 73
+    Caption = 'Query Result :'
+    ParentColor = False
+  end
+  object LabelQuery: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 38
+    Caption = 'Query :'
+    ParentColor = False
+  end
+  object EditQuery: TEdit
+    Left = 8
+    Height = 23
+    Top = 24
+    Width = 528
+    TabOrder = 1
   end
 end
