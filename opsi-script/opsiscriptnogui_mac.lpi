@@ -23,6 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="4"/>
+      <BuildNr Value="2"/>
       <StringTable Comments="Compiled with Lazarus 2.0.10" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -154,7 +155,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="36">
       <Unit0>
         <Filename Value="opsiscriptnogui_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -300,6 +301,10 @@
         <Filename Value="info-osnogui.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
+      <Unit35>
+        <Filename Value="opsi-script.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

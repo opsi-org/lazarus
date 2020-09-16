@@ -521,6 +521,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
+  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -574,7 +575,13 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
@@ -634,7 +641,7 @@ var
 begin
   ps := info + '! ' + LineEnding + 'Please inform the Administrator!';
   {$IFDEF GUI}
-  {$IFDEF OPSI}
+  {$IFDEF OPSISCRIPT}
   MyMessageDlg.WiMessage(ps, [mrOk]);
   {$ELSE}
   ShowMessage(ps);
@@ -1449,7 +1456,7 @@ begin
             //flush(LogMainFile);
           except
             {$IFDEF GUI}
-            {$IFDEF OPSI}
+            {$IFDEF OPSISCRIPT}
             if MyMessageDlg.WiMessage('Logfile ' + Filename +
               ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
               halt

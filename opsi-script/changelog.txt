@@ -5,13 +5,33 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.2) experimental; urgency=low
+
+* macos: try to read mountpoint from opsiclientd.conf
+  default to /var/opsisetupadmin/opsi_depot
+
+-- d.oertel <d.oertel@uib.de> Tue, 15 Sep 2020 15:00
+
+
+opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
+
+  * some more log on startup
+  * oslog: makebakfiles: rename instead of copy (much faster)
+  * fix uefi detection on win10 >= release 1004
+  * osfuncwin: WinIsUefi: the fix is here
+  //* macos: change mountpoint to /Network/opsi_depot
+  //* macos: changeback mountpoint to /Volumes/opsi_depot
+  * macos: change mountpoint back to /var/opsisetupadmin/opsi_depot
+  * osbatchgui: formresize function disabled for Darwin
+
+-- d.oertel <d.oertel@uib.de> Thu, 27 Aug 2020 15:00
+
 opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
 
   * includes changes from github merge request "Feature / Implementation parity between WinBatch, DosBatch and ExecWith"
     * DosBatch-Sections to be executed with elevated privileges like WinBatch could be using /RunElevated
     * /Run*-Parameters for ExecWith
     * Output catching, /showouput and getOutStreamFromSection support for WinBatch
-  * ToDo: write opsi-script tests for these changes
   * compiled with lazarus 2.0.10
   * fix for /showoutput at win64
   * fix for runningonuefi if w10 release >= 2004

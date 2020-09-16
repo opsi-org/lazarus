@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 57
+  Left = 75
   Height = 676
-  Top = 21
+  Top = 383
   Width = 648
   Caption = 'opsi-wmitestgui'
   ClientHeight = 676

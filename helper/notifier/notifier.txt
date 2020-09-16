@@ -1,4 +1,12 @@
 [changelog]
+opsi-notifier  4.1.1.2
+
+  * additional param --test
+    (shows 30 seconds notifier based on given skin config)
+  * multiple fixes for linux highdpi
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 18 Aug 2020:15:00:00 +0200
+
 opsi-notifier  4.1.1.1
 
   * log if given port not >0

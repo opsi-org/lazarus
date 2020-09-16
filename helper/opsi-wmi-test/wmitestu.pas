@@ -6,7 +6,10 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, Buttons, jan_wmi;
+  StdCtrls, ExtCtrls, Buttons, jan_wmi,
+  fileinfo,
+  winpeimagereader,
+  oslog;
   //,oswmi;
 
 type
@@ -341,6 +344,39 @@ begin
 end;
 
 
+procedure StartLog;
+var
+  i : integer;
+  FileVerInfo : TFileVersionInfo;
+  myVersion : string;
+  logfilename : string;
+begin
+  try
+    //Result := True;
+    logdatei := TLogInfo.Create;
+    logfilename := 'opsi-wmi-test.log';
+    LogDatei.WritePartLog := False;
+    LogDatei.WriteErrFile:= False;
+    LogDatei.WriteHistFile:= False;
+    logdatei.CreateTheLogfile(logfilename, False);
+    logdatei.LogLevel := 7;
+    (*
+    for i := 0 to preLogfileLogList.Count-1 do
+      logdatei.log(preLogfileLogList.Strings[i], LLessential);
+      *)
+    FileVerInfo := TFileVersionInfo.Create(nil);
+
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+    logdatei.log('opsi-wmi-test: version: ' + myVersion, LLessential);
+    MainForm.Caption := MainForm.Caption + ' - ' + myVersion;
+  finally
+    FileVerInfo.Free;
+    //preLogfileLogList.Free;
+  end;
+end;
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
    WMIClass := TWMIClass.Create;
@@ -348,12 +384,14 @@ begin
    //MemoQueryResult.Text := WMIClass.WMIClassNames.Text;
    //MemoQueryResult.Append(IntToStr(WMIClass.WMIClassNames.Count));
    FillComboBoxWMIClass(); //ComboBox mit Auswahlmöglichkeiten füllen.
+   StartLog;
 end;
 
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   WMIClass.Free;
+  LogDatei.Close;
 end;
 
 procedure TMainForm.ListBoxAvailableWMIPropertiesDragDrop(Sender,
