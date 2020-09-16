@@ -57,7 +57,7 @@ msgstr "Module kopieren: "
 
 #: opsi_quick_install_resourcestrings.rscorrect
 msgid "If this is correct, please click 'next >' to continue. If not, please edit the distribution and then continue with 'next >'."
-msgstr "Wenn das korrekt ist, klicken Sie zum Fortfahren auf 'weiter >'. Wenn nicht, editieren Sie bitte die Distribution und klicken dann auf 'weiter >"
+msgstr "Wenn das korrekt ist, klicken Sie zum Fortfahren auf 'weiter >'. Wenn nicht, editieren Sie bitte die Distribution und klicken dann auf 'weiter >'."
 
 #: opsi_quick_install_resourcestrings.rscustom
 msgid "Custom"
@@ -83,14 +83,14 @@ msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
 msgstr "DNS Domain (für das DHCP):"
 
+#: opsi_quick_install_resourcestrings.rsdomainex
+msgid " [Exaples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
 msgstr "DNS Domain: "
-
-#: opsi_quick_install_resourcestrings.rsdomainop
-msgid " [Options: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomainother
 msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
@@ -530,6 +530,94 @@ msgstr ""
 msgid "Sudo"
 msgstr ""
 
+#: tquery.btnback.caption
+#, fuzzy
+msgctxt "tquery.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tquery.btnnext.caption
+#, fuzzy
+msgctxt "tquery.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tquery.caption
+msgid "Opsi quick install - query (part 1)"
+msgstr ""
+
+#: tquery.editdefaultrepo.text
+msgid "repo"
+msgstr ""
+
+#: tquery.editdefaultreponocache.text
+msgid "repo (no cache)"
+msgstr ""
+
+#: tquery.labelnocache.caption
+msgid ""
+"(Base-) Repository for opsi-server installation\n"
+"(without any cache proxy)\n"
+msgstr ""
+
+#: tquery.labelopsiversion.caption
+#, fuzzy
+msgctxt "tquery.labelopsiversion.caption"
+msgid "Which opsi version would you like to install?"
+msgstr "Welche Opsi-Version möchten Sie installieren?"
+
+#: tquery.labelproxy.caption
+msgid "Proxy to use (http://myproxy.dom.org:8080)"
+msgstr ""
+
+#: tquery.labelrepo.caption
+msgid "(Base-) Repository for opsi-server installation"
+msgstr ""
+
+#: tquery.labelrepo.hint
+msgid "Repository from which opsi shall be installed."
+msgstr ""
+
+#: tquery.radiobtnmyproxy.caption
+msgid "http://myproxy.dom.org:8080"
+msgstr ""
+
+#: tquery.radiobtnnone.caption
+#, fuzzy
+msgctxt "tquery.radiobtnnone.caption"
+msgid "None"
+msgstr "Keiner"
+
+#: tquery.radiobtnopsi41.caption
+#, fuzzy
+msgctxt "tquery.radiobtnopsi41.caption"
+msgid "opsi 4.1"
+msgstr "Opsi 4.1"
+
+#: tquery.radiobtnopsi42.caption
+#, fuzzy
+msgctxt "tquery.radiobtnopsi42.caption"
+msgid "opsi 4.2"
+msgstr "Opsi 4.2"
+
+#: tquery.radiobtnothernocache.caption
+#, fuzzy
+msgctxt "tquery.radiobtnothernocache.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery.radiobtnotherproxy.caption
+#, fuzzy
+msgctxt "tquery.radiobtnotherproxy.caption"
+msgid "Other:"
+msgstr "Andere:"
+
+#: tquery.radiobtnotherrepo.caption
+#, fuzzy
+msgctxt "tquery.radiobtnotherrepo.caption"
+msgid "Other:"
+msgstr "Andere:"
+
 #: tquery5_dhcp.btnback.caption
 msgctxt "tquery5_dhcp.btnback.caption"
 msgid " < back "
@@ -880,9 +968,9 @@ msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
 
 #: tquickinstall.radiobtncustom.caption
 msgid "Custom (...)"
-msgstr ""
+msgstr "Benutzerdefiniert"
 
 #: tquickinstall.radiobtndefault.caption
 msgid "Standard (...)"
-msgstr ""
+msgstr "Standard"
 

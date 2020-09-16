@@ -22,7 +22,7 @@ resourcestring
   rsBackendOp = ' [Options: "file", "mysql"]';
   rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
   rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
-  rsDomainOp = ' [Options: "uib.local", "ucs.test", "vmnat.local"]';
+  rsDomainEx = ' [Exaples: "uib.local", "ucs.test", "vmnat.local"]';
   rsRightsOp = ' [Options: "root", "sudo"]';
 
   {universal}

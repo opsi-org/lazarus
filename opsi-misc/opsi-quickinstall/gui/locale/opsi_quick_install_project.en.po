@@ -79,20 +79,18 @@ msgid "We recognized the following distribution on this computer:"
 msgstr "We recognized the following distribution on this computer:"
 
 #: opsi_quick_install_resourcestrings.rsdomain
-#, fuzzy
-#| msgid "DNS domain (for dhcp)"
 msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
 msgstr "DNS domain (for dhcp)"
+
+#: opsi_quick_install_resourcestrings.rsdomainex
+msgid " [Exaples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
 msgstr "DNS Domain: "
-
-#: opsi_quick_install_resourcestrings.rsdomainop
-msgid " [Options: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomainother
 msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
@@ -105,8 +103,6 @@ msgid " finish "
 msgstr " finish "
 
 #: opsi_quick_install_resourcestrings.rsgateway
-#, fuzzy
-#| msgid "Gateway (option routers for dhcp)"
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
 msgstr "Gateway (option routers for dhcp)"
@@ -202,8 +198,6 @@ msgid " [Options: \"default.menu\", \"default.nomenu\"]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnameserver
-#, fuzzy
-#| msgid "Primary nameserver (for dhcp)"
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp):"
 msgstr "Primary nameserver (for dhcp)"
@@ -219,8 +213,6 @@ msgid "Other:"
 msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsnetmask
-#, fuzzy
-#| msgid "Netmask (for dhcp)"
 msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp):"
 msgstr "Netmask (for dhcp)"
@@ -236,8 +228,6 @@ msgid "Other:"
 msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddress
-#, fuzzy
-#| msgid "Network address (for dhcp)"
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp):"
 msgstr "Network address (for dhcp)"
@@ -305,8 +295,6 @@ msgid "Password:"
 msgstr "Password:"
 
 #: opsi_quick_install_resourcestrings.rsproxy
-#, fuzzy
-#| msgid "Proxy to use (http://myproxy.dom.org:8080)"
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
 msgid "Proxy to use (http://myproxy.dom.org:8080):"
 msgstr "Proxy to use (http://myproxy.dom.org:8080)"
@@ -337,8 +325,6 @@ msgid "Reboot after script is finished: "
 msgstr "Reboot after script is finished: "
 
 #: opsi_quick_install_resourcestrings.rsrepo
-#, fuzzy
-#| msgid "(Base-) Repository for opsi-server installation"
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
 msgid "(Base-) Repository for opsi-server installation:"
 msgstr "(Base-) Repository for opsi-server installation"
@@ -358,8 +344,6 @@ msgid " [Options: \"stable\", \"testing\", \"experimental\"]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreponocache
-#, fuzzy
-#| msgid "(Base-) Repository for opsi-server installation (without any cache proxy)"
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
 msgid "(Base-) Repository for opsi-server installation (without any cache proxy):"
 msgstr "(Base-) Repository for opsi-server installation (without any cache proxy)"
@@ -545,6 +529,94 @@ msgstr ""
 #: tpassword.radiobtnsudo.caption
 msgid "Sudo"
 msgstr ""
+
+#: tquery.btnback.caption
+#, fuzzy
+msgctxt "tquery.btnback.caption"
+msgid " < back "
+msgstr " < back "
+
+#: tquery.btnnext.caption
+#, fuzzy
+msgctxt "tquery.btnnext.caption"
+msgid " next > "
+msgstr " next > "
+
+#: tquery.caption
+msgid "Opsi quick install - query (part 1)"
+msgstr ""
+
+#: tquery.editdefaultrepo.text
+msgid "repo"
+msgstr ""
+
+#: tquery.editdefaultreponocache.text
+msgid "repo (no cache)"
+msgstr ""
+
+#: tquery.labelnocache.caption
+msgid ""
+"(Base-) Repository for opsi-server installation\n"
+"(without any cache proxy)\n"
+msgstr ""
+
+#: tquery.labelopsiversion.caption
+#, fuzzy
+msgctxt "tquery.labelopsiversion.caption"
+msgid "Which opsi version would you like to install?"
+msgstr "Which opsi version would you like to install?"
+
+#: tquery.labelproxy.caption
+msgid "Proxy to use (http://myproxy.dom.org:8080)"
+msgstr ""
+
+#: tquery.labelrepo.caption
+msgid "(Base-) Repository for opsi-server installation"
+msgstr ""
+
+#: tquery.labelrepo.hint
+msgid "Repository from which opsi shall be installed."
+msgstr ""
+
+#: tquery.radiobtnmyproxy.caption
+msgid "http://myproxy.dom.org:8080"
+msgstr ""
+
+#: tquery.radiobtnnone.caption
+#, fuzzy
+msgctxt "tquery.radiobtnnone.caption"
+msgid "None"
+msgstr "None"
+
+#: tquery.radiobtnopsi41.caption
+#, fuzzy
+msgctxt "tquery.radiobtnopsi41.caption"
+msgid "opsi 4.1"
+msgstr "opsi 4.1"
+
+#: tquery.radiobtnopsi42.caption
+#, fuzzy
+msgctxt "tquery.radiobtnopsi42.caption"
+msgid "opsi 4.2"
+msgstr "opsi 4.2"
+
+#: tquery.radiobtnothernocache.caption
+#, fuzzy
+msgctxt "tquery.radiobtnothernocache.caption"
+msgid "Other:"
+msgstr "Other:"
+
+#: tquery.radiobtnotherproxy.caption
+#, fuzzy
+msgctxt "tquery.radiobtnotherproxy.caption"
+msgid "Other:"
+msgstr "Other:"
+
+#: tquery.radiobtnotherrepo.caption
+#, fuzzy
+msgctxt "tquery.radiobtnotherrepo.caption"
+msgid "Other:"
+msgstr "Other:"
 
 #: tquery5_dhcp.btnback.caption
 #, fuzzy
@@ -907,9 +979,9 @@ msgstr "Welcome to the installation of opsi-server on this computer!"
 
 #: tquickinstall.radiobtncustom.caption
 msgid "Custom (...)"
-msgstr ""
+msgstr "Custom"
 
 #: tquickinstall.radiobtndefault.caption
 msgid "Standard (...)"
-msgstr ""
+msgstr "Standard"
 

@@ -10,8 +10,11 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Process, {LCLtranslator,}
   { you can add units after this }
   opsi_quick_install_resourcestrings,
-  osDistributionInfo ,
-  osfunclin{, osLinuxRepository};
+  osDistributionInfo,
+  osRunCommandElevated,
+  osfunclin,
+  osLinuxRepository,
+  oslog;
 
 type
 
@@ -25,6 +28,7 @@ type
     destructor Destroy; override;
     procedure WriteHelp; virtual;
     procedure NoGuiQuery;
+    procedure ExecuteWithDefaultValues;
   end;
 
   { TMyApplication }
@@ -34,7 +38,7 @@ type
     ErrorMsg, project: string;
   begin
     // quick check parameters
-    ErrorMsg := CheckOptions('htgn', 'help test gui nogui');
+    ErrorMsg := CheckOptions('htgnd', 'help test gui nogui default');
     if ErrorMsg <> '' then
     begin
       ShowException(Exception.Create(ErrorMsg));
@@ -71,6 +75,13 @@ type
     if HasOption('n', 'nogui') then
     begin
       NoGuiQuery;
+      Terminate;
+      Exit;
+    end;
+
+    if HasOption('d', 'default') then
+    begin
+      ExecuteWithDefaultValues;
       Terminate;
       Exit;
     end;
@@ -113,9 +124,21 @@ type
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
     user, password: string;
+    FileText: TStringList;
+    MyRepo: TLinuxRepository;
+    RunCommand: TRunCommandElevated;
+    fileName, url, shellCommand, Output: string;
   begin
-    {LogDatei := TLogInfo.Create;
-    LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');}
+    // set default values:
+    opsiVersion := 'opsi 4.1';
+    repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
+    proxy := '';
+    repoNoCache := repo;
+    backend := 'file';
+    // ...ToDo
+
+    LogDatei := TLogInfo.Create;
+    LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
 
     //writeln(GetDefaultLang);
     writeln(rsWelcome);
@@ -145,16 +168,18 @@ type
     end;
     setupType := input;
 
+    writeln('');
     writeln(rsCarryOut);
     //Sleep(200);
+    writeln('');
 
 
     // distribution:
-    //distroName := getLinuxDistroName;
-    //distroRelease := getLinuxDistroRelease;
-    writeln(distroName, distroRelease);
+    distroName := getLinuxDistroName;
+    distroRelease := getLinuxDistroRelease;
+    //writeln(distroName, distroRelease);
     DistrInfo := TDistributionInfo.Create;
-    writeln(rsDistr, '...');
+    writeln(rsDistr, ' ', distroName, ' ', distroRelease);
     writeln(rsIsCorrect, rsYesNoOp);
     readln(input);
     while not ((input = 'yes') or (input = 'no')) do
@@ -167,9 +192,11 @@ type
     begin
       writeln(rsOtherDistr);
       readln(input);
-      //!!!define distribution
+      distroName := Copy(input, 1, Pos(' ', input) - 1);
+      distroRelease := Copy(input, Pos(' ', input) + 1, Length(input) - Pos(' ', input));
       //What to do with unknown distribution like ubuntu 20.04?
     end;
+    DistrInfo.SetInfo(distroName, distroRelease);
 
 
     if setupType = 'custom' then
@@ -246,10 +273,13 @@ type
 
 
       // ucs password
-      //!!!if distribution = univention:
-      writeln(rsUCS);
-      readln(input);
-      ucsPassword := input;
+      if distroName = 'Univention' then
+      begin
+        writeln(rsUCS);
+        readln(input);
+        ucsPassword := input;
+      end;
+
 
       // reboot
       writeln(rsReboot, rsYesNoOp);
@@ -296,14 +326,8 @@ type
       readln(input);
       networkAddress := input;
       // domain
-      writeln(rsDomain, rsDomainOp);
+      writeln(rsDomain, rsDomainEx);
       readln(input);
-      while not ((input = 'ucs.test') or (input = 'uib.local') or
-          (input = 'vmnat.local')) do
-      begin
-        writeln(input, rsNotValid);
-        readln(input);
-      end;
       domain := input;
       // nameserver
       writeln(rsNameserver,
@@ -350,6 +374,187 @@ type
     writeln(rsPassword);
     readln(input);
     password := input;
+
+
+    // write user input in l-opsi-server.conf and properties.conf file:
+    FileText := TStringList.Create;
+    FileText.Add('allow_reboot=' + reboot);
+    FileText.Add('backend=' + backend);
+    FileText.Add('dnsdomain=' + domain);
+    FileText.Add('force_copy_modules=' + copyMod);
+    FileText.Add('gateway=' + gateway);
+    FileText.Add('install_and_configure_dhcp=' + dhcp);
+    FileText.Add('myipname=' + ipName);
+    FileText.Add('myipnumber=' + ipNumber);
+    FileText.Add('nameserver=' + nameserver);
+    FileText.Add('netmask=' + netmask);
+    FileText.Add('network=' + networkAddress);
+    FileText.Add('opsi_admin_user_name=' + adminName);
+    FileText.Add('opsi_admin_user_password=' + adminPassword);
+    FileText.Add('opsi_online_repository=' + repo);
+    FileText.Add('opsi_noproxy_online_repository=' + repoNoCache);
+    FileText.Add('patch_default_link_for_bootimage=' + link);
+    FileText.Add('proxy=' + proxy);
+    FileText.Add('repo_kind=' + repoKind);
+    FileText.Add('ucs_master_admin_password=' + ucsPassword);
+    // update_test shall always be false
+    FileText.Add('update_test=false');
+    //writeln(FileText.Text);
+
+    // write in l-opsi-server.conf file:
+    fileName := ExtractFilePath(ParamStr(0));
+    //writeln(fileName);
+    FileText.SaveToFile(fileName + 'l-opsi-server.conf');
+    // write in properties.conf file:
+    // navigate to CLIENT_DATA in l-opsi-server
+    Delete(fileName, Length(fileName), 1);
+    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
+    //writeln(fileName);
+    FileText.SaveToFile(fileName + 'properties.conf');
+
+    // Important for getting the result 'failed' in case of a wrong password...
+    // ...cause in this case the RunCommands below aren't executed...
+    // ...and therefore setup.opsiscript, that usually does it, isn't too:
+    FileText.Clear;
+    FileText.Add('failed');
+    FileText.SaveToFile(fileName + 'result.conf');
+
+    // create repository
+    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, password, user = 'sudo');
+    // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+   if opsiVersion = 'opsi 4.1' then
+    begin
+      if repoKind = 'experimental' then
+        url := MyRepo.GetDefaultURL(Opsi41, experimental)
+      else if repoKind = 'stable' then
+        url := MyRepo.GetDefaultURL(Opsi41, stable)
+      else if repoKind = 'testing' then
+        url := MyRepo.GetDefaultURL(Opsi41, testing);
+    end
+    else
+    begin
+      if repoKind = 'experimental' then
+        url := MyRepo.GetDefaultURL(Opsi42, experimental)
+      else if repoKind = 'stable' then
+        url := MyRepo.GetDefaultURL(Opsi42, stable)
+      else if repoKind = 'testing' then
+        url := MyRepo.GetDefaultURL(Opsi42, testing);
+    end;
+    //writeln(url);
+    // following two lines need an existing LogDatei
+    MyRepo.Add(url);
+    RunCommand := TRunCommandElevated.Create(password, user = 'sudo');
+    shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
+    Output := RunCommand.Run(shellCommand + 'update');
+    //writeln(Output);
+    Output := RunCommand.Run(shellCommand + 'install opsi-script');
+    //writeln(Output);
+    Output := RunCommand.Run('opsi-script -batch ' + fileName +
+      'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+
+    FileText.LoadFromFile(fileName + 'result.conf');
+    writeln(FileText.Text);
+
+    FileText.Free;
+    DistrInfo.Free;
+    RunCommand.Free;
+    MyRepo.Free;
+  end;
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  procedure TMyApplication.ExecuteWithDefaultValues;
+  var
+    user, password: string;
+    DistrInfo: TDistributionInfo;
+    FileText: TStringList;
+    MyRepo: TLinuxRepository;
+    RunCommand: TRunCommandElevated;
+    fileName, url, shellCommand, Output: string;
+  begin
+    LogDatei := TLogInfo.Create;
+    LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
+
+    DistrInfo := TDistributionInfo.Create;
+    DistrInfo.SetInfo('Ubuntu', '18.04');
+    user := 'sudo';
+    password := 'linux123';
+
+    // write user input in l-opsi-server.conf and properties.conf file:
+    FileText := TStringList.Create;
+    FileText.Add('allow_reboot=false');
+    FileText.Add('backend=file');
+    FileText.Add('dnsdomain=uib.local');
+    FileText.Add('force_copy_modules=false');
+    FileText.Add('gateway=192.168.1.245');
+    FileText.Add('install_and_configure_dhcp=false');
+    FileText.Add('myipname=auto');
+    FileText.Add('myipnumber=auto');
+    FileText.Add('nameserver=192.168.1.245');
+    FileText.Add('netmask=255.255.0.0');
+    FileText.Add('network=192.168.0.0');
+    FileText.Add('opsi_admin_user_name=Anne');
+    FileText.Add('opsi_admin_user_password=linux123');
+    FileText.Add(
+      'opsi_online_repository=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/');
+    FileText.Add(
+      'opsi_noproxy_online_repository=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/');
+    FileText.Add('patch_default_link_for_bootimage=default.nomenu');
+    FileText.Add('proxy=');
+    FileText.Add('repo_kind=stable');
+    FileText.Add('ucs_master_admin_password=linux123');
+    // update_test shall always be false
+    FileText.Add('update_test=false');
+    //writeln(FileText.Text);
+
+    // write in l-opsi-server.conf file:
+    fileName := ExtractFilePath(ParamStr(0));
+    //writeln(fileName);
+    FileText.SaveToFile(fileName + 'l-opsi-server.conf');
+    // write in properties.conf file:
+    // navigate to CLIENT_DATA in l-opsi-server
+    Delete(fileName, Length(fileName), 1);
+    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
+    //writeln(fileName);
+    FileText.SaveToFile(fileName + 'properties.conf');
+
+    // Important for getting the result 'failed' in case of a wrong password...
+    // ...cause in this case the RunCommands below aren't executed...
+    // ...and therefore setup.opsiscript, that usually does it, isn't too:
+    FileText.Clear;
+    FileText.Add('failed');
+    FileText.SaveToFile(fileName + 'result.conf');
+
+    //writeln(user = 'sudo');
+    //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
+
+    // create repository
+    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, password, user = 'sudo');
+    // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+    url := MyRepo.GetDefaultURL(Opsi41, stable);
+    //writeln(url);
+    // following two lines need an existing LogDatei
+    MyRepo.Add(url);
+    MyRepo.Add(MyRepo.GetDefaultURL(Opsi41, stable));
+
+    RunCommand := TRunCommandElevated.Create(password, user = 'sudo');
+    shellCommand := DistrInfo.GetPackageManagementShellCommand('Ubuntu');
+    //writeln(shellCommand);
+    // following lines need an existing LogDatei
+    Output := RunCommand.Run(shellCommand + 'update');
+    //writeln(Output);
+    Output := RunCommand.Run(shellCommand + 'install opsi-script');
+    //writeln(Output);
+    Output := RunCommand.Run('opsi-script -batch ' + fileName +
+      'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+
+    FileText.LoadFromFile(fileName + 'result.conf');
+    writeln(FileText.Text);
+
+    FileText.Free;
+    DistrInfo.Free;
+    RunCommand.Free;
+    MyRepo.Free;
   end;
 
 var

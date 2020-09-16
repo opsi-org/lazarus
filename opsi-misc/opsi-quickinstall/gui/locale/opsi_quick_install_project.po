@@ -83,13 +83,13 @@ msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rsdomainex
+msgid " [Exaples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
-msgstr ""
-
-#: opsi_quick_install_resourcestrings.rsdomainop
-msgid " [Options: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomainother
@@ -517,6 +517,85 @@ msgstr ""
 
 #: tpassword.radiobtnsudo.caption
 msgid "Sudo"
+msgstr ""
+
+#: tquery.btnback.caption
+msgctxt "tquery.btnback.caption"
+msgid " < back "
+msgstr ""
+
+#: tquery.btnnext.caption
+msgctxt "tquery.btnnext.caption"
+msgid " next > "
+msgstr ""
+
+#: tquery.caption
+msgid "Opsi quick install - query (part 1)"
+msgstr ""
+
+#: tquery.editdefaultrepo.text
+msgid "repo"
+msgstr ""
+
+#: tquery.editdefaultreponocache.text
+msgid "repo (no cache)"
+msgstr ""
+
+#: tquery.labelnocache.caption
+msgid ""
+"(Base-) Repository for opsi-server installation\n"
+"(without any cache proxy)\n"
+msgstr ""
+
+#: tquery.labelopsiversion.caption
+msgctxt "tquery.labelopsiversion.caption"
+msgid "Which opsi version would you like to install?"
+msgstr ""
+
+#: tquery.labelproxy.caption
+msgid "Proxy to use (http://myproxy.dom.org:8080)"
+msgstr ""
+
+#: tquery.labelrepo.caption
+msgid "(Base-) Repository for opsi-server installation"
+msgstr ""
+
+#: tquery.labelrepo.hint
+msgid "Repository from which opsi shall be installed."
+msgstr ""
+
+#: tquery.radiobtnmyproxy.caption
+msgid "http://myproxy.dom.org:8080"
+msgstr ""
+
+#: tquery.radiobtnnone.caption
+msgctxt "tquery.radiobtnnone.caption"
+msgid "None"
+msgstr ""
+
+#: tquery.radiobtnopsi41.caption
+msgctxt "tquery.radiobtnopsi41.caption"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.radiobtnopsi42.caption
+msgctxt "tquery.radiobtnopsi42.caption"
+msgid "opsi 4.2"
+msgstr ""
+
+#: tquery.radiobtnothernocache.caption
+msgctxt "tquery.radiobtnothernocache.caption"
+msgid "Other:"
+msgstr ""
+
+#: tquery.radiobtnotherproxy.caption
+msgctxt "tquery.radiobtnotherproxy.caption"
+msgid "Other:"
+msgstr ""
+
+#: tquery.radiobtnotherrepo.caption
+msgctxt "tquery.radiobtnotherrepo.caption"
+msgid "Other:"
 msgstr ""
 
 #: tquery5_dhcp.btnback.caption
