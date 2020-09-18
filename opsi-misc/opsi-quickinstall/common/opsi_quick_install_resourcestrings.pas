@@ -22,7 +22,11 @@ resourcestring
   rsBackendOp = ' [Options: "file", "mysql"]';
   rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
   rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
+  rsNetmaskEx = ' [Examples: "225.225.0.0", "225.225.225.0"]';
+  rsNetworkAddressEx = ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]';
   rsDomainEx = ' [Exaples: "uib.local", "ucs.test", "vmnat.local"]';
+  rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
+  rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsRightsOp = ' [Options: "root", "sudo"]';
 
   {universal}
@@ -80,9 +84,11 @@ resourcestring
   rsInfoReboot =
     'If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
   rsDhcp = 'Should we run the opsi dhcp server on this machine?';
-  rsInfoDhcp = 'Select "No" if you already have a dhcp server.'+#10+'Select "Yes" if you want to install the dhcp server on the opsi server.';
+  rsInfoDhcp = 'Select "No" if you already have a dhcp server.' + #10 +
+    'Select "Yes" if you want to install the dhcp server on the opsi server.';
   rsTFTPROOT = 'Which file should the TFTPROOT default symlink point to?';
-  rsInfoTFTPROOT = 'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
+  rsInfoTFTPROOT =
+    'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
 
   {Query5_dhcp}
   rsInfoNetwork = 'Information on the network in which the opsi server shall be installed.';
@@ -99,7 +105,8 @@ resourcestring
 
   {Query6}
   rsAdminName = 'What is the name of the opsi_admin_user to create? (empty = nothing created)';
-  rsInfoAdmin = 'User to create for the operation of opsi.'+#10+'This user can not manage system settings.';
+  rsInfoAdmin = 'User to create for the operation of opsi.' + #10 +
+    'This user can not manage system settings.';
   rsAdminPassword =
     'What is the password of the opsi_admin_user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) (''auto'' = use standard)';
