@@ -7,7 +7,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Classes,
   SysUtils,
   CustApp,
-  Process, {LCLtranslator,}
+  Process,
+  GetText,
+  Translations,
   { you can add units after this }
   opsi_quick_install_resourcestrings,
   osDistributionInfo,
@@ -18,9 +20,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 
 type
 
-  { TMyApplication }
+  { TQuickInstall }
 
-  TMyApplication = class(TCustomApplication)
+  TQuickInstall = class(TCustomApplication)
   private
   var
     // Never write the log file in variables as follows!
@@ -41,6 +43,9 @@ type
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
 
+    procedure SetDefaultValues;
+    procedure NoGuiQuery;
+    procedure ExecuteWithDefaultValues;
     // write properties in l-opsi-server.conf and properties.conf file and install opsi-server
     procedure InstallOpsi;
   protected
@@ -49,15 +54,19 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure WriteHelp; virtual;
-    procedure NoGuiQuery;
-    procedure ExecuteWithDefaultValues;
   end;
 
-  { TMyApplication }
+resourcestring
+  rsHi = 'Hello';
+  rsMorning = 'Morning';
 
-  procedure TMyApplication.DoRun;
+  { TQuickInstall }
+
+  procedure TQuickInstall.DoRun;
   var
     ErrorMsg, project: string;
+    {Lang, DefLang: string;
+    r: TTranslateUnitResult;}
   begin
     // quick check parameters
     ErrorMsg := CheckOptions('htgnd', 'help test gui nogui default');
@@ -78,7 +87,10 @@ type
 
     if HasOption('t', 'test') then
     begin
-      writeln('test');
+      {GetLanguageIDs(Lang, DefLang);
+      TranslateUnitResourceStrings('opsi_quick_install_nogui_project', 'opsi_quick_install_nogui_project.de.po', Lang, DefLang);
+      writeln('test');}
+      writeln(rsHi, rsMorning);
       //Terminate;
       //Exit;
     end;
@@ -115,11 +127,29 @@ type
     Exit;
   end;
 
-  constructor TMyApplication.Create(TheOwner: TComponent);
+  constructor TQuickInstall.Create(TheOwner: TComponent);
   begin
     inherited Create(TheOwner);
     StopOnException := True;
+  end;
 
+  destructor TQuickInstall.Destroy;
+  begin
+    inherited Destroy;
+  end;
+
+  procedure TQuickInstall.WriteHelp;
+  begin
+    { add your help code here }
+    writeln('Usage: ', ExeName, ' -h');
+    writeln('Help please');
+    writeln('Write:');
+    readln;
+    writeln('Exit');
+  end;
+
+  procedure TQuickInstall.SetDefaultValues;
+  begin
     // set default values:
     opsiVersion := 'opsi 4.1';
     repo := baseUrlOpsi41;
@@ -144,23 +174,8 @@ type
     user := 'root';
   end;
 
-  destructor TMyApplication.Destroy;
-  begin
-    inherited Destroy;
-  end;
-
-  procedure TMyApplication.WriteHelp;
-  begin
-    { add your help code here }
-    writeln('Usage: ', ExeName, ' -h');
-    writeln('Help please');
-    writeln('Write:');
-    readln;
-    writeln('Exit');
-  end;
-
   // write properties in l-opsi-server.conf and properties.conf file and install opsi-server
-  procedure TMyApplication.InstallOpsi;
+  procedure TQuickInstall.InstallOpsi;
   begin
     // write properties in l-opsi-server.conf and properties.conf file:
     FileText := TStringList.Create;
@@ -249,10 +264,12 @@ type
   end;
 
   /////////////////////////////////////////////////////////////////////////////
-  procedure TMyApplication.NoGuiQuery;
+  procedure TQuickInstall.NoGuiQuery;
   begin
     LogDatei := TLogInfo.Create;
     LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
+
+    SetDefaultValues;
 
     //writeln(GetDefaultLang);
     writeln(rsWelcome);
@@ -495,13 +512,13 @@ type
   end;
 
   //////////////////////////////////////////////////////////////////////////////
-  procedure TMyApplication.ExecuteWithDefaultValues;
+  procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     // .../lazarus/common/oslog.pas
     // log file in /tmp/opsi_quickinstall.log
     LogDatei := TLogInfo.Create;
     LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
-    writeln('OK');
+    SetDefaultValues;
 
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo('Ubuntu', '18.04');
@@ -513,9 +530,14 @@ type
   end;
 
 var
-  Application: TMyApplication;
+  QuickInstall: TQuickInstall;
+  Lang, DefLang: string;
+  r: TTranslateUnitResult;
 begin
-  Application := TMyApplication.Create(nil);
-  Application.Run;
-  Application.Free;
+  QuickInstall := TQuickInstall.Create(nil);
+  GetLanguageIDs(Lang, DefLang);
+  TranslateUnitResourceStrings('opsi_quick_install_nogui_project',
+    'locale/opsi_quick_install_nogui_project.%s.po', Lang, DefLang);
+  QuickInstall.Run;
+  QuickInstall.Free;
 end.
