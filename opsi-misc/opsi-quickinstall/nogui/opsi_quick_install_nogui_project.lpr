@@ -10,13 +10,13 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Process,
   GetText,
   Translations,
-  { you can add units after this }
-  opsi_quick_install_resourcestrings,
   osDistributionInfo,
   osRunCommandElevated,
   osfunclin,
   osLinuxRepository,
-  oslog;
+  oslog,
+  //LCLTranslator,
+  opsi_quick_install_resourcestrings;
 
 type
 
@@ -87,10 +87,12 @@ resourcestring
 
     if HasOption('t', 'test') then
     begin
-      {GetLanguageIDs(Lang, DefLang);
-      TranslateUnitResourceStrings('opsi_quick_install_nogui_project', 'opsi_quick_install_nogui_project.de.po', Lang, DefLang);
-      writeln('test');}
       writeln(rsHi, rsMorning);
+      //GetLanguageIDs(Lang, DefLang);
+      //writeln(Lang, DefLang);
+      //TranslateUnitResourceStrings('opsi_quick_install_nogui_project', 'opsi_quick_install_nogui_project.en.po');
+      //writeln('test');
+      writeln(rsHi);
       //Terminate;
       //Exit;
     end;
@@ -271,8 +273,7 @@ resourcestring
 
     SetDefaultValues;
 
-    //writeln(GetDefaultLang);
-    writeln(rsWelcome);
+    {writeln(rsWelcome);
     //Sleep(2000);
     // language:
     writeln(rsSelLanguage, rsLangOp);
@@ -286,7 +287,7 @@ resourcestring
     {if input = 'de' then
       SetDefaultLang('de')
     else if input = 'en' then
-      SetDefaultLang('en');}
+      SetDefaultLang('en');}}
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
@@ -531,13 +532,31 @@ resourcestring
 
 var
   QuickInstall: TQuickInstall;
-  Lang, DefLang: string;
-  r: TTranslateUnitResult;
+  customLanguage, Lang, DefLang: string;
+  //r: TTranslateUnitResult;
 begin
   QuickInstall := TQuickInstall.Create(nil);
+  // get default language (system language)
   GetLanguageIDs(Lang, DefLang);
   TranslateUnitResourceStrings('opsi_quick_install_nogui_project',
     'locale/opsi_quick_install_nogui_project.%s.po', Lang, DefLang);
+
+  writeln(rsWelcome);
+  //Sleep(2000);
+  // language:
+  writeln(rsSelLanguage, rsLangOp);
+  readln(customLanguage);
+  // check for right input
+  while not ((customLanguage = 'de') or (customLanguage = 'en') or (customLanguage = 'fr')) do
+  begin
+    writeln(customLanguage, rsNotValid);
+    readln(customLanguage);
+  end;
+  TranslateUnitResourceStrings('opsi_quick_install_nogui_project',
+    'locale/opsi_quick_install_nogui_project.'+customLanguage+'.po');
+
+  writeln(rsYes);
   QuickInstall.Run;
+  writeln(rsNext);
   QuickInstall.Free;
 end.

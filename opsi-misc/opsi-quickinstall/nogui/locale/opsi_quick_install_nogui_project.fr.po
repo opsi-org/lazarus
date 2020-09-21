@@ -3,7 +3,7 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: opsi_quick_install_nogui_project.rshi
 msgid "Hello"
-msgstr ""
+msgstr "Bonjour"
 
 #: opsi_quick_install_nogui_project.rsmorning
 msgid "Morning"
