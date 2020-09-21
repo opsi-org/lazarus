@@ -1,4 +1,4 @@
-program wmitestgui;
+program opsiRegExprTest;
 
 {$mode objfpc}{$H+}
 
@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, wmitestu, oswmi, jan_wmi, resultwindow, querywindow
+  Forms, RegExprTest
   { you can add units after this };
 
 {$R *.res}
@@ -16,9 +16,7 @@ begin
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;
   Application.Initialize;
-  Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TResultForm, ResultForm);
-  Application.CreateForm(TQueryForm, QueryForm);
+  Application.CreateForm(TFormRegExpr, FormRegExpr);
   Application.Run;
 end.
 

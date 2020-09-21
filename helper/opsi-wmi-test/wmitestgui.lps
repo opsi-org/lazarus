@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="11"/>
+    <BuildModes Active="Release"/>
+    <Units Count="11">
+      <Unit0>
+        <Filename Value="wmitestgui.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="21"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="wmitestu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="359"/>
+        <CursorPos X="13" Y="387"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\common\oswmi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="10" Y="9"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\external_libraries\modified\misc\utilwmi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilwmi"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="19"/>
+        <CursorPos X="63" Y="39"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="resultwindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ResultForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="21"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\common\jan_wmi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="querywindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="QueryForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UsageCount Value="21"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="1441"/>
+        <CursorPos X="31" Y="1459"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\..\external_libraries\misc\charencstreams.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\..\external_libraries\misc\utilwmi.pas"/>
+        <UnitName Value="Utilwmi"/>
+        <UsageCount Value="20"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\common\osencoding.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="3"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit10>
+    </Units>
+    <OtherDefines Count="1">
+      <Define0 Value="GUI"/>
+    </OtherDefines>
+    <JumpHistory Count="8" HistoryIndex="7">
+      <Position1>
+        <Filename Value="wmitestu.pas"/>
+        <Caret Line="52" Column="19" TopLine="37"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\..\common\oswmi.pas"/>
+        <Caret Line="9" Column="10"/>
+      </Position2>
+      <Position3>
+        <Filename Value="wmitestu.pas"/>
+        <Caret Line="9" Column="40"/>
+      </Position3>
+      <Position4>
+        <Filename Value="wmitestu.pas"/>
+        <Caret Line="244" Column="19" TopLine="239"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1898" Column="11" TopLine="1864"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="644" Column="21" TopLine="617"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1459" Column="31" TopLine="1441"/>
+      </Position7>
+      <Position8>
+        <Filename Value="wmitestu.pas"/>
+        <Caret Line="11" Column="22"/>
+      </Position8>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode="default"/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

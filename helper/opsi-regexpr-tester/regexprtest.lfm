@@ -1,0 +1,82 @@
+object FormRegExpr: TFormRegExpr
+  Left = 610
+  Height = 419
+  Top = 0
+  Width = 387
+  Caption = 'opsi Regular Expressions Tester'
+  ClientHeight = 419
+  ClientWidth = 387
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+  object LabelRegExpr: TLabel
+    Left = 8
+    Height = 15
+    Top = 16
+    Width = 105
+    Caption = 'Regular Expression :'
+    ParentColor = False
+  end
+  object EditRegExpr: TEdit
+    Left = 8
+    Height = 23
+    Top = 32
+    Width = 368
+    TabOrder = 0
+  end
+  object LabelText: TLabel
+    Left = 8
+    Height = 15
+    Top = 64
+    Width = 27
+    Caption = 'Text :'
+    ParentColor = False
+  end
+  object LabelResult: TLabel
+    Left = 16
+    Height = 15
+    Top = 395
+    Width = 38
+    Caption = 'Result :'
+    ParentColor = False
+  end
+  object ButtonExamine: TButton
+    Left = 8
+    Height = 25
+    Top = 360
+    Width = 75
+    Caption = 'Examine'
+    OnClick = ButtonExamineClick
+    TabOrder = 2
+  end
+  object StaticTextResult: TStaticText
+    Left = 64
+    Height = 18
+    Top = 392
+    Width = 256
+    Color = clDefault
+    ParentColor = False
+    TabOrder = 3
+    Transparent = False
+  end
+  object RichMemoText: TRichMemo
+    Left = 8
+    Height = 272
+    Top = 80
+    Width = 368
+    HideSelection = False
+    Lines.Strings = (
+      'RichMemo1'
+    )
+    TabOrder = 1
+    ZoomFactor = 1
+  end
+  object ButtonClear: TButton
+    Left = 301
+    Height = 25
+    Top = 360
+    Width = 75
+    Caption = 'Clear'
+    OnClick = ButtonClearClick
+    TabOrder = 4
+  end
+end
