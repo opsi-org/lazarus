@@ -1,24 +1,25 @@
 object Nform: TNform
-  Left = 745
-  Height = 228
-  Top = 540
-  Width = 303
+  Left = 667
+  Height = 361
+  Top = 536
+  Width = 479
   Caption = 'Nform'
-  ClientHeight = 228
-  ClientWidth = 303
-  DesignTimePPI = 91
+  ClientHeight = 361
+  ClientWidth = 479
+  DesignTimePPI = 144
   OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnHide = FormHide
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.10.0'
   object Image1: TImage
     Left = 0
-    Height = 228
+    Height = 361
     Top = 0
-    Width = 303
+    Width = 479
     Align = alClient
     AutoSize = True
+    Stretch = True
   end
 end

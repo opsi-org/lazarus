@@ -5,6 +5,14 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.2) experimental; urgency=low
+
+* macos: try to read mountpoint from opsiclientd.conf
+  default to /var/opsisetupadmin/opsi_depot
+
+-- d.oertel <d.oertel@uib.de> Tue, 15 Sep 2020 15:00
+
+
 opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
 
   * some more log on startup

@@ -641,7 +641,7 @@ var
 begin
   ps := info + '! ' + LineEnding + 'Please inform the Administrator!';
   {$IFDEF GUI}
-  {$IFDEF OPSI}
+  {$IFDEF OPSISCRIPT}
   MyMessageDlg.WiMessage(ps, [mrOk]);
   {$ELSE}
   ShowMessage(ps);
@@ -1456,7 +1456,7 @@ begin
             //flush(LogMainFile);
           except
             {$IFDEF GUI}
-            {$IFDEF OPSI}
+            {$IFDEF OPSISCRIPT}
             if MyMessageDlg.WiMessage('Logfile ' + Filename +
               ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
               halt
