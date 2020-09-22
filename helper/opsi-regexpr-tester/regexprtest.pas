@@ -54,6 +54,8 @@ end;
 
 procedure TFormRegExpr.ButtonExamineClick(Sender: TObject);
 begin
+  //Reinitializing the text format
+  RichMemoText.SetRangeColor(0, RichMemoText.GetTextLen, clDefault);
   //Getting the Regular Expression
   RegExpObj.Expression := EditRegExpr.Text;
   //Executing the Regular Expression on all the input text
