@@ -35,6 +35,7 @@ uses
   osmain in 'osmain.pas',
   oslocale,
   oscalc,
+  osdefinedfunctions,
   {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
@@ -49,7 +50,14 @@ uses
   {$ENDIF GUI}
   {$IFDEF UNIX}
   osconf, opsihwbiosinfo, oslindesktopfiles, osparserhelper,
+  OSProcessux,
   {$ENDIF UNIX}
+  {$IFDEF DARWIN}
+  osfuncmac,
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  osfunclin,
+  {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
