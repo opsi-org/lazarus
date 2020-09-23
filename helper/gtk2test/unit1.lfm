@@ -1,24 +1,23 @@
 object Form1: TForm1
   Left = 580
-  Height = 151
+  Height = 159
   Top = 179
-  Width = 200
+  Width = 211
   Caption = 'Form1'
-  ClientHeight = 151
-  ClientWidth = 200
-  DesignTimePPI = 91
+  ClientHeight = 159
+  ClientWidth = 211
   OnShow = FormShow
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.10.0'
   object Label1: TLabel
-    Left = 30
-    Height = 91
-    Top = 30
-    Width = 140
+    Left = 32
+    Height = 95
+    Top = 32
+    Width = 147
     Align = alClient
     Alignment = taCenter
-    BorderSpacing.Around = 30
+    BorderSpacing.Around = 32
     Caption = 'OK'
-    Font.Height = -63
+    Font.Height = -66
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
@@ -26,7 +25,7 @@ object Form1: TForm1
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    left = 18
-    top = 17
+    Left = 19
+    Top = 18
   end
 end
