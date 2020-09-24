@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.10.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -98,11 +98,11 @@ object resultForm1: TresultForm1
       Height = 475
       Top = 1
       Width = 898
-      ActivePage = TabSheetCreate
+      ActivePage = TabSheetIcons
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 7
+      TabIndex = 6
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -5424,7 +5424,6 @@ object resultForm1: TresultForm1
           Top = 0
           Width = 890
           Align = alTop
-          Caption = 'FlowPanel14'
           ControlList = <          
             item
               Control = Label78
@@ -6395,12 +6394,12 @@ object resultForm1: TresultForm1
     DefaultExt = '.*.msi'
     Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|Any File|*.*'
     FilterIndex = 2
-    left = 768
-    top = 5
+    Left = 768
+    Top = 5
   end
   object MainMenu1: TMainMenu
-    left = 568
-    top = 5
+    Left = 568
+    Top = 5
     object MenuItemFile: TMenuItem
       Caption = '&File'
       object MenuItemStart: TMenuItem
@@ -6509,16 +6508,16 @@ object resultForm1: TresultForm1
   end
   object OpenDialogSetupfile: TOpenDialog
     Filter = 'all setup|*.msi|*.exe|all|*.*|*.*'
-    left = 864
-    top = 5
+    Left = 864
+    Top = 5
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
-    left = 664
-    top = 5
+    Left = 664
+    Top = 5
   end
   object ImageList1: TImageList
-    left = 1136
-    top = 8
+    Left = 1136
+    Top = 8
     Bitmap = {
       4C69050000001000000010000000000000000000000000000000000000000000
       0000000000000000000A000000A0000000A00000000A00000000000000000000
@@ -6685,7 +6684,7 @@ object resultForm1: TresultForm1
   end
   object TimerFirstconfig: TTimer
     OnTimer = TimerFirstconfigTimer
-    left = 1048
-    top = 5
+    Left = 1048
+    Top = 5
   end
 end
