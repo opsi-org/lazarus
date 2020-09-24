@@ -30,16 +30,13 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="FCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="FCL"/>
-      </Item2>
-      <Item3>
         <PackageName Value="LazUtils"/>
-      </Item3>
+      </Item2>
     </RequiredPackages>
     <Units Count="1">
       <Unit0>
@@ -55,7 +52,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../common;../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;../gui/locale"/>
+      <OtherUnitFiles Value="../common;../../../common;../../../external_libraries/synapse;../../../external_libraries/misc"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Other>

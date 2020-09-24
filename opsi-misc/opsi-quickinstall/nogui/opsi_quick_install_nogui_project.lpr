@@ -15,7 +15,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osfunclin,
   osLinuxRepository,
   oslog,
-  //LCLTranslator,
   opsi_quick_install_resourcestrings;
 
 type
@@ -34,10 +33,9 @@ type
     ucsPassword, reboot, dhcp, link: string;
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
-    user, password: string;
-    FileText: TStringList;
+    FileText, PropsFile: TStringList;
     MyRepo: TLinuxRepository;
-    RunCommand: TRunCommandElevated;
+    InstallOpsiCommand: TRunCommandElevated;
     fileName, url, shellCommand, Output: string;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -46,7 +44,10 @@ type
     procedure SetDefaultValues;
     procedure NoGuiQuery;
     procedure ExecuteWithDefaultValues;
-    // write properties in l-opsi-server.conf and properties.conf file and install opsi-server
+    procedure ReadProps;
+    // write properties in l-opsi-server.conf and properties.conf file
+    procedure WritePropsToFile;
+    // install opsi-server
     procedure InstallOpsi;
   protected
     procedure DoRun; override;
@@ -56,20 +57,22 @@ type
     procedure WriteHelp; virtual;
   end;
 
-resourcestring
+var
+  user: string;
+  LogDatei: TLogInfo;
+
+{resourcestring
   rsHi = 'Hello';
-  rsMorning = 'Morning';
+  rsMorning = 'Morning';}
 
   { TQuickInstall }
 
   procedure TQuickInstall.DoRun;
   var
-    ErrorMsg, project: string;
-    {Lang, DefLang: string;
-    r: TTranslateUnitResult;}
+    ErrorMsg: string;
   begin
     // quick check parameters
-    ErrorMsg := CheckOptions('htgnd', 'help test gui nogui default');
+    ErrorMsg := CheckOptions('htgndf:', 'help test gui nogui default file:');
     if ErrorMsg <> '' then
     begin
       ShowException(Exception.Create(ErrorMsg));
@@ -87,23 +90,19 @@ resourcestring
 
     if HasOption('t', 'test') then
     begin
-      writeln(rsHi, rsMorning);
-      //GetLanguageIDs(Lang, DefLang);
-      //writeln(Lang, DefLang);
-      //TranslateUnitResourceStrings('opsi_quick_install_nogui_project', 'opsi_quick_install_nogui_project.en.po');
-      //writeln('test');
-      writeln(rsHi);
-      //Terminate;
-      //Exit;
+      writeln(rsFinish);
+      Terminate;
+      Exit;
     end;
 
     if HasOption('g', 'gui') then
     begin
-      project := ExtractFilePath(ParamStr(0));
+      // don't call gui version
+      {project := ExtractFilePath(ParamStr(0));
       Delete(project, Length(project), 1);
       project := ExtractFilePath(project) + 'gui/opsi_quick_install_project';
       writeln(project);
-      ExecuteProcess(project, '', []);
+      ExecuteProcess(project, '', []);}
       Terminate;
       Exit;
     end;
@@ -118,6 +117,24 @@ resourcestring
     if HasOption('d', 'default') then
     begin
       ExecuteWithDefaultValues;
+      Terminate;
+      Exit;
+    end;
+
+    if HasOption('f', 'file') then
+    begin
+      writeln(getOptionValue('f', 'file'));
+      // read properties from file
+      PropsFile := TStringList.Create;
+      try
+        begin
+          PropsFile.LoadFromFile(getOptionValue('f', 'file'));
+          ReadProps;
+        end;
+      except
+        writeln('Executing Opsi Qiock-Install didn''t work!');
+      end;
+      PropsFile.Free;
       Terminate;
       Exit;
     end;
@@ -169,15 +186,14 @@ resourcestring
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'admina';
+    adminName := 'Anne-Marie';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
-    user := 'root';
   end;
 
-  // write properties in l-opsi-server.conf and properties.conf file and install opsi-server
-  procedure TQuickInstall.InstallOpsi;
+  // write properties in l-opsi-server.conf and properties.conf file
+  procedure TQuickInstall.WritePropsToFile;
   begin
     // write properties in l-opsi-server.conf and properties.conf file:
     FileText := TStringList.Create;
@@ -212,10 +228,20 @@ resourcestring
     fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
     FileText.SaveToFile(fileName + 'properties.conf');
 
+    FileText.Free;
+  end;
+
+  // install opsi-server
+  procedure TQuickInstall.InstallOpsi;
+  begin
+    fileName := ExtractFilePath(ParamStr(0));
+    Delete(fileName, Length(fileName), 1);
+    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
+
     // Important for getting the result 'failed' in case of a wrong password...
     // ...cause in this case the RunCommands aren't executed...
     // ...and therefore setup.opsiscript, that usually does it, isn't too:
-    FileText.Clear;
+    FileText := TStringList.Create;
     FileText.Add('failed');
     FileText.SaveToFile(fileName + 'result.conf');
 
@@ -223,7 +249,7 @@ resourcestring
     //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
     // create repository
-    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, password, user = 'sudo');
+    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'opsi 4.1' then
     begin
@@ -246,14 +272,14 @@ resourcestring
     //writeln(url);
     // following two lines need an existing LogDatei
     MyRepo.Add(url);
-    RunCommand := TRunCommandElevated.Create(password, user = 'sudo');
+    InstallOpsiCommand := TRunCommandElevated.Create('', False);
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
     // following lines need an existing LogDatei
-    Output := RunCommand.Run(shellCommand + 'update');
+    Output := InstallOpsiCommand.Run(shellCommand + 'update');
     //writeln(Output);
-    Output := RunCommand.Run(shellCommand + 'install opsi-script');
+    Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
-    Output := RunCommand.Run('opsi-script -batch ' + fileName +
+    Output := InstallOpsiCommand.Run('opsi-script -batch ' + fileName +
       'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
@@ -261,33 +287,15 @@ resourcestring
     writeln(FileText.Text);
 
     FileText.Free;
-    RunCommand.Free;
+    InstallOpsiCommand.Free;
     MyRepo.Free;
   end;
 
   /////////////////////////////////////////////////////////////////////////////
   procedure TQuickInstall.NoGuiQuery;
   begin
-    LogDatei := TLogInfo.Create;
-    LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
-
     SetDefaultValues;
 
-    {writeln(rsWelcome);
-    //Sleep(2000);
-    // language:
-    writeln(rsSelLanguage, rsLangOp);
-    readln(input);
-    // check for right input
-    while not ((input = 'de') or (input = 'en')) do
-    begin
-      writeln(input, rsNotValid);
-      readln(input);
-    end;
-    {if input = 'de' then
-      SetDefaultLang('de')
-    else if input = 'en' then
-      SetDefaultLang('en');}}
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
@@ -300,9 +308,7 @@ resourcestring
 
     writeln('');
     writeln(rsCarryOut);
-    //Sleep(200);
     writeln('');
-
 
     // distribution:
     distroName := getLinuxDistroName;
@@ -327,7 +333,6 @@ resourcestring
       //What to do with unknown distribution like ubuntu 20.04?
     end;
     DistrInfo.SetInfo(distroName, distroRelease);
-
 
     if setupType = 'custom' then
       // following queries only for custom setup
@@ -380,7 +385,6 @@ resourcestring
       end;
       repoNoCache := input;
 
-
       // backend
       writeln(rsBackend, rsBackendOp);
       readln(input);
@@ -412,7 +416,6 @@ resourcestring
         readln(input);
       end;
       repoKind := input;
-
 
       // ucs password
       if distroName = 'Univention' then
@@ -474,7 +477,6 @@ resourcestring
       gateway := input;
     end;
 
-
     // user name
     writeln(rsAdminName);
     readln(input);
@@ -494,20 +496,6 @@ resourcestring
 
     // Overview???
 
-    // authentication
-    writeln(rsRights, rsRightsOp);
-    readln(input);
-    while not ((input = 'root') or (input = 'sudo')) do
-    begin
-      writeln(input, rsNotValid);
-      readln(input);
-    end;
-    user := input;
-    writeln(rsPassword);
-    readln(input);
-    password := input;
-
-
     InstallOpsi;
     DistrInfo.Free;
   end;
@@ -515,16 +503,45 @@ resourcestring
   //////////////////////////////////////////////////////////////////////////////
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
-    // .../lazarus/common/oslog.pas
-    // log file in /tmp/opsi_quickinstall.log
-    LogDatei := TLogInfo.Create;
-    LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
     SetDefaultValues;
 
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo('Ubuntu', '18.04');
-    user := 'sudo';
-    password := 'linux123';
+
+    WritePropsToFile;
+    InstallOpsi;
+    DistrInfo.Free;
+  end;
+
+  procedure TQuickInstall.ReadProps;
+  var
+    i: integer;
+  begin
+    // distribution:
+    distroName := getLinuxDistroName;
+    distroRelease := getLinuxDistroRelease;
+    //writeln(distroName, distroRelease);
+    DistrInfo := TDistributionInfo.Create;
+    DistrInfo.SetInfo(distroName, distroRelease);
+
+    // IndexOf(...) is 0-based
+    for i := 0 to PropsFile.Count do
+    begin
+      //writeln(i);
+      if Pos('repo_kind', PropsFile[i]) = 1 then
+      begin
+        repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
+          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
+      end;
+    end;
+    opsiVersion := 'opsi 4.1';
+    writeln(user, repoKind, opsiVersion);
+
+    fileName := ExtractFilePath(ParamStr(0));
+    Delete(fileName, Length(fileName), 1);
+    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/properties.conf';
+    PropsFile.SaveToFile(fileName);
+    writeln(PropsFile.Text);
 
     InstallOpsi;
     DistrInfo.Free;
@@ -532,31 +549,53 @@ resourcestring
 
 var
   QuickInstall: TQuickInstall;
-  customLanguage, Lang, DefLang: string;
+  customLanguage, Lang, DefLang, userID: string;
   //r: TTranslateUnitResult;
 begin
   QuickInstall := TQuickInstall.Create(nil);
-  // get default language (system language)
-  GetLanguageIDs(Lang, DefLang);
-  TranslateUnitResourceStrings('opsi_quick_install_nogui_project',
-    'locale/opsi_quick_install_nogui_project.%s.po', Lang, DefLang);
-
-  writeln(rsWelcome);
-  //Sleep(2000);
-  // language:
-  writeln(rsSelLanguage, rsLangOp);
-  readln(customLanguage);
-  // check for right input
-  while not ((customLanguage = 'de') or (customLanguage = 'en') or (customLanguage = 'fr')) do
+  // only execute QuickInstall if user is root:
+  if RunCommand('id -nu', user) then
   begin
-    writeln(customLanguage, rsNotValid);
-    readln(customLanguage);
+    Delete(user, user.Length, 1);
+    if RunCommand('id -u', userID) then
+      Delete(userID, userID.Length, 1);
   end;
-  TranslateUnitResourceStrings('opsi_quick_install_nogui_project',
-    'locale/opsi_quick_install_nogui_project.'+customLanguage+'.po');
+  // exit if not
+  if not ((user = 'root') and (userID = '0')) then
+  begin
+    writeln('Please execute Opsi Quick-Install as root!');
+    exit;
+  end;
 
-  writeln(rsYes);
+  // .../lazarus/common/oslog.pas
+  // log file in /tmp/opsi_quickinstall.log
+  LogDatei := TLogInfo.Create;
+  LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
+  // do language selection here only for nogui installation
+  if QuickInstall.HasOption('n', 'nogui') then
+  begin
+    // get default language (system language)
+    GetLanguageIDs(Lang, DefLang);
+    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
+      'locale/opsi_quick_install_nogui_project.%s.po', Lang, DefLang);
+
+    writeln('');
+    writeln(rsWelcome);
+    writeln('');
+    // language:
+    writeln(rsSelLanguage, rsLangOp);
+    readln(customLanguage);
+    // check for right input
+    while not ((customLanguage = 'de') or (customLanguage = 'en')) do
+    begin
+      writeln(customLanguage, rsNotValid);
+      readln(customLanguage);
+    end;
+    writeln('');
+    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
+      'locale/opsi_quick_install_nogui_project.' + customLanguage + '.po');
+  end;
+
   QuickInstall.Run;
-  writeln(rsNext);
   QuickInstall.Free;
 end.

@@ -107,6 +107,11 @@ msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
 msgstr "Gateway (...):"
 
+#: opsi_quick_install_resourcestrings.rsgatewayex
+msgctxt "opsi_quick_install_resourcestrings.rsgatewayex"
+msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
 msgid "Gateway: "
@@ -190,7 +195,7 @@ msgid "Is this correct?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rslangop
-msgid " [Options: \"de\" for german, \"en\" for englisch, ...]"
+msgid " [Options: \"de\" for german, \"en\" for english, ...]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rslinkop
@@ -201,6 +206,11 @@ msgstr ""
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp):"
 msgstr "Primärer Nameserver (für das DHCP):"
+
+#: opsi_quick_install_resourcestrings.rsnameserverex
+msgctxt "opsi_quick_install_resourcestrings.rsnameserverex"
+msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
@@ -217,6 +227,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp):"
 msgstr "Netzmaske (für das DHCP):"
 
+#: opsi_quick_install_resourcestrings.rsnetmaskex
+msgid " [Examples: \"225.225.0.0\", \"225.225.225.0\"]"
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
 msgid "Netmask: "
@@ -231,6 +245,10 @@ msgstr "Andere:"
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp):"
 msgstr "Netzwerk-Adresse (für das DHCP):"
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddressex
+msgid " [Examples: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
