@@ -39,8 +39,10 @@ type
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
 
+    // set default values for all required variables
     procedure SetDefaultValues;
     procedure NoGuiQuery;
+
     procedure ExecuteWithDefaultValues;
     procedure ReadProps;
     // write properties in l-opsi-server.conf and properties.conf file
@@ -157,11 +159,16 @@ type
     writeln('Exit');
   end;
 
+  // set default values for all required variables
   procedure TQuickInstall.SetDefaultValues;
   begin
     // set default values:
     opsiVersion := 'opsi 4.1';
-    repo := baseUrlOpsi41;
+    // repo depending on opsi version
+    if opsiVersion = 'opsi 4.1' then
+      repo := baseUrlOpsi41
+    else
+      repo := baseUrlOpsi42;
     proxy := '';
     repoNoCache := repo;
     backend := 'file';
@@ -479,6 +486,7 @@ type
   end;
 
   //////////////////////////////////////////////////////////////////////////////
+  // install opsi server with the default values from SetDefaultValues
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     SetDefaultValues;
@@ -499,16 +507,25 @@ type
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
 
-    // Read repo_kind from file
-    for i := 0 to PropsFile.Count do
+    // Read from file what is required
+    for i := 0 to PropsFile.Count-1 do
     begin
+      // Read repo_kind
       if Pos('repo_kind', PropsFile[i]) = 1 then
-      break;
-    end;
-    // IndexOf(...) is 0-based
-    repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
+      begin
+        // IndexOf(...) is 0-based
+        repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
           2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
-    opsiVersion := 'opsi 4.1';
+      end;
+      // Read opsi version from repo url
+      if Pos('opsi_online_repository', PropsFile[i]) = 1 then
+      begin
+        if Pos('4.1', PropsFile[i]) > 0 then
+          opsiVersion := 'opsi 4.1'
+        else
+          opsiVersion := 'opsi 4.2';
+      end;
+    end;
 
     // Take text of PropsFile as text for properties.conf
     PropsFile.SaveToFile(DirClientData + 'properties.conf');
@@ -545,7 +562,8 @@ begin
   // Get directory of l-opsi-server/CLIENT_DATA
   QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
   Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
-  QuickInstall.DirClientData := ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';
+  QuickInstall.DirClientData :=
+    ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
   begin
