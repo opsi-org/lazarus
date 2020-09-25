@@ -27,7 +27,7 @@
       <BuildNr Value="16"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Default">
+    <BuildModes Count="3" Active="Release">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -174,9 +174,8 @@
         <CursorPos X="39" Y="1888"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="1"/>
+          <WindowIndex Value="-1"/>
           <TopLine Value="2168"/>
           <CursorPos Y="2177"/>
         </ExtraEditor1>
@@ -258,8 +257,9 @@
       <Unit12>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="70"/>
-        <CursorPos X="74" Y="83"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="73"/>
+        <CursorPos X="42" Y="89"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -272,9 +272,8 @@
         <CursorPos X="53" Y="68"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="1"/>
+          <WindowIndex Value="-1"/>
           <TopLine Value="1139"/>
           <CursorPos X="14" Y="1150"/>
         </ExtraEditor1>
@@ -313,9 +312,8 @@
         <CursorPos X="22" Y="1064"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="1"/>
+          <WindowIndex Value="-1"/>
           <TopLine Value="729"/>
           <CursorPos X="54" Y="753"/>
         </ExtraEditor1>
@@ -347,15 +345,13 @@
       <Unit19>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <TopLine Value="44"/>
         <CursorPos X="44" Y="50"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="1"/>
+          <WindowIndex Value="-1"/>
           <TopLine Value="679"/>
           <CursorPos X="8" Y="660"/>
         </ExtraEditor1>
@@ -374,9 +370,8 @@
       </Unit20>
       <Unit21>
         <Filename Value="template-files\delsubsingle.opsiscript"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
+        <WindowIndex Value="-1"/>
         <CursorPos X="38" Y="15"/>
         <UsageCount Value="97"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -419,9 +414,8 @@
       <Unit25>
         <Filename Value="..\..\common\osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
+        <WindowIndex Value="-1"/>
         <TopLine Value="4"/>
         <CursorPos X="33" Y="21"/>
         <UsageCount Value="201"/>
@@ -480,9 +474,8 @@
       </Unit32>
       <Unit33>
         <Filename Value="template-files\delsubdouble.opsiscript"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
+        <WindowIndex Value="-1"/>
         <TopLine Value="8"/>
         <CursorPos X="38" Y="36"/>
         <UsageCount Value="99"/>
@@ -499,9 +492,8 @@
       <Unit35>
         <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
+        <WindowIndex Value="-1"/>
         <TopLine Value="4469"/>
         <CursorPos X="52" Y="4482"/>
         <UsageCount Value="9"/>
@@ -513,9 +505,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CollectionPropEditForm"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
+        <WindowIndex Value="-1"/>
         <TopLine Value="71"/>
         <CursorPos Y="118"/>
         <UsageCount Value="9"/>
@@ -535,7 +526,7 @@
         <EditorIndex Value="14"/>
         <TopLine Value="119"/>
         <CursorPos X="77" Y="128"/>
-        <UsageCount Value="193"/>
+        <UsageCount Value="194"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
