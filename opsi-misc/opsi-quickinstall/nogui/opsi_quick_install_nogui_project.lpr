@@ -24,8 +24,6 @@ type
   TQuickInstall = class(TCustomApplication)
   private
   var
-    // Never write the log file in variables as follows!
-    //LogDatei: TLogInfo;
     input, setupType, distroName, distroRelease: string;
     DistrInfo: TDistributionInfo;
     opsiVersion, repo, proxy, repoNoCache: string;
@@ -36,7 +34,7 @@ type
     FileText, PropsFile: TStringList;
     MyRepo: TLinuxRepository;
     InstallOpsiCommand: TRunCommandElevated;
-    fileName, url, shellCommand, Output: string;
+    DirClientData, url, shellCommand, Output: string;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
@@ -56,10 +54,6 @@ type
     destructor Destroy; override;
     procedure WriteHelp; virtual;
   end;
-
-var
-  user: string;
-  LogDatei: TLogInfo;
 
 {resourcestring
   rsHi = 'Hello';
@@ -123,7 +117,7 @@ var
 
     if HasOption('f', 'file') then
     begin
-      writeln(getOptionValue('f', 'file'));
+      //writeln(getOptionValue('f', 'file'));
       // read properties from file
       PropsFile := TStringList.Create;
       try
@@ -132,7 +126,7 @@ var
           ReadProps;
         end;
       except
-        writeln('Executing Opsi Qiock-Install didn''t work!');
+        writeln('Executing Opsi Quick-Install didn''t work!');
       end;
       PropsFile.Free;
       Terminate;
@@ -140,7 +134,6 @@ var
     end;
 
     { add your program here }
-    writeln('Huhu?');
     // stop program loop
     Terminate;
     Exit;
@@ -161,9 +154,6 @@ var
   begin
     { add your help code here }
     writeln('Usage: ', ExeName, ' -h');
-    writeln('Help please');
-    writeln('Write:');
-    readln;
     writeln('Exit');
   end;
 
@@ -177,7 +167,7 @@ var
     backend := 'file';
     copyMod := 'no';
     repoKind := 'stable';
-    ucsPassword := 'linux123';
+    ucsPassword := '';
     reboot := 'false';
     dhcp := 'no';
     link := 'default.nomenu';
@@ -186,7 +176,7 @@ var
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Anne-Marie';
+    adminName := 'Amina';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -195,7 +185,7 @@ var
   // write properties in l-opsi-server.conf and properties.conf file
   procedure TQuickInstall.WritePropsToFile;
   begin
-    // write properties in l-opsi-server.conf and properties.conf file:
+    // write file text
     FileText := TStringList.Create;
     FileText.Add('allow_reboot=' + reboot);
     FileText.Add('backend=' + backend);
@@ -220,35 +210,22 @@ var
     FileText.Add('update_test=false');
 
     // write in l-opsi-server.conf file:
-    fileName := ExtractFilePath(ParamStr(0));
-    FileText.SaveToFile(fileName + 'l-opsi-server.conf');
+    FileText.SaveToFile(ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf');
     // write in properties.conf file:
-    // navigate to CLIENT_DATA in l-opsi-server
-    Delete(fileName, Length(fileName), 1);
-    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
-    FileText.SaveToFile(fileName + 'properties.conf');
-
+    FileText.SaveToFile(DirClientData + 'properties.conf');
     FileText.Free;
   end;
 
   // install opsi-server
+  // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
-    fileName := ExtractFilePath(ParamStr(0));
-    Delete(fileName, Length(fileName), 1);
-    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
-
-    // Important for getting the result 'failed' in case of a wrong password...
-    // ...cause in this case the RunCommands aren't executed...
-    // ...and therefore setup.opsiscript, that usually does it, isn't too:
+    // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
-    FileText.SaveToFile(fileName + 'result.conf');
+    FileText.SaveToFile(DirClientData + 'result.conf');
 
-    //writeln(user = 'sudo');
-    //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
-
-    // create repository
+    // create repository (no password, user is root)
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'opsi 4.1' then
@@ -270,42 +247,43 @@ var
         url := MyRepo.GetDefaultURL(Opsi42, testing);
     end;
     //writeln(url);
-    // following two lines need an existing LogDatei
+    // !following two lines need an existing LogDatei
     MyRepo.Add(url);
     InstallOpsiCommand := TRunCommandElevated.Create('', False);
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
-    // following lines need an existing LogDatei
+    // !following lines need an existing LogDatei
     Output := InstallOpsiCommand.Run(shellCommand + 'update');
     //writeln(Output);
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
-    Output := InstallOpsiCommand.Run('opsi-script -batch ' + fileName +
+    Output := InstallOpsiCommand.Run('opsi-script -batch ' + DirClientData +
       'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
-    FileText.LoadFromFile(fileName + 'result.conf');
+    FileText.LoadFromFile(DirClientData + 'result.conf');
+    // print result of installation
     writeln(FileText.Text);
 
-    FileText.Free;
     InstallOpsiCommand.Free;
     MyRepo.Free;
+    FileText.Free;
   end;
 
   /////////////////////////////////////////////////////////////////////////////
   procedure TQuickInstall.NoGuiQuery;
   begin
     SetDefaultValues;
+    writeln('');
 
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
     while not ((input = 'standard') or (input = 'custom')) do
     begin
-      writeln(input, rsNotValid);
+      writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     setupType := input;
-
     writeln('');
     writeln(rsCarryOut);
     writeln('');
@@ -320,7 +298,7 @@ var
     readln(input);
     while not ((input = 'yes') or (input = 'no')) do
     begin
-      writeln(input, rsNotValid);
+      writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     // if distribution isn't correct, read the correct one
@@ -334,15 +312,15 @@ var
     end;
     DistrInfo.SetInfo(distroName, distroRelease);
 
+    // following queries only for custom setup
     if setupType = 'custom' then
-      // following queries only for custom setup
     begin
       // opsi version:
       writeln(rsOpsiVersion, rsOpsiVersionOp);
       readln(input);
       while not ((input = 'opsi 4.1') or (input = 'opsi 4.2')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       opsiVersion := input;
@@ -354,7 +332,7 @@ var
       readln(input);
       while not Pos('http', input) = 1 do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       repo := input;
@@ -363,7 +341,7 @@ var
       readln(input);
       while not ((input = 'yes') or (input = 'no')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       if input = 'yes' then
@@ -380,7 +358,7 @@ var
       readln(input);
       while not Pos('http', input) = 1 do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       repoNoCache := input;
@@ -390,7 +368,7 @@ var
       readln(input);
       while not ((input = 'file') or (input = 'mysql')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       backend := input;
@@ -401,7 +379,7 @@ var
         readln(input);
         while not ((input = 'yes') or (input = 'no')) do
         begin
-          writeln(input, rsNotValid);
+          writeln('"', input, '"', rsNotValid);
           readln(input);
         end;
         copyMod := input;
@@ -412,7 +390,7 @@ var
       while not ((input = 'experimental') or (input = 'stable') or
           (input = 'testing')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       repoKind := input;
@@ -429,7 +407,7 @@ var
       readln(input);
       while not ((input = 'yes') or (input = 'no')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       reboot := input;
@@ -439,19 +417,19 @@ var
     readln(input);
     while not ((input = 'yes') or (input = 'no')) do
     begin
-      writeln(input, rsNotValid);
+      writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     dhcp := input;
-    if input = 'yes' then
-      // following queries only for dhcp
+    // following queries only for dhcp
+    if dhcp = 'yes' then
     begin
       // link
       writeln(rsTFTPROOT, rsLinkOp);
       readln(input);
       while not ((input = 'default.menu') or (input = 'default.nomenu')) do
       begin
-        writeln(input, rsNotValid);
+        writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       link := input;
@@ -494,7 +472,7 @@ var
     readln(input);
     ipNumber := input;
 
-    // Overview???
+    // Overview
 
     InstallOpsi;
     DistrInfo.Free;
@@ -504,10 +482,8 @@ var
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     SetDefaultValues;
-
     DistrInfo := TDistributionInfo.Create;
-    DistrInfo.SetInfo('Ubuntu', '18.04');
-
+    DistrInfo.SetInfo(getLinuxDistroName, getLinuxDistroRelease);
     WritePropsToFile;
     InstallOpsi;
     DistrInfo.Free;
@@ -520,28 +496,22 @@ var
     // distribution:
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    //writeln(distroName, distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
 
-    // IndexOf(...) is 0-based
+    // Read repo_kind from file
     for i := 0 to PropsFile.Count do
     begin
-      //writeln(i);
       if Pos('repo_kind', PropsFile[i]) = 1 then
-      begin
-        repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
-          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
-      end;
+      break;
     end;
+    // IndexOf(...) is 0-based
+    repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
+          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
     opsiVersion := 'opsi 4.1';
-    writeln(user, repoKind, opsiVersion);
 
-    fileName := ExtractFilePath(ParamStr(0));
-    Delete(fileName, Length(fileName), 1);
-    fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/properties.conf';
-    PropsFile.SaveToFile(fileName);
-    writeln(PropsFile.Text);
+    // Take text of PropsFile as text for properties.conf
+    PropsFile.SaveToFile(DirClientData + 'properties.conf');
 
     InstallOpsi;
     DistrInfo.Free;
@@ -549,33 +519,39 @@ var
 
 var
   QuickInstall: TQuickInstall;
-  customLanguage, Lang, DefLang, userID: string;
+  user, userID, customLanguage, Lang, DefLang: string;
   //r: TTranslateUnitResult;
 begin
-  QuickInstall := TQuickInstall.Create(nil);
   // only execute QuickInstall if user is root:
-  if RunCommand('id -nu', user) then
+  if (RunCommand('id -nu', user) and RunCommand('id -u', userID)) then
   begin
     Delete(user, user.Length, 1);
-    if RunCommand('id -u', userID) then
-      Delete(userID, userID.Length, 1);
+    Delete(userID, userID.Length, 1);
   end;
-  // exit if not
+  // exit if user is not root
   if not ((user = 'root') and (userID = '0')) then
   begin
     writeln('Please execute Opsi Quick-Install as root!');
     exit;
   end;
 
+  //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
+
   // .../lazarus/common/oslog.pas
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
+  QuickInstall := TQuickInstall.Create(nil);
+  // Get directory of l-opsi-server/CLIENT_DATA
+  QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
+  Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
+  QuickInstall.DirClientData := ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
   begin
     // get default language (system language)
     GetLanguageIDs(Lang, DefLang);
+    // use default language for resourcestrings
     TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
       'locale/opsi_quick_install_nogui_project.%s.po', Lang, DefLang);
 
@@ -588,14 +564,13 @@ begin
     // check for right input
     while not ((customLanguage = 'de') or (customLanguage = 'en')) do
     begin
-      writeln(customLanguage, rsNotValid);
+      writeln('"', customLanguage, '"', rsNotValid);
       readln(customLanguage);
     end;
-    writeln('');
     TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
       'locale/opsi_quick_install_nogui_project.' + customLanguage + '.po');
   end;
-
   QuickInstall.Run;
   QuickInstall.Free;
+  LogDatei.Free;
 end.
