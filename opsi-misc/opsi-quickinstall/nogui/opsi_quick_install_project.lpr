@@ -590,6 +590,7 @@ begin
   QuickInstall.DistrInfo := TDistributionInfo.Create;
   QuickInstall.DistrInfo.SetInfo(QuickInstall.distroName, QuickInstall.distroRelease);
 
+
   QuickInstall.Run;
   QuickInstall.Free;
   LogDatei.Free;

@@ -38,14 +38,12 @@ msgstr "Backend: "
 
 #: opsi_quick_install_resourcestrings.rsbackendop
 msgid " [Options: \"file\", \"mysql\"]"
-msgstr ""
+msgstr " [Options: \"file\", \"mysql\"]"
 
 #: opsi_quick_install_resourcestrings.rscarryout
-#, fuzzy
-#| msgid "To carry out the remaing installation automatically, we need some information first."
 msgctxt "opsi_quick_install_resourcestrings.rscarryout"
 msgid "To carry out the remaining installation automatically, we need some information first."
-msgstr "To carry out the remaing installation automatically, we need some information first."
+msgstr "To carry out the remaining installation automatically, we need some information first."
 
 #: opsi_quick_install_resourcestrings.rscopymodules
 msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
@@ -58,10 +56,8 @@ msgid "Copy modules: "
 msgstr "Copy modules: "
 
 #: opsi_quick_install_resourcestrings.rscorrect
-#, fuzzy
-#| msgid "If this is correct, please click 'next >' to continue. If not, please edit the distribution and then continue with 'next >'."
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
-msgstr "If this is correct, please click 'next >' to continue. If not, please edit the distribution and then continue with 'next >'."
+msgstr "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 
 #: opsi_quick_install_resourcestrings.rscustom
 msgid "Custom"
@@ -89,7 +85,7 @@ msgstr "DNS domain (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsdomainex
 msgid " [Examples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-msgstr ""
+msgstr " [Examples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
@@ -114,7 +110,7 @@ msgstr "Gateway (option routers for dhcp)"
 #: opsi_quick_install_resourcestrings.rsgatewayex
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayex"
 msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr ""
+msgstr " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
@@ -132,25 +128,29 @@ msgid ""
 "User to create for the operation of opsi.\n"
 "This user can not manage system settings.\n"
 msgstr ""
+"User to create for the operation of opsi.\n"
+"This user can not manage system settings.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
 msgid "Shall the data of opsi be stored in a file or a mysql database?"
-msgstr ""
+msgstr "Shall the data of opsi be stored in a file or a mysql database?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
 msgid ""
 "Select \"No\" if you already have a dhcp server.\n"
 "Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
 msgstr ""
+"Select \"No\" if you already have a dhcp server.\n"
+"Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfomodules
 msgid "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
-msgstr ""
+msgstr "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
 msgid "Information on the network in which the opsi server shall be installed."
-msgstr ""
+msgstr "Information on the network in which the opsi server shall be installed."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
 msgid "Opsi 4.2 is the latest version..."
@@ -158,11 +158,11 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
 msgid "If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
-msgstr ""
+msgstr "If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
 
 #: opsi_quick_install_resourcestrings.rsinforepo
 msgid "Source from which opsi will be installed."
-msgstr ""
+msgstr "Source from which opsi will be installed."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
 msgid ""
@@ -172,14 +172,12 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
-msgstr ""
+msgstr "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
 
 #: opsi_quick_install_resourcestrings.rsipname
-#, fuzzy
-#| msgid "Set a different IP name (FQDN) ('auto' = use standard)"
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) (\"auto\" = use standard)"
-msgstr "Set a different IP name (FQDN) ('auto' = use standard)"
+msgstr "Set a different IP name (FQDN) (\"auto\" = use standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnameo
 msgctxt "opsi_quick_install_resourcestrings.rsipnameo"
@@ -187,11 +185,9 @@ msgid "IP name: "
 msgstr "IP name: "
 
 #: opsi_quick_install_resourcestrings.rsipnumber
-#, fuzzy
-#| msgid "Set a different IP number ('auto' = use standard)"
 msgctxt "opsi_quick_install_resourcestrings.rsipnumber"
 msgid "Set a different IP number (\"auto\" = use standard)"
-msgstr "Set a different IP number ('auto' = use standard)"
+msgstr "Set a different IP number (\"auto\" = use standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnumbero
 msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
@@ -200,15 +196,15 @@ msgstr "IP number: "
 
 #: opsi_quick_install_resourcestrings.rsiscorrect
 msgid "Is this correct?"
-msgstr ""
+msgstr "Is this correct?"
 
 #: opsi_quick_install_resourcestrings.rslangop
 msgid " [Options: \"de\" for german, \"en\" for english, ...]"
-msgstr ""
+msgstr " [Options: \"de\" for german, \"en\" for english, ...]"
 
 #: opsi_quick_install_resourcestrings.rslinkop
 msgid " [Options: \"default.menu\", \"default.nomenu\"]"
-msgstr ""
+msgstr " [Options: \"default.menu\", \"default.nomenu\"]"
 
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
@@ -218,7 +214,7 @@ msgstr "Primary nameserver (for dhcp)"
 #: opsi_quick_install_resourcestrings.rsnameserverex
 msgctxt "opsi_quick_install_resourcestrings.rsnameserverex"
 msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr ""
+msgstr " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
 
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
@@ -237,7 +233,7 @@ msgstr "Netmask (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsnetmaskex
 msgid " [Examples: \"225.225.0.0\", \"225.225.225.0\"]"
-msgstr ""
+msgstr " [Examples: \"225.225.0.0\", \"225.225.225.0\"]"
 
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
@@ -256,7 +252,7 @@ msgstr "Network address (for dhcp)"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressex
 msgid " [Examples: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
-msgstr ""
+msgstr " [Examples: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
@@ -280,7 +276,7 @@ msgstr "No"
 
 #: opsi_quick_install_resourcestrings.rsnotvalid
 msgid " is not a valid input."
-msgstr ""
+msgstr " is not a valid input."
 
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
@@ -304,11 +300,11 @@ msgstr "Opsi version to install: "
 
 #: opsi_quick_install_resourcestrings.rsopsiversionop
 msgid " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
-msgstr ""
+msgstr " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
-msgstr ""
+msgstr "Please type in the correct distribution:"
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
@@ -367,7 +363,7 @@ msgstr "Repo kind: "
 
 #: opsi_quick_install_resourcestrings.rsrepokindop
 msgid " [Options: \"stable\", \"testing\", \"experimental\"]"
-msgstr ""
+msgstr " [Options: \"stable\", \"testing\", \"experimental\"]"
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
@@ -406,7 +402,7 @@ msgstr "Please select a setup type:"
 
 #: opsi_quick_install_resourcestrings.rssetupop
 msgid " [Options: \"standard\", \"custom\"]"
-msgstr ""
+msgstr " [Options: \"standard\", \"custom\"]"
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
 msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
@@ -418,11 +414,9 @@ msgid "Standard"
 msgstr "Standard"
 
 #: opsi_quick_install_resourcestrings.rsstartinstallation
-#, fuzzy
-#| msgid "Finally click 'finish' to start the installation of opsi-server."
 msgctxt "opsi_quick_install_resourcestrings.rsstartinstallation"
 msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr "Finally click 'finish' to start the installation of opsi-server."
+msgstr "Finally click \"finish\" to start the installation of opsi-server."
 
 #: opsi_quick_install_resourcestrings.rstftproot
 msgctxt "opsi_quick_install_resourcestrings.rstftproot"
@@ -446,7 +440,7 @@ msgstr "Password of administrator of UCS domain controller: "
 
 #: opsi_quick_install_resourcestrings.rsuseproxy
 msgid "Would you like to use a proxy?"
-msgstr ""
+msgstr "Would you like to use a proxy?"
 
 #: opsi_quick_install_resourcestrings.rswelcome
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
@@ -460,5 +454,5 @@ msgstr "Yes"
 
 #: opsi_quick_install_resourcestrings.rsyesnoop
 msgid " [Options: \"yes\", \"no\"]"
-msgstr ""
+msgstr " [Options: \"yes\", \"no\"]"
 
