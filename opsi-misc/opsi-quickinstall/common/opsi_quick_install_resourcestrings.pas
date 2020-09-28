@@ -24,10 +24,9 @@ resourcestring
   rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
   rsNetmaskEx = ' [Examples: "225.225.0.0", "225.225.225.0"]';
   rsNetworkAddressEx = ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]';
-  rsDomainEx = ' [Exaples: "uib.local", "ucs.test", "vmnat.local"]';
+  rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
   rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
-  rsRightsOp = ' [Options: "root", "sudo"]';
 
   {universal}
   rsYes = 'Yes';
@@ -44,12 +43,12 @@ resourcestring
   rsStandard = 'Standard';
   rsCustom = 'Custom';
   rsCarryOut =
-    'To carry out the remaing installation automatically, we need some information first.';
+    'To carry out the remaining installation automatically, we need some information first.';
 
   {Distribution}
   rsDistr = 'We recognized the following distribution on this computer:';
   rsCorrect =
-    'If this is correct, please click ''next >'' to continue. If not, please edit the distribution and then continue with ''next >''.';
+    'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
 
   {Query}
   rsOpsiVersion = 'Which opsi version would you like to install?';
@@ -109,8 +108,8 @@ resourcestring
     'This user can not manage system settings.';
   rsAdminPassword =
     'What is the password of the opsi_admin_user to create? (empty = nothing created)';
-  rsIPName = 'Set a different IP name (FQDN) (''auto'' = use standard)';
-  rsIPNumber = 'Set a different IP number (''auto'' = use standard)';
+  rsIPName = 'Set a different IP name (FQDN) ("auto" = use standard)';
+  rsIPNumber = 'Set a different IP number ("auto" = use standard)';
 
   {Overview}
   rsOpsiVersionO = 'Opsi version to install: ';
@@ -137,7 +136,7 @@ resourcestring
   rsIPNumberO = 'IP number: ';
 
   rsStartInstallation =
-    'Finally click ''finish'' to start the installation of opsi-server.';
+    'Finally click "finish" to start the installation of opsi-server.';
 
   {Password}
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';

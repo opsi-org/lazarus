@@ -8,7 +8,7 @@ object Query4: TQuery4
   ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.10.0'
   object BackgrImage: TImage
     Left = 0
     Height = 450
@@ -31,7 +31,7 @@ object Query4: TQuery4
     Left = 16
     Height = 25
     Top = 408
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -127,7 +127,7 @@ object Query4: TQuery4
     Visible = False
     object LabelReboot: TLabel
       Left = 0
-      Height = 19
+      Height = 38
       Top = 0
       Width = 282
       Align = alTop
@@ -139,7 +139,7 @@ object Query4: TQuery4
     object PanelRadioReboot: TPanel
       Left = 0
       Height = 21
-      Top = 19
+      Top = 38
       Width = 282
       Align = alTop
       AutoSize = True
@@ -191,7 +191,7 @@ object Query4: TQuery4
     object LabelDhcp: TLabel
       AnchorSideTop.Side = asrBottom
       Left = 0
-      Height = 19
+      Height = 38
       Top = 0
       Width = 322
       Align = alTop
@@ -204,7 +204,7 @@ object Query4: TQuery4
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 19
+      Top = 38
       Width = 322
       Align = alTop
       AutoSize = True
@@ -277,10 +277,10 @@ object Query4: TQuery4
       ParentFont = False
       TabOrder = 0
       object RadioBtnNoMenu: TRadioButton
-        Left = 158
+        Left = 160
         Height = 21
         Top = 0
-        Width = 124
+        Width = 126
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'default.nomenu'
@@ -293,7 +293,7 @@ object Query4: TQuery4
         Left = 0
         Height = 21
         Top = 0
-        Width = 108
+        Width = 110
         Align = alLeft
         Caption = 'default.menu'
         ParentFont = False
