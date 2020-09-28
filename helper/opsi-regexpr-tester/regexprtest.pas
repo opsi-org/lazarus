@@ -21,6 +21,7 @@ type
     CheckBox5: TCheckBox;
     CheckBox6: TCheckBox;
     EditRegExpr: TEdit;
+    LabelNotice: TLabel;
     LabelFlags: TLabel;
     LabelRegExpr: TLabel;
     LabelText: TLabel;
