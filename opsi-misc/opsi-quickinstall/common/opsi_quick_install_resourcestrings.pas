@@ -13,11 +13,12 @@ resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
   rsLangOp = ' [Options: "de" for german, "en" for english, ...]';
-  rsSetupOp = ' [Options: "standard", "custom"]';
+  rsWrongDistr = '';
+  rsSetupOp = ' [Options: "Standard", "Custom"]';
   rsIsCorrect = 'Is this correct?';
-  rsYesNoOp = ' [Options: "yes", "no"]';
+  rsYesNoOp = ' [Options: "Yes", "No"]';
   rsOtherDistr = 'Please type in the correct distribution:';
-  rsOpsiVersionOp = ' [Options: "opsi 4.1", "opsi 4.2"]';
+  rsOpsiVersionOp = ' [Options: "Opsi 4.1", "Opsi 4.2"]';
   rsUseProxy = 'Would you like to use a proxy?';
   rsBackendOp = ' [Options: "file", "mysql"]';
   rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
@@ -27,13 +28,14 @@ resourcestring
   rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
   rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
+  rsOverview = 'Overview';
 
   {universal}
   rsYes = 'Yes';
   rsNo = 'No';
   rsNext = ' next > ';
   rsBack = ' < back ';
-  rsOverview = ' overview ';
+
   rsFinish = ' finish ';
 
   {QuickInstall}
@@ -52,8 +54,8 @@ resourcestring
 
   {Query}
   rsOpsiVersion = 'Which opsi version would you like to install?';
-  rsOpsi41 = 'opsi 4.1';
-  rsOpsi42 = 'opsi 4.2';
+  rsOpsi41 = 'Opsi 4.1';
+  rsOpsi42 = 'Opsi 4.2';
   rsInfoOpsiVersion = 'Opsi 4.2 is the latest version...';
   rsRepo = '(Base-) Repository for opsi-server installation:';
   rsRepoOther = 'Other:';
@@ -77,6 +79,8 @@ resourcestring
   //rsUpdate = 'Install first from stable and than update to repo kind?';
 
   {Query4}
+  rsQuery = 'Opsi Quick Install - Query';
+  rsQuery3 = 'Opsi Quick Install - Query (part 3)';
   rsUCS =
     'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
   rsReboot = 'May the server reboot if the script is finished?';
@@ -110,6 +114,7 @@ resourcestring
     'What is the password of the opsi_admin_user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) ("auto" = use standard)';
   rsIPNumber = 'Set a different IP number ("auto" = use standard)';
+  rsOverviewBtn = ' overview ';
 
   {Overview}
   rsOpsiVersionO = 'Opsi version to install: ';

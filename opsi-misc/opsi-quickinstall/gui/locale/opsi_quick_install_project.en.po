@@ -280,13 +280,13 @@ msgstr " is not a valid input."
 
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
-msgid "opsi 4.1"
-msgstr "opsi 4.1"
+msgid "Opsi 4.1"
+msgstr "Opsi 4.1"
 
 #: opsi_quick_install_resourcestrings.rsopsi42
 msgctxt "opsi_quick_install_resourcestrings.rsopsi42"
-msgid "opsi 4.2"
-msgstr "opsi 4.2"
+msgid "Opsi 4.2"
+msgstr "Opsi 4.2"
 
 #: opsi_quick_install_resourcestrings.rsopsiversion
 msgctxt "opsi_quick_install_resourcestrings.rsopsiversion"
@@ -299,8 +299,8 @@ msgid "Opsi version to install: "
 msgstr "Opsi version to install: "
 
 #: opsi_quick_install_resourcestrings.rsopsiversionop
-msgid " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
-msgstr " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
+msgid " [Options: \"Opsi 4.1\", \"Opsi 4.2\"]"
+msgstr " [Options: \"Opsi 4.1\", \"Opsi 4.2\"]"
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
@@ -308,6 +308,11 @@ msgstr "Please type in the correct distribution:"
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid "Overview"
+msgstr "Overview"
+
+#: opsi_quick_install_resourcestrings.rsoverviewbtn
+msgctxt "opsi_quick_install_resourcestrings.rsoverviewbtn"
 msgid " overview "
 msgstr " overview "
 
@@ -335,6 +340,14 @@ msgstr "Proxy: "
 msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
 msgid "Other:"
 msgstr "Other:"
+
+#: opsi_quick_install_resourcestrings.rsquery
+msgid "Opsi Quick Install - Query"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsquery3
+msgid "Opsi Quick Install - Query (part 3)"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
@@ -401,8 +414,8 @@ msgid "Please select a setup type:"
 msgstr "Please select a setup type:"
 
 #: opsi_quick_install_resourcestrings.rssetupop
-msgid " [Options: \"standard\", \"custom\"]"
-msgstr " [Options: \"standard\", \"custom\"]"
+msgid " [Options: \"Standard\", \"Custom\"]"
+msgstr " [Options: \"Standard\", \"Custom\"]"
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
 msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
@@ -453,6 +466,6 @@ msgid "Yes"
 msgstr "Yes"
 
 #: opsi_quick_install_resourcestrings.rsyesnoop
-msgid " [Options: \"yes\", \"no\"]"
-msgstr " [Options: \"yes\", \"no\"]"
+msgid " [Options: \"Yes\", \"No\"]"
+msgstr " [Options: \"Yes\", \"No\"]"
 

@@ -109,17 +109,21 @@ begin
   InfoDhcp.OnClick := @QuickInstall.ShowHintOnClick;
   InfoTFTPROOT.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
+  if QuickInstall.RadioBtnDefault.Checked then
+    self.Caption := rsQuery
+  else
+    self.Caption := rsQuery3;
   LabelPasswordMasterAdmin.Caption := rsUCS;
   LabelReboot.Caption := rsReboot;
-  InfoReboot.Hint:=rsInfoReboot;
+  InfoReboot.Hint := rsInfoReboot;
   RadioBtnYes.Caption := rsYes;
   RadioBtnNo.Caption := rsNo;
   LabelDhcp.Caption := rsDhcp;
-  InfoDhcp.Hint:=rsInfoDhcp;
+  InfoDhcp.Hint := rsInfoDhcp;
   RadioBtnDhcpYes.Caption := rsYes;
   RadioBtnDhcpNo.Caption := rsNo;
   LabelFilePointer.Caption := rsTFTPROOT;
-  InfoTFTPROOT.Hint:=rsInfoTFTPROOT;
+  InfoTFTPROOT.Hint := rsInfoTFTPROOT;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;

@@ -3,7 +3,7 @@ object Query: TQuery
   Height = 450
   Top = 237
   Width = 730
-  Caption = 'Opsi quick install - query (part 1)'
+  Caption = 'Opsi Quick Install - Query (part 1)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate

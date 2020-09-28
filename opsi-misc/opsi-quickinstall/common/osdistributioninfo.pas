@@ -32,6 +32,10 @@ begin
   // ...distroRelease at first position (1-based) for the fist time...
   // ...(meaning 0th position in array thinking).
 
+  // Set default MyDistr so that for an unknown distribution the result is...
+  // ...not the enum default CentOS_7
+  FMyDistr := other;
+  FDistrUrlPart := '';
   // CentOS has releases with names like 7.x-xxxx
   if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
   begin

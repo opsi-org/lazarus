@@ -163,20 +163,20 @@ type
   procedure TQuickInstall.SetDefaultValues;
   begin
     // set default values:
-    opsiVersion := 'opsi 4.1';
+    opsiVersion := 'Opsi 4.1';
     // repo depending on opsi version
-    if opsiVersion = 'opsi 4.1' then
+    if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
     else
       repo := baseUrlOpsi42;
     proxy := '';
     repoNoCache := repo;
     backend := 'file';
-    copyMod := 'no';
+    copyMod := 'false';
     repoKind := 'stable';
     ucsPassword := '';
     reboot := 'false';
-    dhcp := 'no';
+    dhcp := 'false';
     link := 'default.nomenu';
     netmask := '255.255.0.0';
     networkAddress := '192.168.0.0';
@@ -194,12 +194,21 @@ type
   begin
     // write file text
     FileText := TStringList.Create;
-    FileText.Add('allow_reboot=' + reboot);
+    if reboot = rsYes then
+      FileText.Add('allow_reboot=true')
+    else
+      FileText.Add('allow_reboot=false');
     FileText.Add('backend=' + backend);
     FileText.Add('dnsdomain=' + domain);
-    FileText.Add('force_copy_modules=' + copyMod);
+    if copyMod = rsYes then
+      FileText.Add('force_copy_modules=true')
+    else
+      FileText.Add('force_copy_modules=false');
     FileText.Add('gateway=' + gateway);
-    FileText.Add('install_and_configure_dhcp=' + dhcp);
+    if dhcp = rsYes then
+    FileText.Add('install_and_configure_dhcp=true')
+    else
+      FileText.Add('install_and_configure_dhcp=false');
     FileText.Add('myipname=' + ipName);
     FileText.Add('myipnumber=' + ipNumber);
     FileText.Add('nameserver=' + nameserver);
@@ -220,6 +229,7 @@ type
     FileText.SaveToFile(ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf');
     // write in properties.conf file:
     FileText.SaveToFile(DirClientData + 'properties.conf');
+
     FileText.Free;
   end;
 
@@ -235,7 +245,7 @@ type
     // create repository (no password, user is root)
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-    if opsiVersion = 'opsi 4.1' then
+    if opsiVersion = 'Opsi 4.1' then
     begin
       if repoKind = 'experimental' then
         url := MyRepo.GetDefaultURL(Opsi41, experimental)
@@ -284,7 +294,7 @@ type
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
-    while not ((input = 'standard') or (input = 'custom')) do
+    while not ((input = rsStandard) or (input = rsCustom)) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -298,13 +308,13 @@ type
     writeln(rsDistr, ' ', distroName, ' ', distroRelease);
     writeln(rsIsCorrect, rsYesNoOp);
     readln(input);
-    while not ((input = 'yes') or (input = 'no')) do
+    while not ((input = rsYes) or (input = rsNo)) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     // if distribution isn't correct, read the correct one
-    if input = 'no' then
+    if input = rsNo then
     begin
       writeln(rsOtherDistr);
       readln(input);
@@ -315,21 +325,21 @@ type
     DistrInfo.SetInfo(distroName, distroRelease);
 
     // following queries only for custom setup
-    if setupType = 'custom' then
+    if setupType = rsCustom then
     begin
       // opsi version:
       writeln(rsOpsiVersion, rsOpsiVersionOp);
       readln(input);
-      while not ((input = 'opsi 4.1') or (input = 'opsi 4.2')) do
+      while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2')) do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
       opsiVersion := input;
       // repo:
-      if opsiVersion = 'opsi 4.1' then
+      if opsiVersion = 'Opsi 4.1' then
         writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']')
-      else if opsiVersion = 'opsi 4.2' then
+      else if opsiVersion = 'Opsi 4.2' then
         writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
       readln(input);
       while not Pos('http', input) = 1 do
@@ -341,21 +351,21 @@ type
       // proxy:
       writeln(rsUseProxy, rsYesNoOp);
       readln(input);
-      while not ((input = 'yes') or (input = 'no')) do
+      while not ((input = rsYes) or (input = rsNo)) do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
       end;
-      if input = 'yes' then
+      if input = rsYes then
       begin
         writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
         readln(input);
         proxy := input;
       end;
       // repo wihout cache proxy:
-      if opsiVersion = 'opsi 4.1' then
+      if opsiVersion = 'Opsi 4.1' then
         writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
-      else if opsiVersion = 'opsi 4.2' then
+      else if opsiVersion = 'Opsi 4.2' then
         writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
       readln(input);
       while not Pos('http', input) = 1 do
@@ -379,7 +389,7 @@ type
         // copy modules
         writeln(rsCopyModules, rsYesNoOp);
         readln(input);
-        while not ((input = 'yes') or (input = 'no')) do
+        while not ((input = rsYes) or (input = rsNo)) do
         begin
           writeln('"', input, '"', rsNotValid);
           readln(input);
@@ -407,7 +417,7 @@ type
       // reboot
       writeln(rsReboot, rsYesNoOp);
       readln(input);
-      while not ((input = 'yes') or (input = 'no')) do
+      while not ((input = rsYes) or (input = rsNo)) do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
@@ -417,14 +427,14 @@ type
     // dhcp
     writeln(rsDhcp, rsYesNoOp);
     readln(input);
-    while not ((input = 'yes') or (input = 'no')) do
+    while not ((input = rsYes) or (input = rsNo)) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     dhcp := input;
     // following queries only for dhcp
-    if dhcp = 'yes' then
+    if dhcp = rsYes then
     begin
       // link
       writeln(rsTFTPROOT, rsLinkOp);
@@ -475,9 +485,45 @@ type
     ipNumber := input;
 
     // Overview
+    writeln('');
+    writeln(rsOverview);
+    writeln(rsOpsiVersionO, opsiVersion);
+    {Custom installation}
+    if setupType = rsCustom then
+    begin
+      writeln(rsRepoO, repo);
+      writeln(rsProxyO, proxy);
+      writeln(rsRepoNoCacheO, repoNoCache);
+      writeln(rsBackendO, backend);
+      if backend = 'mysql' then
+        writeln(rsCopyModulesO, copyMod);
+      writeln(rsRepoKindO, repoKind);
+      if distroName = 'Univention' then
+        writeln(rsUCSO, ucsPassword);
+      writeln(rsRebootO, reboot);
+    end;
+    {Both}
+    writeln(rsDhcpO, dhcp);
+    if dhcp = lowerCase(rsYes) then
+    begin
+      writeln(rsTFTPROOTO, link);
+      writeln(rsNetmaskO, netmask);
+      writeln(rsNetworkO, networkAddress);
+      writeln(rsDomainO, domain);
+      writeln(rsNameserverO, nameserver);
+      writeln(rsGatewayO, gateway);
+    end;
+    writeln(rsAdminNameO, adminName);
+    writeln(rsAdminPasswordO, adminPassword);
+    writeln(rsIPNameO, ipName);
+    writeln(rsIPNumberO, ipNumber);
 
+    writeln('');
+    writeln('To continue, please press enter...');
+    readln();
+
+    WritePropsToFile;
     InstallOpsi;
-    DistrInfo.Free;
   end;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -487,7 +533,6 @@ type
     SetDefaultValues;
     WritePropsToFile;
     InstallOpsi;
-    DistrInfo.Free;
   end;
 
   procedure TQuickInstall.ReadProps;
@@ -518,7 +563,6 @@ type
     PropsFile.SaveToFile(DirClientData + 'properties.conf');
 
     InstallOpsi;
-    DistrInfo.Free;
   end;
 
 var
@@ -590,8 +634,8 @@ begin
   QuickInstall.DistrInfo := TDistributionInfo.Create;
   QuickInstall.DistrInfo.SetInfo(QuickInstall.distroName, QuickInstall.distroRelease);
 
-
   QuickInstall.Run;
+  QuickInstall.DistrInfo.Free;
   QuickInstall.Free;
   LogDatei.Free;
 end.

@@ -94,7 +94,7 @@ begin
   LabelNameIP.Caption := rsIPName;
   LabelNumberIP.Caption := rsIPNumber;
   BtnBack.Caption := rsBack;
-  BtnOverview.Caption := rsOverview;
+  BtnOverview.Caption := rsOverviewBtn;
 end;
 
 procedure TQuery6.FormClose(Sender: TObject; var CloseAction: TCloseAction);

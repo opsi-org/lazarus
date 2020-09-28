@@ -276,12 +276,12 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
-msgid "opsi 4.1"
+msgid "Opsi 4.1"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsopsi42
 msgctxt "opsi_quick_install_resourcestrings.rsopsi42"
-msgid "opsi 4.2"
+msgid "Opsi 4.2"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsopsiversion
@@ -295,7 +295,7 @@ msgid "Opsi version to install: "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsopsiversionop
-msgid " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
+msgid " [Options: \"Opsi 4.1\", \"Opsi 4.2\"]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
@@ -304,6 +304,11 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid "Overview"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsoverviewbtn
+msgctxt "opsi_quick_install_resourcestrings.rsoverviewbtn"
 msgid " overview "
 msgstr ""
 
@@ -330,6 +335,14 @@ msgstr ""
 #: opsi_quick_install_resourcestrings.rsproxyother
 msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
 msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsquery
+msgid "Opsi Quick Install - Query"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsquery3
+msgid "Opsi Quick Install - Query (part 3)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreboot
@@ -397,7 +410,7 @@ msgid "Please select a setup type:"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rssetupop
-msgid " [Options: \"standard\", \"custom\"]"
+msgid " [Options: \"Standard\", \"Custom\"]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
@@ -449,6 +462,6 @@ msgid "Yes"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsyesnoop
-msgid " [Options: \"yes\", \"no\"]"
+msgid " [Options: \"Yes\", \"No\"]"
 msgstr ""
 

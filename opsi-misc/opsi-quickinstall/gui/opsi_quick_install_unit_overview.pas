@@ -63,15 +63,15 @@ begin
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
   MemoOverview.Clear;
+  // Opsi version
+  if Query.RadioBtnOpsi41.Checked then
+    MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi41.Caption)
+  else
+    MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi42.Caption);
+
   {Custom installation}
   if QuickInstall.RadioBtnCustom.Checked then
   begin
-    // Opsi version
-    if Query.RadioBtnOpsi41.Checked then
-      MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi41.Caption)
-    else
-      MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi42.Caption);
-
     MemoOverview.Lines.Add('');
     // Repository
     if Query.RadioBtnRepo.Checked then
@@ -102,8 +102,6 @@ begin
       MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnYesCopy.Caption)
     else
       MemoOverview.Lines.Add(rsCopyModulesO + Query2.RadioBtnNoCopy.Caption);
-
-    MemoOverview.Lines.Add('');
     // Repo kind
     if Query2.RadioBtnExperimental.Checked then
       MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnExperimental.Caption)
@@ -136,11 +134,7 @@ begin
       MemoOverview.Lines.Add(rsRebootO + Query4.RadioBtnYes.Caption)
     else
       MemoOverview.Lines.Add(rsRebootO + Query4.RadioBtnNo.Caption);
-  end
-  {Standard installation}
-  else
-    // default opsi version is 4.2, rest ist not shown anyway
-    MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi42.Caption);
+  end;
 
   {Both}
   MemoOverview.Lines.Add('');

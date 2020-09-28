@@ -196,7 +196,7 @@ msgstr "Ist das korrekt?"
 
 #: opsi_quick_install_resourcestrings.rslangop
 msgid " [Options: \"de\" for german, \"en\" for english, ...]"
-msgstr " [Optionen: \"de\" für detsch, \"en\" für englisch, ...]"
+msgstr " [Optionen: \"de\" für deutsch, \"en\" für englisch, ...]"
 
 #: opsi_quick_install_resourcestrings.rslinkop
 msgid " [Options: \"default.menu\", \"default.nomenu\"]"
@@ -276,12 +276,12 @@ msgstr " ist keine gültige Eingabe."
 
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
-msgid "opsi 4.1"
+msgid "Opsi 4.1"
 msgstr "Opsi 4.1"
 
 #: opsi_quick_install_resourcestrings.rsopsi42
 msgctxt "opsi_quick_install_resourcestrings.rsopsi42"
-msgid "opsi 4.2"
+msgid "Opsi 4.2"
 msgstr "Opsi 4.2"
 
 #: opsi_quick_install_resourcestrings.rsopsiversion
@@ -295,8 +295,8 @@ msgid "Opsi version to install: "
 msgstr "Opsi-Version, die installiert wird: "
 
 #: opsi_quick_install_resourcestrings.rsopsiversionop
-msgid " [Options: \"opsi 4.1\", \"opsi 4.2\"]"
-msgstr " [Optionen: \"opsi 4.1\", \"opsi 4.2\"]"
+msgid " [Options: \"Opsi 4.1\", \"Opsi 4.2\"]"
+msgstr " [Optionen: \"Opsi 4.1\", \"Opsi 4.2\"]"
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
@@ -304,6 +304,11 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid "Overview"
+msgstr "Übersicht"
+
+#: opsi_quick_install_resourcestrings.rsoverviewbtn
+msgctxt "opsi_quick_install_resourcestrings.rsoverviewbtn"
 msgid " overview "
 msgstr " Übersicht "
 
@@ -331,6 +336,14 @@ msgstr "Proxy: "
 msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
 msgid "Other:"
 msgstr "Anderer:"
+
+#: opsi_quick_install_resourcestrings.rsquery
+msgid "Opsi Quick Install - Query"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsquery3
+msgid "Opsi Quick Install - Query (part 3)"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
@@ -397,8 +410,8 @@ msgid "Please select a setup type:"
 msgstr "Bitte wählen Sie einen Setup-Typ:"
 
 #: opsi_quick_install_resourcestrings.rssetupop
-msgid " [Options: \"standard\", \"custom\"]"
-msgstr " [Optionen: \"standard\", \"benutzerdefiniert\"]"
+msgid " [Options: \"Standard\", \"Custom\"]"
+msgstr " [Optionen: \"Standard\", \"Benutzerdefiniert\"]"
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
 msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
@@ -449,6 +462,6 @@ msgid "Yes"
 msgstr "Ja"
 
 #: opsi_quick_install_resourcestrings.rsyesnoop
-msgid " [Options: \"yes\", \"no\"]"
+msgid " [Options: \"Yes\", \"No\"]"
 msgstr " [Optionen: \"Ja\", \"Nein\"]"
 

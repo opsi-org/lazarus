@@ -1,5 +1,5 @@
 {"version":1,"strings":[
-{"hash":58892860,"name":"tquickinstall.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108],"value":"Opsi quick install"},
+{"hash":58892860,"name":"tquickinstall.caption","sourcebytes":[79,112,115,105,32,81,117,105,99,107,32,73,110,115,116,97,108,108],"value":"Opsi Quick Install"},
 {"hash":80700016,"name":"tquickinstall.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
 {"hash":10570650,"name":"tquickinstall.labelsetup.caption","sourcebytes":[80,108,101,97,115,101,32,115,101,108,101,99,116,32,97,32,115,101,116,117,112,32,116,121,112,101,58],"value":"Please select a setup type:"},
 {"hash":212844073,"name":"tquickinstall.radiobtndefault.caption","sourcebytes":[83,116,97,110,100,97,114,100,32,40,46,46,46,41],"value":"Standard (...)"},

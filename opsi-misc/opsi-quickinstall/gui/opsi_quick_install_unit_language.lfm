@@ -3,7 +3,7 @@ object QuickInstall: TQuickInstall
   Height = 450
   Top = 188
   Width = 730
-  Caption = 'Opsi quick install'
+  Caption = 'Opsi Quick Install'
   ClientHeight = 450
   ClientWidth = 730
   OnCreate = FormCreate
