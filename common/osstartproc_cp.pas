@@ -482,7 +482,9 @@ begin
 
             if running then
             begin
+              {$IFDEF GUI}
               ProcessMess;
+              {$ENDIF GUI}
               //sleep(50);
               //sleep(1000);
               sleep(1000);
@@ -499,15 +501,16 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
-              {$ENDIF GUI}
               ProcessMess;
+              {$ENDIF GUI}
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-              ProcessMess;
             end;
           end;
 
+          {$IFDEF GUI}
           ProcessMess;
+          {$ENDIF GUI}
 
           if catchout then
           begin
@@ -522,7 +525,9 @@ begin
           end;
         end;
 
+        {$IFDEF GUI}
         ProcessMess;
+        {$ENDIF GUI}
 
         exitCode := FpcProcess.ExitCode;
         Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +

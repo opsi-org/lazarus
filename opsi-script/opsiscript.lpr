@@ -69,7 +69,7 @@ uses
   osfuncwin,
   osfuncwin2,
   {$ENDIF}
-  Forms, ostxstringlist;
+  Forms;
 
 {$IFNDEF GUI}
 type

@@ -195,7 +195,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="39">
+    <Units Count="40">
       <Unit0>
         <Filename Value="opsiscriptnogui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -353,9 +353,13 @@
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="osstartproc_cp.pas"/>
+        <Filename Value="../common/osstartproc_cp.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
+      <Unit39>
+        <Filename Value="../common/ostxstringlist.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
