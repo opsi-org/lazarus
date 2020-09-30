@@ -150,6 +150,10 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -195,7 +199,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="40">
+    <Units Count="42">
       <Unit0>
         <Filename Value="opsiscriptnogui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -360,6 +364,14 @@
         <Filename Value="../common/ostxstringlist.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit39>
+      <Unit40>
+        <Filename Value="info-osnogui.plist"/>
+        <IsPartOfProject Value="True"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="notarize_osnogui.bash"/>
+        <IsPartOfProject Value="True"/>
+      </Unit41>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
