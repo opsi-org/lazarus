@@ -79,6 +79,7 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 opsi-setup-detector (4.1.0.16) stable; urgency=low
 
   * icon selection integrated (by a.schmitz)
+  * del caption of flowpanel4
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
 
