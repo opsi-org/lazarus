@@ -57,6 +57,7 @@ object Query6: TQuery6
       Width = 440
       Align = alTop
       AutoSize = False
+      OnChange = EditNameAdminChange
       ParentFont = False
       TabOrder = 0
       Text = 'adminuser'

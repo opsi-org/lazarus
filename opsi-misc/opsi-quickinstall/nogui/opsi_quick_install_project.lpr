@@ -172,18 +172,18 @@ type
     proxy := '';
     repoNoCache := repo;
     backend := 'file';
-    copyMod := 'false';
-    repoKind := 'stable';
+    copyMod := rsNo;
+    repoKind := 'testing';
     ucsPassword := '';
-    reboot := 'false';
-    dhcp := 'false';
+    reboot := rsNo;
+    dhcp := rsNo;
     link := 'default.nomenu';
     netmask := '255.255.0.0';
     networkAddress := '192.168.0.0';
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Amina';
+    adminName := 'Alisha';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -290,7 +290,7 @@ type
   procedure TQuickInstall.NoGuiQuery;
   begin
     SetDefaultValues;
-
+    // input variables set by resourcestrings for usage in the overview
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
@@ -342,7 +342,7 @@ type
       else if opsiVersion = 'Opsi 4.2' then
         writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
       readln(input);
-      while not Pos('http', input) = 1 do
+      while (Pos('http', input) <> 1) or (input = '') do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
@@ -368,7 +368,7 @@ type
       else if opsiVersion = 'Opsi 4.2' then
         writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
       readln(input);
-      while not Pos('http', input) = 1 do
+      while (Pos('http', input) <> 1) or (input = '')  do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
@@ -553,9 +553,9 @@ type
       if Pos('opsi_online_repository', PropsFile[i]) = 1 then
       begin
         if Pos('4.1', PropsFile[i]) > 0 then
-          opsiVersion := 'opsi 4.1'
+          opsiVersion := 'Opsi 4.1'
         else
-          opsiVersion := 'opsi 4.2';
+          opsiVersion := 'Opsi 4.2';
       end;
     end;
 

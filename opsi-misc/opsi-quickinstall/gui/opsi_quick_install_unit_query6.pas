@@ -30,6 +30,7 @@ type
     PanelPasswordAdmin: TPanel;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnOverviewClick(Sender: TObject);
+    procedure EditNameAdminChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
@@ -80,6 +81,14 @@ begin
       Query7.Width - Query7.BtnBack.Left - QuickInstall.BtnOverviewWidth;
     Query7.BtnOverview.Top := BtnNext.Top;
   end;}
+end;
+
+procedure TQuery6.EditNameAdminChange(Sender: TObject);
+begin
+  if EditNameAdmin.Text = '' then
+    PanelPasswordAdmin.Visible := False
+  else
+    PanelPasswordAdmin.Visible := True;
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
