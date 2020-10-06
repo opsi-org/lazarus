@@ -1615,8 +1615,8 @@ begin
               status := NO_ERROR;
 
               if (not OpenProcessToken(GetCurrentProcess(),
-                TOKEN_ADJUST_PRIVILEGES, procToken)) or (not
-                SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
+                TOKEN_ADJUST_PRIVILEGES, procToken)) or
+                (not SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
                 Result := False
               else
               begin
@@ -3006,8 +3006,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3511,8 +3511,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3958,8 +3958,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -10234,23 +10234,18 @@ var
     ddiff: integer = 0;
     errorno: integer = 0;
 
-    procedure myfiledelete(filename: string);
-    begin
-
-    end;
-
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-    // Completename zerlegen
+    { analyze Completename }
     OrigPath := ExtractFilePath(CompleteName);
-    // endet, wie CompleteName sowohl urspruenglich
-    // als auch in der Rekursion konstruiert ist, stets auf \
+    { should end always with pathdelimiter }
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
     LogDatei.log_prog(LogS, LLInfo);
 
-    // start with the sub directories, and go with the recursion deeper and delete the lowest level first
+    { start with the sub directories,
+      and go with the recursion deeper and delete the lowest level first }
     if recursive then
     begin
       {$IFDEF WINDOWS}
@@ -10266,17 +10261,12 @@ var
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
           (OrigPath + SearchResult.Name + PathDelim + FileMask, DeleteDeeperDir);
-        (*
-        else
-          if (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
-            myfiledelete(OrigPath + SearchResult.Name);
-            *)
         FindResultcode := FindNext(SearchResult);
       end;
       SysUtils.findclose(SearchResult);
     end;
 
-    // now delete in the base directory
+    { now delete in the base directory }
     {$IFDEF WINDOWS}
     if Filemask = '' then
       Filemask := '*.*';
@@ -10302,7 +10292,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, True) then
         begin
-          // Elimination of readonly attribut did not work
+          { Elimination of readonly attribut did not work }
           FileIsReadonly := True;
           Result := False;
         end;
@@ -10311,7 +10301,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, False) then
         begin
-          // Elimination of readonly attribut was not intended
+          { Elimination of readonly attribut was not intended  }
           FileIsReadonly := True;
           Result := False;
           LogS := 'No deletion, file is readonly';
@@ -10339,15 +10329,17 @@ var
       begin
         if SysUtils.DeleteFile(Filename) then
         begin
-          LogS := 'The file has been deleted';
+          LogS := 'The file ' + Filename + ' has been deleted';
           LogDatei.log(LogS, LLInfo);
         end
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          errorNo := GetLastError;
+          if (errorNo = 32) or (errorNo = 5) then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
+            LogDatei.log('Target file: ' +
+              Filename + ' was in use, retry with DELAY_UNTIL_REBOOT.',
               LLDebug2);
             exist := PWChar(unicodestring(Filename));
             moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
@@ -10358,7 +10350,7 @@ var
               RebootWanted := True;
               LogDatei.log(
                 'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
+                LLWarning);
             end
             else
               LogDatei.log(
@@ -10367,7 +10359,20 @@ var
           end
           else
           {$ENDIF WINDOWS}
-            LogDatei.log('Warning: The file could not be deleted', LLWarning);
+          begin
+            //LogDatei.log('Warning: The file could not be deleted', LLWarning);
+           {$IFDEF UNIX}
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
+           {$ENDIF UNIX}
+           {$IFDEF WINDOWS}
+            errorNo := GetLastError;
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + IntToStr(errorNo) +
+              ' ("' + RemoveLineBreaks(SysErrorMessage(errorNo)) + '")';
+           {$ENDIF WINDOWS}
+            LogDatei.log(LogS, LLWarning);
+          end;
         end;
       end;
 
@@ -10401,6 +10406,30 @@ var
           RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
         {$ENDIF WINDOWS}
         LogDatei.log(LogS, LLWarning);
+        {$IFDEF WINDOWS}
+          errorNo := GetLastError;
+          if (errorNo = 32) or (errorNo = 145) then
+          begin
+            LogDatei.log('Target dir: ' +
+              Filename + ' was in use, retry with DELAY_UNTIL_REBOOT.',
+              LLDebug2);
+            exist := PWChar(unicodestring(OrigPath));
+            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+            exitbool := MoveFileExW(exist, nil, moveflags);
+            if exitbool then
+            begin
+              Result := True;
+              RebootWanted := True;
+              LogDatei.log(
+                'Target dir was in use, move / rename should be completed after reboot.',
+                LLWarning);
+            end
+            else
+              LogDatei.log(
+                'Target dir was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                LLError);
+          end;
+          {$ENDIF WINDOWS}
         Result := False;
       end;
     end;

@@ -10,6 +10,9 @@ opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
 * macos: integrate to opsiscript and opsiscriptnogui project
   (Remove mac project files)
 * new unit osstartprocess_cp (from osfunc, will be used in opsi-script-pilot)
+* more logging on alldelete
+* repair del -c
+* try to remove dirs also with copy_delay
 
 -- d.oertel <d.oertel@uib.de> Wed, 23 Sep 2020 15:00
 

@@ -63,9 +63,9 @@ uses
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
   DSiWin32 in 'DSiWin32.pas',
-  wiswaudit in 'wiswaudit.pas',
+  osswaudit in 'osswaudit.pas',
   jclexcerpt,
-  wilocaladmin,
+  oslocaladmin,
   osfuncwin,
   osfuncwin2,
   {$ENDIF}
@@ -109,8 +109,10 @@ var
 {$R opsiscript.res}
 {$ENDIF GUI}
 
+{$IFDEF WINDOWS}
+{$R manifest.rc}
+{$ENDIF WINDOWS}
 
-//{$R manifest.rc}
 //{$i winst.lrs}
 
 
