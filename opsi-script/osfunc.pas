@@ -367,7 +367,13 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      daysback: integer; search4file: boolean;
+      var RebootWanted: boolean): boolean; overload;
+
+    function AllDelete
+      (const Filename: string; recursive, ignoreReadOnly: boolean;
+      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -3006,8 +3012,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3511,8 +3517,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3958,8 +3964,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -10200,6 +10206,17 @@ end;
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+var
+  retryOnReboot: boolean = False;
+begin
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
+    True, RebootWanted, retryOnReboot);
+end;
+
+function TuibFileInstall.AllDelete
+  (const Filename: string; recursive, ignoreReadOnly: boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+  retryOnReboot: boolean): boolean;
 
 var
   CompleteName: string = '';
@@ -10215,6 +10232,7 @@ var
   moveflags: DWORD;
   {$IFDEF WINDOWS}
   exitbool: winbool;
+  errorNo: integer;
 
 {$ENDIF WINDOWS}
 
@@ -10335,27 +10353,30 @@ var
         else
         begin
           {$IFDEF WINDOWS}
-          errorNo := GetLastError;
-          if (errorNo = 32) or (errorNo = 5) then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file: ' +
-              Filename + ' was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLWarning);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
@@ -10407,11 +10428,13 @@ var
         {$ENDIF WINDOWS}
         LogDatei.log(LogS, LLWarning);
         {$IFDEF WINDOWS}
+        if retryOnReboot then
+        begin
           errorNo := GetLastError;
           if (errorNo = 32) or (errorNo = 145) then
           begin
-            LogDatei.log('Target dir: ' +
-              Filename + ' was in use, retry with DELAY_UNTIL_REBOOT.',
+            LogDatei.log('Target dir: ' + Filename +
+              ' was in use, retry with DELAY_UNTIL_REBOOT.',
               LLDebug2);
             exist := PWChar(unicodestring(OrigPath));
             moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
@@ -10429,6 +10452,7 @@ var
                 'Target dir was in use, retry with DELAY_UNTIL_REBOOT failed.',
                 LLError);
           end;
+        end;
           {$ENDIF WINDOWS}
         Result := False;
       end;
@@ -10440,10 +10464,10 @@ var
 
 begin
   Result := True;
-  // Filename processing
+  { Filename processing }
   PathName := ExtractFilePath(CompleteName);
   //CompleteName := ExpandFileName (Filename);
-  // changed because it is dangerous
+  { changed because it is dangerous }
   if (lowercase(Filename) = 'c:\') or (lowercase(Filename) = 'c:\windows') or
     (lowercase(Filename) = 'c:\windows\system32') or (lowercase(Filename) = 'c:') or
     (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
@@ -10455,8 +10479,8 @@ begin
     CompleteName := Filename;
 
 
-       (*  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
-       funktioniert nicht!! *)
+       {  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
+       does not work!! }
   if isDirectory(CompleteName) and (CompleteName[length(CompleteName)] <>
     PathDelim) then
     CompleteName := CompleteName + PathDelim;
@@ -10483,27 +10507,27 @@ begin
   else
     testname := CompleteName;
 
-  // Start
+  { Start }
   if not search4file then
   begin
-    // new del syntax: "del -s c:\not-existing" will do nothing (if not existing)
+    { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
     if (not FileExists(testname)) and (not DirectoryExists(testname)) then
     begin
-      //does not exist
+      { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
       LogDatei.log(LogS, LLInfo);
     end
     else
     begin
-      // does exist as dir or file
+      { does exist as dir or file }
       if isDirectory(ExtractFilePath(CompleteName)) then
       begin
         ExecDelete(CompleteName, DeleteStartDir);
       end
       else
       begin
-        // is a existing file
+        { is a existing file }
         if SysUtils.DeleteFile(CompleteName) then
         begin
           LogS := 'The file has been deleted';
@@ -10512,40 +10536,40 @@ begin
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
             LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
-          (*
-        LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
-          ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLInfo);
-        *)
         end;
       end;
     end;
   end
-  else // old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing"
+  else { old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing" }
   begin
     if isDirectory(ExtractFilePath(CompleteName)) then
       ExecDelete(CompleteName, DeleteStartDir)

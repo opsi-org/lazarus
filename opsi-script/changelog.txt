@@ -13,6 +13,11 @@ opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
 * more logging on alldelete
 * repair del -c
 * try to remove dirs also with copy_delay
+* new del option -r (retryOnReboot) default false (Windows only)
+  If -r is set a missed delete action will be retried on Reboot.
+  In this case normally a 'reboot after this script' flag will be set.
+  By using the -c option setting this flag will be supressed
+  The option -c (continue) make only sense in combination with -r
 
 -- d.oertel <d.oertel@uib.de> Wed, 23 Sep 2020 15:00
 
