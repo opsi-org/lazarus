@@ -17659,6 +17659,22 @@ begin
   end
 
 
+  else if Skip('isFQDN', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            BooleanResult := isValidFQDN(s1);
+          except
+            BooleanResult := False;
+          end;
+        end;
+  end
+
+
   else if Skip('isNumber', Input, r, InfoSyntaxError) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -17673,6 +17689,7 @@ begin
           end;
         end;
   end
+
 
   else if Skip('isPingReachable', Input, r, InfoSyntaxError) then
   begin

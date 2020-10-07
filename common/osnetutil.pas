@@ -18,10 +18,18 @@ uses
   synaip,
   oslog;
 
+function isValidFQDN(expr : string) : boolean;
 function isIPNumber(expr : string) : boolean;
 function IsValidEmail(const Value: string): Boolean;
 
 implementation
+
+// Function to validate if the Doamin Name is Fully Qualified
+function isValidFQDN(expr : string) : boolean;
+begin
+
+end;
+
 
 function isIPNumber(expr : string) : boolean;
 begin
