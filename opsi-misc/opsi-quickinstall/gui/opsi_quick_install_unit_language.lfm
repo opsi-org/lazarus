@@ -30,9 +30,11 @@ object QuickInstall: TQuickInstall
     TabOrder = 0
   end
   object QuickInstallPanel: TPanel
+    AnchorSideTop.Control = WelcomePanel
+    AnchorSideTop.Side = asrBottom
     Left = 175
     Height = 160
-    Top = 224
+    Top = 220
     Width = 364
     BevelOuter = bvNone
     ClientHeight = 160
@@ -88,10 +90,12 @@ object QuickInstall: TQuickInstall
     end
   end
   object WelcomePanel: TPanel
+    AnchorSideTop.Control = Owner
     Left = 175
     Height = 170
-    Top = 32
+    Top = 50
     Width = 372
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
     ClientHeight = 170
     ClientWidth = 372

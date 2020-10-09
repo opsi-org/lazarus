@@ -16,6 +16,11 @@ type
     FMyDistr: TDistribution;
     FDistrUrlPart: string;
   public
+  const
+    Distribs = 'CentOS 7,' + #10 + 'Debian 8, Debian 9, Debian 10,' +
+      #10 + 'openSUSE Leap 15.1, openSUSE Leap 42.3,' + #10 +
+      'RedHatEnterpriseServer 7,' + #10 + 'Univention 4.3, Univention 4.4,' +
+      #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
 
@@ -89,13 +94,13 @@ begin
   begin
     if Pos('4.3', distroRelease) = 1 then
     begin
-      FMyDistr := xUbuntu_16_04;
-      FDistrUrlPart := 'Univention_4.3/';
+      FMyDistr := Univention_4_3;
+      FDistrUrlPart := 'Univention_4_3/';
     end
     else
     if Pos('4.4', distroRelease) = 1 then
     begin
-      FMyDistr := xUbuntu_18_04;
+      FMyDistr := Univention_4_4;
       FDistrUrlPart := 'Univention_4.4/';
     end;
   end
@@ -112,6 +117,12 @@ begin
     begin
       FMyDistr := xUbuntu_18_04;
       FDistrUrlPart := 'xUbuntu_18.04/';
+    end
+    else
+    if distroRelease = '20.04' then
+    begin
+      FMyDistr := xUbuntu_20_04;
+      FDistrUrlPart := 'xUbuntu_20.04/';
     end;
   end;
 end;
@@ -133,6 +144,7 @@ begin
 end;
 
 end.
+
 
 
 

@@ -270,6 +270,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsno"
 msgid "No"
 msgstr "Nein"
 
+#: opsi_quick_install_resourcestrings.rsnosupport
+msgid "Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:"
+msgstr "Leider unterstützt Opsi Ihre Distribution nicht. Nur die folgenden Distributionen werden unterstützt:"
+
 #: opsi_quick_install_resourcestrings.rsnotvalid
 msgid " is not a valid input."
 msgstr " ist keine gültige Eingabe."
@@ -300,7 +304,7 @@ msgstr " [Optionen: \"Opsi 4.1\", \"Opsi 4.2\"]"
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
-msgstr ""
+msgstr "Bitte geben Sie die richtige Distribution ein:"
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"

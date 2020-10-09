@@ -42,9 +42,9 @@ object Query4: TQuery4
     AnchorSideLeft.Control = PanelReboot
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = PanelReboot
-    Left = 466
+    Left = 506
     Height = 18
-    Top = 145
+    Top = 177
     Width = 18
     ParentShowHint = False
     ShowHint = True
@@ -54,9 +54,9 @@ object Query4: TQuery4
     AnchorSideLeft.Control = PanelDhcp
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = PanelDhcp
-    Left = 506
+    Left = 576
     Height = 18
-    Top = 215
+    Top = 267
     Width = 18
     ParentShowHint = False
     ShowHint = True
@@ -66,9 +66,9 @@ object Query4: TQuery4
     AnchorSideLeft.Control = PanelFilePointer
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = PanelFilePointer
-    Left = 577
+    Left = 576
     Height = 18
-    Top = 286
+    Top = 333
     Width = 18
     ParentShowHint = False
     ShowHint = True
@@ -76,14 +76,14 @@ object Query4: TQuery4
     Visible = False
   end
   object PanelPasswordMasterAdmin: TPanel
-    AnchorSideTop.Control = PanelAnchor
-    AnchorSideTop.Side = asrBottom
+    AnchorSideTop.Control = Owner
     Left = 184
-    Height = 64
-    Top = 51
+    Height = 77
+    Top = 50
     Width = 424
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
-    ClientHeight = 64
+    ClientHeight = 77
     ClientWidth = 424
     ParentFont = False
     TabOrder = 2
@@ -116,20 +116,20 @@ object Query4: TQuery4
     AnchorSideTop.Side = asrBottom
     Left = 184
     Height = 40
-    Top = 145
-    Width = 282
-    BorderSpacing.Top = 30
+    Top = 177
+    Width = 322
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
     ClientHeight = 40
-    ClientWidth = 282
+    ClientWidth = 322
     ParentFont = False
     TabOrder = 3
     Visible = False
     object LabelReboot: TLabel
       Left = 0
-      Height = 38
+      Height = 19
       Top = 0
-      Width = 282
+      Width = 322
       Align = alTop
       Caption = 'May the server reboot if the script is finished?'
       ParentColor = False
@@ -139,13 +139,13 @@ object Query4: TQuery4
     object PanelRadioReboot: TPanel
       Left = 0
       Height = 21
-      Top = 38
-      Width = 282
+      Top = 19
+      Width = 322
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 282
+      ClientWidth = 322
       ParentFont = False
       TabOrder = 0
       object RadioBtnNo: TRadioButton
@@ -153,13 +153,15 @@ object Query4: TQuery4
         Left = 95
         Height = 21
         Top = 0
-        Width = 42
+        Width = 82
         Align = alLeft
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 50
         Caption = 'No'
+        Checked = True
         ParentFont = False
         TabOrder = 0
+        TabStop = True
       end
       object RadioBtnYes: TRadioButton
         Left = 0
@@ -168,10 +170,8 @@ object Query4: TQuery4
         Width = 45
         Align = alLeft
         Caption = 'Yes'
-        Checked = True
         ParentFont = False
         TabOrder = 1
-        TabStop = True
       end
     end
   end
@@ -179,21 +179,21 @@ object Query4: TQuery4
     AnchorSideTop.Control = PanelReboot
     AnchorSideTop.Side = asrBottom
     Left = 184
-    Height = 40
-    Top = 215
-    Width = 322
-    BorderSpacing.Top = 30
+    Height = 56
+    Top = 267
+    Width = 392
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
-    ClientHeight = 40
-    ClientWidth = 322
+    ClientHeight = 56
+    ClientWidth = 392
     ParentFont = False
     TabOrder = 4
     object LabelDhcp: TLabel
       AnchorSideTop.Side = asrBottom
       Left = 0
-      Height = 38
+      Height = 19
       Top = 0
-      Width = 322
+      Width = 392
       Align = alTop
       Caption = 'Should we run the opsi dhcp server on this machine?'
       ParentColor = False
@@ -204,13 +204,13 @@ object Query4: TQuery4
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 38
-      Width = 322
+      Top = 19
+      Width = 392
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 322
+      ClientWidth = 392
       ParentFont = False
       TabOrder = 0
       object RadioBtnDhcpNo: TRadioButton
@@ -243,21 +243,21 @@ object Query4: TQuery4
     AnchorSideTop.Control = PanelDhcp
     AnchorSideTop.Side = asrBottom
     Left = 184
-    Height = 47
-    Top = 286
+    Height = 51
+    Top = 333
     Width = 392
-    BorderSpacing.Top = 30
-    BorderSpacing.Around = 1
-    ClientHeight = 47
+    BorderSpacing.Top = 10
+    BorderWidth = 3
+    ClientHeight = 51
     ClientWidth = 392
     ParentFont = False
     TabOrder = 5
     Visible = False
     object LabelFilePointer: TLabel
-      Left = 1
+      Left = 4
       Height = 19
-      Top = 1
-      Width = 390
+      Top = 4
+      Width = 384
       Align = alTop
       Caption = 'Which file should the TFTPROOT default symlink point to?'
       ParentColor = False
@@ -265,15 +265,15 @@ object Query4: TQuery4
       WordWrap = True
     end
     object PanelRadiofilePointer: TPanel
-      Left = 1
+      Left = 4
       Height = 21
-      Top = 20
-      Width = 390
+      Top = 23
+      Width = 384
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 390
+      ClientWidth = 384
       ParentFont = False
       TabOrder = 0
       object RadioBtnNoMenu: TRadioButton
@@ -300,15 +300,5 @@ object Query4: TQuery4
         TabOrder = 1
       end
     end
-  end
-  object PanelAnchor: TPanel
-    AnchorSideTop.Control = Owner
-    Left = 184
-    Height = 1
-    Top = 50
-    Width = 418
-    BorderSpacing.Top = 50
-    BevelOuter = bvNone
-    TabOrder = 6
   end
 end

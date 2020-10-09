@@ -604,7 +604,7 @@ Switch $distrotype$
 			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
 				set $distRelease4repo$ = "8"
 			else
-				if comparedotseparatedNumbers($distRelease$ ">=", "7") and comparedotseparatedNumbers($distRelease$ "<", "8")
+				if comparedotseparatedNumbers($distRelease$, ">=", "7") and comparedotseparatedNumbers($distRelease$, "<", "8")
 					set $distRelease4repo$ = "7"
 				endif
 			endif
@@ -872,17 +872,21 @@ if not("0" = getLastExitCode)
 	isFatalError "Automatic Samba configuration failed."
 endif
 
-Message "add_adminuser"
-if $distroName$ = 'Univention'
-	ShellInAnIcon_add_adminuser_ucs
+if $opsi_admin_user_name$ = ""
+	Message "You have not specified any adminuser name"
+	Message "You should add your existing users to the specific groups and also create a samba password for them if you want to use them as opsi admin users"
 else
-	ShellInAnIcon_add_adminuser
-endif
-
-if not("0" = getLastExitCode)
-	LogError "failed to add adminuser"
-	Message "failed to add adminuser"
-	isFatalError "failed to add adminuser"
+	Message "add_adminuser"
+	if $distroName$ = 'Univention'
+		ShellInAnIcon_add_adminuser_ucs
+	else
+		ShellInAnIcon_add_adminuser
+	endif
+	if not("0" = getLastExitCode)
+		LogError "failed to add adminuser"
+		Message "failed to add adminuser"
+		isFatalError "failed to add adminuser"
+	endif
 endif
 
 Message "Setting clientconfig.depot.user "

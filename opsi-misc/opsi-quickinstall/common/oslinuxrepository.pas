@@ -27,6 +27,7 @@ type
     Univention_4_4,
     xUbuntu_16_04,
     xUbuntu_18_04,
+    xUbuntu_20_04,
     other
     );
 
@@ -127,6 +128,7 @@ begin
     Univention_4_4: Result := Result + 'Univention_4.4/';
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
     xUbuntu_18_04: Result := Result + 'xUbuntu_18.04/';
+    xUbuntu_20_04: Result := Result + 'xUbuntu_20.04/';
     other: Result := '';
   end;
   //ShowMessage(Result);
@@ -203,7 +205,7 @@ begin
   case FDistribution of
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10,
-    xUbuntu_16_04, xUbuntu_18_04:
+    xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
       begin
         AddDebianUbuntu;
       end;

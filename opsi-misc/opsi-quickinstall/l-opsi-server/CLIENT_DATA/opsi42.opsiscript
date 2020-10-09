@@ -23,6 +23,7 @@ DefVar $update_test$
 DefVar $setupProduct$
 DefVar $mysqlservicename$
 DefVar $smbdservicename$
+DefVar $nmbdservicename$
 DefVar $dhcpdservicename$
 DefVar $dhcpdconf_file_path$
 DefVar $fileonly$
@@ -56,7 +57,7 @@ DefStringlist $setup_after_install_list$
 
 ; base initalization of properties
 set $backend$ = "file"
-set $repo_kind$ "stable"
+set $repo_kind$ = "stable"
 set $update_test$ = "false"
 set $opsi_online_repository_org$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
 set $opsi_noproxy_online_repository$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
@@ -86,7 +87,7 @@ if fileExists("%scriptpath%/properties.conf")
 	set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
 	set $backend$ = getValue("backend", $properties_conf$)
 	set $repo_kind$ = getValue("repo_kind", $properties_conf$)
-	set $update_test$ = getValue("update_test", "false")
+	set $update_test$ = getValue("update_test", $properties_conf$)
 	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
 	set $opsi_noproxy_online_repository$ = getValue("opsi_noproxy_online_repository", $properties_conf$)
 	; not used  in quick-install:
@@ -133,7 +134,7 @@ else
 endif
 
 
-; initializaition
+; initialization
 set $append_dhcpd$ = ", dhcpd"
 set $clientconfig_depot_user$ = "pcpatch"
 set $opsi_admin_group$ = "opsiadmin"
@@ -148,6 +149,7 @@ set $distRelease4repo$  = $distRelease$
 set $mysql_root_pw$ = 'linux123'
 set $mysqlservicename$ = "mysql"
 set $smbdservicename$ = "smbd"
+set $nmbdservicename$ = "nmbd"
 set $fileonly$ = "false"
 set $aktbackend$ = $backend$
 
@@ -293,6 +295,7 @@ Switch $distroName$
 	Case 'Debian'
 		set $mysqlservicename$ = "mysql"
 		set $smbdservicename$ = "smbd"
+		set $nmbdservicename$ = "nmbd"
 		set $dhcpdservicename$ = "isc-dhcp-server"
 		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
 
@@ -434,10 +437,12 @@ Switch $distroName$
 			if comparedotseparatedNumbers($distRelease$ ,">=", "4.4") and comparedotseparatedNumbers($distRelease$, "<", "4.5")
 				set $distRelease4Repo$ = "4.4"
 				set $smbdservicename$ = "smbd"
+				set $nmbdservicename$ = "nmbd"
 			else
 				if comparedotseparatedNumbers($distRelease$, ">=", "4.3") and comparedotseparatedNumbers($distRelease$, "<", "4.4")
 					set $distRelease4Repo$ = "4.3"
 					set $smbdservicename$ = "smbd"
+					set $nmbdservicename$ = "nmbd"
 				else
 					LogError "Unsupported UCS version"
 					Message "Unsupported UCS version"
@@ -598,6 +603,8 @@ Switch $distrotype$
 
 		if contains($distroName$,"CentOS")
 			set $distroName4repo$ = "CentOS"
+			set $smbdservicename$ = "smb"
+			set $nmbdservicename$ = "nmb"
 			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
 				set $distRelease4repo$ = "8"
 				set $mysqlservicename$ = "mariadb"
@@ -759,6 +766,8 @@ if $fileonly$ = "false"
 			ShellInAnIcon_configure_opsi_mysql_backend
 		endif
 	endif
+	
+	ShellInAnIcon_configure_mysql_bind_address
 
 	if not("0" = getLastExitCode)
 		LogError "failed to configure mysql backend in opsi"
@@ -877,18 +886,23 @@ if not("0" = getLastExitCode)
 	isFatalError "Automatic Samba configuration failed."
 endif
 
-Message "add_adminuser"
-if $distroName$ = 'Univention'
-	ShellInAnIcon_add_adminuser_ucs
+if $opsi_admin_user_name$ = ""
+	Message "You have not specified any adminuser name"
+	Message "You should add your existing users to the specific groups and also create a samba password for them if you want to use them as opsi admin users"
 else
-	ShellInAnIcon_add_adminuser
+	Message "add_adminuser"
+	if $distroName$ = 'Univention'
+		ShellInAnIcon_add_adminuser_ucs
+	else
+		ShellInAnIcon_add_adminuser
+	endif
+	if not("0" = getLastExitCode)
+		LogError "failed to add adminuser"
+		Message "failed to add adminuser"
+		isFatalError "failed to add adminuser"
+	endif
 endif
 
-if not("0" = getLastExitCode)
-	LogError "failed to add adminuser"
-	Message "failed to add adminuser"
-	isFatalError "failed to add adminuser"
-endif
 
 Message "Setting clientconfig.depot.user "
 set $clientconfig_depot_user$ = "%HOST%\\pcpatch"
@@ -1163,7 +1177,21 @@ sed -i 's/INTERFACESv4=""/INTERFACESv4="'"$CURRENTIF"'"/g' /etc/default/isc-dhcp
 [ShellInAnIcon_disable_mysql_strict_mode]
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-sed -i '/\[mysqld]/a sql_mode=NO_ENGINE_SUBSTITUTION' /etc/mysql/mysql.conf.d/mysqld.cnf
+if ! grep 'sql_mode=NO_ENGINE_SUBSTITUTION' /etc/mysql/mysql.conf.d/mysqld.cnf >/dev/null; then
+	sed -i '/\[mysqld]/a sql_mode=NO_ENGINE_SUBSTITUTION' /etc/mysql/mysql.conf.d/mysqld.cnf
+fi
+service $mysqlservicename$ restart
+
+[ShellInAnIcon_configure_mysql_bind_address]
+# MySQL >= 8.0.13: bind-address option now supports multiple addresses
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+for d in mysql mariadb; do
+	for conf in $(grep -lR "bind-address" /etc/$d 2>/dev/null | grep '.cnf$' | sort | uniq); do
+		#sed -i 's/.*bind-address.*/bind-address = 127.0.0.1,::1/' $conf # MySQL >= 8.0.13
+		sed -i 's/.*bind-address.*/bind-address = */' $conf
+	done
+done
 service $mysqlservicename$ restart
 
 [ShellInAnIcon_configure_opsi_mysql_backend]
@@ -1196,7 +1224,7 @@ if [ ! -S /var/run/mysqld/mysqld.sock ]; then
 	sleep 60
 	service $mysqlservicename$ status
 fi
-UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
+UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "address":"localhost", "database":"opsi"}'
 opsi-setup --configure-mysql --unattended=$UNATTENDED
 exit $?
 
@@ -1229,7 +1257,7 @@ apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-c
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 service $smbdservicename$ restart
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service nmbd restart
+service $nmbdservicename$ restart
 exit $EXITCODE
 
 
@@ -1365,7 +1393,7 @@ else
 	systemctl enable $smbdservicename$.service
 	service $smbdservicename$ restart
 fi
-service nmbd restart
+service $nmbdservicename$ restart
 service $dhcpdservicename$ restart
 service opsiconfd restart
 service opsipxeconfd restart
@@ -1458,6 +1486,8 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 EXITCODE=0
 yum -y install wget
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install redis-tools redis-server redis-timeseries
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 yum -y install samba samba-client
 chkconfig smb on
@@ -1566,19 +1596,25 @@ chkconfig smb on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 chkconfig nmb on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service smb restart
+systemctl restart smb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service nmb restart
+systemctl restart nmb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install $mysqlpkg$
 if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install redis-server
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install redis-timeseries
+if [ $? -ne 0 ]; then EXITCODE=1; fi
 chkconfig mysql on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service mysql restart
+systemctl restart mysql
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 getent hosts $(hostname -f)
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install wimlib
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install opsi-utils
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install opsi-server
 if [ $? -ne 0 ]; then EXITCODE=1; fi
@@ -1590,9 +1626,9 @@ chkconfig opsiconfd on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 chkconfig opsipxeconfd on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service smb restart
+systemctl restart smb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-service nmb restart
+systemctl restart nmb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 exit $EXITCODE
 

@@ -51,6 +51,7 @@ resourcestring
   rsDistr = 'We recognized the following distribution on this computer:';
   rsCorrect =
     'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
+  rsNoSupport = 'Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:';
 
   {Query}
   rsOpsiVersion = 'Which opsi version would you like to install?';

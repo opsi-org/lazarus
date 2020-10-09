@@ -23,7 +23,6 @@ type
     LabelFilePointer: TLabel;
     LabelPasswordMasterAdmin: TLabel;
     LabelReboot: TLabel;
-    PanelAnchor: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     PanelRadiofilePointer: TPanel;
     PanelRadioDhcp: TPanel;

@@ -30,12 +30,12 @@ object Query6: TQuery6
   object PanelNameAdmin: TPanel
     AnchorSideTop.Control = Owner
     Left = 160
-    Height = 80
+    Height = 74
     Top = 50
     Width = 440
     BorderSpacing.Top = 50
     BevelOuter = bvNone
-    ClientHeight = 80
+    ClientHeight = 74
     ClientWidth = 440
     ParentFont = False
     TabOrder = 1
@@ -68,19 +68,19 @@ object Query6: TQuery6
     AnchorSideTop.Side = asrBottom
     Left = 160
     Height = 80
-    Top = 150
+    Top = 124
     Width = 440
-    BorderSpacing.Top = 20
-    BevelOuter = bvNone
+    BevelInner = bvSpace
+    BorderWidth = 3
     ClientHeight = 80
     ClientWidth = 440
     ParentFont = False
     TabOrder = 2
     object LabelPasswordAdmin: TLabel
-      Left = 0
+      Left = 5
       Height = 38
-      Top = 0
-      Width = 440
+      Top = 5
+      Width = 430
       Align = alTop
       Caption = 'What is the password of the opsi_admin_user to create?'#10'(empty = nothing created)'
       ParentColor = False
@@ -88,10 +88,10 @@ object Query6: TQuery6
       WordWrap = True
     end
     object EditPasswordAdmin: TEdit
-      Left = 0
+      Left = 5
       Height = 25
-      Top = 38
-      Width = 440
+      Top = 43
+      Width = 430
       Align = alTop
       AutoSize = False
       ParentFont = False
@@ -103,12 +103,12 @@ object Query6: TQuery6
     AnchorSideTop.Control = PanelPasswordAdmin
     AnchorSideTop.Side = asrBottom
     Left = 160
-    Height = 58
-    Top = 250
+    Height = 70
+    Top = 234
     Width = 440
-    BorderSpacing.Top = 20
+    BorderSpacing.Top = 30
     BevelOuter = bvNone
-    ClientHeight = 58
+    ClientHeight = 70
     ClientWidth = 440
     ParentFont = False
     TabOrder = 3
@@ -139,12 +139,12 @@ object Query6: TQuery6
     AnchorSideTop.Control = PanelNameIP
     AnchorSideTop.Side = asrBottom
     Left = 160
-    Height = 58
-    Top = 328
+    Height = 72
+    Top = 324
     Width = 440
     BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 58
+    ClientHeight = 72
     ClientWidth = 440
     ParentFont = False
     TabOrder = 4

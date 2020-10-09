@@ -80,8 +80,13 @@ var
   fileName, propertyName, url, Output, shellCommand: string;
   FileText: TStringList;
   MyRepo: TLinuxRepository;
-  RunCommand: TRunCommandElevated;
+  InstallRunCommand: TRunCommandElevated;
 begin
+  if Query.RadioBtnOpsi42.Checked and not Query2.RadioBtnExperimental.Checked then
+  begin
+    ShowMessage('Opsi 4.2 only works on branch "experimental".');
+    Exit;
+  end;
   // write user input in l-opsi-server.conf and properties.conf file:
   FileText := TStringList.Create;
 
@@ -230,7 +235,6 @@ begin
   fileName := ExtractFilePath(ParamStr(0));
   Delete(fileName, Length(fileName), 1);
   fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
-  //ShowMessage(fileName);
   FileText.SaveToFile(fileName + 'properties.conf');
 
   // Important for getting the result 'failed' in case of a wrong password...
@@ -263,22 +267,23 @@ begin
       url := MyRepo.GetDefaultURL(Opsi42, testing);
   end;
   MyRepo.Add(url);
-  RunCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
 
+  InstallRunCommand := TRunCommandElevated.Create(EditPassword.Text,
+    RadioBtnSudo.Checked);
   shellCommand := QuickInstall.DistrInfo.GetPackageManagementShellCommand(
     QuickInstall.distroName);
-  Output := RunCommand.Run(shellCommand + 'update');
+  Output := InstallRunCommand.Run(shellCommand + 'update');
   //ShowMessage(Output);
-  Output := RunCommand.Run(shellCommand + 'install opsi-script');
+  Output := InstallRunCommand.Run(shellCommand + 'install opsi-script');
   //ShowMessage(Output);
-  Output := RunCommand.Run('opsi-script -batch ' + fileName +
+  Output := InstallRunCommand.Run('opsi-script -batch ' + fileName +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
-  FileText.LoadFromFile(fileName+'result.conf');
+  FileText.LoadFromFile(fileName + 'result.conf');
   ShowMessage(FileText.Text);
 
   FileText.Free;
-  RunCommand.Free;
+  InstallRunCommand.Free;
   MyRepo.Free;
   QuickInstall.DistrInfo.Free;
 

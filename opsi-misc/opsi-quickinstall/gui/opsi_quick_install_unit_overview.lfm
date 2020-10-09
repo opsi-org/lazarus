@@ -40,13 +40,16 @@ object Overview: TOverview
     TabOrder = 1
   end
   object PanelFinish: TPanel
+    AnchorSideTop.Control = MemoOverview
+    AnchorSideTop.Side = asrBottom
     Left = 192
-    Height = 64
-    Top = 384
-    Width = 384
+    Height = 60
+    Top = 388
+    Width = 392
+    BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 64
-    ClientWidth = 384
+    ClientHeight = 60
+    ClientWidth = 392
     Color = clForm
     ParentColor = False
     ParentFont = False
@@ -56,7 +59,7 @@ object Overview: TOverview
       Left = 0
       Height = 19
       Top = 0
-      Width = 384
+      Width = 392
       Align = alTop
       Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
       ParentColor = False

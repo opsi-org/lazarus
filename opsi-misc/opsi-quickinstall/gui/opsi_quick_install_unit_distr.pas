@@ -5,7 +5,8 @@ unit opsi_quick_install_unit_distr;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  ExtCtrls, osLinuxRepository;
 
 type
 
@@ -61,6 +62,11 @@ begin
     //ShowMessage(distroRelease);
     DistrInfo.SetInfo(distroName, distroRelease);
     //ShowMessage(DistrInfo.DistrUrlPart);
+    if DistrInfo.MyDistr = other then
+    begin
+      ShowMessage(rsNoSupport + #10 + #10 + DistrInfo.Distribs);
+      Close;
+    end;
   end;
 end;
 

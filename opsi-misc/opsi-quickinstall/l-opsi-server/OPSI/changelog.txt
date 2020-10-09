@@ -1,4 +1,35 @@
 [Changelog]
+
+l-opsi-server (4.1.2.1-16(; testing urgency=low
+
+  * checking of adminuser name is empty
+
+ -- Mathias Radtke <m.radtke@uib.de> Tue, 19 Sep 2020 12:08:00 +0200
+l-opsi-server (4.1.2.1-15); testing urgency=low
+
+  * CentOS8: installing order of redis packages
+
+ -- Mathias Radtke <m.radtke@uib.de> Thu, 24 Sep 2020 17:09:00 +0200
+
+l-opsi-server (4.1.2.1-14); testing urgency=low
+
+  * Leap15.2: installing redis-server and redis-timeseries before opsi-server
+
+ -- Mathias Radtke <m.radtke@uib.de> Tue, 22 Sep 2020 12:00:00 +0200
+
+
+l-opsi-server (4.1.2.1-13); testing urgency=low
+
+  * improved Leap15.2
+
+ -- Mathias Radtke <m.radtke@uib.de> Wed, 09 Sep 2020 12:00:00 +0200
+
+l-opsi-server (4.1.2.1-12); testing urgency=low
+
+  * improved CentOS 8 support
+
+ -- Mathias Radtke <m.radtke@uib.de> Wed, 07 Sep 2020 12:00:00 +0200
+
 l-opsi-server (4.1.2.1-11); testing urgency=low
 
   * CentOS8 support started

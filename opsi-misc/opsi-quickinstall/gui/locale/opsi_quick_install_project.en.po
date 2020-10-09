@@ -274,6 +274,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsno"
 msgid "No"
 msgstr "No"
 
+#: opsi_quick_install_resourcestrings.rsnosupport
+msgid "Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:"
+msgstr "Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:"
+
 #: opsi_quick_install_resourcestrings.rsnotvalid
 msgid " is not a valid input."
 msgstr " is not a valid input."

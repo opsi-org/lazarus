@@ -57,15 +57,12 @@ type
     procedure WriteHelp; virtual;
   end;
 
-{resourcestring
-  rsHi = 'Hello';
-  rsMorning = 'Morning';}
 
   { TQuickInstall }
 
   procedure TQuickInstall.DoRun;
   var
-    ErrorMsg: string;
+    ErrorMsg, project: string;
   begin
     // quick check parameters
     ErrorMsg := CheckOptions('htgndf:', 'help test gui nogui default file:');
@@ -163,7 +160,7 @@ type
   procedure TQuickInstall.SetDefaultValues;
   begin
     // set default values:
-    opsiVersion := 'Opsi 4.1';
+    opsiVersion := 'Opsi 4.2';
     // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
@@ -173,7 +170,7 @@ type
     repoNoCache := repo;
     backend := 'file';
     copyMod := rsNo;
-    repoKind := 'testing';
+    repoKind := 'experimental';
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
@@ -183,7 +180,7 @@ type
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Alisha';
+    adminName := 'Antalya';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -206,7 +203,7 @@ type
       FileText.Add('force_copy_modules=false');
     FileText.Add('gateway=' + gateway);
     if dhcp = rsYes then
-    FileText.Add('install_and_configure_dhcp=true')
+      FileText.Add('install_and_configure_dhcp=true')
     else
       FileText.Add('install_and_configure_dhcp=false');
     FileText.Add('myipname=' + ipName);
@@ -237,6 +234,12 @@ type
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
+    if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
+    begin
+      writeln('The branch "' + repoKind + '" is not available for Opsi 4.2');
+      Exit;
+    end;
+
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
@@ -290,7 +293,11 @@ type
   procedure TQuickInstall.NoGuiQuery;
   begin
     SetDefaultValues;
-    // input variables set by resourcestrings for usage in the overview
+
+    // input variables set by resourcestrings for usage in the overview and
+    // for easier query handling, e.g. if dhcp = rsYes instead of
+    // if (dhcp = 'Yes') or (dhcp = 'Ja') or (dhcp = 'Oui') or ...
+
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
@@ -323,6 +330,11 @@ type
       //What to do with unknown distribution like ubuntu 20.04?
     end;
     DistrInfo.SetInfo(distroName, distroRelease);
+    if DistrInfo.MyDistr = other then
+    begin
+      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
+      Exit;
+    end;
 
     // following queries only for custom setup
     if setupType = rsCustom then
@@ -368,7 +380,7 @@ type
       else if opsiVersion = 'Opsi 4.2' then
         writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
       readln(input);
-      while (Pos('http', input) <> 1) or (input = '')  do
+      while (Pos('http', input) <> 1) or (input = '') do
       begin
         writeln('"', input, '"', rsNotValid);
         readln(input);
@@ -569,9 +581,11 @@ var
   QuickInstall: TQuickInstall;
   user, userID, customLanguage, Lang, DefLang: string;
   //r: TTranslateUnitResult;
+
 begin
   // only execute QuickInstall if user is root:
-  if (RunCommand('id -nu', user) and RunCommand('id -u', userID)) then
+  if (RunCommand('/bin/sh', ['-c', 'echo | id -nu'], user) and
+    RunCommand('/bin/sh', ['-c', 'echo | id -u'], userID)) then
   begin
     Delete(user, user.Length, 1);
     Delete(userID, userID.Length, 1);
@@ -582,15 +596,16 @@ begin
     writeln('Please execute Opsi Quick-Install as root!');
     exit;
   end;
+  //writeln(user, userID);
 
-  //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
-
+  QuickInstall := TQuickInstall.Create(nil);
   // .../lazarus/common/oslog.pas
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
 
-  QuickInstall := TQuickInstall.Create(nil);
+  //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
+
   // Get directory of l-opsi-server/CLIENT_DATA
   QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
   Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
@@ -610,8 +625,6 @@ begin
 
     writeln('');
     writeln(rsWelcome);
-    writeln('');
-
     // language:
     writeln(rsSelLanguage, rsLangOp);
     readln(customLanguage);
@@ -627,15 +640,27 @@ begin
       '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
   end;
 
-  // distribution info
-  QuickInstall.distroName := getLinuxDistroName;
-  QuickInstall.distroRelease := getLinuxDistroRelease;
+  with QuickInstall do
+  begin
+     // distribution info
+  distroName := getLinuxDistroName;
+  distroRelease := getLinuxDistroRelease;
   //writeln(QuickInstall.distroName, QuickInstall.distroRelease);
-  QuickInstall.DistrInfo := TDistributionInfo.Create;
-  QuickInstall.DistrInfo.SetInfo(QuickInstall.distroName, QuickInstall.distroRelease);
+  DistrInfo := TDistributionInfo.Create;
+  DistrInfo.SetInfo(distroName, distroRelease);
+  // In the nogui query the checking of the distribution will be done later.
+  if not HasOption('n', 'nogui') then
+  begin
+    if DistrInfo.MyDistr = other then
+    begin
+      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
+      Exit;
+    end;
+  end;
+  Run;
+  DistrInfo.Free;
+  Free;
+  end;
 
-  QuickInstall.Run;
-  QuickInstall.DistrInfo.Free;
-  QuickInstall.Free;
   LogDatei.Free;
 end.
