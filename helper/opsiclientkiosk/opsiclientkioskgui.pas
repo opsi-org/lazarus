@@ -16,26 +16,39 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
+  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls, Process,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
-  CommCtrl, typinfo, installdlg, lcltranslator,
+  typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
-  DSiWin32,
   opsiconnection,
-  jwawinbase,
-  //osprocesses,
-  Process,
-  ockunique,
+  osprocesses,
+  OckUnique,
   progresswindow,
   ExtDlgs,
   lazproginfo,
   helpinfo,
-  ShellApi
+  {$IFDEF WINDOWS}
+    //CommCtrl,
+    //jwawinbase,
+    //DSiWin32,
+    OckWindows,
+    //ShellApi
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+   {add Linux specific units here}
+   OckLinux,
+   OckPasswordQuery,
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  {add MacOS specific units here}
+   OckMacOS,
+   OckPasswordQuery,
+  {$ENDIF DARWIN}
 
-  {more units if nedded};
-  //imagestodepot;
+  {more units if nedded}
+  OckImagestoDepot;
 
 type
 
@@ -86,6 +99,7 @@ type
     DBMemoProductDescription: TDBMemo;
     DBMemoProductDescription1: TDBMemo;
     DBTextActionRequest: TDBText;
+    ImageListButtons: TImageList;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
     LabelPleaseWait: TLabel;
@@ -240,6 +254,7 @@ type
     DefaultSkinPath: string;
     SoftwareOnDemand : boolean;
     AdminMode : boolean;
+    ShowingFirstTime : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
@@ -255,13 +270,12 @@ type
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
-    function RunAsAdmin(const Handle: DWord; const Path, Params: string
-      ): Boolean;
+    //function RunAsAdmin(const Handle: DWord; const Path, Params: string
+    //  ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
-    function SaveImagesOnDepotNT: String;
+    //function SaveImagesOnDepotNT: String;
     procedure SetPositionButtonsOnPanelToolbar;
-    function GetUserName_:string;
-     { Inits at Start }
+    { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure InitDBGrids;
     procedure InstallNow;
@@ -942,7 +956,13 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
-    if not SoftwareOnDemand then Caption := Caption + ' - ' + rsInstallNow + ': ' + rsDisabled;
+    if not SoftwareOnDemand then
+    begin
+      if FormHelpInfo.LabelModeInfo.Caption = '' then
+        FormHelpInfo.LabelModeInfo.Caption := rsInstallNow + ': ' + rsDisabled
+      else
+        FormHelpInfo.LabelModeInfo.Caption := FormHelpInfo.LabelModeInfo.Caption + ', ' + rsInstallNow + ': ' + rsDisabled
+    end;
     if SoftwareOnDemand then
     begin
       BitBtnInstallNow.Caption := rsInstallNow;
@@ -955,15 +975,18 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-    if AdminMode and DSiIsAdmin then
+    if AdminMode and IsAdmin then
     begin
-      Caption := Caption + ' - ' + rsAdminMode;
+      if FormHelpInfo.LabelModeInfo.Caption = '' then
+        FormHelpInfo.LabelModeInfo.Caption := rsAdminMode
+      else
+        FormHelpInfo.LabelModeInfo.Caption := FormHelpInfo.LabelModeInfo.Caption + ', ' + rsAdminMode;
       BitBtnSaveImages.Visible := True;
     end
     else
     begin
       BitBtnSaveImages.Visible := False;
-      if AdminMode and not DSiIsAdmin then
+      if AdminMode and not IsAdmin then
       begin
         ShowMessage(Format(rsCurrentUserNoAdmin, [LineEnding]));
         AdminMode := false;
@@ -1162,7 +1185,7 @@ begin
     DataSourceProductData.Edit;
     DataModuleOCK.SQLQueryProductData.First;
   end;
-  NotebookProducts.PageIndex:= 0
+  NotebookProducts.PageIndex:= 0;
 end;
 
 procedure TFormOpsiClientKiosk.SetTilesView;
@@ -1392,7 +1415,7 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  if AdminMode and DSiIsAdmin then SaveIconsAndScreenshotsLists;
+  if AdminMode and IsAdmin then SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
   StringListScreenshots.Free;
   DataModuleOCK.Free;
@@ -1734,15 +1757,36 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
+var
+  Output: string;
+  PathToExe: string;
 begin
   SaveIconsAndScreenshotsLists;
+  //PathToExeFolder := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
  {$IFDEF WINDOWS}
-  SaveImagesOnDepotNT;
+  FormSaveImagesOnDepot.Visible := True;
+  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
+  //RunCommand('cmd.exe',['/c', PathToExe],Output,[], swoHIDE);
+  //if SystemAPI is TWindowsAPI then
+    //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
- {$IFDEF UNIX}
-  SaveImagesOnDepotUNIX;
- {$ENDIF UNIX}
-end;
+ {$IFDEF LINUX}
+ //if ShowingFirstTime then
+   FormPasswordQuery.Visible := True
+ //else
+   //FormSaveImagesOnDepot.Visible := True;
+ //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
+ //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
+ {$ENDIF LINUX}
+ {$IFDEF DARWIN}
+ //if ShowingFirstTime then
+   FormPasswordQuery.Visible := True
+ //else
+   //FormSaveImagesOnDepot.Visible := True;
+ //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
+ //RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
+ {$ENDIF DARWIN}
+ end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
 begin
@@ -1961,7 +2005,7 @@ begin
     if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
     SetTilesView;
   end;
-
+  Caption := 'opsi-client-kiosk' + ' (Version '+ ProgramInfo.Version + ')';
 end;
 
 procedure TFormOpsiClientKiosk.FormResize(Sender: TObject);
@@ -2089,11 +2133,13 @@ begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   { is opsiclientd or another instance running? }
+  //{$IFNDEF DARWIN}
   if not CheckUnique(InfoText) then
   begin
     ShowMessage(InfoText);
     halt(1);
   end;
+  //{$ENDIF DARWIN}
   //ShowMessage('Form Create');
 
   { Init Variables }
@@ -2343,24 +2389,6 @@ begin
   halt;
 end;
 
-{:Returns user name of the current thread.
-  @author  Miha-R, Lee_Nover
-  @since   2002-11-25
-}
-function TFormOpsiClientKiosk.GetUserName_: string;
-var
-  buffer: PChar;
-  bufferSize: DWORD;
-begin
-  bufferSize := 256; //UNLEN from lmcons.h
-  buffer := AllocMem(bufferSize * SizeOf(char));
-  try
-    GetUserName(buffer, bufferSize);
-    Result := string(buffer);
-  finally
-    FreeMem(buffer, bufferSize);
-  end;
-end; { DSiGetUserName}
 
 procedure TFormOpsiClientKiosk.SetPositionButtonsOnPanelToolbar;
 var
@@ -2459,7 +2487,7 @@ begin
   //OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
   OCKOpsiConnection.DoActionsOnDemand;
   sleep(10000);
-  while ockunique.numberOfProcessInstances('notifier') > 0 do
+  while osprocesses.numberOfProcessInstances('notifier') > 0 do
   begin
     Application.ProcessMessages;
     //Instances := ockunique.numberOfProcessInstances('notifier');
@@ -2468,7 +2496,8 @@ begin
   end;
 end;
 
-function TFormOpsiClientKiosk.RunAsAdmin(const Handle: DWord; const Path, Params: string): Boolean;
+
+(*function TFormOpsiClientKiosk.RunAsAdmin(const Handle: DWord; const Path, Params: string): Boolean;
 var
   ShellExecuteInfoA: TShellExecuteInfoA;
 begin
@@ -2484,10 +2513,10 @@ begin
     nShow := 1;
   end;
   Result := ShellExecuteExA(@ShellExecuteInfoA);
-end;
+end;*)
 
 
-function TFormOpsiClientKiosk.SaveImagesOnDepotNT: String;
+(*function TFormOpsiClientKiosk.SaveImagesOnDepotNT: String;
 var
   Shell,
   ShellOptions,
@@ -2522,7 +2551,8 @@ begin
     Result := '';
     LogDatei.log('Exception during SaveImagesOnDepot', LLDebug);
   end;
-end;
+end;*)
+
 
 {procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
 begin

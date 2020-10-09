@@ -1,0 +1,13 @@
+stages:
+  - build
+  #- test
+  #- deploy
+ 
+ #build jobs
+ build kiosk win_x64:
+   stage: build
+   tags:
+     - lazarus_win10
+   script: 
+   - git clone --branch experimental "https://gitlab.uib.gmbh/uib/lazarus.git" "C:\git_repos\"
+   - "C:\lazarus\lazbuild.exe" --build-mode=Release_Windows "C:\git_repos\lazarus\helper\opsiclientkiosk\opsiclientkiosk.lpi"

@@ -2573,6 +2573,7 @@ end;
 
 {$ENDIF WINDOWS}
 
+
 function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -2624,10 +2625,12 @@ var
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
   var
-    tmp_buffer: array[0..READ_BYTES - 1] of char;//Buffer of 2048 char
-    output_line: string = '';
+    tmp_buffer: array[1..READ_BYTES] of char;//Buffer of 2048 char
+    //output_line: string = '';
+    output_string : string = '';
     LineBreakPos: longint;
     BytesRead: longint;
+    OutputStream: TStringStream;
   begin
     if proc.output.NumBytesAvailable <= 0 then
       BytesRead := 0
@@ -2635,12 +2638,24 @@ var
     begin
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
-      {$IFDEF WINDOWS}
-      OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
-      {$ENDIF WINDOWS}
-      Buffer := Buffer + tmp_buffer;
 
-      {$IFDEF WINDOWS}
+      OutputStream := TStringStream.Create('');
+      OutputStream.Write(tmp_buffer, BytesRead);
+      //{$IFDEF WINDOWS}
+      //OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
+      //{$ENDIF WINDOWS}
+      //Buffer := Buffer + tmp_buffer;
+      OutputStream.Position:=0;
+      output_string := ConsoleToUTF8(Outputstream.DataString);
+      Buffer := Buffer + output_string;
+
+      if showoutput then
+        begin
+          SystemInfo.Memo1.Append(output_string);
+          ProcessMess;
+        end;
+
+      (*{$IFDEF WINDOWS}
       LineBreakPos := Pos(#13, Buffer);
       {$ELSE WINDOWS}
       LineBreakPos := Pos(#10, Buffer);
@@ -2672,7 +2687,7 @@ var
         {$ELSE WINDOWS}
         LineBreakPos := Pos(#10, Buffer);
         {$ENDIF WINDOWS}
-      end;
+      end; *)
     end;
 
     Result := BytesRead;
@@ -3050,10 +3065,10 @@ begin
               processActivityCounter:=wsCreateUsageCounter(FpcProcess.ProcessID);
               {$ENDIF WIN32}
               *)
-              ProcessMess;
+              //ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(1000);
+              //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -3077,7 +3092,7 @@ begin
               {$ENDIF WIN32}
               *)
               {$ENDIF GUI}
-              ProcessMess;
+              //ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
