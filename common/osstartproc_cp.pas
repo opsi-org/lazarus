@@ -17,7 +17,8 @@ uses
 const
   BytesarrayLength = 5000;
   PATHSEPARATOR = PathDelim;
-  READ_BYTES = 2048;
+  //READ_BYTES = 2048;
+  READ_BYTES = 8192;
 
 function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
@@ -47,6 +48,7 @@ var
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
   starttime, nowtime: TDateTime;
+  loopcounter : longint;
 
   line: string;
   filename: string;
@@ -85,9 +87,9 @@ var
     begin
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
-      {$IFDEF WINDOWS}
-      OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
-      {$ENDIF WINDOWS}
+      //{$IFDEF WINDOWS}
+      //OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
+      //{$ENDIF WINDOWS}
       Buffer := Buffer + tmp_buffer;
 
       {$IFDEF WINDOWS}
@@ -104,11 +106,13 @@ var
         {$ENDIF WINDOWS}
         output.Add(output_line);
         {$IFDEF GUI}
+        {$IFDEF OPSISCRIPT}
         if showoutput then
         begin
           SystemInfo.Memo1.Lines.Add(output_line);
-          ProcessMess;
+          //ProcessMess;
         end;
+        {$ENDIF OPSISCRIPT}
         {$ENDIF GUI}
 
         // skip carriage return if present
@@ -123,6 +127,14 @@ var
         LineBreakPos := Pos(#10, Buffer);
         {$ENDIF WINDOWS}
       end;
+      {$IFDEF GUI}
+        {$IFDEF OPSISCRIPT}
+        if showoutput then
+        begin
+          ProcessMess;
+        end;
+        {$ENDIF OPSISCRIPT}
+        {$ENDIF GUI}
     end;
 
     Result := BytesRead;
@@ -247,6 +259,7 @@ begin
         begin
           running := True;
           starttime := now;
+          loopcounter := 0;
           WaitWindowStarted := False;
           {$IFDEF GUI}
           if waitsecsAsTimeout and (WaitSecs > 5) then
@@ -262,6 +275,7 @@ begin
 
             running := False;
 
+            if (loopcounter mod 2) = 0 then
             if catchout then
               ReadStream(Buffer, FPCProcess, output, showoutput);
 
@@ -488,6 +502,7 @@ begin
               //sleep(50);
               //sleep(1000);
               sleep(1000);
+              inc(loopcounter);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -500,8 +515,8 @@ begin
               begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
+                ProcessMess;
               end;
-              ProcessMess;
               {$ENDIF GUI}
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);

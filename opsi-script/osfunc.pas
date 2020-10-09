@@ -502,6 +502,14 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
   catchout: boolean; var output: TXStringList): boolean; overload;
 
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList;
+  showtitle : string): boolean;  overload;
+
 
 
 function GetUibNTVersion(var ErrorInfo: string): TuibNTVersion;
@@ -4663,6 +4671,21 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
   catchout: boolean; var output: TXStringList): boolean;
+var
+  showtitle : string = '';
+begin
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
+    Report, Exitcode, False, output,showtitle);
+end;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList; showtitle : string): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -4770,8 +4793,10 @@ begin
 
     SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
-    systeminfo.BitBtn1.Enabled := False;
-    systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
+    //systeminfo.BitBtn1.Enabled := False;
+    systeminfo.BitBtn1.Visible:=false;
+    //systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
+    systeminfo.Label1.Caption := 'Executing: ' + showtitle;
     systeminfo.ShowOnTop;
     ProcessMess;
   end;
