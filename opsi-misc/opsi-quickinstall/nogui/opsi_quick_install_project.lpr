@@ -41,14 +41,37 @@ type
 
     // set default values for all required variables
     procedure SetDefaultValues;
-    procedure NoGuiQuery;
-
-    procedure ExecuteWithDefaultValues;
-    procedure ReadProps;
     // write properties in l-opsi-server.conf and properties.conf file
     procedure WritePropsToFile;
     // install opsi-server
     procedure InstallOpsi;
+
+    procedure NoGuiQuery;
+    procedure QueryDistribution;
+    procedure QueryOpsiVersion;
+    procedure QueryRepo;
+    procedure QueryProxy;
+    procedure QueryRepoNoCache;
+    procedure QueryBackend;
+    procedure QueryModules;
+    procedure QueryRepoKind;
+    procedure QueryUCS;
+    procedure QueryReboot;
+    procedure QueryDhcp;
+    procedure QueryLink;
+    procedure QueryNetmask;
+    procedure QueryNetworkAddress;
+    procedure QueryDomain;
+    procedure QueryNameserver;
+    procedure QueryGateway;
+    procedure QueryAdminName;
+    procedure QueryAdminPass;
+    procedure QueryIPName;
+    procedure QueryIPNumber;
+    procedure QueryOverview;
+
+    procedure ExecuteWithDefaultValues;
+    procedure ReadProps;
   protected
     procedure DoRun; override;
   public
@@ -310,7 +333,11 @@ type
     writeln('');
     writeln(rsCarryOut);
     writeln('');
+    QueryDistribution;
+  end;
 
+  procedure TQuickInstall.QueryDistribution;
+  begin
     // distribution:
     writeln(rsDistr, ' ', distroName, ' ', distroRelease);
     writeln(rsIsCorrect, rsYesNoOp);
@@ -327,7 +354,6 @@ type
       readln(input);
       distroName := Copy(input, 1, Pos(' ', input) - 1);
       distroRelease := Copy(input, Pos(' ', input) + 1, Length(input) - Pos(' ', input));
-      //What to do with unknown distribution like ubuntu 20.04?
     end;
     DistrInfo.SetInfo(distroName, distroRelease);
     if DistrInfo.MyDistr = other then
@@ -336,107 +362,157 @@ type
       Exit;
     end;
 
-    // following queries only for custom setup
     if setupType = rsCustom then
+      // following queries only for custom setup
+      QueryOpsiVersion
+    else
+      QueryDhcp;
+  end;
+
+  procedure TQuickInstall.QueryOpsiVersion;
+  begin
+    // opsi version:
+    writeln(rsOpsiVersion, rsOpsiVersionOp);
+    readln(input);
+    while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2')) do
     begin
-      // opsi version:
-      writeln(rsOpsiVersion, rsOpsiVersionOp);
+      writeln('"', input, '"', rsNotValid);
       readln(input);
-      while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2')) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      opsiVersion := input;
-      // repo:
-      if opsiVersion = 'Opsi 4.1' then
-        writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']')
-      else if opsiVersion = 'Opsi 4.2' then
-        writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
-      readln(input);
-      while (Pos('http', input) <> 1) or (input = '') do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      repo := input;
-      // proxy:
-      writeln(rsUseProxy, rsYesNoOp);
-      readln(input);
-      while not ((input = rsYes) or (input = rsNo)) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      if input = rsYes then
-      begin
-        writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
-        readln(input);
-        proxy := input;
-      end;
-      // repo wihout cache proxy:
-      if opsiVersion = 'Opsi 4.1' then
-        writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
-      else if opsiVersion = 'Opsi 4.2' then
-        writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
-      readln(input);
-      while (Pos('http', input) <> 1) or (input = '') do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      repoNoCache := input;
-
-      // backend
-      writeln(rsBackend, rsBackendOp);
-      readln(input);
-      while not ((input = 'file') or (input = 'mysql')) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      backend := input;
-      if input = 'mysql' then
-      begin
-        // copy modules
-        writeln(rsCopyModules, rsYesNoOp);
-        readln(input);
-        while not ((input = rsYes) or (input = rsNo)) do
-        begin
-          writeln('"', input, '"', rsNotValid);
-          readln(input);
-        end;
-        copyMod := input;
-      end;
-      // repo kind
-      writeln(rsRepoKind, rsRepoKindOp);
-      readln(input);
-      while not ((input = 'experimental') or (input = 'stable') or
-          (input = 'testing')) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      repoKind := input;
-
-      // ucs password
-      if distroName = 'Univention' then
-      begin
-        writeln(rsUCS);
-        readln(input);
-        ucsPassword := input;
-      end;
-      // reboot
-      writeln(rsReboot, rsYesNoOp);
-      readln(input);
-      while not ((input = rsYes) or (input = rsNo)) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      reboot := input;
     end;
-    // dhcp
+    opsiVersion := input;
+    QueryRepo;
+  end;
+
+  procedure TQuickInstall.QueryRepo;
+  begin
+    // repo:
+    if opsiVersion = 'Opsi 4.1' then
+      writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']')
+    else if opsiVersion = 'Opsi 4.2' then
+      writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
+    readln(input);
+    while (Pos('http', input) <> 1) or (input = '') do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    repo := input;
+    QueryProxy;
+  end;
+
+  procedure TQuickInstall.QueryProxy;
+  begin
+    // proxy:
+    writeln(rsUseProxy, rsYesNoOp);
+    readln(input);
+    while not ((input = rsYes) or (input = rsNo)) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    if input = rsYes then
+    begin
+      writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
+      readln(input);
+      proxy := input;
+    end;
+    QueryRepoNoCache;
+  end;
+
+  procedure TQuickInstall.QueryRepoNoCache;
+  begin
+    // repo wihout cache proxy:
+    if opsiVersion = 'Opsi 4.1' then
+      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
+    else if opsiVersion = 'Opsi 4.2' then
+      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
+    readln(input);
+    while (Pos('http', input) <> 1) or (input = '') do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    repoNoCache := input;
+    QueryBackend;
+  end;
+
+  procedure TQuickInstall.QueryBackend;
+  begin
+    // backend:
+    writeln(rsBackend, rsBackendOp);
+    readln(input);
+    while not ((input = 'file') or (input = 'mysql')) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    backend := input;
+
+    if input = 'mysql' then
+      QueryModules
+    else
+      QueryRepoKind;
+  end;
+
+  procedure TQuickInstall.QueryModules;
+  begin
+    // copy modules:
+    writeln(rsCopyModules, rsYesNoOp);
+    readln(input);
+    while not ((input = rsYes) or (input = rsNo)) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    copyMod := input;
+    QueryRepoKind;
+  end;
+
+  procedure TQuickInstall.QueryRepoKind;
+  begin
+    // repo kind:
+    writeln(rsRepoKind, rsRepoKindOp);
+    readln(input);
+    while not ((input = 'experimental') or (input = 'stable') or
+        (input = 'testing')) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    repoKind := input;
+
+    if distroName = 'Univention' then
+      QueryUCS
+    else
+      QueryReboot;
+  end;
+
+  procedure TQuickInstall.QueryUCS;
+  begin
+    // ucs password:
+    writeln(rsUCS);
+    readln(input);
+    ucsPassword := input;
+    QueryReboot;
+  end;
+
+  procedure TQuickInstall.QueryReboot;
+  begin
+    // reboot:
+    writeln(rsReboot, rsYesNoOp);
+    readln(input);
+    while not ((input = rsYes) or (input = rsNo)) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    reboot := input;
+    QueryDhcp;
+  end;
+
+  procedure TQuickInstall.QueryDhcp;
+  begin
+    // dhcp:
     writeln(rsDhcp, rsYesNoOp);
     readln(input);
     while not ((input = rsYes) or (input = rsNo)) do
@@ -445,57 +521,111 @@ type
       readln(input);
     end;
     dhcp := input;
-    // following queries only for dhcp
-    if dhcp = rsYes then
-    begin
-      // link
-      writeln(rsTFTPROOT, rsLinkOp);
-      readln(input);
-      while not ((input = 'default.menu') or (input = 'default.nomenu')) do
-      begin
-        writeln('"', input, '"', rsNotValid);
-        readln(input);
-      end;
-      link := input;
-      // netmask
-      writeln(rsNetmask, rsNetmaskEx);
-      readln(input);
-      netmask := input;
-      // network address
-      writeln(rsNetworkAddress, rsNetworkAddressEx);
-      readln(input);
-      networkAddress := input;
-      // domain
-      writeln(rsDomain, rsDomainEx);
-      readln(input);
-      domain := input;
-      // nameserver
-      writeln(rsNameserver, rsNameserverEx);
-      readln(input);
-      nameserver := input;
-      // gateway
-      writeln(rsGateway, rsGatewayEx);
-      readln(input);
-      gateway := input;
-    end;
 
-    // user name
+    if dhcp = rsYes then
+      // following queries only for dhcp
+      QueryLink
+    else
+      QueryAdminName;
+  end;
+
+  procedure TQuickInstall.QueryLink;
+  begin
+    // link:
+    writeln(rsTFTPROOT, rsLinkOp);
+    readln(input);
+    while not ((input = 'default.menu') or (input = 'default.nomenu')) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    link := input;
+    QueryNetmask;
+  end;
+
+  procedure TQuickInstall.QueryNetmask;
+  begin
+    // netmask:
+    writeln(rsNetmask, rsNetmaskEx);
+    readln(input);
+    netmask := input;
+    QueryNetworkAddress;
+  end;
+
+  procedure TQuickInstall.QueryNetworkAddress;
+  begin
+    // network address:
+    writeln(rsNetworkAddress, rsNetworkAddressEx);
+    readln(input);
+    networkAddress := input;
+    QueryDomain;
+  end;
+
+  procedure TQuickInstall.QueryDomain;
+  begin
+    // domain:
+    writeln(rsDomain, rsDomainEx);
+    readln(input);
+    domain := input;
+    QueryNameserver;
+  end;
+
+  procedure TQuickInstall.QueryNameserver;
+  begin
+    // nameserver:
+    writeln(rsNameserver, rsNameserverEx);
+    readln(input);
+    nameserver := input;
+    QueryGateway;
+  end;
+
+  procedure TQuickInstall.QueryGateway;
+  begin
+    // gateway:
+    writeln(rsGateway, rsGatewayEx);
+    readln(input);
+    gateway := input;
+    QueryAdminName;
+  end;
+
+  procedure TQuickInstall.QueryAdminName;
+  begin
+    // admin name:
     writeln(rsAdminName);
     readln(input);
     adminName := input;
-    // user password
+    QueryAdminPass;
+  end;
+
+  procedure TQuickInstall.QueryAdminPass;
+  begin
+    // admin password:
     writeln(rsAdminPassword);
     readln(input);
     adminPassword := input;
-    // IP name
+    QueryIPName;
+  end;
+
+  procedure TQuickInstall.QueryIPName;
+  begin
+    // IP name:
     writeln(rsIPName);
     readln(input);
     ipName := input;
-    // IP number
+    QueryIPNumber;
+  end;
+
+  procedure TQuickInstall.QueryIPNumber;
+  begin
+    // IP number:
     writeln(rsIPNumber);
     readln(input);
     ipNumber := input;
+    QueryOverview;
+  end;
 
+  procedure TQuickInstall.QueryOverview;
+  begin
     // Overview
     writeln('');
     writeln(rsOverview);
@@ -642,24 +772,24 @@ begin
 
   with QuickInstall do
   begin
-     // distribution info
-  distroName := getLinuxDistroName;
-  distroRelease := getLinuxDistroRelease;
-  //writeln(QuickInstall.distroName, QuickInstall.distroRelease);
-  DistrInfo := TDistributionInfo.Create;
-  DistrInfo.SetInfo(distroName, distroRelease);
-  // In the nogui query the checking of the distribution will be done later.
-  if not HasOption('n', 'nogui') then
-  begin
-    if DistrInfo.MyDistr = other then
+    // distribution info
+    distroName := getLinuxDistroName;
+    distroRelease := getLinuxDistroRelease;
+    //writeln(QuickInstall.distroName, QuickInstall.distroRelease);
+    DistrInfo := TDistributionInfo.Create;
+    DistrInfo.SetInfo(distroName, distroRelease);
+    // In the nogui query the checking of the distribution will be done later.
+    if not HasOption('n', 'nogui') then
     begin
-      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
-      Exit;
+      if DistrInfo.MyDistr = other then
+      begin
+        writeln(rsNoSupport + #10 + DistrInfo.Distribs);
+        Exit;
+      end;
     end;
-  end;
-  Run;
-  DistrInfo.Free;
-  Free;
+    Run;
+    DistrInfo.Free;
+    Free;
   end;
 
   LogDatei.Free;
