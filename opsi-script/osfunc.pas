@@ -3596,10 +3596,10 @@ begin
               processActivityCounter:=wsCreateUsageCounter(FpcProcess.ProcessID);
               {$ENDIF WIN32}
               *)
-              ProcessMess;
+              //ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(1000);
+              //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -3623,7 +3623,7 @@ begin
               {$ENDIF WIN32}
               *)
               {$ENDIF GUI}
-              ProcessMess;
+              //ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
