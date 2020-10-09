@@ -25,13 +25,13 @@ function IsValidEmail(const Value: string): Boolean;
 
 implementation
 
-// Function to validate if the Doamin Name is Fully Qualified
+// Function to validate if the Domain Name is Fully Qualified
 function isValidFQDN(expr : string) : boolean;
 var RegExprObj : TRegExpr;
 begin
   result := False;
   RegExprObj := TRegExpr.Create;
-  RegExprObj.Expression := '(?m)^[^_\-](([^_\-][a-zA-Z0-9][a-zA-Z0-9_\-]{0,62}\.){2,}[a-zA-Z]{2,63}$)';
+  RegExprObj.Expression := '^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.([a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.){1,}[a-zA-Z]{2,63}$';
   if Length(expr)> 254 then
      result := False
   else
