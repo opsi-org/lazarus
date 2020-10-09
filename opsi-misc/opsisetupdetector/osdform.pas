@@ -226,8 +226,6 @@ type
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
-    TIComboBoxInstaller1: TTIComboBox;
-    TIComboBoxInstaller2: TTIComboBox;
     TIEditInstallDir2: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMstFile2: TTIEdit;
@@ -253,10 +251,12 @@ type
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
     TILabelDirSelIcon: TTILabel;
+    TILabelInstaller2: TTILabel;
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
     TIS1Url: TTILabel;
+    TILabelInstaller1: TTILabel;
     TIS2Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
@@ -527,8 +527,10 @@ begin
   begin
     with aktProduct do
     begin
-      TIComboBoxInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
-      TIComboBoxInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
+      TILabelInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
+      TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
+      //TIComboBoxInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
+      //TIComboBoxInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TIEditSetupfile1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFullFileName');
       TIEditSetupFile2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFullFileName');
       //TIComboBoxArch1.Link.SetObjectAndProperty(SetupFiles[0], 'architecture');
@@ -623,8 +625,10 @@ procedure TResultform1.FormDestroy(Sender: TObject);
 begin
   TIEditSetupfile1.Link.TIObject := nil;
   TIEditSetupFile2.Link.TIObject := nil;
-  TIComboBoxInstaller1.Link.TIObject := nil;
-  TIComboBoxInstaller2.Link.TIObject := nil;
+  //TIComboBoxInstaller1.Link.TIObject := nil;
+  TILabelInstaller1.Link.TIObject := nil;
+  TILabelInstaller2.Link.TIObject := nil;
+  //TIComboBoxInstaller2.Link.TIObject := nil;
   //TIComboBoxArch1.Link.TIObject := nil;
   //TIComboBoxArch2.Link.TIObject := nil;
   TIEditMstFile1.Link.TIObject := nil;

@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 360
+  Left = 700
   Height = 560
-  Top = 133
+  Top = 355
   Width = 905
   Caption = 'opsi Setup Detector'
   ClientHeight = 540
@@ -98,22 +98,22 @@ object resultForm1: TresultForm1
       Height = 475
       Top = 1
       Width = 898
-      ActivePage = TabSheetIcons
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 6
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 470
+        ClientHeight = 447
         ClientWidth = 890
         OnExit = TabSheetStartExit
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 158
+          Height = 135
           Top = 312
           Width = 890
           Align = alClient
@@ -1919,12 +1919,12 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 404
+        ClientHeight = 447
         ClientWidth = 890
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 238
+          Height = 281
           Top = 92
           Width = 890
           Align = alClient
@@ -1935,7 +1935,7 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 74
-          Top = 330
+          Top = 373
           Width = 890
           Align = alBottom
           BorderStyle = bsSingle
@@ -2143,7 +2143,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 449
+        ClientHeight = 447
         ClientWidth = 890
         ParentFont = False
         object FlowPanel1: TFlowPanel
@@ -2161,7 +2161,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = TIComboBoxInstaller1
+              Control = TILabelInstaller1
               WrapAfter = waAuto
               Index = 1
             end          
@@ -2198,23 +2198,8 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
           end
-          object TIComboBoxInstaller1: TTIComboBox
-            Left = 179
-            Height = 23
-            Top = 12
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 5
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
-            ParentFont = False
-            TabOrder = 0
-          end
           object TICheckBoxS1Mst: TTICheckBox
-            Left = 305
+            Left = 274
             Height = 23
             Top = 12
             Width = 90
@@ -2227,10 +2212,10 @@ object resultForm1: TresultForm1
             Enabled = False
             OnChange = TICheckBoxS1MstChange
             PropertyNameAsCaption = False
-            TabOrder = 1
+            TabOrder = 0
           end
           object Label63: TLabel
-            Left = 421
+            Left = 390
             Height = 21
             Top = 12
             Width = 34
@@ -2245,7 +2230,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS1Url: TTILabel
-            Left = 466
+            Left = 435
             Height = 21
             Top = 12
             Width = 51
@@ -2257,6 +2242,24 @@ object resultForm1: TresultForm1
             Font.Color = clBlue
             Font.Height = -16
             Font.Style = [fsUnderline]
+            OnClick = TIS1UrlClick
+            OnMouseEnter = TIS1UrlMouseEnter
+            OnMouseLeave = TIS1UrlMouseLeave
+            ParentFont = False
+          end
+          object TILabelInstaller1: TTILabel
+            Left = 174
+            Height = 21
+            Top = 12
+            Width = 64
+            Anchors = []
+            BorderSpacing.Left = 5
+            BorderSpacing.Top = 5
+            BorderSpacing.Right = 10
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 2
+            Font.Height = -16
+            Font.Style = [fsBold]
             OnClick = TIS1UrlClick
             OnMouseEnter = TIS1UrlMouseEnter
             OnMouseLeave = TIS1UrlMouseLeave
@@ -2813,7 +2816,7 @@ object resultForm1: TresultForm1
         object FlowPanel17: TFlowPanel
           Left = 0
           Height = 70
-          Top = 379
+          Top = 377
           Width = 890
           Align = alBottom
           ControlList = <          
@@ -2980,7 +2983,7 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
-        ClientHeight = 451
+        ClientHeight = 447
         ClientWidth = 890
         ParentFont = False
         object FlowPanel2: TFlowPanel
@@ -2998,7 +3001,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = TIComboBoxInstaller2
+              Control = TILabelInstaller2
               WrapAfter = waAuto
               Index = 1
             end          
@@ -3035,23 +3038,8 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
           end
-          object TIComboBoxInstaller2: TTIComboBox
-            Left = 179
-            Height = 23
-            Top = 12
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Top = 5
-            BorderSpacing.Around = 3
-            BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
-            ParentFont = False
-            TabOrder = 0
-          end
           object TICheckBoxS2Mst: TTICheckBox
-            Left = 305
+            Left = 336
             Height = 23
             Top = 12
             Width = 90
@@ -3064,10 +3052,10 @@ object resultForm1: TresultForm1
             Enabled = False
             OnChange = TICheckBoxS2MstChange
             PropertyNameAsCaption = False
-            TabOrder = 1
+            TabOrder = 0
           end
           object Label69: TLabel
-            Left = 421
+            Left = 452
             Height = 21
             Top = 12
             Width = 34
@@ -3082,7 +3070,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS2Url: TTILabel
-            Left = 466
+            Left = 497
             Height = 21
             Top = 12
             Width = 51
@@ -3094,6 +3082,24 @@ object resultForm1: TresultForm1
             Font.Color = clBlue
             Font.Height = -16
             Font.Style = [fsUnderline]
+            OnClick = TIS1UrlClick
+            OnMouseEnter = TIS1UrlMouseEnter
+            OnMouseLeave = TIS1UrlMouseLeave
+            ParentFont = False
+          end
+          object TILabelInstaller2: TTILabel
+            Left = 174
+            Height = 21
+            Top = 12
+            Width = 126
+            Anchors = []
+            BorderSpacing.Left = 5
+            BorderSpacing.Top = 5
+            BorderSpacing.Right = 10
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 2
+            Font.Height = -16
+            Font.Style = [fsBold]
             OnClick = TIS1UrlClick
             OnMouseEnter = TIS1UrlMouseEnter
             OnMouseLeave = TIS1UrlMouseLeave
@@ -3651,7 +3657,7 @@ object resultForm1: TresultForm1
         object FlowPanel13: TFlowPanel
           Left = 0
           Height = 70
-          Top = 381
+          Top = 377
           Width = 890
           Align = alBottom
           ControlList = <          
