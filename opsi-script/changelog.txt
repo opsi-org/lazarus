@@ -18,6 +18,9 @@ opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
   In this case normally a 'reboot after this script' flag will be set.
   By using the -c option setting this flag will be supressed
   The option -c (continue) make only sense in combination with -r
+* section name now as header of showoutput
+
+* startprocess_cp fix (jan werner)
 
 -- d.oertel <d.oertel@uib.de> Wed, 23 Sep 2020 15:00
 

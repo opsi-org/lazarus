@@ -229,7 +229,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="48">
+    <Units Count="51">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -442,6 +442,18 @@
         <Filename Value="../common/ostxstringlist.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
+      <Unit48>
+        <Filename Value="osfuncwin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="osfuncwin2.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="osfuncwin3.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

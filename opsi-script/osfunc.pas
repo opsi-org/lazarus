@@ -94,6 +94,7 @@ uses
   lconvencoding,
   lcltype,
   ostxstringlist,
+  osstartproc_cp,
   pipes;
 
 const
@@ -2573,7 +2574,7 @@ end;
 
 {$ENDIF WINDOWS}
 
-
+(*
 function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -2612,14 +2613,6 @@ var
   //  var ProcessInfo: jwawinbase.TProcessInformation;
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
-
-  (*
-  starcounter : integer;
-  cpu100stars : string;
-  {$IFDEF WIN32}
-  processActivityCounter: PCPUUsageData;
-  {$ENDIF WIN32}
-  *)
   //i: integer; // tmp
 
   function ReadStream(var Buffer: string; var proc: TProcess;
@@ -2655,39 +2648,6 @@ var
           ProcessMess;
         end;
 
-      (*{$IFDEF WINDOWS}
-      LineBreakPos := Pos(#13, Buffer);
-      {$ELSE WINDOWS}
-      LineBreakPos := Pos(#10, Buffer);
-      {$ENDIF WINDOWS}
-
-      while not (LineBreakPos = 0) do
-      begin
-        output_line := Copy(Buffer, 1, LineBreakPos - 1);
-        {$IFDEF WINDOWS}
-        output_line := WINCPToUTF8(output_line);
-        {$ENDIF WINDOWS}
-        output.Add(output_line);
-        {$IFDEF GUI}
-        if showoutput then
-        begin
-          SystemInfo.Memo1.Lines.Add(output_line);
-          ProcessMess;
-        end;
-        {$ENDIF GUI}
-
-        // skip carriage return if present
-        if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
-          Inc(LineBreakPos, 1);
-
-        Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
-
-        {$IFDEF WINDOWS}
-        LineBreakPos := Pos(#13, Buffer);
-        {$ELSE WINDOWS}
-        LineBreakPos := Pos(#10, Buffer);
-        {$ENDIF WINDOWS}
-      end; *)
     end;
 
     Result := BytesRead;
@@ -2923,12 +2883,6 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                 begin
                   running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
                 end
                 else
                 begin
@@ -3048,23 +3002,11 @@ begin
               else
               begin
                 running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
               end;
             end;
 
             if running then
             begin
-              (*
-              {$IFDEF WIN32}
-              processActivityCounter := nil;
-              processActivityCounter:=wsCreateUsageCounter(FpcProcess.ProcessID);
-              {$ENDIF WIN32}
-              *)
               //ProcessMess;
               //sleep(50);
               //sleep(1000);
@@ -3082,15 +3024,6 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
-              (*
-              {$IFDEF WIN32}
-              if processActivityCounter <> nil then
-              begin
-                logdatei.log('Process CPU Activity: '+inttostr(round(wsGetCpuUsage(processActivityCounter)))+' -> '+ copy(cpu100stars, 1, round(wsGetCpuUsage(processActivityCounter))),LLDebug2);
-                FBatchOberflaeche.setCPUActivityLabel(copy(cpu100stars, 1, 1+round(wsGetCpuUsage(processActivityCounter))));
-              end;
-              {$ENDIF WIN32}
-              *)
               {$ENDIF GUI}
               //ProcessMess;
               logdatei.log('Waiting for ending at ' +
@@ -3138,16 +3071,10 @@ begin
     FpcProcess.Free;
     {$IFDEF GUI}
     FBatchOberflaeche.showProgressBar(False);
-    (*
-    {$IFDEF WIN32}
-    if processActivityCounter <> nil then wsDestroyUsageCounter(processActivityCounter);
-    processActivityCounter := nil;
-    FBatchOberflaeche.setCPUActivityLabel('');
-    {$ENDIF WIN32}
-    *)
-    {$ENDIF GUI}
+     {$ENDIF GUI}
   end;
 end;
+*)
 
 {$IFDEF WIN32}
 function ReadPipe(var Buffer: string; var hReadPipe: THandle;
