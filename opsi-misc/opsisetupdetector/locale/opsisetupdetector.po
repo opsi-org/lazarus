@@ -576,10 +576,6 @@ msgstr ""
 msgid "&Help"
 msgstr ""
 
-#: tresultform1.flowpanel14.caption
-msgid "FlowPanel14"
-msgstr ""
-
 #: tresultform1.label1.caption
 msgid "No Icons"
 msgstr ""
