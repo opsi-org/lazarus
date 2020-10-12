@@ -1,0 +1,191 @@
+
+
+
+encoding=utf8
+
+; ###################################################################################################
+deffunc installmacosdmg($mydmg$ : string) : string
+	defStringlist $outlist$
+	defvar $outline$
+	defVar $regexp$
+	defVar $mountdevice$
+	defVar $mountpoint$
+	defvar $exitcode$
+	defvar $goon$
+	set $result$ = "false"
+	set $goon$ = "true"
+
+	; todo test file, test extension
+	if fileexists($mydmg$)
+		if not(ExtractFileExtension ($mydmg$) = ".dmg")
+			LogError $mydmg$ + " has not the extension .dmg as expected. - Abort installation."
+			set $goon$ = "false"
+		endif
+	else
+		LogError $mydmg$ + " is not a file as expected. - Abort installation."
+		set $goon$ = "false"
+	endif
+	if $goon$ = "true"
+		; convert to supress license agreement
+		; https://superuser.com/questions/221136/bypass-a-licence-agreement-when-mounting-a-dmg-on-the-command-line
+		set $outlist$ = shellcall("hdiutil convert -quiet "+$mydmg$+" -format UDTO -o /tmp/converted.cdr")
+		set $outlist$ = shellcall("hdiutil attach -quiet -nobrowse -noverify -noautoopen -mountpoint /tmp/opsimountpoint /tmp/converted.cdr")
+		set $outlist$ = shellcall("ls -1 /tmp/opsimountpoint")
+		; do we have a .app
+		set $regexp$ =  "\.app$"
+		set $outlist$ = getSubListByContainingRegex($regexp$,$outlist$)
+		if count($outlist$) > "0"
+			; use the first one
+			set $outline$ = trim(takeString("0" , $outlist$))
+			; is it a directory (it should)
+			if directoryexists("/tmp/opsimountpoint/"+$outline$)
+				; we have found the .app directory inside the dmg and now we copy it
+				markerrornumber
+				Files_copy_app
+				if errorsOccurredSinceMark = 0
+					; installation success
+					set $result$ = "true"
+				else
+					logerror "Copy files from "+$outline$+" to Application Dir failed. - installation failed."
+				endif
+			else
+				LogError $outline$+" inside the dmg is not a directory as expected. - installation failed."
+				set $goon$ = "false"
+			endif
+		else
+			set $regexp$ =  "\.pkg\n"
+			set $outlist$ = getSubListByContainingRegex($regexp$,$outlist$)
+			if count($outlist$) > "0"
+				; install pkg
+				; https://apple.stackexchange.com/questions/72226/installing-pkg-with-terminal
+				; use the first one
+				set $outline$ = trim(takeString("0" , $outlist$))
+				; is it a file (it should)
+				if fileexists($outline$)
+					set $exitcode$ = shellcall("installer -allowUntrusted -verbose -pkg "+$outline$+" -target / -dumplog /tmp/installer.log")
+					if not($exitcode$ = "0")
+						logerror "installer did not end with exitcode 0. - installation failed."
+						includelog("/tmp/installer.log","50")
+					else
+						; installation success
+						set $result$ = "true"
+					endif
+				else
+					LogError $outline$+" is not a file as expected. - Abort installation."
+					set $goon$ = "false"
+				endif
+			else
+				LogError $outline$+" does wether contain a .app dir nor a pkg file. - Abort installation."
+			endif
+		endif
+		; unmount
+		set $exitcode$ = shellcall("hdiutil detach /tmp/opsimountpoint")
+		if not($exitcode$ = "0")
+			logerror "hdiutil did not end with exitcode 0"
+		endif
+		; shellcall("hdiutil detach "+$mountdevice$)
+		Files_cleanup
+	endif
+	
+	[Files_cleanup]
+	del -f /tmp/installer.log
+	del -f /tmp/converted.cdr
+	del -f /tmp/opsimountpoint
+
+	[Files_copy_app]
+	copy -s "/tmp/opsimountpoint/$outline$/*" "/Applications/$outline$/"
+endfunc
+; ###################################################################################################
+
+
+; ###################################################################################################
+deffunc installmacoszip($myzip$ : string) : string
+	defStringlist $outlist$
+	defvar $outline$
+	defVar $regexp$
+	defvar $exitcode$
+	defvar $goon$
+	set $result$ = "false"
+	set $goon$ = "true"
+
+	; todo test file, test extension
+	if fileexists($myzip$)
+		if not(ExtractFileExtension ($myzip$) = ".zip")
+			LogError $myzip$ + " has not the extension .zip as expected. - Abort installation."
+			set $goon$ = "false"
+		endif
+	else
+		LogError $myzip$ + " is not a file as expected. - Abort installation."
+		set $goon$ = "false"
+	endif
+	if $goon$ = "true"
+		Files_unzip
+		if errorsOccurredSinceMark > 0
+			logerror "Unzip files from "+$myzip$+" to temporary Dir failed. - installation failed."
+			set $goon$ = "false"
+		endif
+		if $goon$ = "true"
+			set $outlist$ = shellcall("ls -1 /tmp/opsiinstall/")
+			; do we have a .app
+			set $regexp$ =  "\.app$"
+			set $outlist$ = getSubListByContainingRegex($regexp$,$outlist$)
+			if count($outlist$) > "0"
+				; use the first one
+				set $outline$ = trim(takeString("0" , $outlist$))
+				; is it a directory (it should)
+				if directoryexists("/tmp/opsiinstall/"+$outline$)
+					; we have found the .app directory inside the dmg and now we copy it
+					markerrornumber
+					Files_copy_app
+					if errorsOccurredSinceMark = 0
+						; installation success
+						set $result$ = "true"
+					else
+						logerror "Copy files from "+$outline$+" to Application Dir failed. - installation failed."
+					endif
+				else
+					LogError $outline$+" inside the zip is not a directory as expected. - installation failed."
+					set $goon$ = "false"
+				endif
+			else
+				set $regexp$ =  "\.pkg\n"
+				set $outlist$ = getSubListByContainingRegex($regexp$,$outlist$)
+				if count($outlist$) > "0"
+					; install pkg
+					; https://apple.stackexchange.com/questions/72226/installing-pkg-with-terminal
+					; use the first one
+					set $outline$ = trim(takeString("0" , $outlist$))
+					; is it a file (it should)
+					if fileexists($outline$)
+						set $exitcode$ = shellcall("installer -allowUntrusted -verbose -pkg "+$outline$+" -target / -dumplog /tmp/installer.log")
+						if not($exitcode$ = "0")
+							logerror "installer did not end with exitcode 0. - installation failed."
+							includelog("/tmp/installer.log","50")
+						else
+							; installation success
+							set $result$ = "true"
+						endif
+					else
+						LogError $outline$+" is not a file as expected. - Abort installation."
+						set $goon$ = "false"
+					endif
+				else
+					LogError $outline$+" does wether contain a .app dir nor a pkg file. - Abort installation."
+				endif
+			endif
+		endif
+		Files_cleanup
+	endif
+	
+	[Files_cleanup]
+	del -f /tmp/installer.log
+	del -sf /tmp/opsiinstall
+	
+	[Files_unzip]
+	checktargetpath = "/tmp/opsiinstall"
+	unzipfile "$myzip$" "/tmp/opsiinstall"
+
+	[Files_copy_app]
+	copy -s "/tmp/opsiinstall/$outline$/*" "/Applications/$outline$/"
+endfunc
+; ###################################################################################################

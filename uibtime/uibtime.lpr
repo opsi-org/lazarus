@@ -10,7 +10,7 @@ uses
   Forms, lazreportpdfexport, printer4lazarus, datetimectrls,
   uibdata, login, ontop, debug, changelog, treescrolldown, logoff,
   work_description, dataedit, loggedin_, nachf, statistik, result, sqltext,
-  multiday, runprocess, uibtWorkRepChooser, uib2erp,
+  multiday, linhandlewin, uibtWorkRepChooser, uib2erp,
 notificationdlg, uibdatetime, pack_powerpdf;
 
 {$R *.res}

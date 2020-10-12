@@ -122,139 +122,17 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr "Pfad zur opsi-work-bench"
 
-#: osdconfigdlg.rsconfig_filled
-#, fuzzy
-msgctxt "osdconfigdlg.rsconfig_filled"
-msgid "Automatically detected. Do we have all needed configurations"
-msgstr "Automatisch erkannt. Sind alle nötigen Konfigurationen bekannt ?"
-
-#: osdconfigdlg.rscreatebuild
-msgid "Selects the Build mode Checkbox build."
-msgstr ""
-
-#: osdconfigdlg.rscreateinstall
-msgid "Selects the Build mode Checkbox install."
-msgstr ""
-
-#: osdconfigdlg.rscreatequiet
-msgid "Selects the Build mode Checkbox quiet."
-msgstr ""
-
-#: osdconfigdlg.rscreateradioindex
-#, fuzzy
-msgctxt "osdconfigdlg.rscreateradioindex"
-msgid "selects the Create mode Radiobutton."
-msgstr "Auswahl des RadioButtons 'Erstellungs Modus'"
-
-#: osdconfigdlg.rsemail_address
-#, fuzzy
-msgctxt "osdconfigdlg.rsemail_address"
-msgid "Your email address, used for the changelog entry"
-msgstr "Ihre eMail Adresse. Verwendet für den Changelog."
-
-#: osdconfigdlg.rsfullname
-#, fuzzy
-msgctxt "osdconfigdlg.rsfullname"
-msgid "Your full name, used for the changelog entry"
-msgstr "Ihre voller Name. Verwendet für den Changelog."
-
-#: osdconfigdlg.rsimport_libraries
-#, fuzzy
-msgctxt "osdconfigdlg.rsimport_libraries"
-msgid ""
-"List of opsi-script libraries that have to be imported.\n"
-"One per line. May be empty. Example:\n"
-"myinstallhelperlib.opsiscript\n"
-msgstr ""
-"Liste der opsi-script Bibliotheken.\n"
-"Eine pro Zeile. Darf leer sein. Beispiel:\n"
-"myInstallhelperlib.opsiscript\n"
-
-#: osdconfigdlg.rspathtoopsipackagebuilder
-#, fuzzy
-msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
-msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-msgstr ""
-"Pfad zum OpsiPackageBuilder. Der OpsiPackageBuilder wird verwendet um via ssh die opsi Pakete auf dem opsi-server zu bauen. siehe auch: \n"
-"https://forum.opsi.org/viewtopic.php?f=22&t=7573\n"
-
-#: osdconfigdlg.rspostinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the installation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Installation finished...\"\n"
-msgstr ""
-"opsi-script code Zeilen welche nach dem Ende der Installation eingefügt werden.\n"
-"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
-"comment \"Installation finished...\"\n"
-
-#: osdconfigdlg.rspostuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the uninstallation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Uninstall finished...\"\n"
-msgstr ""
-"opsi-script code Zeilen welche nach dem Ende der Deinstallation eingefügt werden.\n"
-"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
-"comment \"Uninstall finished...\"\n"
-
-#: osdconfigdlg.rspreinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the installation starts. \n"
-"One per line. May be empty. Example: \n"
-"comment \"Start the installation ...\"\n"
-msgstr ""
-"opsi-script code Zeilen welche vor dem Begrinn der Installation eingefügt werden.\n"
-"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
-"comment \"Start the installation ...\"\n"
-
-#: osdconfigdlg.rspreuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the uninstallation starts.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Start the uninstallation ...\"\n"
-msgstr ""
-"opsi-script code Zeilen welche vor dem Beginn der Deinstallation eingefügt werden.\n"
-"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
-"comment \"Start the uninstallation ...\"\n"
-
-#: osdconfigdlg.rsregisterinfilemanager
-#, fuzzy
-msgctxt "osdconfigdlg.rsregisterinfilemanager"
-msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
-msgstr "Soll dieses Programm für das Kontextmenü des Dateimanagers (Explorer) registriert werden ?"
-
-#: osdconfigdlg.rsworkbench_mounted
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_mounted"
-msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
-msgstr "Automatisch erkannt. Ist die opsi-work-bench unter dem angegebenen Pfad 'workbench_path' erreichbar."
-
-#: osdconfigdlg.rsworkbench_path
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_path"
-msgid "Path to the opsi_workbench"
-msgstr "Pfad zur opsi-work-bench"
-
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
-msgstr "Verzeichnis konnte nicht erstellt werden:"
+msgstr "Verzeichnis konnte nicht erstellt werden: "
 
 #: osdcreate.rsdirectory
 msgid "Directory "
-msgstr "Verzeichnis"
+msgstr "Verzeichnis "
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
 msgid " still exits. Overwrite / Delete ?"
-msgstr "existiert bereits. Löschen und Überschreiben ?"
+msgstr " existiert bereits. Löschen und Überschreiben ?"
 
 #: osddlgnewproperty.rscontainswhitespacewarning
 msgid " contains whitespace. Whitespaces are not allowed."
@@ -552,16 +430,6 @@ msgstr "Dependency bearbeiten"
 msgid "Edit Property"
 msgstr "Property bearbeiten"
 
-#: tresultform1.bitbtnopenfile.caption
-msgctxt "tresultform1.bitbtnopenfile.caption"
-msgid "Open Setup File"
-msgstr "Setup Datei öffnen"
-
-#: tresultform1.bitbtnopenfile1.caption
-msgctxt "tresultform1.bitbtnopenfile1.caption"
-msgid "Open Setup File"
-msgstr "Setup Datei öffnen"
-
 #: tresultform1.bitbtnopenmst1.caption
 msgctxt "tresultform1.bitbtnopenmst1.caption"
 msgid "Open MST File"
@@ -684,11 +552,6 @@ msgstr "Analysiere eine einzelne Setup Datei und erzeuge ein opsi Paket"
 #: tresultform1.caption
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detektor"
-
-#: tresultform1.checkboxusemst.caption
-msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr "MST Datei"
 
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
@@ -813,8 +676,8 @@ msgstr "Software Version"
 
 #: tresultform1.label72.caption
 msgctxt "tresultform1.label72.caption"
-msgid "Required Space"
-msgstr "erforderlich"
+msgid "Required Space MB"
+msgstr "Benötigter Platz MB"
 
 #: tresultform1.label73.caption
 msgctxt "tresultform1.label73.caption"

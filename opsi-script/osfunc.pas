@@ -401,6 +401,10 @@ type
     function MakeShellLink
       (const description, thePath, commandline_arguments, working_directory,
       iconPath: string; const icon_index: integer; shortcut: word): boolean; overload;
+    function MakeShellLink
+      (const description, thePath, commandline_arguments, working_directory,
+      iconPath: string; const icon_index: integer; shortcut: word;
+      showwindow: integer): boolean; overload;
     function DeleteShellLink(const description: string): boolean;
     function DeleteShellFolder(const SystemFolder: integer;
       const foldername: string): boolean;
@@ -447,6 +451,8 @@ procedure FindLocalIPData(var ipName: string; var address: string);
 
 function ExitSession(exitmode: TExitMode; var Fehler: string): boolean;
 function GetNetDrive(const pathname: string): string;
+
+
 
 {$IFNDEF WIN64}
 function KillTask(ExeFileName: string; var info: string): boolean;
@@ -2336,8 +2342,22 @@ begin
               //wait until a window is appearing
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
-                running := True;
-                logdatei.log('Wait for appear Window: "' + Ident + 'not found.', LLDebug);
+                logdatei.log('Wait for appear Window: "' + Ident +
+                  ' not found.', LLDebug);
+                if WaitSecs = 0 then
+                  running := True
+                else
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for appear Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
+                end;
               end
               else
                 logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
@@ -2355,9 +2375,22 @@ begin
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
-                running := True;
-              // in case WaitForWindowVanished we are not yet ready
-              // but have to check waiting condition 3
+                // in case WaitForWindowVanished we are not yet ready
+                // but have to check waiting condition 3
+                if WaitSecs = 0 then
+                  running := True
+                else
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for vanish Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
+                end;
             end
 
             else
@@ -2453,7 +2486,8 @@ begin
                   lpExitCode := FpcProcess.ExitCode;
                   logdatei.log(
                     'Process : ' + FpcProcess.Executable + ' terminated at: ' +
-                    DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+                    DateTimeToStr(now) + ' exitcode is: ' +
+                    IntToStr(lpExitCode), LLInfo);
                 end;
                 {$ENDIF LINUX}
               end;
@@ -2546,7 +2580,7 @@ begin
               ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(100);
+              sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -4274,6 +4308,19 @@ function ExitSession(ExitMode: TExitMode; var Fehler: string): boolean;
 var
   exitcode: integer;
   exitcmd: string;
+  outstr: string;
+
+  procedure cleanuplog;
+  begin
+    if LogDatei <> nil then
+    begin
+      LogDatei.Free;
+      LogDatei := nil;
+    end;
+    Result := True;
+    Fehler := '';
+  end;
+
 begin
   if ExitMode = txmNoExit then
   begin
@@ -4290,7 +4337,7 @@ begin
       begin
         LogDatei.LogSIndentLevel := 0;
         LogDatei.DependentAdd('============  opsi-script ' +
-          OpsiscriptVersionname + ' is regularly rebooting. Time ' +
+          OpsiscriptVersionname + ' is regularly and direct rebooting. Time ' +
           FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
         sleep(1000);
@@ -4305,68 +4352,72 @@ begin
       if not FileExistsUTF8(exitcmd) then
         exitcmd := '/usr/bin/shutdown';
       exitcmd := exitcmd + ' -r +1 opsi-reboot';
-      LogDatei.log('Exit command is: ' + exitcmd, LLDebug2);
+      LogDatei.log('Exit command is: ' + exitcmd, LLinfo);
       exitcode := fpSystem(exitcmd);
       if exitcode = 0 then
-      begin
-        if LogDatei <> nil then
-        begin
-          LogDatei.Free;
-          LogDatei := nil;
-        end;
-        Result := True;
-        Fehler := '';
-      end
+        cleanuplog
       else
       begin
-        LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+        LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command: ' + exitcmd,
           LLWarning);
         exitcmd := '/sbin/reboot';
+        LogDatei.log('Now try: ' + exitcmd, LLinfo);
         exitcode := fpSystem(exitcmd);
         if exitcode = 0 then
-        begin
-          if LogDatei <> nil then
-          begin
-            LogDatei.Free;
-            LogDatei := nil;
-          end;
-          Result := True;
-          Fehler := '';
-        end
+          cleanuplog
         else
         begin
-          LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+          LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+            ' for command: ' + exitcmd,
             LLWarning);
           exitcmd := '/sbin/shutdown -r now';
+          LogDatei.log('Now try: ' + exitcmd, LLinfo);
           exitcode := fpSystem(exitcmd);
           if exitcode = 0 then
-          begin
-            if LogDatei <> nil then
-            begin
-              LogDatei.Free;
-              LogDatei := nil;
-            end;
-            Result := True;
-            Fehler := '';
-          end
+            cleanuplog
           else
           begin
             Result := False;
             LogDatei.log('Got exitcode: ' + IntToStr(fpgetErrno) +
-              ' for command' + exitcmd,
+              ' for command: ' + exitcmd,
               LLWarning);
-            Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
-            if LogDatei <> nil then
+            exitcmd := 'systemctl reboot';
+            LogDatei.log('Now try: ' + exitcmd, LLinfo);
+            exitcode := fpSystem(exitcmd);
+            if exitcode = 0 then
+              cleanuplog
+            else
             begin
-              LogDatei.Free;
-              LogDatei := nil;
+              LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+                ' for command: ' + exitcmd,
+                LLWarning);
+              exitcmd := 'systemctl reboot';
+              LogDatei.log('Now try: ' + exitcmd, LLinfo);
+              outstr := getCommandResult(exitcmd, exitcode);
+              LogDatei.log('Output: ' + outstr, LLinfo);
+              if exitcode = 0 then
+                cleanuplog
+              else
+              begin
+                LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+                  ' for command: ' + exitcmd + ' - Giving up',
+                  LLerror);
+                Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
+                if LogDatei <> nil then
+                begin
+                  LogDatei.Free;
+                  LogDatei := nil;
+                end;
+              end;
             end;
           end;
         end;
       end;
     end;
   end;
-end;{$ENDIF LINUX}
+end;
+
+{$ENDIF UNIX}
 
 
 
@@ -9444,7 +9495,7 @@ var
     begin
       Filename := OrigPath + SearchResult.Name;
       LogS := 'File "' + Filename + '"';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLdebug);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
       FileIsReadOnly := False;
@@ -9482,7 +9533,7 @@ var
         LogS := 'The file is ' + IntToStr(ddiff) + ' day(s) old';
         if not shallDelete then
           LogS := LogS + ', no deletion';
-        LogDatei.log(LogS, LLInfo);
+        LogDatei.log(LogS, LLDebug2);
       end;
 
       if shallDelete then
@@ -10198,6 +10249,15 @@ function TuibShellLinks.MakeShellLink
   (const description, thePath, commandline_arguments, working_directory,
   iconPath: string;
   const icon_index: integer; shortcut: word): boolean;
+begin
+  Result := MakeShellLink(description, thePath, commandline_arguments,
+    working_directory, iconPath, icon_index, 0, 0);
+end;
+
+function TuibShellLinks.MakeShellLink
+  (const description, thePath, commandline_arguments, working_directory,
+  iconPath: string;
+  const icon_index: integer; shortcut: word; showwindow: integer): boolean;
 
 const
   IID_IPersistFile: TGUID = (D1: $10B; D2: 0; D3: 0;
@@ -10235,6 +10295,11 @@ begin
     begin
       ShellLink.SetHotkey(shortcut);
       LogDatei.log('try to set shortcut: ' + IntToStr(shortcut), LLDebug2);
+    end;
+    if showwindow > 0 then
+    begin
+      ShellLink.SetShowCmd(showwindow);
+      LogDatei.log('try to set showwindow: ' + IntToStr(showwindow), LLDebug2);
     end;
 
     (*

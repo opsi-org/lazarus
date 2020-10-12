@@ -8,8 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
   jwawinbase,
-  LCLTranslator, ExtCtrls, ComCtrls
-  ;
+  LCLTranslator, ExtCtrls, ComCtrls;
 
 type
 
@@ -48,7 +47,7 @@ type
     procedure MountDepotUnix(const User: String; Password: String;
       PathToDepot: String);
     procedure UnmountDepotUnix(const PathToDepot: String);
-    function SetRights(Path:String):boolean;
+    //function SetRights(Path:String):boolean;
 
 
   public
@@ -57,6 +56,20 @@ type
 
 var
   FormSaveImagesOnDepot: TFormSaveImagesOnDepot;
+
+
+implementation
+
+{$R *.lfm}
+
+const
+  PathDepotOnShare = '\var\lib\opsi\depot';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+    PathKioskAppOnShare = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+    PathKioskAppOnShare = '\opsi-client-kiosk\files\app';
+  {$ENDIF KIOSK_IN_AGENT}
+  CustomFolder = '\ock_custom';
 
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';
@@ -72,11 +85,6 @@ resourcestring
   rsCopyIcons = 'Copy icons and screenshots...';
   rsMounting = 'Mounting';
   rsFinished = 'Copy process finished. Closing window...';
-
-
-implementation
-
-{$R *.lfm}
 
 { TFormSaveImagesOnDepot }
 
@@ -108,6 +116,7 @@ begin
      {$ENDIF Unix}
     end;
   end;
+
   if DirectoryExists(PathToDepot) then
   begin
     ProgressBar.Visible := True;
@@ -120,7 +129,10 @@ begin
       Application.ProcessMessages;
       sleep(1000);
       CopySuccess := True;
-      SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
+      LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
+      //SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
+      ProgressBar.Position:= 80;
+      Application.ProcessMessages;
     end;
   end
   else
@@ -130,24 +142,23 @@ begin
     CopySuccess := False;
     DirectoryEditPathToDepot.Font.Color:= clRed;
   end;
- {$IFDEF Windows}
-  if CheckBoxMountDepot.Checked then
+
+  if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
-    if not AlreadyMounted then UnmountDepotNT(PathToDepot);
+    {$IFDEF Windows}
+     UnmountDepotNT(PathToDepot);
+    {$ENDIF Windows}
+    {$IFDEF Unix}
+     UnmountDepotUnix(PathToDepot);
+    {$ENDIF Unix}
   end;
- {$ENDIF Windows}
- {$IFDEF Unix}
-  if CheckBoxMountDepot.Checked then
-  begin
-   if not AlreadyMounted then UnmountDepotUnix(PathToDepot);
-  end;
- {$ENDIF Unix}
+
   if CopySuccess then
   begin
-   //ProgressBar.Position:= 100;
+   ProgressBar.Position:= 100;
    LabelInfo.Caption := rsFinished;
    Application.ProcessMessages;
-   sleep(1000);
+   sleep(2000); //chance to see that copy process was successful before window is closed
    {for i := 5 downto 1 do
     begin
       LabelInfo.Caption := 'Window will be automatically closed in ' + IntToStr(i) + ' sec';
@@ -156,6 +167,7 @@ begin
     end;}
    Close;
   end;
+
 end;
 
 procedure TFormSaveImagesOnDepot.CheckBoxMountDepotChange(Sender: TObject);
@@ -177,7 +189,7 @@ end;
 
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
-   InitLogging('kiosk-images-' + GetUserName_ +'.log', LLDebug);
+   InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
    SetDefaultLang(GetDefaultLang);
 end;
 
@@ -263,6 +275,7 @@ begin
 
 end;
 
+(*
 function TFormSaveImagesOnDepot.SetRights(Path:String): boolean;
 var
   OpsiConnection: TOpsiConnection;
@@ -285,6 +298,7 @@ begin
       ' Error :' + OpsiConnection.MyError,LLDebug);
       ProgressBar.Position := 80;
       Application.ProcessMessages;
+      OpsiConnection.OpsiData.initOpsiConf(OpsiConnection.MyService_URL,'jan','jan123');
       OpsiConnection.SetRights(path);
       Result := True;
       ProgressBar.Position := 100;
@@ -298,24 +312,25 @@ begin
   finally
     OpsiConnection.Free;
   end;
-end;
+end;*)
 
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
 var
   PathToKioskOnDepot: String;
-  Target: String;
-  Source: String;
+  PathToIconsOnDepot: String;
+  PathToKioskOnClient : String;
+  PathToIconsOnClient: String;
 begin
   Result := False;
-  PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\',pdsSystem);
   { Set the right directories }
-  Source := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
+  PathToKioskOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
   //Set path delims dependend on system (e.g. Windows, Unix)
-  Source := SwitchPathDelims(TrimFilename(Source + 'ock_custom\'),pdsSystem);
-  Target := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
-  LogDatei.log('Copy ' + Source + ' to ' + Target, LLInfo);
-  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
+  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
+  LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
+  if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
     Result := True;

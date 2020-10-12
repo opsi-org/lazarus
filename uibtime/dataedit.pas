@@ -108,8 +108,11 @@ type
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid9DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DBLookupComboBox1DropDown(Sender: TObject);
     procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure Label6Click(Sender: TObject);
     procedure PageControl1Enter(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DBGrid1Enter(Sender: TObject);
@@ -471,12 +474,46 @@ begin
   end;
 end;
 
+procedure TFDataedit.DBLookupComboBox1DropDown(Sender: TObject);
+begin
+   DBLookupComboBox1.ListSource.DataSet.Locate('event',DBLookupComboBox1.Text,[loCaseInsensitive]);
+end;
+
 procedure TFDataedit.DBLookupComboBoxMouseWheel(Sender: TObject;
   Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
 begin
   Handled := True;
   if PtInRect(TDBLookupCombobox(Sender).ReadBounds, mousepos) then
     Handled := False;
+end;
+
+procedure TFDataedit.FormCreate(Sender: TObject);
+begin
+  //TForm(sender).Font.Name:=myFont;
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox1));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox2));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox3));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox4));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox5));
+  DataModule1.configureComboBox(TCombobox(ComboBoxOldEvent));
+  DataModule1.configureComboBox(TCombobox(ComboBoxOldAllEvent));
+  DataModule1.configureComboBox(TCombobox(DBComboBoxBool));
+  (*
+ {$IFDEF LINUX}
+  DBLookupComboBox1.AutoComplete:=true;
+  DBLookupComboBox1.AutoDropDown:=false;
+  DBLookupComboBox1.AutoSelect:=false;
+  DBLookupComboBox1.ReadOnly:=false;
+  DBLookupComboBox1.Style:= csDropDown;
+  DBLookupComboBox1.Sorted:=false;
+  {$ENDIF LINUX}
+   *)
+  DataModule1.SetFontName(TControl(sender),myFont);
+end;
+
+procedure TFDataedit.Label6Click(Sender: TObject);
+begin
+
 end;
 
 procedure TFDataedit.FormActivate(Sender: TObject);
@@ -514,6 +551,7 @@ begin
       DBLookupComboBox1.Top := Rect.Top + DBGrid1.top;
       DBLookupComboBox1.Width := Rect.Right - Rect.Left;
       DBLookupComboBox1.Visible := True;
+      DBLookupComboBox1.ListSource.DataSet.First;
     end;
   end;
 end;
@@ -577,7 +615,7 @@ end;
 procedure TFDataedit.FormHide(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'Hide FDataedit');
-  // Datamodule1.TimerOnTop.Enabled := true;
+  // Datamodule1.TimerOnTop.Enabled := ontoptimer;
 end;
 
 procedure TFDataedit.DBImage1Exit(Sender: TObject);

@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 617
+  Left = 615
   Height = 375
-  Top = 465
+  Top = 289
   Width = 814
   Caption = 'uibtime - data edit'
   ClientHeight = 375
@@ -12,6 +12,7 @@ object FDataedit: TFDataedit
   Font.Name = 'MS Sans Serif'
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   OnHide = FormHide
   PopupMode = pmExplicit
   Position = poScreenCenter
@@ -23,6 +24,10 @@ object FDataedit: TFDataedit
     Width = 814
     ActivePage = TabSheet1
     Align = alClient
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    ParentFont = False
     TabIndex = 0
     TabOrder = 0
     TabPosition = tpBottom
@@ -30,20 +35,30 @@ object FDataedit: TFDataedit
     object TabSheet1: TTabSheet
       Caption = 'Events'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnShow = TabSheet1Show
+      ParentFont = False
       object ToolBar1: TToolBar
         Left = 0
-        Height = 29
+        Height = 35
         Top = 0
-        Width = 806
+        Width = 804
+        ButtonHeight = 34
+        ButtonWidth = 34
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator1: TDBNavigator
           Left = 1
-          Height = 22
+          Height = 34
           Top = 2
-          Width = 240
+          Width = 304
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsScaleChilds
           ChildSizing.EnlargeVertical = crsScaleChilds
@@ -51,18 +66,25 @@ object FDataedit: TFDataedit
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 100
-          ClientHeight = 22
-          ClientWidth = 240
+          ClientHeight = 34
+          ClientWidth = 304
           DataSource = DataModule1.DSuibevent
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BtnMultiDay: TBitBtn
-          Left = 241
-          Height = 22
+          Left = 305
+          Height = 34
           Top = 2
           Width = 199
           Caption = 'Mehre Tage eintragen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Glyph.Data = {
             76010000424D7601000000000000760000002800000020000000100000000100
             0400000000000001000000000000000000001000000010000000000000000000
@@ -79,24 +101,29 @@ object FDataedit: TFDataedit
           }
           NumGlyphs = 2
           OnClick = BtnMultiDayClick
+          ParentFont = False
           TabOrder = 2
         end
         object BitBtn2: TBitBtn
-          Left = 440
-          Height = 22
+          Left = 504
+          Height = 34
           Top = 2
           Width = 146
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
       object DBGrid1: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 806
+        Height = 314
+        Top = 35
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <        
@@ -108,10 +135,10 @@ object FDataedit: TFDataedit
             FieldName = 'USERID'
           end        
           item
-            MinSize = 120
-            MaxSize = 120
+            MinSize = 133
+            MaxSize = 133
             Title.Caption = 'STARTTIME'
-            Width = 120
+            Width = 133
             FieldName = 'STARTTIME'
             DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
           end        
@@ -119,26 +146,31 @@ object FDataedit: TFDataedit
             MinSize = 160
             MaxSize = 160
             Title.Caption = 'EVENT'
-            Width = 200
+            Width = 250
             FieldName = 'EVENT'
           end        
           item
-            MinSize = 120
-            MaxSize = 120
+            MinSize = 133
+            MaxSize = 133
             Title.Caption = 'STOPTIME'
-            Width = 120
+            Width = 133
             FieldName = 'STOPTIME'
             DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
           end        
           item
-            MinSize = 64
-            MaxSize = 64
+            MinSize = 60
+            MaxSize = 60
             Title.Caption = 'STUNDEN'
+            Width = 60
             FieldName = 'STUNDEN'
             DisplayFormat = '0.00'
           end>
         DataSource = DataModule1.DSuibevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -151,18 +183,28 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox1: TDBLookupComboBox
         Left = 184
-        Height = 21
+        Height = 22
         Top = 88
         Width = 145
+        ArrowKeysTraverseList = False
+        AutoComplete = True
+        AutoDropDown = True
+        AutoSize = False
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         KeyField = 'EVENT'
         ListField = 'EVENT'
         ListFieldIndex = 0
         ListSource = DataModule1.DSuibaktevent
         LookupCache = False
+        OnDropDown = DBLookupComboBox1DropDown
         OnExit = DBLookupComboBox1Exit
         OnMouseWheel = DBLookupComboBoxMouseWheel
+        ParentFont = False
+        ScrollListDataset = True
         TabOrder = 2
         Visible = False
       end
@@ -170,15 +212,23 @@ object FDataedit: TFDataedit
     object TabSheet2: TTabSheet
       Caption = 'user'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 1
       OnShow = TabSheet2Show
+      ParentFont = False
       object ToolBar2: TToolBar
         Left = 0
         Height = 29
         Top = 0
         Width = 806
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator2: TDBNavigator
           Left = 1
@@ -195,7 +245,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSuibaktuser
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn3: TBitBtn
@@ -204,8 +258,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -218,7 +276,11 @@ object FDataedit: TFDataedit
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibaktuser
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -228,15 +290,23 @@ object FDataedit: TFDataedit
     object TabSheet3: TTabSheet
       Caption = 'Aktuelle Events'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 2
       OnShow = TabSheet3Show
+      ParentFont = False
       object ToolBar3: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator3: TDBNavigator
           Left = 1
@@ -253,7 +323,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSqueryaktevents
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn4: TBitBtn
@@ -262,8 +336,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -271,12 +349,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 284
         Top = 65
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibaktevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -312,11 +394,15 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 36
         Top = 29
-        Width = 806
+        Width = 804
         Align = alTop
         Caption = 'Panel1'
         ClientHeight = 36
-        ClientWidth = 806
+        ClientWidth = 804
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 3
         object Panel2: TPanel
           Left = 1
@@ -325,16 +411,24 @@ object FDataedit: TFDataedit
           Width = 66
           Align = alLeft
           Caption = 'Kommentar:'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
           TabOrder = 0
         end
         object DBMemo1: TDBMemo
           Left = 67
-          Height = 34
+          Height = 40
           Top = 1
-          Width = 738
+          Width = 736
           Align = alClient
           DataField = 'COMMENT'
           DataSource = DataModule1.DSuibaktevent
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -342,17 +436,25 @@ object FDataedit: TFDataedit
     object TabSheet4: TTabSheet
       Caption = 'Alle Events'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 3
       OnShow = TabSheet4Show
+      ParentFont = False
       object ToolBar4: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         ButtonHeight = 24
         ButtonWidth = 23
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator4: TDBNavigator
           Left = 1
@@ -369,7 +471,11 @@ object FDataedit: TFDataedit
           ClientHeight = 24
           ClientWidth = 240
           DataSource = DataModule1.DSuiballevent
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn5: TBitBtn
@@ -378,8 +484,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -387,12 +497,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuiballevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -402,15 +516,23 @@ object FDataedit: TFDataedit
     object TabSheet5: TTabSheet
       Caption = 'Meine Event-Arten'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ParentFont = False
       object ToolBar5: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator5: TDBNavigator
           Left = 1
@@ -427,7 +549,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSuibuserevent
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn6: TBitBtn
@@ -436,8 +562,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -445,12 +575,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibuserevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -466,6 +600,9 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibuserevent
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         KeyField = 'EVENT'
         ListField = 'EVENT'
         ListFieldIndex = 0
@@ -473,6 +610,7 @@ object FDataedit: TFDataedit
         LookupCache = False
         OnExit = DBLookupComboBox2Exit
         OnMouseWheel = DBLookupComboBoxMouseWheel
+        ParentFont = False
         TabOrder = 2
         Visible = False
       end
@@ -483,13 +621,17 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'BUTTON'
         DataSource = DataModule1.DSuibuserevent
-        ItemHeight = 13
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ItemHeight = 0
         Items.Strings = (
           '0'
           '1'
         )
         MaxLength = 0
         OnExit = DBComboBoxBoolExit
+        ParentFont = False
         TabOrder = 3
         Visible = False
       end
@@ -497,15 +639,23 @@ object FDataedit: TFDataedit
     object TabSheet6: TTabSheet
       Caption = 'Timeouts'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 5
       OnShow = TabSheet6Show
+      ParentFont = False
       object ToolBar6: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator6: TDBNavigator
           Left = 1
@@ -522,7 +672,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSuibtimeout
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn7: TBitBtn
@@ -531,8 +685,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -540,12 +698,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibtimeout
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -561,6 +723,9 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibtimeout
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         KeyField = 'EVENT'
         ListField = 'EVENT'
         ListFieldIndex = 0
@@ -568,6 +733,7 @@ object FDataedit: TFDataedit
         LookupCache = False
         OnExit = DBLookupComboBox5Exit
         OnMouseWheel = DBLookupComboBoxMouseWheel
+        ParentFont = False
         TabOrder = 2
         Visible = False
       end
@@ -575,15 +741,23 @@ object FDataedit: TFDataedit
     object TabSheet8: TTabSheet
       Caption = 'Soll-Stunden'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 7
       OnShow = TabSheet8Show
+      ParentFont = False
       object ToolBar8: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator8: TDBNavigator
           Left = 1
@@ -600,7 +774,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSuibsoll
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn8: TBitBtn
@@ -609,8 +787,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
         object BtnDuplicate: TBitBtn
@@ -619,6 +801,9 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 232
           Caption = 'Letzten Datensatz kopieren und anhängen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Glyph.Data = {
             76010000424D7601000000000000760000002800000020000000100000000100
             04000000000000010000130B0000130B00001000000000000000000000000000
@@ -635,6 +820,7 @@ object FDataedit: TFDataedit
           }
           NumGlyphs = 2
           OnClick = BtnDuplicateClick
+          ParentFont = False
           TabOrder = 2
         end
       end
@@ -642,12 +828,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibsoll
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -657,15 +847,23 @@ object FDataedit: TFDataedit
     object TabSheet9: TTabSheet
       Caption = 'Defaultprojekt'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ParentFont = False
       object ToolBar9: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 804
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator9: TDBNavigator
           Left = 1
@@ -682,7 +880,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DSuibdefproj
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn9: TBitBtn
@@ -691,8 +893,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -700,12 +906,16 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 806
+        Width = 804
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DSuibdefproj
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -721,6 +931,9 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibdefproj
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         KeyField = 'EVENT'
         ListField = 'EVENT'
         ListFieldIndex = 0
@@ -728,6 +941,7 @@ object FDataedit: TFDataedit
         LookupCache = False
         OnExit = DBLookupComboBox4Exit
         OnMouseWheel = DBLookupComboBoxMouseWheel
+        ParentFont = False
         TabOrder = 2
         Visible = False
       end
@@ -735,8 +949,12 @@ object FDataedit: TFDataedit
     object TabSheet7: TTabSheet
       Caption = 'Rename Event'
       ClientHeight = 349
-      ClientWidth = 806
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnShow = TabSheet7Show
+      ParentFont = False
       object Bevel2: TBevel
         Left = 16
         Height = 114
@@ -751,26 +969,38 @@ object FDataedit: TFDataedit
       end
       object Label1: TLabel
         Left = 54
-        Height = 13
+        Height = 14
         Top = 128
-        Width = 78
+        Width = 95
         Caption = 'Alter Eventname'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         ParentColor = False
+        ParentFont = False
       end
       object Edit2: TEdit
         Left = 248
-        Height = 21
+        Height = 26
         Top = 152
         Width = 153
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
       end
       object Label2: TLabel
         Left = 248
-        Height = 13
+        Height = 14
         Top = 128
-        Width = 86
+        Width = 102
         Caption = 'Neuer Eventname'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         ParentColor = False
+        ParentFont = False
       end
       object ButtonRenameEvent: TButton
         Left = 568
@@ -778,24 +1008,32 @@ object FDataedit: TFDataedit
         Top = 148
         Width = 75
         Caption = 'Umbennen'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         OnClick = ButtonRenameEventClick
+        ParentFont = False
         TabOrder = 1
       end
       object BitBtn10: TBitBtn
         Left = 672
-        Height = 22
-        Top = 312
+        Height = 38
+        Top = 296
         Width = 113
         Caption = 'Verlassen'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Kind = bkCancel
         OnClick = BitBtn2Click
+        ParentFont = False
         TabOrder = 2
       end
       object Label3: TLabel
         Left = 112
-        Height = 46
+        Height = 48
         Top = 0
-        Width = 494
+        Width = 605
         Caption = 'Vorsicht ! Nur für Admins !'
         Font.Color = clRed
         Font.Height = -40
@@ -811,34 +1049,50 @@ object FDataedit: TFDataedit
         Width = 674
         AutoSize = False
         Caption = 'Erstellt aus dem alten Eventnamen in der Tabelle uibaktevent ein neues Event mit den selben Daten aber unter dem neuen Namen.'#13#10'Das alte Event wird aus der Tabelle uibaktevent gelöscht.'#13#10'Alle Einträge in uibevent und UIB_WORK_DESCRIPTION welche auf das alte Event gebucht waren, werden auf das neue Event geändert.'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         ParentColor = False
+        ParentFont = False
         WordWrap = True
       end
       object LabelProgress: TLabel
         Left = 656
-        Height = 13
+        Height = 14
         Top = 160
-        Width = 120
+        Width = 145
         Caption = 'Fortschritt: Keine Aktivität'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         ParentColor = False
+        ParentFont = False
       end
       object ComboBoxOldEvent: TComboBox
         Left = 54
         Height = 21
         Top = 152
         Width = 170
-        ItemHeight = 13
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ItemHeight = 0
         OnEnter = ComboBoxOldEventEnter
+        ParentFont = False
         TabOrder = 3
       end
       object DateTimePickerFromDate: TDateTimePicker
         Left = 418
-        Height = 21
+        Height = 20
         Top = 153
-        Width = 79
+        Width = 87
         CenturyFrom = 1941
         MaxDate = 2958465
         MinDate = -53780
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 4
         Enabled = False
         TrailingSeparator = False
@@ -856,22 +1110,26 @@ object FDataedit: TFDataedit
       end
       object CheckBoxUseDate: TCheckBox
         Left = 418
-        Height = 19
+        Height = 21
         Top = 122
-        Width = 67
+        Width = 80
         Caption = 'Ab Datum'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         OnChange = CheckBoxUseDateChange
+        ParentFont = False
         TabOrder = 5
       end
       object Label5: TLabel
         Left = 48
         Height = 24
         Top = 40
-        Width = 211
+        Width = 258
         Caption = '1. Rename Altes Event'
         Font.Color = clWindowText
         Font.Height = -20
-        Font.Name = 'Arial'
+        Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
@@ -880,7 +1138,7 @@ object FDataedit: TFDataedit
         Left = 56
         Height = 24
         Top = 224
-        Width = 307
+        Width = 310
         Caption = '2. Gelöschtes Event reaktivieren'
         Font.Color = clWindowText
         Font.Height = -20
@@ -888,23 +1146,32 @@ object FDataedit: TFDataedit
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
+        OnClick = Label6Click
       end
       object ComboBoxOldAllEvent: TComboBox
         Left = 64
         Height = 21
         Top = 288
         Width = 170
-        ItemHeight = 13
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ItemHeight = 0
         OnEnter = ComboBoxOldAllEventEnter
+        ParentFont = False
         TabOrder = 6
       end
       object Label7: TLabel
         Left = 64
-        Height = 13
+        Height = 14
         Top = 264
-        Width = 78
+        Width = 95
         Caption = 'Alter Eventname'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         ParentColor = False
+        ParentFont = False
       end
       object ButtonReactivate: TButton
         Left = 268
@@ -912,20 +1179,32 @@ object FDataedit: TFDataedit
         Top = 284
         Width = 148
         Caption = 'Reaktivieren'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         OnClick = ButtonReactivateClick
+        ParentFont = False
         TabOrder = 7
       end
     end
     object TabSheet10: TTabSheet
       Caption = 'Feiertage'
-      ClientHeight = 354
-      ClientWidth = 812
+      ClientHeight = 349
+      ClientWidth = 804
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
       object ToolBar10: TToolBar
         Left = 0
         Height = 29
         Top = 0
         Width = 806
         Caption = 'ToolBar1'
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        ParentFont = False
         TabOrder = 0
         object DBNavigator10: TDBNavigator
           Left = 1
@@ -942,7 +1221,11 @@ object FDataedit: TFDataedit
           ClientHeight = 22
           ClientWidth = 240
           DataSource = DataModule1.DS_holydays
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Options = []
+          ParentFont = False
           TabOrder = 0
         end
         object BitBtn11: TBitBtn
@@ -951,8 +1234,12 @@ object FDataedit: TFDataedit
           Top = 2
           Width = 113
           Caption = 'Verlassen'
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
           Kind = bkCancel
           OnClick = BitBtn2Click
+          ParentFont = False
           TabOrder = 1
         end
       end
@@ -965,7 +1252,11 @@ object FDataedit: TFDataedit
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DS_holydays
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        ParentFont = False
         TabOrder = 1
         TitleFont.Color = clWindowText
         TitleFont.Height = -11

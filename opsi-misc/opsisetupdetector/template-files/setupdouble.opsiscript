@@ -42,7 +42,13 @@ Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
-Set $MinimumSpace$	 = "#@MinimumSpace*#"
+if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
+	Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+else
+	if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
+		Set $MinimumSpace$	 = "#@MinimumSpace2*#"
+	endif
+endif
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -57,6 +63,7 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	isFatalError "No Space"
 	; Stop process and set installation status to failed
 endif
+
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
@@ -79,7 +86,7 @@ if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both
 
 	#@preInstallLines1*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files"
+	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
 	Winbatch_install_1  #@installWaitForProc1*#
 	;----------------------------------------------
@@ -90,7 +97,7 @@ endif
 if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
 	#@preInstallLines2*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files"
+	ChangeDirectory "%SCRIPTPATH%\files2"
 	;----------------------------------------------
 	Winbatch_install_2  #@installWaitForProc2*#
 	;----------------------------------------------

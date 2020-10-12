@@ -1,0 +1,56 @@
+encoding=utf8
+
+;@author          detlef oertel
+;@email           d.oertel@uib.de
+;@date            17.4.2018
+;@copyright       AGPLv3
+;@version         1.0
+;@filedesc        Collection of functions that 
+;@filedesc        works on string lists
+
+; ###################################################################################################
+DefFunc compareLists($list1$ : stringlist, $list2$ : stringlist) : string
+  ;@author          detlef oertel
+  ;@date            17.5.2018
+  ;@Description     Checks if to string lists are completely identic or not.
+  ;@Description     The check is not case sensitive.
+  ;@Returns         Returns string "true" if the given lists are identic.
+  ;@Returns         Returns string "false" if the given lists are not identic
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     
+  ;@References      
+  ;@Links           
+  ;@Requires
+  ;@ParamDesc_$list1$     First stringlist to compare
+  ;@ParamAdvice_$list1$
+  ;@ParamDesc_$list2$     Second stringlist (to compare with first)
+  ;@ParamAdvice_$list2$
+  ;@Example     set $tmplist$ = getListContainingList($baseproducts$,$resultlist$)
+  ;@Example     if stringToBool(compareLists($tmplist$,$baseproducts$))
+  ;@Example     	comment "check installed products successful finished"
+  ;@Example     else
+  ;@Example     	LogError "check installed products failed"
+  ;@Example     	set $errorList$ = addtolist($errorList$, "check installed products failed")
+  ;@Example     	;set $fatal_error$ = "true"
+  ;@Example     endif
+
+	Defvar $count1$
+	Defvar $count2$
+
+	markErrorNumber
+	set $result$ = "false"
+	if count($list1$) = count($list2$)
+		set $result$ = "true"
+		for %s% = "0" to calculate(count($list1$)+"-1") do sub_check_identic
+	endif
+	
+	if errorsOccurredSinceMark > 0
+		set $result$ = "false"
+	endif
+	
+	[sub_check_identic]
+	if not(takeString(%s%,$list1$) = takeString(%s%,$list2$))
+		set $result$ = "false"
+	endif
+EndFunc
+; ###################################################################################################

@@ -11,12 +11,12 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   CustApp,
   oswebservice,
   oslog,
-  superobject,
  // {$IFDEF LINUX}
   fileinfo,
   winpeimagereader, // {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
 // {$ENDIF LINUX}
+  superobject,
   inifiles,
   strutils,
   ocsnetboot,

@@ -3,52 +3,45 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-09-02 14:45+0000\n"
+"PO-Revision-Date: 2019-09-20 08:33+0000\n"
 "Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SourceCharset: utf-8\n"
 
 #: imagestodepot.rscouldnotsaveicons
-#, fuzzy
-#| msgid "Could not save icons on share."
 msgctxt "imagestodepot.rscouldnotsaveicons"
 msgid "Could not save icons on depot."
-msgstr "Could not save icons on share."
+msgstr "Could not save icons on depot."
 
 #: imagestodepot.rscouldnotsavescreenshots
-#, fuzzy
-#| msgid "Could not save screenshots on share."
 msgctxt "imagestodepot.rscouldnotsavescreenshots"
 msgid "Could not save screenshots on depot."
-msgstr "Could not save screenshots on share."
+msgstr "Could not save screenshots on depot."
 
 #: imagestodepot.rscouldnotunmount
-#, fuzzy
-#| msgid "Could not unmount share."
 msgctxt "imagestodepot.rscouldnotunmount"
 msgid "Could not unmount depot."
-msgstr "Could not unmount share."
+msgstr "Could not unmount depot."
 
 #: imagestodepot.rsimagesnotsaved
 msgctxt "imagestodepot.rsimagesnotsaved"
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
-msgstr ""
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 
 #: imagestodepot.rsimagessaved
 msgctxt "imagestodepot.rsimagessaved"
 msgid "Images saved on"
-msgstr ""
+msgstr "Images saved on"
 
 #: imagestodepot.rsisaninvaliddir
 msgctxt "imagestodepot.rsisaninvaliddir"
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
+msgstr "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -83,7 +76,7 @@ msgstr "Uninstall"
 
 #: opsiclientkioskgui.rsadminmode
 msgid "Admin mode"
-msgstr ""
+msgstr "Admin mode"
 
 #: opsiclientkioskgui.rsall
 msgctxt "opsiclientkioskgui.rsall"
@@ -113,8 +106,10 @@ msgid "Connected to"
 msgstr "Connected to"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
-msgstr ""
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
+msgstr "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
@@ -152,7 +147,8 @@ msgstr "Install now"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start the installation/update (uninstallation) of the selected products"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -160,7 +156,6 @@ msgid "Install product now or at next standard event (e.g. reboot)?"
 msgstr "Install product now or at next standard event (e.g. reboot)?"
 
 #: opsiclientkioskgui.rslabeldataloadcommunicating
-msgctxt "opsiclientkioskgui.rslabeldataloadcommunicating"
 msgid "Communicating with server ..."
 msgstr "Communicating with server ..."
 
@@ -169,7 +164,6 @@ msgid "Loading product data from server"
 msgstr "Loading product data from server"
 
 #: opsiclientkioskgui.rslabeldataloadtiles
-msgctxt "opsiclientkioskgui.rslabeldataloadtiles"
 msgid "Fill tiles"
 msgstr "Fill tiles"
 
@@ -178,7 +172,6 @@ msgid "Connecting to server"
 msgstr "Connecting to server"
 
 #: opsiclientkioskgui.rslabelinfoloaddata
-msgctxt "opsiclientkioskgui.rslabelinfoloaddata"
 msgid "Please wait while communicating with OPSI web server ..."
 msgstr "Please wait while communicating with OPSI web server ..."
 
@@ -221,12 +214,13 @@ msgid "Unknown"
 msgstr "Unknown"
 
 #: opsiclientkioskgui.rsstoreactions
-msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store actions"
 msgstr "Store actions"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Send the action requests to the server, show the resulting installations and ask for installation start."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -289,129 +283,125 @@ msgstr "Yes"
 
 #: opsiconnection.rscouldnotsetrights
 msgid "Could not set rights."
-msgstr ""
+msgstr "Could not set rights."
 
 #: opsiconnection.rserrorintconnection
 msgctxt "opsiconnection.rserrorintconnection"
 msgid "Error while initializing opsiconnection"
-msgstr ""
+msgstr "Error while initializing opsiconnection"
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
-msgstr ""
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
+msgstr "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 
 #: opsiconnection.rsnodatafromserver
 msgid "Could not get data from server."
-msgstr ""
+msgstr "Could not get data from server."
 
 #: opsiconnection.rsnovaluefound
 msgctxt "opsiconnection.rsnovaluefound"
 msgid "No value found! Set%sto"
-msgstr ""
+msgstr "No value found! Set%sto"
 
 #: oswebservice.rserrorintconnection
 msgctxt "oswebservice.rserrorintconnection"
 msgid "Error while initializing opsiconnection"
-msgstr ""
+msgstr "Error while initializing opsiconnection"
 
 #: oswebservice.rsnovaluefound
 msgctxt "oswebservice.rsnovaluefound"
 msgid "No value found! Set%sto"
-msgstr ""
+msgstr "No value found! Set%sto"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Sending log file to server ..."
 
 #: tfinstalldlg.bitbtnlater.caption
-msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
 msgid "Install at next Standard Event (e.g. Reboot)"
 msgstr "Install at next Standard Event (e.g. Reboot)"
 
 #: tfinstalldlg.bitbtnnow.caption
-msgctxt "TFINSTALLDLG.BITBTNNOW.CAPTION"
 msgid "Install now (Close all Applications)"
 msgstr "Install now (Close all Applications)"
 
 #: tfinstalldlg.caption
-msgctxt "TFINSTALLDLG.CAPTION"
 msgid "opsi-kiosk-client"
 msgstr "opsi-kiosk-client"
 
 #: tfinstalldlg.label1.caption
-msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "The following Actions will be done:"
 
 #: tformhelpinfo.buttonclose.caption
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: tformhelpinfo.caption
-#, fuzzy
-#| msgid "FormHelpInfo"
 msgctxt "tformhelpinfo.caption"
 msgid "Help"
-msgstr "FormHelpInfo"
+msgstr "Help"
 
 #: tformhelpinfo.checkboxexpertmode.caption
 msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
-msgstr ""
+msgstr "Expert mode"
 
 #: tformhelpinfo.labelcopy.caption
 msgid "CopyRight:"
-msgstr ""
+msgstr "CopyRight:"
 
 #: tformhelpinfo.labelcopyright.caption
 msgid "LabelCopyRight"
-msgstr ""
+msgstr "LabelCopyRight"
 
 #: tformhelpinfo.labelcredits.caption
 msgid "LabelCredits"
-msgstr ""
+msgstr "LabelCredits"
 
 #: tformhelpinfo.labelcreditsto.caption
 msgid "Credits to"
-msgstr ""
+msgstr "Credits to"
 
 #: tformhelpinfo.labellang.caption
 msgid "Display language:"
-msgstr ""
+msgstr "Display language:"
 
 #: tformhelpinfo.labellanguage.caption
 msgid "LabelLanguage"
-msgstr ""
+msgstr "LabelLanguage"
 
 #: tformhelpinfo.labelname.caption
 msgid "opsi client kiosk"
-msgstr ""
+msgstr "opsi client kiosk"
 
 #: tformhelpinfo.labelopsiweb.caption
 msgid "LabelOpsiWeb"
-msgstr ""
+msgstr "LabelOpsiWeb"
 
 #: tformhelpinfo.labeluibweb.caption
 msgid "LabelUibWeb"
-msgstr ""
+msgstr "LabelUibWeb"
 
 #: tformhelpinfo.labelvers.caption
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: tformhelpinfo.labelversion.caption
 msgid "LabelVersion"
-msgstr ""
+msgstr "LabelVersion"
 
 #: tformhelpinfo.speedbuttonmanual.caption
 msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
-msgstr ""
+msgstr "opsi manual"
 
 #: tformopsiclientkiosk.bitbtnhelp.caption
 msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 #: tformopsiclientkiosk.bitbtninstallnow.caption
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
@@ -420,19 +410,16 @@ msgstr "Install now"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start the installation/update (uninstallation) of the selected products"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
-#, fuzzy
-#| msgid "Save images on share"
 msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
 msgid "Save images on depot"
-msgstr "Save images on share"
+msgstr "Save images on depot"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
-#, fuzzy
-#| msgid "<-- Back"
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- Back"
 msgstr "<-- Back"
@@ -457,22 +444,19 @@ msgid "Update"
 msgstr "Update"
 
 #: tformopsiclientkiosk.caption
-msgctxt "tformopsiclientkiosk.caption"
 msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgctxt "tformopsiclientkiosk.dbgrid1.hint"
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 
 #: tformopsiclientkiosk.editsearch.hint
-msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
 msgstr "Search in Productlist"
 
 #: tformopsiclientkiosk.editsearch.texthint
-msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
 msgstr "Search"
 
@@ -481,17 +465,14 @@ msgid "Your logo"
 msgstr "Your logo"
 
 #: tformopsiclientkiosk.labeladvice.caption
-msgctxt "tformopsiclientkiosk.labeladvice.caption"
 msgid "Advice:  "
 msgstr "Advice:  "
 
 #: tformopsiclientkiosk.labelclientverstr.caption
-msgctxt "tformopsiclientkiosk.labelclientverstr.caption"
 msgid "Version at Client"
 msgstr "Version at Client"
 
 #: tformopsiclientkiosk.labeldescription.caption
-msgctxt "tformopsiclientkiosk.labeldescription.caption"
 msgid "Description:  "
 msgstr "Description:  "
 
@@ -500,7 +481,6 @@ msgid "Please wait. Installing/uninstalling products."
 msgstr "Please wait. Installing/uninstalling products."
 
 #: tformopsiclientkiosk.labelpriority.caption
-msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
 msgstr "Priority: "
 
@@ -510,50 +490,42 @@ msgid "Action"
 msgstr "Action"
 
 #: tformopsiclientkiosk.labelsoftwareadvice.caption
-msgctxt "tformopsiclientkiosk.labelsoftwareadvice.caption"
 msgid "Advice"
 msgstr "Advice"
 
 #: tformopsiclientkiosk.labelsoftwaredescription.caption
-msgctxt "tformopsiclientkiosk.labelsoftwaredescription.caption"
 msgid "Description"
 msgstr "Description"
 
 #: tformopsiclientkiosk.labelsoftwareinstalledversion.caption
-msgctxt "tformopsiclientkiosk.labelsoftwareinstalledversion.caption"
 msgid "Installed version"
 msgstr "Installed version"
 
 #: tformopsiclientkiosk.labelsoftwarename.caption
-msgctxt "tformopsiclientkiosk.labelsoftwarename.caption"
 msgid "LabelSoftwareName"
 msgstr "LabelSoftwareName"
 
 #: tformopsiclientkiosk.labelsoftwarerecentversion.caption
-msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr "Recent version"
 
 #: tformopsiclientkiosk.labeltitle.caption
 msgid "opsi Client Kiosk"
-msgstr ""
+msgstr "opsi Client Kiosk"
 
 #: tformopsiclientkiosk.labelverstr.caption
-msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr "Version at Server"
 
 #: tformopsiclientkiosk.panelsearchmask.caption
 msgid "PanelSearchMask"
-msgstr ""
+msgstr "PanelSearchMask"
 
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
-msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
 msgid "No screenshot available"
 msgstr "No screenshot available"
 
 #: tformopsiclientkiosk.radiogroupview.caption
-msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
 msgstr "View"
 
@@ -568,12 +540,10 @@ msgid "All"
 msgstr "All"
 
 #: tformopsiclientkiosk.speedbuttonall.hint
-msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr "Show all List entries (No Filter)"
 
 #: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
-msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
 msgid "X"
 msgstr "X"
 
@@ -593,7 +563,7 @@ msgstr "Reload data from server"
 
 #: tformopsiclientkiosk.speedbuttonsearch.hint
 msgid "Search product"
-msgstr ""
+msgstr "Search product"
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
@@ -601,27 +571,22 @@ msgid "Updates"
 msgstr "Updates"
 
 #: tformopsiclientkiosk.speedbuttonupdates.hint
-msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
 msgstr "Filter for Products where an upgrade is possible"
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
-msgctxt "tformopsiclientkiosk.statusbar1.panels[0].text"
 msgid "Not Connected to opsi server"
 msgstr "Not Connected to opsi server"
 
 #: tformopsiclientkiosk.tabsheet1.caption
-msgctxt "tformopsiclientkiosk.tabsheet1.caption"
 msgid "Details"
 msgstr "Details"
 
 #: tformopsiclientkiosk.tabsheet2.caption
-msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr "Dependencies / Priority"
 
 #: tformprogresswindow.caption
-msgctxt "tformprogresswindow.caption"
 msgid "Initialize OpsiClientKiosk"
 msgstr "Initialize OpsiClientKiosk"
 
@@ -634,12 +599,10 @@ msgid "LabelDataLoadDetail"
 msgstr "LabelDataLoadDetail"
 
 #: tformprogresswindow.labelinfo.caption
-msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
 msgstr "Please wait while "
 
 #: tformsaveimagesondepot.buttoncancel.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Cancel"
@@ -647,34 +610,33 @@ msgstr "Cancel"
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save images on depot"
-msgstr ""
+msgstr "Save images on depot"
 
 #: tformsaveimagesondepot.caption
 msgctxt "tformsaveimagesondepot.caption"
 msgid "Save images on depot"
-msgstr ""
+msgstr "Save images on depot"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Mount depot"
 
 #: tformsaveimagesondepot.directoryeditpathtodepot.text
 msgid "Y:\\"
-msgstr ""
+msgstr "Y:\\"
 
 #: tformsaveimagesondepot.editpathtodepot.texthint
 msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
 msgid "\\\\servername\\opsi_depot_rw"
-msgstr ""
+msgstr "\\\\servername\\opsi_depot_rw"
 
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Mount depot"
 
 #: tformsaveimagesondepot.labelpassword.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
 msgstr "Password"
@@ -682,16 +644,14 @@ msgstr "Password"
 #: tformsaveimagesondepot.labelpathmountdepot.caption
 msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
 msgid "Path to depot"
-msgstr ""
+msgstr "Path to depot"
 
 #: tformsaveimagesondepot.labelpathtodepot.caption
 msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
 msgid "Path to depot"
-msgstr ""
+msgstr "Path to depot"
 
 #: tformsaveimagesondepot.labeluser.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "User"
-

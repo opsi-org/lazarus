@@ -51,6 +51,9 @@ uses
   osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles, osdefinedfunctions,
   osparserhelper, OSProcessux,
   {$ENDIF UNIX}
+  {$IFDEF DARWIN}
+  //macosall,
+  {$ENDIF DARWIN}
   {$IFDEF WINDOWS}
   packdefs in 'packdefs.pas',
   zipinter in 'zipinter.pas',
