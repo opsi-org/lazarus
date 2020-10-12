@@ -94,6 +94,7 @@ uses
   lconvencoding,
   lcltype,
   ostxstringlist,
+  osstartproc_cp,
   pipes;
 
 const
@@ -367,7 +368,13 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      daysback: integer; search4file: boolean;
+      var RebootWanted: boolean): boolean; overload;
+
+    function AllDelete
+      (const Filename: string; recursive, ignoreReadOnly: boolean;
+      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -495,6 +502,14 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunas;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
   catchout: boolean; var output: TXStringList): boolean; overload;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList;
+  showtitle : string): boolean;  overload;
 
 
 
@@ -1615,8 +1630,8 @@ begin
               status := NO_ERROR;
 
               if (not OpenProcessToken(GetCurrentProcess(),
-                TOKEN_ADJUST_PRIVILEGES, procToken)) or (not
-                SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
+                TOKEN_ADJUST_PRIVILEGES, procToken)) or
+                (not SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
                 Result := False
               else
               begin
@@ -2559,6 +2574,7 @@ end;
 
 {$ENDIF WINDOWS}
 
+(*
 function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -2597,23 +2613,17 @@ var
   //  var ProcessInfo: jwawinbase.TProcessInformation;
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
-
-  (*
-  starcounter : integer;
-  cpu100stars : string;
-  {$IFDEF WIN32}
-  processActivityCounter: PCPUUsageData;
-  {$ENDIF WIN32}
-  *)
   //i: integer; // tmp
 
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
   var
-    tmp_buffer: array[0..READ_BYTES - 1] of char;//Buffer of 2048 char
-    output_line: string = '';
+    tmp_buffer: array[1..READ_BYTES] of char;//Buffer of 2048 char
+    //output_line: string = '';
+    output_string : string = '';
     LineBreakPos: longint;
     BytesRead: longint;
+    OutputStream: TStringStream;
   begin
     if proc.output.NumBytesAvailable <= 0 then
       BytesRead := 0
@@ -2621,44 +2631,23 @@ var
     begin
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
-      {$IFDEF WINDOWS}
-      OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
-      {$ENDIF WINDOWS}
-      Buffer := Buffer + tmp_buffer;
 
-      {$IFDEF WINDOWS}
-      LineBreakPos := Pos(#13, Buffer);
-      {$ELSE WINDOWS}
-      LineBreakPos := Pos(#10, Buffer);
-      {$ENDIF WINDOWS}
+      OutputStream := TStringStream.Create('');
+      OutputStream.Write(tmp_buffer, BytesRead);
+      //{$IFDEF WINDOWS}
+      //OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
+      //{$ENDIF WINDOWS}
+      //Buffer := Buffer + tmp_buffer;
+      OutputStream.Position:=0;
+      output_string := ConsoleToUTF8(Outputstream.DataString);
+      Buffer := Buffer + output_string;
 
-      while not (LineBreakPos = 0) do
-      begin
-        output_line := Copy(Buffer, 1, LineBreakPos - 1);
-        {$IFDEF WINDOWS}
-        output_line := WINCPToUTF8(output_line);
-        {$ENDIF WINDOWS}
-        output.Add(output_line);
-        {$IFDEF GUI}
-        if showoutput then
+      if showoutput then
         begin
-          SystemInfo.Memo1.Lines.Add(output_line);
+          SystemInfo.Memo1.Append(output_string);
           ProcessMess;
         end;
-        {$ENDIF GUI}
 
-        // skip carriage return if present
-        if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
-          Inc(LineBreakPos, 1);
-
-        Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
-
-        {$IFDEF WINDOWS}
-        LineBreakPos := Pos(#13, Buffer);
-        {$ELSE WINDOWS}
-        LineBreakPos := Pos(#10, Buffer);
-        {$ENDIF WINDOWS}
-      end;
     end;
 
     Result := BytesRead;
@@ -2894,12 +2883,6 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                 begin
                   running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
                 end
                 else
                 begin
@@ -3019,27 +3002,15 @@ begin
               else
               begin
                 running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
               end;
             end;
 
             if running then
             begin
-              (*
-              {$IFDEF WIN32}
-              processActivityCounter := nil;
-              processActivityCounter:=wsCreateUsageCounter(FpcProcess.ProcessID);
-              {$ENDIF WIN32}
-              *)
-              ProcessMess;
+              //ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(1000);
+              //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -3053,17 +3024,8 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
-              (*
-              {$IFDEF WIN32}
-              if processActivityCounter <> nil then
-              begin
-                logdatei.log('Process CPU Activity: '+inttostr(round(wsGetCpuUsage(processActivityCounter)))+' -> '+ copy(cpu100stars, 1, round(wsGetCpuUsage(processActivityCounter))),LLDebug2);
-                FBatchOberflaeche.setCPUActivityLabel(copy(cpu100stars, 1, 1+round(wsGetCpuUsage(processActivityCounter))));
-              end;
-              {$ENDIF WIN32}
-              *)
               {$ENDIF GUI}
-              ProcessMess;
+              //ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
@@ -3109,16 +3071,10 @@ begin
     FpcProcess.Free;
     {$IFDEF GUI}
     FBatchOberflaeche.showProgressBar(False);
-    (*
-    {$IFDEF WIN32}
-    if processActivityCounter <> nil then wsDestroyUsageCounter(processActivityCounter);
-    processActivityCounter := nil;
-    FBatchOberflaeche.setCPUActivityLabel('');
-    {$ENDIF WIN32}
-    *)
-    {$ENDIF GUI}
+     {$ENDIF GUI}
   end;
 end;
+*)
 
 {$IFDEF WIN32}
 function ReadPipe(var Buffer: string; var hReadPipe: THandle;
@@ -4657,6 +4613,21 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
   catchout: boolean; var output: TXStringList): boolean;
+var
+  showtitle : string = '';
+begin
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
+    Report, Exitcode, False, output,showtitle);
+end;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList; showtitle : string): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -4764,8 +4735,10 @@ begin
 
     SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
-    systeminfo.BitBtn1.Enabled := False;
-    systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
+    //systeminfo.BitBtn1.Enabled := False;
+    systeminfo.BitBtn1.Visible:=false;
+    //systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
+    systeminfo.Label1.Caption := 'Executing: ' + showtitle;
     systeminfo.ShowOnTop;
     ProcessMess;
   end;
@@ -10200,6 +10173,17 @@ end;
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+var
+  retryOnReboot: boolean = False;
+begin
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
+    True, RebootWanted, retryOnReboot);
+end;
+
+function TuibFileInstall.AllDelete
+  (const Filename: string; recursive, ignoreReadOnly: boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+  retryOnReboot: boolean): boolean;
 
 var
   CompleteName: string = '';
@@ -10215,6 +10199,7 @@ var
   moveflags: DWORD;
   {$IFDEF WINDOWS}
   exitbool: winbool;
+  errorNo: integer;
 
 {$ENDIF WINDOWS}
 
@@ -10234,23 +10219,18 @@ var
     ddiff: integer = 0;
     errorno: integer = 0;
 
-    procedure myfiledelete(filename: string);
-    begin
-
-    end;
-
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-    // Completename zerlegen
+    { analyze Completename }
     OrigPath := ExtractFilePath(CompleteName);
-    // endet, wie CompleteName sowohl urspruenglich
-    // als auch in der Rekursion konstruiert ist, stets auf \
+    { should end always with pathdelimiter }
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
     LogDatei.log_prog(LogS, LLInfo);
 
-    // start with the sub directories, and go with the recursion deeper and delete the lowest level first
+    { start with the sub directories,
+      and go with the recursion deeper and delete the lowest level first }
     if recursive then
     begin
       {$IFDEF WINDOWS}
@@ -10266,17 +10246,12 @@ var
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
           (OrigPath + SearchResult.Name + PathDelim + FileMask, DeleteDeeperDir);
-        (*
-        else
-          if (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
-            myfiledelete(OrigPath + SearchResult.Name);
-            *)
         FindResultcode := FindNext(SearchResult);
       end;
       SysUtils.findclose(SearchResult);
     end;
 
-    // now delete in the base directory
+    { now delete in the base directory }
     {$IFDEF WINDOWS}
     if Filemask = '' then
       Filemask := '*.*';
@@ -10302,7 +10277,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, True) then
         begin
-          // Elimination of readonly attribut did not work
+          { Elimination of readonly attribut did not work }
           FileIsReadonly := True;
           Result := False;
         end;
@@ -10311,7 +10286,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, False) then
         begin
-          // Elimination of readonly attribut was not intended
+          { Elimination of readonly attribut was not intended  }
           FileIsReadonly := True;
           Result := False;
           LogS := 'No deletion, file is readonly';
@@ -10339,35 +10314,53 @@ var
       begin
         if SysUtils.DeleteFile(Filename) then
         begin
-          LogS := 'The file has been deleted';
+          LogS := 'The file ' + Filename + ' has been deleted';
           LogDatei.log(LogS, LLInfo);
         end
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
-            LogDatei.log('Warning: The file could not be deleted', LLWarning);
+          begin
+            //LogDatei.log('Warning: The file could not be deleted', LLWarning);
+           {$IFDEF UNIX}
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
+           {$ENDIF UNIX}
+           {$IFDEF WINDOWS}
+            errorNo := GetLastError;
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + IntToStr(errorNo) +
+              ' ("' + RemoveLineBreaks(SysErrorMessage(errorNo)) + '")';
+           {$ENDIF WINDOWS}
+            LogDatei.log(LogS, LLWarning);
+          end;
         end;
       end;
 
@@ -10401,6 +10394,33 @@ var
           RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
         {$ENDIF WINDOWS}
         LogDatei.log(LogS, LLWarning);
+        {$IFDEF WINDOWS}
+        if retryOnReboot then
+        begin
+          errorNo := GetLastError;
+          if (errorNo = 32) or (errorNo = 145) then
+          begin
+            LogDatei.log('Target dir: ' + Filename +
+              ' was in use, retry with DELAY_UNTIL_REBOOT.',
+              LLDebug2);
+            exist := PWChar(unicodestring(OrigPath));
+            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+            exitbool := MoveFileExW(exist, nil, moveflags);
+            if exitbool then
+            begin
+              Result := True;
+              RebootWanted := True;
+              LogDatei.log(
+                'Target dir was in use, move / rename should be completed after reboot.',
+                LLWarning);
+            end
+            else
+              LogDatei.log(
+                'Target dir was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                LLError);
+          end;
+        end;
+          {$ENDIF WINDOWS}
         Result := False;
       end;
     end;
@@ -10411,10 +10431,10 @@ var
 
 begin
   Result := True;
-  // Filename processing
+  { Filename processing }
   PathName := ExtractFilePath(CompleteName);
   //CompleteName := ExpandFileName (Filename);
-  // changed because it is dangerous
+  { changed because it is dangerous }
   if (lowercase(Filename) = 'c:\') or (lowercase(Filename) = 'c:\windows') or
     (lowercase(Filename) = 'c:\windows\system32') or (lowercase(Filename) = 'c:') or
     (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
@@ -10426,8 +10446,8 @@ begin
     CompleteName := Filename;
 
 
-       (*  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
-       funktioniert nicht!! *)
+       {  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
+       does not work!! }
   if isDirectory(CompleteName) and (CompleteName[length(CompleteName)] <>
     PathDelim) then
     CompleteName := CompleteName + PathDelim;
@@ -10454,27 +10474,27 @@ begin
   else
     testname := CompleteName;
 
-  // Start
+  { Start }
   if not search4file then
   begin
-    // new del syntax: "del -s c:\not-existing" will do nothing (if not existing)
+    { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
     if (not FileExists(testname)) and (not DirectoryExists(testname)) then
     begin
-      //does not exist
+      { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
       LogDatei.log(LogS, LLInfo);
     end
     else
     begin
-      // does exist as dir or file
+      { does exist as dir or file }
       if isDirectory(ExtractFilePath(CompleteName)) then
       begin
         ExecDelete(CompleteName, DeleteStartDir);
       end
       else
       begin
-        // is a existing file
+        { is a existing file }
         if SysUtils.DeleteFile(CompleteName) then
         begin
           LogS := 'The file has been deleted';
@@ -10483,40 +10503,40 @@ begin
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
             LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
-          (*
-        LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
-          ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLInfo);
-        *)
         end;
       end;
     end;
   end
-  else // old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing"
+  else { old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing" }
   begin
     if isDirectory(ExtractFilePath(CompleteName)) then
       ExecDelete(CompleteName, DeleteStartDir)

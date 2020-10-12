@@ -1,4 +1,4 @@
-unit Unit1;
+unit guitest;
 
 {$mode objfpc}{$H+}
 
@@ -12,7 +12,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Label1: TLabel;
+    Image1: TImage;
     Timer1: TTimer;
     procedure FormShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -35,6 +35,7 @@ procedure TForm1.FormShow(Sender: TObject);
 begin
   //Sleep(1000);
   //Application.Terminate;
+   Timer1.Interval:=250;
    writeln('start form / gtk test ...');
    Timer1.Enabled:=true;
 end;
@@ -42,7 +43,7 @@ end;
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
    Timer1.Enabled:=false;
-   writeln('terminating regulary');
+   writeln('terminating regulary');;
    Application.Terminate;
    halt(0);
 end;
