@@ -4359,13 +4359,26 @@ begin
     while found do
     begin
       Logdatei.log('read line from read file ...', LLDebug2);
+      //Logdatei.log('line1: '+t, LLDebug2);
       //UTF8FixBroken(s);
       logstream.Write(s[1], 2);
       t := escapeControlChars(t);
+      //Logdatei.log('line2: '+t, LLDebug2);
       try
         t2 := t;
-        UTF8FixBroken(t2);
-        t := t2;
+        if t2<>'' then
+        begin
+          if FindInvalidUTF8Codepoint(PChar(t2),length(t2)) > -1 then
+          begin
+            { utf8fixbroken may freeze do 06.10.2020 }
+            //UTF8FixBroken(t2);
+            t := 'log line contains non UTF8 chars';
+          end
+          else t := t2;
+        end;
+        { Utf8EscapeControlChars calls utf8fixbroken see above }
+       // t := Utf8EscapeControlChars(t2);
+        //Logdatei.log('line3: '+t, LLDebug2);
       except
         on E: Exception do
         begin
@@ -4378,11 +4391,12 @@ begin
       //utf8str := AnsiToUtf8(t);
       //logstream.Write(utf8str[1], length(utf8str));
       //{$ELSE WINDOWS}
+      //Logdatei.log('line4: '+t, LLDebug2);
       logstream.Write(t[1], length(t));
       //{$ENDIF WINDOWS}
       //utf8str := lconvencoding.ConvertEncoding(t,lconvencoding.GetDefaultTextEncoding,'utf8');
 
-      Logdatei.log('write line from read file to service...', LLDebug2);
+      Logdatei.log('wrote line: '+t, LLDebug2);
       //logstream.write(t[1],length(t));
       found := Logdatei.getPartLine(t);
     end;

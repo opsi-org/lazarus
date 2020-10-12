@@ -1,4 +1,4 @@
-program gtk2test;
+program opsi_laz_gui_test;
 
 {$mode objfpc}{$H+}
 
@@ -7,10 +7,10 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, Unit1
+  Forms, guitest
   { you can add units after this };
 
-{$R *.res}
+//{$R *.res}
 
 begin
   RequireDerivedFormResource:=True;

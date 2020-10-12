@@ -35,6 +35,7 @@ uses
   osmain in 'osmain.pas',
   oslocale,
   oscalc,
+  osdefinedfunctions,
   {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
@@ -49,19 +50,26 @@ uses
   {$ENDIF GUI}
   {$IFDEF UNIX}
   osconf, opsihwbiosinfo, oslindesktopfiles, osparserhelper,
+  OSProcessux,
   {$ENDIF UNIX}
+  {$IFDEF DARWIN}
+  osfuncmac,
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  osfunclin,
+  {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
   DSiWin32 in 'DSiWin32.pas',
-  wiswaudit in 'wiswaudit.pas',
+  osswaudit in 'osswaudit.pas',
   jclexcerpt,
-  wilocaladmin,
+  oslocaladmin,
   osfuncwin,
   osfuncwin2,
   {$ENDIF}
-  Forms, ostxstringlist;
+  Forms;
 
 {$IFNDEF GUI}
 type
@@ -101,8 +109,10 @@ var
 {$R opsiscript.res}
 {$ENDIF GUI}
 
+{$IFDEF WINDOWS}
+{$R manifest.rc}
+{$ENDIF WINDOWS}
 
-//{$R manifest.rc}
 //{$i winst.lrs}
 
 

@@ -1,13 +1,13 @@
 object CentralForm: TCentralForm
-  Left = 368
+  Left = 2240
   Height = 541
-  Top = 225
+  Top = 208
   Width = 966
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   Caption = '  opsi - script'
-  ClientHeight = 541
+  ClientHeight = 521
   ClientWidth = 966
   Font.CharSet = ANSI_CHARSET
   Font.Color = clBlack
@@ -20,12 +20,12 @@ object CentralForm: TCentralForm
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.10.0'
   object LabelWinstVersion: TLabel
     Left = 177
-    Height = 10
+    Height = 9
     Top = 2
-    Width = 75
+    Width = 62
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
@@ -37,9 +37,9 @@ object CentralForm: TCentralForm
   end
   object Label6: TLabel
     Left = 185
-    Height = 10
+    Height = 9
     Top = 10
-    Width = 75
+    Width = 62
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
@@ -51,7 +51,7 @@ object CentralForm: TCentralForm
   end
   object Memo1: TMemo
     Left = 0
-    Height = 288
+    Height = 268
     Top = 253
     Width = 966
     Align = alClient
@@ -128,8 +128,8 @@ object CentralForm: TCentralForm
     BorderWidth = 1
     BorderStyle = bsSingle
     Caption = 'Log-View:'
-    ClientHeight = 42
-    ClientWidth = 966
+    ClientHeight = 38
+    ClientWidth = 962
     TabOrder = 2
     object LabelActivity: TLabel
       Left = 752
@@ -321,7 +321,7 @@ object CentralForm: TCentralForm
     end
     object Edit1: TEdit
       Left = 92
-      Height = 22
+      Height = 26
       Top = 22
       Width = 503
       TabOrder = 0
@@ -357,12 +357,12 @@ object CentralForm: TCentralForm
     end
     object ComboBox1: TComboBox
       Left = 92
-      Height = 21
+      Height = 26
       Top = 23
       Width = 577
       Color = clNone
       Enabled = False
-      ItemHeight = 0
+      ItemHeight = 18
       TabOrder = 3
       Text = 'ComboBox1'
       Visible = False
@@ -388,7 +388,7 @@ object CentralForm: TCentralForm
     end
     object Edit2: TEdit
       Left = 93
-      Height = 22
+      Height = 26
       Top = 7
       Width = 571
       TabOrder = 0
@@ -408,8 +408,8 @@ object CentralForm: TCentralForm
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 50
-      ClientWidth = 256
+      ClientHeight = 37
+      ClientWidth = 260
       Color = clMedGray
       Columns = 2
       Font.Color = clBlack
@@ -421,7 +421,7 @@ object CentralForm: TCentralForm
       TabOrder = 1
       object RadioButtonNewLogfile: TRadioButton
         Left = 6
-        Height = 38
+        Height = 25
         Top = 6
         Width = 115
         Caption = 'New'
@@ -438,9 +438,9 @@ object CentralForm: TCentralForm
       end
       object RadioButtonAppendLogfile: TRadioButton
         Left = 121
-        Height = 38
+        Height = 25
         Top = 6
-        Width = 129
+        Width = 133
         Caption = 'Append'
         Enabled = False
         Font.Color = clBlack
@@ -455,19 +455,19 @@ object CentralForm: TCentralForm
   end
   object TimerWait: TTimer
     OnTimer = TimerWaitTimer
-    left = 720
-    top = 216
+    Left = 720
+    Top = 216
   end
   object OpenDialog1: TOpenDialog
     Filter = 'opsi-script files|*.ins;*.opsiscript|all files|*.*'
     FilterIndex = 0
     InitialDir = 'c:\'
-    left = 768
-    top = 216
+    Left = 768
+    Top = 216
   end
   object MainMenu1: TMainMenu
-    left = 680
-    top = 216
+    Left = 680
+    Top = 216
     object Datei1: TMenuItem
       Caption = 'File'
       object Skript1: TMenuItem

@@ -21,6 +21,9 @@ uses
   OSProcessux,
 
   {$ENDIF UNIX}
+  {$IFDEF DARWIN}
+  osfuncmac,
+  {$ENDIF DARWIN}
   fileutil,
   lazfileutils,
   oslog;
@@ -175,6 +178,9 @@ begin
   {$IFDEF LINUX}
   Result := getLinProcessList;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := getMacOSProcessList;
+  {$ENDIF DARWIN}
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;
@@ -188,7 +194,7 @@ begin
   try
     list1 := TStringList.Create;
     try
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
       {in processlist we get " shortcmd ; ....." }
       {shortcmd has max length 15 and the rest does not help really }
       {so we try find an exact match in shortcmd }
@@ -212,7 +218,7 @@ begin
         if LowerCase(searchstr) = LowerCase(shortcmd) then
           Result := True;
       end;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
     {$IFDEF WINDOWS}
       searchstr := searchproc;
       list1.Text := getProcesslist.Text;

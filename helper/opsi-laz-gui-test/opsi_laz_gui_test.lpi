@@ -5,13 +5,12 @@
     <General>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="gtk2test"/>
+      <Title Value="opsi_laz_gui_test"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
-      <Icon Value="0"/>
     </General>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -19,7 +18,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="gtk2test"/>
+            <Filename Value="opsi_laz_gui_test"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -58,7 +57,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="gtk2test"/>
+            <Filename Value="opsi-laz-gui-test"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -74,6 +73,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -88,7 +88,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="gtk2test"/>
+            <Filename Value="opsi-laz-gui-test"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -107,6 +107,8 @@
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -128,25 +130,32 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
-        <Filename Value="gtk2test.lpr"/>
+        <Filename Value="opsi_laz_gui_test.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="unit1.pas"/>
+        <Filename Value="guitest.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit1"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="Info.plist"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="notarize_clitool.bash"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="gtk2test"/>
+      <Filename Value="opsi_laz_gui_test"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
