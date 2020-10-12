@@ -51,7 +51,8 @@ uses
   SysUtils,
   fileutil,
   lazfileutils,
-  lconvencoding;
+  lconvencoding,
+  LazUTF8;
 
 type
   //TRemoteErrorLogging = (trel_none, trel_filesystem, trel_syslog);
@@ -520,6 +521,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
+  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -573,7 +575,13 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
@@ -633,7 +641,7 @@ var
 begin
   ps := info + '! ' + LineEnding + 'Please inform the Administrator!';
   {$IFDEF GUI}
-  {$IFDEF OPSI}
+  {$IFDEF OPSISCRIPT}
   MyMessageDlg.WiMessage(ps, [mrOk]);
   {$ELSE}
   ShowMessage(ps);
@@ -1309,6 +1317,7 @@ begin
 
       st := s;
       st := TrimRight(st);
+      //UTF8FixBroken(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
@@ -1401,7 +1410,7 @@ begin
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
             *)
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
-            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] ' + LogSIndent + st;
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [] ' + LogSIndent + st;
         end;
       except
         on E: Exception do
@@ -1447,7 +1456,7 @@ begin
             //flush(LogMainFile);
           except
             {$IFDEF GUI}
-            {$IFDEF OPSI}
+            {$IFDEF OPSISCRIPT}
             if MyMessageDlg.WiMessage('Logfile ' + Filename +
               ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
               halt
@@ -1771,6 +1780,7 @@ begin
   begin
     //line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
     line := FormatDateTime('yyyy-mm-dd hh:nn', Now) + '  ' + line;
+    //UTF8FixBroken(line);
     try
       WriteLogLine(HistroryFileF, line);
     except
@@ -1908,6 +1918,11 @@ begin
     defaultStandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     defaultStandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     {$ENDIF OPSISCRIPTSTARTER}
+    {$IFDEF OPSICLIENTAGENT}
+    defaultStandardLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardMainLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardPartLogPath := '/var/log/opsi-client-agent/';
+    {$ENDIF OPSICLIENTAGENT}
     {$ELSE OPSI}
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';

@@ -52,10 +52,6 @@ msgstr "Por favor ingrese el nombre de usuario del servicio opsi:"
 msgid "Ready to continue ?"
 msgstr "Listo para continuar ?"
 
-#: oswebservice.rssendlog
-msgid "Sending log file to server ..."
-msgstr ""
-
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr ""

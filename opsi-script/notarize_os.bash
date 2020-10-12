@@ -30,7 +30,7 @@ rm -f log_file.txt
 rm -f ${FULLPATHTOEXE}
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
-cp Info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+cp info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"

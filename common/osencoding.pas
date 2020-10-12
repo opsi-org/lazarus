@@ -143,7 +143,7 @@ begin
   begin
     // we found an entry: encoding=<encoding to use>
     foundencodingstring := trim(mylist.Values['encoding']);
-    logdatei.DependentAdd('foundencodingstring: ' + foundencodingstring, LLDebug2);
+    logdatei.log('foundencodingstring: ' + foundencodingstring, LLDebug2);
     if isStringInList(foundencodingstring, supportedEncodings) then
       Result := foundencodingstring
     else
@@ -155,7 +155,7 @@ begin
           myencodings.Strings[i], 'utf8');
         newencodingstring := ConvertEncoding(newencodingstring, 'utf8',
           DefaultEncoding);
-        logdatei.DependentAdd('myencodings.Strings[i]: ' + myencodings.Strings[i] +
+        logdatei.log('myencodings.Strings[i]: ' + myencodings.Strings[i] +
           'newencodingstring: ' + newencodingstring, LLDebug3);
         if isStringInList(newencodingstring, supportedEncodings) then
         begin
@@ -181,7 +181,7 @@ begin
     repeat
       begin
         mytext := ConvertEncoding(searchText, myencodings.Strings[i], DefaultEncoding);
-        logdatei.DependentAdd('mytext: ' + mytext + ', myencodings.Strings[i]: ' +
+        logdatei.log('mytext: ' + mytext + ', myencodings.Strings[i]: ' +
           myencodings.Strings[i] + ', DefaultEncoding: ' + DefaultEncoding, LLDebug3);
         mylist.Text := mytext;
         if mylist.IndexOfName('encoding') <> -1 then
@@ -349,9 +349,12 @@ end;
 
 procedure initEncoding;
 begin
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   mysystemEncoding := 'utf8';
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  mysystemEncoding := GetDefaultTextEncoding;
+  {$ENDIF DARWIN}
   {$IFDEF WINDOWS}
   //mysystemEncoding := 'utf8';
   mysystemEncoding := GetDefaultTextEncoding;

@@ -44,6 +44,7 @@ var
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
+  showtest : boolean = false;
 //stopped: boolean;
 
 implementation
@@ -87,6 +88,7 @@ begin
   msg := msg + ' -s <path> -> relative path to config file; required' + LineEnding;
   msg := msg + ' --idevent=<event> -> running event; required' + LineEnding;
   msg := msg + ' -i <event> -> id of the event; required';
+  msg := msg + ' --test or -t (use with -s ; shows notifier for some seconds';
   ShowMessage(msg);
 end;
 
@@ -105,10 +107,14 @@ var
   lfilename: string;
   logAndTerminate: boolean = False;
   mynotifierConfPath: string;
+  fullparam : string;
 begin
+  //writeln('start');
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now));
+  //writeln('PreLog for: ' + Application.exename + ' opend at : ' +
+  //  DateTimeToStr(now));
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
     FileVerInfo.FileName := ParamStr(0);
@@ -118,15 +124,19 @@ begin
     FileVerInfo.Free;
   end;
   preloglist.Add('Application version: ' + myVersion);
-
+  for i := 0 to ParamCount do fullparam := fullparam + paramstr(i)+' ';
+  preloglist.Add('called: ' +fullparam);
 
   myexepath := ExtractFilePath(Application.ExeName);
   {$IFDEF WINDOWS}
   mynotifierConfPath := myexepath;
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   mynotifierConfPath := '/usr/share/opsi-client-agent/';
-  {$ENDIF UNIX}
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  mynotifierConfPath := '/usr/local/share/opsi-client-agent/';
+  {$ENDIF DARWIN}
   //myport := 44003;
   myport := 0;
   //stopped := False;
@@ -138,7 +148,8 @@ begin
   optionlist.Add('port:');
   optionlist.Add('skinconfigfile:');
   optionlist.Add('idevent:');
-  ErrorMsg := Application.CheckOptions('hp:s:i:', optionlist);
+  optionlist.Add('test');
+  ErrorMsg := Application.CheckOptions('thp:s:i:', optionlist);
   if ErrorMsg <> '' then
   begin
     preloglist.Add(ErrorMsg);
@@ -195,9 +206,16 @@ begin
     preloglist.Add('Found Parameter idevent');
     mynotifierkind := Application.GetOptionValue('i', 'idevent');
     // opsiclientd bug: popup comes with %id%
+    // shoud be fixed in opsi 4.2 opsiclientd
     if mynotifierkind = '%id%' then
       mynotifierkind := 'popup';
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
+  end;
+
+  if Application.HasOption('t', 'test') then
+  begin
+    preloglist.Add('Found Parameter test');
+    showtest := true;
   end;
 
   // Initialize logging
@@ -220,7 +238,11 @@ begin
   LogDatei.WriteHistFile := False;
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  {$IFDEF UNIX}
+  WriteLn('Will using log: '+LogDatei.StandardLogPath+LogDatei.StandardLogFilename);
+  {$ENDIF UNIX}
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
+
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do
@@ -246,7 +268,7 @@ end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
-  mythread.Terminate;
+  if Assigned(mythread) then mythread.Terminate;
   //if not inHideNForm then hideNForm
   //else sleep(5000);
   // stop program loop

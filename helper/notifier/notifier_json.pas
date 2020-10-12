@@ -148,13 +148,14 @@ begin
       // method  endConnection
       // hideNForm
       logdatei.log('Got method endConnection for: ' + nkind, LLDebug);
-      if (lowerCase(nkind) = lowerCase(mynotifierkind)) or
-        ((mynotifierkind = 'event') and (nkind = '')) then
+      if (lowerCase(nkind) = lowerCase(mynotifierkind))
+        or ((mynotifierkind = 'event') and (nkind = ''))
+        or ((mynotifierkind = 'shutdown') and (nkind = ''))then
       begin
         // got end call for this notifier kind : hide form
-        mythread.Terminate;
-        hideNForm;
-        //shutdownNotifier;
+        //mythread.Terminate;
+        //hideNForm;
+        shutdownNotifier;
       end;
     end
     else  // other methods
