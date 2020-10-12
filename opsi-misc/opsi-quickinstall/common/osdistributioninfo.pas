@@ -42,10 +42,19 @@ begin
   FMyDistr := other;
   FDistrUrlPart := '';
   // CentOS has releases with names like 7.x-xxxx
-  if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
+  if distroName = 'CentOS' then
   begin
-    FMyDistr := CentOS_7;
-    FDistrUrlPart := 'CentOS_7/';
+    if Pos('7', distroRelease) = 1 then
+    begin
+      FMyDistr := CentOS_7;
+      FDistrUrlPart := 'CentOS_7/';
+    end
+    else
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := CentOS_8;
+      FDistrUrlPart := 'CentOS_8/';
+    end;
   end
   else
   if distroName = 'Debian' then
@@ -76,6 +85,11 @@ begin
       FMyDistr := openSUSE_Leap_15_1;
       FDistrUrlPart := 'openSUSE_Leap_15.1/';
     end
+    else if distroRelease = '15.2' then
+    begin
+      FMyDistr := openSUSE_Leap_42_3;
+      FDistrUrlPart := 'openSUSE_Leap_15.2/';
+    end
     else if distroRelease = '42.3' then
     begin
       FMyDistr := openSUSE_Leap_42_3;
@@ -84,10 +98,19 @@ begin
   end
   else
   // RHEL has releases like 7.x
-  if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
+  if distroName = 'RedHatEnterpriseServer' then
   begin
-    FMyDistr := RHEL_7;
-    FDistrUrlPart := 'RHEL_7/';
+    if Pos('7', distroRelease) = 1 then
+    begin
+      FMyDistr := RHEL_7;
+      FDistrUrlPart := 'RHEL_7/';
+    end
+    else
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := RHEL_8;
+      FDistrUrlPart := 'RHEL_8/';
+    end;
   end
   else
   if distroName = 'Univention' then

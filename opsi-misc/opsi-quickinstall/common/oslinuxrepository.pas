@@ -12,12 +12,15 @@ type
 
   {TDistribution: distributions which opsi-server supports, add any new supported distribution here }
   TDistribution = (CentOS_7,
+    CentOS_8,
     Debian_8,
     Debian_9,
     Debian_10,
     openSUSE_Leap_15_1,
+    openSUSE_Leap_15_2,
     openSUSE_Leap_42_3,
     RHEL_7,
+    RHEL_8,
     SLE_12,
     SLE12_SP1,
     SLE12_SP2,
@@ -63,7 +66,7 @@ type
   public
     constructor Create(Distribution: TDistribution; Password: string;
       Sudo: boolean = False);
-    {  }
+
     destructor Destroy; override;
     function GetDefaultURL(OpsiVersion: TOpsiVersion; OpsiBranch: TOpsiBranch): string;
     { Constructs the repository URL based on distribution, opsi version and opsi branch and gives it back as result}
@@ -113,12 +116,15 @@ begin
   end;
   case FDistribution of
     CentOS_7: Result := Result + 'CentOS_7/';
+    CentOS_8: Result := Result + 'CentOS_8/';
     Debian_8: Result := Result + 'Debian_8/';
     Debian_9: Result := Result + 'Debian_9/';
     Debian_10: Result := Result + 'Debian_10/';
     openSUSE_Leap_15_1: Result := Result + 'openSUSE_Leap_15.1/';
+    openSUSE_Leap_15_2: Result := Result + 'openSUSE_Leap_15.2/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
+    RHEL_8: Result := Result + 'RHEL_8/';
     SLE_12: Result := Result + 'SLE_12/';
     SLE12_SP1: Result := Result + 'SLE12_SP1/';
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
@@ -161,14 +167,15 @@ begin
       FRunCommandElevated.Run('touch ' + FSourcesListFilePath);
     end;
     // change owner of file FSourcesListFilePath from root to user
-    Output:=FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
+    Output := FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
     //ShowMessage(Output);
 
     //ShowMessage('deb '+FURL+' /');
-    AddLineToTextFile('deb '+FURL+' /', FSourcesListFilePath);
+    AddLineToTextFile('deb ' + FURL + ' /', FSourcesListFilePath);
 
     // change owner of file FSourcesListFilePath from user to root
-    Output:=(FRunCommandElevated.Run('chown -c ' + Owner + ' ' + FSourcesListFilePath));
+    Output := (FRunCommandElevated.Run('chown -c ' + Owner + ' ' +
+      FSourcesListFilePath));
     //ShowMessage(Output);
 
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
@@ -194,7 +201,8 @@ begin
     FRunCommandElevated.Run('wget ' + FURL);
     FRunCommandElevated.Run('yum makecache');
   end
-  else LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);
+  else
+    LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);
 end;
 
 
@@ -206,20 +214,20 @@ begin
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10,
     xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
-      begin
-        AddDebianUbuntu;
-      end;
+    begin
+      AddDebianUbuntu;
+    end;
     {OpenSuse and SLES}
-    openSUSE_Leap_15_1, openSUSE_Leap_42_3,
+    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_42_3,
     SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4:
-      begin
-        AddOpenSuseSLES;
-      end;
+    begin
+      AddOpenSuseSLES;
+    end;
     {CentOS and RedHat}
-    CentOS_7, RHEL_7:
-      begin
-        AddCentOSRedHat;
-      end;
+    CentOS_7, CentOS_8, RHEL_7, RHEL_8:
+    begin
+      AddCentOSRedHat;
+    end;
   end;
 end;
 
