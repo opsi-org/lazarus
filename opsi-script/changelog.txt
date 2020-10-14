@@ -5,6 +5,12 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
+
+* new boolean function: isValidFQDN
+
+-- d.oertel <d.oertel@uib.de> Tue, 13 Oct 2020 15:00
+
 opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
 
 * macos: integrate to opsiscript and opsiscriptnogui project
