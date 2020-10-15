@@ -1,4 +1,10 @@
 [changelog]
+opsi-notifier  4.1.1.3
+
+  * again fixes on high dpi: Set var designdpi to 96
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 15 Oct 2020:15:00:00 +0200
+
 opsi-notifier  4.1.1.2
 
   * additional param --test

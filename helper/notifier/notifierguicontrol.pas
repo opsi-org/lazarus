@@ -66,6 +66,7 @@ uses
   notifier_json,
   notifier_base;
 
+
 var
   myini: TIniFile;
   navlist: TStringList;
@@ -82,6 +83,7 @@ var
   ButtonArray: TButtons;
   MemoArray: Tmemos;
   labelcounter, buttoncounter, memocounter: integer;
+  designPPI : integer;
 
 
 
@@ -923,7 +925,8 @@ begin
     mytmpstr := ExtractFilePath(myini.FileName);
     mytmpstr := mytmpstr + myini.ReadString(aktsection, 'File', '');
     nform.Image1.Picture.LoadFromFile(mytmpstr);
-    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
     nform.Image1.Repaint;
     DataModule1.ProcessMess;
   end
@@ -978,8 +981,9 @@ begin
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
     //{$IFDEF WINDOWS}
     // scale new scrollbox:
-    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
-      screen.PixelsPerInch, 0, 0);
+    //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
+
     //{$ENDIF WINDOWS}
    // make transparent
     memoarray[memocounter].ControlStyle :=
@@ -1047,8 +1051,9 @@ begin
     // scale new Label:
     //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
     //  96, nform.PixelsPerInch, 0, 0);
-    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
+    //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
+    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,nform.PixelsPerInch, 0, 0);
+
     //{$ENDIF WINDOWS}
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
@@ -1102,8 +1107,8 @@ begin
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
     //{$IFDEF WINDOWS}
     // scale new Button:
-    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
+    //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
+    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, nform.PixelsPerInch, 0, 0);
     //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
@@ -1145,7 +1150,8 @@ var
 begin
   LogDatei.log('screen.PixelsPerInch: ' + IntToStr(screen.PixelsPerInch), LLInfo);
   LogDatei.log('nform.PixelsPerInch: ' + IntToStr(nform.PixelsPerInch), LLInfo);
-  LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
+  //LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
+  LogDatei.log('designPPI: ' + intToStr(designPPI), LLInfo);
 
   LogDatei.log('Loading Skin config from: ' + ininame, LLInfo);
   myini := TIniFile.Create(ininame);
@@ -1177,4 +1183,5 @@ begin
   buttonlist := TStringList.Create;
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
+  designPPI:=96;
 end.
