@@ -59,13 +59,15 @@ uses
   osfunclin,
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
+  {$IFDEF WIN32}
+  DSiWin32 in 'DSiWin32.pas',
+  oslocaladmin,
+  jclexcerpt,
+  {$ENDIF WIN32}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
-  DSiWin32 in 'DSiWin32.pas',
   osswaudit in 'osswaudit.pas',
-  jclexcerpt,
-  oslocaladmin,
   osfuncwin,
   osfuncwin2,
   {$ENDIF}

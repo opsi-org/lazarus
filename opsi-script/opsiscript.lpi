@@ -23,10 +23,10 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="4"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable Comments="Compiled with Lazarus 2.0.10" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
-    <BuildModes Count="5">
+    <BuildModes Count="6">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -183,6 +183,7 @@
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -211,6 +212,54 @@
           </Other>
         </CompilerOptions>
       </Item5>
+      <Item6 Name="Release_win64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="winst64"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dSYNAPSE"/>
+          </Other>
+        </CompilerOptions>
+      </Item6>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -229,7 +278,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="51">
+    <Units Count="52">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -454,6 +503,10 @@
         <Filename Value="osfuncwin3.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit50>
+      <Unit51>
+        <Filename Value="../common/osnetutil.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

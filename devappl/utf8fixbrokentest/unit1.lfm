@@ -1,0 +1,113 @@
+object Form1: TForm1
+  Left = 886
+  Height = 574
+  Top = 336
+  Width = 714
+  Caption = 'Form1'
+  ClientHeight = 574
+  ClientWidth = 714
+  LCLVersion = '2.0.10.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 122
+    Top = 0
+    Width = 714
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 122
+    ClientWidth = 714
+    TabOrder = 0
+    object Button1: TButton
+      Left = 403
+      Height = 25
+      Top = 12
+      Width = 155
+      Caption = 'Button1'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+    object BitBtn1: TBitBtn
+      Left = 29
+      Height = 30
+      Top = 17
+      Width = 123
+      Caption = 'open'
+      OnClick = BitBtn1Click
+      TabOrder = 1
+    end
+    object Button2: TButton
+      Left = 405
+      Height = 25
+      Top = 45
+      Width = 155
+      Caption = 'Button2'
+      OnClick = Button2Click
+      TabOrder = 2
+    end
+    object Button3: TButton
+      Left = 403
+      Height = 25
+      Top = 82
+      Width = 155
+      Caption = 'Button3'
+      OnClick = Button3Click
+      TabOrder = 3
+    end
+  end
+  object PairSplitter1: TPairSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 452
+    Top = 122
+    Width = 714
+    Align = alClient
+    Position = 200
+    SplitterType = pstVertical
+    object PairSplitterSide1: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 200
+      Top = 0
+      Width = 714
+      ClientWidth = 714
+      ClientHeight = 200
+      object MemoIn: TMemo
+        Left = 0
+        Height = 200
+        Top = 0
+        Width = 714
+        Align = alClient
+        Lines.Strings = (
+          'MemoIn'
+        )
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+    end
+    object PairSplitterSide2: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 247
+      Top = 205
+      Width = 714
+      ClientWidth = 714
+      ClientHeight = 247
+      object MemoOut: TMemo
+        Left = 0
+        Height = 247
+        Top = 0
+        Width = 714
+        Align = alClient
+        Lines.Strings = (
+          'MemoOut'
+        )
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 162
+    Top = 12
+  end
+end

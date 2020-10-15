@@ -43,10 +43,10 @@ uses
   //registry,
   VersionInfoX,
   //unitImpersonator,
-  osregistry,
   osfuncwin2,
   osfuncwin3,
 {$IFDEF WIN32}
+  osregistry,
   DSiWin32,
   oslocaladmin,
   packdefs,
