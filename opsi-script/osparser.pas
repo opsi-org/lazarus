@@ -13739,8 +13739,12 @@ var
   r1: string = '';
   s3: string = '';
   s4: string = '';
+  s5: string = '';
   n1: integer = 0;
   n2: integer = 0;
+  n3: integer = 0;
+  n4: integer = 0;
+  n5: integer = 0;
   s1enc: string = '';
   s2enc: string = '';
   s3enc: string = '';
@@ -15333,6 +15337,31 @@ begin
   begin
     StringResult := randomstr(True);
     syntaxCheck := True;
+  end
+
+  //randomstrWithParameters
+  else if LowerCase(s) = LowerCase('randomstrWithParameters') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                 if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                       if Skip(',', r, r, InfoSyntaxError) then
+                          if EvaluateString(r, r, s5, InfoSyntaxError) then
+                             if Skip(')', r, r, InfoSyntaxError) then
+                              begin
+                                syntaxCheck := True;
+                                 n1 := StrToInt(s1);
+                                 n2 := StrToInt(s2);
+                                 n3 := StrToInt(s3);
+                                 n4 := StrToInt(s4);
+                                 n5 := StrToInt(s5);
+                                 StringResult := randomstrWithParameters(n1,n2,n3,n4,n5);
+                              end;
   end
 
   else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then

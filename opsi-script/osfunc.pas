@@ -593,6 +593,7 @@ procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
+function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
 procedure ShrinkFileToMB(filename: string; newsize: integer);
 procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
@@ -1094,6 +1095,65 @@ begin
       char(randomInt) in CharsNumericForRandomStrings;
     StringResult := StringResult + char(randomInt);
   end;
+  Result := StringResult;
+end;
+
+// randomstrWithParameters returns a random string with predefined preferences
+function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer) : string;
+var
+  StringResult: string = '';
+  i,randomInt,n,m:integer;
+  aux:char;
+begin
+  Randomize;
+   for i := 1 to nLowerCases do
+   begin
+       repeat
+       randomInt := random(122)+1
+       until char(randomInt) in CharsLowerForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nUpperCases do
+   begin
+       repeat
+       randomInt := random(90)+1
+       until char(randomInt) in CharsUpperForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nDigits do
+   begin
+       repeat
+       randomInt := random(57)+1
+       until char(randomInt) in CharsNumericForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nSpecialChars do
+   begin
+       repeat
+       randomInt := random(126)+1
+       until char(randomInt) in CharsSpecialForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   if  Length(StringResult) < minLength  then
+   begin
+       repeat
+           repeat
+             randomInt := random(122)+1
+           until char(randomInt) in CharsLowerForRandomStrings;
+           StringResult := StringResult + char(randomInt);
+       until Length(StringResult) >= minLength;
+   end;
+
+  //randomly reorganizing the string
+  n := Length(StringResult);
+  repeat
+    n:=n-1;
+    m := random(n)+1;
+    aux := StringResult[n];
+    StringResult[n] := StringResult[m];
+    StringResult[m] := aux;
+  until n = 1;
+
   Result := StringResult;
 end;
 
