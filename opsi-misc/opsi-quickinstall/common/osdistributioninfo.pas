@@ -87,7 +87,7 @@ begin
     end
     else if distroRelease = '15.2' then
     begin
-      FMyDistr := openSUSE_Leap_42_3;
+      FMyDistr := openSUSE_Leap_15_2;
       FDistrUrlPart := 'openSUSE_Leap_15.2/';
     end
     else if distroRelease = '42.3' then
