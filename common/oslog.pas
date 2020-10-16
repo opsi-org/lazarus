@@ -1266,6 +1266,7 @@ var
   //usedloglevel: integer = 0;
   i: integer;
   dummybool: boolean;
+  orgfilename, mainfilename, sectionFilename : string;
   {$IFDEF GUI}
   dlgresult: TModalresult;
   {$ENDIF}
@@ -1291,8 +1292,12 @@ begin
       {$IFDEF OPSISCRIPT}
       // running defined function ?
       if inDefFuncIndex > -1 then
-        if definedFunctionArray[inDefFuncIndex].OriginFile <>
-          ExtractFileName(script.Filename) then
+      begin
+        orgfilename := definedFunctionArray[inDefFuncIndex].OriginFile;
+        mainfilename := ExtractFileName(script.Filename);
+        //sectionFilename := ExtractFileName(aktsection.Filename);
+        if orgfilename <> mainfilename
+           then
           // defined function imported from lib
           // do we want to debug libraries ?
           if (not debug_lib) then

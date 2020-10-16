@@ -346,7 +346,7 @@ default: ["xenial_bionic"]
     procedure SetPostUninstallLines(const AValue: TStrings);
     procedure SetProperties(const AValue: TPProperties);
   published
-    property config_version: string read Fconfig_version;
+    property config_version: string read Fconfig_version write Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
@@ -391,6 +391,9 @@ function instIdToint(installerId: TKnownInstaller): integer;
 procedure initaktproduct;
 procedure freebasedata;
 
+const
+  CONFVERSION = '4.1.0';
+
 var
   aktProduct: TopsiProduct;
   aktSetupFile: TSetupFile;
@@ -420,8 +423,8 @@ resourcestring
     'myinstallhelperlib.opsiscript';
   rspreInstallLines =
     'List of opsi-script code lines that should be included before the installation starts. '
-    + LineEnding + 'One per line. May be empty. Example: ' +
-    LineEnding + 'comment "Start the installation ..."';
+    + LineEnding + 'One per line. May be empty. Example: ' + LineEnding +
+    'comment "Start the installation ..."';
   rspostInstallLines =
     'List of opsi-script code lines that should be included after the installation finished.'
     + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
@@ -802,6 +805,7 @@ begin
       Fconfig_filled := False
     else
       Fconfig_filled := True;
+    Fconfig_version := CONFVERSION;
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
@@ -948,11 +952,11 @@ begin
   except
     on E: Exception do
       if Assigned(logdatei) then
-        LogDatei.log('read config exception. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError)
+        LogDatei.log('read config exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError)
       else
-        ShowMessage('read config exception. Details: ' +
-          E.ClassName + ': ' + E.Message);
+        ShowMessage('read config exception. Details: ' + E.ClassName +
+          ': ' + E.Message);
   end;
 end;
 
@@ -1060,8 +1064,8 @@ begin
     licenserequired := False;
     // Application.Params[0] is directory of application as string
     productImageFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' + PathDelim +
-      'template.png';
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'template.png';
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

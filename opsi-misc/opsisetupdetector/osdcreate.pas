@@ -113,14 +113,16 @@ begin
     str := '';
     if myconfiguration.UsePropDesktopicon then
       str := str + 'DefVar $DesktopIcon$' + LineEnding;
-    if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    if myconfiguration.UsePropLicenseOrPool and
+      aktProduct.productdata.licenserequired then
       str := str + 'DefVar $LicenseOrPool$' + LineEnding;
     patchlist.add('#@stringVars*#=' + str);
 
     str := '';
     patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
     for i := 0 to myconfiguration.import_libraries.Count - 1 do
-      str := str + 'importlib "' + myconfiguration.import_libraries[i] + '"' + LineEnding;
+      str := str + 'importlib "' + myconfiguration.import_libraries[i] +
+        '"' + LineEnding;
     patchlist.add('#@importLibs*#=' + str);
     patchlist.add('#@LicenseRequired*#=' +
       boolToStr(aktProduct.productdata.licenserequired, True));
@@ -128,25 +130,27 @@ begin
     if myconfiguration.UsePropDesktopicon then
       str := str + 'set $DesktopIcon$ = GetProductProperty("DesktopIcon","false")' +
         LineEnding;
-    if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    if myconfiguration.UsePropLicenseOrPool and
+      aktProduct.productdata.licenserequired then
     begin
-      str := str + 'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","")' +
+      str := str +
+        'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","")' +
         LineEnding;
-      str := str + 'set $LicensePool$ = $LicenseOrPool$' +  LineEnding;
+      str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
     end;
     patchlist.add('#@GetProductProperty*#=' + str);
     //setup 1
     patchlist.add('#@MinimumSpace1*#=' + IntToStr(
       aktProduct.SetupFiles[0].requiredSpace) + ' MB');
-     patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
     patchlist.add('#@MsiId1*#=' + aktProduct.SetupFiles[0].msiId);
     str := myconfiguration.preInstallLines.Text;
     if str <> '' then
       str := 'comment "Start Pre Install hook :"' + LineEnding +
         myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines1*#=' + str);
-    patchlist.add('#@installCommandLine1*#=' + aktProduct.SetupFiles[
-      0].installCommandLine);
+    patchlist.add('#@installCommandLine1*#=' +
+      aktProduct.SetupFiles[0].installCommandLine);
     str := aktProduct.SetupFiles[0].install_waitforprocess;
     if str <> '' then
       str := '/WaitForProcessEnding "' +
@@ -189,8 +193,8 @@ begin
       str := 'comment "Start Pre Install hook :"' + LineEnding +
         myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines2*#=' + str);
-    patchlist.add('#@installCommandLine2*#=' + aktProduct.SetupFiles[
-      1].installCommandLine);
+    patchlist.add('#@installCommandLine2*#=' +
+      aktProduct.SetupFiles[1].installCommandLine);
     str := aktProduct.SetupFiles[1].install_waitforprocess;
     if str <> '' then
       str := '/WaitForProcessEnding "' +
@@ -227,7 +231,8 @@ begin
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupHandleDesktopIcon.opsiscript');
+      strlist.LoadFromFile(templatePath + Pathdelim +
+        'SetupHandleDesktopIcon.opsiscript');
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
     end;
     patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
@@ -236,21 +241,24 @@ begin
     if myconfiguration.UsePropDesktopicon then
     begin
       //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
-      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + 'Linkfolder_remove_desktop_icon';
+      str := 'comment "Start Desktop Icon Handling :"' + LineEnding +
+        'Linkfolder_remove_desktop_icon';
     end;
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupDesktopIconSection.opsiscript');
+      strlist.LoadFromFile(templatePath + Pathdelim +
+        'SetupDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
     patchlist.add('#@SetupSectionLines*#=' + str);
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubDesktopIconSection.opsiscript');
+      strlist.LoadFromFile(templatePath + Pathdelim +
+        'DelsubDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
     patchlist.add('#@DelsubSectionLines*#=' + str);
@@ -318,7 +326,7 @@ begin
       copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
         clientpath + PathDelim + 'files1' + PathDelim +
         aktProduct.SetupFiles[0].MSTFileName,
-        [cffOverwriteFile,cffCreateDestDirectory, cffPreserveTime], True);
+        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
@@ -330,7 +338,7 @@ begin
       copyfile(aktProduct.SetupFiles[1].MSTFullFileName,
         clientpath + PathDelim + 'files2' + PathDelim +
         aktProduct.SetupFiles[1].MSTFileName,
-        [cffOverwriteFile,cffCreateDestDirectory, cffPreserveTime], True);
+        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
 
     //osd-lib.opsiscript
     infilename := templatePath + Pathdelim + 'osd-lib.opsiscript';
@@ -340,8 +348,8 @@ begin
     //product png
     //infilename := templatePath + Pathdelim + 'template.png';
     infilename := aktProduct.productdata.productImageFullFileName;
-    outfilename := clientpath + PathDelim + aktProduct.productdata.productId
-      + ExtractFileExt(aktProduct.productdata.productImageFullFileName);
+    outfilename := clientpath + PathDelim + aktProduct.productdata.productId +
+      ExtractFileExt(aktProduct.productdata.productImageFullFileName);
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     //preinst
@@ -470,7 +478,7 @@ begin
     textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
       ') stable; urgency=medium');
     textlist.Add('');
-    textlist.Add('  * initial by opsi-setup-detector - Version: '+myVersion);
+    textlist.Add('  * initial by opsi-setup-detector - Version: ' + myVersion);
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(
@@ -479,8 +487,8 @@ begin
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
 
     // readme.txt
-    if (myconfiguration.Readme_txt_templ <> '')
-      and FileExists(myconfiguration.Readme_txt_templ) then
+    if (myconfiguration.Readme_txt_templ <> '') and
+      FileExists(myconfiguration.Readme_txt_templ) then
     begin
       textlist.Clear;
       utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
@@ -491,8 +499,7 @@ begin
       textlist.Add('');
       tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
         aktProduct.productdata.packageversion);
-      textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
-        ')');
+      textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr + ')');
       textlist.Add('');
       textlist.Add('-- ' + myconfiguration.fullName + ' <' +
         myconfiguration.email_address + '> ' + FormatDateTime(
@@ -513,7 +520,8 @@ function createProductdirectory: boolean;
 var
   goon: boolean;
 begin
-  prodpath := myconfiguration.workbench_Path + PathDelim + aktProduct.productdata.productId;
+  prodpath := myconfiguration.workbench_Path + PathDelim +
+    aktProduct.productdata.productId;
   clientpath := prodpath + PathDelim + 'CLIENT_DATA';
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;
