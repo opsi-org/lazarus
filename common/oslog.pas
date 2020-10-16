@@ -103,6 +103,7 @@ type
     FStandardMainLogPath: string;
     FStandardPartLogPath: string;
     FUsedLogLevel: integer;
+    FNoLogFiles : TStringlist;
 
 
   protected
@@ -157,6 +158,7 @@ type
 
 
     procedure SetNumberOfErrors(Number: integer);
+    procedure addToNoLogFiles(filename : string);
     property LogLevel: integer read FLogLevel write FLogLevel;
     property NumberOfWarnings: integer read FNumberOfWarnings write FNumberOfWarnings;
     property NumberOfErrors: integer read FNumberOfErrors write SetNumberOfErrors;
@@ -632,6 +634,10 @@ begin
   FStandardLogPath := defaultStandardLogPath;
   FStandardMainLogPath := defaultStandardMainLogPath;
   FStandardPartLogPath := defaultStandardPartLogPath;
+  FNoLogFiles := TStringlist.Create;
+  { we want no duplicates in this list - so we have not to check at add }
+  FNoLogFiles.Sorted:=true;
+  FNoLogFiles.Duplicates:=dupIgnore;
 end;
 
 
@@ -993,6 +999,7 @@ begin
     if isOpen(LogPartFileF) then
       FileClose(LogPartFileF);
 
+  FreeAndNil(FNoLogFiles);
   inherited Destroy;
 end;
 
@@ -1296,7 +1303,8 @@ begin
         orgfilename := definedFunctionArray[inDefFuncIndex].OriginFile;
         mainfilename := ExtractFileName(script.Filename);
         //sectionFilename := ExtractFileName(aktsection.Filename);
-        if orgfilename <> mainfilename
+        //if orgfilename <> mainfilename
+        if FNoLogFiles.IndexOf(orgfilename) <> -1
            then
           // defined function imported from lib
           // do we want to debug libraries ?
@@ -1317,7 +1325,9 @@ begin
                 usedloglevel :=  LLWarning;
          end;
          *)
+         end;
        {$ENDIF}
+
 
 
       st := s;
@@ -1598,6 +1608,11 @@ end;
 procedure TLogInfo.SetNumberOfErrors(Number: integer);
 begin
   FNumberOfErrors := Number;
+end;
+
+procedure TLogInfo.addToNoLogFiles(filename : string);
+begin
+  FNoLogFiles.add(filename);
 end;
 
 procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;

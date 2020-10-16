@@ -20205,6 +20205,7 @@ begin
                     begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
+                      LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
                       inclist := TStringList.Create;
                       inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       Encoding2use := searchencoding(inclist.Text);
