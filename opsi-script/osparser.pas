@@ -686,7 +686,8 @@ var
   runproductlist: boolean;
   runprocessproducts: boolean;
   opsiWinstStartdir: string;
-  Script: TuibInstScript;
+  Script : TuibInstScript;
+  aktsection : TWorkSection;
   scriptsuspendstate: boolean;
   scriptstopped: boolean;
   inDefFuncLevel: integer = 0;
@@ -19812,6 +19813,7 @@ begin
           begin
             if (ArbeitsSektion.Count > 0) then
             begin
+              aktsection := ArbeitsSektion;
               if StatKind = tsProfileActions then
                 runProfileActions := True;
               LogDatei.log('', LLinfo);
@@ -20203,6 +20205,7 @@ begin
                     begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
+                      LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
                       inclist := TStringList.Create;
                       inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       Encoding2use := searchencoding(inclist.Text);

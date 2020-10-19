@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, Buttons, osdbasedata, PropEdits,
-    lcltranslator;
+  lcltranslator;
 
 type
 
@@ -33,7 +33,7 @@ type
 
 var
   FOSDConfigdlg: TFOSDConfigdlg;
-    myconfigurationhints: TStringList;
+  myconfigurationhints: TStringList;
 
 (*
 resourcestring
@@ -80,21 +80,21 @@ begin
   TIPropertyGrid1.CheckboxForBoolean := True;
   //TIPropertyGrid1.PropertyEditorHook;
   myconfigurationhints.Clear;
-  myconfigurationhints.Add('workbench_Path='+rsworkbench_Path);
+  myconfigurationhints.Add('workbench_Path=' + rsworkbench_Path);
   //myconfigurationhints.Add('preInstallLines = '+rsPreInstallLines);
-  myconfigurationhints.Add('workbench_mounted='+rsworkbench_mounted);
-  myconfigurationhints.Add('config_filled='+rsconfig_filled);
-  myconfigurationhints.Add('registerInFilemanager='+rsRegisterInFilemanager);
-  myconfigurationhints.Add('email_address='+rsEmail_address);
-  myconfigurationhints.Add('fullName='+rsFullName);
-  myconfigurationhints.Add('import_libraries='+rsImport_libraries);
-  myconfigurationhints.Add('preInstallLines='+rsPreInstallLines);
-  myconfigurationhints.Add('postInstallLines='+rsPostInstallLines);
-  myconfigurationhints.Add('preUninstallLines='+rsPreUninstallLines);
-  myconfigurationhints.Add('postUninstallLines='+rsPostUninstallLines);
-  myconfigurationhints.Add('PathToOpsiPackageBuilder='+rsPathToOpsiPackageBuilder);
-  myconfigurationhints.Add('CreateRadioIndex='+rsCreateRadioIndex);
-  myconfigurationhints.Add('BuildRadioIndex='+rsBuildRadioIndex);
+  myconfigurationhints.Add('workbench_mounted=' + rsworkbench_mounted);
+  myconfigurationhints.Add('config_filled=' + rsconfig_filled);
+  myconfigurationhints.Add('registerInFilemanager=' + rsRegisterInFilemanager);
+  myconfigurationhints.Add('email_address=' + rsEmail_address);
+  myconfigurationhints.Add('fullName=' + rsFullName);
+  myconfigurationhints.Add('import_libraries=' + rsImport_libraries);
+  myconfigurationhints.Add('preInstallLines=' + rsPreInstallLines);
+  myconfigurationhints.Add('postInstallLines=' + rsPostInstallLines);
+  myconfigurationhints.Add('preUninstallLines=' + rsPreUninstallLines);
+  myconfigurationhints.Add('postUninstallLines=' + rsPostUninstallLines);
+  myconfigurationhints.Add('PathToOpsiPackageBuilder=' + rsPathToOpsiPackageBuilder);
+  myconfigurationhints.Add('CreateRadioIndex=' + rsCreateRadioIndex);
+  myconfigurationhints.Add('BuildRadioIndex=' + rsBuildRadioIndex);
   (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
@@ -104,17 +104,13 @@ end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
 begin
-
-    // Create Config Hints
+  // Create Config Hints
   myconfigurationhints := TStringList.Create;
-
-
-
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
 begin
-    FreeAndNil(myconfigurationhints);
+  FreeAndNil(myconfigurationhints);
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Click(Sender: TObject);
@@ -147,10 +143,7 @@ initialization
     TFileNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Readme_txt_templ',
     TFileNamePropertyEditor);
- // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
- //   TCollectionPropertyEditor);
-
-
-
+  // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
+  //   TCollectionPropertyEditor);
 
 end.

@@ -80,6 +80,10 @@ opsi-setup-detector (4.1.0.16) stable; urgency=low
 
   * icon selection integrated (by a.schmitz)
   * del caption of flowpanel4
+  * set inital path to icon dir
+  * fix write config_version
+  * set config_version to 4.1.0
+  * fixes on icon collection diplay while loading
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
 

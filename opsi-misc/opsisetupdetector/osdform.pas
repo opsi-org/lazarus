@@ -1163,6 +1163,13 @@ var
 begin
   // select new directory the icons shall come from
   try
+    {$IFDEF UNIX}
+    SelectDirectoryDialog1.InitialDir := '/usr/share/opsi-setup-detector/icons';
+    {$ENDIF UNIX}
+    {$IFDEF WINDOWS}
+    SelectDirectoryDialog1.InitialDir :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'icons';
+    {$ENDIF WINDOWS}
     selectDirectory := SelectDirectoryDialog1.Execute;
   except
     on E: Exception do
@@ -1243,6 +1250,9 @@ begin
           Image.Update;
           Inc(numberIcons);
         end;
+        if numberIcons mod 10 = 0 then
+          LabelNumber.Caption := IntToStr(numberIcons);
+        Application.ProcessMessages;
       until FindNext(IconSearch) <> 0; // I have no idea how they are ordered
       FindClose(IconSearch);
     end;
@@ -2286,6 +2296,11 @@ begin
   list.Add('');
   list.add('Icons from Iconic (https://useiconic.com/) under MIT Licnse.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
+  list.Add('');
+  list.Add('Configuration: ');
+  list.Add(aktconfigfile);
+  list.Add('Log: ');
+  list.Add(logdatei.FileName);
   ShowMessage(list.Text);
   list.Free;
 
@@ -2318,15 +2333,31 @@ end;
 procedure TResultform1.FormCreate(Sender: TObject);
 var
   DefaultIcon: TImage;
+  tmpimage: TPicture;
 begin
+  tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
   main1;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
+   {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
     PathDelim + 'template-files' + PathDelim + 'template.png');
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  DefaultIcon.Picture.LoadFromFile('/usr/share/opsi-setup-detector' +
+    PathDelim + 'template-files' + PathDelim + 'template.png');
+  tmpimage.LoadFromFile(
+    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtSingleAnalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(
+    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
 end;
 
