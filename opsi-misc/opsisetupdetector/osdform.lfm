@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 15
+  Left = 69
   Height = 531
-  Top = 376
+  Top = 280
   Width = 941
   Caption = 'opsi Setup Detector'
   ClientHeight = 503
@@ -5434,8 +5434,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 411
-          ClientWidth = 543
+          ClientHeight = 409
+          ClientWidth = 541
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel

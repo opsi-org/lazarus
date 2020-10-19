@@ -405,6 +405,7 @@ var
   useRunMode: TRunMode;
   myVersion: string;
   lfilename: string;
+  aktconfigfile : string;
 
 resourcestring
 
@@ -907,6 +908,7 @@ begin
       logdatei.log('readconfig from: ' + myfilename, LLDebug);
     if FileExists(myfilename) then
     begin
+      aktconfigfile := myfilename;
       AssignFile(myfile, myfilename);
       Reset(myfile);
       readln(myfile, JSONString);

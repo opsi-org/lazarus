@@ -2296,6 +2296,11 @@ begin
   list.Add('');
   list.add('Icons from Iconic (https://useiconic.com/) under MIT Licnse.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
+  list.Add('');
+  list.Add('Configuration: ');
+  list.Add(aktconfigfile);
+  list.Add('Log: ');
+  list.Add(logdatei.FileName);
   ShowMessage(list.Text);
   list.Free;
 
@@ -2328,7 +2333,9 @@ end;
 procedure TResultform1.FormCreate(Sender: TObject);
 var
   DefaultIcon: TImage;
+  tmpimage: TPicture;
 begin
+  tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
   main1;
@@ -2342,10 +2349,14 @@ begin
   {$IFDEF UNIX}
   DefaultIcon.Picture.LoadFromFile('/usr/share/opsi-setup-detector' +
     PathDelim + 'template-files' + PathDelim + 'template.png');
-  BtSingleAnalyzeAndCreate.Glyph.LoadFromFile(
+  tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
-  BtATwonalyzeAndCreate.Glyph.LoadFromFile(
+  BtSingleAnalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
 end;
