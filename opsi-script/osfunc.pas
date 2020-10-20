@@ -1147,11 +1147,11 @@ begin
   //randomly reorganizing the string
   n := Length(StringResult);
   repeat
-    n:=n-1;
     m := random(n)+1;
     aux := StringResult[n];
     StringResult[n] := StringResult[m];
     StringResult[m] := aux;
+    n:=n-1;
   until n = 1;
 
   Result := StringResult;
