@@ -1060,10 +1060,10 @@ end;
 
 function randomstr(usespecialchars: boolean): string;
 var
-  i, randomInt: integer;
+  //i, randomInt: integer;
   stringresult: string = '';
 begin
-  StringResult := '';
+  (*StringResult := '';
   for i := 1 to 2 do
   begin
     repeat
@@ -1094,7 +1094,11 @@ begin
     until
       char(randomInt) in CharsNumericForRandomStrings;
     StringResult := StringResult + char(randomInt);
-  end;
+  end;*)
+  if usespecialchars = true then
+     StringResult := randomstrWithParameters(10,2,2,4,2)
+  else
+     StringResult := randomstrWithParameters(10,3,3,4,0);
   Result := StringResult;
 end;
 
