@@ -100,22 +100,35 @@ var
   str: string;
   strlist: TStringList;
   templatePath: string;
+  proptmpstr : string;
 begin
-     {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
-    {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
   templatePath := '/usr/share/opsi-setup-detector/template-files';
-    {$ENDIF LINUX}
+  {$ENDIF LINUX}
   try
     strlist := TStringList.Create;
     patchlist.Clear;
     str := '';
+     //ProductProperties
+    for i := 0 to aktProduct.properties.Count - 1 do
+    begin
+      proptmpstr := aktProduct.properties.Items[i].Name;
+      if (proptmpstr = 'SecretLicense_or_Pool')
+         and aktProduct.productdata.licenserequired then
+      str := str + 'DefVar $LicenseOrPool$' + LineEnding
+      else
+      str := str + 'DefVar $'+proptmpstr+'$'+ LineEnding;
+    end;
+    (*
     if myconfiguration.UsePropDesktopicon then
       str := str + 'DefVar $DesktopIcon$' + LineEnding;
     if myconfiguration.UsePropLicenseOrPool and
       aktProduct.productdata.licenserequired then
       str := str + 'DefVar $LicenseOrPool$' + LineEnding;
+      *)
     patchlist.add('#@stringVars*#=' + str);
 
     str := '';
@@ -127,6 +140,22 @@ begin
     patchlist.add('#@LicenseRequired*#=' +
       boolToStr(aktProduct.productdata.licenserequired, True));
     str := '';
+    for i := 0 to aktProduct.properties.Count - 1 do
+    begin
+      proptmpstr := aktProduct.properties.Items[i].Name;
+      if (proptmpstr = 'SecretLicense_or_Pool')
+         and aktProduct.productdata.licenserequired then
+         begin
+      str := str +
+        'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","'
+        +aktProduct.properties.Items[i-1].StrDefault[0]+'")' + LineEnding;
+      str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
+      end
+      else
+      str := str + 'set $'+proptmpstr+'$ = GetProductProperty("'+proptmpstr+
+          '", "'+aktProduct.properties.Items[i].StrDefault[0]+'")' +  LineEnding;
+    end;
+    (*
     if myconfiguration.UsePropDesktopicon then
       str := str + 'set $DesktopIcon$ = GetProductProperty("DesktopIcon","false")' +
         LineEnding;
@@ -138,6 +167,7 @@ begin
         LineEnding;
       str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
     end;
+    *)
     patchlist.add('#@GetProductProperty*#=' + str);
     //setup 1
     patchlist.add('#@MinimumSpace1*#=' + IntToStr(
@@ -274,12 +304,12 @@ var
   templatePath: string;
 begin
   Result := False;
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
-    {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
   templatePath := '/usr/share/opsi-setup-detector/template-files';
-    {$ENDIF LINUX}
+  {$ENDIF LINUX}
   try
     patchlist := TStringList.Create;
     fillPatchList;
@@ -458,8 +488,8 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        textlist.Add('values: ' + myprop.Strvalues.Text);
-        textlist.Add('default: ' + myprop.StrDefault.Text);
+        textlist.Add('values: ' + myprop.Strvalues[0]);
+        textlist.Add('default: ' + myprop.StrDefault[0]);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
@@ -581,17 +611,20 @@ begin
   begin
     Logdatei.log('createProductdirectory failed', LLCritical);
     goon := False;
-  end;
+  end
+  else Logdatei.log('createProductdirectory done', LLnotice);
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
     goon := False;
-  end;
+  end
+  else Logdatei.log('createOpsiFiles done', LLnotice);
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
     goon := False;
-  end;
+  end
+  else Logdatei.log('createClientFiles done', LLnotice);
 end;
 
 

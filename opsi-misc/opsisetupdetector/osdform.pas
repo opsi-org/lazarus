@@ -1042,12 +1042,9 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
-    StringGridDep.Clear;
-    //if StringGridProp.RowCount > 1 then
-    //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1338,10 +1335,8 @@ begin
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     //if StringGridProp.RowCount > 1 then
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
@@ -1448,7 +1443,11 @@ begin
       mydep.Add('');
     end;
     mydep.Add(FNewDepDlg.ComboBoxReqType.Text);
-    StringGridDep.Rows[index - 1].AddStrings(mydep);
+    //StringGridDep.Rows[index - 1].AddStrings(mydep);
+    StringGridDep.Rows[index - 1].SetStrings(mydep);
+    StringGridDep.Repaint;
+    procmess;
+    FreeAndNil(mydep);
   end
   else
   begin
@@ -1530,7 +1529,7 @@ begin
         tmpliststr := tmpliststr + ']';
         myprop.Add(tmpliststr);      //default values
       end;
-      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      StringGridProp.Rows[index - 1].SetStrings(myprop);
     end;
   end
   else
@@ -1795,7 +1794,8 @@ begin
     useRunMode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -1868,10 +1868,11 @@ begin
       myprop.multivalue := False;
       myprop.editable := False;
       myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := '';
+      myprop.StrDefault.Text := BoolToStr(StringGridProp.Cells[7, i].ToBoolean,true);
       myprop.boolDefault := StringGridProp.Cells[7, i].ToBoolean;
     end;
   end;
+  FlowPanel14.Caption:='';
 end;
 
 
@@ -2170,12 +2171,8 @@ begin
     useRunMode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
-    if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount - 1 downto 1 do
-        StringGridProp.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -2550,10 +2547,8 @@ var
   index, i: integer;
 begin
   // clear existing props in StringGridProp
-  if StringGridProp.RowCount > 1 then
-    for i := StringGridProp.RowCount - 1 downto 1 do
-      StringGridProp.DeleteRow(i);
-  //StringGridProp.Clear;
+  StringGridProp.Clean([gzNormal, gzFixedRows]);
+  StringGridProp.RowCount := 1;
 
   if myconfiguration.UsePropDesktopicon and
     (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
@@ -2574,7 +2569,7 @@ begin
     //StringGridProp.InsertRowWithValues(index,myprop);
     StringGridProp.InsertColRow(False, index);
     StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
+    StringGridProp.Rows[index].SetStrings(myprop);
     myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
