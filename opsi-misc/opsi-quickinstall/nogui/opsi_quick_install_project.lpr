@@ -386,7 +386,10 @@ type
     readln(input);
     while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2') or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoOpsiVersion)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -408,7 +411,10 @@ type
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b')) or (input = '') do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoRepo)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -473,7 +479,10 @@ type
     readln(input);
     while not ((input = 'file') or (input = 'mysql') or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoBackend)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -495,7 +504,10 @@ type
     readln(input);
     while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoModules)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -515,7 +527,10 @@ type
     while not ((input = 'experimental') or (input = 'stable') or
         (input = 'testing') or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoRepoKind)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -564,7 +579,10 @@ type
     readln(input);
     while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoReboot)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -588,7 +606,10 @@ type
     readln(input);
     while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoDhcp)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -622,7 +643,10 @@ type
     while not ((input = 'default.menu') or (input = 'default.nomenu') or
         (input = '-b')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoTFTPROOT)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     if input = '-b' then
@@ -639,6 +663,11 @@ type
     // netmask:
     writeln(rsNetmask, rsNetmaskEx);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoNetwork);
+      readln(input);
+    end;
     if input = '-b' then
       QueryLink
     else
@@ -653,6 +682,11 @@ type
     // network address:
     writeln(rsNetworkAddress, rsNetworkAddressEx);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoNetwork);
+      readln(input);
+    end;
     if input = '-b' then
       QueryNetmask
     else
@@ -667,6 +701,11 @@ type
     // domain:
     writeln(rsDomain, rsDomainEx);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoNetwork);
+      readln(input);
+    end;
     if input = '-b' then
       QueryNetworkAddress
     else
@@ -681,6 +720,11 @@ type
     // nameserver:
     writeln(rsNameserver, rsNameserverEx);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoNetwork);
+      readln(input);
+    end;
     if input = '-b' then
       QueryDomain
     else
@@ -695,6 +739,11 @@ type
     // gateway:
     writeln(rsGateway, rsGatewayEx);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoNetwork);
+      readln(input);
+    end;
     if input = '-b' then
       QueryNameserver
     else
@@ -709,6 +758,11 @@ type
     // admin name:
     writeln(rsAdminName);
     readln(input);
+    while input = '-h' do
+    begin
+      writeln(rsInfoAdmin);
+      readln(input);
+    end;
     if input = '-b' then
     begin
       if dhcp = rsYes then
