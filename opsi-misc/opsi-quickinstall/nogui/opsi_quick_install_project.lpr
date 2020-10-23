@@ -47,7 +47,7 @@ type
     procedure InstallOpsi;
 
     procedure NoGuiQuery;
-    procedure QueryDistribution;
+    procedure QuerySetupType;
     procedure QueryOpsiVersion;
     procedure QueryRepo;
     procedure QueryProxy;
@@ -321,28 +321,40 @@ type
     // for easier query handling, e.g. if dhcp = rsYes instead of
     // if (dhcp = 'Yes') or (dhcp = 'Ja') or (dhcp = 'Oui') or ...
 
-    // setup type:
-    writeln(rsSetup, rsSetupOp);
-    readln(input);
-    while not ((input = rsStandard) or (input = rsCustom)) do
-    begin
-      writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    setupType := input;
-    writeln('');
-    writeln(rsCarryOut);
-    writeln('');
-    QueryDistribution;
-  end;
-
-  procedure TQuickInstall.QueryDistribution;
-  begin
     // distribution:
     writeln(rsDistr, ' ', distroName, ' ', distroRelease);
     writeln(rsIsCorrect, rsYesNoOp);
     readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
+    while not ((input = rsYes) or (input = rsNo)) do
+    begin
+      writeln('"', input, '"', rsNotValid);
+      readln(input);
+    end;
+    // if distribution isn't correct, read the correct one
+    if input = rsNo then
+    begin
+      writeln(rsOtherDistr);
+      readln(input);
+      distroName := Copy(input, 1, Pos(' ', input) - 1);
+      distroRelease := Copy(input, Pos(' ', input) + 1, Length(input) -
+        Pos(' ', input));
+    end;
+    DistrInfo.SetInfo(distroName, distroRelease);
+    if DistrInfo.MyDistr = other then
+    begin
+      writeln('');
+      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
+      Exit;
+    end;
+    QuerySetupType;
+  end;
+
+  procedure TQuickInstall.QuerySetupType;
+  begin
+    // setup type:
+    writeln(rsSetup, rsSetupOp);
+    readln(input);
+    while not ((input = rsStandard) or (input = rsCustom) or (input = '-b')) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -352,22 +364,10 @@ type
       NoGuiQuery
     else
     begin
-      // if distribution isn't correct, read the correct one
-      if input = rsNo then
-      begin
-        writeln(rsOtherDistr);
-        readln(input);
-        distroName := Copy(input, 1, Pos(' ', input) - 1);
-        distroRelease := Copy(input, Pos(' ', input) + 1, Length(input) -
-          Pos(' ', input));
-      end;
-      DistrInfo.SetInfo(distroName, distroRelease);
-      if DistrInfo.MyDistr = other then
-      begin
-        writeln('');
-        writeln(rsNoSupport + #10 + DistrInfo.Distribs);
-        Exit;
-      end;
+      setupType := input;
+      writeln('');
+      writeln(rsCarryOut);
+      writeln('');
       if setupType = rsCustom then
         // following queries only for custom setup
         QueryOpsiVersion
@@ -393,7 +393,7 @@ type
       readln(input);
     end;
     if input = '-b' then
-      QueryDistribution
+      QuerySetupType
     else
     begin
       opsiVersion := input;
@@ -558,7 +558,7 @@ type
     if input = '-b' then
     begin
       if setupType = rsStandard then
-        QueryDistribution
+        QuerySetupType
       else
         QueryRepoKind;
     end
@@ -621,7 +621,7 @@ type
         if distroName = 'Univention' then
           QueryUCS
         else
-          QueryDistribution;
+          QuerySetupType;
       end;
     end
     else
