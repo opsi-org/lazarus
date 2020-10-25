@@ -284,18 +284,6 @@ msgstr ""
 "El Installdir es necesario para que el proceso de desinstalación sea correctamente ejecutado.\n"
 "Por favor instale este producto y chequee el directorio de instalación y agreguelo a los scripts de instalación y desinstalación\n"
 
-#: tfcheckenties.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tfcheckenties.checkboxdonotshowcheckentries.caption
-msgid "Do not show this message again"
-msgstr ""
-
-#: tfcheckenties.label1.caption
-msgid "Please keep in mind:"
-msgstr ""
-
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr "opsi-setup-detector: Error de dependencia"
