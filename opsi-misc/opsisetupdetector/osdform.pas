@@ -40,6 +40,8 @@ uses
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
+  osddatamod,
+  osdcheckentriesdlg,
   Contnrs;
 
 type
@@ -54,6 +56,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BtnOpenIconFolder: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnAddProp: TBitBtn;
     BitBtnDelDep: TBitBtn;
@@ -77,7 +80,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    BtnOpenIconFolder: TButton;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
@@ -162,6 +164,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemLangFr: TMenuItem;
     MenuItemLang: TMenuItem;
     MenuItemLangDe: TMenuItem;
     MenuItemLangEn: TMenuItem;
@@ -295,9 +298,11 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemLangClick(Sender: TObject);
     procedure MenuItemLangDeClick(Sender: TObject);
     procedure MenuItemLangEnClick(Sender: TObject);
     procedure MenuItemLangEsClick(Sender: TObject);
+    procedure MenuItemLangFrClick(Sender: TObject);
     procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
@@ -342,6 +347,7 @@ type
     procedure IconDisplayOnMouseEnter(Sender: TObject);
     procedure PaintPreview(Image: TImage);
     procedure IconDisplayOnClick(Sender: TObject);
+    //procedure SetFontName(Control: TControl; Name: string);
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
@@ -408,6 +414,7 @@ var
   //myobject : TMyClass;
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
+  //myFont : string;
 
 
 resourcestring
@@ -753,7 +760,7 @@ begin
   optionlist.Append('lang::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('', optionlist);
+  ErrorMsg := Application.CheckOptions('h', optionlist);
   if ErrorMsg <> '' then
   begin
     Application.ShowException(Exception.Create(ErrorMsg));
@@ -844,7 +851,8 @@ begin
     else
     begin
       LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
-      analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
+      Analyze(myfilename,aktProduct.SetupFiles[0],false);
+      //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
     end;
   end
   else
@@ -959,6 +967,11 @@ begin
 
 end;
 
+procedure TResultform1.MenuItemLangClick(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
   SetDefaultLang('de');
@@ -972,6 +985,11 @@ end;
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
   SetDefaultLang('es');
+end;
+
+procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
+begin
+  SetDefaultLang('fr');
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -1365,8 +1383,18 @@ begin
   end;
 end;
 
+procedure showCeckEntriesWarning;
+begin
+  if myconfiguration.ShowCheckEntryWarning then
+  begin
+    FCheckenties.ShowModal;
+    myconfiguration.ShowCheckEntryWarning := not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
+  end;
+end;
+
 procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
+  showCeckEntriesWarning;
   case useRunMode of
     analyzeOnly:
     begin
@@ -2356,6 +2384,7 @@ begin
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
+  DataModule1.SetFontName(TControl(Sender), myFont);
 end;
 
 procedure TResultform1.memoadd(line: string);

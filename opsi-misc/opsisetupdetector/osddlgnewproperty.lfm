@@ -7,6 +7,7 @@ object FNewPropDlg: TFNewPropDlg
   ClientHeight = 591
   ClientWidth = 406
   DesignTimePPI = 91
+  OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
   object Panel1: TPanel

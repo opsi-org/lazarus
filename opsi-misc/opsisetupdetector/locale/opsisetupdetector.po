@@ -99,6 +99,14 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr ""
 
+#: osdcheckentriesdlg.rscheckentriesmsg
+msgid ""
+"The following data are autoamatically detected.\n"
+"You have to check every data field if this data are correct or plausible.\n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+msgstr ""
+
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr ""
@@ -248,6 +256,18 @@ msgid ""
 "For this Installer the Installdir could not be detected.\n"
 "The Installdir is needed for correct Uninstall process.\n"
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
+msgstr ""
+
+#: tfcheckenties.caption
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tfcheckenties.checkboxdonotshowcheckentries.caption
+msgid "Do not show this message again"
+msgstr ""
+
+#: tfcheckenties.label1.caption
+msgid "Please keep in mind:"
 msgstr ""
 
 #: tfnewdepdlg.caption
@@ -495,7 +515,7 @@ msgid "Go to the next Step"
 msgstr ""
 
 #: tresultform1.btnopeniconfolder.caption
-msgid " open icon folder "
+msgid "open icon folder"
 msgstr ""
 
 #: tresultform1.btproduct1nextstep.caption
@@ -814,6 +834,10 @@ msgstr ""
 
 #: tresultform1.menuitemlanges.caption
 msgid "es"
+msgstr ""
+
+#: tresultform1.menuitemlangfr.caption
+msgid "fr"
 msgstr ""
 
 #: tresultform1.menuitemstart.caption

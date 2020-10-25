@@ -87,12 +87,15 @@ opsi-setup-detector (4.1.0.16) stable; urgency=low
   * fix interactive dependency handling
   * fix interactive property handling
   * unify property handling while create
+  * new menu entry for french (fr)
+  * fix in setupdouble: minimum space at both+64bit is addition of both setup files
+  * osdanalyze : replace '-' by '.' in version; fix for #2243
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
 
 opsi-setup-detector (4.1.0.15) experimental; urgency=low
 
-  * osdform/osdcreate: setup files: tow setup files (e.g. 32bit/64bit) now stored in tow different directories (files1, files2),
+  * osdform/osdcreate: setup files: two setup files (e.g. 32bit/64bit) now stored in two different directories (files1, files2),
                        single file is stored in file1
   * adaptations on opsiscript templates according to changes of setup file paths (32bit/64bit setup files)
   * osdform/osdcreate: MST file: One MST file can now be selected for an MSI setup file

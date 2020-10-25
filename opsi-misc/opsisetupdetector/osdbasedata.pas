@@ -316,7 +316,7 @@ default: ["xenial_bionic"]
   TConfiguration = class(TPersistent)
   private
     Fconfig_version: string;
-    // help to detect and handle changes of config file structure
+    { help to detect and handle changes of config file structure }
     //Fworkbench_share: string;
     Fworkbench_Path: string;
     //Fworkbench_mounted: boolean;
@@ -339,6 +339,7 @@ default: ["xenial_bionic"]
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
     FReadme_txt_templ: string;
+    FShowCheckEntryWarning :boolean;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -375,6 +376,9 @@ default: ["xenial_bionic"]
       write FUsePropLicenseOrPool;
     //property Properties: TPProperties read FProperties  write SetProperties;
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
+    property ShowCheckEntryWarning: boolean read FShowCheckEntryWarning
+      write FShowCheckEntryWarning;
+
     procedure writeconfig;
     procedure readconfig;
   public
@@ -692,6 +696,8 @@ begin
   Fconfig_version := myVersion;
   FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
     'template-files' + PathDelim + 'package_qa.txt';
+  FShowCheckEntryWarning := true;
+  FUsePropDesktopicon := false;
   //readconfig;
 end;
 

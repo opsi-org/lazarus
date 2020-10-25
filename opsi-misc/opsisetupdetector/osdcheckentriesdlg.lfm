@@ -1,0 +1,81 @@
+object FCheckenties: TFCheckenties
+  Left = 608
+  Height = 228
+  Top = 509
+  Width = 527
+  Caption = 'opsi-setup-detector'
+  ClientHeight = 228
+  ClientWidth = 527
+  DesignTimePPI = 91
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 47
+    Top = 181
+    Width = 527
+    Align = alBottom
+    ClientHeight = 47
+    ClientWidth = 527
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 208
+      Height = 28
+      Top = 8
+      Width = 71
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+  end
+  object CheckBoxDoNotShowCheckEntries: TCheckBox
+    Left = 0
+    Height = 21
+    Top = 160
+    Width = 527
+    Align = alBottom
+    Caption = 'Do not show this message again'
+    TabOrder = 1
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 47
+    Top = 0
+    Width = 527
+    Align = alTop
+    ClientHeight = 47
+    ClientWidth = 527
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 1
+      Height = 27
+      Top = 1
+      Width = 525
+      Align = alTop
+      Alignment = taCenter
+      Caption = 'Please keep in mind:'
+      Font.Color = clRed
+      Font.Height = -19
+      Font.Style = [fsBold]
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 113
+    Top = 47
+    Width = 527
+    Align = alClient
+    Font.Style = [fsBold]
+    Lines.Strings = (
+      'Memo1'
+    )
+    ParentFont = False
+    ScrollBars = ssAutoVertical
+    TabOrder = 3
+  end
+end

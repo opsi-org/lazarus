@@ -1363,6 +1363,8 @@ begin
       else
         Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
     end;
+    { avoid hyphen char "-" and replace with dot "." in version }
+    aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
 
   end;
   {$IFDEF OSDGUI}

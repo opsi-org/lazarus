@@ -118,6 +118,14 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr "Directorio al opsi_workbench"
 
+#: osdcheckentriesdlg.rscheckentriesmsg
+msgid ""
+"The following data are autoamatically detected.\n"
+"You have to check every data field if this data are correct or plausible.\n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+msgstr ""
+
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr "No se pudo crear el directorio:"
@@ -275,6 +283,18 @@ msgstr ""
 "Para este instalador el directorio de instalación no pudo ser detectado.\n"
 "El Installdir es necesario para que el proceso de desinstalación sea correctamente ejecutado.\n"
 "Por favor instale este producto y chequee el directorio de instalación y agreguelo a los scripts de instalación y desinstalación\n"
+
+#: tfcheckenties.caption
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tfcheckenties.checkboxdonotshowcheckentries.caption
+msgid "Do not show this message again"
+msgstr ""
+
+#: tfcheckenties.label1.caption
+msgid "Please keep in mind:"
+msgstr ""
 
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
@@ -535,8 +555,10 @@ msgid "Go to the next Step"
 msgstr "Ir al siguiente paso"
 
 #: tresultform1.btnopeniconfolder.caption
+#, fuzzy
+#| msgid " open icon folder "
 msgctxt "tresultform1.btnopeniconfolder.caption"
-msgid " open icon folder "
+msgid "open icon folder"
 msgstr "???"
 
 #: tresultform1.btproduct1nextstep.caption
@@ -864,6 +886,10 @@ msgstr ""
 
 #: tresultform1.menuitemlanges.caption
 msgid "es"
+msgstr ""
+
+#: tresultform1.menuitemlangfr.caption
+msgid "fr"
 msgstr ""
 
 #: tresultform1.menuitemstart.caption

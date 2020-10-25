@@ -216,6 +216,9 @@ begin
     //setup 2
     patchlist.add('#@MinimumSpace2*#=' + IntToStr(
       aktProduct.SetupFiles[1].requiredSpace) + ' MB');
+    patchlist.add('#@MinimumSpace3*#=' + IntToStr(
+      aktProduct.SetupFiles[0].requiredSpace +
+      aktProduct.SetupFiles[1].requiredSpace) + ' MB');
     patchlist.add('#@InstallDir2*#=' + aktProduct.SetupFiles[1].installDirectory);
     patchlist.add('#@MsiId2*#=' + aktProduct.SetupFiles[1].msiId);
     str := myconfiguration.preInstallLines.Text;
