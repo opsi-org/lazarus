@@ -90,6 +90,7 @@ opsi-setup-detector (4.1.0.16) stable; urgency=low
   * new menu entry for french (fr)
   * fix in setupdouble: minimum space at both+64bit is addition of both setup files
   * osdanalyze : replace '-' by '.' in version; fix for #2243
+  * some highdpi fixes for linux
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
 

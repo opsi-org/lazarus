@@ -1,7 +1,7 @@
 object FCheckenties: TFCheckenties
-  Left = 608
+  Left = 663
   Height = 228
-  Top = 509
+  Top = 512
   Width = 527
   Caption = 'opsi-setup-detector'
   ClientHeight = 228
@@ -45,14 +45,15 @@ object FCheckenties: TFCheckenties
     Top = 0
     Width = 527
     Align = alTop
+    BevelOuter = bvNone
     ClientHeight = 47
     ClientWidth = 527
     TabOrder = 2
     object Label1: TLabel
-      Left = 1
+      Left = 0
       Height = 27
-      Top = 1
-      Width = 525
+      Top = 0
+      Width = 527
       Align = alTop
       Alignment = taCenter
       Caption = 'Please keep in mind:'
@@ -65,11 +66,16 @@ object FCheckenties: TFCheckenties
     end
   end
   object Memo1: TMemo
-    Left = 0
-    Height = 113
+    Left = 5
+    Height = 108
     Top = 47
-    Width = 527
+    Width = 517
     Align = alClient
+    BorderSpacing.Left = 5
+    BorderSpacing.Right = 5
+    BorderSpacing.Bottom = 5
+    BorderStyle = bsNone
+    Color = clBtnFace
     Font.Style = [fsBold]
     Lines.Strings = (
       'Memo1'

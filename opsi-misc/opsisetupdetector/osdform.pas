@@ -326,6 +326,7 @@ type
     //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
@@ -964,7 +965,6 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
-
 end;
 
 procedure TResultform1.MenuItemLangClick(Sender: TObject);
@@ -1093,6 +1093,7 @@ var
   row, col: integer;
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
+  picturesize : integer;
 begin
   with ImageIconPreview.Canvas do
   begin
@@ -1107,7 +1108,14 @@ begin
       end;
     end;
     // paint chess board
-    RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+    //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+    picturesize:= ImageIconPreview.Width;
+    //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
+    {$IFDEF LINUX}
+    // scale rect
+    picturesize := round(picturesize * ( 91 / Screen.PixelsPerInch));
+    {$ENDIF LINUX}
+    RectBackgr := Rect(0, 0, picturesize, picturesize);
     // paint icon on chess board
     StretchDraw(RectBackgr, Image.Picture.Bitmap);
   end;
@@ -1198,6 +1206,7 @@ begin
   if selectDirectory then
   begin
     iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
+    LogDatei.log('Open Icon dir: '+iconDirectory,LLnotice);
     // get all files from the selected directory
     if FindFirst(iconDirectory + '*', faAnyFile, IconSearch) = 0 then
     begin
@@ -1266,12 +1275,15 @@ begin
           Inc(numberIcons);
         end;
         if numberIcons mod 10 = 0 then
+        begin
           LabelNumber.Caption := IntToStr(numberIcons);
-        Application.ProcessMessages;
+          Application.ProcessMessages;
+        end;
       until FindNext(IconSearch) <> 0; // I have no idea how they are ordered
       FindClose(IconSearch);
     end;
     LabelNumIcons.Caption := rsNumberIcons;
+    LogDatei.log('Finished Icon dir: '+iconDirectory+ ' number of icons: '+intToStr(numberIcons),LLnotice);
     // part of LabelNumber.Caption in po-files deleted so that the caption does
     // not change to 0 when changing the language
     LabelNumber.Caption := IntToStr(numberIcons);
@@ -1285,15 +1297,20 @@ var
 begin
   if CheckBoxDefaultIcon.Checked = True then
   begin
-    // show name 'default icon' but no directory
+    { show name 'default icon' but no directory }
     LabelIconName.Visible := True;
     LabelNameSelIcon.Caption := rsDefaultIcon;
     LabelIconDir.Visible := False;
     TILabelDirSelIcon.Visible := False;
-    // set productImageFullFileName to full file name of the default icon
-    defaultIconFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'template.png';
+    { set productImageFullFileName to full file name of the default icon }
+    {$IFDEF WINDOWS}
+    defaultIconFullFileName := ExtractFileDir(Application.Params[0]) +
+    PathDelim + 'template-files' + PathDelim + 'template.png';
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    defaultIconFullFileName :='/usr/share/opsi-setup-detector' +
+      PathDelim + 'template-files' + PathDelim + 'template.png';
+    {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
 
@@ -1301,6 +1318,10 @@ begin
     ImageIconPreview.Visible := True;
     // paint icon preview
     DefaultIcon := TImage.Create(TabSheetIcons);
+    {$IFDEF LINUX}
+    // scale image
+    DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+    {$ENDIF LINUX}
     DefaultIcon.Picture.LoadFromFile(defaultIconFullFileName);
     PaintPreview(DefaultIcon);
   end;
@@ -2367,6 +2388,12 @@ begin
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
+  {$IFDEF LINUX}
+    // scale form
+  AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+  DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+  {$ENDIF LINUX}
+  LogDatei.log('design ppi: 91 , screen: '+intToStr(Screen.PixelsPerInch),LLessential);;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
     PathDelim + 'template-files' + PathDelim + 'template.png');
@@ -2458,10 +2485,15 @@ begin
   checkWorkbench;
 end;
 
+procedure TResultform1.TabSheetIconsShow(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.TabSheetStartExit(Sender: TObject);
 begin
-  ResultForm1.Width := 1185;
-  ResultForm1.Height := 566;
+  //ResultForm1.Width := 1185;
+  //ResultForm1.Height := 566;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);

@@ -281,6 +281,18 @@ msgid ""
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr "Fehler: Das Feld 'Install Directory' ist leer. Der 'Install Directory' wird für den korrekten Deinstallationsprozess benötigt. Bitte installieren Sie das Produkt, ermitteln das Install Directory und schreiben diesen in das setup und das uninstall script."
 
+#: tfcheckenties.caption
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tfcheckenties.checkboxdonotshowcheckentries.caption
+msgid "Do not show this message again"
+msgstr ""
+
+#: tfcheckenties.label1.caption
+msgid "Please keep in mind:"
+msgstr ""
+
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr "opsi-setup-detector: Dependency Editor"
