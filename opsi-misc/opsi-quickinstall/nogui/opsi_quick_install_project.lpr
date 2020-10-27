@@ -183,7 +183,7 @@ type
   procedure TQuickInstall.SetDefaultValues;
   begin
     // set default values:
-    opsiVersion := 'Opsi 4.2';
+    opsiVersion := 'Opsi 4.1';
     // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
@@ -193,7 +193,7 @@ type
     repoNoCache := repo;
     backend := 'file';
     copyMod := rsNo;
-    repoKind := 'experimental';
+    repoKind := 'stable';
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
@@ -203,7 +203,7 @@ type
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Antalya';
+    adminName := 'Alex';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -299,8 +299,11 @@ type
     //writeln(Output);
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
-    Output := InstallOpsiCommand.Run('opsi-script -batch ' + DirClientData +
-      'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+    writeln('opsi-server nogui');
+    // "opsi-script -batch" for installation with gui window, ...
+    // ..."opsi-script-nogui -batch" for without
+    Output := InstallOpsiCommand.Run('opsi-script-nogui -batch ' +
+      DirClientData + 'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');
@@ -354,7 +357,8 @@ type
     // setup type:
     writeln(rsSetup, rsSetupOp);
     readln(input);
-    while not ((input = rsStandard) or (input = rsCustom) or (input = '-b')) do
+    while not ((input = rsStandard) or (input = rsCustom) or (input = '-b') or
+        (input = '')) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -365,6 +369,8 @@ type
     else
     begin
       setupType := input;
+      if input = '' then
+        setupType := rsStandard;
       writeln('');
       writeln(rsCarryOut);
       writeln('');
@@ -384,7 +390,8 @@ type
     // opsi version:
     writeln(rsOpsiVersion, rsOpsiVersionOp);
     readln(input);
-    while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2') or (input = '-b')) do
+    while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2') or
+        (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoOpsiVersion)
@@ -397,6 +404,8 @@ type
     else
     begin
       opsiVersion := input;
+      if input = '' then
+        opsiVersion := 'Opsi 4.1';
       QueryRepo;
     end;
   end;
@@ -409,7 +418,7 @@ type
     else if opsiVersion = 'Opsi 4.2' then
       writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
     readln(input);
-    while ((Pos('http', input) <> 1) and (input <> '-b')) or (input = '') do
+    while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
       if input = '-h' then
         writeln(rsInfoRepo)
@@ -422,6 +431,11 @@ type
     else
     begin
       repo := input;
+      if (input = '') and (opsiVersion = 'Opsi 4.1') then
+        repo := baseUrlOpsi41
+      else
+      if (input = '') and (opsiVersion = 'Opsi 4.2') then
+        repo := baseUrlOpsi42;
       QueryProxy;
     end;
   end;
@@ -431,7 +445,7 @@ type
     // proxy:
     writeln(rsUseProxy, rsYesNoOp);
     readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
+    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -445,20 +459,22 @@ type
         writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
         readln(input);
         proxy := input;
-      end;
+      end
+      else
+        proxy := '';
       QueryRepoNoCache;
     end;
   end;
 
   procedure TQuickInstall.QueryRepoNoCache;
   begin
-    // repo wihout cache proxy:
+    // repo without cache proxy:
     if opsiVersion = 'Opsi 4.1' then
       writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
     else if opsiVersion = 'Opsi 4.2' then
       writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
     readln(input);
-    while ((Pos('http', input) <> 1) and (input <> '-b')) or (input = '') do
+    while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -468,6 +484,8 @@ type
     else
     begin
       repoNoCache := input;
+      if input = '' then
+        repoNoCache := repo;
       QueryBackend;
     end;
   end;
@@ -477,7 +495,8 @@ type
     // backend:
     writeln(rsBackend, rsBackendOp);
     readln(input);
-    while not ((input = 'file') or (input = 'mysql') or (input = '-b')) do
+    while not ((input = 'file') or (input = 'mysql') or (input = '-b') or
+        (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoBackend)
@@ -490,6 +509,8 @@ type
     else
     begin
       backend := input;
+      if input = '' then
+        backend := 'file';
       if input = 'mysql' then
         QueryModules
       else
@@ -502,7 +523,7 @@ type
     // copy modules:
     writeln(rsCopyModules, rsYesNoOp);
     readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
+    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoModules)
@@ -515,6 +536,8 @@ type
     else
     begin
       copyMod := input;
+      if input = '' then
+        copyMod := rsNo;
       QueryRepoKind;
     end;
   end;
@@ -525,7 +548,7 @@ type
     writeln(rsRepoKind, rsRepoKindOp);
     readln(input);
     while not ((input = 'experimental') or (input = 'stable') or
-        (input = 'testing') or (input = '-b')) do
+        (input = 'testing') or (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoRepoKind)
@@ -543,6 +566,8 @@ type
     else
     begin
       repoKind := input;
+      if input = '' then
+        repoKind := 'stable';
       if distroName = 'Univention' then
         QueryUCS
       else
@@ -577,7 +602,7 @@ type
     // reboot:
     writeln(rsReboot, rsYesNoOp);
     readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
+    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoReboot)
@@ -595,6 +620,8 @@ type
     else
     begin
       reboot := input;
+      if input = '' then
+        reboot := rsNo;
       QueryDhcp;
     end;
   end;
@@ -604,7 +631,7 @@ type
     // dhcp:
     writeln(rsDhcp, rsYesNoOp);
     readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b')) do
+    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoDhcp)
@@ -627,6 +654,8 @@ type
     else
     begin
       dhcp := input;
+      if input = '' then
+        dhcp := rsNo;
       if dhcp = rsYes then
         // following queries only for dhcp
         QueryLink
@@ -641,7 +670,7 @@ type
     writeln(rsTFTPROOT, rsLinkOp);
     readln(input);
     while not ((input = 'default.menu') or (input = 'default.nomenu') or
-        (input = '-b')) do
+        (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
         writeln(rsInfoTFTPROOT)
@@ -654,6 +683,8 @@ type
     else
     begin
       link := input;
+      if input = '' then
+        link := 'default.nomenu';
       QueryNetmask;
     end;
   end;

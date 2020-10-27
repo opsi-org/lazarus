@@ -141,7 +141,7 @@ else
 endif
 
 
-; initializaition
+; initialization
 
 set $append_dhcpd$ = ", dhcpd"
 set $clientconfig_depot_user$ = "pcpatch"
