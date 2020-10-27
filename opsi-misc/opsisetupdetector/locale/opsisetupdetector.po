@@ -395,26 +395,6 @@ msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
 msgstr ""
 
-#: tfosdconfigdlg.bitbtn1.caption
-msgid "Finished"
-msgstr ""
-
-#: tfosdconfigdlg.caption
-msgid "opsi-setup-detector Configuration"
-msgstr ""
-
-#: tfosdconfigdlg.label1.caption
-msgid ""
-"Edit your configuration here.\n"
-"Click on a line to get help\n"
-"in the yellow field at the bottom.\n"
-msgstr ""
-
-#: tfosdconfigdlg.panel1.caption
-msgctxt "tfosdconfigdlg.panel1.caption"
-msgid "Panel1"
-msgstr ""
-
 #: tresultform1.bitbtnadddep.caption
 msgctxt "tresultform1.bitbtnadddep.caption"
 msgid "Add Dependency"

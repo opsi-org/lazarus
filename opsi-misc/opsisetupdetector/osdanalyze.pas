@@ -598,6 +598,8 @@ var
   AppVerName: string = '';
   DefaultDirName: string = '';
   tmpint: integer;
+  ArchitecturesAllowed : string = '';
+  ArchitecturesInstallIn64BitMode : string = '';
 
 begin
   Mywrite('Analyzing Inno-Setup:');
@@ -606,6 +608,7 @@ begin
   AppVerName := '';
   DefaultDirName := '';
   ArchitecturesInstallIn64BitMode := '';
+  ArchitecturesAllowed := '';
   {$IFDEF WINDOWS}
 
   myoutlines := TStringList.Create;
@@ -676,7 +679,10 @@ begin
           DefaultDirName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('architecturesinstallin64bitmode=', lowercase(issLine))) then
           ArchitecturesInstallIn64BitMode := Copy(issLine, pos('=', issLine) + 1, 100);
+        if (0 < pos('architecturesallowed=', lowercase(issLine))) then
+          ArchitecturesAllowed := Copy(issLine, pos('=', issLine) + 1, 100);
         ReadLn(fISS, issLine);
+
       end;
 
       // get AppVersion from AppVerName (AppVerName = AppName + AppVersion ?)
@@ -703,17 +709,33 @@ begin
         else
           AppVerName := AppName + AppVersion;
       end;
-      if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) then
+      if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode)))
+         and (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
         if pos('{pf}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
-            '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase]);
+            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
+        end;
+        if pos('{autopf}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{autopf}',
+            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
         end;
         if pos('{code:DefDirRoot}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
-            '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase]);
+            '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
+        end;
+         if pos('{code:installDir}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{code:installDir}',
+            '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
+        end;
+        if pos('{code:DefaultDirName}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
+            '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
       end
       else
@@ -723,10 +745,25 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
             '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
         end;
+        if pos('{autopf}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{autopf}',
+            '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
+        end;
         if pos('{code:DefDirRoot}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
             '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
+        end;
+        if pos('{code:installDir}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{code:installDir}',
+            '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
+        end;
+        if pos('{code:DefaultDirName}', DefaultDirName) > 0 then
+        begin
+          DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
+            '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
       end;
       DefaultDirName := StringReplace(DefaultDirName, '{sd}',

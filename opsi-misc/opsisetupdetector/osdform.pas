@@ -395,9 +395,6 @@ var
   setupTypestr: string;
   markerEmbeddedMSI: boolean = False;
   markerInstallShield: boolean = False;
-  ArchitecturesInstallIn64BitMode: string; // INNO: {pf}={pf64}/{pf32}?
-  //Revision: string = '$Rev: 126 $';   // set manually in Project-Settings-Version
-  //RevDate: string = '$Date: 2014-09-23 17:46:39 +0200 (Di, 23 Sep 2014) $';
   opsidir: string;   // opsi.org (set in main)
   opsitmp: string;   // %TEMP%/opsitmp  (set in main)
   //Logfile: string;   // name of logfile (set in main)
@@ -1067,7 +1064,7 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbNo,mbYes],0,mbNo) = mrYes then
       aktProduct.SetupFiles[0].copyCompleteDir := true;
     makeProperties;
     Application.ProcessMessages;
@@ -1378,7 +1375,7 @@ begin
   begin
     useRunMode := twoAnalyzeCreate_1;
     setRunMode;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
       aktProduct.SetupFiles[0].copyCompleteDir := true;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
@@ -2137,7 +2134,7 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
-          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
             aktProduct.SetupFiles[1].copyCompleteDir := true;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;

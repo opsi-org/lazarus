@@ -91,6 +91,7 @@ opsi-setup-detector (4.1.0.16) stable; urgency=low
   * fix in setupdouble: minimum space at both+64bit is addition of both setup files
   * osdanalyze : replace '-' by '.' in version; fix for #2243
   * some highdpi fixes for linux
+  * some additional checks for inno installdir
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Jun 2020 : 15:00:00 +0200
 
