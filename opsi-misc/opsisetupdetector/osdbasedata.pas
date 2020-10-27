@@ -99,6 +99,7 @@ type
     Funinstall_waitforprocess: string;
     Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
+    FcopyCompleteDir: boolean;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -142,6 +143,7 @@ type
     property install_waitforprocess: string
       read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
+    property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     procedure initValues;
 
   public
@@ -565,6 +567,7 @@ begin
   FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
   Funinstall_waitforprocess := '';
   Finstall_waitforprocess := '';
+  FcopyCompleteDir := false;
 end;
 
 // TPProperty **********************************
@@ -1473,4 +1476,5 @@ begin
   LogDatei.LogLevel := 8;
 
   myconfiguration.readconfig;
+  LogDatei.log('Finished initialize basedata ', LLInfo);
 end.

@@ -20,6 +20,7 @@ uses
   oslog,
   osdbasedata,
   Dialogs,
+  lazfileutils,
   dateutils;
 
 procedure createProductStructure;
@@ -348,6 +349,15 @@ begin
     infilename := templatePath + Pathdelim + inuninstall;
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);
+    // complete dir 1
+    if aktProduct.SetupFiles[0].copyCompleteDir then
+    begin
+      CopyDirTree(ExtractFileDir(aktProduct.SetupFiles[0].setupFullFileName),
+        clientpath + PathDelim + 'files1',
+        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]);
+    end
+    else
+    begin
     // setup file 1
     if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
@@ -360,6 +370,17 @@ begin
         clientpath + PathDelim + 'files1' + PathDelim +
         aktProduct.SetupFiles[0].MSTFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+    end;
+    // complete dir 2
+    if FileExists(aktProduct.SetupFiles[1].setupFullFileName) and
+       aktProduct.SetupFiles[1].copyCompleteDir then
+    begin
+      CopyDirTree(ExtractFileDir(aktProduct.SetupFiles[1].setupFullFileName),
+        clientpath + PathDelim + 'files2',
+        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]);
+    end
+    else
+    begin
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
@@ -372,7 +393,7 @@ begin
         clientpath + PathDelim + 'files2' + PathDelim +
         aktProduct.SetupFiles[1].MSTFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
-
+     end;
     //osd-lib.opsiscript
     infilename := templatePath + Pathdelim + 'osd-lib.opsiscript';
     outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';

@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 225
+  Left = 73
   Height = 555
-  Top = 202
+  Top = 322
   Width = 1070
   Caption = 'opsi Setup Detector'
   ClientHeight = 527
@@ -4562,8 +4562,8 @@ object resultForm1: TresultForm1
               Width = 1053
               Align = alClient
               Caption = 'Panel4'
-              ClientHeight = 133
-              ClientWidth = 1053
+              ClientHeight = 129
+              ClientWidth = 1049
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -4626,8 +4626,8 @@ object resultForm1: TresultForm1
                 Top = 1
                 Width = 151
                 Align = alLeft
-                ClientHeight = 131
-                ClientWidth = 151
+                ClientHeight = 127
+                ClientWidth = 147
                 ParentFont = False
                 TabOrder = 1
                 object Label75: TLabel
@@ -4835,8 +4835,8 @@ object resultForm1: TresultForm1
               Width = 1053
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 167
-              ClientWidth = 1053
+              ClientHeight = 163
+              ClientWidth = 1049
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
@@ -5470,8 +5470,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 435
-          ClientWidth = 672
+          ClientHeight = 433
+          ClientWidth = 670
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel

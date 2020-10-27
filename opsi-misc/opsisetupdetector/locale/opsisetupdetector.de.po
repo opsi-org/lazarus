@@ -151,6 +151,10 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr "existiert bereits. Doppel sind hier nicht erlaubt."
 
+#: osdform.rscopycompletedir
+msgid "Should we copy not only the setup file. but the complete directory ?"
+msgstr ""
+
 #: osdform.rsdefaulticon
 msgctxt "osdform.rsdefaulticon"
 msgid "default icon"

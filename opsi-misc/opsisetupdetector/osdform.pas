@@ -476,6 +476,7 @@ resourcestring
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
   rsDefaultIcon = 'default icon';
   rsNumberIcons = 'Icons to choose from: ';
+  rsCopyCompleteDir = 'Should we copy not only the setup file. but the complete directory ?';
 
 implementation
 
@@ -627,6 +628,7 @@ begin
     LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
+  LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
 procedure TResultform1.FormDestroy(Sender: TObject);
@@ -878,6 +880,7 @@ begin
     freebasedata;
     Application.Terminate;
   end;
+  LogDatei.log('Finished main2 ', LLInfo);
 end;
 
 
@@ -965,6 +968,8 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
+   if not startupfinished then
+    main2;
 end;
 
 procedure TResultform1.MenuItemLangClick(Sender: TObject);
@@ -1062,7 +1067,8 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
-
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := true;
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1372,6 +1378,8 @@ begin
   begin
     useRunMode := twoAnalyzeCreate_1;
     setRunMode;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := true;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -2129,6 +2137,8 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
+          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0) = mrYes then
+            aktProduct.SetupFiles[1].copyCompleteDir := true;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
           Application.ProcessMessages;
@@ -2384,7 +2394,7 @@ begin
   tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
-  main1;
+  //main1;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
@@ -2412,6 +2422,7 @@ begin
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
   DataModule1.SetFontName(TControl(Sender), myFont);
+  LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
 procedure TResultform1.memoadd(line: string);
@@ -2421,8 +2432,12 @@ end;
 
 procedure TResultform1.ApplicationEventIdle(Sender: TObject; var Done: boolean);
 begin
+  (*
   if not startupfinished then
     main2;
+    *)
+  Application.ProcessMessages;
+  sleep(100);
 end;
 
 
@@ -2559,6 +2574,7 @@ begin
   begin
     ShowMessage(rsWeNeedConfiguration);
     MenuItemConfigClick(Sender);
+    logdatei.log('Missing configs foundc- configdialog forced',LLinfo);
   end;
 end;
 
