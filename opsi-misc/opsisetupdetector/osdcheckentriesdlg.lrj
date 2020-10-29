@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":107896354,"name":"tfcheckenties.caption","sourcebytes":[111,112,115,105,45,115,101,116,117,112,45,100,101,116,101,99,116,111,114],"value":"opsi-setup-detector"},
+{"hash":30074510,"name":"tfcheckenties.checkboxdonotshowcheckentries.caption","sourcebytes":[68,111,32,110,111,116,32,115,104,111,119,32,116,104,105,115,32,109,101,115,115,97,103,101,32,97,103,97,105,110],"value":"Do not show this message again"},
+{"hash":58151066,"name":"tfcheckenties.label1.caption","sourcebytes":[80,108,101,97,115,101,32,107,101,101,112,32,105,110,32,109,105,110,100,58],"value":"Please keep in mind:"}
+]}
