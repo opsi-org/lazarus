@@ -787,6 +787,7 @@ const
   //ReadBufferSize = 2048;
 
 begin
+  logdatei.log_prog('Start with StartProcess_cp', LLinfo);
   ParamStr := '';
   paramlist := TXStringlist.Create;
 
@@ -1163,6 +1164,13 @@ begin
               ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
+              {$IFDEF WINDOWS}
+              if (lpExitCode = 259) and (not FpcProcess.Running) then
+              begin
+                logdatei.log('Strange: Process ended but exitcode 259 - we stop', LLinfo);
+                running := false;
+              end;
+              {$ENDIF WINDOWS}
               ProcessMess;
             end;
           end;
