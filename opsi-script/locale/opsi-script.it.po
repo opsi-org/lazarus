@@ -51,10 +51,6 @@ msgstr ""
 msgid "Ready to continue ?"
 msgstr ""
 
-#: oswebservice.rssendlog
-msgid "Sending log file to server ..."
-msgstr "Invio del file di log al server ..."
-
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr ""

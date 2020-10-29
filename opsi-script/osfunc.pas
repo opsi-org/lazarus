@@ -1124,7 +1124,11 @@ var
   i,randomInt,n,m:integer;
   aux:char;
 begin
-  Randomize;
+  { do not call randomize here.
+    calling randomize here results that two calls  one after another
+    will get the same result.
+    randomize is called at the initialization of osparser unit }
+  // Randomize;
    for i := 1 to nLowerCases do
    begin
        repeat

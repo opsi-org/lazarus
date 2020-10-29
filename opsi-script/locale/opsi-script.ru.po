@@ -53,10 +53,6 @@ msgstr "Пожалуйста, введите имя пользователя OPS
 msgid "Ready to continue ?"
 msgstr ""
 
-#: oswebservice.rssendlog
-msgid "Sending log file to server ..."
-msgstr "Отправка log-файла на сервер ..."
-
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr ""

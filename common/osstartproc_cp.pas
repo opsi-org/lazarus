@@ -12,7 +12,7 @@ uses
 
 {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
- osshowsysinfo,
+  osshowsysinfo,
   osbatchgui,
   //osinteractivegui,
   {$ELSE GUI}
@@ -48,10 +48,12 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   var output: TXStringList): boolean;
 
 implementation
+
 {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
 uses
   osmain;
+
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 
@@ -716,6 +718,9 @@ var
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
   //i: integer; // tmp
+  seccounter: integer;
+  totalbytes : int64;
+  seconds, hhword, ddword, mmword, msword : word;
 
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
@@ -790,6 +795,8 @@ begin
   logdatei.log_prog('Start with StartProcess_cp', LLinfo);
   ParamStr := '';
   paramlist := TXStringlist.Create;
+  seccounter := 0;
+  totalbytes := 0;
 
   // do we have a quoted file name ?
   if CmdLinePasStr[1] = '"' then
@@ -920,9 +927,10 @@ begin
             if catchout then
             begin
               repeat
-              n := ReadStream(Buffer, FPCProcess, output, showoutput);
-              //LogDatei.log('read from process bytes: '+IntToStr(n),LLinfo);
-            until n <= 0;
+                n := ReadStream(Buffer, FPCProcess, output, showoutput);
+                totalbytes := totalbytes +n;
+                //LogDatei.log('read from process bytes: '+IntToStr(n),LLinfo);
+              until n <= 0;
             end;
 
             //wait for task vanished
@@ -1018,7 +1026,7 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                 begin
                   running := True;
-              end
+                end
                 else
                 begin
                   logdatei.log('Waiting for "' + ident +
@@ -1124,8 +1132,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -1142,10 +1150,10 @@ begin
 
             if running then
             begin
-             ProcessMess;
-             sleep(10);
+              ProcessMess;
+              //sleep(1);
+              //sleep(10);
               //sleep(50);
-              //sleep(1000);
               //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
@@ -1162,13 +1170,20 @@ begin
               end;
              {$ENDIF GUI}
               ProcessMess;
-              logdatei.log('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
+              DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
+              if seconds > seccounter then
+              begin
+                logdatei.log('Waiting for ending at ' +
+                  DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode) +
+                  ' output bytes read: '+intToStr(totalbytes), LLDebug2);
+                seccounter := seconds;
+              end;
               {$IFDEF WINDOWS}
               if (lpExitCode = 259) and (not FpcProcess.Running) then
               begin
-                logdatei.log('Strange: Process ended but exitcode 259 - we stop', LLinfo);
-                running := false;
+                logdatei.log('Strange: Process ended but exitcode 259 - we stop',
+                  LLinfo);
+                running := False;
               end;
               {$ENDIF WINDOWS}
               ProcessMess;
@@ -1219,4 +1234,3 @@ begin
 end;
 
 end.
-
