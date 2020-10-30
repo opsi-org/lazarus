@@ -721,6 +721,10 @@ var
   seccounter: integer;
   totalbytes: int64;
   seconds, hhword, ddword, mmword, msword: word;
+  handle: dword;
+  comparestr: string;
+  winText: array [0..1024] of char;
+  lengthvar: longint;
 
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
@@ -940,7 +944,11 @@ begin
               //waiting condition 0:
               //wait until a window is appearing
               //if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
-              if FindWindow(nil, PChar(Ident)) = 0 then
+              handle := FindWindow(nil, PChar(Ident));
+              //logdatei.log('LastError: '+IntToStr(GetLastError)
+              //  + ' (' + SysErrorMessage(GetLastError) + ')',LLinfo);;
+              if (handle = Invalid_Handle_Value) or
+                (handle = 0) or (GetLastError <> 0) then
               begin
                 if seconds > seccounter then
                 begin
@@ -963,7 +971,21 @@ begin
                 end;
               end
               else
-                logdatei.log('Wait for appear Window: "' + Ident + '" found.', LLDebug);
+              begin
+                if (GetWindowText(handle, winText, SizeOf(winText)) >
+                  0) and (winText = ident) then
+                  logdatei.log('Wait for appear Window: "' + Ident +
+                    '" found.', LLDebug)
+                else
+                begin
+                  running := True;
+                  if seconds > seccounter then
+                  begin
+                    logdatei.log('Wait for appear Window: "' + Ident +
+                      '" not found. Found: '+winText, LLDebug);
+                  end;
+                end;
+              end;
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -1112,9 +1134,10 @@ begin
               // waiting condition 4 :  Process has finished;
               //   we still have to look if WindowToVanish did vanish if this is necessary
               lpExitCode := FpcProcess.ExitCode;
-              logdatei.log(
-                'Process terminated at: ' + DateTimeToStr(now) +
-                ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+              if seconds > seccounter then
+                logdatei.log(
+                  'Process terminated at: ' + DateTimeToStr(now) +
+                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
               {$IFDEF WINDOWS}
               if WaitForWindowVanished then
               begin

@@ -316,8 +316,9 @@ begin
   //writeln('paramcount = '+inttostr(myparamcount));
   for i := 1 to myparamcount do
     myparamstring := myparamstring + ' ' + Application.Params[i];
+  LogDatei.log('Called as: ' + myparamstring, LLEssential);
   myexitcode := 42;
-  system.ExitCode:=myexitcode;
+  system.ExitCode := myexitcode;
   optionlist := TStringList.Create;
   optionlist.Append('help');
   optionlist.Append('log::');
@@ -371,7 +372,7 @@ begin
 
     if Application.HasOption('log') then
     begin
-      LogDatei.log('Option --log is not supportetd any more',LLwarning);
+      LogDatei.log('Option --log is not supportetd any more', LLwarning);
     end;
 (*
     if Application.HasOption('log') then
@@ -425,16 +426,17 @@ begin
     if Application.HasOption('wait') then
     begin
       paramvaluestr := Application.GetOptionValue('wait');
+      //writeln('--wait: waiting ' + paramvaluestr + ' seconds');
+      LogDatei.log('--wait: waiting ' + paramvaluestr + ' seconds', LLnotice);
       try
-        writeln('--wait: waiting ' + paramvaluestr + ' seconds');
-        LogDatei.log('--wait: waiting ' + paramvaluestr + ' seconds', LLnotice);
         waitsec := StrToInt(paramvaluestr);
-        Sleep(waitsec * 1000);
-        LogDatei.log('Finished waiting', LLnotice);
       except
-        LogDatei.log('>' + paramvaluestr + '< is not a integer.', LLerror);
-        writeln('>' + paramvaluestr + '< is not a integer.');
+        LogDatei.log('wait >' + paramvaluestr + '< is not a integer.', LLerror);
+        //writeln('>' + paramvaluestr + '< is not a integer.');
+        waitsec := 1;
       end;
+      Sleep(waitsec * 1000);
+      LogDatei.log('Finished waiting', LLnotice);
     end;
 
     if Application.HasOption('fork-and-stop') then
@@ -445,7 +447,7 @@ begin
       try
         childsec := StrToInt(paramvaluestr);
       except
-        LogDatei.log('>' + paramvaluestr + '< is not a integer.', LLerror);
+        LogDatei.log('fork-and-stop >' + paramvaluestr + '< is not a integer.', LLerror);
         writeln('>' + paramvaluestr + '< is not a integer.');
         childsec := 5;
       end;
@@ -522,12 +524,12 @@ begin
       try
         showtimeint := StrToInt(showtimestr);
       except
-        writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+        //writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
         LogDatei.log('>' + paramvaluestr +
           '< is not a integer. Using default of 1 second.', LLerror);
         showtimeint := 1;
       end;
-      writeln('--showwindow: waiting ' + showtimestr + ' seconds');
+      //writeln('--showwindow: waiting ' + showtimestr + ' seconds');
       LogDatei.log('--showwindow: waiting ' + showtimestr + ' seconds', LLnotice);
       //Sleep(showtimeint * 1000);
 
