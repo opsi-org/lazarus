@@ -1172,7 +1172,7 @@ begin
 
             if running then
             begin
-              ProcessMess;
+              //ProcessMess;
               //sleep(1);
               sleep(10);
               //sleep(50);
@@ -1182,6 +1182,7 @@ begin
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
               GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode));
+              ProcessMess;
               {$ENDIF WINDOWS}
               //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               {$IFDEF GUI}
@@ -1190,8 +1191,11 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
-             {$ENDIF GUI}
+              {$IFDEF WINDOWS}
               ProcessMess;
+              {$ENDIF WINDOWS}
+             {$ENDIF GUI}
+
               DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
               if seconds > seccounter then
               begin
@@ -1207,12 +1211,15 @@ begin
                   LLinfo);
                 //running := False;
               end;
+              ProcessMess
               {$ENDIF WINDOWS}
-              ProcessMess;
+              ;
             end;
           end;
 
+          {$IFDEF WINDOWS}
           ProcessMess;
+          {$ENDIF WINDOWS}
 
           if catchout then
           begin
@@ -1228,7 +1235,9 @@ begin
           end;
         end;
 
+        {$IFDEF WINDOWS}
         ProcessMess;
+        {$ENDIF WINDOWS}
 
         exitCode := FpcProcess.ExitCode;
         Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +

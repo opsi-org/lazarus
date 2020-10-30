@@ -53,6 +53,10 @@ msgstr "S'il vous plaît entrez le nom d'utilisateur du service OPSI :"
 msgid "Ready to continue ?"
 msgstr "Prêt à continuer ?"
 
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr ""
