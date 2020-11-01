@@ -847,6 +847,11 @@ begin
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
       //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      //FpcProcess.Executable := utf8towincp(filename);
+      { tprocess calls widestring api since fpc 3.1.1
+        https://bugs.freepascal.org/view.php?id=29136
+        https://wiki.freepascal.org/Unicode_Support_in_Lazarus#WinAPI_function_calls_in_FPC_libs }
+
       FpcProcess.Executable := filename;
       FpcProcess.Parameters := TStringList(paramlist);
       //FpcProcess.Parameters;
@@ -1246,8 +1251,9 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp: ' +
+        LogDatei.log('Exception in StartProcess_cp: ' +
           e.message, LLDebug);
+        logdatei.log('Lasterror: '+ IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')',LLWarning);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
         Result := False;
