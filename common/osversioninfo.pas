@@ -29,8 +29,8 @@ begin
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   versionInfo := TFileVersionInfo.Create(nil);
   try
-    versionInfo.FileName := reencode(ParamStr(0), 'system');
-    //versionInfo.FileName := ParamStr(0);
+    //versionInfo.FileName := reencode(ParamStr(0), 'system');
+    versionInfo.FileName := ParamStr(0);
     versionInfo.ReadFileInfo;
     result := versionInfo.VersionStrings.Values['FileVersion'];
   finally
