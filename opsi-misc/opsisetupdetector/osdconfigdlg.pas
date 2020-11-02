@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, Buttons, osdbasedata, PropEdits,
+  osddatamod,
   lcltranslator;
 
 type
@@ -106,6 +107,7 @@ procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
 begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
+  DataModule1.SetFontName(TControl(Sender), myFont);
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);

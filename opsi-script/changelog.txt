@@ -9,6 +9,9 @@ opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
 
 * new boolean function: isValidFQDN
 * fix debug_lib do imported libs added to nologfiles in oslog
+* osfunc: new randomstrWithParameters (also called by randomstr
+* new string function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
+* powershellcall and execwith calls at windows RunAndCaptureOut bydefault
 
 -- d.oertel <d.oertel@uib.de> Tue, 13 Oct 2020 15:00
 
@@ -26,6 +29,7 @@ opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
   By using the -c option setting this flag will be supressed
   The option -c (continue) make only sense in combination with -r
 * section name now as header of showoutput
+
 
 * startprocess_cp fix (jan werner)
 

@@ -55,7 +55,7 @@ msgstr "Bereit zum Fortfahren ?"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
+msgstr ""
 
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"

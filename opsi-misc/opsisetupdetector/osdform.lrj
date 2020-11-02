@@ -85,7 +85,6 @@
 {"hash":195884553,"name":"tresultform1.bitbtndelprop.caption","sourcebytes":[68,101,108,101,116,101,32,80,114,111,112,101,114,116,121],"value":"Delete Property"},
 {"hash":81177737,"name":"tresultform1.bitbtneditprop.caption","sourcebytes":[69,100,105,116,32,80,114,111,112,101,114,116,121],"value":"Edit Property"},
 {"hash":253600750,"name":"tresultform1.tabsheeticons.caption","sourcebytes":[80,114,111,100,117,99,116,32,73,99,111,110],"value":"Product Icon"},
-{"hash":164814880,"name":"tresultform1.btnopeniconfolder.caption","sourcebytes":[32,111,112,101,110,32,105,99,111,110,32,102,111,108,100,101,114,32],"value":" open icon folder "},
 {"hash":92863556,"name":"tresultform1.paneliconpreview.caption","sourcebytes":[110,111,32,105,99,111,110,32,115,101,108,101,99,116,101,100],"value":"no icon selected"},
 {"hash":67953945,"name":"tresultform1.labeliconpreview.caption","sourcebytes":[83,101,108,101,99,116,101,100,32,73,99,111,110,32,40,80,114,101,118,105,101,119,32,49,55,48,120,49,55,48,41],"value":"Selected Icon (Preview 170x170)"},
 {"hash":194334512,"name":"tresultform1.btniconsnextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
@@ -97,6 +96,7 @@
 {"hash":97188238,"name":"tresultform1.checkboxdefaulticon.caption","sourcebytes":[117,115,101,32,100,101,102,97,117,108,116,32,105,99,111,110],"value":"use default icon"},
 {"hash":169894576,"name":"tresultform1.labelnumicons.caption","sourcebytes":[73,99,111,110,115,32,116,111,32,99,104,111,111,115,101,32,102,114,111,109,58,32],"value":"Icons to choose from: "},
 {"hash":48,"name":"tresultform1.labelnumber.caption","sourcebytes":[48],"value":"0"},
+{"hash":113061378,"name":"tresultform1.btnopeniconfolder.caption","sourcebytes":[111,112,101,110,32,105,99,111,110,32,102,111,108,100,101,114],"value":"open icon folder"},
 {"hash":21995779,"name":"tresultform1.label1.caption","sourcebytes":[78,111,32,73,99,111,110,115],"value":"No Icons"},
 {"hash":78166181,"name":"tresultform1.tabsheetcreate.caption","sourcebytes":[67,114,101,97,116,101],"value":"Create"},
 {"hash":234593992,"name":"tresultform1.label78.caption","sourcebytes":[80,97,116,104,32,116,111,32,111,112,115,105,45,119,111,114,107,45,98,101,110,99,104],"value":"Path to opsi-work-bench"},
@@ -125,5 +125,6 @@
 {"hash":82521923,"name":"tresultform1.menuitemlang.caption","sourcebytes":[76,97,110,103,117,97,103,101,115],"value":"Languages"},
 {"hash":1726,"name":"tresultform1.menuitemlangen.caption","sourcebytes":[101,110],"value":"en"},
 {"hash":1701,"name":"tresultform1.menuitemlangde.caption","sourcebytes":[100,101],"value":"de"},
-{"hash":1731,"name":"tresultform1.menuitemlanges.caption","sourcebytes":[101,115],"value":"es"}
+{"hash":1731,"name":"tresultform1.menuitemlanges.caption","sourcebytes":[101,115],"value":"es"},
+{"hash":1746,"name":"tresultform1.menuitemlangfr.caption","sourcebytes":[102,114],"value":"fr"}
 ]}

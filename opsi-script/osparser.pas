@@ -9914,7 +9914,7 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowerhellCall Executing: ' + command + ' ; mode: ' + shortarch,
+    LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
       LLNotice + logleveloffset);
 
 
@@ -10828,6 +10828,7 @@ var
   onlyWindows: boolean;
   showoutput: TShowOutputFlag;
   sysError: DWORD;
+  use_sp : boolean;
 
 begin
   try
@@ -10838,6 +10839,7 @@ begin
     showoutput := tsofHideOutput;
     force64 := False;
     threaded := False;
+    use_sp := true; // use startprocess by default
 
     if Sektion.Count = 0 then
       exit;
@@ -10982,6 +10984,60 @@ begin
       if AutoActivityDisplay then
         FBatchOberflaeche.showAcitvityBar(True);
       {$ENDIF GUI}
+      if threaded then
+      begin
+        showcmd := sw_hide;
+        catchout := false;
+        use_sp := true;
+      end
+      else use_sp := false;
+
+      { backport from 4.12.3  }
+      //if threaded then
+
+      if use_sp then
+      begin
+        LogDatei.log_prog('Executing with SP: ' + commandline, LLDebug);
+        if not StartProcess(Commandline, showcmd, showoutput, not threaded,
+        False, False, False, False, runas, '', WaitSecs, Report,
+        FLastExitCodeOfExe, catchout, output,Sektion.Name) then
+        begin
+          ps := 'Error: ' + Report;
+          LogDatei.log(ps, LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+        end
+        else
+          LogDatei.log(Report, LevelComplete);
+      end
+      else
+      begin
+        LogDatei.log_prog('Executing with RCACO:  ' + commandline, LLDebug);
+        if not RunCommandAndCaptureOut(commandline, True, output,
+          report, showcmd, FLastExitCodeOfExe) then
+        begin
+          ps := 'Error: ' + Report;
+          LogDatei.log(ps, LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+          scriptstopped := True;
+        end
+        else
+        begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+          LogDatei.log('', LLDebug + logleveloffset);
+          LogDatei.log('output:', LLDebug + logleveloffset);
+          LogDatei.log('--------------', LLDebug + logleveloffset);
+
+          for i := 0 to output.Count - 1 do
+          begin
+            LogDatei.log(output.strings[i], LLDebug + logleveloffset);
+          end;
+
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+          LogDatei.log('', LLDebug + logleveloffset);
+        end;
+      end;
+
+(*   old .4.12.4 version:
 
       if threaded then
         showcmd := sw_hide;
@@ -11014,7 +11070,7 @@ begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
         LogDatei.log('', LLDebug + logleveloffset);
       end;
-
+ *)
       {$IFDEF WIN32}
       if Wow64FsRedirectionDisabled then
       begin
@@ -13752,8 +13808,12 @@ var
   r1: string = '';
   s3: string = '';
   s4: string = '';
+  s5: string = '';
   n1: integer = 0;
   n2: integer = 0;
+  n3: integer = 0;
+  n4: integer = 0;
+  n5: integer = 0;
   s1enc: string = '';
   s2enc: string = '';
   s3enc: string = '';
@@ -15346,6 +15406,31 @@ begin
   begin
     StringResult := randomstr(True);
     syntaxCheck := True;
+  end
+
+  //randomstrWithParameters
+  else if LowerCase(s) = LowerCase('randomstrWithParameters') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                 if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                       if Skip(',', r, r, InfoSyntaxError) then
+                          if EvaluateString(r, r, s5, InfoSyntaxError) then
+                             if Skip(')', r, r, InfoSyntaxError) then
+                              begin
+                                syntaxCheck := True;
+                                 n1 := StrToInt(s1);
+                                 n2 := StrToInt(s2);
+                                 n3 := StrToInt(s3);
+                                 n4 := StrToInt(s4);
+                                 n5 := StrToInt(s5);
+                                 StringResult := randomstrWithParameters(n1,n2,n3,n4,n5);
+                              end;
   end
 
   else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then

@@ -58,11 +58,8 @@ msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
+msgstr ""
 
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"

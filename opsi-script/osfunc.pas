@@ -608,6 +608,7 @@ procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
+function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
 procedure ShrinkFileToMB(filename: string; newsize: integer);
 procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
@@ -1074,10 +1075,10 @@ end;
 
 function randomstr(usespecialchars: boolean): string;
 var
-  i, randomInt: integer;
+  //i, randomInt: integer;
   stringresult: string = '';
 begin
-  StringResult := '';
+  (*StringResult := '';
   for i := 1 to 2 do
   begin
     repeat
@@ -1108,7 +1109,74 @@ begin
     until
       char(randomInt) in CharsNumericForRandomStrings;
     StringResult := StringResult + char(randomInt);
-  end;
+  end;*)
+  if usespecialchars = true then
+     StringResult := randomstrWithParameters(10,2,2,4,2)
+  else
+     StringResult := randomstrWithParameters(10,3,3,4,0);
+  Result := StringResult;
+end;
+
+// randomstrWithParameters returns a random string with predefined preferences
+function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer) : string;
+var
+  StringResult: string = '';
+  i,randomInt,n,m:integer;
+  aux:char;
+begin
+  { do not call randomize here.
+    calling randomize here results that two calls  one after another
+    will get the same result.
+    randomize is called at the initialization of osparser unit }
+  // Randomize;
+   for i := 1 to nLowerCases do
+   begin
+       repeat
+       randomInt := random(122)+1
+       until char(randomInt) in CharsLowerForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nUpperCases do
+   begin
+       repeat
+       randomInt := random(90)+1
+       until char(randomInt) in CharsUpperForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nDigits do
+   begin
+       repeat
+       randomInt := random(57)+1
+       until char(randomInt) in CharsNumericForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   for i := 1 to nSpecialChars do
+   begin
+       repeat
+       randomInt := random(126)+1
+       until char(randomInt) in CharsSpecialForRandomStrings;
+       StringResult := StringResult + char(randomInt);
+   end;
+   if  Length(StringResult) < minLength  then
+   begin
+       repeat
+           repeat
+             randomInt := random(122)+1
+           until char(randomInt) in CharsLowerForRandomStrings;
+           StringResult := StringResult + char(randomInt);
+       until Length(StringResult) >= minLength;
+   end;
+
+  //randomly reorganizing the string
+  n := Length(StringResult);
+  repeat
+    m := random(n)+1;
+    aux := StringResult[n];
+    StringResult[n] := StringResult[m];
+    StringResult[m] := aux;
+    n:=n-1;
+  until n = 1;
+
   Result := StringResult;
 end;
 

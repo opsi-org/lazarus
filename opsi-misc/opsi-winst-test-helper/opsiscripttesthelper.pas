@@ -14,7 +14,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   opsiscripttesthelper_main,
   Forms,
-  helperwin, osprocesses;
+  helperwin, helperwispecfolder, osprocesses;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelper.rc}{$ENDIF}
 

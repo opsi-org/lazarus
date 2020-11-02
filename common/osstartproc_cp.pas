@@ -12,7 +12,7 @@ uses
 
 {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
- osshowsysinfo,
+  osshowsysinfo,
   osbatchgui,
   //osinteractivegui,
   {$ELSE GUI}
@@ -22,6 +22,7 @@ uses
   Classes,
   SysUtils,
   process,
+  //utf8process,
   osparserhelper,
   oslog,
   osprocesses,
@@ -48,10 +49,12 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   var output: TXStringList): boolean;
 
 implementation
+
 {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
 uses
   osmain;
+
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 
@@ -716,6 +719,13 @@ var
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
   //i: integer; // tmp
+  seccounter: integer;
+  totalbytes: int64;
+  seconds, hhword, ddword, mmword, msword: word;
+  handle: dword;
+  comparestr: string;
+  winText: array [0..1024] of char;
+  lengthvar: longint;
 
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
@@ -787,8 +797,11 @@ const
   //ReadBufferSize = 2048;
 
 begin
+  logdatei.log_prog('Start with StartProcess_cp', LLinfo);
   ParamStr := '';
   paramlist := TXStringlist.Create;
+  seccounter := 0;
+  totalbytes := 0;
 
   // do we have a quoted file name ?
   if CmdLinePasStr[1] = '"' then
@@ -832,9 +845,14 @@ begin
     try
       Buffer := '';
 
-      FpcProcess := process.TProcess.Create(nil);
+      FpcProcess := TProcess.Create(nil);
       {$IFDEF WINDOWS}
       //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      //FpcProcess.Executable := utf8towincp(filename);
+      { tprocess calls widestring api since fpc 3.1.1
+        https://bugs.freepascal.org/view.php?id=29136
+        https://wiki.freepascal.org/Unicode_Support_in_Lazarus#WinAPI_function_calls_in_FPC_libs }
+
       FpcProcess.Executable := filename;
       FpcProcess.Parameters := TStringList(paramlist);
       //FpcProcess.Parameters;
@@ -913,15 +931,16 @@ begin
           while running do
           begin
             nowtime := now;
-
             running := False;
+            DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
 
             if catchout then
             begin
               repeat
-              n := ReadStream(Buffer, FPCProcess, output, showoutput);
-              //LogDatei.log('read from process bytes: '+IntToStr(n),LLinfo);
-            until n <= 0;
+                n := ReadStream(Buffer, FPCProcess, output, showoutput);
+                totalbytes := totalbytes + n;
+                //LogDatei.log('read from process bytes: '+IntToStr(n),LLinfo);
+              until n <= 0;
             end;
 
             //wait for task vanished
@@ -930,10 +949,18 @@ begin
             begin
               //waiting condition 0:
               //wait until a window is appearing
-              if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
+              //if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
+              handle := FindWindow(nil, PChar(Ident));
+              //logdatei.log('LastError: '+IntToStr(GetLastError)
+              //  + ' (' + SysErrorMessage(GetLastError) + ')',LLinfo);;
+              if (handle = Invalid_Handle_Value) or
+                (handle = 0) or (GetLastError <> 0) then
               begin
-                logdatei.log('Wait for appear Window: "' + Ident +
-                  '" not found.', LLDebug);
+                if seconds > seccounter then
+                begin
+                  logdatei.log('Wait for appear Window: "' + Ident +
+                    '" not found.', LLDebug);
+                end;
                 if WaitSecs = 0 then
                   running := True
                 else
@@ -950,7 +977,21 @@ begin
                 end;
               end
               else
-                logdatei.log('Wait for appear Window: "' + Ident + '" found.', LLDebug);
+              begin
+                if (GetWindowText(handle, winText, SizeOf(winText)) >
+                  0) and (winText = ident) then
+                  logdatei.log('Wait for appear Window: "' + Ident +
+                    '" found.', LLDebug)
+                else
+                begin
+                  running := True;
+                  if seconds > seccounter then
+                  begin
+                    logdatei.log('Wait for appear Window: "' + Ident +
+                      '" not found. Found: '+winText, LLDebug);
+                  end;
+                end;
+              end;
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -958,7 +999,8 @@ begin
               //waiting condition 1:
               //we are waiting for a window that will later vanish
               //but this window did not appear yet
-              if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              //if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              if FindWindow(nil, PChar(Ident)) <> 0 then
               begin
                 WaitWindowStarted := True;
                 logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
@@ -1000,7 +1042,8 @@ begin
               //waiting condition 3a : we wait that some other process will come into existence
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.log('Waiting for start of "' + ident + '"', LLInfo);
+                if seconds > seccounter then
+                  logdatei.log('Waiting for start of "' + ident + '"', LLInfo);
                 WaitForProcessEndingLogflag := False;
               end;
               {$IFDEF WINDOWS}
@@ -1017,7 +1060,7 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                 begin
                   running := True;
-              end
+                end
                 else
                 begin
                   logdatei.log('Waiting for "' + ident +
@@ -1040,8 +1083,9 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.log('Waiting for process "' + ident +
-                  '" ending', LLinfo);
+                if seconds > seccounter then
+                  logdatei.log('Waiting for process "' + ident +
+                    '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
@@ -1091,27 +1135,20 @@ begin
               end;
 
             end
-
-            //else if not FpcProcess.Running
-            //else if GetExitCodeProcess(processInfo.hProcess, lpExitCode) and (lpExitCode <> still_active)
-            //else if FpcProcess.ExitStatus  <> still_active
-            //else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
-            //  (lpExitCode <> still_active) then
-            //{$ENDIF WINDOWS}
-            //{$IFDEF UNIX}
             else if not FpcProcess.Running then
-              // {$ENDIF UNIX}
             begin
               // waiting condition 4 :  Process has finished;
               //   we still have to look if WindowToVanish did vanish if this is necessary
               lpExitCode := FpcProcess.ExitCode;
-              logdatei.log(
-                'Process terminated at: ' + DateTimeToStr(now) +
-                ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+              if seconds > seccounter then
+                logdatei.log(
+                  'Process terminated at: ' + DateTimeToStr(now) +
+                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
               {$IFDEF WINDOWS}
               if WaitForWindowVanished then
               begin
-                if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
+                //if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
+                if not (FindWindow(nil, PChar(Ident)) = 0) then
                 begin
                   running := True;
                 end;
@@ -1141,16 +1178,17 @@ begin
 
             if running then
             begin
-             ProcessMess;
-             sleep(10);
+              //ProcessMess;
+              //sleep(1);
+              sleep(10);
               //sleep(50);
-              //sleep(1000);
               //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
               GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode));
+              ProcessMess;
               {$ENDIF WINDOWS}
               //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               {$IFDEF GUI}
@@ -1159,15 +1197,35 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
+              {$IFDEF WINDOWS}
+              ProcessMess;
+              {$ENDIF WINDOWS}
              {$ENDIF GUI}
-              ProcessMess;
-              logdatei.log('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-              ProcessMess;
+
+              DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
+              if seconds > seccounter then
+              begin
+                logdatei.log('Waiting for ending at ' +
+                  DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode) +
+                  ' output bytes read: ' + IntToStr(totalbytes), LLDebug2);
+                seccounter := seconds;
+              end;
+              {$IFDEF WINDOWS}
+              if (lpExitCode = 259) and (not FpcProcess.Running) then
+              begin
+                logdatei.log('Strange: Process ended but exitcode 259 ',
+                  LLinfo);
+                //running := False;
+              end;
+              ProcessMess
+              {$ENDIF WINDOWS}
+              ;
             end;
           end;
 
+          {$IFDEF WINDOWS}
           ProcessMess;
+          {$ENDIF WINDOWS}
 
           if catchout then
           begin
@@ -1183,7 +1241,9 @@ begin
           end;
         end;
 
+        {$IFDEF WINDOWS}
         ProcessMess;
+        {$ENDIF WINDOWS}
 
         exitCode := FpcProcess.ExitCode;
         Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
@@ -1192,8 +1252,9 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp: ' +
+        LogDatei.log('Exception in StartProcess_cp: ' +
           e.message, LLDebug);
+        logdatei.log('Lasterror: '+ IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')',LLWarning);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
         Result := False;
@@ -1211,4 +1272,3 @@ begin
 end;
 
 end.
-

@@ -40,6 +40,8 @@ uses
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
+  osddatamod,
+  osdcheckentriesdlg,
   Contnrs;
 
 type
@@ -54,6 +56,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BtnOpenIconFolder: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnAddProp: TBitBtn;
     BitBtnDelDep: TBitBtn;
@@ -77,7 +80,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    BtnOpenIconFolder: TButton;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
@@ -162,6 +164,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemLangFr: TMenuItem;
     MenuItemLang: TMenuItem;
     MenuItemLangDe: TMenuItem;
     MenuItemLangEn: TMenuItem;
@@ -295,9 +298,11 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemLangClick(Sender: TObject);
     procedure MenuItemLangDeClick(Sender: TObject);
     procedure MenuItemLangEnClick(Sender: TObject);
     procedure MenuItemLangEsClick(Sender: TObject);
+    procedure MenuItemLangFrClick(Sender: TObject);
     procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
@@ -321,6 +326,7 @@ type
     //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
@@ -342,6 +348,7 @@ type
     procedure IconDisplayOnMouseEnter(Sender: TObject);
     procedure PaintPreview(Image: TImage);
     procedure IconDisplayOnClick(Sender: TObject);
+    //procedure SetFontName(Control: TControl; Name: string);
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
@@ -388,9 +395,6 @@ var
   setupTypestr: string;
   markerEmbeddedMSI: boolean = False;
   markerInstallShield: boolean = False;
-  ArchitecturesInstallIn64BitMode: string; // INNO: {pf}={pf64}/{pf32}?
-  //Revision: string = '$Rev: 126 $';   // set manually in Project-Settings-Version
-  //RevDate: string = '$Date: 2014-09-23 17:46:39 +0200 (Di, 23 Sep 2014) $';
   opsidir: string;   // opsi.org (set in main)
   opsitmp: string;   // %TEMP%/opsitmp  (set in main)
   //Logfile: string;   // name of logfile (set in main)
@@ -408,6 +412,7 @@ var
   //myobject : TMyClass;
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
+  //myFont : string;
 
 
 resourcestring
@@ -468,6 +473,7 @@ resourcestring
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
   rsDefaultIcon = 'default icon';
   rsNumberIcons = 'Icons to choose from: ';
+  rsCopyCompleteDir = 'Should we copy not only the setup file. but the complete directory ?';
 
 implementation
 
@@ -619,6 +625,7 @@ begin
     LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
+  LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
 procedure TResultform1.FormDestroy(Sender: TObject);
@@ -753,7 +760,7 @@ begin
   optionlist.Append('lang::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('', optionlist);
+  ErrorMsg := Application.CheckOptions('h', optionlist);
   if ErrorMsg <> '' then
   begin
     Application.ShowException(Exception.Create(ErrorMsg));
@@ -844,7 +851,8 @@ begin
     else
     begin
       LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
-      analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
+      Analyze(myfilename,aktProduct.SetupFiles[0],false);
+      //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
     end;
   end
   else
@@ -869,6 +877,7 @@ begin
     freebasedata;
     Application.Terminate;
   end;
+  LogDatei.log('Finished main2 ', LLInfo);
 end;
 
 
@@ -956,6 +965,12 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
+   if not startupfinished then
+    main2;
+end;
+
+procedure TResultform1.MenuItemLangClick(Sender: TObject);
+begin
 
 end;
 
@@ -972,6 +987,11 @@ end;
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
   SetDefaultLang('es');
+end;
+
+procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
+begin
+  SetDefaultLang('fr');
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -1042,12 +1062,10 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
-    StringGridDep.Clear;
-    //if StringGridProp.RowCount > 1 then
-    //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbNo,mbYes],0,mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := true;
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1078,6 +1096,7 @@ var
   row, col: integer;
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
+  picturesize : integer;
 begin
   with ImageIconPreview.Canvas do
   begin
@@ -1092,7 +1111,14 @@ begin
       end;
     end;
     // paint chess board
-    RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+    //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+    picturesize:= ImageIconPreview.Width;
+    //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
+    {$IFDEF LINUX}
+    // scale rect
+    picturesize := round(picturesize * ( 91 / Screen.PixelsPerInch));
+    {$ENDIF LINUX}
+    RectBackgr := Rect(0, 0, picturesize, picturesize);
     // paint icon on chess board
     StretchDraw(RectBackgr, Image.Picture.Bitmap);
   end;
@@ -1183,6 +1209,7 @@ begin
   if selectDirectory then
   begin
     iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
+    LogDatei.log('Open Icon dir: '+iconDirectory,LLnotice);
     // get all files from the selected directory
     if FindFirst(iconDirectory + '*', faAnyFile, IconSearch) = 0 then
     begin
@@ -1251,12 +1278,15 @@ begin
           Inc(numberIcons);
         end;
         if numberIcons mod 10 = 0 then
+        begin
           LabelNumber.Caption := IntToStr(numberIcons);
-        Application.ProcessMessages;
+          Application.ProcessMessages;
+        end;
       until FindNext(IconSearch) <> 0; // I have no idea how they are ordered
       FindClose(IconSearch);
     end;
     LabelNumIcons.Caption := rsNumberIcons;
+    LogDatei.log('Finished Icon dir: '+iconDirectory+ ' number of icons: '+intToStr(numberIcons),LLnotice);
     // part of LabelNumber.Caption in po-files deleted so that the caption does
     // not change to 0 when changing the language
     LabelNumber.Caption := IntToStr(numberIcons);
@@ -1270,15 +1300,20 @@ var
 begin
   if CheckBoxDefaultIcon.Checked = True then
   begin
-    // show name 'default icon' but no directory
+    { show name 'default icon' but no directory }
     LabelIconName.Visible := True;
     LabelNameSelIcon.Caption := rsDefaultIcon;
     LabelIconDir.Visible := False;
     TILabelDirSelIcon.Visible := False;
-    // set productImageFullFileName to full file name of the default icon
-    defaultIconFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'template.png';
+    { set productImageFullFileName to full file name of the default icon }
+    {$IFDEF WINDOWS}
+    defaultIconFullFileName := ExtractFileDir(Application.Params[0]) +
+    PathDelim + 'template-files' + PathDelim + 'template.png';
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    defaultIconFullFileName :='/usr/share/opsi-setup-detector' +
+      PathDelim + 'template-files' + PathDelim + 'template.png';
+    {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
 
@@ -1286,6 +1321,10 @@ begin
     ImageIconPreview.Visible := True;
     // paint icon preview
     DefaultIcon := TImage.Create(TabSheetIcons);
+    {$IFDEF LINUX}
+    // scale image
+    DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+    {$ENDIF LINUX}
     DefaultIcon.Picture.LoadFromFile(defaultIconFullFileName);
     PaintPreview(DefaultIcon);
   end;
@@ -1336,12 +1375,12 @@ begin
   begin
     useRunMode := twoAnalyzeCreate_1;
     setRunMode;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := true;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     //if StringGridProp.RowCount > 1 then
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
@@ -1370,8 +1409,18 @@ begin
   end;
 end;
 
+procedure showCeckEntriesWarning;
+begin
+  if myconfiguration.ShowCheckEntryWarning then
+  begin
+    FCheckenties.ShowModal;
+    myconfiguration.ShowCheckEntryWarning := not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
+  end;
+end;
+
 procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
+  showCeckEntriesWarning;
   case useRunMode of
     analyzeOnly:
     begin
@@ -1448,7 +1497,11 @@ begin
       mydep.Add('');
     end;
     mydep.Add(FNewDepDlg.ComboBoxReqType.Text);
-    StringGridDep.Rows[index - 1].AddStrings(mydep);
+    //StringGridDep.Rows[index - 1].AddStrings(mydep);
+    StringGridDep.Rows[index - 1].SetStrings(mydep);
+    StringGridDep.Repaint;
+    procmess;
+    FreeAndNil(mydep);
   end
   else
   begin
@@ -1530,7 +1583,7 @@ begin
         tmpliststr := tmpliststr + ']';
         myprop.Add(tmpliststr);      //default values
       end;
-      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      StringGridProp.Rows[index - 1].SetStrings(myprop);
     end;
   end
   else
@@ -1795,7 +1848,8 @@ begin
     useRunMode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -1868,10 +1922,11 @@ begin
       myprop.multivalue := False;
       myprop.editable := False;
       myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := '';
+      myprop.StrDefault.Text := BoolToStr(StringGridProp.Cells[7, i].ToBoolean,true);
       myprop.boolDefault := StringGridProp.Cells[7, i].ToBoolean;
     end;
   end;
+  FlowPanel14.Caption:='';
 end;
 
 
@@ -2079,6 +2134,8 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
+          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
+            aktProduct.SetupFiles[1].copyCompleteDir := true;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
           Application.ProcessMessages;
@@ -2170,12 +2227,8 @@ begin
     useRunMode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount - 1 downto 1 do
-        StringGridDep.DeleteRow(i);
-    if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount - 1 downto 1 do
-        StringGridProp.DeleteRow(i);
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -2338,10 +2391,16 @@ begin
   tmpimage := TPicture.Create;
   loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
-  main1;
+  //main1;
   // TabSheetIcons presets
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
+  {$IFDEF LINUX}
+    // scale form
+  AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+  DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
+  {$ENDIF LINUX}
+  LogDatei.log('design ppi: 91 , screen: '+intToStr(Screen.PixelsPerInch),LLessential);;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
     PathDelim + 'template-files' + PathDelim + 'template.png');
@@ -2359,6 +2418,8 @@ begin
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
+  DataModule1.SetFontName(TControl(Sender), myFont);
+  LogDatei.log('Finished FormCreate ', LLInfo);
 end;
 
 procedure TResultform1.memoadd(line: string);
@@ -2368,8 +2429,12 @@ end;
 
 procedure TResultform1.ApplicationEventIdle(Sender: TObject; var Done: boolean);
 begin
+  (*
   if not startupfinished then
     main2;
+    *)
+  Application.ProcessMessages;
+  sleep(100);
 end;
 
 
@@ -2432,10 +2497,15 @@ begin
   checkWorkbench;
 end;
 
+procedure TResultform1.TabSheetIconsShow(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.TabSheetStartExit(Sender: TObject);
 begin
-  ResultForm1.Width := 1185;
-  ResultForm1.Height := 566;
+  //ResultForm1.Width := 1185;
+  //ResultForm1.Height := 566;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
@@ -2501,6 +2571,7 @@ begin
   begin
     ShowMessage(rsWeNeedConfiguration);
     MenuItemConfigClick(Sender);
+    logdatei.log('Missing configs foundc- configdialog forced',LLinfo);
   end;
 end;
 
@@ -2550,10 +2621,8 @@ var
   index, i: integer;
 begin
   // clear existing props in StringGridProp
-  if StringGridProp.RowCount > 1 then
-    for i := StringGridProp.RowCount - 1 downto 1 do
-      StringGridProp.DeleteRow(i);
-  //StringGridProp.Clear;
+  StringGridProp.Clean([gzNormal, gzFixedRows]);
+  StringGridProp.RowCount := 1;
 
   if myconfiguration.UsePropDesktopicon and
     (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
@@ -2574,7 +2643,7 @@ begin
     //StringGridProp.InsertRowWithValues(index,myprop);
     StringGridProp.InsertColRow(False, index);
     StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
+    StringGridProp.Rows[index].SetStrings(myprop);
     myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
