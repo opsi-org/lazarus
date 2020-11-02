@@ -22,6 +22,7 @@ uses
   Classes,
   SysUtils,
   process,
+  //utf8process,
   osparserhelper,
   oslog,
   osprocesses,
@@ -844,7 +845,7 @@ begin
     try
       Buffer := '';
 
-      FpcProcess := process.TProcess.Create(nil);
+      FpcProcess := TProcess.Create(nil);
       {$IFDEF WINDOWS}
       //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
       //FpcProcess.Executable := utf8towincp(filename);
