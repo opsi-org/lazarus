@@ -13865,6 +13865,7 @@ var
   p1, p2, p3, p4: integer;
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpbool, tmpbool1: boolean;
+  Strings: TStrings;
 
 begin
   LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
@@ -14444,6 +14445,40 @@ begin
                     end;
   end
 
+  else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+          begin
+	    syntaxCheck := True;
+	    try
+		  s2 := ExpandFileName(s2);
+		  Inifile := TInifile.Create(s2);
+
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+		  LogDatei.log
+		  ('    reading the value of section "' + s1 + '"  from inifile  "' +
+		    s2 + '"',
+		    LevelComplete);
+		  s1enc := UTF8ToWinCP(s1);
+		  Inifile.ReadSectionRaw(s1enc,Strings);
+		  StringResult := WinCPToUTF8(AnsiString(Strings));
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+		  Inifile.Free;
+		  Inifile := nil;
+	    except
+		  on e: Exception do
+		  begin
+		    LogDatei.log('Error in creating inifile "' +
+			  s2 + '", message: "' + e.Message + '"', LevelWarnings);
+		    StringResult := '';
+		  end;
+	    end;
+          end;
+  end
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
