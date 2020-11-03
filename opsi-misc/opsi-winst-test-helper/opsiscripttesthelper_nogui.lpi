@@ -12,6 +12,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" FileDescription="Helper program for testing opsi-script (nogui)" LegalCopyright="uib gmbh (http://www.uib.de)" LegalTrademarks="opsi" ProductName="opsi"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -93,7 +94,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE
+-dOPSI"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -117,13 +119,13 @@
         <PackageName Value="LCLBase"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="opsiscripttesthelper_nogui.pas"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="46"/>
         <CursorPos X="21" Y="66"/>
-        <UsageCount Value="67"/>
+        <UsageCount Value="69"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -197,7 +199,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="30"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -207,7 +209,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="30"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
@@ -278,8 +280,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="471"/>
-        <CursorPos X="7" Y="483"/>
-        <UsageCount Value="23"/>
+        <CursorPos X="19" Y="487"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
@@ -300,20 +302,28 @@
       </Unit20>
       <Unit21>
         <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.0.4\packages\fcl-base\src\fptimer.pp"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="52"/>
         <CursorPos X="28" Y="67"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.0.4\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
         <CursorPos X="56" Y="119"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit23>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

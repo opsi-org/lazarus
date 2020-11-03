@@ -12,6 +12,7 @@ opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
 * osfunc: new randomstrWithParameters (also called by randomstr
 * new string function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
 * powershellcall and execwith calls at windows RunAndCaptureOut bydefault
+* Linux: osfunc: Findfirst with or faSymlink
 
 -- d.oertel <d.oertel@uib.de> Tue, 13 Oct 2020 15:00
 

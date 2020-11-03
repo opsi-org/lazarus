@@ -5283,7 +5283,7 @@ var
   //Attr: integer;
   FileResult: integer = 0;
 begin
-  FileResult := FindFirst(CompleteName, faAnyFile, fRec);
+  FileResult := FindFirst(CompleteName, faAnyFile or faSymlink, fRec);
   if FileResult = 0 then
   begin
     Result := True;
@@ -5318,7 +5318,7 @@ var
   SearchRec: TSearchRec;
 begin
   FName := ExpandFileName(FName);
-  if findfirst(FName, faAnyFile, SearchRec) = 0 then
+  if findfirst(FName, faAnyFile or faSymlink, SearchRec) = 0 then
     Result := SearchRec.Size
   else
     Result := -1;
@@ -10034,7 +10034,7 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(SourcePath + '*.*', faAnyfile, SearchResult);
       {$ELSE}
-      FindResultcode := FindFirst(SourcePath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(SourcePath + '*', faAnyfile or faSymlink, SearchResult);
       {$ENDIF WINDOWS}
 
       while FindResultcode = 0 do
@@ -10304,7 +10304,7 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
@@ -10330,7 +10330,7 @@ var
     LogS := 'Search "' + OrigPath + Filemask + '"';
     LogDatei.log(LogS, LLInfo);
 
-    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile -
+    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or faSymlink -
       faDirectory, SearchResult);
 
     while FindResultcode = 0 do
@@ -10454,7 +10454,7 @@ var
         {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
           '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
-        {$ENDIF LINUX}
+        {$ENDIF UNIX}
         {$IFDEF WINDOWS}
         errorNo := GetLastError;
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
