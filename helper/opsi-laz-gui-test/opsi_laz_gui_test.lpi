@@ -82,6 +82,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+          </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Release_mac">
