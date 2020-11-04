@@ -9,8 +9,10 @@ uses
   Windows,
   jwatlhelp32,
   {$ENDIF WINDOWS}
-
-{$IFDEF OPSISCRIPT}
+  {$IFDEF UNIX}
+  baseunix,
+  {$ENDIF UNIX}
+  {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
   osshowsysinfo,
   osbatchgui,
@@ -1254,7 +1256,12 @@ begin
       begin
         LogDatei.log('Exception in StartProcess_cp: ' +
           e.message, LLDebug);
+        {$IFDEF WINDOWS}
         logdatei.log('Lasterror: '+ IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')',LLWarning);
+        {$ENDIF WINDOWS}
+        {$IFDEF UNIX}
+        logdatei.log('Lasterror: '+ IntToStr(fpgeterrno) + ' (' + SysErrorMessage(fpgeterrno) + ')',LLWarning);
+        {$ENDIF UNIX}
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
         Result := False;

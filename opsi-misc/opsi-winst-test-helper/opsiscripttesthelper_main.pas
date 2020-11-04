@@ -519,7 +519,7 @@ begin
       Application.CreateForm(TForm1, Form1);
       Form1.Caption := Application.Title;
       Form1.Show;
-     {$ENDIF GUI}
+      {$ENDIF GUI}
       showtimestr := Application.GetOptionValue('showwindow');
       try
         showtimeint := StrToInt(showtimestr);
@@ -533,10 +533,16 @@ begin
       LogDatei.log('--showwindow: waiting ' + showtimestr + ' seconds', LLnotice);
       //Sleep(showtimeint * 1000);
 
-
+      {$IFDEF GUI}
       timer1.Interval := showtimeint * 1000;
       timer1.Enabled := True;
-
+      {$ELSE GUI}
+      LogDatei.log('NOGUI: sleeping ' + showtimestr + ' seconds', LLnotice);
+      Sleep(showtimeint * 1000);
+      LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      Application.Terminate;
+      halt(system.ExitCode);
+      {$ENDIF GUI}
       //Application.ProcessMessages;
       //Form1.Show;
       //Application.ProcessMessages;
