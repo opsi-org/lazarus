@@ -11158,7 +11158,9 @@ var
   funcindex, funcindexvar: integer;
   ErrorMsg: string;
   keyValueSeparator: char = '=';
-
+  Strings : TSTrings;
+  newIniFile: TIniFile;
+  s1enc: string = '';
 begin
 
   syntaxcheck := False;
@@ -11455,6 +11457,41 @@ begin
       end;
     end
 
+    else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+             if Skip(')', r, r, InfoSyntaxError) then
+            begin
+	      syntaxCheck := True;
+	      try
+		    s2 := ExpandFileName(s2);
+		    newInifile := TInifile.Create(s2);
+                    list.Clear;
+		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+		    LogDatei.log
+		    ('  Reading the value of section "' + s1 + '"  from inifile  "' +
+		      s2 + '"',
+		      LevelComplete);
+		    s1enc := UTF8ToWinCP(s1);
+		    newInifile.ReadSectionRaw(s1enc,TStrings(list));
+		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    //for i := 1 to Strings.Count do
+                    //   list.add(WinCPToUTF8(AnsiString(Strings[i])));
+                    //list.AddStrings(Strings);
+		    newInifile.Free;
+		    newInifile := nil;
+	      except
+		    on e: Exception do
+		    begin
+		      LogDatei.log('Error in creating inifile "' +
+			    s2 + '", message: "' + e.Message + '"', LevelWarnings);
+		    end;
+	      end;
+            end;
+    end
 
     else if LowerCase(s) = LowerCase('retrieveSection') then
     begin
@@ -14443,7 +14480,6 @@ begin
 
                     end;
   end
-
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
