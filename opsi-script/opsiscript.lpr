@@ -185,7 +185,6 @@ var
 begin
 
   {$IFDEF GUI}
-  Application.Scaled := False;
   {$IFDEF WINDOWS}
   Application.Scaled := true;
   {$ENDIF WINDOWS}

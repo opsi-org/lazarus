@@ -5,7 +5,7 @@
   <key>CFBundleExecutable</key>
   <string>opsi-script-nogui</string>
   <key>CFBundleIdentifier</key>
-  <string>org.opsi.opsi-script-nogui</string>
+  <string>org.opsi.opsi-script-gui</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
@@ -13,7 +13,7 @@
   <key>CFBundleName</key>
   <string>opsi-script-nogui</string>
   <key>CFBundleShortVersionString</key>
-  <string>4.12.4.2</string>
+  <string>4.12.4.5</string>
   <key>CFBundleVersion</key>
   <string>1</string>
   <key>CFBundleSupportedPlatforms</key>
