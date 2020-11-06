@@ -14,6 +14,7 @@ uses
 
 begin
   Application:=TMyApplication.Create(nil);
+  //Application.Scaled:=True;
   Application.Title:='opsi-script-beautifier';
   Application.Run;
   Application.Free;
