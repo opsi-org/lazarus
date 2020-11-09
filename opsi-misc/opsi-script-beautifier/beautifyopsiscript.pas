@@ -70,8 +70,11 @@ end;
 
 
 function beautify (code: TStringlist) : TStringList;
-var k, relPos: integer;
+var
+    k, relPos: integer;
     trimLine: boolean;
+    tmpstr, tmpstr2 : string;
+    found : boolean;
 begin
   k:=0;
   while (k < pred(code.Count)) do
@@ -102,8 +105,15 @@ begin
 
       // sections with relativ indentions
       // except previous condions
-      if not(AnsiStartsStr(UpperCase('[Action'),UpperCase(code[k].trim)) or  AnsiStartsStr(UpperCase('[Sub'),code[k].trim)
-         or AnsiStartsStr(UpperCase('[Aktionen'),code[k].trim) or  AnsiStartsStr(UpperCase('[ProfileActions'),code[k].trim))  then
+      tmpstr := UpperCase(code[k].trim);
+      (*
+      tmpstr2 := UpperCase('[Sub');
+      if AnsiStartsStr(UpperCase('[Sub'),code[k].trim) then  found  := true
+      else found := false;
+      if AnsiStartsStr(tmpstr2,tmpstr) then  found  := true
+      else found := false;*)
+      if not(AnsiStartsStr(UpperCase('[Action'),tmpstr) or  AnsiStartsStr(UpperCase('[Sub'),tmpstr)
+         or AnsiStartsStr(UpperCase('[Aktionen'),tmpstr) or  AnsiStartsStr(UpperCase('[ProfileActions'),tmpstr))  then
        if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim))
          then
             begin
