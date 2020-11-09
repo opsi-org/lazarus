@@ -186,15 +186,15 @@ begin
   ini    := TINIFile.Create(bfn);
   indentrange := INI.ReadInteger('beautifierconf', 'indentrange', 5);
   indentlevel :=  0;
-  writeln('indentrange:  ' + indentrange.ToString());
+  {$IFNDEF GUI}writeln('indentrange:  ' + indentrange.ToString()); {$ENDIF GUI}
   logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
-  writeln('indentlevel:  ' + indentlevel.ToString());
+ {$IFNDEF GUI} writeln('indentlevel:  ' + indentlevel.ToString());{$ENDIF GUI}
   logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
 
 
   // Tab = #09, Whitespace = ' '
   indentchar := INI.ReadString('beautifierconf', 'indentchar', '#09');
-  writeln(indentchar);
+  {$IFNDEF GUI}writeln(indentchar);{$ENDIF GUI}
   logdatei.log('indentchar:  ' + indentchar, LLessential);
   if indentchar.Equals('tab')
      then indentchar := #09
@@ -245,7 +245,7 @@ begin
       logdatei.log('backup file: '+ opsiscriptfile,LLessential);
       CopyFile(opsiscriptfile,ExtractFileNameWithoutExt(opsiscriptfile)+'.bak',[cffOverwriteFile]);
       logdatei.log('opening file: '+ opsiscriptfile,LLessential);
-      writeln('opening file: '+  opsiscriptfile);
+      {$IFNDEF GUI}writeln('opening file: '+  opsiscriptfile);{$ENDIF GUI}
       try
         try
           opsiscriptcode.LoadFromFile(opsiscriptfile);
@@ -263,7 +263,7 @@ begin
   else
     begin
       opsiscriptcode.Free;
-      writeln('file does not exist: '+ opsiscriptfile);
+      {$IFNDEF GUI}writeln('file does not exist: '+ opsiscriptfile); {$ENDIF GUI}
       logdatei.log('file does not exist: '+ opsiscriptfile,LLessential);
     end;
   // free all

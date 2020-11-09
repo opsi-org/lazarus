@@ -164,7 +164,7 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSI_AS_APP -dOPSI"/>
+      <CustomOptions Value="-dOPSI_AS_APP -dOPSI -dGUI"/>
     </Other>
   </CompilerOptions>
   <Debugging>
