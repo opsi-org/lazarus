@@ -115,6 +115,8 @@ type
     logdatei.LogLevel := 7;
     logdatei.log('opsi-script version: ' + getversioninfo, LLessential);
     logdatei.log('Called as: ' + ExtractFileNameOnly(ParamStr(0)), LLessential);
+    logdatei.log('Compiled with FPC: '+ {$i %FPCVERSION%} +
+    ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%}, LLessential);
   end;
 
 {$IFDEF UNIX}

@@ -33,7 +33,7 @@ mkdir -p ${EXECUTABLE_DIR}/Contents/MacOS
 rm -f ${EXECUTABLE_DIR}/Contents/MacOS/*
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
-cp info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+cp info-osgui.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"

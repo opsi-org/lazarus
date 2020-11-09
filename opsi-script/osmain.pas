@@ -1980,6 +1980,11 @@ begin
     Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' +
       starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
+    {$MACRO ON}
+    startupmessages.Append(
+    //'Compiled with Laz: ' + {$i %LAZVER%} + ' and FPC: '+ {$i %FPCVERSION%} +
+    'Compiled with FPC: '+ {$i %FPCVERSION%} +
+    ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%});
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
     //FBatchOberflaeche.setVisible(false);
@@ -2160,6 +2165,7 @@ begin
             LLessential);
           logDatei.log('debug_prog: ' + booleantostr(osconf.debug_prog), LLessential);
           logDatei.log('debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
+
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
 
