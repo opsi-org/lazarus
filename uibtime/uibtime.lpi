@@ -172,7 +172,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="28">
+    <Units Count="29">
       <Unit0>
         <Filename Value="uibtime.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -344,6 +344,10 @@
         <Filename Value="..\common\osurlparser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
+      <Unit28>
+        <Filename Value="uibtime24.sql"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
