@@ -31,7 +31,7 @@ object Query4: TQuery4
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -277,10 +277,10 @@ object Query4: TQuery4
       ParentFont = False
       TabOrder = 0
       object RadioBtnNoMenu: TRadioButton
-        Left = 160
+        Left = 158
         Height = 21
         Top = 0
-        Width = 126
+        Width = 124
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'default.nomenu'
@@ -293,7 +293,7 @@ object Query4: TQuery4
         Left = 0
         Height = 21
         Top = 0
-        Width = 110
+        Width = 108
         Align = alLeft
         Caption = 'default.menu'
         ParentFont = False

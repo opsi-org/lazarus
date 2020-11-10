@@ -50,7 +50,8 @@ uses
 
 procedure TOverview.BtnFinishClick(Sender: TObject);
 begin
-  Password.ShowModal;
+  Overview.Enabled:=False;
+  Password.Visible:=True;
 end;
 
 procedure TOverview.FormActivate(Sender: TObject);

@@ -38,8 +38,6 @@ else
 	set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:")
 endif
 
-set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:")
-
 if contains($opsi_online_repository_org$, "4.2")
 	comment "installing opsi 4.2"
 	sub "%ScriptPath%/opsi42.opsiscript"

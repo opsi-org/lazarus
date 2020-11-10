@@ -33,7 +33,7 @@ object Query: TQuery
     Left = 16
     Height = 25
     Top = 416
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -97,9 +97,11 @@ object Query: TQuery
       Top = 19
       Width = 74
       Caption = 'Opsi 4.1'
+      Checked = True
       OnChange = RadioBtnOpsi41Change
       ParentFont = False
       TabOrder = 0
+      TabStop = True
     end
     object RadioBtnOpsi42: TRadioButton
       AnchorSideLeft.Control = RadioBtnOpsi41
@@ -112,10 +114,8 @@ object Query: TQuery
       Width = 74
       BorderSpacing.Left = 50
       Caption = 'Opsi 4.2'
-      Checked = True
       ParentFont = False
       TabOrder = 1
-      TabStop = True
     end
   end
   object PanelRepo: TPanel

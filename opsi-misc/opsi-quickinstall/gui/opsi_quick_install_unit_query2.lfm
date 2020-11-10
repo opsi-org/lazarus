@@ -32,7 +32,7 @@ object Query2: TQuery2
     Left = 8
     Height = 25
     Top = 416
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -91,7 +91,7 @@ object Query2: TQuery2
         Left = 93
         Height = 21
         Top = 0
-        Width = 61
+        Width = 60
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'mysql'
@@ -138,7 +138,7 @@ object Query2: TQuery2
       ParentFont = False
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
-        Left = 271
+        Left = 268
         Height = 21
         Top = 0
         Width = 67
@@ -149,27 +149,27 @@ object Query2: TQuery2
         TabOrder = 0
       end
       object RadioBtnStable: TRadioButton
-        Left = 159
+        Left = 157
         Height = 21
         Top = 0
-        Width = 62
+        Width = 61
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'stable'
-        Checked = True
         ParentFont = False
         TabOrder = 1
-        TabStop = True
       end
       object RadioBtnExperimental: TRadioButton
         Left = 0
         Height = 21
         Top = 0
-        Width = 109
+        Width = 107
         Align = alLeft
         Caption = 'experimental'
+        Checked = True
         ParentFont = False
         TabOrder = 2
+        TabStop = True
       end
     end
   end

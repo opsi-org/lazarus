@@ -385,7 +385,8 @@ Switch $distroName$
 			Message "failed to get key"
 			isFatalError "failed to get key"
 		endif
-		shellcall("apt update && apt upgrade")
+		shellcall("apt update")
+		shellcall("apt upgrade --assume-yes")
 		ShellInAnIcon_install_debuntu_deps
 		ShellInAnIcon_install_python_packages
 		if not("0" = getLastExitCode)
@@ -739,6 +740,21 @@ switch $distRelease$
 	case "12.4"
 		set $distroName4repo$ = "SLE"
 		set $distRelease4repo$ = "12_SP4"
+	endcase
+
+	case "15"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "12"
+	endcase
+
+	case "15.1"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "15_SP1"
+	endcase
+
+	case "15.2"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "15_SP2"
 	endcase
 
 	DefaultCase

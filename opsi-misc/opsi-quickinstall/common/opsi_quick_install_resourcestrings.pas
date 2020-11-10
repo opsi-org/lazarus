@@ -28,14 +28,13 @@ resourcestring
   rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
   rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
-  rsOverview = 'Overview';
 
   {universal}
   rsYes = 'Yes';
   rsNo = 'No';
   rsNext = ' next > ';
   rsBack = ' < back ';
-
+  rsOverview = 'Overview';
   rsFinish = ' finish ';
 
   {QuickInstall}
@@ -51,7 +50,8 @@ resourcestring
   rsDistr = 'We recognized the following distribution on this computer:';
   rsCorrect =
     'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
-  rsNoSupport = 'Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:';
+  rsNoSupport =
+    'Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:';
 
   {Query}
   rsOpsiVersion = 'Which opsi version would you like to install?';
@@ -88,8 +88,8 @@ resourcestring
   rsInfoReboot =
     'If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
   rsDhcp = 'Should we run the opsi dhcp server on this machine?';
-  rsInfoDhcp = 'Select "No" if you already have a dhcp server.' + #10 +
-    'Select "Yes" if you want to install the dhcp server on the opsi server.';
+  rsInfoDhcp = 'Select "No" if you already have a dhcp server.' +
+    #10 + 'Select "Yes" if you want to install the dhcp server on the opsi server.';
   rsTFTPROOT = 'Which file should the TFTPROOT default symlink point to?';
   rsInfoTFTPROOT =
     'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
@@ -148,7 +148,13 @@ resourcestring
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';
   rsPassword = 'Password:';
   rsShowPassword = 'Show password';
+  rsWait = 'Please wait for the installation to start...'+ #10 + '';
+  rsSomeMin= 'This may take some minutes...' + #10;
+  rsLog = 'You can find the log files here:';
 
+  const
+  LogQuickInstall = '/tmp/opsi_quickinstall.log';
+  LogOpsiServer = '/var/log/opsi_quick-install-l-opsi-server.log';
 
 implementation
 

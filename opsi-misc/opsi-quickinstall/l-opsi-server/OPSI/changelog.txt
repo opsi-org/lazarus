@@ -1,6 +1,12 @@
 [Changelog]
 
-l-opsi-server (4.1.2.1-16(; testing urgency=low
+l-opsi-server (4.1.2.2-1); testing; urgency=low
+
+  * added initial SLES15 support
+
+ -- Mathias Radtke <m.radtke@uib.de> Mon, 05 Oct 2020 11:49:00 +0200
+
+l-opsi-server (4.1.2.1-16); testing urgency=low
 
   * checking of adminuser name is empty
 

@@ -28,11 +28,27 @@ type
     procedure EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure FormActivate(Sender: TObject);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
-
+    FMyThread: TThread;
   public
 
   end;
+
+type
+
+  {TMyThread}
+
+  TMyThread = class(TThread)
+  private
+    FForm: TPassword;
+    procedure Complete;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(Form: TPassword);
+  end;
+
 
 var
   Password: TPassword;
@@ -48,45 +64,37 @@ uses
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_overview,
+  opsi_quick_install_unit_wait,
   osLinuxRepository, opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
-{ TPassword }
+{MyThread}
 
-procedure TPassword.FormActivate(Sender: TObject);
+constructor TMyThread.Create(Form: TPassword);
 begin
-  Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
-  Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
-  BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
-  // for displaying password as dots
-  EditPassword.EchoMode := emPassword;
-
-  // text by resourcestrings
-  LabelRights.Caption := rsRights;
-  LabelPassword.Caption := rsPassword;
-  CheckBoxShowPassword.Caption := rsShowPassword;
-  BtnBack.Caption := rsBack;
-  BtnFinish.Caption := rsFinish;
+  FForm := Form;
+  //FForm.Caption := 'Thread is running';
+  inherited Create(False);
 end;
 
-procedure TPassword.BtnBackClick(Sender: TObject);
+procedure TMyThread.Complete;
 begin
-  Password.Close;
+  FForm.FMyThread := nil;
+  //FForm.Caption := 'Thread has completed';
+  // can't close Overview and Wait here, only Password
+  FForm.Close;
 end;
 
-procedure TPassword.BtnFinishClick(Sender: TObject);
+procedure TMyThread.Execute;
 var
   fileName, propertyName, url, Output, shellCommand: string;
   FileText: TStringList;
   MyRepo: TLinuxRepository;
   InstallRunCommand: TRunCommandElevated;
 begin
-  if Query.RadioBtnOpsi42.Checked and not Query2.RadioBtnExperimental.Checked then
-  begin
-    ShowMessage('Opsi 4.2 only works on branch "experimental".');
-    Exit;
-  end;
+  FreeOnTerminate := True;
+
   // write user input in l-opsi-server.conf and properties.conf file:
   FileText := TStringList.Create;
 
@@ -208,24 +216,12 @@ begin
   else
     FileText.Add(propertyName + '=testing');
 
-  // property products_in_depot
-  {stringProducts := '';
-  for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
-  begin
-    if (Query3.PanelProdToChoose.Controls[prod] as TCheckBox).Checked then
-      stringProducts := stringProducts + ', ' +
-        Query3.PanelProdToChoose.Controls[prod].Caption;
-  end;
-  if stringProducts <> '' then
-    // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
-    Delete(stringProducts, 1, 1);}
-  //FileText.Add('products_in_depot=' + Overview.stringProducts);
-
   FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);
 
   // update_test shall always be false
   FileText.Add('update_test=false');
   //////////////////////////////////////////////////////////////////////////////
+  // WritePropsToFile:
   // write in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText.SaveToFile(fileName);
@@ -244,9 +240,10 @@ begin
   FileText.Add('failed');
   FileText.SaveToFile(fileName + 'result.conf');
   //////////////////////////////////////////////////////////////////////////////
+  // InstallOpsi:
   // create repository
   MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
-    EditPassword.Text, RadioBtnSudo.Checked);
+    Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
   if Query.RadioBtnOpsi41.Checked then
   begin
@@ -268,8 +265,8 @@ begin
   end;
   MyRepo.Add(url);
 
-  InstallRunCommand := TRunCommandElevated.Create(EditPassword.Text,
-    RadioBtnSudo.Checked);
+  InstallRunCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
+    Password.RadioBtnSudo.Checked);
   shellCommand := QuickInstall.DistrInfo.GetPackageManagementShellCommand(
     QuickInstall.distroName);
   Output := InstallRunCommand.Run(shellCommand + 'update');
@@ -280,18 +277,54 @@ begin
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
   FileText.LoadFromFile(fileName + 'result.conf');
-  ShowMessage(FileText.Text);
+  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogQuickInstall + #10 + LogOpsiServer);
 
   FileText.Free;
   InstallRunCommand.Free;
   MyRepo.Free;
   QuickInstall.DistrInfo.Free;
 
-  // close forms
-  {QueryProds.Visible := True;
-  Overview.Visible := False;}
-  Overview.Close;
-  Password.Close;
+  //Sleep(2000);
+  Synchronize(@Complete);
+end;
+
+{ TPassword }
+
+procedure TPassword.FormActivate(Sender: TObject);
+begin
+  Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
+  Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
+  BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
+  // for displaying password as dots
+  EditPassword.EchoMode := emPassword;
+
+  // text by resourcestrings
+  LabelRights.Caption := rsRights;
+  LabelPassword.Caption := rsPassword;
+  CheckBoxShowPassword.Caption := rsShowPassword;
+  BtnBack.Caption := rsBack;
+  BtnFinish.Caption := rsFinish;
+end;
+
+procedure TPassword.BtnBackClick(Sender: TObject);
+begin
+  Password.Visible := False;
+  Overview.Enabled := True;
+end;
+
+procedure TPassword.BtnFinishClick(Sender: TObject);
+begin
+  if Query.RadioBtnOpsi42.Checked and not Query2.RadioBtnExperimental.Checked then
+  begin
+    ShowMessage('Opsi 4.2 only works on branch "experimental".');
+    Exit;
+  end
+  else
+  begin
+    if FMyThread = nil then
+      FMyThread := TMyThread.Create(Self);
+    Wait.Visible:=True;
+  end;
 end;
 
 procedure TPassword.EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
@@ -300,7 +333,6 @@ begin
   // #13 stands for the Enter key
   if UTF8Key = #13 then
     BtnFinish.Click;
-
 end;
 
 procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);
@@ -312,6 +344,13 @@ begin
     EditPassword.EchoMode := emPassword;
   // EditPassword.Text still gets the real text
   //ShowMessage(EditPassword.Text);
+end;
+
+procedure TPassword.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  // close project
+  Overview.Close;
+  Wait.Close;
 end;
 
 end.

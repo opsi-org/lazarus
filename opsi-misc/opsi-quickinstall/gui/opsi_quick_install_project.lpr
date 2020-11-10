@@ -4,6 +4,7 @@ program opsi_quick_install_project;
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
+  cthreads,
   Interfaces, // this includes the LCL widgetset
   Forms,
   opsi_quick_install_unit_language,
@@ -15,7 +16,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_password,
-  opsi_quick_install_unit_distr, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_distr,
+  opsi_quick_install_resourcestrings, opsi_quick_install_unit_wait;
 
 {$R *.res}
 
@@ -34,5 +36,6 @@ begin
   Application.CreateForm(TOverview, Overview);
   Application.CreateForm(TPassword, Password);
   Application.CreateForm(TDistribution, Distribution);
+  Application.CreateForm(TWait, Wait);
   Application.Run;
 end.

@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, LCLtranslator, Buttons, osDistributionInfo;
+  StdCtrls, LCLtranslator, Buttons, osDistributionInfo,
+  oslog, osfunclin;
 
 type
 
@@ -76,8 +77,10 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query4,
-  oslog, osfunclin, opsi_quick_install_unit_distr, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_distr,
+  opsi_quick_install_unit_query,
+  opsi_quick_install_unit_query4,
+  opsi_quick_install_resourcestrings;
 
 {$R *.lfm}
 
@@ -103,7 +106,7 @@ begin
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
       (Sender.Components[compIndex] as TPanel).Width := QuickInstall.panelWidth;
-      (Sender.Components[compIndex] as TPanel).Color:=clForm;
+      (Sender.Components[compIndex] as TPanel).Color := clForm;
     end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
@@ -129,7 +132,7 @@ procedure TQuickInstall.SetBtnWidth(Language: string);
 begin
   if Language = 'de' then
   begin
-    // needs to be set for every language for nice place of BtnNext
+    // needs to be set for every language for nice placement of BtnNext
     BtnNextWidth := 63;
     //BtnNext.Width = 'with for english caption'
     //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
@@ -213,7 +216,7 @@ end;
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
   Distribution.ShowModal;
-  // Get Width of BtnOverview and BtnFinish through invisible buttons.
+  // Get Width of BtnOverview and BtnFinish through invisible buttons:
   // Btn.Caption:=rsString and Btn.Width only work properly when Btn.Visible=True
   BtnOverview.Visible := True;
   BtnFinish.Visible := True;

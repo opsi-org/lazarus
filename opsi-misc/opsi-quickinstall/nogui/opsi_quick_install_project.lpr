@@ -183,7 +183,7 @@ type
   procedure TQuickInstall.SetDefaultValues;
   begin
     // set default values:
-    opsiVersion := 'Opsi 4.1';
+    opsiVersion := 'Opsi 4.2';
     // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
@@ -193,7 +193,7 @@ type
     repoNoCache := repo;
     backend := 'file';
     copyMod := rsNo;
-    repoKind := 'stable';
+    repoKind := 'experimental';
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
@@ -257,6 +257,8 @@ type
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
+    writeln(rsWait+rsSomeMin);
+
     if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
     begin
       writeln('The branch "' + repoKind + '" is not available for Opsi 4.2');
@@ -299,7 +301,6 @@ type
     //writeln(Output);
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
-    writeln('opsi-server nogui');
     // "opsi-script -batch" for installation with gui window, ...
     // ..."opsi-script-nogui -batch" for without
     Output := InstallOpsiCommand.Run('opsi-script-nogui -batch ' +
@@ -309,6 +310,9 @@ type
     FileText.LoadFromFile(DirClientData + 'result.conf');
     // print result of installation
     writeln(FileText.Text);
+    writeln(rsLog);
+    writeln(LogQuickInstall);
+    writeln(LogOpsiServer);
 
     InstallOpsiCommand.Free;
     MyRepo.Free;
@@ -976,7 +980,6 @@ type
       end;
       if input = '' then
       begin
-        writeln('Please wait for the installation to start...');
         WritePropsToFile;
         InstallOpsi;
       end
@@ -1135,17 +1138,17 @@ begin
   QuickInstall.DirClientData :=
     ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';
 
+  // get default language (system language)
+  GetLanguageIDs(Lang, DefLang);
+  // use default language for resourcestrings
+  // use po-files of gui version (because LCL does not seem to be able...
+  // ...to use po-files from other directories)
+  TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
+    '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
+
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
   begin
-    // get default language (system language)
-    GetLanguageIDs(Lang, DefLang);
-    // use default language for resourcestrings
-    // use po-files of gui version (because LCL does not seem to be able...
-    // ...to use po-files from other directories)
-    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
-      '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
-
     writeln('');
     writeln(rsWelcome);
     // language:

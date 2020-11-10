@@ -12,7 +12,7 @@ object Distribution: TDistribution
     Left = 16
     Height = 25
     Top = 200
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
