@@ -567,8 +567,8 @@ begin
       end
       else
       if logdatei <> nil then
-        logdatei.log('Succseeded: Testing as temp path: ' + mytemppath
-        + ' ('+DateTimeToStr(Now)+')', LLdebug);
+        logdatei.log('Succseeded: Testing as temp path: ' + mytemppath +
+          ' (' + DateTimeToStr(Now) + ')', LLdebug);
     end;
     teststr := '';
   end;
@@ -1538,7 +1538,7 @@ begin
               {$IFDEF GUI}
               MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
               {$ELSE GUI}
-              writeln('ExitWindows Error ' + LineEnding + Fehler);
+            writeln('ExitWindows Error ' + LineEnding + Fehler);
               {$ENDIF GUI}
           end;
         end;
@@ -1980,6 +1980,11 @@ begin
     Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' +
       starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
+    {$MACRO ON}
+    startupmessages.Append(
+    //'Compiled with Laz: ' + {$i %LAZVER%} + ' and FPC: '+ {$i %FPCVERSION%} +
+    'Compiled with FPC: '+ {$i %FPCVERSION%} +
+    ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%});
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
     //FBatchOberflaeche.setVisible(false);
@@ -2160,6 +2165,7 @@ begin
             LLessential);
           logDatei.log('debug_prog: ' + booleantostr(osconf.debug_prog), LLessential);
           logDatei.log('debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
+
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
 
@@ -2886,8 +2892,10 @@ begin
                     opsiserviceUser := list1.getStringValue('username');
                     opsiservicePassword := list1.getStringValue('password');
                     opsiserviceSessionId := list1.getStringValue('opsiserviceSessionId');
-                    if opsiserviceSessionId = 'NULL' then opsiserviceSessionId := '';
-                    startupmessages.Add('found as credentials:'+opsiserviceUser+' ; '+opsiservicePassword+' ; '+opsiserviceSessionId);
+                    if opsiserviceSessionId = 'NULL' then
+                      opsiserviceSessionId := '';
+                    startupmessages.Add('found as credentials:' +
+                      opsiserviceUser + ' ; ' + opsiservicePassword + ' ; ' + opsiserviceSessionId);
                     if (length(ParamListe.Strings[i - 1]) = 0) or
                       (ParamListe.Strings[i - 1][1] = ParamDelim) then
                     begin
@@ -3267,7 +3275,9 @@ var
 
 begin
   starttimestr := DateTimeToStr(Now);
-  startupmessages := TStringList.Create;
+  if not Assigned(startupmessages) then
+    startupmessages := TStringList.Create;
+  startupmessages.Clear;
   startupmessages.Append('startmessage opsi-script created at main: ' +
     DateTimeToStr(Now));
   toggle := True;

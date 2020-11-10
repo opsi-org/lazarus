@@ -1,4 +1,4 @@
-program opsi_client_systray;
+program opsi_script_beautifier_gui;
 
 {$mode objfpc}{$H+}
 
@@ -7,18 +7,16 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms,
-  oca_systray_dm,
-  lcltranslator;
+  Forms, selectfile
+  { you can add units after this };
 
 {$R *.res}
 
 begin
-  Application.Scaled:=True;
-  Application.Title:='opsi-client-systray';
   RequireDerivedFormResource:=True;
+  Application.Scaled:=True;
   Application.Initialize;
-  Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
 

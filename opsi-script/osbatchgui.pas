@@ -205,6 +205,10 @@ var
   //Alpha: boolean;
 
 begin
+  {$IFDEF LINUX}
+  // scale at LINUX:
+  //FBatchOberflaeche.AutoAdjustLayout(lapAutoAdjustForDPI, 96, screen.PixelsPerInch, 0, 0);
+  {$ENDIF LINUX}
   Progressbar := TQProgressBar.Create(nil);
   Progressbar.Position := 0;
   ProgressBar.Visible := False;
@@ -212,7 +216,13 @@ begin
   begin
     Parent := Panel;
     Left := 275;
+    {$IFDEF LINUX}
+    //Left := round(Left * ((Screen.PixelsPerInch / 96)));
+    {$ENDIF LINUX}
     Top := 160;
+    {$IFDEF LINUX}
+    //Top := round(Top * ((Screen.PixelsPerInch / 96)));
+    {$ENDIF LINUX}
     Width := 280;
     Height := 20;
     orientation := boHorizontal;
@@ -520,6 +530,14 @@ begin
         then
           LabelProduct.Font.Style := LabelProduct.Font.Style + [fsUnderline];
         LabelProduct.OptimalFill := True;
+        (*
+        {$IFDEF LINUX}
+        LabelProduct.Left := round(LabelProduct.Left * ((Screen.PixelsPerInch / 96)));
+        LabelProduct.Top := round(LabelProduct.Top * ((Screen.PixelsPerInch / 96)));
+        LabelProduct.Width := round(LabelProduct.Width * ((Screen.PixelsPerInch / 96)));
+        LabelProduct.Height := round(LabelProduct.Height * ((Screen.PixelsPerInch / 96)));
+        {$ENDIF LINUX}
+        *)
       except
       end;
 
