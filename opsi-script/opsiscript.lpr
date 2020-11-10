@@ -107,7 +107,7 @@ type
     startupmessages.Append('running now gui-test');
     logdatei := TLogInfo.Create;
     //logfilename := ExtractFileNameOnly(ParamStr(0)) + '.log';
-    logfilename := 'opsi-script-gui-test.log';
+    logfilename := logdatei.StandardMainLogPath+'opsi-script-gui-test.log';
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
