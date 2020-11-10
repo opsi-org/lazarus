@@ -4582,19 +4582,16 @@ object resultForm1: TresultForm1
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     Title.Caption = 'Required State'
                     Width = 139
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     Title.Caption = 'Required Action'
                     Width = 120
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     Title.Caption = 'Required Mode'
                     Width = 119
                   end>
@@ -4849,7 +4846,6 @@ object resultForm1: TresultForm1
                 Columns = <                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'PropertyId'
                     Width = 139
@@ -4870,28 +4866,24 @@ object resultForm1: TresultForm1
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Multivalue'
                     Width = 70
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Editable'
                     Width = 70
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Possible Values'
                     Width = 150
                   end                
                   item
                     MinSize = 9
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Default Values'
                     Width = 150

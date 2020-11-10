@@ -100,11 +100,7 @@ msgid "Path to the opsi_workbench"
 msgstr ""
 
 #: osdcheckentriesdlg.rscheckentriesmsg
-msgid ""
-"The following data are autoamatically detected.\n"
-"You have to check every data field if this data are correct or plausible.\n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
+msgid "The following data are autoamatically detected. You have to check every data field if this data are correct or plausible. For some data you may have to install the program once  and than get the needed data from the completed installation."
 msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning

@@ -82,7 +82,10 @@ object FCheckenties: TFCheckenties
     Color = clBtnFace
     Font.Style = [fsBold]
     Lines.Strings = (
-      'Memo1'
+      'The following data are autoamatically detected.'
+      'You have to check every data field if this data are correct or plausible.'
+      'For some data you may have to install the program once '
+      'and than get the needed data from the completed installation.'
     )
     ParentFont = False
     ScrollBars = ssAutoVertical
