@@ -21,6 +21,7 @@ uses
   osdbasedata,
   Dialogs,
   lazfileutils,
+    osparserhelper,
   dateutils;
 
 procedure createProductStructure;
@@ -98,7 +99,7 @@ end;
 procedure fillPatchList;
 var
   i: integer;
-  str: string;
+  str, str2, str3: string;
   strlist: TStringList;
   templatePath: string;
   proptmpstr : string;
@@ -153,8 +154,14 @@ begin
       str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
       end
       else
-      str := str + 'set $'+proptmpstr+'$ = GetProductProperty("'+proptmpstr+
-          '", "'+aktProduct.properties.Items[i].StrDefault[0]+'")' +  LineEnding;
+      begin
+        { remove brackets [] }
+        str2 := opsiunquotestr2(aktProduct.properties.Items[i].StrDefault[0],'[]');
+        { take first from list }
+        GetWordOrStringConstant(str2,str2,str3,WordDelimiterSet6);
+      str := str + 'set $'+proptmpstr+'$ = GetProductProperty("'+proptmpstr
+                 + '", '+str2+')' +  LineEnding;
+      end;
     end;
     (*
     if myconfiguration.UsePropDesktopicon then

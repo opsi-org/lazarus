@@ -113,7 +113,8 @@ uses
   osurlparser,
   ostxstringlist,
   LAZUTF8,
-  osnetutil;
+  osnetutil,
+  osstrlistutils;
 
 type
   TStatement = (tsNotDefined,
@@ -17074,6 +17075,7 @@ var
   dummybool: boolean;
   OldWinapiErrorMode: cardinal;
   list1: TXStringList;
+  list2: TXStringList;
   InputBakup: string;
   i: integer;
   tmpint: integer;
@@ -17091,6 +17093,7 @@ begin
   RunTimeInfo := '';
   BooleanResult := False;
   list1 := TXStringlist.Create;
+  list2 := TXStringlist.Create;
   InputBakup := Input;
 
   LogDatei.log_prog('EvaluateBoolean: Parsing: ' + Input + ' ', LLDebug);
@@ -17808,6 +17811,24 @@ begin
         end;
   end
 
+  else if Skip('areListsEqual', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if produceStringList(script, r, r, list1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if produceStringList(script, r, r, list2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(')', r, r, InfoSyntaxError) then
+                begin
+                  syntaxCheck := True;
+                  try
+                    BooleanResult := areStringlistsEqual(list1,list2,s3);
+                  except
+                    BooleanResult := False;
+                  end;
+                end;
+  end
 
   else if Skip('isNumber', Input, r, InfoSyntaxError) then
   begin
