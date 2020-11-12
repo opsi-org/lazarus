@@ -1,7 +1,7 @@
 object FCheckenties: TFCheckenties
-  Left = 663
+  Left = 708
   Height = 241
-  Top = 512
+  Top = 553
   Width = 556
   Caption = 'opsi-setup-detector'
   ClientHeight = 241
@@ -69,26 +69,18 @@ object FCheckenties: TFCheckenties
       ParentFont = False
     end
   end
-  object Memo1: TMemo
-    Left = 5
-    Height = 117
-    Top = 50
-    Width = 546
+  object Label2: TLabel
+    Left = 10
+    Height = 102
+    Top = 60
+    Width = 536
     Align = alClient
-    BorderSpacing.Left = 5
-    BorderSpacing.Right = 5
-    BorderSpacing.Bottom = 5
-    BorderStyle = bsNone
-    Color = clBtnFace
+    AutoSize = False
+    BorderSpacing.Around = 10
+    Caption = 'The following data are automatically detected.'#13#10'You have to check every data field if this data are correct or plausible.'#13#10'For some data you may have to install the program once '#13#10'and than get the needed data from the completed installation.'
+    Font.Height = -16
     Font.Style = [fsBold]
-    Lines.Strings = (
-      'The following data are autoamatically detected.'
-      'You have to check every data field if this data are correct or plausible.'
-      'For some data you may have to install the program once '
-      'and than get the needed data from the completed installation.'
-    )
+    ParentColor = False
     ParentFont = False
-    ScrollBars = ssAutoVertical
-    TabOrder = 3
   end
 end
