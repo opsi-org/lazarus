@@ -112,7 +112,6 @@ msgstr ""
 "For some data you may have to install the program once \n"
 "and than get the needed data from the completed installation.\n"
 
-
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr ""
@@ -281,6 +280,7 @@ msgid "Please keep in mind:"
 msgstr ""
 
 #: tfcheckenties.label2.caption
+#, fuzzy
 msgctxt "tfcheckenties.label2.caption"
 msgid ""
 "The following data are automatically detected.\n"
@@ -288,6 +288,10 @@ msgid ""
 "For some data you may have to install the program once \n"
 "and than get the needed data from the completed installation.\n"
 msgstr ""
+"The following data are automatically detected. \n"
+"You have to check every data field if this data are correct or plausible. \n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
 
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
