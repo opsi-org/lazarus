@@ -32,11 +32,14 @@ var
 
   resourcestring
 
+    rscheckEntriesMsg = 'You have to check every data field if this data are correct or plausible.';
+(*
     rscheckEntriesMsg =
         'The following data are autoamatically detected. ' +
         'You have to check every data field if this data are correct or plausible. ' +
         'For some data you may have to install the program once  ' +
         'and than get the needed data from the completed installation.';
+        *)
 (*
   rscheckEntriesMsg =
     'The following data are autoamatically detected.' + Lineending +
