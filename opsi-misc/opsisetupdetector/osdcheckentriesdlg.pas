@@ -52,7 +52,7 @@ implementation
 
 procedure TFCheckenties.FormCreate(Sender: TObject);
 begin
-  //Memo1.Text:= rscheckEntriesMsg;
+  Memo1.Text:= rscheckEntriesMsg;
 end;
 
 end.
