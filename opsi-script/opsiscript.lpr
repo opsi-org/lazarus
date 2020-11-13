@@ -127,9 +127,11 @@ type
     i: integer;
     param: string;
     paramdel: string;
+    startgui : boolean;
   begin
     silent := False;
     paramdel := '-';
+    startgui := false;
     initLogging;
     filePath := ExtractFilePath(ParamStr(0));
     //logdatei.log('Launch: paramcount ' + Paramcount.ToString, LLessential);
@@ -147,11 +149,33 @@ type
       if check_gui_startable() then
       begin
         logdatei.log('gui ok - starting opsi-script-gui ... ', LLnotice);
-        //launchProgram(filePath+'opsi-script',  executeparamlist, myexitcode);
+        startgui := true;
+        {$IFDEF DARWIN}
+        if getLoggedInUser = '' then
+        begin
+        startgui := false;
+        logdatei.log('No logon at macos -  continue with nogui... ', LLnotice);
+        end;
+        {$ENDIF DARWIN}
+        if startgui then
+        begin
+          logdatei.log('starting opsi-script-gui ... ', LLnotice);
         logdatei.Close;
         if FileExists(filePath + 'opsi-script-gui') then
           fpExecV(filePath + 'opsi-script-gui', argv);
-      end;
+
+        end;
+      end
+      else
+    begin
+      logdatei.log('no gui access - continue with nogui ... ', LLnotice);
+      logdatei.Close;
+    end;
+    end
+    else
+    begin
+      logdatei.log('Parameter silent found - continue with nogui ... ', LLnotice);
+      logdatei.Close;
     end;
     osmain.main;
   end;

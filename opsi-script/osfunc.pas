@@ -5487,13 +5487,22 @@ begin
   Result := user;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   //Result := execShellCall('who | awk ''{print $1}'' | uniq','sysnative');
   //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
   //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
   //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
   Result := getCommandResult('id -un');
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // https://scriptingosx.com/2020/02/getting-the-current-user-in-macos-update/
+  //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
+  //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
+  //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
+  Result := getCommandResult('/bin/bash -c "stat -f %Su /dev/console"');
+  if result = 'root' then result := '';
+  //echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ && ! /loginwindow/ { print $3 }'
+  {$ENDIF DARWIN}
 end;
 
 
