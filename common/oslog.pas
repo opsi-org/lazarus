@@ -547,7 +547,10 @@ begin
   except
   end;
   filelist.Free;
+  // Why two PathDelim???
   LogDateiName := FStandardMainLogPath + PathDelim + LogDateiName;
+  //LogDateiName := FStandardMainLogPath + LogDateiName;
+  //writeln(FStandardMainLogPath);
   {$ENDIF}
   if not check4append then
   begin

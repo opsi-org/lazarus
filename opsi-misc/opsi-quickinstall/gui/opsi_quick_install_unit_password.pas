@@ -277,7 +277,11 @@ begin
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
   FileText.LoadFromFile(fileName + 'result.conf');
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogQuickInstall + #10 + LogOpsiServer);
+  // adjust quick-install ExitCode
+  if FileText[0] = 'failed' then
+    ExitCode := 1;
+  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
+    #10 + QuickInstall.logFileName);
 
   FileText.Free;
   InstallRunCommand.Free;
@@ -323,7 +327,7 @@ begin
   begin
     if FMyThread = nil then
       FMyThread := TMyThread.Create(Self);
-    Wait.Visible:=True;
+    Wait.Visible := True;
   end;
 end;
 

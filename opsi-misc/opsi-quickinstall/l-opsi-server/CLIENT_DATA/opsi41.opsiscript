@@ -49,6 +49,8 @@ DefVar $opsi_admin_user_password$
 DefVar $proxy$
 DefVar $force_copy_modules$
 DefVar $opsiconfd_log_level$
+DefVar $hostname$
+DefVar $domain$
 
 DefStringList $opsi_productsList$
 DefStringList $linuxInfo$
@@ -56,6 +58,8 @@ DefStringList $templist$
 DefStringList $resultlist$
 DefStringList $waitlist$
 DefStringlist $setup_after_install_list$
+DefStringList $hostnamelist$
+DefStringList $domainlist$
 
 ; base initalization of properties
 set $backend$ = "file"
@@ -188,6 +192,32 @@ set $myIPName$ = getProductProperty("myIPName","auto")
 set $myIPNumber$ = getProductProperty("myIPNumber","auto")
 if $myIPName$ = "auto"
 	set $myIPName$ = "%opsiserviceUser%"
+	if $myIPName$ = ""
+		Message "opsiserviceUser does not exist, getting FQDN from system"
+		set $hostnamelist$ = shellCall("hostname")
+		for %s% in $hostnamelist$ do set $hostname$ = "%s%"
+		if contains($hostname$,".")
+    		set $myIPName$ = $hostname$
+		else
+			set $domainlist$ = shellCall("dnsdomainname")
+    		for %s% in $domainlist$ do set $domain$ = "%s%"
+	    	if $domain$ = ""
+			    comment "dnsdomainname command was not successfull, reading dhclient.leases"
+			    message "dnsdomainname command was not successfull, reading dhclient.leases"
+			    set $domainlist$ = shellCall("cat /var/lib/dhcp/dhclient.leases | grep 'domain-name ' | awk '{ print $3 }' | tr -d ';'")
+			    for %s% in $domainlist$ do set $domain$ = %s%
+			    if ($dnsdomain$ = $domain$)
+			        comment "dnsdomain and read domain-name are the same"
+			        message "dnsdomain and read domain-name are the same"
+			    else
+			        comment "dnsdomain and read domain-name are not the same"
+		            message "dnsdomain and read domain-name are not the same"
+		           	set $dnsdomain$ = $domain$
+			    endif
+			endif
+	    	set $myIPName$ = $hostname$ + "." + $dnsdomain$
+		endif
+	endif
 endif
 
 if $myIPNumber$ = "auto"

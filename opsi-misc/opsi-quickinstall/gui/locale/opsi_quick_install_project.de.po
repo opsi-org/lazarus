@@ -59,6 +59,10 @@ msgstr "Module kopieren: "
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 msgstr "Wenn das korrekt ist, klicken Sie zum Fortfahren auf \"weiter >\". Wenn nicht, editieren Sie bitte die Distribution und klicken dann auf \"weiter >\"."
 
+#: opsi_quick_install_resourcestrings.rscreaterepo
+msgid "Create repository..."
+msgstr "Erstelle Repository..."
+
 #: opsi_quick_install_resourcestrings.rscustom
 msgid "Custom"
 msgstr "Benutzerdefiniert"
@@ -170,6 +174,10 @@ msgstr ""
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rsinstall
+msgid "Install "
+msgstr "Installiere "
+
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) (\"auto\" = use standard)"
@@ -204,7 +212,7 @@ msgstr " [Optionen: \"default.menu\", \"default.nomenu\"]"
 
 #: opsi_quick_install_resourcestrings.rslog
 msgid "You can find the log files here:"
-msgstr ""
+msgstr "Sie finden die Log-Dateien hier:"
 
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
@@ -427,8 +435,8 @@ msgid "Show password"
 msgstr "Passwort sichtbar machen"
 
 #: opsi_quick_install_resourcestrings.rssomemin
-msgid "This may take some minutes..."
-msgstr "Das kann einige Minuten dauern..."
+msgid "(This may take some minutes)"
+msgstr "(Das kann einige Minuten dauern)"
 
 #: opsi_quick_install_resourcestrings.rsstandard
 msgid "Standard"
@@ -464,6 +472,8 @@ msgid "Would you like to use a proxy?"
 msgstr "Möchten Sie einen Proxy verwenden?"
 
 #: opsi_quick_install_resourcestrings.rswait
+#, fuzzy
+#| msgid "Please wait for the installation to start..."
 msgctxt "opsi_quick_install_resourcestrings.rswait"
 msgid "Please wait for the installation to start..."
 msgstr "Bitte warten Sie, bis die Installation beginnt..."

@@ -257,7 +257,7 @@ type
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
-    writeln(rsWait+rsSomeMin);
+    writeln(rsInstall + opsiVersion + ':');
 
     if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
     begin
@@ -270,6 +270,7 @@ type
     FileText.Add('failed');
     FileText.SaveToFile(DirClientData + 'result.conf');
 
+    writeln(rsCreateRepo);
     // create repository (no password, user is root)
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
@@ -299,8 +300,12 @@ type
     // !following lines need an existing LogDatei
     Output := InstallOpsiCommand.Run(shellCommand + 'update');
     //writeln(Output);
+
+    writeln(rsInstall + 'opsi-script...');
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
+
+    writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window, ...
     // ..."opsi-script-nogui -batch" for without
     Output := InstallOpsiCommand.Run('opsi-script-nogui -batch ' +
@@ -308,10 +313,12 @@ type
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');
+    // adjust quick-install ExitCode
+    if FileText[0] = 'failed' then
+      ExitCode := 1;
     // print result of installation
     writeln(FileText.Text);
     writeln(rsLog);
-    writeln(LogQuickInstall);
     writeln(LogOpsiServer);
 
     InstallOpsiCommand.Free;
@@ -1107,6 +1114,8 @@ var
   QuickInstall: TQuickInstall;
   user, userID, customLanguage, Lang, DefLang: string;
   //r: TTranslateUnitResult;
+const
+  logFileName = 'opsi_quickinstall_nogui.log';
 
 begin
   // only execute QuickInstall if user is root:
@@ -1128,7 +1137,7 @@ begin
   // .../lazarus/common/oslog.pas
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
-  LogDatei.CreateTheLogfile('opsi_quickinstall_nogui.log');
+  LogDatei.CreateTheLogfile(logFileName);
 
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
@@ -1188,5 +1197,6 @@ begin
     Free;
   end;
 
+  writeln(LogDatei.StandardMainLogPath + logFileName);
   LogDatei.Free;
 end.

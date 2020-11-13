@@ -116,6 +116,7 @@
         <Filename Value="opsi_quick_install_unit_wait.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Wait"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit12>
     </Units>

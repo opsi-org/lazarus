@@ -58,7 +58,7 @@ type
     // set it to True here in opsi_quick_install_unit_language.
     initialProds: boolean;
 
-    distroName, distroRelease: string;
+    logFileName, distroName, distroRelease: string;
     DistrInfo: TDistributionInfo;
 
     procedure SetBtnWidth(Language: string);
@@ -154,6 +154,7 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
+  logFileName := 'opsi_quickinstall.log';
   // set constant form size
   Height := 450;
   Width := 730;
@@ -190,7 +191,8 @@ begin
   // .../lazarus/common/oslog.pas
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
-  LogDatei.CreateTheLogfile('opsi_quickinstall.log');
+  LogDatei.CreateTheLogfile(logFileName);
+  logFileName:=LogDatei.StandardMainLogPath+ logFileName;
 
   // (compare function GetDefaultURL in osLinuxRepository:)
   // following two lines take time and are therefore executed only...

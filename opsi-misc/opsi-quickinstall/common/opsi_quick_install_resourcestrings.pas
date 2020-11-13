@@ -28,6 +28,9 @@ resourcestring
   rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
   rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
+  rsInstall = 'Install ';
+  rsCreateRepo = 'Create repository...';
+  rsSomeMin= '(This may take some minutes)';
 
   {universal}
   rsYes = 'Yes';
@@ -149,12 +152,10 @@ resourcestring
   rsPassword = 'Password:';
   rsShowPassword = 'Show password';
   rsWait = 'Please wait for the installation to start...'+ #10 + '';
-  rsSomeMin= 'This may take some minutes...' + #10;
   rsLog = 'You can find the log files here:';
 
   const
-  LogQuickInstall = '/tmp/opsi_quickinstall.log';
-  LogOpsiServer = '/var/log/opsi_quick-install-l-opsi-server.log';
+  LogOpsiServer = '/var/log/opsi-quick-install-l-opsi-server.log';
 
 implementation
 

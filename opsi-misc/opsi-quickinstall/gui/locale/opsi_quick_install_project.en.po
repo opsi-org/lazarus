@@ -59,6 +59,12 @@ msgstr "Copy modules: "
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 msgstr "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 
+#: opsi_quick_install_resourcestrings.rscreaterepo
+#, fuzzy
+#| msgid "Create repo..."
+msgid "Create repository..."
+msgstr "Create repo..."
+
 #: opsi_quick_install_resourcestrings.rscustom
 msgid "Custom"
 msgstr "Custom"
@@ -174,6 +180,10 @@ msgstr ""
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
 msgstr "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
 
+#: opsi_quick_install_resourcestrings.rsinstall
+msgid "Install "
+msgstr "Install "
+
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) (\"auto\" = use standard)"
@@ -208,7 +218,7 @@ msgstr " [Options: \"default.menu\", \"default.nomenu\"]"
 
 #: opsi_quick_install_resourcestrings.rslog
 msgid "You can find the log files here:"
-msgstr ""
+msgstr "You can find the log files here:"
 
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
@@ -431,8 +441,8 @@ msgid "Show password"
 msgstr "Show password"
 
 #: opsi_quick_install_resourcestrings.rssomemin
-msgid "This may take some minutes..."
-msgstr "This may take some minutes..."
+msgid "(This may take some minutes)"
+msgstr "(This may take some minutes)"
 
 #: opsi_quick_install_resourcestrings.rsstandard
 msgid "Standard"
@@ -468,6 +478,8 @@ msgid "Would you like to use a proxy?"
 msgstr "Would you like to use a proxy?"
 
 #: opsi_quick_install_resourcestrings.rswait
+#, fuzzy
+#| msgid "Please wait for the installation to start..."
 msgctxt "opsi_quick_install_resourcestrings.rswait"
 msgid "Please wait for the installation to start..."
 msgstr "Please wait for the installation to start..."

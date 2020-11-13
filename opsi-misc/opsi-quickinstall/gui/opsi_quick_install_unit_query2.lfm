@@ -156,8 +156,10 @@ object Query2: TQuery2
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'stable'
+        Checked = True
         ParentFont = False
         TabOrder = 1
+        TabStop = True
       end
       object RadioBtnExperimental: TRadioButton
         Left = 0
@@ -166,10 +168,8 @@ object Query2: TQuery2
         Width = 107
         Align = alLeft
         Caption = 'experimental'
-        Checked = True
         ParentFont = False
         TabOrder = 2
-        TabStop = True
       end
     end
   end

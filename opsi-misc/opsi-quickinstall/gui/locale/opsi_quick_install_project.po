@@ -59,6 +59,10 @@ msgstr ""
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 msgstr ""
 
+#: opsi_quick_install_resourcestrings.rscreaterepo
+msgid "Create repository..."
+msgstr ""
+
 #: opsi_quick_install_resourcestrings.rscustom
 msgid "Custom"
 msgstr ""
@@ -168,6 +172,10 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinstall
+msgid "Install "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsipname
@@ -427,7 +435,7 @@ msgid "Show password"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rssomemin
-msgid "This may take some minutes..."
+msgid "(This may take some minutes)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsstandard
