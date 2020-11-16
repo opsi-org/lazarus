@@ -1,0 +1,25 @@
+object Form1: TForm1
+  Left = 561
+  Height = 104
+  Top = 286
+  Width = 303
+  Caption = 'opsi-script beautifier'
+  ClientHeight = 104
+  ClientWidth = 303
+  DesignTimePPI = 91
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+  object BitBtn1: TBitBtn
+    Left = 22
+    Height = 28
+    Top = 43
+    Width = 266
+    Caption = 'Select file'
+    OnClick = BitBtn1Click
+    TabOrder = 0
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'opsiscript|*.opsiscript|opsiscript old|*.ins|all|*.*'
+    Left = 24
+  end
+end

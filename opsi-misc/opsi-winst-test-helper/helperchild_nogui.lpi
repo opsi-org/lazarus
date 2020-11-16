@@ -16,6 +16,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" OriginalFilename="helperchild_nogui" ProductName="opsi" ProductVersion="4.0.7"/>
@@ -92,7 +93,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE -dUseCThreads"/>
+            <CustomOptions Value="-dSYNAPSE -dUseCThreads
+-dOPSI"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -116,12 +118,12 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="helperchild_nogui.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="13" Y="12"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -171,7 +173,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osencoding.pas"/>
@@ -180,14 +182,14 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos Y="18"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
@@ -203,11 +205,20 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="481"/>
-        <CursorPos X="53" Y="494"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="527"/>
+        <CursorPos X="30" Y="544"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="21"/>
+      </Unit11>
     </Units>
     <JumpHistory Count="5" HistoryIndex="4">
       <Position1>

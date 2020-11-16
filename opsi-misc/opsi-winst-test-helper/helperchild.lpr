@@ -15,7 +15,7 @@ uses
   osversioninfo;
 
 
-{$IFDEF WINDOWS}{$R helperchild.res}{$ENDIF}
+{$R helperchild.res}
 
 begin
   Application.Scaled:=True;

@@ -5,6 +5,17 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.5) experimental; urgency=low
+
+ * the one and only project file is now opsi-script.lpi
+   you hav to switch zhe build mode for differen archtictures (win / mac / lin) (gui)
+ * the opsi-script nogui version is now opsi-script
+ * the opsi-script gui version is now opsi-script-gui
+ * opsi-script tests via opsi-laz-gui-test if a gui can be used
+   and if yes calls opsi-script-gui (via execv)
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Nov 2020 15:00
+
 opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
 
 * new boolean function: isValidFQDN
@@ -12,6 +23,7 @@ opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
 * osfunc: new randomstrWithParameters (also called by randomstr
 * new string function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
 * powershellcall and execwith calls at windows RunAndCaptureOut bydefault
+* Linux: osfunc: Findfirst with or faSymlink
 
 -- d.oertel <d.oertel@uib.de> Tue, 13 Oct 2020 15:00
 
