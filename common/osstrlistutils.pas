@@ -38,7 +38,7 @@ begin
                 if aux1.Equals(aux2)=False then
                   result := False;
                 i:=i+1
-              until (result=false OR (i>=stringlist1.Count))
+              until ((result=false) OR (i>=stringlist1.Count))
              end
              else
                 begin
@@ -49,7 +49,7 @@ begin
                   if aux1.Equals(aux2)=False then
                     result := False;
                   i:=i+1
-                  until (result=false OR (i>=stringlist1.Count));
+                  until ((result=false) OR (i>=stringlist1.Count));
                 end;
            end;
         IF flag.Equals('FLAG_AUTO_CS') THEN
@@ -63,7 +63,7 @@ begin
                 if aux1.Equals(aux2)=False then
                   result := False;
                 i:=i+1
-              until (result=false OR (i>=stringlist1.Count));
+              until ((result=false) OR (i>=stringlist1.Count));
              end
              else
                 begin
@@ -74,7 +74,7 @@ begin
                   if aux1.Equals(aux2)=False then
                     result := False;
                   i:=i+1
-                  until (result=false OR (i>=stringlist1.Count));
+                  until ((result=false) OR (i>=stringlist1.Count));
                 end;
            end;
         IF flag.Equals('FLAG_STRING_CS') THEN
@@ -86,7 +86,7 @@ begin
               if aux1.Equals(aux2)=False then
                 result := False;
               i:=i+1
-              until (result=false OR (i>=stringlist1.Count));
+              until ((result=false) OR (i>=stringlist1.Count));
            end;
     end;
 end;
