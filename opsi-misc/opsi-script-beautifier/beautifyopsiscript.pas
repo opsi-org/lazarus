@@ -71,11 +71,14 @@ end;
 
 function beautify (code: TStringlist) : TStringList;
 var
-    k, relPos: integer;
+    k, relPos, i: integer;
     trimLine: boolean;
     tmpstr, tmpstr2 : string;
     found : boolean;
+    openif : array[0..250] of Integer;
 begin
+  //Initialize openif array
+  for i := 0 to 250 do openif[i] := -1;
   k:=0;
   while (k < pred(code.Count)) do
     begin
@@ -152,6 +155,10 @@ begin
         then
           begin
             code[k]:= indentation(indentlevel) + code[k];
+            if AnsiStartsStr(UpperCase('if'),UpperCase(code[k].Trim)) then
+            begin
+              openif[indentlevel] := k;
+            end;
             inc(indentlevel);
           end
         else if (isStartStr(code[k], decIncIndentList))
@@ -166,6 +173,10 @@ begin
         begin
           dec(indentlevel);
           code[k]:= indentation(indentlevel) + code[k];
+          if AnsiStartsStr(UpperCase('endif'),UpperCase(code[k].Trim)) then
+            begin
+              openif[indentlevel] := -1;
+            end;
         end
         else
           code[k]:= indentation(indentlevel) + code[k];
@@ -175,6 +186,12 @@ begin
         inc(k);
     end; // while
   beautify:=code;
+  LogDatei.log('List of open if: ',LLnotice);
+  for i := 0 to 250 do
+    begin
+      if openif[i] > -1 then
+       LogDatei.log('open if for indetlevel: '+inttostr(i)+' at Line: '+inttostr(openif[i]),LLnotice);
+    end;
 end;
 
 procedure initialize(bfn: String;osf:String);

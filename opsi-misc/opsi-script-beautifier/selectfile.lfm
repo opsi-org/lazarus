@@ -1,22 +1,163 @@
 object Form1: TForm1
-  Left = 561
-  Height = 104
-  Top = 286
-  Width = 303
+  Left = 717
+  Height = 281
+  Top = 277
+  Width = 626
   Caption = 'opsi-script beautifier'
-  ClientHeight = 104
-  ClientWidth = 303
+  ClientHeight = 281
+  ClientWidth = 626
   DesignTimePPI = 91
   OnCreate = FormCreate
   LCLVersion = '2.0.10.0'
-  object BitBtn1: TBitBtn
-    Left = 22
-    Height = 28
-    Top = 43
-    Width = 266
-    Caption = 'Select file'
-    OnClick = BitBtn1Click
+  object FlowPanel1: TFlowPanel
+    Left = 0
+    Height = 64
+    Top = 0
+    Width = 626
+    Align = alTop
+    ControlList = <    
+      item
+        Control = BitBtn1
+        WrapAfter = waAuto
+        Index = 0
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
     TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 16
+      Height = 28
+      Top = 16
+      Width = 266
+      Anchors = []
+      BorderSpacing.Around = 15
+      Caption = 'Select file'
+      OnClick = BitBtn1Click
+      TabOrder = 0
+    end
+  end
+  object FlowPanel2: TFlowPanel
+    Left = 0
+    Height = 47
+    Top = 64
+    Width = 626
+    Align = alTop
+    ControlList = <    
+      item
+        Control = Label1
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = Labelfilename
+        WrapAfter = waAuto
+        Index = 1
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 11
+      Height = 18
+      Top = 11
+      Width = 26
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'File: '
+      ParentColor = False
+    end
+    object Labelfilename: TLabel
+      Left = 57
+      Height = 18
+      Top = 11
+      Width = 36
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'no file'
+      ParentColor = False
+    end
+  end
+  object FlowPanel3: TFlowPanel
+    Left = 0
+    Height = 47
+    Top = 111
+    Width = 626
+    Align = alTop
+    ControlList = <    
+      item
+        Control = Label3
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = LabelState
+        WrapAfter = waAuto
+        Index = 1
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 2
+    object Label3: TLabel
+      Left = 11
+      Height = 18
+      Top = 11
+      Width = 34
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'State:'
+      ParentColor = False
+    end
+    object LabelState: TLabel
+      Left = 65
+      Height = 18
+      Top = 11
+      Width = 63
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'LabelState'
+      ParentColor = False
+    end
+  end
+  object FlowPanel4: TFlowPanel
+    Left = 0
+    Height = 47
+    Top = 158
+    Width = 626
+    Align = alTop
+    ControlList = <    
+      item
+        Control = Label2
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = LabelLogFile
+        WrapAfter = waAuto
+        Index = 1
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 3
+    object Label2: TLabel
+      Left = 11
+      Height = 18
+      Top = 11
+      Width = 46
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'Logfile: '
+      ParentColor = False
+    end
+    object LabelLogFile: TLabel
+      Left = 77
+      Height = 18
+      Top = 11
+      Width = 31
+      Anchors = []
+      BorderSpacing.Around = 10
+      Caption = 'none'
+      ParentColor = False
+    end
   end
   object OpenDialog1: TOpenDialog
     Filter = 'opsiscript|*.opsiscript|opsiscript old|*.ins|all|*.*'
