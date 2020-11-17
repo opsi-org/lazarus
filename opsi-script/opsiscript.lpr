@@ -127,11 +127,18 @@ type
     i: integer;
     param: string;
     paramdel: string;
+    startgui : boolean;
   begin
     silent := False;
     paramdel := '-';
+    startgui := false;
     initLogging;
     filePath := ExtractFilePath(ParamStr(0));
+    if filepath = '' then filepath := '/usr/local/bin/';
+    if not FileExists(filePath + 'opsi-script-gui') then
+      filepath := '/usr/local/bin/';
+    if which('opsi-script-gui',filepath) then
+       filePath := ExtractFilePath(filepath);
     //logdatei.log('Launch: paramcount ' + Paramcount.ToString, LLessential);
     i := 1;
     while (i <= Paramcount) do
@@ -146,12 +153,35 @@ type
     begin
       if check_gui_startable() then
       begin
-        logdatei.log('gui ok - starting opsi-script-gui ... ', LLnotice);
-        //launchProgram(filePath+'opsi-script',  executeparamlist, myexitcode);
+        logdatei.log('gui ok ... ', LLnotice);
+        startgui := true;
+        {$IFDEF DARWIN}
+        if getLoggedInUser = '' then
+        begin
+          startgui := false;
+          logdatei.log('No logon at macos -  continue with nogui... ', LLnotice);
+        end;
+        {$ENDIF DARWIN}
+        if startgui then
+        begin
+          if FileExists(filePath + 'opsi-script-gui') then
+            logdatei.log('starting opsi-script-gui ... ', LLnotice)
+          else logdatei.log('No opsi-script-gui: '+filePath + 'opsi-script-gui'+'  -  continue with nogui... ', LLnotice);
+          logdatei.Close;
+          if FileExists(filePath + 'opsi-script-gui') then
+            fpExecV(filePath + 'opsi-script-gui', argv);
+        end;
+      end
+      else
+      begin
+        logdatei.log('no gui access - continue with nogui ... ', LLnotice);
         logdatei.Close;
-        if FileExists(filePath + 'opsi-script-gui') then
-          fpExecV(filePath + 'opsi-script-gui', argv);
       end;
+    end
+    else
+    begin
+      logdatei.log('Parameter silent found - continue with nogui ... ', LLnotice);
+      logdatei.Close;
     end;
     osmain.main;
   end;

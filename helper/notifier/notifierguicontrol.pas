@@ -363,6 +363,9 @@ end;
 
 function calculate_appearmode: TNFormAppear;
 begin
+  {$IFDEF DARWIN}
+  slidein := '';
+  {$ENDIF DARWIN}
   if hidden then
     Result := fapNone
   else
@@ -370,6 +373,7 @@ begin
     // transparent could not work with fadein
     if transparent then
       fadein := False;
+
 
     if fadein = False then
     begin

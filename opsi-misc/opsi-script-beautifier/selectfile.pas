@@ -9,7 +9,7 @@ uses
   osversioninfo,
   beautifyopsiscript,
   oslog,
-  Buttons;
+  Buttons, ExtCtrls, StdCtrls;
 
 type
 
@@ -17,6 +17,16 @@ type
 
   TForm1 = class(TForm)
     BitBtn1: TBitBtn;
+    FlowPanel1: TFlowPanel;
+    FlowPanel2: TFlowPanel;
+    FlowPanel3: TFlowPanel;
+    FlowPanel4: TFlowPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    LabelLogFile: TLabel;
+    Labelfilename: TLabel;
+    Label3: TLabel;
+    LabelState: TLabel;
     OpenDialog1: TOpenDialog;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -57,17 +67,21 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   initLogging;
+  LabelLogFile.Caption:=LogDatei.FileName;
 end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 var
-  beautycfg, beatyfile : string;
+  beautycfg, beautyfile : string;
 begin
   beautycfg := ExtractFileDir(ParamStr(0))+PathDelim+'beautify.ini';
   if OpenDialog1.Execute then
   begin;
-    beatyfile := OpenDialog1.FileName;
-    beautifyopsiscript.initialize(beautycfg,beatyfile);
+    beautyfile := OpenDialog1.FileName;
+    Labelfilename.Caption:=beautyfile;
+    LabelState.Caption:='working';
+    beautifyopsiscript.initialize(beautycfg,beautyfile);
+    LabelState.Caption:='finished';
   end;
 end;
 
