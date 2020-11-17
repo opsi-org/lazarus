@@ -13,24 +13,25 @@ resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
   rsLangOp = ' [Options: "de" for german, "en" for english, ...]';
-  rsWrongDistr = '';
-  rsSetupOp = ' [Options: "Standard", "Custom"]';
+  rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
   rsIsCorrect = 'Is this correct?';
-  rsYesNoOp = ' [Options: "Yes", "No"]';
+  rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
   rsOtherDistr = 'Please type in the correct distribution:';
-  rsOpsiVersionOp = ' [Options: "Opsi 4.1", "Opsi 4.2"]';
+  rsOpsiVersionOp = ' [Options: "1" for Opsi 4.1, "2" for Opsi 4.2]';
   rsUseProxy = 'Would you like to use a proxy?';
-  rsBackendOp = ' [Options: "file", "mysql"]';
-  rsRepoKindOp = ' [Options: "stable", "testing", "experimental"]';
-  rsLinkOp = ' [Options: "default.menu", "default.nomenu"]';
+  rsBackendOp = ' [Options: "f" for file, "m" for mysql]';
+  rsRepoKindOp = ' [Options: "s" for stable, "t" for testing, "e" for experimental]';
+  rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
   rsNetmaskEx = ' [Examples: "225.225.0.0", "225.225.225.0"]';
   rsNetworkAddressEx = ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]';
   rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
   rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
+  rsContinue = 'To continue and start the installation, please press enter.' + #10 +
+    'If you like to jump back to a question, please press the number key of the respective number in the overview.';
   rsInstall = 'Install ';
   rsCreateRepo = 'Create repository...';
-  rsSomeMin= '(This may take some minutes)';
+  rsSomeMin = '(This may take some minutes)';
 
   {universal}
   rsYes = 'Yes';
@@ -151,10 +152,10 @@ resourcestring
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';
   rsPassword = 'Password:';
   rsShowPassword = 'Show password';
-  rsWait = 'Please wait for the installation to start...'+ #10 + '';
+  rsWait = 'Please wait for the installation to start...' + #10 + '';
   rsLog = 'You can find the log files here:';
 
-  const
+const
   LogOpsiServer = '/var/log/opsi-quick-install-l-opsi-server.log';
 
 implementation

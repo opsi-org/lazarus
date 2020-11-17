@@ -204,7 +204,7 @@ if $myIPName$ = "auto"
 	    	if $domain$ = ""
 			    comment "dnsdomainname command was not successfull, reading dhclient.leases"
 			    message "dnsdomainname command was not successfull, reading dhclient.leases"
-			    set $domainlist$ = shellCall("cat /var/lib/dhcp/dhclient.leases | grep 'domain-name ' | awk '{ print $3 }' | tr -d ';'")
+			    set $domainlist$ = shellCall("cat /var/lib/dhcp/dhclient.* | grep 'domain-name ' | awk '{ print $3 }' | tr -d ';'")
 			    for %s% in $domainlist$ do set $domain$ = %s%
 			    if ($dnsdomain$ = $domain$)
 			        comment "dnsdomain and read domain-name are the same"
@@ -231,6 +231,17 @@ if $myIPNumber$ = "auto"
 			endif
 		endif
 	endif
+endif
+
+if $myIPNumber$ = "127.0.0.1"
+        Message "seems like IP address is from localhost retrying"
+        set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
+        if not(isValidIP4($myIPNumber$))
+                set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+                if not(isValidIP4($myIPNumber$))
+                        set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+                endif
+        endif
 endif
 
 if isValidIP4($myIPNumber$)
