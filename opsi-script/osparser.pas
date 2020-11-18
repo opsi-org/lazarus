@@ -8491,7 +8491,7 @@ var
             begin
               DeleteFileUTF8(target);
               logDatei.log('Info: zip: target: ' + target +
-                ' existed and was be removed', LLNotice);
+                ' existed and was removed', LLNotice);
             end;
 
 
