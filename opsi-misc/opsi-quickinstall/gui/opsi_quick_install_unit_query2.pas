@@ -75,6 +75,7 @@ begin
   InfoModules.OnClick := @QuickInstall.ShowHintOnClick;
   InfoRepoKind.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
+  Caption := 'Opsi Quick Install - ' + rsCapQuery2;
   LabelBackend.Caption := rsBackend;
   InfoBackend.Hint:=rsInfoBackend;
   LabelCopyModules.Caption := rsCopyModules;

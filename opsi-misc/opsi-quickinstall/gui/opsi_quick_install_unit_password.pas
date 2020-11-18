@@ -303,8 +303,9 @@ begin
   EditPassword.EchoMode := emPassword;
 
   // text by resourcestrings
+  Caption := rsPassword;
   LabelRights.Caption := rsRights;
-  LabelPassword.Caption := rsPassword;
+  LabelPassword.Caption := rsPassword+':';
   CheckBoxShowPassword.Caption := rsShowPassword;
   BtnBack.Caption := rsBack;
   BtnFinish.Caption := rsFinish;

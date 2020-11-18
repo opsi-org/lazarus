@@ -89,6 +89,7 @@ begin
   SetBasics(self);
   InfoNetwork.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
+  Caption := 'Opsi Quick Install - ' + rsCapQueryDhcp;
   InfoNetwork.Hint := rsInfoNetwork;
   LabelNetmask.Caption := rsNetmask;
   RadioBtnOtherMask.Caption := rsNetmaskOther;

@@ -109,9 +109,9 @@ begin
   InfoTFTPROOT.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   if QuickInstall.RadioBtnDefault.Checked then
-    self.Caption := rsQuery
+    Caption := 'Opsi Quick Install - ' + rsCapQuery
   else
-    self.Caption := rsQuery3;
+    Caption := 'Opsi Quick Install - ' + rsCapQuery3;
   LabelPasswordMasterAdmin.Caption := rsUCS;
   LabelReboot.Caption := rsReboot;
   InfoReboot.Hint := rsInfoReboot;

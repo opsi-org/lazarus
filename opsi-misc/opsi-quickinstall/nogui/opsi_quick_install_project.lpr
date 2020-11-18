@@ -1928,7 +1928,7 @@ begin
     // distribution info
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    //writeln(QuickInstall.distroName, QuickInstall.distroRelease);
+    writeln(QuickInstall.distroName,', ', QuickInstall.distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later.

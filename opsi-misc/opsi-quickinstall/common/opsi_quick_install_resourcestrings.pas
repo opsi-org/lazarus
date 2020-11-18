@@ -29,8 +29,8 @@ resourcestring
   rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
   rsContinue = 'To continue and start the installation, please press enter.' + #10 +
     'If you like to jump back to a question, please press the number key of the respective number in the overview.';
-  rsInstall = 'Install ';
-  rsCreateRepo = 'Create repository...';
+  rsInstall = 'Installing ';
+  rsCreateRepo = 'Creating repository...';
   rsSomeMin = '(This may take some minutes)';
 
   {universal}
@@ -41,7 +41,15 @@ resourcestring
   rsOverview = 'Overview';
   rsFinish = ' finish ';
 
-  {QuickInstall}
+  // QuickInstall:
+  rsCapDistr = 'Distribution';
+  rsCapQuery = 'Query';
+  rsCapQuery2 = 'Query (part 2)';
+  rsCapQuery3 = 'Query (part 3)';
+  rsCapQueryDhcp = 'Query (dhcp)';
+  rsCapQueryUserInfo = 'Query (user info)';
+
+  {Language}
   rsWelcome = 'Welcome to the installation of opsi-server on this computer!';
   rsSelLanguage = 'Please choose a language for this setup program:';
   rsSetup = 'Please select a setup type:';
@@ -76,7 +84,7 @@ resourcestring
   rsInfoBackend = 'Shall the data of opsi be stored in a file or a mysql database?';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
   rsInfoModules =
-    'For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de';
+    'For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de';
   rsRepoKind = 'From which repo kind should be installed?';
   // #10 does a linebreak :D
   rsInfoRepoKind = 'Select the stability of the installation:' + #10 +
@@ -84,13 +92,11 @@ resourcestring
   //rsUpdate = 'Install first from stable and than update to repo kind?';
 
   {Query4}
-  rsQuery = 'Opsi Quick Install - Query';
-  rsQuery3 = 'Opsi Quick Install - Query (part 3)';
   rsUCS =
     'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
   rsReboot = 'May the server reboot if the script is finished?';
   rsInfoReboot =
-    'If true, shortly after thei script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
+    'If true, shortly after the script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
   rsDhcp = 'Should we run the opsi dhcp server on this machine?';
   rsInfoDhcp = 'Select "No" if you already have a dhcp server.' +
     #10 + 'Select "Yes" if you want to install the dhcp server on the opsi server.';
@@ -150,9 +156,9 @@ resourcestring
 
   {Password}
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';
-  rsPassword = 'Password:';
+  rsPassword = 'Password';
   rsShowPassword = 'Show password';
-  rsWait = 'Please wait for the installation to start...' + #10 + '';
+  rsWait = 'Please wait for the installation to start...' + #10 + ' ';
   rsLog = 'You can find the log files here:';
 
 const

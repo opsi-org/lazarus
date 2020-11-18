@@ -211,6 +211,7 @@ begin
 
 
   // text by resourcestrings
+  Caption := rsOverview;
   LabelFinish.Caption := rsStartInstallation;
   BtnBack.Caption := rsBack;
   BtnFinish.Caption := rsFinish;

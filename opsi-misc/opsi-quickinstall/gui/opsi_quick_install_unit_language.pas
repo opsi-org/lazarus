@@ -222,7 +222,7 @@ begin
   // Btn.Caption:=rsString and Btn.Width only work properly when Btn.Visible=True
   BtnOverview.Visible := True;
   BtnFinish.Visible := True;
-  BtnOverview.Caption := rsOverview;
+  BtnOverview.Caption := rsOverviewBtn;
   BtnFinish.Caption := rsFinish;
   BtnOverviewWidth := BtnOverview.Width;
   BtnFinishWidth := BtnFinish.Width;

@@ -85,6 +85,7 @@ begin
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
 
   // text by resourcestrings
+  Caption := rsCapDistr;
   LabelDistr.Caption := rsDistr;
   LabelCorrect.Caption := rsCorrect;
   BtnBack.Caption := rsBack;
