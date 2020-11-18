@@ -41,7 +41,9 @@ uses //lcltranslator,
   osparserhelper,
   oslog,
   lazfileutils,
-  osversioninfo, {$IFDEF GUI}
+  osprocesses,
+  osversioninfo,
+  {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
   osbatchgui {FBatchOberflaeche},
@@ -50,9 +52,12 @@ uses //lcltranslator,
   osinteractivegui,
   osservicepassdlg,
   oslistedit,
-  Forms, {$ELSE GUI}
+  Forms,
+  {$ELSE GUI}
   custapp,
-  oscheck_gui_startable, {$ENDIF GUI} {$IFDEF UNIX}
+  oscheck_gui_startable,
+  {$ENDIF GUI}
+  {$IFDEF UNIX}
   BaseUnix,
   oslindesktopfiles,
   OSProcessux, {$ENDIF UNIX} {$IFDEF DARWIN}

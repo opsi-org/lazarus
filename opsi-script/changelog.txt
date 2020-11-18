@@ -5,6 +5,13 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.6) experimental; urgency=low
+
+ * import osprocesses
+ * call of opsi-laz-gui-test in extra log: ogdatei.StandardMainLogPath+'opsi-script-gui-test.log'
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Nov 2020 15:00
+
 opsi-winst/opsi-script (4.12.4.5) experimental; urgency=low
 
  * the one and only project file is now opsi-script.lpi
