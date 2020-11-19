@@ -5,7 +5,7 @@ unit osregex;   //regular expression unit for opsi-script
 interface
 
 uses
-  Classes, SysUtils, RegExpr;
+  Classes, SysUtils, RegExpr; //oslog;
 
 function isRegexMatch(inputtext,expr : string) : boolean; //Returns true if regex matches the inputtext.
 function getSubListByContainingRegex(expr : string; inputlist : TStringList) : TStringList; //Returns list of matching lines for a single regex.
@@ -28,9 +28,20 @@ begin
   result := false;
   regexobj := TRegExpr.Create;
   try
+    try
     regexobj.Expression := expr;
-    if regexobj.Exec(inputtext) then
-      result := true;
+    if inputtext <> '' then
+    begin
+      if regexobj.Exec(inputtext) then //exception if string is empty
+        result := true;
+    end;
+    except
+      on E: Exception do
+      begin
+        //Logdatei.log('Exception in isRegexMatch: ' + E.ClassName + ': ' + E.Message, LLError);
+        result := false;
+      end;
+    end;
   finally
     regexobj.Free;
   end;
