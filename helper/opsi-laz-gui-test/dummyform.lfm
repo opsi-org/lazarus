@@ -1,0 +1,248 @@
+object Formdummy: TFormdummy
+  Left = 126
+  Height = 362
+  Top = 309
+  Width = 400
+  Caption = 'Formdummy'
+  ClientHeight = 362
+  ClientWidth = 400
+  DesignTimePPI = 91
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+  object FlowPanel1: TFlowPanel
+    Left = 0
+    Height = 362
+    Top = 0
+    Width = 400
+    Align = alClient
+    Caption = 'FlowPanel1'
+    ControlList = <    
+      item
+        Control = Label1
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = Edit1
+        WrapAfter = waAuto
+        Index = 1
+      end    
+      item
+        Control = Memo1
+        WrapAfter = waAuto
+        Index = 2
+      end    
+      item
+        Control = RadioButton1
+        WrapAfter = waAuto
+        Index = 3
+      end    
+      item
+        Control = BitBtn1
+        WrapAfter = waAuto
+        Index = 4
+      end    
+      item
+        Control = ColorBox1
+        WrapAfter = waAuto
+        Index = 5
+      end    
+      item
+        Control = ValueListEditor1
+        WrapAfter = waAuto
+        Index = 6
+      end    
+      item
+        Control = ProgressBar1
+        WrapAfter = waAuto
+        Index = 7
+      end    
+      item
+        Control = TrackBar1
+        WrapAfter = waAuto
+        Index = 8
+      end    
+      item
+        Control = DateTimePicker1
+        WrapAfter = waAuto
+        Index = 9
+      end    
+      item
+        Control = EditButton1
+        WrapAfter = waAuto
+        Index = 10
+      end    
+      item
+        Control = TimeEdit1
+        WrapAfter = waAuto
+        Index = 11
+      end    
+      item
+        Control = ShellListView1
+        WrapAfter = waAuto
+        Index = 12
+      end    
+      item
+        Control = FilterComboBox1
+        WrapAfter = waAuto
+        Index = 13
+      end>
+    FlowLayout = tlTop
+    FlowStyle = fsLeftRightTopBottom
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 1
+      Height = 18
+      Top = 1
+      Width = 39
+      Anchors = []
+      Caption = 'Label1'
+      ParentColor = False
+    end
+    object Edit1: TEdit
+      Left = 40
+      Height = 30
+      Top = 1
+      Width = 76
+      Anchors = []
+      TabOrder = 0
+      Text = 'Edit1'
+    end
+    object Memo1: TMemo
+      Left = 116
+      Height = 40
+      Top = 1
+      Width = 142
+      Anchors = []
+      Lines.Strings = (
+        'Memo1'
+      )
+      TabOrder = 1
+    end
+    object RadioButton1: TRadioButton
+      Left = 258
+      Height = 21
+      Top = 1
+      Width = 107
+      Anchors = []
+      Caption = 'RadioButton1'
+      Checked = True
+      TabOrder = 2
+    end
+    object BitBtn1: TBitBtn
+      Left = 1
+      Height = 28
+      Top = 41
+      Width = 71
+      Anchors = []
+      Caption = 'BitBtn1'
+      TabOrder = 3
+    end
+    object ColorBox1: TColorBox
+      Left = 72
+      Height = 34
+      Top = 41
+      Width = 95
+      Anchors = []
+      ItemHeight = 0
+      TabOrder = 4
+    end
+    object ValueListEditor1: TValueListEditor
+      Left = 167
+      Height = 95
+      Top = 41
+      Width = 190
+      Anchors = []
+      FixedCols = 0
+      RowCount = 2
+      TabOrder = 5
+      ColWidths = (
+        61
+        127
+      )
+    end
+    object ProgressBar1: TProgressBar
+      Left = 1
+      Height = 19
+      Top = 136
+      Width = 95
+      Anchors = []
+      TabOrder = 6
+    end
+    object TrackBar1: TTrackBar
+      Left = 96
+      Height = 42
+      Top = 136
+      Width = 95
+      Position = 0
+      Anchors = []
+      TabOrder = 7
+    end
+    object DateTimePicker1: TDateTimePicker
+      Left = 191
+      Height = 24
+      Top = 136
+      Width = 84
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
+      TabOrder = 8
+      TrailingSeparator = False
+      TextForNullDate = 'NULL'
+      LeadingZeros = True
+      Anchors = []
+      Kind = dtkDate
+      TimeFormat = tf24
+      TimeDisplay = tdHMS
+      DateMode = dmComboBox
+      Date = 44156
+      Time = 0.655703298609296
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
+    end
+    object EditButton1: TEditButton
+      Left = 275
+      Height = 30
+      Top = 136
+      Width = 98
+      Anchors = []
+      ButtonWidth = 22
+      MaxLength = 0
+      NumGlyphs = 1
+      PasswordChar = #0
+      TabOrder = 9
+      Text = 'EditButton1'
+    end
+    object TimeEdit1: TTimeEdit
+      Left = 1
+      Height = 30
+      Top = 178
+      Width = 98
+      ButtonWidth = 22
+      Anchors = []
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 10
+      Text = 'TimeEdit1'
+    end
+    object ShellListView1: TShellListView
+      Left = 99
+      Height = 142
+      Top = 178
+      Width = 237
+      Anchors = []
+      Color = clDefault
+      TabOrder = 11
+      ObjectTypes = [otNonFolders]
+    end
+    object FilterComboBox1: TFilterComboBox
+      Left = 1
+      Height = 30
+      Top = 320
+      Width = 95
+      Anchors = []
+      TabOrder = 12
+    end
+  end
+end
