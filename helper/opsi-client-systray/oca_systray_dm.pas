@@ -18,11 +18,16 @@ uses
   jwawinbase,
   winpeimagereader,
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   elfreader,
   OSProcessux,
   libnotify,
-  {$ENDIF UNIX}
+  {$ENDIF LINUX}
+  {$IFDEF Darwin}
+  elfreader,
+  OSProcessux,
+  MacOSAll,
+  {$ENDIF}
   osprocesses,
   uniqueinstanceraw;
 
@@ -47,6 +52,7 @@ type
     procedure startNotify(notifyempty: boolean);
   private
     { private declarations }
+    pathMedia: string;
   public
     { public declarations }
   end;
@@ -291,6 +297,8 @@ end;
 
 
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
+
+
 var
   ErrorMsg: string;
   optionlist: TStringList;
@@ -442,7 +450,6 @@ begin
     halt(1);
   end;
 
-
   TrayIcon1.PopUpMenu := PopupMenu1;
   trayIcon1.Show;
   if checkIntervall = 0 then
@@ -494,6 +501,10 @@ begin
       notify_notification_show(hello, nil);
       notify_uninit;
     {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+      Application.MessageBox(PChar(rsNone), PChar(actionstring), 0);
+    {$ENDIF DARWIN}
+
     end;
   end
   else
@@ -517,6 +528,9 @@ begin
     notify_notification_show(hello, nil);
     notify_uninit;
     {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+      Application.MessageBox(PChar(rsActionsWaiting), PChar(actionstring), 0);
+    {$ENDIF DARWIN}
   end;
 end;
 

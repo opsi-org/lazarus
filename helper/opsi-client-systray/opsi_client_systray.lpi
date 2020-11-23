@@ -132,7 +132,6 @@
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="x86_64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
@@ -141,6 +140,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -166,13 +166,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--fqdn=pcbon4.uib.local --checkintervall=1 --lang=de"/>
+        <CommandLineParams Value="--fqdn=uib-mbp1.uib.local --checkintervall=1 --lang=de"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--fqdn=pcbon4.uib.local --checkintervall=1 --lang=de"/>
+            <CommandLineParams Value="--fqdn=uib-mbp1.uib.local --checkintervall=1 --lang=de"/>
           </local>
         </Mode0>
       </Modes>
