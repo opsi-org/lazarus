@@ -11476,7 +11476,8 @@ begin
 		    ('  Reading the value of section "' + s1 + '"  from inifile  "' +
 		      s2 + '"',
 		      LevelComplete);
-		    //s1enc := WinCPToUTF8(s1);
+		    //s1enc := UTF8ToWinCP(s1);
+                    newInifile.Encoding := TEncoding.SystemEncoding;
                     s1enc := s1;
                     newInifile.ReadSectionRaw(s1enc,TStrings(list));
 		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
