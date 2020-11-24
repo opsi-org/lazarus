@@ -26,8 +26,9 @@ uses
   {$IFDEF Darwin}
   elfreader,
   OSProcessux,
-  MacOSAll,
+  //MacOSAll,
   {$ENDIF}
+  graphics,
   osprocesses,
   uniqueinstanceraw;
 
@@ -40,6 +41,7 @@ type
     MI_startevent: TMenuItem;
     MI_pull_for_action_request: TMenuItem;
     PopupMenu1: TPopupMenu;
+    //PopupNotifier1: TPopupNotifier;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
     //uniqueinstance1 : Tuniqueinstance;
@@ -309,6 +311,8 @@ var
   logAndTerminate: boolean = False;
   service_url_port: string;
   mylang: string;
+  tmpimage : TPicture;
+  icofilename : string;
 begin
   if InstanceRunning then
     Application.Terminate;
@@ -451,6 +455,21 @@ begin
   end;
 
   TrayIcon1.PopUpMenu := PopupMenu1;
+  //icofilename := '/usr/local/share/opsi-client-systray/opsi-client-systray_co32.ico';
+  //if fileexists(icofilename) then tmpimage.LoadFromFile(icofilename);
+  {$IFDEF DARWIN}
+  tmpimage := TPicture.Create;
+  icofilename := '/usr/local/share/opsi-client-systray/opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then tmpimage.LoadFromFile(icofilename);
+  icofilename := ExtractFilePath(paramstr(0))+ '/opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then tmpimage.LoadFromFile(icofilename);
+  icofilename := ExtractFilePath(paramstr(0))+ '../../..//opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then tmpimage.LoadFromFile(icofilename);
+  TrayIcon1.Icon.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF DARWIN}
+
+
   trayIcon1.Show;
   if checkIntervall = 0 then
     Timer1.Enabled := False
@@ -491,8 +510,8 @@ begin
       TrayIcon1.BalloonHint := rsNone;
       TrayIcon1.BalloonTitle := rsActionsWaiting;
       TrayIcon1.ShowBalloonHint;
-      {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+     {$ENDIF WINDOWS}
+     {$IFDEF LINUX}
       notify_init(argv[0]);
       hello := notify_notification_new(PChar(rsNone), // Title
         PChar(actionstring), // Content
@@ -503,6 +522,12 @@ begin
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
       Application.MessageBox(PChar(rsNone), PChar(actionstring), 0);
+    (*
+    PopupNotifier1.Title:=rsNone;
+    PopupNotifier1.Title:=actionstring;
+    //PopupNotifier1.Icon;
+    PopupNotifier1.show;
+    *)
     {$ENDIF DARWIN}
 
     end;
@@ -530,6 +555,12 @@ begin
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
       Application.MessageBox(PChar(rsActionsWaiting), PChar(actionstring), 0);
+    (*
+    PopupNotifier1.Title:=rsActionsWaiting;
+    PopupNotifier1.Title:=actionstring;
+    //PopupNotifier1.Icon;
+    PopupNotifier1.show;
+    *)
     {$ENDIF DARWIN}
   end;
 end;

@@ -1,6 +1,14 @@
 
 [changelog]
-opsi_client_systray  4.1.2.0
+opsi_client_systray  4.1.2.2
+
+  * make it work at macos
+  * new bw16.ico for mac
+  * new co32.ico for other
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 24 Nov 2020:15:00:00 +0200
+
+opsi_client_systray  4.1.2.1
 
   * make it work at linux
   * oslog: create logpath if not exists
