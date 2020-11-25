@@ -11484,8 +11484,7 @@ begin
                     //for i := 1 to Strings.Count do
                     //   list.add(WinCPToUTF8(AnsiString(Strings[i])));
                     //list.AddStrings(Strings);
-		    newInifile.Free;
-		    newInifile := nil;
+                    FreeAndNil(newIniFile);
 	      except
 		    on e: Exception do
 		    begin
