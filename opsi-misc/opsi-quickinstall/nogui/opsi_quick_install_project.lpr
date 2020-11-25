@@ -182,6 +182,7 @@ type
   // set default values for all required variables
   procedure TQuickInstall.SetDefaultValues;
   begin
+    LogDatei.log('Entered SetDefaultValues', 0);
     // set default values:
     opsiVersion := 'Opsi 4.2';
     // repo depending on opsi version
@@ -203,7 +204,7 @@ type
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Alex';
+    adminName := 'Alexandra';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -212,6 +213,7 @@ type
   // write properties in l-opsi-server.conf and properties.conf file
   procedure TQuickInstall.WritePropsToFile;
   begin
+    LogDatei.log('Entered WritePropsToFile', 0);
     // write file text
     FileText := TStringList.Create;
     if reboot = rsYes then
@@ -257,6 +259,7 @@ type
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
+    LogDatei.log('Entered InstallOpsi', 0);
     writeln(rsInstall + opsiVersion + ':');
 
     if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
@@ -1823,6 +1826,7 @@ type
   // install opsi server with the default values from SetDefaultValues
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
+    LogDatei.log('Entered ExecuteWithDefaultValues', 0);
     SetDefaultValues;
     WritePropsToFile;
     InstallOpsi;
@@ -1886,6 +1890,7 @@ begin
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
+  LogDatei.log('Log file created', 0);
 
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
@@ -1928,7 +1933,7 @@ begin
     // distribution info
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    writeln(QuickInstall.distroName,', ', QuickInstall.distroRelease);
+    writeln(QuickInstall.distroName,' ', QuickInstall.distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later.

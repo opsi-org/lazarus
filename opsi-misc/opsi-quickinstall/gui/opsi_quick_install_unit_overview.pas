@@ -149,50 +149,50 @@ begin
     else
       MemoOverview.Lines.Add(rsTFTPROOTO + Query4.RadioBtnNoMenu.Caption);
     // Netmask
-    if Query5_dhcp.RadioBtnMask0.Checked then
-      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask0.Caption)
-    else if Query5_dhcp.RadioBtnMask225.Checked then
-      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask225.Caption)
+    if Query5_dhcp.RadioBtnMask1.Checked then
+      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask1.Caption)
+    else if Query5_dhcp.RadioBtnMask2.Checked then
+      MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.RadioBtnMask2.Caption)
     else
       MemoOverview.Lines.Add(rsNetmaskO + Query5_dhcp.EditNetmask.Text);
     // Network address
-    if Query5_dhcp.RadioBtnAddress10.Checked then
-      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress10.Caption)
-    else if Query5_dhcp.RadioBtnAddress172.Checked then
-      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress172.Caption)
-    else if Query5_dhcp.RadioBtnAddress192.Checked then
-      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress192.Caption)
+    if Query5_dhcp.RadioBtnAddress1.Checked then
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress1.Caption)
+    else if Query5_dhcp.RadioBtnAddress2.Checked then
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress2.Caption)
+    else if Query5_dhcp.RadioBtnAddress3.Checked then
+      MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress3.Caption)
     else
       MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.EditAddress.Text);
     // Domain
-    if Query5_dhcp.RadioBtnUcs.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnUcs.Caption)
-    else if Query5_dhcp.RadioBtnUib.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnUib.Caption)
-    else if Query5_dhcp.RadioBtnVmnat.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnVmnat.Caption)
+    if Query5_dhcp.RadioBtnDomain1.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain1.Caption)
+    else if Query5_dhcp.RadioBtnDomain2.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain2.Caption)
+    else if Query5_dhcp.RadioBtnDomain3.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain3.Caption)
     else
       MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);
     // Nameserver
-    if Query5_dhcp.RadioBtnNameserver10.Checked then
+    if Query5_dhcp.RadioBtnNameserver1.Checked then
       MemoOverview.Lines.Add(
-        rsNameserverO + Query5_dhcp.RadioBtnNameserver10.Caption)
-    else if Query5_dhcp.RadioBtnNameserver172.Checked then
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver1.Caption)
+    else if Query5_dhcp.RadioBtnNameserver2.Checked then
       MemoOverview.Lines.Add(
-        rsNameserverO + Query5_dhcp.RadioBtnNameserver172.Caption)
-    else if Query5_dhcp.RadioBtnNameserver192.Checked then
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver2.Caption)
+    else if Query5_dhcp.RadioBtnNameserver3.Checked then
       MemoOverview.Lines.Add(
-        rsNameserverO + Query5_dhcp.RadioBtnNameserver192.Caption)
+        rsNameserverO + Query5_dhcp.RadioBtnNameserver3.Caption)
     else
       MemoOverview.Lines.Add(
         rsNameserverO + Query5_dhcp.EditNameserver.Text);
     // Gateway
-    if Query5_dhcp.RadioBtnGateway10.Checked then
-      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway10.Caption)
-    else if Query5_dhcp.RadioBtnGateway172.Checked then
-      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway172.Caption)
-    else if Query5_dhcp.RadioBtnGateway192.Checked then
-      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway192.Caption)
+    if Query5_dhcp.RadioBtnGateway1.Checked then
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway1.Caption)
+    else if Query5_dhcp.RadioBtnGateway2.Checked then
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway2.Caption)
+    else if Query5_dhcp.RadioBtnGateway3.Checked then
+      MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.RadioBtnGateway3.Caption)
     else
       MemoOverview.Lines.Add(rsGatewayO + Query5_dhcp.EditGateway.Text);
   end

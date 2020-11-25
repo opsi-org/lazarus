@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 542
+  Left = 379
   Height = 450
-  Top = 249
+  Top = 157
   Width = 730
   Caption = 'Opsi quick install - query (dhcp)'
   ClientHeight = 450
@@ -62,7 +62,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnMask0: TRadioButton
+    object RadioBtnMask1: TRadioButton
       AnchorSideTop.Control = LabelNetmask
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -75,8 +75,8 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 0
       TabStop = True
     end
-    object RadioBtnMask225: TRadioButton
-      AnchorSideLeft.Control = RadioBtnMask0
+    object RadioBtnMask2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnMask1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelNetmask
       AnchorSideTop.Side = asrBottom
@@ -90,7 +90,7 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 1
     end
     object RadioBtnOtherMask: TRadioButton
-      AnchorSideLeft.Control = RadioBtnMask225
+      AnchorSideLeft.Control = RadioBtnMask2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelNetmask
       AnchorSideTop.Side = asrBottom
@@ -140,7 +140,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnAddress10: TRadioButton
+    object RadioBtnAddress1: TRadioButton
       AnchorSideTop.Control = LabelAddress
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -151,8 +151,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 0
     end
-    object RadioBtnAddress172: TRadioButton
-      AnchorSideLeft.Control = RadioBtnAddress10
+    object RadioBtnAddress2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnAddress1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelAddress
       AnchorSideTop.Side = asrBottom
@@ -165,8 +165,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 1
     end
-    object RadioBtnAddress192: TRadioButton
-      AnchorSideLeft.Control = RadioBtnAddress172
+    object RadioBtnAddress3: TRadioButton
+      AnchorSideLeft.Control = RadioBtnAddress2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelAddress
       AnchorSideTop.Side = asrBottom
@@ -182,7 +182,7 @@ object Query5_dhcp: TQuery5_dhcp
       TabStop = True
     end
     object RadioBtnOtherAddress: TRadioButton
-      AnchorSideTop.Control = RadioBtnAddress10
+      AnchorSideTop.Control = RadioBtnAddress1
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
@@ -195,7 +195,7 @@ object Query5_dhcp: TQuery5_dhcp
     object EditAddress: TEdit
       AnchorSideLeft.Control = RadioBtnOtherAddress
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnAddress10
+      AnchorSideTop.Control = RadioBtnAddress1
       AnchorSideTop.Side = asrBottom
       Left = 75
       Height = 25
@@ -229,7 +229,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnUcs: TRadioButton
+    object RadioBtnDomain1: TRadioButton
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -240,8 +240,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 0
     end
-    object RadioBtnUib: TRadioButton
-      AnchorSideLeft.Control = RadioBtnUcs
+    object RadioBtnDomain2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnDomain1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -256,8 +256,8 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 3
       TabStop = True
     end
-    object RadioBtnVmnat: TRadioButton
-      AnchorSideLeft.Control = RadioBtnUib
+    object RadioBtnDomain3: TRadioButton
+      AnchorSideLeft.Control = RadioBtnDomain2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -271,7 +271,7 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 1
     end
     object RadioBtnOtherDomain: TRadioButton
-      AnchorSideTop.Control = RadioBtnUcs
+      AnchorSideTop.Control = RadioBtnDomain1
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
@@ -284,7 +284,7 @@ object Query5_dhcp: TQuery5_dhcp
     object EditDomain: TEdit
       AnchorSideLeft.Control = RadioBtnOtherDomain
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnUcs
+      AnchorSideTop.Control = RadioBtnDomain1
       AnchorSideTop.Side = asrBottom
       Left = 75
       Height = 25
@@ -318,7 +318,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnNameserver10: TRadioButton
+    object RadioBtnNameserver1: TRadioButton
       AnchorSideTop.Control = LabelNameserver
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -329,8 +329,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 0
     end
-    object RadioBtnNameserver172: TRadioButton
-      AnchorSideLeft.Control = RadioBtnNameserver10
+    object RadioBtnNameserver2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnNameserver1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelNameserver
       AnchorSideTop.Side = asrBottom
@@ -343,8 +343,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 1
     end
-    object RadioBtnNameserver192: TRadioButton
-      AnchorSideLeft.Control = RadioBtnNameserver172
+    object RadioBtnNameserver3: TRadioButton
+      AnchorSideLeft.Control = RadioBtnNameserver2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelNameserver
       AnchorSideTop.Side = asrBottom
@@ -360,7 +360,7 @@ object Query5_dhcp: TQuery5_dhcp
       TabStop = True
     end
     object RadioBtnOtherNameserver: TRadioButton
-      AnchorSideTop.Control = RadioBtnNameserver10
+      AnchorSideTop.Control = RadioBtnNameserver1
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
@@ -373,7 +373,7 @@ object Query5_dhcp: TQuery5_dhcp
     object EditNameserver: TEdit
       AnchorSideLeft.Control = RadioBtnOtherNameserver
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnNameserver10
+      AnchorSideTop.Control = RadioBtnNameserver1
       AnchorSideTop.Side = asrBottom
       Left = 75
       Height = 25
@@ -407,7 +407,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnGateway10: TRadioButton
+    object RadioBtnGateway1: TRadioButton
       AnchorSideTop.Control = LabelGateway
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -418,8 +418,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 0
     end
-    object RadioBtnGateway172: TRadioButton
-      AnchorSideLeft.Control = RadioBtnGateway10
+    object RadioBtnGateway2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnGateway1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelGateway
       AnchorSideTop.Side = asrBottom
@@ -432,8 +432,8 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 1
     end
-    object RadioBtnGateway192: TRadioButton
-      AnchorSideLeft.Control = RadioBtnGateway172
+    object RadioBtnGateway3: TRadioButton
+      AnchorSideLeft.Control = RadioBtnGateway2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelGateway
       AnchorSideTop.Side = asrBottom
@@ -449,7 +449,7 @@ object Query5_dhcp: TQuery5_dhcp
       TabStop = True
     end
     object RadioBtnOtherGateway: TRadioButton
-      AnchorSideTop.Control = RadioBtnGateway10
+      AnchorSideTop.Control = RadioBtnGateway1
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
@@ -462,7 +462,7 @@ object Query5_dhcp: TQuery5_dhcp
     object EditGateway: TEdit
       AnchorSideLeft.Control = RadioBtnOtherGateway
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnGateway10
+      AnchorSideTop.Control = RadioBtnGateway1
       AnchorSideTop.Side = asrBottom
       Left = 75
       Height = 25

@@ -18,8 +18,8 @@ type
   public
   const
     Distribs = 'CentOS 7,' + #10 + 'Debian 8, Debian 9, Debian 10,' +
-      #10 + 'openSUSE Leap 15.1, openSUSE Leap 42.3,' + #10 +
-      'RedHatEnterpriseServer 7,' + #10 + 'Univention 4.3, Univention 4.4,' +
+      #10 + 'openSUSE 15.1, openSUSE 42.3,' + #10 +
+      'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
@@ -78,7 +78,7 @@ begin
     end;
   end
   else
-  if distroName = 'openSUSE Leap' then
+  if distroName = 'openSUSE' then
   begin
     if distroRelease = '15.1' then
     begin
@@ -98,7 +98,7 @@ begin
   end
   else
   // RHEL has releases like 7.x
-  if distroName = 'RedHatEnterpriseServer' then
+  if distroName = 'RedHatEnterprise' then
   begin
     if Pos('7', distroRelease) = 1 then
     begin
@@ -154,7 +154,7 @@ end;
 function TDistributionInfo.GetPackageManagementShellCommand(distroName: string): string;
 begin
   {CentOS and RedHat}
-  if (distroName = 'CentOS') or (distroName = 'RedHatEnterpriseServer') then
+  if (distroName = 'CentOS') or (distroName = 'RedHatEnterprise') then
     Result := 'yum '
   {Debian, Ubuntu, Univention}
   // univention is based on debian
@@ -162,7 +162,7 @@ begin
     (distroName = 'Univention') then
     Result := 'apt '
   {OpenSuse and SLES}
-  else if (distroName = 'openSUSE Leap') or (distroName = 'SLE12') then
+  else if (distroName = 'openSUSE') or (distroName = 'SLE12') then
     Result := 'zypper ';
 end;
 

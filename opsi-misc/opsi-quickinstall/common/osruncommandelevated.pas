@@ -63,7 +63,7 @@ begin
     Output, [poWaitOnExit, poUsePipes]) then
   begin
     Result := Output;
-    LogDatei.log('Shell command succesful', LLInfo);
+    LogDatei.log('Shell command successful', LLInfo);
     LogDatei.log('Shell output: ' + Output, LLDebug);
   end
   else

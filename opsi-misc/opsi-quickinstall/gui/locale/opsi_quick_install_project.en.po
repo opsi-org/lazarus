@@ -601,7 +601,6 @@ msgid "Show password"
 msgstr "Show password"
 
 #: tpassword.labelpassword.caption
-msgctxt "tpassword.labelpassword.caption"
 msgid "Password:"
 msgstr ""
 
@@ -720,10 +719,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery2.caption
-#, fuzzy
-msgctxt "tquery2.caption"
 msgid "Opsi Quick Install - Query (part 2)"
-msgstr "Opsi Quick Install - Query (part 2)"
+msgstr ""
 
 #: tquery2.labelbackend.caption
 msgid ""
@@ -889,53 +886,65 @@ msgstr ""
 msgid "Netmask (for dhcp)"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnaddress10.caption
+#: tquery5_dhcp.radiobtnaddress1.caption
 msgid "10.100.0.0"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnaddress172.caption
+#: tquery5_dhcp.radiobtnaddress2.caption
 msgid "172.16.166.0"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnaddress192.caption
+#: tquery5_dhcp.radiobtnaddress3.caption
 msgid "192.168.0.0"
 msgstr ""
 
-#: tquery5_dhcp.radiobtngateway10.caption
-msgctxt "tquery5_dhcp.radiobtngateway10.caption"
+#: tquery5_dhcp.radiobtndomain1.caption
+msgid "ucs.test"
+msgstr ""
+
+#: tquery5_dhcp.radiobtndomain2.caption
+msgid "uib.local"
+msgstr ""
+
+#: tquery5_dhcp.radiobtndomain3.caption
+msgid "vmnat.local"
+msgstr ""
+
+#: tquery5_dhcp.radiobtngateway1.caption
+msgctxt "tquery5_dhcp.radiobtngateway1.caption"
 msgid "10.100.1.2"
 msgstr ""
 
-#: tquery5_dhcp.radiobtngateway172.caption
-msgctxt "tquery5_dhcp.radiobtngateway172.caption"
+#: tquery5_dhcp.radiobtngateway2.caption
+msgctxt "tquery5_dhcp.radiobtngateway2.caption"
 msgid "172.16.166.1"
 msgstr ""
 
-#: tquery5_dhcp.radiobtngateway192.caption
-msgctxt "tquery5_dhcp.radiobtngateway192.caption"
+#: tquery5_dhcp.radiobtngateway3.caption
+msgctxt "tquery5_dhcp.radiobtngateway3.caption"
 msgid "192.168.1.245"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnmask0.caption
+#: tquery5_dhcp.radiobtnmask1.caption
 msgid "255.255.0.0"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnmask225.caption
+#: tquery5_dhcp.radiobtnmask2.caption
 msgid "255.255.255.0"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnnameserver10.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver10.caption"
+#: tquery5_dhcp.radiobtnnameserver1.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver1.caption"
 msgid "10.100.1.2"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnnameserver172.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver172.caption"
+#: tquery5_dhcp.radiobtnnameserver2.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver2.caption"
 msgid "172.16.166.1"
 msgstr ""
 
-#: tquery5_dhcp.radiobtnnameserver192.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver192.caption"
+#: tquery5_dhcp.radiobtnnameserver3.caption
+msgctxt "tquery5_dhcp.radiobtnnameserver3.caption"
 msgid "192.168.1.245"
 msgstr ""
 
@@ -969,18 +978,6 @@ msgctxt "tquery5_dhcp.radiobtnothernameserver.caption"
 msgid "Other:"
 msgstr "Other:"
 
-#: tquery5_dhcp.radiobtnucs.caption
-msgid "ucs.test"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnuib.caption
-msgid "uib.local"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnvmnat.caption
-msgid "vmnat.local"
-msgstr ""
-
 #: tquery6.btnback.caption
 #, fuzzy
 msgctxt "tquery6.btnback.caption"
@@ -994,10 +991,8 @@ msgid " overview "
 msgstr " overview "
 
 #: tquery6.caption
-#, fuzzy
-msgctxt "tquery6.caption"
 msgid "Opsi Quick Install - Query (user info)"
-msgstr "Opsi Quick Install - Query (user info)"
+msgstr ""
 
 #: tquery6.editnameadmin.text
 msgid "adminuser"

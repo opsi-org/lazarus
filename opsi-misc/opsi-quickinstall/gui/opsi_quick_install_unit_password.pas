@@ -111,12 +111,12 @@ begin
     FileText.Add(propertyName + '=mysql');
 
   propertyName := 'dnsdomain';
-  if Query5_dhcp.RadioBtnUcs.Checked then
-    FileText.Add(propertyName + '=ucs.test')
-  else if Query5_dhcp.RadioBtnUib.Checked then
-    FileText.Add(propertyName + '=uib.local')
-  else if Query5_dhcp.RadioBtnVmnat.Checked then
-    FileText.Add(propertyName + '=vmnat.local')
+  if Query5_dhcp.RadioBtnDomain1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain1.Caption)
+  else if Query5_dhcp.RadioBtnDomain2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain2.Caption)
+  else if Query5_dhcp.RadioBtnDomain3.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain3.Caption)
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
 
@@ -127,12 +127,12 @@ begin
     FileText.Add(propertyName + '=false');
 
   propertyName := 'gateway';
-  if Query5_dhcp.RadioBtnGateway10.Checked then
-    FileText.Add(propertyName + '=10.100.1.2')
-  else if Query5_dhcp.RadioBtnGateway172.Checked then
-    FileText.Add(propertyName + '=172.16.166.1')
-  else if Query5_dhcp.RadioBtnGateway192.Checked then
-    FileText.Add(propertyName + '=192.168.1.245')
+  if Query5_dhcp.RadioBtnGateway1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway1.Caption)
+  else if Query5_dhcp.RadioBtnGateway2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway2.Caption)
+  else if Query5_dhcp.RadioBtnGateway3.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway3.Caption)
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditGateway.Text);
 
@@ -147,30 +147,30 @@ begin
   FileText.Add('myipnumber=' + Query6.EditNumberIP.Text);
 
   propertyName := 'nameserver';
-  if Query5_dhcp.RadioBtnNameserver10.Checked then
-    FileText.Add(propertyName + '=10.100.1.2')
-  else if Query5_dhcp.RadioBtnNameserver172.Checked then
-    FileText.Add(propertyName + '=172.16.166.1')
-  else if Query5_dhcp.RadioBtnNameserver192.Checked then
-    FileText.Add(propertyName + '=192.168.1.245')
+  if Query5_dhcp.RadioBtnNameserver1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver1.Caption)
+  else if Query5_dhcp.RadioBtnNameserver2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver2.Caption)
+  else if Query5_dhcp.RadioBtnNameserver3.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver3.Caption)
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditNameserver.Text);
 
   propertyName := 'netmask';
-  if Query5_dhcp.RadioBtnMask0.Checked then
-    FileText.Add(propertyName + '=255.255.0.0')
-  else if Query5_dhcp.RadioBtnMask225.Checked then
-    FileText.Add(propertyName + '=255.255.225.0')
+  if Query5_dhcp.RadioBtnMask1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnMask1.Caption)
+  else if Query5_dhcp.RadioBtnMask2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnMask2.Caption)
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditNetmask.Text);
 
   propertyName := 'network';
-  if Query5_dhcp.RadioBtnAddress10.Checked then
-    FileText.Add(propertyName + '=10.100.0.0')
-  else if Query5_dhcp.RadioBtnAddress172.Checked then
-    FileText.Add(propertyName + '=172.16.166.0')
-  else if Query5_dhcp.RadioBtnAddress192.Checked then
-    FileText.Add(propertyName + '=192.168.0.0')
+  if Query5_dhcp.RadioBtnAddress1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress1.Caption)
+  else if Query5_dhcp.RadioBtnAddress2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress2.Caption)
+  else if Query5_dhcp.RadioBtnAddress3.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress3.Caption)
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditAddress.Text);
 
