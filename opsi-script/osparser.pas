@@ -17088,6 +17088,132 @@ var
   funcname: string;
   funcindex: integer;
 
+  // function for FileExists32
+  function handleFileExists32(s1: string): boolean;
+  begin
+    LogDatei.log('  Starting query if file exists ...', LLInfo);
+    s2 := s1;
+    if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
+      s2 := copy(s1, 1, length(s1) - 1);
+    OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+    try
+      try
+        result := FileExists(s2) or DirectoryExists(s2);
+        if (not result) and (not (trim(s2) = '')) then
+        begin
+          LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
+        end;
+      except
+        result := False;
+      end;
+    finally
+      setErrorMode(OldWinapiErrorMode);
+    end;
+  end;
+
+  // function for FileExists64
+  function handleFileExists64(s1: string): boolean;
+  begin
+    LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
+    s2 := s1;
+    if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
+      s2 := copy(s1, 1, length(s1) - 1);
+    try
+      if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+      begin
+        LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+        //BooleanResult := GetFileInfo (s2, FileRecord, RunTimeInfo);
+        // disable  critical-error-handler message box. (Drive not ready)
+        OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+        try
+          try
+            result := FileExists(s2) or DirectoryExists(s2);
+            if (not result) and (not (trim(s2) = '')) then
+            begin
+              LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
+            end;
+          except
+            result := False;
+          end;
+        finally
+          setErrorMode(OldWinapiErrorMode);
+        end;
+        dummybool := DSiRevertWow64FsRedirection(
+          oldDisableWow64FsRedirectionStatus);
+        LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+      end
+      else
+      begin
+        LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+        result := False;
+      end;
+    except
+      on ex: Exception do
+      begin
+        LogDatei.log('Error: ' + ex.message, LLError);
+      end;
+    end;
+  end;
+
+  // function for FileExistsSysNative
+  function handleFileExistsSysNative(s1: string): boolean;
+  begin
+    if Is64BitSystem then
+      LogDatei.log('  Starting query if file exist (SysNative 64 Bit mode)...',
+        LLInfo)
+    else
+      LogDatei.log('  Starting query if file exist (SysNative 32 Bit mode)...',
+        LLInfo);
+    s2 := s1;
+    if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
+      s2 := copy(s1, 1, length(s1) - 1);
+    if Is64BitSystem then
+    begin
+      try
+        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+        begin
+          LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+          OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+          try
+            try
+              result := FileExists(s2) or DirectoryExists(s2);
+              if (not result) and (not (trim(s2) = '')) then
+              begin
+                LogDatei.log('File: ' + s2 +
+                  ' not found via FileExists', LLDebug3);
+              end;
+            except
+              result := False;
+            end;
+          finally
+            setErrorMode(OldWinapiErrorMode);
+          end;
+          dummybool := DSiRevertWow64FsRedirection(
+            oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+        end
+        else
+        begin
+          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+          result := False;
+        end;
+      except
+        on ex: Exception do
+        begin
+          LogDatei.log('Error: ' + ex.message, LLError);
+        end;
+      end;
+    end
+    else
+    begin
+      result := FileExists(s2) or DirectoryExists(s2);
+      if (not result) and (not (trim(s2) = '')) then
+      begin
+        LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
+      end;
+    end;
+  end;
+
 begin
   syntaxCheck := False;
   InfoSyntaxError := '';
@@ -17127,6 +17253,7 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
+          // BooleanResult := handleFileExists64(s1);
           LogDatei.log('  Starting query if file exist (64 Bit mode)...', LLInfo);
           s2 := s1;
           if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
@@ -17166,6 +17293,7 @@ begin
               LogDatei.log('Error: ' + ex.message, LLError);
             end;
           end;
+          //
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17181,6 +17309,7 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
+          // BooleanResult := handleFileExistsSysNative(s1);
           if Is64BitSystem then
             LogDatei.log('  Starting query if file exist (SysNative 64 Bit mode)...',
               LLInfo)
@@ -17235,6 +17364,7 @@ begin
               LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
             end;
           end;
+          //
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17250,7 +17380,8 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          LogDatei.log('  Starting query if file exist ...', LLInfo);
+          // BooleanResult := handleFileExists32(s1);
+          LogDatei.log('  Starting query if file exists ...', LLInfo);
           s2 := s1;
           if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
             s2 := copy(s1, 1, length(s1) - 1);
@@ -17268,6 +17399,7 @@ begin
           finally
             setErrorMode(OldWinapiErrorMode);
           end;
+          //
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17325,6 +17457,56 @@ begin
           syntaxCheck := True;
         end;
   end
+
+  //New general function for File or Folder exists
+  else if (LowerCase(s) = LowerCase('FileOrFolderExists')) then
+  begin
+    s2 := '';
+    tmpstr2 := '';
+    tmpbool := True;
+    syntaxCheck := False;
+    LogDatei.log_prog('GetFile from: ' + r, LLdebug3);
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
+        // next after ',' or ')'
+        if Skip(',', tmpstr, tmpstr1, tmpstr3) then
+          if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
+            if s2 = '' then
+            begin
+              // with 1 parameter
+              if Skip(')', tmpstr, r, InfoSyntaxError) then
+              begin
+                  syntaxCheck := True;
+              end;
+            end
+            else
+            begin
+              // with 2 parameters
+              if Skip(')', tmpstr2, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  tmpbool := True;
+                  if lowercase(s2) = '32bit' then
+                      BooleanResult := handleFileExists32(s2)
+                  else if lowercase(s2) = '64bit' then
+                      BooleanResult := handleFileExists64(s2)
+                  else if lowercase(s2) = 'sysnative' then
+                      BooleanResult := handleFileExistsSysNative(s2)
+                  else
+                  begin
+                      InfoSyntaxError :=
+                          'Error: unknown parameter: ' + s2 +
+                          ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+                      syntaxCheck := False;
+                  end;
+                except
+                  Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
+                end;
+              end;
+            end;
+  end;
+
 
   else if Skip('DirectoryExists', Input, r, sx) then
   begin
