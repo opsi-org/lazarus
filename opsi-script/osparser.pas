@@ -11477,7 +11477,7 @@ begin
 		      s2 + '"',
 		      LevelComplete);
 		    //s1enc := UTF8ToWinCP(s1);
-                    //newInifile.Encoding := TEncoding.SystemEncoding;
+                    //newInifile.Encoding := TEncoding.ANSI;
                     s1enc := s1;
                     newInifile.ReadSectionRaw(s1enc,TStrings(list));
 		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
