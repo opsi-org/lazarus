@@ -153,6 +153,9 @@ var
   Progressbar: TQProgressBar;
   //ActivityBar: TQProgressBar;
 
+  panelWidth: integer;
+  panelHeight: integer;
+
 
 
 const
@@ -468,6 +471,14 @@ begin
     try
       skinIni := TIniFile.Create(skinFile);
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+
+      try
+        panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
+        panelHeight := skinIni.ReadInteger('Panel', 'Height', 430);
+        SetBounds(0, 0, panelWidth, panelHeight);
+      except
+      end;
+
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
@@ -651,6 +662,15 @@ begin
       *)
 
       try
+        ImageBackground.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        Panel.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        ImageBackground.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        Panel.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        ImageBackground.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        Panel.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+        Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+
         filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
         if FileExists(filename) and not IsDirectory(filename) then
           ImageBackground.picture.loadFromFile(filename);
