@@ -676,6 +676,14 @@ begin
     nform.Repaint;
     DataModule1.ProcessMess;
   end;
+  if mynotifierkind = 'popup' then
+  begin
+    nform.FormStyle := fsNormal;
+    logdatei.log('FormStyle := fsNormal', LLDebug);
+    nform.Position:= poDefaultPosOnly;
+    nform.Repaint;
+    DataModule1.ProcessMess;
+  end;
 end;
 
 procedure hideNForm;
@@ -868,6 +876,10 @@ begin
       nform.Left := mytmpint1;
       nform.Top := mytmpint2;
     end;
+    {$IFDEF DARWIN}
+    // at booom we have the dock
+    if nformpos = fpBottomRight then nformpos := fpTopRight;
+    {$ENDIF DARWIN}
     {$IFDEF LINUX}
     // scale new scrollbox:
     nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
