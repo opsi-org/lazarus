@@ -153,6 +153,9 @@ var
   Progressbar: TQProgressBar;
   //ActivityBar: TQProgressBar;
 
+  panelWidth: integer;
+  panelHeight: integer;
+
 
 
 const
@@ -205,10 +208,6 @@ var
   //Alpha: boolean;
 
 begin
-  {$IFDEF LINUX}
-  // scale at LINUX:
-  //FBatchOberflaeche.AutoAdjustLayout(lapAutoAdjustForDPI, 96, screen.PixelsPerInch, 0, 0);
-  {$ENDIF LINUX}
   Progressbar := TQProgressBar.Create(nil);
   Progressbar.Position := 0;
   ProgressBar.Visible := False;
@@ -216,13 +215,7 @@ begin
   begin
     Parent := Panel;
     Left := 275;
-    {$IFDEF LINUX}
-    //Left := round(Left * ((Screen.PixelsPerInch / 96)));
-    {$ENDIF LINUX}
     Top := 160;
-    {$IFDEF LINUX}
-    //Top := round(Top * ((Screen.PixelsPerInch / 96)));
-    {$ENDIF LINUX}
     Width := 280;
     Height := 20;
     orientation := boHorizontal;
@@ -478,6 +471,14 @@ begin
     try
       skinIni := TIniFile.Create(skinFile);
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+
+      try
+        panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
+        panelHeight := skinIni.ReadInteger('Panel', 'Height', 430);
+        SetBounds(0, 0, panelWidth, panelHeight);
+      except
+      end;
+
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
@@ -530,14 +531,6 @@ begin
         then
           LabelProduct.Font.Style := LabelProduct.Font.Style + [fsUnderline];
         LabelProduct.OptimalFill := True;
-        (*
-        {$IFDEF LINUX}
-        LabelProduct.Left := round(LabelProduct.Left * ((Screen.PixelsPerInch / 96)));
-        LabelProduct.Top := round(LabelProduct.Top * ((Screen.PixelsPerInch / 96)));
-        LabelProduct.Width := round(LabelProduct.Width * ((Screen.PixelsPerInch / 96)));
-        LabelProduct.Height := round(LabelProduct.Height * ((Screen.PixelsPerInch / 96)));
-        {$ENDIF LINUX}
-        *)
       except
       end;
 
@@ -669,6 +662,15 @@ begin
       *)
 
       try
+        ImageBackground.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        Panel.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        ImageBackground.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        Panel.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        ImageBackground.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        Panel.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+        Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+
         filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
         if FileExists(filename) and not IsDirectory(filename) then
           ImageBackground.picture.loadFromFile(filename);
@@ -1062,12 +1064,10 @@ begin
   FormMoving := False;
 end;
 
-
 procedure TFBatchOberflaeche.FormResize(Sender: TObject);
 var
   i: integer;
 begin
-  {$IFNDEF DARWIN}
   i := (Width - panel.Width) div 2;
   Panel.Left := i;
   if Height > panel.Height + standardTopMargin then
@@ -1081,7 +1081,6 @@ begin
   ImageOpsiBackground.Top := Height - ImageOpsiBackground.Height;
 
   //LabelVersion.BringToFront
-  {$ENDIF DARWIN}
 end;
 
 //interface
