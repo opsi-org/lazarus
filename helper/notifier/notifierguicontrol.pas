@@ -514,6 +514,18 @@ begin
       LogDatei.log('Error: Unknown Form position', LLError);
   end;
 
+  if mynotifierkind = 'popup' then
+  begin
+    nform.FormStyle := fsNormal;
+    nform.BorderStyle:= bsSizeable;
+    logdatei.log('FormStyle := fsNormal', LLDebug);
+    starty := starty + Random(starty div 2);
+    startx := startx + Random(startx div 2);
+    //nform.Position:= poDefaultPosOnly;
+    //nform.Repaint;
+    //DataModule1.ProcessMess;
+  end;
+
   // show with appearmode
 
   case appearmode of
@@ -673,14 +685,6 @@ begin
   begin
     nform.FormStyle := fsNormal;
     logdatei.log('FormStyle := fsNormal', LLDebug);
-    nform.Repaint;
-    DataModule1.ProcessMess;
-  end;
-  if mynotifierkind = 'popup' then
-  begin
-    nform.FormStyle := fsNormal;
-    logdatei.log('FormStyle := fsNormal', LLDebug);
-    nform.Position:= poDefaultPosOnly;
     nform.Repaint;
     DataModule1.ProcessMess;
   end;
@@ -1200,4 +1204,5 @@ begin
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
   designPPI:=96;
+  Randomize;
 end.
