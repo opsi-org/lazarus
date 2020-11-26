@@ -510,7 +510,7 @@ begin
       end;
 
       try
-        //setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment','') );
+        setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment','') );
         LabelProduct.Left := skinIni.ReadInteger('LabelProduct', 'Left', 144);
         LabelProduct.Top := skinIni.ReadInteger('LabelProduct', 'Top', 207);
         LabelProduct.Width := skinIni.ReadInteger('LabelProduct', 'Width', 313);
