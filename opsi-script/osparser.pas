@@ -11460,38 +11460,50 @@ begin
 
     else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
     begin
+      s3 := 'default';
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
             if EvaluateString(r, r, s2, InfoSyntaxError) then
-             if Skip(')', r, r, InfoSyntaxError) then
             begin
-	      syntaxCheck := True;
-	      try
-		    s2 := ExpandFileName(s2);
-		    newInifile := TInifile.Create(s2);
-                    list.Clear;
-		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-		    LogDatei.log
-		    ('  Reading the value of section "' + s1 + '"  from inifile  "' +
-		      s2 + '"',
-		      LevelComplete);
-		    //s1enc := UTF8ToWinCP(s1);
-                    //newInifile.Encoding := TEncoding.ANSI;
-                    s1enc := s1;
-                    newInifile.ReadSectionRaw(s1enc,TStrings(list));
-		    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                    //for i := 1 to Strings.Count do
-                    //   list.add(WinCPToUTF8(AnsiString(Strings[i])));
-                    //list.AddStrings(Strings);
-                    FreeAndNil(newIniFile);
-	      except
-		    on e: Exception do
-		    begin
-		      LogDatei.log('Error in creating inifile "' +
-			    s2 + '", message: "' + e.Message + '"', LevelWarnings);
-		    end;
-	      end;
+              if Skip(',', r, r, InfoSyntaxError) then
+              begin
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug)
+                else
+                  LogDatei.log('Could not EvaluateString: ' + s3, LLDebug)
+              end;
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+	        syntaxCheck := True;
+	        try
+		  s2 := ExpandFileName(s2);
+                  if (s3 = 'utf8') or (s3 = 'utf-8') or (s3 = 'utf8') or (s3 = 'utf-8') or (s3 ='default') then
+                    newInifile := TInifile.Create(s2, TEncoding.UTF8);
+                  if (s3 = 'ansi') or (s3 = 'ANSI') then
+                    newInifile := TInifile.Create(s2, TEncoding.ANSI);
+                  LogDatei.log('Encoding of IniFile is supposed to be ' + newIniFile.Encoding.EncodingName, LLInfo);
+                  //newInifile.Encoding := TEncoding.SystemEncoding;
+                  list.Clear;
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+		  LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+		    s2 + '"', LevelComplete);
+		  //s1enc := UTF8ToAnsi(s1);
+                  s1enc := s1;
+                  newInifile.ReadSectionRaw(s1enc,TStrings(list));
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  //for i := 1 to Strings.Count do
+                  //   list.add(WinCPToUTF8(AnsiString(Strings[i])));
+                  //list.AddStrings(Strings);
+                  FreeAndNil(newIniFile);
+	        except
+		  on e: Exception do
+		  begin
+		    LogDatei.log('Error in creating inifile "' +
+			  s2 + '", message: "' + e.Message + '"', LevelWarnings);
+		  end;
+	        end;
+              end;
             end;
     end
 
@@ -21436,7 +21448,7 @@ begin
                                 if runProfileActions then
                                   flag_all_ntuser := True;
                                 ActionResult := doFileActions(localSection, tmpstr);
-                                logdatei.log('Finished of: ' +
+                                logdatei.log('Finished local section: ' +
                                   localSection.Name + ' ' + tmpstr, LLNotice);
                               end;
                             end;
@@ -22565,7 +22577,7 @@ begin
                 if runProfileActions then
                   flag_all_ntuser := True;
                 ActionResult := doFileActions(ArbeitsSektion, Remaining);
-                logdatei.log('Finished of: ' + ArbeitsSektion.Name +
+                logdatei.log('Finished section: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
               end;
 
