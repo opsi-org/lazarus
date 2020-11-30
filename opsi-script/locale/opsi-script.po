@@ -47,6 +47,10 @@ msgstr ""
 msgid "Ready to continue ?"
 msgstr ""
 
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
 #: tcentralform.beenden1.caption
 msgctxt "tcentralform.beenden1.caption"
 msgid "Exit"

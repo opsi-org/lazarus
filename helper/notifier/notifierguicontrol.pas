@@ -514,6 +514,18 @@ begin
       LogDatei.log('Error: Unknown Form position', LLError);
   end;
 
+  if mynotifierkind = 'popup' then
+  begin
+    nform.FormStyle := fsNormal;
+    nform.BorderStyle:= bsSizeable;
+    logdatei.log('FormStyle := fsNormal', LLDebug);
+    starty := starty + Random(starty div 2);
+    startx := startx + Random(startx div 2);
+    //nform.Position:= poDefaultPosOnly;
+    //nform.Repaint;
+    //DataModule1.ProcessMess;
+  end;
+
   // show with appearmode
 
   case appearmode of
@@ -868,6 +880,10 @@ begin
       nform.Left := mytmpint1;
       nform.Top := mytmpint2;
     end;
+    {$IFDEF DARWIN}
+    // at booom we have the dock
+    if nformpos = fpBottomRight then nformpos := fpTopRight;
+    {$ENDIF DARWIN}
     {$IFDEF LINUX}
     // scale new scrollbox:
     nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
@@ -1188,4 +1204,5 @@ begin
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
   designPPI:=96;
+  Randomize;
 end.

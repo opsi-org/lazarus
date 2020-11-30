@@ -5,6 +5,22 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.10) experimental; urgency=low
+
+ * macos: modify locale path for opsi-script-gui.app
+
+-- d.oertel <d.oertel@uib.de> Thu, 26 Nov 2020 15:00
+
+
+
+MISSING CHANGELOGS:
+
+opsi-winst/opsi-script (4.12.4.9)
+opsi-winst/opsi-script (4.12.4.8)
+opsi-winst/opsi-script (4.12.4.7)
+
+
+
 opsi-winst/opsi-script (4.12.4.6) experimental; urgency=low
 
  * import osprocesses

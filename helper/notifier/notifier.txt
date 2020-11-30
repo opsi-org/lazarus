@@ -2,6 +2,8 @@
 opsi-notifier  4.1.1.4
 
   * macos: no slidein
+  * macos: from bottom switch to from top
+  * ppopup: posdefault
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri, 13 Nov 2020:15:00:00 +0200
 
