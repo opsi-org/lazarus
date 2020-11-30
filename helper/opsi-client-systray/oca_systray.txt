@@ -5,6 +5,7 @@ opsi_client_systray  4.1.2.2
   * make it work at macos
   * new bw16.ico for mac
   * new co32.ico for other
+  * macos: use macosall: CFUserNotificationDisplayNotice for notify
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 24 Nov 2020:15:00:00 +0200
 
