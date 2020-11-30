@@ -11478,10 +11478,21 @@ begin
 	        syntaxCheck := True;
 	        try
 		  s2 := ExpandFileName(s2);
-                  if (s3 = 'utf8') or (s3 = 'utf-8') or (s3 = 'utf8') or (s3 = 'utf-8') or (s3 ='default') then
-                    newInifile := TInifile.Create(s2, TEncoding.UTF8);
+                  if (s3 = 'default') or (s3 = 'DEFAULT') then
+                    newInifile := TInifile.Create(s2, TEncoding.Default);
+                  if (s3 = 'ascii') or (s3 = 'ASCII') then
+                    newInifile := TInifile.Create(s2, TEncoding.ASCII);
                   if (s3 = 'ansi') or (s3 = 'ANSI') then
                     newInifile := TInifile.Create(s2, TEncoding.ANSI);
+                  //utf7 hidden functionality, not documentated and not tested in opsi-script-test
+                  if (s3 = 'utf7') or (s3 = 'utf-7') or (s3 = 'UTF7') or (s3 = 'UTF-7') then
+                    newInifile := TInifile.Create(s2, TEncoding.UTF7);
+                  if (s3 = 'utf8') or (s3 = 'utf-8') or (s3 = 'UTF8') or (s3 = 'UTF-8') then
+                    newInifile := TInifile.Create(s2, TEncoding.UTF8);
+                  if (s3 = 'utf16') or (s3 = 'utf-16') or (s3 = 'UTF16') or (s3 = 'UTF-16') then
+                    newInifile := TInifile.Create(s2, TEncoding.Unicode);
+                  if (s3 = 'utf16be') or (s3 = 'utf-16be') or (s3 = 'UTF16BE') or (s3 = 'UTF-16BE') then
+                    newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
                   LogDatei.log('Encoding of IniFile is supposed to be ' + newIniFile.Encoding.EncodingName, LLInfo);
                   //newInifile.Encoding := TEncoding.SystemEncoding;
                   list.Clear;
