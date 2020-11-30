@@ -19,7 +19,9 @@ uses
   StdCtrls,
   Buttons,
   Forms,
-  oslog;
+  oslog,
+  ATButtons,
+  ATFlatThemes;
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
@@ -28,8 +30,7 @@ type
   TNFormDisappear = (fdpNone, fdpStd, fdpFade, fdpFadeUp, fdpFadeDown,
     fdpUp, fdpDown, fdpUnknown);
   TLabels = array of TLabel;
-  //TButtons = array of TButton;
-  TButtons = array of TSpeedButton;
+  TButtons = array of TATButton;
 
   TTransparentMemo = class(TScrollBox)
   private
@@ -83,7 +84,8 @@ var
   MemoArray: Tmemos;
   labelcounter, buttoncounter, memocounter: integer;
 
-
+var
+  ButtonTheme: TATFlatTheme;
 
 // from
 // http://stackoverflow.com/questions/41068387/how-to-make-transparent-form-in-lazarus
@@ -998,12 +1000,26 @@ begin
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
   end
   else
-  if pos('Button', aktsection) > 0 then
+  if (pos('Button', aktsection) > 0) and (pos('Theme', aktsection) = 0) then
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
+    LogDatei.log('Reading Button Theme', LLDebug);
+
+    // load the ButtonTheme
+    // the ButtonTheme gets loaded from the global `ButtonTheme` section to guarantee the a consistent userinterface
+    ButtonTheme.ColorBgOver := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgPassive', '225,225,225')); // for some strange reason these values are swaped
+    ButtonTheme.ColorBgPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgOver', '251,241,229')); // for some strange reason these values are swaped
+    ButtonTheme.ColorBgChecked := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgChecked', '232,218,186'));
+    ButtonTheme.ColorBgDisabled := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgDisabled', '232,232,232'));
+    ButtonTheme.ColorBorderPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderPassive', '173,173,173'));
+    ButtonTheme.ColorBorderOver := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderOver', '96,218,232'));
+    ButtonTheme.ColorBorderFocused := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderFocused', '96,218,232'));
+    ButtonTheme.ColorFont := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorFont', '0,0,0'));
+
+    LogDatei.log('Continue reading: ' + aktsection, LLDebug);
     Inc(buttoncounter);
     SetLength(ButtonArray, buttoncounter + 1);
-    ButtonArray[buttoncounter] := Tspeedbutton.Create(nform);
+    ButtonArray[buttoncounter] := TATButton.Create(nform);
     ButtonArray[buttoncounter].Parent := nform;
     ButtonArray[buttoncounter].AutoSize := False;
     ButtonArray[buttoncounter].Name := aktsection;
@@ -1015,8 +1031,6 @@ begin
       myini.ReadString(aktsection, 'FontName', 'Arial');
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
-    //ButtonArray[buttoncounter].Font.Color :=
-    //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
     ButtonArray[buttoncounter].Font.Bold :=
       strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
     ButtonArray[buttoncounter].Font.Italic :=
@@ -1033,6 +1047,10 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+
+    // Add the newly set Button theme
+    ButtonArray[buttoncounter].Theme := @ButtonTheme;
+
     // scale new Button:
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       96, nform.PixelsPerInch, 0, 0);
@@ -1105,4 +1123,16 @@ begin
   buttonlist := TStringList.Create;
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
+
+  // initalize the Button Theme
+  // the actual values do not metter because they get overwritten by the .ini file
+  ButtonTheme:= ATFlatTheme;
+  ButtonTheme.ColorBgPassive := $c3c3c3; // these values are not RGB! (they are BGR)
+  ButtonTheme.ColorBgOver := $c6c6c6;
+  ButtonTheme.ColorBgChecked := $c6c6c6;
+  ButtonTheme.ColorBgDisabled := $c6c6c6;
+  ButtonTheme.ColorBorderPassive := $c6c6c6;
+  ButtonTheme.ColorBorderOver := $c6c6c6;
+  ButtonTheme.ColorBorderFocused := $c6c6c6;
+  ButtonTheme.ColorFont := $000000;
 end.
