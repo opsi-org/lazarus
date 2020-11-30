@@ -12,11 +12,23 @@ opsi-winst/opsi-script (4.12.4.10) experimental; urgency=low
 -- d.oertel <d.oertel@uib.de> Thu, 26 Nov 2020 15:00
 
 
+opsi-winst/opsi-script (4.12.4.9) experimental; urgency=low
+
+* GetSectionFromIniFile: remove encoding transformation (windows only)
+
+-- j.werner <j.werner@uib.de> Wed, 25 Nov 2020 17:39
+
+
+opsi-winst/opsi-script (4.12.4.8) experimental; urgency=low
+
+* isRegexMatch: checks if string is NOT empty before exec is executed
+		catchs exceptions
+
+-- j.werner <j.werner@uib.de> Tue, 24 Nov 2020 14:55
+
 
 MISSING CHANGELOGS:
 
-opsi-winst/opsi-script (4.12.4.9)
-opsi-winst/opsi-script (4.12.4.8)
 opsi-winst/opsi-script (4.12.4.7)
 
 
