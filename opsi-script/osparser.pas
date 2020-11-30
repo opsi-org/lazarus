@@ -17459,7 +17459,7 @@ begin
   end
 
   //New general function for File or Folder exists
-  else if (LowerCase(s) = LowerCase('FileOrFolderExists')) then
+  else if Skip('FileOrFolderExists', Input, r, sx) then
   begin
     s2 := '';
     tmpstr2 := '';
@@ -17477,6 +17477,7 @@ begin
               if Skip(')', tmpstr, r, InfoSyntaxError) then
               begin
                   syntaxCheck := True;
+                  BooleanResult := handleFileExistsSysNative(s2);
               end;
             end
             else
@@ -17505,8 +17506,7 @@ begin
                 end;
               end;
             end;
-  end;
-
+  end
 
   else if Skip('DirectoryExists', Input, r, sx) then
   begin
