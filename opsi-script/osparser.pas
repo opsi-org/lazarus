@@ -17088,6 +17088,7 @@ var
   funcname: string;
   funcindex: integer;
 
+  {$IFDEF WINDOWS}
   // function for FileExists32
   function handleFileExists32(s1: string): boolean;
   begin
@@ -17213,6 +17214,7 @@ var
       end;
     end;
   end;
+  {$ENDIF WINDOWS}
 
 begin
   syntaxCheck := False;
@@ -17459,6 +17461,7 @@ begin
   end
 
   //New general function for File or Folder exists
+  {$IFDEF WINDOWS}
   else if Skip('FileOrFolderExists', Input, r, sx) then
   begin
     s2 := '';
@@ -17507,6 +17510,7 @@ begin
               end;
             end;
   end
+  {$ENDIF WINDOWS}
 
   else if Skip('DirectoryExists', Input, r, sx) then
   begin
