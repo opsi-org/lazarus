@@ -1008,12 +1008,12 @@ begin
     // load the ButtonTheme
     // the ButtonTheme gets loaded from the global `ButtonTheme` section to guarantee the a consistent userinterface
     ButtonTheme.ColorBgOver := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgPassive', '225,225,225')); // for some strange reason these values are swaped
-    ButtonTheme.ColorBgPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgOver', '251,241,229')); // for some strange reason these values are swaped
-    ButtonTheme.ColorBgChecked := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgChecked', '232,218,186'));
+    ButtonTheme.ColorBgPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgOver', '229,241,241')); // for some strange reason these values are swaped
+    ButtonTheme.ColorBgChecked := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgChecked', '229,241,241'));
     ButtonTheme.ColorBgDisabled := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBgDisabled', '232,232,232'));
-    ButtonTheme.ColorBorderPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderPassive', '173,173,173'));
-    ButtonTheme.ColorBorderOver := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderOver', '96,218,232'));
-    ButtonTheme.ColorBorderFocused := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderFocused', '96,218,232'));
+    ButtonTheme.ColorBorderPassive := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderPassive', '196,197,197'));
+    ButtonTheme.ColorBorderOver := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderOver', '76,160,160'));
+    ButtonTheme.ColorBorderFocused := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorBorderFocused', '76,160,160'));
     ButtonTheme.ColorFont := myStringToTColor(myini.ReadString('ButtonTheme', 'ColorFont', '0,0,0'));
 
     LogDatei.log('Continue reading: ' + aktsection, LLDebug);
