@@ -17493,7 +17493,7 @@ begin
                   tmpbool := True;
                   if lowercase(s2) = '32bit' then
                   	BooleanResult := handleFileExists32(s1)
-                  else if lowercase(s2) = '64bit'
+                  else if lowercase(s2) = '64bit' then
                     BooleanResult := handleFileExists64(s1)
                   else if lowercase(s2) = 'sysnative' then
                   	BooleanResult := handleFileExistsSysNative(s1)
@@ -17501,8 +17501,8 @@ begin
                     begin
                       InfoSyntaxError :=
                           'Error: unknown parameter: ' + s2 +
-                          ' expected one of 32bit,64bit,sysnative - default set to sysnative';
-                      BooleanResult := handleFileExistsSysNative(s1);
+                          ' expected one of 32bit,64bit,sysnative';
+                      BooleanResult := False;
                     end;
                 except
                   Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
