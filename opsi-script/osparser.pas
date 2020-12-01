@@ -17466,12 +17466,8 @@ begin
   begin
     s2 := '';
     tmpstr2 := '';
-    tmpbool := True;
-    syntaxCheck := False;
-    LogDatei.log_prog('GetFile from: ' + r, LLdebug3);
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
-        // next after ',' or ')'
         if Skip(',', tmpstr, tmpstr1, tmpstr3) then
           if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
             if s2 = '' then
@@ -17480,7 +17476,11 @@ begin
               if Skip(')', tmpstr, r, InfoSyntaxError) then
               begin
                   syntaxCheck := True;
-                  BooleanResult := handleFileExistsSysNative(s2);
+                  try
+                  	BooleanResult := handleFileExistsSysNative(s1);
+                  except
+                  	BooleanResult := False;
+                  end;
               end;
             end
             else
@@ -17492,20 +17492,21 @@ begin
                 try
                   tmpbool := True;
                   if lowercase(s2) = '32bit' then
-                      BooleanResult := handleFileExists32(s2)
-                  else if lowercase(s2) = '64bit' then
-                      BooleanResult := handleFileExists64(s2)
+                  	BooleanResult := handleFileExists32(s1)
+                  else if lowercase(s2) = '64bit'
+                    BooleanResult := handleFileExists64(s1)
                   else if lowercase(s2) = 'sysnative' then
-                      BooleanResult := handleFileExistsSysNative(s2)
+                  	BooleanResult := handleFileExistsSysNative(s1)
                   else
-                  begin
+                    begin
                       InfoSyntaxError :=
                           'Error: unknown parameter: ' + s2 +
-                          ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-                      syntaxCheck := False;
-                  end;
+                          ' expected one of 32bit,64bit,sysnative - default set to sysnative';
+                      BooleanResult := handleFileExistsSysNative(s1);
+                    end;
                 except
                   Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
+                  BooleanResult := False;
                 end;
               end;
             end;
