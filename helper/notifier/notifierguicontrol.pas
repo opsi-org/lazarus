@@ -21,7 +21,8 @@ uses
   Forms,
   oslog,
   ATButtons,
-  ATFlatThemes;
+  ATFlatThemes,
+  math;
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
@@ -452,7 +453,7 @@ end;
 
 procedure showNForm;
 var
-  startx, starty, stopy, x, y, i: integer;
+  startx, starty, stopy, x, y, i: integer; alphaStepRatio: extended;
 begin
   // position
 
@@ -539,26 +540,17 @@ begin
       nform.Show;
       //for i := 1 to stopy do
       i := appearStepSize;
+      alphaStepRatio := 255 / stopy;
       while i <= stopy do
       begin
         Sleep(1);
-        nform.AlphaBlendValue := i;
+        nform.AlphaBlendValue := Floor(i * alphaStepRatio);
         y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
         //DataModule1.ProcessMess;
-        i := i + appearStepSize;
-      end;
-      //for i := stopy to 255 do
-      while i <= stopy do
-      begin
-        sleep(1);
-        nform.AlphaBlendValue := i;
-        nform.BringToFront;
-        nform.Repaint;
-        DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
     end;
@@ -575,21 +567,12 @@ begin
       nform.Show;
       //for i := 1 to stopy do
       i := appearStepSize;
+      alphaStepRatio := 255 / stopy;
       while i <= stopy do
       begin
         Sleep(1);
-        nform.AlphaBlendValue := i;
+        nform.AlphaBlendValue := Floor(i * alphaStepRatio);
         nform.Height := nform.Height + appearStepSize;
-        nform.BringToFront;
-        nform.Repaint;
-        DataModule1.ProcessMess;
-        i := i + appearStepSize;
-      end;
-      //for i := stopy to 255 do
-      while i <= 255 do
-      begin
-        sleep(1);
-        nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
