@@ -1950,6 +1950,36 @@ end;
 
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 begin
+  {Loading header image}
+  if FileExists(CustomSkinPath + 'header.png') then
+  begin
+    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'header.png') then
+    begin
+      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
+    end;
+  {Loading logo}
+  if FileExists(CustomSkinPath + 'logo.png') then
+  begin
+    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'logo.png') then
+    begin
+      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
+    end;
+  {Loading label text and font style}
+  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
+  begin
+    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
+    begin
+      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
+    end;
   if not StartupDone then
   begin
     //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
@@ -2261,36 +2291,6 @@ begin
     'ock_custom' + PathDelim + 'skin' + PathDelim;
   DefaultSkinPath := Application.Location +
     'default' + PathDelim + 'skin' + PathDelim;
-  {Loading header image}
-  if FileExists(CustomSkinPath + 'header.png') then
-  begin
-    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'header.png') then
-    begin
-      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
-    end;
-  {Loading logo}
-  if FileExists(CustomSkinPath + 'logo.png') then
-  begin
-    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'logo.png') then
-    begin
-      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
-    end;
-  {Loading label text and font style}
-  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
-  begin
-    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
-    begin
-      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
-    end;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
