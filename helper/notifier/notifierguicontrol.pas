@@ -249,7 +249,7 @@ var
   choice: integer;
 
 begin
-  choice := TSpeedButton(Sender).Tag;
+  choice := TATButton(Sender).Tag;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
