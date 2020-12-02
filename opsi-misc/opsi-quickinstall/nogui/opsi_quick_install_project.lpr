@@ -296,9 +296,13 @@ type
         url := MyRepo.GetDefaultURL(Opsi42, testing);
     end;
     //writeln(url);
-    // !following two lines need an existing LogDatei
-    MyRepo.Add(url);
+    // !following lines need an existing LogDatei
+    if distroName = 'openSUSE' then
+      MyRepo.Add(url, 'Opsi-Quick-Install-Repository')
+    else
+      MyRepo.Add(url);
     InstallOpsiCommand := TRunCommandElevated.Create('', False);
+
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
     Output := InstallOpsiCommand.Run(shellCommand + 'update');
@@ -1933,7 +1937,7 @@ begin
     // distribution info
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    writeln(QuickInstall.distroName,' ', QuickInstall.distroRelease);
+    writeln(QuickInstall.distroName, ' ', QuickInstall.distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later.

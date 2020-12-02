@@ -61,7 +61,7 @@ type
     FRunCommandElevated: TRunCommandElevated;
 
     procedure AddDebianUbuntu;
-    procedure AddOpenSuseSLES;
+    procedure AddOpenSuseSLES(RepoName: string);
     procedure AddCentOSRedHat;
   public
     constructor Create(Distribution: TDistribution; Password: string;
@@ -71,6 +71,7 @@ type
     function GetDefaultURL(OpsiVersion: TOpsiVersion; OpsiBranch: TOpsiBranch): string;
     { Constructs the repository URL based on distribution, opsi version and opsi branch and gives it back as result}
     procedure Add(URL: string);
+    procedure Add(URL: string; RepoName: string);
     { Add repository URL to the package system of the OS }
     property URL: string read FURL;
   end;
@@ -188,9 +189,9 @@ begin
 
 end;
 
-procedure TLinuxRepository.AddOpenSuseSLES;
+procedure TLinuxRepository.AddOpenSuseSLES(RepoName: string);
 begin
-  FRunCommandElevated.Run('zypper addrepo ' + FURL);
+  FRunCommandElevated.Run('zypper addrepo ' + FURL + RepoName);
   FRunCommandElevated.Run('zypper --non-interactive refresh');
 end;
 
@@ -217,12 +218,6 @@ begin
     begin
       AddDebianUbuntu;
     end;
-    {OpenSuse and SLES}
-    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_42_3,
-    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4:
-    begin
-      AddOpenSuseSLES;
-    end;
     {CentOS and RedHat}
     CentOS_7, CentOS_8, RHEL_7, RHEL_8:
     begin
@@ -231,6 +226,17 @@ begin
   end;
 end;
 
-//procedure AddCentOS
+procedure TLinuxRepository.Add(URL: string; RepoName: string);
+begin
+  FURL := URL;
+  case FDistribution of
+    {OpenSuse and SLES}
+    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_42_3,
+    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4:
+    begin
+      AddOpenSuseSLES(RepoName);
+    end;
+  end;
+end;
 
 end.
