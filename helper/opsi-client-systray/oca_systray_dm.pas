@@ -41,7 +41,6 @@ type
     MI_startevent: TMenuItem;
     MI_pull_for_action_request: TMenuItem;
     PopupMenu1: TPopupMenu;
-    PopupNotifier1: TPopupNotifier;
     //PopupNotifier1: TPopupNotifier;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
