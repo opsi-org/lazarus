@@ -968,10 +968,10 @@ begin
       strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
     LabelArray[labelcounter].Alignment :=
       StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'left'));
-    LabelArray[labelcounter].Transparent :=
-      strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Color :=
       myStringToTColor(myini.ReadString(aktsection, 'Color', '255,255,255'));
+    LabelArray[labelcounter].Transparent :=
+      strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
     // scale new Label:
