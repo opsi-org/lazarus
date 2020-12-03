@@ -6,6 +6,12 @@ program opsiscript;
 //{$apptype console}
 {$ENDIF GUI}
 
+{$IFDEF DARWIN}
+//{$linklib libcrypto.a}
+//{$linklib libssl.a}
+{$ENDIF DARWIN}
+
+
 // This code is part of the opsi.org project
 
 // Copyright (c) uib gmbh (www.uib.de)

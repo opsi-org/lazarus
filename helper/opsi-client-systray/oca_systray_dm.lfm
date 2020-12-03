@@ -163,15 +163,4 @@ object DataModule1: TDataModule1
     Left = 28
     Top = 68
   end
-  object PopupNotifier1: TPopupNotifier
-    Color = clInfoBk
-    Icon.Data = {
-      07544269746D617000000000
-    }
-    Text = 'Text'
-    Title = 'Caption'
-    Visible = False
-    Left = 299
-    Top = 86
-  end
 end
