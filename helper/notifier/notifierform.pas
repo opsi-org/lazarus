@@ -10,7 +10,7 @@ uses
   {$IFDEF WINDOWS}
   systemcriticalu,
   {$ENDIF WINDOWS}
-  oslog,
+  oslog, ATButtons,
   contnrs;
 
 type
