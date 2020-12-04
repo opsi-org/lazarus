@@ -627,10 +627,12 @@ begin
   FStandardPartLogFilename := 'opsiclientkiosk-part-';
   FStandardLogFilename := 'opsiclientkiosk';
   {$ENDIF OPSICLIENTKIOSK}
+  (*
   {$IFDEF OPSICLIENTD_SHUTDOWN_STARTER}
   FStandardPartLogFilename := 'opsiclientd_shutdown_starter-part-';
   FStandardLogFilename := 'opsiclientd_shutdown_starter';
   {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
+  *)
   FStandardLogPath := defaultStandardLogPath;
   FStandardMainLogPath := defaultStandardMainLogPath;
   FStandardPartLogPath := defaultStandardPartLogPath;
