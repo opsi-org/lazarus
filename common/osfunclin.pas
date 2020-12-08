@@ -604,10 +604,10 @@ function getMyHostEnt: netdb.THostEntry;
 begin
   try
     if not netdb.gethostbyname(synsock.GetHostName, Result) then
-      Logdatei.DependentAddError('gethostbyname error ' +
+      Logdatei.log('gethostbyname error ' +
         IntToStr(wsagetlasterror), LLError);
   except
-    Logdatei.DependentAddError('gethostname error ' +
+    Logdatei.log('gethostname error ' +
       IntToStr(wsagetlasterror), LLError);
   end;
 end;
