@@ -17419,7 +17419,7 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           s1 := ExpandFileName(s1);
-          LogDatei.log('Starting query if file exist ...', LLInfo);
+          LogDatei.log('Starting query if file exists ...', LLInfo);
           s2 := s1;
           if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
             s2 := copy(s1, 1, length(s1) - 1);
@@ -17461,7 +17461,6 @@ begin
   end
 
   //New general function for File or Folder exists
-  {$IFDEF WINDOWS}
   else if Skip('FileOrFolderExists', Input, r, sx) then
   begin
     s2 := '';
@@ -17470,6 +17469,7 @@ begin
       if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
         if Skip(',', tmpstr, tmpstr1, tmpstr3) then
           if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
+            {$IFDEF WINDOWS}
             if s2 = '' then
             begin
               // with 1 parameter
@@ -17510,8 +17510,23 @@ begin
                 end;
               end;
             end;
+            {$ELSE WINDOWS}
+            if s2 = '' then
+            begin
+              // with 1 parameter
+              if Skip(')', tmpstr, r, InfoSyntaxError) then
+              begin
+                  syntaxCheck := True;
+                  try
+                    BooleanResult := FileExists(s1) or DirectoryExists(s1);
+                  except
+                        Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
+                        BooleanResult := False;
+                  end;
+              end;
+            end;
+            {$ENDIF WINDOWS}
   end
-  {$ENDIF WINDOWS}
 
   else if Skip('DirectoryExists', Input, r, sx) then
   begin
