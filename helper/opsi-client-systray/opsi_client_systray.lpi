@@ -182,7 +182,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="opsi_client_systray.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -206,6 +206,10 @@
         <Filename Value="oca_systray.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="..\..\common\osfuncmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

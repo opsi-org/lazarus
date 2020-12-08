@@ -44,19 +44,20 @@ function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption
   : integer;
 function umount(mymountpoint: string): integer;
 function os_shutdown(): boolean;
+function getMacLang(var mylang : string; var report : string) : boolean;
 
 implementation
 
 uses
   {$IFDEF OPSISCRIPT}
   osparser,
-    {$ENDIF OPSISCRIPT}
-{$IFDEF GUI}
+  {$ENDIF OPSISCRIPT}
+  {$IFDEF GUI}
   Graphics,
-  osbatchgui,
-  osinteractivegui,
-  osshowsysinfo,
-{$ENDIF GUI}
+  //osbatchgui,
+  //osinteractivegui,
+  //osshowsysinfo,
+  {$ENDIF GUI}
   null;
 
 function which(target: string; var pathToTarget: string): boolean;
@@ -505,5 +506,28 @@ begin
   end;
 end;
 
+
+function getMacLang(var mylang : string; var report : string) : boolean;
+var
+    outlines : TStringlist;
+  exitcode : integer;
+begin
+  result := false;
+outlines := TStringlist.Create;
+ if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
+   true,outlines,report,0,exitcode) then
+ begin
+   if outlines.Count > 2 then
+   begin
+     mylang := trim(outlines.Strings[1]);
+     mylang := copy(mylang,2,2);
+     result := true;
+     report := 'Detected default primary lang on macos: ' + mylang;
+   end
+   else report := 'Unexpected Result at macos lang detection: '+outlines.Text;
+ end
+ else report := 'Failed macos lang detection: '+report;
+ FreeAndNil(outlines);
+end;
 
 end.
