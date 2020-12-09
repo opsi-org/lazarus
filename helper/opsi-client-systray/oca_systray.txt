@@ -6,6 +6,8 @@ opsi_client_systray  4.1.2.2
   * new bw16.ico for mac
   * new co32.ico for other
   * macos: use macosall: CFUserNotificationDisplayNotice for notify
+  * macos: osfuncmac: new function getMacLang
+  * macos: use getMacLang to detect desktop language
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 24 Nov 2020:15:00:00 +0200
 

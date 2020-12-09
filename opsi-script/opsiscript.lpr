@@ -123,7 +123,8 @@ type
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
     logdatei.CreateTheLogfile(logfilename, False);
-    logdatei.LogLevel := 7;
+    logdatei.LogLevel := 8;
+    //LogDatei.debug_prog:=true;
     logdatei.log('opsi-script version: ' + getversioninfo, LLessential);
     logdatei.log('Called as: ' + ExtractFileNameOnly(ParamStr(0)), LLessential);
     logdatei.log('Compiled with FPC: '+ {$i %FPCVERSION%} +

@@ -13,6 +13,7 @@ uses
   fileinfo,
   superobject,
   lcltranslator,
+  //osparserhelper,
   {$IFDEF WINDOWS}
   Windows,
   jwawinbase,
@@ -27,8 +28,10 @@ uses
   elfreader,
   OSProcessux,
   MacOSAll,
+  osfuncmac,
   {$ENDIF}
-  Graphics, PopupNotifier,
+  Graphics,
+  //PopupNotifier,
   osprocesses,
   uniqueinstanceraw;
 
@@ -312,6 +315,7 @@ var
   mylang: string;
   tmpimage: TPicture;
   icofilename: string;
+  report : string;
 begin
   if InstanceRunning then
     Application.Terminate;
@@ -390,9 +394,13 @@ begin
   if Mylang = '' then
     mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
   {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  getMacLang(mylang,report);
+  preloglist.Add(report);
+  {$ENDIF DARWIN}
   SetDefaultLang(mylang);
   preloglist.Add('Detected default lang: ' + mylang);
-  preloglist.Add('Detected default lang: ' + GetDefaultLang);
+  preloglist.Add('Detected default lang by laz: ' + GetDefaultLang);
 
   if Application.HasOption('lang') then
   begin

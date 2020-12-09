@@ -8,6 +8,8 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.4.10) experimental; urgency=low
 
  * macos: modify locale path for opsi-script-gui.app
+ * macos / linux: oscheck_gui_startable: kill opsi-laz-gui-test if not terminated
+ * osregex: filter empty input to avoid execeptions
 
 -- d.oertel <d.oertel@uib.de> Thu, 26 Nov 2020 15:00
 

@@ -7,39 +7,82 @@ interface
 uses
   Classes, SysUtils, RegExpr; //oslog;
 
-function isRegexMatch(inputtext,expr : string) : boolean; //Returns true if regex matches the inputtext.
-function getSubListByContainingRegex(expr : string; inputlist : TStringList) : TStringList; //Returns list of matching lines for a single regex.
-function getSubListByContainingRegex(exprlist : TStringList; inputlist : TStringList) : TStringList; //Returns list of matching lines for a list of regex.
-function getRegexMatchList(expr : string; inputlist : TStringList) : TStringList; //Returns list of exact matches for a single regex.
-function getRegexMatchList(exprlist : TStringList; inputlist : TStringList) : TStringList; //Returns list of exact matches for a list of regex.
-function removeFromListByContainingRegex(expr : string; inputlist : TStringList) : TStringList; //remove matching lines for a single regex.
-function removeFromListByContainingRegex(exprlist : TStringList; inputlist : TStringList) : TStringList; //remove matching lines for a list of regex.
-function stringReplaceRegex(inputtext, expr, replacetext : string) : string; //Replace matches in string with replacetext.
-function stringReplaceRegexInList(inputlist : TStringList; expr, replacetext : string) : TStringList; //Replace matches in the stringlist with replacetext.
+function isRegexMatch(inputtext, expr: string): boolean;
+//Returns true if regex matches the inputtext.
+function getSubListByContainingRegex(expr: string; inputlist: TStringList): TStringList;
+//Returns list of matching lines for a single regex.
+function getSubListByContainingRegex(exprlist: TStringList;
+  inputlist: TStringList): TStringList;
+//Returns list of matching lines for a list of regex.
+function getRegexMatchList(expr: string; inputlist: TStringList): TStringList;
+//Returns list of exact matches for a single regex.
+function getRegexMatchList(exprlist: TStringList; inputlist: TStringList): TStringList;
+//Returns list of exact matches for a list of regex.
+function removeFromListByContainingRegex(expr: string;
+  inputlist: TStringList): TStringList; //remove matching lines for a single regex.
+function removeFromListByContainingRegex(exprlist: TStringList;
+  inputlist: TStringList): TStringList; //remove matching lines for a list of regex.
+function stringReplaceRegex(inputtext, expr, replacetext: string): string;
+//Replace matches in string with replacetext.
+function stringReplaceRegexInList(inputlist: TStringList;
+  expr, replacetext: string): TStringList;
+//Replace matches in the stringlist with replacetext.
 
 
 implementation
 
-function isRegexMatch(inputtext,expr : string) : boolean;
-//Returns true if regex matches the inputtext.
+function isRegexMatch(inputtext, expr: string): boolean;
+  //Returns true if regex matches the inputtext.
 var
-  regexobj : TRegExpr;
+  regexobj: TRegExpr;
 begin
-  result := false;
+  Result := False;
   regexobj := TRegExpr.Create;
   try
+    if expr <> '' then
+      try
+        regexobj.Expression := expr;
+        if inputtext <> '' then
+        begin
+          if regexobj.Exec(inputtext) then //exception if string is empty
+            Result := True;
+        end;
+      except
+        on E: Exception do
+        begin
+          //Logdatei.log('Exception in isRegexMatch: ' + E.ClassName + ': ' + E.Message, LLError);
+          Result := False;
+        end;
+      end;
+  finally
+    regexobj.Free;
+  end;
+end;
+
+function getSubListByContainingRegex(expr: string; inputlist: TStringList): TStringList;
+  //Returns list of matching lines for a single regex.
+var
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
+begin
+  try
     try
-    regexobj.Expression := expr;
-    if inputtext <> '' then
-    begin
-      if regexobj.Exec(inputtext) then //exception if string is empty
-        result := true;
-    end;
+      regexobj := TRegExpr.Create;
+      regexobj.Expression := expr;
+
+      Result := TStringList.Create;
+      for linecounter := 0 to inputlist.Count - 1 do
+      begin
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if regexobj.Exec(currentline) then
+            Result.Add(currentline);
+      end;
     except
       on E: Exception do
       begin
-        //Logdatei.log('Exception in isRegexMatch: ' + E.ClassName + ': ' + E.Message, LLError);
-        result := false;
+        //Result := False;
       end;
     end;
   finally
@@ -47,77 +90,35 @@ begin
   end;
 end;
 
-function getSubListByContainingRegex(expr : string; inputlist : TStringList) : TStringList;
-//Returns list of matching lines for a single regex.
+function getSubListByContainingRegex(exprlist: TStringList;
+  inputlist: TStringList): TStringList;
+  // Returns list of matching lines for a list of regex.
 var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
 begin
   try
-    regexobj := TRegExpr.Create;
-    regexobj.Expression := expr;
+    try
+      Result := TStringList.Create;
+      regexobj := TRegExpr.Create;
 
-    result := TStringList.Create;
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if regexobj.Exec(currentline) then
-        result.Add(currentline);
-    end;
-  finally
-    regexobj.Free;
-  end;
-end;
+      exprlist.Delimiter := '|';
+      regexobj.Expression := exprlist.DelimitedText;
 
-function getSubListByContainingRegex(exprlist : TStringList; inputlist : TStringList) : TStringList;
-// Returns list of matching lines for a list of regex.
-var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
-begin
-  try
-    result := TStringList.Create;
-    regexobj := TRegExpr.Create;
-
-    exprlist. Delimiter:= '|';
-    regexobj.Expression := exprlist.DelimitedText;
-
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if regexobj.Exec(currentline) then
+      for linecounter := 0 to inputlist.Count - 1 do
       begin
-        result.Add(currentline);
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if regexobj.Exec(currentline) then
+          begin
+            Result.Add(currentline);
+          end;
       end;
-    end;
-  finally
-    regexobj.Free;
-  end;
-end;
-
-function getRegexMatchList(expr : string; inputlist : TStringList) : TStringList;
-//Returns list of exact matches for a single regex.
-var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
-begin
-  try
-    regexobj := TRegExpr.Create;
-    regexobj.Expression := expr;
-
-    result := TStringList.Create;
-
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if regexobj.Exec(currentline) then
+    except
+      on E: Exception do
       begin
-        result.Add(regexobj.Match[0]);
-        while regexobj.ExecNext do
-          result.Add(regexobj.Match[0]);
+        //Result := False;
       end;
     end;
   finally
@@ -125,54 +126,35 @@ begin
   end;
 end;
 
-function getRegexMatchList(exprlist : TStringList; inputlist : TStringList) : TStringList;
-//Returns list of exact matches for a list of regex.
+function getRegexMatchList(expr: string; inputlist: TStringList): TStringList;
+  //Returns list of exact matches for a single regex.
 var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
 begin
   try
-    result := TStringList.Create;
-    regexobj := TRegExpr.Create;
+    try
+      regexobj := TRegExpr.Create;
+      regexobj.Expression := expr;
 
-    exprlist. Delimiter:= '|';
-    regexobj.Expression := exprlist.DelimitedText;
+      Result := TStringList.Create;
 
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if regexobj.Exec(currentline) then
+      for linecounter := 0 to inputlist.Count - 1 do
       begin
-        result.Add(regexobj.Match[0]);
-        while regexobj.ExecNext do
-          result.Add(regexobj.Match[0]);
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if regexobj.Exec(currentline) then
+          begin
+            Result.Add(regexobj.Match[0]);
+            while regexobj.ExecNext do
+              Result.Add(regexobj.Match[0]);
+          end;
       end;
-    end;
-  finally
-    regexobj.Free;
-  end;
-end;
-
-function removeFromListByContainingRegex(expr : string; inputlist : TStringList) : TStringList;
-//remove matching lines for a single regex.
-var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
-begin
-  try
-    regexobj := TRegExpr.Create;
-    regexobj.Expression := expr;
-
-    result := TStringList.Create;
-
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if not regexobj.Exec(currentline) then
+    except
+      on E: Exception do
       begin
-        result.Add(currentline);
+        //Result := False;
       end;
     end;
   finally
@@ -180,54 +162,140 @@ begin
   end;
 end;
 
-function removeFromListByContainingRegex(exprlist : TStringList; inputlist : TStringList) : TStringList;
-//remove matching lines for a list of regex.
+function getRegexMatchList(exprlist: TStringList; inputlist: TStringList): TStringList;
+
+  //Returns list of exact matches for a list of regex.
 var
-  regexobj : TRegExpr;
-  linecounter : integer;
-  currentline : string;
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
 begin
   try
-    result := TStringList.Create;
-    regexobj := TRegExpr.Create;
+    try
+      Result := TStringList.Create;
+      regexobj := TRegExpr.Create;
 
-    exprlist. Delimiter:= '|';
-    regexobj.Expression := exprlist.DelimitedText;
+      exprlist.Delimiter := '|';
+      regexobj.Expression := exprlist.DelimitedText;
 
-    for linecounter:=0 to inputlist.Count-1  do
-    begin
-      currentline := trim(inputlist.Strings[linecounter]);
-      if not regexobj.Exec(currentline) then
-        result.Add(currentline);
+      for linecounter := 0 to inputlist.Count - 1 do
+      begin
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if regexobj.Exec(currentline) then
+          begin
+            Result.Add(regexobj.Match[0]);
+            while regexobj.ExecNext do
+              Result.Add(regexobj.Match[0]);
+          end;
+      end;
+    except
+      on E: Exception do
+      begin
+        //Result := False;
+      end;
     end;
   finally
     regexobj.Free;
   end;
 end;
 
-function stringReplaceRegex(inputtext, expr, replacetext : string) : string;
-//Replace matches in string with replacetext.
+function removeFromListByContainingRegex(expr: string;
+  inputlist: TStringList): TStringList;
+  //remove matching lines for a single regex.
+var
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
 begin
-  result:= '';
-  inputtext:= ReplaceRegExpr(expr, inputtext, replacetext, True);
-  result:= inputtext;
+  try
+    try
+      regexobj := TRegExpr.Create;
+      regexobj.Expression := expr;
+
+      Result := TStringList.Create;
+
+      for linecounter := 0 to inputlist.Count - 1 do
+      begin
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if not regexobj.Exec(currentline) then
+          begin
+            Result.Add(currentline);
+          end;
+      end;
+    except
+      on E: Exception do
+      begin
+        //Result := False;
+      end;
+    end;
+  finally
+    regexobj.Free;
+  end;
 end;
 
-function stringReplaceRegexInList(inputlist : TStringList; expr, replacetext : string) : TStringList;
-//Replace matches in the stringlist with replacetext.
+function removeFromListByContainingRegex(exprlist: TStringList;
+  inputlist: TStringList): TStringList;
+  //remove matching lines for a list of regex.
 var
-  linecounter : integer;
-  currentline : string;
+  regexobj: TRegExpr;
+  linecounter: integer;
+  currentline: string;
 begin
-  result:= TStringList.Create;
-  for linecounter:=0 to inputlist.Count-1  do
+  try
+    try
+      Result := TStringList.Create;
+      regexobj := TRegExpr.Create;
+
+      exprlist.Delimiter := '|';
+      regexobj.Expression := exprlist.DelimitedText;
+
+      for linecounter := 0 to inputlist.Count - 1 do
+      begin
+        currentline := trim(inputlist.Strings[linecounter]);
+        if currentline <> '' then
+          if not regexobj.Exec(currentline) then
+            Result.Add(currentline);
+      end;
+    except
+      on E: Exception do
+      begin
+        //Result := False;
+      end;
+    end;
+  finally
+    regexobj.Free;
+  end;
+end;
+
+function stringReplaceRegex(inputtext, expr, replacetext: string): string;
+  //Replace matches in string with replacetext.
+begin
+  Result := '';
+  if inputtext <> '' then
+    inputtext := ReplaceRegExpr(expr, inputtext, replacetext, True);
+  Result := inputtext;
+end;
+
+function stringReplaceRegexInList(inputlist: TStringList;
+  expr, replacetext: string): TStringList;
+  //Replace matches in the stringlist with replacetext.
+var
+  linecounter: integer;
+  currentline: string;
+begin
+  Result := TStringList.Create;
+  for linecounter := 0 to inputlist.Count - 1 do
   begin
     currentline := trim(inputlist.Strings[linecounter]);
-    currentline:= ReplaceRegExpr(expr, currentline, replacetext, True);
-    result.Add(currentline);
+    if currentline <> '' then
+      currentline := ReplaceRegExpr(expr, currentline, replacetext, True);
+
+
+
+    Result.Add(currentline);
   end;
 end;
 
 end.
-
-

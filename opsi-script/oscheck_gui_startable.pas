@@ -8,7 +8,9 @@ uses
   Classes,
   SysUtils,
   oslog,
+  osprocesses,
   osstartproc_cp,
+  osfunclin,
   ostxstringlist;
 
 function check_gui_startable(): boolean;
@@ -26,6 +28,8 @@ var
   ExitCode: longint;
   catchout: boolean;
   output: TXStringlist;
+  found : integer;
+  stopped : integer;
 begin
   checkerbinaryfile := 'opsi-laz-gui-test';
   checkerpath := ExtractFilePath(ParamStr(0));
@@ -63,6 +67,13 @@ begin
       Result := False;
     end;
   end;
+  if ProcessIsRunning(checkerbinaryfile) then
+  begin
+     stopped := KillProcessbyname(checkerbinaryfile, found);
+     logdatei.log(inttostr(found)+' instances of '+checkerbinaryfile
+           +' where running - stopped ' + inttostr(stopped), LLnotice);
+  end
+  else logdatei.log('No instances of '+checkerbinaryfile+' where running.', LLnotice);
 end;
 
 end.
