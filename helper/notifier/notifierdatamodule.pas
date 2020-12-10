@@ -15,6 +15,10 @@ uses
   winpeimagereader,
   Dialogs, ExtCtrls,
   notifier_base,
+  {$IFDEF WINDOWS}
+  jwawinuser,
+  jwawintype,
+  {$ENDIF WINDOWS}
   notifierform;
 
 type
@@ -44,8 +48,10 @@ var
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
-  showtest : boolean = false;
+  showtest: boolean = False;
 //stopped: boolean;
+
+function getMyWinDesktopName: string;
 
 implementation
 
@@ -107,7 +113,8 @@ var
   lfilename: string;
   logAndTerminate: boolean = False;
   mynotifierConfPath: string;
-  fullparam : string;
+  fullparam: string;
+  myDeskName : string = '';
 begin
   //writeln('start');
   preloglist := TStringList.Create;
@@ -124,8 +131,9 @@ begin
     FileVerInfo.Free;
   end;
   preloglist.Add('Application version: ' + myVersion);
-  for i := 0 to ParamCount do fullparam := fullparam + paramstr(i)+' ';
-  preloglist.Add('called: ' +fullparam);
+  for i := 0 to ParamCount do
+    fullparam := fullparam + ParamStr(i) + ' ';
+  preloglist.Add('called: ' + fullparam);
 
   myexepath := ExtractFilePath(Application.ExeName);
   {$IFDEF WINDOWS}
@@ -215,8 +223,13 @@ begin
   if Application.HasOption('t', 'test') then
   begin
     preloglist.Add('Found Parameter test');
-    showtest := true;
+    showtest := True;
   end;
+
+  {$IFDEF WINDOWS}
+  myDeskName := getMyWinDesktopName;
+  preloglist.Add('Found Windows Desktop: ' + myDeskName);
+  {$ENDIF WINDOWS}
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
@@ -230,6 +243,10 @@ begin
   if mynotifierkind <> '' then
     lfilename := lfilename + '_' + mynotifierkind;
 
+  if myDeskName <> '' then
+    lfilename := lfilename + '_' + myDeskName;
+
+
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
@@ -239,7 +256,7 @@ begin
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   {$IFDEF UNIX}
-  WriteLn('Will using log: '+LogDatei.StandardLogPath+LogDatei.StandardLogFilename);
+  WriteLn('Will using log: ' + LogDatei.StandardLogPath + LogDatei.StandardLogFilename);
   {$ENDIF UNIX}
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
 
@@ -268,7 +285,8 @@ end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
-  if Assigned(mythread) then mythread.Terminate;
+  if Assigned(mythread) then
+    mythread.Terminate;
   //if not inHideNForm then hideNForm
   //else sleep(5000);
   // stop program loop
@@ -287,5 +305,32 @@ begin
   //Application.Terminate;
 end;
 *)
+
+{$IFDEF WINDOWS}
+function getMyWinDesktopName: string;
+var
+  mydesk: HDESK;
+  szb: array [0..80] of char;
+  needed: DWord;
+begin
+  Result := '';
+  mydesk := GetThreadDesktop(GetCurrentThreadId);
+  if mydesk = 0 then
+  begin
+    Result := '';
+  end
+  else
+  begin
+    if GetUserObjectInformation(mydesk, UOI_NAME, @szb, SizeOf(szb), needed) then
+    begin
+      Result := string(szb);
+    end
+    else
+    begin
+      Result := '';
+    end;
+  end;
+end;
+{$ENDIF WINDOWS}
 
 end.
