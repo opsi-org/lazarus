@@ -51,7 +51,10 @@ var
   showtest: boolean = False;
 //stopped: boolean;
 
+
+{$IFDEF WINDOWS}
 function getMyWinDesktopName: string;
+{$ENDIF WINDOWS}
 
 implementation
 
