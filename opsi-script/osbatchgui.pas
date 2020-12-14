@@ -885,7 +885,7 @@ procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if YesNo then
   begin
-    //setWindowState (bwmMaximized);
+    setWindowState (bwmMaximized);
     FormStyle := fsSystemStayOnTop;
     BringToFront;
     Application.ProcessMessages;
@@ -908,10 +908,16 @@ begin
   {$IFNDEF DARWIN}
   case BatchWindowMode of
     bwmNotActivated: WindowState := wsnormal;
+    (*
     bwmIcon: if WindowState <> wsMinimized then WindowState := wsminimized;
     bwmNormalWindow: if WindowState <> wsnormal then WindowState := wsnormal;
     bwmMaximized: if WindowState <> wsMaximized then WindowState := wsMaximized;
+    *)
+    bwmIcon: WindowState := wsminimized;
+    bwmNormalWindow: WindowState := wsnormal;
+    bwmMaximized: WindowState := wsMaximized;
   end;
+  Application.ProcessMessages;
   if Assigned(LogDatei) then
      LogDatei.log_prog('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
   {$ENDIF}
