@@ -90,7 +90,7 @@ begin
   try
     // a flag if we found a matching labe in this message
     labelMatch := False;
-    logdatei.log('Got Message ' + message, LLDebug2);
+    logdatei.log('Got Message ' + message, LLDebug);
 
     // should be a json object
     if not jsonIsObject(message) then

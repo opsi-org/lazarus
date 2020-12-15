@@ -261,10 +261,12 @@ begin
   choice := TSpeedButton(Sender).Tag;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
   buttonPushedToService(choice);
+  (*
   if mynotifierkind = 'popup' then
   begin
    DataModule1.TimerClose.Enabled:=true;
   end;
+  *)
 end;
 
 

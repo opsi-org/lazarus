@@ -122,13 +122,15 @@ begin
           //DataModule1.ProcessMess;
           logdatei.log('After Received: ' + mymessage, LLDebug2);
           myMessage := '';
-        end;
+        end
+        else logdatei.log('Nothing Received.', LLDebug2);
         Synchronize(@messageFromMainThread);
         if myMessage <> '' then
         begin
           myTCPClient.SendString(myMessage);
           logdatei.log('Sended: ' + mymessage, LLDebug2);
-        end;
+        end
+        else logdatei.log('Nothing to send.', LLDebug2);
         logdatei.log('tcploop :' + TimeToStr(now), LLDebug2);
         //sleep(1000);
       end;
