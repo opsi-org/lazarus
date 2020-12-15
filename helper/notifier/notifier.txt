@@ -1,4 +1,21 @@
 [changelog]
+opsi-notifier  4.1.1.6
+
+  * remove special variants for popup
+  * notifier_json: newMessageFromService: modified: freeAndNil(messagelist) (avoid exception)
+  * now also check Frame,Resizable,Closeable,Minimizable from skin config
+  * new popup.ini and popup.bmb
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Dec 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.5
+
+  * windows: add desktopname to log file name (to avoid log conflicts)
+  * additional try - excepts
+  * notifier_json: modified message inspection at endconnection
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 11 Dec 2020:15:00:00 +0200
+
 opsi-notifier  4.1.1.4
 
   * macos: no slidein

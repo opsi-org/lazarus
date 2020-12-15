@@ -193,7 +193,11 @@ begin
     preloglist.Add('Found Parameter skinconfigfile');
     myconfigpath := Application.GetOptionValue('s', 'skinconfigfile');
     preloglist.Add('Found Parameter skinconfigfile: ' + myconfigpath);
-    myconfigfile := mynotifierConfPath + myconfigpath;
+    preloglist.Add('Test: skinconfig file: ' + myconfigpath);
+    if FileExists(myexepath+myconfigpath) then // for debug
+      myconfigfile := myexepath + myconfigpath
+    else
+      myconfigfile := mynotifierConfPath + myconfigpath;
     if not FileExists(myconfigfile) then
     begin
       preloglist.Add('Error: Given skinconfig file not found: ' + myconfigfile);
@@ -201,7 +205,8 @@ begin
       //logdatei.Close;
       //Application.Terminate;
       //Exit;
-    end;
+    end
+    else preloglist.Add('Will use skinconfigfile: ' + myconfigfile);
   end
   else
   begin

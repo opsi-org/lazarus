@@ -264,7 +264,7 @@ begin
       //DataModule1.DataModuleDestroy(nil);
     end;
     if Assigned(messagelist) then
-      messagelist.Free;
+      FreeAndNil(messagelist);
   except
     on E: Exception do
       logdatei.log('exception in newMessageFromService :' + E.Message, LLError);
