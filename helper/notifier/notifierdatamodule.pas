@@ -15,6 +15,7 @@ uses
   winpeimagereader,
   Dialogs, ExtCtrls,
   notifier_base,
+  notifierguicontrol,
   {$IFDEF WINDOWS}
   jwawinuser,
   jwawintype,
@@ -26,8 +27,10 @@ type
   { TDataModule1 }
 
   TDataModule1 = class(TDataModule)
+    TimerClose: TTimer;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure TimerCloseTimer(Sender: TObject);
     //procedure Timer1Timer(Sender: TObject);
   private
     { private declarations }
@@ -304,10 +307,20 @@ begin
   Application.Terminate;
 end;
 
+procedure TDataModule1.TimerCloseTimer(Sender: TObject);
+begin
+     mythread.Terminate;
+    logdatei.log('We are in popup, button close clicked and not terminated after '
+      + intToStr(TimerClose.Interval div 1000) + ' seconds: terminate', LLInfo);
+    notifierguicontrol.hideNForm;
+    DataModule1.DataModuleDestroy(nil);
+    Halt;
+end;
+
 (*
 procedure TDataModule1.Timer1Timer(Sender: TObject);
 begin
-  Timer1.Enabled := False;
+  TimerClose.Enabled := False;
   //hideNForm;
   self.Destroy;
   //Application.Terminate;

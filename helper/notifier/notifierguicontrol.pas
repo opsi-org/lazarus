@@ -263,10 +263,7 @@ begin
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
   begin
-    mythread.Terminate;
-    logdatei.log('We are in popup, button close clicked: terminate', LLInfo);
-    hideNForm;
-    DataModule1.DataModuleDestroy(nil);
+   DataModule1.TimerClose.Enabled:=true;
   end;
 end;
 
