@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, FileUtil,
   Forms,
   LazFileUtils,
+  lazutils,
   oslog,
   //IdTCPClient,
   Variants,
@@ -17,8 +18,11 @@ uses
   notifier_base,
   notifierguicontrol,
   {$IFDEF WINDOWS}
+  jwawinbase,
   jwawinuser,
   jwawintype,
+  jwawtsapi32,
+  Windows,
   {$ENDIF WINDOWS}
   notifierform;
 
@@ -57,6 +61,7 @@ var
 
 {$IFDEF WINDOWS}
 function getMyWinDesktopName: string;
+function getMyWinSessionName: string;
 {$ENDIF WINDOWS}
 
 implementation
@@ -99,8 +104,11 @@ begin
     LineEnding;
   msg := msg + ' -s <path> -> relative path to config file; required' + LineEnding;
   msg := msg + ' --idevent=<event> -> running event; required' + LineEnding;
-  msg := msg + ' -i <event> -> id of the event; required';
-  msg := msg + ' --test or -t (use with -s ; shows notifier for some seconds';
+  msg := msg + ' -i <event> -> id of the event; required' + LineEnding;
+  msg := msg + ' --test or -t (use with -s ; shows notifier for some seconds' +
+    LineEnding;
+  msg := msg + ' --loglevel=<loglevel> -> loglevel (1 - 9, default=6)' + LineEnding;
+  msg := msg + ' -l <loglevel> -> loglevel (1 - 9, default=6)';
   ShowMessage(msg);
 end;
 
@@ -120,7 +128,10 @@ var
   logAndTerminate: boolean = False;
   mynotifierConfPath: string;
   fullparam: string;
-  myDeskName : string = '';
+  myDeskName: string = '';
+  myloglevel: integer;
+  mySession: string = '';
+  tmpstr : string;
 begin
   //writeln('start');
   preloglist := TStringList.Create;
@@ -153,6 +164,7 @@ begin
   {$ENDIF DARWIN}
   //myport := 44003;
   myport := 0;
+  myloglevel := 6;
   //stopped := False;
 
 
@@ -163,7 +175,8 @@ begin
   optionlist.Add('skinconfigfile:');
   optionlist.Add('idevent:');
   optionlist.Add('test');
-  ErrorMsg := Application.CheckOptions('thp:s:i:', optionlist);
+  optionlist.Add('loglevel:');
+  ErrorMsg := Application.CheckOptions('thp:s:i:l:', optionlist);
   if ErrorMsg <> '' then
   begin
     preloglist.Add(ErrorMsg);
@@ -187,8 +200,14 @@ begin
   if Application.HasOption('p', 'port') then
   begin
     preloglist.Add('Found Parameter port');
-    myport := StrToInt(Application.GetOptionValue('p', 'port'));
-    preloglist.Add('Found Parameter port: ' + IntToStr(myport));
+    tmpstr := Application.GetOptionValue('p', 'port');
+    if TryStrToInt(tmpstr,myport) then
+      preloglist.Add('Found Parameter port: ' + IntToStr(myport))
+    else
+    begin
+      preloglist.Add('Error: Given port is not an integer: ' + tmpstr);
+      logAndTerminate := True;
+    end;
   end;
 
   if Application.HasOption('s', 'skinconfigfile') then
@@ -197,7 +216,7 @@ begin
     myconfigpath := Application.GetOptionValue('s', 'skinconfigfile');
     preloglist.Add('Found Parameter skinconfigfile: ' + myconfigpath);
     preloglist.Add('Test: skinconfig file: ' + myconfigpath);
-    if FileExists(myexepath+myconfigpath) then // for debug
+    if FileExists(myexepath + myconfigpath) then // for debug
       myconfigfile := myexepath + myconfigpath
     else
       myconfigfile := mynotifierConfPath + myconfigpath;
@@ -209,7 +228,8 @@ begin
       //Application.Terminate;
       //Exit;
     end
-    else preloglist.Add('Will use skinconfigfile: ' + myconfigfile);
+    else
+      preloglist.Add('Will use skinconfigfile: ' + myconfigfile);
   end
   else
   begin
@@ -231,6 +251,19 @@ begin
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
+  if Application.HasOption('l', 'loglevel') then
+  begin
+    preloglist.Add('Found Parameter loglevel');
+    tmpstr := Application.GetOptionValue('l', 'loglevel');
+    if TryStrToInt(tmpstr,myloglevel) then
+      preloglist.Add('Found Parameter loglevel: ' + IntToStr(myloglevel))
+    else
+    begin
+      preloglist.Add('Error: Given loglevel is not an integer: ' + tmpstr);
+      logAndTerminate := True;
+    end;
+  end;
+
   if Application.HasOption('t', 'test') then
   begin
     preloglist.Add('Found Parameter test');
@@ -240,6 +273,8 @@ begin
   {$IFDEF WINDOWS}
   myDeskName := getMyWinDesktopName;
   preloglist.Add('Found Windows Desktop: ' + myDeskName);
+  mySession := getMyWinSessionName;
+  preloglist.Add('Found Windows Session: ' + mySession);
   {$ENDIF WINDOWS}
 
   // Initialize logging
@@ -257,6 +292,9 @@ begin
   if myDeskName <> '' then
     lfilename := lfilename + '_' + myDeskName;
 
+  if mySession <> '' then
+    lfilename := lfilename + '_S' + mySession;
+
 
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
@@ -264,6 +302,7 @@ begin
   LogDatei.WritePartLog := False;
   LogDatei.WriteErrFile := False;
   LogDatei.WriteHistFile := False;
+  LogDatei.LogLevel := myloglevel;
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   {$IFDEF UNIX}
@@ -285,7 +324,6 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLinfo);
 
-  LogDatei.LogLevel := 8;
 
   //Application.OnQueryEndSession := @queryend;
 
@@ -301,20 +339,20 @@ begin
   //if not inHideNForm then hideNForm
   //else sleep(5000);
   // stop program loop
-  logdatei.log('Program regulary finished (killed)', LLInfo);
+  logdatei.log('Program regulary finished (killed)', LLnotice);
   logdatei.Close;
-
   Application.Terminate;
+  halt;
 end;
 
 procedure TDataModule1.TimerCloseTimer(Sender: TObject);
 begin
-     mythread.Terminate;
-    logdatei.log('We are in popup, button close clicked and not terminated after '
-      + intToStr(TimerClose.Interval div 1000) + ' seconds: terminate', LLInfo);
-    notifierguicontrol.hideNForm;
-    DataModule1.DataModuleDestroy(nil);
-    Halt;
+  mythread.Terminate;
+  logdatei.log('We are in popup, button close clicked and not terminated after ' +
+    IntToStr(TimerClose.Interval div 1000) + ' seconds: terminate', LLInfo);
+  notifierguicontrol.hideNForm;
+  DataModule1.DataModuleDestroy(nil);
+  Halt;
 end;
 
 (*
@@ -352,6 +390,43 @@ begin
     end;
   end;
 end;
+
+// https://www.delphipraxis.net/201869-terminalserver-session-id.html
+function getMyWinSessionName: string;
+var
+  pid: dword;
+  sessionid: dword;
+  nByteCount: DWORD;
+  acNameBuff: Pointer;
+  tmpName: string;
+  sessionnumber: ULong;
+  psessionnumber: ^ULong;
+
+begin
+  Result := '';
+  ;
+  pid := GetCurrentProcessId;
+  if ProcessIdToSessionId(pid, sessionid) then
+  begin
+    if sessionid > 0 then
+    begin
+      if WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionid,
+        WTSSessionId, psessionnumber, nByteCount) then
+      begin
+        sessionnumber := psessionnumber^;
+        Result := IntToStr(sessionnumber);
+        (*
+        tmpName := StrPas(PChar(acNameBuff));
+        // Da bei Vista kein Name vorhanden ist, auf Leerstring prüfen!
+        if tmpName <> '' then
+          result := tmpName;
+        *)
+        WTSFreeMemory(psessionnumber);
+      end;
+    end;
+  end;
+end;
+
 {$ENDIF WINDOWS}
 
 end.

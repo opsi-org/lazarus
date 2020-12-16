@@ -5,7 +5,10 @@ opsi-notifier  4.1.1.6
   * notifier_json: newMessageFromService: modified: freeAndNil(messagelist) (avoid exception)
   * now also check Frame,Resizable,Closeable,Minimizable from skin config
   * new popup.ini and popup.bmb
-  * popup: close button: wait two seconds on thread then close
+  * popup: close button: wait ten seconds on thread then close (as timeout)
+  * new cli options -l --loglevel
+  * loglevel default is now 5
+  * windows: try to get sessionid and add it to the logfile name
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Dec 2020:15:00:00 +0200
 

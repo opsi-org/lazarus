@@ -90,7 +90,7 @@ begin
   try
     // a flag if we found a matching labe in this message
     labelMatch := False;
-    logdatei.log('Got Message ' + message, LLDebug);
+    logdatei.log('Got Message ' + message, LLInfo);
 
     // should be a json object
     if not jsonIsObject(message) then
@@ -176,7 +176,7 @@ begin
       begin
         // method  endConnection
         // hideNForm
-        logdatei.log('Got method endConnection for: ' + messagelist.Text, LLDebug);
+        logdatei.log('Got method endConnection for: ' + messagelist.Text, LLInfo);
         if (messagelist.IndexOf(mynotifierkind) > -1) or  // found
           (messagelist.Count = 0) then                    // empty
       (*  if (lowerCase(nkind) = lowerCase(mynotifierkind)) or
