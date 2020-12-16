@@ -475,7 +475,7 @@ begin
       try
         panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
         panelHeight := skinIni.ReadInteger('Panel', 'Height', 430);
-        SetBounds(0, 0, panelWidth, panelHeight);
+        //SetBounds(0, 0, panelWidth, panelHeight);
       except
       end;
 
@@ -662,6 +662,7 @@ begin
       *)
 
       try
+        (* temporary disabled do 16.12.20
         ImageBackground.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
         Panel.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
         ImageBackground.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
@@ -670,12 +671,13 @@ begin
         Panel.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
         ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
         Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
-
+         *)
         filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
         if FileExists(filename) and not IsDirectory(filename) then
           ImageBackground.picture.loadFromFile(filename);
       except
       end;
+
 
       try
         ImageProduct.Left := skinIni.ReadInteger('ImageProduct', 'Left', 224);
