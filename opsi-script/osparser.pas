@@ -1582,9 +1582,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10226,7 +10225,8 @@ begin
     use_sp := True; // use startprocess by default
     {$IFDEF WINDOWS}
     // do not use startprocess on win7 by default
-    if GetNTVersionMajor < 10 then use_sp := false;
+    if GetNTVersionMajor < 10 then
+      use_sp := False;
     {$ENDIF WINDOWS}
 
     if Sektion.Count = 0 then
@@ -10269,8 +10269,8 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter,
+          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
@@ -10390,6 +10390,8 @@ begin
         ApplyTextVariablesToString(BatchParameter, False);
       end;
 
+      Parameters := '';
+
       if GetUibOsType(errorinfo) = tovLinux then
       begin
        {$IFDEF GUI}
@@ -10420,9 +10422,13 @@ begin
         end
         else
         begin
+          FileName := '/bin/bash';
+          Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
+          (* Calling terminal does not work correctly (do 8.12.2020)
           FileName := '/usr/bin/open';
           Parameters := Parameters + ' -a Terminal.app  ' +
             tempfilename + ' ' + BatchParameter + '"';
+          *)
         end;
        {$ELSE GUI}
         FileName := '/bin/bash';
@@ -11503,63 +11509,68 @@ begin
       s2 := '';
       s3 := '';
       if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-         if EvaluateString(r, r, s2, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
               begin
                 if EvaluateString(r, r, s3, InfoSyntaxError) then
                   LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug)
                 else
                   LogDatei.log('Could not EvaluateString: ' + s3, LLDebug);
               end;
-          if Skip(')', r, r, InfoSyntaxError) then
-              begin
-                try
-                  syntaxCheck := True;
-                  s2 := ExpandFileName(s2);
-                  if s3 = '' then
-                     // with only 2 parameters
-                      newInifile := TInifile.Create(s2, TEncoding.Default)
-                  else
-                  // with 3 parameters
-                  begin
-                      LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug);
-                      if (LowerCase(s3) = LowerCase('default')) then
-                        newInifile := TInifile.Create(s2, TEncoding.Default);
-                      if (LowerCase(s3) = LowerCase('ascii')) then
-                        newInifile := TInifile.Create(s2, TEncoding.ASCII);
-                      if (LowerCase(s3) = LowerCase('ansi')) then
-                        newInifile := TInifile.Create(s2, TEncoding.ANSI);
-                      //utf7 hidden functionality, not documentated and not tested in opsi-script-test
-                      if (LowerCase(s3) = LowerCase('utf7')) or (LowerCase(s3) = LowerCase('utf-7')) then
-                        newInifile := TInifile.Create(s2, TEncoding.UTF7);
-                      if (LowerCase(s3) = LowerCase('utf8')) or (LowerCase(s3) = LowerCase('utf-8')) then
-                        newInifile := TInifile.Create(s2, TEncoding.UTF8);
-                      if (LowerCase(s3) = LowerCase('utf16')) or (LowerCase(s3) = LowerCase('utf-16')) then
-                        newInifile := TInifile.Create(s2, TEncoding.Unicode);
-                      if (LowerCase(s3) = LowerCase('utf16be')) or (LowerCase(s3) = LowerCase('utf-16be')) then
-                        newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
-                  end;
-                  LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
-                  //newInifile.Encoding := TEncoding.SystemEncoding;
-                  list.Clear;
-		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-		  LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
-		    s2 + '"', LevelComplete);
-		  //s1enc := UTF8ToAnsi(s1);
-                  s1enc := s1;
-                  newInifile.ReadSectionRaw(s1enc,TStrings(list));
-		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                  FreeAndNil(newIniFile);
-                except
-		  on e: Exception do
-		  begin
-		    LogDatei.log('Error in creating inifile "' +
-			  s2 + '", message: "' + e.Message + '"', LevelWarnings);
-		  end;
-	        end;
-              end;
+      if Skip(')', r, r, InfoSyntaxError) then
+      begin
+        try
+          syntaxCheck := True;
+          s2 := ExpandFileName(s2);
+          if s3 = '' then
+            // with only 2 parameters
+            newInifile := TInifile.Create(s2, TEncoding.Default)
+          else
+            // with 3 parameters
+          begin
+            LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug);
+            if (LowerCase(s3) = LowerCase('default')) then
+              newInifile := TInifile.Create(s2, TEncoding.Default);
+            if (LowerCase(s3) = LowerCase('ascii')) then
+              newInifile := TInifile.Create(s2, TEncoding.ASCII);
+            if (LowerCase(s3) = LowerCase('ansi')) then
+              newInifile := TInifile.Create(s2, TEncoding.ANSI);
+            //utf7 hidden functionality, not documentated and not tested in opsi-script-test
+            if (LowerCase(s3) = LowerCase('utf7')) or
+              (LowerCase(s3) = LowerCase('utf-7')) then
+              newInifile := TInifile.Create(s2, TEncoding.UTF7);
+            if (LowerCase(s3) = LowerCase('utf8')) or
+              (LowerCase(s3) = LowerCase('utf-8')) then
+              newInifile := TInifile.Create(s2, TEncoding.UTF8);
+            if (LowerCase(s3) = LowerCase('utf16')) or
+              (LowerCase(s3) = LowerCase('utf-16')) then
+              newInifile := TInifile.Create(s2, TEncoding.Unicode);
+            if (LowerCase(s3) = LowerCase('utf16be')) or
+              (LowerCase(s3) = LowerCase('utf-16be')) then
+              newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
+          end;
+          LogDatei.log('Encoding of IniFile is supposed to be: ' +
+            newIniFile.Encoding.EncodingName, LLInfo);
+          //newInifile.Encoding := TEncoding.SystemEncoding;
+          list.Clear;
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+          LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+            s2 + '"', LevelComplete);
+          //s1enc := UTF8ToAnsi(s1);
+          s1enc := s1;
+          newInifile.ReadSectionRaw(s1enc, TStrings(list));
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          FreeAndNil(newIniFile);
+        except
+          on e: Exception do
+          begin
+            LogDatei.log('Error in creating inifile "' + s2 + '", message: "' +
+              e.Message + '"', LevelWarnings);
+          end;
+        end;
+      end;
     end
 
     else if LowerCase(s) = LowerCase('retrieveSection') then
@@ -11593,10 +11604,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14434,32 +14445,36 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
-          if GetIPFromHost(s1, s2, s3) then
-            StringResult := s2
-          else
+          StringResult := GetHostByName(s1);
+          if (stringresult = '') or (not isValidIP4(stringresult)) then
           begin
-       {$IFDEF LINUX}
-            //StringResult :=  getCommandResult('resolveip -s '+s1);
-            StringResult := getCommandResult('getent hosts ' + s1);
-            stringsplitByWhiteSpace(StringResult, slist);
-            if slist.Count > 0 then
-              StringResult := slist.Strings[0]
+            if GetIPFromHost(s1, s2, s3) then
+              StringResult := s2
             else
-              StringResult := '';
-            if not IsIP(StringResult) then
             begin
-              LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
-              StringResult := '';
-            end;
+       {$IFDEF LINUX}
+              //StringResult :=  getCommandResult('resolveip -s '+s1);
+              StringResult := getCommandResult('getent hosts ' + s1);
+              stringsplitByWhiteSpace(StringResult, slist);
+              if slist.Count > 0 then
+                StringResult := slist.Strings[0]
+              else
+                StringResult := '';
+              if not IsIP(StringResult) then
+              begin
+                LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
+                StringResult := '';
+              end;
 
        {$ENDIF LINUX}
        {$IFDEF DARWIN}
-            StringResult := getCommandResult('dig +short -x  ' + s1);
+              StringResult := getCommandResult('dig +short -x  ' + s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
-            StringResult := '';
-            Logdatei.log('Error: ' + s3, LLerror);
+              StringResult := '';
+              Logdatei.log('Error: ' + s3, LLerror);
        {$ENDIF WINDOWS}
+            end;
           end;
         end;
   end

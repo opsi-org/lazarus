@@ -12,7 +12,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   SysUtils,
   fileinfo, {$IFDEF LINUX}
   elfreader, {$ENDIF LINUX} {$IFDEF Darwin}
-  elfreader, {$ENDIF}
+  machoreader, {$ENDIF}
   CustApp { you can add units after this };
 
 type
@@ -91,8 +91,12 @@ var
             fileVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
             writeln('fileversion=' + fileVersion);
           except
-            writeln('Exception while reading version from file: ' + filename);
-            system.ExitCode := 22;
+            on e: Exception do
+            begin
+              writeln('Exception while reading version from file: ' + filename);
+              writeln('Error: ' + e.message);
+              system.ExitCode := 22;
+            end
           end;
         finally
           FileVerInfo.Free;
@@ -139,7 +143,7 @@ var
 
 begin
   Application := TMyApplication.Create(nil);
-  Application.Title:='MyApplication';
+  Application.Title := 'MyApplication';
   Application.Run;
   Application.Free;
 end.
