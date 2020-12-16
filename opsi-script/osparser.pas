@@ -11550,13 +11550,13 @@ begin
                  LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
                  //newInifile.Encoding := TEncoding.SystemEncoding;
                  list.Clear;
-       	  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-       	  LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
-       	    s2 + '"', LevelComplete);
-       	  //s1enc := UTF8ToAnsi(s1);
-                 s1enc := s1;
-                 newInifile.ReadSectionRaw(s1enc,TStrings(list));
-       	  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+       	         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+       	         LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+       	         s2 + '"', LevelComplete);
+       	         //s1enc := UTF8ToAnsi(s1);
+                 //s1enc := s1;
+                 newInifile.ReadSectionRaw(s1,TStrings(list));
+       	         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                  FreeAndNil(newIniFile);
                except
        	  on e: Exception do
