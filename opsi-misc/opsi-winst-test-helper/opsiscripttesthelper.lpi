@@ -13,7 +13,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
       <StringTable FileDescription="Helper program for testing opsi-winst" LegalCopyright="uib gmbh (http://www.uib.de)" LegalTrademarks="opsi"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -128,10 +128,11 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <CursorPos X="18" Y="20"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
@@ -144,7 +145,7 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="189"/>
         <CursorPos X="5" Y="231"/>
         <ExtraEditorCount Value="1"/>
@@ -207,7 +208,7 @@
       <Unit8>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="3094"/>
         <CursorPos X="24" Y="3102"/>
         <UsageCount Value="33"/>
@@ -253,7 +254,7 @@
       </Unit13>
       <Unit14>
         <Filename Value="..\..\common\osfunclin.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="34"/>
         <CursorPos X="3" Y="34"/>
         <UsageCount Value="12"/>
@@ -271,7 +272,7 @@
       <Unit16>
         <Filename Value="..\..\common\osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="9"/>
         <CursorPos X="16" Y="23"/>
         <UsageCount Value="24"/>
@@ -281,7 +282,7 @@
       <Unit17>
         <Filename Value="..\..\common\osprocessux.pas"/>
         <UnitName Value="OSProcessux"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="488"/>
         <CursorPos X="21" Y="529"/>
         <UsageCount Value="12"/>
@@ -297,7 +298,7 @@
       <Unit19>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="271"/>
         <CursorPos X="57" Y="288"/>
         <UsageCount Value="28"/>
@@ -327,8 +328,8 @@
       </Unit22>
       <Unit23>
         <Filename Value="..\..\common\oslog.pas"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="1332"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1483"/>
         <CursorPos X="23" Y="1520"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
@@ -369,7 +370,7 @@
       </Unit27>
       <Unit28>
         <Filename Value="..\..\common\osversioninfo.pas"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <CursorPos X="5" Y="33"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -377,20 +378,28 @@
       </Unit28>
       <Unit29>
         <Filename Value="..\..\common\osfuncmac.pas"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="38"/>
-        <CursorPos X="3" Y="59"/>
+        <CursorPos X="29" Y="59"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit30>
     </Units>
     <OtherDefines Count="2">
       <Define0 Value="SYNAPSE"/>
       <Define1 Value="GUI"/>
     </OtherDefines>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="..\..\common\osfunclin.pas"/>
         <Caret Line="41" Column="14" TopLine="28"/>
@@ -507,10 +516,6 @@
         <Filename Value="opsiscripttesthelper.pas"/>
         <Caret Line="20" Column="18"/>
       </Position29>
-      <Position30>
-        <Filename Value="..\..\common\osfuncmac.pas"/>
-        <Caret Line="57" Column="3" TopLine="30"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -23,6 +23,7 @@ uses
 
   {$IFDEF GUI}
   Forms,
+  Dialogs,
   {$ELSE}
   custapp,
   {$ENDIF GUI}
@@ -83,6 +84,7 @@ uses
   helperwin;
 
 {$ENDIF GUI}
+
 
 {$IFDEF WINDOWS}
 function IsElevated: boolean;
@@ -203,10 +205,35 @@ end;
 procedure WriteHelp;
 var
   filename: string;
+  msg: string;
 begin
   filename := ExtractFileName(ParamStr(0));
+  {$IFDEF GUI}
+  msg := 'This is ' + filename + ' version: ' + getversioninfo +
+    ' (c) uib gmbh, AGPLv3' + LineEnding;
+  msg := msg + 'called from: ' + ParamStr(0) + LineEnding;
+  msg := msg + 'Usage: ' + filename + ' Options' + LineEnding;
+  msg := msg + 'Options:' + LineEnding;
+  msg := msg + ' --help -> write this help and exit' + LineEnding;
+  msg := msg + ' -h -> write this help and exit' + LineEnding;
+  msg := msg + ' --exit-code=n -> exits with n as exit code (default 42)' + LineEnding;
+  //writeln(' --log=<path\filename> -> writes log to <path\filename> (c:\opsi.org\tmp\opsiwinsttesthelper.log)');
+  msg := msg + ' --time-output -> write timestamp and exit' + LineEnding;
+  msg := msg + ' --fork-and-stop=n -> starts a helperchild(.exe) and exits.' +
+    LineEnding;
+  msg := msg +
+    '                     The child process waits 2 seconds, then shows a window for n seconds and stops'
+    +
+    LineEnding;
+  msg := msg + ' --showwindow=n -> shows a window for n seconds and exit' + LineEnding;
+  msg := msg + ' --version -> write version info and exit' + LineEnding;
+  msg := msg + ' --wait=n -> waits n seconds before going on' + LineEnding;
+  msg := msg + ' --createfile=fname -> creates a file fname' + LineEnding;
+  msg := msg + ' --filesize=n -> fills the file to the size of n MB';
+  ShowMessage(msg);
+  {$ELSE GUI}
   writeln(ParamStr(0));
-  writeln(filename);
+  writeln('This is ' + filename + ' version: ' + getversioninfo +' (c) uib gmbh, AGPLv3');
   writeln('Usage:');
   writeln(filename + ' Option [Option]');
   writeln('Options:');
@@ -221,11 +248,14 @@ begin
   writeln(' --wait=n -> waits n seconds before going on');
   writeln(' --createfile=fname -> creates a file fname');
   writeln(' --filesize=n -> fills the file to the size of n MB');
+  {$ENDIF GUI}
 end;
 
 procedure writeTimestamp;
 begin
+  {$IFNDEF GUI}
   writeln(DateTimeToStr(now));
+  {$ENDIF GUI}
 end;
 
 
@@ -360,13 +390,17 @@ begin
       try
         myexitcode := StrToInt(paramvaluestr);
         system.ExitCode := myexitcode;
+        {$IFNDEF GUI}
         writeln('Will use ' + paramvaluestr + ' as exit code.');
+        {$ENDIF GUI}
         LogDatei.log('Will use ' + paramvaluestr + ' as exit code.', LLNotice);
       except
-        writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
-          IntToStr(myexitcode) + ' as exit code.');
         LogDatei.log('>' + paramvaluestr + '< is not a integer. Using default of ' +
           IntToStr(myexitcode) + ' as exit code.', LLerror);
+       {$IFNDEF GUI}
+        writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
+          IntToStr(myexitcode) + ' as exit code.');
+       {$ENDIF GUI}
       end;
     end;
 
@@ -426,13 +460,17 @@ begin
     if Application.HasOption('wait') then
     begin
       paramvaluestr := Application.GetOptionValue('wait');
-      //writeln('--wait: waiting ' + paramvaluestr + ' seconds');
+      {$IFNDEF GUI}
+       writeln('--wait: waiting ' + paramvaluestr + ' seconds');
+      {$ENDIF GUI}
       LogDatei.log('--wait: waiting ' + paramvaluestr + ' seconds', LLnotice);
       try
         waitsec := StrToInt(paramvaluestr);
       except
         LogDatei.log('wait >' + paramvaluestr + '< is not a integer.', LLerror);
-        //writeln('>' + paramvaluestr + '< is not a integer.');
+        {$IFNDEF GUI}
+        writeln('>' + paramvaluestr + '< is not a integer.');
+        {$ENDIF GUI}
         waitsec := 1;
       end;
       Sleep(waitsec * 1000);
@@ -443,12 +481,14 @@ begin
     begin
       paramvaluestr := Application.GetOptionValue('fork-and-stop');
       LogDatei.log('Will use ' + paramvaluestr + ' as fork-and-stop.', LLnotice);
+      {$IFNDEF GUI}
       writeln('Will use ' + paramvaluestr + ' as fork-and-stop.');
+      {$ENDIF GUI}
       try
         childsec := StrToInt(paramvaluestr);
       except
         LogDatei.log('fork-and-stop >' + paramvaluestr + '< is not a integer.', LLerror);
-        writeln('>' + paramvaluestr + '< is not a integer.');
+        {$IFNDEF GUI}  writeln('>' + paramvaluestr + '< is not a integer.'); {$ENDIF GUI}
         childsec := 5;
       end;
       try
@@ -472,7 +512,7 @@ begin
 
     if Application.HasOption('version') then
     begin
-      writeln('Version: ' + getversioninfo);
+      {$IFNDEF GUI} writeln('Version: ' + getversioninfo); {$ENDIF GUI}
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
       halt(system.ExitCode);
@@ -481,16 +521,20 @@ begin
     if Application.HasOption('createfile') then
     begin
       myfilename := Application.GetOptionValue('createfile');
-      writeln('Will use ' + myfilename + ' as file name.');
+      {$IFNDEF GUI} writeln('Will use ' + myfilename + ' as file name.'); {$ENDIF GUI}
       if Application.HasOption('filesize') then
       begin
         paramvaluestr := Application.GetOptionValue('filesize');
         try
           mysizemb := StrToInt(paramvaluestr);
-          writeln('Will use ' + paramvaluestr + ' as file size.');
+          {$IFNDEF GUI} writeln('Will use ' + paramvaluestr + ' as file size.'); {$ENDIF GUI}
         except
+          {$IFNDEF GUI}
           writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
             IntToStr(mysizemb) + ' as file size.');
+          {$ENDIF GUI}
+          LogDatei.log('>' + paramvaluestr + '< is not a integer. Using default of ' +
+            IntToStr(mysizemb) + ' as file size.',LLwarning);
         end;
         k := 0;
         for i := 1 to 4 do
@@ -524,12 +568,12 @@ begin
       try
         showtimeint := StrToInt(showtimestr);
       except
-        //writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+        {$IFNDEF GUI} writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.'); {$ENDIF GUI}
         LogDatei.log('>' + paramvaluestr +
           '< is not a integer. Using default of 1 second.', LLerror);
         showtimeint := 1;
       end;
-      //writeln('--showwindow: waiting ' + showtimestr + ' seconds');
+      {$IFNDEF GUI} writeln('--showwindow: waiting ' + showtimestr + ' seconds'); {$ENDIF GUI}
       LogDatei.log('--showwindow: waiting ' + showtimestr + ' seconds', LLnotice);
       //Sleep(showtimeint * 1000);
 

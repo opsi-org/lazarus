@@ -16,7 +16,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.1"/>
@@ -119,11 +119,10 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="24">
+    <Units Count="25">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <CursorPos X="12" Y="9"/>
         <UsageCount Value="29"/>
         <Loaded Value="True"/>
@@ -143,8 +142,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="194"/>
-        <CursorPos Y="71"/>
+        <TopLine Value="183"/>
+        <CursorPos X="112" Y="202"/>
         <UsageCount Value="29"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -168,8 +167,8 @@
         <Filename Value="helperwispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="88"/>
-        <CursorPos X="17" Y="91"/>
+        <TopLine Value="79"/>
+        <CursorPos X="30" Y="92"/>
         <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit5>
@@ -207,9 +206,10 @@
       <Unit10>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="302"/>
-        <CursorPos X="45" Y="319"/>
+        <TopLine Value="58"/>
+        <CursorPos Y="84"/>
         <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -301,124 +301,138 @@
         <CursorPos X="18" Y="1508"/>
         <UsageCount Value="10"/>
       </Unit23>
+      <Unit24>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit24>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="381" Column="28" TopLine="365"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="248" Column="25" TopLine="228"/>
       </Position1>
       <Position2>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="383" Column="30" TopLine="365"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="261" Column="28" TopLine="247"/>
       </Position2>
       <Position3>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="385" Column="30" TopLine="365"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="309" Column="40" TopLine="289"/>
       </Position3>
       <Position4>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="388" Column="28" TopLine="368"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="330" Column="32" TopLine="310"/>
       </Position4>
       <Position5>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="146" TopLine="146"/>
+        <Caret Line="502" Column="44" TopLine="482"/>
       </Position5>
       <Position6>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="537" Column="21" TopLine="520"/>
+        <Caret Line="267" Column="29" TopLine="245"/>
       </Position6>
       <Position7>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="59" Column="25" TopLine="47"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="477" Column="65" TopLine="464"/>
       </Position7>
       <Position8>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="248" Column="25" TopLine="228"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="488" Column="39" TopLine="473"/>
       </Position8>
       <Position9>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="261" Column="28" TopLine="247"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="495" Column="7" TopLine="482"/>
       </Position9>
       <Position10>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="309" Column="40" TopLine="289"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="310" Column="5" TopLine="291"/>
       </Position10>
       <Position11>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="330" Column="32" TopLine="310"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="423" Column="19" TopLine="403"/>
       </Position11>
       <Position12>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="502" Column="44" TopLine="482"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="261" Column="21" TopLine="250"/>
       </Position12>
       <Position13>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="267" Column="29" TopLine="245"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="16" Column="30"/>
       </Position13>
       <Position14>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="477" Column="65" TopLine="464"/>
+        <Caret Line="30" Column="12"/>
       </Position14>
       <Position15>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="488" Column="39" TopLine="473"/>
+        <Caret Line="217" Column="39" TopLine="186"/>
       </Position15>
       <Position16>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="495" Column="7" TopLine="482"/>
+        <Caret Line="285" Column="50" TopLine="254"/>
       </Position16>
       <Position17>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="310" Column="5" TopLine="291"/>
+        <Caret Line="301" Column="29" TopLine="271"/>
       </Position17>
       <Position18>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="423" Column="19" TopLine="403"/>
+        <Caret Line="366" Column="22" TopLine="336"/>
       </Position18>
       <Position19>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="261" Column="21" TopLine="250"/>
+        <Caret Line="12" Column="27"/>
       </Position19>
       <Position20>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="16" Column="30"/>
+        <Caret Line="88" Column="45" TopLine="69"/>
       </Position20>
       <Position21>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="30" Column="12"/>
+        <Caret Line="93" Column="31" TopLine="80"/>
       </Position21>
       <Position22>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="217" Column="39" TopLine="186"/>
+        <Caret Line="373" Column="73" TopLine="361"/>
       </Position22>
       <Position23>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="285" Column="50" TopLine="254"/>
+        <Filename Value="helperwispecfolder.pas"/>
+        <Caret Line="92" Column="30" TopLine="79"/>
       </Position23>
       <Position24>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="301" Column="29" TopLine="271"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="202" Column="7" TopLine="73"/>
       </Position24>
       <Position25>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="366" Column="22" TopLine="336"/>
+        <Caret Line="68" Column="33" TopLine="64"/>
       </Position25>
       <Position26>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="12" Column="27"/>
+        <Caret Line="301" Column="11" TopLine="269"/>
       </Position26>
       <Position27>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="88" Column="45" TopLine="69"/>
+        <Caret Line="302" Column="11" TopLine="270"/>
       </Position27>
       <Position28>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="93" Column="31" TopLine="80"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="190" Column="13" TopLine="183"/>
       </Position28>
       <Position29>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="373" Column="73" TopLine="361"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="202" Column="112" TopLine="183"/>
       </Position29>
+      <Position30>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="84" Column="3" TopLine="66"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

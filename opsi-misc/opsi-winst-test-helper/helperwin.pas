@@ -199,7 +199,7 @@ begin
     try
       showtimeint := StrToInt(showtimestr);
     except
-      writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+      {$IFNDEF GUI} writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.'); {$ENDIF GUI}
       showtimeint := 1;
     end;
     form1.showwindow(showtimeint);
