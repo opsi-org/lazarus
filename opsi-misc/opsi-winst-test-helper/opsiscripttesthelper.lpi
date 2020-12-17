@@ -132,8 +132,7 @@
       <Unit0>
         <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <CursorPos X="18" Y="20"/>
+        <CursorPos X="28" Y="21"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -145,7 +144,7 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="189"/>
         <CursorPos X="5" Y="231"/>
         <ExtraEditorCount Value="1"/>
@@ -208,7 +207,7 @@
       <Unit8>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="3094"/>
         <CursorPos X="24" Y="3102"/>
         <UsageCount Value="33"/>
@@ -254,7 +253,7 @@
       </Unit13>
       <Unit14>
         <Filename Value="..\..\common\osfunclin.pas"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="34"/>
         <CursorPos X="3" Y="34"/>
         <UsageCount Value="12"/>
@@ -272,7 +271,7 @@
       <Unit16>
         <Filename Value="..\..\common\osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="9"/>
         <CursorPos X="16" Y="23"/>
         <UsageCount Value="24"/>
@@ -282,7 +281,7 @@
       <Unit17>
         <Filename Value="..\..\common\osprocessux.pas"/>
         <UnitName Value="OSProcessux"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="488"/>
         <CursorPos X="21" Y="529"/>
         <UsageCount Value="12"/>
@@ -298,7 +297,7 @@
       <Unit19>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="271"/>
         <CursorPos X="57" Y="288"/>
         <UsageCount Value="28"/>
@@ -328,7 +327,7 @@
       </Unit22>
       <Unit23>
         <Filename Value="..\..\common\oslog.pas"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="1483"/>
         <CursorPos X="23" Y="1520"/>
         <UsageCount Value="13"/>
@@ -370,7 +369,7 @@
       </Unit27>
       <Unit28>
         <Filename Value="..\..\common\osversioninfo.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <CursorPos X="5" Y="33"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -387,11 +386,11 @@
       <Unit30>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="70" Y="6"/>
         <UsageCount Value="20"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit30>
     </Units>
