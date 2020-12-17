@@ -1286,10 +1286,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         Height = 172
         Top = 0
         Width = 620
-        ActivePage = TabSheet1
+        ActivePage = TabSheet2
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = 'Details'
@@ -1418,17 +1418,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         end
         object TabSheet2: TTabSheet
           Caption = 'Dependencies / Priority'
-          ClientHeight = 139
-          ClientWidth = 610
+          ClientHeight = 144
+          ClientWidth = 612
           object PanelPriority: TPanel
             Left = 0
             Height = 32
             Top = 112
-            Width = 632
+            Width = 612
             Align = alBottom
             BevelOuter = bvNone
             ClientHeight = 32
-            ClientWidth = 632
+            ClientWidth = 612
             ParentColor = False
             TabOrder = 0
             object LabelPriority: TLabel
@@ -1454,17 +1454,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 0
             Height = 112
             Top = 0
-            Width = 632
+            Width = 612
             Align = alClient
             BevelOuter = bvNone
             ClientHeight = 112
-            ClientWidth = 632
+            ClientWidth = 612
             TabOrder = 1
             object DBGrid2: TDBGrid
               Left = 0
               Height = 112
               Top = 0
-              Width = 632
+              Width = 612
               Align = alClient
               Color = clWindow
               Columns = <>
@@ -1480,7 +1480,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 313
       Top = 0
       Width = 620
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1525,25 +1525,25 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         object ScrollBoxAllTiles: TScrollBox
           Left = 0
-          Height = 262
+          Height = 313
           Top = 0
-          Width = 640
+          Width = 620
           HorzScrollBar.Page = 1
           HorzScrollBar.Visible = False
           VertScrollBar.Page = 1
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 262
-          ClientWidth = 640
+          ClientHeight = 313
+          ClientWidth = 620
           Color = clDefault
           ParentColor = False
           TabOrder = 0
           OnMouseWheel = ScrollBoxAllTilesMouseWheel
           object FlowPanelAllTiles: TFlowPanel
             Left = 0
-            Height = 262
+            Height = 313
             Top = 0
-            Width = 640
+            Width = 620
             Align = alClient
             BevelOuter = bvNone
             Color = clForm
@@ -1566,8 +1566,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 620
+          ClientHeight = 33
+          ClientWidth = 616
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1600,7 +1600,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alClient
           BorderStyle = bsNone
           ClientHeight = 276
-          ClientWidth = 620
+          ClientWidth = 603
           TabOrder = 1
           object ImageIconSoftware: TImage
             Left = 15
@@ -1791,7 +1791,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 16
             Height = 75
             Top = 355
-            Width = 575
+            Width = 558
             Anchors = [akTop, akLeft, akRight]
             Color = clForm
             DataField = 'Description'
@@ -1804,7 +1804,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 16
             Height = 75
             Top = 463
-            Width = 575
+            Width = 558
             Anchors = [akTop, akLeft, akRight]
             Color = clForm
             DataField = 'Advice'
