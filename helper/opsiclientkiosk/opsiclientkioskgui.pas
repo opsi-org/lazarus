@@ -16,7 +16,7 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls, Process,
+  Classes, SysUtils, StrUtils, DB, ExtendedNotebook, Forms, Controls, Process,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
@@ -754,19 +754,23 @@ var
   FilePath:String;
   Index : integer;
   gefunden :boolean;
+  FormerImageName:string;
 begin
   gefunden := False;
   if FormOpsiClientKiosk.OpenPictureDialogSetIcon.Execute then
   begin
     with FormOpsiClientKiosk do
     begin
-      { delete former image }
-      DeleteFormerImage(PathCustomIcons+StringListCustomIcons.Values[ProductPanel.ProductID]);
+      { former image }
+      FormerImageName := StringListCustomIcons.Values[ProductPanel.ProductID];
       { load and save current image }
       FilePath := OpenPictureDialogSetIcon.FileName;
       ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
       ProductPanel.ImageIcon.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
       StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
+      { delete former image if not used for other products }
+      if not ContainsStr(StringListCustomIcons.Text, FormerImageName) then
+        DeleteFormerImage(PathCustomIcons+FormerImageName);
     end;
   end;
 end;
@@ -1455,19 +1459,22 @@ procedure TFormOpsiClientKiosk.ImageIconSoftwareMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   FilePath:String;
+  FormerImageName:String;
 begin
   if (AdminMode and (Button = mbRight)) then
   begin
     if OpenPictureDialogSetIcon.Execute then
     begin
-      {delete former image}
-      DeleteFormerImage(PathCustomIcons+StringListCustomIcons.Values[SelectedProduct]);
+      FormerImageName := StringListCustomIcons.Values[SelectedProduct];
       {load and save current image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       LogDatei.log('Save image ' + PathCustomIcons + ExtractFileName(FilePath), LLDebug);
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
       ImageIconSoftware.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
       StringListCustomIcons.Values[SelectedProduct] := ExtractFileName(FilePath);
+      {delete former image if not in StringList hence is not used by another product}
+      if not ContainsStr(StringListCustomIcons.Text, FormerImageName) then
+        DeleteFormerImage(PathCustomIcons+FormerImageName);
     end;
   end;
 end;
@@ -1477,17 +1484,20 @@ procedure TFormOpsiClientKiosk.ImageScreenShotMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   FilePath:String;
+  FormerImageName:String;
 begin
   if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
-      {delete former image}
-      DeleteFormerImage(PathScreenShots + StringListScreenShots.Values[SelectedProduct]);
+      { former image }
+      FormerImageName := StringListScreenShots.Values[SelectedProduct];
       {load and save image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
       ImageScreenShot.Picture.SaveToFile(PathScreenShots+ExtractFileName(FilePath));
       StringListScreenShots.Values[SelectedProduct] := ExtractFileName(FilePath);
+      if not ContainsStr(StringListScreenShots.Text, FormerImageName) then
+        DeleteFormerImage(PathScreenShots+FormerImageName);
     end;
 end;
 
