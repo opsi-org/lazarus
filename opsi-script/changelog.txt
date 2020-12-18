@@ -10,6 +10,7 @@ opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
  * repair center batchgui on screen
  * osregex: another empty string regex test
  * license functions: opsiserviceuser if possible
+ * linux: shellBatch implemented as shellInAnIcon
 
 -- d.oertel <d.oertel@uib.de> Wed, 16 Dec 2020 15:00
 

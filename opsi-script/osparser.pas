@@ -10402,10 +10402,14 @@ begin
         end
         else
         begin
+          FileName := '/bin/bash';
+          Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
+          (* Calling terminal does not work correctly (do 8.12.2020)
           FileName := '/usr/bin/xterm';
           Parameters := Parameters +
             ' -e script /tmp/opsi-script-out.txt -c "/bin/bash ' +
             tempfilename + ' ' + BatchParameter + '"';
+            *)
         end;
        {$ELSE GUI}
         FileName := '/bin/bash';
