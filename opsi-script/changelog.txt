@@ -8,6 +8,7 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
 
  * repair center batchgui on screen
+ * osregex: another empty string regex test
 
 -- d.oertel <d.oertel@uib.de> Wed, 16 Dec 2020 15:00
 

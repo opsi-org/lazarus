@@ -207,6 +207,7 @@ var
   filename: string;
   msg: string;
 begin
+  LogDatei.log('Showing help', LLnotice);
   filename := ExtractFileName(ParamStr(0));
   {$IFDEF GUI}
   msg := 'This is ' + filename + ' version: ' + getversioninfo +
@@ -366,18 +367,23 @@ begin
     ErrorMsg := Application.CheckOptions('', optionlist);
     if ErrorMsg <> '' then
     begin
+      LogDatei.log('Exception while handling parameters.', LLcritical);
       ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
       LogDatei.log(ErrorMsg, LLcritical);
       Application.ShowException(Exception.Create(ErrorMsg));
+      WriteHelp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
       Exit;
     end;
 
+    if ParamCount = 0 then
+      LogDatei.log('Found no Options', LLnotice);
+
     // parse parameters
-    if Application.HasOption('help') or (paramcount = 0) then
+    if Application.HasOption('help') then
     begin
-      //if Application.HasOption('help')  then begin
+      LogDatei.log('Found Option help', LLnotice);
       WriteHelp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
@@ -386,6 +392,7 @@ begin
 
     if Application.HasOption('exit-code') then
     begin
+      LogDatei.log('Found Option exit-code', LLnotice);
       paramvaluestr := Application.GetOptionValue('exit-code');
       try
         myexitcode := StrToInt(paramvaluestr);
@@ -459,6 +466,7 @@ begin
 
     if Application.HasOption('wait') then
     begin
+      LogDatei.log('Found Option wait', LLnotice);
       paramvaluestr := Application.GetOptionValue('wait');
       {$IFNDEF GUI}
        writeln('--wait: waiting ' + paramvaluestr + ' seconds');
@@ -479,6 +487,7 @@ begin
 
     if Application.HasOption('fork-and-stop') then
     begin
+      LogDatei.log('Found Option fork-and-stop', LLnotice);
       paramvaluestr := Application.GetOptionValue('fork-and-stop');
       LogDatei.log('Will use ' + paramvaluestr + ' as fork-and-stop.', LLnotice);
       {$IFNDEF GUI}
@@ -504,6 +513,7 @@ begin
 
     if Application.HasOption('time-output') then
     begin
+      LogDatei.log('Found Option time-output', LLnotice);
       writeTimestamp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
@@ -512,6 +522,7 @@ begin
 
     if Application.HasOption('version') then
     begin
+      LogDatei.log('Found Option version', LLnotice);
       {$IFNDEF GUI} writeln('Version: ' + getversioninfo); {$ENDIF GUI}
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
@@ -520,6 +531,7 @@ begin
 
     if Application.HasOption('createfile') then
     begin
+      LogDatei.log('Found Option createfile', LLnotice);
       myfilename := Application.GetOptionValue('createfile');
       {$IFNDEF GUI} writeln('Will use ' + myfilename + ' as file name.'); {$ENDIF GUI}
       if Application.HasOption('filesize') then
@@ -559,6 +571,7 @@ begin
 
     if Application.HasOption('showwindow') then
     begin
+      LogDatei.log('Found Option showwindow', LLnotice);
       {$IFDEF GUI}
       Application.CreateForm(TForm1, Form1);
       Form1.Caption := Application.Title;
