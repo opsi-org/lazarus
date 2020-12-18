@@ -16777,9 +16777,9 @@ begin
     setLength(parameters, 4);
 
     // try to find a valid fqdn
-    parameters[0] := osconf.computername;
+    parameters[0] := osconf.opsiserviceUser;
     if parameters[0] = '' then
-      parameters[0] := osconf.opsiserviceUser;
+      parameters[0] := osconf.computername;
     if parameters[0] = '' then
       parameters[0] := oslog.getComputerName;
     parameters[1] := '';
@@ -16860,7 +16860,13 @@ begin
     r := trim(r);
     setLength(parameters, 5);
 
-    parameters[0] := osconf.computername;
+     // try to find a valid fqdn
+    parameters[0] := osconf.opsiserviceUser;
+    if parameters[0] = '' then
+      parameters[0] := osconf.computername;
+    if parameters[0] = '' then
+      parameters[0] := oslog.getComputerName;
+
     parameters[1] := '';
     parameters[2] := '';
     parameters[3] := '';
