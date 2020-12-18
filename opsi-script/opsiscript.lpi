@@ -642,6 +642,7 @@
       <Unit41>
         <Filename Value="../common/oszip.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OsZip"/>
       </Unit41>
       <Unit42>
         <Filename Value="../common/osversioninfo.pas"/>
