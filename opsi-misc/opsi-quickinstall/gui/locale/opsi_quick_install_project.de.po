@@ -864,6 +864,27 @@ msgstr " weiter > "
 msgid "Opsi quick install - query (dhcp)"
 msgstr ""
 
+#: tquery5_dhcp.checkboxdomain1.caption
+msgctxt "tquery5_dhcp.checkboxdomain1.caption"
+msgid "ucs.test"
+msgstr ""
+
+#: tquery5_dhcp.checkboxdomain2.caption
+msgctxt "tquery5_dhcp.checkboxdomain2.caption"
+msgid "uib.local"
+msgstr ""
+
+#: tquery5_dhcp.checkboxdomain3.caption
+msgctxt "tquery5_dhcp.checkboxdomain3.caption"
+msgid "vmnat.local"
+msgstr ""
+
+#: tquery5_dhcp.checkboxotherdomain.caption
+#, fuzzy
+msgctxt "tquery5_dhcp.checkboxotherdomain.caption"
+msgid "Other:"
+msgstr "Andere:"
+
 #: tquery5_dhcp.labeladdress.caption
 msgid "Network address (for dhcp)"
 msgstr ""
@@ -894,18 +915,6 @@ msgstr ""
 
 #: tquery5_dhcp.radiobtnaddress3.caption
 msgid "192.168.0.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtndomain1.caption
-msgid "ucs.test"
-msgstr ""
-
-#: tquery5_dhcp.radiobtndomain2.caption
-msgid "uib.local"
-msgstr ""
-
-#: tquery5_dhcp.radiobtndomain3.caption
-msgid "vmnat.local"
 msgstr ""
 
 #: tquery5_dhcp.radiobtngateway1.caption
@@ -949,12 +958,6 @@ msgstr ""
 #: tquery5_dhcp.radiobtnotheraddress.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnotheraddress.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery5_dhcp.radiobtnotherdomain.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.radiobtnotherdomain.caption"
 msgid "Other:"
 msgstr "Andere:"
 

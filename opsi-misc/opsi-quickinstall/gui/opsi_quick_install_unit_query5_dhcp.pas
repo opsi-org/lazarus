@@ -5,7 +5,7 @@ unit opsi_quick_install_unit_query5_dhcp;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Process;
 
 type
 
@@ -15,6 +15,10 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
+    CheckBoxOtherDomain: TCheckBox;
+    CheckBoxDomain1: TCheckBox;
+    CheckBoxDomain2: TCheckBox;
+    CheckBoxDomain3: TCheckBox;
     EditNetmask: TEdit;
     EditAddress: TEdit;
     EditDomain: TEdit;
@@ -43,10 +47,6 @@ type
     RadioBtnAddress2: TRadioButton;
     RadioBtnAddress3: TRadioButton;
     RadioBtnOtherAddress: TRadioButton;
-    RadioBtnDomain1: TRadioButton;
-    RadioBtnDomain2: TRadioButton;
-    RadioBtnDomain3: TRadioButton;
-    RadioBtnOtherDomain: TRadioButton;
     RadioBtnNameserver1: TRadioButton;
     RadioBtnNameserver2: TRadioButton;
     RadioBtnNameserver3: TRadioButton;
@@ -85,9 +85,157 @@ begin
 end;
 
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
+var
+  NetworkDetails, radioBtnCaption, topic: string;
+  index: integer;
 begin
   SetBasics(self);
   InfoNetwork.OnClick := @QuickInstall.ShowHintOnClick;
+  if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
+  begin
+    //ShowMessage(NetworkDetails);
+
+    topic := 'IP4.ADDRESS[1]:';
+    radioBtnCaption := '';
+    index := NetworkDetails.IndexOf(topic);
+    if index <> -1 then
+    begin
+      index += topic.Length + 1;
+      while NetworkDetails[index] = ' ' do
+        index += 1;
+      while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+      begin
+        radioBtnCaption += NetworkDetails[index];
+        index += 1;
+      end;
+      RadioBtnAddress1.Visible:=True;
+      RadioBtnAddress1.Caption := radioBtnCaption;
+    end;
+
+
+    topic := 'IP4.DOMAIN[1]:';
+    radioBtnCaption := '';
+    index := NetworkDetails.IndexOf(topic);
+    if index <> -1 then
+    begin
+      index += topic.Length + 1;
+      while NetworkDetails[index] = ' ' do
+        index += 1;
+      while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+      begin
+        radioBtnCaption += NetworkDetails[index];
+        index += 1;
+      end;
+      CheckBoxDomain1.Visible:=True;
+      CheckBoxDomain1.Caption := radioBtnCaption;
+
+      topic := 'IP4.DOMAIN[2]:';
+      radioBtnCaption := '';
+      index := NetworkDetails.IndexOf(topic);
+      if index <> -1 then
+      begin
+        index += topic.Length + 1;
+        while NetworkDetails[index] = ' ' do
+          index += 1;
+        while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+        begin
+          radioBtnCaption += NetworkDetails[index];
+          index += 1;
+        end;
+        CheckBoxDomain2.Visible:=True;
+        CheckBoxDomain2.Caption := radioBtnCaption;
+
+        topic := 'IP4.DOMAIN[3]:';
+        radioBtnCaption := '';
+        index := NetworkDetails.IndexOf(topic);
+        if index <> -1 then
+        begin
+          index += topic.Length + 1;
+          while NetworkDetails[index] = ' ' do
+            index += 1;
+          while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+          begin
+            radioBtnCaption += NetworkDetails[index];
+            index += 1;
+          end;
+          CheckBoxDomain3.Visible:=True;
+          CheckBoxDomain3.Caption := radioBtnCaption;
+        end;
+      end;
+    end;
+
+    topic := 'IP4.DNS[1]:';
+    radioBtnCaption := '';
+    index := NetworkDetails.IndexOf(topic);
+    if index <> -1 then
+    begin
+      index += topic.Length + 1;
+      while NetworkDetails[index] = ' ' do
+        index += 1;
+      while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+      begin
+        radioBtnCaption += NetworkDetails[index];
+        index += 1;
+      end;
+      RadioBtnNameserver1.Visible:=True;
+      RadioBtnNameserver1.Caption := radioBtnCaption;
+
+      topic := 'IP4.DNS[2]:';
+      radioBtnCaption := '';
+      index := NetworkDetails.IndexOf(topic);
+      if index <> -1 then
+      begin
+        index += topic.Length + 1;
+        while NetworkDetails[index] = ' ' do
+          index += 1;
+        while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+        begin
+          radioBtnCaption += NetworkDetails[index];
+          index += 1;
+        end;
+        RadioBtnNameserver2.Visible:=True;
+        RadioBtnNameserver2.Caption := radioBtnCaption;
+
+        topic := 'IP4.DNS[3]:';
+        radioBtnCaption := '';
+        index := NetworkDetails.IndexOf(topic);
+        if index <> -1 then
+        begin
+          index += topic.Length + 1;
+          while NetworkDetails[index] = ' ' do
+            index += 1;
+          while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+          begin
+            radioBtnCaption += NetworkDetails[index];
+            index += 1;
+          end;
+          RadioBtnNameserver3.Visible:=True;
+          RadioBtnNameserver3.Caption := radioBtnCaption;
+        end;
+      end;
+    end;
+
+
+    topic := 'IP4.GATEWAY:';
+    radioBtnCaption := '';
+    index := NetworkDetails.IndexOf(topic);
+    if index <> -1 then
+    begin
+      index += topic.Length + 1;
+      while NetworkDetails[index] = ' ' do
+        index += 1;
+      while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+      begin
+        radioBtnCaption += NetworkDetails[index];
+        index += 1;
+      end;
+      RadioBtnGateway1.Visible:=True;
+      RadioBtnGateway1.Caption := radioBtnCaption;
+    end;
+
+  end;
+
+
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQueryDhcp;
   InfoNetwork.Hint := rsInfoNetwork;
@@ -96,7 +244,7 @@ begin
   LabelAddress.Caption := rsNetworkAddress;
   RadioBtnOtherAddress.Caption := rsNetworkAddressOther;
   LabelDomain.Caption := rsDomain;
-  RadioBtnOtherDomain.Caption := rsDomainOther;
+  CheckBoxOtherDomain.Caption := rsDomainOther;
   LabelNameserver.Caption := rsNameserver;
   RadioBtnOtherNameserver.Caption := rsNameserverOther;
   LabelGateway.Caption := rsGateway;
@@ -116,5 +264,3 @@ begin
 end;
 
 end.
-
-

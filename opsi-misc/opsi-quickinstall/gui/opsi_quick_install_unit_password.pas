@@ -110,7 +110,7 @@ begin
   else
     FileText.Add(propertyName + '=mysql');
 
-  propertyName := 'dnsdomain';
+  {propertyName := 'dnsdomain';
   if Query5_dhcp.RadioBtnDomain1.Checked then
     FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain1.Caption)
   else if Query5_dhcp.RadioBtnDomain2.Checked then
@@ -118,7 +118,19 @@ begin
   else if Query5_dhcp.RadioBtnDomain3.Checked then
     FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain3.Caption)
   else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
+    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);}
+
+  propertyName := 'dnsdomain = ';
+  if Query5_dhcp.CheckBoxDomain1.Checked then
+    propertyName += Query5_dhcp.CheckBoxDomain1.Caption + ', ';
+  if Query5_dhcp.CheckBoxDomain2.Checked then
+    propertyName += Query5_dhcp.CheckBoxDomain2.Caption + ', ';
+  if Query5_dhcp.CheckBoxDomain3.Checked then
+    propertyName += Query5_dhcp.CheckBoxDomain3.Caption + ', ';
+  if Query5_dhcp.CheckBoxOtherDomain.Checked then
+    propertyName += Query5_dhcp.EditDomain.Text + ', ';
+  delete(propertyName,propertyName.length-1,2);
+  FileText.Add(propertyName);
 
   propertyName := 'force_copy_modules';
   if Query2.RadioBtnYesCopy.Checked then

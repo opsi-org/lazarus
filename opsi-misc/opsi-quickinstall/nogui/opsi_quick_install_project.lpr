@@ -298,7 +298,10 @@ type
     //writeln(url);
     // !following lines need an existing LogDatei
     if distroName = 'openSUSE' then
-      MyRepo.Add(url, 'Opsi-Quick-Install-Repository')
+    begin
+      writeln('OpenSUSE: Add Repo');
+      MyRepo.Add(url, 'Opsi-Quick-Install-Repository');
+    end
     else
       MyRepo.Add(url);
     InstallOpsiCommand := TRunCommandElevated.Create('', False);

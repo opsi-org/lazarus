@@ -191,7 +191,7 @@ end;
 
 procedure TLinuxRepository.AddOpenSuseSLES(RepoName: string);
 begin
-  FRunCommandElevated.Run('zypper addrepo ' + FURL + RepoName);
+  FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName);
   FRunCommandElevated.Run('zypper --non-interactive refresh');
 end;
 

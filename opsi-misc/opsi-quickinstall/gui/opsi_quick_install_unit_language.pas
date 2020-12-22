@@ -153,7 +153,15 @@ end;
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
+  testString: string;
 begin
+  //ShowMessage('Hi'.IndexOf('t').ToString);
+  {testString := 'Test';
+  delete(testString,testString.Length-1,2);
+  ShowMessage(testString);
+  testString := binStr(32,10);
+  ShowMessage(testString);}
+
   logFileName := 'opsi_quickinstall.log';
   // set constant form size
   Height := 450;

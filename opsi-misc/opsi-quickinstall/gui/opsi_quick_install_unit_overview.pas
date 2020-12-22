@@ -55,8 +55,8 @@ begin
 end;
 
 procedure TOverview.FormActivate(Sender: TObject);
-{var
-  prod: integer;}
+var
+  domains: string;
 begin
   //ShowMessage(IntToStr(BtnFinish.Width));
   PanelFinish.Left := QuickInstall.panelLeft;
@@ -165,14 +165,25 @@ begin
     else
       MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.EditAddress.Text);
     // Domain
-    if Query5_dhcp.RadioBtnDomain1.Checked then
+    {if Query5_dhcp.RadioBtnDomain1.Checked then
       MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain1.Caption)
     else if Query5_dhcp.RadioBtnDomain2.Checked then
       MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain2.Caption)
     else if Query5_dhcp.RadioBtnDomain3.Checked then
       MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain3.Caption)
     else
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);}
+    domains := rsDomainO;
+    if Query5_dhcp.CheckBoxDomain1.Checked then
+       domains += Query5_dhcp.CheckBoxDomain1.Caption + ', ';
+    if Query5_dhcp.CheckBoxDomain2.Checked then
+      domains += Query5_dhcp.CheckBoxDomain2.Caption + ', ';
+    if Query5_dhcp.CheckBoxDomain3.Checked then
+      domains += Query5_dhcp.CheckBoxDomain3.Caption + ', ';
+    if Query5_dhcp.CheckBoxOtherDomain.Checked then
+      domains += Query5_dhcp.EditDomain.Text + ', ';
+    delete(domains, domains.length-1,2);
+    MemoOverview.Lines.Add(domains);
     // Nameserver
     if Query5_dhcp.RadioBtnNameserver1.Checked then
       MemoOverview.Lines.Add(

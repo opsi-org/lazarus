@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 379
+  Left = 375
   Height = 450
-  Top = 157
+  Top = 174
   Width = 730
   Caption = 'Opsi quick install - query (dhcp)'
   ClientHeight = 450
@@ -148,8 +148,11 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.0.0'
+      Checked = True
       ParentFont = False
       TabOrder = 0
+      TabStop = True
+      Visible = False
     end
     object RadioBtnAddress2: TRadioButton
       AnchorSideLeft.Control = RadioBtnAddress1
@@ -164,6 +167,7 @@ object Query5_dhcp: TQuery5_dhcp
       Caption = '172.16.166.0'
       ParentFont = False
       TabOrder = 1
+      Visible = False
     end
     object RadioBtnAddress3: TRadioButton
       AnchorSideLeft.Control = RadioBtnAddress2
@@ -176,10 +180,9 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 100
       BorderSpacing.Left = 20
       Caption = '192.168.0.0'
-      Checked = True
       ParentFont = False
       TabOrder = 3
-      TabStop = True
+      Visible = False
     end
     object RadioBtnOtherAddress: TRadioButton
       AnchorSideTop.Control = RadioBtnAddress1
@@ -229,7 +232,20 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       WordWrap = True
     end
-    object RadioBtnDomain1: TRadioButton
+    object EditDomain: TEdit
+      AnchorSideLeft.Control = CheckBoxOtherDomain
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = CheckBoxDomain1
+      AnchorSideTop.Side = asrBottom
+      Left = 75
+      Height = 25
+      Top = 40
+      Width = 120
+      BorderSpacing.Left = 10
+      ParentFont = False
+      TabOrder = 0
+    end
+    object CheckBoxDomain1: TCheckBox
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -237,11 +253,10 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 72
       Caption = 'ucs.test'
-      ParentFont = False
-      TabOrder = 0
+      TabOrder = 1
     end
-    object RadioBtnDomain2: TRadioButton
-      AnchorSideLeft.Control = RadioBtnDomain1
+    object CheckBoxDomain2: TCheckBox
+      AnchorSideLeft.Control = CheckBoxDomain1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -251,13 +266,10 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 74
       BorderSpacing.Left = 20
       Caption = 'uib.local'
-      Checked = True
-      ParentFont = False
-      TabOrder = 3
-      TabStop = True
+      TabOrder = 2
     end
-    object RadioBtnDomain3: TRadioButton
-      AnchorSideLeft.Control = RadioBtnDomain2
+    object CheckBoxDomain3: TCheckBox
+      AnchorSideLeft.Control = CheckBoxDomain2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -267,31 +279,16 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 94
       BorderSpacing.Left = 20
       Caption = 'vmnat.local'
-      ParentFont = False
-      TabOrder = 1
+      TabOrder = 3
     end
-    object RadioBtnOtherDomain: TRadioButton
-      AnchorSideTop.Control = RadioBtnDomain1
+    object CheckBoxOtherDomain: TCheckBox
+      AnchorSideTop.Control = CheckBoxDomain1
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
       Top = 40
       Width = 65
       Caption = 'Other:'
-      ParentFont = False
-      TabOrder = 2
-    end
-    object EditDomain: TEdit
-      AnchorSideLeft.Control = RadioBtnOtherDomain
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnDomain1
-      AnchorSideTop.Side = asrBottom
-      Left = 75
-      Height = 25
-      Top = 40
-      Width = 120
-      BorderSpacing.Left = 10
-      ParentFont = False
       TabOrder = 4
     end
   end
@@ -326,8 +323,11 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.1.2'
+      Checked = True
       ParentFont = False
       TabOrder = 0
+      TabStop = True
+      Visible = False
     end
     object RadioBtnNameserver2: TRadioButton
       AnchorSideLeft.Control = RadioBtnNameserver1
@@ -342,6 +342,7 @@ object Query5_dhcp: TQuery5_dhcp
       Caption = '172.16.166.1'
       ParentFont = False
       TabOrder = 1
+      Visible = False
     end
     object RadioBtnNameserver3: TRadioButton
       AnchorSideLeft.Control = RadioBtnNameserver2
@@ -354,10 +355,9 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 116
       BorderSpacing.Left = 20
       Caption = '192.168.1.245'
-      Checked = True
       ParentFont = False
       TabOrder = 3
-      TabStop = True
+      Visible = False
     end
     object RadioBtnOtherNameserver: TRadioButton
       AnchorSideTop.Control = RadioBtnNameserver1
@@ -415,8 +415,11 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.1.2'
+      Checked = True
       ParentFont = False
       TabOrder = 0
+      TabStop = True
+      Visible = False
     end
     object RadioBtnGateway2: TRadioButton
       AnchorSideLeft.Control = RadioBtnGateway1
@@ -431,6 +434,7 @@ object Query5_dhcp: TQuery5_dhcp
       Caption = '172.16.166.1'
       ParentFont = False
       TabOrder = 1
+      Visible = False
     end
     object RadioBtnGateway3: TRadioButton
       AnchorSideLeft.Control = RadioBtnGateway2
@@ -443,10 +447,9 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 116
       BorderSpacing.Left = 20
       Caption = '192.168.1.245'
-      Checked = True
       ParentFont = False
       TabOrder = 2
-      TabStop = True
+      Visible = False
     end
     object RadioBtnOtherGateway: TRadioButton
       AnchorSideTop.Control = RadioBtnGateway1
