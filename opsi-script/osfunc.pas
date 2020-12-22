@@ -917,13 +917,13 @@ end;
 function isGUI: boolean;
 begin
   Result := True;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   {$IFDEF GUI}
   Result := True;
   {$ELSE GUI}
   Result := False;
   {$ENDIF GUI}
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
 end;
 
 function strContains(const str: string; const substr: string): boolean;

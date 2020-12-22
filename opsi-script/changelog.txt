@@ -12,6 +12,7 @@ opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
  * license functions: opsiserviceuser if possible
  * linux: shellBatch implemented as shellInAnIcon
  * macos: osfunclin: getmyipbytarget: use path to ip command
+ * macos: runningWithGui also working for macos
 
 -- d.oertel <d.oertel@uib.de> Wed, 16 Dec 2020 15:00
 
