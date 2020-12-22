@@ -5,7 +5,8 @@ unit opsi_quick_install_unit_query5_dhcp;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Process;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  Process, osnetworkcalculator;
 
 type
 
@@ -50,6 +51,7 @@ type
     RadioBtnNameserver1: TRadioButton;
     RadioBtnNameserver2: TRadioButton;
     RadioBtnNameserver3: TRadioButton;
+    RadioBtnMask3: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -87,6 +89,7 @@ end;
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
 var
   NetworkDetails, radioBtnCaption, topic: string;
+  network: array of string;
   index: integer;
 begin
   SetBasics(self);
@@ -94,7 +97,6 @@ begin
   if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
   begin
     //ShowMessage(NetworkDetails);
-
     topic := 'IP4.ADDRESS[1]:';
     radioBtnCaption := '';
     index := NetworkDetails.IndexOf(topic);
@@ -108,10 +110,66 @@ begin
         radioBtnCaption += NetworkDetails[index];
         index += 1;
       end;
-      RadioBtnAddress1.Visible:=True;
-      RadioBtnAddress1.Caption := radioBtnCaption;
+      network := radioBtnCaption.Split(['/']);
+      RadioBtnMask1.Visible := True;
+      RadioBtnMask1.Caption := getNetmaskByIP4adr(network[1]);
+      RadioBtnAddress1.Visible := True;
+      RadioBtnAddress1.Caption := getIP4NetworkByAdrAndMask(network[0], network[1]);
+      topic := 'IP4.ADDRESS[2]:';
+      radioBtnCaption := '';
+      index := NetworkDetails.IndexOf(topic);
+      if index <> -1 then
+      begin
+        index += topic.Length + 1;
+        while NetworkDetails[index] = ' ' do
+          index += 1;
+        while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+        begin
+          radioBtnCaption += NetworkDetails[index];
+          index += 1;
+        end;
+        network := radioBtnCaption.Split(['/']);
+        RadioBtnMask2.Visible := True;
+        RadioBtnMask2.Caption := getNetmaskByIP4adr(network[1]);
+        RadioBtnAddress2.Visible := True;
+        RadioBtnAddress2.Caption := getIP4NetworkByAdrAndMask(network[0], network[1]);
+        topic := 'IP4.ADDRESS[3]:';
+        radioBtnCaption := '';
+        index := NetworkDetails.IndexOf(topic);
+        if index <> -1 then
+        begin
+          index += topic.Length + 1;
+          while NetworkDetails[index] = ' ' do
+            index += 1;
+          while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+          begin
+            radioBtnCaption += NetworkDetails[index];
+            index += 1;
+          end;
+          network := radioBtnCaption.Split(['/']);
+          RadioBtnMask3.Visible := True;
+          RadioBtnMask3.Caption := getNetmaskByIP4adr(network[1]);
+          RadioBtnAddress3.Visible := True;
+          RadioBtnAddress3.Caption := getIP4NetworkByAdrAndMask(network[0], network[1]);
+          // if too many radiobuttons (i.e. 3), move RadioBtnOtherMask down
+          RadioBtnOtherMask.AnchorSide[akTop].Side := asrBottom;
+          RadioBtnOtherMask.AnchorSide[akTop].Control := RadioBtnMask1;
+          RadioBtnOtherMask.AnchorSide[akLeft].Side := asrLeft;
+          RadioBtnOtherMask.AnchorSide[akLeft].Control := RadioBtnMask1;
+          RadioBtnOtherMask.BorderSpacing.Left := 0;
+          EditNetmask.AnchorSide[akTop].Side := asrBottom;
+          EditNetmask.AnchorSide[akTop].Control := RadioBtnMask1;
+          // and RadioBtnOtherAddress also
+          RadioBtnOtherAddress.AnchorSide[akTop].Side := asrBottom;
+          RadioBtnOtherAddress.AnchorSide[akTop].Control := RadioBtnAddress1;
+          RadioBtnOtherAddress.AnchorSide[akLeft].Side := asrLeft;
+          RadioBtnOtherAddress.AnchorSide[akLeft].Control := RadioBtnAddress1;
+          RadioBtnOtherAddress.BorderSpacing.Left := 0;
+          EditAddress.AnchorSide[akTop].Side := asrBottom;
+          EditAddress.AnchorSide[akTop].Control := RadioBtnAddress1;
+        end;
+      end;
     end;
-
 
     topic := 'IP4.DOMAIN[1]:';
     radioBtnCaption := '';
@@ -126,9 +184,8 @@ begin
         radioBtnCaption += NetworkDetails[index];
         index += 1;
       end;
-      CheckBoxDomain1.Visible:=True;
+      CheckBoxDomain1.Visible := True;
       CheckBoxDomain1.Caption := radioBtnCaption;
-
       topic := 'IP4.DOMAIN[2]:';
       radioBtnCaption := '';
       index := NetworkDetails.IndexOf(topic);
@@ -142,9 +199,8 @@ begin
           radioBtnCaption += NetworkDetails[index];
           index += 1;
         end;
-        CheckBoxDomain2.Visible:=True;
+        CheckBoxDomain2.Visible := True;
         CheckBoxDomain2.Caption := radioBtnCaption;
-
         topic := 'IP4.DOMAIN[3]:';
         radioBtnCaption := '';
         index := NetworkDetails.IndexOf(topic);
@@ -158,8 +214,16 @@ begin
             radioBtnCaption += NetworkDetails[index];
             index += 1;
           end;
-          CheckBoxDomain3.Visible:=True;
+          CheckBoxDomain3.Visible := True;
           CheckBoxDomain3.Caption := radioBtnCaption;
+          // if too many radiobuttons (i.e. 3), move RadioBtnOtherNameserver down
+          CheckBoxOtherDomain.AnchorSide[akTop].Side := asrBottom;
+          CheckBoxOtherDomain.AnchorSide[akTop].Control := CheckBoxDomain1;
+          CheckBoxOtherDomain.AnchorSide[akLeft].Side := asrLeft;
+          CheckBoxOtherDomain.AnchorSide[akLeft].Control := CheckBoxDomain1;
+          CheckBoxOtherDomain.BorderSpacing.Left := 0;
+          EditDomain.AnchorSide[akTop].Side := asrBottom;
+          EditDomain.AnchorSide[akTop].Control := CheckBoxDomain1;
         end;
       end;
     end;
@@ -177,44 +241,51 @@ begin
         radioBtnCaption += NetworkDetails[index];
         index += 1;
       end;
-      RadioBtnNameserver1.Visible:=True;
+      RadioBtnNameserver1.Visible := True;
       RadioBtnNameserver1.Caption := radioBtnCaption;
-
       topic := 'IP4.DNS[2]:';
-      radioBtnCaption := '';
+      //radioBtnCaption := '';
       index := NetworkDetails.IndexOf(topic);
-      if index <> -1 then
+      //if index <> -1 then
+      if True then
       begin
-        index += topic.Length + 1;
+        {index += topic.Length + 1;
         while NetworkDetails[index] = ' ' do
           index += 1;
         while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
         begin
           radioBtnCaption += NetworkDetails[index];
           index += 1;
-        end;
-        RadioBtnNameserver2.Visible:=True;
+        end;}
+        RadioBtnNameserver2.Visible := True;
         RadioBtnNameserver2.Caption := radioBtnCaption;
-
         topic := 'IP4.DNS[3]:';
-        radioBtnCaption := '';
+        //radioBtnCaption := '';
         index := NetworkDetails.IndexOf(topic);
-        if index <> -1 then
+        //if index <> -1 then
+        if True then
         begin
-          index += topic.Length + 1;
+          {index += topic.Length + 1;
           while NetworkDetails[index] = ' ' do
             index += 1;
           while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
           begin
             radioBtnCaption += NetworkDetails[index];
             index += 1;
-          end;
-          RadioBtnNameserver3.Visible:=True;
+          end;}
+          RadioBtnNameserver3.Visible := True;
           RadioBtnNameserver3.Caption := radioBtnCaption;
+          // if too many radiobuttons (i.e. 3), move RadioBtnOtherNameserver down
+          RadioBtnOtherNameserver.AnchorSide[akTop].Side := asrBottom;
+          RadioBtnOtherNameserver.AnchorSide[akTop].Control := RadioBtnNameserver1;
+          RadioBtnOtherNameserver.AnchorSide[akLeft].Side := asrLeft;
+          RadioBtnOtherNameserver.AnchorSide[akLeft].Control := RadioBtnNameserver1;
+          RadioBtnOtherNameserver.BorderSpacing.Left := 0;
+          EditNameserver.AnchorSide[akTop].Side := asrBottom;
+          EditNameserver.AnchorSide[akTop].Control := RadioBtnNameserver1;
         end;
       end;
     end;
-
 
     topic := 'IP4.GATEWAY:';
     radioBtnCaption := '';
@@ -229,12 +300,11 @@ begin
         radioBtnCaption += NetworkDetails[index];
         index += 1;
       end;
-      RadioBtnGateway1.Visible:=True;
+      RadioBtnGateway1.Visible := True;
       RadioBtnGateway1.Caption := radioBtnCaption;
     end;
 
   end;
-
 
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQueryDhcp;

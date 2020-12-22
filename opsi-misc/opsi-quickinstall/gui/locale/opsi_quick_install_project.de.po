@@ -940,6 +940,10 @@ msgstr ""
 msgid "255.255.255.0"
 msgstr ""
 
+#: tquery5_dhcp.radiobtnmask3.caption
+msgid "RadioBtnMask3"
+msgstr ""
+
 #: tquery5_dhcp.radiobtnnameserver1.caption
 msgctxt "tquery5_dhcp.radiobtnnameserver1.caption"
 msgid "10.100.1.2"

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, LCLtranslator, Buttons, osDistributionInfo,
-  oslog, osfunclin;
+  oslog, osfunclin, strutils;
 
 type
 
@@ -159,7 +159,8 @@ begin
   {testString := 'Test';
   delete(testString,testString.Length-1,2);
   ShowMessage(testString);
-  testString := binStr(32,10);
+  testString := binStr(240,10);
+  testString += IntToBin(15,5);
   ShowMessage(testString);}
 
   logFileName := 'opsi_quickinstall.log';
