@@ -205,6 +205,7 @@ type
 
     (*    Procedure ReadSection (const Sectionname: string; var Resultlist : TStringList);
           Liest alle Idents einer Sektion mit der Zeilenstruktur Ident=Value in Strings ein *)
+    procedure ReadRawSection(const SectionName: string; var Resultlist: TXStringList);
   end;
 
 
@@ -7437,6 +7438,43 @@ begin
   end;
 end;
 
+procedure TuibIniScript.ReadRawSection(const SectionName: string;
+  var Resultlist: TXStringList);
+var
+  (*
+  i: integer = 0;
+  s: string = '';
+  sectionFound : string ='';
+  nextLine : string = '';
+  comp: integer =2;
+  *)
+  startlineno: integer = 0;
+begin
+
+  (*
+  i:= 0;
+  repeat
+     s := trim(Strings[i]);
+     i:=i+1;
+     if (length(s) > 1) and (s[1] = '[') and (s[length(s)] = ']') then
+        sectionFound := copy(s, 2, length(s) - 2);
+  until ((CompareStr(SectionName,sectionFound)=0) OR (i=Count));
+
+  repeat
+     s := Strings[i];
+     if CompareStr(s,'')<>0 then
+        resultList.Add(s);
+     i:=i+1;
+     if CompareStr(Strings[i],'')<>0 then
+     begin
+       nextLine:= Strings[i];
+       comp := CompareStr(nextLine[1],'[');
+     end;
+  until ((comp=0) OR (i=Count)) ;
+  *)
+  GetSectionLines(Sectionname, resultlist, startlineno, False, False, False);
+end;
+
 
 (* TuibPatchIniFile *)
 
@@ -8197,6 +8235,7 @@ begin
 
   resultList.Free;
 end;
+
 
 function TuibIniFile.ReadString(const Section, Ident, defaultvalue: string): string;
 var
