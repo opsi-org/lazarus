@@ -5,65 +5,78 @@ unit osnetworkcalculator;  // for manipulating ip addresses.
 interface
 
 uses
-  Classes, SysUtils, RegExpr;
+  Classes, SysUtils, RegExpr, Process;
 
-function isValidIP4(ip4adr: string) : boolean; //return true if the IPv4 address is valid.
-function getIP4NetworkByAdrAndMask(ip4adr, netmask : string) : string; // return network address for the IP address and netmask.
-function isValidIP4Network(ip4adr,netmask : string) : boolean;  // return true for a valid network address.
-function isValidIP4Host(ip4adr, netmask : string) : boolean;  // return true for a valid host address.
-function getDefaultNetmaskByIP4adr(ip4adr : string) : string; // return default netmask for the IPv4 address.
-function getNetmaskByIP4adr(cidr : string) : string; // return netmask for the IPv4 address.
+type
+  StringArray = array of string;
+
+function isValidIP4(ip4adr: string): boolean;
+//return true if the IPv4 address is valid.
+function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
+// return network address for the IP address and netmask.
+function isValidIP4Network(ip4adr, netmask: string): boolean;
+// return true for a valid network address.
+function isValidIP4Host(ip4adr, netmask: string): boolean;
+// return true for a valid host address.
+function getDefaultNetmaskByIP4adr(ip4adr: string): string;
+// return default netmask for the IPv4 address.
+function getNetmaskByIP4adr(cidr: string): string;
+// return netmask for the IPv4 address.
+function getNetworkDetails(Requests: array of string): StringArray;
+// return requested network details
 
 implementation
 
-function isValidIP4(ip4adr: string) : boolean;
-//return true if the IPv4 address is valid.
+function isValidIP4(ip4adr: string): boolean;
+  //return true if the IPv4 address is valid.
 var
-  regexobj : TRegExpr;
+  regexobj: TRegExpr;
 begin
-  result := false;
+  Result := False;
   regexobj := TRegExpr.Create;
   try
-    regexobj.Expression := '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
+    regexobj.Expression :=
+      '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
     if regexobj.Exec(trim(ip4adr)) then
-      result := true;
+      Result := True;
   finally
     regexobj.Free;
   end;
 end;
 
-function binToDec(binary : string) : integer;
-//convert binary to decimal.
+function binToDec(binary: string): integer;
+  //convert binary to decimal.
 var
-  decimal : longint ;
-  pos : byte ;
+  decimal: longint;
+  pos: byte;
 begin
-  result := 0;
-  decimal := 0 ;
+  Result := 0;
+  decimal := 0;
   for pos := 1 to length(binary) do
   begin
-   decimal := (decimal shl 1) + (Ord(binary[pos])-48) ;
+    decimal := (decimal shl 1) + (Ord(binary[pos]) - 48);
   end;
-  result := decimal;
+  Result := decimal;
 end;
 
-function cidrToNetmask(cidr: string) : string;
-// convert cidr notation to dotted decimal notation.
+function cidrToNetmask(cidr: string): string;
+  // convert cidr notation to dotted decimal notation.
 var
-  shortmask, cidrcounter : integer;
-  longmask, netmask, longmaskdotted : string;
-  binaryoctets : array of string;
+  shortmask, cidrcounter: integer;
+  longmask, netmask, longmaskdotted: string;
+  binaryoctets: array of string;
 begin
-  result := '';
+  Result := '';
 
   shortmask := StrToInt(cidr);
 
-  for cidrcounter:=1 to shortmask do
+  for cidrcounter := 1 to shortmask do
     longmask += '1';
-  for cidrcounter:=shortmask+1 to 32 do
+  for cidrcounter := shortmask + 1 to 32 do
     longmask += '0';
 
-  longmaskdotted := Copy(longmask,1,8) + '.' + Copy(longmask,9,8) + '.' +  Copy(longmask,17,8) + '.' + Copy(longmask,25,8);
+  longmaskdotted := Copy(longmask, 1, 8) + '.' + Copy(longmask, 9, 8) +
+    '.' + Copy(longmask, 17, 8) + '.' + Copy(longmask, 25, 8);
   binaryoctets := longmaskdotted.Split(['.']);
 
   netmask := IntToStr(binToDec(binaryoctets[0])) + '.';
@@ -71,17 +84,17 @@ begin
   netmask += IntToStr(binToDec(binaryoctets[2])) + '.';
   netmask += IntToStr(binToDec(binaryoctets[3]));
 
-  result := netmask;
+  Result := netmask;
 end;
 
-function getIP4NetworkByAdrAndMask(ip4adr, netmask : string) : string;
-// return network address for the IP address and netmask.
+function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
+  // return network address for the IP address and netmask.
 var
-  ipoctets, netmaskoctets : array of String;
-  networkadr : string;
-  validinputs : boolean;
+  ipoctets, netmaskoctets: array of string;
+  networkadr: string;
+  validinputs: boolean;
 begin
-  result := '';
+  Result := '';
   networkadr := '';
   validinputs := False;
 
@@ -93,7 +106,7 @@ begin
       begin
         netmask := cidrToNetmask(netmask);
         validinputs := True;
-      end
+      end;
     end
     else if isValidIP4(netmask) then
       validinputs := True;
@@ -105,22 +118,24 @@ begin
     netmaskoctets := netmask.Split(['.']);
 
     networkadr := IntToStr(StrToInt(ipoctets[0]) and StrToInt(netmaskoctets[0])) + '.';
-    networkadr += IntToStr( StrToInt( ipoctets[1] ) and StrToInt(netmaskoctets[1] ) ) + '.';
-    networkadr += IntToStr( StrToInt( ipoctets[2] ) and StrToInt(netmaskoctets[2] ) ) + '.';
-    networkadr += IntToStr( StrToInt( ipoctets[3] ) and StrToInt(netmaskoctets[3] ) );
+    networkadr += IntToStr(StrToInt(ipoctets[1]) and
+      StrToInt(netmaskoctets[1])) + '.';
+    networkadr += IntToStr(StrToInt(ipoctets[2]) and
+      StrToInt(netmaskoctets[2])) + '.';
+    networkadr += IntToStr(StrToInt(ipoctets[3]) and StrToInt(netmaskoctets[3]));
 
-    result := networkadr;
+    Result := networkadr;
   end
   else
-    result := '';
+    Result := '';
 end;
 
-function isValidIP4Network(ip4adr, netmask : string) : boolean;
-// return true for a valid network address.
+function isValidIP4Network(ip4adr, netmask: string): boolean;
+  // return true for a valid network address.
 var
-  validinputs : boolean;
+  validinputs: boolean;
 begin
-  result := false;
+  Result := False;
   validinputs := False;
 
   if isValidIP4(ip4adr) then
@@ -131,7 +146,7 @@ begin
       begin
         netmask := cidrToNetmask(netmask);
         validinputs := True;
-      end
+      end;
     end
     else if isValidIP4(netmask) then
       validinputs := True;
@@ -139,20 +154,20 @@ begin
 
   if validinputs then
   begin
-    if getIP4NetworkByAdrAndMask(ip4adr,netmask) = ip4adr then
-      result := true;
+    if getIP4NetworkByAdrAndMask(ip4adr, netmask) = ip4adr then
+      Result := True;
   end
   else
-    result := false;
+    Result := False;
 end;
 
-function findBroadcastAddress(ip4adr, netmask : string) : string;
-// return broadcast address for the ip and netmask.
+function findBroadcastAddress(ip4adr, netmask: string): string;
+  // return broadcast address for the ip and netmask.
 var
-  ipoctets, netmaskoctets : array of String;
-  broadcastadr : string;
+  ipoctets, netmaskoctets: array of string;
+  broadcastadr: string;
 begin
-  result := '';
+  Result := '';
   broadcastadr := '';
 
   if pos('.', netmask) = 0 then
@@ -161,23 +176,27 @@ begin
   ipoctets := ip4adr.Split(['.']);
   netmaskoctets := netmask.Split(['.']);
 
-  broadcastadr := IntToStr( StrToInt(ipoctets[0]) or (255 - ( StrToInt(netmaskoctets[0]) )) ) + '.';
-  broadcastadr += IntToStr( StrToInt(ipoctets[1]) or (255 - ( StrToInt(netmaskoctets[1]) )) ) + '.';
-  broadcastadr += IntToStr( StrToInt(ipoctets[2]) or (255 - ( StrToInt(netmaskoctets[2]) )) ) + '.';
-  broadcastadr += IntToStr( StrToInt(ipoctets[3]) or (255 - ( StrToInt(netmaskoctets[3]) )) );
+  broadcastadr := IntToStr(StrToInt(ipoctets[0]) or
+    (255 - (StrToInt(netmaskoctets[0])))) + '.';
+  broadcastadr += IntToStr(StrToInt(ipoctets[1]) or
+    (255 - (StrToInt(netmaskoctets[1])))) + '.';
+  broadcastadr += IntToStr(StrToInt(ipoctets[2]) or
+    (255 - (StrToInt(netmaskoctets[2])))) + '.';
+  broadcastadr += IntToStr(StrToInt(ipoctets[3]) or
+    (255 - (StrToInt(netmaskoctets[3]))));
 
-  result := broadcastadr;
+  Result := broadcastadr;
 end;
 
-function isValidIP4Host(ip4adr, netmask : string) : boolean;
-// return true for a valid host address.
+function isValidIP4Host(ip4adr, netmask: string): boolean;
+  // return true for a valid host address.
 var
-  networkadr, broadcastadr : string;
-  ipoctets, networkoctets, broadcastoctets : array of String;
-  octet : integer;
-  validinputs : boolean;
+  networkadr, broadcastadr: string;
+  ipoctets, networkoctets, broadcastoctets: array of string;
+  octet: integer;
+  validinputs: boolean;
 begin
-  result := false;
+  Result := False;
 
   validinputs := False;
 
@@ -189,7 +208,7 @@ begin
       begin
         netmask := cidrToNetmask(netmask);
         validinputs := True;
-      end
+      end;
     end
     else if isValidIP4(netmask) then
       validinputs := True;
@@ -204,26 +223,27 @@ begin
     networkoctets := networkadr.Split(['.']);
     broadcastoctets := broadcastadr.Split(['.']);
 
-    for octet:=0 to 2 do
+    for octet := 0 to 2 do
     begin
-      if (ipoctets[octet] >= networkoctets[octet]) and (ipoctets[octet] <= broadcastoctets[octet]) then
+      if (ipoctets[octet] >= networkoctets[octet]) and
+        (ipoctets[octet] <= broadcastoctets[octet]) then
       begin
-        if(ipoctets[3]>networkoctets[3]) and (ipoctets[3]<broadcastoctets[3]) then
-          result := true;
+        if (ipoctets[3] > networkoctets[3]) and (ipoctets[3] < broadcastoctets[3]) then
+          Result := True;
       end;
     end;
   end
   else
-    result := false;
+    Result := False;
 end;
 
-function findNetworkClass(ip4adr : string) : string;
-// return network's class for the IP address.
+function findNetworkClass(ip4adr: string): string;
+  // return network's class for the IP address.
 var
-  ipoctets : array of String;
-  networkclass : string;
+  ipoctets: array of string;
+  networkclass: string;
 begin
-  result := '';
+  Result := '';
   networkclass := '';
 
   ipoctets := ip4adr.Split(['.']);
@@ -239,15 +259,15 @@ begin
   else if (StrToInt(ipoctets[0]) >= 240) and (StrToInt(ipoctets[0]) <= 255) then
     networkclass := 'E';
 
-  result := networkclass;
+  Result := networkclass;
 end;
 
-function getDefaultNetmaskByIP4adr(ip4adr : string) : string;
-// return default netmask for the IPv4 address.
+function getDefaultNetmaskByIP4adr(ip4adr: string): string;
+  // return default netmask for the IPv4 address.
 var
-  netclass, netmask : string;
+  netclass, netmask: string;
 begin
-  result := '';
+  Result := '';
   netmask := '';
 
   if isValidIP4(ip4adr) then
@@ -265,16 +285,51 @@ begin
     else if netclass = 'E' then
       netmask := 'not defined';
 
-    result := netmask;
+    Result := netmask;
   end
   else
-    result:= '';
+    Result := '';
 end;
 
-function getNetmaskByIP4adr(cidr : string) : string; // return netmask for the IPv4 address.
+function getNetmaskByIP4adr(cidr: string): string;
+  // return netmask for the IPv4 address.
 begin
-  result := cidrToNetmask(cidr);
+  Result := cidrToNetmask(cidr);
+end;
+
+function getNetworkDetails(Requests: array of string): StringArray;
+  // return requested network details
+var
+  NetworkDetails, request: string;
+  i, index: integer;
+begin
+  // get network details with console command 'nmcli dev show'
+  if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
+  begin
+    // for each request store the answer at the respective position in array of string 'Result'
+    SetLength(Result, Length(Requests));
+    // go through requests
+    for i := 0 to Length(Requests) - 1 do
+    begin
+      Result[i] := '';
+      // find request in NetworkDetails
+      request := Requests[i] + ':';
+      index := NetworkDetails.IndexOf(request);
+      if index <> -1 then
+      begin
+        // go to position of answer
+        index += request.Length + 1;
+        while NetworkDetails[index] = ' ' do
+          index += 1;
+        // write answer in 'Result'
+        while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+        begin
+          Result[i] += NetworkDetails[index];
+          index += 1;
+        end;
+      end;
+    end;
+  end;
 end;
 
 end.
-
