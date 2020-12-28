@@ -11141,7 +11141,7 @@ var
   list3: TXStringList;
   slist: TStringList;
   inifile: TuibIniScript;
-  uinifile : TuibIniFile;
+  uibInifile : TuibIniFile;
   localSection: TWorkSection;
   secSpec: TSectionSpecifier;
   localKindOfStatement: TStatement;
@@ -11533,11 +11533,11 @@ begin
            if Skip(')', r, r, InfoSyntaxError) then
                begin
                   syntaxCheck := True;
-                  inifile := TuibIniScript.Create;
+                  uibInifile := TuibIniFile.Create(s2);
                   try
                     s2 := ExpandFileName(s2);
-                    inifile.loadfromfile(s2);
-                    inifile.Text := reencode(inifile.Text, 'system');
+                    uibInifile.loadfromfile(s2);
+                    uibInifile.Text := reencode(uibInifile.Text, 'system');
                   except
                     on e: Exception do
                     begin
@@ -11549,11 +11549,16 @@ begin
                     end
                   end;
                   try
-                     inifile.ReadRawSection(s1,list);
+                     uibInifile.ReadRawSection(s1,list);
                   except
-                     list.Append('');
+                    on e: Exception do
+       	            begin
+                      LogDatei.log('Error in ReadRawSection from inifile "' +
+       		            s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                      list.Append('');
+                    end;
                   end;
-                  inifile.Free;
+                  uibInifile.Free;
                end;
      end
 
