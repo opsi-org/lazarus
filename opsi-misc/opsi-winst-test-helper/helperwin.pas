@@ -2,6 +2,13 @@ unit helperwin;
 
 {$mode objfpc}{$H+}
 
+{$if defined(WINDOWS) or not defined(GUI)}
+   // we have std IO: writeln is possible
+   {$DEFINE STDIO}
+ {$else}
+   {$UNDEFINE STDIO}
+ {$endif}
+
 interface
 
 {$Define GUI}
@@ -193,25 +200,29 @@ var
   showtimestr: string;
   showtimeint: integer;
 begin
+  (*
   if Application.HasOption('showwindow') then
   begin
     showtimestr := Application.GetOptionValue('showwindow');
     try
       showtimeint := StrToInt(showtimestr);
     except
-      {$IFNDEF GUI} writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.'); {$ENDIF GUI}
+      {$IFDEF STDIO} writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.'); {$ENDIF STDIO}
       showtimeint := 1;
     end;
     form1.showwindow(showtimeint);
   end;
+  *)
 end;
 
 procedure TForm1.showwindow(seconds: integer);
 begin
+  (*
   form1.Visible := True;
   Application.ProcessMessages;
   opsiscripttesthelper_main.timer1.Interval := seconds * 1000;
   opsiscripttesthelper_main.timer1.Enabled := True;
+  *)
 end;
 
 

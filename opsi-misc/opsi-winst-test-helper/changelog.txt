@@ -1,7 +1,9 @@
 opsi-script-test-helper (4.1.0.2) stable; urgency=low
 
   * new changelog
-  * ifdef GUI the no writeln
+  * activate console (stdIO at windows)
+  * {$if defined(WINDOWS) or not defined(GUI)} : $STDIO: we may use writeln
+  * start child in detached mode
 
 -- detlef oertel <d.oertel@uib.de>  Thu,  17 Dec 2020 15:00:00 +0200
 
