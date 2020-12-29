@@ -346,6 +346,7 @@ type
 
   TuibFileInstall = class(TObject)
   private
+    copyDenyList: TStringList;
     function GetReadOnlyAttribute
       (const FileName: string; eliminate: boolean): boolean;
 
@@ -368,8 +369,8 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean;
-      var RebootWanted: boolean): boolean; overload;
+      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
@@ -508,8 +509,7 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
   WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
-  catchout: boolean; var output: TXStringList;
-  showtitle : string): boolean;  overload;
+  catchout: boolean; var output: TXStringList; showtitle: string): boolean; overload;
 
 
 
@@ -608,6 +608,8 @@ procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
+function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
+  nDigits, nSpecialChars: integer): string;
 procedure ShrinkFileToMB(filename: string; newsize: integer);
 procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
@@ -915,13 +917,13 @@ end;
 function isGUI: boolean;
 begin
   Result := True;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   {$IFDEF GUI}
   Result := True;
   {$ELSE GUI}
   Result := False;
   {$ENDIF GUI}
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
 end;
 
 function strContains(const str: string; const substr: string): boolean;
@@ -1074,10 +1076,10 @@ end;
 
 function randomstr(usespecialchars: boolean): string;
 var
-  i, randomInt: integer;
+  //i, randomInt: integer;
   stringresult: string = '';
 begin
-  StringResult := '';
+  (*StringResult := '';
   for i := 1 to 2 do
   begin
     repeat
@@ -1108,7 +1110,75 @@ begin
     until
       char(randomInt) in CharsNumericForRandomStrings;
     StringResult := StringResult + char(randomInt);
+  end;*)
+  if usespecialchars = True then
+    StringResult := randomstrWithParameters(10, 2, 2, 4, 2)
+  else
+    StringResult := randomstrWithParameters(10, 3, 3, 4, 0);
+  Result := StringResult;
+end;
+
+// randomstrWithParameters returns a random string with predefined preferences
+function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
+  nDigits, nSpecialChars: integer): string;
+var
+  StringResult: string = '';
+  i, randomInt, n, m: integer;
+  aux: char;
+begin
+  { do not call randomize here.
+    calling randomize here results that two calls  one after another
+    will get the same result.
+    randomize is called at the initialization of osparser unit }
+  // Randomize;
+  for i := 1 to nLowerCases do
+  begin
+    repeat
+      randomInt := random(122) + 1
+    until char(randomInt) in CharsLowerForRandomStrings;
+    StringResult := StringResult + char(randomInt);
   end;
+  for i := 1 to nUpperCases do
+  begin
+    repeat
+      randomInt := random(90) + 1
+    until char(randomInt) in CharsUpperForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  for i := 1 to nDigits do
+  begin
+    repeat
+      randomInt := random(57) + 1
+    until char(randomInt) in CharsNumericForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  for i := 1 to nSpecialChars do
+  begin
+    repeat
+      randomInt := random(126) + 1
+    until char(randomInt) in CharsSpecialForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  if Length(StringResult) < minLength then
+  begin
+    repeat
+      repeat
+        randomInt := random(122) + 1
+      until char(randomInt) in CharsLowerForRandomStrings;
+      StringResult := StringResult + char(randomInt);
+    until Length(StringResult) >= minLength;
+  end;
+
+  //randomly reorganizing the string
+  n := Length(StringResult);
+  repeat
+    m := random(n) + 1;
+    aux := StringResult[n];
+    StringResult[n] := StringResult[m];
+    StringResult[m] := aux;
+    n := n - 1;
+  until n = 1;
+
   Result := StringResult;
 end;
 
@@ -3467,8 +3537,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3914,8 +3984,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -4614,12 +4684,12 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
   catchout: boolean; var output: TXStringList): boolean;
 var
-  showtitle : string = '';
+  showtitle: string = '';
 begin
   Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
     WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
     WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
-    Report, Exitcode, False, output,showtitle);
+    Report, Exitcode, False, output, showtitle);
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -4627,7 +4697,7 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
   WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
-  catchout: boolean; var output: TXStringList; showtitle : string): boolean;
+  catchout: boolean; var output: TXStringList; showtitle: string): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -4736,7 +4806,7 @@ begin
     SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
     //systeminfo.BitBtn1.Enabled := False;
-    systeminfo.BitBtn1.Visible:=false;
+    systeminfo.BitBtn1.Visible := False;
     //systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
     systeminfo.Label1.Caption := 'Executing: ' + showtitle;
     systeminfo.ShowOnTop;
@@ -5215,7 +5285,7 @@ var
   //Attr: integer;
   FileResult: integer = 0;
 begin
-  FileResult := FindFirst(CompleteName, faAnyFile, fRec);
+  FileResult := FindFirst(CompleteName, faAnyFile or faSymlink, fRec);
   if FileResult = 0 then
   begin
     Result := True;
@@ -5250,7 +5320,7 @@ var
   SearchRec: TSearchRec;
 begin
   FName := ExpandFileName(FName);
-  if findfirst(FName, faAnyFile, SearchRec) = 0 then
+  if findfirst(FName, faAnyFile or faSymlink, SearchRec) = 0 then
     Result := SearchRec.Size
   else
     Result := -1;
@@ -5419,13 +5489,23 @@ begin
   Result := user;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   //Result := execShellCall('who | awk ''{print $1}'' | uniq','sysnative');
   //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
   //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
   //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
   Result := getCommandResult('id -un');
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // https://scriptingosx.com/2020/02/getting-the-current-user-in-macos-update/
+  //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
+  //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
+  //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
+  Result := getCommandResult('/bin/bash -c "stat -f %Su /dev/console"');
+  if Result = 'root' then
+    Result := '';
+  //echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ && ! /loginwindow/ { print $3 }'
+  {$ENDIF DARWIN}
 end;
 
 
@@ -5561,6 +5641,9 @@ var
   LastError: DWord = 0;
   i: integer = 0;
   retries: integer = 0;
+  cmdstr, report: string;
+  outlines: TXStringlist;
+  ExitCode: integer;
 
   PLastWriteTime: PFileTime;
 
@@ -5778,9 +5861,47 @@ begin
       (*  $ENDIF *)
 
       if not Result then
+      begin
         problem := problem + ' Errorcode ' + IntToStr(LastError) +
           ' ("' + RemoveLineBreaks(SysErrorMessage(LastError)) + '")';
+        if LastError = 5 then // permission denied
+        begin
+          {$IFDEF WINDOWS}
+          if FileExists(ExtractFilePath(ParamStr(0)) + 'handle.exe') then
+          begin
+            try
+              //RunCommand();
+              LogDatei.log('Search for open handles on source and target:', LLinfo);
+              outlines := TXStringList.Create;
+              cmdstr := ExtractFilePath(ParamStr(0)) + 'handle.exe' +
+                ' /u ' + SourceFilename;
+              RunCommandAndCaptureOut(cmdstr, True, outlines, report, SW_HIDE, Exitcode);
+              for i := outlines.Count - 1 downto 0 do
+                if outlines[i] = '' then
+                  outlines.Delete(i);
+              outlines.EliminateLinesStartingWith('Handle v', False);
+              outlines.EliminateLinesStartingWith('Copyright (c)', False);
+              outlines.EliminateLinesStartingWith('Sysinternals', False);
+              LogDatei.log_list(TStrings(outlines), LLinfo);
+              outlines.Clear;
+              cmdstr := ExtractFilePath(ParamStr(0)) + 'handle.exe' +
+                ' /u ' + TargetFilename;
+              RunCommandAndCaptureOut(cmdstr, True, outlines, report, SW_HIDE, Exitcode);
+              for i := outlines.Count - 1 downto 0 do
+                if outlines[i] = '' then
+                  outlines.Delete(i);
+              outlines.EliminateLinesStartingWith('Handle v', False);
+              outlines.EliminateLinesStartingWith('Copyright (c)', False);
+              outlines.EliminateLinesStartingWith('Sysinternals', False);
 
+              LogDatei.log_list(TStrings(outlines), LLinfo);
+            finally
+              FreeAndNil(outlines);
+            end;
+          end;
+          {$ENDIF WINDOWS}
+        end;
+      end;
 
     except
       on E: Exception do
@@ -8622,11 +8743,15 @@ end;
 
 constructor TuibFileInstall.Create;
 begin
+  copyDenyList := TStringList.Create;
+  copyDenyList.CaseSensitive := False;
+  copyDenyList.Add('.ds_store');
   inherited Create;
 end;
 
 destructor TuibFileInstall.Destroy;
 begin
+  FreeAndNil(copyDenyList);
   inherited Destroy;
 end;
 
@@ -9556,12 +9681,25 @@ var
       CopyShallTakePlace: boolean;
 
     begin
+      CopyShallTakePlace := True;
       if SourceName = TargetName then
       begin
         LogS := 'Warning: ' + ' Target "' + TargetName + '" = Source ';
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
-      end
-      else
+        LogDatei.log(LogS, LLwarning);
+        CopyShallTakePlace := False;
+      end;
+
+      if CopyShallTakePlace then
+      begin
+        if copyDenyList.IndexOf(ExtractFileName(SourceName)) > -1 then
+        begin
+          CopyShallTakePlace := False;
+          LogDatei.log('Copy of source: ' + ExtractFileName(
+            SourceName) + ' denied by policy.', LLinfo);
+        end;
+      end;
+
+      if CopyShallTakePlace and FileExists(TargetName) then
       begin
         CopyShallTakePlace := True;
 
@@ -9586,80 +9724,79 @@ var
           CopyShallTakePlace := FileCheckVersions(SourceName, TargetName, True);
         end;
         {$ENDIF WINDOWS}
+      end;
 
-        if CopyShallTakePlace and FileExists(TargetName) then
+      if CopyShallTakePlace and FileExists(TargetName) then
+      begin
+        if cpSpecify and cpNoOverwrite = cpNoOverwrite then
         begin
-          if cpSpecify and cpNoOverwrite = cpNoOverwrite then
-          begin
-            CopyShallTakePlace := False;
-            LogS := 'Target ' + TargetName + ' exists - no copy';
-            LogDatei.DependentAdd(LogS, LevelComplete);
-          end
-          else if cpSpecify and cpUpdate = cpUpdate then
-          begin
-            CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
-          end
-          else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
-          begin
-            followsymlinks := True;
-          end
-          else if cpSpecify and cpDateControl = cpDateControl then
-          begin
-            Extension := UpperCase(ExtractFileExt(TargetName));
-            system.Delete(Extension, 1, 1);
-            if (Extension = 'EXE') then
-              CopyShallTakePlace := FileCheckDate(SourceName, TargetName, True);
-          end
-          else
-          begin
-            LogS := 'Info: Target ' + TargetName +
-              ' exists and shall be overwritten';
-            LogDatei.DependentAdd(LogS, LevelInfo);
-            LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-          end;
-
-          if CopyShallTakePlace then
-
-            if cpDontForceOverwrite = cpSpecify and cpDontForceOverwrite then
-            begin
-              if GetReadonlyAttribute(TargetName, False) then
-              begin
-                CopyShallTakePlace := False;
-                LogS := '"' + TargetName + '" will not be overwritten';
-                LogDatei.DependentAdd(LogS, LevelInfo);
-              end;
-            end
-            else
-              GetReadOnlyAttribute(TargetName, True);
-
+          CopyShallTakePlace := False;
+          LogS := 'Target ' + TargetName + ' exists - no copy';
+          LogDatei.log(LogS, LLinfo);
+        end
+        else if cpSpecify and cpUpdate = cpUpdate then
+        begin
+          CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
+        end
+        else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+        begin
+          followsymlinks := True;
+        end
+        else if cpSpecify and cpDateControl = cpDateControl then
+        begin
+          Extension := UpperCase(ExtractFileExt(TargetName));
+          system.Delete(Extension, 1, 1);
+          if (Extension = 'EXE') then
+            CopyShallTakePlace := FileCheckDate(SourceName, TargetName, True);
+        end
+        else
+        begin
+          LogS := 'Info: Target ' + TargetName +
+            ' exists and shall be overwritten';
+          LogDatei.log(LogS, LLinfo);
+          LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
         end;
 
         if CopyShallTakePlace then
-        begin
-          if FileCopy(SourceName, TargetName, problem, True,
-            rebootWanted, followsymlinks) then
+
+          if cpDontForceOverwrite = cpSpecify and cpDontForceOverwrite then
           begin
-            LogS := SourceName + ' copied to ' + TargetPath;
-            LogDatei.DependentAdd(LogS, LevelComplete);
-            if problem <> '' then
+            if GetReadonlyAttribute(TargetName, False) then
             begin
-              LogS := 'Warning: ' + problem;
-              LogDatei.DependentAddWarning(LogS, LevelWarnings);
+              CopyShallTakePlace := False;
+              LogS := '"' + TargetName + '" will not be overwritten';
+              LogDatei.log(LogS, LLinfo);
             end;
           end
           else
-          begin
-            LogS := 'Error: copy of ' + SourceName + ' to ' +
-              TargetName + ' not possible. ' + problem;
-            LogDatei.log(LogS, LLError);
-          end;
-
-
-          if not (cpLeaveReadonly = cpSpecify and cpLeaveReadonly) then
             GetReadOnlyAttribute(TargetName, True);
-          // a readonly attribute will be eliminated
+      end;
 
+      if CopyShallTakePlace then
+      begin
+        if FileCopy(SourceName, TargetName, problem, True,
+          rebootWanted, followsymlinks) then
+        begin
+          LogS := SourceName + ' copied to ' + TargetPath;
+          LogDatei.log(LogS, LLInfo);
+          if problem <> '' then
+          begin
+            LogS := 'Warning: ' + problem;
+            LogDatei.log(LogS, LLWarning);
+          end;
+        end
+        else
+        begin
+          LogS := 'Error: copy of ' + SourceName + ' to ' +
+            TargetName + ' not possible. ' + problem;
+          LogDatei.log(LogS, LLError);
         end;
+
+
+        if not (cpLeaveReadonly = cpSpecify and cpLeaveReadonly) then
+          GetReadOnlyAttribute(TargetName, True);
+        // a readonly attribute will be eliminated
+
       end;
     end;
 
@@ -9921,7 +10058,7 @@ var
             FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
-          LogDatei.DependentAdd(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
@@ -9966,7 +10103,8 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(SourcePath + '*.*', faAnyfile, SearchResult);
       {$ELSE}
-      FindResultcode := FindFirst(SourcePath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(SourcePath + '*', faAnyfile or
+        faSymlink, SearchResult);
       {$ENDIF WINDOWS}
 
       while FindResultcode = 0 do
@@ -10236,7 +10374,7 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
@@ -10262,8 +10400,8 @@ var
     LogS := 'Search "' + OrigPath + Filemask + '"';
     LogDatei.log(LogS, LLInfo);
 
-    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile -
-      faDirectory, SearchResult);
+    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or
+      faSymlink - faDirectory, SearchResult);
 
     while FindResultcode = 0 do
     begin
@@ -10386,7 +10524,7 @@ var
         {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
           '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
-        {$ENDIF LINUX}
+        {$ENDIF UNIX}
         {$IFDEF WINDOWS}
         errorNo := GetLastError;
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
