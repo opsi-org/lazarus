@@ -303,7 +303,7 @@ var
   NetworkDetails, request: string;
   i, index: integer;
 begin
-  // get network details with console command 'nmcli dev show'
+  // get network details with console command 'nmcli dev show' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
   begin
     // for each request store the answer at the respective position in array of string 'Result'

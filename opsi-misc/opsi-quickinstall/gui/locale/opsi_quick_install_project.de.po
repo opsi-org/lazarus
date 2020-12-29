@@ -77,8 +77,10 @@ msgstr "Um die restliche Installation automatisch durchführen zu können, benö
 #: opsi_quick_install_resourcestrings.rscontinue
 msgid ""
 "To continue and start the installation, please press enter.\n"
-"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
+"If you like to jump back to a question, please press the number key of the respective number from the overview.\n"
 msgstr ""
+"Um fortzufahren und die Installation zu starten, drücken Sie bitte Enter.\n"
+"Wenn Sie zu einer Frage zurückgehen möchten, drücken Sie bitte die Zahlentaste der entsprechenden Nummer aus der Übersicht.\n"
 
 #: opsi_quick_install_resourcestrings.rscopymodules
 msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
@@ -122,10 +124,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
 msgstr "DNS Domain (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsdomainex
-msgid " [Examples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-msgstr " [Vorschläge: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
@@ -145,11 +143,6 @@ msgstr " fertigstellen "
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
 msgstr "Gateway (...):"
-
-#: opsi_quick_install_resourcestrings.rsgatewayex
-msgctxt "opsi_quick_install_resourcestrings.rsgatewayex"
-msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr " [Vorschläge: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
@@ -187,7 +180,7 @@ msgstr "Für MySQL brauchen Sie aktive Module. Um weitere Informationen und Prei
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
 msgid "Information on the network in which the opsi server shall be installed."
-msgstr ""
+msgstr "Informationen zum Netzwerk, in das der Opsi-Server installiert werden soll."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
 msgid "Opsi 4.2 is the latest version..."
@@ -199,13 +192,15 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinforepo
 msgid "Source from which opsi will be installed."
-msgstr ""
+msgstr "Quelle, von der Opsi installiert wird."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
 msgid ""
 "Select the stability of the installation:\n"
 "Experimental...; testing is the beta version; stable...\n"
 msgstr ""
+"Wählen Sie die Stabilität der Installation:\n"
+"Experimental...; testing is the beta version; stable...\n"
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
@@ -256,11 +251,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp):"
 msgstr "Primärer Nameserver (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsnameserverex
-msgctxt "opsi_quick_install_resourcestrings.rsnameserverex"
-msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr " [Vorschläge: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
 msgid "Primary nameserver: "
@@ -276,10 +266,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp):"
 msgstr "Netzmaske (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsnetmaskex
-msgid " [Examples: \"225.225.0.0\", \"225.225.225.0\"]"
-msgstr " [Vorschläge: \"225.225.0.0\", \"225.225.225.0\"]"
-
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
 msgid "Netmask: "
@@ -294,10 +280,6 @@ msgstr "Andere:"
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp):"
 msgstr "Netzwerk-Adresse (für das DHCP):"
-
-#: opsi_quick_install_resourcestrings.rsnetworkaddressex
-msgid " [Examples: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
-msgstr " [Vorschläge: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
@@ -366,11 +348,9 @@ msgid " overview "
 msgstr " Übersicht "
 
 #: opsi_quick_install_resourcestrings.rspassword
-#, fuzzy
-#| msgid "Password:"
 msgctxt "opsi_quick_install_resourcestrings.rspassword"
 msgid "Password"
-msgstr "Passwort:"
+msgstr "Passwort"
 
 #: opsi_quick_install_resourcestrings.rsproxy
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
@@ -478,6 +458,10 @@ msgctxt "opsi_quick_install_resourcestrings.rsstartinstallation"
 msgid "Finally click \"finish\" to start the installation of opsi-server."
 msgstr "Klicken Sie auf \"fertigstellen\", um die Installation von Opsi-Server zu beginnen."
 
+#: opsi_quick_install_resourcestrings.rssuggestion
+msgid " [Suggestions: "
+msgstr " [Vorschläge: "
+
 #: opsi_quick_install_resourcestrings.rstftproot
 msgctxt "opsi_quick_install_resourcestrings.rstftproot"
 msgid "Which file should the TFTPROOT default symlink point to?"
@@ -523,683 +507,4 @@ msgstr "Ja"
 #: opsi_quick_install_resourcestrings.rsyesnoop
 msgid " [Options: \"y\" for yes, \"n\" for no]"
 msgstr " [Optionen: \"y\" für Ja, \"n\" für Nein]"
-
-#: tdistribution.btnback.caption
-#, fuzzy
-msgctxt "tdistribution.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tdistribution.btnnext.caption
-#, fuzzy
-msgctxt "tdistribution.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tdistribution.caption
-#, fuzzy
-msgctxt "tdistribution.caption"
-msgid "Distribution"
-msgstr "Distribution"
-
-#: tdistribution.labelcorrect.caption
-msgid ""
-"If this is correct, please click 'next >' to continue.\n"
-"If not, please edit the distribution and then continue with 'next >'.\n"
-msgstr ""
-
-#: tdistribution.labeldistr.caption
-#, fuzzy
-msgctxt "tdistribution.labeldistr.caption"
-msgid "We recognized the following distribution on this computer:"
-msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
-
-#: toverview.btnback.caption
-#, fuzzy
-msgctxt "toverview.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: toverview.btnfinish.caption
-#, fuzzy
-msgctxt "toverview.btnfinish.caption"
-msgid " finish "
-msgstr " fertigstellen "
-
-#: toverview.caption
-#, fuzzy
-msgctxt "toverview.caption"
-msgid "Overview"
-msgstr "Übersicht"
-
-#: toverview.labelfinish.caption
-msgid "Finally click 'finish' to start the installation of opsi-server."
-msgstr ""
-
-#: tpassword.btnback.caption
-#, fuzzy
-msgctxt "tpassword.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tpassword.btnfinish.caption
-#, fuzzy
-msgctxt "tpassword.btnfinish.caption"
-msgid " finish "
-msgstr " fertigstellen "
-
-#: tpassword.caption
-msgid "Authentication required"
-msgstr ""
-
-#: tpassword.checkboxshowpassword.caption
-#, fuzzy
-msgctxt "tpassword.checkboxshowpassword.caption"
-msgid "Show password"
-msgstr "Passwort sichtbar machen"
-
-#: tpassword.labelpassword.caption
-msgid "Password:"
-msgstr ""
-
-#: tpassword.labelrights.caption
-#, fuzzy
-msgctxt "tpassword.labelrights.caption"
-msgid "Authentication is required to install opsi-server. Who are you logged in as?"
-msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
-
-#: tpassword.radiobtnroot.caption
-msgid "Root"
-msgstr ""
-
-#: tpassword.radiobtnsudo.caption
-msgid "Sudo"
-msgstr ""
-
-#: tquery.btnback.caption
-#, fuzzy
-msgctxt "tquery.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquery.btnnext.caption
-#, fuzzy
-msgctxt "tquery.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tquery.caption
-msgid "Opsi Quick Install - Query (part 1)"
-msgstr ""
-
-#: tquery.editdefaultrepo.text
-msgid "repo"
-msgstr ""
-
-#: tquery.editdefaultreponocache.text
-msgid "repo (no cache)"
-msgstr ""
-
-#: tquery.labelnocache.caption
-msgid ""
-"(Base-) Repository for opsi-server installation\n"
-"(without any cache proxy)\n"
-msgstr ""
-
-#: tquery.labelopsiversion.caption
-#, fuzzy
-msgctxt "tquery.labelopsiversion.caption"
-msgid "Which opsi version would you like to install?"
-msgstr "Welche Opsi-Version möchten Sie installieren?"
-
-#: tquery.labelproxy.caption
-msgid "Proxy to use (http://myproxy.dom.org:8080)"
-msgstr ""
-
-#: tquery.labelrepo.caption
-msgid "(Base-) Repository for opsi-server installation"
-msgstr ""
-
-#: tquery.labelrepo.hint
-msgid "Repository from which opsi shall be installed."
-msgstr ""
-
-#: tquery.radiobtnmyproxy.caption
-msgid "http://myproxy.dom.org:8080"
-msgstr ""
-
-#: tquery.radiobtnnone.caption
-#, fuzzy
-msgctxt "tquery.radiobtnnone.caption"
-msgid "None"
-msgstr "Keiner"
-
-#: tquery.radiobtnopsi41.caption
-#, fuzzy
-msgctxt "tquery.radiobtnopsi41.caption"
-msgid "Opsi 4.1"
-msgstr "Opsi 4.1"
-
-#: tquery.radiobtnopsi42.caption
-#, fuzzy
-msgctxt "tquery.radiobtnopsi42.caption"
-msgid "Opsi 4.2"
-msgstr "Opsi 4.2"
-
-#: tquery.radiobtnothernocache.caption
-#, fuzzy
-msgctxt "tquery.radiobtnothernocache.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery.radiobtnotherproxy.caption
-#, fuzzy
-msgctxt "tquery.radiobtnotherproxy.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery.radiobtnotherrepo.caption
-#, fuzzy
-msgctxt "tquery.radiobtnotherrepo.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery2.btnback.caption
-#, fuzzy
-msgctxt "tquery2.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquery2.btnnext.caption
-#, fuzzy
-msgctxt "tquery2.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tquery2.caption
-msgid "Opsi Quick Install - Query (part 2)"
-msgstr ""
-
-#: tquery2.labelbackend.caption
-msgid ""
-"Which backend should be installed?\n"
-"(mysql needs valid activation file)\n"
-msgstr ""
-
-#: tquery2.labelcopymodules.caption
-#, fuzzy
-msgctxt "tquery2.labelcopymodules.caption"
-msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr "Sollen wir Module kopieren, selbst wenn /etc/opsi/modules noch existiert?"
-
-#: tquery2.labelrepokind.caption
-#, fuzzy
-msgctxt "tquery2.labelrepokind.caption"
-msgid "From which repo kind should be installed?"
-msgstr "Von welcher Repository-Art soll installiert werden?"
-
-#: tquery2.radiobtnexperimental.caption
-msgid "experimental"
-msgstr ""
-
-#: tquery2.radiobtnfile.caption
-msgid "file"
-msgstr ""
-
-#: tquery2.radiobtnmysql.caption
-msgid "mysql"
-msgstr ""
-
-#: tquery2.radiobtnnocopy.caption
-#, fuzzy
-msgctxt "tquery2.radiobtnnocopy.caption"
-msgid "No"
-msgstr "Nein"
-
-#: tquery2.radiobtnstable.caption
-msgid "stable"
-msgstr ""
-
-#: tquery2.radiobtntesting.caption
-msgid "testing"
-msgstr ""
-
-#: tquery2.radiobtnyescopy.caption
-#, fuzzy
-msgctxt "tquery2.radiobtnyescopy.caption"
-msgid "Yes"
-msgstr "Ja"
-
-#: tquery4.btnback.caption
-#, fuzzy
-msgctxt "tquery4.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquery4.btnnext.caption
-#, fuzzy
-msgctxt "tquery4.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tquery4.caption
-msgctxt "tquery4.caption"
-msgid "Opsi quick install - query (part 3)"
-msgstr ""
-
-#: tquery4.editpassworducs.text
-msgctxt "tquery4.editpassworducs.text"
-msgid "linux123"
-msgstr ""
-
-#: tquery4.labeldhcp.caption
-#, fuzzy
-msgctxt "tquery4.labeldhcp.caption"
-msgid "Should we run the opsi dhcp server on this machine?"
-msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
-
-#: tquery4.labelfilepointer.caption
-#, fuzzy
-msgctxt "tquery4.labelfilepointer.caption"
-msgid "Which file should the TFTPROOT default symlink point to?"
-msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
-
-#: tquery4.labelpasswordmasteradmin.caption
-#, fuzzy
-msgctxt "tquery4.labelpasswordmasteradmin.caption"
-msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
-msgstr "Passwort des Administrators des UCS-Domain-Controllers: (benötigt, um andere Rollen hinzuzufügen)"
-
-#: tquery4.labelreboot.caption
-#, fuzzy
-msgctxt "tquery4.labelreboot.caption"
-msgid "May the server reboot if the script is finished?"
-msgstr "Soll der Server neustarten, wenn das Skript beendet ist?"
-
-#: tquery4.radiobtndhcpno.caption
-#, fuzzy
-msgctxt "tquery4.radiobtndhcpno.caption"
-msgid "No"
-msgstr "Nein"
-
-#: tquery4.radiobtndhcpyes.caption
-#, fuzzy
-msgctxt "tquery4.radiobtndhcpyes.caption"
-msgid "Yes"
-msgstr "Ja"
-
-#: tquery4.radiobtnmenu.caption
-msgid "default.menu"
-msgstr ""
-
-#: tquery4.radiobtnno.caption
-#, fuzzy
-msgctxt "tquery4.radiobtnno.caption"
-msgid "No"
-msgstr "Nein"
-
-#: tquery4.radiobtnnomenu.caption
-msgid "default.nomenu"
-msgstr ""
-
-#: tquery4.radiobtnyes.caption
-#, fuzzy
-msgctxt "tquery4.radiobtnyes.caption"
-msgid "Yes"
-msgstr "Ja"
-
-#: tquery5_dhcp.btnback.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquery5_dhcp.btnnext.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tquery5_dhcp.caption
-msgid "Opsi quick install - query (dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.checkboxdomain1.caption
-msgctxt "tquery5_dhcp.checkboxdomain1.caption"
-msgid "ucs.test"
-msgstr ""
-
-#: tquery5_dhcp.checkboxdomain2.caption
-msgctxt "tquery5_dhcp.checkboxdomain2.caption"
-msgid "uib.local"
-msgstr ""
-
-#: tquery5_dhcp.checkboxdomain3.caption
-msgctxt "tquery5_dhcp.checkboxdomain3.caption"
-msgid "vmnat.local"
-msgstr ""
-
-#: tquery5_dhcp.checkboxotherdomain.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.checkboxotherdomain.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery5_dhcp.labeladdress.caption
-msgid "Network address (for dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.labeldomain.caption
-msgid "DNS domain (for dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.labelgateway.caption
-msgid "Gateway (option routers for dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.labelnameserver.caption
-msgid "Primary nameserver (for dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.labelnetmask.caption
-msgid "Netmask (for dhcp)"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnaddress1.caption
-msgid "10.100.0.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnaddress2.caption
-msgid "172.16.166.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnaddress3.caption
-msgid "192.168.0.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtngateway1.caption
-msgctxt "tquery5_dhcp.radiobtngateway1.caption"
-msgid "10.100.1.2"
-msgstr ""
-
-#: tquery5_dhcp.radiobtngateway2.caption
-msgctxt "tquery5_dhcp.radiobtngateway2.caption"
-msgid "172.16.166.1"
-msgstr ""
-
-#: tquery5_dhcp.radiobtngateway3.caption
-msgctxt "tquery5_dhcp.radiobtngateway3.caption"
-msgid "192.168.1.245"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnmask1.caption
-msgid "255.255.0.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnmask2.caption
-msgid "255.255.255.0"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnmask3.caption
-msgid "RadioBtnMask3"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnnameserver1.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver1.caption"
-msgid "10.100.1.2"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnnameserver2.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver2.caption"
-msgid "172.16.166.1"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnnameserver3.caption
-msgctxt "tquery5_dhcp.radiobtnnameserver3.caption"
-msgid "192.168.1.245"
-msgstr ""
-
-#: tquery5_dhcp.radiobtnotheraddress.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.radiobtnotheraddress.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery5_dhcp.radiobtnothergateway.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.radiobtnothergateway.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery5_dhcp.radiobtnothermask.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.radiobtnothermask.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery5_dhcp.radiobtnothernameserver.caption
-#, fuzzy
-msgctxt "tquery5_dhcp.radiobtnothernameserver.caption"
-msgid "Other:"
-msgstr "Andere:"
-
-#: tquery6.btnback.caption
-#, fuzzy
-msgctxt "tquery6.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquery6.btnoverview.caption
-#, fuzzy
-msgctxt "tquery6.btnoverview.caption"
-msgid " overview "
-msgstr " Übersicht "
-
-#: tquery6.caption
-msgid "Opsi Quick Install - Query (user info)"
-msgstr ""
-
-#: tquery6.editnameadmin.text
-msgid "adminuser"
-msgstr ""
-
-#: tquery6.editnameip.text
-msgctxt "tquery6.editnameip.text"
-msgid "auto"
-msgstr ""
-
-#: tquery6.editnumberip.text
-msgctxt "tquery6.editnumberip.text"
-msgid "auto"
-msgstr ""
-
-#: tquery6.editpasswordadmin.text
-msgctxt "tquery6.editpasswordadmin.text"
-msgid "linux123"
-msgstr ""
-
-#: tquery6.labelnameadmin.caption
-msgid ""
-"What is the name of the opsi_admin_user to create?\n"
-"(empty = nothing created)\n"
-msgstr ""
-
-#: tquery6.labelnameip.caption
-msgid "Set a different IP name (FQDN) ('auto' = use standard)"
-msgstr ""
-
-#: tquery6.labelnumberip.caption
-msgid "Set a different IP number ('auto' = use standard)"
-msgstr ""
-
-#: tquery6.labelpasswordadmin.caption
-msgid ""
-"What is the password of the opsi_admin_user to create?\n"
-"(empty = nothing created)\n"
-msgstr ""
-
-#: tqueryprods.btnback.caption
-#, fuzzy
-msgctxt "tqueryprods.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tqueryprods.btnnext.caption
-#, fuzzy
-msgctxt "tqueryprods.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tqueryprods.caption
-msgctxt "tqueryprods.caption"
-msgid "Opsi quick install - query (part 3)"
-msgstr ""
-
-#: tqueryprods.checkboxall.caption
-msgid "All"
-msgstr ""
-
-#: tqueryprods.checkboxconfigwin10.caption
-msgid "config-win10"
-msgstr ""
-
-#: tqueryprods.checkboxconfigwinbase.caption
-msgid "config-winbase"
-msgstr ""
-
-#: tqueryprods.checkboxhwaudit.caption
-msgid "hwaudit"
-msgstr ""
-
-#: tqueryprods.checkboxjavavm.caption
-msgid "javavm"
-msgstr ""
-
-#: tqueryprods.checkboxjedit.caption
-msgid "jedit"
-msgstr ""
-
-#: tqueryprods.checkboxnone.caption
-#, fuzzy
-msgctxt "tqueryprods.checkboxnone.caption"
-msgid "None"
-msgstr "Keiner"
-
-#: tqueryprods.checkboxopsiclientagent.caption
-msgid "opsi-client-agent"
-msgstr ""
-
-#: tqueryprods.checkboxopsiconfiged.caption
-msgid "opsi-configed"
-msgstr ""
-
-#: tqueryprods.checkboxopsilogviewer.caption
-msgid "opsi-logviewer"
-msgstr ""
-
-#: tqueryprods.checkboxopsiscripttest.caption
-msgid "opsi-script-test"
-msgstr ""
-
-#: tqueryprods.checkboxopsisetupdetector.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tqueryprods.checkboxopsisetwinuac.caption
-msgid "opsi-set-win-uac"
-msgstr ""
-
-#: tqueryprods.checkboxopsitemplate.caption
-msgid "opsi-template"
-msgstr ""
-
-#: tqueryprods.checkboxopsitemplateadmin.caption
-msgid "opsi-template-with-admin"
-msgstr ""
-
-#: tqueryprods.checkboxopsiuefinetboot.caption
-msgid "opsi-uefi-netboot"
-msgstr ""
-
-#: tqueryprods.checkboxopsiwimcapture.caption
-msgid "opsi-wim-capture"
-msgstr ""
-
-#: tqueryprods.checkboxopsiwinpe.caption
-msgid "opsi-winpe"
-msgstr ""
-
-#: tqueryprods.checkboxopsiwinst.caption
-msgid "opsi-winst"
-msgstr ""
-
-#: tqueryprods.checkboxshutdown.caption
-msgid "shutdownwanted"
-msgstr ""
-
-#: tqueryprods.checkboxswaudit.caption
-msgid "swaudit"
-msgstr ""
-
-#: tqueryprods.labelopsiproducts.caption
-msgid "Which opsi product(s) should we install in the depot?"
-msgstr ""
-
-#: tquickinstall.btnback.caption
-#, fuzzy
-msgctxt "tquickinstall.btnback.caption"
-msgid " < back "
-msgstr " < zurück "
-
-#: tquickinstall.btnfinish.caption
-msgid "BtnFinish"
-msgstr ""
-
-#: tquickinstall.btnnext.caption
-#, fuzzy
-msgctxt "tquickinstall.btnnext.caption"
-msgid " next > "
-msgstr " weiter > "
-
-#: tquickinstall.btnoverview.caption
-msgid "BtnOverview"
-msgstr ""
-
-#: tquickinstall.caption
-msgid "Opsi Quick Install"
-msgstr ""
-
-#: tquickinstall.labelcarryout.caption
-msgid "To carry out the remaing installation automatically, we need some information first."
-msgstr ""
-
-#: tquickinstall.labelsellanguage.caption
-#, fuzzy
-msgctxt "tquickinstall.labelsellanguage.caption"
-msgid "Please choose a language for this setup program:"
-msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
-
-#: tquickinstall.labelsetup.caption
-#, fuzzy
-msgctxt "tquickinstall.labelsetup.caption"
-msgid "Please select a setup type:"
-msgstr "Bitte wählen Sie einen Setup-Typ:"
-
-#: tquickinstall.labelwelcome.caption
-#, fuzzy
-msgctxt "tquickinstall.labelwelcome.caption"
-msgid "Welcome to the installation of opsi-server on this computer!"
-msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
-
-#: tquickinstall.radiobtncustom.caption
-msgid "Custom (...)"
-msgstr ""
-
-#: tquickinstall.radiobtndefault.caption
-msgid "Standard (...)"
-msgstr ""
-
-#: twait.labelwait.caption
-msgid "LabelWait"
-msgstr ""
 

@@ -15,7 +15,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osfunclin,
   osLinuxRepository,
   opsi_quick_install_resourcestrings,
-  oslog;
+  oslog,
+  osnetworkcalculator;
 
 type
 
@@ -28,7 +29,8 @@ type
     DistrInfo: TDistributionInfo;
     opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
-    ucsPassword, reboot, dhcp, link: string;
+    ucsPassword, reboot, dhcp, symlink: string;
+    NetworkDetails: array of string;
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
     FileText, PropsFile: TStringList;
@@ -198,7 +200,7 @@ type
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
-    link := 'default.nomenu';
+    symlink := 'default.nomenu';
     netmask := '255.255.0.0';
     networkAddress := '192.168.0.0';
     domain := 'uib.local';
@@ -240,7 +242,7 @@ type
     FileText.Add('opsi_admin_user_password=' + adminPassword);
     FileText.Add('opsi_online_repository=' + repo);
     FileText.Add('opsi_noproxy_online_repository=' + repoNoCache);
-    FileText.Add('patch_default_link_for_bootimage=' + link);
+    FileText.Add('patch_default_link_for_bootimage=' + symlink);
     FileText.Add('proxy=' + proxy);
     FileText.Add('repo_kind=' + repoKind);
     FileText.Add('ucs_master_admin_password=' + ucsPassword);
@@ -683,8 +685,15 @@ type
       else
         dhcp := rsNo; // cases input = 'n', input = ''
       if dhcp = rsYes then
+      begin
+        // read in network details for dhcp queries (requires unit "osnetworkcalculator")
+        NetworkDetails := getNetworkDetails(['IP4.ADDRESS[1]',
+          'IP4.ADDRESS[2]', 'IP4.ADDRESS[3]', 'IP4.DOMAIN[1]',
+          'IP4.DOMAIN[2]', 'IP4.DOMAIN[3]', 'IP4.DNS[1]', 'IP4.DNS[2]',
+          'IP4.DNS[3]', 'IP4.GATEWAY']);
         // following queries only for dhcp
-        QueryLink
+        QueryLink;
+      end
       else
         QueryAdminName;
     end;
@@ -708,36 +717,95 @@ type
     else
     begin
       if input = 'm' then
-        link := 'default.menu'
+        symlink := 'default.menu'
       else
-        link := 'default.nomenu'; // cases input = 'nom', input = ''
+        symlink := 'default.nomenu'; // cases input = 'nom', input = ''
       QueryNetmask;
     end;
   end;
 
   procedure TQuickInstall.QueryNetmask;
+  var
+    suggestion: string;
+    network: array of string;
+    index: integer;
   begin
     // netmask:
-    writeln(rsNetmask, rsNetmaskEx);
-    readln(input);
-    while input = '-h' do
+    // get netmask suggestions
+    suggestion := '';
+    // IP4.ADDRESS[1]
+    index := 0;
+    if NetworkDetails[index] <> '' then
     begin
-      writeln(rsInfoNetwork);
+      network := NetworkDetails[index].Split(['/']);
+      suggestion += getNetmaskByIP4adr(network[1]) + ', ';
+      // IP4.ADDRESS[2]
+      index += 1;
+      if NetworkDetails[index] <> '' then
+      begin
+        network := NetworkDetails[index].Split(['/']);
+        suggestion += getNetmaskByIP4adr(network[1]) + ', ';
+        // IP4.ADDRESS[3]
+        index += 1;
+        if NetworkDetails[index] <> '' then
+        begin
+          network := NetworkDetails[index].Split(['/']);
+          suggestion += getNetmaskByIP4adr(network[1]) + ', ';
+        end;
+      end;
+      Delete(suggestion, suggestion.Length-1, 2);
+      suggestion += ']';
+      // query:
+      writeln(rsNetmask, rsSuggestion, suggestion);
       readln(input);
-    end;
-    if input = '-b' then
-      QueryLink
-    else
-    begin
-      netmask := input;
-      QueryNetworkAddress;
+      while input = '-h' do
+      begin
+        writeln(rsInfoNetwork);
+        readln(input);
+      end;
+      if input = '-b' then
+        QueryLink
+      else
+      begin
+        netmask := input;
+        QueryNetworkAddress;
+      end;
     end;
   end;
 
   procedure TQuickInstall.QueryNetworkAddress;
+  var
+    suggestion: string;
+    network: array of string;
+    index: integer;
   begin
     // network address:
-    writeln(rsNetworkAddress, rsNetworkAddressEx);
+    suggestion := '';
+    // IP4.ADDRESS[1]
+    index := 0;
+    if NetworkDetails[index] <> '' then
+    begin
+      network := NetworkDetails[index].Split(['/']);
+      suggestion += getIP4NetworkByAdrAndMask(network[0], network[1]) + ', ';
+      // IP4.ADDRESS[2]
+      index += 1;
+      if NetworkDetails[index] <> '' then
+      begin
+        network := NetworkDetails[index].Split(['/']);
+        suggestion += getIP4NetworkByAdrAndMask(network[0], network[1]) + ', ';
+        // IP4.ADDRESS[3]
+        index += 1;
+        if NetworkDetails[index] <> '' then
+        begin
+          network := NetworkDetails[index].Split(['/']);
+          suggestion += getIP4NetworkByAdrAndMask(network[0], network[1]) + ', ';
+        end;
+      end;
+    end;
+    Delete(suggestion, suggestion.Length-1, 2);
+    suggestion += ']';
+    // query:
+    writeln(rsNetworkAddress, rsSuggestion, suggestion);
     readln(input);
     while input = '-h' do
     begin
@@ -754,9 +822,31 @@ type
   end;
 
   procedure TQuickInstall.QueryDomain;
+  var
+    suggestion: string;
+    index: integer;
   begin
     // domain:
-    writeln(rsDomain, rsDomainEx);
+    // IP4.DOMAIN[1]
+    index := 3;
+    if NetworkDetails[index] <> '' then
+    begin
+      suggestion += NetworkDetails[index] + ', ';
+      // IP4.DOMAIN[2]
+      index += 1;
+      if NetworkDetails[index] <> '' then
+      begin
+        suggestion += NetworkDetails[index] + ', ';
+        // IP4.DOMAIN[3]
+        index += 1;
+        if NetworkDetails[index] <> '' then
+          suggestion += NetworkDetails[index] + ', ';
+      end;
+    end;
+    Delete(suggestion, suggestion.Length-1, 2);
+    suggestion += ']';
+    // query:
+    writeln(rsDomain, rsSuggestion, suggestion);
     readln(input);
     while input = '-h' do
     begin
@@ -773,28 +863,57 @@ type
   end;
 
   procedure TQuickInstall.QueryNameserver;
+  var
+    suggestion: string;
+    index: integer;
   begin
     // nameserver:
-    writeln(rsNameserver, rsNameserverEx);
-    readln(input);
-    while input = '-h' do
+    // IP4.DNS[1]
+    index := 6;
+    if NetworkDetails[index] <> '' then
     begin
-      writeln(rsInfoNetwork);
+      suggestion += NetworkDetails[index] + ', ';
+      // IP4.DNS[2]
+      index += 1;
+      if NetworkDetails[index] <> '' then
+      begin
+        suggestion += NetworkDetails[index] + ', ';
+        // IP4.DNS[3]
+        index += 1;
+        if NetworkDetails[index] <> '' then
+          suggestion += NetworkDetails[index] + ', ';
+      end;
+      Delete(suggestion, suggestion.Length-1, 2);
+      suggestion += ']';
+      // query:
+      writeln(rsNameserver, rsSuggestion, suggestion);
       readln(input);
-    end;
-    if input = '-b' then
-      QueryDomain
-    else
-    begin
-      nameserver := input;
-      QueryGateway;
+      while input = '-h' do
+      begin
+        writeln(rsInfoNetwork);
+        readln(input);
+      end;
+      if input = '-b' then
+        QueryDomain
+      else
+      begin
+        nameserver := input;
+        QueryGateway;
+      end;
     end;
   end;
 
   procedure TQuickInstall.QueryGateway;
+  var
+    suggestion: string;
   begin
     // gateway:
-    writeln(rsGateway, rsGatewayEx);
+    // IP4.GATEWAY
+    if NetworkDetails[9] <> '' then
+      suggestion += NetworkDetails[9];
+    suggestion += ']';
+    // query:
+    writeln(rsGateway, rsSuggestion, suggestion);
     readln(input);
     while input = '-h' do
     begin
@@ -953,7 +1072,7 @@ type
     Inc(Counter);
     if dhcp = rsYes then
     begin
-      writeln(Counter, ' ', rsTFTPROOTO, link);
+      writeln(Counter, ' ', rsTFTPROOTO, symlink);
       queries.Add('11');
       Inc(Counter);
       writeln(Counter, ' ', rsNetmaskO, netmask);
@@ -1450,9 +1569,9 @@ type
       QueryDhcp
     else
     begin
-      link := input;
+      symlink := input;
       if input = '' then
-        link := 'default.nomenu';
+        symlink := 'default.nomenu';
       QueryNetmask;
     end;
   end;
@@ -1693,7 +1812,7 @@ type
     Inc(Counter);
     if dhcp = rsYes then
     begin
-      writeln(Counter, ' ', rsTFTPROOTO, link);
+      writeln(Counter, ' ', rsTFTPROOTO, symlink);
       queries.Add('11');
       Inc(Counter);
       writeln(Counter, ' ', rsNetmaskO, netmask);
@@ -1940,7 +2059,7 @@ begin
     // distribution info
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    writeln(QuickInstall.distroName, ' ', QuickInstall.distroRelease);
+    //writeln(QuickInstall.distroName, ' ', QuickInstall.distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later.

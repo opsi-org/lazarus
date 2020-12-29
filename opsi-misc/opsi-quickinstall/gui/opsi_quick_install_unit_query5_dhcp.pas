@@ -88,7 +88,7 @@ end;
 
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
 var
-  radioBtnCaption, topic: string;
+  //radioBtnCaption, topic: string;
   NetworkDetails, network: array of string;
   index: integer;
 begin

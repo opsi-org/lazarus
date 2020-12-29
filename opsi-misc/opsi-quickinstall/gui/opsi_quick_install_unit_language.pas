@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, LCLtranslator, Buttons, osDistributionInfo,
-  oslog, osfunclin, strutils;
+  oslog, osfunclin, strutils, process;
 
 type
 
@@ -154,6 +154,7 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
   testString: string;
+  NetworkDetails: array of string;
 begin
   //ShowMessage('Hi'.IndexOf('t').ToString);
   {testString := 'Test';

@@ -22,13 +22,14 @@ resourcestring
   rsBackendOp = ' [Options: "f" for file, "m" for mysql]';
   rsRepoKindOp = ' [Options: "s" for stable, "t" for testing, "e" for experimental]';
   rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
-  rsNetmaskEx = ' [Examples: "225.225.0.0", "225.225.225.0"]';
-  rsNetworkAddressEx = ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]';
-  rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
-  rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
-  rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
+  rsSuggestion = ' [Suggestions: ';
+  {rsNetmaskEx = ' [Examples: ';
+  rsNetworkAddressEx = ' [Examples: ';
+  rsDomainEx = ' [Examples: ';
+  rsNameserverEx = ' [Examples: ';
+  rsGatewayEx = ' [Examples: ';}
   rsContinue = 'To continue and start the installation, please press enter.' + #10 +
-    'If you like to jump back to a question, please press the number key of the respective number in the overview.';
+    'If you like to jump back to a question, please press the number key of the respective number from the overview.';
   rsInstall = 'Installing ';
   rsCreateRepo = 'Creating repository...';
   rsSomeMin = '(This may take some minutes)';
