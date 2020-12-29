@@ -3,34 +3,48 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: imagestodepot.rscouldnotsaveicons
-msgctxt "imagestodepot.rscouldnotsaveicons"
+#: ockimagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr ""
+
+#: ockimagestodepot.rscouldnotsaveicons
 msgid "Could not save icons on depot."
 msgstr ""
 
-#: imagestodepot.rscouldnotsavescreenshots
-msgctxt "imagestodepot.rscouldnotsavescreenshots"
+#: ockimagestodepot.rscouldnotsavescreenshots
 msgid "Could not save screenshots on depot."
 msgstr ""
 
-#: imagestodepot.rscouldnotunmount
-msgctxt "imagestodepot.rscouldnotunmount"
+#: ockimagestodepot.rscouldnotunmount
 msgid "Could not unmount depot."
 msgstr ""
 
-#: imagestodepot.rsimagesnotsaved
-msgctxt "imagestodepot.rsimagesnotsaved"
+#: ockimagestodepot.rsdone
+msgid "done"
+msgstr ""
+
+#: ockimagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr ""
+
+#: ockimagestodepot.rsimagesnotsaved
 msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr ""
 
-#: imagestodepot.rsimagessaved
-msgctxt "imagestodepot.rsimagessaved"
+#: ockimagestodepot.rsimagessaved
 msgid "Images saved on"
 msgstr ""
 
-#: imagestodepot.rsisaninvaliddir
-msgctxt "imagestodepot.rsisaninvaliddir"
+#: ockimagestodepot.rsisaninvaliddir
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
+#: ockimagestodepot.rsmounting
+msgid "Mounting"
+msgstr ""
+
+#: ockimagestodepot.rssettingrights
+msgid "Setting rights..."
 msgstr ""
 
 #: opsiclientkioskgui.rsaction
@@ -356,6 +370,10 @@ msgstr ""
 msgid "LabelLanguage"
 msgstr ""
 
+#: tformhelpinfo.labelmode.caption
+msgid "Mode:"
+msgstr ""
+
 #: tformhelpinfo.labelname.caption
 msgid "opsi client kiosk"
 msgstr ""
@@ -567,6 +585,33 @@ msgstr ""
 msgid "Dependencies / Priority"
 msgstr ""
 
+#: tformpasswordquery.buttoncancel.caption
+msgctxt "tformpasswordquery.buttoncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tformpasswordquery.buttonok.caption
+msgid "OK"
+msgstr ""
+
+#: tformpasswordquery.caption
+msgid "FormPasswordQuery"
+msgstr ""
+
+#: tformpasswordquery.editpassword.editlabel.caption
+msgctxt "tformpasswordquery.editpassword.editlabel.caption"
+msgid "Password"
+msgstr ""
+
+#: tformpasswordquery.labeldescription.caption
+msgid "Please authorize you with a sudo or root account:  "
+msgstr ""
+
+#: tformpasswordquery.sudoorroot.caption
+msgctxt "tformpasswordquery.sudoorroot.caption"
+msgid "User"
+msgstr ""
+
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
 msgstr ""
@@ -583,9 +628,8 @@ msgstr ""
 msgid "Please wait while "
 msgstr ""
 
-#: tformsaveimagesondepot.buttoncancel.caption
-msgctxt "tformsaveimagesondepot.buttoncancel.caption"
-msgid "Cancel"
+#: tformsaveimagesondepot.buttonclose.caption
+msgid "Close"
 msgstr ""
 
 #: tformsaveimagesondepot.buttoncopy.caption
@@ -603,33 +647,22 @@ msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
 msgstr ""
 
-#: tformsaveimagesondepot.directoryeditpathtodepot.text
-msgid "Y:\\"
-msgstr ""
-
-#: tformsaveimagesondepot.editpathtodepot.texthint
-msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
-msgid "\\\\servername\\opsi_depot_rw"
-msgstr ""
-
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
 msgstr ""
 
+#: tformsaveimagesondepot.groupboxpath.caption
+msgid "Path to depot"
+msgstr ""
+
+#: tformsaveimagesondepot.groupboxprogress.caption
+msgid "Progress"
+msgstr ""
+
 #: tformsaveimagesondepot.labelpassword.caption
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathmountdepot.caption
-msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
-msgid "Path to depot"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathtodepot.caption
-msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
-msgid "Path to depot"
 msgstr ""
 
 #: tformsaveimagesondepot.labeluser.caption

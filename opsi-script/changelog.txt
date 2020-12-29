@@ -5,6 +5,90 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
+
+* macos: integrate to opsiscript and opsiscriptnogui project
+  (Remove mac project files)
+* new unit osstartprocess_cp (from osfunc, will be used in opsi-script-pilot)
+* more logging on alldelete
+* repair del -c
+* try to remove dirs also with copy_delay
+* new del option -r (retryOnReboot) default false (Windows only)
+  If -r is set a missed delete action will be retried on Reboot.
+  In this case normally a 'reboot after this script' flag will be set.
+  By using the -c option setting this flag will be supressed
+  The option -c (continue) make only sense in combination with -r
+* section name now as header of showoutput
+
+* startprocess_cp fix (jan werner)
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Sep 2020 15:00
+
+
+opsi-winst/opsi-script (4.12.4.2) experimental; urgency=low
+
+* macos: try to read mountpoint from opsiclientd.conf
+  default to /var/opsisetupadmin/opsi_depot
+
+-- d.oertel <d.oertel@uib.de> Tue, 15 Sep 2020 15:00
+
+
+opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
+
+  * some more log on startup
+  * oslog: makebakfiles: rename instead of copy (much faster)
+  * fix uefi detection on win10 >= release 1004
+  * osfuncwin: WinIsUefi: the fix is here
+  //* macos: change mountpoint to /Network/opsi_depot
+  //* macos: changeback mountpoint to /Volumes/opsi_depot
+  * macos: change mountpoint back to /var/opsisetupadmin/opsi_depot
+  * osbatchgui: formresize function disabled for Darwin
+
+-- d.oertel <d.oertel@uib.de> Thu, 27 Aug 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
+
+  * includes changes from github merge request "Feature / Implementation parity between WinBatch, DosBatch and ExecWith"
+    * DosBatch-Sections to be executed with elevated privileges like WinBatch could be using /RunElevated
+    * /Run*-Parameters for ExecWith
+    * Output catching, /showouput and getOutStreamFromSection support for WinBatch
+  * compiled with lazarus 2.0.10
+  * fix for /showoutput at win64
+  * fix for runningonuefi if w10 release >= 2004
+  * osparser: execDosBatch: additional parameters now allowed for shellInAnIcon &co:
+     /runElevated
+     /TimeoutSeconds <number>
+     /WaitForProcessEnding <string>
+     /LetThemGo
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 17:54
+
+opsi-winst/opsi-script (4.12.3.18) experimental; urgency=low
+
+  * UTF8String replaced by String
+  * AnsiToUTF8() removed accordingly
+  * compiled with lazarus 2.0.10
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 16:56
+
+opsi-winst/opsi-script (4.12.3.17) stable; urgency=low
+
+  * osfunc: StartProcess_cp: log message: 'Started process' now in utf8 encoding
+  * osfunc: StartProcess_cp: use filename and parameters
+  * compiled with lazarus 2.0.10
+
+-- d.oertel <d.oertel@uib.de> Thu, 23 Jul 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.16) stable; urgency=low
+
+  * oswebservice:sendlog: Log that using default if getLogsize failed
+  * osfuncwin: some logprog in WinIsUefi
+  * osfuncwin:  getW10Release
+  * osfuncwin: WinIsUefi: fix uefi detection if w10 release >= 2004
+  * osparser: good bye to cmd64.exe
+  * osfunc: alldelete: change loglevel for not deleted files
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00
 
 opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
 

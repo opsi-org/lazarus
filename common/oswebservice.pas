@@ -24,18 +24,18 @@ interface
 
 uses
   SysUtils, Classes, Variants,
-  //IdComponent,
   oslog,
   superobject,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
+  IdComponent,
   IdHTTP,
   IdWebDAV,
   IdIOHandler,
   IdSSLOpenSSL,
+  IdSocketHandle,
   {$ENDIF SYNAPSE}
-  //IdSocketHandle,
   synacode,
   TypInfo,
   {$IFDEF GUI}
@@ -43,26 +43,14 @@ uses
   {$ENDIF GUI}
   {$IFDEF OPSISCRIPT}
   osfunc,
-  //osparser,
   osconf,
-  //lconvencoding,
-  //utf8scanner,
-  //Character,
-  //utf8info,
   {$ENDIF OPSISCRIPT}
-
-{$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   Windows,
-{$ENDIF WINDOWS}
-  //widatahelper,
-  //IDZlib,
-  //IdCompressorZlib,
+  {$ENDIF WINDOWS}
   GZIPUtils,
-  zstream;
-//LCLIntf,
-//LResources,
-//DefaultTranslator;
-//;
+  zstream,
+  LazUTF8;
 
 
 {
@@ -236,9 +224,7 @@ type
     { destructor }
     destructor Destroy; override;
     { function }
-    function retrieveJSONObject(const omc: TOpsiMethodCall; logging: boolean;
-      retry: boolean; readOmcMap: boolean; communicationmode: integer): ISuperObject;
-      overload;
+    (*
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
@@ -246,7 +232,7 @@ type
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject; overload;
-    (*
+
     function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
       retry: boolean; readOmcMap: boolean): TSuperArray; overload;
     function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
@@ -255,6 +241,9 @@ type
       logging: boolean): TSuperArray; overload;
     function retrieveJSONArray(const omc: TOpsiMethodCall): TSuperArray; overload;
     *)
+    function retrieveJSONObject(const omc: TOpsiMethodCall;
+      logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
+      communicationmode: integer = 0): ISuperObject;
     function retrieveJSONObjectByHttpPost(InStream: TMemoryStream;
       logging: boolean; communicationmode: integer): ISuperObject;
     function getMapResult(const omc: TOpsiMethodCall): TStringList;
@@ -489,7 +478,8 @@ type
     property depotId: string read FDepotId;
     property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
     //property actualclient: string read FactualClient write FactualClient;
-    property CommunicationMode : integer read FCommunicationMode write FCommunicationMode;
+    property CommunicationMode: integer read FCommunicationMode
+      write FCommunicationMode;
   end;
 
 var
@@ -1216,21 +1206,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1427,7 +1417,7 @@ end;
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
 var
-  rpcstr : string;
+  rpcstr: string;
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
   LogDatei.log('got omc.jsonUrlString: ' + omc.jsonUrlString, LLdebug3);
@@ -1453,6 +1443,7 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
+(*
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject;
 begin
   Result := retrieveJSONObject(omc, True);
@@ -1474,11 +1465,11 @@ function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject;
 begin
   Result := retrieveJSONObject(omc, logging, True, False, 0);
-end;
+end;*)
 
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean; readOmcMap: boolean;
-  communicationmode: integer): ISuperObject;
+  logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
+  communicationmode: integer = 0): ISuperObject;
 
 var
   errorOccured: boolean;
@@ -1486,7 +1477,7 @@ var
   posColon: integer;
   s, t, teststring: string;
   jO: ISuperObject;
-  utf8str: UTF8String;
+  utf8str: string;//UTF8String;
   SendStream, ReceiveStream: TMemoryStream;
   InStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
@@ -1622,7 +1613,7 @@ begin
 
         if methodGet then
         begin
-          utf8str := AnsiToUtf8(Furl);
+          //utf8str := Furl;//AnsiToUtf8(Furl);
           LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
           if HTTPSender.HTTPMethod('GET', Furl) then
           begin
@@ -1638,14 +1629,14 @@ begin
           if readOmcMap then
           begin
             s := omc.getJsonHashListString;
-            utf8str := AnsiToUtf8(s);
+            utf8str := s; //AnsiToUtf8(s);
             LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
             LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
           end
           else
           begin
             s := omc.jsonUrlString;
-            utf8str := AnsiToUtf8(s);
+            utf8str := s; //AnsiToUtf8(s);
             LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
             LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
           end;
@@ -1809,9 +1800,15 @@ begin
               if e.message = 'HTTP/1.1 401 Unauthorized' then
                 FValidCredentials := False;
               t := s;
-              Inc(communicationmode);
-              Result := retrieveJSONObject(omc, logging, retry, readOmcMap,
-                communicationmode);
+              FCommunicationMode := -1;
+              Inc(CommunicationMode);
+              if (CommunicationMode <= 2) then
+              begin
+                LogDatei.log('Retry with communicationmode: ' +
+                  IntToStr(communicationmode), LLinfo);
+                Result := retrieveJSONObject(omc, logging, retry,
+                  readOmcMap, CommunicationMode);
+              end;
               finished := True;
             end;
           end;
@@ -2681,12 +2678,13 @@ begin
   {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+    communicationmode : 2 = opsi 4.2 / Request: identity, Response: gzip, deflate, identity
    ----------------------------------------------------}
   if FCommunicationMode <> -1 then   //if Communictaion mode is set
   begin
     CommunicationMode := FCommunicationMode;
   end;
-  case communicationmode of
+  case CommunicationMode of
     0:
     begin
       LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
@@ -2709,7 +2707,7 @@ begin
       //ContentEncoding := '';
       //AcceptEncoding  := '';
     end;}
-    2:
+    1:
     begin
       LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
       compress := True;
@@ -2717,6 +2715,17 @@ begin
       Accept := 'gzip-application/json-rpc';
       ContentEncoding := '';
       AcceptEncoding := '';
+    end;
+    2:
+    begin
+      LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, identity', LLnotice);
+      compress := False;
+      ContentType := 'application/json; charset=UTF-8';
+      Accept := 'application/json';
+      AcceptEncoding := 'gzip, deflate, identity';
+      //AcceptEncoding := 'deflate';
+      ContentEncoding := 'identity';//'deflate';
+      //ContentEncoding := 'deflate';
     end;
     else
     begin
@@ -2865,6 +2874,9 @@ begin
             else
               { Communication unsuccessful }
             begin
+              LogDatei.log('Communication unsucessful', LLError);
+              LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                ' msg: ' + HTTPSender.ResultString, LLError);
               raise Exception.Create(HTTPSender.Headers.Strings[0]);
             end;
 
@@ -2973,16 +2985,21 @@ begin
         end;
         *)
       except
-        on e: Exception do
+        on E: Exception do
         begin
           LogDatei.log_prog(
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
+          FCommunicationMode := -1;
+          //-1 means CommunicationMode is not set e.g. it is unknown
           // retry with other parameters
-          Inc(communicationmode);
-          LogDatei.log('Retry with communicationmode: ' + IntToStr(
-            communicationmode), LLinfo);
-          Result := retrieveJSONObjectByHttpPost(instream, logging, communicationmode);
+          Inc(CommunicationMode);
+          if (CommunicationMode <= 2) then
+          begin
+            LogDatei.log('Retry with communicationmode: ' + IntToStr(
+              communicationmode), LLinfo);
+            Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+          end;
         end;
           (*
           if ContentTypeCompress = 'application/json' then
@@ -3346,7 +3363,7 @@ function TJsonThroughHTTPS.getFileFromDepot(filename: string;
   toStringList: boolean; var ListResult: TStringList): boolean;
 var
   resultstring, localurl: string;
-  utf8str: UTF8String;
+  utf8str: string;//UTF8String;
 begin
   try
     Result := False;
@@ -3368,7 +3385,8 @@ begin
       localurl := FserviceURL
     else
       localurl := copy(FserviceURL, 0, pos('/rpc', FserviceURL));
-    utf8str := AnsiToUtf8(localurl + '/depot/' + filename);
+    utf8str := localurl + '/depot/' + filename;
+    // AnsiToUtf8(localurl + '/depot/' + filename);
     LogDatei.log('Loading file: ' + utf8str, LLDebug2);
     {$IFDEF SYNAPSE}
     HTTPSender.Headers.Clear;
@@ -4283,9 +4301,8 @@ function TOpsi4Data.sendLog(logtype: string; appendmode: boolean): boolean;
 
 var
   logstream: TMemoryStream;
-  s, t: string;
+  s, t, t2: string;
   found: boolean;
-  utf8str: UTF8String;
   errorinfo: string;
   Count: longint;
   maxlogsizebyte: int64;
@@ -4296,14 +4313,18 @@ var
 begin
   t := '';
   Result := True;
-  // 5 MB
+  { 5 MB }
   maxlogsizebyte := 5242880;
 
-  // try to ask for actual maxlogsizebytes at the server
+  { try to ask for actual maxlogsizebytes at the server }
   aktlogsize := getLogsize;
   if aktlogsize = -1 then
+  begin
+    Logdatei.log('Failed to get max log file size from server - using default of 5 MB',
+      LLnotice);
     aktlogsize := maxlogsizebyte;
-  // byte to MB
+  end;
+  { byte to MB }
   aktlogsize := aktlogsize div (1024 * 1024);
 
   Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +
@@ -4329,6 +4350,7 @@ begin
     //s := '{"method":"writeLog","params":["' + logtype + '","';
     s := '{"method":"log_write","params":["' + logtype + '","';
     //LogDatei.log('->6',LLInfo);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
     //LogDatei.log('->7',LLInfo);
     s := '\n';
@@ -4337,17 +4359,44 @@ begin
     while found do
     begin
       Logdatei.log('read line from read file ...', LLDebug2);
+      //Logdatei.log('line1: '+t, LLDebug2);
+      //UTF8FixBroken(s);
       logstream.Write(s[1], 2);
       t := escapeControlChars(t);
+      //Logdatei.log('line2: '+t, LLDebug2);
+      try
+        t2 := t;
+        if t2<>'' then
+        begin
+          if FindInvalidUTF8Codepoint(PChar(t2),length(t2)) > -1 then
+          begin
+            { utf8fixbroken may freeze do 06.10.2020 }
+            //UTF8FixBroken(t2);
+            t := 'log line contains non UTF8 chars';
+          end
+          else t := t2;
+        end;
+        { Utf8EscapeControlChars calls utf8fixbroken see above }
+       // t := Utf8EscapeControlChars(t2);
+        //Logdatei.log('line3: '+t, LLDebug2);
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('oswebservice: UTF8FixBroken: "' + E.Message + '"',
+            LLError);
+          t := 'log line contains non fixable non UTF8 chars';
+        end
+      end;
       //{$IFDEF WINDOWS}
       //utf8str := AnsiToUtf8(t);
       //logstream.Write(utf8str[1], length(utf8str));
       //{$ELSE WINDOWS}
+      //Logdatei.log('line4: '+t, LLDebug2);
       logstream.Write(t[1], length(t));
       //{$ENDIF WINDOWS}
       //utf8str := lconvencoding.ConvertEncoding(t,lconvencoding.GetDefaultTextEncoding,'utf8');
 
-      Logdatei.log('write line from read file to service...', LLDebug2);
+      Logdatei.log('wrote line: '+t, LLDebug2);
       //logstream.write(t[1],length(t));
       found := Logdatei.getPartLine(t);
     end;
@@ -4360,6 +4409,7 @@ begin
       s := '", "' + actualClient + '", "false"], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
   except
     on E: Exception do

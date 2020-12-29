@@ -23,12 +23,12 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
-    <BuildModes Count="3">
-      <Item1 Name="Default" Default="True"/>
-      <Item2 Name="Debug">
+    <BuildModes Count="8">
+      <Item1 Name="Default_Windows" Default="True"/>
+      <Item2 Name="Debug_Windows">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -78,7 +78,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release">
+      <Item3 Name="Release_Windows">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -117,12 +117,204 @@
 -dOPSI
 -dOPSI_AS_USER"/>
             <ExecuteAfter>
-              <Command Value="execute_after.bat"/>
               <CompileReasons Run="False"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="Default_Linux">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Debug_Linux">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <OtherDefines Count="3">
+              <Define0 Value="OPSICLIENTKIOSK"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item5>
+      <Item6 Name="Release_Linux">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <ExecuteAfter>
+              <CompileReasons Run="False"/>
+            </ExecuteAfter>
+          </Other>
+        </CompilerOptions>
+      </Item6>
+      <Item7 Name="Default_MacOS">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
+      <Item8 Name="Release_MacOS">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <ExecuteAfter>
+              <CompileReasons Run="False"/>
+            </ExecuteAfter>
+          </Other>
+        </CompilerOptions>
+      </Item8>
       <SharedMatrixOptions Count="1">
         <Item1 ID="741826884469" Type="IDEMacro" MacroName="TargetFile" Value="$(BuildMode)/$NameOnly($(ProjFile))"/>
       </SharedMatrixOptions>
@@ -166,7 +358,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="30">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -207,6 +399,7 @@
       <Unit7>
         <Filename Value="ockunique.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OckUnique"/>
       </Unit7>
       <Unit8>
         <Filename Value="progresswindow.pas"/>
@@ -236,27 +429,89 @@
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="imagestodepot.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FormSaveImagesOnDepot"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit14>
-      <Unit15>
         <Filename Value="helpinfo.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormHelpInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
       </Unit15>
       <Unit16>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="../../common/osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
       <Unit17>
-        <Filename Value="../../common/osprocesses.pas"/>
+        <Filename Value="ocksystemapi.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OckSystemAPI"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="ockadmintools.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckAdminTools"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="ockwindowsapi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckWindowsAPI"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="ocklinuxapi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckLinuxAPI"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="ockwindows.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckWindows"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="ocklinux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckLinux"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="ockpasswordquery.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormPasswordQuery"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="OckPasswordQuery"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="ockimagestodepot.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormSaveImagesOnDepot"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="OckImagestoDepot"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="../../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="../../common/osruncommandelevated.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osRunCommandElevated"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="ockmacos.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckMacOS"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="../../common/osencoding.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="../../common/osfuncmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -274,6 +529,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>

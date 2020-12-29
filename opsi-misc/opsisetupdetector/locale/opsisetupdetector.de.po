@@ -143,6 +143,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr "existiert bereits. Doppel sind hier nicht erlaubt."
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr "Default-Icon"
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr "opsi-setup-detector: Dependency Editor: Fehler"
@@ -154,6 +159,11 @@ msgstr "Keine Dependency ausgewählt."
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
 msgstr "Noch nicht implementiert."
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
+msgstr "Icons zur Auswahl: "
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
@@ -497,6 +507,21 @@ msgstr "opsi Paket erstellen"
 msgid "Create a opsi Product"
 msgstr "opsi Produkt erstellen"
 
+#: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
+msgid "Next Step"
+msgstr "Nächster Schritt"
+
+#: tresultform1.btniconsnextstep.hint
+#, fuzzy
+msgctxt "tresultform1.btniconsnextstep.hint"
+msgid "Go to the next Step"
+msgstr "Zum nächsten Schritt gehen"
+
+#: tresultform1.btnopeniconfolder.caption
+msgid " open icon folder "
+msgstr " Icon-Ordner öffnen "
+
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
@@ -553,6 +578,14 @@ msgstr "Analysiere eine einzelne Setup Datei und erzeuge ein opsi Paket"
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detektor"
 
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr "Default-Icon verwenden"
+
+#: tresultform1.checkboxnoicon.caption
+msgid "use no icon"
+msgstr "Kein Icon verwenden"
+
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -567,9 +600,9 @@ msgstr "B&eenden"
 msgid "&Help"
 msgstr "&Hilfe"
 
-#: tresultform1.flowpanel14.caption
-msgid "FlowPanel14"
-msgstr ""
+#: tresultform1.label1.caption
+msgid "No Icons"
+msgstr "Keine Icons"
 
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
@@ -741,9 +774,35 @@ msgstr "Deinstallations Programm"
 msgid "Properties"
 msgstr "Properties"
 
+#: tresultform1.labelicondir.caption
+msgid "Directory:"
+msgstr "Dateipfad:"
+
+#: tresultform1.labeliconname.caption
+msgid "Name:"
+msgstr "Name:"
+
+#: tresultform1.labeliconpreview.caption
+msgid "Selected Icon (Preview 170x170)"
+msgstr "Ausgewähltes Icon (Vorschau 170x170)"
+
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
 msgstr ""
+
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr "Default-Icon"
+
+#: tresultform1.labelnumber.caption
+msgid "0"
+msgstr ""
+
+#: tresultform1.labelnumicons.caption
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
+msgstr "Icons zur Auswahl: "
 
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
@@ -771,7 +830,7 @@ msgstr "Bekannte Installer"
 
 #: tresultform1.menuitemlang.caption
 msgid "Languages"
-msgstr ""
+msgstr "Sprachen"
 
 #: tresultform1.menuitemlangde.caption
 msgid "de"
@@ -801,6 +860,11 @@ msgstr "-"
 #: tresultform1.panel4.caption
 msgid "Panel4"
 msgstr "-"
+
+#: tresultform1.paneliconpreview.caption
+msgctxt "tresultform1.paneliconpreview.caption"
+msgid "no icon selected"
+msgstr "kein Icon ausgewählt"
 
 #: tresultform1.processing.caption
 msgid "processing..."
@@ -904,6 +968,10 @@ msgstr "Analysiere"
 #: tresultform1.tabsheetcreate.caption
 msgid "Create"
 msgstr "Erzeugen"
+
+#: tresultform1.tabsheeticons.caption
+msgid "Product Icon"
+msgstr "Produkt-Icon"
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"

@@ -9,6 +9,7 @@
 {"hash":32310642,"name":"tformhelpinfo.labeluibweb.caption","sourcebytes":[76,97,98,101,108,85,105,98,87,101,98],"value":"LabelUibWeb"},
 {"hash":103482778,"name":"tformhelpinfo.labellang.caption","sourcebytes":[68,105,115,112,108,97,121,32,108,97,110,103,117,97,103,101,58],"value":"Display language:"},
 {"hash":244021514,"name":"tformhelpinfo.labelcopy.caption","sourcebytes":[67,111,112,121,82,105,103,104,116,58],"value":"CopyRight:"},
+{"hash":5528202,"name":"tformhelpinfo.labelmode.caption","sourcebytes":[77,111,100,101,58],"value":"Mode:"},
 {"hash":56517026,"name":"tformhelpinfo.labelopsiweb.caption","sourcebytes":[76,97,98,101,108,79,112,115,105,87,101,98],"value":"LabelOpsiWeb"},
 {"hash":104232613,"name":"tformhelpinfo.labellanguage.caption","sourcebytes":[76,97,98,101,108,76,97,110,103,117,97,103,101],"value":"LabelLanguage"},
 {"hash":6615220,"name":"tformhelpinfo.labelcopyright.caption","sourcebytes":[76,97,98,101,108,67,111,112,121,82,105,103,104,116],"value":"LabelCopyRight"},

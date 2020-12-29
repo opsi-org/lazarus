@@ -12,7 +12,6 @@
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
-        <ExecutionLevel Value="requireAdministrator"/>
         <TextDesc Value="Copy images for opsi-client-kiosk to the respective depot."/>
       </XPManifest>
       <Icon Value="0"/>
@@ -28,8 +27,8 @@
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="images-to-depot"/>
     </VersionInfo>
     <BuildModes Count="4">
-      <Item1 Name="Default" Default="True"/>
-      <Item2 Name="Debug">
+      <Item1 Name="Default  - Windows" Default="True"/>
+      <Item2 Name="Debug - Windows">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -70,7 +69,7 @@
           </Linking>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release - own product">
+      <Item3 Name="Release - Windows(own product)">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -106,7 +105,7 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <Item4 Name="Release - client agent">
+      <Item4 Name="Release - Windows(client agent)">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -189,6 +188,11 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <OtherDefines Count="1">
+        <Define0 Value="KIOSK_IN_AGENT"/>
+      </OtherDefines>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
