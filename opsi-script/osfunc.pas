@@ -276,8 +276,8 @@ type
     constructor Create(inifilename: string);
     destructor Destroy; override;
     procedure ReadSection(const Sectionname: string; var SectionVars: TStringList);
-    procedure ReadSectionValues(const Sectionname: string;
-      var SectionValues: TStringList);
+    procedure ReadSectionValues(const Sectionname: string; var SectionValues: TStringList);
+    procedure ReadRawSection(const SectionName: string; var RawSection: TXStringList);
     function ReadString(const Section, Ident, defaultvalue: string): string;
     procedure WriteString(const Section, Ident, Value: string);
     procedure SaveBack;
@@ -8250,6 +8250,49 @@ begin
 
   resultList.Free;
 end;
+
+
+procedure TuibIniFile.ReadRawSection(const SectionName: string;
+  var RawSection: TXStringList);
+var
+  (*
+  i: integer = 0;
+  s: string = '';
+  sectionFound : string ='';
+  nextLine : string = '';
+  comp: integer =2;
+  *)
+  startlineno: integer = 0;
+  resultList: TXStringList;
+begin
+  resultList := TXStringList.Create;
+  resultList.Clear;
+  (*
+  i:= 0;
+  repeat
+     s := trim(Strings[i]);
+     i:=i+1;
+     if (length(s) > 1) and (s[1] = '[') and (s[length(s)] = ']') then
+        sectionFound := copy(s, 2, length(s) - 2);
+  until ((CompareStr(SectionName,sectionFound)=0) OR (i=Count));
+
+  repeat
+     s := Strings[i];
+     if CompareStr(s,'')<>0 then
+        resultList.Add(s);
+     i:=i+1;
+     if CompareStr(Strings[i],'')<>0 then
+     begin
+       nextLine:= Strings[i];
+       comp := CompareStr(nextLine[1],'[');
+     end;
+  until ((comp=0) OR (i=Count)) ;
+  *)
+  GetSectionLines(Sectionname, resultlist, startlineno, False, False, False);
+  RawSection.Assign(resultList);
+  resultList.Free;
+end;
+
 
 function TuibIniFile.ReadString(const Section, Ident, defaultvalue: string): string;
 var

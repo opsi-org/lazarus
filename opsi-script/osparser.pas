@@ -11192,6 +11192,7 @@ var
   list3: TXStringList;
   slist: TStringList;
   inifile: TuibIniScript;
+  uibInifile : TuibIniFile;
   localSection: TWorkSection;
   secSpec: TSectionSpecifier;
   localKindOfStatement: TStatement;
@@ -11508,69 +11509,112 @@ begin
       end;
     end
 
+    (*
     else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
-   begin
-     s2 := '';
-     s3 := '';
-     if Skip('(', r, r, InfoSyntaxError) then
-     if EvaluateString(r, r, s1, InfoSyntaxError) then
-       if Skip(',', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s2, InfoSyntaxError) then
+     begin
+       s2 := '';
+       s3 := '';
+       if Skip('(', r, r, InfoSyntaxError) then
+       if EvaluateString(r, r, s1, InfoSyntaxError) then
          if Skip(',', r, r, InfoSyntaxError) then
-             begin
-               if EvaluateString(r, r, s3, InfoSyntaxError) then
-                 LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug)
-               else
-                 LogDatei.log('Could not EvaluateString: ' + s3, LLDebug);
-             end;
-         if Skip(')', r, r, InfoSyntaxError) then
-             begin
-               try
-                 syntaxCheck := True;
-                 s2 := ExpandFileName(s2);
-                 if s3 = '' then
-                    // with only 2 parameters
-                     newInifile := TInifile.Create(s2, TEncoding.Default)
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+           if Skip(',', r, r, InfoSyntaxError) then
+               begin
+                 if EvaluateString(r, r, s3, InfoSyntaxError) then
+                   LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug)
                  else
-                 // with 3 parameters
-                 begin
-                     LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug);
-                     if (LowerCase(s3) = LowerCase('default')) then
-                       newInifile := TInifile.Create(s2, TEncoding.Default);
-                     if (LowerCase(s3) = LowerCase('ascii')) then
-                       newInifile := TInifile.Create(s2, TEncoding.ASCII);
-                     if (LowerCase(s3) = LowerCase('ansi')) then
-                       newInifile := TInifile.Create(s2, TEncoding.ANSI);
-                     //utf7 hidden functionality, not documentated and not tested in opsi-script-test
-                     if (LowerCase(s3) = LowerCase('utf7')) or (LowerCase(s3) = LowerCase('utf-7')) then
-                       newInifile := TInifile.Create(s2, TEncoding.UTF7);
-                     if (LowerCase(s3) = LowerCase('utf8')) or (LowerCase(s3) = LowerCase('utf-8')) then
-                       newInifile := TInifile.Create(s2, TEncoding.UTF8);
-                     if (LowerCase(s3) = LowerCase('utf16')) or (LowerCase(s3) = LowerCase('utf-16')) then
-                       newInifile := TInifile.Create(s2, TEncoding.Unicode);
-                     if (LowerCase(s3) = LowerCase('utf16be')) or (LowerCase(s3) = LowerCase('utf-16be')) then
-                       newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
-                 end;
-                 LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
-                 //newInifile.Encoding := TEncoding.SystemEncoding;
-                 list.Clear;
-       	         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-       	         LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
-       	         s2 + '"', LevelComplete);
-       	         //s1enc := UTF8ToAnsi(s1);
-                 //s1enc := s1;
-                 newInifile.ReadSectionRaw(s1,TStrings(list));
-       	         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                 FreeAndNil(newIniFile);
-               except
-       	  on e: Exception do
-       	  begin
-       	    LogDatei.log('Error in creating inifile "' +
-       		  s2 + '", message: "' + e.Message + '"', LevelWarnings);
-       	  end;
+                   LogDatei.log('Could not EvaluateString: ' + s3, LLDebug);
                end;
-             end;
-   end
+           if Skip(')', r, r, InfoSyntaxError) then
+               begin
+                 try
+                   syntaxCheck := True;
+                   s2 := ExpandFileName(s2);
+                   if s3 = '' then
+                      // with only 2 parameters
+                       newInifile := TInifile.Create(s2, TEncoding.Default)
+                   else
+                   // with 3 parameters
+                   begin
+                       LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug);
+                       if (LowerCase(s3) = LowerCase('default')) then
+                         newInifile := TInifile.Create(s2, TEncoding.Default);
+                       if (LowerCase(s3) = LowerCase('ascii')) then
+                         newInifile := TInifile.Create(s2, TEncoding.ASCII);
+                       if (LowerCase(s3) = LowerCase('ansi')) then
+                         newInifile := TInifile.Create(s2, TEncoding.ANSI);
+                       //utf7 hidden functionality, not documentated and not tested in opsi-script-test
+                       if (LowerCase(s3) = LowerCase('utf7')) or (LowerCase(s3) = LowerCase('utf-7')) then
+                         newInifile := TInifile.Create(s2, TEncoding.UTF7);
+                       if (LowerCase(s3) = LowerCase('utf8')) or (LowerCase(s3) = LowerCase('utf-8')) then
+                         newInifile := TInifile.Create(s2, TEncoding.UTF8);
+                       if (LowerCase(s3) = LowerCase('utf16')) or (LowerCase(s3) = LowerCase('utf-16')) then
+                         newInifile := TInifile.Create(s2, TEncoding.Unicode);
+                       if (LowerCase(s3) = LowerCase('utf16be')) or (LowerCase(s3) = LowerCase('utf-16be')) then
+                         newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
+                   end;
+                   LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
+                   //newInifile.Encoding := TEncoding.SystemEncoding;
+                   list.Clear;
+       	           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+       	           LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+       	           s2 + '"', LevelComplete);
+       	           //s1enc := UTF8ToAnsi(s1);
+                   //s1enc := s1;
+                   newInifile.ReadSectionRaw(s1,TStrings(list));
+       	           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                   FreeAndNil(newIniFile);
+                 except
+       	            on e: Exception do
+       	            begin
+       	              LogDatei.log('Error in creating inifile "' +
+       		            s2 + '", message: "' + e.Message + '"', LevelWarnings);
+       	            end;
+                 end;
+               end;
+     end
+     *)
+
+    else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+     begin
+       s2 := '';
+       s3 := '';
+       if Skip('(', r, r, InfoSyntaxError) then
+       if EvaluateString(r, r, s1, InfoSyntaxError) then
+         if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+           if Skip(')', r, r, InfoSyntaxError) then
+               begin
+                  syntaxCheck := True;
+                  uibInifile := TuibIniFile.Create(s2);
+                  try
+                    s2 := ExpandFileName(s2);
+                    uibInifile.loadfromfile(s2);
+                    uibInifile.Text := reencode(uibInifile.Text, 'system');
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                      LogDatei.log('Error on loading file: ' + e.message,
+                        LLError);
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    end
+                  end;
+                  try
+                     uibInifile.ReadRawSection(s1,list);
+                  except
+                    on e: Exception do
+       	            begin
+                      LogDatei.log('Error in ReadRawSection from inifile "' +
+       		            s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                      list.Append('');
+                    end;
+                  end;
+                  uibInifile.Free;
+               end;
+     end
+
 
     else if LowerCase(s) = LowerCase('retrieveSection') then
     begin
@@ -13981,6 +14025,7 @@ var
   p1, p2, p3, p4: integer;
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpbool, tmpbool1: boolean;
+  Strings: TStrings;
 
 begin
   LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
@@ -14562,6 +14607,41 @@ begin
                       end;
 
                     end;
+  end
+
+  else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+          begin
+	    syntaxCheck := True;
+	    try
+		  s2 := ExpandFileName(s2);
+		  Inifile := TInifile.Create(s2);
+
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+		  LogDatei.log
+		  ('    reading the value of section "' + s1 + '"  from inifile  "' +
+		    s2 + '"',
+		    LevelComplete);
+		  s1enc := UTF8ToWinCP(s1);
+		  Inifile.ReadSectionRaw(s1enc,Strings);
+		  StringResult := WinCPToUTF8(AnsiString(Strings));
+		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+		  Inifile.Free;
+		  Inifile := nil;
+	    except
+		  on e: Exception do
+		  begin
+		    LogDatei.log('Error in creating inifile "' +
+			  s2 + '", message: "' + e.Message + '"', LevelWarnings);
+		    StringResult := '';
+		  end;
+	    end;
+          end;
   end
 
   else if LowerCase(s) = LowerCase('Lower') then
