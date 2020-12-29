@@ -7,7 +7,8 @@ mac getIpByName liefert name von IPnum
 ##################################################################
 opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
- *
+ * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
+ * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
 
 -- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
 

@@ -1582,8 +1582,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10269,8 +10270,8 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter,
-          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter, pos('winst ',
+          lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
@@ -11192,7 +11193,7 @@ var
   list3: TXStringList;
   slist: TStringList;
   inifile: TuibIniScript;
-  uibInifile : TuibIniFile;
+  uibInifile: TuibIniFile;
   localSection: TWorkSection;
   secSpec: TSectionSpecifier;
   localKindOfStatement: TStatement;
@@ -11556,64 +11557,66 @@ begin
                    LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
                    //newInifile.Encoding := TEncoding.SystemEncoding;
                    list.Clear;
-       	           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-       	           LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
-       	           s2 + '"', LevelComplete);
-       	           //s1enc := UTF8ToAnsi(s1);
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+                    s2 + '"', LevelComplete);
+                    //s1enc := UTF8ToAnsi(s1);
                    //s1enc := s1;
                    newInifile.ReadSectionRaw(s1,TStrings(list));
-       	           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                    FreeAndNil(newIniFile);
                  except
-       	            on e: Exception do
-       	            begin
-       	              LogDatei.log('Error in creating inifile "' +
-       		            s2 + '", message: "' + e.Message + '"', LevelWarnings);
-       	            end;
+                     on e: Exception do
+                     begin
+                       LogDatei.log('Error in creating inifile "' +
+                       s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                     end;
                  end;
                end;
      end
      *)
 
     else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
-     begin
-       s2 := '';
-       s3 := '';
-       if Skip('(', r, r, InfoSyntaxError) then
-       if EvaluateString(r, r, s1, InfoSyntaxError) then
-         if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-           if Skip(')', r, r, InfoSyntaxError) then
-               begin
-                  syntaxCheck := True;
-                  uibInifile := TuibIniFile.Create(s2);
-                  try
-                    s2 := ExpandFileName(s2);
-                    uibInifile.loadfromfile(s2);
-                    uibInifile.Text := reencode(uibInifile.Text, 'system');
-                  except
-                    on e: Exception do
-                    begin
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                      LogDatei.log('Error on loading file: ' + e.message,
-                        LLError);
-                      FNumberOfErrors := FNumberOfErrors + 1;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                    end
+    begin
+      s2 := '';
+      s3 := '';
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                uibInifile := TuibIniFile.Create(s2);
+                (* we do not need that - it is already done in create()
+                try
+                  s2 := ExpandFileName(s2);
+                  uibInifile.loadfromfile(s2);
+                  uibInifile.Text := reencode(uibInifile.Text, 'system');
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Error on loading file: ' + e.message,
+                      LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+                *)
+                try
+                  uibInifile.ReadRawSection(s1, list);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in ReadRawSection from inifile "' +
+                      s2 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
                   end;
-                  try
-                     uibInifile.ReadRawSection(s1,list);
-                  except
-                    on e: Exception do
-       	            begin
-                      LogDatei.log('Error in ReadRawSection from inifile "' +
-       		            s2 + '", message: "' + e.Message + '"', LevelWarnings);
-                      list.Append('');
-                    end;
-                  end;
-                  uibInifile.Free;
-               end;
-     end
+                end;
+                uibInifile.Free;
+              end;
+    end
 
 
     else if LowerCase(s) = LowerCase('retrieveSection') then
@@ -11647,10 +11650,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14609,6 +14612,7 @@ begin
                     end;
   end
 
+  (*
   else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -14616,33 +14620,33 @@ begin
         if Skip(',', r, r, InfoSyntaxError) then
           if EvaluateString(r, r, s2, InfoSyntaxError) then
           begin
-	    syntaxCheck := True;
-	    try
-		  s2 := ExpandFileName(s2);
-		  Inifile := TInifile.Create(s2);
+            syntaxCheck := True;
+            try
+              s2 := ExpandFileName(s2);
+              Inifile := TInifile.Create(s2);
 
-		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-		  LogDatei.log
-		  ('    reading the value of section "' + s1 + '"  from inifile  "' +
-		    s2 + '"',
-		    LevelComplete);
-		  s1enc := UTF8ToWinCP(s1);
-		  Inifile.ReadSectionRaw(s1enc,Strings);
-		  StringResult := WinCPToUTF8(AnsiString(Strings));
-		  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log
+              ('    reading the value of section "' + s1 + '"  from inifile  "' + s2 + '"',
+                LevelComplete);
+              s1enc := UTF8ToWinCP(s1);
+              Inifile.ReadSectionRaw(s1enc, Strings);
+              StringResult := WinCPToUTF8(ansistring(Strings));
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
 
-		  Inifile.Free;
-		  Inifile := nil;
-	    except
-		  on e: Exception do
-		  begin
-		    LogDatei.log('Error in creating inifile "' +
-			  s2 + '", message: "' + e.Message + '"', LevelWarnings);
-		    StringResult := '';
-		  end;
-	    end;
+              Inifile.Free;
+              Inifile := nil;
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Error in creating inifile "' + s2 + '", message: "' +
+                  e.Message + '"', LevelWarnings);
+                StringResult := '';
+              end;
+            end;
           end;
   end
+  *)
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
@@ -16944,7 +16948,7 @@ begin
     r := trim(r);
     setLength(parameters, 5);
 
-     // try to find a valid fqdn
+    // try to find a valid fqdn
     parameters[0] := osconf.opsiserviceUser;
     if parameters[0] = '' then
       parameters[0] := osconf.computername;
