@@ -8,7 +8,7 @@ program opsisetupdetector;
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Classes, SysUtils, CustApp, Interfaces, Forms, osdform, printers, fileinfo,
-  winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyze,
+  winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod, osdcheckentriesdlg;
 

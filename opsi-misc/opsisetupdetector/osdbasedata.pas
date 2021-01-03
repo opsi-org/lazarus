@@ -27,6 +27,8 @@ type
 
   TArchitecture = (a32, a64, aUnknown);
 
+  TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
+
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
 
@@ -100,6 +102,7 @@ type
     Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
+    FtargetOS : TTargetOS;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -144,6 +147,7 @@ type
       read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
+    property targetOS: TTargetOS read FtargetOS write FtargetOS;
     procedure initValues;
 
   public
@@ -302,6 +306,7 @@ default: ["xenial_bionic"]
 
   TopsiProduct = class(TPersistent)
   private
+    FtargetOS: TTargetOS;
   published
   public
     SetupFiles: array[0..1] of TSetupFile;
@@ -309,7 +314,7 @@ default: ["xenial_bionic"]
     //dependeciesCount : integer;
     dependencies: TCollection;
     properties: TPProperties;
-
+    property targetOS: TTargetOS read FtargetOS write FtargetOS;
 
     { public declarations }
     constructor Create;
@@ -342,6 +347,7 @@ default: ["xenial_bionic"]
     FProperties: TPProperties;
     FReadme_txt_templ: string;
     FShowCheckEntryWarning :boolean;
+    FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -1082,6 +1088,7 @@ begin
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
   aktProduct.properties := TPProperties.Create(aktProduct);
+  aktProduct.targetOS:= osWin;
 end;
 
 procedure freebasedata;

@@ -29,7 +29,7 @@ uses
   CustApp,
   //fileinfo,
   //osdhelper,
-  osdanalyze,
+  osdanalyzewin,
   //winpeimagereader,
   lcltranslator,
   EditBtn,
@@ -82,7 +82,7 @@ type
     BitBtnMST1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
-    BtSingleAnalyzeAndCreate: TBitBtn;
+    BtSingleAnalyzeAndCreateWin: TBitBtn;
     BtSingleAnalyzeAndCreateMulti: TBitBtn;
     BtSingleAnalyzeAndCreateLin: TBitBtn;
     BtSingleAnalyzeAndCreateMac: TBitBtn;
@@ -302,7 +302,8 @@ type
     procedure BtProduct2NextStepClick(Sender: TObject);
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
-    procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
     procedure CheckBoxDefaultIconChange(Sender: TObject);
     procedure CheckBoxNoIconChange(Sender: TObject);
@@ -634,7 +635,7 @@ begin
       CheckGroupBuildMode.Enabled := False;
     end;
     {$IFDEF LINUX}
-    //BtSingleAnalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
+    //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
     //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
     {$ENDIF LINUX}
     LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
@@ -1062,7 +1063,7 @@ begin
 end;
 
 
-procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
+procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
   i: integer;
 begin
@@ -1074,6 +1075,7 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
+    aktProduct.targetOS:= osWin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2232,6 +2234,33 @@ begin
   end;
 end;
 
+procedure TResultform1.BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
+var
+  i: integer;
+begin
+  OpenDialog1.FilterIndex := 1;   // setup
+  if OpenDialog1.Execute then
+  begin
+    useRunMode := singleAnalyzeCreate;
+    setRunMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    aktProduct.targetOS:= osMac;
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbNo,mbYes],0,mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := true;
+    makeProperties;
+    Application.ProcessMessages;
+    AnalyzeMac(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
 procedure TResultform1.BitBtnClose1Click(Sender: TObject);
 begin
   Application.Terminate;
@@ -2430,7 +2459,7 @@ begin
     PathDelim + 'template-files' + PathDelim + 'template.png');
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
-  BtSingleAnalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+  BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
 
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');

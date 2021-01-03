@@ -489,18 +489,6 @@ msgid ""
 "and create an opsi Product\n"
 msgstr ""
 
-#: tresultform1.btcreateemptytemplate.caption
-msgctxt "tresultform1.btcreateemptytemplate.caption"
-msgid "Create an opsi Package Template"
-msgstr ""
-
-#: tresultform1.btcreateemptytemplate.hint
-msgctxt "tresultform1.btcreateemptytemplate.hint"
-msgid ""
-"Create a empty \n"
-"opsi Product Directory Structure\n"
-msgstr ""
-
 #: tresultform1.btcreateemptytemplatelin.caption
 msgctxt "tresultform1.btcreateemptytemplatelin.caption"
 msgid "Create an opsi Package Template"
@@ -532,6 +520,18 @@ msgstr ""
 
 #: tresultform1.btcreateemptytemplatemulti.hint
 msgctxt "tresultform1.btcreateemptytemplatemulti.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatewin.caption
+msgctxt "tresultform1.btcreateemptytemplatewin.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatewin.hint
+msgctxt "tresultform1.btcreateemptytemplatewin.hint"
 msgid ""
 "Create a empty \n"
 "opsi Product Directory Structure\n"
@@ -599,18 +599,6 @@ msgctxt "tresultform1.btsetup2nextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
-#: tresultform1.btsingleanalyzeandcreate.caption
-msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
-msgid "Analyze single File and Create Opsi Package"
-msgstr ""
-
-#: tresultform1.btsingleanalyzeandcreate.hint
-msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
-msgid ""
-"Analyze a single existing Setupfile \n"
-"and create an opsi Product\n"
-msgstr ""
-
 #: tresultform1.btsingleanalyzeandcreatelin.caption
 msgctxt "tresultform1.btsingleanalyzeandcreatelin.caption"
 msgid "Analyze Files and Create Opsi Package"
@@ -645,6 +633,18 @@ msgctxt "tresultform1.btsingleanalyzeandcreatemulti.hint"
 msgid ""
 "Analyze some existing Setupfile \n"
 "and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatewin.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatewin.caption"
+msgid "Analyze single File and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatewin.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatewin.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
 msgstr ""
 
 #: tresultform1.caption

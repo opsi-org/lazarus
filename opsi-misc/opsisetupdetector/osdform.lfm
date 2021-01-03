@@ -158,7 +158,7 @@ object resultForm1: TresultForm1
                 Index = 0
               end            
               item
-                Control = BtSingleAnalyzeAndCreate
+                Control = BtSingleAnalyzeAndCreateWin
                 WrapAfter = waAuto
                 Index = 1
               end            
@@ -192,7 +192,7 @@ object resultForm1: TresultForm1
               ParentColor = False
               ParentFont = False
             end
-            object BtSingleAnalyzeAndCreate: TBitBtn
+            object BtSingleAnalyzeAndCreateWin: TBitBtn
               Left = 1
               Height = 64
               Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
@@ -670,7 +670,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateClick
+              OnClick = BtSingleAnalyzeAndCreateWinClick
               ParentFont = False
               TabOrder = 0
             end
@@ -2504,7 +2504,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateClick
+              OnClick = BtSingleAnalyzeAndCreateWinClick
               ParentFont = False
               TabOrder = 0
             end
@@ -3332,7 +3332,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateClick
+              OnClick = BtSingleAnalyzeAndCreateWinClick
               ParentFont = False
               TabOrder = 0
             end
@@ -4160,7 +4160,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateClick
+              OnClick = BtSingleAnalyzeAndCreateMacClick
               ParentFont = False
               TabOrder = 0
             end

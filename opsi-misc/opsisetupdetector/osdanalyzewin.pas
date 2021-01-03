@@ -1,4 +1,4 @@
-unit osdanalyze;
+unit osdanalyzewin;
 
 {$mode delphi}
 
