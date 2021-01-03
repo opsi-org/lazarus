@@ -56,6 +56,12 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BtAnalyzeOnly: TBitBtn;
+    BtATwonalyzeAndCreate: TBitBtn;
+    BtCreateEmptyTemplateWin: TBitBtn;
+    BtCreateEmptyTemplateMulti: TBitBtn;
+    BtCreateEmptyTemplateLin: TBitBtn;
+    BtCreateEmptyTemplateMac: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnAddProp: TBitBtn;
@@ -72,14 +78,14 @@ type
     BtProduct2NextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
-    BtSingleAnalyzeAndCreate: TBitBtn;
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
-    BtATwonalyzeAndCreate: TBitBtn;
-    BtCreateEmptyTemplate: TBitBtn;
-    BtAnalyzeOnly: TBitBtn;
+    BtSingleAnalyzeAndCreate: TBitBtn;
+    BtSingleAnalyzeAndCreateMulti: TBitBtn;
+    BtSingleAnalyzeAndCreateLin: TBitBtn;
+    BtSingleAnalyzeAndCreateMac: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
@@ -116,10 +122,18 @@ type
     FlowPanelSetup37: TFlowPanel;
     FlowPanelSetup38: TFlowPanel;
     FlowPanelSetup39: TFlowPanel;
+    FlowPanelWin: TFlowPanel;
+    FlowPanelWin1: TFlowPanel;
+    FlowPanelWin2: TFlowPanel;
+    FlowPanelWin3: TFlowPanel;
     GroupBox2: TGroupBox;
     ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     LabelNumber: TLabel;
     LabelNumIcons: TLabel;
     LabelNameSelIcon: TLabel;
@@ -281,7 +295,7 @@ type
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
-    procedure BtCreateEmptyTemplateClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
     procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
@@ -294,6 +308,7 @@ type
     procedure CheckBoxNoIconChange(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
+    procedure FlowPanel3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
@@ -1362,6 +1377,11 @@ begin
 
 end;
 
+procedure TResultform1.FlowPanel3Click(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
   myprop: TStringList;
@@ -1842,7 +1862,7 @@ begin
 end;
 
 
-procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
+procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
   begin
     useRunMode := createTemplate;

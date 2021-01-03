@@ -479,7 +479,7 @@ msgid "Analyze a single existing Setupfile "
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.caption
-msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Package"
+msgid "Analyze 2 Files (32 / 64 Bit) and create O. Package"
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.hint
@@ -490,10 +490,48 @@ msgid ""
 msgstr ""
 
 #: tresultform1.btcreateemptytemplate.caption
+msgctxt "tresultform1.btcreateemptytemplate.caption"
 msgid "Create an opsi Package Template"
 msgstr ""
 
 #: tresultform1.btcreateemptytemplate.hint
+msgctxt "tresultform1.btcreateemptytemplate.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatelin.caption
+msgctxt "tresultform1.btcreateemptytemplatelin.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatelin.hint
+msgctxt "tresultform1.btcreateemptytemplatelin.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemac.caption
+msgctxt "tresultform1.btcreateemptytemplatemac.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemac.hint
+msgctxt "tresultform1.btcreateemptytemplatemac.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemulti.caption
+msgctxt "tresultform1.btcreateemptytemplatemulti.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemulti.hint
+msgctxt "tresultform1.btcreateemptytemplatemulti.hint"
 msgid ""
 "Create a empty \n"
 "opsi Product Directory Structure\n"
@@ -573,6 +611,42 @@ msgid ""
 "and create an opsi Product\n"
 msgstr ""
 
+#: tresultform1.btsingleanalyzeandcreatelin.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatelin.caption"
+msgid "Analyze Files and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatelin.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatelin.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemac.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatemac.caption"
+msgid "Analyze Files and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemac.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatemac.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemulti.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatemulti.caption"
+msgid "Analyze Files and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemulti.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatemulti.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
 #: tresultform1.caption
 msgid "opsi Setup Detector"
 msgstr ""
@@ -601,6 +675,22 @@ msgstr ""
 
 #: tresultform1.label1.caption
 msgid "No Icons"
+msgstr ""
+
+#: tresultform1.label2.caption
+msgid "Windows:"
+msgstr ""
+
+#: tresultform1.label3.caption
+msgid "Multiplatform:"
+msgstr ""
+
+#: tresultform1.label4.caption
+msgid "Linux:"
+msgstr ""
+
+#: tresultform1.label5.caption
+msgid "MacOS:"
 msgstr ""
 
 #: tresultform1.label50.caption
