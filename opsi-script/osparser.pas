@@ -17255,7 +17255,9 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          // BooleanResult := handleFileExists64(s1);
+          BooleanResult := handleFileExists64(s1);
+          //delete the following code comment out if tests are passed
+          (*
           LogDatei.log('  Starting query if file exist (64 Bit mode)...', LLInfo);
           s2 := s1;
           if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
@@ -17295,7 +17297,7 @@ begin
               LogDatei.log('Error: ' + ex.message, LLError);
             end;
           end;
-          //
+          //*)
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17311,7 +17313,9 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          // BooleanResult := handleFileExistsSysNative(s1);
+          BooleanResult := handleFileExistsSysNative(s1);
+          //delete the following code comment out if tests are passed
+          (*
           if Is64BitSystem then
             LogDatei.log('  Starting query if file exist (SysNative 64 Bit mode)...',
               LLInfo)
@@ -17366,7 +17370,7 @@ begin
               LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
             end;
           end;
-          //
+          // *)
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17382,7 +17386,9 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          // BooleanResult := handleFileExists32(s1);
+          BooleanResult := handleFileExists32(s1);
+          //delete the following code comment out if tests are passed
+          (*
           LogDatei.log('  Starting query if file exists ...', LLInfo);
           s2 := s1;
           if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
@@ -17401,7 +17407,7 @@ begin
           finally
             setErrorMode(OldWinapiErrorMode);
           end;
-          //
+          // *)
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
