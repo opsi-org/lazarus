@@ -1,0 +1,104 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+
+Message "Check for existing installation of " + $ProductId$ + " ..."
+
+Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
+Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
+
+if FileExists($UninstallProgram$)
+	#@preUninstallLines1*#
+	comment "Uninstall program found, starting uninstall"
+	Winbatch_uninstall
+	Sub_check_exitcode_del
+	#@postUninstallLines1*#
+endif
+if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
+	#@preUninstallLines1*#
+	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
+	Winbatch_uninstall_msi
+	Sub_check_exitcode_del
+	#@postUninstallLines1*#
+endif
+
+#@DelsubHandleDesktopIcon*#
+comment "Delete files"
+if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+	Files_uninstall
+endif
+
+comment "Cleanup registry"
+Registry_uninstall
+
+comment "Delete program shortcuts"
+LinkFolder_uninstall
+
+[Winbatch_uninstall]
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+[Winbatch_uninstall_msi]
+msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
+
+[Files_uninstall]
+; Example for recursively deleting the installation directory:
+;
+; del -sf "$InstallDir$\"
+
+[Registry_uninstall]
+; Example of deleting a registry key:
+;
+; deletekey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
+
+[LinkFolder_uninstall]
+; Example of deleting a folder from AllUsers startmenu:
+;
+; set_basefolder common_programs
+; delete_subfolder $ProductId$
+;
+; Example of deleting a shortcut from AllUsers desktop:
+;
+; set_basefolder common_desktopdirectory
+; set_subfolder ""
+; delete_element $ProductId$
+
+[Sub_check_exitcode_del]
+comment "Test for installation success via exit code"
+set $ExitCode$ = getLastExitCode
+; informations to exit codes see
+; http://msdn.microsoft.com/en-us/library/aa372835(VS.85).aspx
+; http://msdn.microsoft.com/en-us/library/aa368542.aspx
+Switch $ExitCode$
+	Case "0"
+		comment "Looks good: setup program gives exitcode zero"
+	EndCase
+	Case "1605"
+		comment "ERROR_UNKNOWN_PRODUCT	1605	This action is only valid for products that are currently installed."
+		comment "Uninstall of a not installed product failed - no problem"
+	EndCase
+	Case "1641"
+		comment "looks good: setup program gives exitcode 1641"
+		comment "ERROR_SUCCESS_REBOOT_INITIATED	1641	The installer has initiated a restart. This message is indicative of a success."
+		ExitWindows /Reboot
+	EndCase
+	Case "3010"
+		comment "looks good: setup program gives exitcode 3010"
+		comment "ERROR_SUCCESS_REBOOT_REQUIRED	3010	A restart is required to complete the install. This message is indicative of a success."
+		ExitWindows /Reboot
+	EndCase
+	DefaultCase
+		logError "Fatal: Setup program gives an unknown exitcode unequal zero: " + $ExitCode$
+		isFatalError "Exit Code: "+ $ExitCode$
+	EndCase
+EndSwitch
+
+#@DelsubSectionLines*#
+;-----------------------------------------------------

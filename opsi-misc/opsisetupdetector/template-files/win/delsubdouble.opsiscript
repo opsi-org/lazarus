@@ -1,0 +1,81 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+
+Message "Check for existing 32bit installation of " + $ProductId$ + " ..."
+
+Set $InstallDir$ = $InstallDir1$
+comment "Start the Uninstall check:"
+set $oldProgFound$ = "false"
+#@uninstallCheckLines1*#
+
+if $oldProgFound$ = "true"
+	Message "Uninstalling 32bit" + $ProductId$ + " ..."
+	#@preUninstallLines1*#
+	comment "Start uninstall program"
+	ChangeDirectory "%SCRIPTPATH%\files1"
+	;----------------------------------------------
+	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
+	;----------------------------------------------
+	Sub_check_exitcode_del_1
+	#@postUninstallLines1*#
+	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+		Files_uninstall
+	endif
+	#@DelsubHandleDesktopIcon*#
+endif
+
+Message "Check for existing 64bit installation of " + $ProductId$ + " ..."
+
+Set $InstallDir$ = $InstallDir2$
+comment "Start the Uninstall check:"
+set $oldProgFound$ = "false"
+#@uninstallCheckLines2*#
+
+if $oldProgFound$ = "true"
+	Message "Uninstalling 64bit" + $ProductId$ + " ..."
+	#@preUninstallLines2*#
+	comment "Start uninstall program"
+	ChangeDirectory "%SCRIPTPATH%\files2"
+	;----------------------------------------------
+	Winbatch_uninstall_2  #@uninstallWaitForProc2*#
+	;----------------------------------------------
+	Sub_check_exitcode_del_2
+	#@postUninstallLines2*#
+	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+		Files_uninstall
+	endif
+endif
+
+
+
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
+
+[Sub_check_exitcode_del_1]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+[Sub_check_exitcode_del_2]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@DelsubSectionLines*#
+;-----------------------------------------------------

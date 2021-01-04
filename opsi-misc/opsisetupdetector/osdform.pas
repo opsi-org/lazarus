@@ -30,6 +30,8 @@ uses
   //fileinfo,
   //osdhelper,
   osdanalyzewin,
+  osdanalyzelin,
+  osdanalyzemac,
   //winpeimagereader,
   lcltranslator,
   EditBtn,

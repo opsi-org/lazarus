@@ -1,0 +1,297 @@
+encoding=utf8
+
+;@author          detlef oertel
+;@email           d.oertel@uib.de
+;@date            19.8.2020
+;@copyright       AGPLv3
+;@version         1.0
+;@filedesc        Collection of functions to install packages on linux
+
+deffunc cleanupPackageSystem() : void
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     reads repo list und try to repair well known problems
+	;@Description     should be called after modifying the repo list or after failed installs
+	;@Returns         nothing
+	;@OnError         error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References
+	;@Links
+	;@Example     [Actions]
+	;@Example     importlib "uib_lin_install"
+	;@Example     
+	;@Example     DefStringlist $packages$
+	;@Example     DefVar $installresult$
+	;@Example     DefStringlist $errorList$
+	;@Example     DefVar $fatal_error$
+	;@Example     DefVar $result_string$
+	;@Example     
+	;@Example     comment "update and clean package system"
+	;@Example     cleanupPackageSystem()
+	;@Example     comment "install pending updates"
+	;@Example     set $result_string$ = installupdates()
+	;@Example     comment "install new needed packages"
+	;@Example     set $packages$ = CreateStringlist("lsb-release","cifs-utils","xterm", "dnsutils","lsof","openssl","pkg-config","desktop-file-utils","libnotify-bin","libgtk2.0-0")
+	;@Example     comment "if we are on debian / ubuntu we can use debinstall()"
+	;@Example     set $installresult$ = debinstall($packages$)
+	;@Example     if not(stringtobool($installresult$))
+	;@Example     	if waitForPackageLock("300", "false")
+	;@Example     		comment "we got the package lock."
+	;@Example     	else
+	;@Example     		LogError "could not get Package Lock"
+	;@Example     	endif
+	;@Example     	cleanupPackageSystem()
+	;@Example     	set $installresult$ = debinstall($packages$)
+	;@Example     	if not(stringtobool($installresult$))
+	;@Example     		LogError "failed dependent packages"
+	;@Example     		Message "failed dependent packages"
+	;@Example     		;isFatalError "failed dependent packages"
+	;@Example     		set $fatal_error$ = "true"
+	;@Example     		setloglevel = 6
+	;@Example     		set $errorList$ = addtolist($errorList$, " failed dependent_packages")
+	;@Example     	endif
+	;@Example     endif
+
+
+	DefVar $distCodeName$
+	DefVar $distroName$
+	DefVar $distRelease$
+	DefVar $distSubRelease$
+	DefVar $distrotype$
+	DefVar $exitcode$
+	DefStringlist $linuxInfoMap$
+	DefStringlist $messages$
+	
+	set $distrotype$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	;set $distCodeName$ = getValue("Codename", $linuxInfoMap$)
+	;set $distRelease$ = getValue("Release", $linuxInfoMap$)
+	;set $distSubRelease$ = getValue("SubRelease", $linuxInfoMap$)
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+	
+	switch $distrotype$
+		case "redhat"
+			set $messages$ = shellCall('yum makecache')
+		endcase
+		case "suse"
+			set $messages$ = shellCall('zypper --non-interactive refresh')
+		endcase
+		case "debian"
+			if $distroName$ = 'Univention'
+				set $messages$ = getOutstreamFromSection('shellInAnIcon_cleanup_debian')
+			else
+				set $messages$ = getOutstreamFromSection('shellInAnIcon_cleanup_debian')
+			endif
+		endcase
+		defaultcase
+			LogError "Unknown distributor family: "+$distrotype$
+		endcase
+	endswitch
+	
+	if not("0" = getlastexitcode)
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+
+	
+	[shellInAnIcon_cleanup_debian]
+	set -x
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update
+	apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install --fix-broken
+	dpkg --configure -a --force-confdef
+	apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install --fix-broken
+	exit $?
+	
+endfunc
+
+
+deffunc installupdates() : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install pending updates from the known repsitories
+	;@Description     should be called after modifying the repo list or after failed installs
+	;@Returns         nothing
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+
+	DefVar $distCodeName$
+	DefVar $distroName$
+	DefVar $distRelease$
+	DefVar $distSubRelease$
+	DefVar $distrotype$
+	DefVar $exitcode$
+	DefStringlist $linuxInfoMap$
+	DefStringlist $messages$
+	
+	set $distrotype$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	;set $distCodeName$ = getValue("Codename", $linuxInfoMap$)
+	;set $distRelease$ = getValue("Release", $linuxInfoMap$)
+	;set $distSubRelease$ = getValue("SubRelease", $linuxInfoMap$)
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+	set $result$ = "false"
+	switch $distrotype$
+		case "redhat"
+			set $messages$ = shellCall('yum -y update')
+		endcase
+		case "suse"
+			set $messages$ = shellCall('zypper --no-gpg-checks --non-interactive -v --auto-agree-with-licenses update')
+		endcase
+		case "debian"
+			if $distroName$ = 'Univention'
+				set $messages$ = getOutstreamFromSection('ShellInAnIcon_Upgrade_ucs')
+			else
+				set $messages$ = shellCall('apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade')
+			endif
+		endcase
+		defaultcase
+			LogError "Unknown distributor family: "+$distrotype$
+			set $resutlt$ = "false"
+		endcase
+	endswitch
+	
+	if "0" = getlastexitcode
+		set $result$ = "true"
+	else
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+
+	
+	[ShellInAnIcon_Upgrade_ucs]
+	set -x
+	eval "$(ucr shell version/version)"
+	univention-upgrade --noninteractive --ignoreterm --updateto=$version_version-99
+	exit $?
+	
+endfunc
+
+deffunc runCommandWithList($command$ : string, $list$ : stringlist) : string
+
+	defVar $exitcode$
+	defVar $aktitem$
+	defstringlist $messages$
+
+	set $result$ = "true"
+	
+	for %aktitem% in $list$ do sub_runcommand
+	
+	[sub_runcommand]
+	set $aktitem$ = '%aktitem%'
+	set $messages$ = shellCall($command$+$aktitem$)
+	set $exitcode$ = getlastexitcode
+	if not($exitcode$ = "0")
+		set $result$ = "false"
+		LogError "Installation of package: "+$aktitem$+" failed with errorcode: "+$exitcode$
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+
+endfunc
+
+deffunc debinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      redinstall
+	;@References      suseinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install 
+	;@ParamAdvice_$packagelist$
+
+	defVar $instcommand$
+
+	set $instcommand$ = 'export DEBIAN_FRONTEND=noninteractive ;'
+	set $instcommand$ = $instcommand$ +' apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc redinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      suseinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install 
+	;@ParamAdvice_$packagelist$
+	
+	defVar $instcommand$
+
+	set $instcommand$ = 'yum install -y '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc suseinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install 
+	;@ParamAdvice_$packagelist$
+
+	defVar $instcommand$
+
+	set $instcommand$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc ucsinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase     
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      suseinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install 
+	;@ParamAdvice_$packagelist$
+
+	defVar $instcommand$
+	DefVar $packages$
+	DefVar $exitcode$
+	defstringlist $messages$
+
+	set $instcommand$ = 'univention-install --yes '
+	set $packages$ = composeString($packagelist$," ")	
+	set $messages$ = shellCall($instcommand$+$packages$)
+	set $exitcode$ = getlastexitcode
+	if not($exitcode$ = "0")
+		set $result$ = "false"
+		LogError "Installation of packag2: "+$packages$+" failed with errorcode: "+$exitcode$
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+endfunc
+
+
+

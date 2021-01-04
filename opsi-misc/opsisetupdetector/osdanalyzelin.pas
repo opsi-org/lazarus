@@ -25,6 +25,7 @@ uses
   osdbasedata,
   oscheckbinarybitness;
 
+(*
 const
 
   SetupType_AdvancedMSI = 'AdvancedMSI';
@@ -34,10 +35,14 @@ const
   SetupType_MSI = 'MSI';
   SetupType_NSIS = 'NSIS';
   SetupType_7zip = '7zip';
+*)
 
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
-  myfilename: string; var mysetup: TSetupFile);
+//procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+//  myfilename: string; var mysetup: TSetupFile);
+
+
+(*
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
   uninstall_only: boolean); overload;
@@ -55,7 +60,11 @@ procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
+*)
+
+procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
+
+(*
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
 function analyze_binary(myfilename: string; verbose, skipzero: boolean;
@@ -68,12 +77,13 @@ function getProductInfoFromResource(infokey: string; filename: string): string;
 resourcestring
   sWarnMultipleMsi =
     'Multiple (more than one) msi files found. Look to log file and directory: ';
-
+*)
 implementation
 
 uses
   osdform;
 
+(*
 function getProductInfoFromResource(infokey: string; filename: string): string;
 { Allowed keys:
   CompanyName
@@ -1308,8 +1318,8 @@ begin
   Result := analyze_markerlist(mysetup);
 end;
 
-
-procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
+*)
+procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
 
@@ -1319,6 +1329,7 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 0;
   procmess;
   {$ENDIF OSDGUI}
+  (*
   //aktProduct.setup32FileNamePath := FileName;
   //resultform1.clearAllTabs;
   setupType := stUnknown;
@@ -1404,6 +1415,7 @@ begin
     aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
 
   end;
+  *)
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;

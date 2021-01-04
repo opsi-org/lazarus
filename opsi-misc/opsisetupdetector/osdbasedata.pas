@@ -33,7 +33,8 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
+  TKnownInstaller = (stMacZip, stMacDmg, stMacPKG, stMacApp,
+    stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
@@ -309,7 +310,7 @@ default: ["xenial_bionic"]
     FtargetOS: TTargetOS;
   published
   public
-    SetupFiles: array[0..1] of TSetupFile;
+    SetupFiles: array[0..2] of TSetupFile;
     productdata: TProductData;
     //dependeciesCount : integer;
     dependencies: TCollection;
@@ -1054,7 +1055,7 @@ var
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
-  for i := 0 to 1 do
+  for i := 0 to 2 do
   begin
     if not Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i] := TSetupFile.Create;
@@ -1095,7 +1096,7 @@ procedure freebasedata;
 var
   i: integer;
 begin
-  for i := 0 to 1 do
+  for i := 0 to 2 do
   begin
     if Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i].Destroy;
@@ -1115,6 +1116,10 @@ end;
 begin
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('MacZip');
+  knownInstallerList.Add('MacDmg');
+  knownInstallerList.Add('MacPKG');
+  knownInstallerList.Add('MacApp');
   knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('AdvancedMSI');
@@ -1442,6 +1447,70 @@ begin
     link := '';
     comment := 'Unknown Vendor';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacZip)] do
+  begin
+    description := 'MacOS installer packed in zip file';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacDmg)] do
+  begin
+    description := 'MacOS installer packed in dmg file';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacPKG)] do
+  begin
+    description := 'MacOS installer (pkg)';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacApp)] do
+  begin
+    description := 'MacOS App (unpacked directory)';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
     detected := @detectedbypatternwithand;
   end;
   // marker for add installers

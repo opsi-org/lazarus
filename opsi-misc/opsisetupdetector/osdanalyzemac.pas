@@ -1,6 +1,6 @@
 unit osdanalyzemac;
 
-{$mode delphi}
+{$mode objfpc}
 
 interface
 
@@ -25,8 +25,8 @@ uses
   osdbasedata,
   oscheckbinarybitness;
 
+(*
 const
-  (*
 
   SetupType_AdvancedMSI = 'AdvancedMSI';
   SetupType_Inno = 'Inno';
@@ -333,8 +333,10 @@ begin
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installCommandLine :=
-    '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+    'set $installSuccess$ = install_macos_generic('
+    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
+    '") ';
+  (*
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -349,6 +351,7 @@ begin
     aktProduct.productdata.productversion := trim(mysetup.SoftwareVersion);
     str1 := getProductInfoFromResource('ProductName', myfilename);
   end;
+  *)
   if str1 <> '' then
   begin
     aktProduct.productdata.productId := getPacketIDShort(str1);
@@ -379,6 +382,7 @@ begin
   mysetup.requiredSpace := round(rsizemb);
   mysetup.setupFileSize := round(fsizemb);
 
+  (*
   // uninstallcheck
   if installerId = stMsi then
   begin
@@ -412,6 +416,7 @@ begin
   if myArch = 'unknown' then
     mysetup.architecture := aUnknown;
   {$ENDIF WINDOWS}
+  *)
 end; //get_aktProduct_general_info
 
 (*
@@ -1321,6 +1326,7 @@ end;
 procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
+  extension : string;
 
 begin
   LogDatei.log('Start Analyze for Mac ... ', LLInfo);
@@ -1331,40 +1337,21 @@ begin
   //aktProduct.setup32FileNamePath := FileName;
   //resultform1.clearAllTabs;
   setupType := stUnknown;
-  if '.msi' = lowercase(ExtractFileExt(FileName)) then
-  begin
-    mysetup.analyze_progess := 10;
-    setupType := stMsi;
-    get_aktProduct_general_info(stMsi, Filename, mysetup);
-    get_msi_info(FileName, mysetup);
-    Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
-  end
+  extension := lowercase(ExtractFileExt(FileName));
+  case extension of
+    '.zip': setupType := stMacZip;
+    '.dmg': setupType := stMacDmg;
+    '.pkg': setupType := stMacPKG;
+    '.app': setupType := stMacApp;
   else
-  begin
-    //stringsgrep(FileName, false, false); // filename, verbose, skipzero
-    setupType := analyze_binary(FileName, verbose, False, mysetup);
-    // filename, verbose, skipzero
+    setupType := stUnknown;
+  end;
 
     get_aktProduct_general_info(setupType, Filename, mysetup);
 
     // marker for add installers
     case setupType of
-      stInno: get_inno_info(FileName, mysetup);
-      stNsis: get_nsis_info(FileName, mysetup);
-      stInstallShield: get_installshield_info(FileName, mysetup);
-      stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
-      stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
-      st7zip: get_7zip_info(FileName);
-      stMsi: ;// nothing to do here - see above;
-      st7zipsfx: logdatei.log('no getinfo implemented for: ' +
-          installerToInstallerstr(setupType), LLWarning);
-      stInstallAware: get_installaware_info(FileName, mysetup);
-      stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
-      stWixToolset: get_wixtoolset_info(FileName, mysetup);
-      stBoxStub: get_boxstub_info(FileName, mysetup);
-      stSFXcab: get_sfxcab_info(FileName, mysetup);
-      stBitrock: get_bitrock_info(FileName, mysetup);
-      stSelfExtractingInstaller: get_selfextrackting_info(FileName, mysetup);
+
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
@@ -1374,35 +1361,15 @@ begin
 
 
     // marker for add installers
+    // stMacZip, stMacDmg, stMacPKG, stMacApp
     case setupType of
-      stInno: Mywrite('Found well known installer: ' +
+      stMacZip: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
-      stNsis: Mywrite('Found well known installer: ' +
+      stMacDmg: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
-      stInstallShield: Mywrite('Found well known installer: ' +
+      stMacPKG: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
-      stInstallShieldMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stAdvancedMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      st7zip: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallAware: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMSGenericInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stWixToolset: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBoxStub: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSFXcab: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBitrock: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSelfExtractingInstaller: Mywrite('Found well known installer: ' +
+      stMacApp: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));
@@ -1412,7 +1379,6 @@ begin
     { avoid hyphen char "-" and replace with dot "." in version }
     aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
 
-  end;
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;

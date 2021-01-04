@@ -1,0 +1,55 @@
+
+                                                                         (ok, failed, not tested, not applicable)
+installation tests (I*)
+  * I1 Installation ends with state success                             | ( ) | ( )  |    ( )   |       ( )     |
+  * I2 Program can be started as user and with firewall                 | ( ) | ( )  |    ( )   |       ( )     |
+  * I3 There is a startmenu entry                                       | ( ) | ( )  |    ( )   |       ( )     |
+  * I4 Installation log checked                                         | ( ) | ( )  |    ( )   |       ( )     |
+  * I5 Repeated installation tested and ends with state success         | ( ) | ( )  |    ( )   |       ( )     |
+  * I5 Repeated installation log checked                                | ( ) | ( )  |    ( )   |       ( )     |
+  * I6 Property check:
+    * (List of properties)
+  * I7 Desktop Icon creation is controlled by property (default=false)  | ( ) | ( )  |    ( )   |       ( )     |
+  * I8 'Uninstall entry removed' controlled by property (default=true)  | ( ) | ( )  |    ( )   |       ( )     |
+
+installation extended tests (Ix*)
+  * Ix1 'No auto update' controlled by property (default=true)          | ( ) | ( )  |    ( )   |       ( )     |
+  * Ix2 Installation works without Internet connection                  | ( ) | ( )  |    ( )   |       ( )     |
+
+configuration tests (C*)
+  * C1 You may configure where the program try to save its files        | ( ) | ( )  |    ( )   |       ( )     |
+  * C2 Saved files can be loaded after reboot                           | ( ) | ( )  |    ( )   |       ( )     |
+  * C3 The program is the standard app for the saved file type          | ( ) | ( )  |    ( )   |       ( )     |
+
+license tests (L*)
+  * L1 If the license is a string, it will be retrieved from a property
+       or via property from the opsi license management                 | ( ) | ( )  |    ( )   |       ( )     |
+  * L2 If the license is a file, it will be retrieved from a custom
+       directory on the depot that is protected against updates         | ( ) | ( )  |    ( )   |       ( )     |
+  * L3 The package itself contains no license                           | ( ) | ( )  |    ( )   |       ( )     |
+
+uninstall tests (U*)
+  * U1 Uninstallation script exists                                     | ( ) | ( )  |    ( )   |       ( )     |
+  * U2 Uninstallation ends with state success                           | ( ) | ( )  |    ( )   |       ( )     |
+  * U2 Uninstallation log checked                                       | ( ) | ( )  |    ( )   |       ( )     |
+  * U3 Repeated uninstallation tested and ends with state success       | ( ) | ( )  |    ( )   |       ( )     |
+  * U3 Repeated uninstallation log checked                              | ( ) | ( )  |    ( )   |       ( )     |
+  * U4 All registry entries created by the setup script are removed     | ( ) | ( )  |    ( )   |       ( )     |
+  * U5 All link_folder entries created by the setup script are removed  | ( ) | ( )  |    ( )   |       ( )     |
+  * U6 All files created or copied by the setup script are removed      | ( ) | ( )  |    ( )   |       ( )     |
+  * U7 Installation directory empty                                     | ( ) | ( )  |    ( )   |       ( )     |
+  * U8 Installation after uninstall works                               | ( ) | ( )  |    ( )   |       ( )     |
+
+uninstall extended tests (Ux*)
+  * Ux1 Registry uninstall entry for program created and tested         | ( ) | ( )  |    ( )   |       ( )     |
+
+
+general issues (G*)
+  * G1 Scripts contain no depricated code                               | ( ) | ( )  |    ( )   |       ( )     |
+  * G2 Any unneeded code is removed                                     | ( ) | ( )  |    ( )   |       ( )     |
+  * G3 No avoidable warnings                                            | ( ) | ( )  |    ( )   |       ( )     |
+  * G4 No unneeded properties                                           | ( ) | ( )  |    ( )   |       ( )     |
+  * G5 Product icon (160*160) integrated                                | ( ) | ( )  |    ( )   |       ( )     |
+  * G6 Changelog entry with author, date and comments                   | ( ) | ( )  |    ( )   |       ( )     |
+  * G7 Tested against the following OS / architecture / Release:
+  * G8 Package contains this test certificate                           | ( ) | ( )  |    ( )   |       ( )     |

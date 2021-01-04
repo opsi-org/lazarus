@@ -321,6 +321,17 @@ begin
   {$IFDEF LINUX}
   templatePath := '/usr/share/opsi-setup-detector/template-files';
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  templatePath := '/usr/local/share/opsi-setup-detector/template-files';
+  {$ENDIF DARWIN}
+
+  if aktProduct.targetOS = osWin then
+    templatePath := templatePath + Pathdelim + 'win'
+  else if aktProduct.targetOS = osLin then
+    templatePath := templatePath + Pathdelim + 'lin'
+  else if aktProduct.targetOS = osMac then
+    templatePath := templatePath + Pathdelim + 'mac';
+
   try
     patchlist := TStringList.Create;
     fillPatchList;
