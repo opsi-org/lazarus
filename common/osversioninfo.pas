@@ -10,9 +10,12 @@ uses
   {$IFDEF WINDOWS}
   winpeimagereader,
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   elfreader,
-  {$ENDIF UNIX}
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  machoreader,
+  {$ENDIF DARWIN}
   osencoding,
   fileinfo;
 

@@ -97,11 +97,19 @@ var
   regexobj: TRegExpr;
   linecounter: integer;
   currentline: string;
+  i: integer;
 begin
   try
     try
       Result := TStringList.Create;
       regexobj := TRegExpr.Create;
+
+      // remove empty expressions from expression list
+      for i := exprlist.Count - 1 downto 0 do
+      begin
+        if Trim(exprlist[i]) = '' then
+          exprlist.Delete(i);
+      end;
 
       exprlist.Delimiter := '|';
       regexobj.Expression := exprlist.DelimitedText;
@@ -135,21 +143,24 @@ var
 begin
   try
     try
-      regexobj := TRegExpr.Create;
-      regexobj.Expression := expr;
-
       Result := TStringList.Create;
 
-      for linecounter := 0 to inputlist.Count - 1 do
+      if trim(expr) <> '' then
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
-          if regexobj.Exec(currentline) then
-          begin
-            Result.Add(regexobj.Match[0]);
-            while regexobj.ExecNext do
+        regexobj := TRegExpr.Create;
+        regexobj.Expression := expr;
+
+        for linecounter := 0 to inputlist.Count - 1 do
+        begin
+          currentline := trim(inputlist.Strings[linecounter]);
+          if currentline <> '' then
+            if regexobj.Exec(currentline) then
+            begin
               Result.Add(regexobj.Match[0]);
-          end;
+              while regexobj.ExecNext do
+                Result.Add(regexobj.Match[0]);
+            end;
+        end;
       end;
     except
       on E: Exception do
@@ -169,11 +180,19 @@ var
   regexobj: TRegExpr;
   linecounter: integer;
   currentline: string;
+  i: integer;
 begin
   try
     try
       Result := TStringList.Create;
       regexobj := TRegExpr.Create;
+
+      // remove empty expressions from expression list
+      for i := exprlist.Count - 1 downto 0 do
+      begin
+        if Trim(exprlist[i]) = '' then
+          exprlist.Delete(i);
+      end;
 
       exprlist.Delimiter := '|';
       regexobj.Expression := exprlist.DelimitedText;
@@ -273,7 +292,7 @@ function stringReplaceRegex(inputtext, expr, replacetext: string): string;
   //Replace matches in string with replacetext.
 begin
   Result := '';
-  if inputtext <> '' then
+  if (inputtext <> '') and (expr <> '') then
     inputtext := ReplaceRegExpr(expr, inputtext, replacetext, True);
   Result := inputtext;
 end;

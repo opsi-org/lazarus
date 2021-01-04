@@ -5,9 +5,21 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
+
+ * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
+ * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
+
+-- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
+
 opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
 
  * repair center batchgui on screen
+ * osregex: another empty string regex test
+ * license functions: opsiserviceuser if possible
+ * linux: shellBatch implemented as shellInAnIcon
+ * macos: osfunclin: getmyipbytarget: use path to ip command
+ * macos: runningWithGui also working for macos
 
 -- d.oertel <d.oertel@uib.de> Wed, 16 Dec 2020 15:00
 

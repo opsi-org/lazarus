@@ -1,6 +1,12 @@
 unit opsiscripttesthelper_main;
 
 {$mode delphi}
+{$if defined(WINDOWS) or not defined(GUI)}
+// we have std IO: writeln is possible
+   {$DEFINE STDIO}
+ {$else}
+   {$UNDEFINE STDIO}
+ {$endif}
 
 interface
 
@@ -9,6 +15,7 @@ uses
   fptimer,
   {$IFDEF WINDOWS}
   //osfuncwin,
+  Windows,
   JwaWinnt,
   jwawinbase,
   JwaWindows,
@@ -23,6 +30,7 @@ uses
 
   {$IFDEF GUI}
   Forms,
+  Dialogs,
   {$ELSE}
   custapp,
   {$ENDIF GUI}
@@ -67,6 +75,7 @@ var
   //mylog: textfile;
   mydefaultlog: string;
   Timer1: TfpTimer;
+  windowseconds, maxwindowseconds: integer;
   {$IFDEF GUI}
   Application: TApplication;
   {$ELSE}
@@ -83,6 +92,7 @@ uses
   helperwin;
 
 {$ENDIF GUI}
+
 
 {$IFDEF WINDOWS}
 function IsElevated: boolean;
@@ -203,10 +213,36 @@ end;
 procedure WriteHelp;
 var
   filename: string;
+  msg: string;
 begin
+  LogDatei.log('Showing help', LLnotice);
   filename := ExtractFileName(ParamStr(0));
+  {$IFDEF GUI}
+  msg := 'This is ' + filename + ' version: ' + getversioninfo +
+    ' (c) uib gmbh, AGPLv3' + LineEnding;
+  msg := msg + 'called from: ' + ParamStr(0) + LineEnding;
+  msg := msg + 'Usage: ' + filename + ' Options' + LineEnding;
+  msg := msg + 'Options:' + LineEnding;
+  msg := msg + ' --help -> write this help and exit' + LineEnding;
+  msg := msg + ' -h -> write this help and exit' + LineEnding;
+  msg := msg + ' --exit-code=n -> exits with n as exit code (default 42)' + LineEnding;
+  //writeln(' --log=<path\filename> -> writes log to <path\filename> (c:\opsi.org\tmp\opsiwinsttesthelper.log)');
+  msg := msg + ' --time-output -> write timestamp and exit' + LineEnding;
+  msg := msg + ' --fork-and-stop=n -> starts a helperchild(.exe) and exits.' +
+    LineEnding;
+  msg := msg +
+    '                     The child process waits 2 seconds, then shows a window for n seconds and stops'
+    + LineEnding;
+  msg := msg + ' --showwindow=n -> shows a window for n seconds and exit' + LineEnding;
+  msg := msg + ' --version -> write version info and exit' + LineEnding;
+  msg := msg + ' --wait=n -> waits n seconds before going on' + LineEnding;
+  msg := msg + ' --createfile=fname -> creates a file fname' + LineEnding;
+  msg := msg + ' --filesize=n -> fills the file to the size of n MB';
+  ShowMessage(msg);
+  {$ELSE GUI}
   writeln(ParamStr(0));
-  writeln(filename);
+  writeln('This is ' + filename + ' version: ' +
+    getversioninfo + ' (c) uib gmbh, AGPLv3');
   writeln('Usage:');
   writeln(filename + ' Option [Option]');
   writeln('Options:');
@@ -221,11 +257,14 @@ begin
   writeln(' --wait=n -> waits n seconds before going on');
   writeln(' --createfile=fname -> creates a file fname');
   writeln(' --filesize=n -> fills the file to the size of n MB');
+  {$ENDIF GUI}
 end;
 
 procedure writeTimestamp;
 begin
+  {$IFDEF STDIO}
   writeln(DateTimeToStr(now));
+  {$ENDIF STDIO}
 end;
 
 
@@ -233,11 +272,17 @@ procedure startchild(childsec: integer);
 var
   AProcess: TProcess;
   mychildname: string;
+  i : integer;
 begin
   AProcess := TProcess.Create(nil);
   //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
   { do not try to wait for the child }
-  AProcess.Options := [];
+  AProcess.Options := [poDetached];
+  AProcess.InheritHandles := False;
+  // https://wiki.freepascal.org/Executing_External_Programs#Run_detached_program
+  // Copy default environment variables including DISPLAY variable for GUI application to work
+  for I := 1 to GetEnvironmentVariableCount do
+      AProcess.Environment.Add(GetEnvironmentString(I));
   {$IFDEF WINDOWS}
   mychildname := 'helperchild.exe';
   {$ENDIF WINDOWS}
@@ -288,7 +333,7 @@ begin
   LogDatei.log(lfilename + ' Version: ' + getversioninfo, LLEssential);
   LogDatei.LogLevel := 7;
 
-      {$IFDEF WINDOWS}
+ {$IFDEF WINDOWS}
   GetNetUser('', mystr, dummystr);
   LogDatei.log('Running as = ' + mystr, LLEssential);
   if DSiIsAdmin then
@@ -308,8 +353,17 @@ begin
   retrieveFoldersFromWinApi;
   LogDatei.log('Appdata is = ' + GetAppDataPath, LLEssential);
   LogDatei.log('Desktop is = ' + GetDesktopPath, LLEssential);
-      {$ENDIF WINDOWS}
+
+  // initate console while windows gui
+  // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
+  AllocConsole;      // in Windows unit
+  IsConsole := True; // in System unit
+  SysInitStdIO;      // in System unit
+  // Now you can do Writeln, DebugLn, ...
+  {$ENDIF WINDOWS}
   LogDatei.log('current profile is = ' + GetUserProfilePath, LLEssential);
+  windowseconds := 0;
+  maxwindowseconds := 0;
 
   myparamcount := ParamCount;
   myparamcount := Application.ParamCount;
@@ -336,18 +390,23 @@ begin
     ErrorMsg := Application.CheckOptions('', optionlist);
     if ErrorMsg <> '' then
     begin
+      LogDatei.log('Exception while handling parameters.', LLcritical);
       ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
       LogDatei.log(ErrorMsg, LLcritical);
       Application.ShowException(Exception.Create(ErrorMsg));
+      WriteHelp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
       Exit;
     end;
 
+    if ParamCount = 0 then
+      LogDatei.log('Found no Options', LLnotice);
+
     // parse parameters
-    if Application.HasOption('help') or (paramcount = 0) then
+    if Application.HasOption('help') then
     begin
-      //if Application.HasOption('help')  then begin
+      LogDatei.log('Found Option help', LLnotice);
       WriteHelp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
       Application.Terminate;
@@ -356,23 +415,31 @@ begin
 
     if Application.HasOption('exit-code') then
     begin
+      LogDatei.log('Found Option exit-code', LLnotice);
       paramvaluestr := Application.GetOptionValue('exit-code');
       try
         myexitcode := StrToInt(paramvaluestr);
         system.ExitCode := myexitcode;
+        {$IFDEF STDIO}
         writeln('Will use ' + paramvaluestr + ' as exit code.');
+        {$ENDIF STDIO}
         LogDatei.log('Will use ' + paramvaluestr + ' as exit code.', LLNotice);
       except
-        writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
-          IntToStr(myexitcode) + ' as exit code.');
         LogDatei.log('>' + paramvaluestr + '< is not a integer. Using default of ' +
           IntToStr(myexitcode) + ' as exit code.', LLerror);
+       {$IFDEF STDIO}
+        writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
+          IntToStr(myexitcode) + ' as exit code.');
+       {$ENDIF STDIO}
       end;
     end;
 
     if Application.HasOption('log') then
     begin
       LogDatei.log('Option --log is not supportetd any more', LLwarning);
+      {$IFDEF STDIO}
+      writeln('Will use log:' + LogDatei.FileName);
+      {$ENDIF STDIO}
     end;
 (*
     if Application.HasOption('log') then
@@ -425,14 +492,19 @@ begin
 
     if Application.HasOption('wait') then
     begin
+      LogDatei.log('Found Option wait', LLnotice);
       paramvaluestr := Application.GetOptionValue('wait');
-      //writeln('--wait: waiting ' + paramvaluestr + ' seconds');
+      {$IFDEF STDIO}
+      writeln('--wait: waiting ' + paramvaluestr + ' seconds');
+      {$ENDIF STDIO}
       LogDatei.log('--wait: waiting ' + paramvaluestr + ' seconds', LLnotice);
       try
         waitsec := StrToInt(paramvaluestr);
       except
         LogDatei.log('wait >' + paramvaluestr + '< is not a integer.', LLerror);
-        //writeln('>' + paramvaluestr + '< is not a integer.');
+        {$IFDEF STDIO}
+        writeln('>' + paramvaluestr + '< is not a integer.');
+        {$ENDIF STDIO}
         waitsec := 1;
       end;
       Sleep(waitsec * 1000);
@@ -441,14 +513,19 @@ begin
 
     if Application.HasOption('fork-and-stop') then
     begin
+      LogDatei.log('Found Option fork-and-stop', LLnotice);
       paramvaluestr := Application.GetOptionValue('fork-and-stop');
       LogDatei.log('Will use ' + paramvaluestr + ' as fork-and-stop.', LLnotice);
+      {$IFDEF STDIO}
       writeln('Will use ' + paramvaluestr + ' as fork-and-stop.');
+      {$ENDIF STDIO}
       try
         childsec := StrToInt(paramvaluestr);
       except
         LogDatei.log('fork-and-stop >' + paramvaluestr + '< is not a integer.', LLerror);
+        {$IFDEF STDIO}
         writeln('>' + paramvaluestr + '< is not a integer.');
+{$ENDIF STDIO}
         childsec := 5;
       end;
       try
@@ -457,6 +534,7 @@ begin
         LogDatei.log('Failed to start child.', LLerror);
       end;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
     end;
@@ -464,33 +542,48 @@ begin
 
     if Application.HasOption('time-output') then
     begin
+      LogDatei.log('Found Option time-output', LLnotice);
       writeTimestamp;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
     end;
 
     if Application.HasOption('version') then
     begin
+      LogDatei.log('Found Option version', LLnotice);
+      {$IFDEF STDIO}
       writeln('Version: ' + getversioninfo);
+{$ENDIF STDIO}
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
     end;
 
     if Application.HasOption('createfile') then
     begin
+      LogDatei.log('Found Option createfile', LLnotice);
       myfilename := Application.GetOptionValue('createfile');
+      {$IFDEF STDIO}
       writeln('Will use ' + myfilename + ' as file name.');
+{$ENDIF STDIO}
       if Application.HasOption('filesize') then
       begin
         paramvaluestr := Application.GetOptionValue('filesize');
         try
           mysizemb := StrToInt(paramvaluestr);
+          {$IFDEF STDIO}
           writeln('Will use ' + paramvaluestr + ' as file size.');
+{$ENDIF STDIO}
         except
+          {$IFNDEF GUI}
           writeln('>' + paramvaluestr + '< is not a integer. Using default of ' +
             IntToStr(mysizemb) + ' as file size.');
+          {$ENDIF STDIO}
+          LogDatei.log('>' + paramvaluestr + '< is not a integer. Using default of ' +
+            IntToStr(mysizemb) + ' as file size.', LLwarning);
         end;
         k := 0;
         for i := 1 to 4 do
@@ -508,6 +601,7 @@ begin
         closefile(myfile);
       end;
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
     end;
@@ -515,31 +609,41 @@ begin
 
     if Application.HasOption('showwindow') then
     begin
+      LogDatei.log('Found Option showwindow', LLnotice);
       {$IFDEF GUI}
       Application.CreateForm(TForm1, Form1);
+      LogDatei.log('showwindow: created', LLnotice);
       Form1.Caption := Application.Title;
       Form1.Show;
+      LogDatei.log('showwindow: showing', LLnotice);
       {$ENDIF GUI}
       showtimestr := Application.GetOptionValue('showwindow');
+      LogDatei.log('Found Option showwindow with value: ' + showtimestr, LLnotice);
       try
         showtimeint := StrToInt(showtimestr);
       except
-        //writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+        {$IFDEF STDIO}
+        writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+{$ENDIF STDIO}
         LogDatei.log('>' + paramvaluestr +
           '< is not a integer. Using default of 1 second.', LLerror);
         showtimeint := 1;
       end;
-      //writeln('--showwindow: waiting ' + showtimestr + ' seconds');
+      {$IFDEF STDIO}
+      writeln('--showwindow: waiting ' + showtimestr + ' seconds');
+{$ENDIF STDIO}
       LogDatei.log('--showwindow: waiting ' + showtimestr + ' seconds', LLnotice);
       //Sleep(showtimeint * 1000);
 
       {$IFDEF GUI}
-      timer1.Interval := showtimeint * 1000;
+      maxwindowseconds := showtimeint;
+      timer1.Interval := 1000;
       timer1.Enabled := True;
       {$ELSE GUI}
       LogDatei.log('NOGUI: sleeping ' + showtimestr + ' seconds', LLnotice);
       Sleep(showtimeint * 1000);
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
       {$ENDIF GUI}
@@ -556,6 +660,7 @@ begin
     if not (Application.HasOption('showwindow')) then
     begin
       LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+      LogDatei.Close;
       Application.Terminate;
       halt(system.ExitCode);
     end;
@@ -568,14 +673,21 @@ end;
 //procedure Timer1Timer(Sender: TObject) of object;
 procedure Timer1Timer(Sender: TObject);
 begin
-  Timer1.Enabled := False;
+  Inc(windowseconds);
+  if windowseconds < maxwindowseconds then
+    LogDatei.log('showwindow seconds: ' + IntToStr(windowseconds), LLnotice)
+  else
+  begin
+    Timer1.Enabled := False;
 {$IFDEF GUI}
-  form1.Visible := False;
+    form1.Visible := False;
 {$ENDIF GUI}
-  LogDatei.log('Finished waiting (timer)', LLnotice);
-  LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
-  Application.Terminate;
-  halt(system.ExitCode);
+    LogDatei.log('Finished showwindow (timer)', LLnotice);
+    LogDatei.log('Terminating with exitcode' + IntToStr(system.ExitCode), LLessential);
+    LogDatei.Close;
+    Application.Terminate;
+    halt(system.ExitCode);
+  end;
 end;
 
 initialization

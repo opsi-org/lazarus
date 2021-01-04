@@ -347,6 +347,9 @@ begin
   EnableFontSmoothing(LabelProgress);
   //EnableFontSmoothing(LabelProgress1);
   {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  ForceStayOnTop(true);
+  {$ENDIF DARWIN}
 
   //Visible  := true;
   //Repaint;
@@ -888,11 +891,12 @@ begin
   if YesNo then
   begin
     setWindowState (bwmMaximized);
+    { make to system wide top most window }
     FormStyle := fsSystemStayOnTop;
     BringToFront;
     Application.ProcessMessages;
+    { now allow new started windows (setup) to get the system wide top most position }
     FormStyle := fsStayOnTop;
-    (* FBatchOberflaeche.BorderIcons := []; *)
     BatchScreenOnTop := True;
   end
   else
