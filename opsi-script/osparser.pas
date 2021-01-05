@@ -17096,6 +17096,7 @@ var
     s2 := s1;
     if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
       s2 := copy(s1, 1, length(s1) - 1);
+    s2 := trim(s2);
     OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       try
@@ -17116,16 +17117,17 @@ var
   function handleFileExists64(s1: string): boolean;
   begin
     LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
-    s2 := s1;
+    (*s2 := s1;
     if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-      s2 := copy(s1, 1, length(s1) - 1);
+      s2 := copy(s1, 1, length(s1) - 1);*)
     try
       if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
       begin
         LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+        result := handleFileExists32(s1);
         //BooleanResult := GetFileInfo (s2, FileRecord, RunTimeInfo);
         // disable  critical-error-handler message box. (Drive not ready)
-        OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+        (*OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
         try
           try
             result := FileExists(s2) or DirectoryExists(s2);
@@ -17138,7 +17140,7 @@ var
           end;
         finally
           setErrorMode(OldWinapiErrorMode);
-        end;
+        end;*)
         dummybool := DSiRevertWow64FsRedirection(
           oldDisableWow64FsRedirectionStatus);
         LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
@@ -17159,7 +17161,7 @@ var
   // function for FileExistsSysNative
   function handleFileExistsSysNative(s1: string): boolean;
   begin
-    if Is64BitSystem then
+    (*if Is64BitSystem then
       LogDatei.log('  Starting query if file exist (SysNative 64 Bit mode)...',
         LLInfo)
     else
@@ -17167,9 +17169,12 @@ var
         LLInfo);
     s2 := s1;
     if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-      s2 := copy(s1, 1, length(s1) - 1);
+      s2 := copy(s1, 1, length(s1) - 1);*)
     if Is64BitSystem then
     begin
+      LogDatei.log('SysNative 64 Bit mode...', LLInfo);
+      result := handleFileExists64(s1);
+      (*
       try
         if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
         begin
@@ -17204,14 +17209,19 @@ var
           LogDatei.log('Error: ' + ex.message, LLError);
         end;
       end;
+      *)
     end
     else
     begin
+      LogDatei.log('SysNative 32 Bit mode...', LLInfo);
+      result := handleFileExists32(s1);
+      (*
       result := FileExists(s2) or DirectoryExists(s2);
       if (not result) and (not (trim(s2) = '')) then
       begin
         LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
       end;
+      *)
     end;
   end;
   {$ENDIF WINDOWS}
@@ -17424,13 +17434,10 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          s1 := ExpandFileName(s1);
-          LogDatei.log('Starting query if file exists ...', LLInfo);
-          s2 := s1;
-          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-            s2 := copy(s1, 1, length(s1) - 1);
       {$IFDEF WINDOWS}
-          { disable  critical-error-handler message box. (Drive not ready) }
+      BooleanResult := handleFileExists32(s1);
+      (*
+      { disable  critical-error-handler message box. (Drive not ready) }
           OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
           try
             try
@@ -17446,7 +17453,13 @@ begin
           finally
             setErrorMode(OldWinapiErrorMode);
           end;
+          *)
       {$ELSE WINDOWS}
+          s1 := ExpandFileName(s1);
+          LogDatei.log('Starting query if file exists ...', LLInfo);
+          s2 := s1;
+          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
+            s2 := copy(s1, 1, length(s1) - 1);
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
