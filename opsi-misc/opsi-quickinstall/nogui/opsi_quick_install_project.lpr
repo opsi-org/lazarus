@@ -186,7 +186,7 @@ type
   begin
     LogDatei.log('Entered SetDefaultValues', 0);
     // set default values:
-    opsiVersion := 'Opsi 4.2';
+    opsiVersion := 'Opsi 4.1';
     // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
@@ -319,7 +319,7 @@ type
 
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window, ...
-    // ..."opsi-script-nogui -batch" for without
+    // ..."opsi-script-nogui -batch" for without?
     Output := InstallOpsiCommand.Run('opsi-script-nogui -batch ' +
       DirClientData + 'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
@@ -2053,6 +2053,9 @@ begin
     TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
       '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
   end;
+
+  writeln(rsCarryOut);
+  sleep(100);
 
   with QuickInstall do
   begin

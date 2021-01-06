@@ -162,14 +162,9 @@ var
   Languages: TStringList;
   removeFuzzys: string;
 begin
-  // from all po files remove all fuzzys that might have been introduced by the no-gui version
+  // from all po files remove all fuzzys that might have been introduced by the nogui version
   if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys) then;
   if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys) then;
-
-
-
-
-
 
   logFileName := 'opsi_quickinstall.log';
   // set constant form size

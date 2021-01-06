@@ -2,10 +2,10 @@ object Distribution: TDistribution
   Left = 526
   Height = 240
   Top = 305
-  Width = 335
+  Width = 345
   Caption = 'Distribution'
   ClientHeight = 240
-  ClientWidth = 335
+  ClientWidth = 345
   OnActivate = FormActivate
   LCLVersion = '2.0.10.0'
   object BtnBack: TButton
@@ -70,7 +70,9 @@ object Distribution: TDistribution
     end
   end
   object InfoDistribution: TImage
+    AnchorSideLeft.Control = PanelDistr
     AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelDistr
     Left = 296
     Height = 16
     Top = 16

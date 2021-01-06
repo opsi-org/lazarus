@@ -60,6 +60,7 @@ resourcestring
 
   {Distribution}
   rsDistr = 'We recognized the following distribution on this computer:';
+  rsInfoDistribution = 'The following distributions are supported:';
   rsCorrect =
     'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
   rsNoSupport =

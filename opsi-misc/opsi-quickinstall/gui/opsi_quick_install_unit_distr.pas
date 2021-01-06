@@ -90,6 +90,7 @@ begin
   // text by resourcestrings
   Caption := rsCapDistr;
   LabelDistr.Caption := rsDistr;
+  InfoDistribution.Hint:=rsInfoDistribution + #10 + QuickInstall.DistrInfo.Distribs;
   LabelCorrect.Caption := rsCorrect;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
