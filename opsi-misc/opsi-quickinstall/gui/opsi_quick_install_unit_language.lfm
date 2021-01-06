@@ -60,7 +60,7 @@ object QuickInstall: TQuickInstall
       Top = 19
       Width = 364
       Align = alTop
-      Caption = 'Standard (...)'
+      Caption = 'Standard'
       Checked = True
       ParentFont = False
       TabOrder = 0
@@ -72,7 +72,7 @@ object QuickInstall: TQuickInstall
       Top = 40
       Width = 364
       Align = alTop
-      Caption = 'Custom (...)'
+      Caption = 'Custom'
       ParentFont = False
       TabOrder = 1
     end

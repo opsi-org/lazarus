@@ -104,9 +104,6 @@ begin
     InfoReboot.Visible := True;
   end;
 
-  InfoReboot.OnClick := @QuickInstall.ShowHintOnClick;
-  InfoDhcp.OnClick := @QuickInstall.ShowHintOnClick;
-  InfoTFTPROOT.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   if QuickInstall.RadioBtnDefault.Checked then
     Caption := 'Opsi Quick Install - ' + rsCapQuery

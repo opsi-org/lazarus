@@ -71,9 +71,6 @@ end;
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
-  InfoBackend.OnClick := @QuickInstall.ShowHintOnClick;
-  InfoModules.OnClick := @QuickInstall.ShowHintOnClick;
-  InfoRepoKind.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQuery2;
   LabelBackend.Caption := rsBackend;

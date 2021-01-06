@@ -95,7 +95,6 @@ procedure TQuery6.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
   BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
-  InfoAdmin.OnClick := @QuickInstall.ShowHintOnClick;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQueryUserInfo;
   LabelNameAdmin.Caption := rsAdminName;

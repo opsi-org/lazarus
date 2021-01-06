@@ -93,7 +93,6 @@ var
   index: integer;
 begin
   SetBasics(self);
-  InfoNetwork.OnClick := @QuickInstall.ShowHintOnClick;
 
   NetworkDetails := getNetworkDetails(['IP4.ADDRESS[1]', 'IP4.ADDRESS[2]',
     'IP4.ADDRESS[3]', 'IP4.DOMAIN[1]', 'IP4.DOMAIN[2]', 'IP4.DOMAIN[3]',

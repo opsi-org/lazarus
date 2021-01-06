@@ -16,6 +16,7 @@ type
     BtnBack: TButton;
     BtnNext: TButton;
     EditDistr: TEdit;
+    InfoDistribution: TImage;
     LabelCorrect: TLabel;
     LabelDistr: TLabel;
     PanelDistr: TPanel;
@@ -79,8 +80,10 @@ begin
     Round(Height / 2);
 
   BtnBack.Left := QuickInstall.BtnBack.Left;
-  //ShowMessage(QuickInstall.BtnNextWidth.ToString);
+  //ShowMessage(BtnBack.Left.ToString);
   BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
+
+  setInfoBasics(InfoDistribution);
 
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
 

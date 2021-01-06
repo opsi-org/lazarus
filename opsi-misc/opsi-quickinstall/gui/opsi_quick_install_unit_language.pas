@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, LCLtranslator, Buttons, osDistributionInfo,
-  oslog, osfunclin, strutils, process;
+  oslog, osfunclin, process;
 
 type
 
@@ -68,7 +68,9 @@ type
 
 // for less code
 procedure showForm(newForm: TForm; Sender: TForm);
-// set Panel.Left, Panel.Width, InfoImage.Width, InfoImage.Height
+// set InfoImage.Picture, InfoImage.Width, InfoImage.Height
+procedure setInfoBasics(InfoImage: TImage);
+// set Panel.Left, Panel.Width
 procedure SetBasics(Sender: TForm);
 
 var
@@ -96,6 +98,18 @@ begin
   Sender.Visible := False;
 end;
 
+procedure setInfoBasics(InfoImage: TImage);
+begin
+  InfoImage.Width := QuickInstall.infoSize;
+  InfoImage.Height := QuickInstall.infoSize;
+  // set info image
+  InfoImage.Picture.LoadFromFile(
+    ExtractFilePath(ParamStr(0)) + QuickInstall.InfoImageFileName);
+  InfoImage.BorderSpacing.Left := 5;
+  // Show info hints also on click of image
+  InfoImage.OnClick := @QuickInstall.ShowHintOnClick;
+end;
+
 procedure SetBasics(Sender: TForm);
 var
   compIndex: integer;
@@ -111,14 +125,7 @@ begin
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
-    begin
-      (Sender.Components[compIndex] as TImage).Width := QuickInstall.infoSize;
-      (Sender.Components[compIndex] as TImage).Height := QuickInstall.infoSize;
-      // set info image
-      (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
-        ExtractFilePath(ParamStr(0)) + QuickInstall.InfoImageFileName);
-      (Sender.Components[compIndex] as TImage).BorderSpacing.Left := 5;
-    end
+      setInfoBasics(Sender.Components[compIndex] as TImage)
     else if (Sender.Components[compIndex].Name = 'BackgrImage') then
       // set background image
       (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
@@ -153,16 +160,16 @@ end;
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
-  testString: string;
-  NetworkDetails: array of string;
+  removeFuzzys: string;
 begin
-  //ShowMessage('Hi'.IndexOf('t').ToString);
-  {testString := 'Test';
-  delete(testString,testString.Length-1,2);
-  ShowMessage(testString);
-  testString := binStr(240,10);
-  testString += IntToBin(15,5);
-  ShowMessage(testString);}
+  // from all po files remove all fuzzys that might have been introduced by the no-gui version
+  if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys) then;
+  if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys) then;
+
+
+
+
+
 
   logFileName := 'opsi_quickinstall.log';
   // set constant form size
@@ -202,7 +209,7 @@ begin
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
-  logFileName:=LogDatei.StandardMainLogPath+ logFileName;
+  logFileName := LogDatei.StandardMainLogPath + logFileName;
 
   // (compare function GetDefaultURL in osLinuxRepository:)
   // following two lines take time and are therefore executed only...
@@ -270,7 +277,7 @@ begin
     SetDefaultLang('de');
     SetBtnWidth('de');
   end
-  else
+  else if ComboBoxLanguages.Text = 'English' then
   begin
     SetDefaultLang('en');
     SetBtnWidth('en');
