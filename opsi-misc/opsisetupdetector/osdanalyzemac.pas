@@ -41,6 +41,14 @@ const
 
 procedure get_aktProduct_general_info(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
+
+procedure get_zip_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_dmg_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_pkg_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_app_info(myfilename: string; var mysetup: TSetupFile);
+
+procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean);
+
 (*
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
@@ -60,7 +68,6 @@ procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 *)
-procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 (*
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
@@ -69,17 +76,21 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
   *)
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
-function ExtractVersion(str: string): string;
-function getProductInfoFromResource(infokey: string; filename: string): string;
+//function ExtractVersion(str: string): string;
+//function getProductInfoFromResource(infokey: string; filename: string): string;
 
+(*
 resourcestring
   sWarnMultipleMsi =
     'Multiple (more than one) msi files found. Look to log file and directory: ';
+*)
 
 implementation
 
 uses
   osdform;
+
+(*
 
 function getProductInfoFromResource(infokey: string; filename: string): string;
 { Allowed keys:
@@ -139,6 +150,8 @@ begin
   {$ENDIF WINDOWS}
 end;
 
+*)
+
 function getPacketIDfromFilename(str: string): string;
 var
   strnew: string;
@@ -190,7 +203,7 @@ begin
   Result := strnew;
 end;
 
-
+(*
 function ExtractVersion(str: string): string;
 var
   i: integer;
@@ -296,6 +309,8 @@ begin
     end;
   end;
 end;
+
+*)
 
 (*
 procedure grepmsi(instring: string);

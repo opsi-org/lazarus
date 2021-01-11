@@ -429,7 +429,7 @@ begin
     if aktProduct.targetOS = osMac then
     begin
       infilename := templatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
-      outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
+      outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
     end;
