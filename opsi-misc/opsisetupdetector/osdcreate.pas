@@ -21,7 +21,7 @@ uses
   osdbasedata,
   Dialogs,
   lazfileutils,
-    osparserhelper,
+  osparserhelper,
   dateutils;
 
 procedure createProductStructure;
@@ -102,7 +102,7 @@ var
   str, str2, str3: string;
   strlist: TStringList;
   templatePath: string;
-  proptmpstr : string;
+  proptmpstr: string;
 begin
   {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
@@ -114,15 +114,15 @@ begin
     strlist := TStringList.Create;
     patchlist.Clear;
     str := '';
-     //ProductProperties
+    //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
       proptmpstr := aktProduct.properties.Items[i].Name;
-      if (proptmpstr = 'SecretLicense_or_Pool')
-         and aktProduct.productdata.licenserequired then
-      str := str + 'DefVar $LicenseOrPool$' + LineEnding
+      if (proptmpstr = 'SecretLicense_or_Pool') and
+        aktProduct.productdata.licenserequired then
+        str := str + 'DefVar $LicenseOrPool$' + LineEnding
       else
-      str := str + 'DefVar $'+proptmpstr+'$'+ LineEnding;
+        str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
     (*
     if myconfiguration.UsePropDesktopicon then
@@ -145,22 +145,22 @@ begin
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
       proptmpstr := aktProduct.properties.Items[i].Name;
-      if (proptmpstr = 'SecretLicense_or_Pool')
-         and aktProduct.productdata.licenserequired then
-         begin
-      str := str +
-        'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","'
-        +aktProduct.properties.Items[i-1].StrDefault[0]+'")' + LineEnding;
-      str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
+      if (proptmpstr = 'SecretLicense_or_Pool') and
+        aktProduct.productdata.licenserequired then
+      begin
+        str := str +
+          'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","'
+          + aktProduct.properties.Items[i - 1].StrDefault[0] + '")' + LineEnding;
+        str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
       end
       else
       begin
         { remove brackets [] }
-        str2 := opsiunquotestr2(aktProduct.properties.Items[i].StrDefault[0],'[]');
+        str2 := opsiunquotestr2(aktProduct.properties.Items[i].StrDefault[0], '[]');
         { take first from list }
-        GetWordOrStringConstant(str2,str2,str3,WordDelimiterSet6);
-      str := str + 'set $'+proptmpstr+'$ = GetProductProperty("'+proptmpstr
-                 + '", '+str2+')' +  LineEnding;
+        GetWordOrStringConstant(str2, str2, str3, WordDelimiterSet6);
+        str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
+          proptmpstr + '", ' + str2 + ')' + LineEnding;
       end;
     end;
     (*
@@ -270,7 +270,8 @@ begin
     patchlist.add('#@postUninstallLines2*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon then
+    if myconfiguration.UsePropDesktopicon
+      and not (aktProduct.targetOS = osMac) then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim +
         'SetupHandleDesktopIcon.opsiscript');
@@ -319,11 +320,18 @@ begin
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  templatePath := '/usr/share/opsi-setup-detector/template-files';
+  // the first path is in the development environment
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+  if not DirectoryExists(templatePath) then
+    templatePath := '/usr/share/opsi-setup-detector/template-files';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  templatePath := '/usr/local/share/opsi-setup-detector/template-files';
+  // the first path is in the development environment
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+  if not DirectoryExists(templatePath) then
+    templatePath := '/usr/local/share/opsi-setup-detector/template-files';
   {$ENDIF DARWIN}
+
 
   if aktProduct.targetOS = osWin then
     templatePath := templatePath + Pathdelim + 'win'
@@ -376,22 +384,22 @@ begin
     end
     else
     begin
-    // setup file 1
-    if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
-      copyfile(aktProduct.SetupFiles[0].setupFullFileName,
-        clientpath + PathDelim + 'files1' + PathDelim +
-        aktProduct.SetupFiles[0].setupFileName,
-        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
-    // MST file 1
-    if FileExists(aktProduct.SetupFiles[0].MSTFullFileName) then
-      copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
-        clientpath + PathDelim + 'files1' + PathDelim +
-        aktProduct.SetupFiles[0].MSTFileName,
-        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+      // setup file 1
+      if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
+        copyfile(aktProduct.SetupFiles[0].setupFullFileName,
+          clientpath + PathDelim + 'files1' + PathDelim +
+          aktProduct.SetupFiles[0].setupFileName,
+          [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+      // MST file 1
+      if FileExists(aktProduct.SetupFiles[0].MSTFullFileName) then
+        copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
+          clientpath + PathDelim + 'files1' + PathDelim +
+          aktProduct.SetupFiles[0].MSTFileName,
+          [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     end;
     // complete dir 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) and
-       aktProduct.SetupFiles[1].copyCompleteDir then
+      aktProduct.SetupFiles[1].copyCompleteDir then
     begin
       CopyDirTree(ExtractFileDir(aktProduct.SetupFiles[1].setupFullFileName),
         clientpath + PathDelim + 'files2',
@@ -399,24 +407,39 @@ begin
     end
     else
     begin
-    // setup file 2
-    if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
-      copyfile(aktProduct.SetupFiles[1].setupFullFileName,
-        clientpath + PathDelim + 'files2' + PathDelim +
-        aktProduct.SetupFiles[1].setupFileName,
-        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
-    // MST file 2
-    if FileExists(aktProduct.SetupFiles[1].MSTFullFileName) then
-      copyfile(aktProduct.SetupFiles[1].MSTFullFileName,
-        clientpath + PathDelim + 'files2' + PathDelim +
-        aktProduct.SetupFiles[1].MSTFileName,
-        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
-     end;
+      // setup file 2
+      if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
+        copyfile(aktProduct.SetupFiles[1].setupFullFileName,
+          clientpath + PathDelim + 'files2' + PathDelim +
+          aktProduct.SetupFiles[1].setupFileName,
+          [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+      // MST file 2
+      if FileExists(aktProduct.SetupFiles[1].MSTFullFileName) then
+        copyfile(aktProduct.SetupFiles[1].MSTFullFileName,
+          clientpath + PathDelim + 'files2' + PathDelim +
+          aktProduct.SetupFiles[1].MSTFileName,
+          [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+    end;
     //osd-lib.opsiscript
     infilename := templatePath + Pathdelim + 'osd-lib.opsiscript';
     outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
+    // install lib
+    if aktProduct.targetOS = osMac then
+    begin
+      infilename := templatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
+      outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
+      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
+        cffPreserveTime], True);
+    end;
+    if aktProduct.targetOS = osLin then
+    begin
+      infilename := templatePath + Pathdelim + 'uib_lin_install.opsiscript';
+      outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
+      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
+        cffPreserveTime], True);
+    end;
     //product png
     //infilename := templatePath + Pathdelim + 'template.png';
     infilename := aktProduct.productdata.productImageFullFileName;
@@ -654,19 +677,22 @@ begin
     Logdatei.log('createProductdirectory failed', LLCritical);
     goon := False;
   end
-  else Logdatei.log('createProductdirectory done', LLnotice);
+  else
+    Logdatei.log('createProductdirectory done', LLnotice);
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
     goon := False;
   end
-  else Logdatei.log('createOpsiFiles done', LLnotice);
+  else
+    Logdatei.log('createOpsiFiles done', LLnotice);
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
     goon := False;
   end
-  else Logdatei.log('createClientFiles done', LLnotice);
+  else
+    Logdatei.log('createClientFiles done', LLnotice);
 end;
 
 

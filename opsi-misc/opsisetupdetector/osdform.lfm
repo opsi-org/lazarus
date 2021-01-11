@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 486
+  Left = 598
   Height = 666
-  Top = 196
+  Top = 282
   Width = 1046
   Caption = 'opsi Setup Detector'
   ClientHeight = 638
@@ -151,39 +151,46 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 510
             Anchors = []
+            BorderWidth = 2
+            BorderStyle = bsSingle
             ControlList = <            
               item
-                Control = Label2
+                Control = Image1
                 WrapAfter = waAuto
                 Index = 0
               end            
               item
-                Control = BtSingleAnalyzeAndCreateWin
+                Control = Label2
                 WrapAfter = waAuto
                 Index = 1
               end            
               item
-                Control = BtATwonalyzeAndCreate
+                Control = BtSingleAnalyzeAndCreateWin
                 WrapAfter = waAuto
                 Index = 2
               end            
               item
-                Control = BtAnalyzeOnly
+                Control = BtATwonalyzeAndCreate
                 WrapAfter = waAuto
                 Index = 3
               end            
               item
-                Control = BtCreateEmptyTemplateWin
+                Control = BtAnalyzeOnly
                 WrapAfter = waAuto
                 Index = 4
+              end            
+              item
+                Control = BtCreateEmptyTemplateWin
+                WrapAfter = waAuto
+                Index = 5
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 0
             object Label2: TLabel
-              Left = 1
+              Left = 37
               Height = 28
-              Top = 4
+              Top = 6
               Width = 91
               Anchors = []
               BorderSpacing.Top = 3
@@ -193,10 +200,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateWin: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-              Top = 41
+              Top = 43
               Width = 500
               Align = alTop
               Anchors = []
@@ -675,10 +682,10 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BtATwonalyzeAndCreate: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-              Top = 114
+              Top = 116
               Width = 500
               Align = alTop
               Anchors = []
@@ -1409,10 +1416,10 @@ object resultForm1: TresultForm1
               TabOrder = 1
             end
             object BtAnalyzeOnly: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze a single existing Setupfile '
-              Top = 187
+              Top = 189
               Width = 500
               Align = alTop
               Anchors = []
@@ -1681,10 +1688,10 @@ object resultForm1: TresultForm1
               TabOrder = 2
             end
             object BtCreateEmptyTemplateWin: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Create a empty '#10'opsi Product Directory Structure'
-              Top = 260
+              Top = 262
               Width = 500
               Align = alTop
               Anchors = []
@@ -1988,6 +1995,67 @@ object resultForm1: TresultForm1
               ParentFont = False
               TabOrder = 3
             end
+            object Image1: TImage
+              Left = 9
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B47726170686963D105000089504E47
+                0D0A1A0A0000000D4948445200000016000000160806000000C4B46C3B000000
+                06624B474400FF00FF00FFA0BDA793000000097048597300000B1300000B1301
+                009A9C180000000774494D4507E5010B1120099180DB610000055E4944415438
+                CBB5955D6C1C5715C77FF7CEECCEAC776777BDA92D07C74ED2D851E204C9B479
+                A0546A1A68A2F60121556A9140A2E209C497024508949616152A3E5EDA0A0412
+                42AD2C81A01029FD902C9594362D290D0A158A5B8778DD38EB7ABF6CEFCEEECE
+                EECCECCEC7E521AED51478E43C5D5DE9FEEEFFDC73FFE7C0FF29C48737DAE572
+                D6BB7A7538683434954EB7261F5870D1199BB879782267A53421E3EAC2FC7295
+                C1F73B00BB3FF3234ACF9DFADFE0AEE388C1B56BE7FDD5D5DBFC6A15BF52C1AF
+                D7991FEC6365DF27F9D8CC08565A276D086AF50E4FFFEED24B8BC5B5CFBA97BE
+                D1B26EF939CE5B5FFB4F70B3D9245858D007B55ACFAB569361A34A60570936AB
+                D4CC611A5F788C663B8F9E1C229B1258298D7C5AA35A2FC70F3EFADA376BE71F
+                78EAC38A2540A150408E8C1CEE5D5D4E461B45A45BC4888AA4B52267ADC37412
+                FFC0B57ECDDAE0292E567FC299C593DC37378A8A02F98B1FDFF3E4AE63BF7D04
+                E023773DB10DD6DF5FB45E3FF770B85124A12A24A991302AA89B1C2E474768B7
+                9E63DD59C3B66D6AEB354AF512B3D95B41DF81611A3C7CF2F647BF74F5A7BFAF
+                9C3D79E506B0524ABBF4F52FDEEBF6D7F044977CBAC7CC844D2F9163979AE2F5
+                CE4B346D8756A345E88410C37EF929069874FD9889F11DEC9F3DF0E795C293BB
+                A7A61D75F9D987D0CF9D5BE65FCFFF31F583B2F3D80B6F1F7B30B9E38EA1BE28
+                7068DF3ADFBEFD0F8C4EFC12E9AEB0196FC94880D005E6D027B09D8028120825
+                387ADB9EF146E7BDA1CBCF3ED40390478F4EB1181EFCFCCCA1AF7EEFCB779F18
+                BA3539C26CB097E9D5C3FCEADD6F610D724C64B6AA21AF97FBC0F0614C6B06BB
+                1D603B211D57D1EC6A5247BBFB86A7B870A1F2C8C58B35BDD5CA23C41EC0A7E1
+                2BAC4485239326674F5FE190BD44528BF9F4818074D8A796C9D0F323A24891D4
+                04AF2DF824A57607701A402F956A37DD7FFF0B3BC330460817E8A054037604DC
+                7B679DE387BECBF1BDA71854C648DA0E943BDCF5F21C53B30A2B25A8B422FEFA
+                7617D3500837DEF685FEF8E3173E3E184448290007D8402989CA75F8DCF4CFA0
+                0CB81149BB0C0D6836B3B8995B585CF5098218B72F4109742D40E8DEF96D70AF
+                179E308C38542A7262415E979B42AA889EF049AF5F8400F0B6EEB4A1A20E6215
+                F244414C8086A5C774BC88AC6EC75EAF38BF653A25A57CF12F6FBEF995F162F1
+                3B3B97BA57FE54344C0AFB3D46B31A94B8AEB8063480184ED7EFC44882614A72
+                1908A446822E915F5BD7ED378465591240CECD3D7DC6B2ACC6F8F854669FFEEA
+                13077735BC466E0F4BDD032CBBC7A003F88039C4BC7D82F383E398298DBA6752
+                EA9A34BC08BD7F0D5939732A21E3B4611872FB57A4522921A5CC20B5E9EEBB2F
+                BEFAD1E3C3F7EC9F9EE187F133987A00A14FA763402ECD683EC9C2AA46A86288
+                BAD0BB46509E5FD4DD553316226359D6E6E6E6E6F55EA1699A104218C0B0F4ED
+                C4E2CB739B83F7FE46CA5D260C7A84BA899E4CD2EE4614D73C06BE4DE4AC42F3
+                9F64567ED393F5379A426AC3801186A1D8561C86A1DA4AB8A56003AFB571F9EC
+                33A270F391DCCEA9595DCF8F13A914951545180E480636A2BD148BEA2B3D2DF2
+                9A4AE85D94EA0921022144BC0DEE76BB5114456D29E53BC0100847C0DED6CA5B
+                3B9BCB7F2F28CDC8E8E97C322174A1DC7698081D4F49BD0DA2A91035E01DA018
+                4551DBF3BCF886469FCD66B5C9C9C98CAEEBA352CA5D4AA90921C46E601C1811
+                42BC6FECBE52CA16426C28A5EA401528C5715C725DB7BEB4B4E403EA86D1649A
+                A628140ABA655909C330D252CABC1062580891038694521218005DA55407E828
+                A59C288ABC76BBDD2F97CB411CC7EABFCEBC0FC6D8D89896CFE7139AA625AED7
+                581340DCEFF7C3300C078D4623F67D5FF9BEAF00F5C1B3FF062AF297511C889F
+                930000000049454E44AE426082
+              }
+            end
           end
           object FlowPanelWin1: TFlowPanel
             Left = 511
@@ -1995,29 +2063,47 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 510
             Anchors = []
+            BorderWidth = 2
+            BorderStyle = bsSingle
             ControlList = <            
               item
-                Control = Label3
+                Control = Image2
                 WrapAfter = waAuto
                 Index = 0
               end            
               item
-                Control = BtSingleAnalyzeAndCreateMulti
+                Control = Image5
                 WrapAfter = waAuto
                 Index = 1
               end            
               item
-                Control = BtCreateEmptyTemplateMulti
+                Control = Image6
                 WrapAfter = waAuto
                 Index = 2
+              end            
+              item
+                Control = Label3
+                WrapAfter = waAuto
+                Index = 3
+              end            
+              item
+                Control = BtSingleAnalyzeAndCreateMulti
+                WrapAfter = waAuto
+                Index = 4
+              end            
+              item
+                Control = BtCreateEmptyTemplateMulti
+                WrapAfter = waAuto
+                Index = 5
               end>
+            Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 1
             object Label3: TLabel
-              Left = 1
+              Left = 105
               Height = 28
-              Top = 4
+              Top = 6
               Width = 133
               Anchors = []
               BorderSpacing.Top = 3
@@ -2027,10 +2113,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateMulti: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
-              Top = 41
+              Top = 43
               Width = 500
               Align = alTop
               Anchors = []
@@ -2509,10 +2595,10 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BtCreateEmptyTemplateMulti: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Create a empty '#10'opsi Product Directory Structure'
-              Top = 114
+              Top = 116
               Width = 500
               Align = alTop
               Anchors = []
@@ -2816,6 +2902,135 @@ object resultForm1: TresultForm1
               ParentFont = False
               TabOrder = 1
             end
+            object Image2: TImage
+              Left = 9
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B47726170686963D105000089504E47
+                0D0A1A0A0000000D4948445200000016000000160806000000C4B46C3B000000
+                06624B474400FF00FF00FFA0BDA793000000097048597300000B1300000B1301
+                009A9C180000000774494D4507E5010B1120099180DB610000055E4944415438
+                CBB5955D6C1C5715C77FF7CEECCEAC776777BDA92D07C74ED2D851E204C9B479
+                A0546A1A68A2F60121556A9140A2E209C497024508949616152A3E5EDA0A0412
+                42AD2C81A01029FD902C9594362D290D0A158A5B8778DD38EB7ABF6CEFCEEECE
+                EECCECCEC7E521AED51478E43C5D5DE9FEEEFFDC73FFE7C0FF29C48737DAE572
+                D6BB7A7538683434954EB7261F5870D1199BB879782267A53421E3EAC2FC7295
+                C1F73B00BB3FF3234ACF9DFADFE0AEE388C1B56BE7FDD5D5DBFC6A15BF52C1AF
+                D7991FEC6365DF27F9D8CC08565A276D086AF50E4FFFEED24B8BC5B5CFBA97BE
+                D1B26EF939CE5B5FFB4F70B3D9245858D007B55ACFAB569361A34A60570936AB
+                D4CC611A5F788C663B8F9E1C229B1258298D7C5AA35A2FC70F3EFADA376BE71F
+                78EAC38A2540A150408E8C1CEE5D5D4E461B45A45BC4888AA4B52267ADC37412
+                FFC0B57ECDDAE0292E567FC299C593DC37378A8A02F98B1FDFF3E4AE63BF7D04
+                E023773DB10DD6DF5FB45E3FF770B85124A12A24A991302AA89B1C2E474768B7
+                9E63DD59C3B66D6AEB354AF512B3D95B41DF81611A3C7CF2F647BF74F5A7BFAF
+                9C3D79E506B0524ABBF4F52FDEEBF6D7F044977CBAC7CC844D2F9163979AE2F5
+                CE4B346D8756A345E88410C37EF929069874FD9889F11DEC9F3DF0E795C293BB
+                A7A61D75F9D987D0CF9D5BE65FCFFF31F583B2F3D80B6F1F7B30B9E38EA1BE28
+                7068DF3ADFBEFD0F8C4EFC12E9AEB0196FC94880D005E6D027B09D8028120825
+                387ADB9EF146E7BDA1CBCF3ED40390478F4EB1181EFCFCCCA1AF7EEFCB779F18
+                BA3539C26CB097E9D5C3FCEADD6F610D724C64B6AA21AF97FBC0F0614C6B06BB
+                1D603B211D57D1EC6A5247BBFB86A7B870A1F2C8C58B35BDD5CA23C41EC0A7E1
+                2BAC4485239326674F5FE190BD44528BF9F4818074D8A796C9D0F323A24891D4
+                04AF2DF824A57607701A402F956A37DD7FFF0B3BC330460817E8A054037604DC
+                7B679DE387BECBF1BDA71854C648DA0E943BDCF5F21C53B30A2B25A8B422FEFA
+                7617D3500837DEF685FEF8E3173E3E184448290007D8402989CA75F8DCF4CFA0
+                0CB81149BB0C0D6836B3B8995B585CF5098218B72F4109742D40E8DEF96D70AF
+                179E308C38542A7262415E979B42AA889EF049AF5F8400F0B6EEB4A1A20E6215
+                F244414C8086A5C774BC88AC6EC75EAF38BF653A25A57CF12F6FBEF995F162F1
+                3B3B97BA57FE54344C0AFB3D46B31A94B8AEB8063480184ED7EFC44882614A72
+                1908A446822E915F5BD7ED378465591240CECD3D7DC6B2ACC6F8F854669FFEEA
+                13077735BC466E0F4BDD032CBBC7A003F88039C4BC7D82F383E398298DBA6752
+                EA9A34BC08BD7F0D5939732A21E3B4611872FB57A4522921A5CC20B5E9EEBB2F
+                BEFAD1E3C3F7EC9F9EE187F133987A00A14FA763402ECD683EC9C2AA46A86288
+                BAD0BB46509E5FD4DD553316226359D6E6E6E6E6F55EA1699A104218C0B0F4ED
+                C4E2CB739B83F7FE46CA5D260C7A84BA899E4CD2EE4614D73C06BE4DE4AC42F3
+                9F64567ED393F5379A426AC3801186A1D8561C86A1DA4AB8A56003AFB571F9EC
+                33A270F391DCCEA9595DCF8F13A914951545180E480636A2BD148BEA2B3D2DF2
+                9A4AE85D94EA0921022144BC0DEE76BB5114456D29E53BC0100847C0DED6CA5B
+                3B9BCB7F2F28CDC8E8E97C322174A1DC7698081D4F49BD0DA2A91035E01DA018
+                4551DBF3BCF886469FCD66B5C9C9C98CAEEBA352CA5D4AA90921C46E601C1811
+                42BC6FECBE52CA16426C28A5EA401528C5715C725DB7BEB4B4E403EA86D1649A
+                A628140ABA655909C330D252CABC1062580891038694521218005DA55407E828
+                A59C288ABC76BBDD2F97CB411CC7EABFCEBC0FC6D8D89896CFE7139AA625AED7
+                581340DCEFF7C3300C078D4623F67D5FF9BEAF00F5C1B3FF062AF297511C889F
+                930000000049454E44AE426082
+              }
+            end
+            object Image5: TImage
+              Left = 43
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B477261706869637503000089504E47
+                0D0A1A0A0000000D49484452000000130000001608030000001543574D000002
+                40504C5445835204D2A851E6B33F5B3A05533606DEB45C827864E8BD5EDFAC42
+                C8A24C5E4E348F5A04E2BA645E3E2C744E22D6AE58A27A648A7E64392620472F
+                1FF1D311EBBC0BD7AC09C08507CF9407EBC40CAD780AE1B40AF1D42AB67E0AD1
+                9B09E2BC0CC78A08745307976105A46D05ECB40BEBCD28E5AC09C18B0AA5720A
+                F3C40BB37907D7960DF5BD0CB493069A770BDFA509D9B30D9B6605F5CD31B983
+                09EDCC0EF2B60CF4D543D0A40D885F07C98E0791660A946C09F3CD0C9D6A07F6
+                D630DAA309F2DA2CCE8E08F6D50DD89C08F6DA14784E047C5B0AB0A58FA2895C
+                F6DA4A96720B6A4B06291C04744904B8AD96AA7E0AC9A30B7D5305A4770ABD9D
+                04BFB5A4B49654906007EBB316C39A0EAB7205875805493006B58C35B8A378BA
+                8330B79B5C52462CA9782A654307B48320603E057E620CA38E61C29227AC8E58
+                5E4A049E7E44AB8E4797722EF6C62C8A6C24AA946CA3713FC0AC909D774C9C79
+                33C6B684EAC620553B06B57E2FB68A20382605AE9C686C4505685430CF9418A6
+                9B87BC94479C6D2DC19C4E987E345E5644A4843CAD843A92825CF2D28CA26E24
+                956B3182723C0C0C0C1414131C1C1B2C2C2C3434340A06042424244444443C3C
+                3C5050506C6C6BCCCCCCE4E4E4747474DDDDDCACACACECECEC838384B5B4B35C
+                5C5C9C9C9C646464949494BEBDBCF4F4F44A4A4C7C7C7C8D8D8CC4C4C4A4A4A4
+                020204565654D4D4D4FEFEFCB68C0802022FC2930BAC8409402C072A22045C43
+                094132071F16043123059E7E04AC8C04F4EEDE140D044A3A0C8A66048E6A0739
+                2A0C4C360402A6BF910000000174524E530040E6D86600000001624B47440088
+                051D48000000097048597300000B1300000B1301009A9C180000000774494D45
+                07E5010B111F12433B38B1000000AE4944415418D375D1B10AC2301405D0ECCE
+                AD838B93823EE8623641F4270ABA89F835ADE02248C12141E4EA5B9CFC3D93D4
+                5893DABB241C6E5E0811A23B000AFC33C464135A81AA6CF59224EE89C56CF58A
+                6D3F582A5C0344A514735004BB0413F160CDFA74BE3788D2B6B429366FB9B0CF
+                B707FC185A76F426C90D33997F28CF8950D32DC34E3A2313775A2B3992947A1B
+                3A7BDA2DD969D2AC290EE6CA2D91CCEA3BD69369CF6D36E37ED7DFBC017E4871
+                128CE70AF00000000049454E44AE426082
+              }
+            end
+            object Image6: TImage
+              Left = 77
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B477261706869637D01000089504E47
+                0D0A1A0A0000000D4948445200000012000000160804000000675604CA000000
+                02624B474400FF878FCCBF000000097048597300000B1300000B1301009A9C18
+                0000000774494D4507E5010B11203B59578AE10000010E4944415428CF7DD2CF
+                2B845114C6F1EFBDEF4A7E44D9A1C9526936A464210B1B3AF62865A5A6CCC242
+                FE8D29936445B253C353F32F4844165693C578A72C956437B1781B338D719EE5
+                E9D3736EF75EE88A00255AD39D0E5AB3D88D0CA0CA15B3D45AB3D0A3A94809F8
+                B2FE7F9B086C03B098ADEE8D609437E6ED5EC1DAEB14EC5B736C32469D737BD4
+                307D6CB140428D137B5676269528FEF6A4BC93EFE82DD85150C2191B78C945A6
+                5DD264C65E233B6ECBA93D88C8B28BCA6044722E7AC9EEA9E9A2810CD55DB49E
+                A15B171534242215174D52251F34C113232E4CA3A5DCE0E72280C6491DF26983
+                5158A3E379FF6615025C132262A52739B45DB5BFAF2E313EA850A6C1147B2C01
+                C7B62F8C1FE113461E79BF79C00000000049454E44AE426082
+              }
+            end
           end
           object FlowPanelWin2: TFlowPanel
             Left = 1
@@ -2823,29 +3038,37 @@ object resultForm1: TresultForm1
             Top = 345
             Width = 510
             Anchors = []
+            BorderWidth = 2
+            BorderStyle = bsSingle
             ControlList = <            
               item
-                Control = Label4
+                Control = Image3
                 WrapAfter = waAuto
                 Index = 0
               end            
               item
-                Control = BtSingleAnalyzeAndCreateLin
+                Control = Label4
                 WrapAfter = waAuto
                 Index = 1
               end            
               item
-                Control = BtCreateEmptyTemplateLin
+                Control = BtSingleAnalyzeAndCreateLin
                 WrapAfter = waAuto
                 Index = 2
+              end            
+              item
+                Control = BtCreateEmptyTemplateLin
+                WrapAfter = waAuto
+                Index = 3
               end>
+            Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 2
             object Label4: TLabel
-              Left = 1
+              Left = 37
               Height = 28
-              Top = 4
+              Top = 6
               Width = 55
               Anchors = []
               BorderSpacing.Top = 3
@@ -2855,10 +3078,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateLin: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
-              Top = 41
+              Top = 43
               Width = 500
               Align = alTop
               Anchors = []
@@ -3337,10 +3560,10 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BtCreateEmptyTemplateLin: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Create a empty '#10'opsi Product Directory Structure'
-              Top = 114
+              Top = 116
               Width = 500
               Align = alTop
               Anchors = []
@@ -3644,6 +3867,48 @@ object resultForm1: TresultForm1
               ParentFont = False
               TabOrder = 1
             end
+            object Image3: TImage
+              Left = 9
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B477261706869637503000089504E47
+                0D0A1A0A0000000D49484452000000130000001608030000001543574D000002
+                40504C5445835204D2A851E6B33F5B3A05533606DEB45C827864E8BD5EDFAC42
+                C8A24C5E4E348F5A04E2BA645E3E2C744E22D6AE58A27A648A7E64392620472F
+                1FF1D311EBBC0BD7AC09C08507CF9407EBC40CAD780AE1B40AF1D42AB67E0AD1
+                9B09E2BC0CC78A08745307976105A46D05ECB40BEBCD28E5AC09C18B0AA5720A
+                F3C40BB37907D7960DF5BD0CB493069A770BDFA509D9B30D9B6605F5CD31B983
+                09EDCC0EF2B60CF4D543D0A40D885F07C98E0791660A946C09F3CD0C9D6A07F6
+                D630DAA309F2DA2CCE8E08F6D50DD89C08F6DA14784E047C5B0AB0A58FA2895C
+                F6DA4A96720B6A4B06291C04744904B8AD96AA7E0AC9A30B7D5305A4770ABD9D
+                04BFB5A4B49654906007EBB316C39A0EAB7205875805493006B58C35B8A378BA
+                8330B79B5C52462CA9782A654307B48320603E057E620CA38E61C29227AC8E58
+                5E4A049E7E44AB8E4797722EF6C62C8A6C24AA946CA3713FC0AC909D774C9C79
+                33C6B684EAC620553B06B57E2FB68A20382605AE9C686C4505685430CF9418A6
+                9B87BC94479C6D2DC19C4E987E345E5644A4843CAD843A92825CF2D28CA26E24
+                956B3182723C0C0C0C1414131C1C1B2C2C2C3434340A06042424244444443C3C
+                3C5050506C6C6BCCCCCCE4E4E4747474DDDDDCACACACECECEC838384B5B4B35C
+                5C5C9C9C9C646464949494BEBDBCF4F4F44A4A4C7C7C7C8D8D8CC4C4C4A4A4A4
+                020204565654D4D4D4FEFEFCB68C0802022FC2930BAC8409402C072A22045C43
+                094132071F16043123059E7E04AC8C04F4EEDE140D044A3A0C8A66048E6A0739
+                2A0C4C360402A6BF910000000174524E530040E6D86600000001624B47440088
+                051D48000000097048597300000B1300000B1301009A9C180000000774494D45
+                07E5010B111F12433B38B1000000AE4944415418D375D1B10AC2301405D0ECCE
+                AD838B93823EE8623641F4270ABA89F835ADE02248C12141E4EA5B9CFC3D93D4
+                5893DABB241C6E5E0811A23B000AFC33C464135A81AA6CF59224EE89C56CF58A
+                6D3F582A5C0344A514735004BB0413F160CDFA74BE3788D2B6B429366FB9B0CF
+                B707FC185A76F426C90D33997F28CF8950D32DC34E3A2313775A2B3992947A1B
+                3A7BDA2DD969D2AC290EE6CA2D91CCEA3BD69369CF6D36E37ED7DFBC017E4871
+                128CE70AF00000000049454E44AE426082
+              }
+            end
           end
           object FlowPanelWin3: TFlowPanel
             Left = 511
@@ -3651,29 +3916,36 @@ object resultForm1: TresultForm1
             Top = 345
             Width = 510
             Anchors = []
+            BorderWidth = 2
+            BorderStyle = bsSingle
             ControlList = <            
               item
-                Control = Label5
+                Control = Image4
                 WrapAfter = waAuto
                 Index = 0
               end            
               item
-                Control = BtSingleAnalyzeAndCreateMac
+                Control = Label5
                 WrapAfter = waAuto
                 Index = 1
               end            
               item
-                Control = BtCreateEmptyTemplateMac
+                Control = BtSingleAnalyzeAndCreateMac
                 WrapAfter = waAuto
                 Index = 2
+              end            
+              item
+                Control = BtCreateEmptyTemplateMac
+                WrapAfter = waAuto
+                Index = 3
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 3
             object Label5: TLabel
-              Left = 1
+              Left = 37
               Height = 28
-              Top = 4
+              Top = 6
               Width = 71
               Anchors = []
               BorderSpacing.Top = 3
@@ -3683,10 +3955,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateMac: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Analyze some existing Setupfile '#10'and create an multiplatform opsi Product'
-              Top = 41
+              Top = 43
               Width = 500
               Align = alTop
               Anchors = []
@@ -4165,16 +4437,17 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BtCreateEmptyTemplateMac: TBitBtn
-              Left = 1
+              Left = 3
               Height = 64
               Hint = 'Create a empty '#10'opsi Product Directory Structure'
-              Top = 114
+              Top = 116
               Width = 500
               Align = alTop
               Anchors = []
               BorderSpacing.Top = 9
               BorderSpacing.InnerBorder = 5
               Caption = 'Create an opsi Package Template'
+              Enabled = False
               Font.Height = -16
               Glyph.Data = {
                 36240000424D3624000000000000360000002800000030000000300000000100
@@ -4471,6 +4744,32 @@ object resultForm1: TresultForm1
               OnClick = BtCreateEmptyTemplateWinClick
               ParentFont = False
               TabOrder = 1
+            end
+            object Image4: TImage
+              Left = 9
+              Height = 22
+              Top = 9
+              Width = 22
+              Anchors = []
+              BorderSpacing.Left = 3
+              BorderSpacing.Top = 3
+              BorderSpacing.Right = 3
+              BorderSpacing.Around = 3
+              Picture.Data = {
+                1754506F727461626C654E6574776F726B477261706869637D01000089504E47
+                0D0A1A0A0000000D4948445200000012000000160804000000675604CA000000
+                02624B474400FF878FCCBF000000097048597300000B1300000B1301009A9C18
+                0000000774494D4507E5010B11203B59578AE10000010E4944415428CF7DD2CF
+                2B845114C6F1EFBDEF4A7E44D9A1C9526936A464210B1B3AF62865A5A6CCC242
+                FE8D29936445B253C353F32F4844165693C578A72C956437B1781B338D719EE5
+                E9D3736EF75EE88A00255AD39D0E5AB3D88D0CA0CA15B3D45AB3D0A3A94809F8
+                B2FE7F9B086C03B098ADEE8D609437E6ED5EC1DAEB14EC5B736C32469D737BD4
+                307D6CB140428D137B5676269528FEF6A4BC93EFE82DD85150C2191B78C945A6
+                5DD264C65E233B6ECBA93D88C8B28BCA6044722E7AC9EEA9E9A2810CD55DB49E
+                A15B171534242215174D52251F34C113232E4CA3A5DCE0E72280C6491DF26983
+                5158A3E379FF6615025C132262A52739B45DB5BFAF2E313EA850A6C1147B2C01
+                C7B62F8C1FE113461E79BF79C00000000049454E44AE426082
+              }
             end
           end
         end
@@ -5548,7 +5847,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 46
           Top = 0
-          Width = 1053
+          Width = 1029
           Align = alTop
           AutoWrap = False
           BorderWidth = 3
@@ -5668,7 +5967,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 85
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5777,7 +6076,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 124
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5830,7 +6129,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 163
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5882,7 +6181,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 202
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6008,7 +6307,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 46
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6060,7 +6359,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 241
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6112,7 +6411,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 280
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6164,7 +6463,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 319
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6214,9 +6513,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel13: TFlowPanel
           Left = 0
-          Height = 79
+          Height = 190
           Top = 358
-          Width = 1053
+          Width = 1029
           Align = alClient
           ControlList = <          
             item
@@ -6229,7 +6528,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 9
           object BtSetup2NextStep: TBitBtn
-            Left = 912
+            Left = 888
             Height = 56
             Hint = 'Go to the next Step'
             Top = 10
@@ -6388,7 +6687,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 39
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6493,7 +6792,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 39
           Top = 0
-          Width = 1053
+          Width = 1029
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -6580,9 +6879,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 126
+          Height = 237
           Top = 311
-          Width = 1053
+          Width = 1029
           Align = alClient
           ControlList = <          
             item
@@ -6596,10 +6895,10 @@ object resultForm1: TresultForm1
           TabOrder = 2
           OnClick = FlowPanel18Click
           object BtProduct1NextStep: TBitBtn
-            Left = 912
+            Left = 888
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 60
+            Top = 171
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -6750,7 +7049,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 9
           Top = 190
-          Width = 1053
+          Width = 1029
           Align = alTop
           Constraints.MinHeight = 9
           ResizeAnchor = akTop
@@ -6759,10 +7058,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 112
           Top = 78
-          Width = 1053
+          Width = 1029
           Align = alTop
           ClientHeight = 112
-          ClientWidth = 1053
+          ClientWidth = 1029
           ParentFont = False
           TabOrder = 4
           object Panel7: TPanel
@@ -6795,7 +7094,7 @@ object resultForm1: TresultForm1
             Left = 134
             Height = 102
             Top = 5
-            Width = 914
+            Width = 890
             Align = alClient
             Anchors = [akLeft]
             BorderSpacing.Left = 9
@@ -6809,10 +7108,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 112
           Top = 199
-          Width = 1053
+          Width = 1029
           Align = alTop
           ClientHeight = 112
-          ClientWidth = 1053
+          ClientWidth = 1029
           ParentFont = False
           TabOrder = 5
           object Panel9: TPanel
@@ -6845,7 +7144,7 @@ object resultForm1: TresultForm1
             Left = 134
             Height = 102
             Top = 5
-            Width = 914
+            Width = 890
             Align = alClient
             Anchors = [akLeft]
             BorderSpacing.Left = 9
@@ -9028,7 +9327,7 @@ object resultForm1: TresultForm1
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = '.*.msi'
-    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|Any File|*.*'
+    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*'
     FilterIndex = 2
     Left = 728
     Top = 5

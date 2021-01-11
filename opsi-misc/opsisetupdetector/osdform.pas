@@ -129,6 +129,12 @@ type
     FlowPanelWin2: TFlowPanel;
     FlowPanelWin3: TFlowPanel;
     GroupBox2: TGroupBox;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
     ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
@@ -430,7 +436,7 @@ var
   //myobject : TMyClass;
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
-  //myFont : string;
+//myFont : string;
 
 
 resourcestring
@@ -491,7 +497,8 @@ resourcestring
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
   rsDefaultIcon = 'default icon';
   rsNumberIcons = 'Icons to choose from: ';
-  rsCopyCompleteDir = 'Should we copy not only the setup file. but the complete directory ?';
+  rsCopyCompleteDir =
+    'Should we copy not only the setup file. but the complete directory ?';
 
 implementation
 
@@ -869,7 +876,7 @@ begin
     else
     begin
       LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
-      Analyze(myfilename,aktProduct.SetupFiles[0],false);
+      Analyze(myfilename, aktProduct.SetupFiles[0], False);
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
     end;
   end
@@ -983,7 +990,7 @@ end;
 
 procedure TResultform1.FormShow(Sender: TObject);
 begin
-   if not startupfinished then
+  if not startupfinished then
     main2;
 end;
 
@@ -1077,14 +1084,15 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    aktProduct.targetOS:= osWin;
+    aktProduct.targetOS := osWin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbNo,mbYes],0,mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := true;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbNo, mbYes], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1115,7 +1123,7 @@ var
   row, col: integer;
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
-  picturesize : integer;
+  picturesize: integer;
 begin
   with ImageIconPreview.Canvas do
   begin
@@ -1131,11 +1139,11 @@ begin
     end;
     // paint chess board
     //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
-    picturesize:= ImageIconPreview.Width;
+    picturesize := ImageIconPreview.Width;
     //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
     {$IFDEF LINUX}
     // scale rect
-    picturesize := round(picturesize * ( 91 / Screen.PixelsPerInch));
+    picturesize := round(picturesize * (91 / Screen.PixelsPerInch));
     {$ENDIF LINUX}
     RectBackgr := Rect(0, 0, picturesize, picturesize);
     // paint icon on chess board
@@ -1228,7 +1236,7 @@ begin
   if selectDirectory then
   begin
     iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
-    LogDatei.log('Open Icon dir: '+iconDirectory,LLnotice);
+    LogDatei.log('Open Icon dir: ' + iconDirectory, LLnotice);
     // get all files from the selected directory
     if FindFirst(iconDirectory + '*', faAnyFile, IconSearch) = 0 then
     begin
@@ -1305,7 +1313,8 @@ begin
       FindClose(IconSearch);
     end;
     LabelNumIcons.Caption := rsNumberIcons;
-    LogDatei.log('Finished Icon dir: '+iconDirectory+ ' number of icons: '+intToStr(numberIcons),LLnotice);
+    LogDatei.log('Finished Icon dir: ' + iconDirectory +
+      ' number of icons: ' + IntToStr(numberIcons), LLnotice);
     // part of LabelNumber.Caption in po-files deleted so that the caption does
     // not change to 0 when changing the language
     LabelNumber.Caption := IntToStr(numberIcons);
@@ -1326,11 +1335,12 @@ begin
     TILabelDirSelIcon.Visible := False;
     { set productImageFullFileName to full file name of the default icon }
     {$IFDEF WINDOWS}
-    defaultIconFullFileName := ExtractFileDir(Application.Params[0]) +
-    PathDelim + 'template-files' + PathDelim + 'template.png';
+    defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
-    defaultIconFullFileName :='/usr/share/opsi-setup-detector' +
+    defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
       PathDelim + 'template-files' + PathDelim + 'template.png';
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
@@ -1399,8 +1409,9 @@ begin
   begin
     useRunMode := twoAnalyzeCreate_1;
     setRunMode;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := true;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbYes, mbNo], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -1438,7 +1449,8 @@ begin
   if myconfiguration.ShowCheckEntryWarning then
   begin
     FCheckenties.ShowModal;
-    myconfiguration.ShowCheckEntryWarning := not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
+    myconfiguration.ShowCheckEntryWarning :=
+      not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
   end;
 end;
 
@@ -1946,11 +1958,11 @@ begin
       myprop.multivalue := False;
       myprop.editable := False;
       myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := BoolToStr(StringGridProp.Cells[7, i].ToBoolean,true);
+      myprop.StrDefault.Text := BoolToStr(StringGridProp.Cells[7, i].ToBoolean, True);
       myprop.boolDefault := StringGridProp.Cells[7, i].ToBoolean;
     end;
   end;
-  FlowPanel14.Caption:='';
+  FlowPanel14.Caption := '';
 end;
 
 
@@ -2158,8 +2170,9 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
-          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbYes, mbNo],0,mbNo) = mrYes then
-            aktProduct.SetupFiles[1].copyCompleteDir := true;
+          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+            [mbYes, mbNo], 0, mbNo) = mrYes then
+            aktProduct.SetupFiles[1].copyCompleteDir := True;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
           Application.ProcessMessages;
@@ -2239,26 +2252,53 @@ end;
 procedure TResultform1.BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
 var
   i: integer;
+  filename: string;
+  goon: boolean;
+  isapp: boolean;
 begin
-  OpenDialog1.FilterIndex := 1;   // setup
-  if OpenDialog1.Execute then
+  goon := False;
+  isapp := False;
+  if SelectDirectoryDialog1.Execute then
+  begin
+    goon := True;
+    filename := SelectDirectoryDialog1.FileName;
+    if ExtractFileExt(filename) = '.app' then
+    begin
+      isapp := True;
+    end;
+  end;
+  if goon and not isapp then
+  begin
+    OpenDialog1.InitialDir := filename;
+    ;
+    OpenDialog1.FilterIndex := 5;   // macos
+    if OpenDialog1.Execute then
+    begin
+      filename := OpenDialog1.FileName;
+      goon := True;
+    end
+    else
+      goon := False;
+  end;
+  if goon then
   begin
     useRunMode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    aktProduct.targetOS:= osMac;
+    aktProduct.targetOS := osMac;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation, [mbNo,mbYes],0,mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := true;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbNo, mbYes], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
     makeProperties;
     Application.ProcessMessages;
-    AnalyzeMac(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    AnalyzeMac(FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
@@ -2447,11 +2487,12 @@ begin
   BtnOpenIconFolder.Font.Size := 12;
   DefaultIcon := TImage.Create(TabSheetIcons);
   {$IFDEF LINUX}
-    // scale form
+  // scale form
   AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
   DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
   {$ENDIF LINUX}
-  LogDatei.log('design ppi: 91 , screen: '+intToStr(Screen.PixelsPerInch),LLessential);;
+  LogDatei.log('design ppi: 91 , screen: ' + IntToStr(Screen.PixelsPerInch), LLessential);
+  ;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
     PathDelim + 'template-files' + PathDelim + 'template.png');
@@ -2466,6 +2507,15 @@ begin
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
   BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(
+    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtSingleAnalyzeAndCreateLin.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(
+    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtSingleAnalyzeAndCreateMac.Glyph.Assign(tmpimage.Bitmap);
+
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}
   PaintPreview(DefaultIcon);
@@ -2622,7 +2672,7 @@ begin
   begin
     ShowMessage(rsWeNeedConfiguration);
     MenuItemConfigClick(Sender);
-    logdatei.log('Missing configs foundc- configdialog forced',LLinfo);
+    logdatei.log('Missing configs foundc- configdialog forced', LLinfo);
   end;
 end;
 

@@ -11,30 +11,13 @@ set $oldProgFound$ = "false"
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines1*#
-	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%\files1"
-	;----------------------------------------------
-	Winbatch_uninstall  #@uninstallWaitForProc1*#
-	;----------------------------------------------
-	Sub_check_exitcode_del
-	#@postUninstallLines1*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
+	#@postUninstallLines1*#
 	#@DelsubHandleDesktopIcon*#
 endif
 
-[Winbatch_uninstall]
-#@uninstallCommandLine1*#
-
-[Sub_check_exitcode_del]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 [Files_uninstall]
 del -sf "$InstallDir$\"
