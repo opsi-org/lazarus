@@ -243,35 +243,33 @@ begin
       // which should not happen if destEncoding=utf8
       if Assigned(logdatei) then
         logdatei.log_prog('We encode directly from or to utf8.', LLDebug2);
-      (*
-      if (usedSourceEncoding = 'utf16') or (usedSourceEncoding = 'UTF-16') or
-      (destEncoding = 'utf16') or (destEncoding = 'UTF-16') then
-      begin
-        // we use utf16
-        if (destEncoding = 'utf16') or (destEncoding = 'UTF-16')
-        then Result := UTF8ToUTF16(sourceText)
-        else Result := UTF16ToUTF8   (sourceText)
-      end
-      else
-      begin
-      *)
+
+      if (usedSourceEncoding = 'utf16') or (usedSourceEncoding = 'UTF-16') then
+        usedSourceEncoding := 'ucs2be';
+
+      if (destEncoding = 'utf16') or (destEncoding = 'UTF-16') then
+        destEncoding := 'ucs2be';
+
+      if (usedSourceEncoding = 'utf16le') or (usedSourceEncoding = 'UTF-16LE') then
+        usedSourceEncoding := 'ucs2le';
+
+      if (destEncoding = 'utf16le') or (destEncoding = 'UTF-16LE')  then
+        destEncoding := 'ucs2le';
+
+      if (usedSourceEncoding = 'utf16be') or (usedSourceEncoding = 'UTF-16BE')  then
+        usedSourceEncoding := 'ucs2be';
+
+      if (destEncoding = 'utf16be') or (destEncoding = 'UTF-16BE') then
+        destEncoding := 'ucs2be';
+
+      if (usedSourceEncoding = 'unicode') then
+        usedSourceEncoding := 'ucs2le';
+
+      if (destEncoding = 'unicode') then
+        destEncoding := 'ucs2le';
+
       // we use ConvertEncoding
       Result := ConvertEncoding(sourceText, usedSourceEncoding, destEncoding);
-      //end;
-    end
-    else
-    if (lowercase(usedSourceEncoding) = 'unicode') then
-    begin
-      // which should not happen if destEncoding=utf8
-      if Assigned(logdatei) then
-        logdatei.log_prog('We encode with charencstreams.', LLDebug2);
-      if Assigned(logdatei) then
-        logdatei.log_prog('We encode line by line.', LLDebug2);
-      mylist := TStringList.Create;
-      str := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
-      mylist.Text := str;
-      Result := stringListLoadUnicodeFromList(mylist).Text;
-      mylist.Free;
     end
     else
     begin
@@ -323,11 +321,12 @@ var
   encline: string;
 begin
   Result := TStringList.Create;
-  if (enc = 'ucs2be') or (enc = 'UCS-2BE') or (enc = 'ucs2le') or
-    (enc = 'UCS-2LE') or (enc = 'unicode') then
+  if (enc = 'ucs2be') or (enc = 'UCS-2BE') or (enc = 'ucs2le') or (enc = 'UCS-2LE')
+     or (enc = 'utf16') or (enc = 'UTF-16') or (enc = 'utf16le') or (enc = 'UTF-16LE')
+     or (enc = 'utf16be') or (enc = 'UTF-16BE') or (enc = 'unicode') then
     Result.AddStrings(stringListLoadUtf8FromFile(filename))
-  else if (enc = 'utf16le') then
-    Result.AddStrings(stringListLoadUtf16leFromFile(filename))
+  //else if (enc = 'utf16le') then
+  //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
   else if ((enc = 'utf8') or (enc = 'UTF-8')) then
   begin
     // utf8 is our internal code - nothing to do
@@ -363,6 +362,8 @@ begin
   supportedEncodings := TStringList.Create;
   GetSupportedEncodings(supportedEncodings);
   supportedEncodings.Add('UTF-16');
+  supportedEncodings.Add('UTF-16BE');
+  supportedEncodings.Add('UTF-16LE');
   supportedEncodings.Add('unicode');
 
   // add the aliases (utf8 is alias for UTF-8)

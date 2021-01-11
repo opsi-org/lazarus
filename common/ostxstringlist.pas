@@ -191,11 +191,17 @@ begin
       LogDatei.log('Will save (' + encodingtype + ') to file: ' +
         myfilename + ' :', LLDebug2);
       LogDatei.log('-----------------', LLDebug3);
+
+      (*
       for i := 0 to Count - 1 do
       begin
         writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
         LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
       end;
+      *)
+
+      writeln(myfile, reencode(text, 'utf8', usedenc, encodingtype));
+
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
       if LogDatei.UsedLogLevel >= LLDebug3 then
