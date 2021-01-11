@@ -1,4 +1,4 @@
-# opsi-client-kiosk
+# Readme file for opsi-client-kiosk
 
 ## Table of Contents
 1. [General Info](#general-info)
