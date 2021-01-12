@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 598
+  Left = 465
   Height = 666
-  Top = 282
+  Top = 260
   Width = 1046
   Caption = 'opsi Setup Detector'
   ClientHeight = 638
@@ -9327,7 +9327,7 @@ object resultForm1: TresultForm1
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = '.*.msi'
-    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*'
+    Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd'
     FilterIndex = 2
     Left = 728
     Top = 5
@@ -9340,6 +9340,10 @@ object resultForm1: TresultForm1
       object MenuItemStart: TMenuItem
         Caption = 'Start'
         OnClick = MenuItemStartClick
+      end
+      object MenuItem1: TMenuItem
+        Caption = 'Open Project File'
+        OnClick = MenuItem1Click
       end
       object FileExit: TMenuItem
         Caption = '&Exit'

@@ -186,6 +186,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItem1: TMenuItem;
     MenuItemLangFr: TMenuItem;
     MenuItemLang: TMenuItem;
     MenuItemLangDe: TMenuItem;
@@ -322,6 +323,7 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
     procedure MenuItemLangClick(Sender: TObject);
     procedure MenuItemLangDeClick(Sender: TObject);
     procedure MenuItemLangEnClick(Sender: TObject);
@@ -992,6 +994,17 @@ procedure TResultform1.FormShow(Sender: TObject);
 begin
   if not startupfinished then
     main2;
+end;
+
+procedure TResultform1.MenuItem1Click(Sender: TObject);
+begin
+   OpenDialog1.FilterIndex := 8;   // project file
+  if OpenDialog1.Execute then
+  begin
+    initaktproduct;
+    aktProduct.readProjectFile(OpenDialog1.FileName);
+    LogDatei.log('Read Project file from: '+OpenDialog1.FileName, LLnotice);
+  end;
 end;
 
 procedure TResultform1.MenuItemLangClick(Sender: TObject);

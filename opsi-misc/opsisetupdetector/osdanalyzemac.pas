@@ -181,6 +181,8 @@ var
 begin
   strnew := '';
   str := lowercase(str);
+  // try to strip version from filename
+  str := copy(str, 0, pos('-', str) - 1);
   for i := 1 to Length(str) do
   begin
     myChar := str[i];
@@ -203,16 +205,15 @@ begin
   Result := strnew;
 end;
 
-(*
-function ExtractVersion(str: string): string;
+
+function ExtractVersionFromFilename(str: string): string;
 var
   i: integer;
   outstr: string = '';
 begin
-  str := StringReplace(str, 'w32', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'w64', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'win32', '', [rfReplaceAll, rfIgnoreCase]);
-  str := StringReplace(str, 'win64', '', [rfReplaceAll, rfIgnoreCase]);
+  // try to strip productId from filename
+  str := copy(str, pos('-', str), length(str));
+  str := StringReplace(str, '_', '.', [rfReplaceAll, rfIgnoreCase]);
   for i := 1 to Length(str) do
   begin
     if str[i] in ['0'..'9', '.'] then
@@ -226,7 +227,31 @@ begin
   Result := outstr;
 end;
 
+//https://forum.lazarus.freepascal.org/index.php?topic=8541.0
+function GetDirSize(dir: string; subdir: boolean): longint;
+var
+  rec: TSearchRec;
+  found: integer;
+begin
+  Result := 0;
+  dir := IncludeTrailingPathDelimiter(dir);
+  found := FindFirst(dir + '*.*', faAnyFile, rec);
+  while found = 0 do
+  begin
+    Inc(Result, rec.Size);
+    if (rec.Attr and faDirectory > 0) and (rec.Name[1] <> '.') and
+      (subdir = True) then
+      Inc(Result, GetDirSize(dir + rec.Name, True));
+    found := FindNext(rec);
+  end;
+  SysUtils.FindClose(rec);
+  //THIS IS THE LINE that needs to be/was changed to adapt to Lazarus/FreePascal
+end;
 
+
+
+
+(*
 function grepexe(instring: string): string;
 var
   lowerstring: string;
@@ -350,9 +375,8 @@ begin
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_generic('
-    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '") ';
+    'set $installSuccess$ = install_macos_generic(' + '"%scriptpath%\files' +
+    IntToStr(mysetup.ID) + '\' + mysetup.setupFileName + '") ';
   str1 := '';
   (*
   mysetup.isExitcodeFatalFunction :=
@@ -370,19 +394,32 @@ begin
     str1 := getProductInfoFromResource('ProductName', myfilename);
   end;
   *)
+  // productId and name
   if str1 <> '' then
   begin
-    aktProduct.productdata.productId := 'm-'+getPacketIDShort(str1);
+    aktProduct.productdata.productId := 'm-' + getPacketIDShort(str1);
     aktProduct.productdata.productName := str1;
   end
   else
   begin
     product := ExtractFileNameWithoutExt(mysetup.setupFileName);
-    aktProduct.productdata.productId := 'm-'+getPacketIDShort(product);
-    aktProduct.productdata.productName := product;
+    aktProduct.productdata.productId := 'm-' + getPacketIDShort(product);
+    // try to strip version from filename
+    str1 := copy(product, 0, pos('-', product) - 1);
+    aktProduct.productdata.productName := str1;
   end;
-
-  fsize := fileutil.FileSize(myfilename);
+  // installdir
+  mysetup.installDirectory := '/Applications/' +
+    aktProduct.productdata.productName + '.app';
+  // version
+  str1 := ExtractVersionFromFilename(product);
+  mysetup.SoftwareVersion := str1;
+  aktProduct.productdata.productversion := trim(mysetup.SoftwareVersion);
+  // get size
+  if DirectoryExists(myfilename) then  // app dir
+    fsize := GetDirSize(myfilename, True)
+  else
+    fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
   rsizemb := fsizemb * 6;
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
@@ -400,8 +437,12 @@ begin
   mysetup.requiredSpace := round(rsizemb);
   mysetup.setupFileSize := round(fsizemb);
 
-  (*
+
   // uninstallcheck
+  mysetup.uninstallCheck.Add('if DirectoryExists($installdir$)');
+  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+  (*
   if installerId = stMsi then
   begin
     // will be done in  get_msi_info
@@ -414,7 +455,7 @@ begin
   begin
     mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
       mysetup.uninstallProg + '")');
-    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('  set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine :=
       '"$Installdir$\' + mysetup.uninstallProg + '" ' +
@@ -439,65 +480,63 @@ end; //get_aktProduct_general_info
 
 procedure get_zip_info(myfilename: string; var mysetup: TSetupFile);
 var
-  namelist : TStringlist;
+  namelist: TStringList;
   exprlist: TStringList;
-  i : integer;
+  i: integer;
 begin
-  exprlist:= TStringList.create;
+  exprlist := TStringList.Create;
   exprlist.Add('(?i)\.dmg$');
   exprlist.Add('(?i)\.pkg$');
-  exprlist.Add('(?i)\.app'+PathDelim+'$');
+  exprlist.Add('(?i)\.app' + PathDelim + '$');
   namelist := getFileListFromZip(myfilename);
-  for i := 0 to namelist.Count-1 do
-    LogDatei.log('in zip: '+namelist.Strings[i],LLinfo);;
-  namelist := getRegexMatchList(exprlist,namelist);
+  for i := 0 to namelist.Count - 1 do
+    LogDatei.log('in zip: ' + namelist.Strings[i], LLinfo);
+  ;
+  namelist := getRegexMatchList(exprlist, namelist);
   if namelist.Count = 0 then
   begin
     // no well known mac install file found;
-    LogDatei.log('no well known mac install file found',LLerror);
+    LogDatei.log('no well known mac install file found inside zip', LLerror);
+    mywrite('no well known mac install file found inside zip');
     mysetup.installerId := stUnknown;
   end
   else
   begin
-    LogDatei.log('found well known mac install ".app" directory',LLnotice);
+    LogDatei.log('found well known mac install ".app" directory', LLnotice);
     //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[0],LLerror);
     //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[1],LLerror);
     mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_zip('
-    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '") ';
+      'set $installSuccess$ = install_macos_zip(' + '"%scriptpath%/files' +
+      IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
   end;
 end;
 
 procedure get_dmg_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_dmg('
-    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '") ';
+    'set $installSuccess$ = install_macos_dmg(' + '"%scriptpath%/files' +
+    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
 end;
 
 procedure get_pkg_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_pkg('
-    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '") ';
+    'set $installSuccess$ = install_macos_pkg(' + '"%scriptpath%/files' +
+    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
 end;
 
 procedure get_app_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_app('
-    + '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '") ';
+    'set $installSuccess$ = install_macos_app(' + '"%scriptpath%/files' +
+    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
 end;
 
 
 procedure AnalyzeMac(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
-  extension : string;
+  extension: string;
 
 begin
   LogDatei.log('Start Analyze for Mac ... ', LLInfo);
@@ -514,45 +553,46 @@ begin
     '.dmg': setupType := stMacDmg;
     '.pkg': setupType := stMacPKG;
     '.app': setupType := stMacApp;
-  else
-    setupType := stUnknown;
+    else
+      setupType := stUnknown;
   end;
-  mysetup.installerId:=setupType;
+  mysetup.installerId := setupType;
 
-    get_aktProduct_general_info(setupType, Filename, mysetup);
+  get_aktProduct_general_info(setupType, Filename, mysetup);
 
-    // marker for add installers
-    case setupType of
-      stMacZip: get_zip_info(Filename, mysetup);
-      stMacDmg: get_dmg_info(Filename, mysetup);
-      stMacPkg: get_pkg_info(Filename, mysetup);
-      stMacApp: get_app_info(Filename, mysetup);
-      stUnknown: LogDatei.log(
-          'Unknown Installer after Analyze.', LLcritical);
-      else
-        LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
-          instIdToint(setupType)), LLcritical);
-    end;
+  // marker for add installers
+  case setupType of
+    stMacZip: get_zip_info(Filename, mysetup);
+    stMacDmg: get_dmg_info(Filename, mysetup);
+    stMacPkg: get_pkg_info(Filename, mysetup);
+    stMacApp: get_app_info(Filename, mysetup);
+    stUnknown: LogDatei.log(
+        'Unknown Installer after Analyze.', LLcritical);
+    else
+      LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
+        instIdToint(setupType)), LLcritical);
+  end;
 
 
-    // marker for add installers
-    // stMacZip, stMacDmg, stMacPKG, stMacApp
-    case setupType of
-      stMacZip: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMacDmg: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMacPKG: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMacApp: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stUnknown: Mywrite('Sorry - unknown installer: ' +
-          installerToInstallerstr(setupType));
-      else
-        Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
-    end;
-    { avoid hyphen char "-" and replace with dot "." in version }
-    aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
+  // marker for add installers
+  // stMacZip, stMacDmg, stMacPKG, stMacApp
+  case setupType of
+    stMacZip: Mywrite('Found well known installer: ' +
+        installerToInstallerstr(setupType));
+    stMacDmg: Mywrite('Found well known installer: ' +
+        installerToInstallerstr(setupType));
+    stMacPKG: Mywrite('Found well known installer: ' +
+        installerToInstallerstr(setupType));
+    stMacApp: Mywrite('Found well known installer: ' +
+        installerToInstallerstr(setupType));
+    stUnknown: Mywrite('Sorry - unknown installer: ' +
+        installerToInstallerstr(setupType));
+    else
+      Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+  end;
+  { avoid hyphen char "-" and replace with dot "." in version }
+  aktproduct.productdata.productversion :=
+    StringReplace(aktproduct.productdata.productversion, '-', '.', [rfReplaceAll]);
 
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;

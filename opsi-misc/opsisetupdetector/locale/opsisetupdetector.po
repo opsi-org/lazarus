@@ -903,6 +903,10 @@ msgstr ""
 msgid "Path to opsi-work-bench is reachable"
 msgstr ""
 
+#: tresultform1.menuitem1.caption
+msgid "Open Project File"
+msgstr ""
+
 #: tresultform1.menuitemabout.caption
 msgid "&About"
 msgstr ""

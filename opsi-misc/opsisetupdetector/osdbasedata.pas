@@ -319,6 +319,8 @@ default: ["xenial_bionic"]
 
     { public declarations }
     constructor Create;
+    procedure readProjectFile(path : string);
+    procedure writeProjectFile(path : string);
   end;
 
   TConfiguration = class(TPersistent)
@@ -676,6 +678,179 @@ begin
   inherited;
   //initaktproduct;
 end;
+
+procedure TopsiProduct.writeProjectFile(path : string);
+var
+  Streamer: TJSONStreamer;
+  JSONString: string;
+  myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  //myfile: TextFile;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // SaveStringToFile: function to store a string of text into a diskfile.
+  //   If the function result equals true, the string was written ok.
+  //   If not then there was some kind of error.
+  function SaveStringToFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmCreate);
+      fsOut.Write(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+    end;
+  end;
+
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start write project file', LLDebug);
+    // project file name
+    configDir := IncludeTrailingPathDelimiter(path);
+    myfilename := configDir + 'opsi-project.osd';
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('write project file to: ' + myfilename, LLDebug);
+    if not DirectoryExists(configDir) then
+      if not ForceDirectories(configDir) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed to create project file directory: ' +
+            configDir, LLError);
+    // http://wiki.freepascal.org/Streaming_JSON
+    Streamer := TJSONStreamer.Create(nil);
+    try
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      // Save strings as JSON array
+      // JSON convert and output
+      JSONString := Streamer.ObjectToJSONString(aktProduct);
+      logdatei.log('Config: ' + JSONString, LLDebug);
+      if not SaveStringToFile(JSONString, myfilename) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed write project file', LLError);
+    finally
+      Streamer.Destroy;
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished write project file', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('project file could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
+end;
+
+
+procedure TopsiProduct.readProjectFile(path : string);
+var
+  DeStreamer: TJSONDeStreamer;
+  //Streamer: TJSONStreamer;
+  JSONString: string;
+  myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  configDirstr: string;
+  myfile: Text;
+  oldconfigDir, oldconfigFileName, tmpstr: string;
+  fConfig: Text;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // LoadStringFromFile: function to load a string of text from a diskfile.
+  //   If the function result equals true, the string was load ok.
+  //   If not then there was some kind of error.
+  function LoadStringFromFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmOpenRead);
+      fsOut.Read(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        if Assigned(logdatei) then
+          LogDatei.log('String could not be read. Details: ' +
+            E.ClassName + ': ' + E.Message, LLError)
+        else
+          ShowMessage('readProjectFile: String could not be read. Details: ' +
+            E.ClassName + ': ' + E.Message);
+    end;
+  end;
+
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start readProjectFile', LLDebug);
+     // project file name
+    configDir := IncludeTrailingPathDelimiter(path);
+    myfilename := configDir + 'opsi-project.osd';
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('readconfig from: ' + myfilename, LLDebug);
+    if FileExists(myfilename) then
+    begin
+      AssignFile(myfile, myfilename);
+      Reset(myfile);
+      readln(myfile, JSONString);
+      //// http://wiki.freepascal.org/Streaming_JSON
+      // DeStreamer object create
+      DeStreamer := TJSONDeStreamer.Create(nil);
+      try
+        // Load JSON data in the object
+        DeStreamer.JSONToObject(JSONString, aktProduct);
+        // Cleanup
+      finally
+        DeStreamer.Destroy;
+        CloseFile(myfile);
+      end;
+      if Assigned(logdatei) then
+        logdatei.log('read config: ' + JSONString, LLDebug)
+      else
+        ShowMessage('read config: ' + JSONString);
+    end
+    else
+    begin
+       if Assigned(logdatei) then
+      logdatei.log('Project file not found: '+myfilename, LLError);
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished readconfig', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('read config exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError)
+      else
+        ShowMessage('read config exception. Details: ' + E.ClassName +
+          ': ' + E.Message);
+  end;
+end;
+
+
 
 // TProductData **********************************
 procedure TProductData.SetPriority(const AValue: TPriority);

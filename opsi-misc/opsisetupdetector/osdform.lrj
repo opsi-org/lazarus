@@ -133,6 +133,7 @@
 {"hash":160827061,"name":"tresultform1.btcreateproduct.caption","sourcebytes":[67,114,101,97,116,101,32,79,112,115,105,32,80,97,99,107,97,103,101],"value":"Create Opsi Package"},
 {"hash":2805797,"name":"tresultform1.menuitemfile.caption","sourcebytes":[38,70,105,108,101],"value":"&File"},
 {"hash":5941396,"name":"tresultform1.menuitemstart.caption","sourcebytes":[83,116,97,114,116],"value":"Start"},
+{"hash":256607381,"name":"tresultform1.menuitem1.caption","sourcebytes":[79,112,101,110,32,80,114,111,106,101,99,116,32,70,105,108,101],"value":"Open Project File"},
 {"hash":2805508,"name":"tresultform1.fileexit.caption","sourcebytes":[38,69,120,105,116],"value":"&Exit"},
 {"hash":2812976,"name":"tresultform1.filehelp.caption","sourcebytes":[38,72,101,108,112],"value":"&Help"},
 {"hash":44537540,"name":"tresultform1.menuitemabout.caption","sourcebytes":[38,65,98,111,117,116],"value":"&About"},
