@@ -272,7 +272,7 @@ begin
     SetDefaultLang('de');
     SetBtnWidth('de');
   end
-  else if ComboBoxLanguages.Text = 'English' then
+  else
   begin
     SetDefaultLang('en');
     SetBtnWidth('en');

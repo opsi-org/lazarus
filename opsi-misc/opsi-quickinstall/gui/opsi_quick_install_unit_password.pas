@@ -110,15 +110,15 @@ begin
   else
     FileText.Add(propertyName + '=mysql');
 
-  {propertyName := 'dnsdomain';
-  if Query5_dhcp.RadioBtnDomain1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain1.Caption)
-  else if Query5_dhcp.RadioBtnDomain2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain2.Caption)
-  else if Query5_dhcp.RadioBtnDomain3.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnDomain3.Caption)
+  propertyName := 'dnsdomain';
+  if Query5_dhcp.CheckBoxDomain1.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain1.Caption)
+  else if Query5_dhcp.CheckBoxDomain2.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain2.Caption)
+  else if Query5_dhcp.CheckBoxDomain3.Checked then
+    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain3.Caption)
   else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);}
+    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
 
   propertyName := 'dnsdomain = ';
   if Query5_dhcp.CheckBoxDomain1.Checked then

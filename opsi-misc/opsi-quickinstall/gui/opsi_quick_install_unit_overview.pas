@@ -164,15 +164,15 @@ begin
       MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.RadioBtnAddress3.Caption)
     else
       MemoOverview.Lines.Add(rsNetworkO + Query5_dhcp.EditAddress.Text);
-    // Domain
-    {if Query5_dhcp.RadioBtnDomain1.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain1.Caption)
-    else if Query5_dhcp.RadioBtnDomain2.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain2.Caption)
-    else if Query5_dhcp.RadioBtnDomain3.Checked then
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.RadioBtnDomain3.Caption)
+    // Domain TODO
+    if Query5_dhcp.CheckBoxDomain1.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.CheckBoxDomain1.Caption)
+    else if Query5_dhcp.CheckBoxDomain2.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.CheckBoxDomain2.Caption)
+    else if Query5_dhcp.CheckBoxDomain3.Checked then
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.CheckBoxDomain3.Caption)
     else
-      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);}
+      MemoOverview.Lines.Add(rsDomainO + Query5_dhcp.EditDomain.Text);
     domains := rsDomainO;
     if Query5_dhcp.CheckBoxDomain1.Checked then
        domains += Query5_dhcp.CheckBoxDomain1.Caption + ', ';
