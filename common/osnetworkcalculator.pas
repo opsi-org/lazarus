@@ -30,14 +30,17 @@ var
   regexobj: TRegExpr;
 begin
   Result := False;
-  regexobj := TRegExpr.Create;
-  try
-    regexobj.Expression :=
-      '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
-    if regexobj.Exec(trim(ip4adr)) then
-      Result := True;
-  finally
-    regexobj.Free;
+  if ip4adr <> '' then
+  begin
+    regexobj := TRegExpr.Create;
+    try
+      regexobj.Expression :=
+        '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
+      if regexobj.Exec(trim(ip4adr)) then
+        Result := True;
+    finally
+      regexobj.Free;
+    end;
   end;
 end;
 
