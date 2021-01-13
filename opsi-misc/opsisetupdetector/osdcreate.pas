@@ -461,7 +461,7 @@ begin
 
     FreeAndNil(patchlist);
     // write project file
-    aktProduct.writeProjectFile(prodpath+ PathDelim + 'opsi-project.osd');
+    aktProduct.writeProjectFile(prodpath);
     Result := True;
     ;
   except

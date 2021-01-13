@@ -319,7 +319,7 @@ default: ["xenial_bionic"]
 
     { public declarations }
     constructor Create;
-    procedure readProjectFile(path : string);
+    procedure readProjectFile(filename : string);
     procedure writeProjectFile(path : string);
   end;
 
@@ -686,8 +686,10 @@ var
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: UTF8String;
-  //myfile: TextFile;
+  pfile: TextFile;
 
+
+  (*
   // http://wiki.freepascal.org/File_Handling_In_Pascal
   // SaveStringToFile: function to store a string of text into a diskfile.
   //   If the function result equals true, the string was written ok.
@@ -714,6 +716,7 @@ var
           E.ClassName + ': ' + E.Message, LLError);
     end;
   end;
+  *)
 
 begin
   try
@@ -730,17 +733,34 @@ begin
         if Assigned(logdatei) then
           LogDatei.log('failed to create project file directory: ' +
             configDir, LLError);
+    AssignFile(pfile,myfilename);
+    Rewrite(pfile);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
-      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      //Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
       // Save strings as JSON array
       // JSON convert and output
-      JSONString := Streamer.ObjectToJSONString(aktProduct);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[0]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[1]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[2]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
+      writeln(pfile,JSONString);
+      writeln(pfile,aktProduct.FtargetOS);
+      CloseFile(pfile);
+      (*
       logdatei.log('Config: ' + JSONString, LLDebug);
       if not SaveStringToFile(JSONString, myfilename) then
         if Assigned(logdatei) then
           LogDatei.log('failed write project file', LLError);
+      *)
     finally
       Streamer.Destroy;
     end;
@@ -756,7 +776,7 @@ begin
 end;
 
 
-procedure TopsiProduct.readProjectFile(path : string);
+procedure TopsiProduct.readProjectFile(filename : string);
 var
   DeStreamer: TJSONDeStreamer;
   //Streamer: TJSONStreamer;
@@ -805,8 +825,9 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start readProjectFile', LLDebug);
      // project file name
-    configDir := IncludeTrailingPathDelimiter(path);
-    myfilename := configDir + 'opsi-project.osd';
+    //configDir := IncludeTrailingPathDelimiter(path);
+    //myfilename := configDir + 'opsi-project.osd';
+    myfilename := filename;
     myfilename := ExpandFileName(myfilename);
     if Assigned(logdatei) then
       logdatei.log('readconfig from: ' + myfilename, LLDebug);
