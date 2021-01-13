@@ -142,10 +142,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
 msgstr "DNS Domain (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsdomainex
-msgid " [Examples: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-msgstr " [Vorschläge: \"uib.local\", \"ucs.test\", \"vmnat.local\"]"
-
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS Domain: "
@@ -165,11 +161,6 @@ msgstr " fertigstellen "
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
 msgstr "Gateway (...):"
-
-#: opsi_quick_install_resourcestrings.rsgatewayex
-msgctxt "opsi_quick_install_resourcestrings.rsgatewayex"
-msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr " [Vorschläge: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
@@ -294,11 +285,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp):"
 msgstr "Primärer Nameserver (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsnameserverex
-msgctxt "opsi_quick_install_resourcestrings.rsnameserverex"
-msgid " [Examples: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-msgstr " [Vorschläge: \"10.100.1.2\", \"172.16.166.1\", \"192.168.1.245\"]"
-
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
 msgid "Primary nameserver: "
@@ -314,10 +300,6 @@ msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp):"
 msgstr "Netzmaske (für das DHCP):"
 
-#: opsi_quick_install_resourcestrings.rsnetmaskex
-msgid " [Examples: \"225.225.0.0\", \"225.225.225.0\"]"
-msgstr " [Vorschläge: \"225.225.0.0\", \"225.225.225.0\"]"
-
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
 msgid "Netmask: "
@@ -332,10 +314,6 @@ msgstr "Andere:"
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp):"
 msgstr "Netzwerk-Adresse (für das DHCP):"
-
-#: opsi_quick_install_resourcestrings.rsnetworkaddressex
-msgid " [Examples: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
-msgstr " [Vorschläge: \"10.100.0.0\", \"172.16.166.0\", \"192.168.0.0\"]"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
@@ -408,10 +386,9 @@ msgid " overview "
 msgstr " Übersicht "
 
 #: opsi_quick_install_resourcestrings.rspassword
-#| msgid "Password:"
 msgctxt "opsi_quick_install_resourcestrings.rspassword"
 msgid "Password"
-msgstr "Passwort:"
+msgstr "Passwort"
 
 #: opsi_quick_install_resourcestrings.rsproxy
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
@@ -529,6 +506,10 @@ msgstr ""
 "Klicken Sie auf \"fertigstellen\", um die Installation von Opsi-Server zu "
 "beginnen."
 
+#: opsi_quick_install_resourcestrings.rssuggestion
+msgid "[Suggestions: "
+msgstr "[Vorschläge: "
+
 #: opsi_quick_install_resourcestrings.rstftproot
 msgctxt "opsi_quick_install_resourcestrings.rstftproot"
 msgid "Which file should the TFTPROOT default symlink point to?"
@@ -644,8 +625,9 @@ msgid "Show password"
 msgstr "Passwort sichtbar machen"
 
 #: tpassword.labelpassword.caption
-msgid "Password:"
-msgstr ""
+msgctxt "tpassword.labelpassword.caption"
+msgid "Password"
+msgstr "Passwort"
 
 #: tpassword.labelrights.caption
 msgctxt "tpassword.labelrights.caption"

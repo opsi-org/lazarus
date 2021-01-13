@@ -320,7 +320,8 @@ type
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window, ...
     // ..."opsi-script-nogui -batch" for without?
-    Output := InstallOpsiCommand.Run('opsi-script-nogui -batch ' +
+    // new: opsi-script -silent for nogui
+    Output := InstallOpsiCommand.Run('opsi-script -silent -batch ' +
       DirClientData + 'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
@@ -2052,10 +2053,14 @@ begin
     // ...to use po-files from other directories)
     TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
       '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
+
+    writeln(rsCarryOut);
+    sleep(100);
   end;
 
-  writeln(rsCarryOut);
-  sleep(100);
+  // For test environment
+  if QuickInstall.HasOption('d', 'default') then
+    writeln('Start opsi-quickinstall');
 
   with QuickInstall do
   begin
