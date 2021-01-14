@@ -3268,7 +3268,7 @@ var
 
     Patchdatei.Clear;
     if FileExists(PatchdateiName) then
-      mytxtfile := LoadFromFileWithEncoding(ExpandFileName(PatchdateiName),
+      mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
         flag_encoding);
     //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
     Patchdatei.Text := mytxtfile.Text;
@@ -11439,9 +11439,10 @@ begin
                 syntaxCheck := True;
                 try
                   s1 := ExpandFileName(s1);
-                  //list.AddText(LoadFromFileWithEncoding(s1, s2).Text);
-                  list.loadfromfile(s1);
-                  list.Text := reencode(list.Text, s2);
+                  //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
+                  list.assign(LoadTextFileWithEncoding(s1,s2));
+                  //list.loadfromfile(s1);
+                  //list.Text := reencode(list.Text, s2);
                 except
                   on e: Exception do
                   begin
@@ -11464,7 +11465,7 @@ begin
             s1 := ExpandFileName(s1);
             //list.loadfromfile (s1);
             //list.Text:= reencode(list.Text, 'ucs2le');
-            TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
+            TStringList(list).Assign(loadUnicodeTextFile(s1));
             //wsloadfromfile (s1, TStringList (list));
           except
             on e: Exception do

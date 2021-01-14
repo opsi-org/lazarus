@@ -36,7 +36,7 @@ function reencode(const sourceText: string; const sourceEncoding: string;
 function searchencoding(const searchText: string): string;
 
 function loadTextFileWithEncoding(filename, enc: string): TStringList;
-procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string);
+procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string; encoding : string);
 procedure logSupportedEncodings;
 
 function loadUnicodeTextFile(filename: string): TStringList;
@@ -70,7 +70,8 @@ end;
 
 function isEncodingUnicode(encodingString : string) : boolean;
 begin
-  if (LowerCase(encodingString)=Lowercase('unicode'))
+  Result := False;
+  if ((LowerCase(encodingString)=Lowercase('unicode'))
      or (LowerCase(encodingString)=Lowercase('utf8')) or (LowerCase(encodingString)=Lowercase('utf-8'))
      or (LowerCase(encodingString)=Lowercase('utf16')) or (LowerCase(encodingString)=Lowercase('utf-16'))
      or (LowerCase(encodingString)=Lowercase('utf32')) or (LowerCase(encodingString)=Lowercase('utf-32'))
@@ -82,11 +83,10 @@ begin
      or (LowerCase(encodingString)=Lowercase('utf32be')) or (LowerCase(encodingString)=Lowercase('utf-32be'))
      or (LowerCase(encodingString)=Lowercase('utf8-bom')) or (LowerCase(encodingString)=Lowercase('utf-8-bom'))
      or (LowerCase(encodingString)=Lowercase('utf16-bom')) or (LowerCase(encodingString)=Lowercase('utf-16-bom'))
-     or (LowerCase(encodingString)=Lowercase('utf32-bom')) or (LowerCase(encodingString)=Lowercase('utf-32-bom'))
+     or (LowerCase(encodingString)=Lowercase('utf32-bom')) or (LowerCase(encodingString)=Lowercase('utf-32-bom')) )
   then
-    Result := True
-  else
-    Result := False;
+    Result := True;
+
 end;
 
 function hasFileBom(inFileName : string) : boolean;
@@ -370,7 +370,7 @@ var
 begin
   Result := TStringList.Create;
   if isEncodingUnicode(enc) then
-    Result.AddStrings(loadUnicodeTextFile(filename))
+     Result.AddStrings(loadUnicodeTextFile(filename))
   //else if (enc = 'utf16le') then
   //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
   // else if ((enc = 'utf8') or (enc = 'UTF-8')) then
@@ -390,18 +390,16 @@ begin
   end;
 end;
 
-procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string);
+procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string; encoding : string);
 var
   fCES: TCharEncStream;
-  enc : string;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
-  enc := searchEncoding(fCES.UTF8Text) ;
-  if isEncodingUnicode(enc) then
+  if isEncodingUnicode(encoding) then
     saveUnicodeTextFile(inlist,outFileName)
   else
-    fCES.SaveToFile(outFileName);    // FALSE
+    fCES.SaveToFile(outFileName);    // TO CHECK
   fCES.Free;
 end;
 

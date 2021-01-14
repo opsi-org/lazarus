@@ -615,7 +615,7 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-//function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function loadUnicodeTextFile(filename: string): TStringList;
 function opsiunquotestr(s1, s2: string): string;
 
 function cmdLineInputDialog(var inputstr: string; const message, default: string;
@@ -841,7 +841,7 @@ end;
 
 (*
 // removed for Lazarus 1.8
-function stringListLoadUtf8FromFile(filename: string): TStringList;
+function loadUnicodeTextFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
 begin

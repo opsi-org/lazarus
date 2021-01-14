@@ -26,7 +26,7 @@ Type
     function FuncSaveToFile(const FileName: string; encodingtype: string): boolean;
       overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
-    procedure loadFromUnicodeFile(const Filename: string; codepage: word);
+    //procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
     // we return values[keyname], until further notice
@@ -157,11 +157,12 @@ var
   i: integer;
   myfilename, usedenc: string;
   LogS : string;
-
 begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
     myfilename := ExpandFileName(FileName);
+    saveTextFileWithEncoding(TStrings(strings), myfilename, encodingtype);
+    (*
     if LowerCase(encodingtype) = 'utf8' then
     begin
       //utf-8
@@ -192,13 +193,11 @@ begin
         myfilename + ' :', LLDebug2);
       LogDatei.log('-----------------', LLDebug3);
 
-      (*
-      for i := 0 to Count - 1 do
-      begin
-        writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
-        LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
-      end;
-      *)
+      //for i := 0 to Count - 1 do
+      //begin
+      //  writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
+      //  LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
+      //end;
 
       writeln(myfile, reencode(text, 'utf8', usedenc, encodingtype));
 
@@ -213,6 +212,8 @@ begin
         LogDatei.log('-----------------', LLDebug3);
       end;
     end;
+  *)
+
   except
     on e: Exception do
     begin
@@ -346,12 +347,13 @@ begin
   end;
 end;
 
+(*
 procedure TXStringlist.loadFromUnicodeFile(const Filename: string; codepage: word);
 begin
   LoadFromFile(ExpandFileName(Filename));
   Text := reencode(Text, 'ucs2be');
 end;
-
+*)
 
 
 end.
