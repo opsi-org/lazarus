@@ -23,8 +23,8 @@ uses
   LAZUTF8;
 
 procedure initEncoding;
-function isEncodingUnicode(encodingString : string) : boolean;
-function hasFileBom(infilename : string) : boolean;
+function isEncodingUnicode(encodingString: string): boolean;
+function hasFileBom(infilename: string): boolean;
 
 function reencode(const sourceText: string; const sourceEncoding: string): string;
   overload;
@@ -36,11 +36,13 @@ function reencode(const sourceText: string; const sourceEncoding: string;
 function searchencoding(const searchText: string): string;
 
 function loadTextFileWithEncoding(filename, enc: string): TStringList;
-procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string; encoding : string);
+procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
+  encoding: string);
 procedure logSupportedEncodings;
 
 function loadUnicodeTextFile(filename: string): TStringList;
-procedure saveUnicodeTextFile(inlist : TStrings; outFileName : string);
+procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string;
+  encoding: string);
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
 function isSupportedEncoding(testEncoding: string): boolean;
 
@@ -68,28 +70,64 @@ begin
   //   ' is not supported.', LLWarning);
 end;
 
-function isEncodingUnicode(encodingString : string) : boolean;
+function isEncodingUnicode(encodingString: string): boolean;
+var
+  lencstr: string;
 begin
+  lencstr := NormalizeEncoding(encodingString);
   Result := False;
-  if ((LowerCase(encodingString)=Lowercase('unicode'))
-     or (LowerCase(encodingString)=Lowercase('utf8')) or (LowerCase(encodingString)=Lowercase('utf-8'))
-     or (LowerCase(encodingString)=Lowercase('utf16')) or (LowerCase(encodingString)=Lowercase('utf-16'))
-     or (LowerCase(encodingString)=Lowercase('utf32')) or (LowerCase(encodingString)=Lowercase('utf-32'))
-     or (LowerCase(encodingString)=Lowercase('utf16le')) or (LowerCase(encodingString)=Lowercase('utf-16le'))
-     or (LowerCase(encodingString)=Lowercase('utf16be')) or (LowerCase(encodingString)=Lowercase('utf-16be'))
-     or (LowerCase(encodingString)=Lowercase('ucs2le')) or (LowerCase(encodingString)=Lowercase('ucs-2le'))
-     or (LowerCase(encodingString)=Lowercase('ucs2be')) or (LowerCase(encodingString)=Lowercase('ucs-2be'))
-     or (LowerCase(encodingString)=Lowercase('utf32le')) or (LowerCase(encodingString)=Lowercase('utf-32le'))
-     or (LowerCase(encodingString)=Lowercase('utf32be')) or (LowerCase(encodingString)=Lowercase('utf-32be'))
-     or (LowerCase(encodingString)=Lowercase('utf8-bom')) or (LowerCase(encodingString)=Lowercase('utf-8-bom'))
-     or (LowerCase(encodingString)=Lowercase('utf16-bom')) or (LowerCase(encodingString)=Lowercase('utf-16-bom'))
-     or (LowerCase(encodingString)=Lowercase('utf32-bom')) or (LowerCase(encodingString)=Lowercase('utf-32-bom')) )
-  then
+  if (lencstr = Lowercase('unicode')) or (lencstr = Lowercase('utf8')) or
+    (lencstr = Lowercase('utf16')) or
+    (lencstr = Lowercase('utf32')) or
+    (lencstr = Lowercase('utf16le')) or
+    (lencstr = Lowercase('utf16be')) or
+    (lencstr = Lowercase('ucs2le')) or
+    (lencstr = Lowercase('ucs2be')) or
+    (lencstr = Lowercase('utf32le')) or
+    (lencstr = Lowercase('utf32be'))
+     then
     Result := True;
+end;
+
+function uniEncoding2UniStreamTypes(encodingString: string;
+  var hasBOM: boolean): TUniStreamTypes;
+var
+  lencstr: string;
+begin
+  Result := ufUtf8;
+  hasBOM := False;
+  lencstr := NormalizeEncoding(encodingString);
+  if copy(lencstr, length(lencstr) - 3, length(lencstr)) = 'bom' then
+  begin
+    hasBOM := True;
+    lencstr := copy(lencstr, 0, length(lencstr) - 3);
+  end;
+
+  if lencstr = Lowercase('unicode') then
+    Result := ufUtf8;
+
+  if (lencstr = Lowercase('utf8'))  then
+    Result := ufUtf8;
+
+  if (lencstr = Lowercase('utf16le')) or
+    (lencstr = Lowercase('ucs2le'))  then
+    Result := ufUtf16le;
+
+  if (lencstr = Lowercase('utf16'))  or
+    (lencstr = Lowercase('utf16be')) or
+    (lencstr = Lowercase('ucs2be'))  then
+    Result := ufUtf16be;
+
+  if (lencstr = Lowercase('utf32'))  or
+    (lencstr = Lowercase('utf32be')) then
+    Result := ufUtf32be;
+
+  if (lencstr = Lowercase('utf32le')) then
+    Result := ufUtf32le;
 
 end;
 
-function hasFileBom(inFileName : string) : boolean;
+function hasFileBom(inFileName: string): boolean;
 var
   fCES: TCharEncStream;
 begin
@@ -97,7 +135,7 @@ begin
   fCES.Reset;
   inFileName := ExpandFileName(inFileName);
   fCES.LoadFromFile(inFileName);
-  Result := fCES.hasBOM ;
+  Result := fCES.hasBOM;
   fCES.Free;
 end;
 
@@ -115,17 +153,24 @@ begin
   fCES.Free;
 end;
 
-procedure saveUnicodeTextFile(inlist : TStrings; outFileName : string);
+procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string;
+  encoding: string);
 var
   fCES: TCharEncStream;
+  hasBOM : boolean;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
+  fCES.UniStreamType := uniEncoding2UniStreamTypes(encoding, hasBOM);
+  fCES.HasBOM:= hasBOM;
+  fCES.ForceType := True;
+  fCES.UTF8Text := inlist.Text;
   fCES.SaveToFile(outFileName);
   fCES.ANSIEnc := GetSystemEncoding;
   fCES.Free;
 end;
 
+(*
 function stringListLoadUtf16leFromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -140,7 +185,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
-
+*)
 
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
 var
@@ -301,10 +346,10 @@ begin
       if (usedSourceEncoding = 'utf16le') or (usedSourceEncoding = 'UTF-16LE') then
         usedSourceEncoding := 'ucs2le';
 
-      if (destEncoding = 'utf16le') or (destEncoding = 'UTF-16LE')  then
+      if (destEncoding = 'utf16le') or (destEncoding = 'UTF-16LE') then
         destEncoding := 'ucs2le';
 
-      if (usedSourceEncoding = 'utf16be') or (usedSourceEncoding = 'UTF-16BE')  then
+      if (usedSourceEncoding = 'utf16be') or (usedSourceEncoding = 'UTF-16BE') then
         usedSourceEncoding := 'ucs2be';
 
       if (destEncoding = 'utf16be') or (destEncoding = 'UTF-16BE') then
@@ -370,14 +415,17 @@ var
 begin
   Result := TStringList.Create;
   if isEncodingUnicode(enc) then
-     Result.AddStrings(loadUnicodeTextFile(filename))
+    Result.AddStrings(loadUnicodeTextFile(filename))
   //else if (enc = 'utf16le') then
   //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
   // else if ((enc = 'utf8') or (enc = 'UTF-8')) then
-    // utf8 is our internal code - nothing to do
+  // utf8 is our internal code - nothing to do
   //  Result.LoadFromFile(filename);
   else
   begin
+    Result.loadfromfile(filename);
+    Result.Text := reencode(Result.Text, enc);
+    (*
     AssignFile(txtfile, filename);
     Reset(txtfile);
     while not EOF(txtfile) do
@@ -387,19 +435,31 @@ begin
       Result.Append(encline);
     end;
     CloseFile(txtfile);
+    *)
   end;
 end;
 
-procedure saveTextFileWithEncoding(inlist : TStrings; outFileName : string; encoding : string);
+procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
+  encoding: string);
 var
   fCES: TCharEncStream;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
+  fCES.UTF8Text := inlist.Text;
   if isEncodingUnicode(encoding) then
-    saveUnicodeTextFile(inlist,outFileName)
+    saveUnicodeTextFile(inlist, outFileName, encoding)
   else
-    fCES.SaveToFile(outFileName);    // TO CHECK
+    saveTextFileWithEncoding(inlist, outFileName, encoding);
+  // fCES.SaveToFile(outFileName);    // TO CHECK
+
+
+
+
+
+
+
+
   fCES.Free;
 end;
 
