@@ -271,7 +271,7 @@ begin
 
     str := '';
     if myconfiguration.UsePropDesktopicon
-      and not (aktProduct.targetOS = osMac) then
+      and not (osMac in aktProduct.productdata.targetOS) then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim +
         'SetupHandleDesktopIcon.opsiscript');
@@ -333,11 +333,11 @@ begin
   {$ENDIF DARWIN}
 
 
-  if aktProduct.targetOS = osWin then
+  if osWin in aktProduct.productdata.targetOS then
     templatePath := templatePath + Pathdelim + 'win'
-  else if aktProduct.targetOS = osLin then
+  else if osLin in aktProduct.productdata.targetOS then
     templatePath := templatePath + Pathdelim + 'lin'
-  else if aktProduct.targetOS = osMac then
+  else if osMac in aktProduct.productdata.targetOS then
     templatePath := templatePath + Pathdelim + 'mac';
 
   try
@@ -426,14 +426,14 @@ begin
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     // install lib
-    if aktProduct.targetOS = osMac then
+    if osMac in aktProduct.productdata.targetOS then
     begin
       infilename := templatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
       outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
     end;
-    if aktProduct.targetOS = osLin then
+    if osLin in aktProduct.productdata.targetOS then
     begin
       infilename := templatePath + Pathdelim + 'uib_lin_install.opsiscript';
       outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';

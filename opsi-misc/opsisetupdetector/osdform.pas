@@ -1088,6 +1088,7 @@ end;
 procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
   i: integer;
+  localTOSset : TTargetOSset;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -1097,7 +1098,10 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    aktProduct.targetOS := osWin;
+    //aktProduct.targetOS := osWin;
+    localTOSset := aktProduct.productdata.targetOS;
+    Include(localTOSset,osWin);
+    aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2268,6 +2272,7 @@ var
   filename: string;
   goon: boolean;
   isapp: boolean;
+  localTOSset : TTargetOSset;
 begin
   goon := False;
   isapp := False;
@@ -2300,7 +2305,10 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    aktProduct.targetOS := osMac;
+    //aktProduct.targetOS := osMac;
+    localTOSset := aktProduct.productdata.targetOS;
+    Include(localTOSset,osMac);
+    aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;

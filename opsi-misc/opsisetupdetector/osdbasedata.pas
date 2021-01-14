@@ -28,6 +28,7 @@ type
   TArchitecture = (a32, a64, aUnknown);
 
   TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
+  TTargetOSset = set of TTargetOS;
 
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
@@ -103,7 +104,7 @@ type
     Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
-    FtargetOS : TTargetOS;
+    FtargetOS : TTargetOSset;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -148,7 +149,7 @@ type
       read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
-    property targetOS: TTargetOS read FtargetOS write FtargetOS;
+    property targetOS: TTargetOSset read FtargetOS write FtargetOS;
     procedure initValues;
 
   public
@@ -279,6 +280,7 @@ default: ["xenial_bionic"]
     Fdelsubscript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
+    FtargetOS: TTargetOSset;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -299,6 +301,7 @@ default: ["xenial_bionic"]
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
+    property targetOS: TTargetOSset read FtargetOS write FtargetOS;
   public
     { public declarations }
     //constructor Create;
@@ -307,7 +310,6 @@ default: ["xenial_bionic"]
 
   TopsiProduct = class(TPersistent)
   private
-    FtargetOS: TTargetOS;
   published
   public
     SetupFiles: array[0..2] of TSetupFile;
@@ -315,7 +317,6 @@ default: ["xenial_bionic"]
     //dependeciesCount : integer;
     dependencies: TCollection;
     properties: TPProperties;
-    property targetOS: TTargetOS read FtargetOS write FtargetOS;
 
     { public declarations }
     constructor Create;
@@ -350,7 +351,7 @@ default: ["xenial_bionic"]
     FProperties: TPProperties;
     FReadme_txt_templ: string;
     FShowCheckEntryWarning :boolean;
-    FtargetOS : TTargetOS;
+    //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -753,7 +754,7 @@ begin
       writeln(pfile,JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       writeln(pfile,JSONString);
-      writeln(pfile,aktProduct.FtargetOS);
+      //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
       (*
       logdatei.log('Config: ' + JSONString, LLDebug);
@@ -785,10 +786,10 @@ var
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: UTF8String;
   configDirstr: string;
-  myfile: Text;
   oldconfigDir, oldconfigFileName, tmpstr: string;
-  fConfig: Text;
+  pfile: TextFile;
 
+  (*
   // http://wiki.freepascal.org/File_Handling_In_Pascal
   // LoadStringFromFile: function to load a string of text from a diskfile.
   //   If the function result equals true, the string was load ok.
@@ -819,6 +820,7 @@ var
             E.ClassName + ': ' + E.Message);
     end;
   end;
+  *)
 
 begin
   try
@@ -833,19 +835,29 @@ begin
       logdatei.log('readconfig from: ' + myfilename, LLDebug);
     if FileExists(myfilename) then
     begin
-      AssignFile(myfile, myfilename);
-      Reset(myfile);
-      readln(myfile, JSONString);
+      AssignFile(pfile, myfilename);
+      Reset(pfile);
       //// http://wiki.freepascal.org/Streaming_JSON
       // DeStreamer object create
       DeStreamer := TJSONDeStreamer.Create(nil);
       try
         // Load JSON data in the object
-        DeStreamer.JSONToObject(JSONString, aktProduct);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[0]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[1]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[2]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.productdata);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
         // Cleanup
       finally
         DeStreamer.Destroy;
-        CloseFile(myfile);
+        CloseFile(pfile);
       end;
       if Assigned(logdatei) then
         logdatei.log('read config: ' + JSONString, LLDebug)
@@ -1280,12 +1292,13 @@ begin
     productImageFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'template.png';
+    targetOS := [];
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
   aktProduct.properties := TPProperties.Create(aktProduct);
-  aktProduct.targetOS:= osWin;
+  //aktProduct.targetOS:= osWin;
 end;
 
 procedure freebasedata;
