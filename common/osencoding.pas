@@ -23,8 +23,18 @@ uses
   LAZUTF8;
 
 procedure initEncoding;
+function isSupportedEncoding(testEncoding: string): boolean;
+procedure logSupportedEncodings;
+
 function isEncodingUnicode(encodingString: string): boolean;
 function hasFileBom(infilename: string): boolean;
+
+function loadUnicodeTextFile(filename: string): TStringList;
+procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
+
+function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
+
+function searchEncoding(const searchText: string): string;
 
 function reencode(const sourceText: string; const sourceEncoding: string): string;
   overload;
@@ -33,17 +43,8 @@ function reencode(const sourceText: string; const sourceEncoding: string;
 function reencode(const sourceText: string; const sourceEncoding: string;
   var usedSourceEncoding: string; destEncoding: string): string; overload;
 
-function searchencoding(const searchText: string): string;
-
-function loadTextFileWithEncoding(filename, enc: string): TStringList;
-procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
-  encoding: string);
-procedure logSupportedEncodings;
-
-function loadUnicodeTextFile(filename: string): TStringList;
-procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
-function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
-function isSupportedEncoding(testEncoding: string): boolean;
+function loadTextFileWithEncoding(filename, encoding: string): TStringList;
+procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string; encoding: string);
 
 var
   supportedEncodings: TStringList;
@@ -60,14 +61,63 @@ var
   additionalEncoding: string;
 
 
+procedure initEncoding;
+begin
+  {$IFDEF LINUX}
+  mysystemEncoding := 'utf8';
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  mysystemEncoding := GetDefaultTextEncoding;
+  {$ENDIF DARWIN}
+  {$IFDEF WINDOWS}
+  //mysystemEncoding := 'utf8';
+  mysystemEncoding := GetDefaultTextEncoding;
+  {$ENDIF WINDOWS}
+  // get the supported encodings
+  supportedEncodings := TStringList.Create;
+  GetSupportedEncodings(supportedEncodings);
+  supportedEncodings.Add('UTF-16');
+  supportedEncodings.Add('UTF-16BE');
+  supportedEncodings.Add('UTF-16LE');
+  supportedEncodings.Add('unicode');
+  supportedEncodings.Add('UTF-16-BOM');
+  supportedEncodings.Add('UTF-16BE-BOM');
+  supportedEncodings.Add('UTF-16LE-BOM');
+  supportedEncodings.Add('UTF-32-BOM');
+  supportedEncodings.Add('UTF-32BE-BOM');
+  supportedEncodings.Add('UTF-32LE-BOM');
+
+  // add the aliases (utf8 is alias for UTF-8)
+  k := supportedEncodings.Count;
+  for i := 0 to k - 1 do
+  begin
+    additionalEncoding := LowerCase(supportedEncodings.Strings[i]);
+    if pos('-', additionalEncoding) > 0 then
+      additionalEncoding := copy(additionalEncoding, 0,
+        pos('-', additionalEncoding) - 1) + copy(additionalEncoding,
+        pos('-', additionalEncoding) + 1, length(additionalEncoding));
+    supportedEncodings.Add(additionalEncoding);
+  end;
+  //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
+end;
+
 function isSupportedEncoding(testEncoding: string): boolean;
 begin
   Result := False;
   if supportedEncodings.IndexOf(testEncoding) > -1 then
     Result := True;
   // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
-  //   ' is not supported.', LLWarning);
+  //              ' is not supported.', LLWarning);
 end;
+
+procedure logSupportedEncodings;
+begin
+  if LogDatei <> nil then
+    for i := 0 to supportedEncodings.Count - 1 do
+      logdatei.log_prog(supportedEncodings.Strings[i], LLDebug2);
+end;
+
+
 
 function isEncodingUnicode(encodingString: string): boolean;
 var
@@ -75,7 +125,9 @@ var
 begin
   lencstr := NormalizeEncoding(encodingString);
   Result := False;
-  if (lencstr = Lowercase('unicode')) or (lencstr = Lowercase('utf8')) or
+  if copy(lencstr, length(lencstr) - 3, length(lencstr)) = 'bom' then
+    Result := True
+  else if (lencstr = Lowercase('unicode')) or (lencstr = Lowercase('utf8')) or
     (lencstr = Lowercase('utf16')) or (lencstr = Lowercase('utf32')) or
     (lencstr = Lowercase('utf16le')) or (lencstr = Lowercase('utf16be')) or
     (lencstr = Lowercase('ucs2le')) or (lencstr = Lowercase('ucs2be')) or
@@ -83,13 +135,16 @@ begin
     Result := True;
 end;
 
-function uniEncoding2UniStreamTypes(encodingString: string;
+function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
   var hasBOM: boolean): TUniStreamTypes;
 var
   lencstr: string;
+  fCES: TCharEncStream;
 begin
   Result := ufUtf8;
   hasBOM := False;
+  //fCES := TCharEncStream.Create;
+  //fCES.Reset;
   lencstr := NormalizeEncoding(encodingString);
   if copy(lencstr, length(lencstr) - 3, length(lencstr)) = 'bom' then
   begin
@@ -98,7 +153,17 @@ begin
   end;
 
   if lencstr = Lowercase('unicode') then
-    Result := ufUtf8;
+    if fileExists(fileName)
+    then
+    begin
+      fCES := TCharEncStream.Create;
+      fCES.Reset;
+      fCES.LoadFromFile(ExpandFileName(fileName));
+      //hasBOM := fCES.HasBOM;
+      Result := fCES.UniStreamType;
+    end
+  else
+      Result := ufUtf8;
 
   if (lencstr = Lowercase('utf8')) then
     Result := ufUtf8;
@@ -151,7 +216,7 @@ var
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
-  fCES.UniStreamType := uniEncoding2UniStreamTypes(encoding, hasBOM);
+  fCES.UniStreamType := uniEncoding2UniStreamTypes(outFileName,encoding, hasBOM);
   fCES.HasBOM := hasBOM;
   fCES.ForceType := True;
   fCES.UTF8Text := inlist.Text;
@@ -207,7 +272,7 @@ begin
   until (Result = True) or (i >= list.Count);
 end;
 
-function searchencoding(const searchText: string): string;
+function searchEncoding(const searchText: string): string;
   // tries to find entry: encoding=<encoding to use>
 var
   mylist, myencodings: TStringList;
@@ -323,7 +388,6 @@ begin
     if (usedSourceEncoding = 'utf8') or (usedSourceEncoding = 'UTF-8') or
       (destEncoding = 'utf8') or (destEncoding = 'UTF-8') then
     begin
-      // which should not happen if destEncoding=utf8
       if Assigned(logdatei) then
         logdatei.log_prog('We encode directly from or to utf8.', LLDebug2);
 
@@ -397,14 +461,15 @@ begin
       ' to ' + destEncoding, LLDebug2);
 end;
 
-function loadTextFileWithEncoding(filename, enc: string): TStringList;
-var
-  txtfile: Text;
-  rawline: WideString;
-  encline: string;
+function loadTextFileWithEncoding(filename, encoding: string): TStringList;
+(* var
+    txtfile: Text;
+    rawline: WideString;
+    encline: string;
+  *)
 begin
   Result := TStringList.Create;
-  if isEncodingUnicode(enc) then
+  if isEncodingUnicode(encoding) then
     Result.AddStrings(loadUnicodeTextFile(filename))
   //else if (enc = 'utf16le') then
   //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
@@ -413,8 +478,8 @@ begin
   //  Result.LoadFromFile(filename);
   else
   begin
-    Result.loadfromfile(filename);
-    Result.Text := reencode(Result.Text, enc);
+    Result.loadFromFile(filename);
+    Result.Text := reencode(Result.Text, encoding);
     (*
     AssignFile(txtfile, filename);
     Reset(txtfile);
@@ -432,10 +497,10 @@ end;
 procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
 var
-  fCES: TCharEncStream;
+  //fCES: TCharEncStream;
+  //str: string;
   myfile: Text;
   usedenc: string;
-  str: string;
 begin
   (*
   fCES := TCharEncStream.Create;
@@ -463,52 +528,12 @@ begin
       logdatei.includelogtail(outFileName, inlist.Count, encoding);
       LogDatei.log('-----------------', LLDebug3);
     end;
-    // fCES.SaveToFile(outFileName);    // TO CHECK
   end;
  // fCES.Free;
 end;
 
-procedure initEncoding;
-begin
-  {$IFDEF LINUX}
-  mysystemEncoding := 'utf8';
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  mysystemEncoding := GetDefaultTextEncoding;
-  {$ENDIF DARWIN}
-  {$IFDEF WINDOWS}
-  //mysystemEncoding := 'utf8';
-  mysystemEncoding := GetDefaultTextEncoding;
-  {$ENDIF WINDOWS}
-  // get the supported encodings
-  supportedEncodings := TStringList.Create;
-  GetSupportedEncodings(supportedEncodings);
-  supportedEncodings.Add('UTF-16');
-  supportedEncodings.Add('UTF-16BE');
-  supportedEncodings.Add('UTF-16LE');
-  supportedEncodings.Add('unicode');
-
-  // add the aliases (utf8 is alias for UTF-8)
-  k := supportedEncodings.Count;
-  for i := 0 to k - 1 do
-  begin
-    additionalEncoding := LowerCase(supportedEncodings.Strings[i]);
-    if pos('-', additionalEncoding) > 0 then
-      additionalEncoding := copy(additionalEncoding, 0,
-        pos('-', additionalEncoding) - 1) + copy(additionalEncoding,
-        pos('-', additionalEncoding) + 1, length(additionalEncoding));
-    supportedEncodings.Add(additionalEncoding);
-  end;
-  //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
-end;
-
-procedure logSupportedEncodings;
-begin
-  if LogDatei <> nil then
-    for i := 0 to supportedEncodings.Count - 1 do
-      logdatei.log_prog(supportedEncodings.Strings[i], LLDebug2);
-end;
 
 initialization
   initEncoding;
 end.
+

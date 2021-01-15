@@ -17940,7 +17940,34 @@ begin
     end;
   end
 
-
+  else if Skip('saveUnicodeTextFile', Input, r, sx) then
+  begin
+    try
+      BooleanResult := False;
+      list1 := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if produceStringList(script, r, r, list1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s2, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    try
+                      s1 := ExpandFileName(s1);
+                      saveUnicodeTextFile(TStrings(list1),s1, s2);
+                      BooleanResult := True;
+                    except
+                      logdatei.log('Error: Could not save to filename: ' +
+                        s1, LLError);
+                    end;
+                  end;
+    finally
+      list1.Free;
+      list1 := nil;
+    end;
+  end
 
   else if Skip('savetextfile', Input, r, sx) then
   begin

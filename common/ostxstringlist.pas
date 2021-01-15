@@ -33,12 +33,7 @@ Type
   end;
 
 
-
-
-
 implementation
-
-
 
 { TXStringList }
 
@@ -153,9 +148,12 @@ end;
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string;
   raise_on_error: boolean);
 var
+  (*
   myfile: system.TextFile;
   i: integer;
-  myfilename, usedenc: string;
+  usedenc: string;
+  *)
+  myfilename: string;
   LogS : string;
 begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
@@ -230,8 +228,6 @@ begin
     end;
   end;
 end;
-
-
 
 function TXStringList.FuncSaveToFile(const FileName: string): boolean;
 begin
@@ -326,7 +322,6 @@ begin
 end;
 
 
-
 function TXStringList.getStringValue(const keyname: string): string;
 var
   i: integer;
@@ -354,7 +349,6 @@ begin
   Text := reencode(Text, 'ucs2be');
 end;
 *)
-
 
 end.
 
