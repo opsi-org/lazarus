@@ -161,7 +161,7 @@ begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
     myfilename := ExpandFileName(FileName);
-    saveTextFileWithEncoding(TStrings(strings), myfilename, encodingtype);
+    saveTextFileWithEncoding(TStrings(self), myfilename, encodingtype);
     (*
     if LowerCase(encodingtype) = 'utf8' then
     begin

@@ -41,8 +41,7 @@ procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
 procedure logSupportedEncodings;
 
 function loadUnicodeTextFile(filename: string): TStringList;
-procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string;
-  encoding: string);
+procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
 function isSupportedEncoding(testEncoding: string): boolean;
 
@@ -77,15 +76,10 @@ begin
   lencstr := NormalizeEncoding(encodingString);
   Result := False;
   if (lencstr = Lowercase('unicode')) or (lencstr = Lowercase('utf8')) or
-    (lencstr = Lowercase('utf16')) or
-    (lencstr = Lowercase('utf32')) or
-    (lencstr = Lowercase('utf16le')) or
-    (lencstr = Lowercase('utf16be')) or
-    (lencstr = Lowercase('ucs2le')) or
-    (lencstr = Lowercase('ucs2be')) or
-    (lencstr = Lowercase('utf32le')) or
-    (lencstr = Lowercase('utf32be'))
-     then
+    (lencstr = Lowercase('utf16')) or (lencstr = Lowercase('utf32')) or
+    (lencstr = Lowercase('utf16le')) or (lencstr = Lowercase('utf16be')) or
+    (lencstr = Lowercase('ucs2le')) or (lencstr = Lowercase('ucs2be')) or
+    (lencstr = Lowercase('utf32le')) or (lencstr = Lowercase('utf32be')) then
     Result := True;
 end;
 
@@ -106,20 +100,17 @@ begin
   if lencstr = Lowercase('unicode') then
     Result := ufUtf8;
 
-  if (lencstr = Lowercase('utf8'))  then
+  if (lencstr = Lowercase('utf8')) then
     Result := ufUtf8;
 
-  if (lencstr = Lowercase('utf16le')) or
-    (lencstr = Lowercase('ucs2le'))  then
+  if (lencstr = Lowercase('utf16le')) or (lencstr = Lowercase('ucs2le')) then
     Result := ufUtf16le;
 
-  if (lencstr = Lowercase('utf16'))  or
-    (lencstr = Lowercase('utf16be')) or
-    (lencstr = Lowercase('ucs2be'))  then
+  if (lencstr = Lowercase('utf16')) or (lencstr = Lowercase('utf16be')) or
+    (lencstr = Lowercase('ucs2be')) then
     Result := ufUtf16be;
 
-  if (lencstr = Lowercase('utf32'))  or
-    (lencstr = Lowercase('utf32be')) then
+  if (lencstr = Lowercase('utf32')) or (lencstr = Lowercase('utf32be')) then
     Result := ufUtf32be;
 
   if (lencstr = Lowercase('utf32le')) then
@@ -153,16 +144,15 @@ begin
   fCES.Free;
 end;
 
-procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string;
-  encoding: string);
+procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
 var
   fCES: TCharEncStream;
-  hasBOM : boolean;
+  hasBOM: boolean;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
   fCES.UniStreamType := uniEncoding2UniStreamTypes(encoding, hasBOM);
-  fCES.HasBOM:= hasBOM;
+  fCES.HasBOM := hasBOM;
   fCES.ForceType := True;
   fCES.UTF8Text := inlist.Text;
   fCES.SaveToFile(outFileName);
@@ -443,24 +433,39 @@ procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
 var
   fCES: TCharEncStream;
+  myfile: Text;
+  usedenc: string;
+  str: string;
 begin
+  (*
   fCES := TCharEncStream.Create;
   fCES.Reset;
   fCES.UTF8Text := inlist.Text;
+  *)
   if isEncodingUnicode(encoding) then
     saveUnicodeTextFile(inlist, outFileName, encoding)
   else
-    saveTextFileWithEncoding(inlist, outFileName, encoding);
-  // fCES.SaveToFile(outFileName);    // TO CHECK
+  begin
+    AssignFile(myfile, outFileName);
+    Rewrite(myfile);
+    LogDatei.log('Will save (' + encoding + ') to file: ' + outFileName +
+      ' :', LLDebug2);
+    LogDatei.log('-----------------', LLDebug3);
+    writeln(myfile, reencode(inlist.Text, 'utf8', usedenc, encoding));
 
-
-
-
-
-
-
-
-  fCES.Free;
+    LogDatei.log('-----------------', LLDebug3);
+    CloseFile(myfile);
+    if LogDatei.UsedLogLevel >= LLDebug3 then
+    begin
+      LogDatei.log('Read file ' + outFileName + ' with encoding: ' +
+        encoding, LLDebug2);
+      LogDatei.log('-----------------', LLDebug3);
+      logdatei.includelogtail(outFileName, inlist.Count, encoding);
+      LogDatei.log('-----------------', LLDebug3);
+    end;
+    // fCES.SaveToFile(outFileName);    // TO CHECK
+  end;
+ // fCES.Free;
 end;
 
 procedure initEncoding;
