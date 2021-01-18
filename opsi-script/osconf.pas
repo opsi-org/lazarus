@@ -211,6 +211,7 @@ const
 var
   part1, part2, outstr: string;
   myconf: TIniFile;
+  opsiclientd_conf : string;
 
 begin
   try
@@ -267,13 +268,17 @@ begin
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
     //depotdrive := '/Network/opsi_depot';
-    depotdrive := '/Volumes/opsi_depot';
-(*
-    RunCommand('sw_vers -productVersion', outstr);
-    if trim(outstr) > '10.14' then
-      depotdrive := '/System/Volumes/Data/Volumes/opsi_depot'
-    else depotdrive := '/Volumes/opsi_depot';
-    *)
+    //depotdrive := '/Volumes/opsi_depot';
+    depotdrive := '/var/opsisetupadmin/opsi_depot';
+    opsiclientd_conf := '/etc/opsi-client-agent/opsiclientd.conf';
+    if  FileExists(opsiclientd_conf) then
+    begin
+        myconf := TIniFile.Create(opsiclientd_conf);
+        outstr := myconf.ReadString('depot_server', 'drive',depotdrive);
+        if  DirectoryExistsUTF8(outstr) then depotdrive := outstr;
+        myconf.Free;
+    end;
+
 
 {$ENDIF DARWIN}
 
@@ -513,6 +518,10 @@ end;
 
 initialization
   opsiscriptconf := opsiscriptconfinit;
+  {$IFDEF DARWIN}
+  //force_min_loglevel := 8;
+  //debug_prog:= True;
+  {$ENDIF DARWIN}
   initEncoding;
 (*
 {$IFDEF WINDOWS}

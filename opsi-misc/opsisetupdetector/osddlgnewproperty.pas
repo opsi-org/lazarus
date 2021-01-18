@@ -17,7 +17,8 @@ uses
   Buttons,
   StdCtrls,
   lcltranslator,
-  osdbasedata;
+  osdbasedata,
+  osddatamod;
 
 type
 
@@ -57,6 +58,7 @@ type
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
     procedure EditPropNameEditingDone(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
   private
 
@@ -87,9 +89,9 @@ procedure TFNewPropDlg.initFields;
 begin
   EditPropName.Text := 'PropertyName';
   MemoDesc.Lines.Clear;
-  RadioButtonPropBool.Checked:=true;
-  CheckBoxPropEdit.Checked:= false;
-  CheckBoxPropMultiVal.Checked:=false;
+  RadioButtonPropBool.Checked := True;
+  CheckBoxPropEdit.Checked := False;
+  CheckBoxPropMultiVal.Checked := False;
   EditPropNewVal.Text := 'New Value';
   ListBoxPropPosVal.Clear;
   ListBoxPropDefVal.Clear;
@@ -145,8 +147,7 @@ begin
   if pos(' ', FNewPropDlg.EditPropName.Text) > 0 then
   begin
     MessageDlg('opsi-setup-detector: Property Editor: Error',
-      'property Id: ' + FNewPropDlg.EditPropName.Text +
-      rsContainsWhitespaceWarning,
+      'property Id: ' + FNewPropDlg.EditPropName.Text + rsContainsWhitespaceWarning,
       mtError, [mbOK], '');
     valid := False;
   end;
@@ -164,6 +165,11 @@ begin
       mtError, [mbOK], '');
     valid := False;
   end;
+end;
+
+procedure TFNewPropDlg.FormCreate(Sender: TObject);
+begin
+  DataModule1.SetFontName(TControl(Sender), myFont);
 end;
 
 procedure TFNewPropDlg.BitBtnAddPropClick(Sender: TObject);
@@ -200,4 +206,5 @@ begin
 end;
 
 end.
+
 

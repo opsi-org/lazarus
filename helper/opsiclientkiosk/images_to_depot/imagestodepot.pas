@@ -8,7 +8,15 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
   jwawinbase,
-  LCLTranslator, ExtCtrls, ComCtrls;
+  LCLTranslator, ExtCtrls, ComCtrls,
+  {$IFDEF WINDOWS}
+   OckWindows
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+    OckLinux
+  {$ENDIF LINUX}
+
+  ;
 
 type
 
@@ -38,7 +46,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure GroupBoxInfoClick(Sender: TObject);
   private
-    function GetUserName_: string;
     function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
     procedure MountDepotNT(const User: String; Password: String;
       PathToDepot: String);
@@ -217,7 +224,7 @@ begin
     {set shell and options}
     Shell := 'cmd.exe';
     ShellOptions := '/c';
-    ShellCommand := 'net use' + ' ' + PathToDepot + ' ' + Password + ' ' + user;
+    ShellCommand := 'net use' + ' ' + PathToDepot + ' ' + Password + ' ' + '/user:' + User;
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
       ShellCommand := '';
@@ -227,7 +234,7 @@ begin
       //ShowMessage(ShellOutput);
     end
     else LogDatei.log('Error while trying to run command net use ' +
-      PathToDepot + ' ' + user + ' on ' + Shell, LLError);
+      PathToDepot + ' ' + User + ' on ' + Shell, LLError);
   except
     LogDatei.log('Exception during mounting of ' + PathToDepot, LLDebug);
   end;
@@ -370,19 +377,6 @@ begin
   end;
 end;
 
-function TFormSaveImagesOnDepot.GetUserName_: string;
-var
-  buffer: PChar;
-  bufferSize: DWORD;
-begin
-  bufferSize := 256; //UNLEN from lmcons.h
-  buffer := AllocMem(bufferSize * SizeOf(char));
-  try
-    GetUserName(buffer, bufferSize);
-    Result := string(buffer);
-  finally
-    FreeMem(buffer, bufferSize);
-  end;
-end; { DSiGetUserName}
+
 end.
 

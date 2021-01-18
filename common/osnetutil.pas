@@ -16,12 +16,30 @@ uses
   Classes,
   SysUtils,
   synaip,
-  oslog;
+  oslog,
+  RegExpr;
 
+function isValidFQDN(expr : string) : boolean;
 function isIPNumber(expr : string) : boolean;
 function IsValidEmail(const Value: string): Boolean;
 
 implementation
+
+// Function to validate if the Domain Name is Fully Qualified
+function isValidFQDN(expr : string) : boolean;
+var RegExprObj : TRegExpr;
+begin
+  result := False;
+  RegExprObj := TRegExpr.Create;
+  RegExprObj.Expression := '^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.([a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.){1,}[a-zA-Z]{2,63}$';
+  if Length(expr)> 254 then
+     result := False
+  else
+      if RegExprObj.Exec(expr) then
+         result := True;
+  RegExprObj.Free;
+end;
+
 
 function isIPNumber(expr : string) : boolean;
 begin

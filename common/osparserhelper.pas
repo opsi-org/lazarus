@@ -56,7 +56,7 @@ procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: st
   const WordDelimiterSet: TCharset; searchbackward: boolean = False;
     backwardfirst: boolean = True);
 // checks if we have a quoted string constant
-// if yes it returns the quoted string konstant
+// if yes it returns the quoted string constant
 // if no it calls getword
 
 procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);

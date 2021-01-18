@@ -5,6 +5,123 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
+
+ * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
+ * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
+
+-- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
+
+ * repair center batchgui on screen
+ * osregex: another empty string regex test
+ * license functions: opsiserviceuser if possible
+ * linux: shellBatch implemented as shellInAnIcon
+ * macos: osfunclin: getmyipbytarget: use path to ip command
+ * macos: runningWithGui also working for macos
+
+-- d.oertel <d.oertel@uib.de> Wed, 16 Dec 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.11) stable; urgency=low
+
+ * files: copy: deny-list with '.DS_Store'
+ * files: on 'permission denied' call handle.exe if existing in opsi-script directory
+ * dosInAnIcon: if win7 and no new Arguments then call runAndCaptureOut
+
+-- d.oertel <d.oertel@uib.de> Mon, 14 Dec 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.10) experimental; urgency=low
+
+ * macos: modify locale path for opsi-script-gui.app
+ * macos / linux: oscheck_gui_startable: kill opsi-laz-gui-test if not terminated
+ * osregex: filter empty input to avoid execeptions
+ * macos: shellBatch implemented as shellInAnIcon
+ * osnetworkcalculator: net gethostbyname(<ip>)
+ * osparser: GetIpByName: use new gethostbyname
+
+-- d.oertel <d.oertel@uib.de> Thu, 26 Nov 2020 15:00
+
+
+opsi-winst/opsi-script (4.12.4.9) experimental; urgency=low
+
+* GetSectionFromIniFile: remove encoding transformation (windows only)
+
+-- j.werner <j.werner@uib.de> Wed, 25 Nov 2020 17:39
+
+
+opsi-winst/opsi-script (4.12.4.8) experimental; urgency=low
+
+* isRegexMatch: checks if string is NOT empty before exec is executed
+		catchs exceptions
+
+-- j.werner <j.werner@uib.de> Tue, 24 Nov 2020 14:55
+
+
+MISSING CHANGELOGS:
+
+opsi-winst/opsi-script (4.12.4.7)
+
+
+
+opsi-winst/opsi-script (4.12.4.6) experimental; urgency=low
+
+ * import osprocesses
+ * call of opsi-laz-gui-test in extra log: ogdatei.StandardMainLogPath+'opsi-script-gui-test.log'
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Nov 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.5) experimental; urgency=low
+
+ * the one and only project file is now opsi-script.lpi
+   you hav to switch zhe build mode for differen archtictures (win / mac / lin) (gui)
+ * the opsi-script nogui version is now opsi-script
+ * the opsi-script gui version is now opsi-script-gui
+ * opsi-script tests via opsi-laz-gui-test if a gui can be used
+   and if yes calls opsi-script-gui (via execv)
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Nov 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.4) experimental; urgency=low
+
+* new boolean function: isValidFQDN
+* fix debug_lib do imported libs added to nologfiles in oslog
+* osfunc: new randomstrWithParameters (also called by randomstr
+* new string function randomstrWithParameters(minLength,nLowerCases,nUpperCases,nDigits,nSpecialChars : Integer): string;
+* powershellcall and execwith calls at windows RunAndCaptureOut bydefault
+* Linux: osfunc: Findfirst with or faSymlink
+
+-- d.oertel <d.oertel@uib.de> Tue, 13 Oct 2020 15:00
+
+opsi-winst/opsi-script (4.12.4.3) experimental; urgency=low
+
+* macos: integrate to opsiscript and opsiscriptnogui project
+  (Remove mac project files)
+* new unit osstartprocess_cp (from osfunc, will be used in opsi-script-pilot)
+* more logging on alldelete
+* repair del -c
+* try to remove dirs also with copy_delay
+* new del option -r (retryOnReboot) default false (Windows only)
+  If -r is set a missed delete action will be retried on Reboot.
+  In this case normally a 'reboot after this script' flag will be set.
+  By using the -c option setting this flag will be supressed
+  The option -c (continue) make only sense in combination with -r
+* section name now as header of showoutput
+
+
+* startprocess_cp fix (jan werner)
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Sep 2020 15:00
+
+
+opsi-winst/opsi-script (4.12.4.2) experimental; urgency=low
+
+* macos: try to read mountpoint from opsiclientd.conf
+  default to /var/opsisetupadmin/opsi_depot
+
+-- d.oertel <d.oertel@uib.de> Tue, 15 Sep 2020 15:00
+
+
 opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
 
   * some more log on startup
@@ -12,7 +129,8 @@ opsi-winst/opsi-script (4.12.4.1) experimental; urgency=low
   * fix uefi detection on win10 >= release 1004
   * osfuncwin: WinIsUefi: the fix is here
   //* macos: change mountpoint to /Network/opsi_depot
-  * macos: changeback mountpoint to /Volumes/opsi_depot
+  //* macos: changeback mountpoint to /Volumes/opsi_depot
+  * macos: change mountpoint back to /var/opsisetupadmin/opsi_depot
   * osbatchgui: formresize function disabled for Darwin
 
 -- d.oertel <d.oertel@uib.de> Thu, 27 Aug 2020 15:00
