@@ -343,7 +343,7 @@ begin
   try
     patchlist := TStringList.Create;
     fillPatchList;
-    case useRunMode of
+    case osdsettings.runmode of
       singleAnalyzeCreate:
       begin
         insetup := 'setupsingle.opsiscript';
@@ -461,7 +461,7 @@ begin
 
     FreeAndNil(patchlist);
     // write project file
-    aktProduct.writeProjectFile(prodpath);
+    aktProduct.writeProjectFileToPath(prodpath);
     Result := True;
     ;
   except

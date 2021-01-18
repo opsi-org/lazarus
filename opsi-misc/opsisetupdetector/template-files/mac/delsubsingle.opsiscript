@@ -1,6 +1,8 @@
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib gmbh
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
 
 Message "Check for existing installation of " + $ProductId$ + " ..."
 
@@ -10,12 +12,9 @@ set $oldProgFound$ = "false"
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
-	#@preUninstallLines1*#
-	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown') or ($InstallDir$ = '/Applications/'))
 		Files_uninstall
 	endif
-	#@postUninstallLines1*#
-	#@DelsubHandleDesktopIcon*#
 endif
 
 

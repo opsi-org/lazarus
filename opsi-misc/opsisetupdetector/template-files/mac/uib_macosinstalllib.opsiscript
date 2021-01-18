@@ -48,6 +48,8 @@ deffunc install_macos_app($myapp$ : string) : string
 	
 	DefVar $sourceDir$
 	DefVar $myAppDir$
+	DefVar $exitcode$
+	DefStringlist $binfiles$
 	
 	set $result$ = "false"
 	if directoryexists($myapp$)
@@ -55,12 +57,19 @@ deffunc install_macos_app($myapp$ : string) : string
 		set $myAppDir$ = ExtractFileName ($myapp$)
 		markerrornumber
 		Files_copy_app
-		shellCall('chmod ugo+x "/Applications/'+$myAppDir$+'/Contents/Macos/*')
 		if errorsOccurredSinceMark = 0
 			; installation success
 			set $result$ = "true"
 		else
 			logerror "Copy files from "+$myapp$+" to Application Dir failed. - installation failed."
+		endif
+		set $binfiles$ = listFiles('/Applications/'+$myAppDir$+'/Contents/MacOS/',"*","False")
+		for %bin% in $binfiles$ do set $exitcode$ = shellCall('chmod ugo+x "%bin%"')
+		if $exitcode$ = "0"
+			; installation success
+			set $result$ = "true"
+		else
+			logerror "Chaning rights of files from "+$myapp$+" MacOS Dir failed. - installation failed."
 		endif
 	else
 		LogError $myapp$+" is not a directory as expected. - installation failed."

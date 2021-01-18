@@ -1,9 +1,9 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
 ; ----------------------------------------------------------------
-
+encoding=utf8
 
 [Actions]
 requiredWinstVersion >= "4.12.0.28"
@@ -17,13 +17,9 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
 #@stringVars*#
-
-Set $LogDir$ = "%opsiLogDir%"
-
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -41,8 +37,8 @@ Set $LicensePool$	  = ""
 
 set $OS$ = GetOS
 
-if not(($OS$ = "Windows_NT"))
-	logError "Installation aborted: wrong OS version: only Windows"
+if not(($OS$ = "macos"))
+	logError "Installation aborted: wrong OS version: only MacOS"
 	isFatalError "wrong OS"
 endif
 
@@ -70,11 +66,4 @@ comment "License management is enabled and will be used"
 comment "Trying to free license used for the product"
 DefVar $result$
 Set $result$ = FreeLicense($LicensePool$)
-; If there is an assignment of a license pool to the product, it is possible to use
-; Set $result$ = FreeLicense("", $ProductId$)
-;
-; If there is an assignment of a license pool to a windows software id, it is possible to use
-; DefVar $WindowsSoftwareId$
-; $WindowsSoftwareId$ = "..."
-; set $result$ = FreeLicense("", "", $WindowsSoftwareId$)
 

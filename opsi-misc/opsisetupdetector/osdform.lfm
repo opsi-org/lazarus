@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 465
+  Left = 866
   Height = 666
-  Top = 260
+  Top = 249
   Width = 1046
   Caption = 'opsi Setup Detector'
   ClientHeight = 638
@@ -7980,13 +7980,13 @@ object resultForm1: TresultForm1
         OnShow = TabSheetIconsShow
         ParentFont = False
         object Panel11: TPanel
-          Left = 674
-          Height = 437
+          Left = 650
+          Height = 548
           Top = 0
           Width = 379
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 437
+          ClientHeight = 548
           ClientWidth = 379
           Color = clNone
           ParentColor = False
@@ -8006,13 +8006,13 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
             TabOrder = 0
-            object ImageIconPreview: TImage
+            object TIImageIconPreview: TTIImage
               Left = 1
               Height = 161
               Top = 1
               Width = 161
               Align = alClient
-              Stretch = True
+              Transparent = True
             end
           end
           object LabelIconPreview: TLabel
@@ -8028,7 +8028,7 @@ object resultForm1: TresultForm1
             Left = 207
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 368
+            Top = 479
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8320,21 +8320,21 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 437
+          Height = 548
           Top = 0
-          Width = 674
+          Width = 650
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 433
-          ClientWidth = 670
+          ClientHeight = 546
+          ClientWidth = 648
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 435
+            Height = 546
             Top = 0
-            Width = 672
+            Width = 648
             Align = alClient
             Alignment = taCenter
             Caption = 'No Icons'
@@ -9341,9 +9341,13 @@ object resultForm1: TresultForm1
         Caption = 'Start'
         OnClick = MenuItemStartClick
       end
-      object MenuItem1: TMenuItem
+      object MenuItemOpenProj: TMenuItem
         Caption = 'Open Project File'
-        OnClick = MenuItem1Click
+        OnClick = MenuItemOpenProjClick
+      end
+      object MenuItemSaveProj: TMenuItem
+        Caption = 'Save Project File'
+        OnClick = MenuItemSaveProjClick
       end
       object FileExit: TMenuItem
         Caption = '&Exit'
@@ -9666,5 +9670,10 @@ object resultForm1: TresultForm1
     OnTimer = TimerFirstconfigTimer
     Left = 993
     Top = 5
+  end
+  object SaveDialogProj: TSaveDialog
+    Filter = 'OSD Project file|*.osd'
+    Left = 302
+    Top = 10
   end
 end

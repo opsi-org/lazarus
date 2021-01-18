@@ -16,6 +16,7 @@ uses
   lazutf8,
   fileinfo,
   fpjsonrtti,
+  fpjson,
   oslog,
   RTTICtrls,
   lcltranslator;
@@ -26,6 +27,19 @@ type
     twoAnalyzeCreate_2, createTemplate, gmUnknown);
 
   TArchitecture = (a32, a64, aUnknown);
+
+
+  { stores runtime infos of OSD}
+  TOSDSettings = class(TPersistent)
+  private
+    FrunMode : TRunMode;
+  published
+    property runmode: TRunMode read FrunMode write FrunMode;
+  public
+    { public declarations }
+    //constructor Create;
+    //destructor Destroy;
+  end;
 
   TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
   TTargetOSset = set of TTargetOS;
@@ -108,13 +122,15 @@ type
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
+    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
+    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
     // proc
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
     property ID: integer read FID write FID;
-    property setupFileNamePath: string read FsetupFileNamePath;
+    property setupFileNamePath: string read FsetupFileNamePath write FsetupFileNamePath;
     property setupFileName: string read FsetupFileName write FsetupFileName;
     property setupFullFileName: string read FsetupFullFileName
       write SetSetupFullFileName;
@@ -181,7 +197,7 @@ requirementType: before
     FRequType: TPDtype;
   published
     property RequType: TPDtype read FRequType write FRequType;
-    property action: string read FAction;
+    property action: string read FAction write FAction;
     property requProductId: string read FRequProductId write FRequProductId;
     property requState: TPInstallationState read FRequState write FRequState;
     property requAction: TPActionRequest read FRequAction write FRequAction;
@@ -321,7 +337,8 @@ default: ["xenial_bionic"]
     { public declarations }
     constructor Create;
     procedure readProjectFile(filename : string);
-    procedure writeProjectFile(path : string);
+    procedure writeProjectFileToPath(path : string);
+    procedure writeProjectFileToFile(myfilename : string);
   end;
 
   TConfiguration = class(TPersistent)
@@ -413,12 +430,13 @@ const
 var
   aktProduct: TopsiProduct;
   aktSetupFile: TSetupFile;
+  osdsettings: TOSDSettings;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
   myconfiguration: TConfiguration;
-  useRunMode: TRunMode;
+  //useRunMode: TRunMode;
   myVersion: string;
   lfilename: string;
   aktconfigfile : string;
@@ -608,11 +626,13 @@ end;
 
 procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
+  if Assigned(AValue) then
   FStrvalues.Assign(AValue);
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
+  if Assigned(AValue) then
   FStrDefault.Assign(AValue);
 end;
 
@@ -680,11 +700,17 @@ begin
   //initaktproduct;
 end;
 
-procedure TopsiProduct.writeProjectFile(path : string);
+procedure TopsiProduct.writeProjectFileToPath(path : string);
+begin
+  path := IncludeTrailingPathDelimiter(path);
+  writeProjectFileToFile(path+'opsi-project.osd');
+end;
+
+procedure TopsiProduct.writeProjectFileToFile(myfilename : string);
 var
   Streamer: TJSONStreamer;
   JSONString: string;
-  myfilename: string;
+  //myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: UTF8String;
   pfile: TextFile;
@@ -724,9 +750,10 @@ begin
     if Assigned(logdatei) then
       logdatei.log('Start write project file', LLDebug);
     // project file name
-    configDir := IncludeTrailingPathDelimiter(path);
-    myfilename := configDir + 'opsi-project.osd';
     myfilename := ExpandFileName(myfilename);
+    configdir := ExtractFileDir(myfilename);
+    configDir := IncludeTrailingPathDelimiter(configdir);
+    //myfilename := configDir + 'opsi-project.osd';
     if Assigned(logdatei) then
       logdatei.log('write project file to: ' + myfilename, LLDebug);
     if not DirectoryExists(configDir) then
@@ -742,6 +769,8 @@ begin
       //Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
       // Save strings as JSON array
       // JSON convert and output
+      JSONString := Streamer.ObjectToJSONString(osdsettings);
+      writeln(pfile,JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[0]);
       writeln(pfile,JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[1]);
@@ -776,6 +805,21 @@ begin
   end;
 end;
 
+
+(*
+procedure TSetupFile.OnRestoreProperty(Sender: TObject; AObject: TObject;
+  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
+begin
+  Handled := False;
+  if (Info^.Name = 'setupFullFileName') then
+  begin
+    Handled := True;
+    SetSetupFullFileName(AValue.AsString);
+  end;
+  if (Info^.Name = 'setupFileNamePath') then
+    Handled := True;
+end;
+*)
 
 procedure TopsiProduct.readProjectFile(filename : string);
 var
@@ -842,6 +886,9 @@ begin
       DeStreamer := TJSONDeStreamer.Create(nil);
       try
         // Load JSON data in the object
+        //DeStreamer.OnRestoreProperty:=SetupFiles[0].OnRestoreProperty;
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, osdsettings);
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[0]);
         readln(pfile, JSONString);
@@ -1260,6 +1307,7 @@ procedure initaktproduct;
 var
   i: integer;
   //newdep: TPDependency;
+  defaultIconFullFileName :string;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
@@ -1289,9 +1337,23 @@ begin
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
     // Application.Params[0] is directory of application as string
+        { set productImageFullFileName to full file name of the default icon }
+    {$IFDEF WINDOWS}
+    defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'images' + PathDelim + 'template.png';
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
+      PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+    {$ENDIF UNIX}
+    osdbasedata.aktProduct.productdata.productImageFullFileName :=
+      defaultIconFullFileName;
+    (*
     productImageFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'template.png';
+    *)
     targetOS := [];
   end;
   // Create Dependencies
@@ -1323,6 +1385,8 @@ end;
 
 
 begin
+  osdsettings := Tosdsettings.Create;
+
   // marker for add installers
   knownInstallerList := TStringList.Create;
   knownInstallerList.Add('MacZip');

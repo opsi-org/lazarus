@@ -135,7 +135,6 @@ type
     Image4: TImage;
     Image5: TImage;
     Image6: TImage;
-    ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
     Label2: TLabel;
@@ -186,7 +185,8 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
-    MenuItem1: TMenuItem;
+    MenuItemOpenProj: TMenuItem;
+    MenuItemSaveProj: TMenuItem;
     MenuItemLangFr: TMenuItem;
     MenuItemLang: TMenuItem;
     MenuItemLangDe: TMenuItem;
@@ -222,6 +222,7 @@ type
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonPackageBuilder: TRadioButton;
     RadioGroup1: TRadioGroup;
+    SaveDialogProj: TSaveDialog;
     SBtnExit: TSpeedButton;
     ScrollBox1: TScrollBox;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
@@ -276,6 +277,7 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
+    TIImageIconPreview: TTIImage;
     TILabelDirSelIcon: TTILabel;
     TILabelInstaller2: TTILabel;
     TIMemoAdvice: TTIMemo;
@@ -323,7 +325,8 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItemOpenProjClick(Sender: TObject);
+    procedure MenuItemSaveProjClick(Sender: TObject);
     procedure MenuItemLangClick(Sender: TObject);
     procedure MenuItemLangDeClick(Sender: TObject);
     procedure MenuItemLangEnClick(Sender: TObject);
@@ -778,7 +781,7 @@ begin
   myexitcode := 0;
   myerror := '';
   showgui := True;
-  useRunMode := gmUnknown;
+  osdsettings.runmode := gmUnknown;
   opsitmp := GetTempDir(False) + 'opsitmp' + PathDelim;
   optionlist := TStringList.Create;
   optionlist.Append('help');
@@ -860,7 +863,7 @@ begin
       with resultform1 do
       begin
         Show;
-        useRunMode := singleAnalyzeCreate;
+        osdsettings.runmode := singleAnalyzeCreate;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
         PageControl1.ActivePage := TabSheetAnalyze;
@@ -913,7 +916,7 @@ end;
 
 procedure TResultform1.setRunMode;
 begin
-  case useRunMode of
+  case osdsettings.runmode of
     analyzeOnly:
     begin
       TabSheetStart.Enabled := True;
@@ -996,7 +999,7 @@ begin
     main2;
 end;
 
-procedure TResultform1.MenuItem1Click(Sender: TObject);
+procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
    OpenDialog1.FilterIndex := 8;   // project file
   if OpenDialog1.Execute then
@@ -1004,6 +1007,15 @@ begin
     initaktproduct;
     aktProduct.readProjectFile(OpenDialog1.FileName);
     LogDatei.log('Read Project file from: '+OpenDialog1.FileName, LLnotice);
+  end;
+end;
+
+procedure TResultform1.MenuItemSaveProjClick(Sender: TObject);
+begin
+  if SaveDialogProj.Execute then
+  begin
+    aktProduct.writeProjectFileToFile(SaveDialogProj.FileName);
+    LogDatei.log('Write Project file to: '+SaveDialogProj.FileName, LLnotice);
   end;
 end;
 
@@ -1093,7 +1105,7 @@ begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
-    useRunMode := singleAnalyzeCreate;
+    osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
@@ -1142,7 +1154,7 @@ var
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
   picturesize: integer;
 begin
-  with ImageIconPreview.Canvas do
+  with TIImageIconPreview.Canvas do
   begin
     // paint chess background
     for row := 0 to 9 do
@@ -1156,7 +1168,7 @@ begin
     end;
     // paint chess board
     //RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
-    picturesize := ImageIconPreview.Width;
+    picturesize := TIImageIconPreview.Width;
     //picturesize := round(picturesize * (Screen.PixelsPerInch / 91));
     {$IFDEF LINUX}
     // scale rect
@@ -1216,7 +1228,7 @@ begin
     iconDirectory + SelectedIcon.FileName;
   //ShowMessage(osdbasedata.aktProduct.productdata.productImageFullFileName);
   // paint icon in preview
-  ImageIconPreview.Visible := True;
+  TIImageIconPreview.Visible := True;
   PaintPreview(SelectedIcon.Image);
   // adjust checkboxes
   CheckBoxNoIcon.Checked := False;
@@ -1350,6 +1362,7 @@ begin
     LabelNameSelIcon.Caption := rsDefaultIcon;
     LabelIconDir.Visible := False;
     TILabelDirSelIcon.Visible := False;
+    (*
     { set productImageFullFileName to full file name of the default icon }
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
@@ -1362,16 +1375,17 @@ begin
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
+      *)
 
     CheckBoxNoIcon.Checked := False;
-    ImageIconPreview.Visible := True;
+    TIImageIconPreview.Visible := True;
     // paint icon preview
     DefaultIcon := TImage.Create(TabSheetIcons);
     {$IFDEF LINUX}
     // scale image
     DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
     {$ENDIF LINUX}
-    DefaultIcon.Picture.LoadFromFile(defaultIconFullFileName);
+    DefaultIcon.Picture.LoadFromFile(osdbasedata.aktProduct.productdata.productImageFullFileName);
     PaintPreview(DefaultIcon);
   end;
   // if CheckBoxDefaultIcon is unchecked then check CheckBoxNoIcon if no custom icon is selected
@@ -1389,7 +1403,7 @@ begin
     LabelNameSelIcon.Caption := '';
     osdbasedata.aktProduct.productdata.productImageFullFileName := '';
     CheckBoxDefaultIcon.Checked := False;
-    ImageIconPreview.Visible := False;
+    TIImageIconPreview.Visible := False;
   end;
   // if CheckBoxNoIcon is unchecked then check CheckBoxDefaultIcon if no custom icon is selected
   // LabelIconDir.Visible = False is equivalent to no custom icon is selected
@@ -1424,7 +1438,7 @@ begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
-    useRunMode := twoAnalyzeCreate_1;
+    osdsettings.runmode := twoAnalyzeCreate_1;
     setRunMode;
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbYes, mbNo], 0, mbNo) = mrYes then
@@ -1474,7 +1488,7 @@ end;
 procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
   showCeckEntriesWarning;
-  case useRunMode of
+  case osdsettings.runmode of
     analyzeOnly:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
@@ -1504,7 +1518,7 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -1898,7 +1912,7 @@ end;
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
   begin
-    useRunMode := createTemplate;
+    osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -2041,7 +2055,7 @@ end;
 
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
-  case useRunMode of
+  case osdsettings.runmode of
     analyzeOnly:
     begin
       //we should never be here
@@ -2090,7 +2104,7 @@ begin
   end;
   if checkok then
   begin
-    case useRunMode of
+    case osdsettings.runmode of
       analyzeOnly:
       begin
         //we should never be here
@@ -2125,7 +2139,7 @@ end;
 
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
-  case useRunMode of
+  case osdsettings.runmode of
     analyzeOnly:
     begin
       // we should never be here
@@ -2168,7 +2182,7 @@ begin
   end;
   if checkok then
   begin
-    case useRunMode of
+    case osdsettings.runmode of
       analyzeOnly:
       begin
         Application.Terminate;
@@ -2180,7 +2194,7 @@ begin
       end;
       twoAnalyzeCreate_1:
       begin
-        useRunMode := twoAnalyzeCreate_2;
+        osdsettings.runmode := twoAnalyzeCreate_2;
         MessageDlg(rsTwonalyzeAndCreateMsgHead,
           rsTwonalyzeAndCreateMsgSecondSetup,
           mtInformation, [mbOK], '');
@@ -2233,7 +2247,7 @@ begin
   if checkok then
   begin
 
-    case useRunMode of
+    case osdsettings.runmode of
       analyzeOnly:
       begin
         // we should never be here
@@ -2300,7 +2314,7 @@ begin
   end;
   if goon then
   begin
-    useRunMode := singleAnalyzeCreate;
+    osdsettings.runmode := singleAnalyzeCreate;
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
@@ -2336,7 +2350,7 @@ begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
-    useRunMode := analyzeOnly;
+    osdsettings.runmode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -2421,7 +2435,16 @@ begin
 end;
 
 procedure TResultform1.PageControl1Change(Sender: TObject);
+var
+  myimage : TImage;
 begin
+  if FileExists(aktProduct.productdata.productImageFullFileName) then
+  begin
+    myimage := TImage.Create(self);
+    myimage.Picture.LoadFromFile(aktProduct.productdata.productImageFullFileName);
+    PaintPreview(myimage);
+    FreeAndNil(myimage);
+  end;
 
 end;
 
@@ -2815,7 +2838,7 @@ begin
       *)
   end;
 
-  if useRunMode = twoAnalyzeCreate_1 then
+  if osdsettings.runmode = twoAnalyzeCreate_1 then
   begin
     index := StringGridProp.RowCount;
     //Inc(index);
