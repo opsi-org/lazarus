@@ -58,6 +58,7 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnOpenMst3: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
@@ -84,6 +85,7 @@ type
     BitBtnMST1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
+    BtSetup3NextStep: TBitBtn;
     BtSingleAnalyzeAndCreateWin: TBitBtn;
     BtSingleAnalyzeAndCreateMulti: TBitBtn;
     BtSingleAnalyzeAndCreateLin: TBitBtn;
@@ -105,12 +107,18 @@ type
     FlowPanel2: TFlowPanel;
     FlowPanel20: TFlowPanel;
     FlowPanel21: TFlowPanel;
+    FlowPanel22: TFlowPanel;
     FlowPanel23: TFlowPanel;
+    FlowPanel24: TFlowPanel;
+    FlowPanel25: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
+    FlowPanel8: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
+    FlowPanelMsiId2: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
+    FlowPanelMST2: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
     FlowPanel5: TFlowPanel;
@@ -124,6 +132,10 @@ type
     FlowPanelSetup37: TFlowPanel;
     FlowPanelSetup38: TFlowPanel;
     FlowPanelSetup39: TFlowPanel;
+    FlowPanelSetup40: TFlowPanel;
+    FlowPanelSetup41: TFlowPanel;
+    FlowPanelSetup42: TFlowPanel;
+    FlowPanelSetup43: TFlowPanel;
     FlowPanelWin: TFlowPanel;
     FlowPanelWin1: TFlowPanel;
     FlowPanelWin2: TFlowPanel;
@@ -141,6 +153,18 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label86: TLabel;
+    Label87: TLabel;
+    Label88: TLabel;
+    Label89: TLabel;
+    Label90: TLabel;
+    Label91: TLabel;
+    Label92: TLabel;
+    Label93: TLabel;
+    Label94: TLabel;
+    Label95: TLabel;
+    Label96: TLabel;
+    Label97: TLabel;
     LabelNumber: TLabel;
     LabelNumIcons: TLabel;
     LabelNameSelIcon: TLabel;
@@ -231,6 +255,7 @@ type
     StatusBar1: TStatusBar;
     StringGridDep: TStringGrid;
     StringGridProp: TStringGrid;
+    TabSheetSetup3: TTabSheet;
     TabSheetIcons: TTabSheet;
     TabSheetProduct2: TTabSheet;
     TabSheetCreate: TTabSheet;
@@ -253,23 +278,34 @@ type
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
+    TICheckBoxS3Mst: TTICheckBox;
     TIEditInstallDir2: TTIEdit;
+    TIEditInstallDir3: TTIEdit;
     TIEditMsiId2: TTIEdit;
+    TIEditMsiId3: TTIEdit;
     TIEditMstFile2: TTIEdit;
-    TIEditProdVersion1: TTIEdit;
+    TIEditMstFile3: TTIEdit;
+    TIEditSoftVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
-    TIEditProdVersion2: TTIEdit;
+    TIEditSoftVersion2: TTIEdit;
     TIEditProdVersion3: TTIEdit;
     TIEditProdID: TTIEdit;
     TIEditProdName: TTIEdit;
+    TIEditSoftVersion3: TTIEdit;
     TIEditRequiredSizeMB2: TTIEdit;
+    TIEditRequiredSizeMB3: TTIEdit;
     TIEditSetup2Command: TTIEdit;
     TIEditSetup1UnCommand: TTIEdit;
+    TIEditSetup3Command: TTIEdit;
     TIEditSetup2UnCommand: TTIEdit;
     TIEditSetup1UnProgram: TTIEdit;
+    TIEditSetup3UnCommand: TTIEdit;
     TIEditSetup2UnProgram: TTIEdit;
+    TIEditSetup3UnProgram: TTIEdit;
     TIEditSetupfile2: TTIEdit;
     TIEditSetup1Command: TTIEdit;
+    TIEditSetupfile3: TTIEdit;
+    TIEditSetupFileSizeMB3: TTIEdit;
     TIEditworkbenchpath: TTIEdit;
     TIEditSetupFileSizeMB1: TTIEdit;
     TIEditRequiredSizeMB1: TTIEdit;
@@ -280,12 +316,14 @@ type
     TIImageIconPreview: TTIImage;
     TILabelDirSelIcon: TTILabel;
     TILabelInstaller2: TTILabel;
+    TILabelInstaller3: TTILabel;
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
     TIS1Url: TTILabel;
     TILabelInstaller1: TTILabel;
     TIS2Url: TTILabel;
+    TIS3Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
     TITrackBarPrio: TTITrackBar;
@@ -307,12 +345,15 @@ type
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
     procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
     procedure BtProduct2NextStepClick(Sender: TObject);
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
+    procedure BtSetup3NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
@@ -564,37 +605,51 @@ begin
     with aktProduct do
     begin
       TILabelInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
-      TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
+      TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
+      TILabelInstaller3.Link.SetObjectAndProperty(SetupFiles[2], 'installerid');
       //TIComboBoxInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
       //TIComboBoxInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TIEditSetupfile1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFullFileName');
       TIEditSetupFile2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFullFileName');
+      TIEditSetupFile3.Link.SetObjectAndProperty(SetupFiles[2], 'setupFullFileName');
       //TIComboBoxArch1.Link.SetObjectAndProperty(SetupFiles[0], 'architecture');
       //TIComboBoxArch2.Link.SetObjectAndProperty(SetupFiles[1], 'architecture');
       TIEditMstFile1.Link.SetObjectAndProperty(SetupFiles[0], 'mstFullFileName');
       TIEditMstFile2.Link.SetObjectAndProperty(SetupFiles[1], 'mstFullFileName');
+      TIEditMstFile3.Link.SetObjectAndProperty(SetupFiles[2], 'mstFullFileName');
       TICheckBoxS1Mst.Link.SetObjectAndProperty(SetupFiles[0], 'mstAllowed');
       TICheckBoxS2Mst.Link.SetObjectAndProperty(SetupFiles[1], 'mstAllowed');
+      TICheckBoxS3Mst.Link.SetObjectAndProperty(SetupFiles[2], 'mstAllowed');
       TIEditMsiId1.Link.SetObjectAndProperty(SetupFiles[0], 'msiId');
       TIEditMsiId2.Link.SetObjectAndProperty(SetupFiles[1], 'msiId');
-      TIEditProdVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
-      TIEditProdVersion2.Link.SetObjectAndProperty(SetupFiles[1], 'SoftwareVersion');
+      TIEditMsiId3.Link.SetObjectAndProperty(SetupFiles[2], 'msiId');
+      TIEditSoftVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
+      TIEditSoftVersion2.Link.SetObjectAndProperty(SetupFiles[1], 'SoftwareVersion');
+      TIEditSoftVersion3.Link.SetObjectAndProperty(SetupFiles[2], 'SoftwareVersion');
       TIEditSetupFileSizeMB1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFileSize');
       TIEditSetupFileSizeMB2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFileSize');
+      TIEditSetupFileSizeMB3.Link.SetObjectAndProperty(SetupFiles[2], 'setupFileSize');
       TIEditRequiredSizeMB1.Link.SetObjectAndProperty(SetupFiles[0], 'requiredSpace');
       TIEditRequiredSizeMB2.Link.SetObjectAndProperty(SetupFiles[1], 'requiredSpace');
+      TIEditRequiredSizeMB3.Link.SetObjectAndProperty(SetupFiles[2], 'requiredSpace');
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
+      TIEditInstallDir3.Link.SetObjectAndProperty(SetupFiles[2], 'installDirectory');
       TIEditSetup1Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
       TIEditSetup2Command.Link.SetObjectAndProperty(SetupFiles[1], 'installCommandLine');
+      TIEditSetup3Command.Link.SetObjectAndProperty(SetupFiles[2], 'installCommandLine');
       TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0],
         'uninstallCommandLine');
       TIEditSetup2UnCommand.Link.SetObjectAndProperty(SetupFiles[1],
         'uninstallCommandLine');
+      TIEditSetup3UnCommand.Link.SetObjectAndProperty(SetupFiles[2],
+        'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
+      TIEditSetup3UnProgram.Link.SetObjectAndProperty(SetupFiles[2], 'uninstallProg');
       TIS1Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
       TIS2Url.Link.SetObjectAndProperty(SetupFiles[1], 'link');
+      TIS3Url.Link.SetObjectAndProperty(SetupFiles[2], 'link');
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -631,6 +686,7 @@ begin
     TabSheetAnalyze.ImageIndex := 1;
     TabSheetSetup1.ImageIndex := 2;
     TabSheetSetup2.ImageIndex := 2;
+    TabSheetSetup3.ImageIndex := 2;
     TabSheetProduct.ImageIndex := 3;
     TabSheetProduct2.ImageIndex := 3;
     TabSheetIcons.ImageIndex := 3;
@@ -672,8 +728,8 @@ begin
   TIEditMstFile2.Link.TIObject := nil;
   TIEditMsiId1.Link.TIObject := nil;
   TIEditMsiId2.Link.TIObject := nil;
-  TIEditProdVersion1.Link.TIObject := nil;
-  TIEditProdVersion2.Link.TIObject := nil;
+  TIEditSoftVersion1.Link.TIObject := nil;
+  TIEditSoftVersion2.Link.TIObject := nil;
   TIEditSetupFileSizeMB1.Link.TIObject := nil;
   TIEditSetupFileSizeMB2.Link.TIObject := nil;
   TIEditRequiredSizeMB1.Link.TIObject := nil;
@@ -1921,6 +1977,54 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    aktProduct.productdata.targetOS:= [osWin];
+    aktProduct.productdata.productId:= 'opsi-template';
+    aktProduct.productdata.productName:= 'opsi template for Windows';
+    aktProduct.productdata.productversion:= '1.0.0';
+    aktProduct.productdata.packageversion:= 1;
+    aktProduct.productdata.description:= 'A template for opsi products for Windows';
+  end;
+end;
+
+procedure TResultform1.BtCreateEmptyTemplateMacClick(Sender: TObject);
+begin
+  begin
+    osdsettings.runmode := createTemplate;
+    setRunMode;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    PageControl1.ActivePage := resultForm1.TabSheetProduct;
+    Application.ProcessMessages;
+    initaktproduct;
+    makeProperties;
+    aktProduct.productdata.targetOS:= [osMac];
+    aktProduct.productdata.productId:= 'm-opsi-template';
+    aktProduct.productdata.productName:= 'opsi template for macos';
+    aktProduct.productdata.productversion:= '1.0.0';
+    aktProduct.productdata.packageversion:= 1;
+    aktProduct.productdata.description:= 'A template for opsi products for MacOS';
+  end;
+end;
+
+procedure TResultform1.BtCreateEmptyTemplateLinClick(Sender: TObject);
+begin
+  begin
+    osdsettings.runmode := createTemplate;
+    setRunMode;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    PageControl1.ActivePage := resultForm1.TabSheetProduct;
+    Application.ProcessMessages;
+    initaktproduct;
+    makeProperties;
+    aktProduct.productdata.targetOS:= [osLin];
+    aktProduct.productdata.productId:= 'l-opsi-template';
+    aktProduct.productdata.productName:= 'opsi template for Linux';
+    aktProduct.productdata.productversion:= '1.0.0';
+    aktProduct.productdata.packageversion:= 1;
+    aktProduct.productdata.description:= 'A template for opsi products for Linux';
   end;
 end;
 
@@ -2279,6 +2383,56 @@ begin
     end;
   end;
 end;
+
+procedure TResultform1.BtSetup3NextStepClick(Sender: TObject);
+var
+  checkok: boolean = True;
+begin
+  if ((aktProduct.SetupFiles[1].installDirectory = '') or
+    (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
+    (aktProduct.SetupFiles[1].installerId <> stMsi) then
+  begin
+    // checkok := False;
+    // we warn here only
+    ShowMessage(sWarnInstalldirUnknown);
+  end;
+  if checkok then
+  begin
+
+    case osdsettings.runmode of
+      analyzeOnly:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
+      end;
+      singleAnalyzeCreate:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
+          LLError);
+      end;
+      twoAnalyzeCreate_2:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct;
+        Application.ProcessMessages;
+      end;
+      createTemplate:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
+        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+        //Application.ProcessMessages;
+      end;
+      gmUnknown:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
+      end;
+    end;
+  end;
+end;
+
+
 
 procedure TResultform1.BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
 var

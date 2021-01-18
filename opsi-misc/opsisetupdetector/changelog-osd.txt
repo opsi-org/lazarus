@@ -82,6 +82,7 @@ opsi-setup-detector (4.1.0.18) stable; urgency=low
   * write and read project file
   * new menue entries at File for write and read project file
   * updated opsi-script lib for macos install
+  * add macos template
 
 -- Detlef Oertel <d.oertel@uib.de>  Son,  3 Jan 2021 : 15:00:00 +0200
 

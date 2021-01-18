@@ -456,6 +456,11 @@ msgctxt "tresultform1.bitbtnopenmst2.caption"
 msgid "Open MST File"
 msgstr ""
 
+#: tresultform1.bitbtnopenmst3.caption
+msgctxt "tresultform1.bitbtnopenmst3.caption"
+msgid "Open MST File"
+msgstr ""
+
 #: tresultform1.bitbtnrecheckworkbench.caption
 msgid "Check workbench path"
 msgstr ""
@@ -602,6 +607,16 @@ msgstr ""
 
 #: tresultform1.btsetup2nextstep.hint
 msgctxt "tresultform1.btsetup2nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup3nextstep.caption
+msgctxt "tresultform1.btsetup3nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup3nextstep.hint
+msgctxt "tresultform1.btsetup3nextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
@@ -865,6 +880,66 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
+#: tresultform1.label86.caption
+msgctxt "tresultform1.label86.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label87.caption
+msgctxt "tresultform1.label87.caption"
+msgid "Info: "
+msgstr ""
+
+#: tresultform1.label88.caption
+msgctxt "tresultform1.label88.caption"
+msgid "MST File "
+msgstr ""
+
+#: tresultform1.label89.caption
+msgctxt "tresultform1.label89.caption"
+msgid "MsiId"
+msgstr ""
+
+#: tresultform1.label90.caption
+msgctxt "tresultform1.label90.caption"
+msgid "Software Version"
+msgstr ""
+
+#: tresultform1.label91.caption
+msgctxt "tresultform1.label91.caption"
+msgid "Required Space MB"
+msgstr ""
+
+#: tresultform1.label92.caption
+msgctxt "tresultform1.label92.caption"
+msgid "InstallDir"
+msgstr ""
+
+#: tresultform1.label93.caption
+msgctxt "tresultform1.label93.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label94.caption
+msgctxt "tresultform1.label94.caption"
+msgid "Setup File"
+msgstr ""
+
+#: tresultform1.label95.caption
+msgctxt "tresultform1.label95.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label96.caption
+msgctxt "tresultform1.label96.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label97.caption
+msgctxt "tresultform1.label97.caption"
+msgid "Uninstall Program"
+msgstr ""
+
 #: tresultform1.labelicondir.caption
 msgid "Directory:"
 msgstr ""
@@ -903,10 +978,6 @@ msgstr ""
 msgid "Path to opsi-work-bench is reachable"
 msgstr ""
 
-#: tresultform1.menuitem1.caption
-msgid "Open Project File"
-msgstr ""
-
 #: tresultform1.menuitemabout.caption
 msgid "&About"
 msgstr ""
@@ -941,6 +1012,15 @@ msgstr ""
 
 #: tresultform1.menuitemlangfr.caption
 msgid "fr"
+msgstr ""
+
+#: tresultform1.menuitemopenproj.caption
+msgctxt "tresultform1.menuitemopenproj.caption"
+msgid "Open Project File"
+msgstr ""
+
+#: tresultform1.menuitemsaveproj.caption
+msgid "Save Project File"
 msgstr ""
 
 #: tresultform1.menuitemstart.caption
@@ -1087,6 +1167,10 @@ msgstr ""
 msgid "2. Setup"
 msgstr ""
 
+#: tresultform1.tabsheetsetup3.caption
+msgid "3. Setup"
+msgstr ""
+
 #: tresultform1.tabsheetstart.caption
 msgctxt "tresultform1.tabsheetstart.caption"
 msgid "Start"
@@ -1104,6 +1188,11 @@ msgstr ""
 
 #: tresultform1.ticheckboxs2mst.caption
 msgctxt "tresultform1.ticheckboxs2mst.caption"
+msgid "MST allowed"
+msgstr ""
+
+#: tresultform1.ticheckboxs3mst.caption
+msgctxt "tresultform1.ticheckboxs3mst.caption"
 msgid "MST allowed"
 msgstr ""
 
