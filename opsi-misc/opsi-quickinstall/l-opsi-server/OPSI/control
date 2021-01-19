@@ -1,5 +1,5 @@
 [Package]
-version: 1
+version: 4 
 depends: 
 
 [Product]
@@ -43,15 +43,6 @@ editable: True
 description: proxy to use (http://myproxy.dom.org:8080)
 values: ["", "http://myproxy.dom.org:8080"]
 default: [""]
-
-[ProductProperty]
-type: unicode
-name: opsi_noproxy_online_repository
-multivalue: False
-editable: True
-description: (Base-) Repository for opsi-server installation (without any cache proxy)
-values: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/", "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
-default: ["http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/"]
 
 [ProductProperty]
 type: unicode

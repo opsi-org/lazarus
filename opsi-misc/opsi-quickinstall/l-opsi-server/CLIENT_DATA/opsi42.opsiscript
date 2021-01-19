@@ -13,8 +13,6 @@ DefVar $aktbackend$
 DefVar $opsi_stability$
 DefVar $repo_kind$
 DefVar $opsi_online_repository$
-DefVar $opsi_online_repository_nodebproxy$
-DefVar $opsi_noproxy_online_repository$
 DefVar $mysql_root_pw$
 DefVar $mysqlpkg$
 DefVar $distroName4repo$
@@ -66,7 +64,6 @@ set $backend$ = "file"
 set $repo_kind$ = "stable"
 set $update_test$ = "false"
 set $opsi_online_repository_org$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
-set $opsi_noproxy_online_repository$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:"
 set $setup_after_install_list$ = createStringList ("")
 set $allow_reboot$  = "true"
 set $install_and_configure_dhcp$  = "false"
@@ -95,7 +92,6 @@ if fileExists("%scriptpath%/properties.conf")
 	set $repo_kind$ = getValue("repo_kind", $properties_conf$)
 	set $update_test$ = getValue("update_test", $properties_conf$)
 	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
-	set $opsi_noproxy_online_repository$ = getValue("opsi_noproxy_online_repository", $properties_conf$)
 	; not used  in quick-install:
 	;set $setup_after_install_list$ = 
 	set $allow_reboot$  = getValue("allow_reboot", $properties_conf$)
@@ -119,7 +115,6 @@ else
 	set $repo_kind$ = GetProductProperty("repo_kind", $repo_kind$)
 	set $update_test$ = GetProductProperty("update_test", $update_test$)
 	set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", $opsi_online_repository_org$)
-	set $opsi_noproxy_online_repository$ = GetProductProperty("opsi_noproxy_online_repository", $opsi_noproxy_online_repository$)
 	set $setup_after_install_list$ = getProductPropertyList("setup_after_install",$setup_after_install_list$)
 	set $allow_reboot$  = getProductProperty("allow_reboot",$allow_reboot$)
 	set $install_and_configure_dhcp$  = getProductProperty("install_and_configure_dhcp",$install_and_configure_dhcp$)
@@ -177,7 +172,6 @@ else
 endif
 
 set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
-set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
 
 comment "Installing from: " + $opsi_online_repository$
 Message "Start " + $ProductId$
@@ -216,7 +210,9 @@ if $myIPName$ = "auto"
 endif
 
 if $myIPNumber$ = "auto"
-	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+    set $myIPNumber$ = getMyIpByTarget("")
+	;set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	set $myIPNumber$ = "1"
 	if not(isValidIP4($myIPNumber$))
 		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
@@ -283,7 +279,6 @@ if $update_test$ = "true"
 		endif
 	endif
 	set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
-	set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
 	comment "Installing from: " + $opsi_online_repository$
 	sub_dist_dependend_opsi_install
 	sub_opsi_base_config
@@ -336,37 +331,41 @@ endif ; redhat
 [sub_dist_dependend_opsi_install]
 Switch $distroName$
 	Case 'Debian'
+		if CompareDotSeparatedNumbers($distRelease$, "<", "9")
+			LogError "Debian before version 9 not supported"
+			isFatalError "Debian before version 9 not supported"
+			Message "Debian before version 9 not supported"
+		endif
+		
 		set $mysqlservicename$ = "mysql"
 		set $smbdservicename$ = "smbd"
 		set $nmbdservicename$ = "nmbd"
 		set $dhcpdservicename$ = "isc-dhcp-server"
 		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
 
+		shellCall("apt --yes install apt-transport-https wget gnupg")
+		if not (getLastExitCode = "0")
+			LogError "failed to install Debian "+$distRelease$+" dependencies"
+			isFatalError "failed to install Debian "+$distRelease$+" dependencies"
+			Message "failed to install Debian "+$distRelease$+" dependencies"
+		endif
+
 		if $install_and_configure_dhcp$ = "true"
 			Message "Installing dhcp-server"
 			ShellInAnIcon_install_dhcp_deb
+			ShellInAnIcon_patch_dhcp_default
 		endif
 
 		Message "Adding repository"
 		if CompareDotSeparatedNumbers($distRelease$, ">=", "10")
 			set $distRelease4Repo$ = "10"
-			ShellInAnIcon_patch_dhcp_default
-			shellCall("apt --yes install wget gnupg")
-			if not("0" = getLastExitCode)
-				LogError "failed to install debian 10 dependencies"
-				isFatalError "failed to install debian 10 dependencies"
-				Message "failed to install debian 10 dependencies"
-			endif
 		else
-			LogError "Debian 10 or higher supported"
-			isFatalError "Debian 10 or higher supported"
-			Message "Debian 10 or higher supported"
+			set $distRelease4Repo$ = "9.0"
 		endif
-
 		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
 		ShellInAnIcon_add_opsi_repository_debian
 
-		if not("0" = getLastExitCode)
+		if not (getLastExitCode = "0")
 			LogError "failed to add repo"
 			Message "failed to add repo"
 			isFatalError "failed to add repo"
@@ -375,20 +374,20 @@ Switch $distroName$
 		Message "Installing opsi-server"
 		ShellInAnIcon_install_deps_buster
 		ShellInAnIcon_install_python_packages
-		if not("0" = getLastExitCode)
+		if not (getLastExitCode = "0")
 			LogError "failed to install depending python3 packages"
 			Message "failed to install depending python3 packages"
 			isFatalError "failed to install depending python3 packages"
 		endif
 		ShellInAnIcon_make_python3_default
-		if not("0" = getLastExitCode)
+		if not (getLastExitCode = "0")
 			LogError "failed to set python3 as default"
 			Message "failed to set python3 as default"
 			isFatalError "failed to set python3 as default"
 		endif
 		ShellInAnIcon_install_opsi_deb
 
-		if not("0" = getLastExitCode)
+		if not (getLastExitCode = "0")
 			LogError "Installing opsi-server failed on Debian"
 			Message "Installing opsi-server failed on Debian"
 			isFatalError "Installing opsi-server failed on Debian"
@@ -399,7 +398,7 @@ Switch $distroName$
 			PatchTextFile_dhcpd_conf $dhcpdconf_file_path$
 			ShellInAnIcon_opsi_configure_dhcpd
 			ShellInAnIcon_opsi_restart_dhcpd
-			if not("0" = getLastExitCode)
+			if not (getLastExitCode = "0")
 				LogError "dhcpd failed"
 				Message "dhcpd failed"
 				isFatalError "dhcpd failed"
@@ -638,7 +637,6 @@ Switch $distrotype$
 		endif
 
 		Message "Adding repository"
-		set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
 		set $mysqlservicename$ = "mysqld"
 		set $dhcpdservicename$ = "dhcpd"
 		set $mysqlpkg$ = "community-mysql-server"
@@ -666,6 +664,7 @@ Switch $distrotype$
 		endif
 
 		ShellInAnIcon_add_opsi_repository_redhat
+		PatchTextFile_grafana_repo_rpm "/etc/yum.repos.d/grafana.repo"
 		if not("0" = getLastExitCode)
 			LogError "addrepo failed"
 			Message "addrepo failed"
@@ -699,7 +698,6 @@ Switch $distrotype$
 EndSwitch
 
 [sub_suse_configure_variables]
-set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
 set $mysqlservicename$ = "mysql"
 set $mysqlpkg$ = "mariadb"
 set $dhcpdservicename$ = "dhcpd"
@@ -732,6 +730,7 @@ if contains($distroName$, "openSUSE")
 	if "" = TakeFirstStringContaining(shellCall("zypper lr -u") , $opsi_online_repository$+"/"+$distroName4repo$+"_"+$distRelease4repo$)
 		comment "It seems that the suse repo is not installed"
 		ShellInAnIcon_add_opsi_repository_suse
+		PatchTextFile_grafana_repo_rpm "/etc/zypp/repos.d/grafana.repo"
 	endif
 endif
 
@@ -740,11 +739,13 @@ Switch $distroName$
 	Case "SUSE LINUX"
 		sub_suse_configure_variables_suse_linux
 		ShellInAnIcon_add_opsi_repository_sles
+		PatchTextFile_grafana_repo_rpm "/etc/zypp/repos.d/grafana.repo"
 	EndCase
 
 	Case "SUSE"
 		sub_suse_configure_variables_suse
 		ShellInAnIcon_add_opsi_repository_sles
+		PatchTextFile_grafana_repo_rpm "/etc/zypp/repos.d/grafana.repo"
 	EndCase
 EndSwitch
 
@@ -976,6 +977,14 @@ if not("0" = getLastExitCode)
 	isFatalError "failed to setup user for depot share"
 endif
 
+Message "Starting and enabling grafana"
+ShellInAnIcon_grafana_start
+if not("0" = getLastExitCode)
+        LogError "grafana failed to start"
+        Message "grafana failed to start"
+        isFatalError "grafana failed to start"
+endif
+
 [sub_setup_after_install]
 if count($setup_after_install_list$) > "0"
 	for %setupProduct% in $setup_after_install_list$ do opsiservicecall_set_product_to_setup
@@ -986,16 +995,11 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 EXITCODE=0
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install mysql-server
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2 || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install mysql-server || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries || EXITCODE=1
 exit $EXITCODE
 
 [ShellInAnIcon_make_python3_default]
@@ -1062,6 +1066,14 @@ if [ "$UCSROLE" == 'memberserver' ]; then
 else
 	opsi-admin -d method config_createUnicode clientconfig.depot.user "User for depot share" "$clientconfig_depot_user$" "$clientconfig_depot_user$"
 fi
+exit $?
+
+[ShellInAnIcon_grafana_start]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+systemctl enable grafana
+systemctl start grafana
+opsiconfd setup
 exit $?
 
 [ShellInAnIcon_opsi_init]
@@ -1255,9 +1267,21 @@ service $mysqlservicename$ restart
 [ShellInAnIcon_configure_opsi_mysql_backend]
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-service $mysqlservicename$ restart
-mysqladmin -u root password $mysql_root_pw$
-service $mysqlservicename$ restart
+
+systemctl stop $mysqlservicename$
+mysqld_safe --skip-grant-tables --skip-networking &
+sleep 5
+echo "flush privileges" | mysql -u root
+echo "UPDATE mysql.user SET authentication_string=PASSWORD('$mysql_root_pw$'),plugin=NULL WHERE user = 'root'" | mysql -u root
+echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mysql_root_pw$'" | mysql -u root
+echo "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$mysql_root_pw$')" | mysql -u root
+echo "flush privileges" | mysql -u root
+sleep 1
+killall mysqld_safe mysqld
+sleep 5
+killall -9 mysqld_safe mysqld
+sleep 1
+systemctl start $mysqlservicename$
 UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
 opsi-setup --configure-mysql --unattended=$UNATTENDED
 exit $?
@@ -1291,10 +1315,8 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 EXITCODE=0
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install isc-dhcp-server
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install isc-dhcp-server || EXITCODE=1
 exit $EXITCODE
 
 [ShellInAnIcon_install_opsi_deb]
@@ -1305,16 +1327,12 @@ EXITCODE=0
 getent hosts $(hostname -f)
 apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" remove tftpd
 update-inetd --remove tftpd
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-tftpd-hpa
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-server
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-linux-support
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-windows-support
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-service $smbdservicename$ restart
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install grafana || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-tftpd-hpa || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-server || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-linux-support || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-windows-support || EXITCODE=1
+service $smbdservicename$ restart || EXITCODE=1
 service $nmbdservicename$ restart
 exit $EXITCODE
 
@@ -1323,10 +1341,10 @@ exit $EXITCODE
 set -x
 export DEBIAN_FRONTEND=noninteractive
 EXITCODE=0
-wget -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+wget -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get update
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+wget -O - https://packages.grafana.com/gpg.key | apt-key add - || EXITCODE=1
+apt-get update || EXITCODE=1
 exit $EXITCODE
 
 [PatchTextFile_del_opsirepo_deb]
@@ -1338,25 +1356,21 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 export http_proxy=$proxy$
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host gnupg
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install default-mysql-server
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-exit $?
+EXITCODE=0
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget host gnupg || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install samba samba-common smbclient cifs-utils apache2 || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install default-mysql-server || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install redis redis-timeseries || EXITCODE=1
+exit $EXITCODE
 
 [ShellInAnIcon_install_python_packages]
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 export http_proxy=$proxy$
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install python3-distro python3-mysqldb
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+EXITCODE=0
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install python3-distro python3-mysqldb || EXITCODE=1
 exit $EXITCODE
 
 
@@ -1366,7 +1380,7 @@ export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 export http_proxy=$proxy$
 wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
-wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+wget -O - https://packages.grafana.com/gpg.key | apt-key add -
 apt-get update
 exit $?
 
@@ -1386,7 +1400,6 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export http_proxy=$proxy$
 wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
-wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
 exit $?
 
 
@@ -1398,24 +1411,20 @@ UCSROLE=$(ucr get server/role)
 eval "$(ucr shell version/version)"
 EXITCODE=0
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-upgrade --noninteractive --ignoreterm --updateto=$version_version-99
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+univention-upgrade --noninteractive --ignoreterm --updateto=$version_version-99 || EXITCODE=1
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-install --yes wget host
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+univention-install --yes wget host || EXITCODE=1
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
 univention-install --yes univention-mariadb
 
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-install --yes univention-dhcp
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+univention-install --yes univention-dhcp || EXITCODE=1
 if [ "$UCSROLE" == 'memberserver' ]; then
 	while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
 	univention-install --yes univention-samba >> /var/tmp/opsi.log
 fi
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-install --yes samba samba-common smbclient cifs-utils
-if [ $? -ne 0 ]; then EXITCODE=1; fi
+univention-install --yes samba samba-common smbclient cifs-utils || EXITCODE=1
 getent hosts $(hostname -f)
 exit $EXITCODE
 
@@ -1545,7 +1554,9 @@ export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 EXITCODE=0
 yum -y install wget
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install redis-tools redis-server redis-timeseries
+yum -y install grafana
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+yum -y install redis-tools redis-server redis-timeseries 
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 yum -y install samba samba-client
 chkconfig smb on
@@ -1574,29 +1585,6 @@ yum -y install opsi-linux-support
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 chkconfig opsiconfd on
 chkconfig nmb on
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-service smb restart
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-service nmb restart
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install  $mysqlpkg$
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-chkconfig $mysqlservicename$ on
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-service $mysqlservicename$ restart
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-getent hosts $(hostname -f)
-yum -y install wimlib
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install opsi-server
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install opsi-linux-support
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install opsi-windows-support
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-chkconfig opsiconfd on
-if [ $? -ne 0 ]; then EXITCODE=1; fi
-chkconfig opsipxeconfd on
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 service smb restart
 if [ $? -ne 0 ]; then EXITCODE=1; fi
@@ -1660,6 +1648,7 @@ systemctl restart nmb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install $mysqlpkg$
 if [ $? -ne 0 ]; then EXITCODE=1; fi
+zypper --no-gpg-checks --non-interactive install grafana
 zypper --no-gpg-checks --non-interactive install redis-server
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install redis-timeseries
@@ -1704,5 +1693,19 @@ setValueByKey "DHCPD_INTERFACE" '"ANY"'
 [PatchTextFile_opsirepo_deb]
 FindLine_StartingWith "deb $opsi_online_repository$"
 DeleteTheLine
+FindLine_StartingWith "deb https://packages.grafana.com"
+DeleteTheLine
 GoToBottom
 InsertLine "deb $opsi_online_repository$/$distroName4repo$_$distRelease4repo$ ./"
+InsertLine "deb https://packages.grafana.com/enterprise/deb stable main"
+
+[PatchTextFile_grafana_repo_rpm]
+AppendLine "[grafana]"
+AppendLine "name=grafana"
+AppendLine "baseurl=https://packages.grafana.com/oss/rpm"
+AppendLine "repo_gpgcheck=1"
+AppendLine "enabled=1"
+AppendLine "gpgcheck=1"
+AppendLine "gpgkey=https://packages.grafana.com/gpg.key"
+AppendLine "sslverify=1"
+AppendLine "sslcacert=/etc/pki/tls/certs/ca-bundle.crt"

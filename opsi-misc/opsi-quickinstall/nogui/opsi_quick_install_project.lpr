@@ -186,7 +186,7 @@ type
   begin
     LogDatei.log('Entered SetDefaultValues', 0);
     // set default values:
-    opsiVersion := 'Opsi 4.1';
+    opsiVersion := 'Opsi 4.2';
     // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
       repo := baseUrlOpsi41
@@ -264,6 +264,7 @@ type
     LogDatei.log('Entered InstallOpsi', 0);
     writeln(rsInstall + opsiVersion + ':');
 
+    // for me as warning
     if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
     begin
       writeln('The branch "' + repoKind + '" is not available for Opsi 4.2');
@@ -330,6 +331,7 @@ type
     if FileText[0] = 'failed' then
       ExitCode := 1;
     // print result of installation
+    writeln();
     writeln(FileText.Text);
     writeln(rsLog);
     writeln(LogOpsiServer);

@@ -14,8 +14,6 @@ DefVar $aktbackend$
 DefVar $opsi_stability$
 DefVar $repo_kind$
 DefVar $opsi_online_repository$
-DefVar $opsi_online_repository_nodebproxy$
-DefVar $opsi_noproxy_online_repository$
 DefVar $mysql_root_pw$
 DefVar $mysqlpkg$
 DefVar $distroName4repo$
@@ -66,7 +64,6 @@ set $backend$ = "file"
 set $repo_kind$ = "stable"
 set $update_test$ = "false"
 set $opsi_online_repository_org$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:"
-set $opsi_noproxy_online_repository$ = "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:"
 set $setup_after_install_list$ = createStringList ("")
 set $allow_reboot$  = "true"
 set $install_and_configure_dhcp$  = "false"
@@ -97,7 +94,6 @@ if fileExists("%scriptpath%/properties.conf")
 	set $repo_kind$ = getValue("repo_kind", $properties_conf$)
 	set $update_test$ = getValue("update_test", $properties_conf$)
 	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
-	set $opsi_noproxy_online_repository$ = getValue("opsi_noproxy_online_repository", $properties_conf$)
 	; not used  in quick-install:
 	;set $setup_after_install_list$ = 
 	set $allow_reboot$  = getValue("allow_reboot", $properties_conf$)
@@ -123,7 +119,6 @@ else
 	set $repo_kind$ = GetProductProperty("repo_kind", $repo_kind$)
 	set $update_test$ = GetProductProperty("update_test", $update_test$)
 	set $opsi_online_repository_org$ = GetProductProperty("opsi_online_repository", $opsi_online_repository_org$)
-	set $opsi_noproxy_online_repository$ = GetProductProperty("opsi_noproxy_online_repository", $opsi_noproxy_online_repository$)
 	set $setup_after_install_list$ = getProductPropertyList("setup_after_install",$setup_after_install_list$)
 	set $allow_reboot$  = getProductProperty("allow_reboot",$allow_reboot$)
 	set $install_and_configure_dhcp$  = getProductProperty("install_and_configure_dhcp",$install_and_configure_dhcp$)
@@ -182,7 +177,6 @@ else
 endif
 
 set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
-set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
 
 comment "Installing from: " + $opsi_online_repository$
 Message "Start " + $ProductId$
@@ -288,7 +282,6 @@ if $update_test$ = "true"
 		endif
 	endif
 	set $opsi_online_repository$ = $opsi_online_repository_org$ + $opsi_stability$
-	set $opsi_online_repository_nodebproxy$ = $opsi_noproxy_online_repository$ + $opsi_stability$
 	comment "Installing from: " + $opsi_online_repository$
 	sub_dist_dependend_opsi_install
 	sub_opsi_base_config
@@ -634,7 +627,6 @@ Switch $distrotype$
 		endif
 
 		Message "Adding repository"
-		set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
 		set $mysqlservicename$ = "mysqld"
 		set $dhcpdservicename$ = "dhcpd"
 		set $mysqlpkg$ = "community-mysql-server"
@@ -643,7 +635,9 @@ Switch $distrotype$
 		if contains($distroName$,"CentOS")
 			set $distroName4repo$ = "CentOS"
 			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
-				set $distRelease4repo$ = "8"
+				Message "unsupported CentOS Release"
+				isFatalError "unsupported CentOS Release"
+				LogError "unsupported CentOS Reelease"
 			else
 				if comparedotseparatedNumbers($distRelease$, ">=", "7") and comparedotseparatedNumbers($distRelease$, "<", "8")
 					set $distRelease4repo$ = "7"
@@ -656,12 +650,13 @@ Switch $distrotype$
 		if contains($distroName$,"RedHat")
 			set $distroName4repo$ = "RedHat"
 			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
-				set $distroName4repo$ = "RHEL"
-				set $distRelease4repo$ = "7"
+				Message "unsupported Redhat Release"
+				isFatalError "unsupported Redhat Release"
+				LogError "unsupported Redhat Reelease"
 			else
 				if comparedotseparatedNumbers($distRelease$, ">=", "7") and comparedotseparatedNumbers($distRelease$, "<", "8")
 					set $distroName4repo$ = "RHEL"
-					set $distRelease4repo$ = "8"
+					set $distRelease4repo$ = "7"
 				endif
 			endif
 			set $mysqlservicename$ = "mariadb"
@@ -702,7 +697,6 @@ Switch $distrotype$
 EndSwitch
 
 [sub_suse_configure_variables]
-set $opsi_online_repository$ = $opsi_online_repository_nodebproxy$
 set $mysqlservicename$ = "mysql"
 set $mysqlpkg$ = "mariadb"
 set $dhcpdservicename$ = "dhcpd"
@@ -806,9 +800,11 @@ if $fileonly$ = "false"
 		set $mysql_root_pw$ = takeString(0, LoadTextFile("/etc/mysql.secret"))
 		ShellInAnIcon_configure_opsi_mysql_backend_ucs
 	else
-		if $distRelease$ >= "16.04"
-			message "Ubuntu Xenial detected. Disabling mysql strict mode"
-			ShellInAnIcon_disable_mysql_strict_mode
+		if $distroName$ = 'Ubuntu'
+			if comparedotseparatedNumbers($distRelease$, ">=", "16.04")
+				message "Ubuntu Xenial detected. Disabling mysql strict mode"
+				ShellInAnIcon_disable_mysql_strict_mode
+			endif
 		endif
 		ShellInAnIcon_configure_opsi_mysql_backend
 	endif
@@ -1297,12 +1293,7 @@ exit $EXITCODE
 set -x
 export DEBIAN_FRONTEND=noninteractive
 EXITCODE=0
-#apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install software-properties-common
-#apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install python-software-properties
-#apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install wget
-#echo 'deb $opsi_online_repository$/x$distroName4repo$_$distRelease4repo$ ./'  >> /etc/apt/sources.list.d/opsi.list
-#wget -O - $opsi_online_repository$/x$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
-wget -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
+wget -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 apt-get update
 if [ $? -ne 0 ]; then EXITCODE=1; fi
@@ -1333,7 +1324,6 @@ export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 export http_proxy=$proxy$
 wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
-wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
 apt-get update
 exit $?
 
@@ -1353,7 +1343,6 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export http_proxy=$proxy$
 wget --no-check-certificate -O - $opsi_online_repository$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
-wget --no-check-certificate -O - $opsi_online_repository_nodebproxy$/$distroName4repo$_$distRelease4repo$/Release.key | apt-key add -
 exit $?
 
 
