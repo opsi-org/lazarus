@@ -159,7 +159,7 @@ begin
       fCES := TCharEncStream.Create;
       fCES.Reset;
       fCES.LoadFromFile(ExpandFileName(fileName));
-      //hasBOM := fCES.HasBOM;
+      hasBOM := fCES.HasBOM;
       Result := fCES.UniStreamType;
     end
   else
@@ -218,10 +218,9 @@ begin
   fCES.Reset;
   fCES.UniStreamType := uniEncoding2UniStreamTypes(outFileName,encoding, hasBOM);
   fCES.HasBOM := hasBOM;
-  fCES.ForceType := True;
   fCES.UTF8Text := inlist.Text;
   fCES.SaveToFile(outFileName);
-  fCES.ANSIEnc := GetSystemEncoding;
+  //fCES.ANSIEnc := GetSystemEncoding;
   fCES.Free;
 end;
 
@@ -497,18 +496,11 @@ end;
 procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
 var
-  //fCES: TCharEncStream;
-  //str: string;
   myfile: Text;
   usedenc: string;
 begin
-  (*
-  fCES := TCharEncStream.Create;
-  fCES.Reset;
-  fCES.UTF8Text := inlist.Text;
-  *)
   if isEncodingUnicode(encoding) then
-    saveUnicodeTextFile(inlist, outFileName, encoding)
+     saveUnicodeTextFile(inlist, outFileName, encoding)
   else
   begin
     AssignFile(myfile, outFileName);
@@ -529,9 +521,7 @@ begin
       LogDatei.log('-----------------', LLDebug3);
     end;
   end;
- // fCES.Free;
 end;
-
 
 initialization
   initEncoding;
