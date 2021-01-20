@@ -76,16 +76,16 @@ begin
   // get the supported encodings
   supportedEncodings := TStringList.Create;
   GetSupportedEncodings(supportedEncodings);
-  supportedEncodings.Add('UTF-16');
-  supportedEncodings.Add('UTF-16BE');
-  supportedEncodings.Add('UTF-16LE');
+  supportedEncodings.Add('utf16');
+  supportedEncodings.Add('utf16be');
+  supportedEncodings.Add('utf16le');
   supportedEncodings.Add('unicode');
-  supportedEncodings.Add('UTF-16-BOM');
-  supportedEncodings.Add('UTF-16BE-BOM');
-  supportedEncodings.Add('UTF-16LE-BOM');
-  supportedEncodings.Add('UTF-32-BOM');
-  supportedEncodings.Add('UTF-32BE-BOM');
-  supportedEncodings.Add('UTF-32LE-BOM');
+  //supportedEncodings.Add('UTF-16-BOM');
+  supportedEncodings.Add('utf16bebom');
+  supportedEncodings.Add('utf16lebom');
+  //supportedEncodings.Add('UTF-32-BOM');
+  supportedEncodings.Add('utf32bebom');
+  supportedEncodings.Add('utf32lebom');
 
   // add the aliases (utf8 is alias for UTF-8)
   k := supportedEncodings.Count;
@@ -104,6 +104,7 @@ end;
 function isSupportedEncoding(testEncoding: string): boolean;
 begin
   Result := False;
+  testEncoding := NormalizeEncoding(testEncoding);
   if supportedEncodings.IndexOf(testEncoding) > -1 then
     Result := True;
   // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
