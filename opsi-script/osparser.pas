@@ -112,7 +112,9 @@ uses
   osregex,
   osurlparser,
   ostxstringlist,
-  LAZUTF8;
+  LAZUTF8,
+  osnetutil,
+  osstrlistutils;
 
 type
   TStatement = (tsNotDefined,
@@ -445,6 +447,7 @@ type
     function doXMLRemoveNamespace(filename: string; const elementname: string;
       const namespace: string): boolean;
 
+    function RunAsForParameter(const param: string; var runAs: TRunAs): boolean;
 
 
     (* Spezielle Methoden *)
@@ -541,7 +544,11 @@ type
       SaveddeWithProgman: boolean): TSectionResult;
     function execWinBatch(const Sektion: TWorkSection; WinBatchParameter: string;
       WaitConditions: TSetWaitConditions; ident: string; WaitSecs: word;
-      runAs: TRunAs; flag_force64: boolean): TSectionResult;
+      runAs: TRunAs; flag_force64: boolean; showoutput: boolean;
+      var output: TXStringList): TSectionResult;
+    function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
+      var Remaining: string; linecounter: integer;
+      var output: TXStringList): TSectionResult;
     function execDOSBatch(const Sektion: TWorkSection; BatchParameter: string;
       ShowCmd: integer; catchOut: boolean; logleveloffset: integer;
       WaitConditions: TSetWaitConditions; var output: TXStringList): TSectionResult;
@@ -639,6 +646,7 @@ const
   ParameterRunElevated = '/RunElevated';
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
+  ParameterShowoutput = '/showoutput';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -680,6 +688,7 @@ var
   runprocessproducts: boolean;
   opsiWinstStartdir: string;
   Script: TuibInstScript;
+  aktsection: TWorkSection;
   scriptsuspendstate: boolean;
   scriptstopped: boolean;
   inDefFuncLevel: integer = 0;
@@ -1573,8 +1582,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -7911,6 +7921,7 @@ var
     shellcallArchParam: string;
     go_on: boolean;
     tmpstr, searchmask: string;
+    retryOnReboot: boolean = False;
 
   begin
     targetDirectory := presetDir;
@@ -8163,6 +8174,7 @@ var
           (UpperCase(Expressionstr) = 'DEL') then
         begin
           search4file := True;
+          retryOnReboot := False;
           cpSpecify := 0;
           if UpperCase(Expressionstr) = 'DEL' then
             search4file := False;
@@ -8212,6 +8224,15 @@ var
                 LogDatei.log('Option -c detected: ', LLDebug2);
                 {$ELSE}
                 LogDatei.log('The del -c Option is Windows only', LLWarning);
+                {$ENDIF WINDOWS}
+              end
+              else if Expressionstr[j] = 'r' then
+              begin
+                {$IFDEF WINDOWS}
+                retryOnReboot := True;
+                LogDatei.log('Option -r detected: ', LLDebug2);
+                {$ELSE}
+                LogDatei.log('The del -r Option is Windows only', LLWarning);
                 {$ENDIF WINDOWS}
               end
               else if Expressionstr[j] = 'd' then
@@ -8273,7 +8294,7 @@ var
           begin
             LogDatei.log('we try to delete: ' + Source, LLDebug2);
             Install.AllDelete(Source, recursive, ignoreReadOnly,
-              daysback, search4file, RebootWanted);
+              daysback, search4file, RebootWanted, retryOnReboot);
           end;
           if RebootWanted and not (cpSpecify and cpNoExtraReboot = cpNoExtraReboot) then
           begin
@@ -8471,7 +8492,7 @@ var
             begin
               DeleteFileUTF8(target);
               logDatei.log('Info: zip: target: ' + target +
-                ' existed and was be removed', LLNotice);
+                ' existed and was removed', LLNotice);
             end;
 
 
@@ -9379,9 +9400,215 @@ begin
   // not implemented
 end;
 
+function TuibInstScript.parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
+  var Remaining: string; linecounter: integer;
+  var output: TXStringList): TSectionResult;
+var
+  runAs: TRunAs;
+  WaitSecs: word = 0;
+  flag_force64: boolean;
+  expr: string = '';
+  ident: string = '';
+  seconds: string = '';
+  WaitConditions: TSetWaitConditions;
+  SyntaxCheck: boolean;
+  onlyWindows: boolean;
+  InfoSyntaxError: string = '';
+  sectionName: string = '';
+  showoutput: boolean;
+
+begin
+  if length(ArbeitsSektion.Name) <> 0 then
+  begin
+    logdatei.log('Execution of: ' + ArbeitsSektion.Name + ' ' + Remaining, LLNotice);
+    sectionName := PStatNames[ArbeitsSektion.SectionKind];
+  end
+  else
+  begin
+    logdatei.log('Execution of: processCall(' + trim(ArbeitsSektion.Text) +
+      ') ' + Remaining, LLNotice);
+    sectionName := 'processCall';
+  end;
+
+  runAs := traInvoker;
+ {$IFDEF WIN32}
+  opsiSetupAdmin_runElevated := False;
+ {$ENDIF WIN32}
+  WaitSecs := 0;
+  flag_force64 := False;
+  GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+  SyntaxCheck := True;
+  onlyWindows := False;
+  showoutput := False;
+
+  ident := '';
+  WaitConditions := [ttpWaitOnTerminate];
+
+  while SyntaxCheck and (length(expr) > 0) do
+  begin
+    if (LowerCase(expr) = LowerCase(Parameter_64Bit)) and Is64BitSystem then
+    begin
+      flag_force64 := True;
+      onlyWindows := True;
+    end
+
+    else if LowerCase(expr) = LowerCase(Parameter_32Bit) then
+    begin
+      flag_force64 := False;
+      onlyWindows := True;
+    end
+
+    else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and Is64BitSystem then
+    begin
+      flag_force64 := True;
+      onlyWindows := True;
+    end
+
+    else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
+      (not Is64BitSystem) then
+    begin
+      flag_force64 := False;
+      onlyWindows := True;
+    end
+
+    else if LowerCase(expr) = LowerCase(ParameterWaitSecs) then
+    begin
+      WaitConditions := WaitConditions + [ttpWaitTime];
+      // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+
+      GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+      try
+        WaitSecs := StrToInt64(expr);
+      except
+        on EConvertError do
+        begin
+          InfoSyntaxError := 'Integer number expected';
+          SyntaxCheck := False;
+        end
+      end;
+    end
+
+    else if LowerCase(expr) = LowerCase(ParameterCloseOnWindow) then
+    begin
+      onlyWindows := True;
+      runAs := traInvoker;
+      WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
+
+      if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
+      begin
+        if Remaining <> '' then
+        begin
+          SyntaxCheck := False;
+          InfoSyntaxError := 'not expected chars after "';
+        end;
+      end
+      else
+        SyntaxCheck := False;
+    end
+
+
+    else if LowerCase(expr) = LowerCase(ParameterCloseBehindWindow) then
+    begin
+      onlyWindows := True;
+      runAs := traInvoker;
+      WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
+
+      if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
+      begin
+        if Remaining <> '' then
+        begin
+          SyntaxCheck := False;
+          InfoSyntaxError := 'unexpected characters after "';
+        end;
+      end
+      else
+        SyntaxCheck := False;
+    end
+
+    else if LowerCase(expr) = LowerCase(ParameterWaitProcessTimeoutSecs) then
+    begin
+      WaitConditions := WaitConditions - [ttpWaitTime];
+      WaitConditions := WaitConditions + [ttpWaitTimeout];
+
+      GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+      try
+        WaitSecs := StrToInt64(expr);
+      except
+        on EConvertError do
+        begin
+          try
+            EvaluateString(expr, expr, seconds, InfoSyntaxError);
+            WaitSecs := StrToInt64(seconds);
+          except
+            on EConvertError do
+            begin
+              InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+              SyntaxCheck := False;
+            end;
+          end;
+        end
+      end;
+    end
+
+    else if LowerCase(expr) = LowerCase(ParameterWaitForProcessEnding) then
+    begin
+      WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
+      if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
+        SyntaxCheck := False;
+    end
+
+    else if UpperCase(expr) = UpperCase(ParameterDontWait) then
+    begin
+      WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+      WaitConditions := WaitConditions - [ttpWaitTimeout];
+    end
+
+    else if UpperCase(expr) = UpperCase(ParameterWaitOnTerminate) then
+    begin
+      WaitConditions := WaitConditions + [ttpWaitOnTerminate];
+    end
+
+    else if lowercase(expr) = lowercase(ParameterShowoutput) then
+    begin
+      showoutput := True;
+    end
+
+    else if RunAsForParameter(expr, runas) then
+    begin
+      onlyWindows := True;
+    end
+
+    else
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := expr + ' not legal ' + sectionName + ' parameter';
+      // prevent misleading remaining string error for processCall
+      Remaining := '';
+    end;
+
+   {$IFNDEF WIN32}
+    if onlyWindows then
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := expr + ' is only supported on Windows';
+      break;
+    end;
+   {$ENDIF WIN32}
+
+    GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+  end;
+
+  if SyntaxCheck then
+    Result := execWinBatch(ArbeitsSektion, Remaining, WaitConditions,
+      Ident, WaitSecs, runAs, flag_force64, showoutput, output)
+  else
+    Result := reportError(ArbeitsSektion, linecounter, 'Expressionstr', InfoSyntaxError);
+end;
+
 function TuibInstScript.execWinBatch(const Sektion: TWorkSection;
   WinBatchParameter: string; WaitConditions: TSetWaitConditions;
-  ident: string; WaitSecs: word; runAs: TRunAs; flag_force64: boolean): TSectionResult;
+  ident: string; WaitSecs: word; runAs: TRunAs; flag_force64: boolean;
+  showoutput: boolean; var output: TXStringList): TSectionResult;
 
 var
   i: integer = 0;
@@ -9395,11 +9622,14 @@ var
   waitsecsAsTimeout: boolean = False;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
+  outputStart: integer = 0;
+  showOutputFlag: TShowOutputFlag;
 
 begin
   try
     Result := tsrPositive;
     retrycount := 0;
+    showoutputflag := tsofHideOutput;
 
     if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
       exit;
@@ -9418,11 +9648,35 @@ begin
     else
       Wow64FsRedirectionDisabled := False;
     {$ENDIF WIN32}
+
+    WaitForReturn := ttpWaitOnTerminate in WaitConditions;
+
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.showAcitvityBar(True);
+
+    if not WaitForReturn then
+      showoutput := False;
+
+    if showoutput then
+    begin
+      // We call CreateSystemInfo already in execWinBatch
+      // so all continuous StartProcess calls will produce
+      // a continuous output in the SystemInfo window
+      // This is possible with the tsofShowOutputNoSysteminfo flag
+      showoutputFlag := tsofShowOutputNoSysteminfo;
+
+      CreateSystemInfo;
+      SystemInfo.Memo1.Lines.Clear;
+      systeminfo.Label1.Caption := 'Executing: ' + Sektion.Name;
+
+      ProcessMess;
+      LogDatei.log('Start Showoutput', LLInfo);
+    end;
     {$ENDIF GUI}
 
+    // start displaying at next new line
+    outputStart := output.Count;
 
     for i := 1 to Sektion.Count do
     begin
@@ -9475,15 +9729,20 @@ begin
 
         LogDatei.log('Call "' + CommandLine + '"', LevelComplete);
 
-        if ttpWaitTimeout in WaitConditions then
-          waitsecsAsTimeout := True;
+        waitsecsAsTimeout := ttpWaitTimeout in WaitConditions;
+
+        {$IFDEF GUI}
+        if showoutput then
+          systeminfo.Label1.Caption := 'Executing: ' + CommandLine;
+        {$ENDIF GUI}
+
         if WaitSecs > 0 then
           if waitsecsAsTimeout then
             LogDatei.log('   Timeout ' + IntToStr(WaitSecs) +
-              ' seconds ', LevelComplete)
+              ' seconds ', LLinfo)
           else
             LogDatei.log('   Waiting ' + IntToStr(WaitSecs) +
-              ' seconds ', LevelComplete);
+              ' seconds ', LLinfo);
 
 
 
@@ -9491,9 +9750,9 @@ begin
         begin
           LogDatei.log('   Waiting until window "' + ident +
             '" has vanished', LevelComplete);
-          if not StartProcess(Commandline, sw_hide, True, True,
-            False, False, waitsecsAsTimeout, runAs, ident, WaitSecs,
-            Report, FLastExitCodeOfExe) then
+          if not StartProcess(Commandline, sw_hide, showoutputFlag,
+            True, True, False, False, waitsecsAsTimeout, runAs, ident,
+            WaitSecs, Report, FLastExitCodeOfExe, True, output, Sektion.Name) then
           begin
             ps := 'Error: ' + Report;
             LogDatei.log(ps, LLError);
@@ -9506,9 +9765,9 @@ begin
           LogDatei.log('   Waiting until window "' + ident +
             '" is coming up', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, True, False,
-            True, False, waitsecsAsTimeout, runAs, ident, WaitSecs,
-            Report, FLastExitCodeOfExe) then
+          if not StartProcess(Commandline, sw_hide, showoutputFlag,
+            True, False, True, False, waitsecsAsTimeout, runAs, ident,
+            WaitSecs, Report, FLastExitCodeOfExe, True, output, Sektion.Name) then
           begin
             ps := 'Error: ' + Report;
             LogDatei.log(ps, LLError);
@@ -9521,9 +9780,9 @@ begin
           LogDatei.log('   Waiting until process "' + ident +
             '" started and has ended', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, True, False,
-            False, True, waitsecsAsTimeout, runAs, ident, WaitSecs,
-            Report, FLastExitCodeOfExe) then
+          if not StartProcess(Commandline, sw_hide, showoutputFlag,
+            True, False, False, True, waitsecsAsTimeout, runAs, ident,
+            WaitSecs, Report, FLastExitCodeOfExe, True, output, Sektion.Name) then
           begin
             ps := 'Error: ' + Report;
             LogDatei.log(ps, LLError);
@@ -9533,16 +9792,9 @@ begin
         end
         else
         begin
-
-          if ttpWaitOnTerminate in WaitConditions then
-          begin
-            WaitForReturn := True;
+          if WaitForReturn then
             LogDatei.log('   Waiting until the called process is finished',
               LevelComplete);
-          end
-
-          else
-            WaitForReturn := False;
 (*
 from defines.inc
 { ShowWindow  }
@@ -9561,15 +9813,30 @@ from defines.inc
    SW_SHOWNORMAL = 1;
 *)
 
-          if not StartProcess(Commandline, sw_hide, WaitForReturn,
-            False, False, False, waitsecsAsTimeout, runAs, '', WaitSecs,
-            Report, FLastExitCodeOfExe) then
+          if not StartProcess(Commandline, sw_hide, showoutputFlag,
+            WaitForReturn, False, False, False, waitsecsAsTimeout,
+            runAs, '', WaitSecs, Report, FLastExitCodeOfExe, True,
+            output, Sektion.Name) then
           begin
             ps := 'Error: ' + Report;
             LogDatei.log(ps, LLError);
           end
           else
             LogDatei.log(Report, LLInfo);
+        end;
+
+        if (outputStart < output.Count) then
+        begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+          LogDatei.log('output:', LLDebug);
+          LogDatei.log('--------------', LLDebug);
+          while outputStart < output.Count do
+          begin
+            LogDatei.log(output.strings[outputStart], LLDebug);
+            Inc(outputStart, 1);
+          end;
+          LogDatei.log('--------------', LLDebug);
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
         end;
       end;
     end;
@@ -9590,6 +9857,16 @@ from defines.inc
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(False);
+
+    if showoutput then
+    begin
+      SystemInfo.Free;
+      SystemInfo := nil;
+      FBatchOberflaeche.BringToFront;
+      FBatchOberflaeche.centerWindow;
+      ProcessMess;
+      LogDatei.log('Stop Showoutput', LLInfo);
+    end;
     {$ENDIF GUI}
   end;
 end;
@@ -9640,7 +9917,7 @@ begin
     if (lowercase(archparam) = '32bit') then
       shortarch := '32';
 
-    LogDatei.log('PowerhellCall Executing: ' + command + ' ; mode: ' + shortarch,
+    LogDatei.log('PowershellCall Executing: ' + command + ' ; mode: ' + shortarch,
       LLNotice + logleveloffset);
 
 
@@ -9914,11 +10191,25 @@ var
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   tempfilename: string = '';
   runas: TRunAs;
-  showoutput: boolean = False;
+  showoutput: TShowOutputFlag;
   remainingstr, evaluatedstr, newbatchparastr, errorstr: string;
   aktos: TuibOSVersion;
   cmdMuiFiles: TStringList;
   muisrcpath, muitargetpath: string;
+  goon: boolean;
+  remaining: string = '';
+  expr: string = '';
+  warnOnlyWindows: boolean;
+  syntaxCheck: boolean;
+  sysError: DWORD;
+  InfoSyntaxError: string = '';
+  waitsecsAsTimeout: boolean = True;
+  WaitForReturn: boolean = True;
+  WaitForProcessEnding: boolean = False;
+  WaitSecs: word = 0;
+  seconds: string = '';
+  ident: string = '';
+  use_sp, runsuccess: boolean;
 
 begin
   try
@@ -9932,6 +10223,12 @@ begin
     {$ENDIF GUI}
 
     Result := tsrPositive;
+    use_sp := True; // use startprocess by default
+    {$IFDEF WINDOWS}
+    // do not use startprocess on win7 by default
+    if GetNTVersionMajor < 10 then
+      use_sp := False;
+    {$ENDIF WINDOWS}
 
     if Sektion.Count = 0 then
       exit;
@@ -9939,24 +10236,6 @@ begin
     LogDatei.LogSIndentLevel := Sektion.NestingLevel;
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-    (*
-    ps := '';
-    LogDatei.log (ps, LLNotice);
-    ps := 'Execution of: '+Sektion.Name + ' ' +BatchParameter;
-    LogDatei.log (ps, LLNotice);
-    *)
-
-    (*
-    if pos (uppercase (PStatNames^ [tsDOSInAnIcon]), uppercase (Sektion.Name)) > 0 then
-       ps := Sektion.Name;
-    if pos (uppercase (PStatNames^ [tsDOSBatchFile]), uppercase (Sektion.Name)) > 0 then
-       ps := Sektion.Name;
-    if pos (uppercase (PStatNames^ [tsShellInAnIcon]), uppercase (Sektion.Name)) > 0 then
-       ps := Sektion.Name;
-    if pos (uppercase (PStatNames^ [tsShellBatchFile]), uppercase (Sektion.Name)) > 0 then
-       ps := Sektion.Name;
-     *)
 
     {$IFDEF GUI}
     CentralForm.Label2.Caption := ps;
@@ -9983,7 +10262,7 @@ begin
     begin
     {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
       LogDatei.log('Content of saved file: ' + tempfilename, LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       for i := 0 to Sektion.Count - 1 do
@@ -9991,108 +10270,128 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter,
-          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter, pos('winst ',
+          lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
+      warnOnlyWindows := False;
       force64 := False;
       runAs := traInvoker;
+      showoutput := tsofHideOutput;
 
-      if (pos(lowercase('/64bit'), lowercase(winstparam)) > 0) and Is64BitSystem then
-        force64 := True;
+      goon := False;
+      remaining := winstparam;
 
-      if (pos(lowercase('/sysnative'), lowercase(winstparam)) > 0) and Is64BitSystem then
-        force64 := True;
+      {$IFDEF WIN32}
+      opsiSetupAdmin_runElevated := False;
+      {$ENDIF WIN32}
 
-      if (pos(lowercase('/32bit'), lowercase(winstparam)) > 0) then
-        force64 := False;
-
-      if (pos(lowercase('/showoutput'), lowercase(winstparam)) > 0) then
+      if length(winstparam) > 0 then
+        goon := True;
+      while goon do
       begin
-        showoutput := True;
-        LogDatei.log('Set Showoutput true', LLDebug3);
-      end;
-
-      if (pos(lowercase(ParameterRunAsLoggedOnUser), lowercase(winstparam)) > 0) then
-      begin
-        if runLoginScripts then
-          runAs := traLoggedOnUser
-        else
-          LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
-            LLWarning);
-      end;
-
-      (*
-    {$IFDEF WIN32}
-      if force64 then
-        if not cmd64checked then
+        if Skip(Parameter_64bit, Remaining, Remaining, ErrorInfo) then
         begin
-          if (not FileExists(GetWinDirectory + '\cmd64.exe')) or
-            (FindAllFiles('c:\windows', 'cmd64.exe.mui', True).Count = 0) then
-          begin
-            Logdatei.log(GetWinDirectory + '\cmd64.exe not found - try to get it',
-              LLDebug2);
-            try
-              if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-              begin
-                LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-                if FileExists(GetWinSystemDirectory + '\cmd.exe') then
+          if Is64BitSystem then
+            force64 := True;
+          warnOnlyWindows := True;
+        end
+        else if Skip(Parameter_SysNative, Remaining, Remaining, ErrorInfo) then
+        begin
+          if Is64BitSystem then
+            force64 := True;
+          warnOnlyWindows := True;
+        end
+        else if Skip(Parameter_32bit, Remaining, Remaining, ErrorInfo) then
+        begin
+          force64 := False;
+          warnOnlyWindows := True;
+        end
+        else if Skip('/showoutput', Remaining, Remaining, ErrorInfo) then
+        begin
+          showoutput := tsofShowOutput;
+          LogDatei.log('Set Showoutput true', LLDebug);
+        end
+        else if Skip(ParameterWaitProcessTimeoutSecs, Remaining, Remaining, ErrorInfo)
+        then
+        begin
+          use_sp := True;
+          WaitConditions := WaitConditions - [ttpWaitTime];
+          WaitConditions := WaitConditions + [ttpWaitTimeout];
+          waitsecsAsTimeout := True;
+
+          GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+          try
+            WaitSecs := StrToInt64(expr);
+          except
+            on EConvertError do
+            begin
+              try
+                EvaluateString(expr, expr, seconds, InfoSyntaxError);
+                WaitSecs := StrToInt64(seconds);
+              except
+                on EConvertError do
                 begin
-                  if fileutil.CopyFile(GetWinSystemDirectory + '\cmd.exe',
-                    GetWinDirectory + '\cmd64.exe') then
-                  begin
-                    LogDatei.log('cmd64.exe created in ' + GetWinDirectory,
-                      LLinfo + logleveloffset);
-                    cmdMuiFiles := TStringList.Create;
-                    cmdMuiFiles :=
-                      FindAllFiles('c:\windows\system32', 'cmd.exe.mui', True);
-                    for i := 0 to cmdMuiFiles.Count - 1 do
-                    begin
-                      LogDatei.log('cmd.exe.mui found in ' + cmdMuiFiles.Strings[i],
-                        LLinfo + logleveloffset);
-                      muisrcpath := ExtractFileDir(cmdMuiFiles.Strings[i]);
-                      muitargetpath := ReplaceStr(muisrcpath, 'system32\', '');
-                      if fileutil.CopyFile(muisrcpath + '\cmd.exe.mui',
-                        muitargetpath + '\cmd64.exe.mui') then
-                        LogDatei.log('created : ' + muitargetpath + '\cmd64.exe.mui',
-                          LLinfo + logleveloffset);
-                    end;
-                    cmdMuiFiles.Free;
-                  end
-                  else
-                    LogDatei.log('could not get cmd64.exe', LLError);
-                end
-                else
-                  LogDatei.log('could see: ' + GetWinSystemDirectory +
-                    '\cmd.exe', LLError);
-                dummybool := DSiRevertWow64FsRedirection(
-                  oldDisableWow64FsRedirectionStatus);
-                LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-              end
-              else
-              begin
-                LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+                  InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                  SyntaxCheck := False;
+                end;
               end;
-            except
-              on ex: Exception do
-              begin
-                LogDatei.log('Error: ' + ex.message, LLError);
-              end;
+            end
+          end;
+          LogDatei.log('found /Timeoutseconds: ' + IntToStr(WaitSecs), LLDebug);
+        end
+        else if Skip(ParameterWaitForProcessEnding, Remaining, Remaining, ErrorInfo)
+        then
+        begin
+          use_sp := True;
+          WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
+          WaitForProcessEnding := True;
+          if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
+            SyntaxCheck := False;
+          LogDatei.log('found /WaitForProcessEnding: ' + ident, LLDebug);
+        end
+        else if Skip(ParameterDontWait, Remaining, Remaining, ErrorInfo) then
+        begin
+          use_sp := True;
+          WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+          WaitConditions := WaitConditions - [ttpWaitTimeout];
+          WaitForReturn := False;
+          LogDatei.log('found /LetThemGo', LLDebug);
+        end
+        else
+        begin
+          if not (length(remaining) > 0) then
+            goon := False
+          else
+          begin
+            GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+            if not RunAsForParameter(expr, runas) then
+            begin
+              LogDatei.log('Syntaxerror: "' + remaining +
+                '" is no valid parameter ', LLError);
+              goon := False;
+            end
+            else
+            begin
+              warnOnlyWindows := True;
+              use_sp := True;
             end;
           end;
-          if FileExists(GetWinDirectory + '\cmd64.exe') then
-            cmd64checked := True
-          else
-            LogDatei.log('no cmd64.exe - will use cmd.exe instead', LLError);
         end;
-    {$ENDIF WIN32}
-    *)
+      end;
+
+      {$IFNDEF WINDOWS}
+      if warnOnlyWindows then
+        LogDatei.log('Warning: at least one Windows-only Parameter was used', LLError);
+      {$ENDIF WINDOWS}
 
       if BatchParameter <> '' then
       begin
         ApplyTextVariablesToString(BatchParameter, False);
       end;
+
+      Parameters := '';
 
       if GetUibOsType(errorinfo) = tovLinux then
       begin
@@ -10104,10 +10403,14 @@ begin
         end
         else
         begin
+          FileName := '/bin/bash';
+          Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
+          (* Calling terminal does not work correctly (do 8.12.2020)
           FileName := '/usr/bin/xterm';
           Parameters := Parameters +
             ' -e script /tmp/opsi-script-out.txt -c "/bin/bash ' +
             tempfilename + ' ' + BatchParameter + '"';
+            *)
         end;
        {$ELSE GUI}
         FileName := '/bin/bash';
@@ -10124,9 +10427,13 @@ begin
         end
         else
         begin
+          FileName := '/bin/bash';
+          Parameters := Parameters + ' ' + tempfilename + ' ' + BatchParameter;
+          (* Calling terminal does not work correctly (do 8.12.2020)
           FileName := '/usr/bin/open';
           Parameters := Parameters + ' -a Terminal.app  ' +
             tempfilename + ' ' + BatchParameter + '"';
+          *)
         end;
        {$ELSE GUI}
         FileName := '/bin/bash';
@@ -10156,40 +10463,74 @@ begin
 
       commandline := FileName + ' ' + trim(Parameters);
 
+      if WaitSecs > 0 then
+        if waitsecsAsTimeout then
+          LogDatei.log('   Timeout ' + IntToStr(WaitSecs) +
+            ' seconds ', LLinfo);
+
       begin
         output := TXStringlist.Create;
+        runsuccess := False;
         LogDatei.log('Executing ' + commandline, LLDebug + logleveloffset);
-        if not RunCommandAndCaptureOut(commandline, catchout,
-          output, report, showcmd, FLastExitCodeOfExe, showoutput) then
+        if use_sp then
         begin
-          // is failed
-          ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
-          // retry on error 19
-          if FLastExitCodeOfExe = 19 then
+          LogDatei.log_prog('Executing with SP: ' + commandline, LLDebug);
+          if not StartProcess(commandline, showcmd, showoutput,
+            WaitForReturn, False, False, WaitForProcessEnding,
+            waitsecsAsTimeout, runAs, ident, WaitSecs, report,
+            FLastExitCodeOfExe, catchout, output, Sektion.Name) then
           begin
-            ps := 'We got a Write protect error (19) - we retry';
-            LogDatei.log(ps, LLError);
-            ProcessMess;
-            Sleep(100);
-            if not RunCommandAndCaptureOut(commandline, catchout,
-              output, report, showcmd, FLastExitCodeOfExe, showoutput) then
+            // is failed
+            ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
+            // retry on error 19
+            if FLastExitCodeOfExe = 19 then
+            begin
+              ps := 'We got a Write protect error (19) - we retry';
+              LogDatei.log(ps, LLError);
+              ProcessMess;
+              Sleep(100);
+              if not StartProcess(commandline, showcmd, showoutput,
+                WaitForReturn, False, False, WaitForProcessEnding,
+                waitsecsAsTimeout, runAs, ident, WaitSecs, report,
+                FLastExitCodeOfExe, catchout, output, Sektion.Name) then
+              begin
+                LogDatei.log(ps, LLcritical);
+                FExtremeErrorLevel := LevelFatal;
+                scriptstopped := True;
+              end
+              else
+                runsuccess := True;
+              // is failed
+              ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
+            end
+            else
             begin
               LogDatei.log(ps, LLcritical);
               FExtremeErrorLevel := LevelFatal;
               scriptstopped := True;
             end;
-            // is failed
-            ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
           end
           else
+            runsuccess := True;
+        end
+        else
+        begin
+          LogDatei.log_prog('Executing with RCACO:  ' + commandline, LLDebug);
+          if not RunCommandAndCaptureOut(commandline, catchout, output,
+            report, showcmd, FLastExitCodeOfExe) then
           begin
+            ps := 'Error: ' + Report;
             LogDatei.log(ps, LLcritical);
             FExtremeErrorLevel := LevelFatal;
             scriptstopped := True;
+          end
+          else
+          begin
+            runsuccess := True;
           end;
-        end
+        end;
 
-        else if catchout or (filename = '/usr/bin/xterm') then
+        if runsuccess and (catchout or (filename = '/usr/bin/xterm')) then
         begin
           if filename = '/usr/bin/xterm' then
           begin
@@ -10403,6 +10744,8 @@ var
   partA: string = '';
   partB: string = '';
   continue: boolean;
+  tmpRunAs: TRunAs;
+  expr: string = '';
 
 begin
 
@@ -10463,8 +10806,17 @@ begin
         not Skip(ParameterEscapeStrings, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
-        not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) then
-        continue := False;
+        not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) and
+        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) then
+      begin
+        // try to parse a RunAs param
+        GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+        if not RunAsForParameter(expr, tmpRunAs) then
+        begin
+          remaining := expr + ' ' + remaining;
+          continue := False;
+        end;
+      end;
     end;
 
 
@@ -10521,19 +10873,24 @@ var
   force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
+  goon: boolean;
+  remaining: string;
+  expr: string = '';
+  onlyWindows: boolean;
+  showoutput: TShowOutputFlag;
+  sysError: DWORD;
+  use_sp: boolean;
 
 begin
   try
-    (*
-    if  GetNTVersionMajor < 6 then
-      runAs := traInvoker
-    else
-      runAs := traInvoker;
-    *)
     runAs := traInvoker;
     Result := tsrPositive;
     showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
     waitSecs := 0;
+    showoutput := tsofHideOutput;
+    force64 := False;
+    threaded := False;
+    use_sp := True; // use startprocess by default
 
     if Sektion.Count = 0 then
       exit;
@@ -10600,11 +10957,11 @@ begin
     begin
       {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
-      {$ENDIF LINUX}
+      {$ENDIF UNIX}
       LogDatei.log('Content of saved file: ' + tempfilename, LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       for i := 0 to Sektion.Count - 1 do
-        LogDatei.log(Sektion.Strings[i], LLDebug);
+        LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas, length(programparas), 1) = '=' then
@@ -10613,21 +10970,58 @@ begin
           tempfilename + '"  ' + passparas
       else
         commandline :=
-          '"' + programfilename + '" ' + programparas + ' "' +
-          tempfilename + '"  ' + passparas;
+          '"' + programfilename + '" ' + programparas + ' ' +
+          tempfilename + '  ' + passparas;
 
-      force64 := False;
-      if (pos(lowercase('/64bit'), lowercase(winstoption)) > 0) and Is64BitSystem then
-        force64 := True;
+      remaining := winstoption;
+      onlyWindows := False;
 
-      if (pos(lowercase('/sysnative'), lowercase(winstoption)) > 0) and
-        Is64BitSystem then
-        force64 := True;
+      while (remaining <> '') do
+      begin
+        GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
 
-      if (pos(lowercase('/32bit'), lowercase(winstoption)) > 0) then
-        force64 := False;
+        if (lowercase(Parameter_64bit) = lowercase(expr)) and Is64BitSystem then
+        begin
+          force64 := True;
+          onlyWindows := True;
+        end
+        else if (lowercase(Parameter_Sysnative) = lowercase(expr)) and
+          Is64BitSystem then
+        begin
+          force64 := True;
+          onlyWindows := True;
+        end
+        else if lowercase(Parameter_32bit) = lowercase(expr) then
+        begin
+          force64 := False;
+          onlyWindows := True;
+        end
+        else if lowercase(ParameterDontWait) = lowercase(expr) then
+          threaded := True
+        else if lowercase(ParameterShowoutput) = lowercase(expr) then
+          showoutput := tsofShowOutput
+        else if RunAsForParameter(expr, runas) then
+        begin
+          onlyWindows := True;
+        end;
+      end;
+
+      {$IFNDEF WINDOWS}
+      if onlyWindows then
+      begin
+        LogDatei.log('Error: at least one Windows-only Parameter was used', LLError);
+      end;
+      {$ENDIF WINDOWS}
 
       {$IFDEF WIN32}
+      // allow the executing user access to the tmp file
+      sysError := NO_ERROR;
+      if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
+      begin
+        LogDatei.log('Warning: could not modify tmp file permissions: ' +
+          SysErrorMessage(sysError) + ' (' + IntToStr(sysError) + ')', LLWarning);
+      end;
+
       Wow64FsRedirectionDisabled := False;
       if force64 then
       begin
@@ -10641,15 +11035,24 @@ begin
       if AutoActivityDisplay then
         FBatchOberflaeche.showAcitvityBar(True);
       {$ENDIF GUI}
-
-
-      threaded :=
-        (pos(lowercase(ParameterDontWait), lowercase(winstoption)) > 0);
-
       if threaded then
       begin
-        if not StartProcess(Commandline, sw_hide, False, False,
-          False, False, runas, '', WaitSecs, Report, FLastExitCodeOfExe) then
+        showcmd := sw_hide;
+        catchout := False;
+        use_sp := True;
+      end
+      else
+        use_sp := False;
+
+      { backport from 4.12.3  }
+      //if threaded then
+
+      if use_sp then
+      begin
+        LogDatei.log_prog('Executing with SP: ' + commandline, LLDebug);
+        if not StartProcess(Commandline, showcmd, showoutput, not
+          threaded, False, False, False, False, runas, '', WaitSecs,
+          Report, FLastExitCodeOfExe, catchout, output, Sektion.Name) then
         begin
           ps := 'Error: ' + Report;
           LogDatei.log(ps, LLcritical);
@@ -10660,7 +11063,7 @@ begin
       end
       else
       begin
-        LogDatei.log_prog('Executing ' + commandline, LLDebug);
+        LogDatei.log_prog('Executing with RCACO:  ' + commandline, LLDebug);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, showcmd, FLastExitCodeOfExe) then
         begin
@@ -10686,6 +11089,40 @@ begin
         end;
       end;
 
+(*   old .4.12.4 version:
+
+      if threaded then
+        showcmd := sw_hide;
+
+      LogDatei.log_prog('Executing ' + commandline, LLDebug);
+      if not StartProcess(Commandline, showcmd, showoutput, not threaded,
+        False, False, False, False, runas, '', WaitSecs, Report,
+        FLastExitCodeOfExe, catchout, output,Sektion.Name) then
+      begin
+        ps := 'Error: ' + Report;
+        LogDatei.log(ps, LLcritical);
+        FExtremeErrorLevel := LevelFatal;
+        if not threaded then
+          scriptstopped := True;
+      end
+      else if threaded then
+        LogDatei.log(Report, LevelComplete)
+      else
+      begin
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+        LogDatei.log('', LLDebug + logleveloffset);
+        LogDatei.log('output:', LLDebug + logleveloffset);
+        LogDatei.log('--------------', LLDebug + logleveloffset);
+
+        for i := 0 to output.Count - 1 do
+        begin
+          LogDatei.log(output.strings[i], LLDebug + logleveloffset);
+        end;
+
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+        LogDatei.log('', LLDebug + logleveloffset);
+      end;
+ *)
       {$IFDEF WIN32}
       if Wow64FsRedirectionDisabled then
       begin
@@ -10756,6 +11193,7 @@ var
   list3: TXStringList;
   slist: TStringList;
   inifile: TuibIniScript;
+  uibInifile: TuibIniFile;
   localSection: TWorkSection;
   secSpec: TSectionSpecifier;
   localKindOfStatement: TStatement;
@@ -10773,7 +11211,9 @@ var
   funcindex, funcindexvar: integer;
   ErrorMsg: string;
   keyValueSeparator: char = '=';
-
+  Strings: TStrings;
+  newIniFile: TIniFile;
+  s1enc: string = '';
 begin
 
   syntaxcheck := False;
@@ -11070,6 +11510,114 @@ begin
       end;
     end
 
+    (*
+    else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+     begin
+       s2 := '';
+       s3 := '';
+       if Skip('(', r, r, InfoSyntaxError) then
+       if EvaluateString(r, r, s1, InfoSyntaxError) then
+         if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+           if Skip(',', r, r, InfoSyntaxError) then
+               begin
+                 if EvaluateString(r, r, s3, InfoSyntaxError) then
+                   LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug)
+                 else
+                   LogDatei.log('Could not EvaluateString: ' + s3, LLDebug);
+               end;
+           if Skip(')', r, r, InfoSyntaxError) then
+               begin
+                 try
+                   syntaxCheck := True;
+                   s2 := ExpandFileName(s2);
+                   if s3 = '' then
+                      // with only 2 parameters
+                       newInifile := TInifile.Create(s2, TEncoding.Default)
+                   else
+                   // with 3 parameters
+                   begin
+                       LogDatei.log('Read Encoding Parameter: ' + s3, LLDebug);
+                       if (LowerCase(s3) = LowerCase('default')) then
+                         newInifile := TInifile.Create(s2, TEncoding.Default);
+                       if (LowerCase(s3) = LowerCase('ascii')) then
+                         newInifile := TInifile.Create(s2, TEncoding.ASCII);
+                       if (LowerCase(s3) = LowerCase('ansi')) then
+                         newInifile := TInifile.Create(s2, TEncoding.ANSI);
+                       //utf7 hidden functionality, not documentated and not tested in opsi-script-test
+                       if (LowerCase(s3) = LowerCase('utf7')) or (LowerCase(s3) = LowerCase('utf-7')) then
+                         newInifile := TInifile.Create(s2, TEncoding.UTF7);
+                       if (LowerCase(s3) = LowerCase('utf8')) or (LowerCase(s3) = LowerCase('utf-8')) then
+                         newInifile := TInifile.Create(s2, TEncoding.UTF8);
+                       if (LowerCase(s3) = LowerCase('utf16')) or (LowerCase(s3) = LowerCase('utf-16')) then
+                         newInifile := TInifile.Create(s2, TEncoding.Unicode);
+                       if (LowerCase(s3) = LowerCase('utf16be')) or (LowerCase(s3) = LowerCase('utf-16be')) then
+                         newInifile := TInifile.Create(s2, TEncoding.BigEndianUnicode);
+                   end;
+                   LogDatei.log('Encoding of IniFile is supposed to be: ' + newIniFile.Encoding.EncodingName, LLInfo);
+                   //newInifile.Encoding := TEncoding.SystemEncoding;
+                   list.Clear;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Reading the value of section "' + s1 + '"  from inifile  "' +
+                    s2 + '"', LevelComplete);
+                    //s1enc := UTF8ToAnsi(s1);
+                   //s1enc := s1;
+                   newInifile.ReadSectionRaw(s1,TStrings(list));
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                   FreeAndNil(newIniFile);
+                 except
+                     on e: Exception do
+                     begin
+                       LogDatei.log('Error in creating inifile "' +
+                       s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                     end;
+                 end;
+               end;
+     end
+     *)
+
+    else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+    begin
+      s2 := '';
+      s3 := '';
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                uibInifile := TuibIniFile.Create(s2);
+                (* we do not need that - it is already done in create()
+                try
+                  s2 := ExpandFileName(s2);
+                  uibInifile.loadfromfile(s2);
+                  uibInifile.Text := reencode(uibInifile.Text, 'system');
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Error on loading file: ' + e.message,
+                      LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+                *)
+                try
+                  uibInifile.ReadRawSection(s1, list);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in ReadRawSection from inifile "' +
+                      s2 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+                uibInifile.Free;
+              end;
+    end
+
 
     else if LowerCase(s) = LowerCase('retrieveSection') then
     begin
@@ -11104,7 +11652,8 @@ begin
 
           if not (localKindOfStatement in [tsDOSBatchFile,
             tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings]) then
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -11143,6 +11692,9 @@ begin
                   execDOSBatch(localSection, r1,
                     SW_HIDE, True {catchout}, 1,
                     [ttpWaitOnTerminate], list);
+
+                tsWinBatch:
+                  parseAndCallWinBatch(localSection, r1, 0, list);
 
               end;
 
@@ -13419,8 +13971,12 @@ var
   r1: string = '';
   s3: string = '';
   s4: string = '';
+  s5: string = '';
   n1: integer = 0;
   n2: integer = 0;
+  n3: integer = 0;
+  n4: integer = 0;
+  n5: integer = 0;
   s1enc: string = '';
   s2enc: string = '';
   s3enc: string = '';
@@ -13472,6 +14028,7 @@ var
   p1, p2, p3, p4: integer;
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpbool, tmpbool1: boolean;
+  Strings: TStrings;
 
 begin
   LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
@@ -13935,32 +14492,36 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
-          if GetIPFromHost(s1, s2, s3) then
-            StringResult := s2
-          else
+          StringResult := GetHostByName(s1);
+          if (stringresult = '') or (not isValidIP4(stringresult)) then
           begin
-       {$IFDEF LINUX}
-            //StringResult :=  getCommandResult('resolveip -s '+s1);
-            StringResult := getCommandResult('getent hosts ' + s1);
-            stringsplitByWhiteSpace(StringResult, slist);
-            if slist.Count > 0 then
-              StringResult := slist.Strings[0]
+            if GetIPFromHost(s1, s2, s3) then
+              StringResult := s2
             else
-              StringResult := '';
-            if not IsIP(StringResult) then
             begin
-              LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
-              StringResult := '';
-            end;
+       {$IFDEF LINUX}
+              //StringResult :=  getCommandResult('resolveip -s '+s1);
+              StringResult := getCommandResult('getent hosts ' + s1);
+              stringsplitByWhiteSpace(StringResult, slist);
+              if slist.Count > 0 then
+                StringResult := slist.Strings[0]
+              else
+                StringResult := '';
+              if not IsIP(StringResult) then
+              begin
+                LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
+                StringResult := '';
+              end;
 
        {$ENDIF LINUX}
        {$IFDEF DARWIN}
-            StringResult := getCommandResult('dig +short -x  ' + s1);
+              StringResult := getCommandResult('dig +short -x  ' + s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
-            StringResult := '';
-            Logdatei.log('Error: ' + s3, LLerror);
+              StringResult := '';
+              Logdatei.log('Error: ' + s3, LLerror);
        {$ENDIF WINDOWS}
+            end;
           end;
         end;
   end
@@ -14051,6 +14612,41 @@ begin
                     end;
   end
 
+  (*
+  else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              s2 := ExpandFileName(s2);
+              Inifile := TInifile.Create(s2);
+
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log
+              ('    reading the value of section "' + s1 + '"  from inifile  "' + s2 + '"',
+                LevelComplete);
+              s1enc := UTF8ToWinCP(s1);
+              Inifile.ReadSectionRaw(s1enc, Strings);
+              StringResult := WinCPToUTF8(ansistring(Strings));
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+              Inifile.Free;
+              Inifile := nil;
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Error in creating inifile "' + s2 + '", message: "' +
+                  e.Message + '"', LevelWarnings);
+                StringResult := '';
+              end;
+            end;
+          end;
+  end
+  *)
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
@@ -14518,253 +15114,12 @@ begin
         begin
           syntaxCheck := True;
           StringResult := '';
+          list1 := TXStringList.Create;
           ArbeitsSektion := TWorkSection.Create(0, nil);
           ArbeitsSektion.Text := s1;
-          tmpstr := r;
-          //////////////////
-          begin
-            //{$IFDEF WINDOWS}
-            runAs := traInvoker;
-               {$IFDEF WIN32}
-            opsiSetupAdmin_runElevated := False;
-               {$ENDIF WIN32}
-            WaitSecs := 0;
-            flag_force64 := False;
-            GetWord(r, expr, r, WordDelimiterSet0);
-            SyntaxCheck := True;
-
-            ident := '';
-            WaitConditions := [ttpWaitOnTerminate];
-
-            while SyntaxCheck and (length(expr) > 0) do
-            begin
-                 {$IFDEF WIN32}
-              if LowerCase(expr) = LowerCase(ParameterRunAsAdmin) then
-              begin
-                runAs := traAdmin;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin1) then
-              begin
-                runAs := traAdmin;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin2) then
-              begin
-                runAs := traAdminProfile;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin3) then
-              begin
-                runAs := traAdminProfileImpersonate;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin4) then
-              begin
-                runAs := traAdminProfileImpersonateExplorer;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsInvoker)
-              then
-              begin
-                runAs := traInvoker;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunElevated) then
-              begin
-                opsiSetupAdmin_runElevated := True;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsLoggedOnUser)
-              then
-              begin
-                if runLoginScripts then
-                  runAs := traLoggedOnUser
-                else
-                  LogDatei.log(
-                    'Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
-                    LLWarning);
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_64Bit)) and
-                Is64BitSystem then
-              begin
-                flag_force64 := True;
-              end
-
-              else if LowerCase(expr) = LowerCase(Parameter_32Bit) then
-              begin
-                flag_force64 := False;
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-                Is64BitSystem then
-              begin
-                flag_force64 := True;
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-                (not Is64BitSystem) then
-              begin
-                flag_force64 := False;
-              end
-
-              else
-{$ENDIF WIN32}
-              if LowerCase(expr) = LowerCase(ParameterWaitSecs) then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitTime];
-                // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-
-                GetWord(r, expr, r, WordDelimiterSet0);
-                try
-                  WaitSecs := StrToInt64(expr);
-                except
-                  on EConvertError do
-                  begin
-                    InfoSyntaxError := 'Integer number expected';
-                    SyntaxCheck := False;
-                  end
-                end;
-              end
-
-                 {$IFDEF WIN32}
-              else if LowerCase(expr) = LowerCase(ParameterCloseOnWindow)
-              then
-              begin
-                runAs := traInvoker;
-                WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
-
-                if EvaluateString(r, r, ident, InfoSyntaxError) then
-                begin
-                  if r <> '' then
-                  begin
-                    SyntaxCheck := False;
-                    InfoSyntaxError := 'not expected chars after "';
-                  end;
-                end
-                else
-                  SyntaxCheck := False;
-              end
-
-
-              else if LowerCase(expr) = LowerCase(ParameterCloseBehindWindow)
-              then
-              begin
-                runAs := traInvoker;
-                WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
-
-                if EvaluateString(r, r, ident, InfoSyntaxError) then
-                begin
-                  if r <> '' then
-                  begin
-                    SyntaxCheck := False;
-                    InfoSyntaxError := 'unexpected characters after "';
-                  end;
-                end
-                else
-                  SyntaxCheck := False;
-              end
-
-                 {$ENDIF WIN32}
-
-              else if LowerCase(expr) = LowerCase(ParameterWaitProcessTimeoutSecs)
-              then
-              begin
-                WaitConditions := WaitConditions - [ttpWaitTime];
-                WaitConditions := WaitConditions + [ttpWaitTimeout];
-
-                GetWord(r, expr, r, WordDelimiterSet0);
-                try
-                  WaitSecs := StrToInt64(expr);
-                except
-                  on EConvertError do
-                  begin
-                    try
-                      EvaluateString(expr, expr, seconds, InfoSyntaxError);
-                      WaitSecs := StrToInt64(seconds);
-                    except
-                      on EConvertError do
-                      begin
-                        InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                        SyntaxCheck := False;
-                      end;
-                    end;
-                  end
-                end;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterWaitForProcessEnding)
-              then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-(*
-                   GetWord (Remaining, ident, Remaining, WordDelimiterSet0);
-                   if ident = '' then
-                   begin
-                     SyntaxCheck := false;
-                     InfoSyntaxError := 'process name expected';
-                   end;
-*)
-                if not EvaluateString(r, r, ident, InfoSyntaxError) then
-                  SyntaxCheck := False;
-(*
-                   then
-                   Begin
-                     if Remaining <> ''
-                     then
-                     Begin
-                       SyntaxCheck := false;
-                       InfoSyntaxError := 'unexpected chars after "';
-                     End
-                   End
-                   else
-                     SyntaxCheck := false;
-*)
-              end
-
-              else if UpperCase(expr) = UpperCase(ParameterDontWait) then
-              begin
-                WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-                WaitConditions := WaitConditions - [ttpWaitTimeout];
-              end
-
-              else if UpperCase(expr) = UpperCase(ParameterWaitOnTerminate)
-              then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitOnTerminate];
-              end
-
-
-
-              else
-              begin
-                SyntaxCheck := False;
-                InfoSyntaxError := expr + ' not legal WinBatch parameter';
-              end;
-
-              GetWord(r, expr, r, WordDelimiterSet0);
-            end;
-
-            if SyntaxCheck then
-            begin
-              LogDatei.log('Executing: ' + s + '(' + s1 + ') ' + tmpstr, LLNotice);
-              ActionResult :=
-                execWinBatch(ArbeitsSektion, r, WaitConditions, Ident,
-                WaitSecs, runAs, flag_force64);
-              StringResult := IntToStr(FLastExitCodeOfExe);
-            end
-            else
-              ActionResult :=
-                reportError(ArbeitsSektion, i, 'Expressionstr', InfoSyntaxError);
-               (*
-               {$ELSE WINDOWS}
-                logdatei.log('Winbatch sections are not implemented for Linux right now', LLWarning);
-                {$ENDIF WINDOWS}
-                *)
-          end;
+          ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
           ArbeitsSektion.Free;
-          ///////////////////
+          StringResult := IntToStr(FLastExitCodeOfExe);
         end;
   end
 
@@ -15254,6 +15609,31 @@ begin
   begin
     StringResult := randomstr(True);
     syntaxCheck := True;
+  end
+
+  //randomstrWithParameters
+  else if LowerCase(s) = LowerCase('randomstrWithParameters') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s4, InfoSyntaxError) then
+                    if Skip(',', r, r, InfoSyntaxError) then
+                      if EvaluateString(r, r, s5, InfoSyntaxError) then
+                        if Skip(')', r, r, InfoSyntaxError) then
+                        begin
+                          syntaxCheck := True;
+                          n1 := StrToInt(s1);
+                          n2 := StrToInt(s2);
+                          n3 := StrToInt(s3);
+                          n4 := StrToInt(s4);
+                          n5 := StrToInt(s5);
+                          StringResult := randomstrWithParameters(n1, n2, n3, n4, n5);
+                        end;
   end
 
   else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then
@@ -16485,9 +16865,9 @@ begin
     setLength(parameters, 4);
 
     // try to find a valid fqdn
-    parameters[0] := osconf.computername;
+    parameters[0] := osconf.opsiserviceUser;
     if parameters[0] = '' then
-      parameters[0] := osconf.opsiserviceUser;
+      parameters[0] := osconf.computername;
     if parameters[0] = '' then
       parameters[0] := oslog.getComputerName;
     parameters[1] := '';
@@ -16568,7 +16948,13 @@ begin
     r := trim(r);
     setLength(parameters, 5);
 
-    parameters[0] := osconf.computername;
+    // try to find a valid fqdn
+    parameters[0] := osconf.opsiserviceUser;
+    if parameters[0] = '' then
+      parameters[0] := osconf.computername;
+    if parameters[0] = '' then
+      parameters[0] := oslog.getComputerName;
+
     parameters[1] := '';
     parameters[2] := '';
     parameters[3] := '';
@@ -16861,6 +17247,7 @@ var
   dummybool: boolean;
   OldWinapiErrorMode: cardinal;
   list1: TXStringList;
+  list2: TXStringList;
   InputBakup: string;
   i: integer;
   tmpint: integer;
@@ -16878,6 +17265,7 @@ begin
   RunTimeInfo := '';
   BooleanResult := False;
   list1 := TXStringlist.Create;
+  list2 := TXStringlist.Create;
   InputBakup := Input;
 
   LogDatei.log_prog('EvaluateBoolean: Parsing: ' + Input + ' ', LLDebug);
@@ -17580,6 +17968,40 @@ begin
   end
 
 
+  else if Skip('isValidFQDN', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            BooleanResult := isValidFQDN(s1);
+          except
+            BooleanResult := False;
+          end;
+        end;
+  end
+
+  else if Skip('areListsEqual', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if produceStringList(script, r, r, list1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if produceStringList(script, r, r, list2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(')', r, r, InfoSyntaxError) then
+                begin
+                  syntaxCheck := True;
+                  try
+                    BooleanResult := areStringlistsEqual(list1, list2, s3);
+                  except
+                    BooleanResult := False;
+                  end;
+                end;
+  end
+
   else if Skip('isNumber', Input, r, InfoSyntaxError) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -17594,6 +18016,7 @@ begin
           end;
         end;
   end
+
 
   else if Skip('isPingReachable', Input, r, InfoSyntaxError) then
   begin
@@ -18381,6 +18804,49 @@ begin
 
 end;
 
+function TuibInstScript.RunAsForParameter(const param: string;
+  var runAs: TRunAs): boolean;
+var
+  trimmed: string;
+begin
+  trimmed := lowercase(trim(param));
+  Result := True;
+
+  if trimmed = LowerCase(ParameterRunAsAdmin) then
+    runAs := traAdmin
+  else if trimmed = LowerCase(ParameterRunAsAdmin1) then
+    runAs := traAdmin
+  else if trimmed = LowerCase(ParameterRunAsAdmin2) then
+    runAs := traAdminProfile
+  else if trimmed = LowerCase(ParameterRunAsAdmin3) then
+    runAs := traAdminProfileImpersonate
+  else if trimmed = LowerCase(ParameterRunAsAdmin4) then
+    runAs := traAdminProfileImpersonateExplorer
+  else if trimmed = LowerCase(ParameterRunAsInvoker) then
+    runAs := traInvoker
+  else if trimmed = LowerCase(ParameterRunElevated) then
+  begin
+    {$IFDEF WIN32}
+    opsiSetupAdmin_runElevated := True;
+    LogDatei.log('Found Parameter: /runelevated .', LLDebug);
+    {$ENDIF WIN32}
+    runAs := traInvoker;
+  end
+  else if trimmed = LowerCase(ParameterRunAsLoggedOnUser) then
+  begin
+    if runLoginScripts then
+      runAs := traLoggedOnUser
+    else
+    begin
+      LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
+        LLWarning);
+      runAs := traInvoker;
+    end;
+  end
+  else
+    Result := False;
+end;
+
 function TuibInstScript.doSetVar(const section: TuibIniScript;
   const Expressionstr: string; var Remaining: string;
   var InfoSyntaxError: string): boolean;
@@ -19098,210 +19564,6 @@ var
 
 {$ENDIF WINDOWS}
 
-
-  function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
-    Remaining: string): TSectionResult;
-  begin
-    logdatei.log('Execution of: ' + ArbeitsSektion.Name + ' ' + Remaining, LLNotice);
-    runAs := traInvoker;
- {$IFDEF WIN32}
-    opsiSetupAdmin_runElevated := False;
- {$ENDIF WIN32}
-    WaitSecs := 0;
-    flag_force64 := False;
-    GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-    SyntaxCheck := True;
-
-    ident := '';
-    WaitConditions := [ttpWaitOnTerminate];
-
-    while SyntaxCheck and (length(expr) > 0) do
-    begin
-   {$IFDEF WIN32}
-      if LowerCase(expr) = LowerCase(ParameterRunAsAdmin) then
-      begin
-        runAs := traAdmin;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin1) then
-      begin
-        runAs := traAdmin;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin2) then
-      begin
-        runAs := traAdminProfile;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin3) then
-      begin
-        runAs := traAdminProfileImpersonate;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin4) then
-      begin
-        runAs := traAdminProfileImpersonateExplorer;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsInvoker) then
-      begin
-        runAs := traInvoker;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunElevated) then
-      begin
-        opsiSetupAdmin_runElevated := True;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsLoggedOnUser) then
-      begin
-        if runLoginScripts then
-          runAs := traLoggedOnUser
-        else
-          LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
-            LLWarning);
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_64Bit)) and Is64BitSystem then
-      begin
-        flag_force64 := True;
-      end
-
-      else if LowerCase(expr) = LowerCase(Parameter_32Bit) then
-      begin
-        flag_force64 := False;
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and Is64BitSystem then
-      begin
-        flag_force64 := True;
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-        (not Is64BitSystem) then
-      begin
-        flag_force64 := False;
-      end
-
-      else
-{$ENDIF WIN32}
-      if LowerCase(expr) = LowerCase(ParameterWaitSecs) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitTime];
-        // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        try
-          WaitSecs := StrToInt64(expr);
-        except
-          on EConvertError do
-          begin
-            InfoSyntaxError := 'Integer number expected';
-            SyntaxCheck := False;
-          end
-        end;
-      end
-
-   {$IFDEF WIN32}
-      else if LowerCase(expr) = LowerCase(ParameterCloseOnWindow) then
-      begin
-        runAs := traInvoker;
-        WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
-
-        if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-        begin
-          if Remaining <> '' then
-          begin
-            SyntaxCheck := False;
-            InfoSyntaxError := 'not expected chars after "';
-          end;
-        end
-        else
-          SyntaxCheck := False;
-      end
-
-
-      else if LowerCase(expr) = LowerCase(ParameterCloseBehindWindow) then
-      begin
-        runAs := traInvoker;
-        WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
-
-        if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-        begin
-          if Remaining <> '' then
-          begin
-            SyntaxCheck := False;
-            InfoSyntaxError := 'unexpected characters after "';
-          end;
-        end
-        else
-          SyntaxCheck := False;
-      end
-
-   {$ENDIF WIN32}
-
-      else if LowerCase(expr) = LowerCase(ParameterWaitProcessTimeoutSecs) then
-      begin
-        WaitConditions := WaitConditions - [ttpWaitTime];
-        WaitConditions := WaitConditions + [ttpWaitTimeout];
-
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        try
-          WaitSecs := StrToInt64(expr);
-        except
-          on EConvertError do
-          begin
-            try
-              EvaluateString(expr, expr, seconds, InfoSyntaxError);
-              WaitSecs := StrToInt64(seconds);
-            except
-              on EConvertError do
-              begin
-                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                SyntaxCheck := False;
-              end;
-            end;
-          end
-        end;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterWaitForProcessEnding) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-        if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-          SyntaxCheck := False;
-      end
-
-      else if UpperCase(expr) = UpperCase(ParameterDontWait) then
-      begin
-        WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-        WaitConditions := WaitConditions - [ttpWaitTimeout];
-      end
-
-      else if UpperCase(expr) = UpperCase(ParameterWaitOnTerminate) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitOnTerminate];
-      end
-
-
-
-      else
-      begin
-        SyntaxCheck := False;
-        InfoSyntaxError := expr + ' not legal WinBatch parameter';
-      end;
-
-      GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-    end;
-
-    if SyntaxCheck then
-      parseAndCallWinbatch := execWinBatch(ArbeitsSektion, Remaining,
-        WaitConditions, Ident, WaitSecs, runAs, flag_force64)
-    else
-      parseAndCallWinbatch := reportError(Sektion, linecounter,
-        'Expressionstr', InfoSyntaxError);
-  end;
-
 begin
   logdatei.log_prog('Starting doAktionen: ', LLDebug2);
   Script.FLastSection := Script.FActiveSection;
@@ -19865,6 +20127,7 @@ begin
           begin
             if (ArbeitsSektion.Count > 0) then
             begin
+              aktsection := ArbeitsSektion;
               if StatKind = tsProfileActions then
                 runProfileActions := True;
               LogDatei.log('', LLinfo);
@@ -20256,6 +20519,7 @@ begin
                     begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
+                      LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
                       inclist := TStringList.Create;
                       inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       Encoding2use := searchencoding(inclist.Text);
@@ -21325,7 +21589,8 @@ begin
 
                               tsWinBatch:
                                 ActionResult :=
-                                  parseAndCallWinbatch(localSection, tmpstr);
+                                  parseAndCallWinbatch(localSection,
+                                  tmpstr, linecounter, output);
 
                               tsRegistryHack:
                                 ActionResult :=
@@ -21342,7 +21607,7 @@ begin
                                 if runProfileActions then
                                   flag_all_ntuser := True;
                                 ActionResult := doFileActions(localSection, tmpstr);
-                                logdatei.log('Finished of: ' +
+                                logdatei.log('Finished local section: ' +
                                   localSection.Name + ' ' + tmpstr, LLNotice);
                               end;
                             end;
@@ -22471,7 +22736,7 @@ begin
                 if runProfileActions then
                   flag_all_ntuser := True;
                 ActionResult := doFileActions(ArbeitsSektion, Remaining);
-                logdatei.log('Finished of: ' + ArbeitsSektion.Name +
+                logdatei.log('Finished section: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
               end;
 
@@ -22501,7 +22766,8 @@ begin
 
               tsWinBatch:
               begin
-                ActionResult := parseAndCallWinbatch(ArbeitsSektion, Remaining);
+                ActionResult :=
+                  parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
                 //parseAndCallWinbatch(ArbeitsSektion,Remaining);
               end;
 
@@ -23200,6 +23466,7 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       Script.LoadFromFile(Scriptdatei);
+      logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
       Encoding2use := searchencoding(Script.Text);
       if Encoding2use = '' then
         Encoding2use := 'system';

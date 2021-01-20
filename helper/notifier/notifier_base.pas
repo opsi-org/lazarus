@@ -36,7 +36,7 @@ type
 
 
 //var
-  //myTCPClient : TTCPBlockSocket;
+//myTCPClient : TTCPBlockSocket;
 
 procedure Main;
 
@@ -52,9 +52,6 @@ implementation
 uses
   notifierdatamodule;
 
-
-
-
 constructor TMyThread.Create(CreateSuspended: boolean);
 begin
   FreeOnTerminate := True;
@@ -65,7 +62,7 @@ procedure TMyThread.messageToMainThread;
 begin
   // pass recieved message to notifier gui control
   newMessageFromService(myMessage);
-  logdatei.log('From hm: '+myMessage, LLInfo);
+  logdatei.log('From hm: ' + myMessage, LLInfo);
 end;
 
 procedure TMyThread.messageFromMainThread;
@@ -79,69 +76,77 @@ begin
     myJsonAnswer := '';
     myJsonAnswer2 := '';
   end
-  else logdatei.log('Nothing in messageFromMainThread.', LLDebug2);
+  else
+    logdatei.log('Nothing in messageFromMainThread.', LLDebug2);
   DataModule1.ProcessMess;
 end;
 
 
 procedure Tmythread.Execute;
 var
-  myTCPClient : TTCPBlockSocket;
-  Connected : Boolean;
+  myTCPClient: TTCPBlockSocket;
+  Connected: boolean;
   //  receiveline: string;
-//  i: integer;
+  //  i: integer;
 
 begin
-  logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLDebug2);
-  if not Terminated then
-  begin
-    myTCPClient := TTCPBlockSocket.create; //TIdTCPClient.Create;
-    //myTCPClient.Port := myport;
-    //myTCPClient.Host := '127.0.0.1';
-    //myTCPClient.ReadTimeout := 100;
-    myTCPClient.ConnectionTimeout:=0; //uses default system value
-    Connected := false;
-    repeat
-      try
-        myTCPClient.Connect('127.0.0.1', IntToStr(myPort));
-        Connected := True;
-      except
-        Connected := false;
-      end;
-    until Connected;
-    //i := 1;
-    myMessage2 := '';
-    logdatei.log('TCP-Thread connected, starting .loop: ' +TimeToStr(now), LLDebug2);
-    while (not Terminated) and Connected do
+  logdatei.log('Starting TCP-Thread: ' + TimeToStr(now), LLnotice);
+  try
+    if not Terminated then
     begin
-      myMessage := '';
-      myMessage := myTCPClient.RecvString(100);
-      if myMessage <> '' then
+      myTCPClient := TTCPBlockSocket.Create; //TIdTCPClient.Create;
+      //myTCPClient.Port := myport;
+      //myTCPClient.Host := '127.0.0.1';
+      //myTCPClient.ReadTimeout := 100;
+      myTCPClient.ConnectionTimeout := 0; //uses default system value
+      Connected := False;
+      repeat
+        try
+          myTCPClient.Connect('127.0.0.1', IntToStr(myPort));
+          Connected := True;
+        except
+          Connected := False;
+        end;
+      until Connected;
+      //i := 1;
+      myMessage2 := '';
+      logdatei.log('TCP-Thread connected, starting .loop: ' + TimeToStr(now), LLDebug2);
+      while (not Terminated) and Connected do
       begin
-        logdatei.log('Received: ' + mymessage, LLDebug2);
-        Synchronize(@messageToMainThread);
-        //DataModule1.ProcessMess;
-        logdatei.log('After Received: ' + mymessage, LLDebug2);
         myMessage := '';
+        myMessage := myTCPClient.RecvString(100);
+        if myMessage <> '' then
+        begin
+          logdatei.log('Received: ' + mymessage, LLDebug2);
+          Synchronize(@messageToMainThread);
+          //DataModule1.ProcessMess;
+          logdatei.log('After Received: ' + mymessage, LLDebug2);
+          myMessage := '';
+        end
+        else logdatei.log('Nothing Received.', LLDebug2);
+        Synchronize(@messageFromMainThread);
+        if myMessage <> '' then
+        begin
+          myTCPClient.SendString(myMessage);
+          logdatei.log('Sended: ' + mymessage, LLDebug2);
+        end
+        else logdatei.log('Nothing to send.', LLDebug2);
+        logdatei.log('tcploop :' + TimeToStr(now), LLDebug2);
+        //sleep(1000);
       end;
-      Synchronize(@messageFromMainThread);
-      if myMessage <> '' then
-      begin
-        myTCPClient.SendString(myMessage);
-        logdatei.log('Sended: ' + mymessage, LLDebug2);
-      end;
-      logdatei.log('tcploop :' +TimeToStr(now), LLDebug2);
-      //sleep(1000);
+      stopped := True;
+      myTCPClient.CloseSocket;
+      myTCPClient.Free;
+    end
+    else
+    begin
+      stopped := True;
+      myTCPClient.CloseSocket;
+      myTCPClient.Free;
     end;
-    stopped := True;
-    myTCPClient.CloseSocket;
-    myTCPClient.Free;
-  end
-  else
-  begin
-    stopped := True;
-    myTCPClient.CloseSocket;
-    myTCPClient.Free;
+  except
+    on E: Exception do
+      logdatei.log('exception in Thread execute :' + E.Message, LLError);
   end;
 end;
 
@@ -152,14 +157,29 @@ begin
   DataModule1.createNform;
   openSkinIni(myconfigfile);
   DataModule1.ProcessMess;
-  if myport > 0 then
+  if showtest then
   begin
-    mythread := Tmythread.Create(False);
-    mythread.WaitFor;
-
+    {show notifier 10 seconds (for tests only) }
+    if Assigned(LogDatei) then
+      LogDatei.log('show test', LLnotice);
+    Sleep(10000);
+    if Assigned(LogDatei) then
+      LogDatei.log('shutdown after show test', LLnotice);
+    shutdownNotifier;
+  end
+  else
+  begin
+    if myport > 0 then
+    begin
+      mythread := Tmythread.Create(False);
+      mythread.WaitFor;
+    end
+    else
+    if Assigned(LogDatei) then
+      LogDatei.log('Critical Error: given port not > 0 : ' +
+        IntToStr(myport), LLcritical);
   end;
 end;
 
 
 end.
-

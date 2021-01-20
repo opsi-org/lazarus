@@ -25,10 +25,13 @@ interface
 
 uses
 {$IFDEF WINDOWS}
-  //jwawinnt,
   JwaWinType,
   jwatlhelp32,
   jwawinbase,
+  JwaSddl,
+  JwaWinNT,
+  jwaAclApi,
+  JwaAccCtrl,
   JwaProfInfo,
   JwaUserEnv,
   //JclMiscel,
@@ -40,10 +43,10 @@ uses
   //registry,
   VersionInfoX,
   //unitImpersonator,
-  osregistry,
   osfuncwin2,
   osfuncwin3,
 {$IFDEF WIN32}
+  osregistry,
   DSiWin32,
   oslocaladmin,
   packdefs,
@@ -57,6 +60,7 @@ uses
   Shlobj,
 {$ENDIF}
 {$IFDEF GUI}
+  Graphics,
   LResources,
   LCLIntf,
   LCLProc,
@@ -89,11 +93,14 @@ uses
   strutils,
   lconvencoding,
   lcltype,
-  ostxstringlist;
+  ostxstringlist,
+  osstartproc_cp,
+  pipes;
 
 const
   BytesarrayLength = 5000;
   PATHSEPARATOR = PathDelim;
+  READ_BYTES = 2048;
 //KEY_WOW64_64KEY = $0100;
 //KEY_WOW64_32KEY = $0200;
 
@@ -121,6 +128,8 @@ type
   TRunAs = (traPcpatch, traInvoker, traAdmin, traAdminProfile, traAdminProfileExplorer,
     traAdminProfileImpersonate, traAdminProfileImpersonateExplorer, traLoggedOnUser);
 {$ENDIF}
+
+  TShowOutputFlag = (tsofHideOutput, tsofShowOutput, tsofShowOutputNoSystemInfo);
 
 
 
@@ -267,8 +276,8 @@ type
     constructor Create(inifilename: string);
     destructor Destroy; override;
     procedure ReadSection(const Sectionname: string; var SectionVars: TStringList);
-    procedure ReadSectionValues(const Sectionname: string;
-      var SectionValues: TStringList);
+    procedure ReadSectionValues(const Sectionname: string; var SectionValues: TStringList);
+    procedure ReadRawSection(const SectionName: string; var RawSection: TXStringList);
     function ReadString(const Section, Ident, defaultvalue: string): string;
     procedure WriteString(const Section, Ident, Value: string);
     procedure SaveBack;
@@ -337,6 +346,7 @@ type
 
   TuibFileInstall = class(TObject)
   private
+    copyDenyList: TStringList;
     function GetReadOnlyAttribute
       (const FileName: string; eliminate: boolean): boolean;
 
@@ -360,6 +370,12 @@ type
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
       daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      overload;
+
+    function AllDelete
+      (const Filename: string; recursive, ignoreReadOnly: boolean;
+      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -458,6 +474,11 @@ function GetNetDrive(const pathname: string): string;
 function KillTask(ExeFileName: string; var info: string): boolean;
 {$ENDIF WIN64}
 
+{$IFDEF WIN32}
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
+{$ENDIF WIN32}
+
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -475,6 +496,20 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; RunAs: TRunas; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint): boolean; overload;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunas;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList): boolean; overload;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList; showtitle: string): boolean; overload;
 
 
 
@@ -510,6 +545,7 @@ function isGUI: boolean;
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 function CreateTextfile(const FName: string; var ErrorInfo: string): boolean;
 
+function FindInSubDirs(const dir: string; const filename: string): TStringList;
 
 function PointerAufString(Alpha: string): PChar;
 //procedure DisposeString(p: PChar);
@@ -572,6 +608,8 @@ procedure str2jsonstr(var str: string; var errorstr: string);
 function getProcessList: TStringList;
 function getLoggedInUser: string;
 function randomstr(usespecialchars: boolean): string;
+function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
+  nDigits, nSpecialChars: integer): string;
 procedure ShrinkFileToMB(filename: string; newsize: integer);
 procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
@@ -690,6 +728,7 @@ uses
   {$IFDEF GUI}
   osbatchgui,
   osinteractivegui,
+  osshowsysinfo,
   {$ENDIF GUI}
   osmain,
   osdefinedfunctions,
@@ -878,13 +917,13 @@ end;
 function isGUI: boolean;
 begin
   Result := True;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   {$IFDEF GUI}
   Result := True;
   {$ELSE GUI}
   Result := False;
   {$ENDIF GUI}
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
 end;
 
 function strContains(const str: string; const substr: string): boolean;
@@ -1037,10 +1076,10 @@ end;
 
 function randomstr(usespecialchars: boolean): string;
 var
-  i, randomInt: integer;
+  //i, randomInt: integer;
   stringresult: string = '';
 begin
-  StringResult := '';
+  (*StringResult := '';
   for i := 1 to 2 do
   begin
     repeat
@@ -1071,7 +1110,75 @@ begin
     until
       char(randomInt) in CharsNumericForRandomStrings;
     StringResult := StringResult + char(randomInt);
+  end;*)
+  if usespecialchars = True then
+    StringResult := randomstrWithParameters(10, 2, 2, 4, 2)
+  else
+    StringResult := randomstrWithParameters(10, 3, 3, 4, 0);
+  Result := StringResult;
+end;
+
+// randomstrWithParameters returns a random string with predefined preferences
+function randomstrWithParameters(minLength, nLowerCases, nUpperCases,
+  nDigits, nSpecialChars: integer): string;
+var
+  StringResult: string = '';
+  i, randomInt, n, m: integer;
+  aux: char;
+begin
+  { do not call randomize here.
+    calling randomize here results that two calls  one after another
+    will get the same result.
+    randomize is called at the initialization of osparser unit }
+  // Randomize;
+  for i := 1 to nLowerCases do
+  begin
+    repeat
+      randomInt := random(122) + 1
+    until char(randomInt) in CharsLowerForRandomStrings;
+    StringResult := StringResult + char(randomInt);
   end;
+  for i := 1 to nUpperCases do
+  begin
+    repeat
+      randomInt := random(90) + 1
+    until char(randomInt) in CharsUpperForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  for i := 1 to nDigits do
+  begin
+    repeat
+      randomInt := random(57) + 1
+    until char(randomInt) in CharsNumericForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  for i := 1 to nSpecialChars do
+  begin
+    repeat
+      randomInt := random(126) + 1
+    until char(randomInt) in CharsSpecialForRandomStrings;
+    StringResult := StringResult + char(randomInt);
+  end;
+  if Length(StringResult) < minLength then
+  begin
+    repeat
+      repeat
+        randomInt := random(122) + 1
+      until char(randomInt) in CharsLowerForRandomStrings;
+      StringResult := StringResult + char(randomInt);
+    until Length(StringResult) >= minLength;
+  end;
+
+  //randomly reorganizing the string
+  n := Length(StringResult);
+  repeat
+    m := random(n) + 1;
+    aux := StringResult[n];
+    StringResult[n] := StringResult[m];
+    StringResult[m] := aux;
+    n := n - 1;
+  until n = 1;
+
   Result := StringResult;
 end;
 
@@ -1437,6 +1544,375 @@ end;
 
 {$ENDIF WINDOWS}
 
+{$IFDEF WIN32}//ToDo: Ask Detlef why this works not for winst64 e.g.IFDEF WINDOWS
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
+
+const
+  CHANGED_SECURITY_INFO = jwawinnt.DACL_SECURITY_INFORMATION;
+  EA_COUNT = 1;
+
+  // workaround for a FPC bug, see:
+  // https://stackoverflow.com/a/59172446/12403540
+  // https://bugs.freepascal.org/view.php?id=36368
+type
+  TRUSTEE_FIX = packed record
+    pMultipleTrustee: Pointer;
+    MultipleTrusteeOperation: DWORD;
+    TrusteeForm: DWORD;
+    TrusteeType: DWORD;
+    ptstrName: LPSTR;
+  end;
+
+  EXPLICIT_ACCESS_FIX = packed record
+    grfAccessPermissions: DWORD;
+    grfAccessMode: DWORD;
+    grfInheritance: DWORD;
+    Trustee: TRUSTEE_FIX;
+  end;
+
+var
+  sid: JwaWinNT.PSID;
+  sidSize: DWORD;
+  nameUse: JwaWinNT.SID_NAME_USE;
+  refDomain: LpStr;
+  refDomainSize: DWORD;
+  dolocalfree: boolean;
+  procToken: HANDLE;
+  ea: array[0..(EA_COUNT - 1)] of EXPLICIT_ACCESS_FIX;
+  acl: jwawinnt.PACL;
+  status: jwawintype.DWORD;
+
+  function SetPrivilege(token: HANDLE; privilege: PChar; state: boolean): boolean;
+  var
+    luid: jwawintype._LUID;
+    tp: jwawinnt.TOKEN_PRIVILEGES;
+  begin
+    if not jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
+      Result := False
+    else
+    begin
+      FillChar(tp, sizeOf(tp), #0);
+      tp.privilegeCount := 1;
+      tp.Privileges[0].Luid := luid;
+      if state then
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED
+      else
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_REMOVED;
+
+      Result := AdjustTokenPrivileges(token, longbool(False), @tp,
+        sizeOf(tp), nil, nil);
+    end;
+  end;
+
+begin
+  if runas = traInvoker then
+    Result := True
+  else
+    try
+      begin
+        status := NO_ERROR;
+        sidSize := 0;
+        refDomainSize := 0;
+        doLocalFree := False;
+
+        procToken := INVALID_HANDLE_VALUE;
+
+        sid := nil;
+
+        // Determine the SID of the user that the file will be run as
+
+        if runas = traLoggedOnUser then
+        begin
+          // use usercontextSID variable to determine SID of logged on user
+          Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
+          dolocalfree := True;
+        end
+        else if runas = traPcpatch then
+        begin
+          {
+          jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
+            sidSize, nil, refDomainSize, nameUse);
+
+          GetMem(sid, sidSize);
+          GetMem(refDomain, refDomainSize);
+
+          Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
+            sid, sidSize, refDomain, refDomainSize, nameUse);
+          }
+
+          // just generate an error, as it is currently unused anyways
+          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported',
+            LLError);
+          Result := False;
+        end
+        else if runas in [traAdmin, traAdminProfile, traAdminProfileExplorer,
+          traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
+        begin
+          // to get the user's SID we need to create the local admin already here
+          Result := CreateTemporaryLocalAdmin(runas);
+
+          if Result then
+          begin
+            jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil,
+              sidSize, nil, refDomainSize, nameUse);
+            GetMem(sid, sidSize);
+            GetMem(refDomain, refDomainSize);
+
+            Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
+              sid, sidSize, refDomain, refDomainSize, nameUse);
+          end;
+        end
+        else
+          Result := False;
+
+        // Create an ACL allowing the determined SID
+        // Read and Execute Rights, then apply it to
+        // the given file.
+
+        if Result then
+        begin
+          jwawinbase.ZeroMemory(@ea, EA_COUNT * sizeOf(EXPLICIT_ACCESS_FIX));
+
+          ea[0].grfAccessPermissions := FILE_GENERIC_READ or FILE_GENERIC_EXECUTE;
+          ea[0].grfAccessMode := DWORD(SET_ACCESS);
+          ea[0].grfInheritance := NO_INHERITANCE;
+          ea[0].Trustee.MultipleTrusteeOperation := DWORD(NO_MULTIPLE_TRUSTEE);
+          ea[0].Trustee.pMultipleTrustee := nil;
+          ea[0].Trustee.TrusteeForm := DWORD(TRUSTEE_IS_SID);
+          ea[0].Trustee.TrusteeType := DWORD(TRUSTEE_IS_USER);
+          ea[0].Trustee.ptstrName := pointer(sid);
+
+          status := jwaaclapi.SetEntriesInAclA(EA_COUNT, @ea, nil, acl);
+
+          if status <> ERROR_SUCCESS then
+          begin
+            Result := False;
+          end
+          else
+          begin
+            status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+              JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, acl, nil);
+
+            if status <> ERROR_SUCCESS then
+            begin
+              // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
+              status := NO_ERROR;
+
+              if (not OpenProcessToken(GetCurrentProcess(),
+                TOKEN_ADJUST_PRIVILEGES, procToken)) or
+                (not SetPrivilege(procToken, SE_RESTORE_NAME, True)) then
+                Result := False
+              else
+              begin
+                status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+                  JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
+                Result := (status = ERROR_SUCCESS);
+
+                if not SetPrivilege(procToken, SE_RESTORE_NAME, False) then
+                  LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' +
+                    IntToStr(getLastError()), LLDebug);
+              end;
+            end;
+          end;
+        end;
+      end
+    finally
+      begin
+        if not Result and (status = NO_ERROR) then
+          status := getLastError();
+
+        errorCode := status;
+
+        if Assigned(sid) then
+          if doLocalFree then
+            LocalFree(DWORD(sid))
+          else
+            FreeMem(sid, sidSize);
+
+        if Assigned(refDomain) then
+          FreeMem(refDomain, refDomainSize);
+
+        if Assigned(acl) then
+          LocalFree(DWORD(acl));
+      end;
+    end;
+end;
+
+//Function modified by J. Werner (probaly does not work correct at the moment)
+{function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
+
+const
+  EA_COUNT = 1;
+
+  // workaround for a FPC bug, see:
+  // https://stackoverflow.com/a/59172446/12403540
+  // https://bugs.freepascal.org/view.php?id=36368
+type
+  TRUSTEE_FIX = packed record
+    pMultipleTrustee: Pointer;
+    MultipleTrusteeOperation: DWORD;
+    TrusteeForm: DWORD;
+    TrusteeType: DWORD;
+    ptstrName: LPSTR;
+  end;
+
+  EXPLICIT_ACCESS_FIX = packed record
+    grfAccessPermissions: DWORD;
+    grfAccessMode: DWORD;
+    grfInheritance: DWORD;
+    Trustee: TRUSTEE_FIX;
+  end;
+
+var
+  sid: JwaWinNT.PSID;
+  sidSize: DWORD;
+  nameUse: JwaWinNT.SID_NAME_USE;
+  refDomain: LpStr;
+  refDomainSize: DWORD;
+  dolocalfree: boolean;
+  procToken: HANDLE;
+  ea: array[0..(EA_COUNT - 1)] of EXPLICIT_ACCESS_FIX;
+  acl: jwawinnt.PACL;
+  status: jwawintype.DWORD;
+
+  function SetPrivilege(token: HANDLE; privilege: PChar; state: boolean): boolean;
+  var
+    luid: jwawintype._LUID;
+    tp: jwawinnt.TOKEN_PRIVILEGES;
+  begin
+    if jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
+    begin
+      FillChar(tp, sizeOf(tp), #0);
+      tp.privilegeCount := 1;
+      tp.Privileges[0].Luid := luid;
+      if state then
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED
+      else
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_REMOVED;
+      Result := AdjustTokenPrivileges(token, longbool(False), @tp, sizeOf(tp), nil, nil);
+    end
+    else
+      Result := False;
+  end;
+
+begin
+  status := NO_ERROR;
+  sidSize := 0;
+  refDomainSize := 0;
+  doLocalFree := False;
+  procToken := INVALID_HANDLE_VALUE;
+  sid := nil;
+  try
+    case runas of
+      traInvoker: Result := True;
+      traLoggedOnUser:
+      begin
+        // use usercontextSID variable to determine SID of logged on user
+        Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
+        dolocalfree := True;
+      end;
+      traPCpatch:
+      begin
+        (*
+        jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
+          sidSize, nil, refDomainSize, nameUse);
+
+        GetMem(sid, sidSize);
+        GetMem(refDomain, refDomainSize);
+
+        Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
+          sid, sidSize, refDomain, refDomainSize, nameUse);
+        *)
+        // just generate an error, as it is currently unused anyways
+        LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
+        Result := False;
+      end;
+      traAdmin, traAdminProfile, traAdminProfileExplorer,
+      traAdminProfileImpersonate, traAdminProfileImpersonateExplorer:
+      begin
+        // to get the user's SID we need to create the local admin already here
+        Result := CreateTemporaryLocalAdmin(runas);
+        if Result then
+        begin
+          jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil,
+            sidSize, nil, refDomainSize, nameUse);
+          GetMem(sid, sidSize);
+          GetMem(refDomain, refDomainSize);
+          Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
+            sid, sidSize, refDomain, refDomainSize, nameUse);
+        end;
+      end;
+      else Result := False;
+    end;//case
+
+    // Create an ACL allowing the determined SID
+    // Read and Execute Rights, then apply it to
+    // the given file.
+    if Result then
+    begin
+      jwawinbase.ZeroMemory(@ea, EA_COUNT * sizeOf(EXPLICIT_ACCESS_FIX));
+      ea[0].grfAccessPermissions := FILE_GENERIC_READ or FILE_GENERIC_EXECUTE;
+      ea[0].grfAccessMode := DWORD(SET_ACCESS);
+      ea[0].grfInheritance := NO_INHERITANCE;
+      ea[0].Trustee.MultipleTrusteeOperation := DWORD(NO_MULTIPLE_TRUSTEE);
+      ea[0].Trustee.pMultipleTrustee := nil;
+      ea[0].Trustee.TrusteeForm := DWORD(TRUSTEE_IS_SID);
+      ea[0].Trustee.TrusteeType := DWORD(TRUSTEE_IS_USER);
+      ea[0].Trustee.ptstrName := pointer(sid);
+      status := jwaaclapi.SetEntriesInAclA(EA_COUNT, @ea, nil, acl);
+      if status <> ERROR_SUCCESS then
+      begin
+        Result := False;
+      end
+      else
+      begin
+        status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+          JwaAccCtrl.SE_FILE_OBJECT, jwawinnt.DACL_SECURITY_INFORMATION, nil, nil, acl, nil);
+        if status <> ERROR_SUCCESS then
+        begin
+          // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
+          status := NO_ERROR;
+          if OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, procToken)
+            or SetPrivilege(procToken, SE_RESTORE_NAME, True) then
+          begin
+            status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+              JwaAccCtrl.SE_FILE_OBJECT, jwawinnt.DACL_SECURITY_INFORMATION, nil, nil, nil, nil);
+            Result := (status = ERROR_SUCCESS);
+
+            if SetPrivilege(procToken, SE_RESTORE_NAME, False) then
+              LogDatei.log('Disable SE_RESTORE_NAME privilege: ' +
+                IntToStr(getLastError()), LLDebug)
+            else
+              LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' +
+                IntToStr(getLastError()), LLDebug);
+          end
+          else
+            Result := False;
+        end;
+      end;
+    end;
+    //clean up and free memory
+    finally
+      begin
+        if not Result and (status = NO_ERROR) then
+          status := getLastError();
+        errorCode := status;
+        if Assigned(sid) then
+          if doLocalFree then
+            LocalFree(DWORD(sid))
+          else
+            FreeMem(sid, sidSize);
+        if Assigned(refDomain) then
+          FreeMem(refDomain, refDomainSize);
+        if Assigned(acl) then
+          LocalFree(DWORD(acl));
+      end;
+    end;
+end;}
+
+{$ENDIF WIN32}
 
 {$IFDEF WINDOWS}
 function StartProcess_se(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -1788,8 +2264,10 @@ begin
       on e: Exception do
       begin
         LogDatei.log_prog('Exception in StartProcess_se: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
@@ -2152,8 +2630,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_se_as: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
@@ -2164,19 +2644,20 @@ end;
 
 {$ENDIF WINDOWS}
 
+(*
 function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
-  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; catchout: boolean;
+  var output: TXStringList): boolean;
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
-  FpcProcess: TProcess;
-  //n: longint;
+  ProcessStream: TMemoryStream;
+  Buffer: string = '';
   BytesRead: longint;
+  n: longint;
+  FpcProcess: TProcess;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -2202,13 +2683,45 @@ var
   //  var ProcessInfo: jwawinbase.TProcessInformation;
   mypid: dword = 0;
   ProcShowWindowFlag: TShowWindowOptions;
-  (*
-  starcounter : integer;
-  cpu100stars : string;
-  {$IFDEF WIN32}
-  processActivityCounter: PCPUUsageData;
-  {$ENDIF WIN32}
-  *)
+  //i: integer; // tmp
+
+  function ReadStream(var Buffer: string; var proc: TProcess;
+  var output: TXStringList; showoutput: boolean): longint;
+  var
+    tmp_buffer: array[1..READ_BYTES] of char;//Buffer of 2048 char
+    //output_line: string = '';
+    output_string : string = '';
+    LineBreakPos: longint;
+    BytesRead: longint;
+    OutputStream: TStringStream;
+  begin
+    if proc.output.NumBytesAvailable <= 0 then
+      BytesRead := 0
+    else
+    begin
+      tmp_buffer := '';
+      BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
+
+      OutputStream := TStringStream.Create('');
+      OutputStream.Write(tmp_buffer, BytesRead);
+      //{$IFDEF WINDOWS}
+      //OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
+      //{$ENDIF WINDOWS}
+      //Buffer := Buffer + tmp_buffer;
+      OutputStream.Position:=0;
+      output_string := ConsoleToUTF8(Outputstream.DataString);
+      Buffer := Buffer + output_string;
+
+      if showoutput then
+        begin
+          SystemInfo.Memo1.Append(output_string);
+          ProcessMess;
+        end;
+
+    end;
+
+    Result := BytesRead;
+  end;
 
 const
   secsPerDay = 86400;
@@ -2248,28 +2761,39 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
-  //writeln('>->->'+filename+'='+ExpandFileName(filename));
+  stringsplitByWhiteSpace(trim(ParamStr), TStringList(paramlist));
+  logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
+  logdatei.log_prog('ParamStr: ' + ParamStr, LLinfo);
+  logdatei.log_prog('Filename from command: ' + filename + '=' +
+    ExpandFileName(filename), LLInfo);
+  logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
   try
     try
-      ///M := TMemoryStream.Create;
-      BytesRead := 0;
+      Buffer := '';
+
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
-      FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      FpcProcess.Executable := filename;
+      FpcProcess.Parameters := TStringList(paramlist);
+      //FpcProcess.Parameters;
       {$ELSE WINDOWS}
-      FpcProcess.CommandLine := CmdLinePasStr;
-      //FpcProcess.Executable := filename;
-      //FpcProcess.Parameters := paramlist;
+      //FpcProcess.CommandLine := CmdLinePasStr;
+      FpcProcess.Executable := filename;
+      FpcProcess.Parameters := TStringList(paramlist);
       {$ENDIF WINDOWS}
-      //FpcProcess.Executable := filename;
-      //FpcProcess.Parameters := paramlist;
+      logdatei.log_prog('command: ' + FpcProcess.CommandLine, LLinfo);
+
+      if not WaitForReturn then
+        catchout := False;
+
+      if catchout then
+        FpcProcess.Options := FpcProcess.Options + [poUsePipes, poStdErrToOutPut];
+
       //FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-      //FpcProcess.CommandLine := 'cmd.exe /c dir';
-      //if WaitForReturn then
-      //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
+
       case ShowWindowFlag of
         SW_HIDE: ProcShowWindowFlag := swoHIDE;
         SW_MINIMIZE: ProcShowWindowFlag := swoMinimize;
@@ -2325,7 +2849,6 @@ begin
             FBatchOberflaeche.showProgressBar(True);
             FBatchOberflaeche.setProgress(0);
           end;
-          //for starcounter := 1 to 110 do cpu100stars := cpu100stars+ '*';
           {$ENDIF GUI}
 
           while running do
@@ -2333,6 +2856,9 @@ begin
             nowtime := now;
 
             running := False;
+
+            if catchout then
+              ReadStream(Buffer, FPCProcess, output, showoutput);
 
             //wait for task vanished
             {$IFDEF WINDOWS}
@@ -2343,7 +2869,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
                 logdatei.log('Wait for appear Window: "' + Ident +
-                  ' not found.', LLDebug);
+                  '" not found.', LLDebug);
                 if WaitSecs = 0 then
                   running := True
                 else
@@ -2360,7 +2886,7 @@ begin
                 end;
               end
               else
-                logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
+                logdatei.log('Wait for appear Window: "' + Ident + '" found.', LLDebug);
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -2371,7 +2897,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
               begin
                 WaitWindowStarted := True;
-                logdatei.log('Wait for vanish Window: "' + Ident + ' found.', LLDebug);
+                logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
@@ -2427,12 +2953,6 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                 begin
                   running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
                 end
                 else
                 begin
@@ -2524,14 +3044,6 @@ begin
               logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
- (*
-            end
-            else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode <> still_active)
-            then
-            begin
-              logdatei.DependentAdd('Process terminated at: ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-*)
               {$IFDEF WINDOWS}
               if WaitForWindowVanished then
               begin
@@ -2560,27 +3072,15 @@ begin
               else
               begin
                 running := True;
-                  (*
-                  {$IFDEF GUI}
-                  if waitsecsAsTimeout and (WaitSecs > 10) then
-                    FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
-                  {$ENDIF GUI}
-                  *)
               end;
             end;
 
             if running then
             begin
-              (*
-              {$IFDEF WIN32}
-              processActivityCounter := nil;
-              processActivityCounter:=wsCreateUsageCounter(FpcProcess.ProcessID);
-              {$ENDIF WIN32}
-              *)
-              ProcessMess;
+              //ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(1000);
+              //sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -2594,17 +3094,8 @@ begin
                 FBatchOberflaeche.setProgress(round(
                   ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
-              (*
-              {$IFDEF WIN32}
-              if processActivityCounter <> nil then
-              begin
-                logdatei.log('Process CPU Activity: '+inttostr(round(wsGetCpuUsage(processActivityCounter)))+' -> '+ copy(cpu100stars, 1, round(wsGetCpuUsage(processActivityCounter))),LLDebug2);
-                FBatchOberflaeche.setCPUActivityLabel(copy(cpu100stars, 1, 1+round(wsGetCpuUsage(processActivityCounter))));
-              end;
-              {$ENDIF WIN32}
-              *)
               {$ENDIF GUI}
-              ProcessMess;
+              //ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
@@ -2613,24 +3104,34 @@ begin
 
           ProcessMess;
 
-          //exitCode := FpcProcess.ExitStatus;
-          exitCode := FpcProcess.ExitCode;
-          //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
-          //exitCode := lpExitCode;
-          //Report := 'Process executed  + CmdLinePasStr
-          Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
-            CmdLinePasStr + '"';
+          if catchout then
+          begin
+            // read remaining output
+            repeat
+              n := ReadStream(Buffer, FPCProcess, output, showoutput);
+            until n <= 0;
+
+            // add remainder of buffer as last line
+            if Buffer <> '' then
+              output.Add(Buffer);
+          end;
         end;
 
+        ProcessMess;
+
+        exitCode := FpcProcess.ExitCode;
+        Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
+          CmdLinePasStr + '"';
       end;
 
     except
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_cp: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
@@ -2638,34 +3139,66 @@ begin
     //CloseHandle(processInfo.hThread);
     ///S.Free;
     FpcProcess.Free;
-    ///M.Free;
     {$IFDEF GUI}
     FBatchOberflaeche.showProgressBar(False);
-    (*
-    {$IFDEF WIN32}
-    if processActivityCounter <> nil then wsDestroyUsageCounter(processActivityCounter);
-    processActivityCounter := nil;
-    FBatchOberflaeche.setCPUActivityLabel('');
-    {$ENDIF WIN32}
-    *)
-    {$ENDIF GUI}
+     {$ENDIF GUI}
+  end;
+end;
+*)
+
+{$IFDEF WIN32}
+function ReadPipe(var Buffer: string; var hReadPipe: THandle;
+  var BytesRead: longword; var output: TXStringList; showoutput: boolean): boolean;
+var
+  output_line: string = '';
+  lpBuffer: array[0..READ_BYTES - 1] of char;//array of 2048 char
+  LineBreakPos: longword;
+  BytesAvail: longword;
+  BytesLeft: longword;
+begin
+  Result := PeekNamedPipe(hReadPipe, nil, READ_BYTES, @BytesRead,
+    @BytesAvail, @BytesLeft);
+  if BytesAvail > 0 then
+  begin
+    lpBuffer := '';
+    Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
+
+    OemToAnsiBuff(lpBuffer, lpBuffer, BytesRead);
+    Buffer := Buffer + lpBuffer;
+
+    LineBreakPos := Pos(#13, Buffer);
+    while not (LineBreakPos = 0) do
+    begin
+      output_line := Copy(Buffer, 1, LineBreakPos - 1);
+      output_line := WinCPToUTF8(output_line);
+      output.Add(output_line);
+      {$IFDEF GUI}
+      if showoutput then
+      begin
+        SystemInfo.Memo1.Lines.Add(output_line);
+        ProcessMess;
+      end;
+      {$ENDIF GUI}
+
+      // skip carriage return if present
+      if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
+        Inc(LineBreakPos, 1);
+
+      Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+
+      LineBreakPos := Pos(#13, Buffer);
+    end;
   end;
 end;
 
-{$IFDEF WIN32}
 function StartProcess_cp_lu(CmdLinePasStr: string; ShowWindowFlag: integer;
-  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; catchout: boolean;
+  var output: TXStringList): boolean;
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
-  //FpcProcess: TProcess;
-  //n: longint;
-  BytesRead: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -2687,6 +3220,13 @@ var
   info: string;
   lpExitCode: DWORD = 0;
   gottoken: boolean;
+
+  BytesRead: longword;
+  Buffer: string = '';
+  hReadPipe: THandle = 0;
+  hWritePipe: THandle = 0;
+  readResult: boolean;
+  sa: TSecurityAttributes;
 var
   ProcessInfo: jwawinbase.TProcessInformation;
   StartupInfo: jwawinbase.TStartupInfoW;
@@ -2701,7 +3241,6 @@ var
 
 const
   secsPerDay = 86400;
-  //ReadBufferSize = 2048;
 
 begin
   params := '';
@@ -2735,21 +3274,12 @@ begin
   //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
-      (*
-      ///M := TMemoryStream.Create;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
-      FpcProcess.CommandLine := CmdLinePasStr;
-      FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-      //FpcProcess.CommandLine := 'cmd.exe /c dir';
-      //if WaitForReturn then
-      //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
-      FpcProcess.ShowWindow := swoHIDE;
-      FpcProcess.Execute;
-      *)
+      FillChar(sa, SizeOf(sa), 0);
+      sa.nLength := sizeof(sa);
+      sa.lpSecurityDescriptor := nil;
+      sa.bInheritHandle := True;
+
       FillChar(processInfo, SizeOf(processInfo), 0);
-      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
-      StartupInfo.cb := SizeOf(StartupInfo);
 
 (*
       @CreateEnvironmentBlock := GetProcAddress(LoadLibrary('userenv.dll'),
@@ -2792,11 +3322,33 @@ begin
         opsiSetupAdmin_ProfileHandle := lpProfileInfo.hProfile;
         lpEnvironment := nil;
       end;
+
       wstr := CmdLinePasStr;
+
+      if not WaitForReturn then
+        catchout := False;
+
+      if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
+      begin
+        Report := 'Error creating Pipe';
+        Result := False;
+        exit;
+      end;
+
+      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
+      StartupInfo.cb := SizeOf(StartupInfo);
+      if catchout then
+      begin
+        StartupInfo.dwFlags := STARTF_USESTDHANDLES;
+        StartupInfo.hStdInput := 0;
+        StartupInfo.hStdOutput := hWritePipe;
+        StartupInfo.hStdError := hWritePipe;
+      end;
+
       if not jwawinbase.CreateProcessAsUserW(opsiSetupAdmin_logonHandle,
         nil, PWideChar(wstr), nil, nil,
         //opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
-        False,
+        catchout,  // inherit handles if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         //CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or
         //CREATE_DEFAULT_ERROR_MODE,
@@ -2812,6 +3364,8 @@ begin
         LogDatei.DependentAdd(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
+        CloseHandle(hReadPipe);
+        CloseHandle(hWritePipe);
       end
 
 (*
@@ -2831,6 +3385,9 @@ begin
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
         presultfilename := PChar(resultfilename);
+
+        BytesRead := 0;
+
         //mypid := ProcessInfo.dwProcessId;
 
         //FindExecutable(PChar(filename), nil, presultfilename);
@@ -2851,6 +3408,10 @@ begin
             nowtime := now;
 
             running := False;
+
+            if catchout and (not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             //wait for task vanished
 
@@ -2976,8 +3537,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -2999,9 +3560,7 @@ begin
             if running then
             begin
               ProcessMess;
-              //sleep(50);
               sleep(1000);
-              //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
               logdatei.DependentAdd('Waiting for ending at ' +
@@ -3012,10 +3571,23 @@ begin
 
           ProcessMess;
 
-          //exitCode := FpcProcess.ExitStatus;
+          if catchout then
+          begin
+            repeat
+              readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput);
+              if not readResult then
+                LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
+            until (BytesRead <= 0) or (not readResult);
+
+            // add remainder of buffer as last line
+            if Buffer <> '' then
+              output.Add(Buffer);
+          end;
+
+          ProcessMess;
+
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
           exitCode := longint(lpExitCode);
-          //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
         end;
@@ -3026,13 +3598,17 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_cp_lu: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
     CloseHandle(ProcessInfo.hProcess);
     CloseHandle(processInfo.hThread);
+    CloseHandle(hReadPipe);
+    CloseHandle(hWritePipe);
     (*
     if not (opsiSetupAdmin_lpEnvironment = nil) then
       if not DestroyEnvironmentBlock(opsiSetupAdmin_lpEnvironment) then
@@ -3053,18 +3629,13 @@ end;
 
 
 function StartProcess_cp_el(CmdLinePasStr: string; ShowWindowFlag: integer;
-  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; catchout: boolean;
+  var output: TXStringList): boolean;
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
-  //FpcProcess: TProcess;
-  //n: longint;
-  BytesRead: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -3086,6 +3657,14 @@ var
   info: string;
   lpExitCode: DWORD = 0;
   gottoken: boolean;
+
+  // output catching
+  hReadPipe: THandle = 0;
+  hWritePipe: THandle = 0;
+  BytesRead: longword;
+  Buffer: string = '';
+  readResult: boolean;
+  sa: TSecurityAttributes;
 var
   ProcessInfo: jwawinbase.TProcessInformation;
   StartupInfo: jwawinbase.TStartupInfo;
@@ -3097,7 +3676,6 @@ var
 
 const
   secsPerDay = 86400;
-  //ReadBufferSize = 2048;
 
 begin
   params := '';
@@ -3131,21 +3709,15 @@ begin
   //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
-      (*
-      ///M := TMemoryStream.Create;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
-      FpcProcess.CommandLine := CmdLinePasStr;
-      FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-      //FpcProcess.CommandLine := 'cmd.exe /c dir';
-      //if WaitForReturn then
-      //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
-      FpcProcess.ShowWindow := swoHIDE;
-      FpcProcess.Execute;
-      *)
+      FillChar(sa, SizeOf(sa), 0);
+      sa.nLength := sizeof(sa);
+      sa.lpSecurityDescriptor := nil;
+      sa.bInheritHandle := True;
+
       FillChar(processInfo, SizeOf(processInfo), 0);
-      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
-      StartupInfo.cb := SizeOf(StartupInfo);
+
+
+
       //CreateProcessElevated(lpApplicationName: PChar; lpCommandLine: String;
       //lpCurrentDirectory: PChar;Counter: Integer; var ProcessInfo: TProcessInformation): Boolean;
       //gottoken := OpenShellProcessToken('action_processor_starter.exe', opsiSetupAdmin_logonHandle);
@@ -3172,10 +3744,31 @@ begin
         opsiSetupAdmin_lpEnvironment := nil;
       end;
 
+      if not WaitForReturn then
+        catchout := False;
+
+      if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
+      begin
+        Report := 'Error creating Pipe';
+        Result := False;
+        exit;
+      end;
+
+      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
+      StartupInfo.cb := SizeOf(StartupInfo);
+      if catchout then
+      begin
+        StartupInfo.dwFlags := STARTF_USESTDHANDLES;
+        StartupInfo.hStdInput := 0;
+        StartupInfo.hStdOutput := hWritePipe;
+        StartupInfo.hStdError := hWritePipe;
+      end;
+
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, False,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
+        catchout, // inherit handles only if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or
         CREATE_DEFAULT_ERROR_MODE, opsiSetupAdmin_lpEnvironment,
@@ -3188,21 +3781,14 @@ begin
         LogDatei.log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
+        CloseHandle(hWritePipe);
+        CloseHandle(hReadPipe);
       end
-
-(*
-      if not CreateProcessElevated(nil, CmdLinePasStr, PChar(GetCurrentDir), 0,
-        ProcessInfo) then
-      begin
-        Result := False;
-        logdatei.DependentAdd('Could not start process ', LLError);
-      end
-*)
       else
       begin
         SetProcessAffinityMask(ProcessInfo.hProcess, 1);
         Result := True;
-
+        logdatei.log('Started process "' + CmdLinePasStr, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
@@ -3214,6 +3800,8 @@ begin
         //allChildrenIDs := TStringList.create;
         //allChildrenIDs.add ( inttoStr(processID));
 
+        BytesRead := 0;
+
         if not WaitForReturn and (WaitSecs = 0) then
           Report := 'Process started:    ' + CmdLinePasStr
         else
@@ -3221,12 +3809,23 @@ begin
           running := True;
           starttime := now;
           WaitWindowStarted := False;
+          {$IFDEF GUI}
+          if waitsecsAsTimeout and (WaitSecs > 5) then
+          begin
+            FBatchOberflaeche.showProgressBar(True);
+            FBatchOberflaeche.setProgress(0);
+          end;
+          {$ENDIF GUI}
 
           while running do
           begin
             nowtime := now;
 
             running := False;
+
+            if catchout and not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput)) then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             //wait for task vanished
 
@@ -3244,12 +3843,28 @@ begin
               //we are waiting for a window that will later vanish
               //but this window did not appear yet
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              begin
                 WaitWindowStarted := True;
+                logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
+              end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
-                running := True;
-              // in case WaitForWindowVanished we are not yet ready
-              // but have to check waiting condition 3
+                // in case WaitForWindowVanished we are not yet ready
+                // but have to check waiting condition 3
+                if WaitSecs = 0 then
+                  running := True
+                else
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for vanish Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
+                end;
             end
 
             else if not waitsecsAsTimeout and (WaitSecs > 0) and
@@ -3301,7 +3916,35 @@ begin
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LevelComplete);
+                logdatei.log('Process "' + ident + '" ended', LLinfo);
+                // After the process we waited for has ended, the Parent may be still alive
+                // in this case we have to wait for the end of the parent
+                {$IFDEF WINDOWS}
+                if GetExitCodeProcess(processInfo.hProcess, longword(lpExitCode)) and
+                  (lpExitCode = still_active) then
+                begin
+                  running := True;
+                  WaitForProcessEnding := False;
+                end;
+                {$ENDIF WINDOWS}
+                (*
+                {$IFDEF UNIX}
+                lpExitCode := FpcProcess.ExitCode;
+                if FpcProcess.Running then
+                begin
+                  running := True;
+                  WaitForProcessEnding := False;
+                end
+                else
+                begin
+                  lpExitCode := FpcProcess.ExitCode;
+                  logdatei.log(
+                    'Process : ' + FpcProcess.Executable + ' terminated at: ' +
+                    DateTimeToStr(now) + ' exitcode is: ' +
+                    IntToStr(lpExitCode), LLInfo);
+                end;
+                {$ENDIF LINUX}
+                *)
               end
               else
               begin
@@ -3330,15 +3973,6 @@ begin
               logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
- (*
-            end
-            else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
-              (lpExitCode <> still_active)
-            then
-            begin
-              logdatei.DependentAdd('Process terminated at: ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-*)
               if WaitForWindowVanished then
               begin
                 if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
@@ -3350,8 +3984,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3373,15 +4007,28 @@ begin
             if running then
             begin
               ProcessMess;
-              //sleep(50);
               sleep(1000);
-              //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
               logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
+          end;
+
+          ProcessMess;
+
+          if catchout then
+          begin
+            repeat
+              readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput);
+              if not readResult then
+                LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
+            until (BytesRead <= 0) or (not readResult);
+
+            // add remainder of buffer as last line
+            if Buffer <> '' then
+              output.Add(Buffer);
           end;
 
           ProcessMess;
@@ -3399,25 +4046,27 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLError);
+        LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
     CloseHandle(ProcessInfo.hProcess);
     CloseHandle(processInfo.hThread);
-    ///S.Free;
-    //FpcProcess.Free;
-    ///M.Free;
+    CloseHandle(hReadPipe);
+    CloseHandle(hWritePipe);
   end;
 end;
 
 
 function StartProcess_as(CmdLinePasStr: string; ShowWindowFlag: integer;
-  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; catchout: boolean;
+  var output: TXStringList): boolean;
 
 const
   // default values for window stations and desktops
@@ -3426,12 +4075,6 @@ const
   CreateProcDOMUSERSEP = '\';
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
-  //FpcProcess: TProcess;
-  //n: longint;
-  BytesRead: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -3474,6 +4117,13 @@ var
   hDesktop: HDESK;
   mypid: dword = 0;
 
+  // output catching
+  hReadPipe: THandle = 0;
+  hWritePipe: THandle = 0;
+  BytesRead: longword;
+  Buffer: string = '';
+  readResult: boolean;
+  sa: TSecurityAttributes;
 const
   secsPerDay = 86400;
   //ReadBufferSize = 2048;
@@ -3655,6 +4305,22 @@ begin
               begin
 *)
       // Step 4: set the startup info for the new process
+
+      if not WaitForReturn then
+        catchout := False;
+
+      FillChar(sa, SizeOf(sa), 0);
+      sa.nLength := sizeof(sa);
+      sa.lpSecurityDescriptor := nil;
+      sa.bInheritHandle := True;
+
+      if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
+      begin
+        Report := 'Error creating Pipe';
+        Result := False;
+        exit;
+      end;
+
       ConsoleTitle := 'opsi-winst-as-admin';
       FillChar(StartUpInfo, SizeOf(StartUpInfo), #0);
       with StartUpInfo do
@@ -3663,8 +4329,15 @@ begin
         lpTitle := PChar('opsi-winst-as-admin');
         Help := opsiSetupAdmin_startupinfo_help;
         lpDesktop := PChar(Help);
-        dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
+        if catchout then
+          dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES
+        else
+          dwFlags := STARTF_USESHOWWINDOW;
+
         wShowWindow := ShowWindowFlag;
+        hStdInput := 0;
+        hStdOutput := hWritePipe;
+        hStdError := hWritePipe;
       end;
 (*
       if not CreateEnvironmentBlock(lpEnvironment,0,false) then
@@ -3681,7 +4354,8 @@ begin
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, False,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
+        catchout, // inherit handes only if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or NORMAL_PRIORITY_CLASS,
         opsiSetupAdmin_lpEnvironment,
@@ -3725,11 +4399,17 @@ begin
           starttime := now;
           WaitWindowStarted := False;
 
+          BytesRead := 0;
+
           while running do
           begin
             nowtime := now;
 
             running := False;
+
+            if catchout and (not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             (* wait for task vanished *)
 
@@ -3894,6 +4574,21 @@ begin
           end;
 
           ProcessMess;
+
+          if catchout then
+          begin
+            repeat
+              readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput);
+              if not readResult then
+                LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
+            until (BytesRead <= 0) or (not readResult);
+
+            // add remainder of buffer as last line
+            if Buffer <> '' then
+              output.Add(Buffer);
+          end;
+
+          ProcessMess;
           GetExitCodeProcess(processInfo.hProcess, lpExitCode);
           exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
@@ -3907,8 +4602,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_as: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := False;
       end;
     end;
   finally
@@ -3933,11 +4630,12 @@ var
   runAs: TRunAs;
 begin
   // set runas
+  // provide a temp stringlist
   runAs := traInvoker;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    runas, Ident, WaitSecs, Report, ExitCode);
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, False,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, runas, Ident, WaitSecs, Report, ExitCode);
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -3945,19 +4643,61 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   RunAs: TRunAs; Ident: string; WaitSecs: word; var Report: string;
   var ExitCode: longint): boolean;
+var
+  output: TXStringList;
 begin
   // set waitsecsAsTimeout = false
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    False, runAs, Ident, WaitSecs, Report, ExitCode);
-end;
+  // provide a temp stringlist
+  output := TXStringList.Create;
 
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, False, runAs, Ident, WaitSecs, Report,
+    ExitCode, False, output);
+
+  output.Free;
+end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; RunAs: TRunAs; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint): boolean;
+var
+  output: TXStringList;
+begin
+  // compatibility with old version that had no output capturing
+  output := TXStringList.Create;
+
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
+    Report, Exitcode, False, output);
+
+  output.Free;
+end;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList): boolean;
+var
+  showtitle: string = '';
+begin
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
+    Report, Exitcode, False, output, showtitle);
+end;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList; showtitle: string): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -3996,6 +4736,7 @@ var
   myduptoken, mytoken: THandle;
   {$ENDIF WIN32}
 
+  showoutput: boolean;
 const
   secsPerDay = 86400;
   ReadBufferSize = 2048;
@@ -4029,16 +4770,71 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
+
+  showoutput := False;
+
+  if not WaitForReturn then
+    showoutputflag := tsofHideOutput;
+
+  if showoutputFlag in [tsofShowOutput, tsofShowOutputNoSystemInfo] then
+    showoutput := True;
+
+  {$IFDEF GUI}
+
+
+  if showoutput then
+  begin
+    FBatchOberflaeche.Left := 5;
+    FBatchOberflaeche.Top := 5;
+
+    // In the normal case of tsofShowOutput
+    // we call CreateSystemInfo and show the
+    // output of the called process
+
+    // if tsofShowOutputNoSystemInfo is used
+    // we assume that the caller already has
+    // created a SystemInfo and just append
+    // to that one. We also won't free it and
+    // assume the caller does it.
+    if showoutputflag = tsofShowOutput then
+    begin
+      LogDatei.log('Start Showoutput', LLInfo);
+      CreateSystemInfo;
+      SystemInfo.Memo1.Lines.Clear;
+    end;
+
+    SystemInfo.Memo1.Color := clBlack;
+    SystemInfo.Memo1.Font.Color := clWhite;
+    //systeminfo.BitBtn1.Enabled := False;
+    systeminfo.BitBtn1.Visible := False;
+    //systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
+    systeminfo.Label1.Caption := 'Executing: ' + showtitle;
+    systeminfo.ShowOnTop;
+    ProcessMess;
+  end;
+  {$ENDIF GUI}
+
   {$IFDEF UNIX}
   // we start as Invoker
   // we assume that this is a executable
   // we try it via createprocess (Tprocess)
   LogDatei.DependentAdd(
     'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
-  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
-  {$ENDIF LINUX}
+  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
+    ExitCode, catchout, output);
+  {$ENDIF UNIX}
+  {$IFDEF WIN64}
+  // we start as Invoker
+  // we assume that this is a executable
+  // we try it via createprocess (Tprocess)
+  LogDatei.log('Start process as invoker.', LLInfo);
+  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
+    ExitCode, catchout, output);
+  {$ENDIF WIN64}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
   if FileExists(filename) and not ((LowerCase(ext) = '.exe') or
@@ -4047,7 +4843,7 @@ begin
     // we assume that this is a call of a not executable file
     // this is deprecated so we warn and still try it via shellexecute
     logdatei.DependentAdd('winbatch call of not executable file: ' +
-      filename + ' is deprecated', LLWarning);
+      filename + ' is deprecated and output capturing not supported', LLWarning);
     Result := StartProcess_se(CmdLinePasStr, ShowWindowFlag,
       WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
       WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
@@ -4074,9 +4870,9 @@ begin
       LogDatei.log(
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
       Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
-        WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
-
+        showoutput, WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
+        Report, ExitCode, catchout, output);
     end
     else if RunAs = traLoggedOnUser then
     begin
@@ -4108,8 +4904,9 @@ begin
           'Start process as LoggedOnUser: ' + usercontextDomain +
           '\' + usercontextUser, LLInfo);
         Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag,
-          WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+          showoutput, WaitForReturn, WaitForWindowVanished,
+          WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+          Ident, WaitSecs, Report, ExitCode, catchout, output);
         if not Result then
           LogDatei.DependentAdd('Failed to start process as logged on user.', LLError);
       except
@@ -4127,8 +4924,9 @@ begin
       // we try it via createprocess (Tprocess)
       LogDatei.log('Start process elevated ....', LLInfo);
       Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
-        WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+        showoutput, WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
+        Report, ExitCode, catchout, output);
 
     end
     else
@@ -4138,8 +4936,9 @@ begin
       begin
         //it is still created
         Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
-          WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+          showoutput, WaitForReturn, WaitForWindowVanished,
+          WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+          Ident, WaitSecs, Report, ExitCode, catchout, output);
         dwThreadId := GetCurrentThreadId;
         //if SetThreadToken(nil,opsiSetupAdmin_logonHandle) then
         //  Logdatei.DependentAdd('SetThreadToken success', LLDebug2)
@@ -4168,16 +4967,16 @@ begin
             Logdatei.DependentAdd('Could not create Temporary Admin ', LLError);
             Logdatei.DependentAdd('Try to run without temporary Admin ', LLWarning);
             Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
-              WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-              WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode);
+              showoutput, WaitForReturn, WaitForWindowVanished,
+              WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+              Ident, WaitSecs, Report, ExitCode, catchout, output);
           end
           else
           begin
             Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
-              WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-              WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode);
+              showoutput, WaitForReturn, WaitForWindowVanished,
+              WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+              Ident, WaitSecs, Report, ExitCode, catchout, output);
 
 
           (*
@@ -4198,6 +4997,23 @@ begin
     end;
   end;
   {$ENDIF WIN32}
+
+  {$IFDEF GUI}
+  if showoutput then
+  begin
+    // if tsofShowOutputNoSystemInfo we assume
+    // the caller will free the SystemInfo for us
+    if showoutputflag = tsofShowOutput then
+    begin
+      LogDatei.log('Stop Showoutput', LLInfo);
+      SystemInfo.Free;
+      SystemInfo := nil;
+    end;
+    FBatchOberflaeche.BringToFront;
+    FBatchOberflaeche.centerWindow;
+    ProcessMess;
+  end;
+  {$ENDIF GUI}
 end;
 
 
@@ -4469,7 +5285,7 @@ var
   //Attr: integer;
   FileResult: integer = 0;
 begin
-  FileResult := FindFirst(CompleteName, faAnyFile, fRec);
+  FileResult := FindFirst(CompleteName, faAnyFile or faSymlink, fRec);
   if FileResult = 0 then
   begin
     Result := True;
@@ -4504,7 +5320,7 @@ var
   SearchRec: TSearchRec;
 begin
   FName := ExpandFileName(FName);
-  if findfirst(FName, faAnyFile, SearchRec) = 0 then
+  if findfirst(FName, faAnyFile or faSymlink, SearchRec) = 0 then
     Result := SearchRec.Size
   else
     Result := -1;
@@ -4673,13 +5489,23 @@ begin
   Result := user;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   //Result := execShellCall('who | awk ''{print $1}'' | uniq','sysnative');
   //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
   //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
   //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
   Result := getCommandResult('id -un');
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // https://scriptingosx.com/2020/02/getting-the-current-user-in-macos-update/
+  //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
+  //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
+  //Result := getCommandResult('/bin/bash -c "who -q | grep `whoami`"');
+  Result := getCommandResult('/bin/bash -c "stat -f %Su /dev/console"');
+  if Result = 'root' then
+    Result := '';
+  //echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ && ! /loginwindow/ { print $3 }'
+  {$ENDIF DARWIN}
 end;
 
 
@@ -4715,8 +5541,9 @@ begin
   path := ExtractFilePath(FName);
   basename := ExtractFileNameOnly(FName);
   extension := ExtractFileExt(FName);
-  if FileExists(FName) then
-  begin
+  //if FileExists(FName) then
+  //begin
+    (*
     // this is old style (name.ext.num) and is here only for clean up old logs
     for bakcounter := maxbaks - 1 downto 0 do
     begin
@@ -4729,22 +5556,32 @@ begin
         DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
       end;
     end;
-    // this is new style (name_num.ext)
-    for bakcounter := maxbaks - 1 downto 0 do
+    *)
+  // this is new style (name_num.ext)
+  for bakcounter := maxbaks - 1 downto 0 do
+  begin
+    newfilename := path + PathDelim + basename + '_' +
+      IntToStr(bakcounter) + extension;
+    if FileExists(newfilename) then
     begin
-      newfilename := path + PathDelim + basename + '_' +
-        IntToStr(bakcounter) + extension;
-      if FileExists(newfilename) then
-      begin
-        newbakname := path + PathDelim + basename + '_' +
-          IntToStr(bakcounter + 1) + extension;
-        FileCopy(newfilename, newbakname, problem, False, rebootWanted);
-      end;
+      newbakname := path + PathDelim + basename + '_' +
+        IntToStr(bakcounter + 1) + extension;
+      if FileExists(newbakname) then
+        DeleteFileUTF8(newbakname);
+      RenameFileUTF8(newfilename, newbakname);
+      //FileCopy(newfilename, newbakname, problem, False, rebootWanted);
     end;
-    newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
-    FileCopy(FName, newfilename, problem, False, rebootWanted);
+  end;
+  newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
+  if FileExists(newfilename) then
+    DeleteFileUTF8(newfilename);
+  if FileExists(FName) then
+  begin
+    RenameFileUTF8(FName, newfilename);
+    //FileCopy(FName, newfilename, problem, False, rebootWanted);
     DeleteFileUTF8(FName);
   end;
+  //end;
 end;
 
 
@@ -4804,6 +5641,9 @@ var
   LastError: DWord = 0;
   i: integer = 0;
   retries: integer = 0;
+  cmdstr, report: string;
+  outlines: TXStringlist;
+  ExitCode: integer;
 
   PLastWriteTime: PFileTime;
 
@@ -5021,9 +5861,47 @@ begin
       (*  $ENDIF *)
 
       if not Result then
+      begin
         problem := problem + ' Errorcode ' + IntToStr(LastError) +
           ' ("' + RemoveLineBreaks(SysErrorMessage(LastError)) + '")';
+        if LastError = 5 then // permission denied
+        begin
+          {$IFDEF WINDOWS}
+          if FileExists(ExtractFilePath(ParamStr(0)) + 'handle.exe') then
+          begin
+            try
+              //RunCommand();
+              LogDatei.log('Search for open handles on source and target:', LLinfo);
+              outlines := TXStringList.Create;
+              cmdstr := ExtractFilePath(ParamStr(0)) + 'handle.exe' +
+                ' /u ' + SourceFilename;
+              RunCommandAndCaptureOut(cmdstr, True, outlines, report, SW_HIDE, Exitcode);
+              for i := outlines.Count - 1 downto 0 do
+                if outlines[i] = '' then
+                  outlines.Delete(i);
+              outlines.EliminateLinesStartingWith('Handle v', False);
+              outlines.EliminateLinesStartingWith('Copyright (c)', False);
+              outlines.EliminateLinesStartingWith('Sysinternals', False);
+              LogDatei.log_list(TStrings(outlines), LLinfo);
+              outlines.Clear;
+              cmdstr := ExtractFilePath(ParamStr(0)) + 'handle.exe' +
+                ' /u ' + TargetFilename;
+              RunCommandAndCaptureOut(cmdstr, True, outlines, report, SW_HIDE, Exitcode);
+              for i := outlines.Count - 1 downto 0 do
+                if outlines[i] = '' then
+                  outlines.Delete(i);
+              outlines.EliminateLinesStartingWith('Handle v', False);
+              outlines.EliminateLinesStartingWith('Copyright (c)', False);
+              outlines.EliminateLinesStartingWith('Sysinternals', False);
 
+              LogDatei.log_list(TStrings(outlines), LLinfo);
+            finally
+              FreeAndNil(outlines);
+            end;
+          end;
+          {$ENDIF WINDOWS}
+        end;
+      end;
 
     except
       on E: Exception do
@@ -5255,6 +6133,21 @@ begin
   end;
 end;
 
+function FindInSubDirs(const dir: string; const filename: string): TStringList;
+var
+  subdirs: TStringList;
+  i: integer;
+  fullpath: string;
+begin
+  Result := TStringList.Create;
+  subdirs := FindAllDirectories(dir, False);
+  for i := 0 to (subdirs.Count - 1) do
+  begin
+    fullpath := ConcatPaths([subdirs[i], filename]);
+    if FileExists(fullpath) then
+      Result.Add(fullpath);
+  end;
+end;
 
 procedure TCopyCount.Init(NumberCounted: integer);
 begin
@@ -7358,6 +8251,49 @@ begin
   resultList.Free;
 end;
 
+
+procedure TuibIniFile.ReadRawSection(const SectionName: string;
+  var RawSection: TXStringList);
+var
+  (*
+  i: integer = 0;
+  s: string = '';
+  sectionFound : string ='';
+  nextLine : string = '';
+  comp: integer =2;
+  *)
+  startlineno: integer = 0;
+  resultList: TXStringList;
+begin
+  resultList := TXStringList.Create;
+  resultList.Clear;
+  (*
+  i:= 0;
+  repeat
+     s := trim(Strings[i]);
+     i:=i+1;
+     if (length(s) > 1) and (s[1] = '[') and (s[length(s)] = ']') then
+        sectionFound := copy(s, 2, length(s) - 2);
+  until ((CompareStr(SectionName,sectionFound)=0) OR (i=Count));
+
+  repeat
+     s := Strings[i];
+     if CompareStr(s,'')<>0 then
+        resultList.Add(s);
+     i:=i+1;
+     if CompareStr(Strings[i],'')<>0 then
+     begin
+       nextLine:= Strings[i];
+       comp := CompareStr(nextLine[1],'[');
+     end;
+  until ((comp=0) OR (i=Count)) ;
+  *)
+  GetSectionLines(Sectionname, resultlist, startlineno, False, False, False);
+  RawSection.Assign(resultList);
+  resultList.Free;
+end;
+
+
 function TuibIniFile.ReadString(const Section, Ident, defaultvalue: string): string;
 var
   LogSCommand: string = '';
@@ -7850,11 +8786,15 @@ end;
 
 constructor TuibFileInstall.Create;
 begin
+  copyDenyList := TStringList.Create;
+  copyDenyList.CaseSensitive := False;
+  copyDenyList.Add('.ds_store');
   inherited Create;
 end;
 
 destructor TuibFileInstall.Destroy;
 begin
+  FreeAndNil(copyDenyList);
   inherited Destroy;
 end;
 
@@ -8646,7 +9586,7 @@ begin
         LogDatei.log(LogS, LLError);
       end
       else
-        uxtime1 := fstatRecordSource.mtime;
+        uxtime1 := fstatRecordSource.st_mtime;
 
       if 0 <> fpstat(Targetfilename, fstatRecordTarget) then
       begin
@@ -8656,7 +9596,7 @@ begin
         LogDatei.log(LogS, LLError);
       end
       else
-        uxtime2 := fstatRecordTarget.mtime;
+        uxtime2 := fstatRecordTarget.st_mtime;
       dateTime1 := UnixToDateTime(uxtime1);
       dateTime2 := UnixToDateTime(uxtime2);
       diffresult := abs(uxtime1 - uxtime2);
@@ -8784,12 +9724,25 @@ var
       CopyShallTakePlace: boolean;
 
     begin
+      CopyShallTakePlace := True;
       if SourceName = TargetName then
       begin
         LogS := 'Warning: ' + ' Target "' + TargetName + '" = Source ';
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
-      end
-      else
+        LogDatei.log(LogS, LLwarning);
+        CopyShallTakePlace := False;
+      end;
+
+      if CopyShallTakePlace then
+      begin
+        if copyDenyList.IndexOf(ExtractFileName(SourceName)) > -1 then
+        begin
+          CopyShallTakePlace := False;
+          LogDatei.log('Copy of source: ' + ExtractFileName(
+            SourceName) + ' denied by policy.', LLinfo);
+        end;
+      end;
+
+      if CopyShallTakePlace and FileExists(TargetName) then
       begin
         CopyShallTakePlace := True;
 
@@ -8814,80 +9767,79 @@ var
           CopyShallTakePlace := FileCheckVersions(SourceName, TargetName, True);
         end;
         {$ENDIF WINDOWS}
+      end;
 
-        if CopyShallTakePlace and FileExists(TargetName) then
+      if CopyShallTakePlace and FileExists(TargetName) then
+      begin
+        if cpSpecify and cpNoOverwrite = cpNoOverwrite then
         begin
-          if cpSpecify and cpNoOverwrite = cpNoOverwrite then
-          begin
-            CopyShallTakePlace := False;
-            LogS := 'Target ' + TargetName + ' exists - no copy';
-            LogDatei.DependentAdd(LogS, LevelComplete);
-          end
-          else if cpSpecify and cpUpdate = cpUpdate then
-          begin
-            CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
-          end
-          else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
-          begin
-            followsymlinks := True;
-          end
-          else if cpSpecify and cpDateControl = cpDateControl then
-          begin
-            Extension := UpperCase(ExtractFileExt(TargetName));
-            system.Delete(Extension, 1, 1);
-            if (Extension = 'EXE') then
-              CopyShallTakePlace := FileCheckDate(SourceName, TargetName, True);
-          end
-          else
-          begin
-            LogS := 'Info: Target ' + TargetName +
-              ' exists and shall be overwritten';
-            LogDatei.DependentAdd(LogS, LevelInfo);
-            LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-          end;
-
-          if CopyShallTakePlace then
-
-            if cpDontForceOverwrite = cpSpecify and cpDontForceOverwrite then
-            begin
-              if GetReadonlyAttribute(TargetName, False) then
-              begin
-                CopyShallTakePlace := False;
-                LogS := '"' + TargetName + '" will not be overwritten';
-                LogDatei.DependentAdd(LogS, LevelInfo);
-              end;
-            end
-            else
-              GetReadOnlyAttribute(TargetName, True);
-
+          CopyShallTakePlace := False;
+          LogS := 'Target ' + TargetName + ' exists - no copy';
+          LogDatei.log(LogS, LLinfo);
+        end
+        else if cpSpecify and cpUpdate = cpUpdate then
+        begin
+          CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
+        end
+        else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+        begin
+          followsymlinks := True;
+        end
+        else if cpSpecify and cpDateControl = cpDateControl then
+        begin
+          Extension := UpperCase(ExtractFileExt(TargetName));
+          system.Delete(Extension, 1, 1);
+          if (Extension = 'EXE') then
+            CopyShallTakePlace := FileCheckDate(SourceName, TargetName, True);
+        end
+        else
+        begin
+          LogS := 'Info: Target ' + TargetName +
+            ' exists and shall be overwritten';
+          LogDatei.log(LogS, LLinfo);
+          LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
         end;
 
         if CopyShallTakePlace then
-        begin
-          if FileCopy(SourceName, TargetName, problem, True,
-            rebootWanted, followsymlinks) then
+
+          if cpDontForceOverwrite = cpSpecify and cpDontForceOverwrite then
           begin
-            LogS := SourceName + ' copied to ' + TargetPath;
-            LogDatei.DependentAdd(LogS, LevelComplete);
-            if problem <> '' then
+            if GetReadonlyAttribute(TargetName, False) then
             begin
-              LogS := 'Warning: ' + problem;
-              LogDatei.DependentAddWarning(LogS, LevelWarnings);
+              CopyShallTakePlace := False;
+              LogS := '"' + TargetName + '" will not be overwritten';
+              LogDatei.log(LogS, LLinfo);
             end;
           end
           else
-          begin
-            LogS := 'Error: copy of ' + SourceName + ' to ' +
-              TargetName + ' not possible. ' + problem;
-            LogDatei.log(LogS, LLError);
-          end;
-
-
-          if not (cpLeaveReadonly = cpSpecify and cpLeaveReadonly) then
             GetReadOnlyAttribute(TargetName, True);
-          // a readonly attribute will be eliminated
+      end;
 
+      if CopyShallTakePlace then
+      begin
+        if FileCopy(SourceName, TargetName, problem, True,
+          rebootWanted, followsymlinks) then
+        begin
+          LogS := SourceName + ' copied to ' + TargetPath;
+          LogDatei.log(LogS, LLInfo);
+          if problem <> '' then
+          begin
+            LogS := 'Warning: ' + problem;
+            LogDatei.log(LogS, LLWarning);
+          end;
+        end
+        else
+        begin
+          LogS := 'Error: copy of ' + SourceName + ' to ' +
+            TargetName + ' not possible. ' + problem;
+          LogDatei.log(LogS, LLError);
         end;
+
+
+        if not (cpLeaveReadonly = cpSpecify and cpLeaveReadonly) then
+          GetReadOnlyAttribute(TargetName, True);
+        // a readonly attribute will be eliminated
+
       end;
     end;
 
@@ -9149,7 +10101,7 @@ var
             FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
-          LogDatei.DependentAdd(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
@@ -9194,7 +10146,8 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(SourcePath + '*.*', faAnyfile, SearchResult);
       {$ELSE}
-      FindResultcode := FindFirst(SourcePath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(SourcePath + '*', faAnyfile or
+        faSymlink, SearchResult);
       {$ENDIF WINDOWS}
 
       while FindResultcode = 0 do
@@ -9401,6 +10354,17 @@ end;
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+var
+  retryOnReboot: boolean = False;
+begin
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
+    True, RebootWanted, retryOnReboot);
+end;
+
+function TuibFileInstall.AllDelete
+  (const Filename: string; recursive, ignoreReadOnly: boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+  retryOnReboot: boolean): boolean;
 
 var
   CompleteName: string = '';
@@ -9416,6 +10380,7 @@ var
   moveflags: DWORD;
   {$IFDEF WINDOWS}
   exitbool: winbool;
+  errorNo: integer;
 
 {$ENDIF WINDOWS}
 
@@ -9435,29 +10400,24 @@ var
     ddiff: integer = 0;
     errorno: integer = 0;
 
-    procedure myfiledelete(filename: string);
-    begin
-
-    end;
-
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-    // Completename zerlegen
+    { analyze Completename }
     OrigPath := ExtractFilePath(CompleteName);
-    // endet, wie CompleteName sowohl urspruenglich
-    // als auch in der Rekursion konstruiert ist, stets auf \
+    { should end always with pathdelimiter }
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
     LogDatei.log_prog(LogS, LLInfo);
 
-    // start with the sub directories, and go with the recursion deeper and delete the lowest level first
+    { start with the sub directories,
+      and go with the recursion deeper and delete the lowest level first }
     if recursive then
     begin
       {$IFDEF WINDOWS}
       FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*', faAnyfile, SearchResult);
+      FindResultcode := FindFirst(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
@@ -9467,17 +10427,12 @@ var
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
           (OrigPath + SearchResult.Name + PathDelim + FileMask, DeleteDeeperDir);
-        (*
-        else
-          if (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
-            myfiledelete(OrigPath + SearchResult.Name);
-            *)
         FindResultcode := FindNext(SearchResult);
       end;
       SysUtils.findclose(SearchResult);
     end;
 
-    // now delete in the base directory
+    { now delete in the base directory }
     {$IFDEF WINDOWS}
     if Filemask = '' then
       Filemask := '*.*';
@@ -9488,8 +10443,8 @@ var
     LogS := 'Search "' + OrigPath + Filemask + '"';
     LogDatei.log(LogS, LLInfo);
 
-    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile -
-      faDirectory, SearchResult);
+    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or
+      faSymlink - faDirectory, SearchResult);
 
     while FindResultcode = 0 do
     begin
@@ -9503,7 +10458,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, True) then
         begin
-          // Elimination of readonly attribut did not work
+          { Elimination of readonly attribut did not work }
           FileIsReadonly := True;
           Result := False;
         end;
@@ -9512,7 +10467,7 @@ var
       begin
         if GetReadOnlyAttribute(Filename, False) then
         begin
-          // Elimination of readonly attribut was not intended
+          { Elimination of readonly attribut was not intended  }
           FileIsReadonly := True;
           Result := False;
           LogS := 'No deletion, file is readonly';
@@ -9540,35 +10495,53 @@ var
       begin
         if SysUtils.DeleteFile(Filename) then
         begin
-          LogS := 'The file has been deleted';
+          LogS := 'The file ' + Filename + ' has been deleted';
           LogDatei.log(LogS, LLInfo);
         end
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
-            LogDatei.log('Warning: The file could not be deleted', LLWarning);
+          begin
+            //LogDatei.log('Warning: The file could not be deleted', LLWarning);
+           {$IFDEF UNIX}
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
+           {$ENDIF UNIX}
+           {$IFDEF WINDOWS}
+            errorNo := GetLastError;
+            LogS := 'Warning: "' + 'file ' + Filename +
+              '" cannot be deleted, error ' + IntToStr(errorNo) +
+              ' ("' + RemoveLineBreaks(SysErrorMessage(errorNo)) + '")';
+           {$ENDIF WINDOWS}
+            LogDatei.log(LogS, LLWarning);
+          end;
         end;
       end;
 
@@ -9594,7 +10567,7 @@ var
         {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
           '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
-        {$ENDIF LINUX}
+        {$ENDIF UNIX}
         {$IFDEF WINDOWS}
         errorNo := GetLastError;
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
@@ -9602,6 +10575,33 @@ var
           RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
         {$ENDIF WINDOWS}
         LogDatei.log(LogS, LLWarning);
+        {$IFDEF WINDOWS}
+        if retryOnReboot then
+        begin
+          errorNo := GetLastError;
+          if (errorNo = 32) or (errorNo = 145) then
+          begin
+            LogDatei.log('Target dir: ' + Filename +
+              ' was in use, retry with DELAY_UNTIL_REBOOT.',
+              LLDebug2);
+            exist := PWChar(unicodestring(OrigPath));
+            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+            exitbool := MoveFileExW(exist, nil, moveflags);
+            if exitbool then
+            begin
+              Result := True;
+              RebootWanted := True;
+              LogDatei.log(
+                'Target dir was in use, move / rename should be completed after reboot.',
+                LLWarning);
+            end
+            else
+              LogDatei.log(
+                'Target dir was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                LLError);
+          end;
+        end;
+          {$ENDIF WINDOWS}
         Result := False;
       end;
     end;
@@ -9612,10 +10612,10 @@ var
 
 begin
   Result := True;
-  // Filename processing
+  { Filename processing }
   PathName := ExtractFilePath(CompleteName);
   //CompleteName := ExpandFileName (Filename);
-  // changed because it is dangerous
+  { changed because it is dangerous }
   if (lowercase(Filename) = 'c:\') or (lowercase(Filename) = 'c:\windows') or
     (lowercase(Filename) = 'c:\windows\system32') or (lowercase(Filename) = 'c:') or
     (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
@@ -9627,8 +10627,8 @@ begin
     CompleteName := Filename;
 
 
-       (*  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
-       funktioniert nicht!! *)
+       {  if (FileGetAttr (CompleteName) and faDirectory = faDirectory)
+       does not work!! }
   if isDirectory(CompleteName) and (CompleteName[length(CompleteName)] <>
     PathDelim) then
     CompleteName := CompleteName + PathDelim;
@@ -9655,27 +10655,27 @@ begin
   else
     testname := CompleteName;
 
-  // Start
+  { Start }
   if not search4file then
   begin
-    // new del syntax: "del -s c:\not-existing" will do nothing (if not existing)
+    { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
     if (not FileExists(testname)) and (not DirectoryExists(testname)) then
     begin
-      //does not exist
+      { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
       LogDatei.log(LogS, LLInfo);
     end
     else
     begin
-      // does exist as dir or file
+      { does exist as dir or file }
       if isDirectory(ExtractFilePath(CompleteName)) then
       begin
         ExecDelete(CompleteName, DeleteStartDir);
       end
       else
       begin
-        // is a existing file
+        { is a existing file }
         if SysUtils.DeleteFile(CompleteName) then
         begin
           LogS := 'The file has been deleted';
@@ -9684,40 +10684,40 @@ begin
         else
         begin
           {$IFDEF WINDOWS}
-          if GetLastError = 32 then
+          if retryOnReboot then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
-              LLDebug2);
-            exist := PWChar(unicodestring(Filename));
-            moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
-            exitbool := MoveFileExW(exist, nil, moveflags);
-            if exitbool then
+            errorNo := GetLastError;
+            if (errorNo = 32) or (errorNo = 5) then
             begin
-              Result := True;
-              RebootWanted := True;
-              LogDatei.log(
-                'Target file was in use, move / rename should be completed after reboot.',
-                LLInfo);
-            end
-            else
-              LogDatei.log(
-                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
-                LLError);
+              LogDatei.log('Target file: ' + Filename +
+                ' was in use, retry with DELAY_UNTIL_REBOOT.',
+                LLDebug2);
+              exist := PWChar(unicodestring(Filename));
+              moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
+              exitbool := MoveFileExW(exist, nil, moveflags);
+              if exitbool then
+              begin
+                Result := True;
+                RebootWanted := True;
+                LogDatei.log(
+                  'Target file was in use, move / rename should be completed after reboot.',
+                  LLWarning);
+              end
+              else
+                LogDatei.log(
+                  'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                  LLError);
+            end;
           end
           else
           {$ENDIF WINDOWS}
             LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
-          (*
-        LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
-          ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLInfo);
-        *)
         end;
       end;
     end;
   end
-  else // old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing"
+  else { old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing" }
   begin
     if isDirectory(ExtractFilePath(CompleteName)) then
       ExecDelete(CompleteName, DeleteStartDir)

@@ -54,7 +54,8 @@ uses
   SysUtils,
   fileutil,
   lazfileutils,
-  lconvencoding;
+  lconvencoding,
+  LazUTF8;
 
 type
   //TRemoteErrorLogging = (trel_none, trel_filesystem, trel_syslog);
@@ -105,6 +106,7 @@ type
     FStandardMainLogPath: string;
     FStandardPartLogPath: string;
     FUsedLogLevel: integer;
+    FNoLogFiles : TStringlist;
 
 
   protected
@@ -159,6 +161,7 @@ type
 
 
     procedure SetNumberOfErrors(Number: integer);
+    procedure addToNoLogFiles(filename : string);
     property LogLevel: integer read FLogLevel write FLogLevel;
     property NumberOfWarnings: integer read FNumberOfWarnings write FNumberOfWarnings;
     property NumberOfErrors: integer read FNumberOfErrors write SetNumberOfErrors;
@@ -523,6 +526,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
+  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -578,7 +582,13 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
+      {$IFDEF OPSISCRIPT}
+      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
@@ -622,13 +632,19 @@ begin
   FStandardPartLogFilename := 'opsiclientkiosk-part-';
   FStandardLogFilename := 'opsiclientkiosk';
   {$ENDIF OPSICLIENTKIOSK}
+  (*
   {$IFDEF OPSICLIENTD_SHUTDOWN_STARTER}
   FStandardPartLogFilename := 'opsiclientd_shutdown_starter-part-';
   FStandardLogFilename := 'opsiclientd_shutdown_starter';
   {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
+  *)
   FStandardLogPath := defaultStandardLogPath;
   FStandardMainLogPath := defaultStandardMainLogPath;
   FStandardPartLogPath := defaultStandardPartLogPath;
+  FNoLogFiles := TStringlist.Create;
+  { we want no duplicates in this list - so we have not to check at add }
+  FNoLogFiles.Sorted:=true;
+  FNoLogFiles.Duplicates:=dupIgnore;
 end;
 
 
@@ -638,7 +654,7 @@ var
 begin
   ps := info + '! ' + LineEnding + 'Please inform the Administrator!';
   {$IFDEF GUI}
-  {$IFDEF OPSI}
+  {$IFDEF OPSISCRIPT}
   MyMessageDlg.WiMessage(ps, [mrOk]);
   {$ELSE}
   ShowMessage(ps);
@@ -990,6 +1006,7 @@ begin
     if isOpen(LogPartFileF) then
       FileClose(LogPartFileF);
 
+  FreeAndNil(FNoLogFiles);
   inherited Destroy;
 end;
 
@@ -1263,6 +1280,7 @@ var
   //usedloglevel: integer = 0;
   i: integer;
   dummybool: boolean;
+  orgfilename, mainfilename, sectionFilename : string;
   {$IFDEF GUI}
   dlgresult: TModalresult;
   {$ENDIF}
@@ -1288,8 +1306,13 @@ begin
       {$IFDEF OPSISCRIPT}
       // running defined function ?
       if inDefFuncIndex > -1 then
-        if definedFunctionArray[inDefFuncIndex].OriginFile <>
-          ExtractFileName(script.Filename) then
+      begin
+        orgfilename := definedFunctionArray[inDefFuncIndex].OriginFile;
+        mainfilename := ExtractFileName(script.Filename);
+        //sectionFilename := ExtractFileName(aktsection.Filename);
+        //if orgfilename <> mainfilename
+        if FNoLogFiles.IndexOf(orgfilename) <> -1
+           then
           // defined function imported from lib
           // do we want to debug libraries ?
           if (not debug_lib) then
@@ -1309,11 +1332,14 @@ begin
                 usedloglevel :=  LLWarning;
          end;
          *)
+         end;
        {$ENDIF}
+
 
 
       st := s;
       st := TrimRight(st);
+      //UTF8FixBroken(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
@@ -1452,7 +1478,7 @@ begin
             //flush(LogMainFile);
           except
             {$IFDEF GUI}
-            {$IFDEF OPSI}
+            {$IFDEF OPSISCRIPT}
             if MyMessageDlg.WiMessage('Logfile ' + Filename +
               ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
               halt
@@ -1589,6 +1615,11 @@ end;
 procedure TLogInfo.SetNumberOfErrors(Number: integer);
 begin
   FNumberOfErrors := Number;
+end;
+
+procedure TLogInfo.addToNoLogFiles(filename : string);
+begin
+  FNoLogFiles.add(filename);
 end;
 
 procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;
@@ -1776,6 +1807,7 @@ begin
   begin
     //line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
     line := FormatDateTime('yyyy-mm-dd hh:nn', Now) + '  ' + line;
+    //UTF8FixBroken(line);
     try
       WriteLogLine(HistroryFileF, line);
     except

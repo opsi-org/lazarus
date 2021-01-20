@@ -44,6 +44,8 @@ uses
 
 {$R *.lfm}
 
+
+
 { TNform }
 
 procedure TNform.FormCreate(Sender: TObject);

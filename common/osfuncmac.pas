@@ -26,6 +26,10 @@ uses
   OSProcessux,
   osparserhelper,
   oslog,
+  LazFileUtils,
+  fileutil,
+  unix,
+  baseunix,
   SysUtils;
 
 function checkForMacosDependencies(var Errstr: string): boolean;
@@ -39,19 +43,21 @@ function which(target: string; var pathToTarget: string): boolean;
 function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string)
   : integer;
 function umount(mymountpoint: string): integer;
+function os_shutdown(): boolean;
+function getMacLang(var mylang: string; var report: string): boolean;
 
 implementation
 
 uses
   {$IFDEF OPSISCRIPT}
   osparser,
-    {$ENDIF OPSISCRIPT}
-{$IFDEF GUI}
+  {$ENDIF OPSISCRIPT}
+  {$IFDEF GUI}
   Graphics,
-  osbatchgui,
-  osinteractivegui,
-  osshowsysinfo,
-{$ENDIF GUI}
+  //osbatchgui,
+  //osinteractivegui,
+  //osshowsysinfo,
+  {$ENDIF GUI}
   null;
 
 function which(target: string; var pathToTarget: string): boolean;
@@ -95,8 +101,8 @@ begin
   // $ mv ip.py /usr/local/bin/ip
   if not which('ip', errstr) then
   begin
-    exitcode := RunCommandIndir(
-      '', 'curl', ['-s', '-o', '/usr/local/bin/ip', '-L',
+    exitcode := RunCommandIndir('', 'curl',
+      ['-s', '-o', '/usr/local/bin/ip', '-L',
       'https://github.com/brona/iproute2mac/raw/master/src/ip.py'], output, outint, []);
     exitcode := RunCommandIndir('', 'chmod', ['-x', ''], output, outint, []);
     if not which('ip', errstr) then
@@ -148,8 +154,8 @@ begin
       if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
         report, SW_HIDE, ExitCode) then
       {$ELSE OPSISCRIPT}
-        if not RunCommandAndCaptureOut(pscmd, True, outlines, report, SW_HIDE,
-          ExitCode) then
+        if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+          SW_HIDE, ExitCode) then
       {$ENDIF OPSISCRIPT}
 
         begin
@@ -332,8 +338,8 @@ begin
   end;
 end;
 
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string)
-: integer;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,
+  myoption: string): integer;
 var
   cmd, report: string;
   outlines: TStringList;
@@ -352,11 +358,11 @@ begin
   if pos('//', myshare) > 0 then
     myshare := copy(myshare, 3, length(myshare));
   if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +
-      myuser + ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"'
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser +
+      ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"'
   else
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +
-      myuser + ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"';
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser +
+      ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"';
   //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
 
   LogDatei.DependentAdd('calling: ' + cmd, LLNotice);
@@ -427,6 +433,108 @@ begin
       Result := ExitCode;
     end;
   outlines.Free;
+end;
+
+function os_shutdown(): boolean;
+var
+  exitcode: integer;
+  exitcmd: string;
+begin
+
+  if LogDatei <> nil then
+  begin
+    LogDatei.LogSIndentLevel := 0;
+    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+      ' shutdown regularly and direct. Time ' + FormatDateTime(
+      'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+
+    sleep(1000);
+    //LogDatei.Free;
+    //LogDatei := nil;
+  end;
+  exitcmd := FindDefaultExecutablePath('shutdown');
+  if exitcmd = '' then
+    exitcmd := '/sbin/shutdown';
+  if not FileExistsUTF8(exitcmd) then
+    exitcmd := '/usr/sbin/shutdown';
+  if not FileExistsUTF8(exitcmd) then
+    exitcmd := '/usr/bin/shutdown';
+  exitcmd := exitcmd + ' -h +1 opsi-reboot';
+  LogDatei.log('Exit command is: ' + exitcmd, LLDebug2);
+  exitcode := fpSystem(exitcmd);
+  if exitcode = 0 then
+  begin
+    if LogDatei <> nil then
+    begin
+      LogDatei.Free;
+      LogDatei := nil;
+    end;
+    Result := True;
+    //Fehler := '';
+  end
+  else
+  begin
+    LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+      LLWarning);
+    exitcmd := '/sbin/shutdown -h now';
+    exitcode := fpSystem(exitcmd);
+    if exitcode = 0 then
+    begin
+      if LogDatei <> nil then
+      begin
+        LogDatei.Free;
+        LogDatei := nil;
+      end;
+      Result := True;
+      //Fehler := '';
+    end
+    else
+    begin
+      LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+        LLWarning);
+      Result := False;
+      LogDatei.log('Got exitcode: ' + IntToStr(fpgetErrno) +
+        ' for command' + exitcmd,
+        LLWarning);
+      //Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
+      if LogDatei <> nil then
+      begin
+        LogDatei.Free;
+        LogDatei := nil;
+      end;
+    end;
+  end;
+end;
+
+
+function getMacLang(var mylang: string; var report: string): boolean;
+var
+  outlines: TStringList;
+  exitcode: integer;
+begin
+  Result := False;
+  outlines := TStringList.Create;
+  {$IFDEF OPSISCRIPT}
+  if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
+    True, TXStringlist(outlines), report, 0, exitcode) then
+  {$ELSE OPSISCRIPT}
+  if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
+    True, outlines, report, 0, exitcode) then
+  {$ENDIF OPSISCRIPT}
+  begin
+    if outlines.Count > 2 then
+    begin
+      mylang := trim(outlines.Strings[1]);
+      mylang := copy(mylang, 2, 2);
+      Result := True;
+      report := 'Detected default primary lang on macos: ' + mylang;
+    end
+    else
+      report := 'Unexpected Result at macos lang detection: ' + outlines.Text;
+  end
+  else
+    report := 'Failed macos lang detection: ' + report;
+  FreeAndNil(outlines);
 end;
 
 end.

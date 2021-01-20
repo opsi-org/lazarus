@@ -10,124 +10,6 @@ uses
   oslog,
   SysUtils;
 
-(*
-
-type
-  //TosdfDataTypes = (dfpString,dfpStringlist,dfpBoolean);
-  TosdfDataTypes = (dfpString,dfpStringlist,dfpVoid);
-  TosdfDataTypesNames = Array [TosdfDataTypes] of String [50];
-//  TPosdfParameterTypesNames = TosdfParameterTypesNames^;
-
-  TOsDefinedFunctionParameter =
-    record
-      callByReference : boolean;
-      paramName : string;
-      paramDataType : TosdfDataTypes;
-    end;
-
-  TOsDefinedLocalVar =
-    record
-      varName : string;
-      varDataType : TosdfDataTypes;
-      varValueString : String;
-      //varValueBool : String;  // has to be string, since opsi-script do not know boolean variables
-      VarValueList : Tstringlist;
-      callByReference : boolean;
-      referencevarname : string;
-      referencevarscopeindex : integer; // <-1: invalid, -1 : global, >=0: funcindex
-    end;
-
-  TOsDefinedFunction  = class(TObject)
-  private
-    DFName : string;
-    DFparamCount : integer;
-    DFparamList : array [0..64] of TOsDefinedFunctionParameter;
-    DFcontent : TStringList;
-    DFLocalVarList : Array of TOsDefinedLocalVar;
-    DFResultType : TosdfDataTypes;
-    DFResultString : String;
-    DFResultList : Tstringlist;
-    //DFResultBool : boolean;
-    DFindex : integer;
-    DFParentFunc : string;
-    DFActive : boolean;
-    DFOriginFile : string;
-    DFOriginFileStartLineNumber : integer;
-
-  public
-    constructor create;
-    destructor destroy;
-    function parseDefinition(definitionStr : string; var errorstr : string) : boolean;
-
-    procedure addContent(contentstr : string);
-    function  checkContent(var errorstr : string) : boolean;
-    function validIdentifier(identifier : string; var errorstr : string) : boolean;
-    function stringTofunctiontype(const str : string; var ftype : TosdfDataTypes) : boolean;
-    //function addLocalVar(name : string; datatype : TosdfDataTypes; value : variant) : boolean;
-    function locaVarExists(name : string) : boolean;
-    function locaVarIndex (name : string) : integer;
-    function getLocalVarDatatype(name : string) : TosdfDataTypes;
-    function getLocalVarValueString(name : string) : string;
-    function getLocalVarValueList(name : string) : Tstringlist;
-    //function getLocalVarValueBool(name : string) : boolean;
-    function setLocalVarValueString(name : string; value : string) : boolean;
-    function setLocalVarValueList(name : string; value : Tstringlist) : boolean;
-    //function setLocalVarValueBool(name : string; value : boolean) : boolean;
-    function addLocalVarValueString(name : string; value : string) : boolean;
-    function addLocalVarValueList(name : string; value : Tstringlist) : boolean;
-    //function addLocalVarValueBool(name : string; value : boolean) : boolean;
-    function addLocalVar(name : string; datatype : TosdfDataTypes; callByReference :boolean) : boolean;
-    //function getLocalVarReference(name : string) : pointer;
-
-    function parseCallParameter(paramline : string; var remaining : string;
-               var errorstr : string; NestLevel : integer;
-               inDefFuncIndex : integer) : boolean;
-    //function call(paramline : string; var remaining : string) : boolean;
-    function call(paramline : string; var remaining : string;
-               var NestLevel : integer) : boolean;
-
-    property Name : String read DFName;
-    property datatype : TosdfDataTypes read DFResultType;
-    property Resultstring : String read DFResultString;
-    //property ResultBool : boolean read DFResultBool;
-    property ResultList : Tstringlist read DFResultList;
-    property Index : integer read DFindex write DFindex;
-    property ParentFunc : String read DFParentFunc;
-    property Active : boolean read DFActive write DFActive;
-    property OriginFile : String read DFOriginFile write DFOriginFile;
-    property OriginFileStartLineNumber : integer read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
-  end;
-
-    TDefinedFunctionsArray = Array of TOsDefinedFunction;
-
-  function isVisibleLocalVar(varname: string; var index : integer) : boolean;
-  function isVisibleGlobalStringVar(varname: string; var index : integer) : boolean;
-  function isVisibleGlobalStringlistVar(varname: string; var index : integer) : boolean;
-  procedure freeDefinedFunctions;
-  function isVisibleStringVar(varname: string) : boolean;
-  function isVisibleStringlistVar(varname: string) : boolean;
-  function getFirstLineAfterEndFunc(list : TStringlist; startline : integer) : integer;
-  function getVisibleLocalStringVarNameValueList : TStringlist;
-  function IsEndOfLocalFunction(const s: string): boolean;
-
-var
-  osdfParameterTypesNames : TosdfDataTypesNames;
-  remaining : string;
-  definedFunctionNames : Tstringlist;
-  inDefinedFuncNestCounter : integer = 0;
-  definedFunctionsCallStack : TStringlist;
-  definedFunctionArray : TDefinedFunctionsArray;
-  definedFunctioncounter : integer = 0;
-
-
-implementation
-uses
-  osparser,
-  oslog;
-*)
-//#####################################################################
-
-
 Type
 
 TosdfDataTypes = (dftString,dftStringlist,dftVoid);
@@ -204,7 +86,6 @@ TFileDoc =  class
     FDate : String;
     FCopyright : string;
     Ffiledesc : string;
-    //Ffunctions : array of TFuncDoc;
     FfunctionCounter : integer;
   public
     Ffunctions : array of TFuncDoc;
@@ -217,7 +98,6 @@ TFileDoc =  class
     property Version : string  read FVersion write FVersion;
     property Date : String  read FDate write FDate;
     property Copyright : string  read FCopyright write FCopyright;
-    //property functions : array of TFuncDoc   read Ffunctions write Ffunctions;
     property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
 
@@ -243,7 +123,7 @@ const
   CParam = '@Param';
   CExample = '@Example';
 
-function parseInput_opsiscriptlibrary(filename : string) : boolean;
+function parseInput_opsiscriptlibrary() : boolean;
 
 var
   docobject : TFileDoc;
@@ -288,7 +168,6 @@ begin
   FCopyright := '';
   FDescription := '';
   FReturns := '';
-  //Fparams : array of TParamDoc;
   FParamCounter := 0;
   FOnError := '';
   FSpecialCase := '';
@@ -354,18 +233,14 @@ var
   remaining,errorstr : string;
 begin
   LogDatei.log('Parsing: '+definitionStr,LLdebug);
-  //parseDefFunc := false;
-  //syntax_ok := true;
   endOfParamlist := false;
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
-  // get function name
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
 
   LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
   if  skip('(',remaining,remaining,errorstr) then
   begin
-    // test on no parameters
     tmpstr := remaining;
     if skip(')',remaining,remaining,errorstr) then
     begin
@@ -377,13 +252,11 @@ begin
 
     while  not endOfParamlist do
     begin
-      // check call type
       calltype := 'val';
       if skip('val',LowerCase(remaining),remaining,errorstr) then calltype := 'val';
       if skip('ref',LowerCase(remaining),remaining,errorstr) then calltype := 'ref';
       if lowercase(calltype) = 'ref' then mycallByReference := true
       else mycallByReference := false;
-      // check paramname
       GetWord(remaining, paramnamestr, remaining,[':']);
       paramnamestr := trim(paramnamestr);
 
@@ -398,25 +271,20 @@ begin
         if mycallByReference then FcallByReference:= true
         else  FcallByReference:= false;
         LogDatei.log('Parameter has call type: '+calltype,LLDebug2);
-        // is a new param
         FparamName:= paramnamestr;
-        //DFLocalVarList.Add(paramname);
         if  skip(':',remaining,remaining,errorstr) then
         begin
           GetWord(remaining, paramtypestr, remaining,[',',')']);
           paramtypestr := trim(paramtypestr);
           if lowercase(paramtypestr) = lowercase(ParamTypesNames[dptString]) then
           begin
-            // String type
             FParamType:=dptString;
           end
           else if lowercase(paramtypestr) = lowercase(ParamTypesNames[dptStringlist]) then
           begin
-            // Stringlist type
             FParamType := dptStringlist;
           end;
-        end; // skip :
-        // check for endOfParamlist
+        end;
         tmpstr := remaining;
         if skip(')',remaining,remaining,errorstr) then
         begin
@@ -427,9 +295,8 @@ begin
           remaining := tmpstr;
           if skip(',',remaining,remaining,errorstr) then
         end
-      end; // with
-    end; // while
-    // get function type
+      end;
+    end;
     if skip(':',remaining,remaining,errorstr) then
     begin
       if stringTofunctiontype(remaining, myfunc.FResultType) then
@@ -438,7 +305,6 @@ begin
       end;
     end
   end;
-  //parseDefinition := true;
 end;
 
 function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
@@ -451,10 +317,8 @@ begin
     LogDatei.log('Parsing: '+docstring,LLdebug);
     if lowercase(marker) = lowercase(CExample) then
     begin
-      // is this the first line of example
       if target = '' then
       begin
-        // get ident of first line
         tmpstr1 := copy(docstring,length(marker)+1,length(docstring));
         exampleident := length(tmpstr1) - length(trimleft(tmpstr1));
       end;
@@ -479,11 +343,12 @@ begin
   end;
 end;
 
-function parseInput_opsiscriptlibrary(filename : string) : boolean;
+
+function parseInput_opsiscriptlibrary() : boolean;
 var
   linecounter, funccounter,prun : integer;
   indeffunc : integer;
-  aktline, expr, remaining, pname, tmpstr1, tmpstr2, tmpstr3 : string;
+  aktline, pname : string;
   incomment : boolean;
 begin
   LogDatei.log('Start parseInput_opsiscriptlibrary',LLnotice);
@@ -491,15 +356,14 @@ begin
   indeffunc := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  docobject.Fname:=ExtractFileName(filename);
   for linecounter := 0 to sourcelist.Count-1 do
   begin
     incomment := false;
     aktline := trim(sourcelist.Strings[linecounter]);
     if indeffunc = 0 then
-    begin  // not in defined function
+    begin
       if pos(lowercase(cdeffunc),lowercase(aktline)) = 1 then
-      begin // function definition line
+      begin
         inc(indeffunc);
         funccounter := docobject.Ffunctioncounter;
         inc(funccounter);
@@ -515,7 +379,7 @@ begin
         aktline := trim(copy(aktline,length(ccomment)+1,length(aktline)));
       end;
       if incomment then
-      begin    // document related ?
+      begin
         if not onMarkerAddDocStringTo(cauthor,aktline,docobject.FAuthor) then
         if not onMarkerAddDocStringTo(cdate,aktline,docobject.FDate) then
         if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.FCopyright) then
@@ -525,9 +389,9 @@ begin
       end;
     end
     else
-    begin  // in defined function
+    begin
       if pos(lowercase(cendfunc),lowercase(aktline)) = 1 then
-      begin // function end line
+      begin
         dec(indeffunc);
       end
       else
@@ -550,7 +414,7 @@ begin
         if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
         if not onMarkerAddDocStringTo(CExample,aktline,docobject.Ffunctions[funccounter-1].FExample)then
             onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
-        // parameter ?
+
         if pos(lowercase(CParam),lowercase(aktline)) = 1 then
         begin
           for prun := 0 to docobject.Ffunctions[funccounter-1].ParamCounter-1 do
@@ -572,7 +436,5 @@ begin
   funcTypesNames[dftString] :=  'String';
   funcTypesNames[dftStringlist] :=  'Stringlist';
   funcTypesNames[dftVoid] :=  'Void';
-
-
 end.
 

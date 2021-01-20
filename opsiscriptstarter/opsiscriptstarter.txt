@@ -1,4 +1,21 @@
 [changelog]
+opsiscriptstarter 4.1.0.13
+
+  //* macos: change mountpoint to /Network/opsi_depot
+  //* macos: change mountpoint back to /Volumes/opsi_depot
+  * macos: try to read mountpoint from opsiclientd.conf
+    default to /var/opsisetupadmin/opsi_depot
+  * oslog: startumessages only for opsiscript
+
+-- d.oertel <d.oertel@uib.de> Fri, 28 Aug 2020 15:00
+
+opsiscriptstarter 4.1.0.12
+
+  * oslinmount: start negoiation with vers=3.11
+  * opsiscriptstarter writeln version at start
+
+-- d.oertel <d.oertel@uib.de> Wed, 15 Jul 2020 15:00
+
 opsiscriptstarter 4.1.0.11
 
   * oswebservice: avoid double /rpc in service url;

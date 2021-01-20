@@ -5,9 +5,11 @@ unit osnetworkcalculator;  // for manipulating ip addresses.
 interface
 
 uses
-  Classes, SysUtils, RegExpr;
+  Classes,
+  SysUtils,
+  resolve,
+  RegExpr;
 
-function cidrToNetmask(cidr: string): string;
 function isValidIP4(ip4adr: string): boolean;
 //return true if the IPv4 address is valid.
 function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
@@ -18,9 +20,7 @@ function isValidIP4Host(ip4adr, netmask: string): boolean;
 // return true for a valid host address.
 function getDefaultNetmaskByIP4adr(ip4adr: string): string;
 // return default netmask for the IPv4 address.
-function getNetmaskByIP4adr(cidr: string): string;
-// return netmask for the IPv4 address.
-
+function GetHostByName(HostName: string): string;
 
 implementation
 
@@ -30,14 +30,17 @@ var
   regexobj: TRegExpr;
 begin
   Result := False;
-  regexobj := TRegExpr.Create;
-  try
-    regexobj.Expression :=
-      '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
-    if regexobj.Exec(trim(ip4adr)) then
-      Result := True;
-  finally
-    regexobj.Free;
+  if ip4adr <> '' then
+  begin
+    regexobj := TRegExpr.Create;
+    try
+      regexobj.Expression :=
+        '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
+      if regexobj.Exec(trim(ip4adr)) then
+        Result := True;
+    finally
+      regexobj.Free;
+    end;
   end;
 end;
 
@@ -288,10 +291,22 @@ begin
     Result := '';
 end;
 
-function getNetmaskByIP4adr(cidr: string): string;
+// https://www.lazarusforum.de/viewtopic.php?t=1396
+function GetHostByName(HostName: string): string;
+var
+  host: THostResolver;
 begin
-  ShowMessage('net');
-  Result := cidrToNetmask(cidr);
+  if isValidIP4(HostName) then
+    Result := HostName
+  else
+  begin
+    host := THostResolver.Create(nil);
+    if host.NameLookup(HostName) then
+      Result := host.AddressAsString
+    else
+      Result := '';
+    host.Free;
+  end;
 end;
 
 end.

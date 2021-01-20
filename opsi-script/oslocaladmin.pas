@@ -10,13 +10,6 @@ unit oslocaladmin;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 453 $
-// $Author: oertel $
-// $Date: 2016-05-27 17:56:01 +0200 (Fr, 27 Mai 2016) $
-//***************************************************************************
-
 
 {$mode delphi}
 
@@ -73,6 +66,7 @@ const
   SID_REVISION = 1;
   FILENAME_ADVAPI32 = 'ADVAPI32.DLL';
   PROC_CONVERTSIDTOSTRINGSIDA = 'ConvertSidToStringSidA';
+  ADMIN_SIDSTRING = 'S-1-5-32-544';
 
 type
   Tadminmode = (useronly, full);
@@ -258,7 +252,7 @@ begin
       traAdminProfileImpersonateExplorer, traAdminProfileImpersonate] then
     begin
       // get localized name of administrators
-      wGroup := StrSIDToName('S-1-5-32-544');
+      wGroup := StrSIDToName(ADMIN_SIDSTRING);
       opsiSetupAdmin_Password := randomstr(True);
       mypass := opsiSetupAdmin_Password;
       Result := CreateWinUser(DSiGetComputerName, 'opsiSetupAdmin',

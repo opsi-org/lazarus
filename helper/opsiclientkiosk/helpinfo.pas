@@ -16,6 +16,8 @@ type
     ButtonClose: TButton;
     CheckBoxExpertMode: TCheckBox;
     ImageLogo: TImage;
+    LabelModeInfo: TLabel;
+    LabelMode: TLabel;
     LabelCopy: TLabel;
     LabelCopyRight: TLabel;
     LabelCredits: TLabel;
@@ -36,7 +38,8 @@ type
     PanelVersion: TPanel;
     SpeedButtonManual: TSpeedButton;
     procedure ButtonCloseClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    //procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure LabelOpsiWebClick(Sender: TObject);
     procedure LabelOpsiWebMouseEnter(Sender: TObject);
     procedure LabelOpsiWebMouseLeave(Sender: TObject);
@@ -66,9 +69,20 @@ implementation
 
 { TFormHelpInfo }
 
-procedure TFormHelpInfo.FormCreate(Sender: TObject);
+(*procedure TFormHelpInfo.FormCreate(Sender: TObject);
 begin
    //SpeedButtonExpertMode.Caption := rsExpertMode;
+  LabelVersion.Caption := ProgramInfo.Version;
+  LabelLanguage.Caption := GetDefaultLang;
+  LabelCopyRight.Caption:= 'uib gmbh under AGPLv3';
+  LabelUibWeb.Caption := 'http://uib.de';
+  LabelOpsiWeb.Caption:= 'https://opsi.org';
+  LabelCredits.Caption:= 'Lazarus/FPC, synapse, sqllite';
+  //Refresh;
+end;*)
+
+procedure TFormHelpInfo.FormShow(Sender: TObject);
+begin
   LabelVersion.Caption := ProgramInfo.Version;
   LabelLanguage.Caption := GetDefaultLang;
   LabelCopyRight.Caption:= 'uib gmbh under AGPLv3';

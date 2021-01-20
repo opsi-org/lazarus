@@ -20,8 +20,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <RevisionNr Value="7"/>
-      <BuildNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd_event_starter" InternalName="opsiclientd_event_starter" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsiclientd_event_starter" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -71,12 +71,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsiclientd_event_starter_mac"/>
+            <Filename Value="opsiclientd_event_starter"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="..\..\external_libraries\indy\Lib"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse40lib;..\..\external_libraries\indy;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse;..\..\external_libraries\misc"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -94,7 +94,8 @@
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSICLIENTD_SHUTDOWN_STARTER"/>
+            <CustomOptions Value="-dOPSICLIENTAGENT
+-dOPSI"/>
             <OtherDefines Count="1">
               <Define0 Value="OPSICLIENTD_SHUTDOWN_STARTER"/>
             </OtherDefines>
@@ -116,7 +117,7 @@
         <PackageName Value="LCLBase"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="opsiclientd_event_starter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -137,10 +138,6 @@
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
-      <Unit5>
-        <Filename Value="opsiclientd_event_starter_mac.lpi"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

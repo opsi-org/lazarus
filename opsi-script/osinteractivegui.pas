@@ -11,6 +11,12 @@ unit osinteractivegui;
 
 
 
+{$IFDEF DARWIN}
+{$modeswitch objectivec1}
+{$ENDIF DARWIN}
+
+
+
 (* contains the main program code *)
 
 
@@ -70,6 +76,11 @@ uses
   lispecfolder,
   baseunix,
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+  macosall,
+  CocoaAll,   // Needed for NSBundle
+  CocoaUtils, // Needed for NSStringToString
+{$ENDIF DARWIN}
   osencoding,
   osconf,
   osmain,
@@ -840,6 +851,7 @@ var
   ErrorInfo: string;
   str: string;
   s2, s3, s4, sid: string;
+  lang,localedir : string;
 
 begin
   //writeln('TCentralForm.FormCreate');
@@ -892,6 +904,15 @@ begin
   if GetuibOsType(ErrorInfo) = tovWin95 then
     ShellIsExplorer := True;
   {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  // set locale path to the resource/locale dir of the .app bundle
+  localedir := NSStringToString(NSBundle.mainBundle.resourcePath)
+    + PathDelim+ 'locale' + PathDelim;
+  //lang := GetDefaultLang;
+  lang := '';
+  SetDefaultLang(lang,localedir);
+  {$ENDIF DARWIN}
+
 
   CentralFormVisible := False;
   CentralForm.Visible := CentralFormVisible;

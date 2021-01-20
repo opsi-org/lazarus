@@ -1,0 +1,6 @@
+opsi_laz_gui_test (4.1.0.0) stable; urgency=medium
+
+ * added vesion info
+ * added dummyform
+
+-- d.oertel <d.oertel@uib.de> Sat , 21 Nov 2020 15:00:00 + 0100

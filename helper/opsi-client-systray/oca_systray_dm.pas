@@ -13,16 +13,25 @@ uses
   fileinfo,
   superobject,
   lcltranslator,
+  //osparserhelper,
   {$IFDEF WINDOWS}
   Windows,
   jwawinbase,
   winpeimagereader,
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   elfreader,
   OSProcessux,
   libnotify,
-  {$ENDIF UNIX}
+  {$ENDIF LINUX}
+  {$IFDEF Darwin}
+  elfreader,
+  OSProcessux,
+  MacOSAll,
+  osfuncmac,
+  {$ENDIF}
+  Graphics,
+  //PopupNotifier,
   osprocesses,
   uniqueinstanceraw;
 
@@ -35,6 +44,7 @@ type
     MI_startevent: TMenuItem;
     MI_pull_for_action_request: TMenuItem;
     PopupMenu1: TPopupMenu;
+    //PopupNotifier1: TPopupNotifier;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
     //uniqueinstance1 : Tuniqueinstance;
@@ -47,6 +57,7 @@ type
     procedure startNotify(notifyempty: boolean);
   private
     { private declarations }
+    pathMedia: string;
   public
     { public declarations }
   end;
@@ -291,6 +302,7 @@ end;
 
 
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
+
 var
   ErrorMsg: string;
   optionlist: TStringList;
@@ -301,6 +313,9 @@ var
   logAndTerminate: boolean = False;
   service_url_port: string;
   mylang: string;
+  tmpimage: TPicture;
+  icofilename: string;
+  report : string;
 begin
   if InstanceRunning then
     Application.Terminate;
@@ -379,9 +394,13 @@ begin
   if Mylang = '' then
     mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
   {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  getMacLang(mylang,report);
+  preloglist.Add(report);
+  {$ENDIF DARWIN}
   SetDefaultLang(mylang);
   preloglist.Add('Detected default lang: ' + mylang);
-  preloglist.Add('Detected default lang: ' + GetDefaultLang);
+  preloglist.Add('Detected default lang by laz: ' + GetDefaultLang);
 
   if Application.HasOption('lang') then
   begin
@@ -441,9 +460,27 @@ begin
     ShowMessage('opsiclientd is not running - so we abort');
     halt(1);
   end;
-
+  LogDatei.log('opsiclientd is running - ok.', LLnotice);
 
   TrayIcon1.PopUpMenu := PopupMenu1;
+  //icofilename := '/usr/local/share/opsi-client-systray/opsi-client-systray_co32.ico';
+  //if fileexists(icofilename) then tmpimage.LoadFromFile(icofilename);
+  {$IFDEF DARWIN}
+  tmpimage := TPicture.Create;
+  icofilename := '/usr/local/share/opsi-client-systray/opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then
+    tmpimage.LoadFromFile(icofilename);
+  icofilename := ExtractFilePath(ParamStr(0)) + '/opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then
+    tmpimage.LoadFromFile(icofilename);
+  icofilename := ExtractFilePath(ParamStr(0)) + '../../..//opsi_client_systray_bw16.ico';
+  if fileexists(icofilename) then
+    tmpimage.LoadFromFile(icofilename);
+  TrayIcon1.Icon.Assign(tmpimage.Bitmap);
+  FreeAndNil(tmpimage);
+  {$ENDIF DARWIN}
+
+
   trayIcon1.Show;
   if checkIntervall = 0 then
     Timer1.Enabled := False
@@ -458,7 +495,9 @@ end;
 
 procedure TDataModule1.MI_exitClick(Sender: TObject);
 begin
+  logDatei.log('Exit button clicked - will terminate.', LLnotice);
   Application.Terminate;
+  halt(0);
 end;
 
 procedure TDataModule1.startNotify(notifyempty: boolean);
@@ -484,8 +523,8 @@ begin
       TrayIcon1.BalloonHint := rsNone;
       TrayIcon1.BalloonTitle := rsActionsWaiting;
       TrayIcon1.ShowBalloonHint;
-      {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+     {$ENDIF WINDOWS}
+     {$IFDEF LINUX}
       notify_init(argv[0]);
       hello := notify_notification_new(PChar(rsNone), // Title
         PChar(actionstring), // Content
@@ -493,7 +532,20 @@ begin
       // Lets display it, but we will not handle any errors ...
       notify_notification_show(hello, nil);
       notify_uninit;
-    {$ENDIF LINUX}
+      {$ENDIF LINUX}
+      {$IFDEF DARWIN}
+      CFUserNotificationDisplayNotice(1000,kCFUserNotificationPlainAlertLevel
+             ,nil,nil,nil,CFStr(Pchar(rsActionsWaiting))
+             ,CFStr(Pchar(rsNone)),CFStr(Pchar('ok')));
+      (*
+      PopupNotifier1.Title := rsActionsWaiting;
+      PopupNotifier1.Text := actionstring;
+      PopupNotifier1.ShowAtPos(screen.Width - screen.Width div 4, 20);
+      //PopupNotifier1.Icon;
+      PopupNotifier1.Show;
+      *)
+      {$ENDIF DARWIN}
+      LogDatei.log('Notifying no requests finished.', LLinfo);
     end;
   end
   else
@@ -517,22 +569,45 @@ begin
     notify_notification_show(hello, nil);
     notify_uninit;
     {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+    CFUserNotificationDisplayNotice(1000,kCFUserNotificationPlainAlertLevel
+             ,nil,nil,nil,CFStr(Pchar(rsActionsWaiting))
+             ,CFStr(Pchar(actionstring)),CFStr(Pchar('ok')));
+    //CFUserNotificationCreate();
+    //Application.MessageBox(PChar(rsActionsWaiting), PChar(actionstring), 0);
+    (*
+    PopupNotifier1.Title := rsActionsWaiting;
+    PopupNotifier1.Text := actionstring;
+    PopupNotifier1.ShowAtPos(screen.Width - screen.Width div 4, 20);
+    //PopupNotifier1.Icon;
+    PopupNotifier1.Show;
+
+    Trayicon1.BalloonFlags := bfInfo;
+    TrayIcon1.BalloonHint := actionstring;
+    TrayIcon1.BalloonTitle := rsActionsWaiting;
+    TrayIcon1.ShowBalloonHint;
+    *)
+      {$ENDIF DARWIN}
+    LogDatei.log('Notifying requests finished.', LLinfo);
   end;
 end;
 
 
 procedure TDataModule1.MI_pull_for_action_requestClick(Sender: TObject);
 begin
+  logDatei.log('Check menu clicked - start check and notify.', LLnotice);
   startNotify(True);
 end;
 
 procedure TDataModule1.MI_starteventClick(Sender: TObject);
 begin
+  logDatei.log('Install now menu clicked - start firePushInstallation.', LLnotice);
   firePushInstallation;
 end;
 
 procedure TDataModule1.Timer1Timer(Sender: TObject);
 begin
+  logDatei.log('Timer fired - start check and notify.', LLnotice);
   startNotify(False);
 end;
 

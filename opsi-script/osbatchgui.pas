@@ -153,6 +153,9 @@ var
   Progressbar: TQProgressBar;
   //ActivityBar: TQProgressBar;
 
+  panelWidth: integer;
+  panelHeight: integer;
+
 
 
 const
@@ -344,6 +347,9 @@ begin
   EnableFontSmoothing(LabelProgress);
   //EnableFontSmoothing(LabelProgress1);
   {$ENDIF WINDOWS}
+  {$IFDEF DARWIN}
+  ForceStayOnTop(true);
+  {$ENDIF DARWIN}
 
   //Visible  := true;
   //Repaint;
@@ -468,6 +474,14 @@ begin
     try
       skinIni := TIniFile.Create(skinFile);
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+
+      try
+        panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
+        panelHeight := skinIni.ReadInteger('Panel', 'Height', 430);
+        //SetBounds(0, 0, panelWidth, panelHeight);
+      except
+      end;
+
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
@@ -651,11 +665,22 @@ begin
       *)
 
       try
+        (* temporary disabled do 16.12.20
+        ImageBackground.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        Panel.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
+        ImageBackground.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        Panel.Top := skinIni.ReadInteger('ImageBackground', 'Top', 0);
+        ImageBackground.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        Panel.Width := skinIni.ReadInteger('ImageBackground', 'Width', 605);
+        ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+        Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
+         *)
         filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
         if FileExists(filename) and not IsDirectory(filename) then
           ImageBackground.picture.loadFromFile(filename);
       except
       end;
+
 
       try
         ImageProduct.Left := skinIni.ReadInteger('ImageProduct', 'Left', 224);
@@ -865,12 +890,13 @@ procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if YesNo then
   begin
-    //setWindowState (bwmMaximized);
+    setWindowState (bwmMaximized);
+    { make to system wide top most window }
     FormStyle := fsSystemStayOnTop;
     BringToFront;
     Application.ProcessMessages;
+    { now allow new started windows (setup) to get the system wide top most position }
     FormStyle := fsStayOnTop;
-    (* FBatchOberflaeche.BorderIcons := []; *)
     BatchScreenOnTop := True;
   end
   else
@@ -888,10 +914,16 @@ begin
   {$IFNDEF DARWIN}
   case BatchWindowMode of
     bwmNotActivated: WindowState := wsnormal;
+    (*
     bwmIcon: if WindowState <> wsMinimized then WindowState := wsminimized;
     bwmNormalWindow: if WindowState <> wsnormal then WindowState := wsnormal;
     bwmMaximized: if WindowState <> wsMaximized then WindowState := wsMaximized;
+    *)
+    bwmIcon: WindowState := wsminimized;
+    bwmNormalWindow: WindowState := wsnormal;
+    bwmMaximized: WindowState := wsMaximized;
   end;
+  Application.ProcessMessages;
   if Assigned(LogDatei) then
      LogDatei.log_prog('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
   {$ENDIF}

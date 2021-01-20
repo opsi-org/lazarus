@@ -46,12 +46,14 @@ uses
   oslistedit,
   {$ENDIF GUI}
   {$IFDEF LINUX}osfunclin {$ENDIF}
-  {$IFDEF WINDOWS}
+  {$IFDEF WIN32}
   jclexcerpt,
-  osfuncwin2,
   oslocaladmin,
+  {$ENDIF WIN32}
+  {$IFDEF WINDOWS}
   osfuncwin,
   opsihwbiosinfo,
+  osfuncwin2,
   uCpuUsage,
   SystemCriticalU,
   osfuncwin3,

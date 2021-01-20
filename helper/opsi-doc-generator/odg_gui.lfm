@@ -1,129 +1,188 @@
 object Form1: TForm1
-  Left = 2951
-  Height = 650
-  Top = 221
-  Width = 695
+  Left = 157
+  Height = 727
+  Top = 218
+  Width = 1070
+  AllowDropFiles = True
   Caption = 'opsi-doc-generator'
-  ClientHeight = 650
-  ClientWidth = 695
-  DesignTimePPI = 144
+  ClientHeight = 727
+  ClientWidth = 1070
   OnCreate = FormCreate
+  OnDropFiles = FormDropFiles
   Position = poDefault
   LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
-    Height = 120
+    Height = 72
     Top = 0
-    Width = 695
+    Width = 1070
     Align = alTop
-    ClientHeight = 120
-    ClientWidth = 695
+    ClientHeight = 72
+    ClientWidth = 1070
     TabOrder = 0
-    object ButtonOpen: TButton
-      Left = 24
+    object ButtonSave: TButton
+      Left = 744
       Height = 25
       Top = 8
-      Width = 120
-      Caption = 'Open source file'
-      OnClick = ButtonOpenClick
-      TabOrder = 0
-    end
-    object ButtonSave: TButton
-      Left = 432
-      Height = 25
-      Top = 72
-      Width = 155
+      Width = 140
       Caption = 'Save Asciidoc'
       OnClick = ButtonSaveClick
-      TabOrder = 1
+      TabOrder = 0
     end
-    object ButtonConvert: TButton
-      Left = 208
-      Height = 25
-      Top = 72
-      Width = 160
-      Caption = 'Opsiscript to Asciidoc'
-      OnClick = ButtonConvertClick
-      TabOrder = 2
-    end
-    object Bsave_ascii_show: TButton
-      Left = 168
+    object ButtonOSConvert: TButton
+      Left = 80
       Height = 25
       Top = 8
-      Width = 272
-      Caption = 'Convert to asciidoc - save - to html -show '
-      OnClick = Bsave_ascii_showClick
+      Width = 140
+      Caption = 'Opsiscript To Asciidoc'
+      OnClick = ButtonOSConvertClick
+      TabOrder = 1
+    end
+    object Button_os_save_ascii_show: TButton
+      Left = 8
+      Height = 25
+      Top = 40
+      Width = 280
+      Caption = 'Opsiscript To Asciidoc + To HTML + View'
+      OnClick = Button_os_save_ascii_showClick
+      TabOrder = 2
+    end
+    object ButtonPythonConvert: TButton
+      Left = 416
+      Height = 25
+      Top = 8
+      Width = 140
+      Caption = 'Python To Asciidoc'
+      OnClick = ButtonPythonConvertClick
       TabOrder = 3
+    end
+    object Button_py_save_ascii_show: TButton
+      Left = 360
+      Height = 25
+      Top = 40
+      Width = 280
+      Caption = 'Python To Asciidoc + To HTML + View'
+      OnClick = Button_py_save_ascii_showClick
+      TabOrder = 4
     end
   end
   object Panel2: TPanel
-    Left = 0
-    Height = 530
-    Top = 120
-    Width = 320
+    Left = 312
+    Height = 655
+    Top = 72
+    Width = 360
     Align = alLeft
     Caption = 'Panel2'
-    ClientHeight = 530
-    ClientWidth = 320
+    ClientHeight = 655
+    ClientWidth = 360
     TabOrder = 1
     object Memo1: TMemo
       Left = 1
-      Height = 528
+      Height = 653
       Top = 1
-      Width = 318
+      Width = 358
       Align = alClient
       Lines.Strings = (
         'Memo1'
       )
+      ReadOnly = True
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end
   object Splitter1: TSplitter
-    Left = 320
-    Height = 530
-    Top = 120
+    Left = 0
+    Height = 655
+    Top = 72
     Width = 5
     Beveled = True
   end
   object Panel3: TPanel
-    Left = 325
-    Height = 530
-    Top = 120
-    Width = 370
+    Left = 672
+    Height = 655
+    Top = 72
+    Width = 398
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 530
-    ClientWidth = 370
+    ClientHeight = 655
+    ClientWidth = 398
     TabOrder = 3
     object Memo2: TMemo
       Left = 1
-      Height = 528
+      Height = 653
       Top = 1
-      Width = 368
+      Width = 396
       Align = alClient
       Lines.Strings = (
         'Memo2'
       )
+      ReadOnly = True
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end
-  object ButtonPythonConvert: TButton
-    Left = 32
-    Height = 38
-    Top = 64
-    Width = 158
-    Caption = 'Python to Asciidoc'
-    OnClick = ButtonPythonConvertClick
+  object Panel4: TPanel
+    Left = 5
+    Height = 655
+    Top = 72
+    Width = 307
+    Align = alLeft
+    Caption = 'Panel4'
+    ClientHeight = 655
+    ClientWidth = 307
     TabOrder = 4
+    object ListBox1: TListBox
+      Left = 0
+      Height = 559
+      Top = 32
+      Width = 300
+      Align = alCustom
+      Anchors = [akTop, akLeft, akBottom]
+      ItemHeight = 0
+      OnSelectionChange = ListBox1SelectionChange
+      ScrollWidth = 1000
+      TabOrder = 0
+      TopIndex = -1
+    end
+    object ButtonRemoveAll: TButton
+      Left = 1
+      Height = 25
+      Top = 629
+      Width = 305
+      Align = alBottom
+      Caption = 'Remove All'
+      OnClick = ButtonRemoveAllClick
+      TabOrder = 1
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 19
+      Top = 8
+      Width = 215
+      Caption = 'Drag and drop files here :'
+      Font.Height = -15
+      Font.Name = 'Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object ButtonRemoveSelected: TButton
+      Left = 1
+      Height = 25
+      Top = 604
+      Width = 305
+      Align = alBottom
+      Caption = 'Remove Selected'
+      OnClick = ButtonRemoveSelectedClick
+      TabOrder = 2
+    end
   end
   object OpenDialog1: TOpenDialog
-    left = 568
+    left = 904
     top = 8
   end
   object SaveDialog1: TSaveDialog
-    left = 640
+    left = 952
     top = 8
   end
 end

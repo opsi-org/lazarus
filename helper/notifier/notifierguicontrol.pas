@@ -82,6 +82,7 @@ var
   ButtonArray: TButtons;
   MemoArray: Tmemos;
   labelcounter, buttoncounter, memocounter: integer;
+  designPPI: integer;
 
 
 
@@ -138,20 +139,29 @@ begin
         ButtonArray[i].Free;
     if Assigned(mythread) then
       mythread.Free;
-    LogDatei.Close;
-    LogDatei.Free;
+    //LogDatei.Close;
+    //LogDatei.Free;
   finally
   end;
 end;
 
 procedure shutdownNotifier;
 begin
-  mythread.Terminate;
+  logdatei.log('Terminate Thread', LLInfo);
+  if Assigned(mythread) then
+    mythread.Terminate;
+  logdatei.log('Hide Form', LLInfo);
   hideNForm;
+  Nform.Close;
+  logdatei.log('Wait a scond', LLInfo);
+  DataModule1.ProcessMess;
   sleep(1000);
-  free_runtime_objects;
-  DataModule1.DataModuleDestroy(nil);
+  //logdatei.log('free_runtime_objects', LLnotice);
+  //free_runtime_objects;
+  //DataModule1.DataModuleDestroy(nil);
+  logdatei.log('terminate', LLnotice);
   Application.Terminate;
+  Halt(0);
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string): boolean;
@@ -253,10 +263,8 @@ begin
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
   begin
-    mythread.Terminate;
-    logdatei.log('We are in popup, button close clicked: terminate', LLInfo);
-    hideNForm;
-    DataModule1.DataModuleDestroy(nil);
+    DataModule1.TimerClose.Interval:=10000;
+   DataModule1.TimerClose.Enabled:=true;
   end;
 end;
 
@@ -264,6 +272,11 @@ end;
 function fontresize(num: integer): integer;
 begin
   Result := round(num * 0.5);
+
+  {$IFDEF LINUX}
+  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
+  {$ENDIF LINUX}
   if Result < 8 then
     Result := 8;
 end;
@@ -348,6 +361,9 @@ end;
 
 function calculate_appearmode: TNFormAppear;
 begin
+  {$IFDEF DARWIN}
+  slidein := '';
+  {$ENDIF DARWIN}
   if hidden then
     Result := fapNone
   else
@@ -355,6 +371,7 @@ begin
     // transparent could not work with fadein
     if transparent then
       fadein := False;
+
 
     if fadein = False then
     begin
@@ -495,6 +512,20 @@ begin
       LogDatei.log('Error: Unknown Form position', LLError);
   end;
 
+  (* removed in 4.1.1.6 : unified popup done by opsicliend
+  if mynotifierkind = 'popup' then
+  begin
+    nform.FormStyle := fsNormal;
+    nform.BorderStyle:= bsSizeable;
+    logdatei.log('FormStyle := fsNormal', LLDebug);
+    starty := starty + Random(starty div 2);
+    startx := startx + Random(startx div 2);
+    //nform.Position:= poDefaultPosOnly;
+    //nform.Repaint;
+    //DataModule1.ProcessMess;
+  end;
+  *)
+
   // show with appearmode
 
   case appearmode of
@@ -531,6 +562,10 @@ begin
       stopy := nform.Height;
       nform.Height := 0;
       y := screen.WorkAreaHeight;
+      {$IFDEF LINUX}
+      { no valid control toolbar detection on Linux - so guess }
+      y := screen.WorkAreaHeight - 40;
+      {$ENDIF LINUX}
       nform.Top := y;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -540,26 +575,28 @@ begin
       i := appearStepSize;
       while i <= stopy do
       begin
-        Sleep(1);
+        //Sleep(1);
         nform.AlphaBlendValue := i;
-        y := screen.WorkAreaHeight;
+        //y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
-        //DataModule1.ProcessMess;
+        DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= stopy do
+      while i <= 255 do
       begin
-        sleep(1);
+        //sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      nform.Refresh;
+      DataModule1.ProcessMess;
     end;
     fapFadeDown:
     begin
@@ -601,6 +638,10 @@ begin
       stopy := nform.Height;
       nform.Height := 0;
       y := screen.WorkAreaHeight;
+      {$IFDEF LINUX}
+      { no valid control toolbar detection on Linux - so guess }
+      y := screen.WorkAreaHeight - 40;
+      {$ENDIF LINUX}
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
@@ -772,9 +813,9 @@ var
   choiceindex: integer;
   tmpinistr: string;
   tmpbool: boolean;
-  myscreen : TScreen;
+  //myscreen : TScreen;
 begin
-  myscreen := TScreen.Create(Application);
+  //myscreen := TScreen.Create(Application);
   if aktsection = 'Form' then
   begin
     nform.Color := myStringToTColor(myini.ReadString(aktsection, 'color', 'clWhite'));
@@ -809,12 +850,67 @@ begin
       tmpbool := False;
       LogDatei.log('Error: No valid boolean value for Frame: ' + tmpinistr, LLError);
     end;
-    if not tmpbool then
+    if not tmpbool then  // no frame
+    begin
       nform.BorderStyle := bsNone;
+      logdatei.log('Frame=false - so we ignore Resizable,Closeable,Minimizable ',
+        LLDebug);
+    end
+    else
+    begin // with frame
+      logdatei.log('Frame=true - so we check Resizable,Closeable,Minimizable ',
+        LLDebug);
 
-    //Resizable = false
-    //Closeable = false
-    //Minimizable = false
+      //Resizable = false
+      tmpinistr := myini.ReadString(aktsection, 'Resizable', 'false');
+      if not TryStrToBool(tmpinistr, tmpbool) then
+      begin
+        tmpbool := False;
+        LogDatei.log('Error: No valid boolean value for Resizable: ' + tmpinistr, LLError);
+      end;
+      if not tmpbool then  // no Resizable
+      begin
+        nform.BorderStyle := bsSingle;
+        logdatei.log('Resizable=false ', LLDebug);
+      end
+      else
+      begin
+        logdatei.log('Resizable=true ', LLDebug);
+        nform.BorderStyle := bsSizeable;
+      end;
+
+      //Closeable = false
+      tmpinistr := myini.ReadString(aktsection, 'Closeable', 'false');
+      if not TryStrToBool(tmpinistr, tmpbool) then
+      begin
+        tmpbool := False;
+        LogDatei.log('Error: No valid boolean value for Closeable: ' + tmpinistr, LLError);
+      end;
+      if not tmpbool then  // no Closeable
+        logdatei.log('Closeable=false ', LLDebug)
+      else
+      begin
+        logdatei.log('Closeable=True ', LLDebug);
+        nform.BorderIcons:= nform.BorderIcons + [biSystemMenu];
+      end;
+
+      //Minimizable = false
+      tmpinistr := myini.ReadString(aktsection, 'Minimizable', 'false');
+      if not TryStrToBool(tmpinistr, tmpbool) then
+      begin
+        tmpbool := False;
+        LogDatei.log('Error: No valid boolean value for Minimizable: ' + tmpinistr, LLError);
+      end;
+      if not tmpbool then  // no Minimizable
+         logdatei.log('Minimizable=false ', LLDebug)
+      else
+      begin
+        logdatei.log('Minimizable=True ', LLDebug);
+        nform.BorderIcons:= nform.BorderIcons + [biMinimize];
+      end;
+    end;
+
+
     //Text = Opsi Dialog
     nform.Caption := myini.ReadString(aktsection, 'Text', 'opsi');
     //Width = 100
@@ -839,6 +935,16 @@ begin
       nform.Left := mytmpint1;
       nform.Top := mytmpint2;
     end;
+    {$IFDEF DARWIN}
+    // at booom we have the dock
+    if nformpos = fpBottomRight then
+      nformpos := fpTopRight;
+    {$ENDIF DARWIN}
+    {$IFDEF LINUX}
+    // scale new scrollbox:
+    nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
+      screen.PixelsPerInch, 0, 0);
+    {$ENDIF LINUX}
     //Hidden = false
     tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
     if not TryStrToBool(tmpinistr, hidden) then
@@ -896,7 +1002,9 @@ begin
     mytmpstr := ExtractFilePath(myini.FileName);
     mytmpstr := mytmpstr + myini.ReadString(aktsection, 'File', '');
     nform.Image1.Picture.LoadFromFile(mytmpstr);
-    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,
+      screen.PixelsPerInch, 0, 0);
     nform.Image1.Repaint;
     DataModule1.ProcessMess;
   end
@@ -919,14 +1027,18 @@ begin
     memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
-      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      {$IFDEF WINDOWS}
+      mytmpstr := 'Arial';
+{$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
-      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+      {$IFDEF LINUX}
+      mytmpstr := 'Liberation Sans';
+{$ENDIF LINUX}
     end;
     memoarray[memocounter].scrolllabel.Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     memoarray[memocounter].scrolllabel.Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     memoarray[memocounter].scrolllabel.Font.Color :=
@@ -949,9 +1061,13 @@ begin
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
     //memoarray[memocounter].ReadOnly:=true;
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
+    //{$IFDEF WINDOWS}
     // scale new scrollbox:
-    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96,
-      nform.PixelsPerInch, 0, 0);
+    //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+      designPPI, screen.PixelsPerInch, 0, 0);
+
+    //{$ENDIF WINDOWS}
     // make transparent
     memoarray[memocounter].ControlStyle :=
       memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
@@ -974,6 +1090,13 @@ begin
     LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
     LabelArray[labelcounter].WordWrap := True;
+    (*
+    {$IFDEF LINUX}
+    LabelArray[labelcounter].AutoSize := False;
+    LabelArray[labelcounter].WordWrap := False;
+    LabelArray[labelcounter].AdjustFontForOptimalFill;
+    {$ENDIF LINUX}
+    *)
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
@@ -982,14 +1105,18 @@ begin
     LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
-      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      {$IFDEF WINDOWS}
+      mytmpstr := 'Arial';
+{$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
-      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+      {$IFDEF LINUX}
+      mytmpstr := 'Liberation Sans';
+{$ENDIF LINUX}
     end;
-    LabelArray[labelcounter].Font.Name :=  mytmpstr;
-
+    LabelArray[labelcounter].Font.Name := mytmpstr;
+    { fontresize makes also hdpi correction for linux}
     LabelArray[labelcounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
@@ -1006,10 +1133,16 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    //LabelArray[labelcounter].AdjustSize;
+    //{$IFDEF WINDOWS}
     // scale new Label:
+    //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+    //  96, nform.PixelsPerInch, 0, 0);
+    //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
     LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      96, nform.PixelsPerInch, 0, 0);
+      designPPI, nform.PixelsPerInch, 0, 0);
 
+    //{$ENDIF WINDOWS}
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -1032,14 +1165,18 @@ begin
     ButtonArray[buttoncounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
-    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
-      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      {$IFDEF WINDOWS}
+      mytmpstr := 'Arial';
+{$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
-      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+      {$IFDEF LINUX}
+      mytmpstr := 'Liberation Sans';
+{$ENDIF LINUX}
     end;
     ButtonArray[buttoncounter].Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     //ButtonArray[buttoncounter].Font.Color :=
@@ -1060,10 +1197,12 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    //{$IFDEF WINDOWS}
     // scale new Button:
+    //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      96, nform.PixelsPerInch, 0, 0);
-
+      designPPI, nform.PixelsPerInch, 0, 0);
+    //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
@@ -1102,6 +1241,11 @@ var
   i: integer;
   aktsection: string;
 begin
+  LogDatei.log('screen.PixelsPerInch: ' + IntToStr(screen.PixelsPerInch), LLInfo);
+  LogDatei.log('nform.PixelsPerInch: ' + IntToStr(nform.PixelsPerInch), LLInfo);
+  //LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
+  LogDatei.log('designPPI: ' + IntToStr(designPPI), LLInfo);
+
   LogDatei.log('Loading Skin config from: ' + ininame, LLInfo);
   myini := TIniFile.Create(ininame);
   navlist.AddStrings(fillnavlist(myIni));
@@ -1132,4 +1276,6 @@ begin
   buttonlist := TStringList.Create;
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
+  designPPI := 96;
+  Randomize;
 end.

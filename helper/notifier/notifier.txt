@@ -1,4 +1,56 @@
 [changelog]
+opsi-notifier  4.1.1.6
+
+  * remove special variants for popup
+  * notifier_json: newMessageFromService: modified: freeAndNil(messagelist) (avoid exception)
+  * now also check Frame,Resizable,Closeable,Minimizable from skin config
+  * new popup.ini and popup.bmb
+  * popup: close button: wait ten seconds on thread then close (as timeout)
+  * new cli options -l --loglevel
+  * loglevel default is now 5
+  * windows: try to get sessionid and add it to the logfile name
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Dec 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.5
+
+  * windows: add desktopname to log file name (to avoid log conflicts)
+  * additional try - excepts
+  * notifier_json: modified message inspection at endconnection
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 11 Dec 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.4
+
+  * macos: no slidein
+  * macos: from bottom switch to from top
+  * ppopup: pos with random variant
+  * windows: add desktopname to log file name (to avoid log conflicts)
+  * additional try - excepts
+  * notifier_json: modified message inspection at endconnection
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 13 Nov 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.3
+
+  * again fixes on high dpi: Set var designdpi to 96
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 15 Oct 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.2
+
+  * additional param --test
+    (shows 30 seconds notifier based on given skin config)
+  * multiple fixes for linux highdpi
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 18 Aug 2020:15:00:00 +0200
+
+opsi-notifier  4.1.1.1
+
+  * log if given port not >0
+  * more log on terminate
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 21 Jul 2020:15:00:00 +0200
 
 opsi-notifier  4.1.1.0
 
