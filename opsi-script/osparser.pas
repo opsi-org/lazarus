@@ -1942,7 +1942,10 @@ begin
   Encoding2use := searchencoding(OriginalList.Text);
   if Encoding2use = '' then
     Encoding2use := 'system';
-  OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
+  if not ((Encoding2use = 'system')) then
+      OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
+  usedEncoding := Encoding2use;
+  //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + usedEncoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
@@ -3268,10 +3271,11 @@ var
 
     Patchdatei.Clear;
     if FileExists(PatchdateiName) then
-      mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-        flag_encoding);
+      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),flag_encoding);
+     // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
+     //   flag_encoding);
     //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-    Patchdatei.Text := mytxtfile.Text;
+    //Patchdatei.Text := mytxtfile.Text;
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
     for i := 0 to Patchdatei.Count - 1 do
@@ -11411,7 +11415,8 @@ begin
           try
             s1 := ExpandFileName(s1);
             list.loadfromfile(s1);
-            list.Text := reencode(list.Text, 'system');
+            // encoding from system is the default at txstinglist
+            //list.Text := reencode(list.Text, 'system');
           except
             on e: Exception do
             begin
@@ -11440,7 +11445,7 @@ begin
                 try
                   s1 := ExpandFileName(s1);
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
-                  list.assign(LoadTextFileWithEncoding(s1,s2));
+                  list.loadFromFileWithEncoding(s1,s2);
                   //list.loadfromfile(s1);
                   //list.Text := reencode(list.Text, s2);
                 except
@@ -14793,7 +14798,8 @@ begin
           s1 := ExpandFileName(s1);
           list1.loadfromfile(s1);
           if list1.Count > 0 then
-            StringResult := reencode(list1.Strings[0], 'system')
+            StringResult := list1.Strings[0]
+            //StringResult := reencode(list1.Strings[0], 'system')
           else
             StringResult := '';
           list1.Free;
@@ -14825,9 +14831,11 @@ begin
               try
                 list1 := TXStringList.Create;
                 s1 := ExpandFileName(s1);
-                list1.loadfromfile(s1);
+                //list1.loadfromfile(s1);
+                list1.loadFromFileWithEncoding(s1,s2);
                 if list1.Count > 0 then
-                  StringResult := reencode(list1.Strings[0], s2)
+                  StringResult := list1.Strings[0]
+                  //StringResult := reencode(list1.Strings[0], s2)
                 else
                   StringResult := '';
                 list1.Free;
@@ -17719,7 +17727,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
                 BooleanResult := (Textfile.FindFirstItemStartingWith(s1, False, -1) >= 0)
               except
                 on ex: Exception do
@@ -17750,7 +17758,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult :=
                   (Textfile.FindFirstItem(s1, False, -1, BooleanResult0) >= 0)
@@ -17783,7 +17791,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult := (Textfile.FindFirstItemWith(s1, False, -1) >= 0)
               except
@@ -23493,12 +23501,18 @@ begin
         end;
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
+      // this will read with encoding from system to utf8
       Script.LoadFromFile(Scriptdatei);
+      //str := script.Text;
       logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
       Encoding2use := searchencoding(Script.Text);
       if Encoding2use = '' then
         Encoding2use := 'system';
-      Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+      if not ((Encoding2use = 'system')) then
+      Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+      //str := script.Text;
+      usedEncoding := Encoding2use;
+      //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
       Script.FFilename := Scriptdatei;
       for i := 0 to script.Count - 1 do
       begin

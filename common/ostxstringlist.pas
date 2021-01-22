@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils,
   oslog,
+  lconvencoding,
   osencoding,
   osparserhelper;
 
@@ -26,6 +27,8 @@ Type
     function FuncSaveToFile(const FileName: string; encodingtype: string): boolean;
       overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
+    procedure loadFromFileWithEncoding(const FileName: string; encodingtype: string);
+    procedure loadFromFile(const FileName: string);
     //procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
@@ -155,10 +158,12 @@ var
   *)
   myfilename: string;
   LogS : string;
+  usedenc : string;
 begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
     myfilename := ExpandFileName(FileName);
+    //myfilename := reencode(myfilename,'utf8', usedenc, 'system');
     saveTextFileWithEncoding(TStrings(self), myfilename, encodingtype);
     (*
     if LowerCase(encodingtype) = 'utf8' then
@@ -341,6 +346,24 @@ begin
     end;
   end;
 end;
+
+procedure TXStringlist.loadFromFile(const FileName: string);
+begin
+  loadFromFileWithEncoding(FileName,GetDefaultTextEncoding);
+end;
+
+procedure TXStringlist.loadFromFileWithEncoding(const FileName: string; encodingtype: string);
+var
+  encfilename, usedenc : string;
+begin
+  // call fuction of osencoding here
+  self.Clear;
+  //encfilename := reencode(ExpandFileName(FileName),'utf8', usedenc, 'system');
+  encfilename := ExpandFileName(FileName);
+  LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);
+  self.AddStrings(osencoding.loadTextFileWithEncoding(encfilename,encodingtype));
+end;
+
 
 (*
 procedure TXStringlist.loadFromUnicodeFile(const Filename: string; codepage: word);

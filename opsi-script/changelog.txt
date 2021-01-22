@@ -9,6 +9,8 @@ opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
  * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
  * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
+ * redesign of TXStringlist file in and out encoding
+ * call of patches section with /encoding parameter
 
 -- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
 
