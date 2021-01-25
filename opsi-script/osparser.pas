@@ -7577,7 +7577,7 @@ begin
         if SyntaxCheck then
         begin
           try
-            XMLDocObject.delNode(nodepath, errorinfo);
+            XMLDocObject.delNode(nodepath, openstrict, errorinfo);
             // After a deleteNode you must use opennode in order to work with open nodes
             nodeOpened := False;
             nodeOpenCommandExists := False;

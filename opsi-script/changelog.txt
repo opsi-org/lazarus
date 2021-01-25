@@ -9,8 +9,9 @@ opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
  * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
  * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
+ * osxmlsections: fix for xml2 delnode
 
--- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
+-- d.oertel <d.oertel@uib.de> Mon, 25 Jan 2021 15:00
 
 opsi-winst/opsi-script (4.12.4.12) stable; urgency=low
 
