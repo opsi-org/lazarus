@@ -1,0 +1,162 @@
+
+[5] [2020-10-12 14:17:08.046] [opsi-script-test]     comment:
+[5] [2020-10-12 14:17:08.047] [opsi-script-test]     comment: -------------------------------------
+[5] [2020-10-12 14:17:08.049] [opsi-script-test]     comment: Testing:
+[5] [2020-10-12 14:17:08.050] [opsi-script-test]     message includelog
+[6] [2020-10-12 14:17:08.053] [opsi-script-test]     If
+[7] [2020-10-12 14:17:08.053] [opsi-script-test]       $OS$ = 'macos'   <<< result false
+[6] [2020-10-12 14:17:08.053] [opsi-script-test]       not($OS$ = 'macos')   <<< result true
+[6] [2020-10-12 14:17:08.053] [opsi-script-test]     Then
+[6] [2020-10-12 14:17:08.055] [opsi-script-test]       Set  $string1$ = "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.055] [opsi-script-test]         The value of the variable "$string1$" is now: "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.056] [opsi-script-test]       Set  $string2$ = "5"
+[6] [2020-10-12 14:17:08.056] [opsi-script-test]         The value of the variable "$string2$" is now: "5"
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ################################################################
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: line 6
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: line 7
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: line 8
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: line 9
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: line 10
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ==>: üöäÜÖÄß
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       ################################################################
+[7] [2020-10-12 14:17:08.075] [opsi-script-test]       End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.075] [opsi-script-test]       If
+[6] [2020-10-12 14:17:08.076] [opsi-script-test]         CompareDotSeparatedNumbers("4.12.4.3","4.11.3.2") >= "0"   <<< result true
+[6] [2020-10-12 14:17:08.076] [opsi-script-test]       Then
+[6] [2020-10-12 14:17:08.077] [opsi-script-test]         Set  $string2$ = "-5"
+[6] [2020-10-12 14:17:08.077] [opsi-script-test]           The value of the variable "$string2$" is now: "-5"
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         Start including head of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ==>: line 1
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ==>: line 2
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ==>: line 3
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ==>: line 4
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ==>: line 5
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.079] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         Start including head of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ==>: line 1
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ==>: line 2
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ==>: line 3
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ==>: line 4
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ==>: line 5
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.080] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.080] [opsi-script-test]       EndIf
+[6] [2020-10-12 14:17:08.082] [opsi-script-test]       Set  $string1$ = "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.082] [opsi-script-test]         The value of the variable "$string1$" is now: "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.083] [opsi-script-test]       Set  $string2$ = "5"
+[6] [2020-10-12 14:17:08.083] [opsi-script-test]         The value of the variable "$string2$" is now: "5"
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ################################################################
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: line 6
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: line 7
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: line 8
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: line 9
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: line 10
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ==>: üöäÜÖÄß
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       ################################################################
+[7] [2020-10-12 14:17:08.085] [opsi-script-test]       End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.085] [opsi-script-test]       If
+[6] [2020-10-12 14:17:08.086] [opsi-script-test]         CompareDotSeparatedNumbers("4.12.4.3","4.11.3.2") >= "0"   <<< result true
+[6] [2020-10-12 14:17:08.086] [opsi-script-test]       Then
+[6] [2020-10-12 14:17:08.087] [opsi-script-test]         Set  $string2$ = "-5"
+[6] [2020-10-12 14:17:08.087] [opsi-script-test]           The value of the variable "$string2$" is now: "-5"
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         Start including head of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ==>: line 1
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ==>: line 2
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ==>: line 3
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ==>: line 4
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ==>: line 5
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.089] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         Start including head of LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ==>: line 1
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ==>: line 2
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ==>: line 3
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ==>: line 4
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ==>: line 5
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.090] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-cp1252.txt"
+[6] [2020-10-12 14:17:08.090] [opsi-script-test]       EndIf
+[6] [2020-10-12 14:17:08.090] [opsi-script-test]       If
+[6] [2020-10-12 14:17:08.091] [opsi-script-test]         CompareDotSeparatedNumbers("4.12.4.3","4.11.4.1") >= "0"   <<< result true
+[6] [2020-10-12 14:17:08.091] [opsi-script-test]       Then
+[6] [2020-10-12 14:17:08.092] [opsi-script-test]         Set  $string1$ = "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt"
+[6] [2020-10-12 14:17:08.093] [opsi-script-test]           The value of the variable "$string1$" is now: "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt"
+[6] [2020-10-12 14:17:08.094] [opsi-script-test]         Set  $string2$ = "5"
+[6] [2020-10-12 14:17:08.094] [opsi-script-test]           The value of the variable "$string2$" is now: "5"
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: line 6
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: line 7
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: line 8
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: line 9
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: line 10
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ==>: Ã¼Ã¶Ã¤ÃœÃ–Ã„ÃŸ
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.105] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt"
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt with encoding: utf8"
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: line 6
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: line 7
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: line 8
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: line 9
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: line 10
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ==>: üöäÜÖÄß
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.107] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt"
+[7] [2020-10-12 14:17:08.108] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt with encoding: UCS-2BE"
+[7] [2020-10-12 14:17:08.108] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.108] [opsi-script-test]         ==>: 汩湥‱ഊ汩湥′ഊ汩湥″ഊ汩湥‴ഊ汩湥‵ഊ汩湥‶ഊ汩湥‷ഊ汩湥‸ഊ汩湥‹ഊ汩湥‱」ૃ볃뛃꓃鳃雃蓃鼍
+[7] [2020-10-12 14:17:08.108] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.108] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf16.txt"
+[6] [2020-10-12 14:17:08.110] [opsi-script-test]         Set  $string1$ = "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"
+[6] [2020-10-12 14:17:08.110] [opsi-script-test]           The value of the variable "$string1$" is now: "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"
+[6] [2020-10-12 14:17:08.111] [opsi-script-test]         Set  $string2$ = "5"
+[6] [2020-10-12 14:17:08.111] [opsi-script-test]           The value of the variable "$string2$" is now: "5"
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00006
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00007
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00008
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00009
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00001\u0000\u0000\u00000
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ==>: \u0000\u0000\u0000ü\u0000\u0000\u0000ö\u0000\u0000\u0000ä\u0000\u0000\u0000Ü\u0000\u0000\u0000Ö\u0000\u0000\u0000Ä\u0000\u0000\u0000ß
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.119] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt with encoding: cp1252"
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00006
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00007
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00008
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00009
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00001\u0000\u0000\u00000
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ==>: \u0000\u0000\u0000ü\u0000\u0000\u0000ö\u0000\u0000\u0000ä\u0000\u0000\u0000Ü\u0000\u0000\u0000Ö\u0000\u0000\u0000Ä\u0000\u0000\u0000ß
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.121] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt with encoding: ucs2be"
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: \u0000l\u0000i\u0000n\u0000e\u0000 \u00001
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: ਀\u0000氀\u0000椀\u0000渀\u0000攀\u0000 \u0000㈀\u0000ഊ\u0000l\u0000i\u0000n\u0000e\u0000 \u00003
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: ਀\u0000氀\u0000椀\u0000渀\u0000攀\u0000 \u0000㐀\u0000ഊ\u0000l\u0000i\u0000n\u0000e\u0000 \u00005
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: ਀\u0000氀\u0000椀\u0000渀\u0000攀\u0000 \u0000㘀\u0000ഊ\u0000l\u0000i\u0000n\u0000e\u0000 \u00007
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: ਀\u0000氀\u0000椀\u0000渀\u0000攀\u0000 \u0000㠀\u0000ഊ\u0000l\u0000i\u0000n\u0000e\u0000 \u00009
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ==>: ਀\u0000氀\u0000椀\u0000渀\u0000攀\u0000 \u0000㄀\u0000　\u0000ഊ\u0000ü\u0000ö\u0000ä\u0000Ü\u0000Ö\u0000Ä\u0000ßഊ
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.122] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"
+[4] [2020-10-12 14:17:08.124] [opsi-script-test]         Prog: Found or given Encoding: utf32 is not supported.
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         Start including tail of LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt with encoding: utf32"
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00006
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00007
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00008
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00009
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000l\u0000\u0000\u0000i\u0000\u0000\u0000n\u0000\u0000\u0000e\u0000\u0000\u0000 \u0000\u0000\u00001\u0000\u0000\u00000
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ==>: \u0000\u0000\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000�
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         ################################################################
+[7] [2020-10-12 14:17:08.124] [opsi-script-test]         End including LogFile "p:\opsi-script-test\test-files\encoding\10lines-utf32.txt"

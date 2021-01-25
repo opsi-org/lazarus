@@ -70,9 +70,15 @@ end;
 
 
 function beautify (code: TStringlist) : TStringList;
-var k, relPos: integer;
+var
+    k, relPos, i: integer;
     trimLine: boolean;
+    tmpstr, tmpstr2 : string;
+    found : boolean;
+    openif : array[0..250] of Integer;
 begin
+  //Initialize openif array
+  for i := 0 to 250 do openif[i] := -1;
   k:=0;
   while (k < pred(code.Count)) do
     begin
@@ -102,8 +108,15 @@ begin
 
       // sections with relativ indentions
       // except previous condions
-      if not(AnsiStartsStr(UpperCase('[Action'),UpperCase(code[k].trim)) or  AnsiStartsStr(UpperCase('[Sub'),code[k].trim)
-         or AnsiStartsStr(UpperCase('[Aktionen'),code[k].trim) or  AnsiStartsStr(UpperCase('[ProfileActions'),code[k].trim))  then
+      tmpstr := UpperCase(code[k].trim);
+      (*
+      tmpstr2 := UpperCase('[Sub');
+      if AnsiStartsStr(UpperCase('[Sub'),code[k].trim) then  found  := true
+      else found := false;
+      if AnsiStartsStr(tmpstr2,tmpstr) then  found  := true
+      else found := false;*)
+      if not(AnsiStartsStr(UpperCase('[Action'),tmpstr) or  AnsiStartsStr(UpperCase('[Sub'),tmpstr)
+         or AnsiStartsStr(UpperCase('[Aktionen'),tmpstr) or  AnsiStartsStr(UpperCase('[ProfileActions'),tmpstr))  then
        if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim))
          then
             begin
@@ -142,6 +155,10 @@ begin
         then
           begin
             code[k]:= indentation(indentlevel) + code[k];
+            if AnsiStartsStr(UpperCase('if'),UpperCase(code[k].Trim)) then
+            begin
+              openif[indentlevel] := k;
+            end;
             inc(indentlevel);
           end
         else if (isStartStr(code[k], decIncIndentList))
@@ -156,6 +173,10 @@ begin
         begin
           dec(indentlevel);
           code[k]:= indentation(indentlevel) + code[k];
+          if AnsiStartsStr(UpperCase('endif'),UpperCase(code[k].Trim)) then
+            begin
+              openif[indentlevel] := -1;
+            end;
         end
         else
           code[k]:= indentation(indentlevel) + code[k];
@@ -165,6 +186,12 @@ begin
         inc(k);
     end; // while
   beautify:=code;
+  LogDatei.log('List of open if: ',LLnotice);
+  for i := 0 to 250 do
+    begin
+      if openif[i] > -1 then
+       LogDatei.log('open if for indetlevel: '+inttostr(i)+' at Line: '+inttostr(openif[i]),LLnotice);
+    end;
 end;
 
 procedure initialize(bfn: String;osf:String);
@@ -176,15 +203,15 @@ begin
   ini    := TINIFile.Create(bfn);
   indentrange := INI.ReadInteger('beautifierconf', 'indentrange', 5);
   indentlevel :=  0;
-  writeln('indentrange:  ' + indentrange.ToString());
+  {$IFNDEF GUI}writeln('indentrange:  ' + indentrange.ToString()); {$ENDIF GUI}
   logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
-  writeln('indentlevel:  ' + indentlevel.ToString());
+ {$IFNDEF GUI} writeln('indentlevel:  ' + indentlevel.ToString());{$ENDIF GUI}
   logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
 
 
   // Tab = #09, Whitespace = ' '
   indentchar := INI.ReadString('beautifierconf', 'indentchar', '#09');
-  writeln(indentchar);
+  {$IFNDEF GUI}writeln(indentchar);{$ENDIF GUI}
   logdatei.log('indentchar:  ' + indentchar, LLessential);
   if indentchar.Equals('tab')
      then indentchar := #09
@@ -235,7 +262,7 @@ begin
       logdatei.log('backup file: '+ opsiscriptfile,LLessential);
       CopyFile(opsiscriptfile,ExtractFileNameWithoutExt(opsiscriptfile)+'.bak',[cffOverwriteFile]);
       logdatei.log('opening file: '+ opsiscriptfile,LLessential);
-      writeln('opening file: '+  opsiscriptfile);
+      {$IFNDEF GUI}writeln('opening file: '+  opsiscriptfile);{$ENDIF GUI}
       try
         try
           opsiscriptcode.LoadFromFile(opsiscriptfile);
@@ -253,7 +280,7 @@ begin
   else
     begin
       opsiscriptcode.Free;
-      writeln('file does not exist: '+ opsiscriptfile);
+      {$IFNDEF GUI}writeln('file does not exist: '+ opsiscriptfile); {$ENDIF GUI}
       logdatei.log('file does not exist: '+ opsiscriptfile,LLessential);
     end;
   // free all

@@ -14,6 +14,7 @@ uses
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
   Application.Title:='opsi-client-systray';
   RequireDerivedFormResource:=True;
   Application.Initialize;

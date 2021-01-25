@@ -3,6 +3,7 @@
 // Downloaded from https://forum.lazarus.freepascal.org/index.php?action=dlattach;topic=41852.0;attach=27447
 
 unit VerInfo;
+
 {$MODE OBJFPC}
 {$LONGSTRINGS ON}
 
@@ -82,7 +83,7 @@ begin
   if P = nil then
   begin
     Result.Hi := 0;
-    Result.Lo := 0
+    Result.Lo := 0;
   end
   else
   begin
@@ -116,10 +117,10 @@ end;
 function TVersionInfo.GetVerValue(const Name: string): string;
 type
   TTranslateInfo = packed record
-    LangId, CodePage: Word;
+    LangId, CodePage: word;
   end;
 const
-  Default: TTranslateInfo = (LangId:$0409; CodePage:1252);
+  Default: TTranslateInfo = (LangId: $0409; CodePage: 1252);
 var
   PLang: ^TTranslateInfo;
   PValue: PChar;
@@ -168,4 +169,3 @@ begin
 end;
 
 end.
-

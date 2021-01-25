@@ -10,13 +10,6 @@ unit oslocaladmin;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 453 $
-// $Author: oertel $
-// $Date: 2016-05-27 17:56:01 +0200 (Fr, 27 Mai 2016) $
-//***************************************************************************
-
 
 {$mode delphi}
 

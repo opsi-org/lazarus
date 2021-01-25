@@ -270,6 +270,7 @@ type
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
+    procedure InitSkin;
     //function RunAsAdmin(const Handle: DWord; const Path, Params: string
     //  ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
@@ -1950,6 +1951,8 @@ end;
 
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 begin
+  InitSkin;
+  LogDatei.log('LabelTitle.Caption: ' + LabelTitle.Caption, LLDebug);
   if not StartupDone then
   begin
     //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
@@ -2110,14 +2113,22 @@ begin
     LogDatei.Log('loading skin for title from: ' + SkinPath, LLInfo);
     myini := TIniFile.Create(SkinPath);
     //title
+    //LogDatei.LogLevel:=9;//for testing -> set loglevel to 9
     LabelTitle.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
-    LogDatei.log('LabelTitle.Caption: ' + LabelTitle.Caption, LLDebug);
+    LogDatei.log('LabelTitle.Caption: ' + LabelTitle.Caption, LLDebug3);
     LabelTitle.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
+    LogDatei.log('LabelTitle.Font.Name: ' + LabelTitle.Font.Name, LLDebug3);
     LabelTitle.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
+    LogDatei.log('LabelTitle.Font.Size: ' + IntToStr(LabelTitle.Font.Size), LLDebug3);
     LabelTitle.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
+    LogDatei.log('LabelTitle.Font.Color: ' + ColorToString(LabelTitle.Font.Color), LLDebug3);
     LabelTitle.Font.Bold := StrToBool(myini.ReadString('TitleLabel','FontBold','True'));
+    LogDatei.log('LabelTitle.Font.Bold: ' + BoolToStr(LabelTitle.Font.Bold, True), LLDebug3);
     LabelTitle.Font.Italic := StrToBool(myini.ReadString('TitleLabel', 'FontItalic','False'));
+    LogDatei.log('LabelTitle.Font.Italic: ' + BoolToStr(LabelTitle.Font.Italic, True), LLDebug3);
     LabelTitle.Font.Underline := StrToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
+    LogDatei.log('LabelTitle.Font.Underline: ' + BoolToStr(LabelTitle.Font.Underline, True), LLDebug3);
+    //LogDatei.LogLevel:=7;//for testing -> set loglevel back to 7
     myini.Free;
   end;
 end;
@@ -2255,42 +2266,6 @@ begin
   begin
     LoadSkinForTitle(skinpath);
   end;}
-
-  { SkinPaths }
-  CustomSkinPath := Application.Location +
-    'ock_custom' + PathDelim + 'skin' + PathDelim;
-  DefaultSkinPath := Application.Location +
-    'default' + PathDelim + 'skin' + PathDelim;
-  {Loading header image}
-  if FileExists(CustomSkinPath + 'header.png') then
-  begin
-    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'header.png') then
-    begin
-      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
-    end;
-  {Loading logo}
-  if FileExists(CustomSkinPath + 'logo.png') then
-  begin
-    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'logo.png') then
-    begin
-      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
-    end;
-  {Loading label text and font style}
-  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
-  begin
-    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
-  end
-  else
-    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
-    begin
-      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
-    end;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
@@ -2425,6 +2400,45 @@ begin
     LogDatei.log('Delete image ' + ImagePath, LLDebug);
     DeleteFileUTF8(ImagePath);
   end;
+end;
+
+procedure TFormOpsiClientKiosk.InitSkin;
+begin
+  { SkinPaths }
+  CustomSkinPath := Application.Location +
+    'ock_custom' + PathDelim + 'skin' + PathDelim;
+  DefaultSkinPath := Application.Location +
+    'default' + PathDelim + 'skin' + PathDelim;
+    {Loading header image}
+  if FileExists(CustomSkinPath + 'header.png') then
+  begin
+    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'header.png') then
+    begin
+      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
+    end;
+  {Loading logo}
+  if FileExists(CustomSkinPath + 'logo.png') then
+  begin
+    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'logo.png') then
+    begin
+      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
+    end;
+  {Loading label text and font style}
+  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
+  begin
+    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
+    begin
+      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
+    end;
 end;
 
 

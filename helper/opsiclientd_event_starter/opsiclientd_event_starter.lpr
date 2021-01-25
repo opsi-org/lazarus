@@ -171,7 +171,9 @@ function initLogging : boolean;
 begin
   Result := True;
   logdatei := TLogInfo.Create;
-  logfilename := opsilog;
+  //logfilename := opsilog;
+  //logfilename := ApplicationName;
+  logfilename := 'opsiclientd_event_starter.log';
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
   logdatei.log('opsiclientd_event_starter: version: '+myVersion,LLessential);
@@ -439,8 +441,9 @@ var
 {$ENDIF WINDOWS}
 
 begin
-  Application.Title:='opsiclientd_event_starter';
   Application:=Tstarter.Create(nil);
+  Application.Title:='opsiclientd_event_starter';
+  Application.Initialize;
   Application.Run;
   Application.Free;
 end.
