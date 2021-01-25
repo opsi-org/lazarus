@@ -5,6 +5,12 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.14) stable; urgency=low
+
+ *
+
+-- d.oertel <d.oertel@uib.de> Tue, 26 Jan 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
  * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
