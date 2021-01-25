@@ -382,37 +382,53 @@ begin
   // which means normally: do nothing
   if LowerCase(sourceEncoding) = 'auto' then
     usedSourceEncoding := guessEncoding(sourceText);
+  // erasing the BOM part if exists
+  if (copy(usedSourceEncoding, length(usedSourceEncoding) - 2, length(usedSourceEncoding)) = 'bom') then
+     if (usedSourceEncoding[length(usedSourceEncoding) - 3] = '') then
+         usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 4)
+     else
+     usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 3);
+  if (copy(destEncoding, length(destEncoding) - 2, length(destEncoding)) = 'bom') then
+     if (destEncoding[length(destEncoding) - 3] = '') then
+         destEncoding := copy(destEncoding, 0, length(destEncoding) - 4)
+     else
+     destEncoding := copy(destEncoding, 0, length(destEncoding) - 3);
+  // if not supported encoding
   if not isSupportedEncoding(usedSourceEncoding) then
     if Assigned(logdatei) then
       logdatei.log_prog('Found or given Encoding: ' + usedSourceEncoding +
         ' is not supported.', LLWarning);
+  // normalizing encodings
+  usedSourceEncoding:= NormalizeEncoding(usedSourceEncoding);
+  destEncoding:= NormalizeEncoding(destEncoding);
+  // if used and destination encodings are different
   if LowerCase(usedSourceEncoding) <> LowerCase(destEncoding) then
   begin
     if Assigned(logdatei) then
       logdatei.log_prog('Encodings are different so we have to reencode from ' +
         usedSourceEncoding + ' to ' + destEncoding, LLDebug2);
-    if (usedSourceEncoding = 'utf8') or (usedSourceEncoding = 'UTF-8') or
-      (destEncoding = 'utf8') or (destEncoding = 'UTF-8') then
+    // if reencoding is from or to utf8
+    if (usedSourceEncoding = 'utf8') or (destEncoding = 'utf8') then
     begin
       if Assigned(logdatei) then
         logdatei.log_prog('We encode directly from or to utf8.', LLDebug2);
 
-      if (usedSourceEncoding = 'utf16') or (usedSourceEncoding = 'UTF-16') then
+      if (usedSourceEncoding = 'utf16') then
         usedSourceEncoding := 'ucs2be';
 
-      if (destEncoding = 'utf16') or (destEncoding = 'UTF-16') then
+      if (destEncoding = 'utf16') then
         destEncoding := 'ucs2be';
 
-      if (usedSourceEncoding = 'utf16le') or (usedSourceEncoding = 'UTF-16LE') then
+      if (usedSourceEncoding = 'utf16le') then
         usedSourceEncoding := 'ucs2le';
 
-      if (destEncoding = 'utf16le') or (destEncoding = 'UTF-16LE') then
+      if (destEncoding = 'utf16le') then
         destEncoding := 'ucs2le';
 
-      if (usedSourceEncoding = 'utf16be') or (usedSourceEncoding = 'UTF-16BE') then
+      if (usedSourceEncoding = 'utf16be') then
         usedSourceEncoding := 'ucs2be';
 
-      if (destEncoding = 'utf16be') or (destEncoding = 'UTF-16BE') then
+      if (destEncoding = 'utf16be') then
         destEncoding := 'ucs2be';
 
       if (usedSourceEncoding = 'unicode') then
@@ -431,8 +447,7 @@ begin
       if Assigned(logdatei) then
         logdatei.log_prog('Encodings are different so we have to reencode from ' +
           usedSourceEncoding + ' to ' + destEncoding, LLDebug2);
-      if (usedSourceEncoding = 'ucs2be') or (usedSourceEncoding = 'UCS-2BE') or
-        (usedSourceEncoding = 'ucs2le') or (usedSourceEncoding = 'UCS-2LE') then
+      if (usedSourceEncoding = 'ucs2be') or (usedSourceEncoding = 'ucs2le') then
       begin
         if Assigned(logdatei) then
           logdatei.log_prog('We encode line by line.', LLDebug2);
@@ -444,8 +459,7 @@ begin
           mylist.Strings[i] := ConvertEncoding(str, usedSourceEncoding, 'utf8');
           if Assigned(logdatei) then
             logdatei.log_prog(usedSourceEncoding + ' to utf8: ' +
-              str + ' to ' + mylist.Strings[i],
-              LLDebug3);
+              str + ' to ' + mylist.Strings[i], LLDebug3);
         end;
         Result := mylist.Text;
         mylist.Free;
