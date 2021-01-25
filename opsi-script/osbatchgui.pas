@@ -34,7 +34,8 @@ uses
 //Sensors, indGnouMeter,
   osencoding,
   typinfo,
-  QProgBar;
+  QProgBar,
+  osViewControl;
 
 type
 

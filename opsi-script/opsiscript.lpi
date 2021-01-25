@@ -505,7 +505,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="58">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -755,6 +755,11 @@
         <Filename Value="notarize_osgui.bash"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="osviewcontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osViewControl"/>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
