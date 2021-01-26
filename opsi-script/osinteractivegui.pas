@@ -104,7 +104,8 @@ ostxstringlist,
   //IdSysLog,
   lcltranslator,
   strutils,
-  inifiles;
+  inifiles,
+  osGUIControl;
 
 type
 
@@ -926,9 +927,9 @@ begin
   MyMessageDLG := TMyMessageDLG.Create(Application);
 
 
-  FBatchOberflaeche.ForceStayOnTop(False);
+  FBatchOberflaeche.SetForceStayOnTop(False, seFormCreate);
 
-  FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
+  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, seFormCreate);//FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 
@@ -937,7 +938,7 @@ begin
   except
     on E: Exception do
     begin
-      FBatchOberflaeche.ForceStayOnTop(False);
+      FBatchOberflaeche.SetForceStayOnTop(False, seFormCreate);
       MyMessageDlg.WiMessage('TCentralForm.FormCreate : ' + E.Message, [mrOk]);
     end;
   end;

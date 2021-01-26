@@ -505,7 +505,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="58">
+    <Units Count="59">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -760,6 +760,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osViewControl"/>
       </Unit57>
+      <Unit58>
+        <Filename Value="osguicontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osGUIControl"/>
+      </Unit58>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

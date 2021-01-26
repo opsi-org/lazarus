@@ -35,7 +35,7 @@ uses
   osencoding,
   typinfo,
   QProgBar,
-  osViewControl;
+  osGUIControl;
 
 type
 
@@ -44,7 +44,7 @@ type
   { TFBatchOberflaeche }
 
   //TFBatchOberflaeche = class(TForm, IViewService)
-  TFBatchOberflaeche = class(TForm)
+  TFBatchOberflaeche = class(TosGUIControl)
     PanelFillScreen: TPanel;
     Panel: TPanel;
     ImageBackground: TImage;
@@ -94,6 +94,7 @@ type
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
+    procedure doInfo(aMessage:string);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -110,9 +111,11 @@ type
       const theLabel: string): boolean; overload;
 
     //interface
+    procedure SetMessageText(MessageText: string; SenderID: TSenderID);override;
+    procedure SetProgress(Progress: integer; SenderID: TSenderID);override;
     procedure setVisible(b: boolean);
     procedure showProgressBar(b: boolean);
-    procedure setProgress(percent: integer);
+    //procedure setProgress(percent: integer);
 
     procedure setCommandLabel(s: string);
     procedure setInfoLabel(s: string);
@@ -137,7 +140,7 @@ var
 
   //viewService : IViewService;
   //FBatchOberflaeche:  IViewService;   this seems to produce erratic null pointer exceptions when application terminates
-  FBatchOberflaeche: TFBatchOberflaeche;
+  FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
   LableInfoDefaultFontSize : integer;
 
   BatchWindowMode, SavedBatchWindowMode: TBatchWindowMode;
@@ -970,15 +973,15 @@ begin
   //ProcessMess;
 end;
 
-procedure TFBatchOberflaeche.ShowAcitvityBar(show : boolean);
+procedure TFBatchOberflaeche.showAcitvityBar(show: boolean);
 begin
   ActivityBar.Visible:=show;
   //ProcessMess;
 end;
 
 
-function TFBatchOberflaeche.setPicture
-  (No: integer; const BitmapFile: string; const theLabel: string): boolean;
+function TFBatchOberflaeche.SetPicture(No: integer; const BitmapFile: string;
+  const theLabel: string): boolean;
 var
   //bitmap, resizedBitmap: TBitmap;
   //newHeight, newWidth: integer;
@@ -1027,6 +1030,18 @@ begin
   end;
 
   processMess;
+
+end;
+
+procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
+  SenderID: TSenderID);
+begin
+
+end;
+
+procedure TFBatchOberflaeche.SetProgress(Progress: integer; SenderID: TSenderID
+  );
+begin
 
 end;
 
@@ -1108,9 +1123,19 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.setProgress(percent: integer);
+procedure TFBatchOberflaeche.doInfo(aMessage: string);
 begin
-  showProgress(percent);
+  LabelInfo.Font.Size := LableInfoDefaultFontSize;
+  if LabelInfo.Canvas.TextWidth(aMessage) >
+    (LabelInfo.Width - LabelInfo.Width div 5) then
+    LabelInfo.OptimalFill := True
+  else
+  begin
+    LabelInfo.OptimalFill := False;
+    LabelInfo.Font.Size := LableInfoDefaultFontSize;
+    ;
+  end;
+  setInfoLabel(aMessage);
 end;
 
 procedure TFBatchOberflaeche.setCommandLabel(s: string);
