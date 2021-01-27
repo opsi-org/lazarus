@@ -927,9 +927,9 @@ begin
   MyMessageDLG := TMyMessageDLG.Create(Application);
 
 
-  FBatchOberflaeche.SetForceStayOnTop(False, seFormCreate);
+  FBatchOberflaeche.SetForceStayOnTop(False);
 
-  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, seFormCreate);//FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
+  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, mVersion);//FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 
@@ -938,7 +938,7 @@ begin
   except
     on E: Exception do
     begin
-      FBatchOberflaeche.SetForceStayOnTop(False, seFormCreate);
+      FBatchOberflaeche.SetForceStayOnTop(False);
       MyMessageDlg.WiMessage('TCentralForm.FormCreate : ' + E.Message, [mrOk]);
     end;
   end;

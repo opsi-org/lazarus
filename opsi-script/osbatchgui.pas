@@ -39,7 +39,7 @@ uses
 
 type
 
-  TBatchWindowMode = (bwmNotActivated, bwmIcon, bwmNormalWindow, bwmMaximized);
+  //TBatchWindowMode = (bwmNotActivated, bwmIcon, bwmNormalWindow, bwmMaximized);
 
   { TFBatchOberflaeche }
 
@@ -95,6 +95,10 @@ type
 
   private
     procedure doInfo(aMessage:string);
+    procedure ForceStayOnTop(YesNo: boolean);
+    procedure setInfoLabel(s: string);
+    procedure setVersionLabel(s: string);
+    procedure setWindowState(BatchWindowMode: TBatchWindowMode);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -102,8 +106,7 @@ type
   public
     { Public-Deklarationen }
 
-    procedure ForceStayOnTop(YesNo: boolean);
-    procedure setWindowState(BatchWindowMode: TBatchWindowMode);
+
 
     procedure LoadSkin(const skindirectory: string);
 
@@ -111,21 +114,23 @@ type
       const theLabel: string): boolean; overload;
 
     //interface
-    procedure SetMessageText(MessageText: string; SenderID: TSenderID);override;
-    procedure SetProgress(Progress: integer; SenderID: TSenderID);override;
-    procedure setVisible(b: boolean);
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID);override;
+    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID);override;
+    procedure SetForceStayOnTop(StayOnTop: boolean);override;
+    procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);override;
+    procedure SetElementVisible(Visible:boolean; ElementID:TElementID);override;
+
+    //procedure setVisible(b: boolean);
     procedure showProgressBar(b: boolean);
     //procedure setProgress(percent: integer);
 
     procedure setCommandLabel(s: string);
-    procedure setInfoLabel(s: string);
+
     procedure setDetailLabel(s: string);
     procedure setActivityLabel(s: string);
-    procedure setVersionLabel(s: string);
+
     procedure showAcitvityBar(show : boolean);
     //procedure setCPUActivityLabel(s: string);
-
-    //procedure ForceStayOnTop (YesNo : Boolean);
 
     //procedure setWindowState (BatchWindowMode: TBatchWindowMode);
 
@@ -140,7 +145,7 @@ var
 
   //viewService : IViewService;
   //FBatchOberflaeche:  IViewService;   this seems to produce erratic null pointer exceptions when application terminates
-  FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
+  //FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
   LableInfoDefaultFontSize : integer;
 
   BatchWindowMode, SavedBatchWindowMode: TBatchWindowMode;
@@ -1034,15 +1039,29 @@ begin
 end;
 
 procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
-  SenderID: TSenderID);
+  MessageID: TMessageID);
+begin
+  case MessageID of
+    mInfo: setInfoLabel(MessageText);
+    mVersion: setVersionLabel(MessageText);
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetProgress(Progress: integer; ProgressValueID: TProgressValueID
+  );
 begin
 
 end;
 
-procedure TFBatchOberflaeche.SetProgress(Progress: integer; SenderID: TSenderID
-  );
+procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
 begin
+  ForceStayOnTop(StayOnTop);
+end;
 
+procedure TFBatchOberflaeche.SetBatchWindowMode(
+  BatchWindowMode: TBatchWindowMode);
+begin
+  setWindowState(BatchWindowMode: TBatchWindowMode);
 end;
 
 procedure TFBatchOberflaeche.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1112,9 +1131,12 @@ begin
 end;
 
 //interface
-procedure TFBatchOberflaeche.setVisible(b: boolean);
+procedure TFBatchOberflaeche.SetElementVisible(Visible: boolean;
+  ElementID: TElementID);
 begin
-  Visible := b;
+  case ElementID of
+    eMainForm:  self.Visible := Visible;
+  end;
 end;
 
 procedure TFBatchOberflaeche.showProgressBar(b: boolean);
@@ -1191,8 +1213,6 @@ begin
 end;
 
 
-
-//procedure TFBatchOberflaeche.ForceStayOnTop (YesNo : Boolean);
 
 //procedure TFBatchOberflaeche.setWindowState (BatchWindowMode: TBatchWindowMode);
 
