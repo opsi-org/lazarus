@@ -2318,8 +2318,10 @@ var
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
-    PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    PatchListe.Text := reencode(PatchListe.Text, 'system');
+    if FileExists(PatchFilename) then
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename),flag_encoding);
+    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
+    //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
     lastfind := False;
 
