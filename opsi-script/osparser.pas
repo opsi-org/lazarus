@@ -65,6 +65,8 @@ uses
   osshowsysinfo,
   //osinteractivegui,
   //osbatchgui,
+  Forms,
+  osGUIControl,
   Controls,
   LCLIntf,
   oslistedit,
@@ -2097,7 +2099,7 @@ begin
 
   // do not auto size short labels because this will look ugly
   // use optimalfill to decrease the font only on large labels
-  FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
+  (*FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
   if FBatchOberflaeche.LabelInfo.Canvas.TextWidth(Meldung) >
     (FBatchOberflaeche.LabelInfo.Width - FBatchOberflaeche.LabelInfo.Width div 5) then
     FBatchOberflaeche.LabelInfo.OptimalFill := True
@@ -2107,9 +2109,7 @@ begin
     FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
     ;
   end;
-
-
-  FBatchOberflaeche.setInfoLabel(Meldung);
+  FBatchOberflaeche.setInfoLabel(Meldung);*)
   {$ELSE GUI}
   Result := tsrPositive;
   writeln(Meldung);
@@ -2148,7 +2148,7 @@ begin
     if Line = PStatNames^ [tsCondClose] then
       Line := '\';
     CentralForm.Label2.Caption := Line;
-    FBatchOberflaeche.setDetailLabel(Line);
+    FBatchOberflaeche.SetMessageText(Line,mDetail); //setDetailLabel(Line);
   end;
 
   ProcessMess;
@@ -2187,7 +2187,7 @@ begin
   ps := Sektion.Name;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
-  FBatchOberflaeche.setDetailLabel(CentralForm.Label2.Caption);
+  FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
 end;
 
@@ -2201,7 +2201,7 @@ begin
   FNumberOfWarnings := SaveWarningNumber + DiffNumberOfWarnings;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := CentralForm.Label2.Caption + ' finished';
-  FBatchOberflaeche.setDetailLabel(CentralForm.Label2.Caption);
+  FBatchOberflaeche.SetMessageText(CentralForm.Label2.Caption, mDetail);//setDetailLabel(CentralForm.Label2.Caption);
 
   (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
   ProcessMess;
@@ -4083,7 +4083,7 @@ begin
 
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
-  FBatchOberflaeche.setDetailLabel(ps);
+  FBatchOberflaeche.SetMessageText(ps, mDetail);//setDetailLabel(ps);
   ProcessMess;
   {$ENDIF GUI}
   LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
@@ -9653,7 +9653,7 @@ begin
 
     {$IFDEF GUI}
     if AutoActivityDisplay then
-      FBatchOberflaeche.showAcitvityBar(True);
+      FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
 
     if not WaitForReturn then
       showoutput := False;
@@ -9856,14 +9856,14 @@ from defines.inc
 
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False,  eActivityBar);//showAcitvityBar(False);
 
     if showoutput then
     begin
       SystemInfo.Free;
       SystemInfo := nil;
       FBatchOberflaeche.BringToFront;
-      FBatchOberflaeche.centerWindow;
+      FBatchOberflaeche.SetWindowPosition(poScreenCenter); //centerWindow;
       ProcessMess;
       LogDatei.log('Stop Showoutput', LLInfo);
     end;
@@ -9905,7 +9905,7 @@ begin
     shortarch := 'sysnative';
     {$IFDEF GUI}
     if AutoActivityDisplay then
-      FBatchOberflaeche.showAcitvityBar(True);
+      FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showAcitvityBar(True);
     {$ENDIF GUI}
 
     if (lowercase(archparam) = '64bit') and Is64BitSystem then
@@ -9965,7 +9965,7 @@ begin
     end;
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     {$ENDIF GUI}
   end;
 end;
@@ -10112,7 +10112,7 @@ begin
     end;
     {$IFDEF GUI}
     if AutoActivityDisplay then
-      FBatchOberflaeche.showAcitvityBar(True);
+      FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
     {$ENDIF GUI}
 
     commandline := FileName + ' ' + trim(Parameters);
@@ -10167,7 +10167,7 @@ begin
     {$ENDIF WINDOWS}
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     {$ENDIF GUI}
   end;
 end;
@@ -10216,10 +10216,10 @@ begin
     {$IFDEF GUI}
     SaveStayOnTop := BatchScreenOnTop;
     if BatchScreenOnTop then
-      FBatchOberflaeche.ForceStayOnTop(False);
+      FBatchOberflaeche.SetForceStayOnTop(False);
     if AutoActivityDisplay then
-      FBatchOberflaeche.showAcitvityBar(True);
-    FBatchOberflaeche.TimerProcessMess.Enabled := True;
+      FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
+    FBatchOberflaeche.SetElementEnabled(True, eTimerProcessMess); //TimerProcessMess.Enabled := True;
     {$ENDIF GUI}
 
     Result := tsrPositive;
@@ -10239,7 +10239,7 @@ begin
 
     {$IFDEF GUI}
     CentralForm.Label2.Caption := ps;
-    FBatchOberflaeche.setDetailLabel(ps);
+    FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(ps);
     ProcessMess;
     {$ENDIF GUI}
 
@@ -10560,13 +10560,13 @@ begin
       Result := tsrExitProcess;
     {$IFDEF GUI}
     if SaveStayOnTop then
-      FBatchOberflaeche.ForceStayOnTop(True);
+      FBatchOberflaeche.SetForceStayOnTop(True);
     {$ENDIF GUI}
     if Logdatei.UsedLogLevel < LLconfidential then
       deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eActivityBar); //showAcitvityBar(False);
     {$ENDIF GUI}
     {$IFDEF WINDOWS}
     if force64 then
@@ -10644,7 +10644,7 @@ begin
 
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
-  FBatchOberflaeche.setDetailLabel(ps);
+  FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(ps);
   ProcessMess;
   {$ENDIF GUI}
 
@@ -10912,7 +10912,7 @@ begin
 
     {$IFDEF GUI}
     CentralForm.Label2.Caption := ps;
-    FBatchOberflaeche.setDetailLabel(ps);
+    FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(ps);
     ProcessMess;
     {$ENDIF GUI}
 
@@ -11033,7 +11033,7 @@ begin
       {$ENDIF WIN32}
       {$IFDEF GUI}
       if AutoActivityDisplay then
-        FBatchOberflaeche.showAcitvityBar(True);
+        FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showAcitvityBar(True);
       {$ENDIF GUI}
       if threaded then
       begin
@@ -11144,7 +11144,7 @@ begin
         deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
     {$ENDIF GUI}
   end;
 end;
@@ -19585,7 +19585,7 @@ begin
   //ApplyTextConstants (TXStringList (Sektion), false);
   output := TXStringList.Create;
   {$IFDEF GUI}
-  FBatchOberflaeche.setWindowState(batchWindowMode);
+  FBatchOberflaeche.SetBatchWindowMode(batchWindowMode); //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
   linecounter := 1;

@@ -17,7 +17,9 @@ type
   TMessageID = (mInfo, mDetail, mCommand, mProgress, mVersion, mProduct);
   TProgressValueID = (pInteger, pPercent);
   TElementID = (eMainForm, eLabelInfo, eLabelDetail, eLabelCommand,
-    eLabelProgress, eLabelVersion, eLabelProduct, ePanel1, ePanel2, eImage1, eImage2);
+    eLabelProgress, eLabelVersion, eLabelProduct, ePanel1, ePanel2, eImage1, eImage2, eActivityBar, eTimerProcessMess);
+
+  { TosGUIControl }
 
   TosGUIControl = class(TForm)
   public
@@ -26,7 +28,9 @@ type
     procedure SetForceStayOnTop(ForceStayOnTop: boolean);virtual;abstract;
     procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode);virtual;abstract;
     procedure SetElementVisible(Visible:boolean; ElementID:TElementID);virtual;abstract;
-    //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; SenderID: TSenderID);virtual;abstract;
+    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID);virtual;abstract;
+    procedure SetWindowPosition(Position:TPosition)virtual;abstract;
+    //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
   end;
 
 var
