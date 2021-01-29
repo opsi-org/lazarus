@@ -22570,6 +22570,7 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 flag_all_ntuser := False;
+                flag_encoding := 'system';
                 // if this is a 'ProfileActions' which is called as sub in Machine mode
                 // so run patches sections implicit as /Allntuserprofiles
                 if runProfileActions then
@@ -22582,11 +22583,51 @@ begin
                 begin
                   GetWordOrStringExpressionstr(Remaining, Filename,
                     Remaining, ErrorInfo);
-                  if Remaining = '' then
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, '')
-                  else
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, Remaining);
                 end;
+                remaining := CutRightBlanks(Remaining);
+
+                if length(remaining) > 0 then
+                  goon := True;
+                while goon do
+                begin
+
+                  if skip(Parameter_AllNTUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+
+                  else
+                  if skip('/encoding', Remaining, Remaining, ErrorInfo)
+                  then
+                  begin
+                    if not EvaluateString(Remaining, Remaining,
+                      flag_encoding, ErrorInfo) then
+                    begin
+                      syntaxcheck := False;
+                      //ActionResult := reportError (ErrorInfo);
+                    end;
+                    flag_encoding := LowerCase(flag_encoding);
+                    if not isSupportedEncoding(flag_encoding) then
+                    begin
+                      logdatei.log('Given Encoding: ' + flag_encoding +
+                        ' is not supported - fall back to system encoding.',
+                        LLWarning);
+                      flag_encoding := 'system';
+                    end;
+                  end
+                  else
+                  begin
+                    goon := False;
+                    if length(remaining) > 0 then
+                    begin
+                      syntaxcheck := False;
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], '"' + remaining +
+                        '" is no valid parameter ');
+                    end;
+                  end;
+                end;
+                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
               tsTests:
