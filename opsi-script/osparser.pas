@@ -22343,7 +22343,7 @@ begin
                     OutputLevel := StrToInt(Remaining);
                     //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
                     {$IFDEF GUI}
-                    FBatchOberflaeche.setOutputLevel(OutputLevel);
+                    FBatchOberflaeche.SetTracingLevel(OutputLevel);
                     {$ENDIF GUI}
                     LogDatei.log('OutputLevel set to ' + IntToStr(OutputLevel),
                       LLessential);
@@ -22353,7 +22353,7 @@ begin
                       OutputLevel := StrToInt(Parameter);
                       //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
                       {$IFDEF GUI}
-                      FBatchOberflaeche.setOutputLevel(OutputLevel);
+                      FBatchOberflaeche.SetTracingLevel(OutputLevel);
                       {$ENDIF GUI}
                       LogDatei.log('OutputLevel set to ' +
                         IntToStr(OutputLevel), LLessential);
@@ -22362,7 +22362,7 @@ begin
                         'Integer conversion error, OutputLevel could not be set, it is '
                         + IntToStr(LogLevel), Logdatei.loglevel);
                       {$IFDEF GUI}
-                      FBatchOberflaeche.setOutputLevel(3);
+                      FBatchOberflaeche.SetTracingLevel(3);
                       {$ENDIF GUI}
                     end;
                   end;
@@ -22378,10 +22378,10 @@ begin
                    {$IFDEF GUI}
                   if (UpperCase(Remaining) = 'ON') or
                     (UpperCase(Remaining) = 'TRUE') then
-                    FBatchOberflaeche.ForceStayOnTop(True)
+                    FBatchOberflaeche.SetForceStayOnTop(True)
                   else if (UpperCase(Remaining) = 'OFF') or
                     (UpperCase(Remaining) = 'FALSE') then
-                    FBatchOberflaeche.ForceStayOnTop(False)
+                    FBatchOberflaeche.SetForceStayOnTop(False)
                   else
                     ActionResult :=
                       reportError(Sektion, linecounter,
@@ -22399,7 +22399,7 @@ begin
               begin
                 SavedBatchWindowMode := BatchWindowMode;
                 BatchWindowMode := bwmIcon;
-                FBatchOberflaeche.setWindowState(BatchWindowMode);
+                FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
               end
                  {$ENDIF GUI}
                 ;
@@ -22410,7 +22410,7 @@ begin
               begin
                 SavedBatchWindowMode := BatchWindowMode;
                 BatchWindowMode := bwmNormalWindow;
-                FBatchOberflaeche.setWindowState(BatchWindowMode);
+                FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
               end
                  {$ENDIF GUI}
                 ;
@@ -22419,7 +22419,7 @@ begin
                  {$IFDEF GUI}
               begin
                 BatchWindowMode := SavedBatchWindowMode;
-                FBatchOberflaeche.setWindowState(BatchWindowMode);
+                FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
               end
                  {$ENDIF GUI}
                 ;
@@ -22429,7 +22429,7 @@ begin
               begin
                 SavedBatchWindowMode := BatchWindowMode;
                 BatchWindowMode := bwmMaximized;
-                FBatchOberflaeche.setWindowState(BatchWindowMode);
+                FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
               end
                   {$ENDIF GUI}
                 ;
@@ -23422,10 +23422,10 @@ begin
   {$ENDIF LINUX}
   {$IFDEF GUI}
     CentralForm.Label1.Caption := '';
-    FBatchOberflaeche.setInfoLabel('');
+    FBatchOberflaeche.SetMessageText('', mInfo);//setInfoLabel('');
 
     CentralForm.Label2.Caption := '';
-    FBatchOberflaeche.setDetailLabel(CentralForm.Label2.Caption);
+    FBatchOberflaeche.SetMessageText('', mDetail);//setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
   {$IFDEF UNIX}
     lispecfolder.retrieveFolders4Linux;

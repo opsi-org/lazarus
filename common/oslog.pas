@@ -32,6 +32,7 @@ uses
   LCLIntf,
   Forms,
   Dialogs,
+  osGUIControl,
 {$ENDIF GUI}
 {$IFDEF OPSISCRIPT}
   osconf,
@@ -1389,7 +1390,7 @@ begin
         begin
           // commented out while 4.11.2 debugging (do)
           if (FUsedLogLevel >= LevelOfLine) then
-            FBatchOberflaeche.setActivityLabel(copy(peakindicator, 1, peaklen));
+            FBatchOberflaeche.SetMessageText(copy(peakindicator, 1, peaklen), mActivity); //setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
         {$ENDIF}
         {$ENDIF}

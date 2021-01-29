@@ -40,6 +40,7 @@ uses
   TypInfo,
   {$IFDEF GUI}
   Forms,
+  osGUIControl,
   {$ENDIF GUI}
   {$IFDEF OPSISCRIPT}
   osfunc,
@@ -4189,7 +4190,7 @@ begin
   if sendToLogFlag then
   begin
     {$IFDEF GUI}
-    FBatchOberflaeche.setInfoLabel(rsSendLog);
+    FBatchOberflaeche.SetMessageText(rsSendLog, mInfo);//setInfoLabel(rsSendLog);
     ProcessMess;
     Application.ProcessMessages;
     {$ENDIF}

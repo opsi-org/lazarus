@@ -14,22 +14,29 @@ type
   //TSenderID = (seBuildPC, seCentralFormFormCreate, seChangeProductStatusOnReinst, seInstScriptdoInfo);
 
   //Expand/include here further IDs if necessary
-  TMessageID = (mInfo, mDetail, mCommand, mProgress, mVersion, mProduct);
+  TMessageID = (mInfo, mDetail, mCommand, mProgress, mVersion, mProduct, mActivity);
   TProgressValueID = (pInteger, pPercent);
   TElementID = (eMainForm, eLabelInfo, eLabelDetail, eLabelCommand,
-    eLabelProgress, eLabelVersion, eLabelProduct, ePanel1, ePanel2, eImage1, eImage2, eActivityBar, eTimerProcessMess);
+    eLabelProgress, eLabelVersion, eLabelProduct, ePanel1, ePanel2, eImage1,
+    eImage2, eLogo1, eLogo2, eProductImage1, eProductImage2, eActivityBar,
+    eTimerProcessMess, eProgressBar);
 
   { TosGUIControl }
 
   TosGUIControl = class(TForm)
   public
-    procedure SetMessageText(MessageText: string; MessageID: TMessageID);virtual;abstract;
-    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID);virtual;abstract;
-    procedure SetForceStayOnTop(ForceStayOnTop: boolean);virtual;abstract;
-    procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode);virtual;abstract;
-    procedure SetElementVisible(Visible:boolean; ElementID:TElementID);virtual;abstract;
-    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID);virtual;abstract;
-    procedure SetWindowPosition(Position:TPosition)virtual;abstract;
+    procedure LoadSkin(const SkinDirectory: string);virtual;abstract;
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual; abstract;
+    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual; abstract;
+    procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual; abstract;
+    procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); virtual; abstract;
+    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); virtual; abstract;
+    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID); virtual; abstract;
+    procedure SetElementTop(Top: integer; ElementID:TElementID); virtual; abstract;
+    procedure SetElementLeft(Left: integer; ElementID:TElementID); virtual; abstract;
+    procedure SetWindowPosition(Position:TPosition); virtual; abstract;
+    function SetPicture(const BitmapFile: string; const theLabel: string): boolean; virtual; abstract;
+    procedure SetTracingLevel(const Level: integer);virtual; abstract;
     //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
   end;
 

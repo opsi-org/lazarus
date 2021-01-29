@@ -87,7 +87,6 @@ type
 
 
     procedure FormResize(Sender: TObject);
-    procedure setOutputLevel(const level: integer);
     procedure TimerCommandTimer(Sender: TObject);
     procedure TimerActivityTimer(Sender: TObject);
     procedure TimerDetailTimer(Sender: TObject);
@@ -100,7 +99,11 @@ type
     procedure setVersionLabel(s: string);
     procedure setWindowState(BatchWindowMode: TBatchWindowMode);
     procedure setDetailLabel(s: string);
+    procedure setCommandLabel(s: string);
     procedure centerWindow;
+    procedure showActivityBar(show : boolean);
+    procedure showProgressBar(b: boolean);
+    procedure setActivityLabel(s: string);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -109,26 +112,25 @@ type
     { Public-Deklarationen }
 
     //GUIControl interface
-    procedure SetMessageText(MessageText: string; MessageID: TMessageID);override;
-    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID);override;
+    procedure LoadSkin(const SkinDirectory: string); override;
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
+    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); override;
     procedure SetForceStayOnTop(StayOnTop: boolean);override;
-    procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);override;
-    procedure SetElementVisible(Visible:boolean; ElementID:TElementID);override;
-    procedure SetElementEnabled(Enabled:boolean; ElementID:TElementID);override;
-    procedure SetWindowPosition(Position:TPosition);override;
+    procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode); override;
+    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); override;
+    procedure SetElementEnabled(Enabled:boolean; ElementID:TElementID); override;
+    procedure SetElementTop(Top: integer; ElementID: TElementID); override;
+    procedure SetElementLeft(Left: integer; ElementID: TElementID); override;
+    procedure SetWindowPosition(Position:TPosition); override;
+    procedure SetTracingLevel(const Level: integer); override;
+    function SetPicture(const BitmapFile: string; const theLabel: string): boolean; override;
 
     //ToDO: include in new interface
-    procedure LoadSkin(const skindirectory: string);
-    procedure showProgressBar(b: boolean);
-    //procedure setProgress(percent: integer);
-    procedure setCommandLabel(s: string);
-    procedure setActivityLabel(s: string);
-    procedure showAcitvityBar(show : boolean);
+
+
+
     //procedure setCPUActivityLabel(s: string);
-    function SetPicture(No: integer; const BitmapFile: string;
-      const theLabel: string): boolean; overload;
-    function setPicture(const BitmapFile: string; const theLabel: string): boolean;
-      overload;
+
 
   end;
 
@@ -297,7 +299,7 @@ begin
   timeDetailLabel := True;
   timeActivityLabel := True;
 
-  setOutputLevel(3);
+  SetTracingLevel(3);
 
 
   Panel.DoubleBuffered := True;
@@ -409,7 +411,7 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.LoadSkin(const skindirectory: string);
+procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string);
 var
   skindir : String='';
   skinFile : String='';
@@ -816,7 +818,7 @@ begin
 
 end;
 
-procedure TFBatchOberflaeche.setOutputLevel(const level: integer);
+procedure TFBatchOberflaeche.SetTracingLevel(const Level: integer);
 begin
   case level of
     0:
@@ -969,14 +971,14 @@ begin
   //ProcessMess;
 end;
 
-procedure TFBatchOberflaeche.showAcitvityBar(show: boolean);
+procedure TFBatchOberflaeche.showActivityBar(show: boolean);
 begin
   ActivityBar.Visible:=show;
   //ProcessMess;
 end;
 
 
-function TFBatchOberflaeche.SetPicture(No: integer; const BitmapFile: string;
+function TFBatchOberflaeche.SetPicture(const BitmapFile: string;
   const theLabel: string): boolean;
 var
   //bitmap, resizedBitmap: TBitmap;
@@ -1033,9 +1035,11 @@ procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
   MessageID: TMessageID);
 begin
   case MessageID of
-    mInfo: setInfoLabel(MessageText);
-    mVersion: setVersionLabel(MessageText);
-    mDetail: setDetailedLabel(MessageText);
+    mInfo: SetInfoLabel(MessageText);
+    mVersion: SetVersionLabel(MessageText);
+    mDetail: SetDetailLabel(MessageText);
+    mCommand: SetCommandLabel(MessageText);
+    mActivity: SetActivityLabel(MessageText);
   end;
 end;
 
@@ -1055,7 +1059,7 @@ end;
 procedure TFBatchOberflaeche.SetBatchWindowMode(
   BatchWindowMode: TBatchWindowMode);
 begin
-  setWindowState(BatchWindowMode: TBatchWindowMode);
+  setWindowState(BatchWindowMode);
 end;
 
 procedure TFBatchOberflaeche.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1131,6 +1135,7 @@ begin
   case ElementID of
     eMainForm:  self.Visible := Visible;
     eActivityBar: showActivityBar(Visible);
+    eProgressBar: showProgressBar(Visible);
   end;
 end;
 
@@ -1139,6 +1144,21 @@ procedure TFBatchOberflaeche.SetElementEnabled(Enabled: boolean;
 begin
   case ElementID of
     eTimerProcessMess:  TimerProcessMess.Enabled:=Enabled;
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetElementTop(Top: integer; ElementID: TElementID);
+begin
+  case ElementID of
+    eMainForm: self.Top:= Top;
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetElementLeft(Left: integer; ElementID: TElementID
+  );
+begin
+  case ElementID of
+    eMainForm: self.Left := Left;
   end;
 end;
 
@@ -1226,13 +1246,6 @@ end;
 
 //procedure TFBatchOberflaeche.setWindowState (BatchWindowMode: TBatchWindowMode);
 
-function TFBatchOberflaeche.setPicture(const BitmapFile: string;
-  const theLabel: string): boolean;
-begin
-  Result := setPicture(0, BitmapFile, theLabel);
-end;
-
-
 
 procedure TFBatchOberflaeche.TimerCommandTimer(Sender: TObject);
 begin
@@ -1262,7 +1275,7 @@ end;
 procedure TFBatchOberflaeche.centerWindow;
 begin
   Position:=poScreenCenter;
-  FBatchOberflaeche.MoveToDefaultPosition;
+  MoveToDefaultPosition;
 end;
 
 

@@ -60,6 +60,8 @@ uses
   Shlobj,
 {$ENDIF}
 {$IFDEF GUI}
+  osGUIControl,
+  Forms,
   Graphics,
   LResources,
   LCLIntf,
@@ -3812,8 +3814,8 @@ begin
           {$IFDEF GUI}
           if waitsecsAsTimeout and (WaitSecs > 5) then
           begin
-            FBatchOberflaeche.showProgressBar(True);
-            FBatchOberflaeche.setProgress(0);
+            FBatchOberflaeche.SetElementVisible(True, eProgressBar);//showProgressBar(True);
+            //FBatchOberflaeche.setProgress(0);
           end;
           {$ENDIF GUI}
 
@@ -5010,7 +5012,7 @@ begin
       SystemInfo := nil;
     end;
     FBatchOberflaeche.BringToFront;
-    FBatchOberflaeche.centerWindow;
+    FBatchOberflaeche.SetWindowPosition(poScreenCenter); //centerWindow;
     ProcessMess;
   end;
   {$ENDIF GUI}
@@ -10098,7 +10100,7 @@ var
         begin
           {$IFDEF GUI}
           if CountModus <> tccmNoCounter then
-            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100));
+            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent); //SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
           LogDatei.log(LogS, LLInfo);
@@ -10257,7 +10259,7 @@ begin
     LogS := 'Copying  ' + SourceMask + ' -----> ' + Target;
     LogDatei.log(LogS, LLInfo);
     {$IFDEF GUI}
-    FBatchOberflaeche.setCommandLabel(LogS);
+    FBatchOberflaeche.SetMessageText(LogS,mCommand);//setCommandLabel(LogS);
     ProcessMess;
     {$ENDIF GUI}
   end;
@@ -10273,7 +10275,7 @@ begin
   CopyCount := TCopyCount.Create(CountModus, NumberCounted);
   {$IFDEF GUI}
   if CountModus = tccmCounted then
-    FBatchOberflaeche.showProgressBar(True);
+    FBatchOberflaeche.SetElementVisible(True, eProgressBar);//showProgressBar(True);
   {$ENDIF GUI}
   FileFound := False;
   Recursion_Level := -1;
@@ -10296,8 +10298,8 @@ begin
   CopyCount.Free;
   CopyCount := nil;
   {$IFDEF GUI}
-  FBatchOberflaeche.showProgressBar(False);
-  FBatchOberflaeche.setCommandLabel('');
+  FBatchOberflaeche.SetElementVisible(False, eProgressBar);//showProgressBar(False);
+  FBatchOberflaeche.SetMessageText('', mCommand); //setCommandLabel('');
   ProcessMess;
   {$ENDIF GUI}
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -10901,7 +10903,7 @@ var
         Inc(NoOfFiles);
         if compressModus <> tcmCount then
         begin
-          FBatchOberflaeche.setProgress(round(NoOfFiles / TotalNoOfFiles * 100));
+          FBatchOberflaeche.SetProgress(round(NoOfFiles / TotalNoOfFiles * 100), pPercent);
           ProcessMess;
         end;
       end;
