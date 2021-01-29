@@ -2968,8 +2968,18 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
+
+    if saveToOriginalFile then
+      if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
+         PatchListe.SaveToFile(PatchFilename, flag_encoding)
+    else
+      PatchListe.SaveToFile(PatchFilename, 'utf8');
+
+    (*
     if saveToOriginalFile then
       PatchListe.SaveToFile(PatchFilename);
+    *)
+
     PatchListe.Free;
     PatchListe := nil;
 
