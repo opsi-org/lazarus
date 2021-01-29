@@ -5,12 +5,17 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.14) stable; urgency=low
+
+ * redesign of TXStringlist file in and out encoding
+ * call of patches section with /encoding parameter
+
+-- d.oertel <d.oertel@uib.de> Fri, 29 Jan 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
  * osfunc: new: TUibIniFile.ReadRawSection (by j.laajili)
  * new function getSectionFromIniFile based on ReadRawSection (by j.laajili)
- * redesign of TXStringlist file in and out encoding
- * call of patches section with /encoding parameter
 
 -- d.oertel <d.oertel@uib.de> Tue, 29 Dec 2020 15:00
 
