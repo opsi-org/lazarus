@@ -1631,7 +1631,7 @@ begin
       Fname := ExpandFileName(Fname);
       if lowercase(sourceEncoding) = 'unicode' then
       begin
-        includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
+        includelogStrList.Assign(loadUnicodeTextFile(Fname));
       end
       else
       begin

@@ -1942,7 +1942,10 @@ begin
   Encoding2use := searchencoding(OriginalList.Text);
   if Encoding2use = '' then
     Encoding2use := 'system';
-  OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
+  if not ((Encoding2use = 'system')) then
+      OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
+  usedEncoding := Encoding2use;
+  //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + usedEncoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
@@ -2315,8 +2318,10 @@ var
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
-    PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    PatchListe.Text := reencode(PatchListe.Text, 'system');
+    if FileExists(PatchFilename) then
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename),flag_encoding);
+    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
+    //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
     lastfind := False;
 
@@ -2963,8 +2968,18 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
+
+    if saveToOriginalFile then
+      if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
+         PatchListe.SaveToFile(PatchFilename, flag_encoding)
+    else
+      PatchListe.SaveToFile(PatchFilename, 'utf8');
+
+    (*
     if saveToOriginalFile then
       PatchListe.SaveToFile(PatchFilename);
+    *)
+
     PatchListe.Free;
     PatchListe := nil;
 
@@ -3268,10 +3283,11 @@ var
 
     Patchdatei.Clear;
     if FileExists(PatchdateiName) then
-      mytxtfile := LoadFromFileWithEncoding(ExpandFileName(PatchdateiName),
-        flag_encoding);
+      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),flag_encoding);
+     // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
+     //   flag_encoding);
     //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-    Patchdatei.Text := mytxtfile.Text;
+    //Patchdatei.Text := mytxtfile.Text;
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
     for i := 0 to Patchdatei.Count - 1 do
@@ -11411,7 +11427,8 @@ begin
           try
             s1 := ExpandFileName(s1);
             list.loadfromfile(s1);
-            list.Text := reencode(list.Text, 'system');
+            // encoding from system is the default at txstinglist
+            //list.Text := reencode(list.Text, 'system');
           except
             on e: Exception do
             begin
@@ -11439,9 +11456,10 @@ begin
                 syntaxCheck := True;
                 try
                   s1 := ExpandFileName(s1);
-                  //list.AddText(LoadFromFileWithEncoding(s1, s2).Text);
-                  list.loadfromfile(s1);
-                  list.Text := reencode(list.Text, s2);
+                  //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
+                  list.loadFromFileWithEncoding(s1,s2);
+                  //list.loadfromfile(s1);
+                  //list.Text := reencode(list.Text, s2);
                 except
                   on e: Exception do
                   begin
@@ -11464,7 +11482,7 @@ begin
             s1 := ExpandFileName(s1);
             //list.loadfromfile (s1);
             //list.Text:= reencode(list.Text, 'ucs2le');
-            TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
+            TStringList(list).Assign(loadUnicodeTextFile(s1));
             //wsloadfromfile (s1, TStringList (list));
           except
             on e: Exception do
@@ -14792,7 +14810,8 @@ begin
           s1 := ExpandFileName(s1);
           list1.loadfromfile(s1);
           if list1.Count > 0 then
-            StringResult := reencode(list1.Strings[0], 'system')
+            StringResult := list1.Strings[0]
+            //StringResult := reencode(list1.Strings[0], 'system')
           else
             StringResult := '';
           list1.Free;
@@ -14824,9 +14843,11 @@ begin
               try
                 list1 := TXStringList.Create;
                 s1 := ExpandFileName(s1);
-                list1.loadfromfile(s1);
+                //list1.loadfromfile(s1);
+                list1.loadFromFileWithEncoding(s1,s2);
                 if list1.Count > 0 then
-                  StringResult := reencode(list1.Strings[0], s2)
+                  StringResult := list1.Strings[0]
+                  //StringResult := reencode(list1.Strings[0], s2)
                 else
                   StringResult := '';
                 list1.Free;
@@ -17718,7 +17739,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
                 BooleanResult := (Textfile.FindFirstItemStartingWith(s1, False, -1) >= 0)
               except
                 on ex: Exception do
@@ -17749,7 +17770,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult :=
                   (Textfile.FindFirstItem(s1, False, -1, BooleanResult0) >= 0)
@@ -17782,7 +17803,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult := (Textfile.FindFirstItemWith(s1, False, -1) >= 0)
               except
@@ -17939,7 +17960,34 @@ begin
     end;
   end
 
-
+  else if Skip('saveUnicodeTextFile', Input, r, sx) then
+  begin
+    try
+      BooleanResult := False;
+      list1 := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if produceStringList(script, r, r, list1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s2, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    try
+                      s1 := ExpandFileName(s1);
+                      saveUnicodeTextFile(TStrings(list1),s1, s2);
+                      BooleanResult := True;
+                    except
+                      logdatei.log('Error: Could not save to filename: ' +
+                        s1, LLError);
+                    end;
+                  end;
+    finally
+      list1.Free;
+      list1 := nil;
+    end;
+  end
 
   else if Skip('savetextfile', Input, r, sx) then
   begin
@@ -22532,6 +22580,7 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 flag_all_ntuser := False;
+                flag_encoding := 'system';
                 // if this is a 'ProfileActions' which is called as sub in Machine mode
                 // so run patches sections implicit as /Allntuserprofiles
                 if runProfileActions then
@@ -22544,11 +22593,51 @@ begin
                 begin
                   GetWordOrStringExpressionstr(Remaining, Filename,
                     Remaining, ErrorInfo);
-                  if Remaining = '' then
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, '')
-                  else
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, Remaining);
                 end;
+                remaining := CutRightBlanks(Remaining);
+
+                if length(remaining) > 0 then
+                  goon := True;
+                while goon do
+                begin
+
+                  if skip(Parameter_AllNTUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+
+                  else
+                  if skip('/encoding', Remaining, Remaining, ErrorInfo)
+                  then
+                  begin
+                    if not EvaluateString(Remaining, Remaining,
+                      flag_encoding, ErrorInfo) then
+                    begin
+                      syntaxcheck := False;
+                      //ActionResult := reportError (ErrorInfo);
+                    end;
+                    flag_encoding := LowerCase(flag_encoding);
+                    if not isSupportedEncoding(flag_encoding) then
+                    begin
+                      logdatei.log('Given Encoding: ' + flag_encoding +
+                        ' is not supported - fall back to system encoding.',
+                        LLWarning);
+                      flag_encoding := 'system';
+                    end;
+                  end
+                  else
+                  begin
+                    goon := False;
+                    if length(remaining) > 0 then
+                    begin
+                      syntaxcheck := False;
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], '"' + remaining +
+                        '" is no valid parameter ');
+                    end;
+                  end;
+                end;
+                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
               tsTests:
@@ -23465,12 +23554,18 @@ begin
         end;
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
+      // this will read with encoding from system to utf8
       Script.LoadFromFile(Scriptdatei);
+      //str := script.Text;
       logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
       Encoding2use := searchencoding(Script.Text);
       if Encoding2use = '' then
         Encoding2use := 'system';
-      Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+      if not ((Encoding2use = 'system')) then
+      Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+      //str := script.Text;
+      usedEncoding := Encoding2use;
+      //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
       Script.FFilename := Scriptdatei;
       for i := 0 to script.Count - 1 do
       begin
