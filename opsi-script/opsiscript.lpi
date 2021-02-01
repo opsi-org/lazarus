@@ -492,9 +492,18 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <CommandLineParams Value="/opsiservice 192.168.1.14 /clientid desktop-83kni74.uib.local"/>
+        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
-        <Mode0 Name="default"/>
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="/opsiservice 192.168.1.14 /clientid desktop-83kni74.uib.local"/>
+            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+          </local>
+        </Mode0>
       </Modes>
     </RunParams>
     <RequiredPackages Count="2">
@@ -505,7 +514,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="59">
+    <Units Count="60">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -765,6 +774,14 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osGUIControl"/>
       </Unit58>
+      <Unit59>
+        <Filename Value="ossimplewinbatchgui.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SimpleWinBatchGUI"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="osSimpleWinBatchGUI"/>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

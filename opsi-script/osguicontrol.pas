@@ -23,7 +23,7 @@ type
 
   { TosGUIControl }
 
-  TosGUIControl = class(TForm)
+  TGUIControl = class(TForm)
   public
     procedure LoadSkin(const SkinDirectory: string);virtual;abstract;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual; abstract;
@@ -41,7 +41,7 @@ type
   end;
 
 var
-  FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
+  FBatchOberflaeche: TGUIControl;//TFBatchOberflaeche;
 
 implementation
 

@@ -44,7 +44,7 @@ type
   { TFBatchOberflaeche }
 
   //TFBatchOberflaeche = class(TForm, IViewService)
-  TFBatchOberflaeche = class(TosGUIControl)
+  TFBatchOberflaeche = class(TGUIControl)
     PanelFillScreen: TPanel;
     Panel: TPanel;
     ImageBackground: TImage;

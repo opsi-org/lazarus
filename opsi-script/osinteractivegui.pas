@@ -105,7 +105,8 @@ ostxstringlist,
   lcltranslator,
   strutils,
   inifiles,
-  osGUIControl;
+  osGUIControl,
+  osSimpleWinBatchGUI;
 
 type
 
@@ -921,8 +922,10 @@ begin
   CentralForm.Label2.Caption := '';
   LabelWinstVersion.Caption := OpsiscriptVersionName;
 
-  FBatchOberflaeche :=
-    TFBatchOberflaeche.Create(Application);
+  //FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
+  FBatchOberflaeche := TSimpleWinBatchGUI.Create(Application);
+
+
   ProcessMess;
   MyMessageDLG := TMyMessageDLG.Create(Application);
 
