@@ -4786,8 +4786,8 @@ begin
 
   if showoutput then
   begin
-    FBatchOberflaeche.Left := 5;
-    FBatchOberflaeche.Top := 5;
+    FBatchOberflaeche.SetElementLeft(5, eMainForm);//Left := 5;
+    FBatchOberflaeche.SetElementTop(5, eMainForm);//Top := 5;
 
     // In the normal case of tsofShowOutput
     // we call CreateSystemInfo and show the
@@ -5011,7 +5011,7 @@ begin
       SystemInfo.Free;
       SystemInfo := nil;
     end;
-    FBatchOberflaeche.BringToFront;
+    FBatchOberflaeche.BringElementToFront(eMainForm);//BringToFront;
     FBatchOberflaeche.SetWindowPosition(poScreenCenter); //centerWindow;
     ProcessMess;
   end;

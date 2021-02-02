@@ -23,20 +23,23 @@ type
 
   { TosGUIControl }
 
+  { TGUIControl }
+
   TGUIControl = class(TForm)
   public
-    procedure LoadSkin(const SkinDirectory: string);virtual;abstract;
-    procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual; abstract;
-    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual; abstract;
-    procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual; abstract;
-    procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); virtual; abstract;
-    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); virtual; abstract;
-    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID); virtual; abstract;
-    procedure SetElementTop(Top: integer; ElementID:TElementID); virtual; abstract;
-    procedure SetElementLeft(Left: integer; ElementID:TElementID); virtual; abstract;
-    procedure SetWindowPosition(Position:TPosition); virtual; abstract;
-    function SetPicture(const BitmapFile: string; const theLabel: string): boolean; virtual; abstract;
-    procedure SetTracingLevel(const Level: integer);virtual; abstract;
+    procedure LoadSkin(const SkinDirectory: string);virtual;
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
+    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual;
+    procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual;
+    procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); virtual;
+    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); virtual;
+    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID); virtual;
+    procedure BringElementToFront(ElementID:TElementID); virtual;
+    procedure SetElementTop(Top: integer; ElementID:TElementID); virtual;
+    procedure SetElementLeft(Left: integer; ElementID:TElementID); virtual;
+    procedure SetWindowPosition(Position:TPosition); virtual;
+    procedure SetPicture(const BitmapFile: string; const theLabel: string); virtual;
+    procedure SetTracingLevel(const Level: integer);virtual;
     //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
   end;
 
@@ -44,6 +47,77 @@ var
   FBatchOberflaeche: TGUIControl;//TFBatchOberflaeche;
 
 implementation
+
+{ TGUIControl }
+
+procedure TGUIControl.LoadSkin(const SkinDirectory: string);
+begin
+
+end;
+
+procedure TGUIControl.SetMessageText(MessageText: string; MessageID: TMessageID
+  );
+begin
+
+end;
+
+procedure TGUIControl.SetProgress(Progress: integer;
+  ProgressValueID: TProgressValueID);
+begin
+
+end;
+
+procedure TGUIControl.SetForceStayOnTop(ForceStayOnTop: boolean);
+begin
+
+end;
+
+procedure TGUIControl.SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);
+begin
+
+end;
+
+procedure TGUIControl.SetElementVisible(Visible: boolean; ElementID: TElementID
+  );
+begin
+
+end;
+
+procedure TGUIControl.SetElementEnabled(Enabled: boolean; ElementID: TElementID
+  );
+begin
+
+end;
+
+procedure TGUIControl.BringElementToFront(ElementID: TElementID);
+begin
+
+end;
+
+procedure TGUIControl.SetElementTop(Top: integer; ElementID: TElementID);
+begin
+
+end;
+
+procedure TGUIControl.SetElementLeft(Left: integer; ElementID: TElementID);
+begin
+
+end;
+
+procedure TGUIControl.SetWindowPosition(Position: TPosition);
+begin
+
+end;
+
+procedure TGUIControl.SetPicture(const BitmapFile: string; const theLabel: string);
+begin
+
+end;
+
+procedure TGUIControl.SetTracingLevel(const Level: integer);
+begin
+
+end;
 
 end.
 

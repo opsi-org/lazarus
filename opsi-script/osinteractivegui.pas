@@ -572,31 +572,6 @@ begin
   SystemInfo := TSystemInfo.Create(Application);
 end;
 
-
-procedure TCentralForm.TimerWaitset(Interval: word);
-begin
-  TimerWait_waitedIntervals := 0;
-  TimerWait.Enabled := True;
-  TimerWait.Interval := Interval;
-end;
-
-function TCentralForm.TimerWaitready(WaitIntervals: word): boolean;
-begin
-  if TimerWait_waitedIntervals < WaitIntervals then
-    Result := False
-  else
-  begin
-    Result := True;
-    TimerWait.Enabled := False;
-  end;
-end;
-
-procedure TCentralForm.TimerWaitTimer(Sender: TObject);
-begin
-  Inc(TimerWait_waitedIntervals);
-end;
-
-
 procedure writeLogFileOptions(const RegHive: string; const info: string);
 {$IFDEF WINDOWS}
 var
@@ -623,6 +598,43 @@ begin
 
 end;
 {$ENDIF WINDOWS}
+
+function GetTheme(path: string = 'themes'): string;
+var
+  PathToThemeFile : string;
+  ThemeFile: TIniFile;
+begin
+  Result := '';
+  PathToThemeFile := path + PathDelim + 'theme.ini';
+  ThemeFile := TIniFile.Create(PathToThemeFile);
+  ThemeFile.ReadString('Theme', Result, 'DefaultTheme');
+  ThemeFile.Free;
+end;
+
+{ TCentralForm }
+
+procedure TCentralForm.TimerWaitset(Interval: word);
+begin
+  TimerWait_waitedIntervals := 0;
+  TimerWait.Enabled := True;
+  TimerWait.Interval := Interval;
+end;
+
+function TCentralForm.TimerWaitready(WaitIntervals: word): boolean;
+begin
+  if TimerWait_waitedIntervals < WaitIntervals then
+    Result := False
+  else
+  begin
+    Result := True;
+    TimerWait.Enabled := False;
+  end;
+end;
+
+procedure TCentralForm.TimerWaitTimer(Sender: TObject);
+begin
+  Inc(TimerWait_waitedIntervals);
+end;
 
 
 procedure TCentralForm.TakeToSaveList(FName: string);

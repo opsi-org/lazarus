@@ -493,6 +493,7 @@
     </PublishOptions>
     <RunParams>
       <local>
+        <CommandLineParams Value="/opsiservice https://192.168.1.14:4447/rpc /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3"/>
         <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
       </local>
       <FormatVersion Value="2"/>
@@ -505,6 +506,7 @@
         </Mode0>
         <Mode1 Name="opsiservice">
           <local>
+            <CommandLineParams Value="/opsiservice https://192.168.1.14:4447/rpc /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
         </Mode1>

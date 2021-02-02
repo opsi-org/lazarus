@@ -119,11 +119,12 @@ type
     procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode); override;
     procedure SetElementVisible(Visible:boolean; ElementID:TElementID); override;
     procedure SetElementEnabled(Enabled:boolean; ElementID:TElementID); override;
+    procedure BringElementToFront(ElementID:TElementID); override;
     procedure SetElementTop(Top: integer; ElementID: TElementID); override;
     procedure SetElementLeft(Left: integer; ElementID: TElementID); override;
     procedure SetWindowPosition(Position:TPosition); override;
     procedure SetTracingLevel(const Level: integer); override;
-    function SetPicture(const BitmapFile: string; const theLabel: string): boolean; override;
+    procedure SetPicture(const BitmapFile: string; const theLabel: string); override;
 
     //ToDO: include in new interface
 
@@ -978,8 +979,8 @@ begin
 end;
 
 
-function TFBatchOberflaeche.SetPicture(const BitmapFile: string;
-  const theLabel: string): boolean;
+procedure TFBatchOberflaeche.SetPicture(const BitmapFile: string;
+  const theLabel: string);
 var
   //bitmap, resizedBitmap: TBitmap;
   //newHeight, newWidth: integer;
@@ -1018,12 +1019,12 @@ begin
     end;
 
     LabelProduct.Caption := theLabel;
-    Result := True;
+    //Result := True;
   except
     on e: Exception do
     begin
       ErrorInfo := 'Error: ' + e.message;
-      Result := False;
+      //Result := False;
     end
   end;
 
@@ -1144,6 +1145,13 @@ procedure TFBatchOberflaeche.SetElementEnabled(Enabled: boolean;
 begin
   case ElementID of
     eTimerProcessMess:  TimerProcessMess.Enabled:=Enabled;
+  end;
+end;
+
+procedure TFBatchOberflaeche.BringElementToFront(ElementID: TElementID);
+begin
+  case ElementID of
+    eMainForm: self.BringToFront;
   end;
 end;
 
