@@ -1582,9 +1582,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1943,7 +1942,7 @@ begin
   if Encoding2use = '' then
     Encoding2use := 'system';
   if not ((Encoding2use = 'system')) then
-      OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
+    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
   usedEncoding := Encoding2use;
   //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + usedEncoding, LLDebug);
@@ -2319,7 +2318,7 @@ var
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
     if FileExists(PatchFilename) then
-      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename),flag_encoding);
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
     //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
     //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
@@ -2971,9 +2970,9 @@ var
 
     if saveToOriginalFile then
       if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
-         PatchListe.SaveToFile(PatchFilename, flag_encoding)
-    else
-      PatchListe.SaveToFile(PatchFilename, 'utf8');
+        PatchListe.SaveToFile(PatchFilename, flag_encoding)
+      else
+        PatchListe.SaveToFile(PatchFilename, 'utf8');
 
     (*
     if saveToOriginalFile then
@@ -3283,9 +3282,9 @@ var
 
     Patchdatei.Clear;
     if FileExists(PatchdateiName) then
-      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),flag_encoding);
-     // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-     //   flag_encoding);
+      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName), flag_encoding);
+    // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
+    //   flag_encoding);
     //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
     //Patchdatei.Text := mytxtfile.Text;
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
@@ -10286,8 +10285,8 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter,
+          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
@@ -11457,7 +11456,7 @@ begin
                 try
                   s1 := ExpandFileName(s1);
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
-                  list.loadFromFileWithEncoding(s1,s2);
+                  list.loadFromFileWithEncoding(s1, s2);
                   //list.loadfromfile(s1);
                   //list.Text := reencode(list.Text, s2);
                 except
@@ -11668,10 +11667,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14811,7 +14810,7 @@ begin
           list1.loadfromfile(s1);
           if list1.Count > 0 then
             StringResult := list1.Strings[0]
-            //StringResult := reencode(list1.Strings[0], 'system')
+          //StringResult := reencode(list1.Strings[0], 'system')
           else
             StringResult := '';
           list1.Free;
@@ -14844,10 +14843,10 @@ begin
                 list1 := TXStringList.Create;
                 s1 := ExpandFileName(s1);
                 //list1.loadfromfile(s1);
-                list1.loadFromFileWithEncoding(s1,s2);
+                list1.loadFromFileWithEncoding(s1, s2);
                 if list1.Count > 0 then
                   StringResult := list1.Strings[0]
-                  //StringResult := reencode(list1.Strings[0], s2)
+                //StringResult := reencode(list1.Strings[0], s2)
                 else
                   StringResult := '';
                 list1.Free;
@@ -17289,29 +17288,30 @@ var
     OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       try
-        result := FileExists(s2) or DirectoryExists(s2);
-        if (not result) and (not (trim(s2) = '')) then
+        Result := FileExists(s2) or DirectoryExists(s2);
+        if (not Result) and (not (trim(s2) = '')) then
         begin
           LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
         end;
       except
-        result := False;
+        Result := False;
       end;
     finally
       setErrorMode(OldWinapiErrorMode);
     end;
   end;
 
+   {$IFDEF WIN32}
   // function for FileExists64
   function handleFileExists64(s1: string): boolean;
   begin
     LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
-    s2:=TrimAndExpandFilename(s1);
+    s2 := TrimAndExpandFilename(s1);
     try
       if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
       begin
         LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-        result := handleFileExists32(s1);
+        Result := handleFileExists32(s1);
         dummybool := DSiRevertWow64FsRedirection(
           oldDisableWow64FsRedirectionStatus);
         LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
@@ -17319,7 +17319,7 @@ var
       else
       begin
         LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-        result := False;
+        Result := False;
       end;
     except
       on ex: Exception do
@@ -17335,15 +17335,17 @@ var
     if Is64BitSystem then
     begin
       LogDatei.log('SysNative 64 Bit mode...', LLInfo);
-      result := handleFileExists64(s1);
+      Result := handleFileExists64(s1);
     end
     else
     begin
       LogDatei.log('SysNative 32 Bit mode...', LLInfo);
-      result := handleFileExists32(s1);
+      Result := handleFileExists32(s1);
     end;
   end;
-  {$ENDIF WINDOWS}
+
+ {$ENDIF WIN32}
+ {$ENDIF WINDOWS}
 
 begin
   syntaxCheck := False;
@@ -17434,10 +17436,10 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
       {$IFDEF WINDOWS}
-      BooleanResult := handleFileExists32(s1);
-      {$ELSE WINDOWS}
+          BooleanResult := handleFileExists32(s1);
+       {$ELSE WINDOWS}
           LogDatei.log('Starting query if file exists ...', LLInfo);
-          s2:=TrimAndExpandFilename(s1);
+          s2 := TrimAndExpandFilename(s1);
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
@@ -17466,63 +17468,71 @@ begin
       if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
         if Skip(',', tmpstr, tmpstr1, tmpstr3) then
           if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-            {$IFDEF WINDOWS}
-            if s2 = '' then
-            begin
-              // with 1 parameter
-              if Skip(')', tmpstr, r, InfoSyntaxError) then
-              begin
-                  syntaxCheck := True;
-                  try
-                  	BooleanResult := handleFileExistsSysNative(s1);
-                  except
-                  	BooleanResult := False;
-                  end;
-              end;
-            end
-            else
-            begin
-              // with 2 parameters
-              if Skip(')', tmpstr2, r, InfoSyntaxError) then
-              begin
-                syntaxCheck := True;
-                try
-                  tmpbool := True;
-                  if lowercase(s2) = '32bit' then
-                  	BooleanResult := handleFileExists32(s1)
-                  else if lowercase(s2) = '64bit' then
-                    BooleanResult := handleFileExists64(s1)
-                  else if lowercase(s2) = 'sysnative' then
-                  	BooleanResult := handleFileExistsSysNative(s1)
-                  else
-                    begin
-                      InfoSyntaxError :=
-                          'Error: unknown parameter: ' + s2 +
-                          ' expected one of 32bit,64bit,sysnative';
-                      BooleanResult := False;
-                    end;
-                except
-                  Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
-                  BooleanResult := False;
-                end;
-              end;
-            end;
-            {$ELSE WINDOWS}
-            if s2 = '' then
-            begin
-              // with 1 parameter
-              if Skip(')', tmpstr, r, InfoSyntaxError) then
-              begin
-                  syntaxCheck := True;
-                  try
-                    BooleanResult := FileExists(s1) or DirectoryExists(s1);
-                  except
-                        Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
-                        BooleanResult := False;
-                  end;
-              end;
-            end;
-            {$ENDIF WINDOWS}
+
+            {$IFDEF WIN32}
+    if s2 = '' then
+    begin
+      // with 1 parameter
+      if Skip(')', tmpstr, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          BooleanResult := handleFileExistsSysNative(s1);
+        except
+          BooleanResult := False;
+        end;
+      end;
+    end
+    else
+    begin
+      // with 2 parameters
+      if Skip(')', tmpstr2, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          tmpbool := True;
+          if lowercase(s2) = '32bit' then
+            BooleanResult := handleFileExists32(s1)
+          else if lowercase(s2) = '64bit' then
+            BooleanResult := handleFileExists64(s1)
+          else if lowercase(s2) = 'sysnative' then
+            BooleanResult := handleFileExistsSysNative(s1)
+          else
+          begin
+            InfoSyntaxError :=
+              'Error: unknown parameter: ' + s2 +
+              ' expected one of 32bit,64bit,sysnative';
+            BooleanResult := False;
+          end;
+        except
+          Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
+          BooleanResult := False;
+        end;
+      end;
+    end;
+            {$ELSE WIN32}
+    if s2 <> '' then
+    begin
+      Logdatei.log('Error: Second parameter is ignored in 64 bit opsi-script ',
+            LLError);
+      s2 :='';
+    end;
+    if s2 = '' then
+    begin
+      // with 1 parameter
+      if Skip(')', tmpstr, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          BooleanResult := FileExists(s1) or DirectoryExists(s1);
+        except
+          Logdatei.log('Error: Exception in FileOrFolderExists: ',
+            LLError);
+          BooleanResult := False;
+        end;
+      end;
+    end;
+            {$ENDIF WIN32}
   end
 
   else if Skip('DirectoryExists', Input, r, sx) then
@@ -17980,7 +17990,7 @@ begin
                     syntaxCheck := True;
                     try
                       s1 := ExpandFileName(s1);
-                      saveUnicodeTextFile(TStrings(list1),s1, s2);
+                      saveUnicodeTextFile(TStrings(list1), s1, s2);
                       BooleanResult := True;
                     except
                       logdatei.log('Error: Could not save to filename: ' +
@@ -23566,7 +23576,7 @@ begin
       if Encoding2use = '' then
         Encoding2use := 'system';
       if not ((Encoding2use = 'system')) then
-      Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+        Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
       //str := script.Text;
       usedEncoding := Encoding2use;
       //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);

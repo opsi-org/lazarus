@@ -7,10 +7,13 @@ mac getIpByName liefert name von IPnum
 ##################################################################
 opsi-winst/opsi-script (4.12.4.14) stable; urgency=low
 
- * redesign of TXStringlist file in and out encoding
- * call of patches section with /encoding parameter
+ * redesign of TXStringlist file in and out encoding  (by j.laajili)
+ * call of patches section with /encoding parameter (by j.laajili)
+ * call of patchTextFile section with /encoding parameter  (by j.laajili)
+ * new boolean function: fileorfolderExists(<file name>, [<access arch>])   (by j.laajili)
 
 -- d.oertel <d.oertel@uib.de> Fri, 29 Jan 2021 15:00
+
 
 opsi-winst/opsi-script (4.12.4.13) stable; urgency=low
 
