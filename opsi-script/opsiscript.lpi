@@ -493,17 +493,21 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="/opsiservice 192.168.1.14 /clientid desktop-83kni74.uib.local"/>
         <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
       </local>
       <FormatVersion Value="2"/>
-      <Modes Count="1">
+      <Modes Count="2">
         <Mode0 Name="default">
           <local>
             <CommandLineParams Value="/opsiservice 192.168.1.14 /clientid desktop-83kni74.uib.local"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
         </Mode0>
+        <Mode1 Name="opsiservice">
+          <local>
+            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+          </local>
+        </Mode1>
       </Modes>
     </RunParams>
     <RequiredPackages Count="2">
