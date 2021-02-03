@@ -14,17 +14,17 @@ uses
   odg_os_deffunc,
   odg_py_deffunc,
   oslog,
-  odg_asciidoc,
-  odg_pyasciidoc,
+  odg_os_asciidoc,
+  odg_py_asciidoc,
   process,
   LCLIntf,
   Classes,
   SysUtils;
 
-function convertOslibToAsciidoc(filename : string): boolean;
-function convertPylibToAsciidoc(filename : string): boolean;
-function save_compile_show(filename : string) : boolean;
-
+function convertOslibToAsciidoc(): boolean;
+function convertPylibToAsciidoc(): boolean;
+function save_compile_show(outputfile : string) : boolean;
+function callasciidoctor(filename : string): boolean;
 
 var
   sourcelist : TStringlist;
@@ -34,28 +34,32 @@ var
 
 implementation
 
-function convertOslibToAsciidoc(filename : string): boolean;
+function convertOslibToAsciidoc(): boolean;
 begin
-  result := parseInput_opsiscriptlibrary(filename);
+  result := parseInput_opsiscriptlibrary();
   writeDocToList;
 end;
 
-function convertPylibToAsciidoc(filename : string): boolean;
+function convertPylibToAsciidoc(): boolean;
 begin
-  result := parseInput_pythonlibrary(filename);
+  result := parseInput_pythonlibrary();
   writePyDocToList;
 end;
 
-function writeToAsciidocFile(infilename : string) : string;
+function writeToAsciidocFile(outputfile: string) : string;
 var
-  tmpfilename, tmpfilebasename, tmpdirname : string;
+  tmpfilename, currentdatetime : string;
 begin
   result := '';
-  //tmpdirname := GetTempDir;
-  tmpdirname := ExtractFileDir(infilename);
-  tmpfilebasename := ExtractFileName(infilename);
-  tmpfilebasename := ExtractFileNameWithoutExt(tmpfilebasename);
-  tmpfilename := tmpdirname+PathDelim+ tmpfilebasename+'.asciidoc';
+  if outputfile = '' then
+  begin
+    currentdatetime := FormatDateTime('yyyy"-"mm"-"dd"_"hh:nn', Now);
+    tmpfilename := IncludeTrailingPathDelimiter(GetCurrentDir)+'docgenerated_'+currentdatetime+'.asciidoc';
+  end
+  else
+  begin
+    tmpfilename:= outputfile;
+  end;
   targetlist.SaveToFile(tmpfilename);
   result := tmpfilename;
   LogDatei.log('Wrote asciidoc file to: '+tmpfilename,LLinfo);
@@ -97,18 +101,14 @@ begin
     myasciidoc := myasciidoc.Replace('''','');
   end;
   optionstr := '--backend xhtml5 '+ExtractFileName(filename);
-  writeln('calling: indir: '+ ExtractFileDir(filename));
-  writeln('calling: : '+ myasciidoc+' '+optionstr);
+  writeln('Info  : Calling target directory: '+ ExtractFileDir(filename));
+  writeln('Info  : Calling : '+ myasciidoc+' '+optionstr);
   LogDatei.log('calling: indir: '+ ExtractFileDir(filename),LLnotice);
   LogDatei.log('calling: '+ myasciidoc+' '+optionstr,LLnotice);
   if not RunCommand(myasciidoc,['--backend','xhtml5',filename],output) then
-  //if not RunCommandIndir(ExtractFileDir(filename),myasciidoc,[optionstr],output) then
-  //if not RunCommand(myasciidoc,['--backend xhtml5 ','"'+filename+'"'],output) then
-  //if not RunCommand(shell,[shelloption+''''+myasciidoc+' --backend xhtml5 '+filename+''''],output) then
   {$endif LINUX}
-  //if not RunCommand(shell,[shelloption+' '+myasciidoc+' --backend xhtml5 '+filename],output) then
   begin
-   writeln('Call asciidoctor failed');
+   writeln('Error : Calling asciidoctor failed');
    writeln(output);
    LogDatei.log('Call asciidoctor failed: '+output,LLcritical);
   end
@@ -116,25 +116,20 @@ begin
   result := true;
 end;
 
-procedure openhtml(filename : string);
-  begin
-    OpenDocument(filename);
-  end;
-
-
-function save_compile_show(filename : string) : boolean;
+function save_compile_show(outputfile : string) : boolean;
 var
   asciidocfile : string;
 begin
-  asciidocfile := writeToAsciidocFile(filename);
+  asciidocfile := writeToAsciidocFile(outputfile);
   if not callasciidoctor(asciidocfile) then
   begin
-    writeln('callasciidoctor failed');
+    writeln('Error : Calling asciidoctor failed');
     LogDatei.log('callasciidoctor failed',LLcritical);
   end
   else
     OpenDocument(ExtractFileNameWithoutExt(asciidocfile)+'.html');
 end;
+
 
 initialization
   sourcelist := TStringlist.create;
@@ -156,6 +151,5 @@ initialization
 finalization
   sourcelist.Free;
   targetlist.Free;
-
 end.
 

@@ -8,8 +8,9 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   LCLIntf,
   odg_main,
-  odg_asciidoc, oslog,
-  odg_pyasciidoc,
+  oslog,
+  odg_os_asciidoc,
+  odg_py_asciidoc,
   StdCtrls, EditBtn;
 
 type
@@ -17,25 +18,34 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Bsave_ascii_show: TButton;
-    ButtonConvert: TButton;
+    Button_os_save_ascii_show: TButton;
+    Button_py_save_ascii_show: TButton;
+    ButtonRemoveSelected: TButton;
+    ButtonRemoveAll: TButton;
+    ButtonOSConvert: TButton;
     ButtonPythonConvert: TButton;
     ButtonSave: TButton;
-    ButtonOpen: TButton;
+    Label1: TLabel;
+    ListBox1: TListBox;
     Memo1: TMemo;
     Memo2: TMemo;
     OpenDialog1: TOpenDialog;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    Panel4: TPanel;
     SaveDialog1: TSaveDialog;
     Splitter1: TSplitter;
-    procedure Bsave_ascii_showClick(Sender: TObject);
-    procedure ButtonConvertClick(Sender: TObject);
-    procedure ButtonOpenClick(Sender: TObject);
+    procedure Button_os_save_ascii_showClick(Sender: TObject);
+    procedure Button_py_save_ascii_showClick(Sender: TObject);
+    procedure ButtonRemoveSelectedClick(Sender: TObject);
+    procedure ButtonOSConvertClick(Sender: TObject);
     procedure ButtonPythonConvertClick(Sender: TObject);
+    procedure ButtonRemoveAllClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
+    procedure ListBox1SelectionChange(Sender: TObject; User: boolean);
   private
 
   public
@@ -45,7 +55,8 @@ type
 var
   Form1: TForm1;
   infilename : string;
-
+  filecontent : TStringList;
+  tempFile : TStringList;
 
 implementation
 
@@ -53,62 +64,80 @@ implementation
 
 { TForm1 }
 
-{
-procedure TForm1.ButtonOpenClick(Sender: TObject);
+procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Memo1.Lines.Clear;
-  Memo2.Lines.Clear;
-  if OpenDialog1.Execute then
-  begin
-    infilename := OpenDialog1.FileName;
-    sourcelist.LoadFromFile(infilename);
-    memo1.Lines.Assign(sourcelist);
-    if ExtractFileExt(infilename) = '.opsiscript' then
-    begin
-      ButtonPythonConvert.enabled:=false;
-      ButtonConvert.enabled:=true;
-    end
-    else
-    begin
-      ButtonConvert.enabled:=false;
-      ButtonPythonConvert.enabled:=true;
-    end
-  end;
+  caption := 'opsi doc generator Version: '+myversion;
+  ButtonSave.Enabled:= False;
 end;
 
-}
-
-procedure TForm1.ButtonOpenClick(Sender: TObject);
+procedure TForm1.FormDropFiles(Sender: TObject; const FileNames: array of String);
 var
-  filecount, totallines : integer;
-  tempfile : TStringList;
+  filecount: Integer;
 begin
   Memo1.Lines.Clear;
   Memo2.Lines.Clear;
-  tempfile := TStringList.Create;
-  tempfile.Clear;
-  sourcelist.Clear;
-
-  OpenDialog1.Options:= [ofAllowMultiSelect, ofFileMustExist];
-
-  if OpenDialog1.Execute then
-  begin
-    for filecount:= 0 to OpenDialog1.Files.Count-1 do
-    begin
-      tempfile.LoadFromFile(OpenDialog1.Files[filecount]);
-      //sourcelist.Append(tempfile.Text);
-      sourcelist.AddStrings(tempfile);
-    end;
-
-    totallines:= sourcelist.Count;
-
-    memo1.Lines.Assign(sourcelist);
-    ButtonConvert.enabled:=true;
-    ButtonPythonConvert.enabled:=true;
-
-  end;
+  for filecount := Low(FileNames) to High(FileNames) do
+    ListBox1.Items.Add(FileNames[filecount]);
 end;
 
+procedure TForm1.ListBox1SelectionChange(Sender: TObject; User: boolean);
+var
+  selectedFile : string;
+begin
+  Memo1.Lines.Clear;
+  filecontent.Clear;
+  selectedFile := ListBox1.Items[ListBox1.ItemIndex];
+  filecontent.LoadFromFile(selectedFile);
+  Memo1.Lines.Assign(filecontent);
+end;
+
+procedure TForm1.ButtonRemoveSelectedClick(Sender: TObject);
+begin
+  ListBox1.DeleteSelected;
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
+  ButtonSave.Enabled:= False;
+end;
+
+procedure TForm1.ButtonRemoveAllClick(Sender: TObject);
+begin
+  ListBox1.Clear;
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
+  ButtonSave.Enabled:= False;
+end;
+
+procedure TForm1.ButtonOSConvertClick(Sender: TObject);
+var
+  listboxitem : integer;
+begin
+  tempFile.Clear;
+  sourcelist.Clear;
+  for listboxitem := 0 to (ListBox1.Items.Count -1) do
+  begin
+    tempFile.LoadFromFile(ListBox1.Items[listboxitem]);
+    sourcelist.AddStrings(tempFile);
+  end;
+  convertOslibToAsciidoc();
+  memo2.Lines.Assign(targetlist);
+  ButtonSave.Enabled:= True;
+end;
+
+procedure TForm1.ButtonPythonConvertClick(Sender: TObject);
+var
+  listboxitem : integer;
+begin
+  tempFile.Clear;
+  sourcelist.Clear;
+  for listboxitem := 0 to (ListBox1.Items.Count -1) do
+  begin
+    tempFile.LoadFromFile(ListBox1.Items[listboxitem]);
+    sourcelist.AddStrings(tempFile);
+  end;
+  convertPylibToAsciidoc();
+  memo2.Lines.Assign(targetlist);
+  ButtonSave.Enabled:= True;
+end;
 
 procedure TForm1.ButtonSaveClick(Sender: TObject);
 var
@@ -121,39 +150,24 @@ begin
   end;
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm1.Button_os_save_ascii_showClick(Sender: TObject);
 begin
-  caption := 'opsi doc generator Version: '+myversion;
+  ButtonOSConvertClick(Sender);
+  save_compile_show('');
 end;
 
-procedure TForm1.ButtonConvertClick(Sender: TObject);
+procedure TForm1.Button_py_save_ascii_showClick(Sender: TObject);
 begin
-  convertOslibToAsciidoc(infilename);
-  memo2.Lines.Assign(targetlist);
+  ButtonPythonConvertClick(Sender);
+  save_compile_show('');
 end;
-
-procedure TForm1.ButtonPythonConvertClick(Sender: TObject);
-begin
-  convertPylibToAsciidoc(infilename);
-  memo2.Lines.Assign(targetlist);
-end;
-
-
-procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
-begin
-  if ExtractFileExt(infilename) = '.opsiscript' then
-    convertOslibToAsciidoc(infilename)
-  else
-    convertPylibToAsciidoc(infilename);
-
-  memo2.Lines.Assign(targetlist);
-  save_compile_show(infilename);
-end;
-
-
-
 
 initialization
+  filecontent := TStringList.Create;
+  tempFile := TStringList.Create;
 
+finalization
+  filecontent.Free;
+  tempFile.Free;
 end.
 

@@ -29,7 +29,7 @@
       <BuildNr Value="14"/>
       <StringTable Comments="Compiled with Lazarus 2.0.10" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
-    <BuildModes Count="11">
+    <BuildModes Count="12">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -487,6 +487,51 @@
           </Other>
         </CompilerOptions>
       </Item11>
+      <Item12 Name="Debug_win32">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="winst32"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <LinkSmart Value="True"/>
+            <Options>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dSYNAPSE"/>
+          </Other>
+        </CompilerOptions>
+      </Item12>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>

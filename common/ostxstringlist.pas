@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils,
   oslog,
+  lconvencoding,
   osencoding,
   osparserhelper;
 
@@ -26,19 +27,16 @@ Type
     function FuncSaveToFile(const FileName: string; encodingtype: string): boolean;
       overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
-    procedure loadFromUnicodeFile(const Filename: string; codepage: word);
+    procedure loadFromFileWithEncoding(const FileName: string; encodingtype: string);
+    procedure loadFromFile(const FileName: string);
+    //procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
     // we return values[keyname], until further notice
   end;
 
 
-
-
-
 implementation
-
-
 
 { TXStringList }
 
@@ -153,15 +151,21 @@ end;
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string;
   raise_on_error: boolean);
 var
+  (*
   myfile: system.TextFile;
   i: integer;
-  myfilename, usedenc: string;
+  usedenc: string;
+  *)
+  myfilename: string;
   LogS : string;
-
+  usedenc : string;
 begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
     myfilename := ExpandFileName(FileName);
+    //myfilename := reencode(myfilename,'utf8', usedenc, 'system');
+    saveTextFileWithEncoding(TStrings(self), myfilename, encodingtype);
+    (*
     if LowerCase(encodingtype) = 'utf8' then
     begin
       //utf-8
@@ -191,11 +195,15 @@ begin
       LogDatei.log('Will save (' + encodingtype + ') to file: ' +
         myfilename + ' :', LLDebug2);
       LogDatei.log('-----------------', LLDebug3);
-      for i := 0 to Count - 1 do
-      begin
-        writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
-        LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
-      end;
+
+      //for i := 0 to Count - 1 do
+      //begin
+      //  writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
+      //  LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
+      //end;
+
+      writeln(myfile, reencode(text, 'utf8', usedenc, encodingtype));
+
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
       if LogDatei.UsedLogLevel >= LLDebug3 then
@@ -207,6 +215,8 @@ begin
         LogDatei.log('-----------------', LLDebug3);
       end;
     end;
+  *)
+
   except
     on e: Exception do
     begin
@@ -223,8 +233,6 @@ begin
     end;
   end;
 end;
-
-
 
 function TXStringList.FuncSaveToFile(const FileName: string): boolean;
 begin
@@ -319,7 +327,6 @@ begin
 end;
 
 
-
 function TXStringList.getStringValue(const keyname: string): string;
 var
   i: integer;
@@ -340,13 +347,31 @@ begin
   end;
 end;
 
+procedure TXStringlist.loadFromFile(const FileName: string);
+begin
+  loadFromFileWithEncoding(FileName,GetDefaultTextEncoding);
+end;
+
+procedure TXStringlist.loadFromFileWithEncoding(const FileName: string; encodingtype: string);
+var
+  encfilename, usedenc : string;
+begin
+  // call fuction of osencoding here
+  self.Clear;
+  //encfilename := reencode(ExpandFileName(FileName),'utf8', usedenc, 'system');
+  encfilename := ExpandFileName(FileName);
+  LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);
+  self.AddStrings(osencoding.loadTextFileWithEncoding(encfilename,encodingtype));
+end;
+
+
+(*
 procedure TXStringlist.loadFromUnicodeFile(const Filename: string; codepage: word);
 begin
   LoadFromFile(ExpandFileName(Filename));
   Text := reencode(Text, 'ucs2be');
 end;
-
-
+*)
 
 end.
 

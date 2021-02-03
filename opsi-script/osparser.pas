@@ -1584,9 +1584,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1944,7 +1943,10 @@ begin
   Encoding2use := searchencoding(OriginalList.Text);
   if Encoding2use = '' then
     Encoding2use := 'system';
-  OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
+  if not ((Encoding2use = 'system')) then
+    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
+  usedEncoding := Encoding2use;
+  //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + usedEncoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
@@ -2315,8 +2317,10 @@ var
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
-    PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
-    PatchListe.Text := reencode(PatchListe.Text, 'system');
+    if FileExists(PatchFilename) then
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
+    //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
+    //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
     lastfind := False;
 
@@ -2963,8 +2967,18 @@ var
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
+
+    if saveToOriginalFile then
+      if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
+        PatchListe.SaveToFile(PatchFilename, flag_encoding)
+      else
+        PatchListe.SaveToFile(PatchFilename, 'utf8');
+
+    (*
     if saveToOriginalFile then
       PatchListe.SaveToFile(PatchFilename);
+    *)
+
     PatchListe.Free;
     PatchListe := nil;
 
@@ -3268,10 +3282,11 @@ var
 
     Patchdatei.Clear;
     if FileExists(PatchdateiName) then
-      mytxtfile := LoadFromFileWithEncoding(ExpandFileName(PatchdateiName),
-        flag_encoding);
+      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName), flag_encoding);
+    // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
+    //   flag_encoding);
     //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-    Patchdatei.Text := mytxtfile.Text;
+    //Patchdatei.Text := mytxtfile.Text;
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
     for i := 0 to Patchdatei.Count - 1 do
@@ -7577,7 +7592,7 @@ begin
         if SyntaxCheck then
         begin
           try
-            XMLDocObject.delNode(nodepath, errorinfo);
+            XMLDocObject.delNode(nodepath, openstrict, errorinfo);
             // After a deleteNode you must use opennode in order to work with open nodes
             nodeOpened := False;
             nodeOpenCommandExists := False;
@@ -10270,8 +10285,8 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter,
+          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
@@ -11411,7 +11426,8 @@ begin
           try
             s1 := ExpandFileName(s1);
             list.loadfromfile(s1);
-            list.Text := reencode(list.Text, 'system');
+            // encoding from system is the default at txstinglist
+            //list.Text := reencode(list.Text, 'system');
           except
             on e: Exception do
             begin
@@ -11439,9 +11455,10 @@ begin
                 syntaxCheck := True;
                 try
                   s1 := ExpandFileName(s1);
-                  //list.AddText(LoadFromFileWithEncoding(s1, s2).Text);
-                  list.loadfromfile(s1);
-                  list.Text := reencode(list.Text, s2);
+                  //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
+                  list.loadFromFileWithEncoding(s1, s2);
+                  //list.loadfromfile(s1);
+                  //list.Text := reencode(list.Text, s2);
                 except
                   on e: Exception do
                   begin
@@ -11464,7 +11481,7 @@ begin
             s1 := ExpandFileName(s1);
             //list.loadfromfile (s1);
             //list.Text:= reencode(list.Text, 'ucs2le');
-            TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
+            TStringList(list).Assign(loadUnicodeTextFile(s1));
             //wsloadfromfile (s1, TStringList (list));
           except
             on e: Exception do
@@ -11650,10 +11667,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14792,7 +14809,8 @@ begin
           s1 := ExpandFileName(s1);
           list1.loadfromfile(s1);
           if list1.Count > 0 then
-            StringResult := reencode(list1.Strings[0], 'system')
+            StringResult := list1.Strings[0]
+          //StringResult := reencode(list1.Strings[0], 'system')
           else
             StringResult := '';
           list1.Free;
@@ -14824,9 +14842,11 @@ begin
               try
                 list1 := TXStringList.Create;
                 s1 := ExpandFileName(s1);
-                list1.loadfromfile(s1);
+                //list1.loadfromfile(s1);
+                list1.loadFromFileWithEncoding(s1, s2);
                 if list1.Count > 0 then
-                  StringResult := reencode(list1.Strings[0], s2)
+                  StringResult := list1.Strings[0]
+                //StringResult := reencode(list1.Strings[0], s2)
                 else
                   StringResult := '';
                 list1.Free;
@@ -17259,6 +17279,74 @@ var
   funcname: string;
   funcindex: integer;
 
+  {$IFDEF WINDOWS}
+  // function for FileExists32
+  function handleFileExists32(s1: string): boolean;
+  begin
+    LogDatei.log('  Starting query if file exists ...', LLInfo);
+    s2 := TrimAndExpandFilename(s1);
+    OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+    try
+      try
+        Result := FileExists(s2) or DirectoryExists(s2);
+        if (not Result) and (not (trim(s2) = '')) then
+        begin
+          LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
+        end;
+      except
+        Result := False;
+      end;
+    finally
+      setErrorMode(OldWinapiErrorMode);
+    end;
+  end;
+
+   {$IFDEF WIN32}
+  // function for FileExists64
+  function handleFileExists64(s1: string): boolean;
+  begin
+    LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
+    s2 := TrimAndExpandFilename(s1);
+    try
+      if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+      begin
+        LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+        Result := handleFileExists32(s1);
+        dummybool := DSiRevertWow64FsRedirection(
+          oldDisableWow64FsRedirectionStatus);
+        LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+      end
+      else
+      begin
+        LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+        Result := False;
+      end;
+    except
+      on ex: Exception do
+      begin
+        LogDatei.log('Error: ' + ex.message, LLError);
+      end;
+    end;
+  end;
+
+  // function for FileExistsSysNative
+  function handleFileExistsSysNative(s1: string): boolean;
+  begin
+    if Is64BitSystem then
+    begin
+      LogDatei.log('SysNative 64 Bit mode...', LLInfo);
+      Result := handleFileExists64(s1);
+    end
+    else
+    begin
+      LogDatei.log('SysNative 32 Bit mode...', LLInfo);
+      Result := handleFileExists32(s1);
+    end;
+  end;
+
+ {$ENDIF WIN32}
+ {$ENDIF WINDOWS}
+
 begin
   syntaxCheck := False;
   InfoSyntaxError := '';
@@ -17298,45 +17386,7 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          LogDatei.log('  Starting query if file exist (64 Bit mode)...', LLInfo);
-          s2 := s1;
-          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-            s2 := copy(s1, 1, length(s1) - 1);
-          try
-            if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-            begin
-              LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-              //BooleanResult := GetFileInfo (s2, FileRecord, RunTimeInfo);
-              // disable  critical-error-handler message box. (Drive not ready)
-              OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-              try
-                try
-                  BooleanResult := FileExists(s2) or DirectoryExists(s2);
-                  if (not BooleanResult) and (not (trim(s2) = '')) then
-                  begin
-                    LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
-                  end;
-                except
-                  BooleanResult := False;
-                end;
-              finally
-                setErrorMode(OldWinapiErrorMode);
-              end;
-              dummybool := DSiRevertWow64FsRedirection(
-                oldDisableWow64FsRedirectionStatus);
-              LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-            end
-            else
-            begin
-              LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-              BooleanResult := False;
-            end;
-          except
-            on ex: Exception do
-            begin
-              LogDatei.log('Error: ' + ex.message, LLError);
-            end;
-          end;
+          BooleanResult := handleFileExists64(s1);
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17352,60 +17402,7 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          if Is64BitSystem then
-            LogDatei.log('  Starting query if file exist (SysNative 64 Bit mode)...',
-              LLInfo)
-          else
-            LogDatei.log('  Starting query if file exist (SysNative 32 Bit mode)...',
-              LLInfo);
-          s2 := s1;
-          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-            s2 := copy(s1, 1, length(s1) - 1);
-          if Is64BitSystem then
-          begin
-            try
-              if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-              begin
-                LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-                OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-                try
-                  try
-                    BooleanResult := FileExists(s2) or DirectoryExists(s2);
-                    if (not BooleanResult) and (not (trim(s2) = '')) then
-                    begin
-                      LogDatei.log('File: ' + s2 +
-                        ' not found via FileExists', LLDebug3);
-                    end;
-                  except
-                    BooleanResult := False;
-                  end;
-                finally
-                  setErrorMode(OldWinapiErrorMode);
-                end;
-                dummybool := DSiRevertWow64FsRedirection(
-                  oldDisableWow64FsRedirectionStatus);
-                LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-              end
-              else
-              begin
-                LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-                BooleanResult := False;
-              end;
-            except
-              on ex: Exception do
-              begin
-                LogDatei.log('Error: ' + ex.message, LLError);
-              end;
-            end;
-          end
-          else
-          begin
-            BooleanResult := FileExists(s2) or DirectoryExists(s2);
-            if (not BooleanResult) and (not (trim(s2) = '')) then
-            begin
-              LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
-            end;
-          end;
+          BooleanResult := handleFileExistsSysNative(s1);
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17421,24 +17418,7 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          LogDatei.log('  Starting query if file exist ...', LLInfo);
-          s2 := s1;
-          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-            s2 := copy(s1, 1, length(s1) - 1);
-          OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-          try
-            try
-              BooleanResult := FileExists(s2) or DirectoryExists(s2);
-              if (not BooleanResult) and (not (trim(s2) = '')) then
-              begin
-                LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
-              end;
-            except
-              BooleanResult := False;
-            end;
-          finally
-            setErrorMode(OldWinapiErrorMode);
-          end;
+          BooleanResult := handleFileExists32(s1);
           if not BooleanResult then
           begin
             RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -17455,29 +17435,11 @@ begin
       if EvaluateString(r, r, s1, InfoSyntaxError) then
         if Skip(')', r, r, InfoSyntaxError) then
         begin
-          s1 := ExpandFileName(s1);
-          LogDatei.log('Starting query if file exist ...', LLInfo);
-          s2 := s1;
-          if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-            s2 := copy(s1, 1, length(s1) - 1);
       {$IFDEF WINDOWS}
-          { disable  critical-error-handler message box. (Drive not ready) }
-          OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-          try
-            try
-              s2 := trim(s2);
-              BooleanResult := FileExists(s2) or DirectoryExists(s2);
-              if (not BooleanResult) and (not (trim(s2) = '')) then
-              begin
-                LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
-              end;
-            except
-              BooleanResult := False;
-            end;
-          finally
-            setErrorMode(OldWinapiErrorMode);
-          end;
-      {$ELSE WINDOWS}
+          BooleanResult := handleFileExists32(s1);
+       {$ELSE WINDOWS}
+          LogDatei.log('Starting query if file exists ...', LLInfo);
+          s2 := TrimAndExpandFilename(s1);
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
@@ -17495,6 +17457,82 @@ begin
           end;
           syntaxCheck := True;
         end;
+  end
+
+  //New general function for File or Folder exists
+  else if Skip('FileOrFolderExists', Input, r, sx) then
+  begin
+    s2 := '';
+    tmpstr2 := '';
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
+        if Skip(',', tmpstr, tmpstr1, tmpstr3) then
+          if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
+
+            {$IFDEF WIN32}
+    if s2 = '' then
+    begin
+      // with 1 parameter
+      if Skip(')', tmpstr, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          BooleanResult := handleFileExistsSysNative(s1);
+        except
+          BooleanResult := False;
+        end;
+      end;
+    end
+    else
+    begin
+      // with 2 parameters
+      if Skip(')', tmpstr2, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          tmpbool := True;
+          if lowercase(s2) = '32bit' then
+            BooleanResult := handleFileExists32(s1)
+          else if lowercase(s2) = '64bit' then
+            BooleanResult := handleFileExists64(s1)
+          else if lowercase(s2) = 'sysnative' then
+            BooleanResult := handleFileExistsSysNative(s1)
+          else
+          begin
+            InfoSyntaxError :=
+              'Error: unknown parameter: ' + s2 +
+              ' expected one of 32bit,64bit,sysnative';
+            BooleanResult := False;
+          end;
+        except
+          Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
+          BooleanResult := False;
+        end;
+      end;
+    end;
+            {$ELSE WIN32}
+    if s2 <> '' then
+    begin
+      Logdatei.log('Error: Second parameter is ignored in 64 bit opsi-script ',
+            LLError);
+      s2 :='';
+    end;
+    if s2 = '' then
+    begin
+      // with 1 parameter
+      if Skip(')', tmpstr, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          BooleanResult := FileExists(s1) or DirectoryExists(s1);
+        except
+          Logdatei.log('Error: Exception in FileOrFolderExists: ',
+            LLError);
+          BooleanResult := False;
+        end;
+      end;
+    end;
+            {$ENDIF WIN32}
   end
 
   else if Skip('DirectoryExists', Input, r, sx) then
@@ -17544,11 +17582,8 @@ begin
     end;
     if syntaxcheck then
     begin
-      s1 := ExpandFileName(s1);
       LogDatei.log('Starting query if directory exist ...', LLInfo);
-      tmpstr := s1;
-      if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR) then
-        tmpstr := copy(s1, 1, length(s1) - 1);
+      tmpstr := TrimAndExpandFilename(s1);
       {$IFDEF WIN32}
       try
         tmpbool1 := True;
@@ -17718,7 +17753,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
                 BooleanResult := (Textfile.FindFirstItemStartingWith(s1, False, -1) >= 0)
               except
                 on ex: Exception do
@@ -17749,7 +17784,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult :=
                   (Textfile.FindFirstItem(s1, False, -1, BooleanResult0) >= 0)
@@ -17782,7 +17817,7 @@ begin
                 Textfile.ItemPointer := -1;
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
-                Textfile.Text := reencode(Textfile.Text, 'system');
+                //Textfile.Text := reencode(Textfile.Text, 'system');
 
                 BooleanResult := (Textfile.FindFirstItemWith(s1, False, -1) >= 0)
               except
@@ -17939,7 +17974,34 @@ begin
     end;
   end
 
-
+  else if Skip('saveUnicodeTextFile', Input, r, sx) then
+  begin
+    try
+      BooleanResult := False;
+      list1 := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if produceStringList(script, r, r, list1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s2, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    try
+                      s1 := ExpandFileName(s1);
+                      saveUnicodeTextFile(TStrings(list1), s1, s2);
+                      BooleanResult := True;
+                    except
+                      logdatei.log('Error: Could not save to filename: ' +
+                        s1, LLError);
+                    end;
+                  end;
+    finally
+      list1.Free;
+      list1 := nil;
+    end;
+  end
 
   else if Skip('savetextfile', Input, r, sx) then
   begin
@@ -22532,6 +22594,7 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 flag_all_ntuser := False;
+                flag_encoding := 'system';
                 // if this is a 'ProfileActions' which is called as sub in Machine mode
                 // so run patches sections implicit as /Allntuserprofiles
                 if runProfileActions then
@@ -22544,11 +22607,51 @@ begin
                 begin
                   GetWordOrStringExpressionstr(Remaining, Filename,
                     Remaining, ErrorInfo);
-                  if Remaining = '' then
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, '')
-                  else
-                    ActionResult := doTextpatch(ArbeitsSektion, Filename, Remaining);
                 end;
+                remaining := CutRightBlanks(Remaining);
+
+                if length(remaining) > 0 then
+                  goon := True;
+                while goon do
+                begin
+
+                  if skip(Parameter_AllNTUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+
+                  else
+                  if skip('/encoding', Remaining, Remaining, ErrorInfo)
+                  then
+                  begin
+                    if not EvaluateString(Remaining, Remaining,
+                      flag_encoding, ErrorInfo) then
+                    begin
+                      syntaxcheck := False;
+                      //ActionResult := reportError (ErrorInfo);
+                    end;
+                    flag_encoding := LowerCase(flag_encoding);
+                    if not isSupportedEncoding(flag_encoding) then
+                    begin
+                      logdatei.log('Given Encoding: ' + flag_encoding +
+                        ' is not supported - fall back to system encoding.',
+                        LLWarning);
+                      flag_encoding := 'system';
+                    end;
+                  end
+                  else
+                  begin
+                    goon := False;
+                    if length(remaining) > 0 then
+                    begin
+                      syntaxcheck := False;
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], '"' + remaining +
+                        '" is no valid parameter ');
+                    end;
+                  end;
+                end;
+                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
               tsTests:
@@ -23465,12 +23568,18 @@ begin
         end;
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
+      // this will read with encoding from system to utf8
       Script.LoadFromFile(Scriptdatei);
+      //str := script.Text;
       logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
       Encoding2use := searchencoding(Script.Text);
       if Encoding2use = '' then
         Encoding2use := 'system';
-      Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+      if not ((Encoding2use = 'system')) then
+        Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+      //str := script.Text;
+      usedEncoding := Encoding2use;
+      //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
       Script.FFilename := Scriptdatei;
       for i := 0 to script.Count - 1 do
       begin

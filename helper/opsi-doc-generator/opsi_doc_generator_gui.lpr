@@ -8,7 +8,12 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
-  odg_gui, odg_main, odg_asciidoc, odg_pyasciidoc, odg_os_deffunc, odg_py_deffunc;
+  odg_gui,
+  odg_main,
+  odg_os_deffunc,
+  odg_py_deffunc,
+  odg_os_asciidoc,
+  odg_py_asciidoc;
 
 {$R *.res}
 

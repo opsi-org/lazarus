@@ -131,31 +131,31 @@
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="odg_asciidoc.pas"/>
+        <Filename Value="odg_os_deffunc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="odg_os_deffunc.pas"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="..\..\common\osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="..\..\common\osparserhelper.pas"/>
+        <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="..\..\common\oslog.pas"/>
+        <Filename Value="odg_py_deffunc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="odg_py_deffunc.pas"/>
+        <Filename Value="odg_os_asciidoc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="odg_pyasciidoc.pas"/>
+        <Filename Value="odg_py_asciidoc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
     </Units>
