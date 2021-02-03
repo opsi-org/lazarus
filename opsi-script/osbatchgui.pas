@@ -163,27 +163,8 @@ var
 
 const
   BatchScreenOnTop: boolean = False;
-
   centralImageNo = 2;
-
   bitmapFilenameProductDefault = 'winst3.png';
-  {$IFDEF WINDOWS}
-  skindirectoryDefault = 'winstskin';
-  skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'winstskin';
-  skindirectoryDevelopment = 'winstskin';
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '/usr/share/opsi-script/skin';
-  skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '../Resources/skin';
-  skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
-  {$ENDIF DARWIN}
-
-
   StartTop: integer = 100;
   StartLeft: integer = 100;
   InnerWidth = 605;
@@ -195,6 +176,7 @@ resourcestring
   rsGetListOfProducts = 'get list of products';
 
 implementation
+
 
 uses osmessagedialog, osfunc, osmain, oslog;
 
@@ -432,51 +414,15 @@ var
   end;
 
 begin
-
-  {$IFDEF WINDOWS}
-  paramstr0enc := reencode(ParamStr(0),'system');
-  if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-   if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := skindirectoryCustomWin
-  else if FileExists(skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := skindirectoryDefault
-  else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  paramstr0enc := reencode(ParamStr(0),'system');
-  if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  {$ENDIF DARWIN}
-
-  //logdatei.DependentAdd('Loading skin from: '+skindir,LLessential);
-  //skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  startupmessages.Append('Loading skin from: '+skindir);
-  skinFile := skinDir +PathDelim+ 'skin.ini';
-
+  skinDir := GetSkinDirectory(SkinDirectory);
+  startupmessages.Append('Loading skin from: '+skinDir);
+  skinFile := skinDir + PathDelim + 'skin.ini';
   if FileExists(skinFile) then
   begin
     LabelInfo.Caption := rsLoadingSkin;
     try
       skinIni := TIniFile.Create(skinFile);
-      Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+      Color := myStringToTColor(skinIni.ReadString('Window', 'Color', 'clBlack'));
 
       try
         panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
@@ -486,7 +432,7 @@ begin
       end;
 
       try
-        Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+        Panel.Color := myStringToTColor(skinIni.ReadString('Window', 'Color', 'clBlack'));
 
       except
       end;

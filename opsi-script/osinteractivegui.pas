@@ -599,15 +599,13 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-function GetTheme(path: string = 'themes'): string;
+function GetGUITheme(PathToSkinFile: string): string;
 var
-  PathToThemeFile : string;
   ThemeFile: TIniFile;
 begin
-  Result := '';
-  PathToThemeFile := path + PathDelim + 'theme.ini';
-  ThemeFile := TIniFile.Create(PathToThemeFile);
-  ThemeFile.ReadString('Theme', Result, 'DefaultTheme');
+  //PathToThemeFile := path + PathDelim + 'theme.ini';
+  ThemeFile := TIniFile.Create(PathToSkinFile);
+  Result := ThemeFile.ReadString('Window', 'Theme' , 'Default');
   ThemeFile.Free;
 end;
 
@@ -866,6 +864,7 @@ var
   str: string;
   s2, s3, s4, sid: string;
   lang,localedir : string;
+  Theme: string;
 
 begin
   //writeln('TCentralForm.FormCreate');
@@ -934,9 +933,17 @@ begin
   CentralForm.Label2.Caption := '';
   LabelWinstVersion.Caption := OpsiscriptVersionName;
 
-  //FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
-  FBatchOberflaeche := TSimpleWinBatchGUI.Create(Application);
-
+  Theme := LowerCase(TGUIControl.GetGUITheme(''));
+  if  (Theme = LowerCase('Default')) or (Theme = LowerCase('BatchOberflaeche')) then
+  begin
+    FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
+  end
+  else
+  if (Theme = LowerCase('WindowsSimple')) then
+  begin
+    FBatchOberflaeche := TSimpleWinBatchGUI.Create(Application);
+  end
+  else FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
 
   ProcessMess;
   MyMessageDLG := TMyMessageDLG.Create(Application);
