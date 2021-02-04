@@ -422,7 +422,7 @@ begin
     LabelInfo.Caption := rsLoadingSkin;
     try
       skinIni := TIniFile.Create(skinFile);
-      Color := myStringToTColor(skinIni.ReadString('Window', 'Color', 'clBlack'));
+      Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
       try
         panelWidth := skinIni.ReadInteger('Panel', 'Width', 605);
@@ -432,7 +432,7 @@ begin
       end;
 
       try
-        Panel.Color := myStringToTColor(skinIni.ReadString('Window', 'Color', 'clBlack'));
+        Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
       except
       end;

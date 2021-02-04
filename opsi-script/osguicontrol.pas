@@ -1,4 +1,18 @@
 unit osGUIControl;
+{ Contains the class TGUIControl. Forms that come to front in batch mode must
+  be subclasses of this class. Do not use TGUIControl direct. It is used
+  like an abstract class but provides empty procedures so that in the
+  subclass only the procedures necessary to get the desired GUI behaviour
+  had to be overriden
+
+  This code is part of the opsi.org project
+
+  Copyright (c) uib gmbh (www.uib.de)
+  This sourcecode is owned by the uib gmbh, D55118 Mainz, Germany
+  and published under the Terms of the GNU Affero General Public License.
+  Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
+  author: Detlef Oertel, Jan Werner
+  credits: http://www.opsi.org/credits/ }
 
 {$mode delphi}
 
@@ -10,23 +24,37 @@ uses
 type
   TBatchWindowMode = (bwmNotActivated, bwmIcon, bwmNormalWindow, bwmMaximized);
 
-  //TSenderID might be useful in the future but not necessary now, just an idea to rember
-  //TSenderID = (seBuildPC, seCentralFormFormCreate, seChangeProductStatusOnReinst, seInstScriptdoInfo);
+  { The following IDs are used to specify the message, progress or element type.
+    Based on these IDs the GUI can than be adapted accordingly. For example
+    override SetMessageText in the subclass like this:
 
-  //Expand/include here further IDs if necessary
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
+    begin
+      case MessageID of
+        mInfo: LabelInfo.Caption  := MessageText;
+        mDetail: MemoXY.Text := MessageText;
+      end;
+    end; }
+
+  { Expand/include here further IDs if necessary. }
   TMessageID = (mInfo, mDetail, mCommand, mProgress, mVersion, mProduct, mActivity);
   TProgressValueID = (pInteger, pPercent);
   TElementID = (eMainForm, eLabelInfo, eLabelDetail, eLabelCommand,
     eLabelProgress, eLabelVersion, eLabelProduct, ePanel1, ePanel2, eImage1,
     eImage2, eLogo1, eLogo2, eProductImage1, eProductImage2, eActivityBar,
     eTimerProcessMess, eProgressBar);
+  { TSenderID might be useful in the future but not necessary now }
+  //TSenderID = (seBuildPC, seCentralFormFormCreate, seChangeProductStatusOnReinst, seInstScriptdoInfo);
 
   { TGUIControl }
 
   TGUIControl = class(TForm)
+    { GetGUITheme gives back the name of the theme from skin.ini }
     class function GetGUITheme(const SkinDirectory: string):string;
     class function GetSkinDirectory(const SkinDirectory: string = ''):string;
   public
+    { These are the procedures to control the behaviour of the GUI.
+      Override them in the subclass to get the desired functionality. }
     procedure LoadSkin(const SkinDirectory: string);virtual;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
     procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual;
@@ -71,9 +99,8 @@ class function TGUIControl.GetGUITheme(const SkinDirectory: string): string;
 var
   ThemeFile: TIniFile;
 begin
-  //GetSkinFilePath(SkinDirectory);
   ThemeFile := TIniFile.Create(GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini');
-  Result := ThemeFile.ReadString('Window', 'Theme' , 'Default');
+  Result := ThemeFile.ReadString('Form', 'Theme' , 'Default');
   ThemeFile.Free;
 end;
 

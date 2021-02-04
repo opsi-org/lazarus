@@ -934,6 +934,7 @@ begin
   LabelWinstVersion.Caption := OpsiscriptVersionName;
 
   Theme := LowerCase(TGUIControl.GetGUITheme(''));
+  { Include new themes in the if .. then block if available }
   if  (Theme = LowerCase('Default')) or (Theme = LowerCase('BatchOberflaeche')) then
   begin
     FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
