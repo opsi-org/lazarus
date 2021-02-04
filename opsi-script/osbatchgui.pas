@@ -982,7 +982,7 @@ procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
   MessageID: TMessageID);
 begin
   case MessageID of
-    mInfo: SetInfoLabel(MessageText);
+    mInfo: DoInfo(MessageText);
     mVersion: SetVersionLabel(MessageText);
     mDetail: SetDetailLabel(MessageText);
     mCommand: SetCommandLabel(MessageText);

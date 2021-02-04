@@ -1,0 +1,77 @@
+object SimpleWinBatchGUI: TSimpleWinBatchGUI
+  Left = 453
+  Height = 759
+  Top = 143
+  Width = 648
+  BorderStyle = bsNone
+  ClientHeight = 759
+  ClientWidth = 648
+  Color = clHotLight
+  FormStyle = fsSystemStayOnTop
+  Position = poScreenCenter
+  LCLVersion = '2.0.10.0'
+  WindowState = wsFullScreen
+  object PanelCenter: TPanel
+    AnchorSideRight.Side = asrBottom
+    Left = 0
+    Height = 80
+    Top = 350
+    Width = 648
+    Anchors = [akLeft, akRight]
+    BevelOuter = bvNone
+    ClientHeight = 80
+    ClientWidth = 648
+    TabOrder = 0
+    object LabelInfo: TLabel
+      Left = 0
+      Height = 35
+      Top = 0
+      Width = 648
+      Align = alTop
+      Alignment = taCenter
+      Anchors = [akLeft, akRight]
+      AutoSize = False
+      Caption = 'Software wird installiert. Bitte warten.'
+      Font.Color = clWindow
+      Font.Height = 35
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+      OptimalFill = True
+    end
+    object LabelActivity: TLabel
+      AnchorSideTop.Control = LabelInfo
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 35
+      Top = 45
+      Width = 648
+      Align = alBottom
+      Alignment = taCenter
+      Anchors = [akLeft, akRight]
+      AutoSize = False
+      Font.Color = clWindow
+      Font.Height = 27
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+      OptimalFill = True
+    end
+  end
+  object LabelVersion: TLabel
+    Left = 0
+    Height = 15
+    Top = 744
+    Width = 648
+    Align = alBottom
+    Caption = 'opsi-script 4.12.4.13'
+    Font.Color = clSkyBlue
+    ParentColor = False
+    ParentFont = False
+  end
+  object TimerActivity: TTimer
+    OnTimer = TimerActivityTimer
+    Left = 189
+    Top = 88
+  end
+end

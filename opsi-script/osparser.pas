@@ -2087,21 +2087,10 @@ begin
   Result := tsrPositive;
   CentralForm.Label1.Caption := Meldung;
 
-  //FBatchOberflaeche.LabelInfo.alignment := labelinfoAlignmentSave;
-
-  (*
-  if FBatchOberflaeche.LabelInfo.Canvas.TextWidth(Meldung) > FBatchOberflaeche.LabelInfo.Width
-  then
-  Begin
-    labelinfoAlignmentSave := FBatchOberflaeche.LabelInfo.alignment;
-    FBatchOberflaeche.LabelInfo.alignment := taLeftJustify;
-    //FBatchOberflaeche.LabelInfo.Width := FBatchOberflaeche.LabelInfo.Canvas.TextWidth(Meldung);
-  End;
-  *)
-
   // do not auto size short labels because this will look ugly
   // use optimalfill to decrease the font only on large labels
-  (*FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
+  (*
+  FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
   if FBatchOberflaeche.LabelInfo.Canvas.TextWidth(Meldung) >
     (FBatchOberflaeche.LabelInfo.Width - FBatchOberflaeche.LabelInfo.Width div 5) then
     FBatchOberflaeche.LabelInfo.OptimalFill := True
@@ -2111,7 +2100,10 @@ begin
     FBatchOberflaeche.LabelInfo.Font.Size := LableInfoDefaultFontSize;
     ;
   end;
-  FBatchOberflaeche.setInfoLabel(Meldung);*)
+  FBatchOberflaeche.setInfoLabel(Meldung);
+  *)
+
+  FBatchOberflaeche.SetMessageText(Meldung, mInfo);
   {$ELSE GUI}
   Result := tsrPositive;
   writeln(Meldung);
