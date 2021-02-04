@@ -1271,7 +1271,7 @@ begin
         ssl_openssl_lib.IsSSLloaded), LLdebug);
     end;
     LogDatei.log_prog('after init: ' + BoolToStr(ssl_openssl_lib.IsSSLloaded), LLdebug);
-    LogDatei.DependentAdd('Lib should be: ' + ssl_openssl_lib.DLLSSLName, LLdebug);
+    LogDatei.log('Lib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
     LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
@@ -1663,6 +1663,7 @@ begin
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
+              LogDatei.log('SslLib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
               { Set Body }
               HTTPSender.Document.Write(utf8str[1], length(utf8str));
               if ContentEncoding <> 'identity' then
