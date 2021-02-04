@@ -2103,6 +2103,7 @@ begin
   FBatchOberflaeche.setInfoLabel(Meldung);
   *)
 
+
   FBatchOberflaeche.SetMessageText(Meldung, mInfo);
   {$ELSE GUI}
   Result := tsrPositive;
