@@ -49,7 +49,7 @@ type
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stMacZip, stMacDmg, stMacPKG, stMacApp,
+  TKnownInstaller = (stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
     stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
@@ -1390,6 +1390,8 @@ begin
 
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('LinRPM');
+  knownInstallerList.Add('LinDeb');
   knownInstallerList.Add('MacZip');
   knownInstallerList.Add('MacDmg');
   knownInstallerList.Add('MacPKG');
@@ -1787,6 +1789,39 @@ begin
     uib_exitcode_function := '';
     detected := @detectedbypatternwithand;
   end;
+  with installerArray[integer(stLinRPM)] do
+  begin
+    description := 'Linux RPM package';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stLinDeb)] do
+  begin
+    description := 'Linux Debian Package';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+    stLinRPM, stLinDeb
   // marker for add installers
 
   architectureModeList := TStringList.Create;

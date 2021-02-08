@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 292
+  Left = 425
   Height = 666
-  Top = 227
+  Top = 327
   Width = 1046
   Caption = 'opsi Setup Detector'
   ClientHeight = 638
@@ -3061,7 +3061,6 @@ object resultForm1: TresultForm1
                 WrapAfter = waAuto
                 Index = 3
               end>
-            Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 2
@@ -3555,7 +3554,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateWinClick
+              OnClick = BtSingleAnalyzeAndCreateLinClick
               ParentFont = False
               TabOrder = 0
             end
@@ -9164,8 +9163,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 546
-          ClientWidth = 648
+          ClientHeight = 544
+          ClientWidth = 646
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel

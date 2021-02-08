@@ -20,12 +20,13 @@ DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
 DefVar $installSuccess$
+DefVar $installCommand$
 #@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
+importlib "%scriptpath%\uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -40,8 +41,8 @@ Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 
 set $OS$ = GetOS
 
-if not(($OS$ = "macos"))
-	logError "Installation aborted: wrong OS version: only MacOS"
+if not(($OS$ = "linux"))
+	logError "Installation aborted: wrong OS version: only Linux"
 	isFatalError "wrong OS"
 endif
 
@@ -51,10 +52,10 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
-endif
+;if FileExists("%ScriptPath%\delsub.opsiscript")
+;	comment "Start uninstall sub section"
+;	Sub "%ScriptPath%\delsub.opsiscript"
+;endif
 
 Message "Installing " + $ProductId$ + " ..."
 
@@ -67,7 +68,9 @@ endif
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
+cleanupPackageSystem()
 #@installCommandLine1*#
+cleanupPackageSystem()
 ;----------------------------------------------
 Sub_check_installSuccess
 #@postInstallLines1*#

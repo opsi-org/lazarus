@@ -354,6 +354,7 @@ type
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSetup3NextStepClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
@@ -2431,6 +2432,58 @@ begin
     end;
   end;
 end;
+
+procedure TResultform1.BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
+var
+  i: integer;
+  filename: string;
+  goon: boolean;
+  isapp: boolean;
+  localTOSset : TTargetOSset;
+begin
+  goon := False;
+  isapp := False;
+
+    OpenDialog1.InitialDir := filename;
+    ;
+    OpenDialog1.FilterIndex := 6;   // linux
+    if OpenDialog1.Execute then
+    begin
+      filename := OpenDialog1.FileName;
+      goon := True;
+    end
+    else
+      goon := False;
+
+  if goon then
+  begin
+    osdsettings.runmode := singleAnalyzeCreate;
+    setRunMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    //aktProduct.targetOS := osMac;
+    localTOSset := aktProduct.productdata.targetOS;
+    Include(localTOSset,osLinux);
+    aktProduct.productdata.targetOS := localTOSset;
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    // we expect deb, rpm so we do not ask for complete directories
+    (*
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbNo, mbYes], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
+    *)
+    makeProperties;
+    Application.ProcessMessages;
+    AnalyzeLin(FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
 
 
 

@@ -38,31 +38,22 @@ const
 *)
 
 
-//procedure get_aktProduct_general_info(installerId: TKnownInstaller;
-//  myfilename: string; var mysetup: TSetupFile);
+procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+  myfilename: string; var mysetup: TSetupFile);
+
+procedure get_rpm_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
+
+procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
+
+function getPacketIDfromFilename(str: string): string;
+function getPacketIDShort(str: string): string;
 
 
 (*
-procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
-procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
-  uninstall_only: boolean); overload;
-procedure get_inno_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
-procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 *)
-
-procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 
 (*
 procedure grepmsi(instring: string);
@@ -142,6 +133,8 @@ begin
   {$ENDIF WINDOWS}
 end;
 
+*)
+
 function getPacketIDfromFilename(str: string): string;
 var
   strnew: string;
@@ -193,7 +186,7 @@ begin
   Result := strnew;
 end;
 
-
+(*
 function ExtractVersion(str: string): string;
 var
   i: integer;
@@ -1319,6 +1312,23 @@ begin
 end;
 
 *)
+
+
+procedure get_rpm_info(myfilename: string; var mysetup: TSetupFile);
+begin
+  mysetup.installCommandLine :=
+    'set $installSuccess$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
+    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+end;
+
+procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
+begin
+  mysetup.installCommandLine :=
+    'set $installSuccess$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
+    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+end;
+
+
 procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;

@@ -1,0 +1,226 @@
+encoding=utf8
+
+;@author		detlef oertel
+;@email			d.oertel@uib.de
+;@date			5.10.2018
+;@copyright		AGPLv3
+;@version		1.0
+;@filedesc		Collection of functions that 
+;@filedesc		helps opsi-setup-detector
+
+; ###################################################################################################
+DefFunc checkForMsiProduct($msiId$ : string) : string
+	;@author		detlef oertel
+	;@date			5.10..2018
+	;@Description	Checks if a product with the given msiId is installed on the system
+	;@Returns		Returns string "true" if the given msiId is found in the Uninstall registry hive
+	;@Returns		Returns string "false" if the given msiId is not found in the Uninstall registry hive
+	;@OnError		Returns string "false"
+	;@SpecialCase	
+	;@References	
+	;@Links			
+	;@Requires
+	;@ParamDesc_$msiId$	  MSI Id in the form {xxxx}
+	;@ParamAdvice_$list1$
+	;@Example	if stringToBool(checkForMsiProduct($msiId))
+	;@Example		comment "product installed"
+	;@Example	else
+	;@Example		comment "product not installed"
+	;@Example	endif
+	
+	set $result$ = "false"
+	
+	if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "32bit") = "")
+		comment "MSI id " + $MsiId$ + " found in 32 bit registry"
+		set $result$ = "true"
+	endif
+	if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "64bit") = "")
+		comment "MSI id " + $MsiId$ + " found in 64 bit registry"
+		set $result$ = "true"
+	endif
+EndFunc
+; ###################################################################################################
+
+
+; ###################################################################################################
+DefFunc get_licensekey_byPoolOrKey($LicenseString$ : string) : string
+	;@author			detlef oertel
+	;@date				16.04.2019
+	;@Description		Checks if we can get a license key from the given string as license pool
+	;@Description		Or if the string is the key it self
+	;@Returns			Returns string with a valid licensekey from the opsi license management
+	;@Returns			Returns string with a valid licensekey that was the input string
+	;@OnError			Breaks with isFatalError if no valid license key could be get from the pool
+	;@SpecialCase	  
+	;@References		
+	;@Links			  
+	;@Requires
+	;@ParamDesc_$LicenseString$	  License pool in the opsi license management
+	;@ParamAdvice_$LicenseString$
+	;@Example	  set $Licensekey$ = get_licensekey_byPoolorKey('mypool')
+	;@Example	  set $Licensekey$ = get_licensekey_byPoolorKey('ABCD-EFGH-IJKL-MNOP')
+	
+	DefVar $ServiceErrorClass$
+	DefVar $LicensePool$
+	DefVar $key$
+	
+	set $result$ = ""
+	
+	if $LicenseString$ = ""
+		LogError "Fatal: license required, but no license pool or key in property"
+		isFatalError
+	endif
+	if opsiLicenseManagementEnabled
+		comment "Try property as pool ..."
+		set $LicensePool$ = $LicenseString$
+		comment "License management is enabled and will be used"
+		comment "Trying to get a license key"
+		Set $key$ = demandLicenseKey ($LicensePool$)
+
+		set $ServiceErrorClass$ = getLastServiceErrorClass
+		comment "Error class: " + $ServiceErrorClass$
+		if $ServiceErrorClass$ = "None"
+			Set $result$ = $key$
+			comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
+		else
+			if $ServiceErrorClass$ = "LicenseMissingError"
+				LogError "Fatal: required license is not supplied"
+				isFatalError
+			else
+				if ($ServiceErrorClass$ = "LicenseConfigurationError") or ($ServiceErrorClass$ = "ValueError")
+					comment "we assume that we got a license key by property ..."
+					Set $result$ = $LicenseString$
+				endif
+			endif
+		endif
+	else
+		comment "We assume that we got a license key by property..."
+		Set $result$ = $LicenseString$
+	endif
+EndFunc
+; ###################################################################################################
+
+
+
+
+
+; ###################################################################################################
+DefFunc get_licensekey_byPool($LicensePool$ : string) : string
+	;@author			 detlef oertel
+	;@date				5.10..2018
+	;@Description	  Checks if we can get a license key from the given license pool
+	;@Returns			Returns string with a valid licensekey from the opsi license management
+	;@OnError			Breaks with isFatalError if no valid license key could be get from the pool
+	;@SpecialCase	  
+	;@References		
+	;@Links			  
+	;@Requires
+	;@ParamDesc_$LicensePool$	  License pool in the opsi license management
+	;@ParamAdvice_$LicensePool$
+	;@Example	  set $Licensekey$ = get_licensekey_byPool('mypool')
+	
+	
+	DefVar $ServiceErrorClass$
+	
+	set $result$ = ""
+	
+	if opsiLicenseManagementEnabled
+		comment "License management is enabled and will be used"
+	
+		comment "Trying to get a license key"
+		Set $result$ = demandLicenseKey ($LicensePool$)
+		; If there is an assignment of exactly one licensepool to the product the following call is possible:
+		; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
+		;
+		; If there is an assignment of a license pool to a windows software id, it is possible to use:
+		; DefVar $WindowsSoftwareId$
+		; $WindowsSoftwareId$ = "..."
+		; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
+	
+		
+		set $ServiceErrorClass$ = getLastServiceErrorClass
+		comment "Error class: " + $ServiceErrorClass$
+		
+		if $ServiceErrorClass$ = "None"
+			comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
+		else
+			if $ServiceErrorClass$ = "LicenseConfigurationError"
+				LogError "Fatal: license configuration must be corrected"
+				LogError getLastServiceErrorMessage
+				isFatalError
+			else 
+				if $ServiceErrorClass$ = "LicenseMissingError"
+					LogError "Fatal: required license is not supplied"
+					isFatalError
+				endif
+			endif
+		endif
+	else
+		LogError "Fatal: license required, but license management not enabled"
+		isFatalError
+	endif
+EndFunc
+; ###################################################################################################
+
+; ###################################################################################################
+DefFunc desktopicon_create($name$ : string, $target$ : string, $param$ : string, $dir$ : string) : void
+	;@author			detlef oertel
+	;@date				16.04.2019
+	;@Description		Create a desktop Icon
+	;@Returns			Nothing
+	;@OnError			Nothing, Error is logged
+	;@SpecialCase	  
+	;@References		
+	;@Links			  
+	;@Requires
+	;@ParamDesc_$name$		Name of desktop icon
+	;@ParamAdvice_$name$
+	;@ParamDesc_$target$	Target of desktop icon
+	;@ParamAdvice_$target$
+	;@ParamDesc_$param$		param of target of desktop icon
+	;@ParamAdvice_$param$
+	;@ParamDesc_$dir$		Working dir of desktop icon
+	;@ParamAdvice_$dir$
+	;@Example	  desktopicon_create('mydesktopicon_name','mydesktopicon_target','mydesktopicon_param','mydesktopicon_dir')
+	
+	Linkfolder_create_desktop_icon_infunc
+	
+	[Linkfolder_create_desktop_icon_infunc]
+	set_basefolder common_desktopdirectory
+	set_subfolder ""
+	set_link
+		name: $name$
+		target: $target$
+		parameters: $param$
+		working_dir: $dir$
+		icon_file:
+		icon_index:
+		shortcut:
+	end_link
+EndFunc
+; ###################################################################################################
+
+
+; ###################################################################################################
+DefFunc desktopicon_remove($name$ : string) : void
+	;@author			detlef oertel
+	;@date				16.04.2019
+	;@Description		Delete a desktop Icon
+	;@Returns			Nothing
+	;@OnError			Nothing, Error is logged
+	;@SpecialCase	  
+	;@References		
+	;@Links			  
+	;@Requires
+	;@ParamDesc_$name$	  Desktop icon name to delete
+	;@ParamAdvice_$name$
+	;@Example	  desktopicon_remove('mydesktopicon_name')
+	
+	Linkfolder_remove_desktop_icon_infunc
+	
+	[Linkfolder_remove_desktop_icon_infunc]
+	set_basefolder common_desktopdirectory
+	set_subfolder ""
+	delete_element $name$
+EndFunc
+; ###################################################################################################

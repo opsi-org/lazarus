@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; and published under the Terms of the General Public License.
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -20,58 +20,61 @@ DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
 DefVar $installSuccess$
+DefStringlist $ListOfPackageNames$
 #@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
+importlib "%scriptpath%\uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		= "#@productId*#"
-; the path where we find the product after the installation
-Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $ProductId$		 = "#@productId*#"
+Set $MinimumSpace$	 = "1 MB"
+; the path were we find the product after the installation
+Set $LicenseRequired$ = "false"
 Set $LicensePool$	  = "" 
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+; enter here names of the package at the supported Distributions / Versions
+Set $ListOfPackageNames$ = CreateStringList("<packagename>")
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
-if not(($OS$ = "macos"))
-	logError "Installation aborted: wrong OS version: only MacOS"
+if not(($OS$ = "linux"))
+	logError "Installation aborted: wrong OS version: only linux"
 	isFatalError "wrong OS"
 endif
-
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
-endif
+;if FileExists("%ScriptPath%\delsub.opsiscript")
+;	comment "Start uninstall sub section"
+;	Sub "%ScriptPath%\delsub.opsiscript"
+;endif
 
 Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
+	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
 #@preInstallLines1*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
-#@installCommandLine1*#
+; we expect that you want install a package from a existing repo
+set $installSuccess$ = linuxInstallOneOf($ListOfPackageNames$) 
 ;----------------------------------------------
 Sub_check_installSuccess
 #@postInstallLines1*#
 
+comment "Copy files"
+Files_install
 
 [Sub_check_installSuccess]
 if $installSuccess$  = "false"
@@ -80,6 +83,13 @@ if $installSuccess$  = "false"
 else
 	Comment "Installation success"
 endif
+
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+
 
 #@SetupSectionLines*#
 ; ----------------------------------------------------------------

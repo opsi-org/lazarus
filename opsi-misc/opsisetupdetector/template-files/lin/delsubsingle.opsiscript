@@ -1,0 +1,12 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+Message "Uninstalling " + $ProductId$ + " ..."
+#@uninstallCommandLine1*#
+
+
+#@DelsubSectionLines*#
+;-----------------------------------------------------

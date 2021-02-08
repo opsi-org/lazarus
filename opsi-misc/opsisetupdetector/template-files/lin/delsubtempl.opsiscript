@@ -1,0 +1,25 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+;----------------------------------------------
+; we expect that you want install a package from a existing repo
+set $installSuccess$ = linuxInstallOneOf($ListOfPackageNames$) 
+;----------------------------------------------
+Sub_check_installSuccess
+
+
+[Sub_check_installSuccess]
+if $installSuccess$  = "false"
+	LogError "DeInstallation failed"
+	isfatalerror "DeInstallation failed"
+else
+	Comment "Installation success"
+endif
+
+;-----------------------------------------------------
+
+#@DelsubSectionLines*#
+;-----------------------------------------------------
