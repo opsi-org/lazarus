@@ -8189,7 +8189,7 @@ begin
   try
     inifilename := ExpandFileName(inifilename);
     LoadFromFile(inifilename);
-    Text := reencode(Text, 'system');
+    //Text := reencode(Text, 'system');
     filename := inifilename;
   except
   end;
