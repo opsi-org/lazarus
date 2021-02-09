@@ -533,7 +533,7 @@ begin
     LogDatei.log('Will save (' + encoding + ') to file: ' + outFileName +
       ' :', LLDebug2);
     LogDatei.log('-----------------', LLDebug3);
-    writeln(myfile, reencode(inlist.Text, 'utf8', usedenc, encoding));
+    write(myfile, reencode(inlist.Text, 'utf8', usedenc, encoding));
 
     LogDatei.log('-----------------', LLDebug3);
     CloseFile(myfile);
