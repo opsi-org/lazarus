@@ -1821,7 +1821,6 @@ begin
     uib_exitcode_function := '';
     detected := @detectedbypatternwithand;
   end;
-    stLinRPM, stLinDeb
   // marker for add installers
 
   architectureModeList := TStringList.Create;

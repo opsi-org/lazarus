@@ -2464,7 +2464,7 @@ begin
     initaktproduct;
     //aktProduct.targetOS := osMac;
     localTOSset := aktProduct.productdata.targetOS;
-    Include(localTOSset,osLinux);
+    Include(localTOSset,osLin);
     aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;

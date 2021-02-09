@@ -21,6 +21,7 @@ Wise Installer
 stWixToolset,
 * install4j (install4j, ej-technologies : perpustakaan-light)
   * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+  * https://www.ej-technologies.com/products/install4j/overview.html
 * QT Installer Framework (Avidemux 4.7.3, msys2)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/

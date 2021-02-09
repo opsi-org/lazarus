@@ -384,10 +384,7 @@ msgstr ""
 
 #: tfnewpropdlg.label1.caption
 msgctxt "tfnewpropdlg.label1.caption"
-msgid ""
-"Please edit the dependency.\n"
-"Please note:\n"
-"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgid "Please edit the Property."
 msgstr ""
 
 #: tfnewpropdlg.label2.caption
