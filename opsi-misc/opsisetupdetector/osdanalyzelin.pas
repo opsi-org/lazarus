@@ -25,7 +25,9 @@ uses
   winpeimagereader,
   oslog,
   osdbasedata,
-  oscheckbinarybitness;
+  oscheckbinarybitness,
+  osdanalyzegeneral,
+  osparserhelper;
 
 (*
 const
@@ -48,8 +50,8 @@ procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
 
 procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 
-function getPacketIDfromFilename(str: string): string;
-function getPacketIDShort(str: string): string;
+//function getPacketIDfromFilename(str: string): string;
+//function getPacketIDShort(str: string): string;
 
 
 (*
@@ -76,6 +78,7 @@ implementation
 uses
   osdform;
 
+(*
 function getPacketIDfromFilename(str: string): string;
 var
   strnew: string;
@@ -148,6 +151,8 @@ begin
   Result := outstr;
 end;
 
+*)
+
 
 procedure get_aktProduct_general_info(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -184,13 +189,13 @@ begin
   // productId and name
   if str1 <> '' then
   begin
-    aktProduct.productdata.productId := 'm-' + getPacketIDShort(str1);
+    aktProduct.productdata.productId := 'l-' + getPacketIDShort(str1);
     aktProduct.productdata.productName := str1;
   end
   else
   begin
     product := ExtractFileNameWithoutExt(mysetup.setupFileName);
-    aktProduct.productdata.productId := 'm-' + getPacketIDShort(product);
+    aktProduct.productdata.productId := 'l-' + getPacketIDShort(product);
     // try to strip version from filename
     str1 := copy(product, 0, pos('-', product) - 1);
     aktProduct.productdata.productName := str1;
@@ -252,8 +257,11 @@ var
       *)
     if RunCommand(cmd,commands,outstr,Options,swoHIDE) then
     begin
-      outstr := StringReplace(outstr,'#10','',[rfReplaceAll]);
+      LogDatei.log('RPM-Info for: '+fieldname+' is: '+outstr,LLnotice);
+      outstr := opsiunquotestr2(outstr,'""');
+      //outstr := StringReplace(outstr,'#10','',[rfReplaceAll]);
       outstr :=  TrimRightSet(outstr, [#10,#13]);
+      LogDatei.log('RPM-Info for: '+fieldname+' is: '+outstr,LLnotice);
     result := outstr;
     end;
   end;
@@ -266,9 +274,9 @@ begin
     {$IFDEF LINUX}
   // product ID
   tmpstr := getFieldInfoFromRpm(myfilename,'name');
-  aktProduct.productdata.productId:= getPacketIDShort(tmpstr);
+  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(tmpstr);
   // product name
-  aktProduct.productdata.productId:= getFieldInfoFromRpm(myfilename,'name');
+  aktProduct.productdata.productName:= getFieldInfoFromRpm(myfilename,'name');
   // Softwareversion
   tmpstr := getFieldInfoFromRpm(myfilename,'version');
   aktProduct.productdata.productversion:= tmpstr;
@@ -278,11 +286,11 @@ begin
   // Advice
   tmpstr := getFieldInfoFromRpm(myfilename,'Vendor');
   if tmpstr <> '' then outstr := 'Vendor: '+tmpstr  + LineEnding;
-  tmpstr := getFieldInfoFromRpm(myfilename,'License') + LineEnding;
+  tmpstr := getFieldInfoFromRpm(myfilename,'License');
   if tmpstr <> '' then outstr := outstr + 'License: '+tmpstr  + LineEnding;
-   tmpstr := getFieldInfoFromRpm(myfilename,'Architecture') + LineEnding;
+   tmpstr := getFieldInfoFromRpm(myfilename,'Architecture');
   if tmpstr <> '' then outstr := outstr + 'Architecture: '+tmpstr  + LineEnding;
-  tmpstr := getFieldInfoFromRpm(myfilename,'Url') + LineEnding;
+  tmpstr := getFieldInfoFromRpm(myfilename,'Url');
   if tmpstr <> '' then outstr := outstr + 'Homepage: '+tmpstr  + LineEnding;
   aktProduct.productdata.advice := outstr;
   // size;
@@ -334,9 +342,9 @@ begin
   {$IFDEF LINUX}
   // product ID
   tmpstr := getFieldInfoFromDeb(myfilename,'package');
-  aktProduct.productdata.productId:= getPacketIDShort(tmpstr);
+  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(tmpstr);
   // product name
-  aktProduct.productdata.productId:= getFieldInfoFromDeb(myfilename,'package');
+  aktProduct.productdata.productName:= getFieldInfoFromDeb(myfilename,'package');
   // Softwareversion
   tmpstr := getFieldInfoFromDeb(myfilename,'version');
   aktProduct.productdata.productversion:= tmpstr;
@@ -346,11 +354,11 @@ begin
   // Advice
   tmpstr := getFieldInfoFromDeb(myfilename,'Vendor');
   if tmpstr <> '' then outstr := 'Vendor: '+tmpstr  + LineEnding;
-  tmpstr := getFieldInfoFromDeb(myfilename,'License') + LineEnding;
+  tmpstr := getFieldInfoFromDeb(myfilename,'License');
   if tmpstr <> '' then outstr := outstr + 'License: '+tmpstr  + LineEnding;
-   tmpstr := getFieldInfoFromDeb(myfilename,'Architecture') + LineEnding;
+   tmpstr := getFieldInfoFromDeb(myfilename,'Architecture');
   if tmpstr <> '' then outstr := outstr + 'Architecture: '+tmpstr  + LineEnding;
-  tmpstr := getFieldInfoFromDeb(myfilename,'Homepage') + LineEnding;
+  tmpstr := getFieldInfoFromDeb(myfilename,'Homepage');
   if tmpstr <> '' then outstr := outstr + 'Homepage: '+tmpstr  + LineEnding;
   aktProduct.productdata.advice := outstr;
   // size;
@@ -366,6 +374,16 @@ begin
   end;
 end;
 
+
+procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
+begin
+
+end;
+
+procedure get_linux_generic_info(myfilename: string; var mysetup: TSetupFile);
+begin
+
+end;
 
 procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
@@ -390,15 +408,22 @@ begin
 
   get_aktProduct_general_info(setupType, Filename, mysetup);
 
+  if setupType = stUnknown then
+    setupType := analyze_binary(FileName, verbose, False, mysetup);
+
   // marker for add installers
   case setupType of
     stLinRPM: get_rpm_info(Filename, mysetup);
     stLinDeb: get_deb_info(Filename, mysetup);
+    stBitrock: get_bitrock_info(Filename, mysetup);
     stUnknown: LogDatei.log(
         'Unknown Installer after Analyze.', LLcritical);
     else
-      LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
-        instIdToint(setupType)), LLcritical);
+      begin
+        LogDatei.log('Unexpected Setuptype in Analyze: ' installerToInstallerstr(setupType)
+      '  :  '+ IntToStr(instIdToint(setupType)), LLWarning);
+          get_linux_generic_info(Filename, mysetup);
+      end;
   end;
 
 

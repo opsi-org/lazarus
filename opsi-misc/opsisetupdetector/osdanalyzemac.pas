@@ -25,7 +25,8 @@ uses
   osdbasedata,
   oszip,
   osregex,
-  oscheckbinarybitness;
+  oscheckbinarybitness,
+  osdanalyzegeneral;
 
 (*
 const

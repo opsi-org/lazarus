@@ -10,7 +10,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Classes, SysUtils, CustApp, Interfaces, Forms, osdform, printers, fileinfo,
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
-  oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod, osdcheckentriesdlg;
+  oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
+  osdcheckentriesdlg, osdanalyzegeneral;
 
 
 {$R *.res}

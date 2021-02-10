@@ -23,8 +23,11 @@ uses
   winpeimagereader,
   oslog,
   osdbasedata,
+  osdanalyzegeneral,
   oscheckbinarybitness;
 
+
+(*
 const
 
   SetupType_AdvancedMSI = 'AdvancedMSI';
@@ -34,7 +37,7 @@ const
   SetupType_MSI = 'MSI';
   SetupType_NSIS = 'NSIS';
   SetupType_7zip = '7zip';
-
+*)
 
 procedure get_aktProduct_general_info(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
@@ -56,13 +59,16 @@ procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
-procedure grepmsi(instring: string);
+//procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
+(*
 function analyze_binary(myfilename: string; verbose, skipzero: boolean;
   var mysetup: TSetupFile): TKnownInstaller;
+
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
+*)
 function getProductInfoFromResource(infokey: string; filename: string): string;
 
 resourcestring
@@ -132,6 +138,7 @@ begin
   {$ENDIF WINDOWS}
 end;
 
+(*
 function getPacketIDfromFilename(str: string): string;
 var
   strnew: string;
@@ -233,7 +240,8 @@ begin
   if (0 < pos(lowercase(searchstr), lowerstring)) then
     Result := instring;
 end;
-
+*)
+(*
 procedure analyze_binstr(instring: string; var mysetup: TSetupFile);
 var
   lowerstring: string;
@@ -289,14 +297,15 @@ begin
     end;
   end;
 end;
-
+*)
+(*
 procedure grepmsi(instring: string);
 begin
   if (0 < pos('product_build_number{', lowercase(instring))) or
     (0 < pos('productcode{', lowercase(instring))) then
     mywrite(instring);
 end;
-
+*)
 procedure get_aktProduct_general_info(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
@@ -1142,7 +1151,7 @@ begin
 end;
 
 // marker for add installers
-
+(*
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
@@ -1178,7 +1187,8 @@ begin
     end;
   end;
 end;
-
+*)
+(*
 function analyze_binary(myfilename: string; verbose, skipzero: boolean;
   var mysetup: TSetupFile): TKnownInstaller;
 var
@@ -1307,7 +1317,7 @@ begin
   end;
   Result := analyze_markerlist(mysetup);
 end;
-
+*)
 
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var

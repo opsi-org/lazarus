@@ -1698,13 +1698,13 @@ begin
     install_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('<description>BitRock Installer</description>');
-    //patterns.Add('Wix Toolset');
+    patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
     link :=
       'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
-    detected := @detectedbypatternwithand;
+    detected := @detectedbypatternwithor;
   end;
   // stSelfExtractingInstaller
   with installerArray[integer(stSelfExtractingInstaller)] do
