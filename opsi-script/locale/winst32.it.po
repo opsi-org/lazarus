@@ -195,11 +195,3 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
-#: tsimplewinbatchgui.labelinfo.caption
-msgid "Software wird installiert. Bitte warten."
-msgstr ""
-
-#: tsimplewinbatchgui.labelversion.caption
-msgid "opsi-script 4.12.4.13"
-msgstr ""
-

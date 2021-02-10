@@ -1,7 +1,7 @@
 object CentralForm: TCentralForm
-  Left = 486
+  Left = 2240
   Height = 541
-  Top = 275
+  Top = 208
   Width = 966
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
@@ -55,6 +55,7 @@ object CentralForm: TCentralForm
     Top = 253
     Width = 966
     Align = alClient
+    Font.CharSet = ANSI_CHARSET
     Font.Color = clBlack
     Font.Height = -12
     Font.Name = 'Fixedsys'

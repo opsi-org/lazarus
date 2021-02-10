@@ -12014,6 +12014,32 @@ begin
       end;
     end
 
+    else if LowerCase(s) = LowerCase('asConfidentialList') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        k := logdatei.LogLevel;
+        logdatei.LogLevel := LLWarning;
+        list1 := TXStringList.Create;
+        try
+          if produceStringList(section, r, r, list1, InfoSyntaxError)
+            and skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxcheck := True;
+            for i := 0 to list1.Count - 1 do
+            begin
+              tmpstr := list1.Strings[i];
+              if tmpstr <> '' then
+                logdatei.AddToConfidentials(tmpstr);
+            end;
+          end;
+          list.Text := list1.Text;
+        finally
+          FreeAndNil(list1);
+          logdatei.LogLevel := k;
+        end;
+      end;
+    end
 
     else if LowerCase(s) = LowerCase('removeFromListByMatch') then
     begin
