@@ -11,6 +11,7 @@ opsi-winst/opsi-script (4.12.4.14) stable; urgency=low
  * call of patches section with /encoding parameter (by j.laajili)
  * call of patchTextFile section with /encoding parameter  (by j.laajili)
  * new boolean function: fileorfolderExists(<file name>, [<access arch>]) (by j.laajili)
+ * osregistry: open Registry with KEY:READ instead of KEY_ALL_ACCESS. Thanks to Jens Boettge. ; fixes  #4625
 
 -- d.oertel <d.oertel@uib.de> Fri, 29 Jan 2021 15:00
 

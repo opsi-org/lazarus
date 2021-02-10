@@ -2310,8 +2310,7 @@ var
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
-    if FileExists(PatchFilename) then
-      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
+    PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
     //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
     //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
@@ -2420,8 +2419,7 @@ var
         begin
           CheckRemainder(syntaxCheck);
 
-          //if PatchListe.count > 0
-          //then
+          //if PatchListe.count > 0 then
           PatchListe.SetItemPointer(-1);
         end
 
@@ -2481,7 +2479,7 @@ var
               try
                 secondStringList := TStringList.Create;
                 secondStringList.LoadFromFile(ExpandFileName(s1));
-                secondStringList.Text := reencode(secondStringList.Text, 'system');
+                //secondStringList.Text := reencode(secondStringList.Text, 'system');
                 PatchListe.addStrings(secondStringList);
                 secondStringList.Free;
               except
@@ -2648,7 +2646,8 @@ var
             working := FileExists(s1) or CreateTextFile(s1, FileError);
             if working then
               try
-                PatchListe.SaveToFile(s1);
+                //PatchListe.SaveToFile(s1);
+                PatchListe.SaveToFile(s1, flag_encoding)
               except
                 on ex: Exception do
                 begin
@@ -2682,7 +2681,7 @@ var
               try
                 secondStringList := TStringList.Create;
                 secondStringList.LoadFromFile(ExpandFileName(s1));
-                secondStringList.Text := reencode(secondStringList.Text, 'system');
+                //secondStringList.Text := reencode(secondStringList.Text, 'system');
                 patchliste.SetItemPointer(0);
 
                 j := 0;
@@ -2962,15 +2961,9 @@ var
 
 
     if saveToOriginalFile then
-      if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
-        PatchListe.SaveToFile(PatchFilename, flag_encoding)
-      else
-        PatchListe.SaveToFile(PatchFilename, 'utf8');
-
-    (*
-    if saveToOriginalFile then
-      PatchListe.SaveToFile(PatchFilename);
-    *)
+      PatchListe.SaveToFile(PatchFilename, flag_encoding);
+      //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
+      //PatchListe.SaveToFile(PatchFilename);
 
     PatchListe.Free;
     PatchListe := nil;
