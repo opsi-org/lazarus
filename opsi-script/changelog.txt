@@ -5,6 +5,13 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.15) stable; urgency=low
+
+ *  new function asConfidentialList(<list>) : stringlist
+ * new GUI Interface implementation
+
+-- d.oertel <d.oertel@uib.de> Fri, 12 Feb 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.14) stable; urgency=low
 
  * redesign of TXStringlist file in and out encoding  (by j.laajili)
