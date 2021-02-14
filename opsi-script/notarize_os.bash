@@ -10,6 +10,7 @@ BUNDLE_ID=org.opsi.opsi-script
 EXECUTABLE_NAME=opsi-script
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
+ENTITLEMENTS="--entitlements opsi-script.entitlements"
 
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
@@ -41,7 +42,8 @@ launchctl plist $FULLPATHTOEXE
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing binary..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+#codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+codesign -vvv --force --strict --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE

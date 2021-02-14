@@ -565,7 +565,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="61">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -833,6 +833,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="osSimpleWinBatchGUI"/>
       </Unit59>
+      <Unit60>
+        <Filename Value="opsi-script.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
