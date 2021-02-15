@@ -2143,7 +2143,7 @@ begin
     if Line = PStatNames^ [tsCondClose] then
       Line := '\';
     CentralForm.Label2.Caption := Line;
-    FBatchOberflaeche.SetMessageText(Line,mDetail); //setDetailLabel(Line);
+    FBatchOberflaeche.SetMessageText(Line, mDetail); //setDetailLabel(Line);
   end;
 
   ProcessMess;
@@ -2182,7 +2182,8 @@ begin
   ps := Sektion.Name;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
-  FBatchOberflaeche.SetMessageText(ps, mDetail); //setDetailLabel(CentralForm.Label2.Caption);
+  FBatchOberflaeche.SetMessageText(ps, mDetail);
+  //setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
 end;
 
@@ -2196,7 +2197,8 @@ begin
   FNumberOfWarnings := SaveWarningNumber + DiffNumberOfWarnings;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := CentralForm.Label2.Caption + ' finished';
-  FBatchOberflaeche.SetMessageText(CentralForm.Label2.Caption, mDetail);//setDetailLabel(CentralForm.Label2.Caption);
+  FBatchOberflaeche.SetMessageText(CentralForm.Label2.Caption, mDetail);
+  //setDetailLabel(CentralForm.Label2.Caption);
 
   (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
   ProcessMess;
@@ -2962,8 +2964,8 @@ var
 
     if saveToOriginalFile then
       PatchListe.SaveToFile(PatchFilename, flag_encoding);
-      //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
-      //PatchListe.SaveToFile(PatchFilename);
+    //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
+    //PatchListe.SaveToFile(PatchFilename);
 
     PatchListe.Free;
     PatchListe := nil;
@@ -9857,7 +9859,7 @@ from defines.inc
 
   finally
     {$IFDEF GUI}
-    FBatchOberflaeche.SetElementVisible(False,  eActivityBar);//showAcitvityBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
 
     if showoutput then
     begin
@@ -10220,7 +10222,8 @@ begin
       FBatchOberflaeche.SetForceStayOnTop(False);
     if AutoActivityDisplay then
       FBatchOberflaeche.SetElementVisible(True, eActivityBar);//showAcitvityBar(True);
-    FBatchOberflaeche.SetElementEnabled(True, eTimerProcessMess); //TimerProcessMess.Enabled := True;
+    FBatchOberflaeche.SetElementEnabled(True, eTimerProcessMess);
+    //TimerProcessMess.Enabled := True;
     {$ENDIF GUI}
 
     Result := tsrPositive;
@@ -11411,7 +11414,12 @@ begin
         begin
           try
             s1 := ExpandFileName(s1);
-            list.loadfromfile(s1);
+            if FileExists(s1) then
+              list.loadfromfile(s1)
+            else
+            begin
+              LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+            end;
             // encoding from system is the default at txstinglist
             //list.Text := reencode(list.Text, 'system');
           except
@@ -11441,8 +11449,15 @@ begin
                 syntaxCheck := True;
                 try
                   s1 := ExpandFileName(s1);
+                  if FileExists(s1) then
+                    list.loadFromFileWithEncoding(s1, s2)
+                  else
+                  begin
+                    LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                  end;
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
-                  list.loadFromFileWithEncoding(s1, s2);
+                  //list.loadFromFileWithEncoding(s1, s2);
                   //list.loadfromfile(s1);
                   //list.Text := reencode(list.Text, s2);
                 except
@@ -11465,9 +11480,16 @@ begin
         begin
           try
             s1 := ExpandFileName(s1);
+            if FileExists(s1) then
+              TStringList(list).Assign(loadUnicodeTextFile(s1))
+            else
+            begin
+              LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+            end;
             //list.loadfromfile (s1);
             //list.Text:= reencode(list.Text, 'ucs2le');
-            TStringList(list).Assign(loadUnicodeTextFile(s1));
+            //TStringList(list).Assign(loadUnicodeTextFile(s1));
             //wsloadfromfile (s1, TStringList (list));
           except
             on e: Exception do
@@ -11495,8 +11517,15 @@ begin
         inifile := TuibIniScript.Create;
         try
           s1 := ExpandFileName(s1);
-          inifile.loadfromfile(s1);
-          inifile.Text := reencode(inifile.Text, 'system');
+          if FileExists(s1) then
+            inifile.loadfromfile(s1)
+          else
+          begin
+            LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+            FNumberOfErrors := FNumberOfErrors + 1;
+          end;
+          //inifile.loadfromfile(s1);
+          //inifile.Text := reencode(inifile.Text, 'system');
         except
           on e: Exception do
           begin
@@ -12022,8 +12051,8 @@ begin
         logdatei.LogLevel := LLWarning;
         list1 := TXStringList.Create;
         try
-          if produceStringList(section, r, r, list1, InfoSyntaxError)
-            and skip(')', r, r, InfoSyntaxError) then
+          if produceStringList(section, r, r, list1, InfoSyntaxError) and
+            skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
             for i := 0 to list1.Count - 1 do
@@ -14819,7 +14848,14 @@ begin
         try
           list1 := TXStringList.Create;
           s1 := ExpandFileName(s1);
-          list1.loadfromfile(s1);
+          if FileExists(s1) then
+            list1.loadfromfile(s1)
+          else
+          begin
+            LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+            FNumberOfErrors := FNumberOfErrors + 1;
+          end;
+          //list1.loadfromfile(s1);
           if list1.Count > 0 then
             StringResult := list1.Strings[0]
           //StringResult := reencode(list1.Strings[0], 'system')
@@ -14855,7 +14891,14 @@ begin
                 list1 := TXStringList.Create;
                 s1 := ExpandFileName(s1);
                 //list1.loadfromfile(s1);
-                list1.loadFromFileWithEncoding(s1, s2);
+                if FileExists(s1) then
+                  list1.loadFromFileWithEncoding(s1, s2)
+                else
+                begin
+                  LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                end;
+                //list1.loadFromFileWithEncoding(s1, s2);
                 if list1.Count > 0 then
                   StringResult := list1.Strings[0]
                 //StringResult := reencode(list1.Strings[0], s2)
@@ -16200,8 +16243,15 @@ begin
         begin
           try
             s3 := ExpandFileName(s3);
-            list1.loadfromfile(s3);
-            list1.Text := reencode(list1.Text, 'system');
+            if FileExists(s3) then
+              list1.loadfromfile(s3)
+            else
+            begin
+              LogDatei.log('Error on loading file (not found): ' + s3, LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+            end;
+            //list1.loadfromfile(s3);
+            //list1.Text := reencode(list1.Text, 'system');
           except
             on e: Exception do
             begin
@@ -16261,8 +16311,14 @@ begin
       begin
         try
           s3 := ExpandFileName(s3);
-          list1.loadfromfile(s3);
-          list1.Text := reencode(list1.Text, 'system');
+          if FileExists(s3) then
+            list1.loadfromfile(s3)
+          else
+          begin
+            LogDatei.log('Error on loading file (not found): ' + s3, LLError);
+            FNumberOfErrors := FNumberOfErrors + 1;
+          end;
+
         except
           on e: Exception do
           begin
@@ -17526,8 +17582,8 @@ begin
     if s2 <> '' then
     begin
       Logdatei.log('Error: Second parameter is ignored in 64 bit opsi-script ',
-            LLError);
-      s2 :='';
+        LLError);
+      s2 := '';
     end;
     if s2 = '' then
     begin
@@ -19659,7 +19715,8 @@ begin
   //ApplyTextConstants (TXStringList (Sektion), false);
   output := TXStringList.Create;
   {$IFDEF GUI}
-  FBatchOberflaeche.SetBatchWindowMode(batchWindowMode); //setWindowState(batchWindowMode);
+  FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
+  //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
   linecounter := 1;
@@ -23540,7 +23597,8 @@ begin
     FBatchOberflaeche.SetMessageText('', mInfo);//setInfoLabel('');
 
     CentralForm.Label2.Caption := '';
-    FBatchOberflaeche.SetMessageText('', mDetail);//setDetailLabel(CentralForm.Label2.Caption);
+    FBatchOberflaeche.SetMessageText('', mDetail);
+    //setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
   {$IFDEF UNIX}
     lispecfolder.retrieveFolders4Linux;
