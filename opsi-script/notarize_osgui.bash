@@ -57,6 +57,10 @@ codesign -dv -r- $EXECUTABLE_DIR
 codesign -vvv --deep --strict $EXECUTABLE_DIR
 codesign -d --entitlements :- $EXECUTABLE_DIR
 
+### no notarize ####
+exit $?
+### no notarize ####
+
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
 hdiutil create -volname $EXECUTABLE_NAME -srcfolder $EXECUTABLE_DIR -ov -format UDZO -layout SPUD -fs HFS+J  ${EXECUTABLE_NAME}_macOS.dmg

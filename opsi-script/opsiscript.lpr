@@ -59,6 +59,7 @@ uses //lcltranslator,
   osservicepassdlg,
   oslistedit,
   Forms,
+ osGUIControl,
   {$ELSE GUI}
   custapp,
   oscheck_gui_startable,
@@ -78,7 +79,7 @@ uses //lcltranslator,
   osswaudit in 'osswaudit.pas',
   osfuncwin,
   osfuncwin2, {$ENDIF}
-  lazutf8, osGUIControl;
+  lazutf8;
 
 
 
