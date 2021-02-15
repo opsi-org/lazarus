@@ -574,26 +574,38 @@ var
   value_obj, new_obj: ISuperObject;
   mykeylist: TStringList;
 begin
-  Result := False;
-  mykeylist := TStringList.Create;
-  new_obj := SO(str);
-  value_obj := SO('"' + escapeControlChars(Value) + '"');
-  if jsonAsObjectGetKeyList(str, mykeylist) then
-    if (new_obj <> nil) and new_obj.IsType(stObject) then
-    begin
-      if (mykeylist.IndexOf(key) >= 0) then
-        new_obj.S[key] := Value
-      else  // key does not exist (case insensitive) - create it
-        new_obj.S[key] := value_obj.AsString;
-      //stringToSet := new_obj.AsJson;
-      stringToSet := new_obj.AsString;
-      Result := True;
-    end
-    else
-    begin
-      stringToSet := '';
+  try
+    try
       Result := False;
+      mykeylist := TStringList.Create;
+      new_obj := SO(str);
+      value_obj := SO('"' + escapeControlChars(Value) + '"');
+      if jsonAsObjectGetKeyList(str, mykeylist) then
+        if (new_obj <> nil) and new_obj.IsType(stObject) then
+        begin
+          if (mykeylist.IndexOf(key) >= 0) then
+            new_obj.S[key] := Value
+          else  // key does not exist (case insensitive) - create it
+            new_obj.S[key] := value_obj.AsString;
+          //stringToSet := new_obj.AsJson;
+          stringToSet := new_obj.AsString;
+          Result := True;
+        end
+        else
+        begin
+          stringToSet := '';
+          Result := False;
+        end;
+
+    except
+      on e: Exception do
+      begin
+        //LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +  e.message, LLerror);
+      end;
     end;
+  finally
+    FreeAndNil(mykeylist);
+  end;
 end;
 
 

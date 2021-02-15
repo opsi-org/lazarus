@@ -54,6 +54,11 @@ codesign -vvv --deep --strict $FULLPATHTOEXE
 #codesign -dv -r- $EXECUTABLE_DIR
 #codesign -vvv --deep --strict $EXECUTABLE_DIR
 
+### no notarize ####
+exit $?
+### no notarize ####
+
+
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
 
