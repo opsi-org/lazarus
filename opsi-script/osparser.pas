@@ -11419,7 +11419,7 @@ begin
               list.loadfromfile(s1)
             else
             begin
-              LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+              LogDatei.log('Error in LoadTextFile on loading file (not found): ' + s1, LLError);
             end;
             // encoding from system is the default at txstinglist
             //list.Text := reencode(list.Text, 'system');
@@ -11427,7 +11427,7 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Error on loading file: ' + e.message, LLError);
+              LogDatei.log('Exception in LoadTextFile on loading file: ' + s1 +' with msg: '+e.message, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
@@ -11454,7 +11454,7 @@ begin
                     list.loadFromFileWithEncoding(s1, s2)
                   else
                   begin
-                    LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                    LogDatei.log('Error in LoadTextFileWithEncoding on loading file (not found): ' + s1, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                   end;
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
@@ -11465,7 +11465,7 @@ begin
                   on e: Exception do
                   begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log('Error on loading file: ' + e.message, LLError);
+                    LogDatei.log('Exception in LoadTextFileWithEncoding on loading file: ' + s1 +' with msg: ' + e.message, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
@@ -11485,7 +11485,7 @@ begin
               TStringList(list).Assign(loadUnicodeTextFile(s1))
             else
             begin
-              LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+              LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' + s1, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
             end;
             //list.loadfromfile (s1);
@@ -11496,7 +11496,7 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Error on loading file: ' + e.message,
+              LogDatei.log('Exception in LoadUnicodeTextFile on loading file: '  + s1 +' with msg: '+ e.message,
                 LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
@@ -11522,7 +11522,7 @@ begin
             inifile.loadfromfile(s1)
           else
           begin
-            LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+            LogDatei.log('Error in GetSectionNames on loading file (not found): ' + s1, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
           //inifile.loadfromfile(s1);
@@ -11531,7 +11531,7 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Error on loading file: ' + e.message,
+            LogDatei.log('Exception in GetSectionNames on loading file: '  + s1 +' with msg: '+ e.message,
               LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
@@ -14853,7 +14853,7 @@ begin
             list1.loadfromfile(s1)
           else
           begin
-            LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+            LogDatei.log('Error in strLoadTextFile on loading file (not found): ' + s1, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
           //list1.loadfromfile(s1);
@@ -14867,7 +14867,7 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Error on loading file: ' + e.message, LLError);
+            LogDatei.log('Exception in strLoadTextFile on loading file: '  + s1 +' with msg: '+ e.message, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
           end
@@ -14910,7 +14910,7 @@ begin
                 on e: Exception do
                 begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('Error on loading file: ' + e.message, LLError);
+                  LogDatei.log('Exception in strLoadTextFileWithEncoding on loading file: '  + s1 +' with msg: '+ e.message, LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
@@ -16253,7 +16253,7 @@ begin
               list1.loadfromfile(s3)
             else
             begin
-              LogDatei.log('Error on loading file (not found): ' + s3, LLError);
+              LogDatei.log('Error in getValueFromFile on loading file (not found): ' + s3, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
             end;
             //list1.loadfromfile(s3);
@@ -16262,7 +16262,7 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Error on loading file: ' + e.message, LLError);
+              LogDatei.log('Exception in getValueFromFile on loading file: '  + s3 +' with msg: '+ e.message, LLError);
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
           end;
@@ -16321,7 +16321,7 @@ begin
             list1.loadfromfile(s3)
           else
           begin
-            LogDatei.log('Error on loading file (not found): ' + s3, LLError);
+            LogDatei.log('Error in getValueFromFileBySeparator on loading file (not found): ' + s3, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
 
@@ -16329,7 +16329,7 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Error on loading file: ' + e.message, LLError);
+            LogDatei.log('Exception in getValueFromFileBySeparator on loading file: '  + s3 +' with msg: '+ e.message, LLError);
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
           end
         end;
@@ -17851,7 +17851,7 @@ begin
               syntaxCheck := True;
 
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-              LogDatei.log('Searching "' + s1 + '" in File "' + s2 + '"', LevelComplete);
+              LogDatei.log('Searching "' + s1 + '" in File "' + s2 + '"', LLInfo);
               try
                 Textfile := TPatchList.Create;
                 Textfile.Clear;
@@ -17859,7 +17859,7 @@ begin
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
                 //Textfile.Text := reencode(Textfile.Text, 'system');
-
+                LogDatei.log_list(Tstrings(Textfile),LLDebug2);
                 BooleanResult :=
                   (Textfile.FindFirstItem(s1, False, -1, BooleanResult0) >= 0)
               except
