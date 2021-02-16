@@ -12044,7 +12044,7 @@ begin
       end;
     end
 
-    else if LowerCase(s) = LowerCase('asConfidentialList') then
+    else if LowerCase(s) = LowerCase('asConfidential') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
