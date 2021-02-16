@@ -9,6 +9,7 @@ opsi-winst/opsi-script (4.12.4.15) stable; urgency=low
 
  *  new function asConfidentialList(<list>) : stringlist
  * new GUI Interface implementation
+ * some additional try excet in osjson and load testfile variants
 
 -- d.oertel <d.oertel@uib.de> Fri, 12 Feb 2021 15:00
 
