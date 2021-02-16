@@ -1,5 +1,5 @@
 object CentralForm: TCentralForm
-  Left = 2240
+  Left = 938
   Height = 541
   Top = 208
   Width = 966
