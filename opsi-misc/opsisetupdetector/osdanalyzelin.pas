@@ -182,9 +182,9 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-  mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_generic(' + '"%scriptpath%\files' +
-    IntToStr(mysetup.ID) + '\' + mysetup.setupFileName + '") ';
+  mysetup.installCommandLine :=  'set $exitcode$ = shellCall(''' +
+    '"%scriptpath%/files' + IntToStr(mysetup.ID) + '/' + mysetup.setupFileName +
+    '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup +''')';
   str1 := '';
   // productId and name
   if str1 <> '' then
@@ -268,7 +268,7 @@ var
 
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
+    'set $exitcode$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
   try
     {$IFDEF LINUX}
@@ -337,7 +337,7 @@ begin
   try
   //outlist := TStringList.Create;
   mysetup.installCommandLine :=
-    'set $installSuccess$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
+    'set $exitcode$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
   {$IFDEF LINUX}
   // product ID
@@ -388,7 +388,7 @@ end;
 procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
-  extension : string;
+  extension, tmpstr  : string;
 
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
@@ -406,10 +406,13 @@ begin
   end;
   mysetup.installerId := setupType;
 
-  get_aktProduct_general_info(setupType, Filename, mysetup);
-
   if setupType = stUnknown then
+  begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
+    mysetup.installerId := setupType;
+  end;
+
+  get_aktProduct_general_info(setupType, Filename, mysetup);
 
   // marker for add installers
   case setupType of
@@ -420,24 +423,23 @@ begin
         'Unknown Installer after Analyze.', LLcritical);
     else
       begin
-        LogDatei.log('Unexpected Setuptype in Analyze: ' installerToInstallerstr(setupType)
-      '  :  '+ IntToStr(instIdToint(setupType)), LLWarning);
-          get_linux_generic_info(Filename, mysetup);
+        LogDatei.log('Unexpected Setuptype in Analyze: ' + installerToInstallerstr(setupType)
+        + '  :  '+ IntToStr(instIdToint(setupType)), LLWarning);
+         // get_linux_generic_info(Filename, mysetup);
       end;
   end;
 
 
   // marker for add installers
   // stLinRPM, stLinDeb
+  tmpstr := installerToInstallerstr(setupType);
   case setupType of
-    stLinRPM: Mywrite('Found well known installer: ' +
-        installerToInstallerstr(setupType));
-    stLinDeb: Mywrite('Found well known installer: ' +
-        installerToInstallerstr(setupType));
-    stUnknown: Mywrite('Sorry - unknown installer: ' +
-        installerToInstallerstr(setupType));
+    stLinRPM: Mywrite('Found well known installer: ' + tmpstr);
+    stLinDeb: Mywrite('Found well known installer: ' + tmpstr);
+    stBitrock: Mywrite('Found well known installer: ' + tmpstr);
+    stUnknown: Mywrite('Sorry - unknown installer: ' + tmpstr);
     else
-      Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+      Mywrite('Sorry - unknown installer: ' + tmpstr);
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=

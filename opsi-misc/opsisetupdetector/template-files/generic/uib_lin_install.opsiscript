@@ -544,8 +544,8 @@ deffunc linuxInstallOneFile($packagefile$ : string) : string
 	;@date            08.02.2021
 	;@Description     try to install the local file package given by $packagefile$
 	;@Description     This can be used specifying a package with different names for different linux distributions.
-	;@Returns         Returns string 'True' if one package was successfully installed
-	;@OnError         Returns string 'False'
+	;@Returns         Returns string '0' if one package was successfully installed
+	;@OnError         Returns string '-1'
 	;@ParamDesc_$package$     string with path ro package file to install
 	;@References      isOneInstalled
 	;@References      getLinuxCommand
@@ -564,15 +564,16 @@ deffunc linuxInstallOneFile($packagefile$ : string) : string
 		LogError "could not get Package Lock"
 	endif
 	
-	set $result$ = 'False'
+	set $result$ = '-1'
 	if fileexists($packagefile$)
 		set $command$ = getLinuxCommand('localpackage')
 		set $exitcode$ = shellCall($command$ + ' ' + $packagefile$)
 		comment 'Executed ' + $command$ + ' ' + $packagefile$ + ' got result ' + $exitcode$
 		if $exitcode$ = '0'
-			set $result$ = 'True'
+			set $result$ = '0'
 		else
 			LogError "Installation of package: "+$packagefile$+" failed with errorcode: "+$exitcode$
+			set $result$ = $exitcode$
 		endif
 	else
 		LogError "Package: "+$packagefile$+" could not be found."
@@ -585,8 +586,8 @@ deffunc linuxRemoveOnePackage($packagename$ : string) : string
 	;@date            08.02.2021
 	;@Description     try to remove the  package given by $packagename$
 	;@Description     This can be used specifying a package with different names for different linux distributions.
-	;@Returns         Returns string 'True' if package was successfully removed or was not installed
-	;@OnError         Returns string 'False'
+	;@Returns         Returns string '0' if package was successfully removed or was not installed
+	;@OnError         Returns string '-1'
 	;@ParamDesc_$packagename$     string with the name of a package to remove
 	;@References      isOneInstalled
 	;@References      getLinuxCommand
@@ -606,21 +607,22 @@ deffunc linuxRemoveOnePackage($packagename$ : string) : string
 		LogError "could not get Package Lock"
 	endif
 	
-	set $result$ = 'False'
+	set $result$ = '-1'
 	set $list$ = CreateStringlist($packagename$)
 	if stringToBool(isOneInstalled($list$))
 		set $command$ = getLinuxCommand('uninstall')
 		set $exitcode$ = shellCall($command$ + ' ' + $packagename$)
 		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
 		if $exitcode$ = '0'
-			set $result$ = 'True'
+			set $result$ = '0'
 			comment $packagename$ + " was successful removed"
 		else
 			LogError "Remove of package: "+$packagename$+" failed with errorcode: "+$exitcode$
+			set $result$ = $exitcode$
 		endif
 	else
 		comment "Package: "+$packagename$+" is not installed."
-		set $result$ = 'True'
+		set $result$ = '0'
 	endif
 endfunc
 

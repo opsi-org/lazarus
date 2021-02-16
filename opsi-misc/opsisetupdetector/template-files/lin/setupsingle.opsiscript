@@ -72,16 +72,15 @@ cleanupPackageSystem()
 #@installCommandLine1*#
 cleanupPackageSystem()
 ;----------------------------------------------
-Sub_check_installSuccess
+Sub_check_exitcode
 #@postInstallLines1*#
 
-
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "Installation failed"
-	isfatalerror "Installation failed"
+[sub_check_exitcode]
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
 else
-	Comment "Installation success"
+	Comment $ErrorString$
 endif
 
 #@SetupSectionLines*#

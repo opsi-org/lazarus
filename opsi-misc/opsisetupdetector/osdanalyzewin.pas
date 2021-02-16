@@ -1322,6 +1322,7 @@ end;
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
+  tmpstr : string;
 
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
@@ -1375,40 +1376,26 @@ begin
 
 
     // marker for add installers
+    tmpstr := installerToInstallerstr(setupType);
     case setupType of
-      stInno: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stNsis: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShield: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShieldMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stAdvancedMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      st7zip: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
+      stInno: Mywrite('Found well known installer: ' + tmpstr);
+      stNsis: Mywrite('Found well known installer: ' + tmpstr);
+      stInstallShield: Mywrite('Found well known installer: ' + tmpstr);
+      stInstallShieldMSI: Mywrite('Found well known installer: ' + tmpstr);
+      stAdvancedMSI: Mywrite('Found well known installer: ' + tmpstr);
+      st7zip: Mywrite('Found well known installer: ' + tmpstr);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallAware: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMSGenericInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stWixToolset: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBoxStub: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSFXcab: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBitrock: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSelfExtractingInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stUnknown: Mywrite('Sorry - unknown installer: ' +
-          installerToInstallerstr(setupType));
+      st7zipsfx: Mywrite('Found well known installer: ' + tmpstr);
+      stInstallAware: Mywrite('Found well known installer: ' + tmpstr);
+      stMSGenericInstaller: Mywrite('Found well known installer: ' + tmpstr);
+      stWixToolset: Mywrite('Found well known installer: ' + tmpstr);
+      stBoxStub: Mywrite('Found well known installer: ' + tmpstr);
+      stSFXcab: Mywrite('Found well known installer: ' + tmpstr);
+      stBitrock: Mywrite('Found well known installer: ' + tmpstr);
+      stSelfExtractingInstaller: Mywrite('Found well known installer: ' + tmpstr);
+      stUnknown: Mywrite('Sorry - unknown installer: ' + tmpstr);
       else
-        Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+        Mywrite('Sorry - unknown installer: ' + tmpstr);
     end;
     { avoid hyphen char "-" and replace with dot "." in version }
     aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);

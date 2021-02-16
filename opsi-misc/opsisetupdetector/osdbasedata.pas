@@ -1703,7 +1703,7 @@ begin
     link :=
       'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithor;
   end;
   // stSelfExtractingInstaller
@@ -1802,7 +1802,7 @@ begin
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
-    uib_exitcode_function := '';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
   with installerArray[integer(stLinDeb)] do
@@ -1818,7 +1818,7 @@ begin
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
-    uib_exitcode_function := '';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
   // marker for add installers

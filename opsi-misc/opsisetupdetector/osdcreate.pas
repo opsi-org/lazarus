@@ -313,7 +313,7 @@ function createClientFiles: boolean;
 var
   infilename, outfilename: string;
   insetup, indelsub, inuninstall: string;
-  templatePath: string;
+  templatePath, genericTemplatePath : string;
 begin
   Result := False;
   {$IFDEF WINDOWS}
@@ -332,7 +332,7 @@ begin
     templatePath := '/usr/local/share/opsi-setup-detector/template-files';
   {$ENDIF DARWIN}
 
-
+  genericTemplatePath := templatePath + Pathdelim + 'generic';
   if osWin in aktProduct.productdata.targetOS then
     templatePath := templatePath + Pathdelim + 'win'
   else if osLin in aktProduct.productdata.targetOS then
@@ -421,22 +421,29 @@ begin
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     end;
     //osd-lib.opsiscript
-    infilename := templatePath + Pathdelim + 'osd-lib.opsiscript';
+    infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
     outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     // install lib
     if osMac in aktProduct.productdata.targetOS then
     begin
-      infilename := templatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
+      infilename := genericTemplatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
       outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
     end;
     if osLin in aktProduct.productdata.targetOS then
     begin
-      infilename := templatePath + Pathdelim + 'uib_lin_install.opsiscript';
+      infilename := genericTemplatePath + Pathdelim + 'uib_lin_install.opsiscript';
       outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
+      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
+        cffPreserveTime], True);
+    end;
+    if fileexists(genericTemplatePath+ Pathdelim + 'uib_exitcode.opsiscript') then
+    begin
+      infilename := genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript';
+      outfilename := clientpath + PathDelim + 'uib_exitcode.opsiscript';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
     end;
