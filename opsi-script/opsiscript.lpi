@@ -162,7 +162,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dSYNAPSE"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dSYNAPSE -dOSLOG"/>
           </Other>
         </CompilerOptions>
       </Item4>

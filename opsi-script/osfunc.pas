@@ -7118,7 +7118,7 @@ begin
   if MatchCase then
     SearchUString := SearchString
   else
-    SearchUString := AnsiUpperCase(SearchString);
+    SearchUString := UTF8UpperString(SearchString);
 
   found := False;
   Result := startIndex;
@@ -7131,7 +7131,7 @@ begin
     if MatchCase then
       SearchItem := Strings[i - 1]
     else
-      SearchItem := AnsiUpperCase(Strings[i - 1]);
+      SearchItem := UTF8UpperString(Strings[i - 1]);
 
     if SearchUString = SearchItem then
     begin
@@ -7146,12 +7146,12 @@ begin
   begin
     LogS := 'Item no. ' + IntToStr(Result) + ' is containing ''' +
       SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
   end
   else
   begin
     LogS := 'No item found containing ''' + SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
   end;
 end;
 
