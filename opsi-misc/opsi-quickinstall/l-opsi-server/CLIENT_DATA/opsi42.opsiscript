@@ -210,9 +210,9 @@ if $myIPName$ = "auto"
 endif
 
 if $myIPNumber$ = "auto"
-    set $myIPNumber$ = getMyIpByTarget("")
-	;set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
-	set $myIPNumber$ = "1"
+    ;set $myIPNumber$ = getMyIpByTarget("")
+	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	;set $myIPNumber$ = "1"
 	if not(isValidIP4($myIPNumber$))
 		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
