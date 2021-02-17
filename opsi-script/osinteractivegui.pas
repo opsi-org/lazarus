@@ -599,15 +599,6 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-function GetGUITheme(PathToSkinFile: string): string;
-var
-  ThemeFile: TIniFile;
-begin
-  //PathToThemeFile := path + PathDelim + 'theme.ini';
-  ThemeFile := TIniFile.Create(PathToSkinFile);
-  Result := ThemeFile.ReadString('Window', 'Theme' , 'Default');
-  ThemeFile.Free;
-end;
 
 { TCentralForm }
 
