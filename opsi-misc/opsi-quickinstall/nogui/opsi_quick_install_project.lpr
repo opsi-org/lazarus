@@ -300,10 +300,11 @@ type
     end;
     //writeln(url);
     // !following lines need an existing LogDatei
+    writeln(distroName);
     if distroName = 'openSUSE' then
     begin
       writeln('OpenSUSE: Add Repo');
-      MyRepo.Add(url, 'Opsi-Quick-Install-Repository');
+      MyRepo.Add(url, 'OpsiQuickInstallRepository');
     end
     else
       MyRepo.Add(url);
@@ -318,11 +319,14 @@ type
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
     //writeln(Output);
 
+    // Never ever again problems with opsi.list!
+    Output := InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window, ...
     // ..."opsi-script-nogui -batch" for without?
     // new: opsi-script -silent for nogui
-    Output := InstallOpsiCommand.Run('opsi-script -silent -batch ' +
+    Output := InstallOpsiCommand.Run('../common/opsi-script-gui -silent -batch ' +
       DirClientData + 'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
@@ -2057,7 +2061,7 @@ begin
       '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
 
     writeln(rsCarryOut);
-    sleep(100);
+    sleep(50);
   end;
 
   // For test environment
@@ -2087,5 +2091,6 @@ begin
   end;
 
   writeln(LogDatei.StandardMainLogPath + logFileName);
+  writeln();
   LogDatei.Free;
 end.
