@@ -83,7 +83,6 @@ type
     { public declarations }
     constructor Create;
     destructor Destroy;
-
   end;
 
   TInstallers = array of TInstallerData;
@@ -1689,7 +1688,7 @@ begin
   // stBitrock
   with installerArray[integer(stBitrock)] do
   begin
-    description := 'Bitrock installer ';
+    description := 'Bitrock installer / VMWare installbuilder';
     silentsetup := '--mode unattended --unattendedmodeui none';
     unattendedsetup := '--mode unattended --unattendedmodeui minimal';
     silentuninstall := '--mode unattended --unattendedmodeui none';

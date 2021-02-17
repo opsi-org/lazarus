@@ -5,7 +5,33 @@
 encoding=utf8
 
 Message "Uninstalling " + $ProductId$ + " ..."
-#@uninstallCommandLine1*#
+
+comment "Start the Uninstall check:"
+set $oldProgFound$ = "false"
+#@uninstallCheckLines1*#
+
+if $oldProgFound$ = "true"
+	Message "Uninstalling " + $ProductId$ + " ..."
+	#@preUninstallLines1*#
+	comment "Start uninstall program"
+	ChangeDirectory "%SCRIPTPATH%\files1"
+	;----------------------------------------------
+	#@uninstallCommandLine1*#
+	;----------------------------------------------
+	Sub_check_exitcode_del
+	#@postUninstallLines1*#
+	#@DelsubHandleDesktopIcon*#
+endif
+
+[Sub_check_exitcode_del]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
 
 
 #@DelsubSectionLines*#

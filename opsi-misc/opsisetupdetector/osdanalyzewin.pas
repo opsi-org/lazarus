@@ -1137,7 +1137,7 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing Bitrock Installer:');
+  Mywrite('Analyzing Windows Bitrock Installer:');
   mywrite('get_bitrock_info finished');
 end;
 

@@ -234,7 +234,7 @@ end; //get_aktProduct_general_info
 
 procedure get_rpm_info(myfilename: string; var mysetup: TSetupFile);
 var
-  tmpstr, outstr : string;
+  tmpstr, outstr, packageId : string;
   fsize, fsizemb : Longword;
 
 
@@ -272,11 +272,12 @@ begin
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
   try
     {$IFDEF LINUX}
+    mysetup.installDirectory:= '<none>';
   // product ID
-  tmpstr := getFieldInfoFromRpm(myfilename,'name');
-  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(tmpstr);
+  packageId := getFieldInfoFromRpm(myfilename,'name');
+  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(packageId);
   // product name
-  aktProduct.productdata.productName:= getFieldInfoFromRpm(myfilename,'name');
+  aktProduct.productdata.productName:= packageId;
   // Softwareversion
   tmpstr := getFieldInfoFromRpm(myfilename,'version');
   aktProduct.productdata.productversion:= tmpstr;
@@ -300,6 +301,13 @@ begin
   if fsizemb < 1 then
     fsizemb := 1;
   mysetup.requiredSpace := round(fsizemb);
+    // uninstall
+  mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled('
+    + 'CreateStringlist('+packageId+')))');
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage('
+   + packageId +')';
   {$ENDIF LINUX}
   finally
     //FreeAndNil(outlist);
@@ -308,7 +316,7 @@ end;
 
 procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
 var
-  tmpstr, outstr : string;
+  tmpstr, outstr, packageId : string;
   fsize, fsizemb : Longword;
 
 
@@ -336,15 +344,16 @@ var
 begin
   try
   //outlist := TStringList.Create;
+  mysetup.installDirectory:= '<none>';
   mysetup.installCommandLine :=
     'set $exitcode$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
   {$IFDEF LINUX}
   // product ID
-  tmpstr := getFieldInfoFromDeb(myfilename,'package');
-  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(tmpstr);
+  packageId := getFieldInfoFromDeb(myfilename,'package');
+  aktProduct.productdata.productId:= 'l-'+getPacketIDShort(packageId);
   // product name
-  aktProduct.productdata.productName:= getFieldInfoFromDeb(myfilename,'package');
+  aktProduct.productdata.productName:= packageId;
   // Softwareversion
   tmpstr := getFieldInfoFromDeb(myfilename,'version');
   aktProduct.productdata.productversion:= tmpstr;
@@ -368,6 +377,13 @@ begin
   if fsizemb < 1 then
     fsizemb := 1;
   mysetup.requiredSpace := round(fsizemb);
+  // uninstall
+  mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled('
+    + 'CreateStringlist('+packageId+')))');
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage('
+   + packageId +')';
   {$ENDIF LINUX}
   finally
     //FreeAndNil(outlist);
@@ -376,8 +392,32 @@ end;
 
 
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
 begin
+  Mywrite('Analyzing Linux Bitrock Installer:');
+  mysetup.installDirectory:= '/opt/<product>/';
+  if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
+  begin
+    // use the uninstall prog without extenstion
+    mysetup.uninstallProg := ExtractFileNameOnly(installerArray[integer(mysetup.installerId)].uninstallProg);
+    str1 := 'if fileexists(''"''+$installdir$+''/' +mysetup.uninstallProg + '"'')';
+    mysetup.uninstallCheck.Add(str1);
 
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+    str1 := 'set $exitcode$ = shellCall(''"''+$installdir$+''/'
+    + mysetup.uninstallProg + '" '
+    + installerArray[integer(mysetup.installerId)].unattendeduninstall+''')';
+    mysetup.uninstallCommandLine := str1;
+  end
+  else
+  begin
+    // no known uninstall program
+    mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
+  end;
+  mywrite('get_bitrock_info finished');
 end;
 
 procedure get_linux_generic_info(myfilename: string; var mysetup: TSetupFile);
