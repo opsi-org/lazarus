@@ -98,10 +98,19 @@ implementation
 class function TGUIControl.GetGUITheme(const SkinDirectory: string): string;
 var
   ThemeFile: TIniFile;
+  FilePath: string;
 begin
-  ThemeFile := TIniFile.Create(GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini');
-  Result := ThemeFile.ReadString('Form', 'Theme' , 'Default');
-  ThemeFile.Free;
+  FilePath := GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini';
+  if FileExists(FilePath) then
+  begin
+    ThemeFile := TIniFile.Create(FilePath);
+    Result := ThemeFile.ReadString('Form', 'Theme' , 'Default');
+    ThemeFile.Free;
+  end
+  else
+  begin
+    Result := 'Default';
+  end;
 end;
 
 class function TGUIControl.GetSkinDirectory(const SkinDirectory: string = ''): string;

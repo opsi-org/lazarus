@@ -11,7 +11,7 @@ unit osSimpleWinBatchGUI;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, osGUIControl;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, osGUIControl, INIFiles;
 
 type
 
@@ -80,8 +80,22 @@ begin
 end;
 
 procedure TSimpleWinBatchGUI.LoadSkin(const SkinDirectory: string);
+var
+  SkinFile: TIniFile;
+  FilePath: string;
 begin
-
+  FilePath := GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini';
+  if FileExists(FilePath) then
+  begin
+    SkinFile := TIniFile.Create(GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini');
+    Color := StringToColor(SkinFile.ReadString('Form', 'Color' , 'clHotLight'));
+    LabelInfo.Caption := SkinFile.ReadString('LabelInfo', 'Caption' , 'Software wird installiert. Bitte warten.');
+    SkinFile.Free;
+  end
+  else
+  begin
+    LabelInfo.Caption := 'Software wird installiert. Bitte warten';
+  end;
 end;
 
 procedure TSimpleWinBatchGUI.SetMessageText(MessageText: string;
