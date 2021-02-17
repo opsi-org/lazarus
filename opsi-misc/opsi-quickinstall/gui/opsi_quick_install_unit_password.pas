@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated, LCLType;
+  MaskEdit, osRunCommandElevated, LCLType, cthreads;
 
 type
 
@@ -29,10 +29,18 @@ type
     procedure FormActivate(Sender: TObject);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    // get properties from query and write them to file properties.conf
+    procedure prepareInstallation;
+    // executed by thread (only the time consuming parts of the installation)
+    procedure installOpsi;
+    // show result of l-opsi-server installation and paths to log files,
+    // executed in TPassword.FormClose
+    procedure showResult;
   private
     FMyThread: TThread;
+    // directory l-opsi-server/CLIENT_DATA
+    clientDataDir: string;
   public
-
   end;
 
 type
@@ -48,7 +56,6 @@ type
   public
     constructor Create(Form: TPassword);
   end;
-
 
 var
   Password: TPassword;
@@ -87,14 +94,20 @@ begin
 end;
 
 procedure TMyThread.Execute;
-var
-  fileName, propertyName, url, Output, shellCommand: string;
-  FileText: TStringList;
-  MyRepo: TLinuxRepository;
-  InstallRunCommand: TRunCommandElevated;
 begin
-  FreeOnTerminate := True;
+  FForm.installOpsi;
+  //Sleep(2000);
+  Synchronize(@Complete);
+end;
 
+{ TPassword }
+
+// get properties from query and write them to file properties.conf
+procedure TPassword.prepareInstallation;
+var
+  propertyName: string;
+  FileText: TStringList;
+begin
   // write user input in l-opsi-server.conf and properties.conf file:
   FileText := TStringList.Create;
 
@@ -110,7 +123,8 @@ begin
   else
     FileText.Add(propertyName + '=mysql');
 
-  propertyName := 'dnsdomain';
+  // for several domains
+  {propertyName := 'dnsdomain';
   if Query5_dhcp.CheckBoxDomain1.Checked then
     FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain1.Caption)
   else if Query5_dhcp.CheckBoxDomain2.Checked then
@@ -118,9 +132,10 @@ begin
   else if Query5_dhcp.CheckBoxDomain3.Checked then
     FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain3.Caption)
   else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
+    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);}
 
-  propertyName := 'dnsdomain = ';
+  // for one domain
+  propertyName := 'dnsdomain=';
   if Query5_dhcp.CheckBoxDomain1.Checked then
     propertyName += Query5_dhcp.CheckBoxDomain1.Caption + ', ';
   if Query5_dhcp.CheckBoxDomain2.Checked then
@@ -129,7 +144,8 @@ begin
     propertyName += Query5_dhcp.CheckBoxDomain3.Caption + ', ';
   if Query5_dhcp.CheckBoxOtherDomain.Checked then
     propertyName += Query5_dhcp.EditDomain.Text + ', ';
-  delete(propertyName,propertyName.length-1,2);
+  Delete(propertyName, propertyName.length - 1, 2);
+  propertyName := 'dnsdomain=uib.local';
   FileText.Add(propertyName);
 
   propertyName := 'force_copy_modules';
@@ -235,24 +251,35 @@ begin
   //////////////////////////////////////////////////////////////////////////////
   // WritePropsToFile:
   // write in l-opsi-server.conf file:
-  fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
-  FileText.SaveToFile(fileName);
+  clientDataDir := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
+  FileText.SaveToFile(clientDataDir);
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
   //ShowMessage(ParamStr(0));
-  fileName := ExtractFilePath(ParamStr(0));
-  Delete(fileName, Length(fileName), 1);
-  fileName := ExtractFilePath(fileName) + 'l-opsi-server/CLIENT_DATA/';
-  FileText.SaveToFile(fileName + 'properties.conf');
+  clientDataDir := ExtractFilePath(ParamStr(0));
+  Delete(clientDataDir, Length(clientDataDir), 1);
+  clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server/CLIENT_DATA/';
+  FileText.SaveToFile(clientDataDir + 'properties.conf');
 
   // Important for getting the result 'failed' in case of a wrong password...
   // ...cause in this case the RunCommands below aren't executed...
   // ...and therefore setup.opsiscript, that usually does it, isn't too:
   FileText.Clear;
   FileText.Add('failed');
-  FileText.SaveToFile(fileName + 'result.conf');
+  FileText.SaveToFile(clientDataDir + 'result.conf');
   //////////////////////////////////////////////////////////////////////////////
-  // InstallOpsi:
+
+  //ShowMessage(clientDataDir);
+  FileText.Free;
+end;
+
+// executed by thread (only the time consuming parts of the installation)
+procedure TPassword.installOpsi;
+var
+  url, Output, shellCommand: string;
+  MyRepo: TLinuxRepository;
+  InstallRunCommand: TRunCommandElevated;
+begin
   // create repository
   MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
@@ -285,26 +312,33 @@ begin
   //ShowMessage(Output);
   Output := InstallRunCommand.Run(shellCommand + 'install opsi-script');
   //ShowMessage(Output);
-  Output := InstallRunCommand.Run('opsi-script -batch ' + fileName +
-    'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+  Output := InstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  //ShowMessage(Output);
+  Output := InstallRunCommand.Run('../common/opsi-script-gui -batch ' +
+    clientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
-  FileText.LoadFromFile(fileName + 'result.conf');
-  // adjust quick-install ExitCode
-  if FileText[0] = 'failed' then
-    ExitCode := 1;
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
-    #10 + QuickInstall.logFileName);
-
-  FileText.Free;
   InstallRunCommand.Free;
   MyRepo.Free;
   QuickInstall.DistrInfo.Free;
-
-  //Sleep(2000);
-  Synchronize(@Complete);
 end;
 
-{ TPassword }
+// show result of l-opsi-server installation and paths to log files,
+// executed in TPassword.FormClose
+procedure TPassword.showResult;
+var
+  FileText: TStringList;
+begin
+  //ShowMessage(clientDataDir);
+  FileText := TStringList.Create;
+  FileText.LoadFromFile(clientDataDir + 'result.conf');
+  // adjust quick-install ExitCode
+  if FileText[0] = 'failed' then
+    ExitCode := 1;
+  ShowMessage(ExitCode.ToString);
+  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
+    #10 + QuickInstall.logFileName);
+  FileText.Free;
+end;
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
@@ -317,7 +351,7 @@ begin
   // text by resourcestrings
   Caption := rsPassword;
   LabelRights.Caption := rsRights;
-  LabelPassword.Caption := rsPassword+':';
+  LabelPassword.Caption := rsPassword + ':';
   CheckBoxShowPassword.Caption := rsShowPassword;
   BtnBack.Caption := rsBack;
   BtnFinish.Caption := rsFinish;
@@ -338,9 +372,15 @@ begin
   end
   else
   begin
+    prepareInstallation;
     if FMyThread = nil then
+    begin
       FMyThread := TMyThread.Create(Self);
+    end;
     Wait.Visible := True;
+    //if FMyThread.WaitFor > 0 then Wait.Visible := True
+    //else ShowMessage('<=0');
+    //if FMyThread.CheckTerminated then ShowMessage('finished');
   end;
 end;
 
@@ -365,6 +405,7 @@ end;
 
 procedure TPassword.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  showResult;
   // close project
   Overview.Close;
   Wait.Close;
