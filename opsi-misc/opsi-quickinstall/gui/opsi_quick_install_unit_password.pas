@@ -90,6 +90,7 @@ begin
   FForm.FMyThread := nil;
   //FForm.Caption := 'Thread has completed';
   // can't close Overview and Wait here, only Password
+  // On close, execute showResult!
   FForm.Close;
 end;
 
@@ -276,7 +277,7 @@ end;
 // executed by thread (only the time consuming parts of the installation)
 procedure TPassword.installOpsi;
 var
-  url, Output, shellCommand: string;
+  url, shellCommand: string;
   MyRepo: TLinuxRepository;
   InstallRunCommand: TRunCommandElevated;
 begin
@@ -308,13 +309,13 @@ begin
     Password.RadioBtnSudo.Checked);
   shellCommand := QuickInstall.DistrInfo.GetPackageManagementShellCommand(
     QuickInstall.distroName);
-  Output := InstallRunCommand.Run(shellCommand + 'update');
-  //ShowMessage(Output);
-  Output := InstallRunCommand.Run(shellCommand + 'install opsi-script');
-  //ShowMessage(Output);
-  Output := InstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
-  //ShowMessage(Output);
-  Output := InstallRunCommand.Run('../common/opsi-script-gui -batch ' +
+  InstallRunCommand.Run(shellCommand + 'update');
+  InstallRunCommand.Run(shellCommand + 'install opsi-script');
+
+  // Never ever again problems with opsi.list!
+  InstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+
+  InstallRunCommand.Run('../common/opsi-script-gui -batch ' +
     clientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 
   InstallRunCommand.Free;
