@@ -191,9 +191,10 @@ end;
 
 procedure TLinuxRepository.AddOpenSuseSLES(RepoName: string);
 begin
-  FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName);
-  writeln('echo "t"');
-  FRunCommandElevated.Run('echo "t" | zypper refresh');
+  writeln('zypper addrepo ' + FURL + RepoName);
+  FRunCommandElevated.Run('zypper addrepo ' + FURL + RepoName);
+  writeln('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
+  FRunCommandElevated.Run('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
 end;
 
 procedure TLinuxRepository.AddCentOSRedHat;
