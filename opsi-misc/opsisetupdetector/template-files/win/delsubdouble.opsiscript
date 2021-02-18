@@ -79,5 +79,7 @@ endif
 [Files_uninstall]
 del -sf "$InstallDir$\"
 
+#@DelsubDesktopiconSectionLines*#
+
 #@DelsubSectionLines*#
 ;-----------------------------------------------------

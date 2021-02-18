@@ -9163,8 +9163,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 544
-          ClientWidth = 646
+          ClientHeight = 546
+          ClientWidth = 648
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel

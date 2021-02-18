@@ -270,8 +270,7 @@ begin
     patchlist.add('#@postUninstallLines2*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon
-      and not (osMac in aktProduct.productdata.targetOS) then
+    if myconfiguration.UsePropDesktopicon then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim +
         'SetupHandleDesktopIcon.opsiscript');
@@ -289,13 +288,20 @@ begin
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
     str := '';
+    patchlist.add('#@SetupSectionLines*#=' + str);
+
+    str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim +
         'SetupDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
-    patchlist.add('#@SetupSectionLines*#=' + str);
+    patchlist.add('#@SetupDesktopiconSectionLines*#=' + str);
+
+    str := '';
+    patchlist.add('#@DelsubSectionLines*#=' + str);
+
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
@@ -303,7 +309,7 @@ begin
         'DelsubDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
-    patchlist.add('#@DelsubSectionLines*#=' + str);
+    patchlist.add('#@DelsubDesktopiconSectionLines*#=' + str);
   finally
     strlist.Free;
   end;

@@ -1346,6 +1346,11 @@ begin
     {$IFDEF UNIX}
     defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
       PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+    // in develop environment
+    if not fileexists(defaultIconFullFileName) then
+       defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
@@ -1733,7 +1738,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
@@ -1749,7 +1754,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
@@ -1765,7 +1770,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
@@ -1781,7 +1786,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
@@ -1797,7 +1802,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';
@@ -1813,7 +1818,7 @@ begin
     unattendeduninstall := '';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := '';
+    uninstallProg := '<none>';
     patterns.Add('');
     link := '';
     comment := 'Unknown Vendor';

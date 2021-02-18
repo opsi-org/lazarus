@@ -225,7 +225,13 @@ begin
   mysetup.requiredSpace := round(rsizemb);
   mysetup.setupFileSize := round(fsizemb);
 
+  // exitcode
+  mysetup.isExitcodeFatalFunction :=
+    installerArray[integer(mysetup.installerId)].uib_exitcode_function;
 
+  // uninstall
+  mysetup.uninstallProg:=
+    installerArray[integer(mysetup.installerId)].uninstallProg;
   // uninstallcheck
     // nothing yet
 end; //get_aktProduct_general_info
@@ -303,11 +309,11 @@ begin
   mysetup.requiredSpace := round(fsizemb);
     // uninstall
   mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled('
-    + 'CreateStringlist('+packageId+')))');
+    + 'CreateStringlist("'+packageId+'")))');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-  mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage('
-   + packageId +')';
+  mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage("'
+   + packageId +'")';
   {$ENDIF LINUX}
   finally
     //FreeAndNil(outlist);

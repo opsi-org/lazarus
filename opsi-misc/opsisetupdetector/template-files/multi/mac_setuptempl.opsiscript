@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; and published under the Terms of the General Public License.
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -17,39 +17,33 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
+DefVar $installSuccess$
 #@stringVars*#
-
-Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		= "#@productId*#"
-; the path where we find the product after the installation
-Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $ProductId$		 = "#@productId*#"
+Set $MinimumSpace$	 = "1 MB"
+; the path were we find the product after the installation
+;Set $InstallDir$		= "/Applications/<path to the product>"
+Set $InstallDir$		= "/Applications/<productid.app>"
+Set $LicenseRequired$ = "false"
 Set $LicensePool$	  = "" 
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
-if not(($OS$ = "Windows_NT"))
-	logError "Installation aborted: wrong OS version: only Windows"
+if not(($OS$ = "macos"))
+	logError "Installation aborted: wrong OS version: only MacOS"
 	isFatalError "wrong OS"
-endif
-
-if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
-	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
-	isFatalError "No Space"
-	; Stop process and set installation status to failed
 endif
 
 comment "Show product picture"
@@ -66,33 +60,35 @@ Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
+	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
 #@preInstallLines1*#
-comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
+comment "Start setup "
+ChangeDirectory "%SCRIPTPATH%/files1"
 ;----------------------------------------------
-Winbatch_install	#@installWaitForProc1*#
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
 ;----------------------------------------------
-Sub_check_exitcode
+Sub_check_installSuccess
 #@postInstallLines1*#
 
-#@SetupHandleDesktopIcon*#
+comment "Copy files"
+Files_install
 
-[Winbatch_install]
-#@installCommandLine1*#
-
-[sub_check_exitcode]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
+[Sub_check_installSuccess]
+if $installSuccess$  = "false"
+	LogError "Installation failed"
+	isfatalerror "Installation failed"
 else
-	Comment $ErrorString$
+	Comment "Installation success"
 endif
 
-#@SetupDesktopiconSectionLines*#
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+
 
 #@SetupSectionLines*#
 ; ----------------------------------------------------------------

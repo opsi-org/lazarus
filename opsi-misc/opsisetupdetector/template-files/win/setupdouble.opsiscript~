@@ -1,8 +1,9 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
 ; ----------------------------------------------------------------
+encoding=utf8
 
 [Actions]
 requiredWinstVersion >= "4.12.0.28"

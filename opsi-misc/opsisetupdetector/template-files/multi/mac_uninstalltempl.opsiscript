@@ -5,6 +5,7 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
+
 [Actions]
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
@@ -24,13 +25,13 @@ DefVar $oldProgFound$
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$		 = "#@productId*#"
-; the path where we find the product after the installation
+; the path were we find the product after the installation
+;Set $InstallDir$	= "/Applications/<product.app>"
 Set $InstallDir$	= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
@@ -38,22 +39,22 @@ Set $LicensePool$	  = ""
 
 set $OS$ = GetOS
 
-if not(($OS$ = "linux"))
-	logError "Installation aborted: wrong OS version: only Linux"
+if not(($OS$ = "macos"))
+	logError "Installation aborted: wrong OS version: only macos"
 	isFatalError "wrong OS"
 endif
 
 
 comment "Show product picture"
-ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%/delsub.opsiscript")
+if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/delsub.opsiscript"
+	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"
@@ -67,4 +68,11 @@ comment "License management is enabled and will be used"
 comment "Trying to free license used for the product"
 DefVar $result$
 Set $result$ = FreeLicense($LicensePool$)
+; If there is an assignment of a license pool to the product, it is possible to use
+; Set $result$ = FreeLicense("", $ProductId$)
+;
+; If there is an assignment of a license pool to a windows software id, it is possible to use
+; DefVar $WindowsSoftwareId$
+; $WindowsSoftwareId$ = "..."
+; set $result$ = FreeLicense("", "", $WindowsSoftwareId$)
 
