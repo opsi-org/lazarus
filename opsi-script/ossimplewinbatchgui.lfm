@@ -31,7 +31,6 @@ object SimpleWinBatchGUI: TSimpleWinBatchGUI
       Alignment = taCenter
       Anchors = [akLeft, akRight]
       AutoSize = False
-      Caption = 'Software wird installiert. Bitte warten.'
       Font.Color = clWindow
       Font.Height = 35
       Layout = tlCenter
