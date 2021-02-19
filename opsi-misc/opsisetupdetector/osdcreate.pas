@@ -177,50 +177,54 @@ begin
     end;
     *)
     patchlist.add('#@GetProductProperty*#=' + str);
+     // loop over setups
+    for i := 0 to 2 do
+    if aktProduct.SetupFiles[i].active then
     //setup 1
-    patchlist.add('#@MinimumSpace1*#=' + IntToStr(
-      aktProduct.SetupFiles[0].requiredSpace) + ' MB');
-    patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
-    patchlist.add('#@MsiId1*#=' + aktProduct.SetupFiles[0].msiId);
+    patchlist.add('#@MinimumSpace'+inttostr(i)+'*#=' + IntToStr(
+      aktProduct.SetupFiles[i].requiredSpace) + ' MB');
+    patchlist.add('#@InstallDir'+inttostr(i)+'*#=' + aktProduct.SetupFiles[i].installDirectory);
+    patchlist.add('#@MsiId'+inttostr(i)+'*#=' + aktProduct.SetupFiles[i].msiId);
     str := myconfiguration.preInstallLines.Text;
     if str <> '' then
       str := 'comment "Start Pre Install hook :"' + LineEnding +
         myconfiguration.preInstallLines.Text;
-    patchlist.add('#@preInstallLines1*#=' + str);
-    patchlist.add('#@installCommandLine1*#=' +
-      aktProduct.SetupFiles[0].installCommandLine);
-    str := aktProduct.SetupFiles[0].install_waitforprocess;
+    patchlist.add('#@preInstallLines'+inttostr(i)+'*#=' + str);
+    patchlist.add('#@installCommandLine'+inttostr(i)+'*#=' +
+      aktProduct.SetupFiles[i].installCommandLine);
+    str := aktProduct.SetupFiles[i].install_waitforprocess;
     if str <> '' then
       str := '/WaitForProcessEnding "' +
-        aktProduct.SetupFiles[0].install_waitforprocess + '" /TimeOutSeconds 20';
-    patchlist.add('#@installWaitForProc1*#=' + str);
+        aktProduct.SetupFiles[i].install_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@installWaitForProc'+inttostr(i)+'*#=' + str);
     str := myconfiguration.postInstallLines.Text;
     if str <> '' then
       str := 'comment "Start Post UnInstall hook :"' + LineEnding +
         myconfiguration.postInstallLines.Text;
-    patchlist.add('#@postInstallLines1*#=' + str);
-    patchlist.add('#@isExitcodeFatalFunction1*#=' +
-      aktProduct.SetupFiles[0].isExitcodeFatalFunction);
-    str := aktProduct.SetupFiles[0].uninstallCheck.Text;
-    patchlist.add('#@uninstallCheckLines1*#=' + str);
+    patchlist.add('#@postInstallLines'+inttostr(i)+'*#=' + str);
+    patchlist.add('#@isExitcodeFatalFunction'+inttostr(i)+'*#=' +
+      aktProduct.SetupFiles[i].isExitcodeFatalFunction);
+    str := aktProduct.SetupFiles[i].uninstallCheck.Text;
+    patchlist.add('#@uninstallCheckLines'+inttostr(i)+'*#=' + str);
     str := myconfiguration.preUninstallLines.Text;
     if str <> '' then
       str := 'comment "Start Pre UnInstall hook :"' + LineEnding +
         myconfiguration.preUninstallLines.Text;
-    patchlist.add('#@preUninstallLines1*#=' + str);
-    patchlist.add('#@uninstallCommandLine1*#=' +
-      aktProduct.SetupFiles[0].uninstallCommandLine);
-    patchlist.add('#@uninstallProg1*#=' + aktProduct.SetupFiles[0].uninstallProg);
-    str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
+    patchlist.add('#@preUninstallLines'+inttostr(i)+'*#=' + str);
+    patchlist.add('#@uninstallCommandLine'+inttostr(i)+'*#=' +
+      aktProduct.SetupFiles[i].uninstallCommandLine);
+    patchlist.add('#@uninstallProg'+inttostr(i)+'*#=' + aktProduct.SetupFiles[0].uninstallProg);
+    str := aktProduct.SetupFiles[i].uninstall_waitforprocess;
     if str <> '' then
       str := '/WaitForProcessEnding "' +
-        aktProduct.SetupFiles[0].uninstall_waitforprocess + '" /TimeOutSeconds 20';
-    patchlist.add('#@uninstallWaitForProc1*#=' + str);
+        aktProduct.SetupFiles[i].uninstall_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@uninstallWaitForProc'+inttostr(i)+'*#=' + str);
     str := myconfiguration.postUnInstallLines.Text;
     if str <> '' then
       str := 'comment "Start Post UnInstall hook :"' + LineEnding +
         myconfiguration.postUnInstallLines.Text;
-    patchlist.add('#@postUninstallLines1*#=' + str);
+    patchlist.add('#@postUninstallLines'+inttostr(i)+'*#=' + str);
+    (*
     //setup 2
     patchlist.add('#@MinimumSpace2*#=' + IntToStr(
       aktProduct.SetupFiles[1].requiredSpace) + ' MB');
@@ -268,11 +272,11 @@ begin
       str := 'comment "Start Post UnInstall hook :"' + LineEnding +
         myconfiguration.postUninstallLines.Text;
     patchlist.add('#@postUninstallLines2*#=' + str);
-
+    *)
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim +
+      strlist.LoadFromFile(templatePath + Pathdelim + 'win' +Pathdelim +
         'SetupHandleDesktopIcon.opsiscript');
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
     end;
@@ -293,7 +297,7 @@ begin
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim +
+      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
         'SetupDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
@@ -305,7 +309,7 @@ begin
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim +
+      strlist.LoadFromFile(templatePath + Pathdelim + 'win'+ Pathdelim +
         'DelsubDesktopIconSection.opsiscript');
       str := strlist.Text;
     end;
@@ -317,9 +321,11 @@ end;
 
 function createClientFiles: boolean;
 var
-  infilename, outfilename: string;
+  infilename, outfilename, tmpname, tmpext : string;
   insetup, indelsub, inuninstall: string;
-  templatePath, genericTemplatePath : string;
+  templatePath, genericTemplatePath, tempstr : string;
+  infilelist : TStringlist;
+  i : integer;
 begin
   Result := False;
   {$IFDEF WINDOWS}
@@ -340,35 +346,90 @@ begin
 
   genericTemplatePath := templatePath + Pathdelim + 'generic';
   if osWin in aktProduct.productdata.targetOS then
-    templatePath := templatePath + Pathdelim + 'win'
+    tempstr := 'win'
   else if osLin in aktProduct.productdata.targetOS then
-    templatePath := templatePath + Pathdelim + 'lin'
+    tempstr := 'lin'
   else if osMac in aktProduct.productdata.targetOS then
-    templatePath := templatePath + Pathdelim + 'mac';
+    tempstr := 'mac';
+  if (osWin in aktProduct.productdata.targetOS) and
+     (osLin in aktProduct.productdata.targetOS) and
+     (osMac in aktProduct.productdata.targetOS) then
+     tempstr := 'multi';
+
+  templatePath := templatePath + Pathdelim + tempstr;
 
   try
+    try
     patchlist := TStringList.Create;
     fillPatchList;
+    infilelist := TStringlist.Create;
     case osdsettings.runmode of
       singleAnalyzeCreate:
       begin
+        infilelist.Add('setupsingle.opsiscript');
+        infilelist.Add('delsubsingle.opsiscript');
+        infilelist.Add('uninstallsingle.opsiscript');
+        (*
         insetup := 'setupsingle.opsiscript';
         indelsub := 'delsubsingle.opsiscript';
         inuninstall := 'uninstallsingle.opsiscript';
+        *)
       end;
       twoAnalyzeCreate_1, twoAnalyzeCreate_2:
       begin
+        infilelist.Add('setupdouble.opsiscript');
+        infilelist.Add('delsubdouble.opsiscript');
+        infilelist.Add('uninstalldouble.opsiscript');
+        (*
         insetup := 'setupdouble.opsiscript';
         indelsub := 'delsubdouble.opsiscript';
         inuninstall := 'uninstalldouble.opsiscript';
+        *)
       end;
       createTemplate:
       begin
+        infilelist.Add('setuptempl.opsiscript');
+        infilelist.Add('delsubtempl.opsiscript');
+        infilelist.Add('uninstalltempl.opsiscript');
+        (*
         insetup := 'setuptempl.opsiscript';
         indelsub := 'delsubtempl.opsiscript';
         inuninstall := 'uninstalltempl.opsiscript';
+        *)
+      end;
+      threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+      begin
+        infilelist.Add('setupsingle.opsiscript');
+        infilelist.Add('uninstallsingle.opsiscript');
+        infilelist.Add('win_setupsingle.opsiscript');
+        infilelist.Add('win_delsubsingle.opsiscript');
+        infilelist.Add('win_uninstallsingle.opsiscript');
+        infilelist.Add('lin_setupsingle.opsiscript');
+        infilelist.Add('lin_delsubsingle.opsiscript');
+        infilelist.Add('lin_uninstallsingle.opsiscript');
+        infilelist.Add('mac_setupsingle.opsiscript');
+        infilelist.Add('mac_delsubsingle.opsiscript');
+        infilelist.Add('mac_uninstallsingle.opsiscript');
       end;
     end;
+    for i := 0 to infilelist.Count -1 do
+    begin
+      tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
+      tmpext := ExtractFileExt(infilelist.Strings[i]);
+      infilename := templatePath + Pathdelim + infilelist.Strings[i];
+      tmpname := StringReplace(tmpname,'single','',[]);
+      tmpname := StringReplace(tmpname,'double','',[]);
+      tmpname := StringReplace(tmpname,'templ','',[]);
+      if tmpname = 'setup' then
+        outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
+      else if tmpname = 'delsub' then
+      outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
+      else if tmpname = 'uninstall' then
+      outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript
+      else outfilename := clientpath + PathDelim + tmpname+'.'+tmpext;
+      patchScript(infilename, outfilename);
+    end;
+    (*
     // setup script
     infilename := templatePath + Pathdelim + insetup;
     outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript;
@@ -381,28 +442,33 @@ begin
     infilename := templatePath + Pathdelim + inuninstall;
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);
-    // complete dir 1
-    if aktProduct.SetupFiles[0].copyCompleteDir then
+    *)
+    // loop over setups
+    for i := 0 to 2 do
+    if aktProduct.SetupFiles[i].active then
+    // complete dir
+    if aktProduct.SetupFiles[i].copyCompleteDir then
     begin
-      CopyDirTree(ExtractFileDir(aktProduct.SetupFiles[0].setupFullFileName),
-        clientpath + PathDelim + 'files1',
+      CopyDirTree(ExtractFileDir(aktProduct.SetupFiles[i].setupFullFileName),
+        clientpath + PathDelim + 'files'+inttostr(i),
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]);
     end
     else
     begin
-      // setup file 1
-      if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
-        copyfile(aktProduct.SetupFiles[0].setupFullFileName,
-          clientpath + PathDelim + 'files1' + PathDelim +
+      // setup file
+      if FileExists(aktProduct.SetupFiles[i].setupFullFileName) then
+        copyfile(aktProduct.SetupFiles[i].setupFullFileName,
+          clientpath + PathDelim + 'files'+inttostr(i) + PathDelim +
           aktProduct.SetupFiles[0].setupFileName,
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
-      // MST file 1
+      // MST file
       if FileExists(aktProduct.SetupFiles[0].MSTFullFileName) then
         copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
-          clientpath + PathDelim + 'files1' + PathDelim +
+          clientpath + PathDelim + 'files'+inttostr(i) + PathDelim +
           aktProduct.SetupFiles[0].MSTFileName,
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     end;
+    (*
     // complete dir 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) and
       aktProduct.SetupFiles[1].copyCompleteDir then
@@ -426,6 +492,7 @@ begin
           aktProduct.SetupFiles[1].MSTFileName,
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     end;
+    *)
     //osd-lib.opsiscript
     infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
     outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
@@ -461,18 +528,16 @@ begin
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     //preinst
-    infilename := templatePath + Pathdelim + 'preinst';
+    infilename := genericTemplatePath + Pathdelim + 'preinst';
     outfilename := opsipath + pathdelim + 'preinst';
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     //postinst
-    infilename := templatePath + Pathdelim + 'postinst';
+    infilename := genericTemplatePath + Pathdelim + 'postinst';
     outfilename := opsipath + pathdelim + 'postinst';
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
 
-
-    FreeAndNil(patchlist);
     // write project file
     aktProduct.writeProjectFileToPath(prodpath);
     Result := True;
@@ -483,6 +548,11 @@ begin
       logdatei.log('createClientFiles file error: ' + E.ClassName +
         '/' + E.Message, LLError);
     end;
+  end;
+
+  finally
+    FreeAndNil(patchlist);
+    FreeAndNil(infilelist);
   end;
 end;
 

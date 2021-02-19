@@ -2193,6 +2193,18 @@ begin
       logdatei.log(
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
+    createTemplate,
+      singleAnalyzeCreate,
+      twoAnalyzeCreate_1,
+      twoAnalyzeCreate_2,
+      threeAnalyzeCreate_1,
+      threeAnalyzeCreate_2,
+      threeAnalyzeCreate_3:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetCreate;
+        Application.ProcessMessages;
+      end;
+    (*
     singleAnalyzeCreate:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
@@ -2209,6 +2221,7 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
+    *)
     gmUnknown:
     begin
       // we should never be here
@@ -2242,22 +2255,31 @@ begin
         logdatei.log(
           'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
       end;
+      (*
       singleAnalyzeCreate:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
+      *)
+      createTemplate,
+      singleAnalyzeCreate,
       twoAnalyzeCreate_1,
-      twoAnalyzeCreate_2:
+      twoAnalyzeCreate_2,
+      threeAnalyzeCreate_1,
+      threeAnalyzeCreate_2,
+      threeAnalyzeCreate_3:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
+      (*
       createTemplate:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
+      *)
       gmUnknown:
       begin
         // we should never be here
@@ -2276,6 +2298,18 @@ begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
+    createTemplate,
+      singleAnalyzeCreate,
+      twoAnalyzeCreate_1,
+      twoAnalyzeCreate_2,
+      threeAnalyzeCreate_1,
+      threeAnalyzeCreate_2,
+      threeAnalyzeCreate_3:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetIcons;
+        Application.ProcessMessages;
+      end;
+    (*
     singleAnalyzeCreate:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetIcons;
@@ -2291,6 +2325,7 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
+    *)
     gmUnknown:
     begin
       // we should never be here
@@ -2531,7 +2566,7 @@ begin
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
           LLError);
       end;
-      threeAnalyzeCreate_2:
+      threeAnalyzeCreate_3:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
@@ -2905,11 +2940,11 @@ begin
   ;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
-    PathDelim + 'template-files' + PathDelim + 'template.png');
+    PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   DefaultIcon.Picture.LoadFromFile('/usr/share/opsi-setup-detector' +
-    PathDelim + 'template-files' + PathDelim + 'template.png');
+    PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);

@@ -962,7 +962,7 @@ begin
   FProperties := TPProperties.Create(self);
   Fconfig_version := myVersion;
   FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
-    'template-files' + PathDelim + 'package_qa.txt';
+    'template-files' + PathDelim + 'generic' + PathDelim + 'package_qa.txt';
   FShowCheckEntryWarning := true;
   FUsePropDesktopicon := false;
   //readconfig;
