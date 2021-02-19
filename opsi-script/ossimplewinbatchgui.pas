@@ -83,19 +83,24 @@ procedure TSimpleWinBatchGUI.LoadSkin(const SkinDirectory: string);
 var
   SkinFile: TIniFile;
   FilePath: string;
+  //debug:string;
 begin
   FilePath := GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini';
   if FileExists(FilePath) then
   begin
-    SkinFile := TIniFile.Create(GetSkinDirectory(SkinDirectory) + PathDelim + 'skin.ini');
+    SkinFile := TIniFile.Create(FilePath);
     Color := StringToColor(SkinFile.ReadString('Form', 'Color' , 'clHotLight'));
     LabelInfo.Caption := SkinFile.ReadString('LabelInfo', 'Caption' , 'Software wird installiert. Bitte warten.');
+    LabelInfo.Repaint;
+    //debug:= LabelInfo.Caption;
     SkinFile.Free;
   end
   else
   begin
     LabelInfo.Caption := 'Software wird installiert. Bitte warten';
+    LabelInfo.Repaint;
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TSimpleWinBatchGUI.SetMessageText(MessageText: string;
