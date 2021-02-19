@@ -8,7 +8,7 @@ Message "Uninstalling " + $ProductId$ + " ..."
 
 comment "Start the Uninstall check:"
 set $oldProgFound$ = "false"
-#@uninstallCheckLines1*#
+#@uninstallCheckLines2*#
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
@@ -16,19 +16,19 @@ if $oldProgFound$ = "true"
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
-	#@uninstallCommandLine1*#
+	#@uninstallCommandLine2*#
 	;----------------------------------------------
 	Sub_check_exitcode_del
-	#@postUninstallLines1*#
+	#@postUninstallLines2*#
 endif
 
 [Sub_check_exitcode_del]
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else
 	Comment $ErrorString$
 endif
 
-#@DelsubSectionLines*#
+#@DelsubSectionLines2*#
 ;-----------------------------------------------------

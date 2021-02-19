@@ -356,6 +356,7 @@ type
     procedure BtSetup3NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateMacClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
     procedure CheckBoxDefaultIconChange(Sender: TObject);
@@ -536,6 +537,12 @@ resourcestring
   rsTwonalyzeAndCreateMsgHead = 'opsi-setup-detector: Two File (32/64 Bit) Product';
   rsTwonalyzeAndCreateMsgFirstSetup = 'First Select the 32 Bit Setup exe';
   rsTwonalyzeAndCreateMsgSecondSetup = 'Now Select the 64 Bit Setup exe';
+  rsThreeAnalyzeAndCreateMsgHead =
+    'opsi-setup-detector: Multi Platform three File (Win/Lin/Mac) Product';
+  rsThreeAnalyzeAndCreateMsgFirstSetup = 'First Select the Windows Setup exe';
+  rsThreeAnalyzeAndCreateMsgSecondSetup = 'Now Select the Linux installer file';
+  rsThreeAnalyzeAndCreateMsgThirdSetup = 'Now Select the MacOS installer file';
+
   rsPropEditErrorHead = 'opsi-setup-detector: Property Editor: Error';
   rsPropEditErrorDoubleMsgStart = 'property Id: ';
   rsPropEditErrorDoubleMsgFinish = ' exists. Duplicates not allowed.';
@@ -1058,12 +1065,12 @@ end;
 
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
-   OpenDialog1.FilterIndex := 8;   // project file
+  OpenDialog1.FilterIndex := 8;   // project file
   if OpenDialog1.Execute then
   begin
     initaktproduct;
     aktProduct.readProjectFile(OpenDialog1.FileName);
-    LogDatei.log('Read Project file from: '+OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Read Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
 
@@ -1072,7 +1079,7 @@ begin
   if SaveDialogProj.Execute then
   begin
     aktProduct.writeProjectFileToFile(SaveDialogProj.FileName);
-    LogDatei.log('Write Project file to: '+SaveDialogProj.FileName, LLnotice);
+    LogDatei.log('Write Project file to: ' + SaveDialogProj.FileName, LLnotice);
   end;
 end;
 
@@ -1157,7 +1164,7 @@ end;
 procedure TResultform1.BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
 var
   i: integer;
-  localTOSset : TTargetOSset;
+  localTOSset: TTargetOSset;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -1169,7 +1176,7 @@ begin
     initaktproduct;
     //aktProduct.targetOS := osWin;
     localTOSset := aktProduct.productdata.targetOS;
-    Include(localTOSset,osWin);
+    Include(localTOSset, osWin);
     aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
@@ -1181,6 +1188,7 @@ begin
       aktProduct.SetupFiles[0].copyCompleteDir := True;
     makeProperties;
     Application.ProcessMessages;
+    aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
@@ -1442,7 +1450,8 @@ begin
     // scale image
     DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
     {$ENDIF LINUX}
-    DefaultIcon.Picture.LoadFromFile(osdbasedata.aktProduct.productdata.productImageFullFileName);
+    DefaultIcon.Picture.LoadFromFile(
+      osdbasedata.aktProduct.productdata.productImageFullFileName);
     PaintPreview(DefaultIcon);
   end;
   // if CheckBoxDefaultIcon is unchecked then check CheckBoxNoIcon if no custom icon is selected
@@ -1527,6 +1536,7 @@ begin
     *)
     // start add property
     makeProperties;
+    aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
@@ -1566,6 +1576,21 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup2;
       Application.ProcessMessages;
     end;
+    threeAnalyzeCreate_1:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      Application.ProcessMessages;
+    end;
+    threeAnalyzeCreate_2:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+      Application.ProcessMessages;
+    end;
+    threeAnalyzeCreate_3:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup3;
+      Application.ProcessMessages;
+    end;
 
     createTemplate:
     begin
@@ -1575,7 +1600,8 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: gmUnknown', LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick osdsettings.runmode: gmUnknown',
+        LLError);
     end;
   end;
 end;
@@ -1978,12 +2004,12 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS:= [osWin];
-    aktProduct.productdata.productId:= 'opsi-template';
-    aktProduct.productdata.productName:= 'opsi template for Windows';
-    aktProduct.productdata.productversion:= '1.0.0';
-    aktProduct.productdata.packageversion:= 1;
-    aktProduct.productdata.description:= 'A template for opsi products for Windows';
+    aktProduct.productdata.targetOS := [osWin];
+    aktProduct.productdata.productId := 'opsi-template';
+    aktProduct.productdata.productName := 'opsi template for Windows';
+    aktProduct.productdata.productversion := '1.0.0';
+    aktProduct.productdata.packageversion := 1;
+    aktProduct.productdata.description := 'A template for opsi products for Windows';
   end;
 end;
 
@@ -1999,12 +2025,12 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS:= [osMac];
-    aktProduct.productdata.productId:= 'm-opsi-template';
-    aktProduct.productdata.productName:= 'opsi template for macos';
-    aktProduct.productdata.productversion:= '1.0.0';
-    aktProduct.productdata.packageversion:= 1;
-    aktProduct.productdata.description:= 'A template for opsi products for MacOS';
+    aktProduct.productdata.targetOS := [osMac];
+    aktProduct.productdata.productId := 'm-opsi-template';
+    aktProduct.productdata.productName := 'opsi template for macos';
+    aktProduct.productdata.productversion := '1.0.0';
+    aktProduct.productdata.packageversion := 1;
+    aktProduct.productdata.description := 'A template for opsi products for MacOS';
   end;
 end;
 
@@ -2020,12 +2046,12 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS:= [osLin];
-    aktProduct.productdata.productId:= 'l-opsi-template';
-    aktProduct.productdata.productName:= 'opsi template for Linux';
-    aktProduct.productdata.productversion:= '1.0.0';
-    aktProduct.productdata.packageversion:= 1;
-    aktProduct.productdata.description:= 'A template for opsi products for Linux';
+    aktProduct.productdata.targetOS := [osLin];
+    aktProduct.productdata.productId := 'l-opsi-template';
+    aktProduct.productdata.productName := 'opsi template for Linux';
+    aktProduct.productdata.productversion := '1.0.0';
+    aktProduct.productdata.packageversion := 1;
+    aktProduct.productdata.description := 'A template for opsi products for Linux';
   end;
 end;
 
@@ -2276,6 +2302,7 @@ end;
 procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
+  localTOSset: TTargetOSset;
 begin
   if ((aktProduct.SetupFiles[0].installDirectory = '') or
     (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
@@ -2312,12 +2339,42 @@ begin
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
           Application.ProcessMessages;
+          aktProduct.SetupFiles[1].active := True;
           Analyze(OpenDialog1.FileName,
             aktProduct.SetupFiles[1], True);
           SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
         end;
         //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
         //Application.ProcessMessages;
+      end;
+      threeAnalyzeCreate_1:
+      begin
+        osdsettings.runmode := threeAnalyzeCreate_2;
+        MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsThreeAnalyzeAndCreateMsgSecondSetup,
+          mtInformation, [mbOK], '');
+        OpenDialog1.FilterIndex := 6;   // linux
+        if OpenDialog1.Execute then
+        begin
+          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+            [mbYes, mbNo], 0, mbNo) = mrYes then
+            aktProduct.SetupFiles[1].copyCompleteDir := True;
+          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+          MemoAnalyze.Clear;
+          Application.ProcessMessages;
+          aktProduct.SetupFiles[1].active := True;
+          //aktProduct.targetOS := osLin;
+          localTOSset := aktProduct.productdata.targetOS;
+          Include(localTOSset, osLin);
+          aktProduct.productdata.targetOS := localTOSset;
+          //aktProduct.SetupFiles[1] := osLin;
+          localTOSset := aktProduct.SetupFiles[1].targetOS;
+          Include(localTOSset, osLin);
+          aktProduct.SetupFiles[1].targetOS := localTOSset;
+          AnalyzeLin(OpenDialog1.FileName,
+            aktProduct.SetupFiles[1], True);
+          SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+        end;
       end;
       createTemplate:
       begin
@@ -2339,8 +2396,11 @@ end;
 
 procedure TResultform1.BtSetup2NextStepClick(Sender: TObject);
 var
-  checkok: boolean = True;
+  checkok, isapp, goon: boolean;
+  filename: string;
+  localTOSset: TTargetOSset;
 begin
+  checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
     (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[1].installerId <> stMsi) then
@@ -2351,7 +2411,6 @@ begin
   end;
   if checkok then
   begin
-
     case osdsettings.runmode of
       analyzeOnly:
       begin
@@ -2368,6 +2427,60 @@ begin
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
+      end;
+      threeAnalyzeCreate_2:
+      begin
+        osdsettings.runmode := threeAnalyzeCreate_3;
+        MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsThreeAnalyzeAndCreateMsgThirdSetup,
+          mtInformation, [mbOK], '');
+        goon := False;
+        isapp := False;
+        if SelectDirectoryDialog1.Execute then
+        begin
+          goon := True;
+          filename := SelectDirectoryDialog1.FileName;
+          if ExtractFileExt(filename) = '.app' then
+          begin
+            isapp := True;
+            aktProduct.SetupFiles[2].copyCompleteDir := True;
+          end;
+        end;
+        if goon and not isapp then
+        begin
+          OpenDialog1.InitialDir := filename;
+          ;
+          OpenDialog1.FilterIndex := 5;   // macos
+          if OpenDialog1.Execute then
+          begin
+            filename := OpenDialog1.FileName;
+            goon := True;
+          end
+          else
+            goon := False;
+        end;
+        if goon then
+        begin
+          if not isapp then
+            if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+              [mbYes, mbNo], 0, mbNo) = mrYes then
+              aktProduct.SetupFiles[2].copyCompleteDir := True;
+          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+          MemoAnalyze.Clear;
+          Application.ProcessMessages;
+          //aktProduct.targetOS := osMac;
+          localTOSset := aktProduct.productdata.targetOS;
+          Include(localTOSset, osMac);
+          aktProduct.productdata.targetOS := localTOSset;
+          //aktProduct.SetupFiles[2] := osMac;
+          localTOSset := aktProduct.SetupFiles[2].targetOS;
+          Include(localTOSset, osMac);
+          aktProduct.SetupFiles[2].targetOS := localTOSset;
+          aktProduct.SetupFiles[2].active := True;
+          AnalyzeMac(OpenDialog1.FileName,
+            aktProduct.SetupFiles[2], True);
+          SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+        end;
       end;
       createTemplate:
       begin
@@ -2414,6 +2527,12 @@ begin
       end;
       twoAnalyzeCreate_2:
       begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
+          LLError);
+      end;
+      threeAnalyzeCreate_2:
+      begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
       end;
@@ -2439,21 +2558,21 @@ var
   filename: string;
   goon: boolean;
   isapp: boolean;
-  localTOSset : TTargetOSset;
+  localTOSset: TTargetOSset;
 begin
   goon := False;
   isapp := False;
 
-    OpenDialog1.InitialDir := filename;
-    ;
-    OpenDialog1.FilterIndex := 6;   // linux
-    if OpenDialog1.Execute then
-    begin
-      filename := OpenDialog1.FileName;
-      goon := True;
-    end
-    else
-      goon := False;
+  OpenDialog1.InitialDir := filename;
+  ;
+  OpenDialog1.FilterIndex := 6;   // linux
+  if OpenDialog1.Execute then
+  begin
+    filename := OpenDialog1.FileName;
+    goon := True;
+  end
+  else
+    goon := False;
 
   if goon then
   begin
@@ -2464,7 +2583,7 @@ begin
     initaktproduct;
     //aktProduct.targetOS := osMac;
     localTOSset := aktProduct.productdata.targetOS;
-    Include(localTOSset,osLin);
+    Include(localTOSset, osLin);
     aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
@@ -2479,6 +2598,7 @@ begin
     *)
     makeProperties;
     Application.ProcessMessages;
+    aktProduct.SetupFiles[0].active := True;
     AnalyzeLin(FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
@@ -2493,7 +2613,7 @@ var
   filename: string;
   goon: boolean;
   isapp: boolean;
-  localTOSset : TTargetOSset;
+  localTOSset: TTargetOSset;
 begin
   goon := False;
   isapp := False;
@@ -2528,7 +2648,7 @@ begin
     initaktproduct;
     //aktProduct.targetOS := osMac;
     localTOSset := aktProduct.productdata.targetOS;
-    Include(localTOSset,osMac);
+    Include(localTOSset, osMac);
     aktProduct.productdata.targetOS := localTOSset;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
@@ -2540,7 +2660,45 @@ begin
       aktProduct.SetupFiles[0].copyCompleteDir := True;
     makeProperties;
     Application.ProcessMessages;
+    aktProduct.SetupFiles[0].active := True;
     AnalyzeMac(FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
+procedure TResultform1.BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
+var
+  i: integer;
+  localTOSset: TTargetOSset;
+begin
+  OpenDialog1.FilterIndex := 1;   // setup
+  if OpenDialog1.Execute then
+  begin
+    osdsettings.runmode := threeAnalyzeCreate_1;
+    setRunMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    //aktProduct.targetOS := osWin;
+    localTOSset := aktProduct.productdata.targetOS;
+    Include(localTOSset, osWin);
+    aktProduct.productdata.targetOS := localTOSset;
+    //aktProduct.SetupFiles[0] := osLin;
+    localTOSset := aktProduct.SetupFiles[0].targetOS;
+    Include(localTOSset, osWin);
+    aktProduct.SetupFiles[0].targetOS := localTOSset;
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbNo, mbYes], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
+    makeProperties;
+    Application.ProcessMessages;
+    aktProduct.SetupFiles[0].active := True;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
@@ -2643,7 +2801,7 @@ end;
 
 procedure TResultform1.PageControl1Change(Sender: TObject);
 var
-  myimage : TImage;
+  myimage: TImage;
 begin
   if FileExists(aktProduct.productdata.productImageFullFileName) then
   begin
@@ -2742,7 +2900,8 @@ begin
   AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
   DefaultIcon.AutoAdjustLayout(lapAutoAdjustForDPI, 91, screen.PixelsPerInch, 0, 0);
   {$ENDIF LINUX}
-  LogDatei.log('design ppi: 91 , screen: ' + IntToStr(Screen.PixelsPerInch), LLessential);
+  LogDatei.log('design ppi: 91 , screen: ' + IntToStr(Screen.PixelsPerInch),
+    LLessential);
   ;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +

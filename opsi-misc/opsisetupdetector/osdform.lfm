@@ -2096,7 +2096,6 @@ object resultForm1: TresultForm1
                 WrapAfter = waAuto
                 Index = 5
               end>
-            Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 1
@@ -2590,7 +2589,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtSingleAnalyzeAndCreateWinClick
+              OnClick = BtSingleAnalyzeAndCreateMultiClick
               ParentFont = False
               TabOrder = 0
             end
@@ -4779,9 +4778,9 @@ object resultForm1: TresultForm1
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 280
+          Height = 391
           Top = 87
-          Width = 1053
+          Width = 1029
           Align = alClient
           ParentFont = False
           ScrollBars = ssAutoBoth
@@ -4790,16 +4789,16 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 70
-          Top = 367
-          Width = 1053
+          Top = 478
+          Width = 1029
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 68
-          ClientWidth = 1051
+          ClientWidth = 1027
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
-            Left = 910
+            Left = 886
             Height = 48
             Hint = 'Go to the next Step'
             Top = 10
@@ -4952,10 +4951,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 40
           Top = 0
-          Width = 1053
+          Width = 1029
           Align = alTop
           ClientHeight = 40
-          ClientWidth = 1053
+          ClientWidth = 1029
           ParentFont = False
           TabOrder = 2
           object LabelLogInfo: TLabel
@@ -4976,17 +4975,17 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 47
           Top = 40
-          Width = 1053
+          Width = 1029
           Align = alTop
           ClientHeight = 47
-          ClientWidth = 1053
+          ClientWidth = 1029
           ParentFont = False
           TabOrder = 3
           object ProgressBarAnalyze: TProgressBar
             Left = 1
             Height = 22
             Top = 1
-            Width = 1051
+            Width = 1027
             Align = alTop
             ParentColor = False
             ParentFont = False
@@ -6767,7 +6766,7 @@ object resultForm1: TresultForm1
             Left = 494
             Height = 22
             Top = 12
-            Width = 60
+            Width = 51
             Anchors = []
             BorderSpacing.Left = 5
             BorderSpacing.Top = 5
@@ -9163,8 +9162,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 546
-          ClientWidth = 648
+          ClientHeight = 544
+          ClientWidth = 646
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel

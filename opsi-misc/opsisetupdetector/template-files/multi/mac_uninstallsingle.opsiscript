@@ -5,21 +5,9 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-[Actions]
-requiredWinstVersion >= "4.12.0.28"
-ScriptErrorMessages = false
+; This file should be included by main file uninstall.opsiscript
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-#@stringVars*#
+#@stringVars3*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -27,15 +15,14 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
-; the path where we find the product after the installation
-Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
+Set $InstallDir$	= "#@InstallDir3*#"
 ; ----------------------------------------------------------------
 
-set $OS$ = GetOS
+if not("#@install3*#" = "true")
+	logError "No Deinstallation for Linux in this opsi product"
+	isFatalError "wrong OS"
+endif	
+
 
 if not(($OS$ = "macos"))
 	logError "Installation aborted: wrong OS version: only MacOS"
@@ -50,9 +37,9 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
+if FileExists("%ScriptPath%\mac_delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+	Sub "%ScriptPath%\mac_delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"

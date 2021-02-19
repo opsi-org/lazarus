@@ -182,6 +182,22 @@ msgstr ""
 msgid "No Property selected."
 msgstr ""
 
+#: osdform.rsthreeanalyzeandcreatemsgfirstsetup
+msgid "First Select the Windows Setup exe"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsghead
+msgid "opsi-setup-detector: Multi Platform three File (Win/Lin/Mac) Product"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsgsecondsetup
+msgid "Now Select the Linux installer file"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsgthirdsetup
+msgid "Now Select the MacOS installer file"
+msgstr ""
+
 #: osdform.rstwonalyzeandcreatemsgfirstsetup
 msgid "First Select the 32 Bit Setup exe"
 msgstr ""

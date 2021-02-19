@@ -63,7 +63,6 @@ type
   TInstallerData = class
   private
   public
-
     installerId: TKnownInstaller;
     Name: string;
     description: string;
@@ -89,6 +88,7 @@ type
 
   TSetupFile = class(TPersistent)
   private
+    Factive : boolean;
     FID: integer; // 1 = first setup file, 2 = second setup file
     FsetupFileNamePath: string;
     FsetupFileName: string;
@@ -166,6 +166,7 @@ type
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     property targetOS: TTargetOSset read FtargetOS write FtargetOS;
+    property active: boolean read Factive write Factive;
     procedure initValues;
 
   public
@@ -568,6 +569,7 @@ end;
 
 procedure TSetupFile.initValues;
 begin
+  Factive := false;
   FsetupFileNamePath := '';
   FsetupFileName := '';
   FsetupFullFileName := '';
