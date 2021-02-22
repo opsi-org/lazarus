@@ -49,8 +49,8 @@ var
   infileHandle, outfileHandle: Text;
   aktline: string;
   i, k: integer;
-  aktidentstr: string;
-  aktidentnum: integer;
+  aktindentstr: string;
+  aktindentnum: integer;
   aktReplacestr: string;
 begin
   mywrite('creating: ' + outfile + ' from: ' + infile);
@@ -67,20 +67,20 @@ begin
       ReadLn(infileHandle, aktline);
       for i := 0 to patchlist.Count - 1 do
       begin
-        if pos(patchlist.Names[i], aktline) > 0 then
+        if pos(lowercase(patchlist.Names[i]), lowercase(aktline)) > 0 then
         begin
-          // we have to preserve the ident
-          // check actual ident
-          aktidentnum := length(aktline) - length(trimleft(aktline));
-          aktidentstr := '';
-          // ident with tabs
-          for k := 1 to aktidentnum do
-            aktidentstr := aktidentstr + char(9);
+          // we have to preserve the indent
+          // check actual indent
+          aktindentnum := length(aktline) - length(trimleft(aktline));
+          aktindentstr := '';
+          // indent with tabs
+          for k := 1 to aktindentnum do
+            aktindentstr := aktindentstr + char(9);
           // p
           aktReplacestr := patchlist.ValueFromIndex[i];
           // patch aktidentstr after each Newline
           aktReplacestr := StringReplace(aktReplacestr, Lineending,
-            Lineending + aktidentstr, [rfReplaceAll, rfIgnoreCase]);
+            Lineending + aktindentstr, [rfReplaceAll, rfIgnoreCase]);
           aktline := StringReplace(aktline, patchlist.Names[i],
             aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
         end;
@@ -108,7 +108,13 @@ begin
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  templatePath := '/usr/share/opsi-setup-detector/template-files';
+  // development env
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+  if  not DirectoryExists(templatePath) then
+  begin
+    LogDatei.log('Template path: '+templatePath+' not found. Fallback to unix path', LLInfo);
+    templatePath := '/usr/share/opsi-setup-detector/template-files';
+  end;
   {$ENDIF LINUX}
   try
     strlist := TStringList.Create;
@@ -181,6 +187,8 @@ begin
     for i := 0 to 2 do
     if aktProduct.SetupFiles[i].active then
     //setup 1
+    patchlist.add('#@install'+inttostr(i)+'*#=' +
+      aktProduct.SetupFiles[i].active.ToString(true));
     patchlist.add('#@MinimumSpace'+inttostr(i)+'*#=' + IntToStr(
       aktProduct.SetupFiles[i].requiredSpace) + ' MB');
     patchlist.add('#@InstallDir'+inttostr(i)+'*#=' + aktProduct.SetupFiles[i].installDirectory);
@@ -426,7 +434,7 @@ begin
       outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
       else if tmpname = 'uninstall' then
       outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript
-      else outfilename := clientpath + PathDelim + tmpname+'.'+tmpext;
+      else outfilename := clientpath + PathDelim + tmpname+tmpext;
       patchScript(infilename, outfilename);
     end;
     (*
@@ -459,13 +467,13 @@ begin
       if FileExists(aktProduct.SetupFiles[i].setupFullFileName) then
         copyfile(aktProduct.SetupFiles[i].setupFullFileName,
           clientpath + PathDelim + 'files'+inttostr(i) + PathDelim +
-          aktProduct.SetupFiles[0].setupFileName,
+          aktProduct.SetupFiles[i].setupFileName,
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
       // MST file
-      if FileExists(aktProduct.SetupFiles[0].MSTFullFileName) then
-        copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
+      if FileExists(aktProduct.SetupFiles[i].MSTFullFileName) then
+        copyfile(aktProduct.SetupFiles[i].MSTFullFileName,
           clientpath + PathDelim + 'files'+inttostr(i) + PathDelim +
-          aktProduct.SetupFiles[0].MSTFileName,
+          aktProduct.SetupFiles[i].MSTFileName,
           [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     end;
     (*

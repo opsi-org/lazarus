@@ -344,7 +344,11 @@ var
       getCommandResult(cmd: string)
       *)
     if RunCommand(cmd,commands,outstr,Options,swoHIDE) then
-    result := outstr;
+    begin
+    outstr := opsiunquotestr2(outstr,'""');
+      outstr :=  TrimRightSet(outstr, [#10,#13]);
+      result := outstr;
+    end;
   end;
 
 begin

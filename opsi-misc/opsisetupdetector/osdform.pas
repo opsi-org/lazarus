@@ -378,6 +378,10 @@ type
     procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
+    procedure OpenDialog1CanClose(Sender: TObject; var CanClose: boolean);
+    procedure OpenDialog1Close(Sender: TObject);
+    procedure OpenDialog1FolderChange(Sender: TObject);
+    procedure OpenDialog1SelectionChange(Sender: TObject);
     procedure setRunMode;
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
@@ -539,9 +543,11 @@ resourcestring
   rsTwonalyzeAndCreateMsgSecondSetup = 'Now Select the 64 Bit Setup exe';
   rsThreeAnalyzeAndCreateMsgHead =
     'opsi-setup-detector: Multi Platform three File (Win/Lin/Mac) Product';
-  rsThreeAnalyzeAndCreateMsgFirstSetup = 'First Select the Windows Setup exe';
-  rsThreeAnalyzeAndCreateMsgSecondSetup = 'Now Select the Linux installer file';
-  rsThreeAnalyzeAndCreateMsgThirdSetup = 'Now Select the MacOS installer file';
+  rsThreeAnalyzeAndCreateMsgFirstSetup = 'Do you want to select a Windows Setup file ?';
+  rsThreeAnalyzeAndCreateMsgSecondSetup =
+    'Do you want to select a Linux installer file ?';
+  rsThreeAnalyzeAndCreateMsgThirdSetup =
+    'Do you want to select a MacOS installer file ?';
 
   rsPropEditErrorHead = 'opsi-setup-detector: Property Editor: Error';
   rsPropEditErrorDoubleMsgStart = 'property Id: ';
@@ -1157,6 +1163,36 @@ begin
     if not (installer = stUnknown) then
       installerstr := installerstr + installerToInstallerstr(installer) + LineEnding;
   ShowMessage(installerstr);
+
+end;
+
+procedure TResultform1.OpenDialog1CanClose(Sender: TObject;
+  var CanClose: boolean);
+begin
+   Logdatei.log('opendialog ccl folder: '+TOpenDialog(sender).FileName+'  -  '+BoolToStr(canclose),LLInfo);
+end;
+
+procedure TResultform1.OpenDialog1Close(Sender: TObject);
+begin
+  Logdatei.log('opendialog cl folder: '+TOpenDialog(sender).FileName,LLInfo);
+end;
+
+procedure TResultform1.OpenDialog1FolderChange(Sender: TObject);
+begin
+  Logdatei.log('opendialog fc folder: '+TOpenDialog(sender).FileName,LLInfo);
+
+end;
+
+procedure TResultform1.OpenDialog1SelectionChange(Sender: TObject);
+var
+  ext : string;
+begin
+  Logdatei.log('opendialog sc folder: '+TOpenDialog(sender).FileName,LLInfo);
+  ext := ExtractFileExt(TOpenDialog(sender).FileName);
+  if ext = '.app' then
+  OpenDialog1.Options:=[ofNoChangeDir,ofNoValidate,ofEnableSizing,ofViewDetail]
+  else
+    OpenDialog1.Options:=[ofEnableSizing,ofViewDetail] ;
 
 end;
 
@@ -2194,16 +2230,16 @@ begin
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
-      singleAnalyzeCreate,
-      twoAnalyzeCreate_1,
-      twoAnalyzeCreate_2,
-      threeAnalyzeCreate_1,
-      threeAnalyzeCreate_2,
-      threeAnalyzeCreate_3:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetCreate;
-        Application.ProcessMessages;
-      end;
+    singleAnalyzeCreate,
+    twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2,
+    threeAnalyzeCreate_1,
+    threeAnalyzeCreate_2,
+    threeAnalyzeCreate_3:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
     (*
     singleAnalyzeCreate:
     begin
@@ -2299,16 +2335,16 @@ begin
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
-      singleAnalyzeCreate,
-      twoAnalyzeCreate_1,
-      twoAnalyzeCreate_2,
-      threeAnalyzeCreate_1,
-      threeAnalyzeCreate_2,
-      threeAnalyzeCreate_3:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetIcons;
-        Application.ProcessMessages;
-      end;
+    singleAnalyzeCreate,
+    twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2,
+    threeAnalyzeCreate_1,
+    threeAnalyzeCreate_2,
+    threeAnalyzeCreate_3:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetIcons;
+      Application.ProcessMessages;
+    end;
     (*
     singleAnalyzeCreate:
     begin
@@ -2338,6 +2374,7 @@ procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
   localTOSset: TTargetOSset;
+  installerselected: boolean = False;
 begin
   if ((aktProduct.SetupFiles[0].installDirectory = '') or
     (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
@@ -2385,31 +2422,36 @@ begin
       threeAnalyzeCreate_1:
       begin
         osdsettings.runmode := threeAnalyzeCreate_2;
-        MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
-          rsThreeAnalyzeAndCreateMsgSecondSetup,
-          mtInformation, [mbOK], '');
-        OpenDialog1.FilterIndex := 6;   // linux
-        if OpenDialog1.Execute then
+        if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsThreeAnalyzeAndCreateMsgSecondSetup, mtConfirmation,
+          [mbYes, mbNo], '') = mrYes then
         begin
-          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-            [mbYes, mbNo], 0, mbNo) = mrYes then
-            aktProduct.SetupFiles[1].copyCompleteDir := True;
-          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-          MemoAnalyze.Clear;
-          Application.ProcessMessages;
-          aktProduct.SetupFiles[1].active := True;
-          //aktProduct.targetOS := osLin;
-          localTOSset := aktProduct.productdata.targetOS;
-          Include(localTOSset, osLin);
-          aktProduct.productdata.targetOS := localTOSset;
-          //aktProduct.SetupFiles[1] := osLin;
-          localTOSset := aktProduct.SetupFiles[1].targetOS;
-          Include(localTOSset, osLin);
-          aktProduct.SetupFiles[1].targetOS := localTOSset;
-          AnalyzeLin(OpenDialog1.FileName,
-            aktProduct.SetupFiles[1], True);
-          SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+          OpenDialog1.FilterIndex := 6;   // linux
+          if OpenDialog1.Execute then
+          begin
+            if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+              [mbYes, mbNo], 0, mbNo) = mrYes then
+              aktProduct.SetupFiles[1].copyCompleteDir := True;
+            PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+            MemoAnalyze.Clear;
+            Application.ProcessMessages;
+            aktProduct.SetupFiles[1].active := True;
+            //aktProduct.targetOS := osLin;
+            localTOSset := aktProduct.productdata.targetOS;
+            Include(localTOSset, osLin);
+            aktProduct.productdata.targetOS := localTOSset;
+            //aktProduct.SetupFiles[1] := osLin;
+            localTOSset := aktProduct.SetupFiles[1].targetOS;
+            Include(localTOSset, osLin);
+            aktProduct.SetupFiles[1].targetOS := localTOSset;
+            AnalyzeLin(OpenDialog1.FileName,
+              aktProduct.SetupFiles[1], True);
+            SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+            installerselected := True;
+          end;
         end;
+        if not installerselected then
+          BtSetup2NextStepClick(Sender);
       end;
       createTemplate:
       begin
@@ -2434,6 +2476,7 @@ var
   checkok, isapp, goon: boolean;
   filename: string;
   localTOSset: TTargetOSset;
+  installerselected: boolean = False;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
@@ -2466,56 +2509,81 @@ begin
       threeAnalyzeCreate_2:
       begin
         osdsettings.runmode := threeAnalyzeCreate_3;
-        MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
-          rsThreeAnalyzeAndCreateMsgThirdSetup,
-          mtInformation, [mbOK], '');
-        goon := False;
-        isapp := False;
-        if SelectDirectoryDialog1.Execute then
+        if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsThreeAnalyzeAndCreateMsgThirdSetup, mtConfirmation,
+          [mbYes, mbNo], '') = mrYes then
         begin
-          goon := True;
-          filename := SelectDirectoryDialog1.FileName;
-          if ExtractFileExt(filename) = '.app' then
-          begin
-            isapp := True;
-            aktProduct.SetupFiles[2].copyCompleteDir := True;
-          end;
-        end;
-        if goon and not isapp then
-        begin
+
+          goon := False;
+          isapp := False;
           OpenDialog1.InitialDir := filename;
-          ;
-          OpenDialog1.FilterIndex := 5;   // macos
-          if OpenDialog1.Execute then
+            ;
+            OpenDialog1.FilterIndex := 5;   // macos
+            OpenDialog1.Options:= [ofEnableSizing,ofViewDetail,ofAllowMultiSelect,ofNoValidate];
+            if OpenDialog1.Execute then
+            begin
+              if OpenDialog1.Files.Count >0 then
+              begin
+              filename := OpenDialog1.Files[0];
+              goon := True;
+              if lowercase(ExtractFileExt(filename)) = lowercase('.app')
+              then isapp := true;
+
+              end
+              else goon := false;
+            end
+            else
+              goon := False;
+          (*
+          if SelectDirectoryDialog1.Execute then
           begin
-            filename := OpenDialog1.FileName;
             goon := True;
-          end
-          else
-            goon := False;
-        end;
-        if goon then
-        begin
-          if not isapp then
-            if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-              [mbYes, mbNo], 0, mbNo) = mrYes then
+            filename := SelectDirectoryDialog1.FileName;
+            if ExtractFileExt(filename) = '.app' then
+            begin
+              isapp := True;
               aktProduct.SetupFiles[2].copyCompleteDir := True;
-          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-          MemoAnalyze.Clear;
-          Application.ProcessMessages;
-          //aktProduct.targetOS := osMac;
-          localTOSset := aktProduct.productdata.targetOS;
-          Include(localTOSset, osMac);
-          aktProduct.productdata.targetOS := localTOSset;
-          //aktProduct.SetupFiles[2] := osMac;
-          localTOSset := aktProduct.SetupFiles[2].targetOS;
-          Include(localTOSset, osMac);
-          aktProduct.SetupFiles[2].targetOS := localTOSset;
-          aktProduct.SetupFiles[2].active := True;
-          AnalyzeMac(OpenDialog1.FileName,
-            aktProduct.SetupFiles[2], True);
-          SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
-        end;
+            end;
+          end;
+          if goon and not isapp then
+          begin
+            OpenDialog1.InitialDir := filename;
+            ;
+            OpenDialog1.FilterIndex := 5;   // macos
+            if OpenDialog1.Execute then
+            begin
+              filename := OpenDialog1.FileName;
+              goon := True;
+            end
+            else
+              goon := False;
+          end;
+          *)
+          if goon then
+          begin
+            if not isapp then
+              if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+                [mbYes, mbNo], 0, mbNo) = mrYes then
+                aktProduct.SetupFiles[2].copyCompleteDir := True;
+            PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+            MemoAnalyze.Clear;
+            Application.ProcessMessages;
+            //aktProduct.targetOS := osMac;
+            localTOSset := aktProduct.productdata.targetOS;
+            Include(localTOSset, osMac);
+            aktProduct.productdata.targetOS := localTOSset;
+            //aktProduct.SetupFiles[2] := osMac;
+            localTOSset := aktProduct.SetupFiles[2].targetOS;
+            Include(localTOSset, osMac);
+            aktProduct.SetupFiles[2].targetOS := localTOSset;
+            aktProduct.SetupFiles[2].active := True;
+            AnalyzeMac(OpenDialog1.FileName,
+              aktProduct.SetupFiles[2], True);
+            SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+          end;
+        end
+        else
+          BtSetup3NextStepClick(Sender);
       end;
       createTemplate:
       begin
@@ -2705,36 +2773,47 @@ procedure TResultform1.BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
 var
   i: integer;
   localTOSset: TTargetOSset;
+  installerselected: boolean = False;
 begin
-  OpenDialog1.FilterIndex := 1;   // setup
-  if OpenDialog1.Execute then
+  osdsettings.runmode := threeAnalyzeCreate_1;
+      setRunMode;
+  if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+    rsThreeAnalyzeAndCreateMsgFirstSetup, mtConfirmation,
+    [mbYes, mbNo], '') = mrYes then
   begin
-    osdsettings.runmode := threeAnalyzeCreate_1;
-    setRunMode;
-    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-    Application.ProcessMessages;
-    initaktproduct;
-    //aktProduct.targetOS := osWin;
-    localTOSset := aktProduct.productdata.targetOS;
-    Include(localTOSset, osWin);
-    aktProduct.productdata.targetOS := localTOSset;
-    //aktProduct.SetupFiles[0] := osLin;
-    localTOSset := aktProduct.SetupFiles[0].targetOS;
-    Include(localTOSset, osWin);
-    aktProduct.SetupFiles[0].targetOS := localTOSset;
-    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-    //TIProgressBarAnalyze_progress.Loaded;
-    MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
-    makeProperties;
-    Application.ProcessMessages;
-    aktProduct.SetupFiles[0].active := True;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
-    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+    OpenDialog1.FilterIndex := 1;   // setup
+    if OpenDialog1.Execute then
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+      Application.ProcessMessages;
+      initaktproduct;
+      //aktProduct.targetOS := osWin;
+      localTOSset := aktProduct.productdata.targetOS;
+      Include(localTOSset, osWin);
+      aktProduct.productdata.targetOS := localTOSset;
+      //aktProduct.SetupFiles[0] := osLin;
+      localTOSset := aktProduct.SetupFiles[0].targetOS;
+      Include(localTOSset, osWin);
+      aktProduct.SetupFiles[0].targetOS := localTOSset;
+      //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+      //TIProgressBarAnalyze_progress.Loaded;
+      MemoAnalyze.Clear;
+      StringGridDep.Clean([gzNormal, gzFixedRows]);
+      StringGridDep.RowCount := 1;
+      if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+        [mbNo, mbYes], 0, mbNo) = mrYes then
+        aktProduct.SetupFiles[0].copyCompleteDir := True;
+      makeProperties;
+      Application.ProcessMessages;
+      aktProduct.SetupFiles[0].active := True;
+      Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+      SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+      installerselected := True;
+    end;
+  end;
+  if not installerselected then
+  begin
+    BtSetup1NextStepClick(Sender);
   end;
 end;
 
@@ -2922,6 +3001,7 @@ procedure TResultform1.FormCreate(Sender: TObject);
 var
   DefaultIcon: TImage;
   tmpimage: TPicture;
+  filename: string;
 begin
   tmpimage := TPicture.Create;
   loadDefaultIcon := True;
@@ -2943,8 +3023,19 @@ begin
     PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  DefaultIcon.Picture.LoadFromFile('/usr/share/opsi-setup-detector' +
-    PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
+  filename := '/usr/share/opsi-setup-detector' + PathDelim +
+    'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+  if fileexists(filename) then
+    DefaultIcon.Picture.LoadFromFile(filename)
+  else
+  begin
+    filename := ExtractFileDir(Application.Params[0]) + PathDelim +
+      'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+    if fileexists(filename) then
+      DefaultIcon.Picture.LoadFromFile(filename)
+    else
+      LogDatei.log('Could not find template.png ', LLError);
+  end;
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);

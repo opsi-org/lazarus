@@ -11,6 +11,11 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdanalyzewin.swarnmultiplemsi
 msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
@@ -178,7 +183,7 @@ msgid "No Property selected."
 msgstr ""
 
 #: osdform.rsthreeanalyzeandcreatemsgfirstsetup
-msgid "First Select the Windows Setup exe"
+msgid "Do you want to select a Windows Setup file ?"
 msgstr ""
 
 #: osdform.rsthreeanalyzeandcreatemsghead
@@ -186,11 +191,11 @@ msgid "opsi-setup-detector: Multi Platform three File (Win/Lin/Mac) Product"
 msgstr ""
 
 #: osdform.rsthreeanalyzeandcreatemsgsecondsetup
-msgid "Now Select the Linux installer file"
+msgid "Do you want to select a Linux installer file ?"
 msgstr ""
 
 #: osdform.rsthreeanalyzeandcreatemsgthirdsetup
-msgid "Now Select the MacOS installer file"
+msgid "Do you want to select a MacOS installer file ?"
 msgstr ""
 
 #: osdform.rstwonalyzeandcreatemsgfirstsetup
