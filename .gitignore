@@ -44,3 +44,18 @@ opsi-script/opsi-script-nogui
 /helper/opsi-icon-collector/opsi-icon-collectoropsi-misc/opsi-quickinstall/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/opsi_quick_install_project
 opsi-misc/testAddRepository/
+
+# quickinstall:
+# gitahead
+opsi-misc/opsi-dev-tool
+opsi-misc/opsi-quickinstall/common/opsi-script
+opsi-misc/opsi-quickinstall/common/opsi-script-gui
+opsi-misc/opsi-quickinstall/gui/default
+opsi-script/opsi-script-gui
+# manually
+opsi-misc/opsi-quickinstall/gui/l-opsi-server.conf
+opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
+opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
+opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/properties.conf
+# new
+opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/test.opsiscript
