@@ -9433,7 +9433,7 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 611
             Anchors = []
-            ClientHeight = 118
+            ClientHeight = 101
             ClientWidth = 609
             ParentFont = False
             TabOrder = 0
@@ -10172,6 +10172,7 @@ object resultForm1: TresultForm1
     DefaultExt = '.*.msi'
     Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|MacOS|*.dmg;*.pkg;*.app;*.zip|Linux|*.deb;*.rpm;*.tgz;*.tar.gz|Any File|*.*|OSD Project file|*.osd'
     FilterIndex = 2
+    Options = [ofAllowMultiSelect, ofPathMustExist, ofEnableSizing, ofViewDetail]
     OnFolderChange = OpenDialog1FolderChange
     OnSelectionChange = OpenDialog1SelectionChange
     Left = 728

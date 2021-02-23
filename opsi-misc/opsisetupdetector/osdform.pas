@@ -44,7 +44,8 @@ uses
   osddlgnewproperty, osparserhelper,
   osddatamod,
   osdcheckentriesdlg,
-  Contnrs;
+  Contnrs,
+  openfiledirdlg;
 
 type
   TIconDisplay = class(TPersistent)
@@ -559,6 +560,8 @@ resourcestring
   rsNumberIcons = 'Icons to choose from: ';
   rsCopyCompleteDir =
     'Should we copy not only the setup file. but the complete directory ?';
+  rsSelectAppOrDir = 'First select MacOS .app or Directory where to find MacOS Installer files';
+  rsSelectMacFile = 'Now select MacOS installer file.';
 
 implementation
 
@@ -1190,7 +1193,7 @@ begin
   Logdatei.log('opendialog sc folder: '+TOpenDialog(sender).FileName,LLInfo);
   ext := ExtractFileExt(TOpenDialog(sender).FileName);
   if ext = '.app' then
-  OpenDialog1.Options:=[ofNoChangeDir,ofNoValidate,ofEnableSizing,ofViewDetail]
+  OpenDialog1.Options:=[ofAllowMultiSelect,ofNoChangeDir,ofNoValidate,ofEnableSizing,ofViewDetail]
   else
     OpenDialog1.Options:=[ofEnableSizing,ofViewDetail] ;
 
@@ -2477,6 +2480,7 @@ var
   filename: string;
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
+  macosOpendlg : TSelectFileOrDirectoryDialog;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
@@ -2513,18 +2517,51 @@ begin
           rsThreeAnalyzeAndCreateMsgThirdSetup, mtConfirmation,
           [mbYes, mbNo], '') = mrYes then
         begin
+           goon := False;
+  isapp := False;
+  MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsSelectAppOrDir, mtInformation,
+          [mbok], '');
+  SelectDirectoryDialog1.Title:=rsSelectAppOrDir;
 
+  if SelectDirectoryDialog1.Execute then
+  begin
+    goon := True;
+    filename := SelectDirectoryDialog1.FileName;
+    if ExtractFileExt(filename) = '.app' then
+    begin
+      isapp := True;
+    end;
+  end;
+  if goon and not isapp then
+  begin
+    MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+          rsSelectMacFile, mtInformation,
+          [mbok], '');
+    OpenDialog1.InitialDir := filename;
+    ;
+    OpenDialog1.FilterIndex := 5;   // macos
+    if OpenDialog1.Execute then
+    begin
+      filename := OpenDialog1.FileName;
+      goon := True;
+    end
+    else
+      goon := False;
+  end;
+          (*
           goon := False;
           isapp := False;
-          OpenDialog1.InitialDir := filename;
-            ;
-            OpenDialog1.FilterIndex := 5;   // macos
-            OpenDialog1.Options:= [ofEnableSizing,ofViewDetail,ofAllowMultiSelect,ofNoValidate];
-            if OpenDialog1.Execute then
+          macosOpendlg := TSelectFileOrDirectoryDialog.Create(self);
+          //macosOpendlg.InitialDir := filename;
+           macosOpendlg.Filter:= OpenDialog1.Filter;
+            macosOpendlg.FilterIndex := 5;   // macos
+            macosOpendlg.Options:= [ofPathMustExist,ofEnableSizing,ofViewDetail,ofAllowMultiSelect,ofNoValidate];
+            if macosOpendlg.Execute then
             begin
-              if OpenDialog1.Files.Count >0 then
+              if macosOpendlg.Files.Count >0 then
               begin
-              filename := OpenDialog1.Files[0];
+              filename := macosOpendlg.Files[0];
               goon := True;
               if lowercase(ExtractFileExt(filename)) = lowercase('.app')
               then isapp := true;
@@ -2534,6 +2571,8 @@ begin
             end
             else
               goon := False;
+            FreeAndNil(macosOpendlg);
+            *)
           (*
           if SelectDirectoryDialog1.Execute then
           begin
@@ -2577,7 +2616,7 @@ begin
             Include(localTOSset, osMac);
             aktProduct.SetupFiles[2].targetOS := localTOSset;
             aktProduct.SetupFiles[2].active := True;
-            AnalyzeMac(OpenDialog1.FileName,
+            AnalyzeMac(filename,
               aktProduct.SetupFiles[2], True);
             SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
           end;
