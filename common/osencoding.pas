@@ -152,10 +152,10 @@ begin
   //fCES := TCharEncStream.Create;
   //fCES.Reset;
   lencstr := NormalizeEncoding(encodingString);
-  if copy(lencstr, length(lencstr) - 2, length(lencstr)) = 'bom' then
+  if copy(lencstr, length(lencstr)-2, length(lencstr)) = 'bom' then
   begin
     hasBOM := True;
-    lencstr := copy(lencstr, 0, length(lencstr) - 3);
+    lencstr := copy(lencstr, 0, length(lencstr)-3);
   end;
 
   if lencstr = Lowercase('unicode') then
@@ -203,7 +203,6 @@ end;
 function loadUnicodeTextFile(fileName: string): TStringList;
 var
   fCES: TCharEncStream;
-  myunitype : TUniStreamTypes;
   str : string;
 begin
   Result := TStringList.Create;
@@ -297,11 +296,13 @@ begin
   begin
     // we found an entry: encoding=<encoding to use>
     foundencodingstring := trim(mylist.Values['encoding']);
+    foundencodingstring := NormalizeEncoding(foundencodingstring);
     logdatei.log('foundencodingstring: ' + foundencodingstring, LLDebug2);
     if isStringInList(foundencodingstring, supportedEncodings) then
       Result := foundencodingstring
     else
     begin
+      logdatei.log('Foundencodingstring '+ foundencodingstring +' is not in supportedEncodings list',LLWarning);
       i := 0;
       repeat
         // convert via utf8
@@ -383,13 +384,13 @@ begin
   if LowerCase(sourceEncoding) = 'auto' then
     usedSourceEncoding := guessEncoding(sourceText);
   // erasing the BOM part if exists
-  if (copy(usedSourceEncoding, length(usedSourceEncoding) - 2, length(usedSourceEncoding)) = 'bom') then
-     if (usedSourceEncoding[length(usedSourceEncoding) - 3] = '') then
-         usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 4)
+  if (copy(usedSourceEncoding, length(usedSourceEncoding)-2, length(usedSourceEncoding)) = 'bom') then
+     if (usedSourceEncoding[length(usedSourceEncoding)-3] = '') then
+         usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding)-4)
      else
      usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 3);
-  if (copy(destEncoding, length(destEncoding) - 2, length(destEncoding)) = 'bom') then
-     if (destEncoding[length(destEncoding) - 3] = '') then
+  if (copy(destEncoding, length(destEncoding)-2, length(destEncoding)) = 'bom') then
+     if (destEncoding[length(destEncoding)-3] = '') then
          destEncoding := copy(destEncoding, 0, length(destEncoding) - 4)
      else
      destEncoding := copy(destEncoding, 0, length(destEncoding) - 3);
@@ -514,7 +515,6 @@ begin
     CloseFile(txtfile);
     *)
   end;
-  //str := result.Text;
   //str := result.Text;
 end;
 

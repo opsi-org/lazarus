@@ -23645,17 +23645,54 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
-      Script.LoadFromFile(Scriptdatei);
-      //str := script.Text;
-      logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
-      Encoding2use := searchencoding(Script.Text);
-      if Encoding2use = '' then
-        Encoding2use := 'system';
-      if not ((Encoding2use = 'system')) then
-        Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+      if hasFileBom(Scriptdatei) then
+      begin
+        //logdatei.log_prog('file has BOM', LLinfo );
+        Script.loadFromUnicodeFile(Scriptdatei);
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+        Encoding2use := searchencoding(Script.Text);
+      end
+      else
+      begin
+        Script.LoadFromFile(Scriptdatei);
+        //str := script.Text;
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+        Encoding2use := searchencoding(Script.Text);
+        if (Encoding2use = '') then
+          Encoding2use := 'system';
+        if (Encoding2use = 'system') then
+           begin
+             //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+             logdatei.log('Encoding=system makes the opsiscript not portable between different OS', LLWarning);
+           end
+        else
+        begin
+           if (Lowercase(copy(Encoding2use, length(Encoding2use)-2, length(Encoding2use))) = 'bom') then
+           begin
+              //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+              if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use)-3)) then
+                 begin
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromUnicodeFile(Scriptdatei);
+                 end
+              else
+                  begin
+                    logdatei.log_prog('the encoding mentioned in the file is not unicode)', LLWarning );
+                    //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                    Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                  end;
+           end
+           else
+             begin
+               //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+               Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+             end;
+        end;
+      end;
       //str := script.Text;
       usedEncoding := Encoding2use;
       //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+
       Script.FFilename := Scriptdatei;
       for i := 0 to script.Count - 1 do
       begin
