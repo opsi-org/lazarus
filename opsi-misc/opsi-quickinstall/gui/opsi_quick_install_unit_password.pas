@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated, LCLType, cthreads;
+  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog;
 
 type
 
@@ -28,16 +28,14 @@ type
     procedure EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure FormActivate(Sender: TObject);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormClose(Sender: TObject);
     // get properties from query and write them to file properties.conf
     procedure prepareInstallation;
-    // executed by thread (only the time consuming parts of the installation)
-    procedure installOpsi;
-    // show result of l-opsi-server installation and paths to log files,
-    // executed in TPassword.FormClose
+    procedure addRepo;
+    // Show result of l-opsi-server installation and paths to log files
+    // Executed in TPassword.FormClose
     procedure showResult;
   private
-    FMyThread: TThread;
     // directory l-opsi-server/CLIENT_DATA
     clientDataDir: string;
   public
@@ -49,12 +47,15 @@ type
 
   TMyThread = class(TThread)
   private
-    FForm: TPassword;
+    FInstallRunCommand: TRunCommandElevated;
+    FShellCommand, FClientDataDir: string;
     procedure Complete;
+    procedure installOpsi;
   protected
     procedure Execute; override;
   public
-    constructor Create(Form: TPassword);
+    constructor Create(password: string; sudo: boolean; shellCommand: string;
+      clientDataDir: string);
   end;
 
 var
@@ -78,26 +79,37 @@ uses
 
 {MyThread}
 
-constructor TMyThread.Create(Form: TPassword);
+constructor TMyThread.Create(password: string; sudo: boolean;
+  shellCommand: string; clientDataDir: string);
 begin
-  FForm := Form;
-  //FForm.Caption := 'Thread is running';
-  inherited Create(False);
+  FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
+  FShellCommand := shellCommand;
+  FClientDataDir := clientDataDir;
+
+  FreeOnTerminate := True;
+  inherited Create(True);
+end;
+
+
+// install opsi server with thread (only the time consuming parts of the installation)
+procedure TMyThread.installOpsi;
+begin
+  FInstallRunCommand.Run(FShellCommand + 'update');
+  FInstallRunCommand.Run(FShellCommand + 'install opsi-script');
+  // Never ever again problems with opsi.list!
+  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  FInstallRunCommand.Run('../common/opsi-script-gui -batch ' +
+    FClientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
 end;
 
 procedure TMyThread.Complete;
 begin
-  FForm.FMyThread := nil;
-  //FForm.Caption := 'Thread has completed';
-  // can't close Overview and Wait here, only Password
-  // On close, execute showResult!
-  FForm.Close;
+  FInstallRunCommand.Free;
 end;
 
 procedure TMyThread.Execute;
 begin
-  FForm.installOpsi;
-  //Sleep(2000);
+  installOpsi;
   Synchronize(@Complete);
 end;
 
@@ -274,12 +286,10 @@ begin
   FileText.Free;
 end;
 
-// executed by thread (only the time consuming parts of the installation)
-procedure TPassword.installOpsi;
+procedure TPassword.addRepo;
 var
-  url, shellCommand: string;
+  url: string;
   MyRepo: TLinuxRepository;
-  InstallRunCommand: TRunCommandElevated;
 begin
   // create repository
   MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
@@ -304,23 +314,7 @@ begin
       url := MyRepo.GetDefaultURL(Opsi42, testing);
   end;
   MyRepo.Add(url);
-
-  InstallRunCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
-    Password.RadioBtnSudo.Checked);
-  shellCommand := QuickInstall.DistrInfo.GetPackageManagementShellCommand(
-    QuickInstall.distroName);
-  InstallRunCommand.Run(shellCommand + 'update');
-  InstallRunCommand.Run(shellCommand + 'install opsi-script');
-
-  // Never ever again problems with opsi.list!
-  InstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
-
-  InstallRunCommand.Run('../common/opsi-script-gui -batch ' +
-    clientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
-
-  InstallRunCommand.Free;
   MyRepo.Free;
-  QuickInstall.DistrInfo.Free;
 end;
 
 // show result of l-opsi-server installation and paths to log files,
@@ -334,8 +328,13 @@ begin
   FileText.LoadFromFile(clientDataDir + 'result.conf');
   // adjust quick-install ExitCode
   if FileText[0] = 'failed' then
+  begin
     ExitCode := 1;
-  ShowMessage(ExitCode.ToString);
+    LogDatei.log('l-opsi-server installation failed', 1);
+  end
+  else
+    LogDatei.log('l-opsi-server installation success', 6);
+  //ShowMessage(ExitCode.ToString);
   ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
     #10 + QuickInstall.logFileName);
   FileText.Free;
@@ -374,14 +373,17 @@ begin
   else
   begin
     prepareInstallation;
-    if FMyThread = nil then
-    begin
-      FMyThread := TMyThread.Create(Self);
-    end;
+    addRepo;
+    // start thread for opsi server installation while showing form 'Wait'
+    with TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
+      QuickInstall.DistrInfo.GetPackageManagementShellCommand(QuickInstall.distroName),
+      clientDataDir) do
+      begin
+        // FormClose automatically executed on termination of thread
+        OnTerminate := @FormClose;
+        Start;
+      end;
     Wait.Visible := True;
-    //if FMyThread.WaitFor > 0 then Wait.Visible := True
-    //else ShowMessage('<=0');
-    //if FMyThread.CheckTerminated then ShowMessage('finished');
   end;
 end;
 
@@ -404,8 +406,9 @@ begin
   //ShowMessage(EditPassword.Text);
 end;
 
-procedure TPassword.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure TPassword.FormClose(Sender: TObject);
 begin
+  QuickInstall.DistrInfo.Free;
   showResult;
   // close project
   Overview.Close;
