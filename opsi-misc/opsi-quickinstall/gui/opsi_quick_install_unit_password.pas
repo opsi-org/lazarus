@@ -49,7 +49,6 @@ type
   private
     FInstallRunCommand: TRunCommandElevated;
     FShellCommand, FClientDataDir: string;
-    procedure Complete;
     procedure installOpsi;
   protected
     procedure Execute; override;
@@ -100,17 +99,12 @@ begin
   FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
   FInstallRunCommand.Run('../common/opsi-script-gui -batch ' +
     FClientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
-end;
-
-procedure TMyThread.Complete;
-begin
   FInstallRunCommand.Free;
 end;
 
 procedure TMyThread.Execute;
 begin
   installOpsi;
-  Synchronize(@Complete);
 end;
 
 { TPassword }
