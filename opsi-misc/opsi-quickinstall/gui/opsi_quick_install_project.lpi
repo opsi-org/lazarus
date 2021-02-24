@@ -17,6 +17,11 @@
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>
     </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="4"/>
+      <MinorVersionNr Value="2"/>
+    </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
     </BuildModes>
@@ -134,10 +139,6 @@
     <Other>
       <CustomOptions Value="-dSYNAPSE
 -dQUICKINSTALLGUI"/>
-      <OtherDefines Count="2">
-        <Define0 Value="SYNAPSE"/>
-        <Define1 Value="QUICKINSTALLGUI"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
