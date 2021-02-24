@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="12">
       <Unit0>
         <Filename Value="opsi_quick_install_project.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -60,65 +60,58 @@
         <ResourceBaseClass Value="Form"/>
       </Unit3>
       <Unit4>
-        <Filename Value="opsi_quick_install_unit_query_prods.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="QueryProds"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit4>
-      <Unit5>
         <Filename Value="opsi_quick_install_unit_query4.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query4"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit5>
-      <Unit6>
+      </Unit4>
+      <Unit5>
         <Filename Value="opsi_quick_install_unit_query5_dhcp.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query5_dhcp"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit6>
-      <Unit7>
+      </Unit5>
+      <Unit6>
         <Filename Value="opsi_quick_install_unit_query6.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query6"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit7>
-      <Unit8>
+      </Unit6>
+      <Unit7>
         <Filename Value="opsi_quick_install_unit_overview.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Overview"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit8>
-      <Unit9>
+      </Unit7>
+      <Unit8>
         <Filename Value="opsi_quick_install_unit_password.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Password"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="opsi_quick_install_unit_distr.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Distribution"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="../common/opsi_quick_install_resourcestrings.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="opsi_quick_install_unit_wait.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Wait"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit12>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
