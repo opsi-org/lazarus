@@ -345,6 +345,7 @@ type
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateMultiClick(Sender: TObject);
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
@@ -530,7 +531,7 @@ resourcestring
 
   //sErrProductIdEmpty = 'We need a productId.';
   //sErrProductVersionEmpty = 'We need a productVersion.';
-  sWarnInstalldirUnknown = 'Error: Field Install Directory is empty!' +
+  sWarnInstalldirUnknown = 'Error: Field Install Directory is empty or not valid!' +
     Lineending + 'For this Installer the Installdir could not be detected.' +
     Lineending + 'The Installdir is needed for correct Uninstall process.' +
     Lineending +
@@ -562,6 +563,10 @@ resourcestring
     'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir = 'First select MacOS .app or Directory where to find MacOS Installer files';
   rsSelectMacFile = 'Now select MacOS installer file.';
+  rsRpmAnalyze = 'Analyze of RPM files';
+  rsRPMAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
+  rsDebAnalyze = 'Analyze of DEB files';
+  rsDebAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
 
 implementation
 
@@ -605,8 +610,15 @@ begin
   writeln(progname + '[Options]');
   writeln('Options:');
   writeln(' --help -> write this help and exit');
+  writeln(' --help -> write this help and exit');
   writeln(' --filename=<path\filename> -> file to analyze)');
+  writeln(' --f <path\filename> -> file to analyze)');
   writeln(' --nogui -> do not show interactive output window)');
+  writeln(' --n -> do not show interactive output window)');
+  writeln(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
+  writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
+  writeln(' --productID=<id> -> Create product with productID <id>');
+  writeln(' --p <id> -> Create product with productID <id>');
   Application.Terminate;
   halt(-1);
   Exit;
@@ -848,8 +860,17 @@ var
   ErrorMsg: string;
   i: integer;
   mylang: string;
+  myparamstring : string;
+  myparamcount : integer;
+  allowedOS : TStringlist;
 begin
   startupfinished := True; //avoid calling main on every show event
+  myparamcount := ParamCount;
+  myparamcount := Application.ParamCount;
+  //writeln('paramcount = '+inttostr(myparamcount));
+  for i := 1 to myparamcount do
+    myparamstring := myparamstring + ' ' + Application.Params[i];
+  LogDatei.log('Called as: ' + myparamstring, LLEssential);
   myExeDir := ExtractFileDir(ParamStr(0));
   myexitcode := 0;
   myerror := '';
@@ -861,11 +882,16 @@ begin
   optionlist.Append('filename::');
   optionlist.Append('nogui');
   optionlist.Append('lang::');
+  optionlist.Append('targetOS::');
+  optionlist.Append('productid::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('h', optionlist);
+  ErrorMsg := Application.CheckOptions('hfnltp', optionlist);
   if ErrorMsg <> '' then
   begin
+    LogDatei.log('Exception while handling parameters.', LLcritical);
+      ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
+      LogDatei.log(ErrorMsg, LLcritical);
     Application.ShowException(Exception.Create(ErrorMsg));
     Application.Terminate;
     Exit;
@@ -889,10 +915,10 @@ begin
 
 
 
-  if Application.HasOption('lang') then
+  if Application.HasOption('l','lang') then
   begin
     LogDatei.log('Found Parameter lang', LLInfo);
-    mylang := Application.GetOptionValue('lang');
+    mylang := Application.GetOptionValue('l','lang');
     SetDefaultLang(mylang);
     LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
     LogDatei.log('Active lang: ' + mylang, LLInfo);
@@ -910,7 +936,7 @@ begin
   end;
 
 
-  if Application.HasOption('nogui') then
+  if Application.HasOption('n','nogui') then
     showgui := False;
 
   if showgui then
@@ -918,9 +944,32 @@ begin
     //FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
   end;
 
-  if Application.HasOption('filename') then
+  if Application.HasOption('t','targetOS') then
   begin
-    myfilename := trim(Application.GetOptionValue('filename'));
+    forceTargetOS := lowercase(trim(Application.GetOptionValue('t','targetOS')));
+    allowedOS := TStringList.Create;
+    allowedOS.CommaText := 'win,lin,mac';
+    if allowedOS.IndexOf(forceTargetOS) = -1 then
+    begin
+      myerror := 'Error: Given targetOS: ' + forceTargetOS + ' is not valid. Should be on of win,lin,mac';
+      writeln(myerror);
+      LogDatei.log(myerror, LLCritical);
+      WriteHelp;
+      Application.Terminate;
+    Exit;
+    end;
+    FreeAndNil(allowedOS);
+  end;
+
+  if Application.HasOption('p','productId') then
+  begin
+    forceProductId := trim(Application.GetOptionValue('p','productId'));
+    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
+  end;
+
+  if Application.HasOption('f','filename') then
+  begin
+    myfilename := trim(Application.GetOptionValue('f','filename'));
     if not FileExists(myfilename) then
     begin
       myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
@@ -1214,9 +1263,10 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     //aktProduct.targetOS := osWin;
-    localTOSset := aktProduct.productdata.targetOS;
+    localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
-    aktProduct.productdata.targetOS := localTOSset;
+    aktProduct.productdata.targetOSset := localTOSset;
+    aktProduct.SetupFiles[0].targetOS:= osWin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -1537,6 +1587,7 @@ var
   myprop: TStringList;
   index: integer;
   i: integer;
+  localTOSset: TTargetOSset;
 begin
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
@@ -1556,6 +1607,11 @@ begin
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     initaktproduct;
+    //aktProduct.targetOS := osWin;
+    localTOSset := aktProduct.productdata.targetOSset;
+    Include(localTOSset, osWin);
+    aktProduct.productdata.targetOSset := localTOSset;
+    aktProduct.SetupFiles[0].targetOS:= osWin;
     (* moved to makeProperties
     // start add property
     index := StringGridProp.RowCount;
@@ -1578,6 +1634,27 @@ begin
     aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
+procedure TResultform1.BtCreateEmptyTemplateMultiClick(Sender: TObject);
+begin
+   begin
+    osdsettings.runmode := createTemplate;
+    setRunMode;
+    MemoAnalyze.Clear;
+    StringGridDep.Clean([gzNormal, gzFixedRows]);
+    StringGridDep.RowCount := 1;
+    PageControl1.ActivePage := resultForm1.TabSheetProduct;
+    Application.ProcessMessages;
+    initaktproduct;
+    makeProperties;
+    aktProduct.productdata.targetOSset := [osWin,osLin,osMac];
+    aktProduct.productdata.productId := 'opsi-template';
+    aktProduct.productdata.productName := 'opsi template for multi platform';
+    aktProduct.productdata.productversion := '1.0.0';
+    aktProduct.productdata.packageversion := 1;
+    aktProduct.productdata.description := 'A template for opsi products for Win, Lin, Mac';
   end;
 end;
 
@@ -2043,7 +2120,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS := [osWin];
+    aktProduct.productdata.targetOSset := [osWin];
     aktProduct.productdata.productId := 'opsi-template';
     aktProduct.productdata.productName := 'opsi template for Windows';
     aktProduct.productdata.productversion := '1.0.0';
@@ -2064,7 +2141,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS := [osMac];
+    aktProduct.productdata.targetOSset := [osMac];
     aktProduct.productdata.productId := 'm-opsi-template';
     aktProduct.productdata.productName := 'opsi template for macos';
     aktProduct.productdata.productversion := '1.0.0';
@@ -2085,7 +2162,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOS := [osLin];
+    aktProduct.productdata.targetOSset := [osLin];
     aktProduct.productdata.productId := 'l-opsi-template';
     aktProduct.productdata.productName := 'opsi template for Linux';
     aktProduct.productdata.productversion := '1.0.0';
@@ -2381,7 +2458,9 @@ var
 begin
   if ((aktProduct.SetupFiles[0].installDirectory = '') or
     (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
-    (aktProduct.SetupFiles[0].installerId <> stMsi) then
+    (aktProduct.SetupFiles[0].installerId <> stMsi) and
+    (aktProduct.SetupFiles[0].targetOS = osWin)
+    then
   begin
     //checkok := False;
     // we warn here only
@@ -2440,13 +2519,11 @@ begin
             Application.ProcessMessages;
             aktProduct.SetupFiles[1].active := True;
             //aktProduct.targetOS := osLin;
-            localTOSset := aktProduct.productdata.targetOS;
+            localTOSset := aktProduct.productdata.targetOSset;
             Include(localTOSset, osLin);
-            aktProduct.productdata.targetOS := localTOSset;
+            aktProduct.productdata.targetOSset := localTOSset;
             //aktProduct.SetupFiles[1] := osLin;
-            localTOSset := aktProduct.SetupFiles[1].targetOS;
-            Include(localTOSset, osLin);
-            aktProduct.SetupFiles[1].targetOS := localTOSset;
+            aktProduct.SetupFiles[1].targetOS := osLin;
             AnalyzeLin(OpenDialog1.FileName,
               aktProduct.SetupFiles[1], True);
             SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
@@ -2608,13 +2685,11 @@ begin
             MemoAnalyze.Clear;
             Application.ProcessMessages;
             //aktProduct.targetOS := osMac;
-            localTOSset := aktProduct.productdata.targetOS;
+            localTOSset := aktProduct.productdata.targetOSset;
             Include(localTOSset, osMac);
-            aktProduct.productdata.targetOS := localTOSset;
+            aktProduct.productdata.targetOSset := localTOSset;
             //aktProduct.SetupFiles[2] := osMac;
-            localTOSset := aktProduct.SetupFiles[2].targetOS;
-            Include(localTOSset, osMac);
-            aktProduct.SetupFiles[2].targetOS := localTOSset;
+            aktProduct.SetupFiles[2].targetOS := osMac;
             aktProduct.SetupFiles[2].active := True;
             AnalyzeMac(filename,
               aktProduct.SetupFiles[2], True);
@@ -2724,9 +2799,10 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     //aktProduct.targetOS := osMac;
-    localTOSset := aktProduct.productdata.targetOS;
+    localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osLin);
-    aktProduct.productdata.targetOS := localTOSset;
+    aktProduct.productdata.targetOSset := localTOSset;
+    aktProduct.SetupFiles[0].targetOS:= osLin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2789,9 +2865,10 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     //aktProduct.targetOS := osMac;
-    localTOSset := aktProduct.productdata.targetOS;
+    localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osMac);
-    aktProduct.productdata.targetOS := localTOSset;
+    aktProduct.productdata.targetOSset := localTOSset;
+    aktProduct.SetupFiles[0].targetOS:= osMac;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2827,13 +2904,11 @@ begin
       Application.ProcessMessages;
       initaktproduct;
       //aktProduct.targetOS := osWin;
-      localTOSset := aktProduct.productdata.targetOS;
+      localTOSset := aktProduct.productdata.targetOSset;
       Include(localTOSset, osWin);
-      aktProduct.productdata.targetOS := localTOSset;
-      //aktProduct.SetupFiles[0] := osLin;
-      localTOSset := aktProduct.SetupFiles[0].targetOS;
-      Include(localTOSset, osWin);
-      aktProduct.SetupFiles[0].targetOS := localTOSset;
+      aktProduct.productdata.targetOSset := localTOSset;
+      //aktProduct.SetupFiles[0] := osWin;
+      aktProduct.SetupFiles[0].targetOS := osWin;
       //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
       //TIProgressBarAnalyze_progress.Loaded;
       MemoAnalyze.Clear;
@@ -3090,6 +3165,10 @@ begin
   tmpimage.LoadFromFile(
     '/usr/share/opsi-setup-detector/analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMac.Glyph.Assign(tmpimage.Bitmap);
+
+  tmpimage.LoadFromFile(
+    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
   FreeAndNil(tmpimage);
   {$ENDIF UNIX}

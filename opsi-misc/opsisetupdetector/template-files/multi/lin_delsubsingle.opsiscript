@@ -12,14 +12,14 @@ set $oldProgFound$ = "false"
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
-	#@preUninstallLines1*#
+	#@preUninstallLines*#
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
 	#@uninstallCommandLine2*#
 	;----------------------------------------------
 	Sub_check_exitcode_del
-	#@postUninstallLines2*#
+	#@postUninstallLines*#
 endif
 
 [Sub_check_exitcode_del]

@@ -8,8 +8,6 @@ encoding=utf8
 
 ; This file should be included by main file uninstall.opsiscript
 
-#@stringVars2*#
-
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"
@@ -29,12 +27,6 @@ if not(($OS$ = "linux"))
 	logError "Installation aborted: wrong OS version: only Linux"
 	isFatalError "wrong OS"
 endif
-
-
-comment "Show product picture"
-ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
-
-#@GetProductProperty*#
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

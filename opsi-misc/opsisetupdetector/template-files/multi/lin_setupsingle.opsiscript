@@ -7,7 +7,6 @@ encoding=utf8
 
 ; This file should be included by main file setup.opsiscript
 
-#@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -31,11 +30,6 @@ if not(($OS$ = "linux"))
 endif
 
 
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
-
-#@GetProductProperty*#
-
 Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
@@ -43,7 +37,7 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines2*#
+#@preInstallLines*#
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
@@ -52,7 +46,7 @@ cleanupPackageSystem()
 cleanupPackageSystem()
 ;----------------------------------------------
 Sub_check_exitcode
-#@postInstallLines2*#
+#@postInstallLines*#
 
 [sub_check_exitcode]
 if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))

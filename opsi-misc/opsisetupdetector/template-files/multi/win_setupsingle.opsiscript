@@ -7,7 +7,7 @@ encoding=utf8
 
 ; This file should be included by main file setup.opsiscript
 
-#@stringVars*#
+
 
 
 ; import complete file !
@@ -36,7 +36,7 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-#@GetProductProperty*#
+
 
 if FileExists("%ScriptPath%\win_delsub.opsiscript")
 	comment "Start uninstall sub section"
@@ -50,14 +50,14 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
 Sub_check_exitcode
-#@postInstallLines1*#
+#@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
 
@@ -75,7 +75,7 @@ endif
 
 #@SetupDesktopiconSectionLines*#
 
-#@SetupSectionLines*#
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

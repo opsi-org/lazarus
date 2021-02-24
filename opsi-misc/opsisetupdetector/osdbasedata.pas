@@ -118,7 +118,7 @@ type
     Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
-    FtargetOS : TTargetOSset;
+    FtargetOS : TTargetOS;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -165,7 +165,7 @@ type
       read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
-    property targetOS: TTargetOSset read FtargetOS write FtargetOS;
+    property targetOS: TTargetOS read FtargetOS write FtargetOS;
     property active: boolean read Factive write Factive;
     procedure initValues;
 
@@ -297,7 +297,7 @@ default: ["xenial_bionic"]
     Fdelsubscript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
-    FtargetOS: TTargetOSset;
+    FtargetOSset: TTargetOSset;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -318,7 +318,7 @@ default: ["xenial_bionic"]
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
-    property targetOS: TTargetOSset read FtargetOS write FtargetOS;
+    property targetOSset: TTargetOSset read FtargetOSset write FtargetOSset;
   public
     { public declarations }
     //constructor Create;
@@ -441,6 +441,8 @@ var
   myVersion: string;
   lfilename: string;
   aktconfigfile : string;
+  forceProductId : string = ''; // by cli parameter
+  forceTargetOS : string = ''; // by cli parameter
 
 resourcestring
 
@@ -594,7 +596,7 @@ begin
   FuninstallProg := '';
   FuninstallCheck.Clear;
   Fanalyze_progess := 0;
-  FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
+  FisExitcodeFatalFunction := 'isGenericExitcodeFatal';
   Funinstall_waitforprocess := '';
   Finstall_waitforprocess := '';
   FcopyCompleteDir := false;
@@ -1361,7 +1363,7 @@ begin
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'template.png';
     *)
-    targetOS := [];
+    targetOSset := [];
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

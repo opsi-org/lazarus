@@ -147,6 +147,15 @@ msgstr ""
 msgid "Should we copy not only the setup file. but the complete directory ?"
 msgstr ""
 
+#: osdform.rsdebanalyze
+msgid "Analyze of DEB files"
+msgstr ""
+
+#: osdform.rsdebanalyzenotlinux
+msgctxt "osdform.rsdebanalyzenotlinux"
+msgid "Detailed anlyze of deb files can only be done at linux"
+msgstr ""
+
 #: osdform.rsdefaulticon
 msgctxt "osdform.rsdefaulticon"
 msgid "default icon"
@@ -184,6 +193,15 @@ msgstr ""
 
 #: osdform.rspropediterrornoselect
 msgid "No Property selected."
+msgstr ""
+
+#: osdform.rsrpmanalyze
+msgid "Analyze of RPM files"
+msgstr ""
+
+#: osdform.rsrpmanalyzenotlinux
+msgctxt "osdform.rsrpmanalyzenotlinux"
+msgid "Detailed anlyze of deb files can only be done at linux"
 msgstr ""
 
 #: osdform.rsselectappordir
@@ -295,7 +313,7 @@ msgstr ""
 
 #: osdform.swarninstalldirunknown
 msgid ""
-"Error: Field Install Directory is empty!\n"
+"Error: Field Install Directory is empty or not valid!\n"
 "For this Installer the Installdir could not be detected.\n"
 "The Installdir is needed for correct Uninstall process.\n"
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"

@@ -40,7 +40,7 @@ const
   SetupType_7zip = '7zip';
  *)
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_mac(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 
 procedure get_zip_info(myfilename: string; var mysetup: TSetupFile);
@@ -347,7 +347,7 @@ begin
 end;
 *)
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_mac(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -443,41 +443,7 @@ begin
   mysetup.uninstallCheck.Add('if DirectoryExists($installdir$)');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
-  (*
-  if installerId = stMsi then
-  begin
-    // will be done in  get_msi_info
-  end
-  else
-  begin
-    // will be done in analyze after get_*_info
-  end;
-  if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
-  begin
-    mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
-      mysetup.uninstallProg + '")');
-    mysetup.uninstallCheck.Add('  set $oldProgFound$ = "true"');
-    mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      '"$Installdir$\' + mysetup.uninstallProg + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendeduninstall;
-  end
-  else
-  begin
-    // no known uninstall program
-    mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
-  end;
-  {$IFDEF WINDOWS}
-  myArch := getBinaryArchitecture(myfilename);
-  if myArch = '32' then
-    mysetup.architecture := a32;
-  if myArch = '64' then
-    mysetup.architecture := a64;
-  if myArch = 'unknown' then
-    mysetup.architecture := aUnknown;
-  {$ENDIF WINDOWS}
-  *)
-end; //get_aktProduct_general_info
+end; //get_aktProduct_general_info_mac
 
 procedure get_zip_info(myfilename: string; var mysetup: TSetupFile);
 var
@@ -559,7 +525,7 @@ begin
   end;
   mysetup.installerId := setupType;
 
-  get_aktProduct_general_info(setupType, Filename, mysetup);
+  get_aktProduct_general_info_mac(setupType, Filename, mysetup);
 
   // marker for add installers
   case setupType of

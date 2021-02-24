@@ -7,7 +7,6 @@ encoding=utf8
 
 ; This file should be included by main file setup.opsiscript
 
-#@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -25,18 +24,11 @@ if not("#@install3*#" = "true")
 	isFatalError "wrong OS"
 endif
 
-set $OS$ = GetOS
-
 if not(($OS$ = "macos"))
 	logError "Installation aborted: wrong OS version: only MacOS"
 	isFatalError "wrong OS"
 endif
 
-
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
-
-#@GetProductProperty*#
 
 if FileExists("%ScriptPath%\mac_delsub.opsiscript")
 	comment "Start uninstall sub section"
@@ -50,14 +42,14 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines3*#
+#@preInstallLines*#
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%\files3"
 ;----------------------------------------------
 #@installCommandLine3*#
 ;----------------------------------------------
 Sub_check_installSuccess
-#@postInstallLines3*#
+#@postInstallLines*#
 
 
 [Sub_check_installSuccess]

@@ -42,7 +42,7 @@ const
 *)
 
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 
 procedure get_rpm_info(myfilename: string; var mysetup: TSetupFile);
@@ -154,7 +154,7 @@ end;
 *)
 
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -234,7 +234,7 @@ begin
     installerArray[integer(mysetup.installerId)].uninstallProg;
   // uninstallcheck
     // nothing yet
-end; //get_aktProduct_general_info
+end; //get_aktProduct_general_info_lin
 
 
 
@@ -314,6 +314,10 @@ begin
     mysetup.uninstallCheck.Add('endif');
   mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage("'
    + packageId +'")';
+  {$ELSE LINUX}
+  LogDatei.log('Detailed anlyze of rpm files can only be done at linux',LLWarning);
+  MessageDlg(rsRpmAnalyze, rsRPMAnalyzeNotLinux,
+    mtInformation, [mbOK], '');
   {$ENDIF LINUX}
   finally
     //FreeAndNil(outlist);
@@ -394,6 +398,10 @@ begin
     mysetup.uninstallCheck.Add('endif');
   mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage('
    + packageId +')';
+  {$ELSE LINUX}
+  LogDatei.log('Detailed anlyze of deb files can only be done at linux',LLWarning);
+  MessageDlg(rsDebAnalyze, rsDebAnalyzeNotLinux,
+    mtInformation, [mbOK], '');
   {$ENDIF LINUX}
   finally
     //FreeAndNil(outlist);
@@ -462,7 +470,7 @@ begin
     mysetup.installerId := setupType;
   end;
 
-  get_aktProduct_general_info(setupType, Filename, mysetup);
+  get_aktProduct_general_info_lin(setupType, Filename, mysetup);
 
   // marker for add installers
   case setupType of

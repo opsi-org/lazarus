@@ -99,11 +99,11 @@ object resultForm1: TresultForm1
       Height = 578
       Top = 1
       Width = 1039
-      ActivePage = TabSheetSetup2
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 3
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -693,7 +693,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Top = 9
               BorderSpacing.InnerBorder = 5
               Caption = 'Analyze 2 Files (32 / 64 Bit) and create O. Package'
-              Font.Height = -16
+              Font.Height = -14
               Glyph.Data = {
                 76590000424D7659000000000000360000002800000077000000300000000100
                 2000000000004059000064000000640000000000000000000000000000000000
@@ -2899,7 +2899,7 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BtCreateEmptyTemplateWinClick
+              OnClick = BtCreateEmptyTemplateMultiClick
               ParentFont = False
               TabOrder = 1
             end

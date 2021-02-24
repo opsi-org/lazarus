@@ -39,7 +39,7 @@ const
   SetupType_7zip = '7zip';
 *)
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
@@ -306,7 +306,7 @@ begin
     mywrite(instring);
 end;
 *)
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -414,7 +414,7 @@ begin
   if myArch = 'unknown' then
     mysetup.architecture := aUnknown;
   {$ENDIF WINDOWS}
-end; //get_aktProduct_general_info
+end; //get_aktProduct_general_info_win
 
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile);
 begin
@@ -1337,7 +1337,7 @@ begin
   begin
     mysetup.analyze_progess := 10;
     setupType := stMsi;
-    get_aktProduct_general_info(stMsi, Filename, mysetup);
+    get_aktProduct_general_info_win(stMsi, Filename, mysetup);
     get_msi_info(FileName, mysetup);
     Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
   end
@@ -1347,7 +1347,7 @@ begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
     // filename, verbose, skipzero
 
-    get_aktProduct_general_info(setupType, Filename, mysetup);
+    get_aktProduct_general_info_win(setupType, Filename, mysetup);
 
     // marker for add installers
     case setupType of

@@ -8,12 +8,18 @@ Message "Check for existing installation of " + $ProductId$ + " ..."
 
 comment "Start the Uninstall check:"
 set $oldProgFound$ = "false"
-#@uninstallCheckLines3*#
+if DirectoryExists($InstallDir$)
+	set $oldProgFound$ = "true"
+endif
 
 if $oldProgFound$ = "true"
-	Message "Uninstalling " + $ProductId$ + " ..."
-	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown') or ($InstallDir$ = '/Applications/'))
-		Files_uninstall
+	comment "Is the Instaddir in the Apllications directory ?"
+	if "1" = strPos(lower($InstallDir$),lower("/Applications/"))
+		comment "Do not delete the whole /Applications dir ..."
+		if not(lower($InstallDir$) = lower('/Applications/'))
+			Message "Uninstalling " + $ProductId$ + " ..."
+			Files_uninstall
+		endif
 	endif
 endif
 
