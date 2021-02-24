@@ -11482,7 +11482,7 @@ begin
           try
             s1 := ExpandFileName(s1);
             if FileExists(s1) then
-              TStringList(list).Assign(loadUnicodeTextFile(s1))
+              TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
             else
             begin
               LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' + s1, LLError);
@@ -23523,6 +23523,8 @@ var
   ipAddress: string = '';
   usedEncoding: string = '';
   Encoding2use: string = '';
+  hasBOM : boolean = False;
+  foundEncoding : string = '';
   tmpstr: string = '';
   str: string;
   depotdrive_bak, depotdir_bak: string;
@@ -23648,9 +23650,16 @@ begin
       if hasFileBom(Scriptdatei) then
       begin
         //logdatei.log_prog('file has BOM', LLinfo );
-        Script.loadFromUnicodeFile(Scriptdatei);
+        Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
         logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
         Encoding2use := searchencoding(Script.Text);
+        if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+           begin
+             logdatei.log('The encoding mentioned in the file :' + Encoding2use +
+               ', is different that the detected encoding :' + foundEncoding +'!', LLWarning);
+             logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+             Encoding2use := foundEncoding;
+           end;
       end
       else
       begin
@@ -23673,7 +23682,7 @@ begin
               if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use)-3)) then
                  begin
                   //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                  Script.loadFromUnicodeFile(Scriptdatei);
+                  Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
                  end
               else
                   begin

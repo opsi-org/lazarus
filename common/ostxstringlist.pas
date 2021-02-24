@@ -29,7 +29,7 @@ Type
     function FuncSaveToFile(const FileName: string): boolean; overload;
     procedure loadFromFileWithEncoding(const FileName: string; encodingtype: string);
     procedure loadFromFile(const FileName: string);
-    procedure loadFromUnicodeFile(const FileName: string);
+    procedure loadFromUnicodeFile(const FileName: string; var hasBOM : boolean; var foundEncoding : string);
     //procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
@@ -365,11 +365,11 @@ begin
   self.AddStrings(osencoding.loadTextFileWithEncoding(encfilename,encodingtype));
 end;
 
-procedure TXStringlist.loadFromUnicodeFile(const FileName: string);
+procedure TXStringlist.loadFromUnicodeFile(const FileName: string; var hasBOM : boolean; var foundEncoding : string);
 begin
   self.Clear;
   LogDatei.log('Load from Unicode file ', LLDebug);
-  self.AddStrings(osencoding.loadUnicodeTextFile(ExpandFileName(Filename)));
+  self.AddStrings(osencoding.loadUnicodeTextFile(ExpandFileName(Filename), hasBOM, foundEncoding));
 end;
 
 (*

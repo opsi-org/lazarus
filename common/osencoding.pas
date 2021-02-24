@@ -27,9 +27,12 @@ function isSupportedEncoding(testEncoding: string): boolean;
 procedure logSupportedEncodings;
 
 function isEncodingUnicode(encodingString: string): boolean;
+function UniStreamTypes2uniEncoding(inEncoding:TUniStreamTypes; hasBOM: boolean): string;
+function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
+  var hasBOM: boolean): TUniStreamTypes;
 function hasFileBom(infilename: string): boolean;
 
-function loadUnicodeTextFile(filename: string): TStringList;
+function loadUnicodeTextFile(filename: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
 procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
 
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
@@ -141,6 +144,31 @@ begin
     Result := True;
 end;
 
+function UniStreamTypes2uniEncoding(inEncoding:TUniStreamTypes; hasBOM: boolean): string;
+begin
+  if (inEncoding = ufUtf8) then
+    Result := 'utf8';
+
+  if (inEncoding = ufUtf16le) then
+    Result := 'utf16le';
+
+  if (inEncoding = ufUtf16be) then
+    Result := 'utf16be';
+
+  if (inEncoding = ufUtf32le) then
+    Result := 'utf32le';
+
+  if (inEncoding = ufUtf32be) then
+    Result := 'utf132be';
+
+  if (inEncoding = ufANSI) then
+    Result := 'ansi';
+
+  if (hasBOM = True) and (inEncoding <> ufANSI) then
+    Result := Result + 'bom';
+
+end;
+
 function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
   var hasBOM: boolean): TUniStreamTypes;
 var
@@ -196,11 +224,11 @@ begin
   fCES.Reset;
   inFileName := ExpandFileName(inFileName);
   fCES.LoadFromFile(inFileName);
-  Result := fCES.hasBOM;
+  Result := fCES.HasBOM;
   fCES.Free;
 end;
 
-function loadUnicodeTextFile(fileName: string): TStringList;
+function loadUnicodeTextFile(fileName: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
 var
   fCES: TCharEncStream;
   str : string;
@@ -210,6 +238,8 @@ begin
   fCES.Reset;
   fileName := ExpandFileName(fileName);
   fCES.LoadFromFile(fileName);
+  hasBOM := fCES.HasBOM;
+  foundEncoding := UniStreamTypes2uniEncoding(fCES.UniStreamType,hasBOM);
   str := fCES.UTF8Text;
   Result.Text := str;
   fCES.Free;
@@ -489,11 +519,12 @@ function loadTextFileWithEncoding(filename, encoding: string): TStringList;
     encline: string;
   *)
 var
+  bool : boolean;
   str : string;
 begin
   Result := TStringList.Create;
   if isEncodingUnicode(encoding) then
-    Result.AddStrings(loadUnicodeTextFile(filename))
+    Result.AddStrings(loadUnicodeTextFile(filename, bool, str))
   //else if (enc = 'utf16le') then
   //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
   // else if ((enc = 'utf8') or (enc = 'UTF-8')) then
