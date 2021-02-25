@@ -42,4 +42,4 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-include_insert $OSshort$+"_setup.opsicript"
+include_insert $OSshort$+"_setup.opsiscript"

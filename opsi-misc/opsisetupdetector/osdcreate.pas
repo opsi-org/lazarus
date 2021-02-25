@@ -242,7 +242,7 @@ begin
       if aktProduct.SetupFiles[i].active then
         //setup 1
         patchlist.add('#@install' + IntToStr(i+1) + '*#=' +
-          BoolToStr(aktProduct.SetupFiles[i].active,true);
+          BoolToStr(aktProduct.SetupFiles[i].active,true));
 
       patchlist.add('#@MinimumSpace' + IntToStr(i+1) + '*#=' + IntToStr(
         aktProduct.SetupFiles[i].requiredSpace) + ' MB');
@@ -422,13 +422,13 @@ begin
       begin
         infilename := aktProduct.SetupFiles[i].setupFullFileName;
         LogDatei.log('Will copy: ' + infilename + ' to: ' + clientpath +
-          PathDelim + 'files' + IntToStr(i), LLNotice);
+          PathDelim + 'files' + IntToStr(i+1), LLNotice);
         if aktProduct.SetupFiles[i].active then
           // complete dir
           if aktProduct.SetupFiles[i].copyCompleteDir then
           begin
             if not CopyDirTree(ExtractFileDir(infilename),
-              clientpath + PathDelim + 'files' + IntToStr(i),
+              clientpath + PathDelim + 'files' + IntToStr(i+1),
               [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
               LogDatei.log('Failed to copy: ' + infilename, LLError);
           end
@@ -437,7 +437,7 @@ begin
             (LowerCase(ExtractFileExt(infilename)) = '.app') then
           begin
             if not CopyDirTree(infilename, clientpath +
-              PathDelim + 'files' + IntToStr(i) + PathDelim +
+              PathDelim + 'files' + IntToStr(i+1) + PathDelim +
               ExtractFileName(infilename), [cffOverwriteFile,
               cffCreateDestDirectory, cffPreserveTime]) then
               LogDatei.log('Failed to copy: ' + infilename, LLError);
@@ -447,14 +447,14 @@ begin
             // setup file
             if FileExists(infilename) then
               if copyfile(infilename, clientpath +
-                PathDelim + 'files' + IntToStr(i) + PathDelim +
+                PathDelim + 'files' + IntToStr(i+1) + PathDelim +
                 aktProduct.SetupFiles[i].setupFileName,
                 [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
                 LogDatei.log('Failed to copy: ' + infilename, LLError);
             // MST file
             if FileExists(aktProduct.SetupFiles[i].MSTFullFileName) then
               if copyfile(aktProduct.SetupFiles[i].MSTFullFileName,
-                clientpath + PathDelim + 'files' + IntToStr(i) +
+                clientpath + PathDelim + 'files' + IntToStr(i+1) +
                 PathDelim + aktProduct.SetupFiles[i].MSTFileName,
                 [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
                 LogDatei.log('Failed to copy: ' +

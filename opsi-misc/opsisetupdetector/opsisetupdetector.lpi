@@ -15,7 +15,6 @@
         <TextDesc Value="Program to detect the silent / unattended parameters of setup files and create opsi package structure"/>
       </XPManifest>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -340,8 +339,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="229"/>
-        <CursorPos X="29" Y="241"/>
+        <TopLine Value="333"/>
+        <CursorPos X="84" Y="426"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -668,7 +667,7 @@
         <EditorIndex Value="7"/>
         <TopLine Value="509"/>
         <CursorPos X="34" Y="528"/>
-        <UsageCount Value="193"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
@@ -678,9 +677,9 @@
         <UnitName Value="osdanalyzeLin"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="473"/>
-        <CursorPos X="34" Y="473"/>
-        <UsageCount Value="193"/>
+        <TopLine Value="370"/>
+        <CursorPos X="30" Y="395"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
@@ -714,7 +713,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="16"/>
         <CursorPos X="63" Y="21"/>
-        <UsageCount Value="183"/>
+        <UsageCount Value="186"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -730,7 +729,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="40" Y="15"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="185"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -762,7 +761,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="39" Y="70"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="121"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
@@ -784,7 +783,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="67"/>
         <CursorPos X="26" Y="67"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="113"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
@@ -831,7 +830,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11" Y="11"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="45"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit74>
       <Unit75>
@@ -892,7 +891,7 @@
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osdform.pas"/>
         <Caret Line="546" Column="29" TopLine="526"/>
@@ -1009,6 +1008,10 @@
         <Filename Value="osdcreate.pas"/>
         <Caret Line="286" Column="58" TopLine="94"/>
       </Position29>
+      <Position30>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="241" Column="29" TopLine="229"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

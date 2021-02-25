@@ -42,4 +42,4 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-include_insert $OSshort$+"_uninstallsingle.opsicript"
+include_insert $OSshort$+"_uninstall.opsiscript"
