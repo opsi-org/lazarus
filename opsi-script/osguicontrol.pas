@@ -73,9 +73,10 @@ type
 
 const
   {$IFDEF WINDOWS}
-  skindirectoryDefault = 'winstskin';
-  skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'winstskin';
   skindirectoryDevelopment = 'winstskin';
+  skindirectoryDefault = 'skin';
+  skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'customskin';
+  skindirectoryCustomWinOld = '..'+PathDelim+'custom'+PathDelim+'winstskin';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   skindirectoryDevelopment = 'winstskin';
@@ -124,6 +125,8 @@ begin
     skindir := skindirectory
   else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWinOld+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWinOld
   else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
   else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
