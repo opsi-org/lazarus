@@ -20,16 +20,15 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
 DefVar $arch$
 DefVar $mode$
+
 #@stringVars*#
 
 Set $arch$ = GetSystemType
 set $mode$ = GetProductProperty("install_architecture","system specific")
-Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"

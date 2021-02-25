@@ -18,13 +18,10 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
+
 #@stringVars*#
-
-Set $LogDir$ = "%opsiLogDir%"
-
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"

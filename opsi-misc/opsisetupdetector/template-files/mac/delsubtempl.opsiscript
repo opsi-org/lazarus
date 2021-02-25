@@ -21,9 +21,7 @@ endif
 
 
 [Files_uninstall]
-del -sf "$InstallDir$\"
+del -sf "$InstallDir$/"
 
-;-----------------------------------------------------
-
-#@DelsubSectionLines*#
+#@DelsubSectionLines1*#
 ;-----------------------------------------------------

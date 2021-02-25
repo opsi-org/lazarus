@@ -39,7 +39,7 @@ endif
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory "%SCRIPTPATH%\files2"
 ;----------------------------------------------
 cleanupPackageSystem()
 ;----------------------------------------------

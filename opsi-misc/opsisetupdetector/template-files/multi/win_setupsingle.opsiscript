@@ -7,9 +7,6 @@ encoding=utf8
 
 ; This file should be included by main file setup.opsiscript
 
-
-
-
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "%scriptpath%\osd-lib.opsiscript"

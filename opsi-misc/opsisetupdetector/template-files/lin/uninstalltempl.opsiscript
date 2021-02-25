@@ -21,6 +21,7 @@ DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
 DefStringlist $ListOfPackageNames$
+
 #@stringVars*#
 
 ; import complete file !
@@ -31,9 +32,10 @@ importlib "%scriptpath%\uib_lin_install.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
+Set $ProductId$		 = "l-opsi-template"
 ; the path were we find the product after the installation
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $InstallDir$	= "<none>"
+Set $LicenseRequired$ = "false"
 Set $LicensePool$	  = ""
 ; enter here names of the package at the supported Distributions / Versions
 Set $ListOfPackageNames$ = CreateStringList("<packagename>")
@@ -70,11 +72,3 @@ comment "License management is enabled and will be used"
 comment "Trying to free license used for the product"
 DefVar $result$
 Set $result$ = FreeLicense($LicensePool$)
-; If there is an assignment of a license pool to the product, it is possible to use
-; Set $result$ = FreeLicense("", $ProductId$)
-;
-; If there is an assignment of a license pool to a windows software id, it is possible to use
-; DefVar $WindowsSoftwareId$
-; $WindowsSoftwareId$ = "..."
-; set $result$ = FreeLicense("", "", $WindowsSoftwareId$)
-

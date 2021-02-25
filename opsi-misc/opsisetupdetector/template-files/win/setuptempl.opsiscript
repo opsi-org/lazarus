@@ -17,13 +17,13 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
+DefVar %opsiLogDir%
 DefVar $OS$
+DefVar $oldProgFound$
 DefVar $MsiId$
 DefVar $UninstallProgram$
-#@stringVars*#
 
-Set $LogDir$ = "%opsiLogDir%"
+#@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -32,12 +32,12 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
+Set $ProductId$		 = "opsi-template"
 Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 ;Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
 Set $InstallDir$		= "unknown"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $LicenseRequired$ = "false"
 Set $LicensePool$	  = "" 
 ; ----------------------------------------------------------------
 
@@ -71,14 +71,14 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
 Winbatch_install
 ;----------------------------------------------
 Sub_check_exitcode
-#@postInstallLines1*#
+#@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
 
@@ -100,17 +100,17 @@ LinkFolder_install
 ;
 ; === MSI package =======================================================================================
 ; You may use the parameter PIDKEY=$Licensekey$
-; msiexec /i "%ScriptPath%\some.msi" /l* "$LogDir$\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress
+; msiexec /i "%ScriptPath%\some.msi" /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress
 ;
 ; === InstallShield + MSI=====================================================================================
 ; Attention: The path to the log file should not contain any whitespaces
-; "%ScriptPath%\setup.exe" /s /v" /l* $LogDir$\$ProductId$.install_log.txt /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+; "%ScriptPath%\setup.exe" /s /v" /l* %opsiLogDir%\$ProductId$.install_log.txt /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
 ; "%ScriptPath%\setup.exe" /s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
 ;
 ; === InstallShield =====================================================================================
 ; Create setup.iss answer file by running: setup.exe /r /f1"c:\setup.iss"
 ; You may use an answer file by the parameter /f1"c:\setup.iss"
-; "%ScriptPath%\setup.exe" /s /sms /f2"$LogDir$\$ProductId$.install_log.txt"
+; "%ScriptPath%\setup.exe" /s /sms /f2"%opsiLogDir%\$ProductId$.install_log.txt"
 ;
 ; === Inno Setup ========================================================================================
 ; http://unattended.sourceforge.net/InnoSetup_Switches_ExitCodes.html
@@ -198,7 +198,7 @@ EndSwitch
 
 #@SetupDesktopiconSectionLines*#
 
-#@SetupSectionLines*#
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

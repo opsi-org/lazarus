@@ -561,7 +561,8 @@ resourcestring
   rsNumberIcons = 'Icons to choose from: ';
   rsCopyCompleteDir =
     'Should we copy not only the setup file. but the complete directory ?';
-  rsSelectAppOrDir = 'First select MacOS .app or Directory where to find MacOS Installer files';
+  rsSelectAppOrDir =
+    'First select MacOS .app or Directory where to find MacOS Installer files';
   rsSelectMacFile = 'Now select MacOS installer file.';
   rsRpmAnalyze = 'Analyze of RPM files';
   rsRPMAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
@@ -860,9 +861,9 @@ var
   ErrorMsg: string;
   i: integer;
   mylang: string;
-  myparamstring : string;
-  myparamcount : integer;
-  allowedOS : TStringlist;
+  myparamstring: string;
+  myparamcount: integer;
+  allowedOS: TStringList;
 begin
   startupfinished := True; //avoid calling main on every show event
   myparamcount := ParamCount;
@@ -890,8 +891,8 @@ begin
   if ErrorMsg <> '' then
   begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
-      ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
-      LogDatei.log(ErrorMsg, LLcritical);
+    ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
+    LogDatei.log(ErrorMsg, LLcritical);
     Application.ShowException(Exception.Create(ErrorMsg));
     Application.Terminate;
     Exit;
@@ -915,10 +916,10 @@ begin
 
 
 
-  if Application.HasOption('l','lang') then
+  if Application.HasOption('l', 'lang') then
   begin
     LogDatei.log('Found Parameter lang', LLInfo);
-    mylang := Application.GetOptionValue('l','lang');
+    mylang := Application.GetOptionValue('l', 'lang');
     SetDefaultLang(mylang);
     LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
     LogDatei.log('Active lang: ' + mylang, LLInfo);
@@ -936,7 +937,7 @@ begin
   end;
 
 
-  if Application.HasOption('n','nogui') then
+  if Application.HasOption('n', 'nogui') then
     showgui := False;
 
   if showgui then
@@ -944,32 +945,33 @@ begin
     //FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
   end;
 
-  if Application.HasOption('t','targetOS') then
+  if Application.HasOption('t', 'targetOS') then
   begin
-    forceTargetOS := lowercase(trim(Application.GetOptionValue('t','targetOS')));
+    forceTargetOS := lowercase(trim(Application.GetOptionValue('t', 'targetOS')));
     allowedOS := TStringList.Create;
     allowedOS.CommaText := 'win,lin,mac';
     if allowedOS.IndexOf(forceTargetOS) = -1 then
     begin
-      myerror := 'Error: Given targetOS: ' + forceTargetOS + ' is not valid. Should be on of win,lin,mac';
+      myerror := 'Error: Given targetOS: ' + forceTargetOS +
+        ' is not valid. Should be on of win,lin,mac';
       writeln(myerror);
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
       Application.Terminate;
-    Exit;
+      Exit;
     end;
     FreeAndNil(allowedOS);
   end;
 
-  if Application.HasOption('p','productId') then
+  if Application.HasOption('p', 'productId') then
   begin
-    forceProductId := trim(Application.GetOptionValue('p','productId'));
+    forceProductId := trim(Application.GetOptionValue('p', 'productId'));
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
   end;
 
-  if Application.HasOption('f','filename') then
+  if Application.HasOption('f', 'filename') then
   begin
-    myfilename := trim(Application.GetOptionValue('f','filename'));
+    myfilename := trim(Application.GetOptionValue('f', 'filename'));
     if not FileExists(myfilename) then
     begin
       myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
@@ -1218,33 +1220,34 @@ begin
 
 end;
 
-procedure TResultform1.OpenDialog1CanClose(Sender: TObject;
-  var CanClose: boolean);
+procedure TResultform1.OpenDialog1CanClose(Sender: TObject; var CanClose: boolean);
 begin
-   Logdatei.log('opendialog ccl folder: '+TOpenDialog(sender).FileName+'  -  '+BoolToStr(canclose),LLInfo);
+  Logdatei.log('opendialog ccl folder: ' + TOpenDialog(Sender).FileName +
+    '  -  ' + BoolToStr(canclose), LLInfo);
 end;
 
 procedure TResultform1.OpenDialog1Close(Sender: TObject);
 begin
-  Logdatei.log('opendialog cl folder: '+TOpenDialog(sender).FileName,LLInfo);
+  Logdatei.log('opendialog cl folder: ' + TOpenDialog(Sender).FileName, LLInfo);
 end;
 
 procedure TResultform1.OpenDialog1FolderChange(Sender: TObject);
 begin
-  Logdatei.log('opendialog fc folder: '+TOpenDialog(sender).FileName,LLInfo);
+  Logdatei.log('opendialog fc folder: ' + TOpenDialog(Sender).FileName, LLInfo);
 
 end;
 
 procedure TResultform1.OpenDialog1SelectionChange(Sender: TObject);
 var
-  ext : string;
+  ext: string;
 begin
-  Logdatei.log('opendialog sc folder: '+TOpenDialog(sender).FileName,LLInfo);
-  ext := ExtractFileExt(TOpenDialog(sender).FileName);
+  Logdatei.log('opendialog sc folder: ' + TOpenDialog(Sender).FileName, LLInfo);
+  ext := ExtractFileExt(TOpenDialog(Sender).FileName);
   if ext = '.app' then
-  OpenDialog1.Options:=[ofAllowMultiSelect,ofNoChangeDir,ofNoValidate,ofEnableSizing,ofViewDetail]
+    OpenDialog1.Options := [ofAllowMultiSelect, ofNoChangeDir,
+      ofNoValidate, ofEnableSizing, ofViewDetail]
   else
-    OpenDialog1.Options:=[ofEnableSizing,ofViewDetail] ;
+    OpenDialog1.Options := [ofEnableSizing, ofViewDetail];
 
 end;
 
@@ -1266,7 +1269,7 @@ begin
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
     aktProduct.productdata.targetOSset := localTOSset;
-    aktProduct.SetupFiles[0].targetOS:= osWin;
+    aktProduct.SetupFiles[0].targetOS := osWin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -1611,7 +1614,7 @@ begin
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osWin);
     aktProduct.productdata.targetOSset := localTOSset;
-    aktProduct.SetupFiles[0].targetOS:= osWin;
+    aktProduct.SetupFiles[0].targetOS := osWin;
     (* moved to makeProperties
     // start add property
     index := StringGridProp.RowCount;
@@ -1639,7 +1642,7 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateMultiClick(Sender: TObject);
 begin
-   begin
+  begin
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
@@ -1649,12 +1652,13 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOSset := [osWin,osLin,osMac];
+    aktProduct.productdata.targetOSset := [osWin, osLin, osMac];
     aktProduct.productdata.productId := 'opsi-template';
     aktProduct.productdata.productName := 'opsi template for multi platform';
     aktProduct.productdata.productversion := '1.0.0';
     aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description := 'A template for opsi products for Win, Lin, Mac';
+    aktProduct.productdata.description :=
+      'A template for opsi products for Win, Lin, Mac';
   end;
 end;
 
@@ -2459,8 +2463,7 @@ begin
   if ((aktProduct.SetupFiles[0].installDirectory = '') or
     (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[0].installerId <> stMsi) and
-    (aktProduct.SetupFiles[0].targetOS = osWin)
-    then
+    (aktProduct.SetupFiles[0].targetOS = osWin) then
   begin
     //checkok := False;
     // we warn here only
@@ -2504,6 +2507,9 @@ begin
       threeAnalyzeCreate_1:
       begin
         osdsettings.runmode := threeAnalyzeCreate_2;
+        //aktProduct.targetOS := osLin;
+        localTOSset := aktProduct.productdata.targetOSset;
+        Include(localTOSset, osLin);
         if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
           rsThreeAnalyzeAndCreateMsgSecondSetup, mtConfirmation,
           [mbYes, mbNo], '') = mrYes then
@@ -2518,9 +2524,6 @@ begin
             MemoAnalyze.Clear;
             Application.ProcessMessages;
             aktProduct.SetupFiles[1].active := True;
-            //aktProduct.targetOS := osLin;
-            localTOSset := aktProduct.productdata.targetOSset;
-            Include(localTOSset, osLin);
             aktProduct.productdata.targetOSset := localTOSset;
             //aktProduct.SetupFiles[1] := osLin;
             aktProduct.SetupFiles[1].targetOS := osLin;
@@ -2557,7 +2560,7 @@ var
   filename: string;
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
-  macosOpendlg : TSelectFileOrDirectoryDialog;
+  macosOpendlg: TSelectFileOrDirectoryDialog;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
@@ -2590,42 +2593,46 @@ begin
       threeAnalyzeCreate_2:
       begin
         osdsettings.runmode := threeAnalyzeCreate_3;
+        //aktProduct.targetOS := osMac;
+        localTOSset := aktProduct.productdata.targetOSset;
+        Include(localTOSset, osMac);
+        aktProduct.productdata.targetOSset := localTOSset;
         if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
           rsThreeAnalyzeAndCreateMsgThirdSetup, mtConfirmation,
           [mbYes, mbNo], '') = mrYes then
         begin
-           goon := False;
-  isapp := False;
-  MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
-          rsSelectAppOrDir, mtInformation,
-          [mbok], '');
-  SelectDirectoryDialog1.Title:=rsSelectAppOrDir;
+          goon := False;
+          isapp := False;
+          MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+            rsSelectAppOrDir, mtInformation,
+            [mbOK], '');
+          SelectDirectoryDialog1.Title := rsSelectAppOrDir;
 
-  if SelectDirectoryDialog1.Execute then
-  begin
-    goon := True;
-    filename := SelectDirectoryDialog1.FileName;
-    if ExtractFileExt(filename) = '.app' then
-    begin
-      isapp := True;
-    end;
-  end;
-  if goon and not isapp then
-  begin
-    MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
-          rsSelectMacFile, mtInformation,
-          [mbok], '');
-    OpenDialog1.InitialDir := filename;
-    ;
-    OpenDialog1.FilterIndex := 5;   // macos
-    if OpenDialog1.Execute then
-    begin
-      filename := OpenDialog1.FileName;
-      goon := True;
-    end
-    else
-      goon := False;
-  end;
+          if SelectDirectoryDialog1.Execute then
+          begin
+            goon := True;
+            filename := SelectDirectoryDialog1.FileName;
+            if ExtractFileExt(filename) = '.app' then
+            begin
+              isapp := True;
+            end;
+          end;
+          if goon and not isapp then
+          begin
+            MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
+              rsSelectMacFile, mtInformation,
+              [mbOK], '');
+            OpenDialog1.InitialDir := filename;
+            ;
+            OpenDialog1.FilterIndex := 5;   // macos
+            if OpenDialog1.Execute then
+            begin
+              filename := OpenDialog1.FileName;
+              goon := True;
+            end
+            else
+              goon := False;
+          end;
           (*
           goon := False;
           isapp := False;
@@ -2684,10 +2691,6 @@ begin
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
             Application.ProcessMessages;
-            //aktProduct.targetOS := osMac;
-            localTOSset := aktProduct.productdata.targetOSset;
-            Include(localTOSset, osMac);
-            aktProduct.productdata.targetOSset := localTOSset;
             //aktProduct.SetupFiles[2] := osMac;
             aktProduct.SetupFiles[2].targetOS := osMac;
             aktProduct.SetupFiles[2].active := True;
@@ -2802,7 +2805,7 @@ begin
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osLin);
     aktProduct.productdata.targetOSset := localTOSset;
-    aktProduct.SetupFiles[0].targetOS:= osLin;
+    aktProduct.SetupFiles[0].targetOS := osLin;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2868,7 +2871,7 @@ begin
     localTOSset := aktProduct.productdata.targetOSset;
     Include(localTOSset, osMac);
     aktProduct.productdata.targetOSset := localTOSset;
-    aktProduct.SetupFiles[0].targetOS:= osMac;
+    aktProduct.SetupFiles[0].targetOS := osMac;
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
@@ -2892,10 +2895,13 @@ var
   installerselected: boolean = False;
 begin
   osdsettings.runmode := threeAnalyzeCreate_1;
-      setRunMode;
-  if MessageDlg(rsThreeAnalyzeAndCreateMsgHead,
-    rsThreeAnalyzeAndCreateMsgFirstSetup, mtConfirmation,
-    [mbYes, mbNo], '') = mrYes then
+  setRunMode;
+  //aktProduct.targetOS := osWin;
+  localTOSset := aktProduct.productdata.targetOSset;
+  Include(localTOSset, osWin);
+  aktProduct.productdata.targetOSset := localTOSset;
+  if MessageDlg(rsThreeAnalyzeAndCreateMsgHead, rsThreeAnalyzeAndCreateMsgFirstSetup,
+    mtConfirmation, [mbYes, mbNo], '') = mrYes then
   begin
     OpenDialog1.FilterIndex := 1;   // setup
     if OpenDialog1.Execute then
@@ -2903,10 +2909,6 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
       initaktproduct;
-      //aktProduct.targetOS := osWin;
-      localTOSset := aktProduct.productdata.targetOSset;
-      Include(localTOSset, osWin);
-      aktProduct.productdata.targetOSset := localTOSset;
       //aktProduct.SetupFiles[0] := osWin;
       aktProduct.SetupFiles[0].targetOS := osWin;
       //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');

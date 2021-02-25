@@ -294,7 +294,7 @@ end;
 
 function createClientFiles: boolean;
 var
-  infilename, outfilename, tmpname, tmpext: string;
+  infilename, outfilename, tmpname, tmpext, tmppref: string;
   insetup, indelsub, inuninstall: string;
   templatePath, genericTemplatePath, tempstr: string;
   infilelist: TStringList;
@@ -389,7 +389,19 @@ begin
       begin
         tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
         tmpext := ExtractFileExt(infilelist.Strings[i]);
-        infilename := templatePath + Pathdelim + infilelist.Strings[i];
+        tmppref := copy(infilelist.Strings[i],1,3);
+        // replace non active setups with template
+        if (tmppref = 'win') and (aktProduct.SetupFiles[0].active = false) then
+          infilename := templatePath + Pathdelim
+          + StringReplace(tmpname, 'single', 'templ', []) + tmpext
+        else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = false) then
+          infilename := templatePath + Pathdelim
+          + StringReplace(tmpname, 'single', 'templ', []) + tmpext
+        else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = false) then
+          infilename := templatePath + Pathdelim
+          + StringReplace(tmpname, 'single', 'templ', []) + tmpext
+        else
+          infilename := templatePath + Pathdelim + infilelist.Strings[i];
         tmpname := StringReplace(tmpname, 'single', '', []);
         tmpname := StringReplace(tmpname, 'double', '', []);
         tmpname := StringReplace(tmpname, 'templ', '', []);

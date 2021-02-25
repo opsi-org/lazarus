@@ -20,6 +20,7 @@ DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
+
 #@stringVars*#
 
 ; import complete file !
@@ -29,11 +30,11 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
+Set $ProductId$		 = "m-opsi-template"
 ; the path were we find the product after the installation
 ;Set $InstallDir$	= "/Applications/<product.app>"
-Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $InstallDir$	= "/Applications/<productid.app>"
+Set $LicenseRequired$ = "false"
 Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 

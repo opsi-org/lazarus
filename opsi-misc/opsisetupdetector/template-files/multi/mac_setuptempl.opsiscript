@@ -1,26 +1,11 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
 ; ----------------------------------------------------------------
 encoding=utf8
 
-[Actions]
-requiredWinstVersion >= "4.12.0.28"
-ScriptErrorMessages = false
-
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-DefVar $installSuccess$
-#@stringVars*#
+; This file should be included by main file setup.opsiscript
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -29,48 +14,41 @@ importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
-Set $MinimumSpace$	 = "1 MB"
-; the path were we find the product after the installation
-;Set $InstallDir$		= "/Applications/<path to the product>"
-Set $InstallDir$		= "/Applications/<productid.app>"
-Set $LicenseRequired$ = "false"
-Set $LicensePool$	  = "" 
+; the path where we find the product after the installation
+Set $InstallDir$	= "/Applications/<productid>.app"
 ; ----------------------------------------------------------------
 
-set $OS$ = GetOS
+if not("true" = "true")
+	logError "No installation for MacOS in this opsi product"
+	isFatalError "wrong OS"
+endif
 
 if not(($OS$ = "macos"))
 	logError "Installation aborted: wrong OS version: only MacOS"
 	isFatalError "wrong OS"
 endif
 
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
-#@GetProductProperty*#
-
-if FileExists("%ScriptPath%\delsub.opsiscript")
+if FileExists("%ScriptPath%\mac_delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+	Sub "%ScriptPath%\mac_delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%/files1"
+ChangeDirectory "%SCRIPTPATH%\files3"
 ;----------------------------------------------
 set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
 ;----------------------------------------------
 Sub_check_installSuccess
-#@postInstallLines1*#
+#@postInstallLines*#
 
 comment "Copy files"
 Files_install
@@ -90,7 +68,7 @@ endif
 ; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
 
 
-#@SetupSectionLines*#
+#@SetupSectionLines3*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

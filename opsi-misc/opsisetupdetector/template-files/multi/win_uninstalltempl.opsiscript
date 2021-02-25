@@ -5,13 +5,7 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-
-; This file should be included by main file uninstalltempl.opsiscript
-
-#@stringVars*#
-
-
-Set $LogDir$ = "%opsiLogDir%"
+; This file should be included by main file uninstall.opsiscript
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -19,34 +13,25 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
-Set $MinimumSpace$	 = "1 MB"
-; the path were we find the product after the installation
-;Set $InstallDir$	= "%ProgramFiles32Dir%\<path to the product>"
-Set $InstallDir$	= "unknown"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
+Set $InstallDir$	= "%Programfiles32dir%\<productId>"
 ; ----------------------------------------------------------------
 
-set $OS$ = GetOS
+if not("true" = "true")
+	logError "No Deinstallation for Windows in this opsi product"
+	isFatalError "wrong OS"
+endif	
+
 
 if not(($OS$ = "Windows_NT"))
 	logError "Installation aborted: wrong OS version: only Windows"
 	isFatalError "wrong OS"
 endif
 
-
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
-
-#@GetProductProperty*#
-
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
+if FileExists("%ScriptPath%\win_delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+	Sub "%ScriptPath%\win_delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"

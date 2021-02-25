@@ -17,12 +17,12 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
-#@stringVars*#
+DefVar $MsiId$
+DefVar $UninstallProgram$
 
-Set $LogDir$ = "%opsiLogDir%"
+#@stringVars*#
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -69,14 +69,14 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
 Sub_check_exitcode
-#@postInstallLines1*#
+#@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
 
@@ -94,7 +94,7 @@ endif
 
 #@SetupDesktopiconSectionLines*#
 
-#@SetupSectionLines*#
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

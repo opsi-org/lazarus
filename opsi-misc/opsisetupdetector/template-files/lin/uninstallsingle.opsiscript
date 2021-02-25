@@ -19,6 +19,7 @@ DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
+
 #@stringVars*#
 
 ; import complete file !

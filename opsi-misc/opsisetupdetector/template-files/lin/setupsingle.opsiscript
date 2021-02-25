@@ -21,6 +21,7 @@ DefVar $OS$
 DefVar $oldProgFound$
 DefVar $installSuccess$
 DefVar $installCommand$
+
 #@stringVars*#
 
 ; import complete file !
@@ -46,7 +47,6 @@ if not(($OS$ = "linux"))
 	isFatalError "wrong OS"
 endif
 
-
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
@@ -59,7 +59,7 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
@@ -68,7 +68,7 @@ cleanupPackageSystem()
 cleanupPackageSystem()
 ;----------------------------------------------
 Sub_check_exitcode
-#@postInstallLines1*#
+#@postInstallLines*#
 
 [sub_check_exitcode]
 if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
@@ -78,7 +78,7 @@ else
 	Comment $ErrorString$
 endif
 
-#@SetupSectionLines*#
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

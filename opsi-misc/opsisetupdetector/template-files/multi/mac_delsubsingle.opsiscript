@@ -8,9 +8,7 @@ Message "Check for existing installation of " + $ProductId$ + " ..."
 
 comment "Start the Uninstall check:"
 set $oldProgFound$ = "false"
-if DirectoryExists($InstallDir$)
-	set $oldProgFound$ = "true"
-endif
+#@uninstallCheckLines1*#
 
 if $oldProgFound$ = "true"
 	comment "Is the Instaddir in the Apllications directory ?"
@@ -25,7 +23,7 @@ endif
 
 
 [Files_uninstall]
-del -sf "$InstallDir$\"
+del -sf "$InstallDir$/"
 
 #@DelsubSectionLines3*#
 ;-----------------------------------------------------

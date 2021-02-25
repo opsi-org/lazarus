@@ -392,7 +392,12 @@ begin
     fsizemb := 1;
   mysetup.requiredSpace := round(fsizemb);
   // uninstall
-  mysetup.uninstallCheck.Add(
+  mysetup.uninstallCheck.Add('if stringToBool(isOneInstalled('
+    + 'CreateStringlist("'+packageId+'")))');
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+  mysetup.uninstallCommandLine:= 'set $exitcode$ = linuxRemoveOnePackage("'
+   + packageId +'")';
   {$ELSE LINUX}
   LogDatei.log('Detailed anlyze of deb files can only be done at linux',LLWarning);
   MessageDlg(rsDebAnalyze, rsDebAnalyzeNotLinux,

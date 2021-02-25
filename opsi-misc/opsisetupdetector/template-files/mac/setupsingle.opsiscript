@@ -20,6 +20,7 @@ DefVar $LicensePool$
 DefVar $OS$
 DefVar $oldProgFound$
 DefVar $installSuccess$
+
 #@stringVars*#
 
 ; import complete file !
@@ -63,14 +64,14 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-#@preInstallLines1*#
+#@preInstallLines*#
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 #@installCommandLine1*#
 ;----------------------------------------------
 Sub_check_installSuccess
-#@postInstallLines1*#
+#@postInstallLines*#
 
 
 [Sub_check_installSuccess]
@@ -81,7 +82,7 @@ else
 	Comment "Installation success"
 endif
 
-#@SetupSectionLines*#
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 
