@@ -219,11 +219,13 @@ end;
 function hasFileBom(inFileName: string): boolean;
 var
   fCES: TCharEncStream;
+  Utype : TUniStreamTypes;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
   inFileName := ExpandFileName(inFileName);
   fCES.LoadFromFile(inFileName);
+  Utype := fCES.UniStreamType;
   Result := fCES.HasBOM;
   fCES.Free;
 end;
@@ -238,9 +240,9 @@ begin
   fCES.Reset;
   fileName := ExpandFileName(fileName);
   fCES.LoadFromFile(fileName);
+  str := fCES.UTF8Text;
   hasBOM := fCES.HasBOM;
   foundEncoding := UniStreamTypes2uniEncoding(fCES.UniStreamType,hasBOM);
-  str := fCES.UTF8Text;
   Result.Text := str;
   fCES.Free;
 end;
@@ -463,10 +465,10 @@ begin
         destEncoding := 'ucs2be';
 
       if (usedSourceEncoding = 'unicode') then
-        usedSourceEncoding := 'ucs2le';
+        usedSourceEncoding := 'utf8';
 
       if (destEncoding = 'unicode') then
-        destEncoding := 'ucs2le';
+        destEncoding := 'utf8';
 
       // we use ConvertEncoding
       Result := ConvertEncoding(sourceText, usedSourceEncoding, destEncoding);

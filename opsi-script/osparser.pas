@@ -23647,12 +23647,15 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
-      if hasFileBom(Scriptdatei) then
+      Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+      logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+      Encoding2use := searchencoding(Script.Text);
+      if Encoding2use = '' then Encoding2use := mysystemEncoding;
+      if hasBOM or isEncodingUnicode(Encoding2use) then
       begin
         //logdatei.log_prog('file has BOM', LLinfo );
-        Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
-        Encoding2use := searchencoding(Script.Text);
+        //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+        //Encoding2use := searchencoding(Script.Text);
         if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
            begin
              logdatei.log('The encoding mentioned in the file :' + Encoding2use +

@@ -171,7 +171,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="compiler_out/binarys/$(TargetCPU)-$(TargetOS)/opsi-script"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -221,7 +221,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="compiler_out/binarys/$(TargetCPU)-$(TargetOS)/opsi-script"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
