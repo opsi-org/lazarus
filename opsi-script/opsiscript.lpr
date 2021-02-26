@@ -59,6 +59,7 @@ uses //lcltranslator,
   osservicepassdlg,
   oslistedit,
   Forms,
+ osGUIControl,
   {$ELSE GUI}
   custapp,
   oscheck_gui_startable,

@@ -9,22 +9,23 @@ uses
   osparserhelper,
   oslog,
   SysUtils,
-  StrUtils,
-  regexpr;
+  StrUtils;
 
 Type
 
 TParamDoc = class
   private
-    FParamName : string;
-    FParamType : string;
-    FParamDesc : string;
+    FParamName    : string;
+    FParamType    : string;
+    FParamDefault : string;
+    FParamDesc    : string;
   public
     constructor Create;
     destructor Destroy;
-    property ParamName : string  read FParamName;
-    property ParamType : string  read FParamType;
-    property ParamDesc : string  read FParamDesc;
+    property ParamName    : string  read FParamName;
+    property ParamType    : string  read FParamType;
+    property ParamDefault : string  read FParamDefault;
+    property ParamDesc    : string  read FParamDesc;
 end;
 
 TFuncDoc =  class
@@ -35,9 +36,8 @@ TFuncDoc =  class
     FLicense : string;
     FCopyright : string;
     FDescription : string;
-    //FReturns :string;
-    //FReturnType :string;
     FRType :string;
+    FReturns :string;
     FRaises :string;
     FParamCounter : integer;
   public
@@ -50,9 +50,8 @@ TFuncDoc =  class
     property License : string  read FLicense write FLicense;
     property Copyright : string  read FCopyright write FCopyright;
     property Description : string  read FDescription write FDescription;
-    //property Returns :string  read FReturns write FReturns;
-    //property ReturnType :string  read FReturnType write FReturnType;
     property RType :string  read FRType write FRType;
+    property Returns :string  read FReturns write FReturns;
     property Raises :string  read FRaises write FRaises;
     property ParamCounter : integer  read FParamCounter write FParamCounter;
   end;
@@ -67,7 +66,6 @@ TFileDoc =  class
     FfunctionCounter : integer;
   public
     Ffunctions : array of TFuncDoc;
-
     constructor Create;
     destructor Destroy;
     property name : string  read Fname write Fname;
@@ -88,19 +86,18 @@ const
   cauthor = ':author:';
   clicense = ':license:';
   ccopyright = ':copyright:';
-  //CReturns = ':return:';
-  //CReturnType = ':returntype:';
   CRType = ':rtype:';
+  CReturns = ':return:';
   CRaises = ':raises';
   CParamType = ':type ';
   CParam = ':param ';
 
 
-function parseInput_pythonlibrary(filename : string) : boolean;
+function parseInput_pythonlibrary() : boolean;
 
 var
   docobject : TFileDoc;
-  preprocessedlist, backendClassBlacklist : TStringlist;
+  preprocessedlist, backendMethodBlacklist, backendClassBlacklist : TStringlist;
 
 implementation
 
@@ -132,9 +129,8 @@ begin
   FLicense := '';
   FCopyright := '';
   FDescription := '';
-  //FReturns := '';
-  //FReturnType := '';
   FRType := '';
+  FReturns := '';
   FRaises := '';
   FParamCounter := 0;
   Inherited;
@@ -148,9 +144,10 @@ end;
 
 constructor TParamDoc.create;
 begin
-  FParamName := '';
-  FParamType := '';
-  FParamDesc := '';
+  FParamName    := '';
+  FParamType    := '';
+  FParamDefault := '';
+  FParamDesc    := '';
   Inherited;
 end;
 
@@ -159,7 +156,7 @@ begin
   inherited;
 end;
 
-
+//collects data from markers.
 function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
 var
   tmpstr1 : string;
@@ -167,16 +164,20 @@ begin
   result := false;
   if pos(marker,docstring) = 1 then
   begin
+    LogDatei.log('Parsing: '+docstring,LLdebug);
     tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+    if pos(':', tmpstr1) = 1 then
+      Delete(tmpstr1, 1, 2);
     if target = '' then target := tmpstr1
     else target := target+', '+tmpstr1;
     result := true;
   end;
 end;
 
+// Parses python public methods
 procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
 var
-  paramnamestr : string;
+  paramnamestr, defaultvalue : string;
   paramcounter, posofequal : integer;
   endOfParamlist : boolean;
   remaining,errorstr : string;
@@ -185,7 +186,7 @@ begin
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
-  LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
+  LogDatei.log('Found function: '+myfunc.FName,LLDebug2);
 
   if  skip('(',remaining,remaining,errorstr) then
   begin
@@ -197,29 +198,38 @@ begin
 
     while not endOfParamlist do
     begin
+      defaultvalue:='';
       GetWord(remaining, paramnamestr, remaining,[',',':']);
       if remaining = ':' then
       begin
         if pos('=', trim(paramnamestr)) > 1 then
         begin
           posofequal := pos('=', trim(paramnamestr));
+          defaultvalue:= Copy(paramnamestr, posofequal+1, Length(paramnamestr));
           paramnamestr := copy(paramnamestr, 0, posofequal-1);
         end
         else
         begin
           delete(paramnamestr, length(paramnamestr), 1);
           paramnamestr := trim(paramnamestr);
-        end
+        end;
+        if pos(')', Trim(defaultvalue)) > 1 then
+          defaultvalue := StringReplace(defaultvalue, ')', '', []);
       end
       else if pos('=', trim(paramnamestr)) > 1 then
       begin
         posofequal := pos('=', trim(paramnamestr));
+        defaultvalue:= Copy(paramnamestr, posofequal+1, Length(paramnamestr));
         paramnamestr := copy(paramnamestr, 0, posofequal-1);
+
       end
       else
         paramnamestr := trim(paramnamestr);
 
-      LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
+      LogDatei.log('Found parameter: '+paramnamestr,LLDebug2);
+      if defaultvalue <> '' then
+        LogDatei.log('Default value: '+defaultvalue,LLDebug2);
+
       inc(paramcounter);
 
       myfunc.FParamCounter := paramcounter+1;
@@ -229,6 +239,7 @@ begin
       with myfunc.Fparams[paramcounter] do
       begin
         FparamName:= paramnamestr;
+        myfunc.Fparams[paramcounter].FParamDefault:= defaultvalue;
         if skip(':',remaining,remaining,errorstr) then
         begin
           endOfParamlist := true;
@@ -242,6 +253,7 @@ begin
   end;
 end;
 
+// manipulates a method signature.
 function getDefinitionLine(var currentlinenumber : integer) : string;
 var
   deflinecounter, matchpos : integer;
@@ -250,6 +262,8 @@ begin
   result := '';
   defstring := trim(preprocessedlist.Strings[currentlinenumber]);
   deflinecounter := currentlinenumber;
+
+  // remove 'def' from function definition
   defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
   matchpos := pos(':', defstring);
 
@@ -260,8 +274,8 @@ begin
     matchpos := pos(':', defstring);
   end;
 
+  // remove 'self' from function arguments
   defstring := copy(defstring,1,matchpos);
-
   if pos('self, ', defstring) > 0 then
   begin
     matchpos := pos('self, ', defstring);
@@ -273,16 +287,23 @@ begin
     delete(defstring, matchpos, length('self'));
   end;
 
-  currentlinenumber := deflinecounter+1;
+  //change default parameter value from None to null
+  defstring := StringReplace(defstring, 'none', 'null', [rfReplaceAll, rfIgnoreCase]);
 
+  //Replace single quotes in default parameter value with double quotes
+  defstring := StringReplace(defstring, '''', '"', [rfReplaceAll]);
+
+  currentlinenumber := deflinecounter+1;
   result := defstring;
 end;
 
+// Parse file related docstrings
 function getFileDoc(var currentlinenumber : integer) : boolean;
 var
   docstringcounter, matchpos : integer;
   docstring, description : string;
 begin
+  LogDatei.log('Parsing file related docstrings',LLnotice);
   result := false;
   docstring := trim(preprocessedlist.Strings[currentlinenumber]);
   docstringcounter:= currentlinenumber;
@@ -310,6 +331,7 @@ begin
   description := copy(description,1,matchpos-1);
   docobject.Ffiledesc := description;
   currentlinenumber := docstringcounter+1;
+  LogDatei.log('Finished parsing file related docstrings',LLnotice);
   result := true;
 end;
 
@@ -322,6 +344,7 @@ begin
   result := totallen-len;
 end;
 
+// Parses a public method and collects needed informations from definition line and docstring.
 function processPublicDef(var currentlinenumber : integer) : boolean;
 var
   indentofdef, funccounter, linecounter, prun, matchpos : integer;
@@ -353,6 +376,7 @@ begin
       begin
         if (rpos(cmulticomment1, trim(currentline)) > 1) or (rpos(cmulticomment2, trim(currentline)) > 1) then
         begin
+          // collects function description from function related docstring
           if (pos(cmulticomment1, trim(currentline)) = 1) then
             currentline := copy(trim(currentline), length(cmulticomment1)+1,length(trim(currentline)))
           else if (pos(cmulticomment2, trim(currentline)) = 1) then
@@ -383,9 +407,8 @@ begin
       if not onMarkerAddDocStringTo(cauthor,trim(currentline),docobject.Ffunctions[funccounter-1].FAuthor) then
       if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
       if not onMarkerAddDocStringTo(ccopyright,trim(currentline),docobject.Ffunctions[funccounter-1].FCopyright) then
-      //if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
-      //if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
       if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
+      if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
       if not onMarkerAddDocStringTo(CRaises,trim(currentline),docobject.Ffunctions[funccounter-1].FRaises) then
       if (pos(CParam,trim(currentline)) = 1) or (pos(CParamType,trim(currentline)) = 1) then
       begin
@@ -412,6 +435,7 @@ begin
   result := true;
 end;
 
+// Skip private functions and also some methods which are listed in the stringlist 'backendMethodBlacklist'.
 function processPrivateDef(var currentlinenumber : integer) : boolean;
 var
   indentofdef, linecounter : integer;
@@ -419,6 +443,7 @@ var
 begin
   result := false;
   defline := preprocessedlist.Strings[currentlinenumber];
+  LogDatei.log('Skipping private function: '+defline,LLDebug2);
   indentofdef := indentation(defline);
   getDefinitionLine(currentlinenumber);
   linecounter := currentlinenumber;
@@ -436,6 +461,7 @@ begin
   result := true;
 end;
 
+// Skip classes which are listed in the stringlist 'backendClassBlacklist'.
 function processPrivateClass(var currentlinenumber : integer) : boolean;
 var
   classindent, linecounter : integer;
@@ -443,6 +469,7 @@ var
 begin
   result := false;
   classline := preprocessedlist.Strings[currentlinenumber];
+  LogDatei.log('Skipping blacklisted class: '+classline,LLDebug2);
   classindent := indentation(classline);
   linecounter := currentlinenumber + 1;
   currentline := preprocessedlist.Strings[linecounter];
@@ -459,11 +486,13 @@ begin
   result := true;
 end;
 
+// Removes linebreaks from Python source code and merge it as a single sentence.
 procedure preprocess();
 var
   line, linetoadd : string;
   linenumber, totatlines : integer;
 begin
+  LogDatei.log('Started preprocessing to remove linebreaks (\) from the Python source code.',LLinfo);
   linenumber := 0;
   preprocessedlist.Clear;
   totatlines := sourcelist.Count;
@@ -495,31 +524,32 @@ begin
       inc(linenumber);
     end;
   end;
+  LogDatei.log('Finished preprocessing. Removed linebreaks and combined multiline statements.',LLinfo);
 end;
 
-
-function parseInput_pythonlibrary(filename : string) : boolean;
+//Parses python source codes
+function parseInput_pythonlibrary() : boolean;
 var
-  linenumber, totallines, classindex, removepos : integer;
-  trimmedline, classstring, classname, remaining : string;
+  linenumber, totallines : integer;
+  trimmedline, defstring, classstring, defname, classname, remaining : string;
   filedocfound : Boolean;
 begin
+  LogDatei.log('Started parsing Python sourcecodes',LLnotice);
   filedocfound := false;
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  //docobject.Fname:=ExtractFileName(filename);
-  preprocess();
+  preprocess();  // preprocess entire code to remove linebreaks and combine multiline statements
   totallines:= preprocessedlist.Count;
   while linenumber < totallines do
     begin
+      //parses file related docstrings
       trimmedline := trim(preprocessedlist.Strings[linenumber]);
       if ((pos(cmulticomment1, trimmedline) = 1) or  (pos(cmulticomment2, trimmedline) = 1)) and not filedocfound then
       begin
         filedocfound := true;
         getFileDoc(linenumber);
       end
-
       else if (pos(cpyclass,trimmedline) = 1) then
       begin
         classstring := trimmedline;
@@ -527,25 +557,38 @@ begin
         GetWord(trim(classstring), classname, remaining,WordDelimiterSet3);
 
         if backendClassBlacklist.IndexOf(classname) <> -1 then
+        //skips blacklisted classes
         begin
           processPrivateClass(linenumber);
         end
         else
           inc(linenumber);
       end
-
-
       else if (pos(cpydeffunc,trimmedline) = 1) then
       begin
         if pos(cpydefnotpublic,trimmedline) = 1 then
         begin
+          //skips private methods
           filedocfound := true;
           processPrivateDef(linenumber);
         end
         else
         begin
-          filedocfound := true;
-          processPublicDef(linenumber);
+          defstring := trimmedline;
+          defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
+          GetWord(trim(defstring), defname, remaining,WordDelimiterSet3);
+          if backendMethodBlacklist.IndexOf(defname) <> -1 then
+          // skips blacklisted methods
+          begin
+            filedocfound := true;
+            processPrivateDef(linenumber);
+          end
+          else
+          begin
+            // parses public methods
+            filedocfound := true;
+            processPublicDef(linenumber);
+          end;
         end;
       end
       else
@@ -555,15 +598,26 @@ begin
         inc(linenumber);
       end;
     end;
-
-  //sortFunctions();  //new
-
+  LogDatei.log('Finished parsing Python sourcecodes',LLinfo);
   result := True;
 end;
 
 
 initialization
   preprocessedlist := TStringlist.Create;
+
+  backendMethodBlacklist := TStringList.Create;
+  backendMethodBlacklist.Add('describeInterface');
+  backendMethodBlacklist.Add('backendManagerFactory');
+  backendMethodBlacklist.Add('getArgAndCallString');
+  backendMethodBlacklist.Add('temporaryBackendOptions');
+  backendMethodBlacklist.Add('loadBackendConfig');
+  backendMethodBlacklist.Add('timeQuery');
+  backendMethodBlacklist.Add('onlyAllowSelect');
+  backendMethodBlacklist.Add('createSchemaVersionTable');
+  backendMethodBlacklist.Add('closingConnectionAndCursor');
+  backendMethodBlacklist.Add('createUnixSocket');
+
   backendClassBlacklist := TStringList.Create;
   backendClassBlacklist.Add('DeferredCall');
   backendClassBlacklist.Add('ModificationTrackingBackend');
@@ -589,6 +643,7 @@ initialization
 
 finalization
   preprocessedlist.Free;
+  backendMethodBlacklist.Free;
   backendClassBlacklist.Free;
 
 end.

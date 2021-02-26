@@ -3,13 +3,14 @@ set -e -x
 
 # Set these values:
 CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
-APPLE_ID_USER=d.oertel@uib.de
-APP_SPECIFIC_PASSWORD=uuve-sosg-wbjr-yebn
+APPLE_ID_USER=macos@uib.de
+APP_SPECIFIC_PASSWORD=ehni-qtqa-fiug-nogt
 
-BUNDLE_ID=org.opsi.opsi-notifier
-EXECUTABLE_NAME=opsi-notifier
+BUNDLE_ID=org.opsi.opsi-client-systray
+EXECUTABLE_NAME=opsi-client-systray
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
+ENTITLEMENTS="--entitlements opsi-script.entitlements"
 
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
@@ -27,24 +28,27 @@ rm -f ${EXECUTABLE_DIR}/*
 rm -f ${FULLPATHTOEXE}
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
-#cp Info-opsi-notifier.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+#cp info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"
 launchctl plist $FULLPATHTOEXE
-launchctl plist $EXECUTABLE_DIR
+#launchctl plist $EXECUTABLE_DIR
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing binary..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+#codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+codesign -vvv --force --strict --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
+
 #echo "Code signing .app..."
-#codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
+#codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
 #codesign --verify --verbose --strict $EXECUTABLE_DIR
 #codesign -dv -r- $EXECUTABLE_DIR
 #codesign -vvv --deep --strict $EXECUTABLE_DIR
+
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
 
@@ -57,6 +61,7 @@ hdiutil create -volname $EXECUTABLE_NAME -srcfolder $EXECUTABLE_DIR -ov -format 
 codesign -s "$CODE_SIGN_SIGNATURE" ${EXECUTABLE_NAME}_macOS.dmg
 codesign -vvv --deep --strict ${EXECUTABLE_NAME}_macOS.dmg
 #codesign -s "$CODE_SIGN_SIGNATURE" ${EXECUTABLE_NAME}.zip
+
 # Notarizing with Apple...
 echo "Uploading..."
 xcrun altool --notarize-app -t osx --file ${EXECUTABLE_NAME}_macOS.dmg --primary-bundle-id $BUNDLE_ID -u $APPLE_ID_USER -p $APP_SPECIFIC_PASSWORD --output-format xml > upload_log_file.txt

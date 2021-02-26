@@ -104,7 +104,9 @@ ostxstringlist,
   //IdSysLog,
   lcltranslator,
   strutils,
-  inifiles;
+  inifiles,
+  osGUIControl,
+  osSimpleWinBatchGUI;
 
 type
 
@@ -570,31 +572,6 @@ begin
   SystemInfo := TSystemInfo.Create(Application);
 end;
 
-
-procedure TCentralForm.TimerWaitset(Interval: word);
-begin
-  TimerWait_waitedIntervals := 0;
-  TimerWait.Enabled := True;
-  TimerWait.Interval := Interval;
-end;
-
-function TCentralForm.TimerWaitready(WaitIntervals: word): boolean;
-begin
-  if TimerWait_waitedIntervals < WaitIntervals then
-    Result := False
-  else
-  begin
-    Result := True;
-    TimerWait.Enabled := False;
-  end;
-end;
-
-procedure TCentralForm.TimerWaitTimer(Sender: TObject);
-begin
-  Inc(TimerWait_waitedIntervals);
-end;
-
-
 procedure writeLogFileOptions(const RegHive: string; const info: string);
 {$IFDEF WINDOWS}
 var
@@ -621,6 +598,32 @@ begin
 
 end;
 {$ENDIF WINDOWS}
+
+
+{ TCentralForm }
+
+procedure TCentralForm.TimerWaitset(Interval: word);
+begin
+  TimerWait_waitedIntervals := 0;
+  TimerWait.Enabled := True;
+  TimerWait.Interval := Interval;
+end;
+
+function TCentralForm.TimerWaitready(WaitIntervals: word): boolean;
+begin
+  if TimerWait_waitedIntervals < WaitIntervals then
+    Result := False
+  else
+  begin
+    Result := True;
+    TimerWait.Enabled := False;
+  end;
+end;
+
+procedure TCentralForm.TimerWaitTimer(Sender: TObject);
+begin
+  Inc(TimerWait_waitedIntervals);
+end;
 
 
 procedure TCentralForm.TakeToSaveList(FName: string);
@@ -852,6 +855,7 @@ var
   str: string;
   s2, s3, s4, sid: string;
   lang,localedir : string;
+  Theme: string;
 
 begin
   //writeln('TCentralForm.FormCreate');
@@ -859,6 +863,7 @@ begin
   startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
+  startupmessages.Append('Detected Language is:'+GetDefaultLang);
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
@@ -920,15 +925,26 @@ begin
   CentralForm.Label2.Caption := '';
   LabelWinstVersion.Caption := OpsiscriptVersionName;
 
-  FBatchOberflaeche :=
-    TFBatchOberflaeche.Create(Application);
+  Theme := LowerCase(TGUIControl.GetGUITheme(''));
+  { Include new themes in the if .. then block if available }
+  if  (Theme = LowerCase('Default')) or (Theme = LowerCase('BatchOberflaeche')) then
+  begin
+    FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
+  end
+  else
+  if (Theme = LowerCase('WindowsSimple')) then
+  begin
+    FBatchOberflaeche := TSimpleWinBatchGUI.Create(Application);
+  end
+  else FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
+
   ProcessMess;
   MyMessageDLG := TMyMessageDLG.Create(Application);
 
 
-  FBatchOberflaeche.ForceStayOnTop(False);
+  FBatchOberflaeche.SetForceStayOnTop(False);
 
-  FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
+  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, mVersion);//FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 
@@ -937,7 +953,7 @@ begin
   except
     on E: Exception do
     begin
-      FBatchOberflaeche.ForceStayOnTop(False);
+      FBatchOberflaeche.SetForceStayOnTop(False);
       MyMessageDlg.WiMessage('TCentralForm.FormCreate : ' + E.Message, [mrOk]);
     end;
   end;

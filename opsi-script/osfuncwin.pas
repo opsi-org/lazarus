@@ -23,7 +23,9 @@ uses
   DSiWin32,
 {$ENDIF WIN64}
 {$IFDEF GUI}
+  Forms,
   Graphics,
+  osGUIControl,
 {$ENDIF GUI}
   registry,
   //JwaWinnt,
@@ -199,8 +201,8 @@ begin
   {$IFDEF GUI}
   if showoutput then
   begin
-    FBatchOberflaeche.Left := 5;
-    FBatchOberflaeche.Top := 5;
+    FBatchOberflaeche.SetElementLeft(5,eMainForm); //Left := 5;
+    FBatchOberflaeche.SetElementTop(5,eMainForm);  //Top := 5;
     CreateSystemInfo;
     SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
@@ -347,7 +349,7 @@ begin
     SystemInfo.Free;
     SystemInfo := nil;
     FBatchOberflaeche.BringToFront;
-    FBatchOberflaeche.centerWindow;
+    FBatchOberflaeche.SetWindowPosition(poScreenCenter);//centerWindow;
     ProcessMess;
     LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
   end;

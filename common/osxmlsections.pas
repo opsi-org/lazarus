@@ -186,7 +186,7 @@ type
     // and different TextContent, actNode will be same after creation
 
     // overload procedure
-    procedure delNode(nodePath: string; var errorinfo : string); overload;
+    procedure delNode(nodePath: string; attributes_strict: boolean; var errorinfo : string); overload;
     // this node (and all childs) will be deleted, afterwards parent will be actnode
     // node will be opened with openNode
 
@@ -649,42 +649,42 @@ var
 begin
   cleanUpActNodeSet();
   cleanUpDerivedNodeSet();
-  LogDatei.log('', LLinfo);
-  LogDatei.log('actNodeSet: ', LLinfo);
+  LogDatei.log_prog('', LLinfo);
+  LogDatei.log_prog('actNodeSet: ', LLinfo);
   count_not_nil := 0;
   for i := 0 to length(actNodeSet) - 1 do
   begin
     if actnodeset[i] = nil then
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
     else
     begin
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
         actNodeSet[i].NodeName + '"', LLinfo);
       Inc(count_not_nil);
     end;
   end;
 
-  LogDatei.log('Non-null element(s) in act node set: ' +
+  LogDatei.log_prog('Non-null element(s) in act node set: ' +
     IntToStr(count_not_nil), LLinfo);
 
   count_not_nil_2 := 0;
-  LogDatei.log('derivedNodeSet: ', LLinfo);
+  LogDatei.log_prog('derivedNodeSet: ', LLinfo);
 
   for i := 0 to length(derivedNodeSet) - 1 do
   begin
     if derivednodeset[i] = nil then
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
     else
     begin
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
         derivedNodeSet[i].NodeName + '"', LLinfo);
       Inc(count_not_nil_2);
     end;
   end;
 
-  LogDatei.log('Non-null element(s) remaining in children node set: ' +
+  LogDatei.log_prog('Non-null element(s) remaining in children node set: ' +
     IntToStr(count_not_nil_2), LLinfo);
-  LogDatei.log('', LLinfo);
+  LogDatei.log_prog('', LLinfo);
   LogDatei.log('    -------', LLinfo);
 end;
 
@@ -695,21 +695,21 @@ var
 
 begin
   cleanUpActNodeSet();
-  LogDatei.log('', LLinfo);
-  LogDatei.log('actNodeSet: ', LLinfo);
+  LogDatei.log_prog('', LLinfo);
+  LogDatei.log_prog('actNodeSet: ', LLinfo);
   count_not_nil := 0;
   for i := 0 to length(actNodeSet) - 1 do
   begin
     if actnodeset[i] = nil then
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
     else
     begin
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
+      LogDatei.log_prog(extraindent + 'node ' + IntToStr(i) + ' elementname: "' +
         actNodeSet[i].NodeName + '"', LLinfo);
       Inc(count_not_nil);
     end;
   end;
-  LogDatei.log('Non-null element(s) in act node set: ' +
+  LogDatei.log_prog('Non-null element(s) in act node set: ' +
     IntToStr(count_not_nil), LLinfo);
 
 end;
@@ -1208,17 +1208,17 @@ begin
 
       found := True;
       leavingPath := nodePath;
-      logdatei.log('begin to open nodepath  : ' + nodepath, LLinfo);
-      logdatei.log('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LevelInfo);
+      logdatei.log_prog('begin to open nodepath  : ' + nodepath, LLinfo);
+      logdatei.log_prog('-- pathes.Count: ' + IntToStr(pathes.Count), LLinfo);
       while i < pathes.Count + 1 do
       begin
         attributeList.Clear;
-        logdatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
+        logdatei.log_prog('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
         thisnodeName := Trim(copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1));
-        logdatei.log('thisnodename ' + thisnodeName, LLinfo);
+        logdatei.log_prog('thisnodename ' + thisnodeName, LLinfo);
         leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) +
           1, length(pathes[i - 1]));
-        logdatei.log('leavingPath ' + leavingPath, LLinfo);
+        logdatei.log_prog('leavingPath ' + leavingPath, LLinfo);
         if (pos('=', pathes[i - 1]) > 0) then // only in this case attributes
         begin
           // split on blank, list of attributes
@@ -1231,8 +1231,8 @@ begin
               exit;
             end;
           for k := 0 to attributesSL.Count - 1 do
-            logdatei.log('Attribute ' + attributesSL[k], LLinfo);
-          logdatei.log('Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo);
+            logdatei.log_prog('Attribute ' + attributesSL[k], LLinfo);
+          logdatei.log_prog('Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo);
           j := 0;
           while j < attributesSL.Count do
           begin
@@ -1265,7 +1265,7 @@ begin
         else
           thisnodeName := Trim(pathes[i - 1]);
 
-        logdatei.log('node ' + IntToStr(i) + ': nodename ' + thisnodename
+        logdatei.log_prog('node ' + IntToStr(i) + ': nodename ' + thisnodename
           , LLinfo
           );
         if attributes_strict then
@@ -1393,16 +1393,16 @@ begin
       found := True;
       leavingPath := nodePath;
       logdatei.log('begin to open nodepath  : ' + nodepath, LLinfo);
-      logdatei.log('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LevelInfo);
+      logdatei.log_prog('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LevelInfo);
       while i < pathes.Count + 1 do
       begin
         attributeList.Clear;
-        logdatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
+        logdatei.log_prog('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
         thisnodeName := Trim(copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1));
-        logdatei.log('thisnodename ' + thisnodeName, LLinfo);
+        logdatei.log_prog('thisnodename ' + thisnodeName, LLinfo);
         leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) +
           1, length(pathes[i - 1]));
-        logdatei.log('leavingPath ' + leavingPath, LLinfo);
+        logdatei.log_prog('leavingPath ' + leavingPath, LLinfo);
         if (pos('=', pathes[i - 1]) > 0) then // only in this case attributes
         begin
           // split on blank, list of attributes
@@ -1415,8 +1415,8 @@ begin
               exit;
             end;
           for k := 0 to attributesSL.Count - 1 do
-            logdatei.log('Attribute ' + attributesSL[k], LLinfo);
-          logdatei.log('Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo);
+            logdatei.log_prog('Attribute ' + attributesSL[k], LLinfo);
+          logdatei.log_prog('Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo);
           j := 0;
           while j < attributesSL.Count do
           begin
@@ -1425,7 +1425,7 @@ begin
 
             attributeList.Items[j].key :=
               Trim(copy(attributesSL[j], 1, pos('=', attributesSL[j]) - 1));
-            logdatei.log(' attributeList.Items[j].key ' +
+            logdatei.log_prog(' attributeList.Items[j].key ' +
               attributeList.Items[j].key, LLinfo);
             attributeList.Items[attributeList.Count - 1].Value :=
               Trim(copy(attributesSL[j], pos('=', attributesSL[j]) +
@@ -1444,7 +1444,7 @@ begin
         else
           thisnodeName := Trim(pathes[i - 1]);
 
-        logdatei.log('node ' + IntToStr(i) + ': nodename ' + thisnodename
+        logdatei.log_prog('node ' + IntToStr(i) + ': nodename ' + thisnodename
           , LLinfo
           );
 
@@ -1667,18 +1667,19 @@ begin
 end;
 
 // überladen!!!
-procedure TuibXMLDocument.delNode(nodePath: string; var errorinfo : string);
+procedure TuibXMLDocument.delNode(nodePath: string; attributes_strict: boolean; var errorinfo : string);
 var
   removeNode: TDOMNode;
 begin
-  LogDatei.log('begin to del Node: ' + nodePath, LLinfo);
-  openNode(nodePath, False,errorinfo);  // not strict
+  LogDatei.log('delnode: strict: '+BoolToStr(attributes_strict,true)+' del Node: ' + nodePath, LLInfo);
+  openNode(nodePath, attributes_strict,errorinfo);
   if actNode <> nil then
   begin
     removeNode := actNode;
     actNode := actNode.ParentNode;
     try
       removenode.Free;
+      LogDatei.log('delNode: ' + nodePath + '. Node was  removed', LLInfo);
     except
       LogDatei.log('Error in delNode: ' + nodePath +
         '. Node was not removed', LLerror);
@@ -1859,7 +1860,7 @@ begin
   finally
   end;
 
-  logdatei.log('node(s) found with name ' + mynodeName + ': ' +
+  logdatei.log_prog('node(s) found with name ' + mynodeName + ': ' +
     IntToStr(length(actNodeSet)), oslog.LLinfo);
 
   if namefound then
@@ -1875,8 +1876,8 @@ begin
           boolarray[al] := False;
         for al := 0 to attributelist.Count - 1 do
           attributelist.Items[al].isvalid := False;
-        logdatei.log(' ', oslog.LLinfo);
-        logdatei.log(IntToStr(N) + ' -> find attributes for node ' +
+        logdatei.log_prog(' ', oslog.LLinfo);
+        logdatei.log_prog(IntToStr(N) + ' -> find attributes for node ' +
           actnodeset[j].NodeName + ', number of attributes ' +
           IntToStr(attributeList.Count)
           , LLinfo);
@@ -1896,7 +1897,7 @@ begin
                 if (actattributename = attributeName) and
                   (actattributevalue = attributeValue) then
                 begin
-                  logdatei.log('attribut found ' + attributename +
+                  logdatei.log_prog('attribut found ' + attributename +
                     ' ' + attributevalue, LLinfo);
                   boolarray[al] := True;
                   attributelist.Items[al].isvalid := True;
@@ -1908,7 +1909,7 @@ begin
 
         end; // has attributes
 
-        logdatei.log('all attributes have to fit, nodename ' +
+        logdatei.log_prog('all attributes have to fit, nodename ' +
           actnodeset[j].NodeName, oslog.LLinfo);
 
         attributecount1 := attributeList.Count;
@@ -1920,17 +1921,17 @@ begin
           for al := 0 to attributeList.Count - 1 do
           begin
             if attributelist.Items[al].isvalid then
-              logdatei.log('key/value found ' + attributelist.Items[al].key +
+              logdatei.log_prog('key/value found ' + attributelist.Items[al].key +
                 ':' + attributelist.Items[al].Value, oslog.LLinfo)
             else
-              logdatei.log('key/value not found ' + attributelist.Items[al].key +
+              logdatei.log_prog('key/value not found ' + attributelist.Items[al].key +
                 ':' + attributelist.Items[al].Value, oslog.LLDebug2);
             attributesfound := attributesfound and boolarray[al];
           end;
           if not attributesfound then
           begin
-            logdatei.log('one or more attributes does not match, nodename ' +
-              actnodeset[j].NodeName, oslog.LLDebug2);
+            logdatei.log_prog('one or more attributes does not match, nodename ' +
+              actnodeset[j].NodeName, oslog.LLinfo);
             // remove node
             actnodeset[j] := nil;
             j := j - 1;
@@ -1949,7 +1950,7 @@ begin
         Inc(n);
       end;  // end traverse actNodeSet
 
-      logdatei.log('actnodeset after retrieving key/value ', oslog.LLinfo);
+      logdatei.log_prog('actnodeset after retrieving key/value ', oslog.LLinfo);
       logActNodeSet;
       if length(actnodeset) > 1 then
       begin
@@ -2228,7 +2229,7 @@ begin
   result := true;
   try
     localAttributeList := TStringlist.create;
-    logdatei.log('attribute path element : ' + attributePath, LLinfo);
+    logdatei.log_prog('attribute path element : ' + attributePath, LLinfo);
     //attributeStringList := TStringList.Create;
     // has to be created outside
     if not Assigned(attributeStringList) then
