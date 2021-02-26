@@ -9,7 +9,7 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "%scriptpath%/osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -29,9 +29,9 @@ endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\mac_delsub.opsiscript")
+if FileExists("%ScriptPath%/mac_delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\mac_delsub.opsiscript"
+	Sub "%ScriptPath%/mac_delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"

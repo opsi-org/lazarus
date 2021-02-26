@@ -30,8 +30,9 @@ procedure callOpsiPackageBuilder;
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDirectory = 'Directory ';
-  rsStillExitsWarningDeleteOverwrite = ' still exits. Overwrite / Delete ?';
+  rsStillExitsWarningDeleteOverwrite = ' still exits. Abort or Backup or Delete ?';
   rsCouldNotCreateDirectoryWarning = 'Could not create directory: ';
+  rsConfirmBackupOrRemovalTitle = 'Confirm Delete or Backup of old files.';
 
 
 implementation
@@ -168,7 +169,7 @@ begin
         { take first from list }
         GetWordOrStringConstant(str2, str2, str3, WordDelimiterSet6);
         str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
-          proptmpstr + '", ' + str2 + ')' + LineEnding;
+          proptmpstr + '", "' + str2 + '")' + LineEnding;
       end;
     end;
     patchlist.add('#@GetProductProperty*#=' + str);
@@ -486,7 +487,8 @@ begin
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
       end;
-      if osLin in aktProduct.productdata.targetOSset then
+      if (osLin in aktProduct.productdata.targetOSset)
+          or (osMulti in aktProduct.productdata.targetOSset) then
       begin
         infilename := genericTemplatePath + Pathdelim + 'uib_lin_install.opsiscript';
         outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
@@ -678,9 +680,71 @@ begin
   end;
 end;
 
+Function bakupOldProductDir : boolean;
+
+
+  Function bakupOldInDir(mydir : string) : boolean;
+  var
+  backupfiles : TStringlist;
+  fname, fbakname, bakpostfix  : string;
+  i, k : integer;
+
+
+begin
+  result := true;
+  backupfiles := TStringlist.Create;
+  // Del really old files
+  FindAllFiles(backupfiles,mydir,'*.3',false);
+  Application.ProcessMessages;
+  for i := 0 to backupfiles.Count-1 do
+   if not DeleteFileUTF8(backupfiles.Strings[i]) then result := false;
+  Application.ProcessMessages;
+  // backup old files
+  for k := 2 downto 1 do
+  begin
+   FindAllFiles(backupfiles,mydir,'*.'+inttostr(k),false);
+   for i := 0 to backupfiles.Count-1 do
+   begin
+    fname := backupfiles.Strings[i];
+    fbakname := ExtractFileNameWithoutExt(fname)+'.'+inttostr(k+1);
+     if not CopyFile(fname,fbakname, [cffOverwriteFile, cffPreserveTime])
+       then result := false;
+     Application.ProcessMessages;
+   end;
+   //Application.ProcessMessages;
+  end;
+  // backup last files
+  FindAllFiles(backupfiles,mydir,'*',false);
+   for i := 0 to backupfiles.Count-1 do
+   begin
+    fname := backupfiles.Strings[i];
+    fbakname := fname+'.1';
+     if not CopyFile(fname,fbakname, [cffOverwriteFile, cffPreserveTime])
+       then result := false;
+     Application.ProcessMessages;
+   end;
+end;
+
+begin
+   result := true;
+  if not bakupOldInDir(clientpath) then result := false;
+  if not bakupOldInDir(opsipath) then result := false;
+end;
+
+Function delOldProductDir : boolean;
+begin
+  result := true;
+  Application.ProcessMessages;
+  if not DeleteDirectory(clientpath, False) then result := false;
+  Application.ProcessMessages;
+  if not DeleteDirectory(opsipath, False) then result := false;
+  Application.ProcessMessages;
+end;
+
 function createProductdirectory: boolean;
 var
   goon: boolean;
+  task : string;
 begin
   prodpath := myconfiguration.workbench_Path + PathDelim +
     aktProduct.productdata.productId;
@@ -688,13 +752,50 @@ begin
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;
   if DirectoryExists(prodpath) then
-    if not MessageDlg('opsi-setup-detector', rsDirectory + prodpath +
-      rsStillExitsWarningDeleteOverwrite, mtWarning, mbOKCancel, '') = mrOk then
-      goon := False
-    else
-    if not DeleteDirectory(prodpath, False) then
+  with TTaskDialog.Create(resultForm1) do
+    try
+      Title := rsConfirmBackupOrRemovalTitle;
+      Caption := 'opsi-setup-detector';
+      Text := rsDirectory + prodpath +
+      rsStillExitsWarningDeleteOverwrite;
+      CommonButtons := [];
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := 'Abort';
+        ModalResult := mrAbort;
+      end;
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := 'Delete';
+        ModalResult := mrYes;
+      end;
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := 'Backup';
+        ModalResult := mrNo;
+      end;
+      MainIcon := tdiQuestion;
+      if Execute then
+      begin
+        if ModalResult = mrYes then task := 'del';
+        if ModalResult = mrNo then task := 'bak';
+        if ModalResult = mrAbort then task := 'abort';
+      end;
+    finally
+      Free;
+    end;
+  if task = 'abort' then goon := False;
+  if task = 'del' then
+    if not delOldProductDir then
     begin
       LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
+       goon := False;
+    end;
+  if task = 'bak' then
+    if not bakupOldProductDir then
+    begin
+      LogDatei.log('Could not inernally backup dir: ' + prodpath, LLCritical);
+       goon := False;
     end;
   if goon then
   begin
@@ -730,6 +831,7 @@ begin
     end;
   end;
   Result := goon;
+  Application.ProcessMessages;
 end;
 
 
@@ -746,6 +848,7 @@ begin
   end
   else
     Logdatei.log('createProductdirectory done', LLnotice);
+  Application.ProcessMessages;
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
@@ -753,6 +856,7 @@ begin
   end
   else
     Logdatei.log('createOpsiFiles done', LLnotice);
+  Application.ProcessMessages;
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
@@ -760,6 +864,7 @@ begin
   end
   else
     Logdatei.log('createClientFiles done', LLnotice);
+  Application.ProcessMessages;
 end;
 
 

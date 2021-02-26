@@ -497,6 +497,7 @@ begin
   mysetup.installCommandLine :=
     'set $installSuccess$ = install_macos_app(' + '"%scriptpath%/files' +
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+  mysetup.installDirectory:= '/Applications/'+ExtractFileName(myfilename);
 end;
 
 

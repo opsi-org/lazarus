@@ -9,8 +9,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
+importlib "%scriptpath%/osd-lib.opsiscript"
+importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -29,9 +29,9 @@ if not(($OS$ = "macos"))
 endif
 
 
-if FileExists("%ScriptPath%\mac_delsub.opsiscript")
+if FileExists("%ScriptPath%/mac_delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\mac_delsub.opsiscript"
+	Sub "%ScriptPath%/mac_delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
@@ -43,7 +43,7 @@ endif
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files3"
+ChangeDirectory "%SCRIPTPATH%/files3"
 ;----------------------------------------------
 set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
 ;----------------------------------------------

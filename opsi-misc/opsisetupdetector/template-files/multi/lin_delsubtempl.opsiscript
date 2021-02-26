@@ -15,7 +15,7 @@ if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%\files2"
+	ChangeDirectory "%SCRIPTPATH%/files2"
 	;----------------------------------------------
 	; Delete an installed  OS package out of a list of names:
 	; set $installSuccess$ = linuxRemoveOneOf('list of packageIDs')

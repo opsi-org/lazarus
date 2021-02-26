@@ -10,8 +10,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_lin_install.opsiscript"
+importlib "%scriptpath%/osd-lib.opsiscript"
+importlib "%scriptpath%/uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -39,7 +39,7 @@ endif
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files2"
+ChangeDirectory "%SCRIPTPATH%/files2"
 ;----------------------------------------------
 cleanupPackageSystem()
 ;----------------------------------------------
@@ -82,7 +82,7 @@ endif
 [Files_install]
 ; Example of recursively copying some files into the installation directory:
 ;
-; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+; copy -s "%ScriptPath%/files/*.*" "$InstallDir$"
 
 
 #@SetupSectionLines2*#

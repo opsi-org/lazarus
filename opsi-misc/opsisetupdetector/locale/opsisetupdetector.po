@@ -113,6 +113,10 @@ msgstr ""
 "For some data you may have to install the program once \n"
 "and than get the needed data from the completed installation.\n"
 
+#: osdcreate.rsconfirmbackuporremovaltitle
+msgid "Confirm Delete or Backup of old files."
+msgstr ""
+
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr ""
@@ -122,7 +126,7 @@ msgid "Directory "
 msgstr ""
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
-msgid " still exits. Overwrite / Delete ?"
+msgid " still exits. Abort or Backup or Delete ?"
 msgstr ""
 
 #: osddlgnewproperty.rscontainswhitespacewarning
