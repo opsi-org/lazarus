@@ -44,8 +44,8 @@ uses
   osddlgnewproperty, osparserhelper,
   osddatamod,
   osdcheckentriesdlg,
-  Contnrs,
-  openfiledirdlg;
+  Contnrs;
+  //openfiledirdlg;
 
 type
   TIconDisplay = class(TPersistent)
@@ -2560,12 +2560,13 @@ var
   filename: string;
   localTOSset: TTargetOSset;
   installerselected: boolean = False;
-  macosOpendlg: TSelectFileOrDirectoryDialog;
+  //macosOpendlg: TSelectFileOrDirectoryDialog;
 begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
     (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
-    (aktProduct.SetupFiles[1].installerId <> stMsi) then
+    (aktProduct.SetupFiles[1].installerId <> stMsi)  and
+    (aktProduct.SetupFiles[1].targetOS = osWin) then
   begin
     // checkok := False;
     // we warn here only
@@ -2722,9 +2723,10 @@ procedure TResultform1.BtSetup3NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  if ((aktProduct.SetupFiles[1].installDirectory = '') or
-    (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
-    (aktProduct.SetupFiles[1].installerId <> stMsi) then
+  if ((aktProduct.SetupFiles[2].installDirectory = '') or
+    (aktProduct.SetupFiles[2].installDirectory = 'unknown')) and
+    (aktProduct.SetupFiles[2].installerId <> stMsi)  and
+    (aktProduct.SetupFiles[2].targetOS = osWin) then
   begin
     // checkok := False;
     // we warn here only
@@ -2896,10 +2898,8 @@ var
 begin
   osdsettings.runmode := threeAnalyzeCreate_1;
   setRunMode;
-  //aktProduct.targetOS := osWin;
-  localTOSset := aktProduct.productdata.targetOSset;
-  Include(localTOSset, osWin);
-  aktProduct.productdata.targetOSset := localTOSset;
+  initaktproduct;
+  aktProduct.productdata.targetOSset := [osMulti];
   if MessageDlg(rsThreeAnalyzeAndCreateMsgHead, rsThreeAnalyzeAndCreateMsgFirstSetup,
     mtConfirmation, [mbYes, mbNo], '') = mrYes then
   begin
@@ -2908,7 +2908,11 @@ begin
     begin
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
-      initaktproduct;
+      //initaktproduct;
+      //aktProduct.targetOS := osWin;
+  localTOSset := aktProduct.productdata.targetOSset;
+  Include(localTOSset, osWin);
+  aktProduct.productdata.targetOSset := localTOSset;
       //aktProduct.SetupFiles[0] := osWin;
       aktProduct.SetupFiles[0].targetOS := osWin;
       //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');

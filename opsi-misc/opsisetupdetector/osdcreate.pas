@@ -324,9 +324,7 @@ begin
     tempstr := 'lin'
   else if osMac in aktProduct.productdata.targetOSset then
     tempstr := 'mac';
-  if (osWin in aktProduct.productdata.targetOSset) and
-    (osLin in aktProduct.productdata.targetOSset) and
-    (osMac in aktProduct.productdata.targetOSset) then
+  if (osMulti in aktProduct.productdata.targetOSset) then
     tempstr := 'multi';
 
   templatePath := templatePath + Pathdelim + tempstr;
