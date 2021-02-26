@@ -21721,7 +21721,7 @@ begin
                               tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
                               tsShellInAnIcon:
                                 execDOSBatch(localSection, tmpstr,
-                                  SW_HIDE, False {no catchout}, 1,
+                                  SW_HIDE, False {no catchout}, 0,
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsWinBatch:

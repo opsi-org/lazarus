@@ -14,6 +14,7 @@ opsi-winst/opsi-script (4.12.4.15) stable; urgency=low
  * standard out file at windows now opsi-script.exe
  * locale is now opsi-script.po (also at windows)
  * winstxx.exe only as symbolic links to opsi-script.exe (for backward compatibility)
+ * osparser: executesection: shellinanIcon: logleveloffset=0
 
 -- d.oertel <d.oertel@uib.de> Fri, 12 Feb 2021 15:00
 

@@ -863,6 +863,7 @@ begin
   startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
+  startupmessages.Append('Detected Language is:'+GetDefaultLang);
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
