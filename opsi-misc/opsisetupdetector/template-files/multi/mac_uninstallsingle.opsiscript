@@ -16,16 +16,11 @@ importlib "%scriptpath%/osd-lib.opsiscript"
 Set $InstallDir$	= "#@InstallDir3*#"
 ; ----------------------------------------------------------------
 
-if not("#@install3*#" = "true")
-	logError "No Deinstallation for Linux in this opsi product"
+; switch to "true" if this product supports MacOS
+if not(stringToBool("#@install3*#"))
+	logError "No Deinstallation for MacOS in this opsi product"
 	isFatalError "wrong OS"
 endif	
-
-
-if not(($OS$ = "macos"))
-	logError "Installation aborted: wrong OS version: only MacOS"
-	isFatalError "wrong OS"
-endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

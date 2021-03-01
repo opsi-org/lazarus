@@ -17,15 +17,11 @@ importlib "%scriptpath%/uib_lin_install.opsiscript"
 Set $InstallDir$	= "#@InstallDir2*#"
 ; ----------------------------------------------------------------
 
-if not("#@install2*#" = "true")
+; switch to "true" if this product supports Linux
+if not(stringToBool("#@install2*#"))
 	logError "No Deinstallation for Linux in this opsi product"
 	isFatalError "wrong OS"
 endif	
-
-if not(($OS$ = "linux"))
-	logError "Installation aborted: wrong OS version: only Linux"
-	isFatalError "wrong OS"
-endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

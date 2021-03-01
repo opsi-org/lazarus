@@ -51,32 +51,44 @@ deffunc install_macos_app($myapp$ : string) : string
 	DefVar $exitcode$
 	DefStringlist $binfiles$
 	
-	set $result$ = "false"
+	set $result$ = "true"
 	if directoryexists($myapp$)
 		set $sourceDir$ = ExtractFilePath($myapp$)
 		set $myAppDir$ = ExtractFileName ($myapp$)
-		markerrornumber
-		Files_copy_app
-		if errorsOccurredSinceMark = 0
+		;markerrornumber
+		;Files_copy_app
+		;if errorsOccurredSinceMark = 0
+		;	; installation success
+		;	;set $result$ = "true"
+		;else
+		;	logerror "Copy files from "+$myapp$+" to Application Dir failed. - installation failed."
+		;	set $result$ = "false"
+		;endif
+		set $exitcode$ = shellCall('mv "'+$sourceDir$+'/'+$myAppDir$+'" "/Applications/'+$myAppDir$+'/"')
+		if $exitcode$ = "0"
 			; installation success
-			set $result$ = "true"
+			;set $result$ = "true"
 		else
-			logerror "Copy files from "+$myapp$+" to Application Dir failed. - installation failed."
+			logerror "Move the files from "+$myapp$+" to /Applications  Dir failed. - installation failed."
+			set $result$ = "false"
 		endif
 		set $binfiles$ = listFiles('/Applications/'+$myAppDir$+'/Contents/MacOS/',"*","False")
 		for %bin% in $binfiles$ do set $exitcode$ = shellCall('chmod ugo+x "%bin%"')
 		if $exitcode$ = "0"
 			; installation success
-			set $result$ = "true"
+			;set $result$ = "true"
 		else
-			logerror "Chaning rights of files from "+$myapp$+" MacOS Dir failed. - installation failed."
+			logerror "Change the rights of files from "+$myapp$+" MacOS Dir failed. - installation failed."
+			set $result$ = "false"
 		endif
 	else
 		LogError $myapp$+" is not a directory as expected. - installation failed."
+		set $result$ = "false"
 	endif
 	
 	[Files_copy_app]
 	copy -s "$sourceDir$/$myAppDir$/*" "/Applications/$myAppDir$/"
+	
 	
 endfunc
 

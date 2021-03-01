@@ -11,7 +11,7 @@ set $oldProgFound$ = "false"
 #@uninstallCheckLines1*#
 
 if $oldProgFound$ = "true"
-	comment "Is the Instaddir in the Apllications directory ?"
+	comment "Is the Installdir in the Applications directory ?"
 	if "1" = strPos(lower($InstallDir$),lower("/Applications/"))
 		comment "Do not delete the whole /Applications dir ..."
 		if not(lower($InstallDir$) = lower('/Applications/'))

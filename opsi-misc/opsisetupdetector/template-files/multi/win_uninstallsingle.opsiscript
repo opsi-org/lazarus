@@ -16,16 +16,11 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 Set $InstallDir$	= "#@InstallDir1*#"
 ; ----------------------------------------------------------------
 
-if not("#@install1*#" = "true")
+; switch to "true" if this product supports Windows
+if not(stringToBool("#@install1*#"))
 	logError "No Deinstallation for Windows in this opsi product"
 	isFatalError "wrong OS"
 endif	
-
-
-if not(($OS$ = "Windows_NT"))
-	logError "Installation aborted: wrong OS version: only Windows"
-	isFatalError "wrong OS"
-endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

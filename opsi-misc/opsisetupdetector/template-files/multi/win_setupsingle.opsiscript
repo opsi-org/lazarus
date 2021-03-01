@@ -17,23 +17,17 @@ Set $InstallDir$	= "#@InstallDir1*#"
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
-if not("#@install1*#" = "true")
+; switch to "true" if this product supports Windows
+if not(stringToBool("#@install1*#"))
 	logError "No installation for Windows in this opsi product"
 	isFatalError "wrong OS"
 endif	
-
-if not(($OS$ = "Windows_NT"))
-	logError "Installation aborted: wrong OS version: only Windows"
-	isFatalError "wrong OS"
-endif
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
 	isFatalError "No Space"
 	; Stop process and set installation status to failed
 endif
-
-
 
 if FileExists("%ScriptPath%\win_delsub.opsiscript")
 	comment "Start uninstall sub section"

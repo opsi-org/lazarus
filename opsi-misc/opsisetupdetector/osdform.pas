@@ -45,7 +45,7 @@ uses
   osddatamod,
   osdcheckentriesdlg,
   Contnrs;
-  //openfiledirdlg;
+//openfiledirdlg;
 
 type
   TIconDisplay = class(TPersistent)
@@ -426,7 +426,9 @@ type
     procedure IconDisplayOnMouseEnter(Sender: TObject);
     procedure PaintPreview(Image: TImage);
     procedure IconDisplayOnClick(Sender: TObject);
+    procedure showCheckEntriesWarning;
     //procedure SetFontName(Control: TControl; Name: string);
+    function showCompleteDirDlg : boolean;
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
@@ -559,8 +561,12 @@ resourcestring
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
   rsDefaultIcon = 'default icon';
   rsNumberIcons = 'Icons to choose from: ';
-  rsCopyCompleteDir =
-    'Should we copy not only the setup file. but the complete directory ?';
+  rsCopyFileOnlyOrCompleteDirTitle = ' Only File or Directory';
+  rsCopyFileOnlyOrCompleteDirText =
+    'Should we copy only the installer file or the complete directory ?';
+  rsCopyCompleteDirCap = 'Complete directory';
+  rsCopyFileOnlyCap = 'Only selected file';
+//    'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir =
     'First select MacOS .app or Directory where to find MacOS Installer files';
   rsSelectMacFile = 'Now select MacOS installer file.';
@@ -568,6 +574,13 @@ resourcestring
   rsRPMAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
   rsDebAnalyze = 'Analyze of DEB files';
   rsDebAnalyzeNotLinux = 'Detailed anlyze of deb files can only be done at linux';
+  rscheckEntriesTitle = 'Please keep in mind:';
+  rscheckEntriesMsg =
+    'The following data are automatically detected.' + Lineending +
+    'You have to check every data field if this data are correct or plausible.' +
+    Lineending + 'For some data you may have to install the program once ' +
+    Lineending + 'and than get the needed data from the completed installation.';
+  rscheckEntriesRememberMe = 'Do not show this Message again';
 
 implementation
 
@@ -1275,9 +1288,12 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
+    (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbNo, mbYes], 0, mbNo) = mrYes then
       aktProduct.SetupFiles[0].copyCompleteDir := True;
+      *)
+    aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
@@ -1599,9 +1615,11 @@ begin
   begin
     osdsettings.runmode := twoAnalyzeCreate_1;
     setRunMode;
+    (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbYes, mbNo], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
+      aktProduct.SetupFiles[0].copyCompleteDir := True;   *)
+    aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -1643,7 +1661,7 @@ end;
 procedure TResultform1.BtCreateEmptyTemplateMultiClick(Sender: TObject);
 begin
   begin
-    osdsettings.runmode := createTemplate;
+    osdsettings.runmode := createMultiTemplate;
     setRunMode;
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
@@ -1652,7 +1670,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
-    aktProduct.productdata.targetOSset := [osWin, osLin, osMac];
+    aktProduct.productdata.targetOSset := [osWin, osLin, osMac, osMulti];
     aktProduct.productdata.productId := 'opsi-template';
     aktProduct.productdata.productName := 'opsi template for multi platform';
     aktProduct.productdata.productversion := '1.0.0';
@@ -1662,19 +1680,40 @@ begin
   end;
 end;
 
-procedure showCeckEntriesWarning;
+procedure TResultform1.showCheckEntriesWarning;
+var
+  tmpbool: boolean;
 begin
   if myconfiguration.ShowCheckEntryWarning then
   begin
+    (*
     FCheckenties.ShowModal;
     myconfiguration.ShowCheckEntryWarning :=
       not FCheckenties.CheckBoxDoNotShowCheckEntries.Checked;
+    *)
+    // https://specials.rejbrand.se/TTaskDialog/
+    with TTaskDialog.Create(self) do
+      try
+        Caption := 'opsi-setup-detector';
+        Title := rscheckEntriesTitle;
+        Text := rscheckEntriesMsg;
+        CommonButtons := [tcbOk];
+        MainIcon := tdiInformation;
+        VerificationText := rscheckEntriesRememberMe;
+        Execute;
+        tmpbool := tfVerificationFlagChecked in Flags;
+        myconfiguration.ShowCheckEntryWarning := not (tmpbool);
+        tmpbool := myconfiguration.ShowCheckEntryWarning;
+        myconfiguration.writeconfig;
+      finally
+        Free;
+      end;
   end;
 end;
 
 procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
-  showCeckEntriesWarning;
+  showCheckEntriesWarning;
   case osdsettings.runmode of
     analyzeOnly:
     begin
@@ -2314,6 +2353,7 @@ begin
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
+    createMultiTemplate,
     singleAnalyzeCreate,
     twoAnalyzeCreate_1,
     twoAnalyzeCreate_2,
@@ -2383,6 +2423,7 @@ begin
       end;
       *)
       createTemplate,
+      createMultiTemplate,
       singleAnalyzeCreate,
       twoAnalyzeCreate_1,
       twoAnalyzeCreate_2,
@@ -2419,6 +2460,7 @@ begin
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
     createTemplate,
+    createMultiTemplate,
     singleAnalyzeCreate,
     twoAnalyzeCreate_1,
     twoAnalyzeCreate_2,
@@ -2490,9 +2532,11 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
+          (*
           if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
             [mbYes, mbNo], 0, mbNo) = mrYes then
-            aktProduct.SetupFiles[1].copyCompleteDir := True;
+            aktProduct.SetupFiles[1].copyCompleteDir := True; *)
+          aktProduct.SetupFiles[1].copyCompleteDir := showCompleteDirDlg;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
           Application.ProcessMessages;
@@ -2517,9 +2561,11 @@ begin
           OpenDialog1.FilterIndex := 6;   // linux
           if OpenDialog1.Execute then
           begin
+            (*
             if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
               [mbYes, mbNo], 0, mbNo) = mrYes then
-              aktProduct.SetupFiles[1].copyCompleteDir := True;
+              aktProduct.SetupFiles[1].copyCompleteDir := True; *)
+            aktProduct.SetupFiles[1].copyCompleteDir := showCompleteDirDlg;
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
             Application.ProcessMessages;
@@ -2565,7 +2611,7 @@ begin
   checkok := True;
   if ((aktProduct.SetupFiles[1].installDirectory = '') or
     (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
-    (aktProduct.SetupFiles[1].installerId <> stMsi)  and
+    (aktProduct.SetupFiles[1].installerId <> stMsi) and
     (aktProduct.SetupFiles[1].targetOS = osWin) then
   begin
     // checkok := False;
@@ -2686,9 +2732,11 @@ begin
           if goon then
           begin
             if not isapp then
+            (*
               if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
                 [mbYes, mbNo], 0, mbNo) = mrYes then
-                aktProduct.SetupFiles[2].copyCompleteDir := True;
+                aktProduct.SetupFiles[2].copyCompleteDir := True; *)
+            aktProduct.SetupFiles[2].copyCompleteDir := showCompleteDirDlg;
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
             Application.ProcessMessages;
@@ -2725,7 +2773,7 @@ var
 begin
   if ((aktProduct.SetupFiles[2].installDirectory = '') or
     (aktProduct.SetupFiles[2].installDirectory = 'unknown')) and
-    (aktProduct.SetupFiles[2].installerId <> stMsi)  and
+    (aktProduct.SetupFiles[2].installerId <> stMsi) and
     (aktProduct.SetupFiles[2].targetOS = osWin) then
   begin
     // checkok := False;
@@ -2879,9 +2927,11 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clean([gzNormal, gzFixedRows]);
     StringGridDep.RowCount := 1;
+    (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
+      aktProduct.SetupFiles[0].copyCompleteDir := True; *)
+    aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
@@ -2910,9 +2960,9 @@ begin
       Application.ProcessMessages;
       //initaktproduct;
       //aktProduct.targetOS := osWin;
-  localTOSset := aktProduct.productdata.targetOSset;
-  Include(localTOSset, osWin);
-  aktProduct.productdata.targetOSset := localTOSset;
+      localTOSset := aktProduct.productdata.targetOSset;
+      Include(localTOSset, osWin);
+      aktProduct.productdata.targetOSset := localTOSset;
       //aktProduct.SetupFiles[0] := osWin;
       aktProduct.SetupFiles[0].targetOS := osWin;
       //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
@@ -2920,9 +2970,11 @@ begin
       MemoAnalyze.Clear;
       StringGridDep.Clean([gzNormal, gzFixedRows]);
       StringGridDep.RowCount := 1;
+      (*
       if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
         [mbNo, mbYes], 0, mbNo) = mrYes then
-        aktProduct.SetupFiles[0].copyCompleteDir := True;
+        aktProduct.SetupFiles[0].copyCompleteDir := True; *)
+      aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
       makeProperties;
       Application.ProcessMessages;
       aktProduct.SetupFiles[0].active := True;
@@ -3116,6 +3168,38 @@ begin
   myEdit.SelStart := CurPos;
 end;
 
+function TResultform1.showCompleteDirDlg : boolean;
+begin
+  result := false;
+  // https://specials.rejbrand.se/TTaskDialog/
+    with TTaskDialog.Create(self) do
+      try
+        Title := rsCopyFileOnlyOrCompleteDirTitle;
+        Caption := 'opsi-setup-detector';
+        Text := rsCopyFileOnlyOrCompleteDirText;
+        CommonButtons := [];
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsCopyCompleteDirCap;
+          ModalResult := mrYes;
+        end;
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsCopyFileOnlyCap;
+          ModalResult := mrNo;
+        end;
+        MainIcon := tdiQuestion;
+        if Execute then
+        begin
+          if ModalResult = mrYes then
+            result := true;
+          if ModalResult = mrNo then
+            result := false;
+        end;
+      finally
+        Free;
+      end;
+end;
 
 procedure TResultform1.FormCreate(Sender: TObject);
 var
@@ -3332,7 +3416,7 @@ begin
   begin
     ShowMessage(rsWeNeedConfiguration);
     MenuItemConfigClick(Sender);
-    logdatei.log('Missing configs foundc- configdialog forced', LLinfo);
+    logdatei.log('Missing configs found- config dialog forced', LLinfo);
   end;
 end;
 

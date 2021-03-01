@@ -34,7 +34,7 @@ Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
-; Win / Lin /Mac
+; Win / Lin / Mac
 set $OSshort$ = strPart($OS$,"1","3")
 	
 

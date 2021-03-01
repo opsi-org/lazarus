@@ -11,6 +11,15 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: openfiledirdlg.rsfdselectfileordirectory
+msgid "Select File or Directory"
+msgstr ""
+
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdanalyzewin.swarnmultiplemsi
 msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
@@ -113,8 +122,43 @@ msgstr ""
 "For some data you may have to install the program once \n"
 "and than get the needed data from the completed installation.\n"
 
+#: osdcreate.rsconfirmabortcaption
+msgid "Abort"
+msgstr ""
+
+#: osdcreate.rsconfirmaborthint
+msgid "Leave existing directory unchanged and abort"
+msgstr ""
+
+#: osdcreate.rsconfirmbackupcaption
+msgid "Backup"
+msgstr ""
+
+#: osdcreate.rsconfirmbackuphint
+msgid "All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file."
+msgstr ""
+
 #: osdcreate.rsconfirmbackuporremovaltitle
 msgid "Confirm Delete or Backup of old files."
+msgstr ""
+
+#: osdcreate.rsconfirmdeletecaption
+msgid "Delete"
+msgstr ""
+
+#: osdcreate.rsconfirmdeletehint
+msgid "Delete the complete directory before creating the new one."
+msgstr ""
+
+#: osdcreate.rsconfirmexpandbutton
+msgid "More Information ..."
+msgstr ""
+
+#: osdcreate.rsconfirmexpandedtext
+msgid ""
+"Abort: Leave existing directory unchanged and abort\n"
+"Delete: Delete the complete directory before creating the new one.\n"
+"Backup: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file.\n"
 msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning
@@ -138,8 +182,46 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 
-#: osdform.rscopycompletedir
-msgid "Should we copy not only the setup file. but the complete directory ?"
+#: osdform.rscheckentriesmsg
+#, fuzzy
+msgctxt "osdform.rscheckentriesmsg"
+msgid ""
+"The following data are automatically detected.\n"
+"You have to check every data field if this data are correct or plausible.\n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+msgstr ""
+"The following data are automatically detected. \n"
+"You have to check every data field if this data are correct or plausible. \n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+
+#: osdform.rscheckentriesrememberme
+msgid "Do not show this Message again"
+msgstr ""
+
+#: osdform.rscheckentriestitle
+msgctxt "osdform.rscheckentriestitle"
+msgid "Please keep in mind:"
+msgstr ""
+
+#: osdform.rscopycompletedircap
+msgctxt "osdform.rscopycompletedircap"
+msgid "Complete directory"
+msgstr ""
+
+#: osdform.rscopyfileonlycap
+msgctxt "osdform.rscopyfileonlycap"
+msgid "Only selected file"
+msgstr ""
+
+#: osdform.rscopyfileonlyorcompletedirtext
+msgctxt "osdform.rscopyfileonlyorcompletedirtext"
+msgid "Should we copy only the installer file or the complete directory ?"
+msgstr ""
+
+#: osdform.rscopyfileonlyorcompletedirtitle
+msgid " Only File or Directory"
 msgstr ""
 
 #: osdform.rsdebanalyze
@@ -323,6 +405,7 @@ msgid "Do not show this message again"
 msgstr ""
 
 #: tfcheckenties.label1.caption
+msgctxt "tfcheckenties.label1.caption"
 msgid "Please keep in mind:"
 msgstr ""
 
@@ -660,7 +743,7 @@ msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatelin.caption
 msgctxt "tresultform1.btsingleanalyzeandcreatelin.caption"
-msgid "Analyze Files and Create Opsi Package"
+msgid "Analyze File and Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatelin.hint
@@ -672,7 +755,7 @@ msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatemac.caption
 msgctxt "tresultform1.btsingleanalyzeandcreatemac.caption"
-msgid "Analyze Files and Create Opsi Package"
+msgid "Analyze File and Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatemac.hint
@@ -684,7 +767,7 @@ msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatemulti.caption
 msgctxt "tresultform1.btsingleanalyzeandcreatemulti.caption"
-msgid "Analyze Files and Create Opsi Package"
+msgid "Analyze File and Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreatemulti.hint

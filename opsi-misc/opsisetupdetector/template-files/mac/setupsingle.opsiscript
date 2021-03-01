@@ -25,8 +25,8 @@ DefVar $installSuccess$
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_macosinstalllib.opsiscript"
+importlib "%scriptpath%/osd-lib.opsiscript"
+importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -48,13 +48,13 @@ endif
 
 
 comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
+if FileExists("%ScriptPath%/delsub.opsiscript")
 	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+	Sub "%ScriptPath%/delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
@@ -66,7 +66,7 @@ endif
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory "%SCRIPTPATH%/files1"
 ;----------------------------------------------
 #@installCommandLine1*#
 ;----------------------------------------------

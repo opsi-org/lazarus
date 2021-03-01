@@ -33,13 +33,25 @@ Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
-; Win / Lin /Mac
-set $OSshort$ = strPart($OS$,"1","3")
-	
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
+; Win / Lin / Mac
+
+set $OSshort$ = strPart($OS$,"1","3")
 include_insert $OSshort$+"_setupt.opsicript"
+
+;switch $OS$
+;	case "Windows_NT"
+;		include_insert "win_setupt.opsicript"
+;	endcase
+;	case "Linux"
+;		include_insert "lin_setupt.opsicript"
+;	endcase
+;	case "MacOS"
+;		include_insert "mac_setupt.opsicript"
+;	endcase
+;endswitch
