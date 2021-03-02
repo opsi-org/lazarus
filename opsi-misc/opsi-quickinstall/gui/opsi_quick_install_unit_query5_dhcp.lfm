@@ -218,7 +218,8 @@ object Query5_dhcp: TQuery5_dhcp
     object EditAddress: TEdit
       AnchorSideLeft.Control = RadioBtnOtherAddress
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RadioBtnAddress1
+      AnchorSideTop.Control = LabelAddress
+      AnchorSideTop.Side = asrBottom
       Left = 435
       Height = 25
       Top = 19
@@ -254,9 +255,10 @@ object Query5_dhcp: TQuery5_dhcp
       WordWrap = True
     end
     object EditDomain: TEdit
-      AnchorSideLeft.Control = CheckBoxOtherDomain
+      AnchorSideLeft.Control = RadioBtnOtherDomain
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = CheckBoxDomain1
+      AnchorSideTop.Control = LabelDomain
+      AnchorSideTop.Side = asrBottom
       Left = 375
       Height = 25
       Top = 19
@@ -265,7 +267,7 @@ object Query5_dhcp: TQuery5_dhcp
       ParentFont = False
       TabOrder = 0
     end
-    object CheckBoxDomain1: TCheckBox
+    object RadioBtnDomain1: TRadioButton
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
       Left = 0
@@ -274,12 +276,10 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 72
       Caption = 'ucs.test'
       Checked = True
-      State = cbChecked
       TabOrder = 1
-      Visible = False
     end
-    object CheckBoxDomain2: TCheckBox
-      AnchorSideLeft.Control = CheckBoxDomain1
+    object RadioBtnDomain2: TRadioButton
+      AnchorSideLeft.Control = RadioBtnDomain1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -290,10 +290,9 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = 'uib.local'
       TabOrder = 2
-      Visible = False
     end
-    object CheckBoxDomain3: TCheckBox
-      AnchorSideLeft.Control = CheckBoxDomain2
+    object RadioBtnDomain3: TRadioButton
+      AnchorSideLeft.Control = RadioBtnDomain2
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LabelDomain
       AnchorSideTop.Side = asrBottom
@@ -304,12 +303,12 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = 'vmnat.local'
       TabOrder = 3
-      Visible = False
     end
-    object CheckBoxOtherDomain: TCheckBox
-      AnchorSideLeft.Control = CheckBoxDomain3
+    object RadioBtnOtherDomain: TRadioButton
+      AnchorSideLeft.Control = RadioBtnDomain3
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = CheckBoxDomain1
+      AnchorSideTop.Control = LabelDomain
+      AnchorSideTop.Side = asrBottom
       Left = 300
       Height = 21
       Top = 19

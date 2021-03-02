@@ -16,10 +16,6 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
-    CheckBoxOtherDomain: TCheckBox;
-    CheckBoxDomain1: TCheckBox;
-    CheckBoxDomain2: TCheckBox;
-    CheckBoxDomain3: TCheckBox;
     EditNetmask: TEdit;
     EditAddress: TEdit;
     EditDomain: TEdit;
@@ -52,6 +48,10 @@ type
     RadioBtnNameserver2: TRadioButton;
     RadioBtnNameserver3: TRadioButton;
     RadioBtnMask3: TRadioButton;
+    RadioBtnDomain1: TRadioButton;
+    RadioBtnDomain2: TRadioButton;
+    RadioBtnDomain3: TRadioButton;
+    RadioBtnOtherDomain: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -150,28 +150,28 @@ begin
   index := 3;
   if NetworkDetails[index] <> '' then
   begin
-    CheckBoxDomain1.Visible := True;
-    CheckBoxDomain1.Caption := NetworkDetails[index];
+    RadioBtnDomain1.Visible := True;
+    RadioBtnDomain1.Caption := NetworkDetails[index];
     // IP4.DOMAIN[2]
     index += 1;
     if NetworkDetails[index] <> '' then
     begin
-      CheckBoxDomain2.Visible := True;
-      CheckBoxDomain2.Caption := NetworkDetails[index];
+      RadioBtnDomain2.Visible := True;
+      RadioBtnDomain2.Caption := NetworkDetails[index];
       // IP4.DOMAIN[3]
       index += 1;
       if NetworkDetails[index] <> '' then
       begin
-        CheckBoxDomain3.Visible := True;
-        CheckBoxDomain3.Caption := NetworkDetails[index];
+        RadioBtnDomain3.Visible := True;
+        RadioBtnDomain3.Caption := NetworkDetails[index];
         // if too many checkboxes (i.e. 3), move CheckBoxOtherDomain down
-        CheckBoxOtherDomain.AnchorSide[akTop].Side := asrBottom;
-        CheckBoxOtherDomain.AnchorSide[akTop].Control := CheckBoxDomain1;
-        CheckBoxOtherDomain.AnchorSide[akLeft].Side := asrLeft;
-        CheckBoxOtherDomain.AnchorSide[akLeft].Control := CheckBoxDomain1;
-        CheckBoxOtherDomain.BorderSpacing.Left := 0;
+        RadioBtnOtherDomain.AnchorSide[akTop].Side := asrBottom;
+        RadioBtnOtherDomain.AnchorSide[akTop].Control := RadioBtnDomain1;
+        RadioBtnOtherDomain.AnchorSide[akLeft].Side := asrLeft;
+        RadioBtnOtherDomain.AnchorSide[akLeft].Control := RadioBtnDomain1;
+        RadioBtnOtherDomain.BorderSpacing.Left := 0;
         EditDomain.AnchorSide[akTop].Side := asrBottom;
-        EditDomain.AnchorSide[akTop].Control := CheckBoxDomain1;
+        EditDomain.AnchorSide[akTop].Control := RadioBtnDomain1;
       end;
     end;
   end;
@@ -435,7 +435,7 @@ begin
   LabelAddress.Caption := rsNetworkAddress;
   RadioBtnOtherAddress.Caption := rsNetworkAddressOther;
   LabelDomain.Caption := rsDomain;
-  CheckBoxOtherDomain.Caption := rsDomainOther;
+  RadioBtnOtherDomain.Caption := rsDomainOther;
   LabelNameserver.Caption := rsNameserver;
   RadioBtnOtherNameserver.Caption := rsNameserverOther;
   LabelGateway.Caption := rsGateway;
