@@ -3,7 +3,7 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
-msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
+msgid "What is the name of the opsi admin user to create? (empty = nothing created)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsadminnameo
@@ -13,7 +13,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsadminpassword
 msgctxt "opsi_quick_install_resourcestrings.rsadminpassword"
-msgid "What is the password of the opsi_admin_user to create? (empty = nothing created)"
+msgid "What is the password of the opsi admin user to create? (empty = nothing created)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsadminpasswordo
@@ -28,7 +28,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsbackend
 msgctxt "opsi_quick_install_resourcestrings.rsbackend"
-msgid "Which backend should be installed? (mysql needs valid activation file)"
+msgid "Which backend should be installed? (mysql needs a valid activation file)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsbackendo
@@ -105,12 +105,12 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdhcp
 msgctxt "opsi_quick_install_resourcestrings.rsdhcp"
-msgid "Should we run the opsi dhcp server on this machine?"
+msgid "Should we run the opsi dhcp-server on this machine?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdhcpo
 msgctxt "opsi_quick_install_resourcestrings.rsdhcpo"
-msgid "Run opsi dhcp server: "
+msgid "Run opsi dhcp-server: "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdistr
@@ -125,7 +125,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
-msgid "DNS Domain: "
+msgid "DNS domain: "
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsdomainother
@@ -166,8 +166,8 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
 msgid ""
-"Select \"No\" if you already have a dhcp server.\n"
-"Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
+"Select \"No\" if you already have a dhcp-server.\n"
+"Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfodistribution
@@ -180,15 +180,15 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
-msgid "Information on the network in which the opsi server shall be installed."
+msgid "Information on the network in which the opsi-server shall be installed."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
-msgid "Opsi 4.2 is the latest version..."
+msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
-msgid "If true, shortly after the script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
+msgid "If yes, shortly after the opsi-server is installed, your computer will reboot."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinforepo
@@ -198,7 +198,7 @@ msgstr ""
 #: opsi_quick_install_resourcestrings.rsinforepokind
 msgid ""
 "Select the stability of the installation:\n"
-"Experimental...; testing is the beta version; stable...\n"
+"Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
@@ -301,7 +301,7 @@ msgid "No"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnosupport
-msgid "Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:"
+msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsnotvalid
@@ -373,7 +373,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
-msgid "May the server reboot if the script is finished?"
+msgid "May the server reboot if this script is finished?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsrebooto
@@ -383,7 +383,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsrepo
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
-msgid "(Base-) Repository for opsi-server installation:"
+msgid "(Base-) Repository for the opsi-server installation:"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsrepokind
@@ -402,7 +402,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
-msgid "(Base-) Repository for opsi-server installation (without any cache proxy):"
+msgid "(Base-) Repository for the opsi-server installation (without any cache proxy):"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsreponocacheo
@@ -474,7 +474,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"
-msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+msgid "What is the password of the administrator of the UCS domain controller (needed for other roles to join)?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsucso

@@ -3,8 +3,8 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
-msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
-msgstr "Name des Opsi-Admin-User, der erstellt wird: (leer = nichts wird erstellt)"
+msgid "What is the name of the opsi admin user to create? (empty = nothing created)"
+msgstr "Name des Opsi-Admin-User, der erstellt werden soll: (leer = nichts wird erstellt)"
 
 #: opsi_quick_install_resourcestrings.rsadminnameo
 msgctxt "opsi_quick_install_resourcestrings.rsadminnameo"
@@ -13,8 +13,8 @@ msgstr "Opsi-Admin-User Name: "
 
 #: opsi_quick_install_resourcestrings.rsadminpassword
 msgctxt "opsi_quick_install_resourcestrings.rsadminpassword"
-msgid "What is the password of the opsi_admin_user to create? (empty = nothing created)"
-msgstr "Passwort des Opsi-Admin-User, der erstellt wird: (leer = nichts wird erstellt)"
+msgid "What is the password of the opsi admin user to create? (empty = nothing created)"
+msgstr "Passwort des Opsi-Admin-User, der erstellt werden soll: (leer = nichts wird erstellt)"
 
 #: opsi_quick_install_resourcestrings.rsadminpasswordo
 msgctxt "opsi_quick_install_resourcestrings.rsadminpasswordo"
@@ -28,7 +28,7 @@ msgstr " < zurück "
 
 #: opsi_quick_install_resourcestrings.rsbackend
 msgctxt "opsi_quick_install_resourcestrings.rsbackend"
-msgid "Which backend should be installed? (mysql needs valid activation file)"
+msgid "Which backend should be installed? (mysql needs a valid activation file)"
 msgstr "Welches Backend soll installiert werden? (mysql benötigt eine passende Aktivierungsdatei)"
 
 #: opsi_quick_install_resourcestrings.rsbackendo
@@ -105,12 +105,12 @@ msgstr "Benutzerdefiniert"
 
 #: opsi_quick_install_resourcestrings.rsdhcp
 msgctxt "opsi_quick_install_resourcestrings.rsdhcp"
-msgid "Should we run the opsi dhcp server on this machine?"
+msgid "Should we run the opsi dhcp-server on this machine?"
 msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
 
 #: opsi_quick_install_resourcestrings.rsdhcpo
 msgctxt "opsi_quick_install_resourcestrings.rsdhcpo"
-msgid "Run opsi dhcp server: "
+msgid "Run opsi dhcp-server: "
 msgstr "Opsi-DHCP-Server verwenden: "
 
 #: opsi_quick_install_resourcestrings.rsdistr
@@ -125,7 +125,7 @@ msgstr "DNS Domain (für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
-msgid "DNS Domain: "
+msgid "DNS domain: "
 msgstr "DNS Domain: "
 
 #: opsi_quick_install_resourcestrings.rsdomainother
@@ -141,7 +141,7 @@ msgstr " fertigstellen "
 #: opsi_quick_install_resourcestrings.rsgateway
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
-msgstr "Gateway (...):"
+msgstr "Gateway (optionale Router für das DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
@@ -159,6 +159,8 @@ msgid ""
 "User to create for the operation of opsi.\n"
 "This user can not manage system settings.\n"
 msgstr ""
+"Benutzer, der für die Bedienung von opsi erstellt wird.\n"
+"Dieser Benutzer kann keine System-Einstellungen vornehmen.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
 msgid "Shall the data of opsi be stored in a file or a mysql database?"
@@ -166,15 +168,15 @@ msgstr "Sollen die Daten von Opsi in einer Datei oder einer MySQL-Datenbank gesp
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
 msgid ""
-"Select \"No\" if you already have a dhcp server.\n"
-"Select \"Yes\" if you want to install the dhcp server on the opsi server.\n"
+"Select \"No\" if you already have a dhcp-server.\n"
+"Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgstr ""
 "Wählen Sie \"Nein\", wenn Sie schon einen DHCP-Server haben.\n"
 "Wählen Sie \"Ja\", wenn Sie, wenn Sie den DHCP-Server auf dem Opsi-Server installieren möchten.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfodistribution
 msgid "The following distributions are supported:"
-msgstr ""
+msgstr "Die folgenden Betriebssysteme werden unterstützt:"
 
 #: opsi_quick_install_resourcestrings.rsinfomodules
 msgid "For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de"
@@ -182,26 +184,28 @@ msgstr "Für MySQL brauchen Sie aktive Module. Um weitere Informationen und Prei
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
-msgid "Information on the network in which the opsi server shall be installed."
-msgstr ""
+msgid "Information on the network in which the opsi-server shall be installed."
+msgstr "Informationen zum Netzwerk, in dem der Opsi-Server installiert werden soll."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
-msgid "Opsi 4.2 is the latest version..."
-msgstr ""
+msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgstr "Sie sollten normalerweise Opsi 4.2 installieren wollen, da es die neueste Version ist; der Support für Opsi 4.1 endet bald."
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
-msgid "If true, shortly after the script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user)."
-msgstr ""
+msgid "If yes, shortly after the opsi-server is installed, your computer will reboot."
+msgstr "Wenn ja, dann wird Ihr Computer, kurz nachdem der Opsi-Server installiert wurde, neustarten."
 
 #: opsi_quick_install_resourcestrings.rsinforepo
 msgid "Source from which opsi will be installed."
-msgstr ""
+msgstr "Quelle, von der Opsi installiert wird."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
 msgid ""
 "Select the stability of the installation:\n"
-"Experimental...; testing is the beta version; stable...\n"
+"Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgstr ""
+"Wählen Sie die Stabilität der Installation:\n"
+"Stable ist zuverlässig, testing ist die Beta-Version, experimental könnte einige Fehler verursachen.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
@@ -303,8 +307,8 @@ msgid "No"
 msgstr "Nein"
 
 #: opsi_quick_install_resourcestrings.rsnosupport
-msgid "Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:"
-msgstr "Leider unterstützt Opsi Ihre Distribution nicht. Nur die folgenden Distributionen werden unterstützt:"
+msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
+msgstr "Leider unterstützt Opsi Ihr Betriebssystem nicht. Nur die folgenden Betriebssysteme werden unterstützt:"
 
 #: opsi_quick_install_resourcestrings.rsnotvalid
 msgid " is not a valid input."
@@ -375,8 +379,8 @@ msgstr "Anderer:"
 
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
-msgid "May the server reboot if the script is finished?"
-msgstr "Soll der Server neustarten, wenn das Skript beendet ist?"
+msgid "May the server reboot if this script is finished?"
+msgstr "Soll der Server neustarten, wenn dieses Skript beendet ist?"
 
 #: opsi_quick_install_resourcestrings.rsrebooto
 msgctxt "opsi_quick_install_resourcestrings.rsrebooto"
@@ -385,8 +389,8 @@ msgstr "Neustarten, wenn das Skript beendet ist: "
 
 #: opsi_quick_install_resourcestrings.rsrepo
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
-msgid "(Base-) Repository for opsi-server installation:"
-msgstr "(Basis-) Repository für die Installation von Opsi-Server:"
+msgid "(Base-) Repository for the opsi-server installation:"
+msgstr "(Basis-) Repository für die Installation des Opsi-Server:"
 
 #: opsi_quick_install_resourcestrings.rsrepokind
 msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
@@ -404,8 +408,8 @@ msgstr " [Optionen: \"s\" für stable, \"t\" für testing, \"e\" für experiment
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
-msgid "(Base-) Repository for opsi-server installation (without any cache proxy):"
-msgstr "(Basis-) Repository für die Installation von Opsi-Server (ohne einen Cache-Proxy):"
+msgid "(Base-) Repository for the opsi-server installation (without any cache proxy):"
+msgstr "(Basis-) Repository für die Installation des Opsi-Server (ohne einen Cache-Proxy):"
 
 #: opsi_quick_install_resourcestrings.rsreponocacheo
 msgctxt "opsi_quick_install_resourcestrings.rsreponocacheo"
@@ -476,7 +480,7 @@ msgstr "TFTPROOT-Symlink zeigt auf: "
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"
-msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+msgid "What is the password of the administrator of the UCS domain controller (needed for other roles to join)?"
 msgstr "Passwort des Administrators des UCS-Domain-Controllers: (benötigt, um andere Rollen hinzuzufügen)"
 
 #: opsi_quick_install_resourcestrings.rsucso
