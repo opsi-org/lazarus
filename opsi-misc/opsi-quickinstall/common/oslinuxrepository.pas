@@ -191,8 +191,9 @@ end;
 
 procedure TLinuxRepository.AddOpenSuseSLES(RepoName: string);
 begin
-  writeln('zypper addrepo ' + FURL + RepoName);
-  FRunCommandElevated.Run('zypper addrepo ' + FURL + RepoName);
+  // zypper addrepo <options> <URI> <alias>
+  writeln('zypper addrepo ' + FURL + ' ' + RepoName);
+  FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName);
   writeln('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
   FRunCommandElevated.Run('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
 end;
@@ -207,8 +208,6 @@ begin
   else
     LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);
 end;
-
-
 
 procedure TLinuxRepository.Add(URL: string);
 begin
