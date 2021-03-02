@@ -40,7 +40,8 @@ type
     // same background image for all forms
     BackgrImageFileName = 'opsi.png';
     // same image for all infos
-    InfoImageFileName = 'info_tiny.png';
+    InfoImageFileName = 'dialog-information.png';
+    //InfoImageFileName = 'info_tiny.png';
     // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -124,6 +125,7 @@ begin
     end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
+       // load info icon
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
       setInfoBasics(Sender.Components[compIndex] as TImage)
     else if (Sender.Components[compIndex].Name = 'BackgrImage') then
@@ -273,6 +275,8 @@ begin
   begin
     SetDefaultLang('de');
     SetBtnWidth('de');
+    // somehow the following made problems with de->en->de translation
+    LabelCarryOut.Caption := rsCarryOut;
   end
   else
   begin
