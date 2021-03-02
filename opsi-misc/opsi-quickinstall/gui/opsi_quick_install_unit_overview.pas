@@ -35,14 +35,15 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
-  opsi_quick_install_unit_password,
-  opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_password;
 
 {$R *.lfm}
 
@@ -63,7 +64,7 @@ begin
   MemoOverview.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  MemoOverview.Clear;
+  {MemoOverview.Clear;
   // Opsi version
   if Query.RadioBtnOpsi41.Checked then
     MemoOverview.Lines.Add(rsOpsiVersionO + Query.RadioBtnOpsi41.Caption)
@@ -76,7 +77,7 @@ begin
     MemoOverview.Lines.Add('');
     // Repository
     if Query.RadioBtnRepo.Checked then
-      MemoOverview.Lines.Add(rsRepoO + Query.EditDefaultRepoNoCache.Text)
+      MemoOverview.Lines.Add(rsRepoO + Query.EditDefaultRepo.Text)
     else
       MemoOverview.Lines.Add(rsRepoO + Query.EditRepo.Text);
     // Proxy
@@ -111,8 +112,8 @@ begin
     else
       MemoOverview.Lines.Add(rsRepoKindO + Query2.RadioBtnTesting.Caption);
 
-  {MemoOverview.Lines.Add('');
-  // Prods
+  {// Prods
+  MemoOverview.Lines.Add('');
   MemoOverview.Lines.Add(rsProds);
   stringProducts := '';
   for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
@@ -218,8 +219,88 @@ begin
   // IP name
   MemoOverview.Lines.Add(rsIPNameO + Query6.EditNameIP.Text);
   // IP number
-  MemoOverview.Lines.Add(rsIPNumberO + Query6.EditNumberIP.Text);
+  MemoOverview.Lines.Add(rsIPNumberO + Query6.EditNumberIP.Text);}
 
+  MemoOverview.Clear;
+  // Opsi version
+  MemoOverview.Lines.Add(rsOpsiVersionO + Data.opsiVersion);
+
+  {Custom installation}
+  if Data.custom then
+  begin
+    MemoOverview.Lines.Add('');
+    // Repository
+    MemoOverview.Lines.Add(rsRepoO + Data.repo);
+    // Proxy
+    if Query.RadioBtnNone.Checked then
+      MemoOverview.Lines.Add(rsProxyO + Query.RadioBtnNone.Caption)
+    else if Query.RadioBtnMyProxy.Checked then
+      MemoOverview.Lines.Add(rsProxyO + Query.RadioBtnMyProxy.Caption)
+    else
+      MemoOverview.Lines.Add(rsProxyO + Query.EditProxy.Text);
+    // Repository (no cache)
+    MemoOverview.Lines.Add(rsRepoNoCacheO + Data.repoNoCache);
+
+    MemoOverview.Lines.Add('');
+    // Backend
+    MemoOverview.Lines.Add(rsBackendO + Data.backend);
+    // Copy modules
+    MemoOverview.Lines.Add(rsCopyModulesO + Data.copyMod.OverviewEntry);
+    // Repo kind
+    MemoOverview.Lines.Add(rsRepoKindO + Data.repoKind);
+
+  {// Prods
+  MemoOverview.Lines.Add('');
+  MemoOverview.Lines.Add(rsProds);
+  stringProducts := '';
+  for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
+  begin
+    if (Query3.PanelProdToChoose.Controls[prod] as TCheckBox).Checked then
+      stringProducts := stringProducts + ', ' +
+        Query3.PanelProdToChoose.Controls[prod].Caption;
+  end;
+  if stringProducts <> '' then
+    // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
+    Delete(stringProducts, 1, 2);
+  MemoOverview.Lines.Add(stringProducts);}
+
+    MemoOverview.Lines.Add('');
+    // UCS password
+    if Data.distroName = 'Univention' then
+      MemoOverview.Lines.Add(rsUCSO + Data.ucsPassword);
+    // Reboot
+    MemoOverview.Lines.Add(rsRebootO + Data.reboot.OverviewEntry);
+  end;
+
+  {Both}
+  MemoOverview.Lines.Add('');
+  // Dhcp
+  if Query4.RadioBtnDhcpYes.Checked then
+  begin
+    MemoOverview.Lines.Add(rsDhcpO + Data.dhcp.OverviewEntry);
+    // TFTPROOT
+    MemoOverview.Lines.Add(rsTFTPROOTO + Data.symlink);
+    // Netmask
+    MemoOverview.Lines.Add(rsNetmaskO + Data.netmask);
+    // Network address
+    MemoOverview.Lines.Add(rsNetworkO + Data.networkAddress);
+    // Domain TODO
+    MemoOverview.Lines.Add(rsDomainO + Data.domain);
+    // Nameservere
+    MemoOverview.Lines.Add(rsNameserverO + Data.nameserver);
+    // Gateway
+    MemoOverview.Lines.Add(rsGatewayO + Data.gateway);
+  end;
+
+  MemoOverview.Lines.Add('');
+  // Admin name
+  MemoOverview.Lines.Add(rsAdminNameO + Data.adminName);
+  // Admin password
+  MemoOverview.Lines.Add(rsAdminPasswordO + Data.adminPassword);
+  // IP name
+  MemoOverview.Lines.Add(rsIPNameO + Data.ipName);
+  // IP number
+  MemoOverview.Lines.Add(rsIPNumberO + Data.ipNumber);
 
   // text by resourcestrings
   Caption := rsOverview;

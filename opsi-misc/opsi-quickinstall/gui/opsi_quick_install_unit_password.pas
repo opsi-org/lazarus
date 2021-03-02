@@ -63,16 +63,17 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query_prods,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_wait,
-  osLinuxRepository, opsi_quick_install_resourcestrings;
+  osLinuxRepository;
 
 {$R *.lfm}
 
@@ -95,8 +96,6 @@ procedure TMyThread.installOpsi;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update');
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script');
-  // Never ever again problems with opsi.list!
-  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
   FInstallRunCommand.Run('../common/opsi-script-gui -batch ' +
     FClientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
   FInstallRunCommand.Free;
@@ -118,7 +117,7 @@ begin
   // write user input in l-opsi-server.conf and properties.conf file:
   FileText := TStringList.Create;
 
-  propertyName := 'allow_reboot';
+  {propertyName := 'allow_reboot';
   if Query4.RadioBtnYes.Checked then
     FileText.Add(propertyName + '=true')
   else
@@ -251,8 +250,26 @@ begin
   else
     FileText.Add(propertyName + '=testing');
 
-  FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);
+  FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);}
 
+  FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
+  FileText.Add('backend=' + Data.backend);
+  FileText.Add('dnsdomain=' + Data.domain);
+  FileText.Add('force_copy_modules=' + Data.copyMod.PropertyEntry);
+  FileText.Add('install_and_configure_dhcp=' + Data.dhcp.PropertyEntry);
+  FileText.Add('myipname=' + Data.ipName);
+  FileText.Add('myipnumber=' + Data.ipNumber);
+  FileText.Add('nameserver=' + Data.nameserver);
+  FileText.Add('netmask=' + Data.netmask);
+  FileText.Add('network=' + Data.networkAddress);
+  FileText.Add('opsi_admin_user_name=' + Data.adminName);
+  FileText.Add('opsi_admin_user_password=' + Data.adminPassword);
+  FileText.Add('opsi_online_repository=' + Data.repo);
+  FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
+  FileText.Add('patch_default_link_for_bootimage=' + Data.symlink);
+  FileText.Add('proxy=' + Data.proxy.PropertyEntry);
+  FileText.Add('repo_kind=' + Data.repoKind);
+  FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
   // update_test shall always be false
   FileText.Add('update_test=false');
   //////////////////////////////////////////////////////////////////////////////
@@ -286,7 +303,7 @@ var
   MyRepo: TLinuxRepository;
 begin
   // create repository
-  MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
+  MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
   if Query.RadioBtnOpsi41.Checked then
@@ -307,6 +324,9 @@ begin
     else if Query2.RadioBtnTesting.Checked then
       url := MyRepo.GetDefaultURL(Opsi42, testing);
   end;
+
+  //Delete(url, Pos('s', url), 1);
+  //Delete(url, url.Length, 1);
   MyRepo.Add(url);
   MyRepo.Free;
 end;
@@ -370,13 +390,13 @@ begin
     addRepo;
     // start thread for opsi server installation while showing form 'Wait'
     with TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
-      QuickInstall.DistrInfo.GetPackageManagementShellCommand(QuickInstall.distroName),
-      clientDataDir) do
-      begin
-        // FormClose automatically executed on termination of thread
-        OnTerminate := @FormClose;
-        Start;
-      end;
+        Data.DistrInfo.GetPackageManagementShellCommand(Data.distroName),
+        clientDataDir) do
+    begin
+      // FormClose automatically executed on termination of thread
+      OnTerminate := @FormClose;
+      Start;
+    end;
     Wait.Visible := True;
   end;
 end;
@@ -402,7 +422,7 @@ end;
 
 procedure TPassword.FormClose(Sender: TObject);
 begin
-  QuickInstall.DistrInfo.Free;
+  Data.DistrInfo.Free;
   showResult;
   // close project
   Overview.Close;
