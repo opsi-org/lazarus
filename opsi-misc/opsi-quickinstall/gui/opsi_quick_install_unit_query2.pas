@@ -95,13 +95,13 @@ begin
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQuery2;
   LabelBackend.Caption := rsBackend;
-  InfoBackend.Hint:=rsInfoBackend;
+  InfoBackend.Hint := rsInfoBackend;
   LabelCopyModules.Caption := rsCopyModules;
-  InfoModules.Hint:=rsInfoModules;
+  InfoModules.Hint := rsInfoModules;
   RadioBtnYesCopy.Caption := rsYes;
   RadioBtnNoCopy.Caption := rsNo;
   LabelRepoKind.Caption := rsRepoKind;
-  InfoRepoKind.Hint:=rsInfoRepoKind;
+  InfoRepoKind.Hint := rsInfoRepoKind;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;
@@ -114,10 +114,10 @@ end;
 procedure TQuery2.RadioBtnFileChange(Sender: TObject);
 begin
   if RadioBtnFile.Checked then
-    begin
-      PanelCopyModules.Visible := False;
-      InfoModules.Visible:=False;
-    end
+  begin
+    PanelCopyModules.Visible := False;
+    InfoModules.Visible := False;
+  end
   else
   begin
     PanelCopyModules.Visible := True;
