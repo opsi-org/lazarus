@@ -65,24 +65,24 @@ resourcestring
   rsCorrect =
     'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
   rsNoSupport =
-    'Unfortunately, Opsi does not support your distribution. Only the following distributions are supported:';
+    'Unfortunately, opsi does not support your distribution. Only the following distributions are supported:';
 
   {Query}
   rsOpsiVersion = 'Which opsi version would you like to install?';
   rsOpsi41 = 'Opsi 4.1';
   rsOpsi42 = 'Opsi 4.2';
-  rsInfoOpsiVersion = 'Opsi 4.2 is the latest version...';
-  rsRepo = '(Base-) Repository for opsi-server installation:';
+  rsInfoOpsiVersion = 'You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon.';
+  rsRepo = '(Base-) Repository for the opsi-server installation:';
   rsRepoOther = 'Other:';
   rsInfoRepo = 'Source from which opsi will be installed.';
   rsProxy = 'Proxy to use (http://myproxy.dom.org:8080):';
   rsProxyNone = 'None';
   rsProxyOther = 'Other:';
   rsRepoNoCache =
-    '(Base-) Repository for opsi-server installation (without any cache proxy):';
+    '(Base-) Repository for the opsi-server installation (without any cache proxy):';
 
   {Query2}
-  rsBackend = 'Which backend should be installed? (mysql needs valid activation file)';
+  rsBackend = 'Which backend should be installed? (mysql needs a valid activation file)';
   rsInfoBackend = 'Shall the data of opsi be stored in a file or a mysql database?';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
   rsInfoModules =
@@ -90,24 +90,24 @@ resourcestring
   rsRepoKind = 'From which repo kind should be installed?';
   // #10 does a linebreak :D
   rsInfoRepoKind = 'Select the stability of the installation:' + #10 +
-    'Experimental...; testing is the beta version; stable...';
+    'Stable is reliable, testing is the beta version, experimental may cause some errors.';
   //rsUpdate = 'Install first from stable and than update to repo kind?';
 
   {Query4}
   rsUCS =
-    'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?';
-  rsReboot = 'May the server reboot if the script is finished?';
+    'What is the password of the administrator of the UCS domain controller (needed for other roles to join)?';
+  rsReboot = 'May the server reboot if this script is finished?';
   rsInfoReboot =
-    'If true, shortly after the script is finished and l-opsi-server is installed, your computer will reboot (and you can see the newly created user).';
-  rsDhcp = 'Should we run the opsi dhcp server on this machine?';
-  rsInfoDhcp = 'Select "No" if you already have a dhcp server.' +
-    #10 + 'Select "Yes" if you want to install the dhcp server on the opsi server.';
+    'If yes, shortly after the opsi-server is installed, your computer will reboot.';
+  rsDhcp = 'Should we run the opsi dhcp-server on this machine?';
+  rsInfoDhcp = 'Select "No" if you already have a dhcp-server.' +
+    #10 + 'Select "Yes" if you want to install the dhcp-server on the opsi-server.';
   rsTFTPROOT = 'Which file should the TFTPROOT default symlink point to?';
   rsInfoTFTPROOT =
     'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
 
   {Query5_dhcp}
-  rsInfoNetwork = 'Information on the network in which the opsi server shall be installed.';
+  rsInfoNetwork = 'Information on the network in which the opsi-server shall be installed.';
   rsNetmask = 'Netmask (for dhcp):';
   rsNetmaskOther = 'Other:';
   rsNetworkAddress = 'Network address (for dhcp):';
@@ -120,11 +120,11 @@ resourcestring
   rsGatewayOther = 'Other:';
 
   {Query6}
-  rsAdminName = 'What is the name of the opsi_admin_user to create? (empty = nothing created)';
+  rsAdminName = 'What is the name of the opsi admin user to create? (empty = nothing created)';
   rsInfoAdmin = 'User to create for the operation of opsi.' + #10 +
     'This user can not manage system settings.';
   rsAdminPassword =
-    'What is the password of the opsi_admin_user to create? (empty = nothing created)';
+    'What is the password of the opsi admin user to create? (empty = nothing created)';
   rsIPName = 'Set a different IP name (FQDN) ("auto" = use standard)';
   rsIPNumber = 'Set a different IP number ("auto" = use standard)';
   rsOverviewBtn = ' overview ';
@@ -141,11 +141,11 @@ resourcestring
   //rsProds = 'Products in depot: ';
   rsUCSO = 'Password of administrator of UCS domain controller: ';
   rsRebootO = 'Reboot after script is finished: ';
-  rsDhcpO = 'Run opsi dhcp server: ';
+  rsDhcpO = 'Run opsi dhcp-server: ';
   rsTFTPROOTO = 'TFTPROOT symlink points to: ';
   rsNetmaskO = 'Netmask: ';
   rsNetworkO = 'Network address: ';
-  rsDomainO = 'DNS Domain: ';
+  rsDomainO = 'DNS domain: ';
   rsNameserverO = 'Primary nameserver: ';
   rsGatewayO = 'Gateway: ';
   rsAdminNameO = 'Opsi admin user name: ';
