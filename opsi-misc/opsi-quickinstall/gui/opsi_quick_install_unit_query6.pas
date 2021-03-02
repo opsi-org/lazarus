@@ -45,10 +45,12 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_overview, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_overview;
 
 {$R *.lfm}
 
@@ -56,6 +58,16 @@ uses
 
 procedure TQuery6.BtnOverviewClick(Sender: TObject);
 begin
+  // Make Data Entries
+  // Admin name
+  Data.adminName := EditNameAdmin.Text;
+  // Admin password
+  Data.adminPassword := EditPasswordAdmin.Text;
+  // IP name
+  Data.ipName := EditNameIP.Text;
+  // IP number
+  Data.ipNumber := EditNumberIP.Text;
+
   showForm(Overview, self);
   Overview.BtnBack.Left := BtnBack.Left;
   Overview.BtnBack.Top := BtnBack.Top;

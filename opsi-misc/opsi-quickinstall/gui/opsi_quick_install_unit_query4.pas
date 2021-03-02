@@ -53,10 +53,12 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_query6, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_query6;
 
 {$R *.lfm}
 
@@ -64,6 +66,25 @@ uses
 
 procedure TQuery4.BtnNextClick(Sender: TObject);
 begin
+  // Make Data entries
+  // UCS password
+  Data.ucsPassword := EditPasswordUCS.Text;
+  // Reboot
+  if RadioBtnYes.Checked then
+    Data.reboot.SetEntries(RadioBtnYes.Caption, 'true')
+  else
+    Data.reboot.SetEntries(RadioBtnNo.Caption, 'false');
+  // Dhcp
+  if RadioBtnDhcpYes.Checked then
+    Data.dhcp.SetEntries(RadioBtnDhcpYes.Caption, 'true')
+  else
+    Data.dhcp.SetEntries(RadioBtnDhcpNo.Caption, 'false');
+  // TFTPROOT
+  if RadioBtnMenu.Checked then
+    Data.symlink := RadioBtnMenu.Caption
+  else
+    Data.symlink := RadioBtnNoMenu.Caption;
+
   if RadioBtnDhcpYes.Checked then
   begin
     showForm(Query5_dhcp, self);
@@ -86,7 +107,7 @@ procedure TQuery4.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
   // ask for UCS password only if distribution is Univention
-  if QuickInstall.distroName = 'Univention' then
+  if Data.distroName = 'Univention' then
     PanelPasswordMasterAdmin.Visible := True
   else
   begin

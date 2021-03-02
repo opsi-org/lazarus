@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, osLinuxRepository;
+  ExtCtrls;
 
 type
 
@@ -36,8 +36,11 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language, osDistributionInfo,
-  opsi_quick_install_resourcestrings;
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
+  opsi_quick_install_unit_language,
+  osDistributionInfo,
+  osLinuxRepository;
 
 {$R *.lfm}
 
@@ -48,16 +51,16 @@ begin
   GoOn := True;
   Distribution.Close;
   // if distribution was edited:
-  if EditDistr.Text <> QuickInstall.distroName + ' ' + QuickInstall.distroRelease then
+  if EditDistr.Text <> Data.distroName + ' ' + Data.distroRelease then
   begin
     // set new distribution name and release
     // function Copy is 1-based like Pos
-    QuickInstall.distroName := Copy(EditDistr.Text, 1, Pos(' ', EditDistr.Text) - 1);
-    QuickInstall.distroRelease :=
+    Data.distroName := Copy(EditDistr.Text, 1, Pos(' ', EditDistr.Text) - 1);
+    Data.distroRelease :=
       Copy(EditDistr.Text, Pos(' ', EditDistr.Text) + 1, Length(EditDistr.Text) -
       Pos(' ', EditDistr.Text));
   end;
-  with QuickInstall do
+  with Data do
   begin
     //ShowMessage(distroName);
     //ShowMessage(distroRelease);
@@ -85,12 +88,12 @@ begin
 
   setInfoBasics(InfoDistribution);
 
-  EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
+  EditDistr.Text := Data.distroName + ' ' + Data.distroRelease;
 
   // text by resourcestrings
   Caption := rsCapDistr;
   LabelDistr.Caption := rsDistr;
-  InfoDistribution.Hint:=rsInfoDistribution + #10 + QuickInstall.DistrInfo.Distribs;
+  InfoDistribution.Hint:=rsInfoDistribution + #10 + Data.DistrInfo.Distribs;
   LabelCorrect.Caption := rsCorrect;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;

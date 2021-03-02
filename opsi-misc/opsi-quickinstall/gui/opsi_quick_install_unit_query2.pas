@@ -51,9 +51,11 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query4, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_query4;
 
 {$R *.lfm}
 
@@ -61,6 +63,25 @@ uses
 
 procedure TQuery2.BtnNextClick(Sender: TObject);
 begin
+  // Make Data entries:
+  // Backend
+  if RadioBtnFile.Checked then
+    Data.backend := RadioBtnFile.Caption
+  else
+    Data.backend := RadioBtnMySql.Caption;
+  // Copy modules
+  if RadioBtnYesCopy.Checked then
+    Data.copyMod.SetEntries(RadioBtnYesCopy.Caption, 'true')
+  else
+    Data.copyMod.SetEntries(RadioBtnNoCopy.Caption, 'false');
+  // Repo kind
+  if RadioBtnExperimental.Checked then
+    Data.repoKind := RadioBtnExperimental.Caption
+  else if Query2.RadioBtnStable.Checked then
+    Data.repoKind := RadioBtnStable.Caption
+  else
+    Data.repoKind := RadioBtnTesting.Caption;
+
   showForm(Query4, self);
   Query4.BtnBack.Left := BtnBack.Left;
   Query4.BtnBack.Top := BtnBack.Top;

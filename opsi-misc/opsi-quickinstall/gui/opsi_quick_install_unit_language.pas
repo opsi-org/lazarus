@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, LCLtranslator, Buttons, osDistributionInfo,
-  oslog, osfunclin, process;
+  StdCtrls, LCLtranslator, Buttons, process;
 
 type
 
@@ -58,8 +57,7 @@ type
     // set it to True here in opsi_quick_install_unit_language.
     initialProds: boolean;
 
-    logFileName, distroName, distroRelease: string;
-    DistrInfo: TDistributionInfo;
+    logFileName: string;
 
     procedure SetBtnWidth(Language: string);
     procedure ShowHintOnClick(Sender: TObject);
@@ -79,10 +77,12 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_distr,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query4,
-  opsi_quick_install_resourcestrings;
+  oslog, osfunclin;
 
 {$R *.lfm}
 
@@ -166,7 +166,6 @@ begin
   if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys) then;
   if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys) then;
 
-  logFileName := 'opsi_quickinstall.log';
   // set constant form size
   Height := 450;
   Width := 730;
@@ -200,22 +199,22 @@ begin
 
   initialProds := True;
 
+  logFileName := 'opsi_quickinstall.log';
   // .../lazarus/common/oslog.pas
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
   logFileName := LogDatei.StandardMainLogPath + logFileName;
 
+  Data:=TQuickInstallData.Create;
+
   // (compare function GetDefaultURL in osLinuxRepository:)
   // following two lines take time and are therefore executed only...
   // ...once at the beginning of this program
   // functions are from osfunclin
   // osfunclin needs definition 'SYNAPSE' in project settings
-  distroName := getLinuxDistroName;
-  distroRelease := getLinuxDistroRelease;
-  //ShowMessage(distroName);
-  //ShowMessage(distroRelease);
-  DistrInfo := TDistributionInfo.Create;
+  Data.distroName := getLinuxDistroName;
+  Data.distroRelease := getLinuxDistroRelease;
 
   // text by resourcestrings
   LabelWelcome.Caption := rsWelcome;
@@ -229,6 +228,9 @@ end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
+  if RadioBtnCustom.Checked then Data.custom := true
+  else Data.custom := false;
+
   Distribution.ShowModal;
   // Get Width of BtnOverview and BtnFinish through invisible buttons:
   // Btn.Caption:=rsString and Btn.Width only work properly when Btn.Visible=True

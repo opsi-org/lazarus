@@ -55,8 +55,11 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language, opsi_quick_install_resourcestrings,
-  opsi_quick_install_unit_query2, oslog;
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
+  opsi_quick_install_unit_language,
+  opsi_quick_install_unit_query2,
+  oslog;
 
 {$R *.lfm}
 
@@ -115,6 +118,30 @@ end;
 
 procedure TQuery.BtnNextClick(Sender: TObject);
 begin
+  // Make Data entries:
+  // Opsi version
+  if RadioBtnOpsi41.Checked then
+    Data.opsiVersion := RadioBtnOpsi41.Caption
+  else
+    Data.opsiVersion := RadioBtnOpsi42.Caption;
+  // Repository
+  if RadioBtnRepo.Checked then
+    Data.repo := EditDefaultRepo.Text
+  else
+    Data.repo := EditRepo.Text;
+  // Proxy
+  if RadioBtnNone.Checked then
+    Data.proxy.SetEntries(RadioBtnNone.Caption, '')
+  else if RadioBtnMyProxy.Checked then
+    Data.proxy.SetEntries(RadioBtnMyProxy.Caption, RadioBtnMyProxy.Caption)
+  else
+    Data.proxy.SetEntries(EditProxy.Text, EditProxy.Text);
+  // Repository (no cache)
+  if RadioBtnRepoNoCache.Checked then
+    Data.repoNoCache := EditDefaultRepoNoCache.Text
+  else
+    Data.repoNoCache := EditOtherNoCache.Text;
+
   showForm(Query2, self);
   Query2.BtnBack.Left := BtnBack.Left;
   Query2.BtnBack.Top := BtnBack.Top;

@@ -68,9 +68,11 @@ var
 implementation
 
 uses
+  opsi_quick_install_resourcestrings,
+  opsi_quick_install_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
-  opsi_quick_install_unit_query6, opsi_quick_install_resourcestrings;
+  opsi_quick_install_unit_query6;
 
 {$R *.lfm}
 
@@ -78,6 +80,51 @@ uses
 
 procedure TQuery5_dhcp.BtnNextClick(Sender: TObject);
 begin
+  // Make Data Entries
+  // Netmask
+  if RadioBtnMask1.Checked then
+    Data.netmask := RadioBtnMask1.Caption
+  else if RadioBtnMask2.Checked then
+    Data.netmask := RadioBtnMask2.Caption
+  else
+    Data.netmask := EditNetmask.Text;
+  // Network address
+  if RadioBtnAddress1.Checked then
+    Data.networkAddress := RadioBtnAddress1.Caption
+  else if RadioBtnAddress2.Checked then
+    Data.networkAddress := RadioBtnAddress2.Caption
+  else if RadioBtnAddress3.Checked then
+    Data.networkAddress := RadioBtnAddress3.Caption
+  else
+    Data.networkAddress := EditAddress.Text;
+  // Domain TODO
+  if RadioBtnDomain1.Checked then
+    Data.domain := RadioBtnDomain1.Caption
+  else if RadioBtnDomain2.Checked then
+    Data.domain := RadioBtnDomain2.Caption
+  else if RadioBtnDomain3.Checked then
+    Data.domain := RadioBtnDomain3.Caption
+  else
+    Data.domain := EditDomain.Text;
+  // Nameserver
+  if RadioBtnNameserver1.Checked then
+    Data.nameserver := RadioBtnNameserver1.Caption
+  else if RadioBtnNameserver2.Checked then
+    Data.nameserver := RadioBtnNameserver2.Caption
+  else if RadioBtnNameserver3.Checked then
+    Data.nameserver := RadioBtnNameserver3.Caption
+  else
+    Data.nameserver := EditNameserver.Text;
+  // Gateway
+  if RadioBtnGateway1.Checked then
+    Data.gateway := RadioBtnGateway1.Caption
+  else if RadioBtnGateway2.Checked then
+    Data.gateway := RadioBtnGateway2.Caption
+  else if RadioBtnGateway3.Checked then
+    Data.gateway := RadioBtnGateway3.Caption
+  else
+    Data.gateway := EditGateway.Text;
+
   showForm(Query6, self);
   Query6.BtnBack.Left := BtnBack.Left;
   Query6.BtnBack.Top := BtnBack.Top;
