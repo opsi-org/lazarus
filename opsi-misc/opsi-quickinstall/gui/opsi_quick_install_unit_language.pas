@@ -35,13 +35,12 @@ type
   const
     // same width for all panels
     panelWidth = 460;
-    // same size for all info images
+    // same size for all info images (squares)
     infoSize = 22;
     // same background image for all forms
     BackgrImageFileName = 'opsi.png';
     // same image for all infos
     InfoImageFileName = 'dialog-information.png';
-    //InfoImageFileName = 'info_tiny.png';
     // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -53,23 +52,24 @@ type
     panelLeft: integer;
     // same position for all buttons
     BtnNextWidth, BtnOverviewWidth, BtnFinishWidth: integer;
-    // for setting selectedAmount:=productAmount only the first time when Query3 is activated
-    // Note that it doesn't work to define initialProds in opsi_quick_install_unit_query3 and
-    // set it to True here in opsi_quick_install_unit_language.
-    initialProds: boolean;
-
+    // name for log file of QuickInstall
     logFileName: string;
-
+    // Set position for BtnNext on first form !manually! for right position
+    // after language change.
+    // needs to be done for each language!
     procedure SetBtnWidth(Language: string);
+    // show hint on click of InfoImage
+    // (used with '@' and therefore must be defined in TQuickInstall)
     procedure ShowHintOnClick(Sender: TObject);
   end;
 
 
-// for less code
+// For constant layout (and less code):
+// switch to the next form (set position of new form and adjust visibilities)
 procedure showForm(newForm: TForm; Sender: TForm);
-// set InfoImage.Picture, InfoImage.Width, InfoImage.Height
+// make InfoImage settings
 procedure setInfoBasics(InfoImage: TImage);
-// set Panel.Left, Panel.Width
+// make Panel settings and load background and info images
 procedure SetBasics(Sender: TForm);
 
 var
@@ -87,6 +87,8 @@ uses
 
 {$R *.lfm}
 
+// For constant layout (and less code):
+// switch to the next form (set position of new form and adjust visibilities)
 procedure showForm(newForm: TForm; Sender: TForm);
 begin
   newForm.Visible := True;
@@ -98,7 +100,7 @@ begin
 
   Sender.Visible := False;
 end;
-
+// make InfoImage settings
 procedure setInfoBasics(InfoImage: TImage);
 begin
   InfoImage.Width := QuickInstall.infoSize;
@@ -110,7 +112,7 @@ begin
   // Show info hints also on click of image
   InfoImage.OnClick := @QuickInstall.ShowHintOnClick;
 end;
-
+// make Panel settings and load background and info images
 procedure SetBasics(Sender: TForm);
 var
   compIndex: integer;
@@ -125,7 +127,7 @@ begin
     end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
-       // load info icon
+      // load info icon
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
       setInfoBasics(Sender.Components[compIndex] as TImage)
     else if (Sender.Components[compIndex].Name = 'BackgrImage') then
@@ -137,14 +139,17 @@ end;
 
 { TQuickInstall }
 
+// Set position for BtnNext on first form !manually! for right position after
+// language change.
+// needs to be done for each language!
 procedure TQuickInstall.SetBtnWidth(Language: string);
 begin
   if Language = 'de' then
   begin
-    // needs to be set for every language for nice placement of BtnNext
+    // needs to be hard coded for every language for nice placement of BtnNext
     BtnNextWidth := 63;
-    //BtnNext.Width = 'with for english caption'
-    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
+    //note that BtnNext.Width = width for english caption and
+    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help either
     BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
   end
   else if Language = 'en' then
@@ -153,7 +158,8 @@ begin
     BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
   end;
 end;
-
+// show hint on click of InfoImage
+// (used with '@' and therefore must be defined in TQuickInstall)
 procedure TQuickInstall.ShowHintOnClick(Sender: TObject);
 begin
   Application.ActivateHint(TWinControl(Sender).ClientToScreen(Point(1, 1)), True);
@@ -171,13 +177,14 @@ begin
   // set constant form size
   Height := 450;
   Width := 730;
-  // center forms nicely on screen
+  // center form nicely on screen
   Left := Round((Screen.Width - Width) / 2);
   Top := Round((Screen.Height - Height) / 2);
+  // position Panels with twice as much space to the left than to the right of the form
   panelLeft := Round((Width - panelWidth) * 2 / 3);
   // set constant button positions:
   BtnBack.Left := 20;
-  //BtnNext.Width = 'with for english caption'
+  //note that BtnNext.Width = width for english caption
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   BtnBack.Top := 410;
   BtnNext.Top := BtnBack.Top;
@@ -193,28 +200,22 @@ begin
   Languages := TStringList.Create;
   Languages.Add('de');
   Languages.Add('en');
-  // let the combo box show the system language
+  // let the combo box show the system language at the beginning
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
-  // set width for overview and finish buttons and the next button on this...
-  // ...form depending on the language
+  // now set position of BtnNext for the default language
   SetBtnWidth(GetDefaultLang);
 
-  initialProds := True;
-
+  // initialize log file:
   logFileName := 'opsi_quickinstall.log';
-  // .../lazarus/common/oslog.pas
-  // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
+  // log file will be saved in /tmp/opsi_quickinstall.log
   logFileName := LogDatei.StandardMainLogPath + logFileName;
 
-  Data:=TQuickInstallData.Create;
-
-  // (compare function GetDefaultURL in osLinuxRepository:)
-  // following two lines take time and are therefore executed only...
-  // ...once at the beginning of this program
-  // functions are from osfunclin
-  // osfunclin needs definition 'SYNAPSE' in project settings
+  // initialize data structure to store the QuickInstall data for easier access
+  Data := TQuickInstallData.Create;
+  // Following two lines take time and are therefore executed only once at the
+  // beginning of this program.
   Data.distroName := getLinuxDistroName;
   Data.distroRelease := getLinuxDistroRelease;
 
@@ -230,11 +231,20 @@ end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
-  if RadioBtnCustom.Checked then Data.custom := true
-  else Data.custom := false;
+  // store in Data whether we are in custom installation or not
+  if RadioBtnCustom.Checked then
+    Data.custom := True
+  else
+    Data.custom := False;
 
+  // before going on, let the user check the distribution
   Distribution.ShowModal;
-  // Get Width of BtnOverview and BtnFinish through invisible buttons:
+
+  // Get width of BtnOverview(TQuery6) and BtnFinish(TOverview, TPassword)
+  // through invisible buttons in TQuickInstall:
+  // This is necessary because the positioning of the buttons does not work
+  // properly on FormActivate in the respective forms (same problem as
+  // here in TQuickInstall with BtnNext).
   // Btn.Caption:=rsString and Btn.Width only work properly when Btn.Visible=True
   BtnOverview.Visible := True;
   BtnFinish.Visible := True;
@@ -246,9 +256,13 @@ begin
   BtnFinish.Visible := False;
   //ShowMessage(BtnOverviewWidth.ToString + ', ' + BtnFinishWidth.ToString);
 
+  // Distribution.GoOn tells TQuickInstall whether in TDistribution the next or
+  // the back button was clicked, i.e. whether to go on to the next form or to
+  // stay on TQuickInstall after TDistribution closed.
   if Distribution.GoOn then
   begin
-    if RadioBtnDefault.Checked then
+    // in standard setup go on to TQuery4
+    if not Data.custom then
     begin
       // 'self' is current form
       showForm(Query4, self);
@@ -259,6 +273,7 @@ begin
       Query4.BtnNext.Top := BtnNext.Top;
     end
     else
+    // in custom setup go on to TQuery
     begin
       showForm(Query, self);
       Query.BtnBack.Left := BtnBack.Left;
@@ -275,7 +290,8 @@ begin
   begin
     SetDefaultLang('de');
     SetBtnWidth('de');
-    // somehow the following made problems with de->en->de translation
+    // Somehow the following made problems with de->en->de translation so we set
+    // it here always again.
     LabelCarryOut.Caption := rsCarryOut;
   end
   else

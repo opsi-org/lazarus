@@ -24,9 +24,11 @@ type
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
   private
-
   public
   var
+    // Distribution.GoOn tells TQuickInstall whether in TDistribution the next or
+    // the back button was clicked, i.e. whether to go on to the next form or to
+    // stay on TQuickInstall after TDistribution closed.
     GoOn: boolean;
   end;
 
@@ -46,11 +48,37 @@ uses
 
 { TDistribution }
 
+procedure TDistribution.FormActivate(Sender: TObject);
+begin
+  // centering TDistribution nicely on TQuickInstall
+  Distribution.Left := QuickInstall.Left + Round(QuickInstall.Width / 2) -
+    Round(Width / 2);
+  Distribution.Top := QuickInstall.Top + Round(QuickInstall.Height / 2) -
+    Round(Height / 2);
+
+  // position buttons here because of different layout (size of TDistribution)
+  BtnBack.Left := QuickInstall.BtnBack.Left;
+  BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
+  // we have one InfoImage
+  setInfoBasics(InfoDistribution);
+  // show distribution suggestion
+  EditDistr.Text := Data.distroName + ' ' + Data.distroRelease;
+
+  // text by resourcestrings
+  Caption := rsCapDistr;
+  LabelDistr.Caption := rsDistr;
+  InfoDistribution.Hint := rsInfoDistribution + #10 + Data.DistrInfo.Distribs;
+  LabelCorrect.Caption := rsCorrect;
+  BtnBack.Caption := rsBack;
+  BtnNext.Caption := rsNext;
+end;
+
 procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
   GoOn := True;
   Distribution.Close;
-  // if distribution was edited:
+
+  // If the distribution was edited:
   if EditDistr.Text <> Data.distroName + ' ' + Data.distroRelease then
   begin
     // set new distribution name and release
@@ -60,43 +88,19 @@ begin
       Copy(EditDistr.Text, Pos(' ', EditDistr.Text) + 1, Length(EditDistr.Text) -
       Pos(' ', EditDistr.Text));
   end;
+
+  // set Data.DistrInfo
   with Data do
   begin
-    //ShowMessage(distroName);
-    //ShowMessage(distroRelease);
     DistrInfo.SetInfo(distroName, distroRelease);
     //ShowMessage(DistrInfo.DistrUrlPart);
+    // If the distribution is not supported, show an information and close QuickInstall:
     if DistrInfo.MyDistr = other then
     begin
       ShowMessage(rsNoSupport + #10 + #10 + DistrInfo.Distribs);
       Close;
     end;
   end;
-end;
-
-procedure TDistribution.FormActivate(Sender: TObject);
-begin
-  // centering form Distribution nicely on form QuickInstall
-  Distribution.Left := QuickInstall.Left + Round(QuickInstall.Width / 2) -
-    Round(Width / 2);
-  Distribution.Top := QuickInstall.Top + Round(QuickInstall.Height / 2) -
-    Round(Height / 2);
-
-  BtnBack.Left := QuickInstall.BtnBack.Left;
-  //ShowMessage(BtnBack.Left.ToString);
-  BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
-
-  setInfoBasics(InfoDistribution);
-
-  EditDistr.Text := Data.distroName + ' ' + Data.distroRelease;
-
-  // text by resourcestrings
-  Caption := rsCapDistr;
-  LabelDistr.Caption := rsDistr;
-  InfoDistribution.Hint:=rsInfoDistribution + #10 + Data.DistrInfo.Distribs;
-  LabelCorrect.Caption := rsCorrect;
-  BtnBack.Caption := rsBack;
-  BtnNext.Caption := rsNext;
 end;
 
 procedure TDistribution.BtnBackClick(Sender: TObject);
