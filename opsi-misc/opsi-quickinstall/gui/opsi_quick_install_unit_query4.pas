@@ -99,7 +99,8 @@ begin
     showForm(Query6, self);
     Query6.BtnBack.Left := BtnBack.Left;
     Query6.BtnBack.Top := BtnBack.Top;
-    Query6.BtnOverview.Left := BtnNext.Left;
+    Query6.BtnOverview.Left :=
+      Query6.Width - Query6.BtnBack.Left - QuickInstall.BtnOverviewWidth;
     Query6.BtnOverview.Top := BtnNext.Top;
   end;
 end;

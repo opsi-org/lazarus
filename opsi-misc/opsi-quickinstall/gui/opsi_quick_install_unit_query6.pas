@@ -74,29 +74,11 @@ begin
   Overview.BtnFinish.Left := Overview.Width - Overview.BtnBack.Left -
     QuickInstall.BtnFinishWidth;
   Overview.BtnFinish.Top := BtnOverview.Top;
-
-  {if QuickInstall.RadioBtnDefault.Checked then
-  begin
-    showForm(Overview, self);
-    Overview.BtnBack.Left := BtnBack.Left;
-    Overview.BtnBack.Top := BtnBack.Top;
-    Overview.BtnFinish.Left :=
-      Overview.Width - Overview.BtnBack.Left - Overview.BtnFinish.Width;
-    Overview.BtnFinish.Top := BtnNext.Top;
-  end
-  else
-  begin
-    showForm(Query7, self);
-    Query7.BtnBack.Left := BtnBack.Left;
-    Query7.BtnBack.Top := BtnBack.Top;
-    Query7.BtnOverview.Left :=
-      Query7.Width - Query7.BtnBack.Left - QuickInstall.BtnOverviewWidth;
-    Query7.BtnOverview.Top := BtnNext.Top;
-  end;}
 end;
 
 procedure TQuery6.EditNameAdminChange(Sender: TObject);
 begin
+  // ask for admin password only if a new admin is wanted
   if EditNameAdmin.Text = '' then
     PanelPasswordAdmin.Visible := False
   else
@@ -106,7 +88,6 @@ end;
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
-  BtnOverview.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQueryUserInfo;
   LabelNameAdmin.Caption := rsAdminName;
