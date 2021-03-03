@@ -1,12 +1,12 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
   Left = 639
-  Height = 691
+  Height = 853
   Top = 73
   Width = 620
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 691
+  ClientHeight = 853
   ClientWidth = 620
   DefaultMonitor = dmDesktop
   OnActivate = FormActivate
@@ -218,7 +218,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 668
+    Top = 830
     Width = 620
     Panels = <    
       item
@@ -1261,12 +1261,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelProducts: TPanel
     Left = 0
-    Height = 485
+    Height = 647
     Top = 183
     Width = 620
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 485
+    ClientHeight = 647
     ClientWidth = 620
     Color = clForm
     ParentColor = False
@@ -1274,7 +1274,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     object PanelProductDetail: TPanel
       Left = 0
       Height = 172
-      Top = 313
+      Top = 475
       Width = 620
       Align = alBottom
       BevelOuter = bvNone
@@ -1477,10 +1477,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object NotebookProducts: TNotebook
       Left = 0
-      Height = 313
+      Height = 475
       Top = 0
       Width = 620
-      PageIndex = 2
+      PageIndex = 1
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1525,7 +1525,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         object ScrollBoxAllTiles: TScrollBox
           Left = 0
-          Height = 313
+          Height = 475
           Top = 0
           Width = 620
           HorzScrollBar.Page = 1
@@ -1533,7 +1533,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           VertScrollBar.Page = 1
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 313
+          ClientHeight = 475
           ClientWidth = 620
           Color = clDefault
           ParentColor = False
@@ -1541,7 +1541,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           OnMouseWheel = ScrollBoxAllTilesMouseWheel
           object FlowPanelAllTiles: TFlowPanel
             Left = 0
-            Height = 313
+            Height = 475
             Top = 0
             Width = 620
             Align = alClient
@@ -1592,14 +1592,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         end
         object ScrollBoxSoftwarePage: TScrollBox
           Left = 0
-          Height = 276
+          Height = 438
           Top = 37
           Width = 620
           HorzScrollBar.Page = 579
-          VertScrollBar.Page = 276
+          VertScrollBar.Page = 438
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 276
+          ClientHeight = 438
           ClientWidth = 603
           TabOrder = 1
           object ImageIconSoftware: TImage
