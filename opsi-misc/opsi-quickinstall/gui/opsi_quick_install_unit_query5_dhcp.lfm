@@ -277,6 +277,7 @@ object Query5_dhcp: TQuery5_dhcp
       Caption = 'ucs.test'
       Checked = True
       TabOrder = 1
+      TabStop = True
     end
     object RadioBtnDomain2: TRadioButton
       AnchorSideLeft.Control = RadioBtnDomain1

@@ -53,7 +53,7 @@ implementation
 uses
   opsi_quick_install_resourcestrings,
   opsi_quick_install_data,
-  opsi_quick_install_unit_language,
+  opsi_quick_install_unit_language, // needed for procedures like showForm
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query4;
 
@@ -82,6 +82,7 @@ begin
   else
     Data.repoKind := RadioBtnTesting.Caption;
 
+  // Query3 doesn't exist any more
   showForm(Query4, self);
   Query4.BtnBack.Left := BtnBack.Left;
   Query4.BtnBack.Top := BtnBack.Top;
@@ -113,6 +114,7 @@ end;
 
 procedure TQuery2.RadioBtnFileChange(Sender: TObject);
 begin
+  // ask for copying modules only if backend is mysql
   if RadioBtnFile.Checked then
   begin
     PanelCopyModules.Visible := False;

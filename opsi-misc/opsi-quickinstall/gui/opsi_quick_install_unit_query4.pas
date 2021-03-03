@@ -85,6 +85,7 @@ begin
   else
     Data.symlink := RadioBtnNoMenu.Caption;
 
+  // if a dhcp-server is wanted, show an own form for the required network information
   if RadioBtnDhcpYes.Checked then
   begin
     showForm(Query5_dhcp, self);
@@ -106,6 +107,7 @@ end;
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
   SetBasics(self);
+
   // ask for UCS password only if distribution is Univention
   if Data.distroName = 'Univention' then
     PanelPasswordMasterAdmin.Visible := True
@@ -114,7 +116,8 @@ begin
     PanelPasswordMasterAdmin.Visible := False;
   end;
 
-  if QuickInstall.RadioBtnDefault.Checked then
+  // ask for reboot only in custom setup
+  if not Data.custom then
   begin
     PanelReboot.Visible := False;
     InfoReboot.Visible := False;
@@ -126,7 +129,8 @@ begin
   end;
 
   // text by resourcestrings
-  if QuickInstall.RadioBtnDefault.Checked then
+  // adjust form caption depending on setup type
+  if not Data.custom then
     Caption := 'Opsi Quick Install - ' + rsCapQuery
   else
     Caption := 'Opsi Quick Install - ' + rsCapQuery3;
@@ -152,6 +156,7 @@ end;
 
 procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
 begin
+  // ask for symlink only if a dhcp-server is wanted
   if RadioBtnDhcpYes.Checked then
   begin
     PanelFilePointer.Visible := True;
@@ -166,7 +171,8 @@ end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked then
+  // show form depending on setup type
+  if not Data.custom then
     showForm(QuickInstall, self)
   else
   begin
