@@ -32,11 +32,11 @@ type
     // get properties from query and write them to file properties.conf
     procedure prepareInstallation;
     procedure addRepo;
-    // Show result of l-opsi-server installation and paths to log files
-    // Executed in TPassword.FormClose
+    // show result of l-opsi-server installation and paths to log files
+    // showResult executed in TPassword.FormClose
     procedure showResult;
   private
-    // directory l-opsi-server/CLIENT_DATA
+    // full directory l-opsi-server/CLIENT_DATA
     clientDataDir: string;
   public
   end;
@@ -45,6 +45,8 @@ type
 
   {TMyThread}
 
+  // Thread for showing 'please wait' on a form while 'apt/zypper/.. update'
+  // runs in the background.
   TMyThread = class(TThread)
   private
     FInstallRunCommand: TRunCommandElevated;
@@ -66,11 +68,6 @@ uses
   opsi_quick_install_resourcestrings,
   opsi_quick_install_data,
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query4,
-  opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_query6,
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_wait,
   osLinuxRepository;
@@ -111,146 +108,10 @@ end;
 // get properties from query and write them to file properties.conf
 procedure TPassword.prepareInstallation;
 var
-  propertyName: string;
   FileText: TStringList;
 begin
-  // write user input in l-opsi-server.conf and properties.conf file:
+  // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
   FileText := TStringList.Create;
-
-  {propertyName := 'allow_reboot';
-  if Query4.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=true')
-  else
-    FileText.Add(propertyName + '=false');
-
-  propertyName := 'backend';
-  if (Query2.RadioBtnFile.Checked) then
-    FileText.Add(propertyName + '=file')
-  else
-    FileText.Add(propertyName + '=mysql');
-
-  // for several domains
-  {propertyName := 'dnsdomain';
-  if Query5_dhcp.CheckBoxDomain1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain1.Caption)
-  else if Query5_dhcp.CheckBoxDomain2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain2.Caption)
-  else if Query5_dhcp.CheckBoxDomain3.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.CheckBoxDomain3.Caption)
-  else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);}
-
-  // for one domain
-  propertyName := 'dnsdomain=';
-  if Query5_dhcp.CheckBoxDomain1.Checked then
-    propertyName += Query5_dhcp.CheckBoxDomain1.Caption + ', ';
-  if Query5_dhcp.CheckBoxDomain2.Checked then
-    propertyName += Query5_dhcp.CheckBoxDomain2.Caption + ', ';
-  if Query5_dhcp.CheckBoxDomain3.Checked then
-    propertyName += Query5_dhcp.CheckBoxDomain3.Caption + ', ';
-  if Query5_dhcp.CheckBoxOtherDomain.Checked then
-    propertyName += Query5_dhcp.EditDomain.Text + ', ';
-  Delete(propertyName, propertyName.length - 1, 2);
-  propertyName := 'dnsdomain=uib.local';
-  FileText.Add(propertyName);
-
-  propertyName := 'force_copy_modules';
-  if Query2.RadioBtnYesCopy.Checked then
-    FileText.Add(propertyName + '=true')
-  else
-    FileText.Add(propertyName + '=false');
-
-  propertyName := 'gateway';
-  if Query5_dhcp.RadioBtnGateway1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway1.Caption)
-  else if Query5_dhcp.RadioBtnGateway2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway2.Caption)
-  else if Query5_dhcp.RadioBtnGateway3.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnGateway3.Caption)
-  else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditGateway.Text);
-
-  propertyName := 'install_and_configure_dhcp';
-  if Query4.RadioBtnDhcpYes.Checked then
-    FileText.Add(propertyName + '=true')
-  else
-    FileText.Add(propertyName + '=false');
-
-  FileText.Add('myipname=' + Query6.EditNameIP.Text);
-
-  FileText.Add('myipnumber=' + Query6.EditNumberIP.Text);
-
-  propertyName := 'nameserver';
-  if Query5_dhcp.RadioBtnNameserver1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver1.Caption)
-  else if Query5_dhcp.RadioBtnNameserver2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver2.Caption)
-  else if Query5_dhcp.RadioBtnNameserver3.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnNameserver3.Caption)
-  else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditNameserver.Text);
-
-  propertyName := 'netmask';
-  if Query5_dhcp.RadioBtnMask1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnMask1.Caption)
-  else if Query5_dhcp.RadioBtnMask2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnMask2.Caption)
-  else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditNetmask.Text);
-
-  propertyName := 'network';
-  if Query5_dhcp.RadioBtnAddress1.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress1.Caption)
-  else if Query5_dhcp.RadioBtnAddress2.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress2.Caption)
-  else if Query5_dhcp.RadioBtnAddress3.Checked then
-    FileText.Add(propertyName + '=' + Query5_dhcp.RadioBtnAddress3.Caption)
-  else
-    FileText.Add(propertyName + '=' + Query5_dhcp.EditAddress.Text);
-
-  FileText.Add('opsi_admin_user_name=' + Query6.EditNameAdmin.Text);
-
-  FileText.Add('opsi_admin_user_password=' + Query6.EditPasswordAdmin.Text);
-
-  propertyName := 'opsi_online_repository';
-  if Query.RadioBtnOpsi41.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41)
-  else if Query.RadioBtnOpsi42.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42)
-  else
-    FileText.Add(propertyName + '=' + Query.EditRepo.Text);
-
-  propertyName := 'opsi_noproxy_online_repository';
-  if Query.RadioBtnOpsi41.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41)
-  else if Query.RadioBtnOpsi42.Checked then
-    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42)
-  else
-    FileText.Add(propertyName + '=' + Query.EditOtherNoCache.Text);
-
-  propertyName := 'patch_default_link_for_bootimage';
-  if Query4.RadioBtnMenu.Checked then
-    FileText.Add(propertyName + '=default.menu')
-  else
-    FileText.Add(propertyName + '=default.nomenu');
-
-  propertyName := 'proxy';
-  if Query.RadioBtnNone.Checked then
-    FileText.Add(propertyName + '=')
-  else if Query.RadioBtnMyProxy.Checked then
-    FileText.Add(propertyName + '=http://myproxy.dom.org:8080')
-  else
-    FileText.Add(propertyName + '=' + Query.EditProxy.Text);
-
-  propertyName := 'repo_kind';
-  if Query2.RadioBtnExperimental.Checked then
-    FileText.Add(propertyName + '=experimental')
-  else if Query2.RadioBtnStable.Checked then
-    FileText.Add(propertyName + '=stable')
-  else
-    FileText.Add(propertyName + '=testing');
-
-  FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);}
 
   FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
   FileText.Add('backend=' + Data.backend);
@@ -272,28 +133,24 @@ begin
   FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
   // update_test shall always be false
   FileText.Add('update_test=false');
-  //////////////////////////////////////////////////////////////////////////////
-  // WritePropsToFile:
+
+  // following equals no-gui WritePropsToFile
   // write in l-opsi-server.conf file:
   clientDataDir := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText.SaveToFile(clientDataDir);
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
-  //ShowMessage(ParamStr(0));
   clientDataDir := ExtractFilePath(ParamStr(0));
   Delete(clientDataDir, Length(clientDataDir), 1);
   clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server/CLIENT_DATA/';
   FileText.SaveToFile(clientDataDir + 'properties.conf');
-
-  // Important for getting the result 'failed' in case of a wrong password...
-  // ...cause in this case the RunCommands below aren't executed...
-  // ...and therefore setup.opsiscript, that usually does it, isn't too:
+  // Important for getting the result 'failed' in case of a wrong password
+  // because in this case the RunCommands below aren't executed and therefore
+  // setup.opsiscript, that usually does it, isn't too:
   FileText.Clear;
   FileText.Add('failed');
   FileText.SaveToFile(clientDataDir + 'result.conf');
-  //////////////////////////////////////////////////////////////////////////////
 
-  //ShowMessage(clientDataDir);
   FileText.Free;
 end;
 
@@ -306,25 +163,10 @@ begin
   MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-  if Query.RadioBtnOpsi41.Checked then
-  begin
-    if Query2.RadioBtnExperimental.Checked then
-      url := MyRepo.GetDefaultURL(Opsi41, experimental)
-    else if Query2.RadioBtnStable.Checked then
-      url := MyRepo.GetDefaultURL(Opsi41, stable)
-    else if Query2.RadioBtnTesting.Checked then
-      url := MyRepo.GetDefaultURL(Opsi41, testing);
-  end
+  if Data.opsiVersion = 'Opsi 4.1' then
+    url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
   else
-  begin
-    if Query2.RadioBtnExperimental.Checked then
-      url := MyRepo.GetDefaultURL(Opsi42, experimental)
-    else if Query2.RadioBtnStable.Checked then
-      url := MyRepo.GetDefaultURL(Opsi42, stable)
-    else if Query2.RadioBtnTesting.Checked then
-      url := MyRepo.GetDefaultURL(Opsi42, testing);
-  end;
-
+    url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
   //Delete(url, Pos('s', url), 1);
   //Delete(url, url.Length, 1);
   MyRepo.Add(url);
@@ -379,7 +221,8 @@ end;
 
 procedure TPassword.BtnFinishClick(Sender: TObject);
 begin
-  if Query.RadioBtnOpsi42.Checked and not Query2.RadioBtnExperimental.Checked then
+  // so far opsi 4.2 only has the branch experimental
+  if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind <> 'experimental') then
   begin
     ShowMessage('Opsi 4.2 only works on branch "experimental".');
     Exit;
@@ -388,7 +231,7 @@ begin
   begin
     prepareInstallation;
     addRepo;
-    // start thread for opsi server installation while showing form 'Wait'
+    // start thread for opsi server installation while showing TWait
     with TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
         Data.DistrInfo.GetPackageManagementShellCommand(Data.distroName),
         clientDataDir) do
@@ -397,6 +240,7 @@ begin
       OnTerminate := @FormClose;
       Start;
     end;
+    // show TWait
     Wait.Visible := True;
   end;
 end;
@@ -411,19 +255,21 @@ end;
 
 procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);
 begin
+  // Change whether the password is shown as dots or text:
+  // EditPassword.Text still gets the real text
   if CheckBoxShowPassword.Checked then
-    // TMaskEdit can't do this !?
+    // TMaskEdit can't do this!
     EditPassword.EchoMode := emNormal
   else
     EditPassword.EchoMode := emPassword;
-  // EditPassword.Text still gets the real text
-  //ShowMessage(EditPassword.Text);
 end;
 
 procedure TPassword.FormClose(Sender: TObject);
 begin
   Data.DistrInfo.Free;
+  // show result of the whole installation (from result.conf)
   showResult;
+
   // close project
   Overview.Close;
   Wait.Close;

@@ -14,10 +14,6 @@ type
   TWait = class(TForm)
     LabelWait: TLabel;
     procedure FormActivate(Sender: TObject);
-  private
-
-  public
-
   end;
 
 var
@@ -37,7 +33,6 @@ procedure TWait.FormActivate(Sender: TObject);
 begin
   Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
   Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
-
   // text by resourcestrings
   LabelWait.Caption := rsWait;
 end;
