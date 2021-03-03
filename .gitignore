@@ -59,3 +59,6 @@ opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/properties.conf
 # new
 opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/test.opsiscript
+opsi-misc/opsi-quickinstall/nogui/Release.key.2
+opsi-misc/opsi-quickinstall/nogui/Release.key
+opsi-misc/opsi-quickinstall/nogui/Release.key.1
