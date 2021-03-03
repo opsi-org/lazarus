@@ -65,25 +65,29 @@ end;
 
 constructor TQuickInstallData.Create;
 begin
-  // default values
+  // set default values
   DistrInfo := TDistributionInfo.Create;
   opsiVersion := 'Opsi 4.2';
   repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
   proxy := TSplitData.Create;
+  proxy.SetEntries('', '');
   repoNoCache := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
   backend := 'file';
   copyMod := TSplitData.Create;
+  copyMod.SetEntries('', 'false');
   repoKind := 'experimental';
   ucsPassword := '';
   reboot := TSplitData.Create;
+  reboot.SetEntries('', 'false');
   dhcp := TSplitData.Create;
+  dhcp.SetEntries('', 'false');
   symlink := 'default.nomenu';
   netmask := '255.255.0.0';
   networkAddress := '192.168.0.0';
   domain := 'uib.local';
   nameserver := '192.168.1.245';
   gateway := '192.168.1.245';
-  adminName := 'admin';
+  adminName := 'adminuser';
   adminPassword := 'linux123';
   ipName := 'auto';
   ipNumber := 'auto';
