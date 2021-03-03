@@ -34,6 +34,7 @@ uses
   osdanalyzemac,
   //winpeimagereader,
   lcltranslator,
+  //defaulttranslator,
   EditBtn,
   //Spin,
   //JSONPropStorage,
@@ -492,6 +493,7 @@ var
   //myobject : TMyClass;
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
+  mylocaledir: string;
 //myFont : string;
 
 
@@ -879,6 +881,22 @@ var
   allowedOS: TStringList;
 begin
   startupfinished := True; //avoid calling main on every show event
+
+  // initialize language
+  mylocaledir := '';
+  {$IFDEF DARWIN}
+  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim
+       + '../Resources/locale';
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim
+       + 'locale';
+  If not DirectoryExists(mylocaledir) then mylocaledir := '';
+  {$ENDIF LINUX}
+  mylang := GetDefaultLang;
+  SetDefaultLang(mylang,mylocaledir);
+
+  //check parameters
   myparamcount := ParamCount;
   myparamcount := Application.ParamCount;
   //writeln('paramcount = '+inttostr(myparamcount));
@@ -933,7 +951,7 @@ begin
   begin
     LogDatei.log('Found Parameter lang', LLInfo);
     mylang := Application.GetOptionValue('l', 'lang');
-    SetDefaultLang(mylang);
+    SetDefaultLang(mylang,mylocaledir);
     LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
     LogDatei.log('Active lang: ' + mylang, LLInfo);
   end
@@ -944,7 +962,7 @@ begin
     if Mylang = '' then
       mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
-    SetDefaultLang(mylang);
+    SetDefaultLang(mylang,mylocaledir);
     LogDatei.log('Detected default lang: ' + mylang, LLInfo);
     LogDatei.log('Detected default lang: ' + GetDefaultLang, LLInfo);
   end;
@@ -1163,22 +1181,22 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
-  SetDefaultLang('de');
+  SetDefaultLang('de',mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-  SetDefaultLang('en');
+  SetDefaultLang('en',mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  SetDefaultLang('es');
+  SetDefaultLang('es',mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
-  SetDefaultLang('fr');
+  SetDefaultLang('fr',mylocaledir);
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -3559,8 +3577,6 @@ begin
     myprop.Free;
   end;
 end;
-
-
 
 
 end.

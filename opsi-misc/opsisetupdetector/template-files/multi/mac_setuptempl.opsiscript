@@ -40,7 +40,7 @@ endif
 comment "Start setup "
 ChangeDirectory "%SCRIPTPATH%/files3"
 ;----------------------------------------------
-set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files3/<my macos install file>") 
 ;----------------------------------------------
 Sub_check_installSuccess
 #@postInstallLines*#

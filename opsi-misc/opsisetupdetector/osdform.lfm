@@ -8259,8 +8259,8 @@ object resultForm1: TresultForm1
               Width = 1029
               Align = alClient
               Caption = 'Panel4'
-              ClientHeight = 133
-              ClientWidth = 1029
+              ClientHeight = 129
+              ClientWidth = 1025
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -8323,8 +8323,8 @@ object resultForm1: TresultForm1
                 Top = 1
                 Width = 151
                 Align = alLeft
-                ClientHeight = 131
-                ClientWidth = 151
+                ClientHeight = 127
+                ClientWidth = 147
                 ParentFont = False
                 TabOrder = 1
                 object Label75: TLabel
@@ -8532,8 +8532,8 @@ object resultForm1: TresultForm1
               Width = 1029
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 167
-              ClientWidth = 1029
+              ClientHeight = 163
+              ClientWidth = 1025
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
@@ -9167,8 +9167,8 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 546
-          ClientWidth = 648
+          ClientHeight = 544
+          ClientWidth = 646
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
@@ -9433,7 +9433,7 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 611
             Anchors = []
-            ClientHeight = 118
+            ClientHeight = 101
             ClientWidth = 609
             ParentFont = False
             TabOrder = 0

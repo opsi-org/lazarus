@@ -27,7 +27,7 @@
       <BuildNr Value="18"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Release">
+    <BuildModes Count="3" Active="Default">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -157,7 +157,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="76">
+    <Units Count="78">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -174,14 +174,16 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="3163"/>
-        <CursorPos X="70" Y="3166"/>
+        <TopLine Value="877"/>
+        <CursorPos Y="897"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
+          <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="556"/>
-          <CursorPos X="34" Y="565"/>
+          <TopLine Value="474"/>
+          <CursorPos X="26" Y="496"/>
         </ExtraEditor1>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -242,7 +244,6 @@
       <Unit9>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="67"/>
         <CursorPos X="30" Y="81"/>
         <UsageCount Value="202"/>
@@ -252,7 +253,7 @@
       <Unit10>
         <Filename Value="osdanalyzewin.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="1320"/>
         <CursorPos X="36" Y="1350"/>
         <ExtraEditorCount Value="1"/>
@@ -290,11 +291,11 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="13"/>
-        <CursorPos X="69" Y="28"/>
+        <TopLine Value="1373"/>
+        <CursorPos X="18" Y="1396"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="7"/>
+          <EditorIndex Value="8"/>
           <TopLine Value="950"/>
           <CursorPos X="4" Y="968"/>
         </ExtraEditor1>
@@ -325,16 +326,15 @@
       <Unit16>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="774"/>
-        <CursorPos X="21" Y="786"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="317"/>
+        <CursorPos X="42" Y="331"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <EditorIndex Value="2"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="794"/>
-          <CursorPos X="11" Y="811"/>
+          <EditorIndex Value="1"/>
+          <TopLine Value="776"/>
+          <CursorPos X="21" Y="788"/>
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -610,7 +610,7 @@
         <ComponentName Value="FCheckenties"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="25"/>
         <CursorPos X="39" Y="30"/>
         <UsageCount Value="201"/>
@@ -646,7 +646,7 @@
       <Unit51>
         <Filename Value="osdanalyzemac.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="480"/>
         <CursorPos X="73" Y="500"/>
         <UsageCount Value="200"/>
@@ -657,7 +657,7 @@
         <Filename Value="osdanalyzelin.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="osdanalyzeLin"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="391"/>
         <CursorPos Y="403"/>
         <UsageCount Value="200"/>
@@ -730,16 +730,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="39" Y="70"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="152"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
         <Filename Value="osdanalyzegeneral.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="67"/>
         <CursorPos X="26" Y="67"/>
-        <UsageCount Value="142"/>
+        <UsageCount Value="144"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
@@ -783,7 +783,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos Y="45"/>
-        <UsageCount Value="74"/>
+        <UsageCount Value="76"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -860,85 +860,150 @@
         <CursorPos X="29" Y="216"/>
         <UsageCount Value="11"/>
       </Unit75>
+      <Unit76>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <UnitName Value="LCLTranslator"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="107"/>
+        <CursorPos X="21" Y="113"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit76>
+      <Unit77>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\defaulttranslator.pas"/>
+        <UnitName Value="DefaultTranslator"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6"/>
+        <CursorPos Y="35"/>
+        <UsageCount Value="10"/>
+      </Unit77>
     </Units>
     <OtherDefines Count="3">
       <Define0 Value="OSDGUI"/>
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="421" Column="23" TopLine="413"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="108" TopLine="87"/>
       </Position1>
       <Position2>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2156" Column="3" TopLine="2153"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="109" TopLine="87"/>
       </Position2>
       <Position3>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2425" Column="27" TopLine="2421"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="111" TopLine="87"/>
       </Position3>
       <Position4>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2462" Column="25" TopLine="2452"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="113" TopLine="87"/>
       </Position4>
       <Position5>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2356" Column="25" TopLine="2346"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="115" TopLine="87"/>
       </Position5>
       <Position6>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="884" Column="37" TopLine="867"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="117" TopLine="89"/>
       </Position6>
       <Position7>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="881" Column="64" TopLine="867"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="118" TopLine="90"/>
       </Position7>
       <Position8>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="884" Column="37" TopLine="867"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="119" TopLine="94"/>
       </Position8>
       <Position9>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="886" Column="36" TopLine="867"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="120" TopLine="94"/>
       </Position9>
       <Position10>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="890" Column="36" TopLine="867"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="123" TopLine="95"/>
       </Position10>
       <Position11>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="3419" Column="49" TopLine="3175"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="128" TopLine="102"/>
       </Position11>
       <Position12>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="409" Column="63" TopLine="377"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="129" TopLine="102"/>
       </Position12>
       <Position13>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="500" Column="9" TopLine="548"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="133" TopLine="106"/>
       </Position13>
       <Position14>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="3179" Column="48" TopLine="3162"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="132" TopLine="106"/>
       </Position14>
       <Position15>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="786" Column="21" TopLine="774"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="133" TopLine="106"/>
       </Position15>
       <Position16>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="40" Column="22" TopLine="29"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="132" TopLine="106"/>
       </Position16>
       <Position17>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="795" Column="11" TopLine="787"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="133" TopLine="106"/>
       </Position17>
       <Position18>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="811" Column="43" TopLine="794"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="132" TopLine="106"/>
       </Position18>
+      <Position19>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="133" TopLine="106"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="134" TopLine="107"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="138" TopLine="111"/>
+      </Position21>
+      <Position22>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="137" TopLine="111"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="138" TopLine="111"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="137" TopLine="111"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="138" TopLine="111"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="137" TopLine="111"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="138" TopLine="111"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="139" TopLine="112"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
+        <Caret Line="113" Column="21" TopLine="107"/>
+      </Position29>
+      <Position30>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="894" TopLine="877"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -983,7 +1048,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
+    <BreakPoints Count="3">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -992,6 +1057,20 @@
         <InitialEnabled Value="False"/>
         <Line Value="51"/>
       </Item1>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="osdform.pas"/>
+        <Line Value="897"/>
+      </Item2>
+      <Item3>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="osdform.pas"/>
+        <Line Value="894"/>
+      </Item3>
     </BreakPoints>
     <Watches Count="11">
       <Item1>

@@ -1393,6 +1393,8 @@ begin
 end;
 
 
+//initialize unit
+
 begin
   osdsettings := Tosdsettings.Create;
 
