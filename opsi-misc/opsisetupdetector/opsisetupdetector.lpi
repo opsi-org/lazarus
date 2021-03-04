@@ -174,15 +174,15 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="877"/>
-        <CursorPos Y="897"/>
+        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="474"/>
+        <CursorPos X="26" Y="496"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="474"/>
-          <CursorPos X="26" Y="496"/>
+          <EditorIndex Value="3"/>
+          <TopLine Value="877"/>
+          <CursorPos Y="897"/>
         </ExtraEditor1>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -243,8 +243,9 @@
       <Unit9>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="67"/>
-        <CursorPos X="30" Y="81"/>
+        <CursorPos X="70" Y="89"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -862,7 +863,6 @@
       <Unit76>
         <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\lcltranslator.pas"/>
         <UnitName Value="LCLTranslator"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="521"/>
         <CursorPos Y="530"/>

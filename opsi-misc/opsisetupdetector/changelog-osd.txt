@@ -80,7 +80,7 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 opsi-setup-detector (4.1.0.18) stable; urgency=low
 
-  * start integration of Linux, Mac, Multi
+  * integration of Linux, Mac, Multi
   * write and read project file
   * new menue entries at File for write and read project file
   * updated opsi-script lib for macos install
