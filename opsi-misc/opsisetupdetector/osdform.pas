@@ -3224,6 +3224,7 @@ var
   DefaultIcon: TImage;
   tmpimage: TPicture;
   filename: string;
+  resourcedir, templatePath : string;
 begin
   tmpimage := TPicture.Create;
   loadDefaultIcon := True;
@@ -3245,7 +3246,17 @@ begin
     PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  filename := '/usr/share/opsi-setup-detector' + PathDelim +
+  resourcedir := '/usr/share/opsi-setup-detector';
+  {$IFDEF DARWIN}
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../../..';
+  templatePath := resourcedir + PathDelim + 'template-files';
+  if not DirectoryExists(templatePath) then
+    //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
+    resourcedir :=  ExtractFileDir(Application.ExeName) + PathDelim
+       + '../Resources';
+  {$ENDIF DARWIN}
+  filename := resourcedir + PathDelim +
     'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
   if fileexists(filename) then
     DefaultIcon.Picture.LoadFromFile(filename)
@@ -3258,24 +3269,24 @@ begin
     else
       LogDatei.log('Could not find template.png ', LLError);
   end;
-  tmpimage.LoadFromFile(
-    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
+    + PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(
-    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
+    + PathDelim + 'analyzepack4.xpm');
   BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(
-    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
+    + PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateLin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(
-    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
+    + PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMac.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(
-    '/usr/share/opsi-setup-detector/analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
+    + PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
   FreeAndNil(tmpimage);

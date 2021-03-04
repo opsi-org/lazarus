@@ -327,7 +327,7 @@ begin
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
-    templatePath :=  ExtractFileDir(Application.ExeName) + PathDelim +
+    templatePath :=  ExtractFileDir(Application.ExeName) + PathDelim
        + '../Resources/template-files';
   {$ENDIF DARWIN}
 
