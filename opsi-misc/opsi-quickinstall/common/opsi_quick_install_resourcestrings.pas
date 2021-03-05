@@ -12,7 +12,7 @@ uses
 resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
-  rsLangOp = ' [Options: "de" for german, "en" for english, ...]';
+  rsLangOp = ' [Options: "de" for German, "en" for English, ...]';
   rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
   rsIsCorrect = 'Is this correct?';
   rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
@@ -23,11 +23,6 @@ resourcestring
   rsRepoKindOp = ' [Options: "s" for stable, "t" for testing, "e" for experimental]';
   rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
   rsSuggestion = '[Suggestions: ';
-  {rsNetmaskEx = ' [Examples: "225.225.0.0", "225.225.225.0"]';
-  rsNetworkAddressEx = ' [Examples: "10.100.0.0", "172.16.166.0", "192.168.0.0"]';
-  rsDomainEx = ' [Examples: "uib.local", "ucs.test", "vmnat.local"]';
-  rsNameserverEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';
-  rsGatewayEx = ' [Examples: "10.100.1.2", "172.16.166.1", "192.168.1.245"]';}
   rsContinue = 'To continue and start the installation, please press enter.' + #10 +
     'If you like to jump back to a question, please press the number key of the respective number in the overview.';
   rsInstall = 'Installing ';
