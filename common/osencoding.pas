@@ -525,6 +525,14 @@ var
   str : string;
 begin
   Result := TStringList.Create;
+
+  if encoding='' then
+  begin
+    LogDatei.log('Warning : encodingString is empty', LLWarning);
+    LogDatei.log('System encoding is taking into consideration' , LLDebug3);
+    encoding := mysystemEncoding;
+  end;
+
   if isEncodingUnicode(encoding) then
     Result.AddStrings(loadUnicodeTextFile(filename, bool, str))
   //else if (enc = 'utf16le') then
@@ -557,13 +565,20 @@ var
   myfile: Text;
   usedenc: string;
 begin
+  if encoding='' then
+  begin
+    LogDatei.log('Warning : encodingString is empty', LLWarning);
+    LogDatei.log('System encoding is taking into consideration' , LLDebug3);
+    encoding := mysystemEncoding;
+  end;
+
   if isEncodingUnicode(encoding) then
     saveUnicodeTextFile(inlist, outFileName, encoding)
   else
   begin
     AssignFile(myfile, outFileName);
     Rewrite(myfile);
-    LogDatei.log('Will save (' + encoding + ') to file: ' + outFileName +
+    LogDatei.log('Will save (' + encoding + ') encoding to file: ' + outFileName +
       ' :', LLDebug2);
     LogDatei.log('-----------------', LLDebug3);
     write(myfile, reencode(inlist.Text, 'utf8', usedenc, encoding));
