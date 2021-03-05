@@ -10888,6 +10888,7 @@ var
   use_sp: boolean;
   encodingParam : Boolean = False;
   encodingString : string ='';
+  InfoSyntaxError: string = '';
 
 begin
   try
@@ -10985,7 +10986,7 @@ begin
         GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
         EvaluateString(expr, expr, encodingString, InfoSyntaxError);
         if isSupportedEncoding(encodingString) then
-           encodingParam := True;
+           encodingParam := True
         else
         LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
         // unicode fallback to utf8
