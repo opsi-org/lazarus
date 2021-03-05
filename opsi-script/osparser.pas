@@ -10215,6 +10215,8 @@ var
   seconds: string = '';
   ident: string = '';
   use_sp, runsuccess: boolean;
+  encodingParam : Boolean = False;
+  encodingString : string ='';
 
 begin
   try
@@ -10253,17 +10255,141 @@ begin
 
     Sektion.eliminateLinesStartingWith(';', False);
 
+    goon := False;
+    remaining := winstparam;
+
+    {$IFDEF WIN32}
+    opsiSetupAdmin_runElevated := False;
+    {$ENDIF WIN32}
+
+    if length(winstparam) > 0 then
+      goon := True;
+    while goon do
+    begin
+      if Skip(Parameter_64bit, Remaining, Remaining, ErrorInfo) then
+      begin
+        if Is64BitSystem then
+          force64 := True;
+        warnOnlyWindows := True;
+      end
+      else if Skip(Parameter_SysNative, Remaining, Remaining, ErrorInfo) then
+      begin
+        if Is64BitSystem then
+          force64 := True;
+        warnOnlyWindows := True;
+      end
+      else if Skip(Parameter_32bit, Remaining, Remaining, ErrorInfo) then
+      begin
+        force64 := False;
+        warnOnlyWindows := True;
+      end
+      else if Skip('/showoutput', Remaining, Remaining, ErrorInfo) then
+      begin
+        showoutput := tsofShowOutput;
+        LogDatei.log('Set Showoutput true', LLDebug);
+      end
+      else if Skip(ParameterWaitProcessTimeoutSecs, Remaining, Remaining, ErrorInfo)
+      then
+      begin
+        use_sp := True;
+        WaitConditions := WaitConditions - [ttpWaitTime];
+        WaitConditions := WaitConditions + [ttpWaitTimeout];
+        waitsecsAsTimeout := True;
+
+        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+        try
+          WaitSecs := StrToInt64(expr);
+        except
+          on EConvertError do
+          begin
+            try
+              EvaluateString(expr, expr, seconds, InfoSyntaxError);
+              WaitSecs := StrToInt64(seconds);
+            except
+              on EConvertError do
+              begin
+                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                SyntaxCheck := False;
+              end;
+            end;
+          end
+        end;
+        LogDatei.log('found /Timeoutseconds: ' + IntToStr(WaitSecs), LLDebug);
+      end
+      else if Skip(ParameterWaitForProcessEnding, Remaining, Remaining, ErrorInfo)
+      then
+      begin
+        use_sp := True;
+        WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
+        WaitForProcessEnding := True;
+        if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
+          SyntaxCheck := False;
+        LogDatei.log('found /WaitForProcessEnding: ' + ident, LLDebug);
+      end
+      else if Skip(ParameterDontWait, Remaining, Remaining, ErrorInfo) then
+      begin
+        use_sp := True;
+        WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+        WaitConditions := WaitConditions - [ttpWaitTimeout];
+        WaitForReturn := False;
+        LogDatei.log('found /LetThemGo', LLDebug);
+      end
+      // // Handling '/encoding' within WINST parameters
+      else if Skip(ParameterEncoding, Remaining, Remaining, ErrorInfo) then
+      begin
+        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
+        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        if isSupportedEncoding(encodingString) then
+           encodingParam := True
+        else
+        LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        // unicode fallback to utf8
+        if lowercase(encodingString)='unicode' then
+            encodingString := 'utf8';
+      end
+
+      else
+      begin
+        if not (length(remaining) > 0) then
+          goon := False
+        else
+        begin
+          GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+          if not RunAsForParameter(expr, runas) then
+          begin
+            LogDatei.log('Syntaxerror: "' + remaining +
+              '" is no valid parameter ', LLError);
+            goon := False;
+          end
+          else
+          begin
+            warnOnlyWindows := True;
+            use_sp := True;
+          end;
+        end;
+      end;
+    end;
+
     //Sektion.SaveToFile (TempPath + TempBatchdatei);
     //inc(TempBatchDatei_UniqueCount);
     //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
     tempfilename := winstGetTempFileName;
     //Sektion.SaveToFile (tempfilename);
-    if not Sektion.FuncSaveToFile(tempfilename) then
-    begin
-      LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-        LLcritical);
-      FExtremeErrorLevel := LevelFatal;
-    end
+    if True then
+      if encodingParam=True then
+        if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+        begin
+          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+            LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+        end
+      else
+        if not Sektion.FuncSaveToFile(tempfilename) then
+        begin
+          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+            LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+        end
     else
     begin
     {$IFDEF UNIX}
@@ -10286,106 +10412,6 @@ begin
       runAs := traInvoker;
       showoutput := tsofHideOutput;
 
-      goon := False;
-      remaining := winstparam;
-
-      {$IFDEF WIN32}
-      opsiSetupAdmin_runElevated := False;
-      {$ENDIF WIN32}
-
-      if length(winstparam) > 0 then
-        goon := True;
-      while goon do
-      begin
-        if Skip(Parameter_64bit, Remaining, Remaining, ErrorInfo) then
-        begin
-          if Is64BitSystem then
-            force64 := True;
-          warnOnlyWindows := True;
-        end
-        else if Skip(Parameter_SysNative, Remaining, Remaining, ErrorInfo) then
-        begin
-          if Is64BitSystem then
-            force64 := True;
-          warnOnlyWindows := True;
-        end
-        else if Skip(Parameter_32bit, Remaining, Remaining, ErrorInfo) then
-        begin
-          force64 := False;
-          warnOnlyWindows := True;
-        end
-        else if Skip('/showoutput', Remaining, Remaining, ErrorInfo) then
-        begin
-          showoutput := tsofShowOutput;
-          LogDatei.log('Set Showoutput true', LLDebug);
-        end
-        else if Skip(ParameterWaitProcessTimeoutSecs, Remaining, Remaining, ErrorInfo)
-        then
-        begin
-          use_sp := True;
-          WaitConditions := WaitConditions - [ttpWaitTime];
-          WaitConditions := WaitConditions + [ttpWaitTimeout];
-          waitsecsAsTimeout := True;
-
-          GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-          try
-            WaitSecs := StrToInt64(expr);
-          except
-            on EConvertError do
-            begin
-              try
-                EvaluateString(expr, expr, seconds, InfoSyntaxError);
-                WaitSecs := StrToInt64(seconds);
-              except
-                on EConvertError do
-                begin
-                  InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                  SyntaxCheck := False;
-                end;
-              end;
-            end
-          end;
-          LogDatei.log('found /Timeoutseconds: ' + IntToStr(WaitSecs), LLDebug);
-        end
-        else if Skip(ParameterWaitForProcessEnding, Remaining, Remaining, ErrorInfo)
-        then
-        begin
-          use_sp := True;
-          WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-          WaitForProcessEnding := True;
-          if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-            SyntaxCheck := False;
-          LogDatei.log('found /WaitForProcessEnding: ' + ident, LLDebug);
-        end
-        else if Skip(ParameterDontWait, Remaining, Remaining, ErrorInfo) then
-        begin
-          use_sp := True;
-          WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-          WaitConditions := WaitConditions - [ttpWaitTimeout];
-          WaitForReturn := False;
-          LogDatei.log('found /LetThemGo', LLDebug);
-        end
-        else
-        begin
-          if not (length(remaining) > 0) then
-            goon := False
-          else
-          begin
-            GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-            if not RunAsForParameter(expr, runas) then
-            begin
-              LogDatei.log('Syntaxerror: "' + remaining +
-                '" is no valid parameter ', LLError);
-              goon := False;
-            end
-            else
-            begin
-              warnOnlyWindows := True;
-              use_sp := True;
-            end;
-          end;
-        end;
-      end;
 
       {$IFNDEF WINDOWS}
       if warnOnlyWindows then
