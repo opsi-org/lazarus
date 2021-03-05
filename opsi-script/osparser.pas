@@ -649,6 +649,7 @@ const
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
   ParameterShowoutput = '/showoutput';
+  ParameterEncoding = '/encoding';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -10885,6 +10886,8 @@ var
   showoutput: TShowOutputFlag;
   sysError: DWORD;
   use_sp: boolean;
+  encodingParam : Boolean = False;
+  encodingString : string ='';
 
 begin
   try
@@ -10945,6 +10948,52 @@ begin
       exit;
     end;
 
+    remaining := winstoption;
+    onlyWindows := False;
+
+    while (remaining <> '') do
+    begin
+      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+
+      if (lowercase(Parameter_64bit) = lowercase(expr)) and Is64BitSystem then
+      begin
+        force64 := True;
+        onlyWindows := True;
+      end
+      else if (lowercase(Parameter_Sysnative) = lowercase(expr)) and
+        Is64BitSystem then
+      begin
+        force64 := True;
+        onlyWindows := True;
+      end
+      else if lowercase(Parameter_32bit) = lowercase(expr) then
+      begin
+        force64 := False;
+        onlyWindows := True;
+      end
+      else if lowercase(ParameterDontWait) = lowercase(expr) then
+        threaded := True
+      else if lowercase(ParameterShowoutput) = lowercase(expr) then
+        showoutput := tsofShowOutput
+      else if RunAsForParameter(expr, runas) then
+      begin
+        onlyWindows := True;
+      end
+      // Handling '/encoding' within WINST parameters
+      else if lowercase(ParameterEncoding) = lowercase(expr) then
+      begin
+        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        if isSupportedEncoding(encodingString) then
+           encodingParam := True;
+        else
+        LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        // unicode fallback to utf8
+        if lowercase(encodingString)='unicode' then
+            encodingString := 'utf8';
+      end
+    end;
+
     useext := '.cmd';
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
       useext := '.ps1';
@@ -10952,12 +11001,21 @@ begin
       useext := '.ps1';
     tempfilename := winstGetTempFileNameWithExt(useext);
 
-    if not Sektion.FuncSaveToFile(tempfilename) then
-    begin
-      LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-        LLcritical);
-      FExtremeErrorLevel := LevelFatal;
-    end
+    if True then
+      if encodingParam=True then
+        if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+        begin
+          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+            LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+        end
+      else
+        if not Sektion.FuncSaveToFile(tempfilename) then
+        begin
+          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+            LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+        end
     else
     begin
       {$IFDEF UNIX}
@@ -10978,38 +11036,7 @@ begin
           '"' + programfilename + '" ' + programparas + ' ' +
           tempfilename + '  ' + passparas;
 
-      remaining := winstoption;
-      onlyWindows := False;
 
-      while (remaining <> '') do
-      begin
-        GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-
-        if (lowercase(Parameter_64bit) = lowercase(expr)) and Is64BitSystem then
-        begin
-          force64 := True;
-          onlyWindows := True;
-        end
-        else if (lowercase(Parameter_Sysnative) = lowercase(expr)) and
-          Is64BitSystem then
-        begin
-          force64 := True;
-          onlyWindows := True;
-        end
-        else if lowercase(Parameter_32bit) = lowercase(expr) then
-        begin
-          force64 := False;
-          onlyWindows := True;
-        end
-        else if lowercase(ParameterDontWait) = lowercase(expr) then
-          threaded := True
-        else if lowercase(ParameterShowoutput) = lowercase(expr) then
-          showoutput := tsofShowOutput
-        else if RunAsForParameter(expr, runas) then
-        begin
-          onlyWindows := True;
-        end;
-      end;
 
       {$IFNDEF WINDOWS}
       if onlyWindows then
@@ -11038,7 +11065,7 @@ begin
       {$ENDIF WIN32}
       {$IFDEF GUI}
       if AutoActivityDisplay then
-        FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showAcitvityBar(True);
+        FBatchOberflaeche.SetElementVisible(True, eActivityBar); //showActivityBar(True);
       {$ENDIF GUI}
       if threaded then
       begin
