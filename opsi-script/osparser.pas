@@ -10215,7 +10215,6 @@ var
   seconds: string = '';
   ident: string = '';
   use_sp, runsuccess: boolean;
-  encodingParam : Boolean = False;
   encodingString : string ='';
 
 begin
@@ -10339,10 +10338,8 @@ begin
       begin
         GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
         EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-        if isSupportedEncoding(encodingString) then
-           encodingParam := True
-        else
-        LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        if not isSupportedEncoding(encodingString) then
+          LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
@@ -10375,21 +10372,13 @@ begin
     //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
     tempfilename := winstGetTempFileName;
     //Sektion.SaveToFile (tempfilename);
-    if True then
-      if encodingParam=True then
-        if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
-        begin
-          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-            LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-        end
-      else
-        if not Sektion.FuncSaveToFile(tempfilename) then
-        begin
-          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-            LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-        end
+
+    if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+    begin
+      LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+        LLcritical);
+      FExtremeErrorLevel := LevelFatal;
+    end
     else
     begin
     {$IFDEF UNIX}
@@ -10912,7 +10901,6 @@ var
   showoutput: TShowOutputFlag;
   sysError: DWORD;
   use_sp: boolean;
-  encodingParam : Boolean = False;
   encodingString : string ='';
   InfoSyntaxError: string = '';
 
@@ -11011,10 +10999,8 @@ begin
       begin
         GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
         EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-        if isSupportedEncoding(encodingString) then
-           encodingParam := True
-        else
-        LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        if not isSupportedEncoding(encodingString) then
+           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
@@ -11028,21 +11014,12 @@ begin
       useext := '.ps1';
     tempfilename := winstGetTempFileNameWithExt(useext);
 
-    if True then
-      if encodingParam=True then
-        if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
-        begin
-          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-            LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-        end
-      else
-        if not Sektion.FuncSaveToFile(tempfilename) then
-        begin
-          LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
-            LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-        end
+    if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+    begin
+      LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
+        LLcritical);
+      FExtremeErrorLevel := LevelFatal;
+    end
     else
     begin
       {$IFDEF UNIX}
