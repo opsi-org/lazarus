@@ -10,11 +10,11 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Process,
   GetText,
   Translations,
+  opsi_quick_install_resourcestrings,
   osDistributionInfo,
   osRunCommandElevated,
   osfunclin,
   osLinuxRepository,
-  opsi_quick_install_resourcestrings,
   oslog,
   osnetworkcalculator;
 
@@ -40,14 +40,13 @@ type
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
-
     // set default values for all required variables
     procedure SetDefaultValues;
-    // write properties in l-opsi-server.conf and properties.conf file
+    // write properties in properties.conf file
     procedure WritePropsToFile;
-    // install opsi-server
+    // install opsi-script, l-opsi-server
     procedure InstallOpsi;
-
+    // query:
     procedure NoGuiQuery;
     procedure QuerySetupType;
     procedure QueryOpsiVersion;
@@ -71,8 +70,9 @@ type
     procedure QueryIPName;
     procedure QueryIPNumber;
     procedure QueryOverview;
-
+    // no query, directly use all default values for installation
     procedure ExecuteWithDefaultValues;
+    // no query, read in values from a file
     procedure ReadProps;
   protected
     procedure DoRun; override;
@@ -90,29 +90,21 @@ type
     ErrorMsg, project: string;
   begin
     // quick check parameters
-    ErrorMsg := CheckOptions('htgndf:', 'help test gui nogui default file:');
+    ErrorMsg := CheckOptions('hgndf:', 'help gui nogui default file:');
     if ErrorMsg <> '' then
     begin
       ShowException(Exception.Create(ErrorMsg));
       Terminate;
       Exit;
     end;
-
-    // parse parameters
+    // parse parameters:
     if HasOption('h', 'help') then
     begin
       WriteHelp;
-      //Terminate;
-      //Exit;
-    end;
-
-    if HasOption('t', 'test') then
-    begin
-      writeln(rsFinish);
       Terminate;
       Exit;
     end;
-
+    // out of use
     if HasOption('g', 'gui') then
     begin
       // don't call gui version
@@ -124,21 +116,21 @@ type
       Terminate;
       Exit;
     end;
-
+    // query
     if HasOption('n', 'nogui') then
     begin
       NoGuiQuery;
       Terminate;
       Exit;
     end;
-
+    // no query, directly use all default values for installation
     if HasOption('d', 'default') then
     begin
       ExecuteWithDefaultValues;
       Terminate;
       Exit;
     end;
-
+    // no query, read in values from a file
     if HasOption('f', 'file') then
     begin
       //writeln(getOptionValue('f', 'file'));
@@ -177,11 +169,13 @@ type
   procedure TQuickInstall.WriteHelp;
   begin
     { add your help code here }
-    writeln('Usage: ', ExeName, ' -h');
-    writeln('Exit');
+    writeln('-d [-default]    : Use the default values for the opsi-server installation.');
+    writeln('-f [-file]       : Use the values from a file for the opsi-server installation.');
+    writeln('-h [-help]       : See this information.');
+    writeln('-n [-nogui]      : ...');
   end;
 
-  // set default values for all required variables
+  // set default values for all variables that are required for the installation
   procedure TQuickInstall.SetDefaultValues;
   begin
     LogDatei.log('Entered SetDefaultValues', 0);
@@ -212,7 +206,7 @@ type
     ipNumber := 'auto';
   end;
 
-  // write properties in l-opsi-server.conf and properties.conf file
+  // write properties in properties.conf file
   procedure TQuickInstall.WritePropsToFile;
   begin
     LogDatei.log('Entered WritePropsToFile', 0);
@@ -249,7 +243,7 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
-    // write in l-opsi-server.conf file:
+    // write in l-opsi-server.conf file(for tests):
     FileText.SaveToFile(ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf');
     // write in properties.conf file:
     FileText.SaveToFile(DirClientData + 'properties.conf');
@@ -277,63 +271,54 @@ type
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
-    // create repository (no password, user is root)
+    // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
-    // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+    // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'Opsi 4.1' then
-    begin
-      if repoKind = 'experimental' then
-        url := MyRepo.GetDefaultURL(Opsi41, experimental)
-      else if repoKind = 'stable' then
-        url := MyRepo.GetDefaultURL(Opsi41, stable)
-      else if repoKind = 'testing' then
-        url := MyRepo.GetDefaultURL(Opsi41, testing);
-    end
+      url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
     else
-    begin
-      if repoKind = 'experimental' then
-        url := MyRepo.GetDefaultURL(Opsi42, experimental)
-      else if repoKind = 'stable' then
-        url := MyRepo.GetDefaultURL(Opsi42, stable)
-      else if repoKind = 'testing' then
-        url := MyRepo.GetDefaultURL(Opsi42, testing);
-    end;
-    //writeln(url);
-    // !following lines need an existing LogDatei
+      url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+
+    writeln(url);
     writeln(distroName);
+
+    // !following lines need an existing LogDatei
     if distroName = 'openSUSE' then
     begin
       writeln('OpenSUSE: Add Repo');
-      MyRepo.Add(url, 'OpsiQuickInstallRepository');
+      MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
     end
     else
       MyRepo.Add(url);
-    InstallOpsiCommand := TRunCommandElevated.Create('', False);
 
+    // install opsi:
+    InstallOpsiCommand := TRunCommandElevated.Create('', False);
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
     Output := InstallOpsiCommand.Run(shellCommand + 'update');
     //writeln(Output);
-
     writeln(rsInstall + 'opsi-script...');
     Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
+    Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
-
-    // Never ever again problems with opsi.list!
-    Output := InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
-
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window, ...
     // ..."opsi-script-nogui -batch" for without?
-    // new: opsi-script -silent for nogui
-    Output := InstallOpsiCommand.Run('../common/opsi-script-gui -silent -batch ' +
-      DirClientData + 'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
+    // new: opsi-script-gui -silent for nogui
+    Output := InstallOpsiCommand.Run('opsi-script -silent -batch ' +
+      DirClientData +
+      '-logfile setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');
     // adjust quick-install ExitCode
     if FileText[0] = 'failed' then
+    begin
       ExitCode := 1;
+      LogDatei.log('l-opsi-server installation failed', 1);
+    end
+    else
+      LogDatei.log('l-opsi-server installation success', 6);
     // print result of installation
     writeln();
     writeln(FileText.Text);
@@ -350,15 +335,18 @@ type
   begin
     SetDefaultValues;
 
-    // input variables not set by resourcestrings but by characters for no...
-    // ...need of mouse.
+    // Input variables not set by resourcestrings but by characters for no
+    // requirement of a mouse.
     // distribution:
     writeln(rsDistr, ' ', distroName, ' ', distroRelease);
-    writeln(rsIsCorrect, rsYesNoOp);
+    writeln(rsIsCorrect, rsYesNoOp, '*');
     readln(input);
-    while not ((input = 'y') or (input = 'n')) do
+    while not ((input = 'y') or (input = 'n') or (input = '')) do
     begin
-      writeln('"', input, '"', rsNotValid);
+      if input = '-h' then
+        writeln(rsInfoDistribution + #10 + DistrInfo.Distribs)
+      else
+        writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
     // if distribution isn't correct, read the correct one
@@ -416,7 +404,7 @@ type
   procedure TQuickInstall.QueryOpsiVersion;
   begin
     // opsi version:
-    writeln(rsOpsiVersion, rsOpsiVersionOp);
+    writeln(rsOpsiVersion, rsOpsiVersionOp, '*');
     readln(input);
     while not ((input = '1') or (input = '2') or (input = '-b') or
         (input = '')) do
@@ -442,9 +430,9 @@ type
   begin
     // repo:
     if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']')
+      writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']', '*')
     else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
+      writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']', '*');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
@@ -521,7 +509,7 @@ type
   procedure TQuickInstall.QueryBackend;
   begin
     // backend:
-    writeln(rsBackend, rsBackendOp);
+    writeln(rsBackend, rsBackendOp, '*');
     readln(input);
     while not ((input = 'f') or (input = 'm') or (input = '-b') or
         (input = '')) do
@@ -550,7 +538,7 @@ type
   procedure TQuickInstall.QueryModules;
   begin
     // copy modules:
-    writeln(rsCopyModules, rsYesNoOp);
+    writeln(rsCopyModules, rsYesNoOp, '*');
     readln(input);
     while not ((input = 'y') or (input = 'n') or (input = '-b') or (input = '')) do
     begin
@@ -575,7 +563,7 @@ type
   procedure TQuickInstall.QueryRepoKind;
   begin
     // repo kind:
-    writeln(rsRepoKind, rsRepoKindOp);
+    writeln(rsRepoKind, rsRepoKindOp, '*');
     readln(input);
     while not ((input = 'e') or (input = 's') or (input = 't') or
         (input = '-b') or (input = '')) do
@@ -633,7 +621,7 @@ type
   procedure TQuickInstall.QueryReboot;
   begin
     // reboot:
-    writeln(rsReboot, rsYesNoOp);
+    writeln(rsReboot, rsYesNoOp, '*');
     readln(input);
     while not ((input = 'y') or (input = 'n') or (input = '-b') or (input = '')) do
     begin
@@ -663,7 +651,7 @@ type
   procedure TQuickInstall.QueryDhcp;
   begin
     // dhcp:
-    writeln(rsDhcp, rsYesNoOp);
+    writeln(rsDhcp, rsYesNoOp, '*');
     readln(input);
     while not ((input = 'y') or (input = 'n') or (input = '-b') or (input = '')) do
     begin
@@ -709,7 +697,7 @@ type
   procedure TQuickInstall.QueryLink;
   begin
     // link:
-    writeln(rsTFTPROOT, rsLinkOp);
+    writeln(rsTFTPROOT, rsLinkOp, '*');
     readln(input);
     while not ((input = 'm') or (input = 'nom') or (input = '-b') or (input = '')) do
     begin
@@ -760,10 +748,10 @@ type
           suggestion += getNetmaskByIP4adr(network[1]) + ', ';
         end;
       end;
-      Delete(suggestion, suggestion.Length-1, 2);
+      Delete(suggestion, suggestion.Length - 1, 2);
       suggestion += ']';
       // query:
-      writeln(rsNetmask, rsSuggestion, suggestion);
+      writeln(rsNetmask, rsSuggestion, suggestion, '*');
       readln(input);
       while input = '-h' do
       begin
@@ -809,10 +797,10 @@ type
         end;
       end;
     end;
-    Delete(suggestion, suggestion.Length-1, 2);
+    Delete(suggestion, suggestion.Length - 1, 2);
     suggestion += ']';
     // query:
-    writeln(rsNetworkAddress, rsSuggestion, suggestion);
+    writeln(rsNetworkAddress, rsSuggestion, suggestion, '*');
     readln(input);
     while input = '-h' do
     begin
@@ -834,6 +822,7 @@ type
     index: integer;
   begin
     // domain:
+    suggestion := '';
     // IP4.DOMAIN[1]
     index := 3;
     if NetworkDetails[index] <> '' then
@@ -850,10 +839,10 @@ type
           suggestion += NetworkDetails[index] + ', ';
       end;
     end;
-    Delete(suggestion, suggestion.Length-1, 2);
+    Delete(suggestion, suggestion.Length - 1, 2);
     suggestion += ']';
     // query:
-    writeln(rsDomain, rsSuggestion, suggestion);
+    writeln(rsDomain, rsSuggestion, suggestion, '*');
     readln(input);
     while input = '-h' do
     begin
@@ -875,6 +864,7 @@ type
     index: integer;
   begin
     // nameserver:
+    suggestion := '';
     // IP4.DNS[1]
     index := 6;
     if NetworkDetails[index] <> '' then
@@ -890,10 +880,10 @@ type
         if NetworkDetails[index] <> '' then
           suggestion += NetworkDetails[index] + ', ';
       end;
-      Delete(suggestion, suggestion.Length-1, 2);
+      Delete(suggestion, suggestion.Length - 1, 2);
       suggestion += ']';
       // query:
-      writeln(rsNameserver, rsSuggestion, suggestion);
+      writeln(rsNameserver, rsSuggestion, suggestion, '*');
       readln(input);
       while input = '-h' do
       begin
@@ -915,12 +905,13 @@ type
     suggestion: string;
   begin
     // gateway:
+    suggestion := '';
     // IP4.GATEWAY
     if NetworkDetails[9] <> '' then
       suggestion += NetworkDetails[9];
     suggestion += ']';
     // query:
-    writeln(rsGateway, rsSuggestion, suggestion);
+    writeln(rsGateway, rsSuggestion, suggestion, '*');
     readln(input);
     while input = '-h' do
     begin
@@ -939,7 +930,7 @@ type
   procedure TQuickInstall.QueryAdminName;
   begin
     // admin name:
-    writeln(rsAdminName);
+    writeln(rsAdminName, '*');
     readln(input);
     while input = '-h' do
     begin
@@ -966,7 +957,7 @@ type
   procedure TQuickInstall.QueryAdminPass;
   begin
     // admin password:
-    writeln(rsAdminPassword);
+    writeln(rsAdminPassword, '*');
     readln(input);
     if input = '-b' then
       QueryAdminName
@@ -1012,9 +1003,9 @@ type
 
   procedure TQuickInstall.QueryOverview;
   var
-    // for getting the number of asked questions
+    // number of asked questions
     Counter: integer;
-    // for getting a list of the asked questions
+    // list of the asked questions by numbers
     queries: TStringList;
     validInput, isInputInt: boolean;
   begin
@@ -1024,9 +1015,12 @@ type
     isInputInt := False;
 
     // Overview
+    // Print the overview and in 'queries' save the questions that were asked
+    // (depending on setup type and distribution=Univention) by their number:
     writeln('');
     writeln(rsOverview);
     if setupType = 's' then
+
       writeln(rsOpsiVersionO, opsiVersion)
     else
     begin
@@ -1112,21 +1106,21 @@ type
     Inc(Counter);
     writeln(Counter, ' ', rsIPNumberO, ipNumber);
     queries.Add('20');
-
-    {writeln('');
-    writeln(queries.Text);}
+    //writeln(queries.Text);
 
     writeln('');
     writeln(rsContinue);
     // Jumping back to a query by the number in the overview:
-    while validInput = False do
+    {while validInput = False do
     begin
+      // first test if input is valid, i.e. input = '' or input in
       validInput := True;
       readln(input);
       try
         Counter := input.ToInteger - 1;
         isInputInt := True;
       except
+        writeln('"', input, '"', rsNotValid);
       end;
       if input = '' then
       begin
@@ -1210,753 +1204,87 @@ type
       begin
         writeln('"', input, '"', rsNotValid);
         validInput := False;
-      end;
-    end;
-{procedure TQuickInstall.NoGuiQuery;
-  begin
-    SetDefaultValues;
-    // input variables set by resourcestrings for usage in the overview and
-    // for easier query handling, e.g. if dhcp = rsYes instead of
-    // if (dhcp = 'Yes') or (dhcp = 'Ja') or (dhcp = 'Oui') or ...
-    // distribution:
-    writeln(rsDistr, ' ', distroName, ' ', distroRelease);
-    writeln(rsIsCorrect, rsYesNoOp);
+      end;}
     readln(input);
-    while not ((input = rsYes) or (input = rsNo)) do
+    // only elements of 'queries' (jumping back) or '' (start installation) are valid inputs
+    while not ((queries.IndexOf(input) <> -1) or (input = '')) do
     begin
       writeln('"', input, '"', rsNotValid);
       readln(input);
     end;
-    // if distribution isn't correct, read the correct one
-    if input = rsNo then
+    // install opsi
+    if input = '' then
     begin
-      writeln(rsOtherDistr);
-      readln(input);
-      distroName := Copy(input, 1, Pos(' ', input) - 1);
-      distroRelease := Copy(input, Pos(' ', input) + 1, Length(input) -
-        Pos(' ', input));
-    end;
-    DistrInfo.SetInfo(distroName, distroRelease);
-    if DistrInfo.MyDistr = other then
-    begin
-      writeln('');
-      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
-      Exit;
-    end;
-    QuerySetupType;
-  end;
-
-  procedure TQuickInstall.QuerySetupType;
-  begin
-    // setup type:
-    writeln(rsSetup, rsSetupOp);
-    readln(input);
-    while not ((input = rsStandard) or (input = rsCustom) or (input = '-b') or
-        (input = '')) do
-    begin
-      writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    // if input = -b then go back to the previous query
-    if input = '-b' then
-      NoGuiQuery
+      WritePropsToFile;
+      InstallOpsi;
+    end
     else
+      // jump back to the respective question
     begin
-      setupType := input;
-      if input = '' then
-        setupType := rsStandard;
-      writeln('');
-      writeln(rsCarryOut);
-      writeln('');
-      if setupType = rsCustom then
-        // following queries only for custom setup
+      if input = '1' then
         QueryOpsiVersion
       else
-      if distroName = 'Univention' then
-        QueryUCS
+      if input = '2' then
+        QueryRepo
       else
-        QueryDhcp;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryOpsiVersion;
-  begin
-    // opsi version:
-    writeln(rsOpsiVersion, rsOpsiVersionOp);
-    readln(input);
-    while not ((input = 'Opsi 4.1') or (input = 'Opsi 4.2') or
-        (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoOpsiVersion)
+      if input = '3' then
+        QueryProxy
       else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QuerySetupType
-    else
-    begin
-      opsiVersion := input;
-      if input = '' then
-        opsiVersion := 'Opsi 4.1';
-      QueryRepo;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryRepo;
-  begin
-    // repo:
-    if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']')
-    else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']');
-    readln(input);
-    while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoRepo)
+      if input = '4' then
+        QueryRepoNoCache
       else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryOpsiVersion
-    else
-    begin
-      repo := input;
-      if (input = '') and (opsiVersion = 'Opsi 4.1') then
-        repo := baseUrlOpsi41
+      if input = '5' then
+        QueryBackend
       else
-      if (input = '') and (opsiVersion = 'Opsi 4.2') then
-        repo := baseUrlOpsi42;
-      QueryProxy;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryProxy;
-  begin
-    // proxy:
-    writeln(rsUseProxy, rsYesNoOp);
-    readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
-    begin
-      writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryRepo
-    else
-    begin
-      if input = rsYes then
-      begin
-        writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
-        readln(input);
-        proxy := input;
-      end
-      else
-        proxy := '';
-      QueryRepoNoCache;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryRepoNoCache;
-  begin
-    // repo without cache proxy:
-    if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
-    else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
-    readln(input);
-    while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
-    begin
-      writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryProxy
-    else
-    begin
-      repoNoCache := input;
-      if input = '' then
-        repoNoCache := repo;
-      QueryBackend;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryBackend;
-  begin
-    // backend:
-    writeln(rsBackend, rsBackendOp);
-    readln(input);
-    while not ((input = 'file') or (input = 'mysql') or (input = '-b') or
-        (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoBackend)
-      else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryRepoNoCache
-    else
-    begin
-      backend := input;
-      if input = '' then
-        backend := 'file';
-      if input = 'mysql' then
+      if input = '6' then
         QueryModules
       else
-        QueryRepoKind;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryModules;
-  begin
-    // copy modules:
-    writeln(rsCopyModules, rsYesNoOp);
-    readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoModules)
+      if input = '7' then
+        QueryRepoKind
       else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryBackend
-    else
-    begin
-      copyMod := input;
-      if input = '' then
-        copyMod := rsNo;
-      QueryRepoKind;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryRepoKind;
-  begin
-    // repo kind:
-    writeln(rsRepoKind, rsRepoKindOp);
-    readln(input);
-    while not ((input = 'experimental') or (input = 'stable') or
-        (input = 'testing') or (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoRepoKind)
-      else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-    begin
-      if input = 'mysql' then
-        QueryModules
-      else
-        QueryBackend;
-    end
-    else
-    begin
-      repoKind := input;
-      if input = '' then
-        repoKind := 'stable';
-      if distroName = 'Univention' then
+      if input = '8' then
         QueryUCS
       else
-        QueryReboot;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryUCS;
-  begin
-    // ucs password:
-    writeln(rsUCS);
-    readln(input);
-    if input = '-b' then
-    begin
-      if setupType = rsStandard then
-        QuerySetupType
-      else
-        QueryRepoKind;
-    end
-    else
-    begin
-      ucsPassword := input;
-      if setupType = rsCustom then
+      if input = '9' then
         QueryReboot
       else
-        QueryDhcp;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryReboot;
-  begin
-    // reboot:
-    writeln(rsReboot, rsYesNoOp);
-    readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoReboot)
+      if input = '10' then
+        QueryDhcp
       else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-    begin
-      if distroName = 'Univention' then
-        QueryUCS
-      else
-        QueryRepoKind;
-    end
-    else
-    begin
-      reboot := input;
-      if input = '' then
-        reboot := rsNo;
-      QueryDhcp;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryDhcp;
-  begin
-    // dhcp:
-    writeln(rsDhcp, rsYesNoOp);
-    readln(input);
-    while not ((input = rsYes) or (input = rsNo) or (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoDhcp)
-      else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-    begin
-      if setupType = rsCustom then
-        QueryReboot
-      else
-      begin
-        if distroName = 'Univention' then
-          QueryUCS
-        else
-          QuerySetupType;
-      end;
-    end
-    else
-    begin
-      dhcp := input;
-      if input = '' then
-        dhcp := rsNo;
-      if dhcp = rsYes then
-        // following queries only for dhcp
+      if input = '11' then
         QueryLink
       else
-        QueryAdminName;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryLink;
-  begin
-    // link:
-    writeln(rsTFTPROOT, rsLinkOp);
-    readln(input);
-    while not ((input = 'default.menu') or (input = 'default.nomenu') or
-        (input = '-b') or (input = '')) do
-    begin
-      if input = '-h' then
-        writeln(rsInfoTFTPROOT)
+      if input = '12' then
+        QueryNetmask
       else
-        writeln('"', input, '"', rsNotValid);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryDhcp
-    else
-    begin
-      symlink := input;
-      if input = '' then
-        symlink := 'default.nomenu';
-      QueryNetmask;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryNetmask;
-  begin
-    // netmask:
-    writeln(rsNetmask, rsNetmaskEx);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoNetwork);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryLink
-    else
-    begin
-      netmask := input;
-      QueryNetworkAddress;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryNetworkAddress;
-  begin
-    // network address:
-    writeln(rsNetworkAddress, rsNetworkAddressEx);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoNetwork);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryNetmask
-    else
-    begin
-      networkAddress := input;
-      QueryDomain;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryDomain;
-  begin
-    // domain:
-    writeln(rsDomain, rsDomainEx);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoNetwork);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryNetworkAddress
-    else
-    begin
-      domain := input;
-      QueryNameserver;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryNameserver;
-  begin
-    // nameserver:
-    writeln(rsNameserver, rsNameserverEx);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoNetwork);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryDomain
-    else
-    begin
-      nameserver := input;
-      QueryGateway;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryGateway;
-  begin
-    // gateway:
-    writeln(rsGateway, rsGatewayEx);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoNetwork);
-      readln(input);
-    end;
-    if input = '-b' then
-      QueryNameserver
-    else
-    begin
-      gateway := input;
-      QueryAdminName;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryAdminName;
-  begin
-    // admin name:
-    writeln(rsAdminName);
-    readln(input);
-    while input = '-h' do
-    begin
-      writeln(rsInfoAdmin);
-      readln(input);
-    end;
-    if input = '-b' then
-    begin
-      if dhcp = rsYes then
+      if input = '13' then
+        QueryNetworkAddress
+      else
+      if input = '14' then
+        QueryDomain
+      else
+      if input = '15' then
+        QueryNameserver
+      else
+      if input = '16' then
         QueryGateway
       else
-        QueryDhcp;
-    end
-    else
-    begin
-      adminName := input;
-      if input = '' then
-        QueryIPName
-      else
-        QueryAdminPass;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryAdminPass;
-  begin
-    // admin password:
-    writeln(rsAdminPassword);
-    readln(input);
-    if input = '-b' then
-      QueryAdminName
-    else
-    begin
-      adminPassword := input;
-      QueryIPName;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryIPName;
-  begin
-    // IP name:
-    writeln(rsIPName);
-    readln(input);
-    if input = '-b' then
-    begin
-      if adminName = '' then
+      if input = '17' then
         QueryAdminName
       else
-        QueryAdminPass;
-    end
-    else
-    begin
-      ipName := input;
-      QueryIPNumber;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryIPNumber;
-  begin
-    // IP number:
-    writeln(rsIPNumber);
-    readln(input);
-    if input = '-b' then
-      QueryIPName
-    else
-    begin
-      ipNumber := input;
-      QueryOverview;
-    end;
-  end;
-
-  procedure TQuickInstall.QueryOverview;
-  var
-    Counter: integer;
-    queries: TStringList;
-    validInput, isInputInt: boolean;
-  begin
-    Counter := 1;
-    queries := TStringList.Create;
-    validInput := False;
-    isInputInt := False;
-
-    // Overview
-    writeln('');
-    writeln(rsOverview);
-    if setupType = rsStandard then
-      writeln(rsOpsiVersionO, opsiVersion)
-    else
-    begin
-      writeln(Counter, ' ', rsOpsiVersionO, opsiVersion);
-      queries.Add('1');
-      Inc(Counter);
-    end;
-    {Custom installation}
-    if setupType = rsCustom then
-    begin
-      writeln(Counter, ' ', rsRepoO, repo);
-      queries.Add('2');
-      Inc(Counter);
-      writeln(Counter, ' ', rsProxyO, proxy);
-      queries.Add('3');
-      Inc(Counter);
-      writeln(Counter, ' ', rsRepoNoCacheO, repoNoCache);
-      queries.Add('4');
-      Inc(Counter);
-      writeln(Counter, ' ', rsBackendO, backend);
-      queries.Add('5');
-      Inc(Counter);
-      if backend = 'mysql' then
-      begin
-        writeln(Counter, ' ', rsCopyModulesO, copyMod);
-        queries.Add('6');
-        Inc(Counter);
-      end;
-      writeln(Counter, ' ', rsRepoKindO, repoKind);
-      queries.Add('7');
-      Inc(Counter);
-    end;
-    {Both}
-    if distroName = 'Univention' then
-    begin
-      writeln(Counter, ' ', rsUCSO, ucsPassword);
-      queries.Add('8');
-      Inc(Counter);
-    end;
-    {Custom installation}
-    if setupType = rsCustom then
-    begin
-      writeln(Counter, ' ', rsRebootO, reboot);
-      queries.Add('9');
-      Inc(Counter);
-    end;
-    {Both}
-    writeln(Counter, ' ', rsDhcpO, dhcp);
-    queries.Add('10');
-    Inc(Counter);
-    if dhcp = rsYes then
-    begin
-      writeln(Counter, ' ', rsTFTPROOTO, symlink);
-      queries.Add('11');
-      Inc(Counter);
-      writeln(Counter, ' ', rsNetmaskO, netmask);
-      queries.Add('12');
-      Inc(Counter);
-      writeln(Counter, ' ', rsNetworkO, networkAddress);
-      queries.Add('13');
-      Inc(Counter);
-      writeln(Counter, ' ', rsDomainO, domain);
-      queries.Add('14');
-      Inc(Counter);
-      writeln(Counter, ' ', rsNameserverO, nameserver);
-      queries.Add('15');
-      Inc(Counter);
-      writeln(Counter, ' ', rsGatewayO, gateway);
-      queries.Add('16');
-      Inc(Counter);
-    end;
-    writeln(Counter, ' ', rsAdminNameO, adminName);
-    queries.Add('17');
-    Inc(Counter);
-    if adminName <> '' then
-    begin
-      writeln(Counter, ' ', rsAdminPasswordO, adminPassword);
-      queries.Add('18');
-      Inc(Counter);
-    end;
-    writeln(Counter, ' ', rsIPNameO, ipName);
-    queries.Add('19');
-    Inc(Counter);
-    writeln(Counter, ' ', rsIPNumberO, ipNumber);
-    queries.Add('20');
-
-    {writeln('');
-    writeln(queries.Text);}
-
-    writeln('');
-    writeln('To continue, please press enter.');
-    // Jumping back to a query by the number in the overview:
-    while validInput = False do
-    begin
-      validInput := True;
-      readln(input);
-      try
-        Counter := input.ToInteger - 1;
-        isInputInt := True;
-      except
-      end;
-      if input = '' then
-      begin
-        WritePropsToFile;
-        InstallOpsi;
-      end
+      if input = '18' then
+        QueryAdminPass
       else
-      if isInputInt = True then
-      begin
-        if Counter in [0..queries.Count - 1] then
-        begin
-          if queries[Counter] = '1' then
-            QueryOpsiVersion
-          else
-          if queries[Counter] = '2' then
-            QueryRepo
-          else
-          if queries[Counter] = '3' then
-            QueryProxy
-          else
-          if queries[Counter] = '4' then
-            QueryRepoNoCache
-          else
-          if queries[Counter] = '5' then
-            QueryBackend
-          else
-          if queries[Counter] = '6' then
-            QueryModules
-          else
-          if queries[Counter] = '7' then
-            QueryRepoKind
-          else
-          if queries[Counter] = '8' then
-            QueryUCS
-          else
-          if queries[Counter] = '9' then
-            QueryReboot
-          else
-          if queries[Counter] = '10' then
-            QueryDhcp
-          else
-          if queries[Counter] = '11' then
-            QueryLink
-          else
-          if queries[Counter] = '12' then
-            QueryNetmask
-          else
-          if queries[Counter] = '13' then
-            QueryNetworkAddress
-          else
-          if queries[Counter] = '14' then
-            QueryDomain
-          else
-          if queries[Counter] = '15' then
-            QueryNameserver
-          else
-          if queries[Counter] = '16' then
-            QueryGateway
-          else
-          if queries[Counter] = '17' then
-            QueryAdminName
-          else
-          if queries[Counter] = '18' then
-            QueryAdminPass
-          else
-          if queries[Counter] = '19' then
-            QueryIPName
-          else
-          if queries[Counter] = '20' then
-            QueryIPNumber;
-        end
-        else
-          // If input is integer but not a valid one:
-        begin
-          writeln('"', input, '"', rsNotValid);
-          validInput := False;
-        end;
-      end
+      if input = '19' then
+        QueryIPName
       else
-        // If input is no integer and not '':
-      begin
-        writeln('"', input, '"', rsNotValid);
-        validInput := False;
-      end;
+      if input = '20' then
+        QueryIPNumber;
     end;
-  end;}
   end;
 
-  //////////////////////////////////////////////////////////////////////////////
-  // install opsi server with the default values from SetDefaultValues
+  /////////////////////////////////////////////////////////////////////////////
+  // no query, directly use all default values for installation
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     LogDatei.log('Entered ExecuteWithDefaultValues', 0);
@@ -1964,12 +1292,12 @@ type
     WritePropsToFile;
     InstallOpsi;
   end;
-
+  // no query, read in values from a file
   procedure TQuickInstall.ReadProps;
   var
     i: integer;
   begin
-    // Read from file what is required
+    // Read from file what is required for adding the repo
     for i := 0 to PropsFile.Count - 1 do
     begin
       // Read repo_kind
@@ -1988,8 +1316,7 @@ type
           opsiVersion := 'Opsi 4.2';
       end;
     end;
-
-    // Take text of PropsFile as text for properties.conf
+    // take text of PropsFile as text for properties.conf
     PropsFile.SaveToFile(DirClientData + 'properties.conf');
 
     InstallOpsi;
@@ -2001,6 +1328,8 @@ var
   //r: TTranslateUnitResult;
 const
   logFileName = 'opsi_quickinstall_nogui.log';
+
+{$R *.res}
 
 begin
   // only execute QuickInstall if user is root:
@@ -2018,8 +1347,7 @@ begin
   end;
   //writeln(user, userID);
 
-  QuickInstall := TQuickInstall.Create(nil);
-  // .../lazarus/common/oslog.pas
+  // initialize log file:
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
@@ -2027,7 +1355,8 @@ begin
 
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
-  // Get directory of l-opsi-server/CLIENT_DATA
+  QuickInstall := TQuickInstall.Create(nil);
+  // Get directory of l-opsi-server/CLIENT_DATA:
   QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
   Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
   QuickInstall.DirClientData :=
@@ -2036,8 +1365,9 @@ begin
   // get default language (system language)
   GetLanguageIDs(Lang, DefLang);
   // use default language for resourcestrings
-  // use po-files of gui version (because LCL does not seem to be able...
-  // ...to use po-files from other directories)
+  // Use po-files of gui version (because LCL (from the gui version) does not
+  // seem to be able to use po-files from other directories while the nogui
+  // version is flexible).
   TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
     '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
 
@@ -2055,8 +1385,6 @@ begin
       writeln('"', customLanguage, '"', rsNotValid);
       readln(customLanguage);
     end;
-    // use po-files of gui version (because LCL does not seem to be able...
-    // ...to use po-files from other directories)
     TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
       '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
 
@@ -2064,20 +1392,23 @@ begin
     sleep(50);
   end;
 
-  // For test environment
+  // For default installation to indicate the start of the program (also nice
+  // nice for the test environment log to identify the start of QuickInstall).
   if QuickInstall.HasOption('d', 'default') then
     writeln('Start opsi-quickinstall');
 
   with QuickInstall do
   begin
-    // distribution info
+    // distribution info:
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
     //writeln(QuickInstall.distroName, ' ', QuickInstall.distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
-    // In the nogui query the checking of the distribution will be done later.
-    if not HasOption('n', 'nogui') then
+    // In the nogui query the checking of the distribution will be done later,
+    // for the options -d and -f do it here (for the other options like -h we
+    // don't need the correct distribution):
+    if HasOption('d', 'default') or HasOption('f', 'file') then
     begin
       if DistrInfo.MyDistr = other then
       begin
@@ -2085,8 +1416,12 @@ begin
         Exit;
       end;
     end;
+
+    // run TQuickInstall
     Run;
+
     DistrInfo.Free;
+    // free QuickInstall
     Free;
   end;
 
