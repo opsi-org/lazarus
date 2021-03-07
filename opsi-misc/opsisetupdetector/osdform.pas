@@ -3246,6 +3246,10 @@ begin
     PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
+  // the first path is in the development environment
+  resourcedir := ExtractFileDir(Application.ExeName) ;
+  templatePath := resourcedir + PathDelim + 'template-files';
+  if not DirectoryExists(templatePath) then
   resourcedir := '/usr/share/opsi-setup-detector';
   {$IFDEF DARWIN}
   // the first path is in the development environment

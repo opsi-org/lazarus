@@ -11,6 +11,15 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: openfiledirdlg.rsfdselectfileordirectory
+msgid "Select File or Directory"
+msgstr ""
+
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdanalyzewin.swarnmultiplemsi
 msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
