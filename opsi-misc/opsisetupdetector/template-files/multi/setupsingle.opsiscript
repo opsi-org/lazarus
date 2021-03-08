@@ -22,6 +22,9 @@ DefVar $OSshort$
 DefVar $oldProgFound$
 DefVar $installSuccess$
 DefVar $installCommand$
+
+DefStringlist $ListOfPackageNames$
+
 #@stringVars*#
 
 ; ----------------------------------------------------------------

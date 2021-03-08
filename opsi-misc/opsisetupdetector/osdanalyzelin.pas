@@ -234,6 +234,7 @@ begin
     installerArray[integer(mysetup.installerId)].uninstallProg;
   // uninstallcheck
     // nothing yet
+  LogDatei.log('Finished with get_aktProduct_general_info_lin',LLinfo);;
 end; //get_aktProduct_general_info_lin
 
 
@@ -273,6 +274,7 @@ var
   end;
 
 begin
+  LogDatei.log('Start with get_rpm_info',LLinfo);
   mysetup.installCommandLine :=
     'set $exitcode$ = linuxInstallOneFile(' + '"%scriptpath%/files' +
     IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
@@ -322,6 +324,7 @@ begin
   finally
     //FreeAndNil(outlist);
   end;
+  LogDatei.log('Finished with get_rpm_info',LLinfo);
 end;
 
 procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
@@ -356,6 +359,7 @@ var
   end;
 
 begin
+  LogDatei.log('Start with get_deb_info',LLinfo);
   try
   //outlist := TStringList.Create;
   mysetup.installDirectory:= '<none>';
@@ -406,6 +410,7 @@ begin
   finally
     //FreeAndNil(outlist);
   end;
+  LogDatei.log('Finished with get_deb_info',LLinfo);
 end;
 
 

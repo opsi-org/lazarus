@@ -294,6 +294,50 @@ deffunc ucsinstall($packagelist$ : stringlist) : string
 	endif
 endfunc
 
+deffunc genericLinInstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            08.03.2021
+	;@Description     try to determine the Linux familily and
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      suseinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	DefVar $distroType$
+	DefVar $distroName$
+	DefStringList $linuxInfoMap$
+	set $result$ = 'false'
+	
+	set $distroType$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+		
+	switch $distroType$
+			Case 'redhat'
+				set $result$ = redinstall($packagelist$)
+			EndCase
+			Case 'suse'
+				set $result$ = suseinstall($packagelist$)
+			EndCase			
+			Case 'debian'
+				if $distroName$ = 'Univention'
+					set $result$ = ucsinstall($packagelist$)
+				else
+					set $result$ = debinstall($packagelist$)
+				endif
+			EndCase
+		EndSwitch
+endfunc
+
 
 deffunc linuxInstallOneOf($packagelist$ : stringlist) : string
 	;@author          nils doerrer

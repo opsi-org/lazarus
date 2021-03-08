@@ -10,8 +10,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_lin_install.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------

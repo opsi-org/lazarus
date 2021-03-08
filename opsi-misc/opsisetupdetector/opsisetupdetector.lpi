@@ -174,13 +174,11 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="3247"/>
-        <CursorPos X="54" Y="3250"/>
+        <TopLine Value="2858"/>
+        <CursorPos X="3" Y="2851"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
           <TopLine Value="1195"/>
           <CursorPos Y="1213"/>
@@ -289,10 +287,11 @@
       <Unit13>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1373"/>
-        <CursorPos X="18" Y="1396"/>
+        <TopLine Value="1305"/>
+        <CursorPos X="29" Y="1323"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="7"/>
@@ -657,9 +656,10 @@
         <Filename Value="osdanalyzelin.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="osdanalyzeLin"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="391"/>
-        <CursorPos Y="403"/>
+        <TopLine Value="432"/>
+        <CursorPos X="53" Y="413"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -730,7 +730,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="39" Y="70"/>
-        <UsageCount Value="162"/>
+        <UsageCount Value="163"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
@@ -739,7 +739,7 @@
         <EditorIndex Value="6"/>
         <TopLine Value="67"/>
         <CursorPos X="26" Y="67"/>
-        <UsageCount Value="154"/>
+        <UsageCount Value="155"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
@@ -783,7 +783,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos Y="45"/>
-        <UsageCount Value="86"/>
+        <UsageCount Value="87"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -882,7 +882,7 @@
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="osdform.pas"/>
         <Caret Line="894" TopLine="877"/>
@@ -947,6 +947,30 @@
         <Filename Value="osdform.pas"/>
         <Caret Line="3253" Column="15" TopLine="3247"/>
       </Position16>
+      <Position17>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="3250" Column="54" TopLine="3247"/>
+      </Position17>
+      <Position18>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="2851" Column="3" TopLine="2836"/>
+      </Position18>
+      <Position19>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="1291" Column="3" TopLine="1286"/>
+      </Position19>
+      <Position20>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="2851" Column="3" TopLine="2864"/>
+      </Position20>
+      <Position21>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="2141" Column="23" TopLine="2124"/>
+      </Position21>
+      <Position22>
+        <Filename Value="osdanalyzelin.pas"/>
+        <Caret Line="403" TopLine="201"/>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

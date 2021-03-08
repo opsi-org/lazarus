@@ -10,8 +10,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_lin_install.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -40,8 +40,10 @@ cleanupPackageSystem()
 ;----------------------------------------------
 ; To create a new repo: described in the opsi-script manual (Linux)
 ; 
-; install a package from a existing repo:
-; set $installSuccess$ = linuxInstallOneOf($ListOfPackageNames$)
+; install packages from a existing repo:
+; set $ListOfPackageNames$ = createStringList('msitools','dpkg','rpm')
+; set $installSuccess$ = genericLinInstall($ListOfPackageNames$)
+; set $exitcode$ = boolToGenericExitcode($installSuccess$)
 ;
 ; install a deb/rpm file:
 ; Belongs on the distribution. tyr to analyze with opsi-setup-detector
@@ -49,20 +51,12 @@ cleanupPackageSystem()
 cleanupPackageSystem()
 ;----------------------------------------------
 Sub_check_exitcode
-Sub_check_installSuccess
 
 #@postInstallLines*#
 
 comment "Copy files"
 Files_install
 
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "Installation failed"
-	isfatalerror "Installation failed"
-else
-	Comment "Installation success"
-endif
 
 [sub_check_exitcode]
 if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
