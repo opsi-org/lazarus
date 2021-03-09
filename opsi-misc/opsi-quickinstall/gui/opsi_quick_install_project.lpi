@@ -107,18 +107,18 @@
         <ResourceBaseClass Value="Form"/>
       </Unit9>
       <Unit10>
-        <Filename Value="../common/opsi_quick_install_resourcestrings.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit10>
-      <Unit11>
         <Filename Value="opsi_quick_install_unit_wait.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Wait"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="opsi_quick_install_data.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="opsi_quick_install_data.pas"/>
+        <Filename Value="../opsi_quick_install_resourcestrings.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
     </Units>
@@ -130,7 +130,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../common;../../../common;../../../external_libraries/synapse;../../../external_libraries/misc"/>
+      <OtherUnitFiles Value="../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;.."/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

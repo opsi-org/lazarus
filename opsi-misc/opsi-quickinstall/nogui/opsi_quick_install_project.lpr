@@ -10,13 +10,13 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Process,
   GetText,
   Translations,
-  opsi_quick_install_resourcestrings,
   osDistributionInfo,
   osRunCommandElevated,
   osfunclin,
   osLinuxRepository,
   oslog,
-  osnetworkcalculator;
+  osnetworkcalculator,
+  opsi_quick_install_resourcestrings;
 
 type
 

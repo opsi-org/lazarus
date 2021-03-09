@@ -17,11 +17,6 @@ interface
 
 uses
   Classes, SysUtils,
-  {$IFNDEF SYNAPSE}
-  IdBaseComponent,
-  IdComponent,
-  IdIPWatch,
-  {$ENDIF SYNAPSE}
   sockets,
   {$IFDEF OPSISCRIPT}
   //osfunc,
@@ -39,7 +34,9 @@ uses
   process,
   OSProcessux,
   IniFiles,
-  osprocesses;
+  osprocesses,
+  // dialogs e.g. for ShowMessage
+  dialogs;
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
@@ -76,7 +73,10 @@ var
 {$ENDIF SYNAPSE}
 
 implementation
-
+// definition QUICKINSTALLGUI because programs (non graghical) like...
+// ...opsi_quick_install_nogui_project don't support LCLBase...
+// ...(-> Error while linking) and therefore not LResources
+{$IFDEF QUICKINSTALLGUI}
 uses
 {$IFDEF OPSISCRIPT}
   osparser,
@@ -90,6 +90,7 @@ uses
 {$ENDIF OPSISCRIPT}
 {$ENDIF GUI}
   LResources;
+{$ENDIF QUICKINSTALLGUI}
 
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
@@ -162,7 +163,7 @@ begin
     end;
     //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     if found > 0 then
-      LogDatei.log('Found after kill :' + IntToStr(found) + ' instances of ' +
+      LogDatei.log('Found after kill :' + Inttostr(found) + ' instances of ' +
         exename, LLError);
   end;
   outlines.Free;
@@ -410,9 +411,9 @@ begin
           if resultstring <> '/' then
             { no /home  }
             if resultstring <> '/home' then
-              { use only existing direcories as profile }
-              if DirectoryExists(ExpandFileName(resultstring)) then
-                Result.Add(ExpandFileName(resultstring));
+            { use only existing direcories as profile }
+            if DirectoryExists(ExpandFileName(resultstring)) then
+              Result.Add(ExpandFileName(resultstring));
       end;
     end;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
@@ -484,6 +485,7 @@ begin
     LogDatei.log('--------------', LLDebug2);
     for i := 0 to outlines.Count - 1 do
     begin
+      //ShowMessage(outlines.Strings[i]);
       lineparts.Clear;
       LogDatei.log(outlines.strings[i], LLDebug2);
       stringsplit(outlines.strings[i], ':', lineparts);
@@ -604,10 +606,10 @@ function getMyHostEnt: netdb.THostEntry;
 begin
   try
     if not netdb.gethostbyname(synsock.GetHostName, Result) then
-      Logdatei.log('gethostbyname error ' +
+      Logdatei.DependentAddError('gethostbyname error ' +
         IntToStr(wsagetlasterror), LLError);
   except
-    Logdatei.log('gethostname error ' +
+    Logdatei.DependentAddError('gethostname error ' +
       IntToStr(wsagetlasterror), LLError);
   end;
 end;
@@ -734,15 +736,9 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  {$IFDEF UNIX}
-  str := getCommandResult('/bin/bash -c "ip -o -4 route get ' + target + ' || exit $?"');
-  {$ENDIF}
-  {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get ' + target + ' || exit $?"');
-  {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  str := getCommandResult('/bin/bash -c "ip -4 route get ' + target + ' || exit $?"');
   stringsplitByWhiteSpace(str, TStringList(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
@@ -761,17 +757,12 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  //if not which('ip', cmd) then
-  //  cmd := 'ip';
-  {$IFDEF UNIX}
-  str := getCommandResult('/bin/bash -c "ip -o -4 route get 255.255.255.255 || exit $?"');
-  {$ENDIF}
-  {$IFDEF DARWIN}
-  //str := getCommandResult('ip -o -4 route get '+target);
+  if not which('ip', cmd) then
+    cmd := 'ip';
+  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
-  {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  str := getCommandResult('/bin/bash -c "' + cmd +
+    ' -4 route get 255.255.255.255 || exit $?"');
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('src');
@@ -791,17 +782,12 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  //if not which('ip', cmd) then
-  //  cmd := 'ip';
-  {$IFDEF UNIX}
-  str := getCommandResult('/bin/bash -c "ip -o -4 route get 255.255.255.255 || exit $?"');
-  {$ENDIF}
-  {$IFDEF DARWIN}
-  //str := getCommandResult('ip -o -4 route get '+target);
+  if not which('ip', cmd) then
+    cmd := 'ip';
+  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
-  {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  str := getCommandResult('/bin/bash -c "' + cmd +
+    ' -4 route get 255.255.255.255 || exit $?"');
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('dev');
@@ -1013,9 +999,9 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
-      ' shutdown regularly and direct. Time ' + FormatDateTime(
-      'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0))
+       + ' shutdown regularly and direct. Time ' +
+      FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
     sleep(1000);
     //LogDatei.Free;
@@ -1078,3 +1064,4 @@ end;
 
 
 end.
+

@@ -49,7 +49,7 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="../common/opsi_quick_install_resourcestrings.pas"/>
+        <Filename Value="../opsi_quick_install_resourcestrings.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
     </Units>
@@ -61,7 +61,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../common;../../../common;../../../external_libraries/synapse;../../../external_libraries/misc"/>
+      <OtherUnitFiles Value="..;../../../common;../../../external_libraries/synapse;../../../external_libraries/misc"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Other>
