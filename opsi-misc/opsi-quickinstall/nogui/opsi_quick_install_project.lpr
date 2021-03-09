@@ -1394,7 +1394,10 @@ begin
   // For default installation to indicate the start of the program (also nice
   // nice for the test environment log to identify the start of QuickInstall).
   if QuickInstall.HasOption('d', 'default') then
+  begin
+    writeln('');
     writeln('Start opsi-quickinstall');
+  end;
 
   with QuickInstall do
   begin

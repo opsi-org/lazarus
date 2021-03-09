@@ -91,10 +91,10 @@ begin
   end;
 
   {Both}
-  MemoOverview.Lines.Add('');
   // Dhcp
   if Data.dhcp.PropertyEntry = 'true' then
   begin
+    MemoOverview.Lines.Add('');
     MemoOverview.Lines.Add(rsDhcpO + Data.dhcp.OverviewEntry);
     // TFTPROOT
     MemoOverview.Lines.Add(rsTFTPROOTO + Data.symlink);
