@@ -315,6 +315,8 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
+    TIGrid1: TTIGrid;
+    TIGrid2: TTIGrid;
     TIImageIconPreview: TTIImage;
     TILabelDirSelIcon: TTILabel;
     TILabelInstaller2: TTILabel;
@@ -429,7 +431,8 @@ type
     procedure IconDisplayOnClick(Sender: TObject);
     procedure showCheckEntriesWarning;
     //procedure SetFontName(Control: TControl; Name: string);
-    function showCompleteDirDlg : boolean;
+    function showCompleteDirDlg: boolean;
+    procedure showMacOS2StepSelectionDLG;
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
@@ -568,7 +571,7 @@ resourcestring
     'Should we copy only the installer file or the complete directory ?';
   rsCopyCompleteDirCap = 'Complete directory';
   rsCopyFileOnlyCap = 'Only selected file';
-//    'Should we copy not only the setup file. but the complete directory ?';
+  //    'Should we copy not only the setup file. but the complete directory ?';
   rsSelectAppOrDir =
     'First select MacOS .app or Directory where to find MacOS Installer files';
   rsSelectMacFile = 'Now select MacOS installer file.';
@@ -583,6 +586,12 @@ resourcestring
     Lineending + 'For some data you may have to install the program once ' +
     Lineending + 'and than get the needed data from the completed installation.';
   rscheckEntriesRememberMe = 'Do not show this Message again';
+  rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' + LineEnding +
+                 'Firststep is Dialog to select a Directory where to find the installer ' + LineEnding +
+                 'or the "installer.app" Directory' + LineEnding +
+                 'Second step (if needed) is a Dialog to select a installer file';
+  rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
+  rsMacSelectionRememberMe = 'Do not show this Message again';
 
 implementation
 
@@ -710,6 +719,7 @@ begin
       // definition of class TProductData in unit osdbasedata line ~256
       TILabelDirSelIcon.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
         'productImageFullFileName');
+      TIGrid2.ListObject := dependencies;
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -885,16 +895,16 @@ begin
   // initialize language
   mylocaledir := '';
   {$IFDEF DARWIN}
-  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim
-       + '../Resources/locale';
+  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim +
+    '../Resources/locale';
   {$ENDIF DARWIN}
   {$IFDEF LINUX}
-  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim
-       + 'locale';
-  If not DirectoryExists(mylocaledir) then mylocaledir := '';
+  mylocaledir := ExtractFileDir(Application.ExeName) + PathDelim + 'locale';
+  if not DirectoryExists(mylocaledir) then
+    mylocaledir := '';
   {$ENDIF LINUX}
   mylang := GetDefaultLang;
-  SetDefaultLang(mylang,mylocaledir);
+  SetDefaultLang(mylang, mylocaledir);
 
   //check parameters
   myparamcount := ParamCount;
@@ -951,7 +961,7 @@ begin
   begin
     LogDatei.log('Found Parameter lang', LLInfo);
     mylang := Application.GetOptionValue('l', 'lang');
-    SetDefaultLang(mylang,mylocaledir);
+    SetDefaultLang(mylang, mylocaledir);
     LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
     LogDatei.log('Active lang: ' + mylang, LLInfo);
   end
@@ -962,7 +972,7 @@ begin
     if Mylang = '' then
       mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
-    SetDefaultLang(mylang,mylocaledir);
+    SetDefaultLang(mylang, mylocaledir);
     LogDatei.log('Detected default lang: ' + mylang, LLInfo);
     LogDatei.log('Detected default lang: ' + GetDefaultLang, LLInfo);
   end;
@@ -1181,22 +1191,22 @@ end;
 
 procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
 begin
-  SetDefaultLang('de',mylocaledir);
+  SetDefaultLang('de', mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-  SetDefaultLang('en',mylocaledir);
+  SetDefaultLang('en', mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
 begin
-  SetDefaultLang('es',mylocaledir);
+  SetDefaultLang('es', mylocaledir);
 end;
 
 procedure TResultform1.MenuItemLangFrClick(Sender: TObject);
 begin
-  SetDefaultLang('fr',mylocaledir);
+  SetDefaultLang('fr', mylocaledir);
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -1829,6 +1839,7 @@ begin
     StringGridDep.Repaint;
     procmess;
     FreeAndNil(mydep);
+    fetchDepPropFromForm;
   end
   else
   begin
@@ -1876,9 +1887,9 @@ begin
       if FNewPropDlg.RadioButtonPropBool.Checked then
       begin
         myprop.Add('bool');  //type
-        myprop.Add('');      //multivalue
-        myprop.Add('');      //editable
-        myprop.Add('');      //possible values
+        myprop.Add('False');      //multivalue
+        myprop.Add('False');      //editable
+        myprop.Add('[]');      //possible values
         myprop.Add(FNewPropDlg.ListBoxPropDefVal.Items[
           FNewPropDlg.ListBoxPropDefVal.ItemIndex]);   //default values
       end
@@ -1922,6 +1933,7 @@ end;
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 begin
   StringGridDep.DeleteRow(StringGridDep.Row);
+  fetchDepPropFromForm;
 end;
 
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
@@ -1971,6 +1983,7 @@ begin
         StringGridDep.Cells[3, y] := '';
       end;
       StringGridDep.Cells[4, y] := FNewDepDlg.ComboBoxReqType.Text;
+      fetchDepPropFromForm;
     end
     else
     begin
@@ -2754,7 +2767,9 @@ begin
               if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
                 [mbYes, mbNo], 0, mbNo) = mrYes then
                 aktProduct.SetupFiles[2].copyCompleteDir := True; *)
-            aktProduct.SetupFiles[2].copyCompleteDir := showCompleteDirDlg;
+              // no showCompleteDirDlg for macos
+              //aktProduct.SetupFiles[2].copyCompleteDir := showCompleteDirDlg;
+              aktProduct.SetupFiles[2].copyCompleteDir := False;
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
             Application.ProcessMessages;
@@ -2949,7 +2964,9 @@ begin
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbNo, mbYes], 0, mbNo) = mrYes then
       aktProduct.SetupFiles[0].copyCompleteDir := True; *)
-    aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
+    // no showCompleteDirDlg for macos
+    //aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
+    aktProduct.SetupFiles[0].copyCompleteDir := False;
     makeProperties;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
@@ -3186,37 +3203,63 @@ begin
   myEdit.SelStart := CurPos;
 end;
 
-function TResultform1.showCompleteDirDlg : boolean;
+function TResultform1.showCompleteDirDlg: boolean;
 begin
-  result := false;
+  Result := False;
   // https://specials.rejbrand.se/TTaskDialog/
-    with TTaskDialog.Create(self) do
-      try
-        Title := rsCopyFileOnlyOrCompleteDirTitle;
-        Caption := 'opsi-setup-detector';
-        Text := rsCopyFileOnlyOrCompleteDirText;
-        CommonButtons := [];
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsCopyCompleteDirCap;
-          ModalResult := mrYes;
-        end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsCopyFileOnlyCap;
-          ModalResult := mrNo;
-        end;
-        MainIcon := tdiQuestion;
-        if Execute then
-        begin
-          if ModalResult = mrYes then
-            result := true;
-          if ModalResult = mrNo then
-            result := false;
-        end;
+  with TTaskDialog.Create(self) do
+    try
+      Title := rsCopyFileOnlyOrCompleteDirTitle;
+      Caption := 'opsi-setup-detector';
+      Text := rsCopyFileOnlyOrCompleteDirText;
+      CommonButtons := [];
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := rsCopyCompleteDirCap;
+        ModalResult := mrYes;
+      end;
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := rsCopyFileOnlyCap;
+        ModalResult := mrNo;
+      end;
+      MainIcon := tdiQuestion;
+      if Execute then
+      begin
+        if ModalResult = mrYes then
+          Result := True;
+        if ModalResult = mrNo then
+          Result := False;
+      end;
+    finally
+      Free;
+    end;
+end;
+
+procedure TResultform1.showMacOS2StepSelectionDLG;
+var
+  tmpbool: boolean;
+begin
+  if myconfiguration.Show2StepMacSeletionWarn then
+  begin
+  // https://specials.rejbrand.se/TTaskDialog/
+  with TTaskDialog.Create(self) do
+    try
+      Title := rsMac3stepSelectionTitle;
+      Caption := 'opsi-setup-detector';
+      Text := rsMac3stepSelectionText;
+      CommonButtons := [tcbOk];
+        MainIcon := tdiInformation;
+        VerificationText := rsMacSelectionRememberMe;
+        Execute;
+        tmpbool := tfVerificationFlagChecked in Flags;
+        myconfiguration.Show2StepMacSeletionWarn := not (tmpbool);
+        tmpbool := myconfiguration.Show2StepMacSeletionWarn;
+        myconfiguration.writeconfig;
       finally
         Free;
       end;
+  end;
 end;
 
 procedure TResultform1.FormCreate(Sender: TObject);
@@ -3224,7 +3267,7 @@ var
   DefaultIcon: TImage;
   tmpimage: TPicture;
   filename: string;
-  resourcedir, templatePath : string;
+  resourcedir, templatePath: string;
 begin
   tmpimage := TPicture.Create;
   loadDefaultIcon := True;
@@ -3247,21 +3290,21 @@ begin
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   // the first path is in the development environment
-  resourcedir := ExtractFileDir(Application.ExeName) ;
+  resourcedir := ExtractFileDir(Application.ExeName);
   templatePath := resourcedir + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
-  resourcedir := '/usr/share/opsi-setup-detector';
+    resourcedir := '/usr/share/opsi-setup-detector';
   {$IFDEF DARWIN}
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../../..';
   templatePath := resourcedir + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
-    resourcedir :=  ExtractFileDir(Application.ExeName) + PathDelim
-       + '../Resources';
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim +
+      '../Resources';
   {$ENDIF DARWIN}
-  filename := resourcedir + PathDelim +
-    'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+  filename := resourcedir + PathDelim + 'template-files' + PathDelim +
+    'images' + PathDelim + 'template.png';
   if fileexists(filename) then
     DefaultIcon.Picture.LoadFromFile(filename)
   else
@@ -3273,24 +3316,24 @@ begin
     else
       LogDatei.log('Could not find template.png ', LLError);
   end;
-  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
-    + PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
+    PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
-    + PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
+    PathDelim + 'analyzepack4.xpm');
   BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
-    + PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
+    PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateLin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
-    + PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
+    PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMac.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir  + PathDelim + 'images'
-    + PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
+    PathDelim + 'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
   FreeAndNil(tmpimage);

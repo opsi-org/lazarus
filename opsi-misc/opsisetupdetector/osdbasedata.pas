@@ -369,6 +369,7 @@ default: ["xenial_bionic"]
     FProperties: TPProperties;
     FReadme_txt_templ: string;
     FShowCheckEntryWarning :boolean;
+    FShow2StepMacSeletionWarn : boolean;
     //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
@@ -408,6 +409,8 @@ default: ["xenial_bionic"]
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     property ShowCheckEntryWarning: boolean read FShowCheckEntryWarning
       write FShowCheckEntryWarning;
+    property Show2StepMacSeletionWarn: boolean read FShow2StepMacSeletionWarn
+      write FShow2StepMacSeletionWarn;
 
     procedure writeconfig;
     procedure readconfig;
@@ -479,6 +482,10 @@ resourcestring
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+  rsCnfdTitle = 'Edit your configuration here.'  + LineEnding +
+                 'Click on a line to get help '  + LineEnding +
+                 'in the yellow field at the bottom.';
+
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
   rscreateBuild = 'Selects the Build mode Checkbox build.';
@@ -966,6 +973,7 @@ begin
   FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
     'template-files' + PathDelim + 'generic' + PathDelim + 'package_qa.txt';
   FShowCheckEntryWarning := true;
+  FShow2StepMacSeletionWarn := true;
   FUsePropDesktopicon := false;
   //readconfig;
 end;

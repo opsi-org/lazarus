@@ -29,6 +29,13 @@ msgstr ""
 msgid "selects the Build mode Radiobutton."
 msgstr ""
 
+#: osdbasedata.rscnfdtitle
+msgid ""
+"Edit your configuration here.\n"
+"Click on a line to get help \n"
+"in the yellow field at the bottom.\n"
+msgstr ""
+
 #: osdbasedata.rsconfig_filled
 msgctxt "osdbasedata.rsconfig_filled"
 msgid "Automatically detected. Do we have all needed configurations"
@@ -109,19 +116,6 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr ""
 
-#: osdcheckentriesdlg.rscheckentriesmsg
-msgctxt "osdcheckentriesdlg.rscheckentriesmsg"
-msgid ""
-"The following data are automatically detected.\n"
-"You have to check every data field if this data are correct or plausible.\n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
-msgstr ""
-"The following data are automatically detected. \n"
-"You have to check every data field if this data are correct or plausible. \n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
-
 #: osdcreate.rsconfirmabortcaption
 msgid "Abort"
 msgstr ""
@@ -173,6 +167,12 @@ msgstr ""
 msgid " still exits. Abort or Backup or Delete ?"
 msgstr ""
 
+#: osddlgnewdependency.rsdepdlgproductid
+msgid ""
+"productId\n"
+"of the dependent product\n"
+msgstr ""
+
 #: osddlgnewproperty.rscontainswhitespacewarning
 msgid " contains whitespace. Whitespaces are not allowed."
 msgstr ""
@@ -180,6 +180,13 @@ msgstr ""
 #: osddlgnewproperty.rsduplicatewarning
 msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
+msgstr ""
+
+#: osddlgnewproperty.rspropdefaultval
+msgid ""
+"Default Values\n"
+"Only the selected\n"
+"Values are the defaults\n"
 msgstr ""
 
 #: osdform.rscheckentriesmsg
@@ -197,6 +204,7 @@ msgstr ""
 "and than get the needed data from the completed installation.\n"
 
 #: osdform.rscheckentriesrememberme
+msgctxt "osdform.rscheckentriesrememberme"
 msgid "Do not show this Message again"
 msgstr ""
 
@@ -244,6 +252,23 @@ msgstr ""
 
 #: osdform.rsdependencyediterrornoselect
 msgid "No Dependency selected."
+msgstr ""
+
+#: osdform.rsmac3stepselectiontext
+msgid ""
+"To select a MacOS installer we have a two Steps\n"
+"Firststep is Dialog to select a Directory where to find the installer \n"
+"or the \"installer.app\" Directory\n"
+"Second step (if needed) is a Dialog to select a installer file\n"
+msgstr ""
+
+#: osdform.rsmac3stepselectiontitle
+msgid "Attention: Two Step Selection Dialog"
+msgstr ""
+
+#: osdform.rsmacselectionrememberme
+msgctxt "osdform.rsmacselectionrememberme"
+msgid "Do not show this Message again"
 msgstr ""
 
 #: osdform.rsnotimplemented
@@ -396,33 +421,6 @@ msgid ""
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr ""
 
-#: tfcheckenties.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tfcheckenties.checkboxdonotshowcheckentries.caption
-msgid "Do not show this message again"
-msgstr ""
-
-#: tfcheckenties.label1.caption
-msgctxt "tfcheckenties.label1.caption"
-msgid "Please keep in mind:"
-msgstr ""
-
-#: tfcheckenties.label2.caption
-#, fuzzy
-msgctxt "tfcheckenties.label2.caption"
-msgid ""
-"The following data are automatically detected.\n"
-"You have to check every data field if this data are correct or plausible.\n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
-msgstr ""
-"The following data are automatically detected. \n"
-"You have to check every data field if this data are correct or plausible. \n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
-
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr ""
@@ -448,7 +446,9 @@ msgid ""
 msgstr ""
 
 #: tfnewdepdlg.label2.caption
-msgid "productid"
+msgid ""
+"productid\n"
+"of the dependent product\n"
 msgstr ""
 
 #: tfnewdepdlg.label3.caption
@@ -493,7 +493,7 @@ msgstr ""
 
 #: tfnewpropdlg.editpropname.text
 msgctxt "tfnewpropdlg.editpropname.text"
-msgid "PropertyName"
+msgid "propertyname"
 msgstr ""
 
 #: tfnewpropdlg.editpropnewval.text
@@ -539,6 +539,18 @@ msgstr ""
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
+msgstr ""
+
+#: tfosdconfigdlg.bitbtn1.caption
+msgid "Finished"
+msgstr ""
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.panel1.caption
+msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption
@@ -951,7 +963,16 @@ msgstr ""
 
 #: tresultform1.label75.caption
 msgctxt "tresultform1.label75.caption"
-msgid "Dependencies"
+msgid ""
+"Dependencies\n"
+"\n"
+"(for installation)\n"
+msgstr ""
+
+#: tresultform1.label75.hint
+msgid ""
+"Dependecies for Installation only.\n"
+"There are no dependecies for unistall.\n"
 msgstr ""
 
 #: tresultform1.label76.caption

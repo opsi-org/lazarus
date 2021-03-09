@@ -11,7 +11,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
-  osdcheckentriesdlg, osdanalyzegeneral;
+  osdanalyzegeneral;
 
 
 {$R *.res}
@@ -35,7 +35,6 @@ begin
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
-  Application.CreateForm(TFCheckenties, FCheckenties);
   Application.Run;
 end.
 

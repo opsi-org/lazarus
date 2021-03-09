@@ -1,7 +1,7 @@
 object FNewPropDlg: TFNewPropDlg
-  Left = 861
+  Left = 340
   Height = 591
-  Top = 280
+  Top = 237
   Width = 406
   Caption = 'opsi-setup-detector - Properties'
   ClientHeight = 591
@@ -109,6 +109,7 @@ object FNewPropDlg: TFNewPropDlg
       Width = 73
       Caption = 'Boolean'
       Checked = True
+      OnChange = RadioButtonPropBoolChange
       ParentFont = False
       TabOrder = 1
       TabStop = True
@@ -145,7 +146,7 @@ object FNewPropDlg: TFNewPropDlg
       OnEditingDone = EditPropNameEditingDone
       ParentFont = False
       TabOrder = 0
-      Text = 'PropertyName'
+      Text = 'propertyname'
     end
   end
   object CheckGroupPropBool: TCheckGroup

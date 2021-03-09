@@ -42,6 +42,9 @@ type
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
+    procedure ComboBoxActStateChange(Sender: TObject);
+    procedure FlowPanel2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
   private
 
@@ -52,6 +55,11 @@ type
 var
   FNewDepDlg: TFNewDepDlg;
   newdependency: TPDependency;
+
+  resourcestring
+  // new for 4.1.0.2 ******************************************************************
+    rsDepDlgProductId = 'productId' + LineEnding +
+      'of the dependent product';
 
 implementation
 
@@ -77,6 +85,25 @@ begin
     ComboBoxActState.Items.Add('not installed');
     ComboBoxActState.Items.Add('none');
   end;
+end;
+
+procedure TFNewDepDlg.FormShow(Sender: TObject);
+begin
+   label2.Caption:= rsDepDlgProductId;
+   ComboBoxReqType.Enabled:= true;
+end;
+
+procedure TFNewDepDlg.ComboBoxActStateChange(Sender: TObject);
+begin
+  if ComboBoxActState.Text = 'uninstall' then
+    ComboBoxReqType.Enabled:= false
+  else
+    ComboBoxReqType.Enabled:= true;
+end;
+
+procedure TFNewDepDlg.FlowPanel2Click(Sender: TObject);
+begin
+
 end;
 
 

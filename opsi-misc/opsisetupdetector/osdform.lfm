@@ -99,11 +99,11 @@ object resultForm1: TresultForm1
       Height = 578
       Top = 1
       Width = 1039
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetProduct2
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 6
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -8079,6 +8079,11 @@ object resultForm1: TresultForm1
               Control = BtProduct2NextStep
               WrapAfter = waAuto
               Index = 0
+            end          
+            item
+              Control = TIGrid2
+              WrapAfter = waAuto
+              Index = 1
             end>
           FlowLayout = tlTop
           FlowStyle = fsRightLeftBottomTop
@@ -8234,6 +8239,20 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 0
           end
+          object TIGrid2: TTIGrid
+            Left = 16
+            Height = 155
+            Top = 32
+            Width = 863
+            Anchors = []
+            Color = clWindow
+            Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor, goSmoothScroll]
+            ParentColor = False
+            TabOrder = 1
+            TIOptions = []
+            Visible = False
+          end
         end
         object PairSplitter1: TPairSplitter
           Cursor = crVSplit
@@ -8259,8 +8278,8 @@ object resultForm1: TresultForm1
               Width = 1029
               Align = alClient
               Caption = 'Panel4'
-              ClientHeight = 129
-              ClientWidth = 1025
+              ClientHeight = 133
+              ClientWidth = 1029
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -8323,20 +8342,21 @@ object resultForm1: TresultForm1
                 Top = 1
                 Width = 151
                 Align = alLeft
-                ClientHeight = 127
-                ClientWidth = 147
+                ClientHeight = 131
+                ClientWidth = 151
                 ParentFont = False
                 TabOrder = 1
                 object Label75: TLabel
                   Left = 14
                   Height = 121
+                  Hint = 'Dependecies for Installation only.'#10'There are no dependecies for unistall.'
                   Top = 5
                   Width = 132
                   Align = alClient
                   Anchors = [akLeft, akBottom]
                   BorderSpacing.Left = 9
                   BorderSpacing.Around = 4
-                  Caption = 'Dependencies'
+                  Caption = 'Dependencies'#10#10'(for installation)'
                   Font.Height = -15
                   ParentColor = False
                   ParentFont = False
@@ -8532,8 +8552,8 @@ object resultForm1: TresultForm1
               Width = 1029
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 163
-              ClientWidth = 1025
+              ClientHeight = 167
+              ClientWidth = 1029
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
@@ -10165,6 +10185,17 @@ object resultForm1: TresultForm1
     Width = 1046
     Panels = <>
     ParentFont = False
+  end
+  object TIGrid1: TTIGrid
+    Left = 140
+    Height = 95
+    Top = 634
+    Width = 190
+    Color = clWindow
+    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
+    ParentColor = False
+    TabOrder = 3
+    TIOptions = []
   end
   object OpenDialog1: TOpenDialog
     OnClose = OpenDialog1Close
