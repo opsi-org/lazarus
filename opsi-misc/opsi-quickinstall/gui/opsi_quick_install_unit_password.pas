@@ -158,8 +158,13 @@ procedure TPassword.addRepo;
 var
   url: string;
   MyRepo: TLinuxRepository;
+  RemoveCommand: TRunCommandElevated;
 begin
-  // create repository
+  // first remove opsi.list to have a cleared opsi repository list
+  RemoveCommand := TRunCommandElevated.Create;
+  RemoveCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  RemoveCommand.Free;
+  // create repository:
   MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL

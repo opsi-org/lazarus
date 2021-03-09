@@ -271,6 +271,9 @@ type
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
+    InstallOpsiCommand := TRunCommandElevated.Create('', False);
+    // first remove opsi.list to have a cleared opsi repository list
+    InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
     // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
