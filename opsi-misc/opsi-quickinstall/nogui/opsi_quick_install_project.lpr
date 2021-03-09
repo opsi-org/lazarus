@@ -169,10 +169,10 @@ type
   procedure TQuickInstall.WriteHelp;
   begin
     { add your help code here }
-    writeln('-d [-default]    : Use the default values for the opsi-server installation.');
-    writeln('-f [-file]       : Use the values from a file for the opsi-server installation.');
-    writeln('-h [-help]       : See this information.');
-    writeln('-n [-nogui]      : ...');
+    writeln('-d [-default]     : Use the default values for the opsi-server installation and immmediately start the installation.');
+    writeln('-f [-file] <file> : Use the values from a file for the opsi-server installation and immmediately start the installation.');
+    writeln('-h [-help]        : See this information.');
+    writeln('-n [-nogui]       : Start a setup program, in which you can set the values for the installation seperately');
   end;
 
   // set default values for all variables that are required for the installation
@@ -282,9 +282,6 @@ type
     else
       url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
 
-    writeln(url);
-    writeln(distroName);
-
     // !following lines need an existing LogDatei
     if distroName = 'openSUSE' then
     begin
@@ -295,22 +292,21 @@ type
       MyRepo.Add(url);
 
     // install opsi:
-    InstallOpsiCommand := TRunCommandElevated.Create('', False);
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
-    Output := InstallOpsiCommand.Run(shellCommand + 'update');
-    //writeln(Output);
+    InstallOpsiCommand.Run(shellCommand + 'update');
     writeln(rsInstall + 'opsi-script...');
-    Output := InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
-    Output := InstallOpsiCommand.Run('opsi-script -silent -version');
+    InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
+    //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
+    // remove the QuickInstall repo entry because it was only for installing opsi-script
+    InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
-    // "opsi-script -batch" for installation with gui window, ...
-    // ..."opsi-script-nogui -batch" for without?
-    // new: opsi-script-gui -silent for nogui
-    Output := InstallOpsiCommand.Run('opsi-script -silent -batch ' +
-      DirClientData +
-      '-logfile setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
+    // "opsi-script -batch" for installation with gui window,
+    // "opsi-script-nogui -batch" for without?
+    // new: opsi-script -silent for nogui
+    InstallOpsiCommand.Run('opsi-script -silent -batch ' + DirClientData +
+      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');

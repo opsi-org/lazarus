@@ -93,7 +93,9 @@ procedure TMyThread.installOpsi;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update');
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script');
-  FInstallRunCommand.Run('../common/opsi-script-gui -batch ' +
+  // remove the QuickInstall repo entry because it was only for installing opsi-script
+  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  FInstallRunCommand.Run('opsi-script-gui -batch ' +
     FClientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
   FInstallRunCommand.Free;
 end;
@@ -172,8 +174,6 @@ begin
     url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
   else
     url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
-  //Delete(url, Pos('s', url), 1);
-  //Delete(url, url.Length, 1);
   MyRepo.Add(url);
   MyRepo.Free;
 end;
