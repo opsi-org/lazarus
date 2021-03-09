@@ -76,9 +76,16 @@ type
     property URL: string read FURL;
   end;
 
+function stringToOpsiBranch(branch: string): TOpsiBranch;
 
 implementation
 
+function stringToOpsiBranch(branch: string): TOpsiBranch;
+begin
+   if branch = 'experimental' then Result := experimental
+   else if branch = 'testing' then Result := testing
+   else if branch = 'stable' then Result := stable
+end;
 
 constructor TLinuxRepository.Create(Distribution: TDistribution;
   Password: string; Sudo: boolean = False);
