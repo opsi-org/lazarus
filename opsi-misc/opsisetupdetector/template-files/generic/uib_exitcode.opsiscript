@@ -682,3 +682,36 @@ defFunc isGenericExitcodeFatal($exitcode$ : string, $allowRebootRequest$ : strin
 		EndCase
 	EndSwitch
 endFunc
+
+defFunc boolToGenericExitcode($BoolString$ : string) : string
+  ;@author          detlef oertel
+  ;@date            08.3.2021
+  ;@Description     Converts the given $BoolString$ as Generic Exitcode:
+  ;@Description     "True": returns "0"
+  ;@Description     "False": returns "1"
+  ;@Description     is used to decide if a 'ExitWindows /Reboot' is called or not
+  ;@Returns         Returns string "0" or "1"
+  ;@OnError         Returns string "1"
+  ;@References      
+  ;@Links           
+  ;@Links           
+  ;@Requires
+  ;@ParamDesc_$BoolString$               boolean string given 
+  ;@ParamAdvice_$BoolString$             if not "true" default result is "1"
+
+	set $result$ = '1'
+
+	Switch $BoolString$
+		Case "true"
+			set $result$ = '0'
+		EndCase
+		Case "false"
+			set $result$ = '1'
+		EndCase
+		DefaultCase
+			logError "Given boolean string = "+$BoolString$+" is not a valid boolean"
+			set $result$ = '1'
+		EndCase
+	EndSwitch
+endFunc
+

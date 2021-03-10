@@ -316,7 +316,7 @@ type
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
     TIGrid1: TTIGrid;
-    TIGrid2: TTIGrid;
+    TIGridDep: TTIGrid;
     TIImageIconPreview: TTIImage;
     TILabelDirSelIcon: TTILabel;
     TILabelInstaller2: TTILabel;
@@ -415,6 +415,7 @@ type
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdVersion3Change(Sender: TObject);
     procedure TIEditProdVersion3Exit(Sender: TObject);
+    procedure TIGridDepPropertiesCreated(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
     procedure TIS1UrlMouseEnter(Sender: TObject);
@@ -586,10 +587,12 @@ resourcestring
     Lineending + 'For some data you may have to install the program once ' +
     Lineending + 'and than get the needed data from the completed installation.';
   rscheckEntriesRememberMe = 'Do not show this Message again';
-  rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' + LineEnding +
-                 'Firststep is Dialog to select a Directory where to find the installer ' + LineEnding +
-                 'or the "installer.app" Directory' + LineEnding +
-                 'Second step (if needed) is a Dialog to select a installer file';
+  rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' +
+    LineEnding +
+    'Firststep is Dialog to select a Directory where to find the installer ' +
+    LineEnding + 'or the "installer.app" Directory' +
+    LineEnding +
+    'Second step (if needed) is a Dialog to select a installer file';
   rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
   rsMacSelectionRememberMe = 'Do not show this Message again';
 
@@ -719,7 +722,7 @@ begin
       // definition of class TProductData in unit osdbasedata line ~256
       TILabelDirSelIcon.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
         'productImageFullFileName');
-      TIGrid2.ListObject := dependencies;
+      TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -1171,6 +1174,8 @@ begin
   begin
     initaktproduct;
     aktProduct.readProjectFile(OpenDialog1.FileName);
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.Update;
     LogDatei.log('Read Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
@@ -1807,7 +1812,8 @@ end;
 
 procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
 var
-  mydep: TStringList;
+  //mydep: TStringList;
+  mydep: TPDependency;
   index: integer;
 begin
   FNewDepDlg.ComboBoxActState.Text := '';
@@ -1816,6 +1822,45 @@ begin
   procmess;
   if FNewDepDlg.ShowModal = mrOk then
   begin
+    //add
+    mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
+    mydep.init;
+    // required productId
+    mydep.requProductId := FNewDepDlg.Editproductid.Text;
+    // required State & action
+    if FNewDepDlg.RadioButtonAction.Checked then
+    begin
+      mydep.requState := noState;
+      //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+      case FNewDepDlg.ComboBoxActState.Text of
+        '': mydep.requAction := noRequest;
+        'setup': mydep.requAction := setup;
+        'uninstall': mydep.requAction := uninstall;
+        'update': mydep.requAction := TPActionRequest.update;
+      end;
+    end
+    else
+    begin
+      //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+      case FNewDepDlg.ComboBoxActState.Text of
+        '': mydep.requState := noState;
+        'installed': mydep.requState := installed;
+        'not installed': mydep.requState := not_installed;
+        'unknown': mydep.requState := unknown;
+      end;
+      mydep.requAction := noRequest;
+    end;
+
+    // requirement Type
+    case FNewDepDlg.ComboBoxReqType.Text of
+      '': mydep.RequType := doNotMatter;
+      'before': mydep.RequType := before;
+      'after': mydep.RequType := after;
+    end;
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    (*
     // add
     index := StringGridDep.RowCount;
     Inc(index);
@@ -1840,6 +1885,9 @@ begin
     procmess;
     FreeAndNil(mydep);
     fetchDepPropFromForm;
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.Update;
+    *)
   end
   else
   begin
@@ -1931,9 +1979,22 @@ begin
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
+var
+  index: integer;
 begin
-  StringGridDep.DeleteRow(StringGridDep.Row);
-  fetchDepPropFromForm;
+  //StringGridDep.DeleteRow(StringGridDep.Row);
+  if TIGridDep.SelectedRangeCount > 0 then
+  begin
+    index := TIGridDep.SelectedRange[0].Top;
+    aktProduct.dependencies.Delete(index - 1);
+    //fetchDepPropFromForm;
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+  end
+  else
+    // nothing yet
+  ;
 end;
 
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
@@ -1946,30 +2007,77 @@ procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
 var
   //mydep: TStringList;
   y: integer;
+  mydep: TPDependency;
+  tmpstr: string;
+
   //aPoint: TPoint;
 begin
-  y := StringGridDep.Row;
-  if y > 0 then
+  if TIGridDep.SelectedRangeCount > 0 then
   begin
-    FNewDepDlg.Editproductid.Text := StringGridDep.Cells[1, y];
-    if StringGridDep.Cells[2, y] = '' then
+    y := TIGridDep.SelectedRange[0].Top - 1;
+    if y > -1 then
     begin
-      FNewDepDlg.RadioButtonState.Checked := False;
-      FNewDepDlg.RadioButtonAction.Checked := True;
-      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[3, y];
-    end
-    else
-    begin
-      FNewDepDlg.RadioButtonState.Checked := True;
-      FNewDepDlg.RadioButtonAction.Checked := False;
-      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[2, y];
-    end;
-    FNewDepDlg.RadioButtonActionChange(Sender);
-    procmess;
+      mydep := TPDependency(aktProduct.dependencies.Items[y]);
+      FNewDepDlg.Editproductid.Text := mydep.requProductId;
+      if mydep.requState = noState then
+      begin
+        FNewDepDlg.RadioButtonState.Checked := False;
+        FNewDepDlg.RadioButtonAction.Checked := True;
+        tmpstr := GetEnumName(TypeInfo(TPActionRequest), Ord(mydep.requAction));
+        FNewDepDlg.ComboBoxActState.Text := tmpstr;
+      end
+      else
+      begin
+        FNewDepDlg.RadioButtonState.Checked := True;
+        FNewDepDlg.RadioButtonAction.Checked := False;
+        tmpstr := GetEnumName(TypeInfo(TPInstallationState), Ord(mydep.requState));
+        FNewDepDlg.ComboBoxActState.Text := tmpstr;
+      end;
+      FNewDepDlg.RadioButtonActionChange(Sender);
+      procmess;
 
-    FNewDepDlg.ComboBoxReqType.Text := StringGridDep.Cells[4, y];
-    if FNewDepDlg.ShowModal = mrOk then
-    begin
+      tmpstr := GetEnumName(TypeInfo(TPDtype), Ord(mydep.RequType));
+      FNewDepDlg.ComboBoxReqType.Text := tmpstr;
+      FNewDepDlg.ComboBoxReqType.Refresh;
+      procmess;
+      if FNewDepDlg.ShowModal = mrOk then
+      begin
+        // required productId
+        mydep.requProductId := FNewDepDlg.Editproductid.Text;
+        // required State & action
+        if FNewDepDlg.RadioButtonAction.Checked then
+        begin
+          mydep.requState := noState;
+          //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+          case FNewDepDlg.ComboBoxActState.Text of
+            '': mydep.requAction := noRequest;
+            'setup': mydep.requAction := setup;
+            'uninstall': mydep.requAction := uninstall;
+            'update': mydep.requAction := TPActionRequest.update;
+          end;
+        end
+        else
+        begin
+          //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+          case FNewDepDlg.ComboBoxActState.Text of
+            '': mydep.requState := noState;
+            'installed': mydep.requState := installed;
+            'not installed': mydep.requState := not_installed;
+            'unknown': mydep.requState := unknown;
+          end;
+          mydep.requAction := noRequest;
+        end;
+
+        // requirement Type
+        case FNewDepDlg.ComboBoxReqType.Text of
+          '': mydep.RequType := doNotMatter;
+          'before': mydep.RequType := before;
+          'after': mydep.RequType := after;
+        end;
+        TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+        TIGridDep.ReloadTIList;
+        TIGridDep.Update;
+      (*
       // modify
       StringGridDep.Cells[1, y] := FNewDepDlg.Editproductid.Text;
       if FNewDepDlg.RadioButtonAction.Checked then
@@ -1984,10 +2092,14 @@ begin
       end;
       StringGridDep.Cells[4, y] := FNewDepDlg.ComboBoxReqType.Text;
       fetchDepPropFromForm;
-    end
-    else
-    begin
-      // cancel add
+      TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+      TIGridDep.Update;
+      *)
+      end
+      else
+      begin
+        // cancel add
+      end;
     end;
   end
   else
@@ -2253,6 +2365,7 @@ var
   myprop: TPProperty;
   tmpstr: string;
 begin
+  (*
   //dependencies
   aktProduct.dependencies.Clear;
   for i := 1 to StringGridDep.RowCount - 1 do
@@ -2279,6 +2392,8 @@ begin
       'after': mydep.RequType := after;
     end;
   end;
+  TIGridDep.Update;
+  *)
 
   //properties
   aktProduct.properties.Clear;
@@ -2333,6 +2448,7 @@ begin
     PanelProcess.Visible := True;
     procmess;
     fetchDepPropFromForm;
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     procmess;
     createProductStructure;
     procmess;
@@ -3242,13 +3358,13 @@ var
 begin
   if myconfiguration.Show2StepMacSeletionWarn then
   begin
-  // https://specials.rejbrand.se/TTaskDialog/
-  with TTaskDialog.Create(self) do
-    try
-      Title := rsMac3stepSelectionTitle;
-      Caption := 'opsi-setup-detector';
-      Text := rsMac3stepSelectionText;
-      CommonButtons := [tcbOk];
+    // https://specials.rejbrand.se/TTaskDialog/
+    with TTaskDialog.Create(self) do
+      try
+        Title := rsMac3stepSelectionTitle;
+        Caption := 'opsi-setup-detector';
+        Text := rsMac3stepSelectionText;
+        CommonButtons := [tcbOk];
         MainIcon := tdiInformation;
         VerificationText := rsMacSelectionRememberMe;
         Execute;
@@ -3300,8 +3416,7 @@ begin
   templatePath := resourcedir + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
-    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim +
-      '../Resources';
+    resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   filename := resourcedir + PathDelim + 'template-files' + PathDelim +
     'images' + PathDelim + 'template.png';
@@ -3316,24 +3431,24 @@ begin
     else
       LogDatei.log('Could not find template.png ', LLError);
   end;
-  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
-    PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateWin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
-    PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
   BtATwonalyzeAndCreate.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
-    PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateLin.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
-    PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMac.Glyph.Assign(tmpimage.Bitmap);
 
-  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' +
-    PathDelim + 'analyzepack4.xpm');
+  tmpimage.LoadFromFile(resourcedir + PathDelim + 'images' + PathDelim +
+    'analyzepack4.xpm');
   BtSingleAnalyzeAndCreateMulti.Glyph.Assign(tmpimage.Bitmap);
 
   FreeAndNil(tmpimage);
@@ -3473,6 +3588,11 @@ begin
 end;
 
 procedure TResultform1.TIEditProdVersion3Exit(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.TIGridDepPropertiesCreated(Sender: TObject);
 begin
 
 end;

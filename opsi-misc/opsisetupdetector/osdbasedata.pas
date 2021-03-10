@@ -695,6 +695,7 @@ begin
 end;
 
 // TPDependency **********************************
+
 procedure TPDependency.init;
 begin
   FAction := 'setup';
@@ -703,6 +704,7 @@ begin
   FRequState := noState;
   FRequProductId := '';
 end;
+
 
 // TopsiProduct **********************************
 constructor TopsiProduct.Create;

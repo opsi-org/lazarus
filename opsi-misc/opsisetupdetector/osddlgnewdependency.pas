@@ -77,6 +77,8 @@ begin
     ComboBoxActState.Items.Add('update');
     ComboBoxActState.Items.Add('uninstall');
     ComboBoxActState.Items.Add('once');
+    if ComboBoxActState.Items.IndexOf(ComboBoxActState.Text) < 0 then
+     ComboBoxActState.Text := 'setup';
   end
   else
   begin
@@ -84,6 +86,8 @@ begin
     ComboBoxActState.Items.Add('installed');
     ComboBoxActState.Items.Add('not installed');
     ComboBoxActState.Items.Add('none');
+    if ComboBoxActState.Items.IndexOf(ComboBoxActState.Text) < 0 then
+     ComboBoxActState.Text := 'installed';
   end;
 end;
 

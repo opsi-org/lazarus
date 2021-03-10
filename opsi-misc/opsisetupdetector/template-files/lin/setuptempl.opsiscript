@@ -71,6 +71,7 @@ cleanupPackageSystem()
 ; 
 ; install a package from a existing repo:
 ; set $installSuccess$ = linuxInstallOneOf($ListOfPackageNames$)
+; set $exitcode$ = boolToGenericExitcode($installSuccess$)
 ;
 ; install a deb/rpm file:
 ; Belongs on the distribution. tyr to analyze with opsi-setup-detector
@@ -78,7 +79,6 @@ cleanupPackageSystem()
 cleanupPackageSystem()
 ;----------------------------------------------
 Sub_check_exitcode
-Sub_check_installSuccess
 
 #@postInstallLines*#
 
