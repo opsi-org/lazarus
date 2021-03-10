@@ -31,13 +31,13 @@ type
     procedure FormClose(Sender: TObject);
     // get properties from query and write them to file properties.conf
     procedure prepareInstallation;
-    procedure addRepo;
     // show result of l-opsi-server installation and paths to log files
     // showResult executed in TPassword.FormClose
     procedure showResult;
   private
     // full directory l-opsi-server/CLIENT_DATA
     clientDataDir: string;
+    btnFinishClicked: boolean;
   public
   end;
 
@@ -51,6 +51,7 @@ type
   private
     FInstallRunCommand: TRunCommandElevated;
     FShellCommand, FClientDataDir: string;
+    procedure addRepo;
     procedure installOpsi;
   protected
     procedure Execute; override;
@@ -61,6 +62,7 @@ type
 
 var
   Password: TPassword;
+  MyThread: TMyThread;
 
 implementation
 
@@ -87,6 +89,24 @@ begin
   inherited Create(True);
 end;
 
+procedure TMyThread.addRepo;
+var
+  url: string;
+  MyRepo: TLinuxRepository;
+begin
+  // first remove opsi.list to have a cleared opsi repository list
+  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  // create repository:
+  MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
+    Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
+  // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+  if Data.opsiVersion = 'Opsi 4.1' then
+    url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
+  else
+    url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
+  MyRepo.Add(url);
+  MyRepo.Free;
+end;
 
 // install opsi server with thread (only the time consuming parts of the installation)
 procedure TMyThread.installOpsi;
@@ -95,13 +115,16 @@ begin
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script');
   // remove the QuickInstall repo entry because it was only for installing opsi-script
   FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
-  FInstallRunCommand.Run('opsi-script-gui -batch ' +
-    FClientDataDir + 'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+  FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
+    'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
   FInstallRunCommand.Free;
 end;
 
 procedure TMyThread.Execute;
 begin
+  // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
+  Sleep(100);
+  Synchronize(@addRepo);
   installOpsi;
 end;
 
@@ -111,9 +134,11 @@ end;
 procedure TPassword.prepareInstallation;
 var
   FileText: TStringList;
+  TouchCommand: TRunCommandElevated;
 begin
   // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
   FileText := TStringList.Create;
+  TouchCommand := TRunCommandElevated.Create;
 
   FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
   FileText.Add('backend=' + Data.backend);
@@ -138,44 +163,34 @@ begin
 
   // following equals no-gui WritePropsToFile
   // write in l-opsi-server.conf file:
-  clientDataDir := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
-  FileText.SaveToFile(clientDataDir);
+  clientDataDir := ExtractFilePath(ParamStr(0));
+  if not FileExists(clientDataDir + 'l-opsi-server.conf') then
+  begin
+    TouchCommand.Run('touch ' + clientDataDir + 'l-opsi-server.conf');
+  end;
+  FileText.SaveToFile(clientDataDir + 'l-opsi-server.conf');
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
-  clientDataDir := ExtractFilePath(ParamStr(0));
   Delete(clientDataDir, Length(clientDataDir), 1);
   clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server/CLIENT_DATA/';
+  if not FileExists(clientDataDir + 'properties.conf') then
+  begin
+    TouchCommand.Run('touch ' + clientDataDir + 'properties.conf');
+  end;
   FileText.SaveToFile(clientDataDir + 'properties.conf');
   // Important for getting the result 'failed' in case of a wrong password
   // because in this case the RunCommands below aren't executed and therefore
   // setup.opsiscript, that usually does it, isn't too:
   FileText.Clear;
   FileText.Add('failed');
+  if not FileExists(clientDataDir + 'result.conf') then
+  begin
+    TouchCommand.Run('touch ' + clientDataDir + 'result.conf');
+  end;
   FileText.SaveToFile(clientDataDir + 'result.conf');
 
   FileText.Free;
-end;
-
-procedure TPassword.addRepo;
-var
-  url: string;
-  MyRepo: TLinuxRepository;
-  RemoveCommand: TRunCommandElevated;
-begin
-  // first remove opsi.list to have a cleared opsi repository list
-  RemoveCommand := TRunCommandElevated.Create;
-  RemoveCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
-  RemoveCommand.Free;
-  // create repository:
-  MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
-    Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
-  // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-  if Data.opsiVersion = 'Opsi 4.1' then
-    url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
-  else
-    url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
-  MyRepo.Add(url);
-  MyRepo.Free;
+  TouchCommand.Free;
 end;
 
 // show result of l-opsi-server installation and paths to log files,
@@ -203,6 +218,8 @@ end;
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
+  btnFinishClicked := False;
+
   Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
   Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
   BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
@@ -230,16 +247,16 @@ begin
   if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind <> 'experimental') then
   begin
     ShowMessage('Opsi 4.2 only works on branch "experimental".');
-    Exit;
   end
   else
   begin
+    btnFinishClicked := True;
     prepareInstallation;
-    addRepo;
     // start thread for opsi server installation while showing TWait
-    with TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
-        Data.DistrInfo.GetPackageManagementShellCommand(Data.distroName),
-        clientDataDir) do
+    MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
+      Data.DistrInfo.GetPackageManagementShellCommand(Data.distroName),
+      clientDataDir);
+    with MyThread do
     begin
       // FormClose automatically executed on termination of thread
       OnTerminate := @FormClose;
@@ -271,13 +288,17 @@ end;
 
 procedure TPassword.FormClose(Sender: TObject);
 begin
-  Data.DistrInfo.Free;
-  // show result of the whole installation (from result.conf)
-  showResult;
-
-  // close project
-  Overview.Close;
-  Wait.Close;
+  if btnFinishClicked then
+  begin
+    Data.DistrInfo.Free;
+    // show result of the whole installation (from result.conf)
+    showResult;
+    // close project
+    Overview.Close;
+    Wait.Close;
+  end
+  else
+    Overview.Enabled := True;
 end;
 
 end.
