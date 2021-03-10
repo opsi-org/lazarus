@@ -11,6 +11,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
+  osjson,
   osdanalyzegeneral;
 
 

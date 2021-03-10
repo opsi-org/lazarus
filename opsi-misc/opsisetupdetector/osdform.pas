@@ -315,7 +315,7 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
-    TIGrid1: TTIGrid;
+    TIGridProp: TTIGrid;
     TIGridDep: TTIGrid;
     TIImageIconPreview: TTIImage;
     TILabelDirSelIcon: TTILabel;
@@ -723,6 +723,7 @@ begin
       TILabelDirSelIcon.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
         'productImageFullFileName');
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+      TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -1176,6 +1177,9 @@ begin
     aktProduct.readProjectFile(OpenDialog1.FileName);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
     LogDatei.log('Read Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
@@ -1976,6 +1980,10 @@ begin
   begin
     // cancel add
   end;
+  fetchDepPropFromForm;
+  TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+  TIGridProp.ReloadTIList;
+    TIGridProp.Update;
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
@@ -2024,6 +2032,7 @@ begin
         FNewDepDlg.RadioButtonState.Checked := False;
         FNewDepDlg.RadioButtonAction.Checked := True;
         tmpstr := GetEnumName(TypeInfo(TPActionRequest), Ord(mydep.requAction));
+        if tmpstr  = 'noRequest' then tmpstr := '';
         FNewDepDlg.ComboBoxActState.Text := tmpstr;
       end
       else
@@ -2031,12 +2040,14 @@ begin
         FNewDepDlg.RadioButtonState.Checked := True;
         FNewDepDlg.RadioButtonAction.Checked := False;
         tmpstr := GetEnumName(TypeInfo(TPInstallationState), Ord(mydep.requState));
+        if tmpstr  = 'noState' then tmpstr := '';
         FNewDepDlg.ComboBoxActState.Text := tmpstr;
       end;
       FNewDepDlg.RadioButtonActionChange(Sender);
       procmess;
 
       tmpstr := GetEnumName(TypeInfo(TPDtype), Ord(mydep.RequType));
+      if tmpstr  = 'doNotMatter' then tmpstr := '';
       FNewDepDlg.ComboBoxReqType.Text := tmpstr;
       FNewDepDlg.ComboBoxReqType.Refresh;
       procmess;
@@ -2054,6 +2065,7 @@ begin
             'setup': mydep.requAction := setup;
             'uninstall': mydep.requAction := uninstall;
             'update': mydep.requAction := TPActionRequest.update;
+            'once': mydep.requAction := once;
           end;
         end
         else
@@ -2061,6 +2073,7 @@ begin
           //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
           case FNewDepDlg.ComboBoxActState.Text of
             '': mydep.requState := noState;
+            'none': mydep.requState := noState;
             'installed': mydep.requState := installed;
             'not installed': mydep.requState := not_installed;
             'unknown': mydep.requState := unknown;

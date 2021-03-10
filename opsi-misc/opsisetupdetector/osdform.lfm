@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = -126
+  Left = 617
   Height = 666
-  Top = 263
+  Top = 257
   Width = 1046
   Caption = 'opsi Setup Detector'
   ClientHeight = 638
@@ -8084,6 +8084,11 @@ object resultForm1: TresultForm1
               Control = StringGridDep
               WrapAfter = waAuto
               Index = 1
+            end          
+            item
+              Control = StringGridProp
+              WrapAfter = waAuto
+              Index = 2
             end>
           FlowLayout = tlTop
           FlowStyle = fsRightLeftBottomTop
@@ -8240,10 +8245,10 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object StringGridDep: TStringGrid
-            Left = 319
+            Left = 736
             Height = 121
             Top = 61
-            Width = 555
+            Width = 138
             Align = alLeft
             Anchors = []
             BorderSpacing.Around = 5
@@ -8277,6 +8282,7 @@ object resultForm1: TresultForm1
             ParentFont = False
             RowCount = 1
             TabOrder = 1
+            Visible = False
             ColWidths = (
               65
               110
@@ -8294,6 +8300,89 @@ object resultForm1: TresultForm1
               'required State'
             )
           end
+          object StringGridProp: TStringGrid
+            Left = 68
+            Height = 115
+            Top = 67
+            Width = 658
+            Anchors = []
+            BorderSpacing.Around = 5
+            ColCount = 8
+            Columns = <            
+              item
+                MinSize = 9
+                MaxSize = 190
+                ReadOnly = True
+                Title.Caption = 'PropertyId'
+                Width = 132
+              end            
+              item
+                MinSize = 95
+                MaxSize = 237
+                Title.Caption = 'Description'
+                Width = 190
+              end            
+              item
+                MinSize = 9
+                MaxSize = 379
+                ReadOnly = True
+                Title.MultiLine = True
+                Title.Caption = 'Type'
+                Width = 110
+              end            
+              item
+                MinSize = 9
+                MaxSize = 190
+                ReadOnly = True
+                Title.Caption = 'Multivalue'
+                Width = 66
+              end            
+              item
+                MinSize = 9
+                MaxSize = 190
+                ReadOnly = True
+                Title.Caption = 'Editable'
+                Width = 66
+              end            
+              item
+                MinSize = 9
+                MaxSize = 190
+                ReadOnly = True
+                Title.Caption = 'Possible Values'
+                Width = 142
+              end            
+              item
+                MinSize = 9
+                MaxSize = 190
+                ReadOnly = True
+                Title.Caption = 'Default Values'
+                Width = 142
+              end>
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
+            ParentFont = False
+            RowCount = 1
+            TabOrder = 2
+            Visible = False
+            ColWidths = (
+              65
+              132
+              190
+              110
+              66
+              66
+              142
+              142
+            )
+            Cells = (
+              2
+              0
+              0
+              'Number'
+              3
+              0
+              'required State'
+            )
+          end
         end
         object PairSplitter1: TPairSplitter
           Cursor = crVSplit
@@ -8302,40 +8391,41 @@ object resultForm1: TresultForm1
           Top = 55
           Width = 1029
           Align = alTop
-          Position = 133
+          Position = 128
           SplitterType = pstVertical
           object PairSplitterSide1: TPairSplitterSide
             Cursor = crArrow
             Left = 0
-            Height = 133
+            Height = 128
             Top = 0
             Width = 1029
+            ChildSizing.TopBottomSpacing = 3
             ClientWidth = 1029
-            ClientHeight = 133
+            ClientHeight = 128
             object Panel4: TPanel
               Left = 0
-              Height = 133
-              Top = 0
+              Height = 122
+              Top = 3
               Width = 1029
               Align = alClient
               Caption = 'Panel4'
-              ClientHeight = 133
+              ClientHeight = 122
               ClientWidth = 1029
               ParentFont = False
               TabOrder = 0
               object Panel5: TPanel
                 Left = 1
-                Height = 131
+                Height = 120
                 Top = 1
                 Width = 151
                 Align = alLeft
-                ClientHeight = 131
+                ClientHeight = 120
                 ClientWidth = 151
                 ParentFont = False
                 TabOrder = 0
                 object Label75: TLabel
                   Left = 14
-                  Height = 121
+                  Height = 110
                   Hint = 'Dependecies for Installation only.'#10'There are no dependecies for unistall.'
                   Top = 5
                   Width = 132
@@ -8351,7 +8441,7 @@ object resultForm1: TresultForm1
               end
               object FlowPanel20: TFlowPanel
                 Left = 764
-                Height = 131
+                Height = 120
                 Top = 1
                 Width = 264
                 Align = alRight
@@ -8523,11 +8613,14 @@ object resultForm1: TresultForm1
               end
               object TIGridDep: TTIGrid
                 Left = 152
-                Height = 131
+                Height = 120
                 Top = 1
                 Width = 612
                 AliasPropertyNames.Strings = (
-                  'RequType = Required Mode'
+                  'RequType=Required Mode'
+                  'requProductId=Required Product'
+                  'requAction=Required Action'
+                  'requState=Required Mode'
                 )
                 Align = alClient
                 Anchors = [akLeft]
@@ -8536,6 +8629,12 @@ object resultForm1: TresultForm1
                 Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll]
                 ParentColor = False
+                PropertyOrder.Strings = (
+                  'requProductId'
+                  'requState'
+                  'requAction'
+                  'RequType'
+                )
                 ShowOnlyProperties.Strings = (
                   'requProductId'
                   'requState'
@@ -8557,104 +8656,23 @@ object resultForm1: TresultForm1
           object PairSplitterSide2: TPairSplitterSide
             Cursor = crArrow
             Left = 0
-            Height = 167
-            Top = 138
+            Height = 172
+            Top = 133
             Width = 1029
+            ChildSizing.TopBottomSpacing = 3
             ClientWidth = 1029
-            ClientHeight = 167
+            ClientHeight = 172
             object Panel10: TPanel
               Left = 0
-              Height = 167
-              Top = 0
+              Height = 166
+              Top = 3
               Width = 1029
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 167
+              ClientHeight = 166
               ClientWidth = 1029
               ParentFont = False
               TabOrder = 0
-              object StringGridProp: TStringGrid
-                Left = 6
-                Height = 115
-                Top = 46
-                Width = 1017
-                Align = alClient
-                BorderSpacing.Around = 5
-                ColCount = 8
-                Columns = <                
-                  item
-                    MinSize = 9
-                    MaxSize = 190
-                    ReadOnly = True
-                    Title.Caption = 'PropertyId'
-                    Width = 132
-                  end                
-                  item
-                    MinSize = 95
-                    MaxSize = 237
-                    Title.Caption = 'Description'
-                    Width = 190
-                  end                
-                  item
-                    MinSize = 9
-                    MaxSize = 379
-                    ReadOnly = True
-                    Title.MultiLine = True
-                    Title.Caption = 'Type'
-                    Width = 110
-                  end                
-                  item
-                    MinSize = 9
-                    MaxSize = 190
-                    ReadOnly = True
-                    Title.Caption = 'Multivalue'
-                    Width = 66
-                  end                
-                  item
-                    MinSize = 9
-                    MaxSize = 190
-                    ReadOnly = True
-                    Title.Caption = 'Editable'
-                    Width = 66
-                  end                
-                  item
-                    MinSize = 9
-                    MaxSize = 190
-                    ReadOnly = True
-                    Title.Caption = 'Possible Values'
-                    Width = 142
-                  end                
-                  item
-                    MinSize = 9
-                    MaxSize = 190
-                    ReadOnly = True
-                    Title.Caption = 'Default Values'
-                    Width = 142
-                  end>
-                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
-                ParentFont = False
-                RowCount = 1
-                TabOrder = 0
-                ColWidths = (
-                  65
-                  132
-                  190
-                  110
-                  66
-                  66
-                  142
-                  142
-                )
-                Cells = (
-                  2
-                  0
-                  0
-                  'Number'
-                  3
-                  0
-                  'required State'
-                )
-              end
               object FlowPanel4: TFlowPanel
                 Left = 1
                 Height = 40
@@ -8685,7 +8703,7 @@ object resultForm1: TresultForm1
                 FlowLayout = tlTop
                 FlowStyle = fsLeftRightTopBottom
                 ParentFont = False
-                TabOrder = 1
+                TabOrder = 0
                 object Label85: TLabel
                   Left = 14
                   Height = 22
@@ -8846,6 +8864,58 @@ object resultForm1: TresultForm1
                   ParentFont = False
                   TabOrder = 2
                 end
+              end
+              object TIGridProp: TTIGrid
+                Left = 1
+                Height = 124
+                Top = 41
+                Width = 1027
+                AliasPropertyNames.Strings = (
+                  'Name=PropertyId'
+                  'description=Description'
+                  'ptype=Type'
+                  'multivalue=Multivalue'
+                  'editable=Editable'
+                  'StrvaluesStr=Possible Values'
+                  'StrDefaultStr=Default Values'
+                  'booldefault=Bool Default'
+                  ''
+                )
+                Align = alClient
+                AutoFillColumns = True
+                Color = clWindow
+                Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
+                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll]
+                ParentColor = False
+                PropertyOrder.Strings = (
+                  'Name'
+                  'description'
+                  'ptype'
+                  'multivalue'
+                  'editable'
+                  'StrvaluesStr'
+                  'StrDefaultStr'
+                  'booldefault'
+                )
+                ShowOnlyProperties.Strings = (
+                  'Name'
+                  'description'
+                  'ptype'
+                  'multivalue'
+                  'editable'
+                  'StrvaluesStr'
+                  'StrDefaultStr'
+                  'booldefault'
+                )
+                TabOrder = 1
+                TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
+                ColWidths = (
+                  61
+                  241
+                  241
+                  241
+                  241
+                )
               end
             end
           end
@@ -10202,17 +10272,6 @@ object resultForm1: TresultForm1
     Width = 1046
     Panels = <>
     ParentFont = False
-  end
-  object TIGrid1: TTIGrid
-    Left = 140
-    Height = 95
-    Top = 634
-    Width = 190
-    Color = clWindow
-    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
-    ParentColor = False
-    TabOrder = 3
-    TIOptions = []
   end
   object OpenDialog1: TOpenDialog
     OnClose = OpenDialog1Close

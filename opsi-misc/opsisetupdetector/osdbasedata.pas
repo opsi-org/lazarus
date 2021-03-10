@@ -19,6 +19,7 @@ uses
   fpjson,
   oslog,
   RTTICtrls,
+  osjson,
   lcltranslator;
 
 type
@@ -186,7 +187,7 @@ requirementType: before
 
   TPDtype = (before, after, doNotMatter);
   //['before','after',''];
-  TPActionRequest = (setup, uninstall, update, noRequest);
+  TPActionRequest = (setup, uninstall, update, once, noRequest);
   TPInstallationState = (installed, not_installed, unknown, noState);
 
   TPDependency = class(TCollectionItem)
@@ -238,7 +239,10 @@ default: ["xenial_bionic"]
     Fdescription: string;
     FStrvalues: TStrings;
     FStrDefault: TStrings;
+    FStrvaluesStr : string;
+    FStrDefaultStr : string;
     FBoolDefault: boolean;
+    dummystr : string;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
   protected
@@ -252,7 +256,9 @@ default: ["xenial_bionic"]
     property multivalue: boolean read Fmultivalue write Fmultivalue;
     property editable: boolean read Feditable write Feditable;
     property StrDefault: TStrings read FStrDefault write SetDefaultLines;
-    property Strvalues: TStrings read FStrvalues write FStrvalues;
+    property Strvalues: TStrings read FStrvalues write SetValueLines;
+    property StrDefaultStr: string read FStrDefaultStr write dummystr;
+    property StrvaluesStr: string read FStrvaluesStr write dummystr;
     property boolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
@@ -639,12 +645,16 @@ procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
   if Assigned(AValue) then
   FStrvalues.Assign(AValue);
+  if not stringListToJsonArray(TStringlist(AValue),FStrvaluesStr) then
+   logdatei.log('Could not convert stringlist to json array',LLerror);
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
   if Assigned(AValue) then
   FStrDefault.Assign(AValue);
+  if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
+    logdatei.log('Could not convert stringlist to json array',LLerror);
 end;
 
 function TPProperty.GetDisplayName: string;
