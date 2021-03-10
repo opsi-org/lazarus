@@ -21138,14 +21138,29 @@ begin
                     if found then
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
-                      inclist := TStringList.Create;
-                      inclist.LoadFromFile(ExpandFileName(fullincfilename));
-                      Encoding2use := searchencoding(inclist.Text);
+                      inclist := TXStringList.Create;
+
+                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+                      if lowercase(ParameterEncoding) = lowercase(expr) then
+                      begin
+                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+                        if not isSupportedEncoding(encodingString) then
+                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+                        // unicode fallback to utf8
+                        if lowercase(encodingString)='unicode' then
+                           encodingString := 'utf8';
+                      end;
+
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+
+                      //inclist.LoadFromFile(ExpandFileName(fullincfilename));
+                      //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
                       Script.registerSectionOrigins(inclist, fullincfilename);
                       inclist.Free;
-                      if Encoding2use = '' then
-                        Encoding2use := 'system';
+                      //if Encoding2use = '' then
+                      //  Encoding2use := 'system';
                       linecount := Count;
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
@@ -21155,7 +21170,7 @@ begin
                       begin
                         Inc(k);
                         readln(incfile, incline);
-                        incline := reencode(incline, Encoding2use, usedEncoding);
+                        //incline := reencode(incline, Encoding2use, usedEncoding);
                         for constcounter := 1 to ConstList.Count do
                           if Sektion.replaceInLine(incline,
                             Constlist.Strings[constcounter - 1],
@@ -21172,7 +21187,7 @@ begin
                       closeFile(incfile);
                       //linecount := Count;
                       LogDatei.log('Included (append) file: ' +
-                        fullincfilename + ' with encoding: ' + usedEncoding, LLInfo);
+                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
                     end
                     else
                     begin
