@@ -35,7 +35,7 @@ type
     adminName, adminPassword, ipName, ipNumber: string;
     FileText, PropsFile: TStringList;
     MyRepo: TLinuxRepository;
-    InstallOpsiCommand: TRunCommandElevated;
+    QuickInstallCommand: TRunCommandElevated;
     DirClientData, url, shellCommand, Output: string;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -87,7 +87,7 @@ type
 
   procedure TQuickInstall.DoRun;
   var
-    ErrorMsg, project: string;
+    ErrorMsg: string;
   begin
     // quick check parameters
     ErrorMsg := CheckOptions('hgndf:', 'help gui nogui default file:');
@@ -208,10 +208,14 @@ type
 
   // write properties in properties.conf file
   procedure TQuickInstall.WritePropsToFile;
+  var
+    path: string;
   begin
     LogDatei.log('Entered WritePropsToFile', 0);
     // write file text
     FileText := TStringList.Create;
+    QuickInstallCommand := TRunCommandElevated.Create('', False);
+
     if reboot = rsYes then
       FileText.Add('allow_reboot=true')
     else
@@ -244,8 +248,13 @@ type
     FileText.Add('update_test=false');
 
     // write in l-opsi-server.conf file(for tests):
-    FileText.SaveToFile(ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf');
+    path := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
+    if not FileExists(path) then
+      QuickInstallCommand.Run('touch ' + path);
+    FileText.SaveToFile(path);
     // write in properties.conf file:
+    if not FileExists(DirClientData + 'properties.conf') then
+      QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf');
     FileText.SaveToFile(DirClientData + 'properties.conf');
 
     FileText.Free;
@@ -268,12 +277,13 @@ type
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
+    if not FileExists(DirClientData + 'result.conf') then
+      QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf');
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
-    InstallOpsiCommand := TRunCommandElevated.Create('', False);
     // first remove opsi.list to have a cleared opsi repository list
-    InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
     // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
@@ -294,18 +304,18 @@ type
     // install opsi:
     shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
-    InstallOpsiCommand.Run(shellCommand + 'update');
+    QuickInstallCommand.Run(shellCommand + 'update');
     writeln(rsInstall + 'opsi-script...');
-    InstallOpsiCommand.Run(shellCommand + 'install opsi-script');
+    QuickInstallCommand.Run(shellCommand + 'install opsi-script');
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
     // remove the QuickInstall repo entry because it was only for installing opsi-script
-    InstallOpsiCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window,
     // "opsi-script-nogui -batch" for without?
     // new: opsi-script -silent for nogui
-    InstallOpsiCommand.Run('opsi-script -silent -batch ' + DirClientData +
+    QuickInstallCommand.Run('opsi-script -silent -batch ' + DirClientData +
       'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
 
     // get result from result file and print it
@@ -324,7 +334,7 @@ type
     writeln(rsLog);
     writeln(LogOpsiServer);
 
-    InstallOpsiCommand.Free;
+    QuickInstallCommand.Free;
     MyRepo.Free;
     FileText.Free;
   end;
@@ -1006,12 +1016,9 @@ type
     Counter: integer;
     // list of the asked questions by numbers
     queries: TStringList;
-    validInput, isInputInt: boolean;
   begin
     Counter := 1;
     queries := TStringList.Create;
-    validInput := False;
-    isInputInt := False;
 
     // Overview
     // Print the overview and in 'queries' save the questions that were asked
