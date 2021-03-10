@@ -459,7 +459,7 @@ type
   {$ENDIF WINDOWS}
 
     (* Sektion erstellen *)
-    procedure loadValidLinesFromFile(FName: string; var Section: TWorkSection);
+    procedure loadValidLinesFromFile(FName: string; encodingString : string; var Section: TWorkSection);
     //procedure getLinesFromUnicodeFile (Const FName : String; var Section : TWorkSection);
     procedure ApplyTextVariables(var Sektion: TXStringList; CStringEscaping: boolean);
     procedure ApplyTextConstants(var Sektion: TXStringList; CStringEscaping: boolean);
@@ -1928,19 +1928,21 @@ end;
 
 
 
-procedure TuibInstScript.LoadValidLinesFromFile(FName: string;
+procedure TuibInstScript.LoadValidLinesFromFile(FName: string; encodingString : string;
   var Section: TWorkSection);
 var
   OriginalList: TXStringList;
   s: string;
   i: integer;
-  Encoding2use, usedEncoding: string;
+  //Encoding2use, usedEncoding: string;
   statkind: TStatement;
   //secname, remaining : string;
   //secindex : integer;
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
+  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+  (*
   OriginalList.LoadFromFile(ExpandFileName(FName));
   Encoding2use := searchencoding(OriginalList.Text);
   if Encoding2use = '' then
@@ -1949,7 +1951,8 @@ begin
     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
   usedEncoding := Encoding2use;
   //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
-  logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + usedEncoding, LLDebug);
+  *)
+  logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + encodingString, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
     s := trim(OriginalList.Strings[i - 1]);
@@ -19548,6 +19551,8 @@ var
   linecounter: integer;
   numberOfSectionLines: integer;
 
+  encodingString : string ='';
+
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
     Remaining: string): TSectionResult;
@@ -20265,15 +20270,27 @@ begin
                 else
                 begin
                   if CheckFileExists(fullfilename, ErrorInfo) then
-                  begin
-                    try
-                      LoadValidLinesFromFile(fullfilename, ArbeitsSektion);
+                   begin
+                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+                      if lowercase(ParameterEncoding) = lowercase(expr) then
+                      begin
+                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+                        if not isSupportedEncoding(encodingString) then
+                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+                        // unicode fallback to utf8
+                        if lowercase(encodingString)='unicode' then
+                           encodingString := 'utf8';
 
-                      ArbeitsSektion.StartLineNo := 1;
-                    except
-                      Logdatei.log('File "' + fullfilename +
-                        '" cannot be read', LLError);
-                    end;
+                        try
+                          LoadValidLinesFromFile(fullfilename, encodingString, ArbeitsSektion);
+
+                          ArbeitsSektion.StartLineNo := 1;
+                        except
+                          Logdatei.log('File "' + fullfilename +
+                            '" cannot be read', LLError);
+                        end;
+                      end;
                   end
                   else
                   begin
