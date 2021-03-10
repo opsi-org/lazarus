@@ -20705,15 +20705,29 @@ begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
-                      inclist := TStringList.Create;
-                      inclist.LoadFromFile(ExpandFileName(fullincfilename));
-                      Encoding2use := searchencoding(inclist.Text);
+                      inclist := TXStringList.Create;
+
+                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+                      if lowercase(ParameterEncoding) = lowercase(expr) then
+                      begin
+                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+                        if not isSupportedEncoding(encodingString) then
+                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+                        // unicode fallback to utf8
+                        if lowercase(encodingString)='unicode' then
+                           encodingString := 'utf8';
+                      end;
+
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      //inclist.LoadFromFile(ExpandFileName(fullincfilename));
+                      //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
                       inclist.Free;
-                      if Encoding2use = '' then
-                        Encoding2use := 'system';
+                      //if Encoding2use = '' then
+                      //  Encoding2use := 'system';
                       LogDatei.log_prog('Will Include : ' +
-                        incfilename + ' with encoding: ' + Encoding2use, LLDebug);
+                        incfilename + ' with encoding: ' + encodingString, LLDebug);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -20726,7 +20740,7 @@ begin
                         readln(incfile, incline);
                         LogDatei.log_prog(
                           'Found line in lib file (raw): ' + incline, LLDebug3);
-                        incline := reencode(incline, Encoding2use, usedEncoding);
+                        //incline := reencode(incline, Encoding2use, usedEncoding);
                         LogDatei.log_prog(
                           'Found line in lib file (reencoded): ' + incline, LLDebug2);
                         for constcounter := 1 to ConstList.Count do
