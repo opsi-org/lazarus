@@ -19517,7 +19517,7 @@ var
   incfilename, fullincfilename, testincfilename, incline, myline, replacedline: string;
   //remaining, errorinfo, expr , numberString : string;
   incfile: TextFile;
-  inclist: TStringList;
+  inclist: TXStringList;
   found: boolean;
   //, doincludes, evaluated : boolean;
   loopstart, loopstop: integer;
@@ -20967,16 +20967,31 @@ begin
                     if found then
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
-                      inclist := TStringList.Create;
-                      inclist.LoadFromFile(ExpandFileName(fullincfilename));
-                      Encoding2use := searchencoding(inclist.Text);
+                      inclist := TXStringList.Create;
+
+                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+                      if lowercase(ParameterEncoding) = lowercase(expr) then
+                      begin
+                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+                        if not isSupportedEncoding(encodingString) then
+                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+                        // unicode fallback to utf8
+                        if lowercase(encodingString)='unicode' then
+                           encodingString := 'utf8';
+                      end;
+
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+
+                      //inclist.LoadFromFile(ExpandFileName(fullincfilename));
+                      //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
                       Script.registerSectionOrigins(inclist, fullincfilename);
                       inclist.Free;
-                      if Encoding2use = '' then
-                        Encoding2use := 'system';
+                      //if Encoding2use = '' then
+                      //  Encoding2use := 'system';
                       LogDatei.log('Will Include : ' + incfilename +
-                        ' with encoding: ' + Encoding2use, LLDebug2);
+                        ' with encoding: ' + encodingString, LLDebug2);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -20987,9 +21002,9 @@ begin
                         readln(incfile, incline);
                         LogDatei.log_prog(
                           'Will Include line (raw): ' + incline, LLDebug3);
-                        incline := reencode(incline, Encoding2use, usedEncoding);
-                        LogDatei.log_prog(
-                          'Will Include line (reencoded): ' + incline, LLDebug3);
+                        //incline := reencode(incline, Encoding2use, usedEncoding);
+                        //LogDatei.log_prog(
+                        //  'Will Include line (reencoded): ' + incline, LLDebug3);
                         for constcounter := 1 to ConstList.Count do
                           if Sektion.replaceInLine(incline,
                             Constlist.Strings[constcounter - 1],
@@ -21016,7 +21031,7 @@ begin
                       closeFile(incfile);
                       linecount := Count;
                       LogDatei.log('Included (insert) file: ' +
-                        fullincfilename + ' with encoding: ' + usedEncoding, LLInfo);
+                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
                     end
                     else
                     begin
