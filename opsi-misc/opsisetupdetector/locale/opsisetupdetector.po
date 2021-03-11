@@ -1225,61 +1225,6 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#: tresultform1.stringgriddep.columns[0].title.caption
-msgctxt "tresultform1.stringgriddep.columns[0].title.caption"
-msgid "Required ProductId"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[1].title.caption
-msgctxt "tresultform1.stringgriddep.columns[1].title.caption"
-msgid "Required State"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[2].title.caption
-msgctxt "tresultform1.stringgriddep.columns[2].title.caption"
-msgid "Required Action"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[3].title.caption
-msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
-msgid "Required Mode"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[0].title.caption
-msgctxt "tresultform1.stringgridprop.columns[0].title.caption"
-msgid "PropertyId"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[1].title.caption
-msgctxt "tresultform1.stringgridprop.columns[1].title.caption"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[2].title.caption
-msgctxt "tresultform1.stringgridprop.columns[2].title.caption"
-msgid "Type"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[3].title.caption
-msgctxt "tresultform1.stringgridprop.columns[3].title.caption"
-msgid "Multivalue"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[4].title.caption
-msgctxt "tresultform1.stringgridprop.columns[4].title.caption"
-msgid "Editable"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[5].title.caption
-msgctxt "tresultform1.stringgridprop.columns[5].title.caption"
-msgid "Possible Values"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[6].title.caption
-msgctxt "tresultform1.stringgridprop.columns[6].title.caption"
-msgid "Default Values"
-msgstr ""
-
 #: tresultform1.tabsheetanalyze.caption
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"

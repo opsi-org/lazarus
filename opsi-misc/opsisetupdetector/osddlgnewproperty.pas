@@ -102,6 +102,7 @@ begin
   RadioButtonPropStringChange(self);
   CheckBoxPropMultiValChange(self);
   RadioButtonPropBoolChange(self);
+  ListBoxPropDefVal.Selected[1] := True;
 end;
 
 procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);
@@ -112,6 +113,8 @@ begin
     ListBoxPropPosVal.Items.Clear;
     ListBoxPropDefVal.Items.Clear;
     PanelPropPosVal.Enabled := True;
+    //ListBoxPropDefVal.MultiSelect := true;
+    //ListBoxPropDefVal.ExtendedSelect:= true;
   end
   else
   begin
@@ -126,7 +129,8 @@ begin
     ListBoxPropDefVal.Items.Add('True');
     ListBoxPropDefVal.Items.Add('False');
     ListBoxPropDefVal.MultiSelect := False;
-    ListBoxPropDefVal.Selected[0] := True;
+    ListBoxPropDefVal.ExtendedSelect:= False;
+    //ListBoxPropDefVal.Selected[1] := True;
   end;
 end;
 
@@ -135,12 +139,18 @@ begin
   if CheckBoxPropMultiVal.Checked then
   begin
     if RadioButtonPropString.Checked then
+    begin
       ListBoxPropDefVal.MultiSelect := True;
+      ListBoxPropDefVal.ExtendedSelect:= True;
+    end;
   end
   else
   begin
     if RadioButtonPropString.Checked then
+    begin
       ListBoxPropDefVal.MultiSelect := False;
+      ListBoxPropDefVal.ExtendedSelect:= False;
+    end;
   end;
 
 end;
@@ -159,14 +169,17 @@ begin
     valid := False;
   end;
 
-  index := resultform1.StringGridProp.RowCount;
+  //index := resultform1.StringGridProp.RowCount;
   tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
   // properties are always lowercase
+  (*
   FNewPropDlg.EditPropName.Text := tmpstr;
   exists := False;
   for i := 0 to index - 1 do
     if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
       exists := True;
+  *)
+  exists := aktProduct.properties.propExists(tmpstr);
   if exists then
   begin
     MessageDlg('opsi-setup-detector: Property Editor: Error',

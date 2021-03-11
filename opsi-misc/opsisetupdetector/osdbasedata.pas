@@ -198,11 +198,11 @@ requirementType: before
     FRequState: TPInstallationState;
     FRequType: TPDtype;
   published
-    property RequType: TPDtype read FRequType write FRequType;
+    property Required_Type: TPDtype read FRequType write FRequType;
     property action: string read FAction write FAction;
-    property requProductId: string read FRequProductId write FRequProductId;
-    property requState: TPInstallationState read FRequState write FRequState;
-    property requAction: TPActionRequest read FRequAction write FRequAction;
+    property Required_ProductId: string read FRequProductId write FRequProductId;
+    property Required_State: TPInstallationState read FRequState write FRequState;
+    property Required_Action: TPActionRequest read FRequAction write FRequAction;
     procedure init;
   public
     { public declarations }
@@ -233,7 +233,7 @@ default: ["xenial_bionic"]
   TPProperty = class(TCollectionItem)
   private
     Ftype: TPPtype;
-    Fname: string;
+    Fpname: string;
     Fmultivalue: boolean;
     Feditable: boolean;
     Fdescription: string;
@@ -243,23 +243,23 @@ default: ["xenial_bionic"]
     FStrDefaultStr : string;
     FBoolDefault: boolean;
     dummystr : string;
-    procedure SetValueLines(const AValue: TStrings);
-    procedure SetDefaultLines(const AValue: TStrings);
   protected
-    function GetDisplayName: string; override;
+   // function GetDisplayName: string; override;
     // public
     //     procedure Assign(Source: TPersistent); override;
   published
-    property ptype: TPPtype read Ftype write Ftype;
-    property Name: string read Fname write Fname;
-    property description: string read Fdescription write Fdescription;
-    property multivalue: boolean read Fmultivalue write Fmultivalue;
-    property editable: boolean read Feditable write Feditable;
+    procedure SetValueLines(const AValue: TStrings);
+    procedure SetDefaultLines(const AValue: TStrings);
+    property Property_Type: TPPtype read Ftype write Ftype;
+    property Property_Name: string read Fpname write Fpname;
+    property Description: string read Fdescription write Fdescription;
+    property Multivalue: boolean read Fmultivalue write Fmultivalue;
+    property Editable: boolean read Feditable write Feditable;
     property StrDefault: TStrings read FStrDefault write SetDefaultLines;
     property Strvalues: TStrings read FStrvalues write SetValueLines;
-    property StrDefaultStr: string read FStrDefaultStr write dummystr;
-    property StrvaluesStr: string read FStrvaluesStr write dummystr;
-    property boolDefault: boolean read FBoolDefault write FBoolDefault;
+    property Default_Values: string read FStrDefaultStr write dummystr;
+    property Possible_Values: string read FStrvaluesStr write dummystr;
+    property BoolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
     { public declarations }
@@ -280,6 +280,7 @@ default: ["xenial_bionic"]
     function Add: TPProperty;
     function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
+    function propExists(propname : string) : boolean;
   end;
 
 
@@ -432,6 +433,7 @@ function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
 procedure initaktproduct;
+procedure makeProperties;
 procedure freebasedata;
 
 const
@@ -625,6 +627,8 @@ end;
 
 procedure TPProperty.init;
 begin
+  Fpname:= '';
+  Fdescription:='';
   FStrvalues := TStringList.Create;
   FStrdefault := TStringList.Create;
   Ftype := bool;
@@ -644,7 +648,8 @@ end;
 procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
   if Assigned(AValue) then
-  FStrvalues.Assign(AValue);
+  //FStrvalues.Assign(AValue);
+    FStrvalues.Text:= AValue.Text;
   if not stringListToJsonArray(TStringlist(AValue),FStrvaluesStr) then
    logdatei.log('Could not convert stringlist to json array',LLerror);
 end;
@@ -652,15 +657,18 @@ end;
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
   if Assigned(AValue) then
-  FStrDefault.Assign(AValue);
+  //FStrDefault.Assign(AValue);
+   FStrDefault.Text:= AValue.Text;
   if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
     logdatei.log('Could not convert stringlist to json array',LLerror);
 end;
 
+(*
 function TPProperty.GetDisplayName: string;
 begin
-  Result := Fname;
+  Result := Fpname;
 end;
+*)
 
 { TPProperties }
 
@@ -703,6 +711,157 @@ function TPProperties.Add: TPProperty;
 begin
   Result := inherited Add as TPProperty;
 end;
+
+function TPProperties.propExists(propname : string) : boolean;
+var
+  index ,i : integer;
+  tmpstr : string;
+begin
+      index := Count;
+    tmpstr := lowercase(propname);
+    propExists := False;
+    for i := 0 to index - 1 do
+      if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
+        propExists := True;
+end;
+
+procedure makeProperties;
+var
+  //myprop: TStringList;
+  myprop: TPProperty;
+  index, i: integer;
+  propexists: boolean;
+  tmpstrlist: TStringList;
+begin
+  (*
+  // clear existing props in StringGridProp
+  StringGridProp.Clean([gzNormal, gzFixedRows]);
+  StringGridProp.RowCount := 1;
+
+  if myconfiguration.UsePropDesktopicon and
+    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.InsertColRow(false,index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('DesktopIcon');
+    myprop.Add('Soll es ein Desktop Icon geben ?');
+    myprop.Add('bool');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('False');      //default values
+    //StringGridProp.InsertRowWithValues(index,myprop);
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].SetStrings(myprop);
+    myprop.Free;
+    *)
+
+  propexists := aktProduct.properties.propExists('DesktopIcon');
+  if myconfiguration.UsePropDesktopicon and not propexists then
+  begin
+
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('DesktopIcon');
+    myprop.description := 'Soll es ein Desktop Icon geben ?';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.Strvalues.Text := '';
+    myprop.StrDefault.Text := '';
+    myprop.boolDefault := False;
+  end;
+
+
+(*
+  if myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired and
+    (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('SecretLicense_or_Pool');
+    myprop.Add('LicenseKey or opsi-LicensePool');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('True');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('[""]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
+    *)
+  propexists := aktProduct.properties.propExists('LicenseOrPool');
+  if myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('LicenseOrPool');
+    myprop.description := 'LicenseKey or opsi-LicensePool';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := True;
+    myprop.Strvalues.Text := '';
+    myprop.StrDefault.Text := '';
+    myprop.boolDefault := False;
+  end;
+
+  propexists := aktProduct.properties.propExists('install_architecture');
+  if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('install_architecture');
+    myprop.description := 'Which architecture (32 / 64 Bit) has to be installed?';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    tmpstrlist := TStringList.Create;
+    tmpstrlist.Add('32 only');
+    tmpstrlist.Add('64 only');
+    tmpstrlist.Add('system specific');
+    tmpstrlist.Add('both');
+    myprop.SetValueLines(TStrings(tmpstrlist));
+    tmpstrlist.Clear;
+    tmpstrlist.Add('system specific');
+    myprop.SetDefaultLines(TStrings(tmpstrlist));
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
+
+
+    (*
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('install_architecture');
+    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('["32 only","64 only","system specific","both"]');
+    //possible values
+    myprop.Add('["system specific"]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
+    *)
+  end;
+end;
+
+
 
 // TPDependency **********************************
 
@@ -814,6 +973,7 @@ begin
         if Assigned(logdatei) then
           LogDatei.log('failed write project file', LLError);
       *)
+
     finally
       Streamer.Destroy;
     end;
@@ -945,10 +1105,14 @@ begin
   except
     on E: Exception do
       if Assigned(logdatei) then
-        LogDatei.log('read config exception. Details: ' + E.ClassName +
-          ': ' + E.Message, LLError)
-      else
-        ShowMessage('read config exception. Details: ' + E.ClassName +
+      begin
+        LogDatei.log('read project exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError) ;
+        ShowMessage('Read project file exception. Details: ' + E.ClassName +
+          ': ' + E.Message);
+      end
+    else
+        ShowMessage('Read project file exception. Details: ' + E.ClassName +
           ': ' + E.Message);
   end;
 end;

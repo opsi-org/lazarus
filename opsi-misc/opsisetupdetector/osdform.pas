@@ -255,8 +255,6 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     StatusBar1: TStatusBar;
-    StringGridDep: TStringGrid;
-    StringGridProp: TStringGrid;
     TabSheetSetup3: TTabSheet;
     TabSheetIcons: TTabSheet;
     TabSheetProduct2: TTabSheet;
@@ -425,7 +423,7 @@ type
     procedure fetchDepPropFromForm;
     procedure ApplicationEventIdle(Sender: TObject; var Done: boolean);
     procedure genRttiEditChange(Sender: TObject);
-    procedure makeProperties;
+    //procedure makeProperties;
 
     procedure IconDisplayOnMouseEnter(Sender: TObject);
     procedure PaintPreview(Image: TImage);
@@ -588,10 +586,8 @@ resourcestring
     Lineending + 'and than get the needed data from the completed installation.';
   rscheckEntriesRememberMe = 'Do not show this Message again';
   rsMac3stepSelectionText = 'To select a MacOS installer we have a two Steps' +
-    LineEnding +
-    'Firststep is Dialog to select a Directory where to find the installer ' +
-    LineEnding + 'or the "installer.app" Directory' +
-    LineEnding +
+    LineEnding + 'Firststep is Dialog to select a Directory where to find the installer '
+    + LineEnding + 'or the "installer.app" Directory' + LineEnding +
     'Second step (if needed) is a Dialog to select a installer file';
   rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
   rsMacSelectionRememberMe = 'Do not show this Message again';
@@ -1008,6 +1004,9 @@ begin
     FreeAndNil(allowedOS);
   end;
 
+  initaktproduct;
+  makeProperties;
+
   if Application.HasOption('p', 'productId') then
   begin
     forceProductId := trim(Application.GetOptionValue('p', 'productId'));
@@ -1042,8 +1041,6 @@ begin
           sleep(100);
         until (resultform1.Showing = True) and startupfinished;
       end;
-      initaktproduct;
-      resultform1.makeProperties;
       LogDatei.log('Start Analyze in GUI mode: ', LLInfo);
       Analyze(myfilename, aktProduct.SetupFiles[0], True);
     end
@@ -1323,8 +1320,8 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbNo, mbYes], 0, mbNo) = mrYes then
@@ -1659,8 +1656,8 @@ begin
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     //if StringGridProp.RowCount > 1 then
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
@@ -1701,8 +1698,8 @@ begin
     osdsettings.runmode := createMultiTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -1830,36 +1827,36 @@ begin
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
     // required productId
-    mydep.requProductId := FNewDepDlg.Editproductid.Text;
+    mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
     // required State & action
     if FNewDepDlg.RadioButtonAction.Checked then
     begin
-      mydep.requState := noState;
+      mydep.Required_State := noState;
       //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
       case FNewDepDlg.ComboBoxActState.Text of
-        '': mydep.requAction := noRequest;
-        'setup': mydep.requAction := setup;
-        'uninstall': mydep.requAction := uninstall;
-        'update': mydep.requAction := TPActionRequest.update;
+        '': mydep.Required_Action := noRequest;
+        'setup': mydep.Required_Action := setup;
+        'uninstall': mydep.Required_Action := uninstall;
+        'update': mydep.Required_Action := TPActionRequest.update;
       end;
     end
     else
     begin
       //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
       case FNewDepDlg.ComboBoxActState.Text of
-        '': mydep.requState := noState;
-        'installed': mydep.requState := installed;
-        'not installed': mydep.requState := not_installed;
-        'unknown': mydep.requState := unknown;
+        '': mydep.Required_State := noState;
+        'installed': mydep.Required_State := installed;
+        'not installed': mydep.Required_State := not_installed;
+        'unknown': mydep.Required_State := unknown;
       end;
-      mydep.requAction := noRequest;
+      mydep.Required_Action := noRequest;
     end;
 
     // requirement Type
     case FNewDepDlg.ComboBoxReqType.Text of
-      '': mydep.RequType := doNotMatter;
-      'before': mydep.RequType := before;
-      'after': mydep.RequType := after;
+      '': mydep.Required_Type := doNotMatter;
+      'before': mydep.Required_Type := before;
+      'after': mydep.Required_Type := after;
     end;
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
@@ -1902,10 +1899,11 @@ end;
 procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
 // add property
 var
-  myprop: TStringList;
+  //myprop: TStringList;
+  myprop: TPProperty;
   index: integer;
   i: integer;
-  tmpliststr: string;
+  tmpstrlist: TStringList;
   tmpstr: string;
   exists: boolean;
   //valid : boolean;
@@ -1917,6 +1915,78 @@ begin
   if FNewPropDlg.ShowModal = mrOk then
   begin
     // add
+    with osdbasedata.aktProduct do
+    begin
+      (*
+    index := properties.Count;
+    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
+    exists := False;
+    for i := 0 to index - 1 do
+      if lowercase(tmpstr) = lowercase(properties.Items[i].Property_Name) then
+        exists := True;
+        *)
+      exists := properties.propExists(FNewPropDlg.EditPropName.Text);
+      if exists then
+        MessageDlg(rsPropEditErrorHead,
+          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +
+          rsPropEditErrorDoubleMsgFinish,
+          mtError, [mbOK], '')
+      else
+      begin
+        myprop := TPProperty(properties.add);
+        myprop.init;
+        myprop.Property_Name := FNewPropDlg.EditPropName.Text;
+        myprop.description := FNewPropDlg.MemoDesc.Text;
+        if FNewPropDlg.RadioButtonPropBool.Checked then
+        begin
+          myprop.Property_Type := bool;
+          myprop.boolDefault := False;
+          for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+            if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+              if lowercase(FNewPropDlg.ListBoxPropDefVal.Items[i]) = 'true' then
+                myprop.boolDefault := False;
+          tmpstrlist := TStringList.Create;
+          myprop.SetDefaultLines(TStrings(tmpstrlist));
+          myprop.SetValueLines(TStrings(tmpstrlist));
+          FreeAndNil(tmpstrlist);
+        (*
+        myprop.multivalue:= false;
+        myprop.editable:= false;
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.s
+        *)
+        end
+        else
+        begin
+          myprop.Property_Type := unicode;  //type
+          myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+          tmpstrlist := TStringList.Create;
+          for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+            if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+              tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+          myprop.SetDefaultLines(TStrings(tmpstrlist));
+          FreeAndNil(tmpstrlist);
+        (*
+        myprop.multivalue:= FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
+        myprop.editable:= FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.Items);
+        *)
+        end;
+        myprop.multivalue := FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
+        myprop.editable := FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
+        (*
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        tmpstrlist := TStringList.Create;
+        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+            tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+        myprop.SetDefaultLines(TStrings(tmpstrlist));
+        FreeAndNil(tmpstrlist);
+        *)
+      end;
+    end;
+    (*
     index := StringGridProp.RowCount;
     tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
     exists := False;
@@ -1975,15 +2045,16 @@ begin
       end;
       StringGridProp.Rows[index - 1].SetStrings(myprop);
     end;
+    *)
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
   end
   else
   begin
     // cancel add
   end;
-  fetchDepPropFromForm;
-  TIGridProp.ListObject := osdbasedata.aktproduct.properties;
-  TIGridProp.ReloadTIList;
-    TIGridProp.Update;
+  //fetchDepPropFromForm;
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
@@ -2006,9 +2077,23 @@ begin
 end;
 
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
+var
+  index: integer;
 begin
   // delete property
-  StringGridProp.DeleteRow(StringGridProp.Row);
+  //StringGridProp.DeleteRow(StringGridProp.Row);
+  if TIGridProp.SelectedRangeCount > 0 then
+  begin
+    index := TIGridProp.SelectedRange[0].Top;
+    aktProduct.properties.Delete(index - 1);
+    //fetchDepPropFromForm;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
+  end
+  else
+    // nothing yet
+  ;
 end;
 
 procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
@@ -2026,66 +2111,69 @@ begin
     if y > -1 then
     begin
       mydep := TPDependency(aktProduct.dependencies.Items[y]);
-      FNewDepDlg.Editproductid.Text := mydep.requProductId;
-      if mydep.requState = noState then
+      FNewDepDlg.Editproductid.Text := mydep.Required_ProductId;
+      if mydep.Required_State = noState then
       begin
         FNewDepDlg.RadioButtonState.Checked := False;
         FNewDepDlg.RadioButtonAction.Checked := True;
-        tmpstr := GetEnumName(TypeInfo(TPActionRequest), Ord(mydep.requAction));
-        if tmpstr  = 'noRequest' then tmpstr := '';
+        tmpstr := GetEnumName(TypeInfo(TPActionRequest), Ord(mydep.Required_Action));
+        if tmpstr = 'noRequest' then
+          tmpstr := '';
         FNewDepDlg.ComboBoxActState.Text := tmpstr;
       end
       else
       begin
         FNewDepDlg.RadioButtonState.Checked := True;
         FNewDepDlg.RadioButtonAction.Checked := False;
-        tmpstr := GetEnumName(TypeInfo(TPInstallationState), Ord(mydep.requState));
-        if tmpstr  = 'noState' then tmpstr := '';
+        tmpstr := GetEnumName(TypeInfo(TPInstallationState), Ord(mydep.Required_State));
+        if tmpstr = 'noState' then
+          tmpstr := '';
         FNewDepDlg.ComboBoxActState.Text := tmpstr;
       end;
       FNewDepDlg.RadioButtonActionChange(Sender);
       procmess;
 
-      tmpstr := GetEnumName(TypeInfo(TPDtype), Ord(mydep.RequType));
-      if tmpstr  = 'doNotMatter' then tmpstr := '';
+      tmpstr := GetEnumName(TypeInfo(TPDtype), Ord(mydep.Required_Type));
+      if tmpstr = 'doNotMatter' then
+        tmpstr := '';
       FNewDepDlg.ComboBoxReqType.Text := tmpstr;
       FNewDepDlg.ComboBoxReqType.Refresh;
       procmess;
       if FNewDepDlg.ShowModal = mrOk then
       begin
         // required productId
-        mydep.requProductId := FNewDepDlg.Editproductid.Text;
+        mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
         // required State & action
         if FNewDepDlg.RadioButtonAction.Checked then
         begin
-          mydep.requState := noState;
+          mydep.Required_State := noState;
           //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
           case FNewDepDlg.ComboBoxActState.Text of
-            '': mydep.requAction := noRequest;
-            'setup': mydep.requAction := setup;
-            'uninstall': mydep.requAction := uninstall;
-            'update': mydep.requAction := TPActionRequest.update;
-            'once': mydep.requAction := once;
+            '': mydep.Required_Action := noRequest;
+            'setup': mydep.Required_Action := setup;
+            'uninstall': mydep.Required_Action := uninstall;
+            'update': mydep.Required_Action := TPActionRequest.update;
+            'once': mydep.Required_Action := once;
           end;
         end
         else
         begin
           //mydep.Add(FNewDepDlg.ComboBoxActState.Text);
           case FNewDepDlg.ComboBoxActState.Text of
-            '': mydep.requState := noState;
-            'none': mydep.requState := noState;
-            'installed': mydep.requState := installed;
-            'not installed': mydep.requState := not_installed;
-            'unknown': mydep.requState := unknown;
+            '': mydep.Required_State := noState;
+            'none': mydep.Required_State := noState;
+            'installed': mydep.Required_State := installed;
+            'not installed': mydep.Required_State := not_installed;
+            'unknown': mydep.Required_State := unknown;
           end;
-          mydep.requAction := noRequest;
+          mydep.Required_Action := noRequest;
         end;
 
         // requirement Type
         case FNewDepDlg.ComboBoxReqType.Text of
-          '': mydep.RequType := doNotMatter;
-          'before': mydep.RequType := before;
-          'after': mydep.RequType := after;
+          '': mydep.Required_Type := doNotMatter;
+          'before': mydep.Required_Type := before;
+          'after': mydep.Required_Type := after;
         end;
         TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
         TIGridDep.ReloadTIList;
@@ -2129,125 +2217,141 @@ procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
 var
   //myprop: TStringList;
   //index: integer;
-  i: integer;
+  i, k: integer;
   tmpliststr: string;
   tmpstr: string;
   errorstr: string;
   remaining: string;
   y: integer;
-  //aPoint: TPoint;
+  myprop: TPProperty;
+  tmpstrlist: TStringList;
 begin
-  FNewPropDlg.initFields;
-  y := StringGridProp.Row;
-  if y > 0 then
+  if TIGridProp.SelectedRangeCount > 0 then
   begin
-    FNewPropDlg.ListBoxPropPosVal.Clear;
-    FNewPropDlg.ListBoxPropDefVal.Clear;
-    FNewPropDlg.EditPropName.Text := StringGridProp.Cells[1, y];
-    FNewPropDlg.MemoDesc.Text := StringGridProp.Cells[2, y];
-    if StringGridProp.Cells[3, y] = 'bool' then
+    y := TIGridProp.SelectedRange[0].Top - 1;
+    if y > -1 then
     begin
-      FNewPropDlg.RadioButtonPropString.Checked := False;
-      FNewPropDlg.RadioButtonPropBool.Checked := True;
-      FNewPropDlg.RadioButtonPropStringChange(Sender);
-      procmess;
-      FNewPropDlg.CheckBoxPropMultiVal.Checked := False;
-      FNewPropDlg.CheckBoxPropEdit.Checked := False;
-      if StringGridProp.Cells[7, y] = 'True' then
-        FNewPropDlg.ListBoxPropDefVal.ItemIndex := 0
-      else
-        FNewPropDlg.ListBoxPropDefVal.ItemIndex := 1;
-    end
-    else  // unicode
-    begin
-      FNewPropDlg.RadioButtonPropString.Checked := True;
-      FNewPropDlg.RadioButtonPropBool.Checked := False;
-      FNewPropDlg.RadioButtonPropStringChange(Sender);
-      procmess;
-      if StringGridProp.Cells[4, y] = 'True' then
-        FNewPropDlg.CheckBoxPropMultiVal.Checked := True
-      else
-        FNewPropDlg.CheckBoxPropMultiVal.Checked := False;
+      myprop := TPProperty(aktProduct.properties.Items[y]);
+
+      FNewPropDlg.ListBoxPropPosVal.Clear;
+      FNewPropDlg.ListBoxPropDefVal.Clear;
+      FNewPropDlg.EditPropName.Text := myprop.Property_Name;
+      FNewPropDlg.MemoDesc.Text := myprop.description;
+      FNewPropDlg.CheckBoxPropMultiVal.Checked := myprop.multivalue;
+      FNewPropDlg.CheckBoxPropEdit.Checked := myprop.editable;
       FNewPropDlg.CheckBoxPropMultiValChange(Sender);
-      if StringGridProp.Cells[5, y] = 'True' then
-        FNewPropDlg.CheckBoxPropEdit.Checked := True
-      else
-        FNewPropDlg.CheckBoxPropEdit.Checked := False;
-      // pos values
-      tmpliststr := StringGridProp.Cells[6, y];
-      remaining := opsiunquotestr2(tmpliststr, '[]');
-      while remaining <> '' do
-      begin
-        GetWordOrStringConstant(remaining, tmpstr, remaining, [',']);
-        tmpstr := opsiunquotestr2(tmpstr, '"');
-        if Skip(',', remaining, remaining, errorstr) then
-        ;
-        FNewPropDlg.ListBoxPropPosVal.Items.Add(tmpstr);
-        FNewPropDlg.ListBoxPropDefVal.Items.Add(tmpstr);
-      end;
       procmess;
-      // def values
-      tmpliststr := StringGridProp.Cells[7, y];
-      remaining := opsiunquotestr2(tmpliststr, '[]');
-      while remaining <> '' do
+      if myprop.Property_Type = bool then
       begin
-        GetWordOrStringConstant(remaining, tmpstr, remaining, [',']);
-        tmpstr := opsiunquotestr2(tmpstr, '"');
-        if Skip(',', remaining, remaining, errorstr) then
-        ;
-        i := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(tmpstr);
-        if i > -1 then
-          FNewPropDlg.ListBoxPropDefVal.Selected[i] := True;
+        FNewPropDlg.RadioButtonPropString.Checked := False;
+        FNewPropDlg.RadioButtonPropBool.Checked := True;
+        FNewPropDlg.RadioButtonPropStringChange(Sender);
+        procmess;
+        if myprop.boolDefault = True then
+        begin
+          FNewPropDlg.ListBoxPropDefVal.Selected[1] := false;
+          FNewPropDlg.ListBoxPropDefVal.Selected[0] := True;
+          //FNewPropDlg.ListBoxPropDefVal.ItemIndex := 0
+        end
+        else
+        begin
+          FNewPropDlg.ListBoxPropDefVal.Selected[0] := False;
+          FNewPropDlg.ListBoxPropDefVal.Selected[1] := True;
+          //FNewPropDlg.ListBoxPropDefVal.ItemIndex := 1;
+        end;
+        procmess;
+      end
+      else  // unicode
+      begin
+        FNewPropDlg.RadioButtonPropString.Checked := True;
+        FNewPropDlg.RadioButtonPropBool.Checked := False;
+        FNewPropDlg.RadioButtonPropStringChange(Sender);
+        procmess;
+        FNewPropDlg.ListBoxPropPosVal.Items.SetStrings(myprop.Strvalues);
+        // add possible value here - default is the selcted one
+        FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.Strvalues);
+        for i := 0 to myprop.StrDefault.Count - 1 do
+        begin
+          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(myprop.StrDefault.Strings[i]);
+          if k > -1 then
+            FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
+        end;
       end;
-    end;
-    if FNewPropDlg.ShowModal = mrOk then
-    begin
-      // modify
-      StringGridProp.Cells[1, y] := FNewPropDlg.EditPropName.Text;
-      StringGridProp.Cells[2, y] := FNewPropDlg.MemoDesc.Text;
-      if FNewPropDlg.RadioButtonPropBool.Checked then
+
+
+
+
+      if FNewPropDlg.ShowModal = mrOk then
       begin
-        StringGridProp.Cells[3, y] := 'bool'; //type
-        StringGridProp.Cells[4, y] := '';  //multivalue
-        StringGridProp.Cells[5, y] := ''; //editable
-        StringGridProp.Cells[6, y] := ''; //possible values
-        StringGridProp.Cells[7, y] :=
-          FNewPropDlg.ListBoxPropDefVal.Items[FNewPropDlg.ListBoxPropDefVal.ItemIndex];
-        //default values
+        // modify
+        myprop.Property_Name := FNewPropDlg.EditPropName.Text;
+        myprop.description := FNewPropDlg.MemoDesc.Text;
+        if FNewPropDlg.RadioButtonPropBool.Checked then
+        begin
+          myprop.Property_Type := bool;
+          myprop.boolDefault := False;
+          for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+            if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+            begin
+              tmpstr:= lowercase(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+              if tmpstr = 'true' then
+                myprop.boolDefault := True;
+            end;
+          tmpstrlist := TStringList.Create;
+          myprop.SetDefaultLines(TStrings(tmpstrlist));
+          myprop.SetValueLines(TStrings(tmpstrlist));
+          FreeAndNil(tmpstrlist);
+        (*
+        myprop.multivalue:= false;
+        myprop.editable:= false;
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.s
+        *)
+        end
+        else
+        begin
+          myprop.Property_Type := unicode;  //type
+          myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+          tmpstrlist := TStringList.Create;
+          for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+            if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+              tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+          myprop.SetDefaultLines(TStrings(tmpstrlist));
+          FreeAndNil(tmpstrlist);
+        (*
+        myprop.multivalue:= FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
+        myprop.editable:= FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        myprop.SetDefaultLines(FNewPropDlg.ListBoxPropDefVal.Items);
+        *)
+        end;
+        myprop.multivalue := FNewPropDlg.CheckBoxPropMultiVal.Checked; //multivalue
+        myprop.editable := FNewPropDlg.CheckBoxPropEdit.Checked;  //editable
+        (*
+        myprop.SetValueLines(FNewPropDlg.ListBoxPropPosVal.Items);
+        tmpstrlist := TStringList.Create;
+        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+            tmpstrlist.Add(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+        myprop.SetDefaultLines(TStrings(tmpstrlist));
+        FreeAndNil(tmpstrlist);
+        *)
+        TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+        TIGridProp.ReloadTIList;
+        TIGridProp.Update;
       end
       else
       begin
-        StringGridProp.Cells[3, y] := 'unicode';  //type
-        if FNewPropDlg.CheckBoxPropMultiVal.Checked then
-          StringGridProp.Cells[4, y] := 'True'      //multivalue
-        else
-          StringGridProp.Cells[4, y] := 'False';      //multivalue
-        if FNewPropDlg.CheckBoxPropEdit.Checked then
-          StringGridProp.Cells[5, y] := 'True'      //editable
-        else
-          StringGridProp.Cells[5, y] := 'False';      //editable
-        tmpliststr := '[';
-        for i := 0 to FNewPropDlg.ListBoxPropPosVal.Count - 1 do
-          tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropPosVal.Items[i] + '",';
-        // remove trailing comma
-        RemoveTrailingChars(tmpliststr, [',']);
-        tmpliststr := tmpliststr + ']';
-        StringGridProp.Cells[6, y] := tmpliststr;      //possible values
-        tmpliststr := '[';
-        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
-          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
-            tmpliststr := tmpliststr + '"' +
-              FNewPropDlg.ListBoxPropDefVal.Items[i] + '",';
-        // remove trailing comma
-        RemoveTrailingChars(tmpliststr, [',']);
-        tmpliststr := tmpliststr + ']';
-        StringGridProp.Cells[7, y] := tmpliststr;      //default values
+        // cancel add
       end;
     end
     else
     begin
-      // cancel add
+      MessageDlg(rsPropEditErrorHead,
+        rsPropEditErrorNoSelect,
+        mtError, [mbOK], '');
     end;
+
   end
   else
   begin
@@ -2255,7 +2359,6 @@ begin
       rsPropEditErrorNoSelect,
       mtError, [mbOK], '');
   end;
-
 end;
 
 procedure TResultform1.BitBtnOpenFile1Click(Sender: TObject);
@@ -2313,8 +2416,8 @@ begin
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -2334,8 +2437,8 @@ begin
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -2355,8 +2458,8 @@ begin
     osdsettings.runmode := createTemplate;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -2407,7 +2510,7 @@ begin
   end;
   TIGridDep.Update;
   *)
-
+  (*
   //properties
   aktProduct.properties.Clear;
   for i := 1 to StringGridProp.RowCount - 1 do
@@ -2420,10 +2523,10 @@ begin
     myprop.description := StringGridProp.Cells[2, i];
     tmpstr := StringGridProp.Cells[3, i];
     case StringGridProp.Cells[3, i] of
-      'bool': myprop.ptype := bool;
-      'unicode': myprop.ptype := unicode;
+      'bool': myprop.Property_Type := bool;
+      'unicode': myprop.Property_Type := unicode;
     end;
-    if myprop.ptype = unicode then
+    if myprop.Property_Type = unicode then
     begin
       tmpstr := StringGridProp.Cells[4, i];
       myprop.multivalue := StringGridProp.Cells[4, i].ToBoolean;
@@ -2443,6 +2546,7 @@ begin
     end;
   end;
   FlowPanel14.Caption := '';
+  *)
 end;
 
 
@@ -3021,8 +3125,8 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     // we expect deb, rpm so we do not ask for complete directories
     (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
@@ -3087,8 +3191,8 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     (*
     if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
       [mbNo, mbYes], 0, mbNo) = mrYes then
@@ -3132,8 +3236,8 @@ begin
       //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
       //TIProgressBarAnalyze_progress.Loaded;
       MemoAnalyze.Clear;
-      StringGridDep.Clean([gzNormal, gzFixedRows]);
-      StringGridDep.RowCount := 1;
+      //StringGridDep.Clean([gzNormal, gzFixedRows]);
+      //StringGridDep.RowCount := 1;
       (*
       if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
         [mbNo, mbYes], 0, mbNo) = mrYes then
@@ -3168,8 +3272,8 @@ begin
     osdsettings.runmode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clean([gzNormal, gzFixedRows]);
-    StringGridDep.RowCount := 1;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -3669,105 +3773,70 @@ begin
   procmess;
 end;
 
+(*
 procedure TResultform1.makeProperties;
 var
-  myprop: TStringList;
+  //myprop: TStringList;
+  myprop: TPProperty;
   index, i: integer;
+  propexists: boolean;
+  tmpstrlist: TStringList;
 begin
-  // clear existing props in StringGridProp
-  StringGridProp.Clean([gzNormal, gzFixedRows]);
-  StringGridProp.RowCount := 1;
-
-  if myconfiguration.UsePropDesktopicon and
-    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
+  propexists := aktProduct.properties.propExists('DesktopIcon');
+  if myconfiguration.UsePropDesktopicon and not propexists then
   begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.InsertColRow(false,index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('DesktopIcon');
-    myprop.Add('Soll es ein Desktop Icon geben ?');
-    myprop.Add('bool');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('[]');      //possible values
-    myprop.Add('False');      //default values
-    //StringGridProp.InsertRowWithValues(index,myprop);
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].SetStrings(myprop);
-    myprop.Free;
-      (*
-      myprop := TPProperty(aktProduct.properties.add);
-      myprop.init;
-      myprop.Name := 'DesktopIcon';
-      myprop.description := 'Soll es ein Desktop Icon geben ?';
-      myprop.ptype := bool;
-      myprop.multivalue := False;
-      myprop.editable := False;
-      myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := '';
-      myprop.boolDefault := False;
-      *)
+
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('DesktopIcon');
+    myprop.description := 'Soll es ein Desktop Icon geben ?';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.Strvalues.Text := '';
+    myprop.StrDefault.Text := '';
+    myprop.boolDefault := False;
   end;
 
+  propexists := aktProduct.properties.propExists('LicenseOrPool');
   if myconfiguration.UsePropLicenseOrPool and
-    aktProduct.productdata.licenserequired and
-    (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
+    aktProduct.productdata.licenserequired and not propexists then
   begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('SecretLicense_or_Pool');
-    myprop.Add('LicenseKey or opsi-LicensePool');
-    myprop.Add('unicode');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('True');      //editable
-    myprop.Add('[]');      //possible values
-    myprop.Add('[""]');      //default values
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
-    myprop.Free;
-      (*
-      myprop := TPProperty(aktProduct.properties.add);
-      myprop.init;
-      myprop.Name := 'LicenseOrPool';
-      myprop.description := 'LicenseKey or opsi-LicensePool';
-      myprop.ptype := unicode;
-      myprop.multivalue := False;
-      myprop.editable := True;
-      myprop.Strvalues.Text := '';
-      myprop.StrDefault.Text := '';
-      myprop.boolDefault := False;
-      *)
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('LicenseOrPool');
+    myprop.description := 'LicenseKey or opsi-LicensePool';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := True;
+    myprop.Strvalues.Text := '';
+    myprop.StrDefault.Text := '';
+    myprop.boolDefault := False;
   end;
 
-  if osdsettings.runmode = twoAnalyzeCreate_1 then
+  propexists := aktProduct.properties.propExists('install_architecture');
+  if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
   begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('install_architecture');
-    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
-    myprop.Add('unicode');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('["32 only","64 only","system specific","both"]');
-    //possible values
-    myprop.Add('["system specific"]');      //default values
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
-    myprop.Free;
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('install_architecture');
+    myprop.description := 'Which architecture (32 / 64 Bit) has to be installed?';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    tmpstrlist := TStringList.Create;
+    tmpstrlist.Add('32 only');
+    tmpstrlist.Add('64 only');
+    tmpstrlist.Add('system specific');
+    tmpstrlist.Add('both');
+    myprop.SetValueLines(TStrings(tmpstrlist));
+    tmpstrlist.Clear;
+    tmpstrlist.Add('system specific');
+    myprop.SetDefaultLines(TStrings(tmpstrlist));
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
   end;
 end;
-
+*)
 
 end.

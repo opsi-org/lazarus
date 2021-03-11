@@ -31,7 +31,7 @@ uses
 (*
 const
 
-  SetupType_AdvancedMSI = 'AdvancedMSI';
+  SetuProperty_Type_AdvancedMSI = 'AdvancedMSI';
   SetupType_Inno = 'Inno';
   SetupType_InstallShield = 'InstallShield';
   SetupType_InstallShieldMSI = 'InstallShieldMSI';

@@ -136,7 +136,7 @@ begin
     //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      proptmpstr := aktProduct.properties.Items[i].Name;
+      proptmpstr := aktProduct.properties.Items[i].Property_Name;
       if (proptmpstr = 'SecretLicense_or_Pool') and
         aktProduct.productdata.licenserequired then
         str := str + 'DefVar $LicenseOrPool$' + LineEnding
@@ -163,7 +163,7 @@ begin
     str := '';
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      proptmpstr := aktProduct.properties.Items[i].Name;
+      proptmpstr := aktProduct.properties.Items[i].Property_Name;
       if (proptmpstr = 'SecretLicense_or_Pool') and
         aktProduct.productdata.licenserequired then
       begin
@@ -610,20 +610,20 @@ begin
       textlist.Add('');
       textlist.Add('[ProductDependency]');
       textlist.Add('action: setup');
-      textlist.Add('requiredProduct: ' + mydep.requProductId);
-      case mydep.requState of
+      textlist.Add('requiredProduct: ' + mydep.Required_ProductId);
+      case mydep.Required_State of
         noState: ;
         installed: textlist.Add('requiredStatus: installed');
         not_installed: textlist.Add('requiredStatus: not installed');
         unknown: textlist.Add('requiredStatus: unknown');
       end;
-      case mydep.requAction of
+      case mydep.Required_Action of
         noRequest: ;
         setup: textlist.Add('requiredAction: setup');
         uninstall: textlist.Add('requiredAction: uninstall');
         TPActionRequest.update: textlist.Add('requiredAction: update');
       end;
-      case mydep.RequType of
+      case mydep.Required_Type of
         doNotMatter: textlist.Add('requirementType: ');
         before: textlist.Add('requirementType: before');
         after: textlist.Add('requirementType: after');
@@ -636,13 +636,13 @@ begin
       myprop := TPProperty(aktProduct.properties.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductProperty]');
-      case myprop.ptype of
+      case myprop.Property_Type of
         bool: textlist.Add('type: bool');
         unicode: textlist.Add('type: unicode');
       end;
-      textlist.Add('name: ' + myprop.Name);
+      textlist.Add('name: ' + myprop.Property_Name);
       textlist.Add('description: ' + myprop.description);
-      if myprop.ptype = bool then
+      if myprop.Property_Type = bool then
       begin
         textlist.Add('default: ' + BoolToStr(myprop.boolDefault, True));
       end
