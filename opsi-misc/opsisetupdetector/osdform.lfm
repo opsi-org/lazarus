@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 617
+  Left = 170
   Height = 703
-  Top = 257
+  Top = 220
   Width = 1103
   Caption = 'opsi Setup Detector'
   ClientHeight = 674
@@ -98,11 +98,11 @@ object resultForm1: TresultForm1
       Height = 611
       Top = 1
       Width = 1096
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetProduct2
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 6
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -8467,7 +8467,7 @@ object resultForm1: TresultForm1
                 Top = 1
                 Width = 646
                 AliasPropertyNames.Strings = (
-                  'doNotMatter='''''
+                  'doNotMatter=''none'''
                   'noState=''none'''
                   'noRequest=''none'''
                 )

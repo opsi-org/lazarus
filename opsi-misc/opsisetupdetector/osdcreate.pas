@@ -170,13 +170,13 @@ begin
         str := str +
           'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","'
           +
-          aktProduct.properties.Items[i - 1].StrDefault[0] + '")' + LineEnding;
+          aktProduct.properties.Items[i - 1].GetDefaultLines[0] + '")' + LineEnding;
         str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
       end
       else
       begin
         { remove brackets [] }
-        str2 := opsiunquotestr2(aktProduct.properties.Items[i].StrDefault[0], '[]');
+        str2 := opsiunquotestr2(aktProduct.properties.Items[i].GetDefaultLines[0], '[]');
         { take first from list }
         GetWordOrStringConstant(str2, str2, str3, WordDelimiterSet6);
         str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
@@ -650,8 +650,8 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        textlist.Add('values: ' + myprop.Strvalues[0]);
-        textlist.Add('default: ' + myprop.StrDefault[0]);
+        textlist.Add('values: ' + myprop.GetValueLines[0]);
+        textlist.Add('default: ' + myprop.GetDefaultLines[0]);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');

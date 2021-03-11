@@ -250,15 +250,17 @@ default: ["xenial_bionic"]
   published
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
+    function GetValueLines: TStringlist;
+    function GetDefaultLines: TStrings;
     property Property_Type: TPPtype read Ftype write Ftype;
     property Property_Name: string read Fpname write Fpname;
     property Description: string read Fdescription write Fdescription;
     property Multivalue: boolean read Fmultivalue write Fmultivalue;
     property Editable: boolean read Feditable write Feditable;
-    property StrDefault: TStrings read FStrDefault write SetDefaultLines;
-    property Strvalues: TStrings read FStrvalues write SetValueLines;
-    property Default_Values: string read FStrDefaultStr write dummystr;
-    property Possible_Values: string read FStrvaluesStr write dummystr;
+    //property StrDefault: TStrings read FStrDefault write SetDefaultLines;
+    //property Strvalues: TStrings read FStrvalues write SetValueLines;
+    property Default_Values: string read FStrDefaultStr write FStrDefaultStr;
+    property Possible_Values: string read FStrvaluesStr write FStrvaluesStr;
     property BoolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
@@ -646,12 +648,15 @@ begin
 end;
 
 procedure TPProperty.SetValueLines(const AValue: TStrings);
+var
+  tmpstr : string;
 begin
   if Assigned(AValue) then
   //FStrvalues.Assign(AValue);
-    FStrvalues.Text:= AValue.Text;
-  if not stringListToJsonArray(TStringlist(AValue),FStrvaluesStr) then
-   logdatei.log('Could not convert stringlist to json array',LLerror);
+    FStrvalues.SetStrings(AValue);
+  if not stringListToJsonArray(TStringlist(AValue),tmpstr) then
+   logdatei.log('Could not convert stringlist to json array',LLerror)
+   else FStrvaluesStr := tmpstr;
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
@@ -661,6 +666,27 @@ begin
    FStrDefault.Text:= AValue.Text;
   if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
     logdatei.log('Could not convert stringlist to json array',LLerror);
+end;
+
+function TPProperty.GetValueLines: TStringlist;
+var
+  i : integer;
+  tmpstr : string;
+begin
+  result := TStringlist.Create;
+  //result.Clear;
+  //result.SetStrings(FStrvalues);
+  for i := 0 to FStrvalues.Count-1 do
+  begin
+    tmpstr := FStrvalues[i];
+    result.Add(tmpstr);
+  end;
+end;
+
+function TPProperty.GetDefaultLines: TStrings;
+begin
+  result := TStrings.Create;
+  result.SetStrings(FStrDefault);
 end;
 
 (*
@@ -772,8 +798,10 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    myprop.Strvalues.Text := '';
-    myprop.StrDefault.Text := '';
+    tmpstrlist := TStringList.Create;
+    myprop.SetValueLines(tmpstrlist);
+    myprop.SetDefaultLines(tmpstrlist);
+    FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end;
 
@@ -811,8 +839,10 @@ begin
     myprop.Property_Type := unicode;
     myprop.multivalue := False;
     myprop.editable := True;
-    myprop.Strvalues.Text := '';
-    myprop.StrDefault.Text := '';
+    tmpstrlist := TStringList.Create;
+    myprop.SetValueLines(tmpstrlist);
+    myprop.SetDefaultLines(tmpstrlist);
+    FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end;
 
@@ -961,9 +991,11 @@ begin
       writeln(pfile,JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
       writeln(pfile,JSONString);
-      JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
+      //JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
+      JSONString := Streamer.CollectionToJSON(aktProduct.properties);
       writeln(pfile,JSONString);
-      JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
+      //JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
+      JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
       writeln(pfile,JSONString);
       //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
@@ -1081,9 +1113,11 @@ begin
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.productdata);
         readln(pfile, JSONString);
-        DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+        //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+        DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
         readln(pfile, JSONString);
-        DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        //DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
         // Cleanup
       finally
         DeStreamer.Destroy;

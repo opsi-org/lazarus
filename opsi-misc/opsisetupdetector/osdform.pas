@@ -2267,12 +2267,12 @@ begin
         FNewPropDlg.RadioButtonPropBool.Checked := False;
         FNewPropDlg.RadioButtonPropStringChange(Sender);
         procmess;
-        FNewPropDlg.ListBoxPropPosVal.Items.SetStrings(myprop.Strvalues);
+        FNewPropDlg.ListBoxPropPosVal.Items.SetStrings(myprop.GetValueLines);
         // add possible value here - default is the selcted one
-        FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.Strvalues);
-        for i := 0 to myprop.StrDefault.Count - 1 do
+        FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.GetValueLines);
+        for i := 0 to myprop.GetDefaultLines.Count - 1 do
         begin
-          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(myprop.StrDefault.Strings[i]);
+          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(myprop.GetDefaultLines.Strings[i]);
           if k > -1 then
             FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
         end;
