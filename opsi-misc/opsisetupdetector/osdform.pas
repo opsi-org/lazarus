@@ -1170,14 +1170,17 @@ begin
   OpenDialog1.FilterIndex := 8;   // project file
   if OpenDialog1.Execute then
   begin
+    LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
+    makeProperties;
     aktProduct.readProjectFile(OpenDialog1.FileName);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
     TIGridDep.Update;
     TIGridProp.ListObject := osdbasedata.aktproduct.properties;
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
-    LogDatei.log('Read Project file from: ' + OpenDialog1.FileName, LLnotice);
+    LogDatei.log('Finished import Project file from: ' + OpenDialog1.FileName, LLnotice);
   end;
 end;
 

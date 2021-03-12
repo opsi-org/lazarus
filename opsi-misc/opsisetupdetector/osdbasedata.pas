@@ -242,25 +242,31 @@ default: ["xenial_bionic"]
     FStrvaluesStr : string;
     FStrDefaultStr : string;
     FBoolDefault: boolean;
+    //FimportMode : boolean;
     dummystr : string;
   protected
    // function GetDisplayName: string; override;
     // public
     //     procedure Assign(Source: TPersistent); override;
   published
+    //procedure activateImportMode;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
-    function GetValueLines: TStringlist;
+    procedure SetDefaultStr(const AValue: string);
+    procedure SetValueStr(const AValue: string);
+    function GetValueLines: TStrings;
     function GetDefaultLines: TStrings;
+    function GetDefaultStr : string;
+    function GetValueStr : string;
     property Property_Type: TPPtype read Ftype write Ftype;
     property Property_Name: string read Fpname write Fpname;
     property Description: string read Fdescription write Fdescription;
     property Multivalue: boolean read Fmultivalue write Fmultivalue;
     property Editable: boolean read Feditable write Feditable;
-    //property StrDefault: TStrings read FStrDefault write SetDefaultLines;
-    //property Strvalues: TStrings read FStrvalues write SetValueLines;
-    property Default_Values: string read FStrDefaultStr write FStrDefaultStr;
-    property Possible_Values: string read FStrvaluesStr write FStrvaluesStr;
+    property StrDefault: TStrings read GetDefaultLines write SetDefaultLines;
+    property Strvalues: TStrings read GetValueLines write SetValueLines;
+    property Default_Values: string read GetDefaultStr write SetDefaultStr;
+    property Possible_Values: string read GetValueStr write SetValueStr;
     property BoolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
@@ -283,6 +289,7 @@ default: ["xenial_bionic"]
     function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
     function propExists(propname : string) : boolean;
+    //procedure activateImportMode;
   end;
 
 
@@ -437,6 +444,8 @@ function instIdToint(installerId: TKnownInstaller): integer;
 procedure initaktproduct;
 procedure makeProperties;
 procedure freebasedata;
+procedure activateImportMode;
+procedure deactivateImportMode;
 
 const
   CONFVERSION = '4.1.0';
@@ -456,6 +465,7 @@ var
   aktconfigfile : string;
   forceProductId : string = ''; // by cli parameter
   forceTargetOS : string = ''; // by cli parameter
+  globimportMode : boolean = false;
 
 resourcestring
 
@@ -647,6 +657,7 @@ begin
   inherited;
 end;
 
+(*
 procedure TPProperty.SetValueLines(const AValue: TStrings);
 var
   tmpstr : string;
@@ -683,10 +694,96 @@ begin
   end;
 end;
 
+
 function TPProperty.GetDefaultLines: TStrings;
 begin
   result := TStrings.Create;
   result.SetStrings(FStrDefault);
+end;
+*)
+
+// Defaults
+function TPProperty.GetDefaultLines : TStrings;
+begin
+  if globimportMode then
+    begin
+      // return empty
+      result := TStringlist.Create;
+    end
+  else
+  result :=  FStrDefault;
+end;
+
+procedure TPProperty.SetDefaultLines(const AValue : TStrings);
+begin
+   if globimportMode then
+    begin
+      // do nothing
+    end
+  else
+  begin
+  FStrDefault.SetStrings(AValue);
+  FStrDefaultStr := FStrDefault.DelimitedText;
+  end;
+end;
+
+procedure TPProperty.SetDefaultStr(const AValue: string);
+begin
+  FStrDefaultStr := AValue;
+  FStrDefault.DelimitedText := AValue;
+end;
+
+function TPProperty.GetDefaultStr : string;
+begin
+  result := FStrDefault.DelimitedText;
+end;
+
+//Values
+
+function TPProperty.GetValueLines : TStrings;
+begin
+  if globimportMode then
+    begin
+      // return empty
+      result := TStringlist.Create;
+    end
+  else
+  result :=  FStrvalues;
+end;
+
+procedure TPProperty.SetValueLines(const AValue : TStrings);
+begin
+  if globimportMode then
+    begin
+      // do nothing
+    end
+  else
+  begin
+  FStrvalues.SetStrings(AValue);
+  FStrvaluesStr := FStrvalues.DelimitedText;
+  end;
+end;
+
+procedure TPProperty.SetValueStr(const AValue: string);
+begin
+  FStrvaluesStr := AValue;
+  FStrvalues.DelimitedText := AValue;
+end;
+
+function TPProperty.GetValueStr : string;
+begin
+  result := FStrvalues.DelimitedText;
+end;
+
+
+procedure activateImportMode;
+begin
+  globimportMode := true;
+end;
+
+procedure deactivateImportMode;
+begin
+  globimportMode := false;
 end;
 
 (*
@@ -751,6 +848,15 @@ begin
         propExists := True;
 end;
 
+(*
+procedure TPProperties.activateImportMode;
+var
+  i : integer;
+begin
+  for i := 0 to count - 1 do
+    ITems[i].activateImportMode;
+end;
+*)
 procedure makeProperties;
 var
   //myprop: TStringList;
@@ -834,7 +940,7 @@ begin
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
-    myprop.Property_Name := lowercase('LicenseOrPool');
+    myprop.Property_Name := lowercase('SecretLicense_or_Pool');
     myprop.description := 'LicenseKey or opsi-LicensePool';
     myprop.Property_Type := unicode;
     myprop.multivalue := False;
@@ -991,11 +1097,13 @@ begin
       writeln(pfile,JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
       writeln(pfile,JSONString);
-      //JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
-      JSONString := Streamer.CollectionToJSON(aktProduct.properties);
+      activateImportMode;
+      // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
+      deactivateImportMode;
+      //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
       writeln(pfile,JSONString);
-      //JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
-      JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
+      //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
       writeln(pfile,JSONString);
       //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
@@ -1113,11 +1221,15 @@ begin
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.productdata);
         readln(pfile, JSONString);
-        //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
-        DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
+        activateImportMode;
+        if pos('gdb unparsed remainder',JSONString) = 0 then
+          if jsonIsValid(JSONString) then
+        DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+        deactivateImportMode;
+        //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
         readln(pfile, JSONString);
-        //DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
-        DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
+        DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        //DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
         // Cleanup
       finally
         DeStreamer.Destroy;

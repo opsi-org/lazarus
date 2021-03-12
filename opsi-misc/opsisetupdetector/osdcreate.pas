@@ -140,6 +140,10 @@ begin
       if (proptmpstr = 'SecretLicense_or_Pool') and
         aktProduct.productdata.licenserequired then
         str := str + 'DefVar $LicenseOrPool$' + LineEnding
+      else if (proptmpstr = 'DesktopIcon') then
+        str := str + 'DefVar $DesktopIcon$' + LineEnding
+      else if (proptmpstr = 'install_architecture') then
+        str := str + 'DefVar install_architecture' + LineEnding
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
@@ -175,8 +179,11 @@ begin
       end
       else
       begin
+        if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
+          str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
+        else str2 := '';
         { remove brackets [] }
-        str2 := opsiunquotestr2(aktProduct.properties.Items[i].GetDefaultLines[0], '[]');
+        str2 := opsiunquotestr2(str2, '[]');
         { take first from list }
         GetWordOrStringConstant(str2, str2, str3, WordDelimiterSet6);
         str := str + 'set $' + proptmpstr + '$ = GetProductProperty("' +
