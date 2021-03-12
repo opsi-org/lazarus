@@ -80,7 +80,7 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 opsi-setup-detector (4.1.0.20) stable; urgency=low
 
-  *
+  * div fixes
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  10 Mar 2021 : 15:00:00 +0200
 
