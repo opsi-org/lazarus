@@ -15,6 +15,7 @@
         <TextDesc Value="Program to detect the silent / unattended parameters of setup files and create opsi package structure"/>
       </XPManifest>
       <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -175,12 +176,12 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="7"/>
         <TopLine Value="1167"/>
-        <CursorPos X="81" Y="1176"/>
+        <CursorPos X="54" Y="1176"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <WindowIndex Value="1"/>
           <TopLine Value="2042"/>
-          <CursorPos X="28" Y="2054"/>
+          <CursorPos X="23" Y="2054"/>
         </ExtraEditor1>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -244,7 +245,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="11"/>
         <TopLine Value="1375"/>
-        <CursorPos X="76" Y="1385"/>
+        <CursorPos X="71" Y="1385"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -281,7 +282,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="701"/>
-        <CursorPos X="51" Y="711"/>
+        <CursorPos X="36" Y="711"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="10"/>
@@ -313,7 +314,7 @@
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
         <TopLine Value="644"/>
-        <CursorPos X="16" Y="658"/>
+        <CursorPos X="53" Y="651"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="4"/>
@@ -371,7 +372,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
         <TopLine Value="170"/>
-        <CursorPos X="90" Y="181"/>
+        <CursorPos X="5" Y="181"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -786,7 +787,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="341"/>
-        <CursorPos X="79" Y="355"/>
+        <CursorPos X="6" Y="355"/>
         <UsageCount Value="53"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
