@@ -22,6 +22,7 @@ uses
   Dialogs,
   lazfileutils,
   osparserhelper,
+    osjson,
   dateutils;
 
 procedure createProductStructure;
@@ -657,8 +658,10 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        textlist.Add('values: ' + myprop.GetValueLines[0]);
-        textlist.Add('default: ' + myprop.GetDefaultLines[0]);
+        if stringListToJsonArray(TStringlist(myprop.GetValueLines),tmpstr) then
+        textlist.Add('values: ' + tmpstr);
+        if stringListToJsonArray(TStringlist(myprop.GetDefaultLines),tmpstr) then
+        textlist.Add('default: ' + tmpstr);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
