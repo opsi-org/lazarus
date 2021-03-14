@@ -634,7 +634,7 @@ begin
   writeln(progname + '[Options]');
   writeln('Options:');
   writeln(' --help -> write this help and exit');
-  writeln(' --help -> write this help and exit');
+  writeln('  -h -> write this help and exit');
   writeln(' --filename=<path\filename> -> file to analyze)');
   writeln(' --f <path\filename> -> file to analyze)');
   writeln(' --nogui -> do not show interactive output window)');
@@ -643,6 +643,10 @@ begin
   writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
   writeln(' --productID=<id> -> Create product with productID <id>');
   writeln(' --p <id> -> Create product with productID <id>');
+  writeln(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+  writeln(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+  writeln('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+
   Application.Terminate;
   halt(-1);
   Exit;
@@ -889,6 +893,7 @@ var
   myparamstring: string;
   myparamcount: integer;
   allowedOS: TStringList;
+  tmpstr: string;
 begin
   startupfinished := True; //avoid calling main on every show event
 
@@ -926,9 +931,10 @@ begin
   optionlist.Append('lang::');
   optionlist.Append('targetOS::');
   optionlist.Append('productid::');
+  optionlist.Append('mode::');
 
   // quick check parameters
-  ErrorMsg := Application.CheckOptions('hfnltp', optionlist);
+  ErrorMsg := Application.CheckOptions('hfnltpm', optionlist);
   if ErrorMsg <> '' then
   begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
@@ -988,12 +994,12 @@ begin
 
   if Application.HasOption('t', 'targetOS') then
   begin
-    forceTargetOS := lowercase(trim(Application.GetOptionValue('t', 'targetOS')));
+    tmpstr := lowercase(trim(Application.GetOptionValue('t', 'targetOS')));
     allowedOS := TStringList.Create;
     allowedOS.CommaText := 'win,lin,mac';
-    if allowedOS.IndexOf(forceTargetOS) = -1 then
+    if allowedOS.IndexOf(tmpstr) = -1 then
     begin
-      myerror := 'Error: Given targetOS: ' + forceTargetOS +
+      myerror := 'Error: Given targetOS: ' + tmpstr +
         ' is not valid. Should be on of win,lin,mac';
       writeln(myerror);
       LogDatei.log(myerror, LLCritical);
@@ -1001,7 +1007,38 @@ begin
       Application.Terminate;
       Exit;
     end;
+    try
+      forceTargetOS := TTargetOS(GetEnumValue(TypeInfo(TTargetOS), 'os' + tmpstr))
+    except
+      myerror := 'Error: Failed to convert: ' + tmpstr + ' to targetOS.';
+      writeln(myerror);
+      LogDatei.log(myerror, LLCritical);
+      WriteHelp;
+      Application.Terminate;
+      Exit;
+    end;
+    LogDatei.log('Will use as targetOS: ' +
+      GetEnumName(TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
     FreeAndNil(allowedOS);
+  end;
+
+
+  if Application.HasOption('m', 'mode') then
+  begin
+    tmpstr := trim(Application.GetOptionValue('m', 'mode'));
+    try
+      osdsettings.runmode := TRunMode(GetEnumValue(TypeInfo(TRunMode), tmpstr));
+      LogDatei.log('Will use as mode: ' +
+        GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLInfo);
+    except
+      myerror := 'Error: Given mode: ' + tmpstr +
+        ' is not valid. Should be on of analyzeOnly, singleAnalyzeCreate, createTemplate';
+      writeln(myerror);
+      LogDatei.log(myerror, LLCritical);
+      WriteHelp;
+      Application.Terminate;
+      Exit;
+    end;
   end;
 
   initaktproduct;
@@ -1021,9 +1058,18 @@ begin
       myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
+      Application.Terminate;
+      Exit;
     end;
     LogDatei.log('Got command line parameter filename with existing: ' +
       myfilename, LLInfo);
+    if osdsettings.runmode = gmUnknown then
+      osdsettings.runmode := analyzeOnly;
+    LogDatei.log('Will use as mode: ' +
+      GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLInfo);
+    LogDatei.log('Will use as targetOS: ' +
+      GetEnumName(TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
+    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
     if showgui then
     begin
       LogDatei.log('Start GUI mode: ', LLInfo);
@@ -1031,7 +1077,7 @@ begin
       with resultform1 do
       begin
         Show;
-        osdsettings.runmode := singleAnalyzeCreate;
+        //osdsettings.runmode := singleAnalyzeCreate;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
         PageControl1.ActivePage := TabSheetAnalyze;
@@ -1046,8 +1092,68 @@ begin
     end
     else
     begin
-      LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
-      Analyze(myfilename, aktProduct.SetupFiles[0], False);
+      case osdsettings.runmode of
+        analyzeOnly:
+        begin
+          LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
+          case forceTargetOS of
+            osWin: Analyze(myfilename, aktProduct.SetupFiles[0], False);
+            osLin: AnalyzeLin(myfilename, aktProduct.SetupFiles[0], False);
+            osMac: AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
+          end;
+        end;
+        singleAnalyzeCreate:
+        begin
+          LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
+          initaktproduct;
+          aktProduct.SetupFiles[0].copyCompleteDir := False;
+              makeProperties;
+              aktProduct.SetupFiles[0].active := True;
+          case forceTargetOS of
+            osWin:
+            begin
+              aktProduct.productdata.targetOSset := [osWin];
+              aktProduct.SetupFiles[0].targetOS := osWin;
+              Analyze(myfilename, aktProduct.SetupFiles[0], False);
+            end;
+            osLin:
+            begin
+              aktProduct.productdata.targetOSset := [osLin];
+              aktProduct.SetupFiles[0].targetOS := osLin;
+              AnalyzeLin(myfilename, aktProduct.SetupFiles[0], False);
+            end;
+            osMac:
+            begin
+              aktProduct.productdata.targetOSset := [osMac];
+              aktProduct.SetupFiles[0].targetOS := osMac;
+              AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
+            end;
+          end;
+          createProductStructure;
+        end;
+        createTemplate:
+        begin
+          LogDatei.log('Start createTemplate in NOGUI mode: ', LLInfo);
+          case forceTargetOS of
+            osWin:
+            begin
+              aktProduct.productdata.targetOSset := [osWin];
+              aktProduct.SetupFiles[0].targetOS := osWin;
+            end;
+            osLin:
+            begin
+              aktProduct.productdata.targetOSset := [osLin];
+              aktProduct.SetupFiles[0].targetOS := osLin;
+            end;
+            osMac:
+            begin
+              aktProduct.productdata.targetOSset := [osMac];
+              aktProduct.SetupFiles[0].targetOS := osMac;
+            end;
+          end;
+          createProductStructure;
+        end;
+      end;
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
     end;
   end
@@ -1063,13 +1169,15 @@ begin
       myerror := 'Error: No filename given but nogui';
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
+      Application.Terminate;
+      Exit;
     end;
   end;
 
   // stop program loop
   if not showgui then
   begin
-    resultForm1.Destroy;
+    //resultForm1.Destroy;
     freebasedata;
     Application.Terminate;
   end;
@@ -2252,7 +2360,7 @@ begin
         procmess;
         if myprop.boolDefault = True then
         begin
-          FNewPropDlg.ListBoxPropDefVal.Selected[1] := false;
+          FNewPropDlg.ListBoxPropDefVal.Selected[1] := False;
           FNewPropDlg.ListBoxPropDefVal.Selected[0] := True;
           //FNewPropDlg.ListBoxPropDefVal.ItemIndex := 0
         end
@@ -2275,7 +2383,8 @@ begin
         FNewPropDlg.ListBoxPropDefVal.Items.SetStrings(myprop.GetValueLines);
         for i := 0 to myprop.GetDefaultLines.Count - 1 do
         begin
-          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(myprop.GetDefaultLines.Strings[i]);
+          k := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(
+            myprop.GetDefaultLines.Strings[i]);
           if k > -1 then
             FNewPropDlg.ListBoxPropDefVal.Selected[k] := True;
         end;
@@ -2296,7 +2405,7 @@ begin
           for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
             if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
             begin
-              tmpstr:= lowercase(FNewPropDlg.ListBoxPropDefVal.Items[i]);
+              tmpstr := lowercase(FNewPropDlg.ListBoxPropDefVal.Items[i]);
               if tmpstr = 'true' then
                 myprop.boolDefault := True;
             end;
@@ -2568,7 +2677,7 @@ begin
     PanelProcess.Visible := True;
     procmess;
     fetchDepPropFromForm;
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    //TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     procmess;
     createProductStructure;
     procmess;

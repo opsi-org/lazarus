@@ -464,7 +464,7 @@ var
   lfilename: string;
   aktconfigfile : string;
   forceProductId : string = ''; // by cli parameter
-  forceTargetOS : string = ''; // by cli parameter
+  forceTargetOS : TTargetOS = osWin; // by cli parameter
   globimportMode : boolean = false;
 
 resourcestring
