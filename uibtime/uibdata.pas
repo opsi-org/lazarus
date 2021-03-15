@@ -221,6 +221,7 @@ type
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
     procedure configureComboBox(mycombo: TComboBox);
+    procedure gotoLastTodayEvent;
   private
     { private declarations }
   public
@@ -547,7 +548,8 @@ begin
   //FOntop.Enabled := False;
   //FDataedit.Show;
   FreeAndNil(FDataedit);
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
@@ -556,7 +558,8 @@ end;
 procedure TDataModule1.Dateneditieren1Cancel;
 begin
   //FStatistik.free;
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
@@ -1268,7 +1271,8 @@ procedure TDataModule1.SQuibeventBeforeClose(DataSet: TDataSet);
 begin
   if login.automatic then
   begin
-    DataModule1.SQuibevent.last;
+    //DataModule1.SQuibevent.last;
+    DataModule1.gotoLastTodayEvent;
     DataModule1.SQuibevent.edit;
     DataModule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
     try
@@ -2628,6 +2632,47 @@ begin
   {$ENDIF WINDOWS}
 
 end;
+
+procedure TDataModule1.gotoLastTodayEvent;
+var
+  foundstart, foundstop: TDateTime;
+  foundevent, filterstr: string;
+begin
+  debugOut(5, 'gotoLastTodayEvent', 'start');
+  //try to go to to the last event that is not starting tomorrow or later
+  //filterstr := '(stoptime < ' +
+  //  QuotedStr(DateTimeToStr(IncDay(today, 1))) + ') and (userid = ' + QuotedStr(uid) + ')';
+  filterstr := 'DTOS(stoptime) < "' + formatdatetime('yyyymmdd', IncDay(today, 1)) + '"'
+     + ' and userid = ' + QuotedStr(uid);
+  debugOut(5, 'gotoLastTodayEvent', 'filter: '+filterstr);
+  SQuibevent.Filter := filterstr;
+  SQuibevent.Filtered := True;
+  SQuibevent.Last;
+  foundevent := SQuibevent.FieldByName('event').AsString;
+  foundstart := SQuibevent.FieldByName('starttime').AsDateTime;
+  foundstop := SQuibevent.FieldByName('stoptime').AsDateTime;
+  SQuibevent.Filtered := False;
+  filterstr := 'userid = ' + QuotedStr(uid);
+  debugOut(5, 'gotoLastTodayEvent', 'filter: '+filterstr);
+  SQuibevent.Filter := filterstr;
+  SQuibevent.Filtered := True;
+  if SQuibevent.Locate('userid;event;starttime',
+    VarArrayOf([uid, foundevent, foundstart]), [loCaseInsensitive,loPartialKey]) then
+    debugOut(5, 'gotoLastTodayEvent', 'found event: ' +
+    'userid='+uid+' foundevent='+foundevent
+      +' starttime='+DateTimeToStr(foundstart))
+      //SQuibevent.FieldByName('event').AsString + ' with stoptime: ' +
+      //SQuibevent.FieldByName('stoptime').AsString)
+  else
+  begin
+    debugOut(3, 'gotoLastTodayEvent', 'Error searching last event: ' +
+      'userid='+uid+' foundevent='+foundevent
+      +' starttime='+DateTimeToStr(foundstart));
+    SQuibevent.Last;
+  end;
+end;
+
+
 
 initialization
   { initialization-Abschnitt }

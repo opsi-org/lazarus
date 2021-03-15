@@ -1,4 +1,12 @@
 (*
+uibtime (4.1.2.0-1) stable; urgency=low
+
+ * uibdate: gotoLastTodayEvent;
+     //try to go to to the last event
+     //that is not starting tomorrow or later
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 15 Mar 2021 15:00:00 +0000
+
 uibtime (4.1.1.72-1) stable; urgency=low
 
  * nachf: timeout: boolean : make sure to startr logoff after nachf is timeout

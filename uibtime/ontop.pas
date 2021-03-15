@@ -578,7 +578,8 @@ begin
     begin
       if not (uid = 'admin') then
       begin
-        Datamodule1.SQuibevent.last;
+        //Datamodule1.SQuibevent.last;
+        DataModule1.gotoLastTodayEvent;
         Datamodule1.SQuibevent.edit;
         datamodule1.debugOut(5, timetostr(now) + ' byeedit ' + lastevent);
         //Datamodule1.SQuibevent.FieldByName('event').AsString := lastevent;
@@ -649,7 +650,8 @@ begin
     // never was absent
     if Result = mrCancel then
     begin
-      Datamodule1.SQuibevent.last;
+      //Datamodule1.SQuibevent.last;
+      DataModule1.gotoLastTodayEvent;
       //  Datamodule1.SQuibevent.edit;
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
@@ -666,7 +668,8 @@ begin
     if Result = mrYes then
     begin
       //show work description
-      Datamodule1.SQuibevent.last;
+      //Datamodule1.SQuibevent.last;
+      DataModule1.gotoLastTodayEvent;
       //  Datamodule1.SQuibevent.edit;
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
@@ -758,7 +761,8 @@ begin
                 if not Datamodule1.SQuibevent.Active then
                   Datamodule1.SQuibevent.Open;
               end;
-              Datamodule1.SQuibevent.last;
+              //Datamodule1.SQuibevent.last;
+              DataModule1.gotoLastTodayEvent;
               FOnTop.TimerProjektzeitTimer(FOnTop);
             end;
 
@@ -807,7 +811,8 @@ begin
               datamodule1.debugOut(2, 'eventhandler',
                 'exception in eventhandler.SQuibevent.ApplyUpdates');
             end;
-            Datamodule1.SQuibevent.last;
+            //Datamodule1.SQuibevent.last;
+            DataModule1.gotoLastTodayEvent;
             FOnTop.TimerProjektzeitTimer(FOnTop);
             if not Datamodule1.SQuibevent.Active then
               Datamodule1.SQuibevent.Open;
@@ -856,7 +861,8 @@ begin
               if not Datamodule1.SQuibevent.Active then
                 Datamodule1.SQuibevent.Open;
             end;
-            Datamodule1.SQuibevent.last;
+            //Datamodule1.SQuibevent.last;
+            DataModule1.gotoLastTodayEvent;
             FOnTop.TimerProjektzeitTimer(FOnTop);
           end;
           // loggedin setzen - false bei pause
