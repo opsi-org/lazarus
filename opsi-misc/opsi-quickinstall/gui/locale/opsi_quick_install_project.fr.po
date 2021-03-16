@@ -1,35 +1,44 @@
+# Translators:
+# Benoit Mortier <benoit.mortier@fusiondirectory.org>, 2021
+# Niko Wenselowski, 2021
+# Jinene Laajili <j.laajili@uib.de>, 2021
 msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8"
+msgstr ""
+"Last-Translator: Jinene Laajili <j.laajili@uib.de>, 2021\n"
+"Language-Team: French (https://www.transifex.com/opsi-org/teams/35141/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: opsi_quick_install_resourcestrings.rsadminname
 msgctxt "opsi_quick_install_resourcestrings.rsadminname"
 msgid "What is the name of the opsi admin user to create? (empty = nothing created)"
-msgstr "Name des Opsi-Admin-User, der erstellt werden soll: (leer = nichts wird erstellt)"
+msgstr "Quel est le nom de l'utilisateur admin opsi à créer? (vide = rien à créer)"
 
 #: opsi_quick_install_resourcestrings.rsadminnameo
 msgctxt "opsi_quick_install_resourcestrings.rsadminnameo"
 msgid "Opsi admin user name: "
-msgstr "Opsi-Admin-User Name: "
+msgstr "Nom d'utilisateur de l'administrateur opsi:"
 
 #: opsi_quick_install_resourcestrings.rsadminpassword
 msgctxt "opsi_quick_install_resourcestrings.rsadminpassword"
 msgid "What is the password of the opsi admin user to create? (empty = nothing created)"
-msgstr "Passwort des Opsi-Admin-User, der erstellt werden soll: (leer = nichts wird erstellt)"
+msgstr "Quel est le mot de passe de l'utilisateur admin opsi à créer? (vide = rien à créer)"
 
 #: opsi_quick_install_resourcestrings.rsadminpasswordo
 msgctxt "opsi_quick_install_resourcestrings.rsadminpasswordo"
 msgid "Opsi admin user password: "
-msgstr "Opsi-Admin-User Passwort: "
+msgstr "Mot de passe de l'administrateur opsi:"
 
 #: opsi_quick_install_resourcestrings.rsback
 msgctxt "opsi_quick_install_resourcestrings.rsback"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: opsi_quick_install_resourcestrings.rsbackend
 msgctxt "opsi_quick_install_resourcestrings.rsbackend"
 msgid "Which backend should be installed? (mysql needs a valid activation file)"
-msgstr "Welches Backend soll installiert werden? (mysql benötigt eine passende Aktivierungsdatei)"
+msgstr "Quel backend doit être installé? (MySQL aura besoin d'un fichier d'activation valide)"
 
 #: opsi_quick_install_resourcestrings.rsbackendo
 msgctxt "opsi_quick_install_resourcestrings.rsbackendo"
@@ -38,7 +47,7 @@ msgstr "Backend: "
 
 #: opsi_quick_install_resourcestrings.rsbackendop
 msgid " [Options: \"f\" for file, \"m\" for mysql]"
-msgstr " [Optionen: \"f\" für file, \"m\" für mysql]"
+msgstr "[Options: \"f\" pour fichier, \"m\" pour MySQL]"
 
 #: opsi_quick_install_resourcestrings.rscapdistr
 msgctxt "opsi_quick_install_resourcestrings.rscapdistr"
@@ -48,110 +57,112 @@ msgstr "Distribution"
 #: opsi_quick_install_resourcestrings.rscapquery
 msgctxt "opsi_quick_install_resourcestrings.rscapquery"
 msgid "Query"
-msgstr "Abfrage"
+msgstr "Requête"
 
 #: opsi_quick_install_resourcestrings.rscapquery2
 msgctxt "opsi_quick_install_resourcestrings.rscapquery2"
 msgid "Query (part 2)"
-msgstr "Abfrage (Teil 2)"
+msgstr "Requête (partie 2)"
 
 #: opsi_quick_install_resourcestrings.rscapquery3
 msgctxt "opsi_quick_install_resourcestrings.rscapquery3"
 msgid "Query (part 3)"
-msgstr "Abfrage (Teil 3)"
+msgstr "Requête (partie 3)"
 
 #: opsi_quick_install_resourcestrings.rscapquerydhcp
 msgid "Query (dhcp)"
-msgstr "Abfrage (DHCP)"
+msgstr "Requête (DHCP)"
 
 #: opsi_quick_install_resourcestrings.rscapqueryuserinfo
 msgctxt "opsi_quick_install_resourcestrings.rscapqueryuserinfo"
 msgid "Query (user info)"
-msgstr "Abfrage (User-Info)"
+msgstr "Requête (info. utilisateur)"
 
 #: opsi_quick_install_resourcestrings.rscarryout
 msgctxt "opsi_quick_install_resourcestrings.rscarryout"
 msgid "To carry out the remaining installation automatically, we need some information first."
-msgstr "Um die restliche Installation automatisch durchführen zu können, benötigen wir zunächst ein paar Informationen."
+msgstr "Pour effectuer automatiquement le restant de l'installation, nous avons d'abord besoin de quelques informations."
 
 #: opsi_quick_install_resourcestrings.rscontinue
 msgid ""
 "To continue and start the installation, please press enter.\n"
 "If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
 msgstr ""
+"Pour continuer et démarrer l'installation, veuillez appuyer sur Entrée.\n"
+"Si vous souhaitez revenir à une question, veuillez appuyer sur le numéro correspondant dans l'aperçu.\n"
 
 #: opsi_quick_install_resourcestrings.rscopymodules
 msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr "Sollen wir Module kopieren, selbst wenn /etc/opsi/modules noch existiert?"
+msgstr "Doit-on copier des modules même si /etc/opsi/modules existe encore ?"
 
 #: opsi_quick_install_resourcestrings.rscopymoduleso
 msgctxt "opsi_quick_install_resourcestrings.rscopymoduleso"
 msgid "Copy modules: "
-msgstr "Module kopieren: "
+msgstr "Copier des modules:"
 
 #: opsi_quick_install_resourcestrings.rscorrect
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
-msgstr "Wenn das korrekt ist, klicken Sie zum Fortfahren auf \"weiter >\". Wenn nicht, editieren Sie bitte die Distribution und klicken dann auf \"weiter >\"."
+msgstr "Si cela est correct, veuillez cliquer sur \"Suivant>\" pour continuer. Sinon, veuillez modifier la distribution et continuer avec \"Suivant>\"."
 
 #: opsi_quick_install_resourcestrings.rscreaterepo
 msgid "Creating repository..."
-msgstr "Erstelle Repository..."
+msgstr "Création du référentiel ..."
 
 #: opsi_quick_install_resourcestrings.rscustom
 msgctxt "opsi_quick_install_resourcestrings.rscustom"
 msgid "Custom"
-msgstr "Benutzerdefiniert"
+msgstr "Personnaliser"
 
 #: opsi_quick_install_resourcestrings.rsdhcp
 msgctxt "opsi_quick_install_resourcestrings.rsdhcp"
 msgid "Should we run the opsi dhcp-server on this machine?"
-msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
+msgstr "Doit-on exécuter le serveur DHCP opsi sur cette machine?"
 
 #: opsi_quick_install_resourcestrings.rsdhcpo
 msgctxt "opsi_quick_install_resourcestrings.rsdhcpo"
 msgid "Run opsi dhcp-server: "
-msgstr "Opsi-DHCP-Server verwenden: "
+msgstr "Exécuter le serveur DHCP opsi :"
 
 #: opsi_quick_install_resourcestrings.rsdistr
 msgctxt "opsi_quick_install_resourcestrings.rsdistr"
 msgid "We recognized the following distribution on this computer:"
-msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
+msgstr "On a reconnu la distribution suivante sur cet ordinateur:"
 
 #: opsi_quick_install_resourcestrings.rsdomain
 msgctxt "opsi_quick_install_resourcestrings.rsdomain"
 msgid "DNS domain (for dhcp):"
-msgstr "DNS Domain (für das DHCP):"
+msgstr "Domaine DNS (pour DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsdomaino
 msgctxt "opsi_quick_install_resourcestrings.rsdomaino"
 msgid "DNS domain: "
-msgstr "DNS Domain: "
+msgstr "Domaine DNS:"
 
 #: opsi_quick_install_resourcestrings.rsdomainother
 msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
 msgid " finish "
-msgstr " fertigstellen "
+msgstr " Terminer "
 
 #: opsi_quick_install_resourcestrings.rsgateway
 msgctxt "opsi_quick_install_resourcestrings.rsgateway"
 msgid "Gateway (option routers for dhcp):"
-msgstr "Gateway (optionale Router für das DHCP):"
+msgstr "Passerelle (option routeurs pour DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsgatewayo
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayo"
 msgid "Gateway: "
-msgstr "Gateway: "
+msgstr "Passerelle :"
 
 #: opsi_quick_install_resourcestrings.rsgatewayother
 msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
 msgid "Other:"
-msgstr "Anderes:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsinfoadmin
 msgctxt "opsi_quick_install_resourcestrings.rsinfoadmin"
@@ -159,161 +170,161 @@ msgid ""
 "User to create for the operation of opsi.\n"
 "This user can not manage system settings.\n"
 msgstr ""
-"Benutzer, der für die Bedienung von opsi erstellt wird.\n"
-"Dieser Benutzer kann keine System-Einstellungen vornehmen.\n"
+"Utilisateur à créer pour le fonctionnement d'opsi.\n"
+"Cet utilisateur ne peut pas gérer les paramètres du système.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
 msgid "Shall the data of opsi be stored in a file or a mysql database?"
-msgstr "Sollen die Daten von Opsi in einer Datei oder einer MySQL-Datenbank gespeichert werden?"
+msgstr "Doivent les données d'opsi être stockées dans un fichier ou une base de données MySQL?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
 msgid ""
 "Select \"No\" if you already have a dhcp-server.\n"
 "Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgstr ""
-"Wählen Sie \"Nein\", wenn Sie schon einen DHCP-Server haben.\n"
-"Wählen Sie \"Ja\", wenn Sie den DHCP-Server auf dem Opsi-Server installieren möchten.\n"
+"Sélectionnez \"Non\" si vous avez déjà un serveur DHCP.\n"
+"Sélectionnez \"Oui\" si vous souhaitez installer le serveur DHCP sur le serveur opsi.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfodistribution
 msgid "The following distributions are supported:"
-msgstr "Die folgenden Betriebssysteme werden unterstützt:"
+msgstr "Les distributions suivantes sont prises en charge:"
 
 #: opsi_quick_install_resourcestrings.rsinfomodules
 msgid "For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de"
-msgstr "Für MySQL brauchen Sie aktive Module. Um weitere Informationen und Preise zu erhalten, schreiben Sie bitte eine E-Mail an info@uib.de"
+msgstr "Pour MySQL, vous avez besoin de modules actifs. Pour plus d'informations et les prix, veuillez envoyer un e-mail à info@uib.de"
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
 msgid "Information on the network in which the opsi-server shall be installed."
-msgstr "Informationen zum Netzwerk, in dem der Opsi-Server installiert werden soll."
+msgstr "Informations sur le réseau dans lequel le serveur opsi doit être installé."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
 msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
-msgstr "Sie sollten normalerweise Opsi 4.2 installieren wollen, da es die neueste Version ist; der Support für Opsi 4.1 endet bald."
+msgstr "Vous devriez installer opsi 4.2 car il s'agit de la dernière version; le support pour opsi 4.1 sera bientôt terminé."
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
 msgid "If yes, shortly after the opsi-server is installed, your computer will reboot."
-msgstr "Wenn ja, dann wird Ihr Computer, kurz nachdem der Opsi-Server installiert wurde, neustarten."
+msgstr "Si oui, peu de temps après l'installation du serveur opsi, votre ordinateur redémarrera."
 
 #: opsi_quick_install_resourcestrings.rsinforepo
 msgid "Source from which opsi will be installed."
-msgstr "Quelle, von der Opsi installiert wird."
+msgstr "Source à partir de laquelle opsi sera installé."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
 msgid ""
 "Select the stability of the installation:\n"
 "Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgstr ""
-"Wählen Sie die Stabilität der Installation:\n"
-"Stable ist zuverlässig, testing ist die Beta-Version, experimental könnte einige Fehler verursachen.\n"
+"Sélectionnez la stabilité de l'installation:\n"
+"Stable est fiable, test est la version bêta, expérimental peut provoquer des erreurs.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfotftproot
 msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
-msgstr "Wählen Sie \"default.menu\", falls Sie ein kleines Menü zeigen wollen, wenn kein Netboot-Produkt auf setup steht (...)."
+msgstr "Choisissez \"default.menu\" si vous souhaitez afficher un petit menu lorsqu'aucun produit netboot n'est en cours de configuration (bios uniquement)."
 
 #: opsi_quick_install_resourcestrings.rsinstall
 msgid "Installing "
-msgstr "Installiere "
+msgstr "En cours d'installation"
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
 msgid "Set a different IP name (FQDN) (\"auto\" = use standard)"
-msgstr "Anderen IP-Namen setzen (FQDN): (\"auto\" = Standard verwenden)"
+msgstr "Définir un autre nom IP (FQDN) (\"auto\" = utiliser standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnameo
 msgctxt "opsi_quick_install_resourcestrings.rsipnameo"
 msgid "IP name: "
-msgstr "IP-Name: "
+msgstr "Nom IP :"
 
 #: opsi_quick_install_resourcestrings.rsipnumber
 msgctxt "opsi_quick_install_resourcestrings.rsipnumber"
 msgid "Set a different IP number (\"auto\" = use standard)"
-msgstr "Andere IP-Nummer setzen: (\"auto\" = Standard verwenden)"
+msgstr "Définir un numéro IP différent (\"auto\" = utiliser standard)"
 
 #: opsi_quick_install_resourcestrings.rsipnumbero
 msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
 msgid "IP number: "
-msgstr "IP-Nummer: "
+msgstr "Numéro IP :"
 
 #: opsi_quick_install_resourcestrings.rsiscorrect
 msgid "Is this correct?"
-msgstr "Ist das korrekt?"
+msgstr "Est-ce correct ?"
 
 #: opsi_quick_install_resourcestrings.rslangop
 #| msgid " [Options: \"de\" for Deutsch, \"en\" for English, ...]"
 msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français]"
-msgstr " [Optionen: \"de\" für Deutsch, \"en\" für Englisch, ...]"
+msgstr "[Options: \"de\" pour Allemand, \"en\" pour Anglais, ...]"
 
 #: opsi_quick_install_resourcestrings.rslinkop
 msgid " [Options: \"m\" for default.menu, \"nom\" for default.nomenu]"
-msgstr " [Optionen: \"m\" für default.menu, \"nom\" für default.nomenu]"
+msgstr " [Options: \"m\" pour default.menu, \"nom\" pour default.nomenu]"
 
 #: opsi_quick_install_resourcestrings.rslog
 msgid "You can find the log files here:"
-msgstr "Sie finden die Log-Dateien hier:"
+msgstr "Vous pouvez trouver les fichiers journaux ici:"
 
 #: opsi_quick_install_resourcestrings.rsnameserver
 msgctxt "opsi_quick_install_resourcestrings.rsnameserver"
 msgid "Primary nameserver (for dhcp):"
-msgstr "Primärer Nameserver (für das DHCP):"
+msgstr "Principal nom du serveur (pour DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnameservero
 msgctxt "opsi_quick_install_resourcestrings.rsnameservero"
 msgid "Primary nameserver: "
-msgstr "Primärer Nameserver: "
+msgstr "Principal nom du serveur :"
 
 #: opsi_quick_install_resourcestrings.rsnameserverother
 msgctxt "opsi_quick_install_resourcestrings.rsnameserverother"
 msgid "Other:"
-msgstr "Anderer:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsnetmask
 msgctxt "opsi_quick_install_resourcestrings.rsnetmask"
 msgid "Netmask (for dhcp):"
-msgstr "Netzmaske (für das DHCP):"
+msgstr "Masque de réseau (pour DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnetmasko
 msgctxt "opsi_quick_install_resourcestrings.rsnetmasko"
 msgid "Netmask: "
-msgstr "Netzmaske: "
+msgstr "Masque de réseau :"
 
 #: opsi_quick_install_resourcestrings.rsnetmaskother
 msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddress
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddress"
 msgid "Network address (for dhcp):"
-msgstr "Netzwerk-Adresse (für das DHCP):"
+msgstr "Adresse réseau (pour DHCP):"
 
 #: opsi_quick_install_resourcestrings.rsnetworkaddressother
 msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsnetworko
 msgctxt "opsi_quick_install_resourcestrings.rsnetworko"
 msgid "Network address: "
-msgstr "Netzwerk-Adresse: "
+msgstr "Adresse réseau :"
 
 #: opsi_quick_install_resourcestrings.rsnext
 msgctxt "opsi_quick_install_resourcestrings.rsnext"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: opsi_quick_install_resourcestrings.rsno
 msgctxt "opsi_quick_install_resourcestrings.rsno"
 msgid "No"
-msgstr "Nein"
+msgstr "No"
 
 #: opsi_quick_install_resourcestrings.rsnosupport
 msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
-msgstr "Leider unterstützt Opsi Ihr Betriebssystem nicht. Nur die folgenden Betriebssysteme werden unterstützt:"
+msgstr "Malheureusement, opsi ne prend pas en charge votre distribution. Seules les distributions suivantes sont prises en charge:"
 
 #: opsi_quick_install_resourcestrings.rsnotvalid
 msgid " is not a valid input."
-msgstr " ist keine gültige Eingabe."
+msgstr "n'est pas une entrée valide."
 
 #: opsi_quick_install_resourcestrings.rsopsi41
 msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
@@ -328,45 +339,45 @@ msgstr "Opsi 4.2"
 #: opsi_quick_install_resourcestrings.rsopsiversion
 msgctxt "opsi_quick_install_resourcestrings.rsopsiversion"
 msgid "Which opsi version would you like to install?"
-msgstr "Welche Opsi-Version möchten Sie installieren?"
+msgstr "Quelle version opsi voulez-vous installer?"
 
 #: opsi_quick_install_resourcestrings.rsopsiversiono
 msgctxt "opsi_quick_install_resourcestrings.rsopsiversiono"
 msgid "Opsi version to install: "
-msgstr "Opsi-Version, die installiert wird: "
+msgstr "Version opsi à installer :"
 
 #: opsi_quick_install_resourcestrings.rsopsiversionop
 msgid " [Options: \"1\" for Opsi 4.1, \"2\" for Opsi 4.2]"
-msgstr " [Optionen: \"1\" für Opsi 4.1, \"2\" für Opsi 4.2]"
+msgstr " [Options: \"1\" pour Opsi 4.1, \"2\" pour Opsi 4.2]"
 
 #: opsi_quick_install_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
-msgstr "Bitte geben Sie die richtige Distribution ein:"
+msgstr "Veuillez saisir la bonne distribution:"
 
 #: opsi_quick_install_resourcestrings.rsoverview
 msgctxt "opsi_quick_install_resourcestrings.rsoverview"
 msgid "Overview"
-msgstr "Übersicht"
+msgstr "Aperçu"
 
 #: opsi_quick_install_resourcestrings.rsoverviewbtn
 msgctxt "opsi_quick_install_resourcestrings.rsoverviewbtn"
 msgid " overview "
-msgstr " Übersicht "
+msgstr " Aperçu "
 
 #: opsi_quick_install_resourcestrings.rspassword
 msgctxt "opsi_quick_install_resourcestrings.rspassword"
 msgid "Password"
-msgstr "Passwort"
+msgstr "Mot de passe"
 
 #: opsi_quick_install_resourcestrings.rsproxy
 msgctxt "opsi_quick_install_resourcestrings.rsproxy"
 msgid "Proxy to use (http://myproxy.dom.org:8080):"
-msgstr "Zu verwendender Proxy (http://myproxy.dom.org:8080):"
+msgstr "Proxy à utiliser (http://myproxy.dom.org:8080):"
 
 #: opsi_quick_install_resourcestrings.rsproxynone
 msgctxt "opsi_quick_install_resourcestrings.rsproxynone"
 msgid "None"
-msgstr "Keiner"
+msgstr "Rien"
 
 #: opsi_quick_install_resourcestrings.rsproxyo
 msgctxt "opsi_quick_install_resourcestrings.rsproxyo"
@@ -376,84 +387,84 @@ msgstr "Proxy: "
 #: opsi_quick_install_resourcestrings.rsproxyother
 msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
 msgid "Other:"
-msgstr "Anderer:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsreboot
 msgctxt "opsi_quick_install_resourcestrings.rsreboot"
 msgid "May the server reboot if this script is finished?"
-msgstr "Soll der Server neustarten, wenn dieses Skript beendet ist?"
+msgstr "Le serveur peut-il redémarrer si ce script est terminé?"
 
 #: opsi_quick_install_resourcestrings.rsrebooto
 msgctxt "opsi_quick_install_resourcestrings.rsrebooto"
 msgid "Reboot after script is finished: "
-msgstr "Neustarten, wenn das Skript beendet ist: "
+msgstr "Redémarrer une fois le script terminé:"
 
 #: opsi_quick_install_resourcestrings.rsrepo
 msgctxt "opsi_quick_install_resourcestrings.rsrepo"
 msgid "(Base-) Repository for the opsi-server installation:"
-msgstr "(Basis-) Repository für die Installation des Opsi-Server:"
+msgstr "Référentiel (de base) pour l'installation du serveur opsi:"
 
 #: opsi_quick_install_resourcestrings.rsrepokind
 msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
 msgid "From which repo kind should be installed?"
-msgstr "Von welcher Repository-Art soll installiert werden?"
+msgstr "À partir de quel type de référentiel doit-on installer?"
 
 #: opsi_quick_install_resourcestrings.rsrepokindo
 msgctxt "opsi_quick_install_resourcestrings.rsrepokindo"
 msgid "Repo kind: "
-msgstr "Repository-Art: "
+msgstr "Type de référentiel :"
 
 #: opsi_quick_install_resourcestrings.rsrepokindop
 msgid " [Options: \"s\" for stable, \"t\" for testing, \"e\" for experimental]"
-msgstr " [Optionen: \"s\" für stable, \"t\" für testing, \"e\" für experimental]"
+msgstr " [Options: \"s\" pour stable, \"t\" pour test; \"e\" pour expérimental]"
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
 msgid "(Base-) Repository for the opsi-server installation (without any cache proxy):"
-msgstr "(Basis-) Repository für die Installation des Opsi-Server (ohne einen Cache-Proxy):"
+msgstr "Référentiel (de base) pour l'installation du serveur opsi (sans aucun proxy de cache):"
 
 #: opsi_quick_install_resourcestrings.rsreponocacheo
 msgctxt "opsi_quick_install_resourcestrings.rsreponocacheo"
 msgid "Repository (without cache proxy): "
-msgstr "Repository (ohne Cache-Proxy): "
+msgstr "Référentiel (sans aucun proxy de cache):"
 
 #: opsi_quick_install_resourcestrings.rsrepoo
 msgctxt "opsi_quick_install_resourcestrings.rsrepoo"
 msgid "Repository: "
-msgstr "Repository: "
+msgstr "Référentiel :"
 
 #: opsi_quick_install_resourcestrings.rsrepoother
 msgctxt "opsi_quick_install_resourcestrings.rsrepoother"
 msgid "Other:"
-msgstr "Anderes:"
+msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsrights
 msgctxt "opsi_quick_install_resourcestrings.rsrights"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
-msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
+msgstr "L'authentification est requise pour installer le serveur opsi. Qui êtes-vous connecté en tant?"
 
 #: opsi_quick_install_resourcestrings.rssellanguage
 msgctxt "opsi_quick_install_resourcestrings.rssellanguage"
 msgid "Please choose a language for this setup program:"
-msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
 
 #: opsi_quick_install_resourcestrings.rssetup
 msgctxt "opsi_quick_install_resourcestrings.rssetup"
 msgid "Please select a setup type:"
-msgstr "Bitte wählen Sie einen Setup-Typ:"
+msgstr "Veuillez sélectionner un type de configuration:"
 
 #: opsi_quick_install_resourcestrings.rssetupop
 msgid " [Options: \"s\" for standard, \"c\" for custom]"
-msgstr " [Optionen: \"s\" für Standard, \"c\" für Benutzerdefiniert]"
+msgstr " [Options: \"s\" pour standard, \"c\" pour personnalisé]"
 
 #: opsi_quick_install_resourcestrings.rsshowpassword
 msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
 msgid "Show password"
-msgstr "Passwort sichtbar machen"
+msgstr "Montrer le mot de passe"
 
 #: opsi_quick_install_resourcestrings.rssomemin
 msgid "(This may take some minutes)"
-msgstr "(Das kann einige Minuten dauern)"
+msgstr "(Ceci peut prendre quelques minutes)"
 
 #: opsi_quick_install_resourcestrings.rsstandard
 msgctxt "opsi_quick_install_resourcestrings.rsstandard"
@@ -463,69 +474,70 @@ msgstr "Standard"
 #: opsi_quick_install_resourcestrings.rsstartinstallation
 msgctxt "opsi_quick_install_resourcestrings.rsstartinstallation"
 msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr "Klicken Sie auf \"fertigstellen\", um die Installation von Opsi-Server zu beginnen."
+msgstr "Enfin, cliquez sur \"Terminer\" pour démarrer l'installation du serveur opsi."
 
 #: opsi_quick_install_resourcestrings.rssuggestion
 msgid "[Suggestions: "
-msgstr "[Vorschläge: "
+msgstr "[Propositions: "
 
 #: opsi_quick_install_resourcestrings.rstftproot
 msgctxt "opsi_quick_install_resourcestrings.rstftproot"
 msgid "Which file should the TFTPROOT default symlink point to?"
-msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
+msgstr "Vers quel fichier doit le lien symbolique par défaut de TFTPROOT pointer?"
 
 #: opsi_quick_install_resourcestrings.rstftprooto
 msgctxt "opsi_quick_install_resourcestrings.rstftprooto"
 msgid "TFTPROOT symlink points to: "
-msgstr "TFTPROOT-Symlink zeigt auf: "
+msgstr "Lien symbolique de TFTPROOT pointe vers:"
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"
 msgid "What is the password of the administrator of the UCS domain controller (needed for other roles to join)?"
-msgstr "Passwort des Administrators des UCS-Domain-Controllers: (benötigt, um andere Rollen hinzuzufügen)"
+msgstr "Quel est le mot de passe de l'administrateur du contrôleur du domaine UCS (nécessaire pour que d'autres rôles se joignent)?"
 
 #: opsi_quick_install_resourcestrings.rsucso
 msgctxt "opsi_quick_install_resourcestrings.rsucso"
 msgid "Password of administrator of UCS domain controller: "
-msgstr "Passwort des Administrators des UCS-Domain-Controllers: "
+msgstr "Mot de passe de l'administrateur du contrôleur du domaine UCS :"
 
 #: opsi_quick_install_resourcestrings.rsuseproxy
 msgid "Would you like to use a proxy?"
-msgstr "Möchten Sie einen Proxy verwenden?"
+msgstr "Voulez-vous utiliser un proxy?"
 
 #: opsi_quick_install_resourcestrings.rswait
+msgctxt "opsi_quick_install_resourcestrings.rswait"
 msgid ""
 "Please wait for the installation to start...\n"
 " \n"
 msgstr ""
-"Bitte warten Sie, bis die Installation beginnt...\n"
-" \n"
+"Veuillez attendre que l'installation commence...\n"
+"\n"
 
 #: opsi_quick_install_resourcestrings.rswelcome
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
 msgid "Welcome to the installation of opsi-server on this computer!"
-msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
+msgstr "Bienvenu à l'installation du serveur opsi sur cet ordinateur !"
 
 #: opsi_quick_install_resourcestrings.rsyes
 msgctxt "opsi_quick_install_resourcestrings.rsyes"
 msgid "Yes"
-msgstr "Ja"
+msgstr "Oui"
 
 #: opsi_quick_install_resourcestrings.rsyesnoop
 msgid " [Options: \"y\" for yes, \"n\" for no]"
-msgstr " [Optionen: \"y\" für Ja, \"n\" für Nein]"
+msgstr " [Options: \"y\" pour Oui, \"n\" for Non]"
 
 #: tdistribution.btnback.caption
 #, fuzzy
 msgctxt "tdistribution.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tdistribution.btnnext.caption
 #, fuzzy
 msgctxt "tdistribution.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tdistribution.caption
 #, fuzzy
@@ -543,25 +555,25 @@ msgstr ""
 #, fuzzy
 msgctxt "tdistribution.labeldistr.caption"
 msgid "We recognized the following distribution on this computer:"
-msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
+msgstr "On a reconnu la distribution suivante sur cet ordinateur:"
 
 #: toverview.btnback.caption
 #, fuzzy
 msgctxt "toverview.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: toverview.btnfinish.caption
 #, fuzzy
 msgctxt "toverview.btnfinish.caption"
 msgid " finish "
-msgstr " fertigstellen "
+msgstr " Terminer "
 
 #: toverview.caption
 #, fuzzy
 msgctxt "toverview.caption"
 msgid "Overview"
-msgstr "Übersicht"
+msgstr "Aperçu"
 
 #: toverview.labelfinish.caption
 msgid "Finally click 'finish' to start the installation of opsi-server."
@@ -571,13 +583,13 @@ msgstr ""
 #, fuzzy
 msgctxt "tpassword.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tpassword.btnfinish.caption
 #, fuzzy
 msgctxt "tpassword.btnfinish.caption"
 msgid " finish "
-msgstr " fertigstellen "
+msgstr " Terminer "
 
 #: tpassword.caption
 msgid "Authentication required"
@@ -587,19 +599,19 @@ msgstr ""
 #, fuzzy
 msgctxt "tpassword.checkboxshowpassword.caption"
 msgid "Show password"
-msgstr "Passwort sichtbar machen"
+msgstr "Montrer le mot de passe"
 
 #: tpassword.labelpassword.caption
 #, fuzzy
 msgctxt "tpassword.labelpassword.caption"
 msgid "Password"
-msgstr "Passwort"
+msgstr "Mot de passe"
 
 #: tpassword.labelrights.caption
 #, fuzzy
 msgctxt "tpassword.labelrights.caption"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
-msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. Als was sind Sie angemeldet?"
+msgstr "L'authentification est requise pour installer le serveur opsi. Qui êtes-vous connecté en tant?"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
@@ -613,13 +625,13 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquery.btnnext.caption
 #, fuzzy
 msgctxt "tquery.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tquery.caption
 msgid "Opsi Quick Install - Query (part 1)"
@@ -643,7 +655,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery.labelopsiversion.caption"
 msgid "Which opsi version would you like to install?"
-msgstr "Welche Opsi-Version möchten Sie installieren?"
+msgstr "Quelle version opsi voulez-vous installer?"
 
 #: tquery.labelproxy.caption
 msgid "Proxy to use (http://myproxy.dom.org:8080)"
@@ -665,7 +677,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery.radiobtnnone.caption"
 msgid "None"
-msgstr "Keiner"
+msgstr "Rien"
 
 #: tquery.radiobtnopsi41.caption
 #, fuzzy
@@ -683,31 +695,31 @@ msgstr "Opsi 4.2"
 #, fuzzy
 msgctxt "tquery.radiobtnothernocache.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery.radiobtnotherproxy.caption
 #, fuzzy
 msgctxt "tquery.radiobtnotherproxy.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery.radiobtnotherrepo.caption
 #, fuzzy
 msgctxt "tquery.radiobtnotherrepo.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery2.btnback.caption
 #, fuzzy
 msgctxt "tquery2.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquery2.btnnext.caption
 #, fuzzy
 msgctxt "tquery2.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tquery2.caption
 msgid "Opsi Quick Install - Query (part 2)"
@@ -723,13 +735,13 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery2.labelcopymodules.caption"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr "Sollen wir Module kopieren, selbst wenn /etc/opsi/modules noch existiert?"
+msgstr "Doit-on copier des modules même si /etc/opsi/modules existe encore ?"
 
 #: tquery2.labelrepokind.caption
 #, fuzzy
 msgctxt "tquery2.labelrepokind.caption"
 msgid "From which repo kind should be installed?"
-msgstr "Von welcher Repository-Art soll installiert werden?"
+msgstr "À partir de quel type de référentiel doit-on installer?"
 
 #: tquery2.radiobtnexperimental.caption
 msgid "experimental"
@@ -747,7 +759,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery2.radiobtnnocopy.caption"
 msgid "No"
-msgstr "Nein"
+msgstr "No"
 
 #: tquery2.radiobtnstable.caption
 msgid "stable"
@@ -761,19 +773,19 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery2.radiobtnyescopy.caption"
 msgid "Yes"
-msgstr "Ja"
+msgstr "Oui"
 
 #: tquery4.btnback.caption
 #, fuzzy
 msgctxt "tquery4.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquery4.btnnext.caption
 #, fuzzy
 msgctxt "tquery4.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tquery4.caption
 msgid "Opsi quick install - query (part 3)"
@@ -792,7 +804,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery4.labelfilepointer.caption"
 msgid "Which file should the TFTPROOT default symlink point to?"
-msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
+msgstr "Vers quel fichier doit le lien symbolique par défaut de TFTPROOT pointer?"
 
 #: tquery4.labelpasswordmasteradmin.caption
 msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
@@ -806,13 +818,13 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery4.radiobtndhcpno.caption"
 msgid "No"
-msgstr "Nein"
+msgstr "No"
 
 #: tquery4.radiobtndhcpyes.caption
 #, fuzzy
 msgctxt "tquery4.radiobtndhcpyes.caption"
 msgid "Yes"
-msgstr "Ja"
+msgstr "Oui"
 
 #: tquery4.radiobtnmenu.caption
 msgid "default.menu"
@@ -822,7 +834,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery4.radiobtnno.caption"
 msgid "No"
-msgstr "Nein"
+msgstr "No"
 
 #: tquery4.radiobtnnomenu.caption
 msgid "default.nomenu"
@@ -832,19 +844,19 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery4.radiobtnyes.caption"
 msgid "Yes"
-msgstr "Ja"
+msgstr "Oui"
 
 #: tquery5_dhcp.btnback.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquery5_dhcp.btnnext.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tquery5_dhcp.caption
 msgid "Opsi quick install - query (dhcp)"
@@ -940,43 +952,43 @@ msgstr ""
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnotheraddress.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery5_dhcp.radiobtnotherdomain.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnotherdomain.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery5_dhcp.radiobtnothergateway.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnothergateway.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery5_dhcp.radiobtnothermask.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnothermask.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery5_dhcp.radiobtnothernameserver.caption
 #, fuzzy
 msgctxt "tquery5_dhcp.radiobtnothernameserver.caption"
 msgid "Other:"
-msgstr "Andere:"
+msgstr "Autre :"
 
 #: tquery6.btnback.caption
 #, fuzzy
 msgctxt "tquery6.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquery6.btnoverview.caption
 #, fuzzy
 msgctxt "tquery6.btnoverview.caption"
 msgid " overview "
-msgstr " Übersicht "
+msgstr " Aperçu "
 
 #: tquery6.caption
 msgid "Opsi Quick Install - Query (user info)"
@@ -1025,7 +1037,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquickinstall.btnback.caption"
 msgid " < back "
-msgstr " < zurück "
+msgstr " < Retour "
 
 #: tquickinstall.btnfinish.caption
 msgid "BtnFinish"
@@ -1035,7 +1047,7 @@ msgstr ""
 #, fuzzy
 msgctxt "tquickinstall.btnnext.caption"
 msgid " next > "
-msgstr " weiter > "
+msgstr " Suivant > "
 
 #: tquickinstall.btnoverview.caption
 msgid "BtnOverview"
@@ -1053,25 +1065,25 @@ msgstr ""
 #, fuzzy
 msgctxt "tquickinstall.labelsellanguage.caption"
 msgid "Please choose a language for this setup program:"
-msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
 
 #: tquickinstall.labelsetup.caption
 #, fuzzy
 msgctxt "tquickinstall.labelsetup.caption"
 msgid "Please select a setup type:"
-msgstr "Bitte wählen Sie einen Setup-Typ:"
+msgstr "Veuillez sélectionner un type de configuration:"
 
 #: tquickinstall.labelwelcome.caption
 #, fuzzy
 msgctxt "tquickinstall.labelwelcome.caption"
 msgid "Welcome to the installation of opsi-server on this computer!"
-msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
+msgstr "Bienvenu à l'installation du serveur opsi sur cet ordinateur !"
 
 #: tquickinstall.radiobtncustom.caption
 #, fuzzy
 msgctxt "tquickinstall.radiobtncustom.caption"
 msgid "Custom"
-msgstr "Benutzerdefiniert"
+msgstr "Personnaliser"
 
 #: tquickinstall.radiobtndefault.caption
 #, fuzzy

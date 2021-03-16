@@ -1386,7 +1386,7 @@ begin
     writeln(rsSelLanguage, rsLangOp);
     readln(customLanguage);
     // check for right input
-    while not ((customLanguage = 'de') or (customLanguage = 'en')) do
+    while not ((customLanguage = 'de') or (customLanguage = 'en') or (customLanguage = 'fr')) do
     begin
       writeln('"', customLanguage, '"', rsNotValid);
       readln(customLanguage);

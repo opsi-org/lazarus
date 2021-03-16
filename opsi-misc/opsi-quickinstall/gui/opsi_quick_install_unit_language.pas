@@ -156,6 +156,11 @@ begin
   begin
     BtnNextWidth := 51;
     BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
+  end
+  else if Language = 'fr' then
+  begin
+    BtnNextWidth := 68;
+    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
   end;
 end;
 // show hint on click of InfoImage
@@ -171,8 +176,9 @@ var
   removeFuzzys: string;
 begin
   // from all po files remove all fuzzys that might have been introduced by the nogui version
-  if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys) then;
-  if RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys) then;
+  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys);
+  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys);
+  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.fr.po ../gui/locale/opsi_quick_install_project.fr.po'], removeFuzzys);
 
   // set constant form size
   Height := 450;
@@ -196,10 +202,12 @@ begin
   begin
     Add('Deutsch');
     Add('English');
+    Add('Français');
   end;
   Languages := TStringList.Create;
   Languages.Add('de');
   Languages.Add('en');
+  Languages.Add('fr');
   // let the combo box show the system language at the beginning
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
   // now set position of BtnNext for the default language
@@ -254,7 +262,8 @@ begin
   BtnFinishWidth := BtnFinish.Width;
   BtnOverview.Visible := False;
   BtnFinish.Visible := False;
-  //ShowMessage(BtnOverviewWidth.ToString + ', ' + BtnFinishWidth.ToString);
+  // Get width of BtnNext here once for procedure SetBtnWidth
+  //ShowMessage(BtnNext.Width.ToString);
 
   // Distribution.GoOn tells TQuickInstall whether in TDistribution the next or
   // the back button was clicked, i.e. whether to go on to the next form or to
@@ -273,7 +282,7 @@ begin
       Query4.BtnNext.Top := BtnNext.Top;
     end
     else
-    // in custom setup go on to TQuery
+      // in custom setup go on to TQuery
     begin
       showForm(Query, self);
       Query.BtnBack.Left := BtnBack.Left;
@@ -294,10 +303,16 @@ begin
     // it here always again.
     LabelCarryOut.Caption := rsCarryOut;
   end
-  else
+  else if ComboBoxLanguages.Text = 'English' then
   begin
     SetDefaultLang('en');
     SetBtnWidth('en');
+  end
+  else if ComboBoxLanguages.Text = 'Français' then
+  begin
+    SetDefaultLang('fr');
+    SetBtnWidth('fr');
+    LabelCarryOut.Caption := rsCarryOut;
   end;
 end;
 

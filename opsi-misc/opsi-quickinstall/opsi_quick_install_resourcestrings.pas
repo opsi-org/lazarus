@@ -12,7 +12,7 @@ uses
 resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
-  rsLangOp = ' [Options: "de" for Deutsch, "en" for English, ...]';
+  rsLangOp = ' [Options: "de" for Deutsch, "en" for English, "fr" for Français]';
   rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
   rsIsCorrect = 'Is this correct?';
   rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
