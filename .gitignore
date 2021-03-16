@@ -62,3 +62,8 @@ opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/test.opsiscript
 opsi-misc/opsi-quickinstall/nogui/Release.key.2
 opsi-misc/opsi-quickinstall/nogui/Release.key
 opsi-misc/opsi-quickinstall/nogui/Release.key.1
+opsi-misc/opsi-quickinstall/gui/locale/opsi_quick_install_project(transifex).po
+opsi-misc/opsi-quickinstall/gui/locale/opsi_quick_install_project.de(transifex).po
+opsi-misc/opsi-quickinstall/gui/Release.key.1
+opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/result.conf
+opsi-misc/opsi-quickinstall/nogui/l-opsi-server.conf
