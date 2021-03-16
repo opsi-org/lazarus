@@ -545,18 +545,18 @@ begin
   // marker for add installers
   // stMacZip, stMacDmg, stMacPKG, stMacApp
   case setupType of
-    stMacZip: Mywrite('Found well known installer: ' +
+    stMacZip: Mywrite('Found installer= ' +
         installerToInstallerstr(setupType));
-    stMacDmg: Mywrite('Found well known installer: ' +
+    stMacDmg: Mywrite('Found installer= ' +
         installerToInstallerstr(setupType));
-    stMacPKG: Mywrite('Found well known installer: ' +
+    stMacPKG: Mywrite('Found installer= ' +
         installerToInstallerstr(setupType));
-    stMacApp: Mywrite('Found well known installer: ' +
+    stMacApp: Mywrite('Found installer= ' +
         installerToInstallerstr(setupType));
-    stUnknown: Mywrite('Sorry - unknown installer: ' +
+    stUnknown: Mywrite('Found installer= ' +
         installerToInstallerstr(setupType));
     else
-      Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+      Mywrite('Found installer= ' + installerToInstallerstr(setupType));
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=

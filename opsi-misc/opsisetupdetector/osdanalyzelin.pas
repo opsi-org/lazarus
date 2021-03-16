@@ -497,12 +497,12 @@ begin
   // stLinRPM, stLinDeb
   tmpstr := installerToInstallerstr(setupType);
   case setupType of
-    stLinRPM: Mywrite('Found well known installer: ' + tmpstr);
-    stLinDeb: Mywrite('Found well known installer: ' + tmpstr);
-    stBitrock: Mywrite('Found well known installer: ' + tmpstr);
-    stUnknown: Mywrite('Sorry - unknown installer: ' + tmpstr);
+    stLinRPM: Mywrite('Found installer= ' + tmpstr);
+    stLinDeb: Mywrite('Found installer= ' + tmpstr);
+    stBitrock: Mywrite('Found installer= ' + tmpstr);
+    stUnknown: Mywrite('Found installer= ' + tmpstr);
     else
-      Mywrite('Sorry - unknown installer: ' + tmpstr);
+      Mywrite('Found installer= ' + tmpstr);
   end;
   { avoid hyphen char "-" and replace with dot "." in version }
   aktproduct.productdata.productversion :=

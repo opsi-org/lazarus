@@ -1339,7 +1339,7 @@ begin
     setupType := stMsi;
     get_aktProduct_general_info_win(stMsi, Filename, mysetup);
     get_msi_info(FileName, mysetup);
-    Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+    Mywrite('Found installer= ' + installerToInstallerstr(setupType));
   end
   else
   begin
@@ -1378,24 +1378,24 @@ begin
     // marker for add installers
     tmpstr := installerToInstallerstr(setupType);
     case setupType of
-      stInno: Mywrite('Found well known installer: ' + tmpstr);
-      stNsis: Mywrite('Found well known installer: ' + tmpstr);
-      stInstallShield: Mywrite('Found well known installer: ' + tmpstr);
-      stInstallShieldMSI: Mywrite('Found well known installer: ' + tmpstr);
-      stAdvancedMSI: Mywrite('Found well known installer: ' + tmpstr);
-      st7zip: Mywrite('Found well known installer: ' + tmpstr);
+      stInno: Mywrite('Found installer= ' + tmpstr);
+      stNsis: Mywrite('Found installer= ' + tmpstr);
+      stInstallShield: Mywrite('Found installer= ' + tmpstr);
+      stInstallShieldMSI: Mywrite('Found installer= ' + tmpstr);
+      stAdvancedMSI: Mywrite('Found installer= ' + tmpstr);
+      st7zip: Mywrite('Found installer= ' + tmpstr);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found well known installer: ' + tmpstr);
-      stInstallAware: Mywrite('Found well known installer: ' + tmpstr);
-      stMSGenericInstaller: Mywrite('Found well known installer: ' + tmpstr);
-      stWixToolset: Mywrite('Found well known installer: ' + tmpstr);
-      stBoxStub: Mywrite('Found well known installer: ' + tmpstr);
-      stSFXcab: Mywrite('Found well known installer: ' + tmpstr);
-      stBitrock: Mywrite('Found well known installer: ' + tmpstr);
-      stSelfExtractingInstaller: Mywrite('Found well known installer: ' + tmpstr);
-      stUnknown: Mywrite('Sorry - unknown installer: ' + tmpstr);
+      st7zipsfx: Mywrite('Found installer= ' + tmpstr);
+      stInstallAware: Mywrite('Found installer= ' + tmpstr);
+      stMSGenericInstaller: Mywrite('Found installer= ' + tmpstr);
+      stWixToolset: Mywrite('Found installer= ' + tmpstr);
+      stBoxStub: Mywrite('Found installer= ' + tmpstr);
+      stSFXcab: Mywrite('Found installer= ' + tmpstr);
+      stBitrock: Mywrite('Found installer= ' + tmpstr);
+      stSelfExtractingInstaller: Mywrite('Found installer= ' + tmpstr);
+      stUnknown: Mywrite('Found installer= ' + tmpstr);
       else
-        Mywrite('Sorry - unknown installer: ' + tmpstr);
+        Mywrite('Found installer= ' + tmpstr);
     end;
     { avoid hyphen char "-" and replace with dot "." in version }
     aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
