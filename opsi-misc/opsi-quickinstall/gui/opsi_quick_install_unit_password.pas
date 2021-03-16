@@ -165,18 +165,15 @@ begin
   // write in l-opsi-server.conf file:
   clientDataDir := ExtractFilePath(ParamStr(0));
   if not FileExists(clientDataDir + 'l-opsi-server.conf') then
-  begin
     TouchCommand.Run('touch ' + clientDataDir + 'l-opsi-server.conf');
-  end;
   FileText.SaveToFile(clientDataDir + 'l-opsi-server.conf');
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
   Delete(clientDataDir, Length(clientDataDir), 1);
   clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server/CLIENT_DATA/';
   if not FileExists(clientDataDir + 'properties.conf') then
-  begin
     TouchCommand.Run('touch ' + clientDataDir + 'properties.conf');
-  end;
+  TouchCommand.Run('chown -c $USER ' + clientDataDir + 'properties.conf');
   FileText.SaveToFile(clientDataDir + 'properties.conf');
   // Important for getting the result 'failed' in case of a wrong password
   // because in this case the RunCommands below aren't executed and therefore
@@ -184,9 +181,8 @@ begin
   FileText.Clear;
   FileText.Add('failed');
   if not FileExists(clientDataDir + 'result.conf') then
-  begin
     TouchCommand.Run('touch ' + clientDataDir + 'result.conf');
-  end;
+  TouchCommand.Run('chown -c $USER ' + clientDataDir + 'result.conf');
   FileText.SaveToFile(clientDataDir + 'result.conf');
 
   FileText.Free;

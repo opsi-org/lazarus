@@ -214,7 +214,7 @@ type
     LogDatei.log('Entered WritePropsToFile', 0);
     // write file text
     FileText := TStringList.Create;
-    QuickInstallCommand := TRunCommandElevated.Create('', False);
+    QuickInstallCommand := TRunCommandElevated.Create;
 
     if reboot = rsYes then
       FileText.Add('allow_reboot=true')
@@ -255,6 +255,7 @@ type
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf');
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf');
     FileText.SaveToFile(DirClientData + 'properties.conf');
 
     FileText.Free;
@@ -279,6 +280,7 @@ type
     FileText.Add('failed');
     if not FileExists(DirClientData + 'result.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf');
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf');
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
