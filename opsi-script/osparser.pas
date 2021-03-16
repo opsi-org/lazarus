@@ -18869,6 +18869,21 @@ begin
             end;
   end
 
+  //function getFileBom(inFileName: string, var gottenEncoding : string): boolean;
+  else if Skip('getFileBom', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+                syntaxCheck := True;
+                BooleanResult := getFileBom(s1,s2);
+                LogDatei.log('GottenEnconding : '+ s2, LLInfo);
+            end;
+  end
+
   (* Boolescher Ausdruck  s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
