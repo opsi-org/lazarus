@@ -911,10 +911,20 @@ begin
   mylang := GetDefaultLang;
   SetDefaultLang(mylang, mylocaledir);
 
+    {$IFDEF WINDOWS}
+  // initate console while windows gui
+    // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
+    AllocConsole;      // in Windows unit
+    IsConsole := True; // in System unit
+    SysInitStdIO;      // in System unit
+    // Now you can do Writeln, DebugLn,
+  {$ENDIF WINDOWS}
+
   //check parameters
   myparamcount := ParamCount;
   myparamcount := Application.ParamCount;
   //writeln('paramcount = '+inttostr(myparamcount));
+  myparamstring := '';
   for i := 1 to myparamcount do
     myparamstring := myparamstring + ' ' + Application.Params[i];
   LogDatei.log('Called as: ' + myparamstring, LLEssential);
