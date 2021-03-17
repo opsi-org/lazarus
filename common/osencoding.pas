@@ -223,7 +223,6 @@ function hasFileBom(inFileName: string): boolean;
 var
   fCES: TCharEncStream;
   Utype : TUniStreamTypes;
-  //fileStream : TFileStream;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
@@ -232,9 +231,6 @@ begin
   Utype := fCES.UniStreamType;
   Result := fCES.HasBOM;
   fCES.Free;
-  //fileStream:=TFileStream.Create (iniFileName,fmOpenRead or fmShareDenyWrite);
-  //Result := inFileName.ReadBuffer(fileStream, 4);
-
 end;
 
 function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
