@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog;
+  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog, get_latest_lopsiserver;
 
 type
 
@@ -35,7 +35,7 @@ type
     // showResult executed in TPassword.FormClose
     procedure showResult;
   private
-    // full directory l-opsi-server/CLIENT_DATA
+    // full directory l-opsi-server/CLIENT_DATA/
     clientDataDir: string;
     btnFinishClicked: boolean;
   public
@@ -135,10 +135,11 @@ procedure TPassword.prepareInstallation;
 var
   FileText: TStringList;
   TouchCommand: TRunCommandElevated;
+  path: string;
 begin
   // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
   FileText := TStringList.Create;
-  TouchCommand := TRunCommandElevated.Create;
+  TouchCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
 
   FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
   FileText.Add('backend=' + Data.backend);
@@ -161,20 +162,35 @@ begin
   // update_test shall always be false
   FileText.Add('update_test=false');
 
+  clientDataDir := ExtractFilePath(ParamStr(0));
+  Delete(clientDataDir, Length(clientDataDir), 1);
+  clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server';
+  // try downloading latest l-opsi-server and use respective DirClientData
+  if getLOpsiServer(TouchCommand) then
+  begin
+    LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
+    clientDataDir += '_downloaded/CLIENT_DATA/';
+  end
+  else
+  begin
+    LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
+      LLnotice);
+    clientDataDir += '/CLIENT_DATA/';
+  end;
+
   // following equals no-gui WritePropsToFile
   // write in l-opsi-server.conf file:
-  clientDataDir := ExtractFilePath(ParamStr(0));
-  if not FileExists(clientDataDir + 'l-opsi-server.conf') then
-    TouchCommand.Run('touch ' + clientDataDir + 'l-opsi-server.conf');
-  FileText.SaveToFile(clientDataDir + 'l-opsi-server.conf');
+  if not FileExists('l-opsi-server.conf') then
+    TouchCommand.Run('touch l-opsi-server.conf');
+  FileText.SaveToFile('l-opsi-server.conf');
+
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
-  Delete(clientDataDir, Length(clientDataDir), 1);
-  clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server/CLIENT_DATA/';
   if not FileExists(clientDataDir + 'properties.conf') then
     TouchCommand.Run('touch ' + clientDataDir + 'properties.conf');
   TouchCommand.Run('chown -c $USER ' + clientDataDir + 'properties.conf');
   FileText.SaveToFile(clientDataDir + 'properties.conf');
+
   // Important for getting the result 'failed' in case of a wrong password
   // because in this case the RunCommands below aren't executed and therefore
   // setup.opsiscript, that usually does it, isn't too:

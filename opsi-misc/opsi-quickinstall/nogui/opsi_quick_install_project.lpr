@@ -16,6 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osLinuxRepository,
   oslog,
   osnetworkcalculator,
+  get_latest_lopsiserver,
   opsi_quick_install_resourcestrings;
 
 type
@@ -208,13 +209,11 @@ type
 
   // write properties in properties.conf file
   procedure TQuickInstall.WritePropsToFile;
-  var
-    path: string;
   begin
     LogDatei.log('Entered WritePropsToFile', 0);
     // write file text
     FileText := TStringList.Create;
-    QuickInstallCommand := TRunCommandElevated.Create;
+    QuickInstallCommand := TRunCommandElevated.Create('', False);
 
     if reboot = rsYes then
       FileText.Add('allow_reboot=true')
@@ -247,11 +246,26 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
+    DirClientData := ExtractFilePath(ParamStr(0));
+    Delete(DirClientData, Length(DirClientData), 1);
+    DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
+    // try downloading latest l-opsi-server and use respective DirClientData
+    if getLOpsiServer(QuickInstallCommand) then
+    begin
+      LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
+      DirClientData += '_downloaded/CLIENT_DATA/';
+    end
+    else
+    begin
+      LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
+        LLnotice);
+      DirClientData += '/CLIENT_DATA/';
+    end;
+
     // write in l-opsi-server.conf file(for tests):
-    path := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
-    if not FileExists(path) then
-      QuickInstallCommand.Run('touch ' + path);
-    FileText.SaveToFile(path);
+    if not FileExists('l-opsi-server.conf') then
+      QuickInstallCommand.Run('touch l-opsi-server.conf');
+    FileText.SaveToFile('l-opsi-server.conf');
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf');
@@ -1365,10 +1379,10 @@ begin
 
   QuickInstall := TQuickInstall.Create(nil);
   // Get directory of l-opsi-server/CLIENT_DATA:
-  QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
+  {QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
   Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
   QuickInstall.DirClientData :=
-    ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';
+    ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';}
 
   // get default language (system language)
   GetLanguageIDs(Lang, DefLang);
@@ -1388,7 +1402,8 @@ begin
     writeln(rsSelLanguage, rsLangOp);
     readln(customLanguage);
     // check for right input
-    while not ((customLanguage = 'de') or (customLanguage = 'en') or (customLanguage = 'fr')) do
+    while not ((customLanguage = 'de') or (customLanguage = 'en') or
+        (customLanguage = 'fr')) do
     begin
       writeln('"', customLanguage, '"', rsNotValid);
       readln(customLanguage);
