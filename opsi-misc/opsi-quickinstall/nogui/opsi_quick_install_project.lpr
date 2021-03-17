@@ -1378,11 +1378,6 @@ begin
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
   QuickInstall := TQuickInstall.Create(nil);
-  // Get directory of l-opsi-server/CLIENT_DATA:
-  {QuickInstall.DirClientData := ExtractFilePath(ParamStr(0));
-  Delete(QuickInstall.DirClientData, Length(QuickInstall.DirClientData), 1);
-  QuickInstall.DirClientData :=
-    ExtractFilePath(QuickInstall.DirClientData) + 'l-opsi-server/CLIENT_DATA/';}
 
   // get default language (system language)
   GetLanguageIDs(Lang, DefLang);
@@ -1403,7 +1398,7 @@ begin
     readln(customLanguage);
     // check for right input
     while not ((customLanguage = 'de') or (customLanguage = 'en') or
-        (customLanguage = 'fr')) do
+        (customLanguage = 'fr') or (customLanguage = 'es')) do
     begin
       writeln('"', customLanguage, '"', rsNotValid);
       readln(customLanguage);

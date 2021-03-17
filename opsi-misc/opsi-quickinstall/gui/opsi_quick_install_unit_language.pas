@@ -144,24 +144,18 @@ end;
 // needs to be done for each language!
 procedure TQuickInstall.SetBtnWidth(Language: string);
 begin
+  // width of BtnNext needs to be hard coded for every language for nice placement of BtnNext
   if Language = 'de' then
-  begin
-    // needs to be hard coded for every language for nice placement of BtnNext
-    BtnNextWidth := 63;
-    //note that BtnNext.Width = width for english caption and
-    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help either
-    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
-  end
+    BtnNextWidth := 63
   else if Language = 'en' then
-  begin
-    BtnNextWidth := 51;
-    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
-  end
+    BtnNextWidth := 51
+  else if Language = 'es' then
+    BtnNextWidth := 80
   else if Language = 'fr' then
-  begin
     BtnNextWidth := 68;
-    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
-  end;
+  //note that BtnNext.Width = width for english caption and
+  //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help either
+  BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
 end;
 // show hint on click of InfoImage
 // (used with '@' and therefore must be defined in TQuickInstall)
@@ -176,9 +170,18 @@ var
   removeFuzzys: string;
 begin
   // from all po files remove all fuzzys that might have been introduced by the nogui version
-  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'], removeFuzzys);
-  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'], removeFuzzys);
-  RunCommand('/bin/sh', ['-c', 'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.fr.po ../gui/locale/opsi_quick_install_project.fr.po'], removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.de.po ../gui/locale/opsi_quick_install_project.de.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.en.po ../gui/locale/opsi_quick_install_project.en.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.es.po ../gui/locale/opsi_quick_install_project.es.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_quick_install_project.fr.po ../gui/locale/opsi_quick_install_project.fr.po'],
+    removeFuzzys);
 
   // set constant form size
   Height := 450;
@@ -202,11 +205,13 @@ begin
   begin
     Add('Deutsch');
     Add('English');
+    Add('Español');
     Add('Français');
   end;
   Languages := TStringList.Create;
   Languages.Add('de');
   Languages.Add('en');
+  Languages.Add('es');
   Languages.Add('fr');
   // let the combo box show the system language at the beginning
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
@@ -307,6 +312,12 @@ begin
   begin
     SetDefaultLang('en');
     SetBtnWidth('en');
+  end
+  else if ComboBoxLanguages.Text = 'Español' then
+  begin
+    SetDefaultLang('es');
+    SetBtnWidth('es');
+    LabelCarryOut.Caption := rsCarryOut;
   end
   else if ComboBoxLanguages.Text = 'Français' then
   begin
