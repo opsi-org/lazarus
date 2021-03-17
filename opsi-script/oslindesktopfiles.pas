@@ -314,13 +314,12 @@ begin
    //myLinkname :=  ChangeFileExt(ExtractFileName(thePath),'.desktop')
     myLinkname :=  LowerCase(trim(name))+'.desktop'
   else myLinkname := LowerCase(linkname);
+  myLinkname := DelChars(myLinkname,#9); // delete any tabulator chars
   myLinkname := DelChars(myLinkname,#10);// delete any line feed chars
   myLinkname := DelChars(myLinkname,#13); // delete any carriage return (enter) chars
-  myLinkname := ReplaceText(myLinkname,'/',' '); //converts slashes to space char
-  myLinkname := Tab2Space(myLinkname, 1);// converts tabulator char to one space char
-  myLinkname := DelSpace1(myLinkname);// Reduces sequences of space characters to 1 space character
+  myLinkname := DelChars(myLinkname,'/'); // delete slashes, filename must not contain slashes
+  myLinkname := DelSpace(myLinkname);// delete whitespaces, filename must not contain whitespaces
   myLinkname := trim(myLinkname);
-  myLinkname := ReplaceText(myLinkname,' ','-'); // filename must not contain whitespaces
   if dirpath = '' then mydirpath := '/tmp'
   else mydirpath := dirpath;
   Filename := mydirpath+'/'+myLinkname;
