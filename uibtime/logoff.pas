@@ -299,7 +299,7 @@ begin
        with RichMemo1 do
        begin
          if Datamodule1.dateIsHolyday(aktdate) then
-          mynewline := 'Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate)
+          //mynewline := 'Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate)
          else
            mynewline := 'Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate);
          lines.add(mynewline);

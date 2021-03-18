@@ -1,14 +1,15 @@
 object Flogoff: TFlogoff
   Left = 261
-  Height = 611
+  Height = 579
   Top = 347
-  Width = 994
+  Width = 942
   Caption = 'uibtime - logged off'
-  ClientHeight = 611
-  ClientWidth = 994
+  ClientHeight = 579
+  ClientWidth = 942
   Color = clBtnFace
+  DesignTimePPI = 91
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -10
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   OnHide = FormHide
@@ -16,50 +17,54 @@ object Flogoff: TFlogoff
   OnShow = FormShow
   OnWindowStateChange = FormWindowStateChange
   Position = poDefault
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.10.0'
   object Label1: TLabel
-    Left = 18
-    Height = 38
-    Top = 48
-    Width = 754
+    Left = 17
+    Height = 36
+    Top = 46
+    Width = 696
     Caption = 'Für uibtime bist Du nicht mehr da !! seit: '
     Font.Color = clWindowText
-    Font.Height = -32
+    Font.Height = -30
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object DBText1: TDBText
-    Left = 20
-    Height = 38
-    Top = 80
-    Width = 149
+    Left = 19
+    Height = 36
+    Top = 76
+    Width = 138
     DataField = 'STOPTIME'
     DataSource = DataModule1.DSuibevent
     Font.Color = clWindowText
-    Font.Height = -32
+    Font.Height = -30
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 16
-    Height = 14
-    Top = 200
-    Width = 179
+    Left = 15
+    Height = 13
+    Top = 190
+    Width = 157
     Caption = 'Ergebnis des Datenbankchecks:'
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     ParentColor = False
+    ParentFont = False
   end
   object BitBtn1: TBitBtn
-    Left = 240
-    Height = 34
-    Top = 125
-    Width = 281
+    Left = 228
+    Height = 32
+    Top = 118
+    Width = 266
     Caption = 'Ich bin wieder da !'
     Font.Color = clRed
-    Font.Height = -24
+    Font.Height = -23
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     Glyph.Data = {
@@ -87,12 +92,15 @@ object Flogoff: TFlogoff
     TabOrder = 0
   end
   object BitBtn2: TBitBtn
-    Left = 20
-    Height = 32
-    Top = 160
-    Width = 220
+    Left = 19
+    Height = 30
+    Top = 152
+    Width = 209
     Cancel = True
     Caption = 'uibtime - Beenden'
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     Glyph.Data = {
       DE010000424DDE01000000000000760000002800000024000000120000000100
       0400000000006801000000000000000000001000000010000000000000000000
@@ -114,16 +122,17 @@ object Flogoff: TFlogoff
     ModalResult = 3
     NumGlyphs = 2
     OnClick = BitBtn2Click
+    ParentFont = False
     TabOrder = 1
   end
   object BitBtn3: TBitBtn
-    Left = 19
-    Height = 33
-    Top = 126
-    Width = 221
+    Left = 18
+    Height = 31
+    Top = 119
+    Width = 209
     Caption = 'Ich war nie weg !!!!'
     Font.Color = clGreen
-    Font.Height = -16
+    Font.Height = -15
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     Glyph.Data = {
@@ -151,22 +160,26 @@ object Flogoff: TFlogoff
     TabOrder = 2
   end
   object orgMemo1: TMemo
-    Left = 552
-    Height = 304
-    Top = 24
-    Width = 392
+    Left = 523
+    Height = 288
+    Top = 23
+    Width = 372
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 3
     Visible = False
   end
   object Btn_work_description: TBitBtn
-    Left = 240
-    Height = 32
-    Top = 161
-    Width = 281
+    Left = 228
+    Height = 30
+    Top = 153
+    Width = 266
     Caption = 'Arbeitsbericht'
     Font.Color = clWindowText
-    Font.Height = -19
+    Font.Height = -18
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ModalResult = 6
@@ -175,29 +188,33 @@ object Flogoff: TFlogoff
     TabOrder = 4
   end
   object EditButton1: TEditButton
-    Left = 136
-    Height = 26
-    Top = 528
-    Width = 200
+    Left = 129
+    Height = 25
+    Top = 500
+    Width = 190
     ButtonCaption = 'Startdatum wählen'
-    ButtonWidth = 120
+    ButtonWidth = 114
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     MaxLength = 0
     NumGlyphs = 1
     OnButtonClick = EditButton1ButtonClick
     OnChange = EditButton1Change
+    ParentFont = False
     PasswordChar = #0
     TabOrder = 5
     Text = 'datum'
   end
   object Label3: TLabel
-    Left = 18
-    Height = 17
-    Top = 531
-    Width = 108
+    Left = 17
+    Height = 15
+    Top = 503
+    Width = 104
     Caption = 'Durchsuchen ab:'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -12
     Font.Name = 'MS Sans Serif'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
@@ -205,34 +222,46 @@ object Flogoff: TFlogoff
     ParentFont = False
   end
   object RichMemo1: TRichMemo
-    Left = 16
-    Height = 295
-    Top = 224
-    Width = 928
+    Left = 15
+    Height = 280
+    Top = 212
+    Width = 880
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     HideSelection = False
     Lines.Strings = (
       'RichMemo1'
     )
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 6
     ZoomFactor = 1
   end
   object ButtonLastWeek: TButton
-    Left = 352
-    Height = 21
-    Top = 528
-    Width = 104
+    Left = 334
+    Height = 20
+    Top = 500
+    Width = 99
     Caption = 'letzte Woche'
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     OnClick = ButtonLastWeekClick
+    ParentFont = False
     TabOrder = 7
   end
   object ButtonLastMonth: TButton
-    Left = 472
-    Height = 21
-    Top = 528
-    Width = 104
+    Left = 447
+    Height = 20
+    Top = 500
+    Width = 99
     Caption = 'letzter Monat'
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'MS Sans Serif'
     OnClick = ButtonLastMonthClick
+    ParentFont = False
     TabOrder = 8
   end
   object Query1: TSQLQuery
@@ -240,29 +269,29 @@ object Flogoff: TFlogoff
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 544
-    top = 120
+    Left = 516
+    Top = 114
   end
   object Query2: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 592
-    top = 120
+    Left = 561
+    Top = 114
   end
   object CalendarDialog1: TCalendarDialog
     Date = 42293
     OKCaption = '&OK'
     CancelCaption = 'Cancel'
-    left = 703
-    top = 119
+    Left = 666
+    Top = 113
   end
   object FlogOffTimer: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = FlogOffTimerTimer
-    left = 823
-    top = 132
+    Left = 780
+    Top = 125
   end
 end

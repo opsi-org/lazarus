@@ -41,9 +41,12 @@ uses uibdata;
 {$R *.lfm}
 
 procedure TFDebug.FormCreate(Sender: TObject);
+var
+  tmpint : integer;
 begin
   memo1.Align := alClient;
-  SpinEdit1.Value := DataModule1.getdebuglevel;
+  tmpint := DataModule1.getdebuglevel;
+  SpinEdit1.Value := tmpint;
   Visible := False;
   FDebug.Hide;
   memo1.Append('create: hide');
@@ -57,6 +60,8 @@ begin
 end;
 
 procedure TFDebug.FormActivate(Sender: TObject);
+var
+  tmpint : integer;
 begin
   if Assigned(datamodule1) then
   begin
@@ -65,7 +70,8 @@ begin
       Sender.UnitName + ' ' + Sender.ToString);
     if not DataModule1.ShowDebugWindow1.Checked then
       hide;
-    SpinEdit1.Value := DataModule1.getdebuglevel();
+    tmpint := DataModule1.getdebuglevel();
+    SpinEdit1.Value := tmpint;
   end;
 end;
 
@@ -77,8 +83,13 @@ begin
 end;
 
 procedure TFDebug.SpinEdit1Change(Sender: TObject);
+var
+  tmpint : integer;
 begin
-  DataModule1.setdebuglevel(SpinEdit1.Value);
+  tmpint := SpinEdit1.Value;
+  if FDebug.Active and FDebug.Visible then
+  if debuglevel <> Fdebug.SpinEdit1.Value then
+    DataModule1.setdebuglevel(tmpint);
 end;
 
 initialization

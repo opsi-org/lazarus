@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CONFIG>
   <LazReport>
-    <Version Value="29"/>
+    <Version Value="31"/>
     <Title Value=""/>
     <Subject Value=""/>
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2016-12-20 18:52:29"/>
+    <ReportLastChange Value="2021-03-18 17:04:29"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -17,7 +17,7 @@
     <Pages>
       <PrintToDefault Value="False"/>
       <DoublePass Value="False"/>
-      <SelectedPrinter Value="Brother MFC-8380DN Printer"/>
+      <SelectedPrinter Value="PDF"/>
       <PageCount Value="1"/>
       <Page1>
         <Name Value="Page1"/>
@@ -203,7 +203,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Monatsreport für &#xD;&#xA;"/>
+            <Memo Value="Monatsreport für &#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -259,7 +259,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="vom start bis ende&#xD;&#xA;"/>
+            <Memo Value="vom start bis ende&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -315,7 +315,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.daystr]&#xD;&#xA;"/>
+            <Memo Value="[query1.daystr]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -371,7 +371,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.tag]&#xD;&#xA;"/>
+            <Memo Value="[query1.tag]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -410,12 +410,12 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="406"/>
+            <Left Value="390"/>
             <Top Value="144"/>
-            <Width Value="132"/>
+            <Width Value="148"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="11"/>
+          <Flags Value="3"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -425,9 +425,9 @@
             <Restrictions Value=""/>
           </Frames>
           <Data>
-            <Format Value="16974380"/>
+            <Format Value="16843308"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.summe]&#xD;&#xA;"/>
+            <Memo Value="[query1.summe]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -441,8 +441,8 @@
           <Tag Value=""/>
           <FURLInfo Value=""/>
           <Font>
-            <Name Value="Arial"/>
-            <Size Value="12"/>
+            <Name Value="Liberation Sans"/>
+            <Size Value="11"/>
             <Color Value="clBlack"/>
             <Charset Value="0"/>
             <Style Value=""/>
@@ -454,7 +454,7 @@
             <HighlightStr Value=""/>
           </Highlight>
           <Alignment Value="taRightJustify"/>
-          <Layout Value="tlTop"/>
+          <Layout Value="tlCenter"/>
           <Angle Value="0"/>
           <Justify Value="False"/>
           <Cursor Value="0"/>
@@ -483,7 +483,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Summe&#xD;&#xA;"/>
+            <Memo Value="Summe&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -539,7 +539,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Sollstunden&#xD;&#xA;"/>
+            <Memo Value="Sollstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -595,7 +595,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[querysollstunden.stunden]&#xD;&#xA;"/>
+            <Memo Value="[querysollstunden.stunden]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -651,7 +651,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Überstunden&#xD;&#xA;"/>
+            <Memo Value="Überstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -707,7 +707,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe]) - querysollstunden.stunden]&#xD;&#xA;"/>
+            <Memo Value="[SUM([query1.summe]) - querysollstunden.stunden]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -763,7 +763,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Ausgedruckt am [[DATE]]  [TIME]&#xD;&#xA;"/>
+            <Memo Value="Ausgedruckt am [[DATE]]  [TIME]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -819,7 +819,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe])]&#xD;&#xA;"/>
+            <Memo Value="[SUM([query1.summe])]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -875,7 +875,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Wochentag Nr&#xD;&#xA;"/>
+            <Memo Value="Wochentag Nr&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -931,7 +931,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Monatstag&#xD;&#xA;"/>
+            <Memo Value="Monatstag&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -987,7 +987,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Summe&#xD;&#xA;"/>
+            <Memo Value="Summe&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>

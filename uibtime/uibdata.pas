@@ -306,10 +306,10 @@ end;
 { TDataModule1 }
 function TDataModule1.getdebuglevel(): integer;
 begin
-  // wiil be called at start before the logfile is initialized
-  if Assigned(logdatei) then
-    getdebuglevel := logdatei.LogLevel
-  else
+  // will be called at start before the logfile is initialized
+  //if Assigned(logdatei) then
+  //  getdebuglevel := logdatei.LogLevel
+ // else
     getdebuglevel := debuglevel;
 end;
 
@@ -345,6 +345,10 @@ begin
   myini.WriteInteger('general', 'debuglevel', newlevel);
   myini.UpdateFile;
   myini.Free;
+  // attention: endless loop:
+  if Assigned(Fdebug.SpinEdit1) then
+   if debuglevel <> Fdebug.SpinEdit1.Value then
+    Fdebug.SpinEdit1.Value:=debuglevel;
   debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
@@ -2300,6 +2304,8 @@ begin
 
   debuglevel := myini.ReadInteger('general', 'debuglevel', 5);
   Fdebug.Memo1.Append('debuglevel: ' + IntToStr(debuglevel));
+  //FDebug.SpinEdit1.Value:= debuglevel;
+  setdebuglevel(debuglevel);
   TrayInterval := myini.ReadInteger('general', 'TrayInterval', 5);
   TimerTrayIcon.Interval := TrayInterval * 60 * 1000;
   Trayshow := myini.ReadBool('general', 'showTray', True);
@@ -2355,7 +2361,7 @@ begin
   //myFont := 'Liberation Sans Narrow';
   myFont := 'Liberation Sans';
   {$ENDIF LINUX}
-
+  Application.ProcessMessages;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -2638,37 +2644,48 @@ var
   foundstart, foundstop: TDateTime;
   foundevent, filterstr: string;
 begin
-  debugOut(5, 'gotoLastTodayEvent', 'start');
-  //try to go to to the last event that is not starting tomorrow or later
-  //filterstr := '(stoptime < ' +
-  //  QuotedStr(DateTimeToStr(IncDay(today, 1))) + ') and (userid = ' + QuotedStr(uid) + ')';
-  filterstr := 'DTOS(stoptime) < "' + formatdatetime('yyyymmdd', IncDay(today, 1)) + '"'
-     + ' and userid = ' + QuotedStr(uid);
-  debugOut(5, 'gotoLastTodayEvent', 'filter: '+filterstr);
-  SQuibevent.Filter := filterstr;
-  SQuibevent.Filtered := True;
-  SQuibevent.Last;
-  foundevent := SQuibevent.FieldByName('event').AsString;
-  foundstart := SQuibevent.FieldByName('starttime').AsDateTime;
-  foundstop := SQuibevent.FieldByName('stoptime').AsDateTime;
-  SQuibevent.Filtered := False;
-  filterstr := 'userid = ' + QuotedStr(uid);
-  debugOut(5, 'gotoLastTodayEvent', 'filter: '+filterstr);
-  SQuibevent.Filter := filterstr;
-  SQuibevent.Filtered := True;
-  if SQuibevent.Locate('userid;event;starttime',
-    VarArrayOf([uid, foundevent, foundstart]), [loCaseInsensitive,loPartialKey]) then
-    debugOut(5, 'gotoLastTodayEvent', 'found event: ' +
-    'userid='+uid+' foundevent='+foundevent
-      +' starttime='+DateTimeToStr(foundstart))
+  try
+    try
+      debugOut(5, 'gotoLastTodayEvent', 'start');
+      //try to go to to the last event that is not starting tomorrow or later
+      //filterstr := '(stoptime < ' +
+      //  QuotedStr(DateTimeToStr(IncDay(today, 1))) + ') and (userid = ' + QuotedStr(uid) + ')';
+      filterstr := 'DTOS(stoptime) < "' + formatdatetime('yyyymmdd', IncDay(today, 1)) +
+        '"' + ' and userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      SQuibevent.Last;
+      foundevent := SQuibevent.FieldByName('event').AsString;
+      foundstart := SQuibevent.FieldByName('starttime').AsDateTime;
+      foundstop := SQuibevent.FieldByName('stoptime').AsDateTime;
+      SQuibevent.Filtered := False;
+      filterstr := 'userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      if SQuibevent.Locate('userid;event;starttime',
+        VarArrayOf([uid, foundevent, foundstart]), [loCaseInsensitive, loPartialKey]) then
+        debugOut(5, 'gotoLastTodayEvent', 'found event: ' + 'userid=' +
+          uid + ' foundevent=' + foundevent + ' starttime=' + DateTimeToStr(foundstart))
       //SQuibevent.FieldByName('event').AsString + ' with stoptime: ' +
       //SQuibevent.FieldByName('stoptime').AsString)
-  else
-  begin
-    debugOut(3, 'gotoLastTodayEvent', 'Error searching last event: ' +
-      'userid='+uid+' foundevent='+foundevent
-      +' starttime='+DateTimeToStr(foundstart));
-    SQuibevent.Last;
+      else
+      begin
+        debugOut(3, 'gotoLastTodayEvent', 'Error searching last event: ' +
+          'userid=' + uid + ' foundevent=' + foundevent + ' starttime=' +
+          DateTimeToStr(foundstart));
+        SQuibevent.Last;
+      end;
+    except
+      debugOut(3, 'gotoLastTodayEvent', 'Exception searching last event: ');
+    end;
+  finally
+    SQuibevent.Filtered := False;
+    filterstr := 'userid = ' + QuotedStr(uid);
+    debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+    SQuibevent.Filter := filterstr;
+    SQuibevent.Filtered := True;
   end;
 end;
 
@@ -2693,7 +2710,7 @@ initialization
   ///vi := GetVersionInfoRec(Application.ExeName);
   ///version := vi.FileVersion;
   //version := '4.0.12';
-  //debuglevel := 5;
+  debuglevel := 8;
 
   verDatum := DateToStr(FileDateToDateTime(FileAge(ParamStr(0))));
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company

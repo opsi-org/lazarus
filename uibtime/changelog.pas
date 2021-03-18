@@ -4,6 +4,7 @@ uibtime (4.1.2.0-1) stable; urgency=low
  * uibdate: gotoLastTodayEvent;
      //try to go to to the last event
      //that is not starting tomorrow or later
+ * monthrep.rlf width of data  field adjusted  ; fixes #4639
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 15 Mar 2021 15:00:00 +0000
 

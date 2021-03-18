@@ -25,6 +25,7 @@ uses
   Variants,
   DBGrids, UniqueInstance, treescrolldown,
   httpservice, linhandlewin,
+  oslog,
   uibdatetime;
 
 type
@@ -517,6 +518,7 @@ begin
       if not Datamodule1.geteditonly then
         Datamodule1.TimerOntop.Enabled := ontoptimer;
       // DataModule1.TimerOnToptimer(sender);
+      logdatei.LogLevel:= DataModule1.getdebuglevel();
     end;
   except
     datamodule1.debugOut(3, '', 'exception in ontopactivate');

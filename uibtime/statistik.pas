@@ -490,10 +490,10 @@ begin
  FRmonat.free;
  *)
  {$IFDEF Linux}
-  mypath := '/usr/share/uibtime/';
+ // development:
+  mypath := ExtractFilePath(ParamStr(0));
   if not FileExists(mypath + 'monthrep.lrf') then
-    // development:
-    mypath := ExtractFilePath(ParamStr(0));
+    mypath := '/usr/share/uibtime/';
  {$ELSE}
   mypath := ExtractFilePath(ParamStr(0));
  {$ENDIF Linux}
@@ -504,6 +504,8 @@ begin
   frReport1.FindObject('memoStartEnd').Memo.Text :=
     'Von 1.' + spinedit1.Text + '.' + spinedit2.Text + ' bis (excl.) 1.' +
     IntToStr(nextmonth) + '.' + IntToStr(nextmonthyear);
+  //frReport1.FindObject('memo3').Width:=30;
+
   frReport1.ShowReport;
 end;
 
