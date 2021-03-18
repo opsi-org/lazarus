@@ -28,8 +28,9 @@ type
     property DistrUrlPart: string read FDistrUrlPart;
 
     procedure SetInfo(distroName: string; distroRelease: string);
-    function GetPackageManagementShellCommand(distroName: string): string;
   end;
+
+function GetPackageManagementShellCommand(distroName: string): string;
 
 implementation
 
@@ -154,7 +155,7 @@ begin
 end;
 
 // get right shell command for package management depending on the distribution
-function TDistributionInfo.GetPackageManagementShellCommand(distroName: string): string;
+function GetPackageManagementShellCommand(distroName: string): string;
 begin
   {CentOS and RedHat}
   if (distroName = 'CentOS') or (distroName = 'RedHatEnterprise') then

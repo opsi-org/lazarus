@@ -29,8 +29,6 @@ type
     procedure FormActivate(Sender: TObject);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
     procedure FormClose(Sender: TObject);
-    // get properties from query and write them to file properties.conf
-    procedure prepareInstallation;
     // show result of l-opsi-server installation and paths to log files
     // showResult executed in TPassword.FormClose
     procedure showResult;
@@ -51,13 +49,13 @@ type
   private
     FInstallRunCommand: TRunCommandElevated;
     FShellCommand, FClientDataDir: string;
+    procedure prepareInstallation;
     procedure addRepo;
     procedure installOpsi;
   protected
     procedure Execute; override;
   public
-    constructor Create(password: string; sudo: boolean; shellCommand: string;
-      clientDataDir: string);
+    constructor Create(password: string; sudo: boolean; shellCommand: string);
   end;
 
 var
@@ -72,21 +70,96 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_wait,
-  osLinuxRepository;
+  osLinuxRepository,
+  osDistributionInfo;
 
 {$R *.lfm}
 
 {MyThread}
 
-constructor TMyThread.Create(password: string; sudo: boolean;
-  shellCommand: string; clientDataDir: string);
+constructor TMyThread.Create(password: string; sudo: boolean; shellCommand: string);
 begin
   FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
   FShellCommand := shellCommand;
-  FClientDataDir := clientDataDir;
 
   FreeOnTerminate := True;
   inherited Create(True);
+end;
+
+// get properties from query and write them to file properties.conf
+procedure TMyThread.prepareInstallation;
+var
+  FileText: TStringList;
+  TouchCommand: TRunCommandElevated;
+begin
+  // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
+  FileText := TStringList.Create;
+  TouchCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
+    Password.RadioBtnSudo.Checked);
+
+  FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
+  FileText.Add('backend=' + Data.backend);
+  FileText.Add('dnsdomain=' + Data.domain);
+  FileText.Add('force_copy_modules=' + Data.copyMod.PropertyEntry);
+  FileText.Add('install_and_configure_dhcp=' + Data.dhcp.PropertyEntry);
+  FileText.Add('myipname=' + Data.ipName);
+  FileText.Add('myipnumber=' + Data.ipNumber);
+  FileText.Add('nameserver=' + Data.nameserver);
+  FileText.Add('netmask=' + Data.netmask);
+  FileText.Add('network=' + Data.networkAddress);
+  FileText.Add('opsi_admin_user_name=' + Data.adminName);
+  FileText.Add('opsi_admin_user_password=' + Data.adminPassword);
+  FileText.Add('opsi_online_repository=' + Data.repo);
+  FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
+  FileText.Add('patch_default_link_for_bootimage=' + Data.symlink);
+  FileText.Add('proxy=' + Data.proxy.PropertyEntry);
+  FileText.Add('repo_kind=' + Data.repoKind);
+  FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
+  // update_test shall always be false
+  FileText.Add('update_test=false');
+
+  FClientDataDir := ExtractFilePath(ParamStr(0));
+  Delete(FClientDataDir, Length(FClientDataDir), 1);
+  FClientDataDir := ExtractFilePath(FClientDataDir) + 'l-opsi-server';
+  // try downloading latest l-opsi-server and use respective DirClientData
+  if getLOpsiServer(TouchCommand, Data.distroName) then
+  begin
+    LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
+    FClientDataDir += '_downloaded/CLIENT_DATA/';
+  end
+  else
+  begin
+    LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
+      LLnotice);
+    FClientDataDir += '/CLIENT_DATA/';
+  end;
+  Password.clientDataDir := FClientDataDir;
+
+  // following equals no-gui WritePropsToFile
+  // write in l-opsi-server.conf file:
+  if not FileExists('l-opsi-server.conf') then
+    TouchCommand.Run('touch l-opsi-server.conf');
+  FileText.SaveToFile('l-opsi-server.conf');
+
+  // write in properties.conf file:
+  // navigate to CLIENT_DATA in l-opsi-server
+  if not FileExists(FClientDataDir + 'properties.conf') then
+    TouchCommand.Run('touch ' + FClientDataDir + 'properties.conf');
+  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'properties.conf');
+  FileText.SaveToFile(FClientDataDir + 'properties.conf');
+
+  // Important for getting the result 'failed' in case of a wrong password
+  // because in this case the RunCommands below aren't executed and therefore
+  // setup.opsiscript, that usually does it, isn't too:
+  FileText.Clear;
+  FileText.Add('failed');
+  if not FileExists(FClientDataDir + 'result.conf') then
+    TouchCommand.Run('touch ' + FClientDataDir + 'result.conf');
+  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf');
+  FileText.SaveToFile(FClientDataDir + 'result.conf');
+
+  FileText.Free;
+  TouchCommand.Free;
 end;
 
 procedure TMyThread.addRepo;
@@ -94,6 +167,7 @@ var
   url: string;
   MyRepo: TLinuxRepository;
 begin
+  Wait.LabelWait.Caption := rsCreateRepo;
   // first remove opsi.list to have a cleared opsi repository list
   FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
   // create repository:
@@ -124,86 +198,12 @@ procedure TMyThread.Execute;
 begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
+  Synchronize(@prepareInstallation);
   Synchronize(@addRepo);
   installOpsi;
 end;
 
 { TPassword }
-
-// get properties from query and write them to file properties.conf
-procedure TPassword.prepareInstallation;
-var
-  FileText: TStringList;
-  TouchCommand: TRunCommandElevated;
-  path: string;
-begin
-  // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
-  FileText := TStringList.Create;
-  TouchCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-
-  FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
-  FileText.Add('backend=' + Data.backend);
-  FileText.Add('dnsdomain=' + Data.domain);
-  FileText.Add('force_copy_modules=' + Data.copyMod.PropertyEntry);
-  FileText.Add('install_and_configure_dhcp=' + Data.dhcp.PropertyEntry);
-  FileText.Add('myipname=' + Data.ipName);
-  FileText.Add('myipnumber=' + Data.ipNumber);
-  FileText.Add('nameserver=' + Data.nameserver);
-  FileText.Add('netmask=' + Data.netmask);
-  FileText.Add('network=' + Data.networkAddress);
-  FileText.Add('opsi_admin_user_name=' + Data.adminName);
-  FileText.Add('opsi_admin_user_password=' + Data.adminPassword);
-  FileText.Add('opsi_online_repository=' + Data.repo);
-  FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
-  FileText.Add('patch_default_link_for_bootimage=' + Data.symlink);
-  FileText.Add('proxy=' + Data.proxy.PropertyEntry);
-  FileText.Add('repo_kind=' + Data.repoKind);
-  FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
-  // update_test shall always be false
-  FileText.Add('update_test=false');
-
-  clientDataDir := ExtractFilePath(ParamStr(0));
-  Delete(clientDataDir, Length(clientDataDir), 1);
-  clientDataDir := ExtractFilePath(clientDataDir) + 'l-opsi-server';
-  // try downloading latest l-opsi-server and use respective DirClientData
-  if getLOpsiServer(TouchCommand) then
-  begin
-    LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
-    clientDataDir += '_downloaded/CLIENT_DATA/';
-  end
-  else
-  begin
-    LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
-      LLnotice);
-    clientDataDir += '/CLIENT_DATA/';
-  end;
-
-  // following equals no-gui WritePropsToFile
-  // write in l-opsi-server.conf file:
-  if not FileExists('l-opsi-server.conf') then
-    TouchCommand.Run('touch l-opsi-server.conf');
-  FileText.SaveToFile('l-opsi-server.conf');
-
-  // write in properties.conf file:
-  // navigate to CLIENT_DATA in l-opsi-server
-  if not FileExists(clientDataDir + 'properties.conf') then
-    TouchCommand.Run('touch ' + clientDataDir + 'properties.conf');
-  TouchCommand.Run('chown -c $USER ' + clientDataDir + 'properties.conf');
-  FileText.SaveToFile(clientDataDir + 'properties.conf');
-
-  // Important for getting the result 'failed' in case of a wrong password
-  // because in this case the RunCommands below aren't executed and therefore
-  // setup.opsiscript, that usually does it, isn't too:
-  FileText.Clear;
-  FileText.Add('failed');
-  if not FileExists(clientDataDir + 'result.conf') then
-    TouchCommand.Run('touch ' + clientDataDir + 'result.conf');
-  TouchCommand.Run('chown -c $USER ' + clientDataDir + 'result.conf');
-  FileText.SaveToFile(clientDataDir + 'result.conf');
-
-  FileText.Free;
-  TouchCommand.Free;
-end;
 
 // show result of l-opsi-server installation and paths to log files,
 // executed in TPassword.FormClose
@@ -263,11 +263,9 @@ begin
   else
   begin
     btnFinishClicked := True;
-    prepareInstallation;
     // start thread for opsi server installation while showing TWait
     MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
-      Data.DistrInfo.GetPackageManagementShellCommand(Data.distroName),
-      clientDataDir);
+      GetPackageManagementShellCommand(Data.distroName));
     with MyThread do
     begin
       // FormClose automatically executed on termination of thread

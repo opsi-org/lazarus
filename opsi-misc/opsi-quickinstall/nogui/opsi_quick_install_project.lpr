@@ -250,7 +250,8 @@ type
     Delete(DirClientData, Length(DirClientData), 1);
     DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
     // try downloading latest l-opsi-server and use respective DirClientData
-    if getLOpsiServer(QuickInstallCommand) then
+    writeln(rsWait);
+    if getLOpsiServer(QuickInstallCommand, distroName) then
     begin
       LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
       DirClientData += '_downloaded/CLIENT_DATA/';
@@ -318,7 +319,7 @@ type
       MyRepo.Add(url);
 
     // install opsi:
-    shellCommand := DistrInfo.GetPackageManagementShellCommand(distroName);
+    shellCommand := GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
     QuickInstallCommand.Run(shellCommand + 'update');
     writeln(rsInstall + 'opsi-script...');

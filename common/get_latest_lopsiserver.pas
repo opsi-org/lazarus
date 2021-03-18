@@ -5,13 +5,14 @@ unit get_latest_lopsiserver;
 interface
 
 uses
-  Classes, SysUtils, osRunCommandElevated, osLog, Process;
+  Classes, SysUtils, osRunCommandElevated, osLog, Process, osDistributionInfo;
 
 const
   downloadDir = 'download.uib.de/opsi4.2/stable/packages/linux/localboot/';
 
 function extractFile(fileName: string): boolean;
-function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated): boolean;
+function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
+  distroName: string): boolean;
 
 implementation
 
@@ -30,10 +31,20 @@ begin
   end;
 end;
 
-function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated): boolean;
+function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
+  distroName: string): boolean;
+var
+  shellCommand: string;
 begin
   LogDatei.log('Try downloading latest l-opsi-server:', LLInfo);
   Result := True;
+
+  // installing required packages:
+  shellCommand := GetPackageManagementShellCommand(distroName);
+  LOpsiServerCommand.Run(shellCommand + 'update');
+  LOpsiServerCommand.Run(shellCommand + 'install wget');
+  LOpsiServerCommand.Run(shellCommand + 'install cpio');
+  LOpsiServerCommand.Run(shellCommand + 'install gzip');
 
   // download
   LOpsiServerCommand.Run('wget -A l-opsi-server_*.opsi -r -l 1 https://' +
@@ -68,7 +79,8 @@ begin
 
   // tidy up
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
-  LOpsiServerCommand.Run('rm l-opsi-server_*.opsi ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio');
+  LOpsiServerCommand.Run(
+    'rm l-opsi-server_*.opsi ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio');
 end;
 
 end.
