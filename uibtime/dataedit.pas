@@ -715,6 +715,7 @@ end;
 
 procedure TFDataedit.BitBtn2Click(Sender: TObject);
 begin
+  DataModule1.gotoLastTodayEvent;
   hide;
   Close;
 end;

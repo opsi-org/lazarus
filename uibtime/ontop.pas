@@ -72,6 +72,7 @@ type
     procedure eventhandler(newevent: string);
     procedure BtnArrayClick(Sender: TObject);
     procedure TimerAfterTopTenEnterTimer(Sender: TObject);
+    procedure TimerCallCountTimer(Sender: TObject);
     procedure TimerNachfrageTimer(Sender: TObject);
     //procedure BtnCallCountClick(Sender: TObject);
     //procedure TimerCallCountTimer(Sender: TObject);
@@ -899,6 +900,11 @@ begin
   TimerAfterTopTenEnter.Enabled := False;
 end;
 
+procedure TFOnTop.TimerCallCountTimer(Sender: TObject);
+begin
+
+end;
+
 (*
 procedure TFOnTop.BtnCallCountClick(Sender: TObject);
 var
@@ -1030,7 +1036,7 @@ var
   messagelist: TStringList;
 begin
   try
-    aktstartyear := 2001;
+    aktstartyear := 2010;
     aktstartmonth := 1;
     DataModule1.debugOut(6, 'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
     suchevent := edit1.Text;

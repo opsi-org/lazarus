@@ -1,7 +1,7 @@
 object FOnTop: TFOnTop
-  Left = 570
+  Left = 2035
   Height = 229
-  Top = 296
+  Top = 174
   Width = 1143
   BorderIcons = []
   Caption = 'uibtime - ontop'
@@ -284,6 +284,7 @@ object FOnTop: TFOnTop
   end
   object TimerCallCount: TTimer
     Enabled = False
+    OnTimer = TimerCallCountTimer
     Left = 163
     Top = 57
   end
