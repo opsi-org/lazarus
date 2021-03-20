@@ -1176,7 +1176,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 806
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -1206,7 +1206,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn11: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -1222,10 +1222,10 @@ object FDataedit: TFDataedit
       end
       object DBGrid10: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 356
-        Align = alLeft
+        Height = 303
+        Top = 27
+        Width = 762
+        Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataModule1.DS_holydays

@@ -1,7 +1,7 @@
 object FOnTop: TFOnTop
-  Left = 2035
+  Left = 383
   Height = 229
-  Top = 174
+  Top = 278
   Width = 1143
   BorderIcons = []
   Caption = 'uibtime - ontop'
