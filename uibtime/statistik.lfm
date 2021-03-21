@@ -1,7 +1,7 @@
 object FStatistik: TFStatistik
-  Left = 642
+  Left = 556
   Height = 604
-  Top = 56
+  Top = 182
   Width = 404
   Caption = 'uibtime-Statistik'
   ClientHeight = 604
@@ -171,10 +171,9 @@ object FStatistik: TFStatistik
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 1
-    OnClick = Panel2Click
     object Bevel3: TBevel
       Left = 188
-      Height = 395
+      Height = 363
       Top = 13
       Width = 198
     end
@@ -396,9 +395,9 @@ object FStatistik: TFStatistik
       TabOrder = 12
     end
     object BtnBSZreport: TBitBtn
-      Left = 14
+      Left = 0
       Height = 24
-      Top = 362
+      Top = 272
       Width = 159
       Caption = 'BSZ Controlling Auswertung'
       Enabled = False
@@ -423,10 +422,10 @@ object FStatistik: TFStatistik
       TabOrder = 14
     end
     object BitBtnControlRep2: TBitBtn
-      Left = 203
+      Left = 1
       Height = 24
-      Top = 373
-      Width = 160
+      Top = 296
+      Width = 155
       Caption = 'Controlling Report 2'
       Enabled = False
       Font.Color = clWindowText
@@ -528,6 +527,25 @@ object FStatistik: TFStatistik
       ShowHint = True
       TabOrder = 20
     end
+    object LabelMonthURL: TLabel
+      Left = 8
+      Height = 18
+      Top = 390
+      Width = 377
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Link zum Monatsabschluß'
+      Font.Color = clBlue
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = LabelMonthURLClick
+      OnMouseEnter = LabelMonthURLMouseEnter
+      OnMouseLeave = LabelMonthURLMouseLeave
+    end
   end
   object Query1: TSQLQuery
     FieldDefs = <>
@@ -567,12 +585,12 @@ object FStatistik: TFStatistik
     Options = []
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     DataType = dtDataSet
-    Left = 24
-    Top = 408
+    Left = 32
+    Top = 440
   end
   object frDBDataSet1: TfrDBDataSet
     DataSet = Query1
-    Left = 87
-    Top = 411
+    Left = 120
+    Top = 440
   end
 end

@@ -16,6 +16,7 @@ type
   TFStatistik = class(TForm)
     frDBDataSet1: TfrDBDataSet;
     frReport1: TfrReport;
+    LabelMonthURL: TLabel;
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -84,7 +85,9 @@ type
     procedure BitBtnworkreportClick(Sender: TObject);
     procedure BitBtnArbeitsberichtOutputClick(Sender: TObject);
     procedure BitBtnMonthreportStartStopClick(Sender: TObject);
-    procedure Panel2Click(Sender: TObject);
+    procedure LabelMonthURLClick(Sender: TObject);
+    procedure LabelMonthURLMouseEnter(Sender: TObject);
+    procedure LabelMonthURLMouseLeave(Sender: TObject);
   private
     { Private-Deklarationen}
   public
@@ -433,6 +436,9 @@ var
   nextmonth, nextmonthyear: integer;
   mypath: string;
   startdt, stopdt: TDateTime;
+  sollbrutto : double; // contract
+  sollnetto : double; // abzgl. zeitgutschriten (feiertag)
+  feierstunden : double; // zeitgutschriten (feiertag)
 begin
   ///FRmonat := TFRmonat.create(self);
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
@@ -469,26 +475,40 @@ begin
   query1.ReadOnly := True;
   query1.Open;
 
-  // sollstunden holen....
+  // sollstunden brutto (gemäß vertrag) holen....
+  // sollstunden netto (nach abzug zeitgutschriften) holen....
   ///Datamodule1.Tableuser.FindKey([uid]);
   if querysollstunden.active then
     querysollstunden.Close;
   querysollstunden.SQL.Clear;
-  querysollstunden.SQL.Add('select stunden from uibsoll where');
-  querysollstunden.sql.Add('(userid = :uid) ');
-  querysollstunden.sql.Add('and (jahr = ' + spinedit2.Text + ')');
-  querysollstunden.sql.Add('and (monat = ' + spinedit1.Text + ')');
+  querysollstunden.SQL.Add('select sum(UIB_MONTH_SOLL_CONTRACT) as brutto, ');
+  querysollstunden.SQL.Add('sum(UIB_MONTH_SOLL) as netto ');
+  querysollstunden.SQL.Add('from EVAL_MONTH where');
+  querysollstunden.sql.Add('(UIB_USER = :uid) ');
+  querysollstunden.sql.Add('and (UIB_YEAR = ' + spinedit2.Text + ')');
+  querysollstunden.sql.Add('and (UIB_MONTH = ' + spinedit1.Text + ')');
   querysollstunden.parambyname('uid').AsString := combobox1.Text;
   ///  := Datamodule1.Tableuser.fieldbyname('userid').asstring;
   querysollstunden.Open;
- (*
- FRmonat.QRLabel1.Caption := 'Monatsreport für '+
- Datamodule1.Tableuser.fieldbyname('name').asstring;
- FRmonat.QRLabel2.Caption := 'Von 1.'+spinedit1.Text+'.'+spinedit2.Text+
-   ' bis (excl.) 1.'+inttostr(nextmonth)+'.'+inttostr(nextmonthyear);
- FRmonat.QuickRep1.Preview;
- FRmonat.free;
- *)
+  sollbrutto:= querysollstunden.FieldByName('brutto').AsFloat;
+  sollnetto:= querysollstunden.FieldByName('netto').AsFloat;
+  feierstunden := sollbrutto - sollnetto;
+
+  (*
+  // sollstunden netto (nach abzug zeitgutschriften) holen....
+  ///Datamodule1.Tableuser.FindKey([uid]);
+  if query2.active then
+    query2.Close;
+  query2.SQL.Clear;    // EVAL_MONTH.UIB_MONTH_SOLL_CONTRACT
+  //UIB_USER,UIB_YEAR,UIB_MONTH
+  query2.SQL.Add('select UIB_MONTH_SOLL_CONTRACT from EVAL_MONTH where');
+  query2.sql.Add('(UIB_USER = :uid) ');
+  query2.sql.Add('and (UIB_YEAR = ' + spinedit2.Text + ')');
+  query2.sql.Add('and (UIB_MONTH = ' + spinedit1.Text + ')');
+  query2.parambyname('uid').AsString := combobox1.Text;
+  ///  := Datamodule1.Tableuser.fieldbyname('userid').asstring;
+  query2.Open;
+  *)
  {$IFDEF Linux}
  // development:
   mypath := ExtractFilePath(ParamStr(0));
@@ -504,7 +524,7 @@ begin
   frReport1.FindObject('memoStartEnd').Memo.Text :=
     'Von 1.' + spinedit1.Text + '.' + spinedit2.Text + ' bis (excl.) 1.' +
     IntToStr(nextmonth) + '.' + IntToStr(nextmonthyear);
-  //frReport1.FindObject('memo3').Width:=30;
+  //frReport1.FindObject('gutschrift').Memo.Text:=  FormatDateTime('hh:nn',feierstunden)
 
   frReport1.ShowReport;
 end;
@@ -1097,9 +1117,30 @@ begin
   Fresult.Free;
 end;
 
-procedure TFStatistik.Panel2Click(Sender: TObject);
+procedure TFStatistik.LabelMonthURLClick(Sender: TObject);
+var
+  link: string;
 begin
+  link := 'https://uibtime.uib.gmbh/uibtime/stdkonto/uibtime_info.php';
+  link := link + '?monat='+spinedit2.Text+'_';
+  link := link + format('%.2d',[StrToInt(spinedit1.Text)]);
+  OpenURL(link);
+end;
 
+procedure TFStatistik.LabelMonthURLMouseEnter(Sender: TObject);
+var
+  link: string;
+begin
+  link := 'https://uibtime.uib.gmbh/uibtime/stdkonto/uibtime_info.php';
+  link := link + '?monat='+spinedit2.Text+'_';
+  link := link + format('%.2d',[StrToInt(spinedit1.Text)]);
+  LabelMonthURL.Hint:=link;
+  Screen.Cursor := crHandPoint;
+end;
+
+procedure TFStatistik.LabelMonthURLMouseLeave(Sender: TObject);
+begin
+  Screen.Cursor := crDefault;
 end;
 
 end.

@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2021-03-19 19:04:40"/>
+    <ReportLastChange Value="2021-03-21 18:16:50"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -49,7 +49,7 @@
             <Left Value="0"/>
             <Top Value="174"/>
             <Width Value="752"/>
-            <Height Value="184"/>
+            <Height Value="212"/>
           </Size>
           <Flags Value="48"/>
           <Data>
@@ -595,7 +595,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[querysollstunden.stunden]&#xA;"/>
+            <Memo Value="[querysollstunden.brutto]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -707,7 +707,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe])&#xA;+ queryfeierstunden.stunden&#xA; - querysollstunden.stunden]&#xA;"/>
+            <Memo Value="[SUM([query1.summe]) - [querysollstunden.netto]]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1173,7 +1173,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Feiertagsstunden&#xA;"/>
+            <Memo Value="Zeitgutschrift*&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1206,15 +1206,15 @@
           <Cursor Value="0"/>
         </Object26>
         <Object27>
-          <Name Value="Memo15"/>
+          <Name Value="gutschrift"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="301"/>
+            <Left Value="333"/>
             <Top Value="215"/>
-            <Width Value="238"/>
+            <Width Value="206"/>
             <Height Value="20"/>
           </Size>
           <Flags Value="3"/>
@@ -1229,7 +1229,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[queryfeierstunden.stunden]&#xA;"/>
+            <Memo Value="[querysollstunden.brutto - querysollstunden.netto]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1341,7 +1341,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe]) + &#xA;queryfeierstunden.stunden]&#xA;"/>
+            <Memo Value="[SUM([query1.summe]) + [querysollstunden.brutto] - [querysollstunden.netto]]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1373,7 +1373,63 @@
           <Justify Value="False"/>
           <Cursor Value="0"/>
         </Object29>
-        <ObjectCount Value="29"/>
+        <Object30>
+          <Name Value="Memo15"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="24"/>
+            <Top Value="348"/>
+            <Width Value="706"/>
+            <Height Value="18"/>
+          </Size>
+          <Flags Value="11"/>
+          <FillColor Value="clNone"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="556"/>
+            <FormatStr Value=""/>
+            <Memo Value="* Zeitgutschrift: Feiertage, Sonderurlaub u.a. von der Firma verwaltete Zeitgutschriften&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="12"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taCenter"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object30>
+        <ObjectCount Value="30"/>
       </Page1>
       <FVal>
         <Count Value="0"/>
