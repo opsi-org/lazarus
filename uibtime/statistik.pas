@@ -439,6 +439,8 @@ var
   sollbrutto : double; // contract
   sollnetto : double; // abzgl. zeitgutschriten (feiertag)
   feierstunden : double; // zeitgutschriten (feiertag)
+  summework : double;  // summe work
+  ueberstunden : double;  // summe work - soll
 begin
   ///FRmonat := TFRmonat.create(self);
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
@@ -474,6 +476,14 @@ begin
   query1.sql.Add(' group by Tag, daystr');
   query1.ReadOnly := True;
   query1.Open;
+  summework := 0;
+  query1.First;
+  while not query1.EOF do
+  begin
+    summework := summework+ query1.FieldByName('Summe').AsFloat;
+    query1.Next;
+  end;
+  query1.First;
 
   // sollstunden brutto (gemäß vertrag) holen....
   // sollstunden netto (nach abzug zeitgutschriften) holen....
@@ -481,8 +491,8 @@ begin
   if querysollstunden.active then
     querysollstunden.Close;
   querysollstunden.SQL.Clear;
-  querysollstunden.SQL.Add('select sum(UIB_MONTH_SOLL_CONTRACT) as brutto, ');
-  querysollstunden.SQL.Add('sum(UIB_MONTH_SOLL) as netto ');
+  querysollstunden.SQL.Add('select UIB_MONTH_SOLL_CONTRACT, ');
+  querysollstunden.SQL.Add('UIB_MONTH_SOLL  ');
   querysollstunden.SQL.Add('from EVAL_MONTH where');
   querysollstunden.sql.Add('(UIB_USER = :uid) ');
   querysollstunden.sql.Add('and (UIB_YEAR = ' + spinedit2.Text + ')');
@@ -490,9 +500,10 @@ begin
   querysollstunden.parambyname('uid').AsString := combobox1.Text;
   ///  := Datamodule1.Tableuser.fieldbyname('userid').asstring;
   querysollstunden.Open;
-  sollbrutto:= querysollstunden.FieldByName('brutto').AsFloat;
-  sollnetto:= querysollstunden.FieldByName('netto').AsFloat;
+  sollbrutto:= querysollstunden.FieldByName('UIB_MONTH_SOLL_CONTRACT').AsFloat;
+  sollnetto:= querysollstunden.FieldByName('UIB_MONTH_SOLL').AsFloat;
   feierstunden := sollbrutto - sollnetto;
+  ueberstunden := summework - sollnetto;
 
   (*
   // sollstunden netto (nach abzug zeitgutschriften) holen....
@@ -524,7 +535,14 @@ begin
   frReport1.FindObject('memoStartEnd').Memo.Text :=
     'Von 1.' + spinedit1.Text + '.' + spinedit2.Text + ' bis (excl.) 1.' +
     IntToStr(nextmonth) + '.' + IntToStr(nextmonthyear);
-  //frReport1.FindObject('gutschrift').Memo.Text:=  FormatDateTime('hh:nn',feierstunden)
+  frReport1.FindObject('gutschrift').Memo.Text:=
+    FormatDateTime('hh:nn',feierstunden);
+  frReport1.FindObject('zwsumme').Memo.Text:=
+      FormatDateTime('hh:nn',summework + feierstunden);
+  frReport1.FindObject('sollstunden').Memo.Text:=
+      FormatDateTime('hh:nn',sollbrutto);
+  frReport1.FindObject('ueberstunden').Memo.Text:=
+      FormatDateTime('hh:nn',ueberstunden);
 
   frReport1.ShowReport;
 end;

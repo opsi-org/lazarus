@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2021-03-21 18:16:50"/>
+    <ReportLastChange Value="2021-03-22 12:57:26"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -49,7 +49,7 @@
             <Left Value="0"/>
             <Top Value="174"/>
             <Width Value="752"/>
-            <Height Value="212"/>
+            <Height Value="180"/>
           </Size>
           <Flags Value="48"/>
           <Data>
@@ -522,8 +522,8 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="200"/>
-            <Top Value="274"/>
+            <Left Value="204"/>
+            <Top Value="266"/>
             <Width Value="108"/>
             <Height Value="20"/>
           </Size>
@@ -572,18 +572,18 @@
           <Cursor Value="0"/>
         </Object12>
         <Object13>
-          <Name Value="Memo7"/>
+          <Name Value="sollstunden"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
             <Left Value="338"/>
-            <Top Value="274"/>
+            <Top Value="266"/>
             <Width Value="198"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -595,7 +595,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[querysollstunden.brutto]&#xA;"/>
+            <Memo Value="soll&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -634,12 +634,12 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="204"/>
-            <Top Value="308"/>
-            <Width Value="106"/>
+            <Left Value="172"/>
+            <Top Value="296"/>
+            <Width Value="138"/>
             <Height Value="18"/>
           </Size>
-          <Flags Value="11"/>
+          <Flags Value="3"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -684,18 +684,18 @@
           <Cursor Value="0"/>
         </Object14>
         <Object15>
-          <Name Value="Memo9"/>
+          <Name Value="ueberstunden"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
             <Left Value="338"/>
-            <Top Value="302"/>
+            <Top Value="294"/>
             <Width Value="198"/>
-            <Height Value="36"/>
+            <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -707,7 +707,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe]) - [querysollstunden.netto]]&#xA;"/>
+            <Memo Value="ueberstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -807,7 +807,7 @@
             <Width Value="174"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -1157,7 +1157,7 @@
           <StreamMode Value="0"/>
           <Size>
             <Left Value="160"/>
-            <Top Value="213"/>
+            <Top Value="209"/>
             <Width Value="152"/>
             <Height Value="20"/>
           </Size>
@@ -1212,12 +1212,12 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="333"/>
-            <Top Value="215"/>
+            <Left Value="329"/>
+            <Top Value="207"/>
             <Width Value="206"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -1229,7 +1229,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[querysollstunden.brutto - querysollstunden.netto]&#xA;"/>
+            <Memo Value="huhu&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1269,7 +1269,7 @@
           <StreamMode Value="0"/>
           <Size>
             <Left Value="153"/>
-            <Top Value="244"/>
+            <Top Value="236"/>
             <Width Value="160"/>
             <Height Value="20"/>
           </Size>
@@ -1318,18 +1318,18 @@
           <Cursor Value="0"/>
         </Object28>
         <Object29>
-          <Name Value="Memo17"/>
+          <Name Value="zwsumme"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
             <Left Value="338"/>
-            <Top Value="244"/>
+            <Top Value="236"/>
             <Width Value="198"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -1341,7 +1341,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe]) + [querysollstunden.brutto] - [querysollstunden.netto]]&#xA;"/>
+            <Memo Value="hoho&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1380,9 +1380,9 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="24"/>
-            <Top Value="348"/>
-            <Width Value="706"/>
+            <Left Value="56"/>
+            <Top Value="324"/>
+            <Width Value="638"/>
             <Height Value="18"/>
           </Size>
           <Flags Value="11"/>
@@ -1411,8 +1411,8 @@
           <Tag Value=""/>
           <FURLInfo Value=""/>
           <Font>
-            <Name Value="Arial"/>
-            <Size Value="12"/>
+            <Name Value="Sans"/>
+            <Size Value="9"/>
             <Color Value="clBlack"/>
             <Charset Value="0"/>
             <Style Value=""/>

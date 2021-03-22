@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 615
+  Left = 693
   Height = 355
-  Top = 289
+  Top = 427
   Width = 772
   Caption = 'uibtime - data edit'
   ClientHeight = 355
@@ -32,6 +32,7 @@ object FDataedit: TFDataedit
     TabIndex = 0
     TabOrder = 0
     TabPosition = tpBottom
+    OnChange = PageControl1Change
     OnEnter = PageControl1Enter
     object TabSheet1: TTabSheet
       Caption = 'Events'
@@ -221,7 +222,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 806
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -251,7 +252,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn3: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -267,9 +268,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid2: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 806
+        Height = 303
+        Top = 27
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -296,7 +297,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 804
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -326,7 +327,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn4: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -342,9 +343,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid3: TDBGrid
         Left = 0
-        Height = 284
-        Top = 65
-        Width = 804
+        Height = 269
+        Top = 61
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -362,7 +363,7 @@ object FDataedit: TFDataedit
       object DBLookupComboBox3: TDBLookupComboBox
         Tag = 1
         Left = 167
-        Height = 21
+        Height = 27
         Top = 136
         Width = 137
         DataField = 'PARENTEVENT'
@@ -385,12 +386,12 @@ object FDataedit: TFDataedit
       object Panel1: TPanel
         Left = 0
         Height = 34
-        Top = 29
-        Width = 804
+        Top = 27
+        Width = 762
         Align = alTop
         Caption = 'Panel1'
         ClientHeight = 34
-        ClientWidth = 804
+        ClientWidth = 762
         Font.Color = clWindowText
         Font.Height = -10
         Font.Name = 'MS Sans Serif'
@@ -398,7 +399,7 @@ object FDataedit: TFDataedit
         TabOrder = 3
         object Panel2: TPanel
           Left = 1
-          Height = 34
+          Height = 32
           Top = 1
           Width = 63
           Align = alLeft
@@ -410,10 +411,10 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object DBMemo1: TDBMemo
-          Left = 67
+          Left = 64
           Height = 40
           Top = 1
-          Width = 736
+          Width = 697
           Align = alClient
           DataField = 'COMMENT'
           DataSource = DataModule1.DSuibaktevent
@@ -439,7 +440,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 804
+        Width = 762
         ButtonHeight = 23
         ButtonWidth = 22
         Caption = 'ToolBar1'
@@ -471,7 +472,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn5: TBitBtn
-          Left = 228
+          Left = 229
           Height = 23
           Top = 2
           Width = 107
@@ -487,9 +488,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid4: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 804
+        Height = 303
+        Top = 27
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -516,7 +517,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 804
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -546,7 +547,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn6: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -562,9 +563,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid5: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 804
+        Height = 303
+        Top = 27
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -581,7 +582,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox2: TDBLookupComboBox
         Left = 258
-        Height = 21
+        Height = 27
         Top = 152
         Width = 137
         DataField = 'EVENT'
@@ -602,7 +603,7 @@ object FDataedit: TFDataedit
       end
       object DBComboBoxBool: TDBComboBox
         Left = 265
-        Height = 21
+        Height = 27
         Top = 190
         Width = 137
         DataField = 'BUTTON'
@@ -636,7 +637,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 804
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -666,7 +667,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn7: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -682,9 +683,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid6: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 804
+        Height = 303
+        Top = 27
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -701,7 +702,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox5: TDBLookupComboBox
         Left = 220
-        Height = 21
+        Height = 27
         Top = 144
         Width = 137
         DataField = 'EVENT'
@@ -735,7 +736,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 27
         Top = 0
-        Width = 804
+        Width = 762
         Caption = 'ToolBar1'
         Font.Color = clWindowText
         Font.Height = -10
@@ -765,7 +766,7 @@ object FDataedit: TFDataedit
           TabOrder = 0
         end
         object BitBtn8: TBitBtn
-          Left = 228
+          Left = 229
           Height = 21
           Top = 2
           Width = 107
@@ -809,9 +810,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid8: TDBGrid
         Left = 0
-        Height = 320
-        Top = 29
-        Width = 804
+        Height = 303
+        Top = 27
+        Width = 762
         Align = alClient
         Color = clWindow
         Columns = <>
