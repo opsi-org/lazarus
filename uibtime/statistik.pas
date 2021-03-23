@@ -156,11 +156,11 @@ begin
   edit1.Text := '01.01.2003';
   edit2.Text := datetostr(date);
   {$IFDEF WINDOWS}
-  ComboBoxAktevent.Style:= csDropDown;
+  ComboBoxAktevent.Style := csDropDown;
   {$ElSE WINDOWS}
-  ComboBoxAktevent.Style:= csSimple;
+  ComboBoxAktevent.Style := csSimple;
   {$ENDIF WINDOWS}
-  DataModule1.SetFontName(TControl(sender),myFont);
+  DataModule1.SetFontName(TControl(Sender), myFont);
 end;
 
 procedure TFStatistik.Edit1Exit(Sender: TObject);
@@ -436,11 +436,14 @@ var
   nextmonth, nextmonthyear: integer;
   mypath: string;
   startdt, stopdt: TDateTime;
-  sollbrutto : double; // contract
-  sollnetto : double; // abzgl. zeitgutschriten (feiertag)
-  feierstunden : double; // zeitgutschriten (feiertag)
-  summework : double;  // summe work
-  ueberstunden : double;  // summe work - soll
+  sollbrutto: double; // contract
+  sollnetto: double; // abzgl. zeitgutschriten (feiertag)
+  feierstunden: double; // zeitgutschriten (feiertag)
+  summework: double;  // summe work
+  ueberstunden: double;  // summe work - soll
+  tmptime: TDateTime;
+  hours, minutes: integer;
+  outstr: string;
 begin
   ///FRmonat := TFRmonat.create(self);
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
@@ -480,7 +483,7 @@ begin
   query1.First;
   while not query1.EOF do
   begin
-    summework := summework+ query1.FieldByName('Summe').AsFloat;
+    summework := summework + query1.FieldByName('Summe').AsFloat;
     query1.Next;
   end;
   query1.First;
@@ -500,8 +503,8 @@ begin
   querysollstunden.parambyname('uid').AsString := combobox1.Text;
   ///  := Datamodule1.Tableuser.fieldbyname('userid').asstring;
   querysollstunden.Open;
-  sollbrutto:= querysollstunden.FieldByName('UIB_MONTH_SOLL_CONTRACT').AsFloat;
-  sollnetto:= querysollstunden.FieldByName('UIB_MONTH_SOLL').AsFloat;
+  sollbrutto := querysollstunden.FieldByName('UIB_MONTH_SOLL_CONTRACT').AsFloat;
+  sollnetto := querysollstunden.FieldByName('UIB_MONTH_SOLL').AsFloat;
   feierstunden := sollbrutto - sollnetto;
   ueberstunden := summework - sollnetto;
 
@@ -521,7 +524,7 @@ begin
   query2.Open;
   *)
  {$IFDEF Linux}
- // development:
+  // development:
   mypath := ExtractFilePath(ParamStr(0));
   if not FileExists(mypath + 'monthrep.lrf') then
     mypath := '/usr/share/uibtime/';
@@ -535,16 +538,39 @@ begin
   frReport1.FindObject('memoStartEnd').Memo.Text :=
     'Von 1.' + spinedit1.Text + '.' + spinedit2.Text + ' bis (excl.) 1.' +
     IntToStr(nextmonth) + '.' + IntToStr(nextmonthyear);
-  frReport1.FindObject('gutschrift').Memo.Text:=
-    FormatDateTime('hh:nn',feierstunden);
-  frReport1.FindObject('zwsumme').Memo.Text:=
-      FormatDateTime('hh:nn',summework + feierstunden);
-  frReport1.FindObject('sollstunden').Memo.Text:=
-      FormatDateTime('hh:nn',sollbrutto);
-  frReport1.FindObject('ueberstunden').Memo.Text:=
-      FormatDateTime('hh:nn',ueberstunden);
+
+  hours := trunc(feierstunden);
+  minutes := trunc((feierstunden - hours) * 60);
+  outstr := '(' + IntToStr(hours) + ':' + format('%.2d', [minutes]) + ' h)       ' +
+    FormatFloat('###0.00', feierstunden);
+  frReport1.FindObject('gutschrift').Memo.Text := outstr;
+
+  //FormatDateTime('hh:nn',feierstunden);
+  hours := trunc(summework + feierstunden);
+  minutes := trunc((summework + feierstunden - hours) * 60);
+  outstr := '(' + IntToStr(hours) + ':' + format('%.2d', [minutes]) + ' h)       ' +
+    FormatFloat('###0.00', summework + feierstunden);
+  frReport1.FindObject('zwsumme').Memo.Text := outstr;
+
+  // FormatDateTime('hh:nn',TDateTime(summework + feierstunden))+'*';
+  hours := trunc(sollbrutto);
+  minutes := trunc((sollbrutto - hours) * 60);
+  outstr := '(' + IntToStr(hours) + ':' + format('%.2d', [minutes]) + ' h)       ' +
+    FormatFloat('###0.00', sollbrutto);
+  frReport1.FindObject('sollstunden').Memo.Text := outstr;
+
+  //FormatDateTime('hh:nn',TDateTime(sollbrutto))+'+';
+  hours := trunc(ueberstunden);
+  minutes := trunc((ueberstunden - hours) * 60);
+  outstr := '(' + IntToStr(hours) + ':' + format('%.2d', [minutes]) + ' h)       ' +
+    FormatFloat('###0.00', ueberstunden);
+  frReport1.FindObject('ueberstunden').Memo.Text := outstr;
+  Application.ProcessMessages;
+
+  //FormatDateTime('hh:nn',tmptime)
 
   frReport1.ShowReport;
+  Application.ProcessMessages;
 end;
 
 procedure TFStatistik.BtnTreeSumClick(Sender: TObject);
@@ -1140,8 +1166,8 @@ var
   link: string;
 begin
   link := 'https://uibtime.uib.gmbh/uibtime/stdkonto/uibtime_info.php';
-  link := link + '?monat='+spinedit2.Text+'_';
-  link := link + format('%.2d',[StrToInt(spinedit1.Text)]);
+  link := link + '?monat=' + spinedit2.Text + '_';
+  link := link + format('%.2d', [StrToInt(spinedit1.Text)]);
   OpenURL(link);
 end;
 
@@ -1150,9 +1176,9 @@ var
   link: string;
 begin
   link := 'https://uibtime.uib.gmbh/uibtime/stdkonto/uibtime_info.php';
-  link := link + '?monat='+spinedit2.Text+'_';
-  link := link + format('%.2d',[StrToInt(spinedit1.Text)]);
-  LabelMonthURL.Hint:=link;
+  link := link + '?monat=' + spinedit2.Text + '_';
+  link := link + format('%.2d', [StrToInt(spinedit1.Text)]);
+  LabelMonthURL.Hint := link;
   Screen.Cursor := crHandPoint;
 end;
 

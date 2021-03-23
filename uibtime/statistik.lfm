@@ -1,7 +1,7 @@
 object FStatistik: TFStatistik
-  Left = 556
+  Left = 518
   Height = 604
-  Top = 182
+  Top = 284
   Width = 404
   Caption = 'uibtime-Statistik'
   ClientHeight = 604
