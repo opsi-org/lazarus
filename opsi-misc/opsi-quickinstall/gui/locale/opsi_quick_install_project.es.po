@@ -265,8 +265,8 @@ msgstr "Instalando"
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
-msgid "Set a different IP name (FQDN) (\"auto\" = use standard)"
-msgstr "Fijar un nombre IP diferente (FQDN) (\"auto\" = utiliza standard)"
+msgid "Set a different IP name (FQDN) (\"auto\" = use automatically determined FQDN of this computer)"
+msgstr "Fijar un nombre IP diferente (FQDN) (\"auto\" = utiliza el FQDN determinado automáticamente de este ordenador)"
 
 #: opsi_quick_install_resourcestrings.rsipnameo
 msgctxt "opsi_quick_install_resourcestrings.rsipnameo"
@@ -275,8 +275,8 @@ msgstr "Nombre IP:"
 
 #: opsi_quick_install_resourcestrings.rsipnumber
 msgctxt "opsi_quick_install_resourcestrings.rsipnumber"
-msgid "Set a different IP number (\"auto\" = use standard)"
-msgstr "Fijar un número de IP distinto (\"auto\" = utiliza standard)"
+msgid "Set a different IP number (\"auto\" = use automatically determined IP address of this computer)"
+msgstr "Fijar un número de IP distinto (\"auto\" = utiliza la dirección IP determinada automáticamente de este ordenador)"
 
 #: opsi_quick_install_resourcestrings.rsipnumbero
 msgctxt "opsi_quick_install_resourcestrings.rsipnumbero"
