@@ -969,7 +969,7 @@ begin
     if Datamodule1.getshowallprojects() then
     begin
       datamodule1.debugOut(6, 'buildtree allprojects');
-      DataModule1.SQuibaktevent.Refresh;
+      //DataModule1.SQuibaktevent.Refresh;
       buildtree(DataModule1.SQuibaktevent);
     end
     else
