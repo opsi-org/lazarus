@@ -146,6 +146,8 @@ end;
 
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
 begin
+  if encodingtype='' then
+     encodingtype := 'system';
   SaveToFile(Filename, encodingtype, False);
 end;
 
@@ -249,6 +251,8 @@ var
 begin
   Result := False;
   try
+    if encodingtype='' then
+     encodingtype := 'system';
     myfilename := ExpandFileName(FileName);
     SaveToFile(myfilename, encodingtype, True);
     LogS := myfilename + ' saved back with encoding: ' + encodingtype;
@@ -350,7 +354,8 @@ end;
 
 procedure TXStringlist.loadFromFile(const FileName: string);
 begin
-  loadFromFileWithEncoding(FileName,GetDefaultTextEncoding);
+  //loadFromFileWithEncoding(FileName,GetDefaultTextEncoding);
+  loadFromFileWithEncoding(FileName,'system');
 end;
 
 procedure TXStringlist.loadFromFileWithEncoding(const FileName: string; encodingtype: string);
@@ -359,6 +364,8 @@ var
 begin
   // call fuction of osencoding here
   self.Clear;
+  if encodingtype='' then
+     encodingtype := 'system';
   //encfilename := reencode(ExpandFileName(FileName),'utf8', usedenc, 'system');
   encfilename := ExpandFileName(FileName);
   LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);

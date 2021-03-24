@@ -1941,7 +1941,17 @@ var
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
-  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+  if encodingString<>'' then
+     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString)
+  else
+     begin
+       OriginalList.LoadFromFile(ExpandFileName(FName));
+       encodingString := searchencoding(OriginalList.Text);
+       if encodingString='' then
+          encodingString := 'system';
+       if encodingString <> 'system' then
+          OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+     end;
   (*
   OriginalList.LoadFromFile(ExpandFileName(FName));
   Encoding2use := searchencoding(OriginalList.Text);
