@@ -68,3 +68,6 @@ opsi-misc/opsi-quickinstall/gui/Release.key.1
 opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/result.conf
 opsi-misc/opsi-quickinstall/nogui/l-opsi-server.conf
 opsi-misc/opsi-quickinstall/l-opsi-server2/
+opsi-misc/opsi-quickinstall/nogui/changelog.txt
+opsi-misc/opsi-quickinstall/gui/changelog.txt
+opsi-misc/opsi-quickinstall/gui/control

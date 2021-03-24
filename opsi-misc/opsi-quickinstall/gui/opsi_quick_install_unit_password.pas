@@ -178,7 +178,15 @@ begin
     url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
   else
     url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
-  MyRepo.Add(url);
+
+  // !following lines need an existing LogDatei
+  if (Data.distroName = 'openSUSE') or (Data.distroName = 'SUSE') then
+  begin
+    MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
+  end
+  else
+    MyRepo.Add(url);
+
   MyRepo.Free;
 end;
 
