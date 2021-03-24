@@ -242,9 +242,8 @@ msgid "Is this correct?"
 msgstr "Is this correct?"
 
 #: opsi_quick_install_resourcestrings.rslangop
-#| msgid " [Options: \"de\" for Deutsch, \"en\" for English, ...]"
-msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français]"
-msgstr " [Options: \"de\" for Deutsch, \"en\" for English, ...]"
+msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
+msgstr " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
 
 #: opsi_quick_install_resourcestrings.rslinkop
 msgid " [Options: \"m\" for default.menu, \"nom\" for default.nomenu]"
