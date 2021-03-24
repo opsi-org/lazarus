@@ -26,10 +26,10 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="4"/>
-      <BuildNr Value="13"/>
-      <StringTable Comments="Compiled with Lazarus 2.0.10" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
+      <BuildNr Value="16"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.10" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
-    <BuildModes Count="11">
+    <BuildModes Count="12">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -171,11 +171,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="winst32"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -220,11 +221,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="winst64"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -487,14 +489,72 @@
           </Other>
         </CompilerOptions>
       </Item11>
+      <Item12 Name="Debug_win32">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="winst32"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <LinkSmart Value="True"/>
+            <Options>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-os.plist"/>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dSYNAPSE"/>
+          </Other>
+        </CompilerOptions>
+      </Item12>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+      </local>
       <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
+      <Modes Count="2">
+        <Mode0 Name="default">
+          <local>
+            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+          </local>
+        </Mode0>
+        <Mode1 Name="opsiservice">
+          <local>
+            <CommandLineParams Value="/opsiservice https://192.168.1.14:4447/rpc /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3"/>
+            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+          </local>
+        </Mode1>
       </Modes>
     </RunParams>
     <RequiredPackages Count="2">
@@ -505,7 +565,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="61">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -755,6 +815,28 @@
         <Filename Value="notarize_osgui.bash"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="osviewcontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osViewControl"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="osguicontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osGUIControl"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="ossimplewinbatchgui.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SimpleWinBatchGUI"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="osSimpleWinBatchGUI"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="opsi-script.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

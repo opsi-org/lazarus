@@ -1480,7 +1480,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 313
       Top = 0
       Width = 620
-      PageIndex = 2
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1525,7 +1525,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         object ScrollBoxAllTiles: TScrollBox
           Left = 0
-          Height = 313
+          Height = 475
           Top = 0
           Width = 620
           HorzScrollBar.Page = 1
@@ -1533,7 +1533,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           VertScrollBar.Page = 1
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 313
+          ClientHeight = 475
           ClientWidth = 620
           Color = clDefault
           ParentColor = False
@@ -1541,7 +1541,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           OnMouseWheel = ScrollBoxAllTilesMouseWheel
           object FlowPanelAllTiles: TFlowPanel
             Left = 0
-            Height = 313
+            Height = 475
             Top = 0
             Width = 620
             Align = alClient
@@ -1566,8 +1566,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 616
+          ClientHeight = 37
+          ClientWidth = 620
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1592,14 +1592,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         end
         object ScrollBoxSoftwarePage: TScrollBox
           Left = 0
-          Height = 276
+          Height = 438
           Top = 37
           Width = 620
           HorzScrollBar.Page = 579
-          VertScrollBar.Page = 276
+          VertScrollBar.Page = 438
           Align = alClient
           BorderStyle = bsNone
-          ClientHeight = 276
+          ClientHeight = 438
           ClientWidth = 603
           TabOrder = 1
           object ImageIconSoftware: TImage

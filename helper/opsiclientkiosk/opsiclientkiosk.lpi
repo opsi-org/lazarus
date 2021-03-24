@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="8">

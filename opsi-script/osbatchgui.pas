@@ -34,16 +34,17 @@ uses
 //Sensors, indGnouMeter,
   osencoding,
   typinfo,
-  QProgBar;
+  QProgBar,
+  osGUIControl;
 
 type
 
-  TBatchWindowMode = (bwmNotActivated, bwmIcon, bwmNormalWindow, bwmMaximized);
+  //TBatchWindowMode = (bwmNotActivated, bwmIcon, bwmNormalWindow, bwmMaximized);
 
   { TFBatchOberflaeche }
 
   //TFBatchOberflaeche = class(TForm, IViewService)
-  TFBatchOberflaeche = class(TForm)
+  TFBatchOberflaeche = class(TGUIControl)
     PanelFillScreen: TPanel;
     Panel: TPanel;
     ImageBackground: TImage;
@@ -86,13 +87,23 @@ type
 
 
     procedure FormResize(Sender: TObject);
-    procedure setOutputLevel(const level: integer);
     procedure TimerCommandTimer(Sender: TObject);
     procedure TimerActivityTimer(Sender: TObject);
     procedure TimerDetailTimer(Sender: TObject);
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
+    procedure doInfo(aMessage:string);
+    procedure ForceStayOnTop(YesNo: boolean);
+    procedure setInfoLabel(s: string);
+    procedure setVersionLabel(s: string);
+    procedure setWindowState(BatchWindowMode: TBatchWindowMode);
+    procedure setDetailLabel(s: string);
+    procedure setCommandLabel(s: string);
+    procedure centerWindow;
+    procedure showActivityBar(show : boolean);
+    procedure showProgressBar(b: boolean);
+    procedure setActivityLabel(s: string);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -100,43 +111,35 @@ type
   public
     { Public-Deklarationen }
 
-    procedure ForceStayOnTop(YesNo: boolean);
-    procedure setWindowState(BatchWindowMode: TBatchWindowMode);
+    //GUIControl interface
+    procedure LoadSkin(const SkinDirectory: string); override;
+    procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
+    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); override;
+    procedure SetForceStayOnTop(StayOnTop: boolean);override;
+    procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode); override;
+    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); override;
+    procedure SetElementEnabled(Enabled:boolean; ElementID:TElementID); override;
+    procedure BringElementToFront(ElementID:TElementID); override;
+    procedure SetElementTop(Top: integer; ElementID: TElementID); override;
+    procedure SetElementLeft(Left: integer; ElementID: TElementID); override;
+    procedure SetWindowPosition(Position:TPosition); override;
+    procedure SetTracingLevel(const Level: integer); override;
+    procedure SetPicture(const BitmapFile: string; const theLabel: string); override;
 
-    procedure LoadSkin(const skindirectory: string);
+    //ToDO: include in new interface
 
-    function SetPicture(No: integer; const BitmapFile: string;
-      const theLabel: string): boolean; overload;
 
-    //interface
-    procedure setVisible(b: boolean);
-    procedure showProgressBar(b: boolean);
-    procedure setProgress(percent: integer);
 
-    procedure setCommandLabel(s: string);
-    procedure setInfoLabel(s: string);
-    procedure setDetailLabel(s: string);
-    procedure setActivityLabel(s: string);
-    procedure setVersionLabel(s: string);
-    procedure showAcitvityBar(show : boolean);
     //procedure setCPUActivityLabel(s: string);
 
-    //procedure ForceStayOnTop (YesNo : Boolean);
 
-    //procedure setWindowState (BatchWindowMode: TBatchWindowMode);
-
-
-
-    function setPicture(const BitmapFile: string; const theLabel: string): boolean;
-      overload;
-    procedure centerWindow;
   end;
 
 var
 
   //viewService : IViewService;
   //FBatchOberflaeche:  IViewService;   this seems to produce erratic null pointer exceptions when application terminates
-  FBatchOberflaeche: TFBatchOberflaeche;
+  //FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
   LableInfoDefaultFontSize : integer;
 
   BatchWindowMode, SavedBatchWindowMode: TBatchWindowMode;
@@ -160,27 +163,8 @@ var
 
 const
   BatchScreenOnTop: boolean = False;
-
   centralImageNo = 2;
-
   bitmapFilenameProductDefault = 'winst3.png';
-  {$IFDEF WINDOWS}
-  skindirectoryDefault = 'winstskin';
-  skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'winstskin';
-  skindirectoryDevelopment = 'winstskin';
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '/usr/share/opsi-script/skin';
-  skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '../Resources/skin';
-  skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
-  {$ENDIF DARWIN}
-
-
   StartTop: integer = 100;
   StartLeft: integer = 100;
   InnerWidth = 605;
@@ -192,6 +176,7 @@ resourcestring
   rsGetListOfProducts = 'get list of products';
 
 implementation
+
 
 uses osmessagedialog, osfunc, osmain, oslog;
 
@@ -297,7 +282,7 @@ begin
   timeDetailLabel := True;
   timeActivityLabel := True;
 
-  setOutputLevel(3);
+  SetTracingLevel(3);
 
 
   Panel.DoubleBuffered := True;
@@ -409,7 +394,7 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.LoadSkin(const skindirectory: string);
+procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string);
 var
   skindir : String='';
   skinFile : String='';
@@ -429,45 +414,9 @@ var
   end;
 
 begin
-
-  {$IFDEF WINDOWS}
-  paramstr0enc := reencode(ParamStr(0),'system');
-  if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-   if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := skindirectoryCustomWin
-  else if FileExists(skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := skindirectoryDefault
-  else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  paramstr0enc := reencode(ParamStr(0),'system');
-  if FileExists(skindirectory+PathDelim+'skin.ini') then
-    skindir := skindirectory
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
-  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  {$ENDIF DARWIN}
-
-  //logdatei.DependentAdd('Loading skin from: '+skindir,LLessential);
-  //skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  startupmessages.Append('Loading skin from: '+skindir);
-  skinFile := skinDir +PathDelim+ 'skin.ini';
-
+  skinDir := GetSkinDirectory(SkinDirectory);
+  startupmessages.Append('Loading skin from: '+skinDir);
+  skinFile := skinDir + PathDelim + 'skin.ini';
   if FileExists(skinFile) then
   begin
     LabelInfo.Caption := rsLoadingSkin;
@@ -816,7 +765,7 @@ begin
 
 end;
 
-procedure TFBatchOberflaeche.setOutputLevel(const level: integer);
+procedure TFBatchOberflaeche.SetTracingLevel(const Level: integer);
 begin
   case level of
     0:
@@ -969,15 +918,15 @@ begin
   //ProcessMess;
 end;
 
-procedure TFBatchOberflaeche.ShowAcitvityBar(show : boolean);
+procedure TFBatchOberflaeche.showActivityBar(show: boolean);
 begin
   ActivityBar.Visible:=show;
   //ProcessMess;
 end;
 
 
-function TFBatchOberflaeche.setPicture
-  (No: integer; const BitmapFile: string; const theLabel: string): boolean;
+procedure TFBatchOberflaeche.SetPicture(const BitmapFile: string;
+  const theLabel: string);
 var
   //bitmap, resizedBitmap: TBitmap;
   //newHeight, newWidth: integer;
@@ -1016,17 +965,48 @@ begin
     end;
 
     LabelProduct.Caption := theLabel;
-    Result := True;
+    //Result := True;
   except
     on e: Exception do
     begin
       ErrorInfo := 'Error: ' + e.message;
-      Result := False;
+      //Result := False;
     end
   end;
 
   processMess;
 
+end;
+
+procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
+  MessageID: TMessageID);
+begin
+  case MessageID of
+    mInfo: DoInfo(MessageText);
+    mVersion: SetVersionLabel(MessageText);
+    mDetail: SetDetailLabel(MessageText);
+    mCommand: SetCommandLabel(MessageText);
+    mActivity: SetActivityLabel(MessageText);
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetProgress(Progress: integer; ProgressValueID: TProgressValueID
+  );
+begin
+  case ProgressValueID of
+    pPercent: ShowProgress(Progress);
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
+begin
+  ForceStayOnTop(StayOnTop);
+end;
+
+procedure TFBatchOberflaeche.SetBatchWindowMode(
+  BatchWindowMode: TBatchWindowMode);
+begin
+  setWindowState(BatchWindowMode);
 end;
 
 procedure TFBatchOberflaeche.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1096,9 +1076,51 @@ begin
 end;
 
 //interface
-procedure TFBatchOberflaeche.setVisible(b: boolean);
+procedure TFBatchOberflaeche.SetElementVisible(Visible: boolean;
+  ElementID: TElementID);
 begin
-  Visible := b;
+  case ElementID of
+    eMainForm:  self.Visible := Visible;
+    eActivityBar: showActivityBar(Visible);
+    eProgressBar: showProgressBar(Visible);
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetElementEnabled(Enabled: boolean;
+  ElementID: TElementID);
+begin
+  case ElementID of
+    eTimerProcessMess:  TimerProcessMess.Enabled:=Enabled;
+  end;
+end;
+
+procedure TFBatchOberflaeche.BringElementToFront(ElementID: TElementID);
+begin
+  case ElementID of
+    eMainForm: self.BringToFront;
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetElementTop(Top: integer; ElementID: TElementID);
+begin
+  case ElementID of
+    eMainForm: self.Top:= Top;
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetElementLeft(Left: integer; ElementID: TElementID
+  );
+begin
+  case ElementID of
+    eMainForm: self.Left := Left;
+  end;
+end;
+
+procedure TFBatchOberflaeche.SetWindowPosition(Position: TPosition);
+begin
+  case Position of
+    poScreenCenter: centerWindow;
+  end;
 end;
 
 procedure TFBatchOberflaeche.showProgressBar(b: boolean);
@@ -1107,9 +1129,19 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.setProgress(percent: integer);
+procedure TFBatchOberflaeche.doInfo(aMessage: string);
 begin
-  showProgress(percent);
+  LabelInfo.Font.Size := LableInfoDefaultFontSize;
+  if LabelInfo.Canvas.TextWidth(aMessage) >
+    (LabelInfo.Width - LabelInfo.Width div 5) then
+    LabelInfo.OptimalFill := True
+  else
+  begin
+    LabelInfo.OptimalFill := False;
+    LabelInfo.Font.Size := LableInfoDefaultFontSize;
+    ;
+  end;
+  setInfoLabel(aMessage);
 end;
 
 procedure TFBatchOberflaeche.setCommandLabel(s: string);
@@ -1166,16 +1198,7 @@ end;
 
 
 
-//procedure TFBatchOberflaeche.ForceStayOnTop (YesNo : Boolean);
-
 //procedure TFBatchOberflaeche.setWindowState (BatchWindowMode: TBatchWindowMode);
-
-function TFBatchOberflaeche.setPicture(const BitmapFile: string;
-  const theLabel: string): boolean;
-begin
-  Result := setPicture(0, BitmapFile, theLabel);
-end;
-
 
 
 procedure TFBatchOberflaeche.TimerCommandTimer(Sender: TObject);
@@ -1206,7 +1229,7 @@ end;
 procedure TFBatchOberflaeche.centerWindow;
 begin
   Position:=poScreenCenter;
-  FBatchOberflaeche.MoveToDefaultPosition;
+  MoveToDefaultPosition;
 end;
 
 

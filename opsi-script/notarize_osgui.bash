@@ -42,16 +42,24 @@ launchctl plist $EXECUTABLE_DIR
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing..."
-codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+#codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
 
 echo "Code signing .app..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
+#codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
+codesign -vvv --force --strict --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
+
 codesign --verify --verbose --strict $EXECUTABLE_DIR
 codesign -dv -r- $EXECUTABLE_DIR
 codesign -vvv --deep --strict $EXECUTABLE_DIR
+codesign -d --entitlements :- $EXECUTABLE_DIR
+
+### no notarize ####
+exit $?
+### no notarize ####
 
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."

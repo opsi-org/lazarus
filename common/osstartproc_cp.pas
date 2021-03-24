@@ -15,7 +15,8 @@ uses
   {$IFDEF OPSISCRIPT}
   {$IFDEF GUI}
   osshowsysinfo,
-  osbatchgui,
+  osGUIControl,
+  //osbatchgui,
   //osinteractivegui,
   {$ELSE GUI}
   //osmain,
@@ -925,8 +926,8 @@ begin
           {$IFDEF GUI}
           if waitsecsAsTimeout and (WaitSecs > 5) then
           begin
-            FBatchOberflaeche.showProgressBar(True);
-            FBatchOberflaeche.setProgress(0);
+            FBatchOberflaeche.SetElementVisible(True, eProgressBar);// showProgressBar(True);
+            //FBatchOberflaeche.setProgress(0);
           end;
           {$ENDIF GUI}
 
@@ -1197,7 +1198,7 @@ begin
               if waitsecsAsTimeout and (WaitSecs > 5) then
               begin
                 FBatchOberflaeche.setProgress(round(
-                  ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
+                  ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100), pPercent);
               end;
               {$IFDEF WINDOWS}
               ProcessMess;
@@ -1273,7 +1274,7 @@ begin
     ///S.Free;
     FpcProcess.Free;
     {$IFDEF GUI}
-    FBatchOberflaeche.showProgressBar(False);
+    FBatchOberflaeche.SetElementVisible(False, eProgressBar); //showProgressBar(False);
    {$ENDIF GUI}
   end;
 end;

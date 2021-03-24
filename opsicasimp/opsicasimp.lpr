@@ -19,7 +19,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   superobject,
   inifiles,
   strutils,
-  ocsnetboot,
+  //ocsnetboot,
   ocsglobal,
   ocshwaudit;
 
@@ -574,7 +574,8 @@ var
     end;
     writeln('webdav=' + BoolToStr(mywebdav, True));
 
-
+    (*
+    //net boot part needs indy
     if (mymode = 'net') or (mymode = 'both') then
     begin
       // here come the net boot part
@@ -622,7 +623,7 @@ var
         LogDatei.log('init failed', LLError);
       end;
     end;  // end net boot part
-
+     *)
 
     if (mymode = 'local') or (mymode = 'both') then
     begin
