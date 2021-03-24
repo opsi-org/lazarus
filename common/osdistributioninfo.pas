@@ -23,7 +23,7 @@ type
       'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
     Distribs = 'Debian 9, Debian 10,' + #10 + 'openSUSE 15.1, openSUSE 15.2, openSUSE 42.3,' +
-      #10 + 'Ubuntu 18.04, Ubuntu 20.04';
+      #10 + 'SLES 15 SP1, SLES 15 SP1' + #10 + 'Ubuntu 18.04, Ubuntu 20.04';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
 
@@ -132,6 +132,21 @@ begin
     end;
   end
   else}
+  if distroName = 'SUSE' then
+  begin
+    if distroRelease = '15.1' then
+    begin
+      FMyDistr := SLE15_SP1;
+      FDistrUrlPart := 'SLE_15_SP1/';
+    end
+    else
+    if distroRelease = '15.2' then
+    begin
+      FMyDistr := SLE15_SP2;
+      FDistrUrlPart := 'SLE_15_SP1/';
+    end;
+  end
+  else
   if distroName = 'Ubuntu' then
   begin
     {if distroRelease = '16.04' then
@@ -166,7 +181,7 @@ begin
     (distroName = 'Univention') then
     Result := 'apt '
   {OpenSuse and SLES}
-  else if (distroName = 'openSUSE') or (distroName = 'SLE12') then
+  else if (distroName = 'openSUSE') or (distroName = 'SUSE') then
     Result := 'zypper ';
 end;
 

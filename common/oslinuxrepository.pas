@@ -5,7 +5,7 @@ unit osLinuxRepository;
 interface
 
 uses
-  Classes, SysUtils, Process, osTextFileUtils, osLog, Dialogs,
+  Classes, SysUtils, Process, osTextFileUtils, osLog,
   osRunCommandElevated, BaseUnix;
 
 type
@@ -26,6 +26,8 @@ type
     SLE12_SP2,
     SLE12_SP3,
     SLE12_SP4,
+    SLE15_SP1,
+    SLE15_SP2,
     Univention_4_3,
     Univention_4_4,
     xUbuntu_16_04,
@@ -138,6 +140,8 @@ begin
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
     SLE12_SP3: Result := Result + 'SLE12_SP3/';
     SLE12_SP4: Result := Result + 'SLE12_SP4/';
+    SLE15_SP1: Result := Result + 'SLE15_SP1/';
+    SLE15_SP2: Result := Result + 'SLE15_SP2/';
     Univention_4_3: Result := Result + 'Univention_4.3/';
     Univention_4_4: Result := Result + 'Univention_4.4/';
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
@@ -241,7 +245,7 @@ begin
   case FDistribution of
     {OpenSuse and SLES}
     openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_42_3,
-    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4:
+    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4, SLE15_SP1, SLE15_SP2:
     begin
       AddOpenSuseSLES(RepoName);
     end;
