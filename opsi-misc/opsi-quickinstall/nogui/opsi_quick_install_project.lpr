@@ -284,9 +284,9 @@ type
     writeln(rsInstall + opsiVersion + ':');
 
     // for me as warning
-    if (opsiVersion = 'Opsi 4.2') and (repoKind <> 'experimental') then
+    if (opsiVersion = 'Opsi 4.2') and (repoKind = 'stable') then
     begin
-      writeln('The branch "' + repoKind + '" is not available for Opsi 4.2');
+      writeln('Opsi 4.2 only works on the branches "experimental" and "testing" so far.');
       Exit;
     end;
 
@@ -1424,7 +1424,7 @@ begin
     // distribution info:
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    //writeln(QuickInstall.distroName, ' ', QuickInstall.distroRelease);
+    //writeln(distroName, ' ', distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later,

@@ -254,27 +254,41 @@ begin
 end;
 
 procedure TPassword.BtnFinishClick(Sender: TObject);
+var
+  TestCommand: TRunCommandElevated;
+  Output: string;
 begin
-  // so far opsi 4.2 only has the branch experimental
-  if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind <> 'experimental') then
+  // so far opsi 4.2 only has the branches experimental and testing
+  if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind = 'stable') then
   begin
-    ShowMessage('Opsi 4.2 only works on branch "experimental".');
-  end
-  else
-  begin
-    btnFinishClicked := True;
-    // start thread for opsi server installation while showing TWait
-    MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
-      GetPackageManagementShellCommand(Data.distroName));
-    with MyThread do
-    begin
-      // FormClose automatically executed on termination of thread
-      OnTerminate := @FormClose;
-      Start;
-    end;
-    // show TWait
-    Wait.Visible := True;
+    ShowMessage('Opsi 4.2 only works on the branches "experimental" and "testing" so far.');
+    Exit;
   end;
+
+  // test if the password is correct, otherwise exit
+  TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
+  Output := TestCommand.Run('mkdir /root/testDir');
+  if (Pos('Error', Output) >= 0) and (Output <> '') then
+  begin
+    TestCommand.Free;
+    ShowMessage(rsWrongPassword);
+    Exit;
+  end;
+  TestCommand.Run('rm -rf /root/testDir');
+  TestCommand.Free;
+
+  btnFinishClicked := True;
+  // start thread for opsi server installation while showing TWait
+  MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
+    GetPackageManagementShellCommand(Data.distroName));
+  with MyThread do
+  begin
+    // FormClose automatically executed on termination of thread
+    OnTerminate := @FormClose;
+    Start;
+  end;
+  // show TWait
+  Wait.Visible := True;
 end;
 
 procedure TPassword.EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
