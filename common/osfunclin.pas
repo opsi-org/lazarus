@@ -17,6 +17,11 @@ interface
 
 uses
   Classes, SysUtils,
+  {$IFNDEF SYNAPSE}
+  IdBaseComponent,
+  IdComponent,
+  IdIPWatch,
+  {$ENDIF SYNAPSE}
   sockets,
   {$IFDEF OPSISCRIPT}
   //osfunc,
@@ -606,10 +611,10 @@ function getMyHostEnt: netdb.THostEntry;
 begin
   try
     if not netdb.gethostbyname(synsock.GetHostName, Result) then
-      Logdatei.DependentAddError('gethostbyname error ' +
+      Logdatei.log('gethostbyname error ' +
         IntToStr(wsagetlasterror), LLError);
   except
-    Logdatei.DependentAddError('gethostname error ' +
+    Logdatei.log('gethostname error ' +
       IntToStr(wsagetlasterror), LLError);
   end;
 end;
@@ -736,9 +741,15 @@ var
 begin
   Result := '';
   list := TStringList.Create;
+  {$IFDEF UNIX}
+  str := getCommandResult('/bin/bash -c "ip -o -4 route get ' + target + ' || exit $?"');
+  {$ENDIF}
+  {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "ip -4 route get ' + target + ' || exit $?"');
+  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get ' + target + ' || exit $?"');
+  {$ENDIF DARWIN}
+  LogDatei.log('ip out: ' + str , LLInfo);
   stringsplitByWhiteSpace(str, TStringList(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
@@ -757,12 +768,17 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  if not which('ip', cmd) then
-    cmd := 'ip';
-  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  //if not which('ip', cmd) then
+  //  cmd := 'ip';
+  {$IFDEF UNIX}
+  str := getCommandResult('/bin/bash -c "ip -o -4 route get 255.255.255.255 || exit $?"');
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "' + cmd +
-    ' -4 route get 255.255.255.255 || exit $?"');
+  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
+  {$ENDIF DARWIN}
+  LogDatei.log('ip out: ' + str , LLInfo);
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('src');
@@ -782,12 +798,17 @@ var
 begin
   Result := '';
   list := TStringList.Create;
-  if not which('ip', cmd) then
-    cmd := 'ip';
-  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  //if not which('ip', cmd) then
+  //  cmd := 'ip';
+  {$IFDEF UNIX}
+  str := getCommandResult('/bin/bash -c "ip -o -4 route get 255.255.255.255 || exit $?"');
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "' + cmd +
-    ' -4 route get 255.255.255.255 || exit $?"');
+  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
+  {$ENDIF DARWIN}
+  LogDatei.log('ip out: ' + str , LLInfo);
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('dev');

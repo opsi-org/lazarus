@@ -46,10 +46,7 @@ uses
   baseUnix,
 {$ENDIF LINUX}
   //lconvencoding,
-{$IFDEF GUI}
   osencoding,
-  {$ENDIF GUI}
-
   Classes,
   //idsyslogMessage,
   SysUtils,
@@ -242,7 +239,7 @@ const
 (* new Loglevels since opsi 4:
 0 = nothing (absolute nothing)
 1 = essential ("unverzichtbares")
-2 = critical (unexpected errors that may cause a program abort)
+2 = critical (unexpected errors that my cause a program abort)
 3 = error (Errors that don't will abort the running program)
 4 = warning (you should have a look at this)
 5 = notice (Important statements to the program flow)
@@ -552,11 +549,9 @@ begin
   except
   end;
   filelist.Free;
-  // Why two PathDelim???
   LogDateiName := FStandardMainLogPath + PathDelim + LogDateiName;
-  //LogDateiName := FStandardMainLogPath + LogDateiName;
-  //writeln(FStandardMainLogPath);
   {$ENDIF}
+
   if not check4append then
   begin
     // normally called at login scripts
@@ -1644,8 +1639,8 @@ begin
       else
       begin
         includelogStrList.LoadFromFile(FName);
-        {includelogStrList.Text :=
-          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);}
+        includelogStrList.Text :=
+          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
       end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then

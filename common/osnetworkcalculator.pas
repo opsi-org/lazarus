@@ -20,6 +20,7 @@ function isValidIP4Host(ip4adr, netmask: string): boolean;
 // return true for a valid host address.
 function getDefaultNetmaskByIP4adr(ip4adr: string): string;
 // return default netmask for the IPv4 address.
+function GetHostByName(HostName: string): string;
 function getNetmaskByIP4adr(cidr: string): string;
 // return netmask for the IPv4 address.
 function getNetworkDetails(Requests: array of string): StringArray;
@@ -32,11 +33,7 @@ function isValidIP4(ip4adr: string): boolean;
 var
   regexobj: TRegExpr;
 begin
-  writeln('Hi');
   Result := False;
-  writeln('Hi');
-  writeln(True.ToString);
-  writeln((ip4adr <> '').ToString);
   if ip4adr <> '' then
   begin
     regexobj := TRegExpr.Create;
@@ -297,6 +294,25 @@ begin
   else
     Result := '';
 end;
+
+// https://www.lazarusforum.de/viewtopic.php?t=1396
+function GetHostByName(HostName: string): string;
+var
+  host: THostResolver;
+begin
+  if isValidIP4(HostName) then
+    Result := HostName
+  else
+  begin
+    host := THostResolver.Create(nil);
+    if host.NameLookup(HostName) then
+      Result := host.AddressAsString
+    else
+      Result := '';
+    host.Free;
+  end;
+end;
+
 
 function getNetmaskByIP4adr(cidr: string): string;
   // return netmask for the IPv4 address.
