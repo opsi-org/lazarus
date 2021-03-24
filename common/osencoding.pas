@@ -572,7 +572,7 @@ begin
   if encoding='' then
   begin
     LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
-    encoding := mysystemEncoding;
+    encoding := 'system';
   end;
 
   if isEncodingUnicode(encoding) then
@@ -609,9 +609,8 @@ var
 begin
   if encoding='' then
   begin
-    LogDatei.log('Warning : encodingString is empty', LLWarning);
-    LogDatei.log('System encoding is taking into consideration' , LLDebug3);
-    encoding := mysystemEncoding;
+    LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
+    encoding := 'system';
   end;
 
   if isEncodingUnicode(encoding) then
