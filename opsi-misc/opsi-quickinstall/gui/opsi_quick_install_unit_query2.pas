@@ -92,7 +92,9 @@ end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
+  PanelCopyModules.AutoSize:=False;
   SetBasics(self);
+  PanelCopyModules.AutoSize:=True;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQuery2;
   LabelBackend.Caption := rsBackend;

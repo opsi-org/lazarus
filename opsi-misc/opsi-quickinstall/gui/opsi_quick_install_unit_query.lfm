@@ -1,7 +1,7 @@
 object Query: TQuery
-  Left = 470
+  Left = 410
   Height = 450
-  Top = 237
+  Top = 201
   Width = 730
   Caption = 'Opsi Quick Install - Query (part 1)'
   ClientHeight = 450
@@ -46,7 +46,7 @@ object Query: TQuery
     AnchorSideTop.Control = PanelRepo
     Left = 560
     Height = 16
-    Top = 114
+    Top = 111
     Width = 14
     ParentShowHint = False
     ShowHint = True
@@ -67,12 +67,12 @@ object Query: TQuery
   object PanelOpsiVersion: TPanel
     AnchorSideTop.Control = Owner
     Left = 176
-    Height = 54
+    Height = 46
     Top = 50
     Width = 304
     BorderSpacing.Top = 50
     BevelOuter = bvNone
-    ClientHeight = 54
+    ClientHeight = 46
     ClientWidth = 304
     ParentFont = False
     TabOrder = 2
@@ -122,12 +122,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelOpsiVersion
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 82
-    Top = 114
+    Height = 78
+    Top = 111
     Width = 384
-    BorderSpacing.Top = 10
+    BorderSpacing.Top = 15
     BevelOuter = bvNone
-    ClientHeight = 82
+    ClientHeight = 78
     ClientWidth = 384
     ParentFont = False
     TabOrder = 3
@@ -196,12 +196,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelRepo
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 100
-    Top = 206
+    Height = 92
+    Top = 204
     Width = 384
-    BorderSpacing.Top = 10
+    BorderSpacing.Top = 15
     BevelOuter = bvNone
-    ClientHeight = 100
+    ClientHeight = 92
     ClientWidth = 384
     ParentFont = False
     TabOrder = 4
@@ -267,12 +267,12 @@ object Query: TQuery
     AnchorSideTop.Control = PanelProxy
     AnchorSideTop.Side = asrBottom
     Left = 176
-    Height = 100
-    Top = 316
+    Height = 92
+    Top = 311
     Width = 384
-    BorderSpacing.Top = 10
+    BorderSpacing.Top = 15
     BevelOuter = bvNone
-    ClientHeight = 100
+    ClientHeight = 92
     ClientWidth = 384
     ParentFont = False
     TabOrder = 5

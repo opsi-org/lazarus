@@ -107,8 +107,9 @@ end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
+  PanelFilePointer.AutoSize:=False;
   SetBasics(self);
-
+  PanelFilePointer.AutoSize:=True;
   // ask for UCS password only if distribution is Univention
   if Data.distroName = 'Univention' then
     PanelPasswordMasterAdmin.Visible := True

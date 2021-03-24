@@ -1,7 +1,7 @@
 object Query4: TQuery4
-  Left = 446
+  Left = 421
   Height = 450
-  Top = 246
+  Top = 208
   Width = 730
   Caption = 'Opsi quick install - query (part 3)'
   ClientHeight = 450
@@ -66,7 +66,7 @@ object Query4: TQuery4
     AnchorSideLeft.Control = PanelFilePointer
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = PanelFilePointer
-    Left = 576
+    Left = 644
     Height = 18
     Top = 333
     Width = 18
@@ -243,21 +243,22 @@ object Query4: TQuery4
     AnchorSideTop.Control = PanelDhcp
     AnchorSideTop.Side = asrBottom
     Left = 184
-    Height = 51
+    Height = 48
     Top = 333
-    Width = 392
+    Width = 460
     BorderSpacing.Top = 10
     BorderWidth = 3
-    ClientHeight = 51
-    ClientWidth = 392
+    ClientHeight = 48
+    ClientWidth = 460
     ParentFont = False
     TabOrder = 5
     Visible = False
+    Wordwrap = True
     object LabelFilePointer: TLabel
       Left = 4
       Height = 19
       Top = 4
-      Width = 384
+      Width = 452
       Align = alTop
       Caption = 'Which file should the TFTPROOT default symlink point to?'
       ParentColor = False
@@ -268,12 +269,11 @@ object Query4: TQuery4
       Left = 4
       Height = 21
       Top = 23
-      Width = 384
+      Width = 452
       Align = alTop
-      AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 384
+      ClientWidth = 452
       ParentFont = False
       TabOrder = 0
       object RadioBtnNoMenu: TRadioButton

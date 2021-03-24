@@ -87,7 +87,9 @@ end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
+  PanelPasswordAdmin.AutoSize:=False;
   SetBasics(self);
+  PanelPasswordAdmin.AutoSize:=True;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQueryUserInfo;
   LabelNameAdmin.Caption := rsAdminName;
