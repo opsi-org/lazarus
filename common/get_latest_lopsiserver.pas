@@ -23,7 +23,16 @@ begin
   Result := True;
   // cpio only works with bash not with sh !!!
   if RunCommand('/bin/bash', ['-c', 'cpio --extract < ' + fileName], Output) then
-    LogDatei.log(fileName + ' successfully extracted', LLInfo)
+  begin
+    // if extraction works, Output should be something like '89 Blöcke'
+    if Output = '' then
+    begin
+      LogDatei.log(fileName + ' extraction failed', LLNotice);
+      Result := False;
+    end
+    else
+      LogDatei.log(fileName + ' successfully extracted', LLInfo);
+  end
   else
   begin
     LogDatei.log(fileName + ' extraction failed', LLNotice);
@@ -79,8 +88,9 @@ begin
 
   // tidy up
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
+  LOpsiServerCommand.Run('rm l-opsi-server_*.opsi');
   LOpsiServerCommand.Run(
-    'rm l-opsi-server_*.opsi ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio');
+    'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio');
 end;
 
 end.
