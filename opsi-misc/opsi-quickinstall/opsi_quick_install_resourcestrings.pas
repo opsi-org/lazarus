@@ -24,8 +24,8 @@ resourcestring
   rsRepoKindOp = ' [Options: "s" for stable, "t" for testing, "e" for experimental]';
   rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
   rsSuggestion = '[Suggestions: ';
-  rsContinue = 'To continue and start the installation, please press enter.' + #10 +
-    'If you like to jump back to a question, please press the number key of the respective number in the overview.';
+  rsContinue = 'To continue and start the installation, please press enter.' +
+    #10 + 'If you like to jump back to a question, please press the number key of the respective number in the overview.';
   rsInstall = 'Installing ';
   rsCreateRepo = 'Creating repository...';
   rsSomeMin = '(This may take some minutes)';
@@ -67,7 +67,8 @@ resourcestring
   rsOpsiVersion = 'Which opsi version would you like to install?';
   rsOpsi41 = 'Opsi 4.1';
   rsOpsi42 = 'Opsi 4.2';
-  rsInfoOpsiVersion = 'You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon.';
+  rsInfoOpsiVersion =
+    'You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon.';
   rsRepo = '(Base-) Repository for the opsi-server installation:';
   rsRepoOther = 'Other:';
   rsInfoRepo = 'Source from which opsi will be installed.';
@@ -121,8 +122,10 @@ resourcestring
     'This user can not manage system settings.';
   rsAdminPassword =
     'What is the password of the opsi admin user to create? (empty = nothing created)';
-  rsIPName = 'Set a different IP name (FQDN) ("auto" = use standard)';
-  rsIPNumber = 'Set a different IP number ("auto" = use standard)';
+  rsIPName =
+    'Set a different IP name ("auto" = use automatically determined FQDN of this computer)';
+  rsIPNumber =
+    'Set a different IP number ("auto" = use automatically determined IP address of this computer)';
   rsOverviewBtn = ' overview ';
 
   {Overview}
@@ -156,8 +159,9 @@ resourcestring
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';
   rsPassword = 'Password';
   rsShowPassword = 'Show password';
-  rsWait = 'Please wait for the installation to start...' + #10 + ' ';
+  rsWait = 'Please wait for the installation to start...';
   rsLog = 'You can find the log files here:';
+  rsWrongPassword = 'Authentication failed. Please check your password!';
 
 const
   LogOpsiServer = '/var/log/opsi-quick-install-l-opsi-server.log';
