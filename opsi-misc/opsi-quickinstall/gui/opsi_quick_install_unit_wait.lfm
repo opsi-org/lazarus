@@ -5,6 +5,7 @@ object Wait: TWait
   Width = 320
   ClientHeight = 83
   ClientWidth = 320
+  FormStyle = fsStayOnTop
   OnActivate = FormActivate
   LCLVersion = '2.0.10.0'
   object LabelWait: TLabel
