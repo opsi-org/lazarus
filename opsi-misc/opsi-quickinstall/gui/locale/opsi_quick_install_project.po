@@ -211,7 +211,7 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
-msgid "Set a different IP name (FQDN) (\"auto\" = use automatically determined FQDN of this computer)"
+msgid "Set a different IP name (\"auto\" = use automatically determined FQDN of this computer)"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsipnameo
@@ -234,7 +234,7 @@ msgid "Is this correct?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rslangop
-msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français]"
+msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rslinkop
