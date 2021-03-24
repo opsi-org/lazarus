@@ -495,17 +495,17 @@ msgid "Would you like to use a proxy?"
 msgstr "Would you like to use a proxy?"
 
 #: opsi_quick_install_resourcestrings.rswait
-msgid ""
-"Please wait for the installation to start...\n"
-" \n"
-msgstr ""
-"Please wait for the installation to start...\n"
-" \n"
+msgid "Please wait for the installation to start..."
+msgstr "Please wait for the installation to start..."
 
 #: opsi_quick_install_resourcestrings.rswelcome
 msgctxt "opsi_quick_install_resourcestrings.rswelcome"
 msgid "Welcome to the installation of opsi-server on this computer!"
 msgstr "Welcome to the installation of opsi-server on this computer!"
+
+#: opsi_quick_install_resourcestrings.rswrongpassword
+msgid "Authentication failed. Please check your password!"
+msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsyes
 msgctxt "opsi_quick_install_resourcestrings.rsyes"
@@ -1003,9 +1003,7 @@ msgid "linux123"
 msgstr ""
 
 #: tquery6.labelnameadmin.caption
-msgid ""
-"What is the name of the opsi_admin_user to create?\n"
-"(empty = nothing created)\n"
+msgid "What is the name of the opsi_admin_user to create? (empty = nothing created)"
 msgstr ""
 
 #: tquery6.labelnameip.caption
@@ -1017,9 +1015,7 @@ msgid "Set a different IP number ('auto' = use standard)"
 msgstr ""
 
 #: tquery6.labelpasswordadmin.caption
-msgid ""
-"What is the password of the opsi_admin_user to create?\n"
-"(empty = nothing created)\n"
+msgid "What is the password of the opsi_admin_user to create? (empty = nothing created)"
 msgstr ""
 
 #: tquickinstall.btnback.caption
