@@ -13,13 +13,14 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
-  pingsend,
+  //pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
   Windows,
-  pingsend,
+  //pingsend,
   {$ENDIF WINDOWS}
+  pingsend,
   Classes, SysUtils, IBConnection, sqldb, DB,
   //FileUtil,
   LazFileUtils,
@@ -1673,13 +1674,14 @@ begin
     SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
       ontopheight, SWP_NOACTIVATE);
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
     FOntop.Left := leftint;
     FOnTop.Top := 0;
     FOnTop.Height := ontopheight;
     FOnTop.Width := ontopwidth;
     FOnTop.FormStyle := fsSystemStayOnTop;
     FOnTop.BorderStyle := bsNone;
+    {$ENDIF UNIX}
   (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
@@ -1720,6 +1722,7 @@ begin
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
   *)
+  {$IFDEF LINUX}
     if linuxusewmctrl then
       moveToCurrentDeskAndFront(FOnTop.Caption);
       {$ENDIF LINUX}

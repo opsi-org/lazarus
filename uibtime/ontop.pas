@@ -1146,7 +1146,7 @@ begin
           'Warnung: übrige Zeit: ' + IntToStr(available_min) + ' Minuten';
         DataModule1.TrayIcon1.ShowBalloonHint;
       {$ENDIF WINDOWS}
-      {$IFDEF LINUX}
+      {$IFDEF UNIX}
         try
           messagelist := TStringList.Create;
           messagelist.Add('Warnung: übrige Zeit: ' + IntToStr(available_min) +
@@ -1157,7 +1157,7 @@ begin
         except
           DataModule1.debugOut(3, 'trayicon', 'Exception starting notify-send ');
         end;
-      {$ENDIF LINUX}
+      {$ENDIF UNIX}
       end;
     end
     else
