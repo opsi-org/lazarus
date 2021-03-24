@@ -1,4 +1,12 @@
 object resultForm1: TresultForm1
+  Left = 445
+  Height = 566
+  Top = 133
+  Width = 913
+  Caption = 'opsi Setup Detector'
+  ClientHeight = 537
+  ClientWidth = 913
+=======
   Left = 73
   Height = 585
   Top = 322
@@ -6,6 +14,7 @@ object resultForm1: TresultForm1
   Caption = 'opsi Setup Detector'
   ClientHeight = 565
   ClientWidth = 1129
+>>>>>>> experimental
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
@@ -24,7 +33,15 @@ object resultForm1: TresultForm1
     Alignment = taLeftJustify
     BorderStyle = bsSingle
     ClientHeight = 36
+    Width = 913
+    Align = alTop
+    Alignment = taLeftJustify
+    BorderStyle = bsSingle
+    ClientHeight = 38
+    ClientWidth = 911
+=======
     ClientWidth = 1125
+>>>>>>> experimental
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -32,7 +49,10 @@ object resultForm1: TresultForm1
       Left = 1
       Height = 26
       Top = 1
+      Width = 909
+=======
       Width = 1123
+>>>>>>> experimental
       ParentFont = False
       TabOrder = 0
       object SBtnExit: TSpeedButton
@@ -84,6 +104,12 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
+    Width = 913
+    Align = alClient
+    Caption = 'Panel3'
+    ClientHeight = 476
+    ClientWidth = 913
+=======
     Height = 502
     Top = 40
     Width = 1129
@@ -91,13 +117,17 @@ object resultForm1: TresultForm1
     Caption = 'Panel3'
     ClientHeight = 502
     ClientWidth = 1129
+>>>>>>> experimental
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 6
+      Width = 906
+=======
       Height = 500
       Top = 1
       Width = 1122
+>>>>>>> experimental
       ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
@@ -107,15 +137,22 @@ object resultForm1: TresultForm1
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
+        ClientHeight = 447
+        ClientWidth = 904
+=======
         ClientHeight = 472
         ClientWidth = 1114
+>>>>>>> experimental
         OnExit = TabSheetStartExit
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
+          Width = 904
+=======
           Height = 164
           Top = 308
           Width = 1114
+>>>>>>> experimental
           Align = alClient
           AutoSize = True
           ControlList = <>
@@ -128,8 +165,11 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 68
           Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
+          Width = 904
+=======
           Top = 9
           Width = 1114
+>>>>>>> experimental
           Align = alTop
           BorderSpacing.Top = 9
           BorderSpacing.InnerBorder = 5
@@ -609,8 +649,11 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 68
           Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
+          Width = 904
+=======
           Top = 86
           Width = 1114
+>>>>>>> experimental
           Align = alTop
           BorderSpacing.Top = 9
           BorderSpacing.InnerBorder = 5
@@ -1342,8 +1385,11 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 68
           Hint = 'Analyze a single existing Setupfile '
+          Width = 904
+=======
           Top = 163
           Width = 1114
+>>>>>>> experimental
           Align = alTop
           BorderSpacing.Top = 9
           BorderSpacing.InnerBorder = 5
@@ -1613,8 +1659,11 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 68
           Hint = 'Create a empty '#10'opsi Product Directory Structure'
+          Width = 904
+=======
           Top = 240
           Width = 1114
+>>>>>>> experimental
           Align = alTop
           BorderSpacing.Top = 9
           BorderSpacing.InnerBorder = 5
@@ -1919,8 +1968,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
@@ -1939,8 +1991,11 @@ object resultForm1: TresultForm1
           Width = 1053
           Align = alBottom
           BorderStyle = bsSingle
-          ClientHeight = 70
+          ClientHeight = 72
+          ClientWidth = 1168
+=======
           ClientWidth = 1049
+>>>>>>> experimental
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
@@ -2143,8 +2198,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         ParentFont = False
         object FlowPanel1: TFlowPanel
           Left = 0
@@ -2983,8 +3041,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
@@ -3823,8 +3884,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetProduct: TTabSheet
         Caption = 'Product Configuration 1'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         ParentFont = False
         object FlowPanel6: TFlowPanel
           Left = 0
@@ -4300,8 +4364,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetProduct2: TTabSheet
         Caption = 'Product Configuration 2'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         ParentFont = False
         object FlowPanel21: TFlowPanel
           Left = 0
@@ -4561,8 +4628,12 @@ object resultForm1: TresultForm1
               Width = 1053
               Align = alClient
               Caption = 'Panel4'
+              ClientHeight = 136
+              ClientWidth = 1166
+=======
               ClientHeight = 133
               ClientWidth = 1053
+>>>>>>> experimental
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -4831,8 +4902,12 @@ object resultForm1: TresultForm1
               Width = 1053
               Align = alClient
               Caption = 'Panel10'
+              ClientHeight = 145
+              ClientWidth = 1166
+=======
               ClientHeight = 167
               ClientWidth = 1053
+>>>>>>> experimental
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
@@ -5483,8 +5558,11 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
+        ClientWidth = 904
+=======
         ClientHeight = 444
         ClientWidth = 1055
+>>>>>>> experimental
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel
@@ -5728,7 +5806,7 @@ object resultForm1: TresultForm1
             Width = 645
             Anchors = []
             ClientHeight = 107
-            ClientWidth = 641
+            ClientWidth = 643
             ParentFont = False
             TabOrder = 0
             object RadioGroup1: TRadioGroup
@@ -6454,9 +6532,13 @@ object resultForm1: TresultForm1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
+    Height = 21
+    Top = 516
+    Width = 913
+=======
     Top = 542
     Width = 1129
+>>>>>>> experimental
     Panels = <>
     ParentFont = False
   end

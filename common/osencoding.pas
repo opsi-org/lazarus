@@ -20,7 +20,10 @@ uses
   SysUtils,
   strUtils,
   lconvencoding,
+  {$IFDEF GUI}
   charencstreams,
+  {$ENDIF GUI}
+
   LAZUTF8;
 
 procedure initEncoding;
