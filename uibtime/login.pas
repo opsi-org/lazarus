@@ -282,6 +282,9 @@ begin
         myini.WriteString('general', 'loginname', '');
       myini.UpdateFile;
       myini.Free;
+      hide;
+      Visible:=false;
+      Application.ProcessMessages;
     end;
   except
     datamodule1.debugOut(2, 'login-bitbtnokclick', 'exception in login: BtnOK');
@@ -314,14 +317,24 @@ var
   //PNAME : array[0..30] of Char;
 
 begin
- {$IFDEF Linux}
+  mypath := ExtractFilePath(ParamStr(0));
+   {$IFDEF Linux}
   mypath := '/usr/share/uibtime/';
   if not FileExists(mypath + 'uibtime.ini') then
     // development:
     mypath := ExtractFilePath(ParamStr(0));
- {$ELSE}
-  mypath := ExtractFilePath(ParamStr(0));
+
  {$ENDIF Linux}
+ {$IFDEF Darwin}
+  mypath := ExtractFilePath(ParamStr(0));
+  mypath := mypath +'../Resources/';
+  if not FileExists(mypath + 'uibtime.ini') then
+  begin
+    // development:
+    mypath := ExtractFilePath(ParamStr(0));
+     mypath := mypath +'/../../../';
+  end;
+ {$ENDIF Darwin}
   myini := TIniFile.Create(mypath + 'uibtime.ini');
   DataModule1.debugOut(5, 'login-formcreate',
     'Will use uibtime.ini file from: ' + mypath);
