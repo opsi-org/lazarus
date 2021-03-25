@@ -21,9 +21,9 @@ uses
   strUtils,
   lconvencoding,
   {$IFDEF GUI}
-  charencstreams,
-  {$ENDIF GUI}
 
+  {$ENDIF GUI}
+  charencstreams,
   LAZUTF8;
 
 procedure initEncoding;

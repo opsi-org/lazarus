@@ -84,7 +84,8 @@ uses
 {$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
-  osGUIControl,osbatchgui,
+  osGUIControl,
+  osbatchgui,
   Forms, Dialogs,
   ExtCtrls,
   StdCtrls,
