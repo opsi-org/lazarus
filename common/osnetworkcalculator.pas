@@ -5,7 +5,11 @@ unit osnetworkcalculator;  // for manipulating ip addresses.
 interface
 
 uses
-  Classes, SysUtils, RegExpr, Process;
+  Classes,
+  SysUtils,
+  resolve,
+  RegExpr,
+  Process;
 
 type
   StringArray = array of string;
