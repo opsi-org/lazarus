@@ -1,5 +1,5 @@
 object FOnTop: TFOnTop
-  Left = 383
+  Left = 769
   Height = 229
   Top = 278
   Width = 1143
