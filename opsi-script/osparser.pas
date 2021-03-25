@@ -10267,6 +10267,18 @@ begin
 
     Sektion.eliminateLinesStartingWith(';', False);
 
+    if pos('winst ', lowercase(BatchParameter)) > 0 then
+      begin
+        winstparam := trim(copy(BatchParameter, pos('winst ',
+          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        BatchParameter := trim(copy(BatchParameter, 0,
+          pos('winst ', lowercase(BatchParameter)) - 1));
+      end;
+      warnOnlyWindows := False;
+      force64 := False;
+      runAs := traInvoker;
+      showoutput := tsofHideOutput;
+
     goon := False;
     remaining := winstparam;
 
@@ -10402,17 +10414,7 @@ begin
       for i := 0 to Sektion.Count - 1 do
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
-      if pos('winst ', lowercase(BatchParameter)) > 0 then
-      begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
-        BatchParameter := trim(copy(BatchParameter, 0,
-          pos('winst ', lowercase(BatchParameter)) - 1));
-      end;
-      warnOnlyWindows := False;
-      force64 := False;
-      runAs := traInvoker;
-      showoutput := tsofHideOutput;
+
 
 
       {$IFNDEF WINDOWS}
