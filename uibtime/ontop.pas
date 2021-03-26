@@ -34,6 +34,7 @@ type
 
   TFOnTop = class(TForm)
     BtnProjekt: TSpeedButton;
+    BtnFreeFlogin: TButton;
     DBLCB_topten_event: TDBLookupComboBox;
     DSQueryaktprojekt: TDataSource;
     DS_topten_events: TDataSource;
@@ -49,6 +50,7 @@ type
     BtnTreeview: TSpeedButton;
     BtnBye: TSpeedButton;
     BtnUnlock: TSpeedButton;
+    TimerKillFlogin: TTimer;
     TimerAfterTopTenEnter: TTimer;
     TimerCallCount: TTimer;
     TimerNachfrage: TTimer;
@@ -57,6 +59,7 @@ type
     TimerScrollDisable: TTimer;
     Timer_top_ten: TTimer;
     ToolBar1: TToolBar;
+    procedure BtnFreeFloginClick(Sender: TObject);
     procedure BtnUnlockClick(Sender: TObject);
     procedure DBLCB_topten_eventChange(Sender: TObject);
     procedure DBLCB_topten_eventEditingDone(Sender: TObject);
@@ -73,6 +76,7 @@ type
     procedure BtnArrayClick(Sender: TObject);
     procedure TimerAfterTopTenEnterTimer(Sender: TObject);
     procedure TimerCallCountTimer(Sender: TObject);
+    procedure TimerKillFloginTimer(Sender: TObject);
     procedure TimerNachfrageTimer(Sender: TObject);
     //procedure BtnCallCountClick(Sender: TObject);
     //procedure TimerCallCountTimer(Sender: TObject);
@@ -169,6 +173,12 @@ begin
   edit1.Enabled := True;
   BtnTreeview.Enabled := True;
   DBLCB_topten_event.Enabled := True;
+end;
+
+procedure TFOnTop.BtnFreeFloginClick(Sender: TObject);
+begin
+  Flogin.close;
+  FreeAndNil(Flogin);
 end;
 
 procedure TFOnTop.DBLCB_topten_eventEditingDone(Sender: TObject);
@@ -516,6 +526,9 @@ begin
         *)
       end;
       //FLogin.Free;    /// do not free here - we have to come back to FLogin !
+      //FLogin.Hide;
+      // close and free FLogin by timer in 1 second
+      TimerKillFlogin.Enabled:=true;
       if not Datamodule1.geteditonly then
         Datamodule1.TimerOntop.Enabled := ontoptimer;
       // DataModule1.TimerOnToptimer(sender);
@@ -903,6 +916,14 @@ end;
 procedure TFOnTop.TimerCallCountTimer(Sender: TObject);
 begin
 
+end;
+
+procedure TFOnTop.TimerKillFloginTimer(Sender: TObject);
+begin
+  TimerKillFlogin.Enabled:=false;
+  Flogin.close;
+  FreeAndNil(Flogin);
+  datamodule1.debugOut(5, 'KillFloginTimer', 'finished');
 end;
 
 (*
