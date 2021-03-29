@@ -5449,12 +5449,12 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   // At the moment the only supported architecture at Linux
-  Result := trim(getCommandResult('uname -m'))
+  Result := trim(getCommandResult('uname -m'));
   if result = 'arm64' then Result := 'arm_64';
   if result = 'x86_64' then
   begin
     if '1' = trim(getCommandResult('sysctl -in sysctl.proc_translated')) then
-     Result := 'arm_64'
+     Result := 'arm_64';
   end;
   {$ENDIF DARWIN}
 end;
