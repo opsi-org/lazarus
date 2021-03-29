@@ -9,6 +9,8 @@ opsi-winst/opsi-script (4.12.4.16) stable; urgency=low
 
  * can now handle *.opsiscript files with bom
  * call of execwith section with /encoding parameter (by j.laajili)
+ * new string function: getOSarchitecture (x86_32 / x86_64/ arm_64)
+ * new boolean function: runningInWAnMode (true if opsiserver = localhost) default=false
 
 -- d.oertel <d.oertel@uib.de> Fri, 26 Feb 2021 15:00
 

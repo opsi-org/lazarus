@@ -91,6 +91,7 @@ uses
   osconf,
   oslog,
   osparserhelper,
+  osurlparser,
   crt,
   strutils,
   lconvencoding,
@@ -538,10 +539,12 @@ function FileCopy
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean; overload;
 function Is64BitSystem: boolean;
+function getOSArchitecture: string;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
 function isWinPE: boolean;
 function isGUI: boolean;
+function runningInWAnMode: boolean;
 
 
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
@@ -5430,6 +5433,48 @@ begin
   Result := Is64BitSystemLin;
   {$ENDIF LINUX}
 end;
+
+function getOSArchitecture: string;
+begin
+  Result := 'unknown';
+  {$IFDEF WIN32}
+  Result := 'x86_32';
+  {$ENDIF WIN32}
+  {$IFDEF WIN64}
+  Result := 'x86_64';
+  {$ENDIF WIN64}
+  {$IFDEF LINUX}
+  // At the moment the only supported architecture at Linux
+  Result := 'x86_64';
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // At the moment the only supported architecture at Linux
+  Result := trim(getCommandResult('uname -m'))
+  if result = 'arm64' then Result := 'arm_64';
+  if result = 'x86_64' then
+  begin
+    if '1' = trim(getCommandResult('sysctl -in sysctl.proc_translated')) then
+     Result := 'arm_64'
+  end;
+  {$ENDIF DARWIN}
+end;
+
+function runningInWAnMode: boolean;
+var
+  mylist : TStringlist;
+  myserver : string;
+begin
+  result := false;
+  mylist := parseUrl(opsiserviceURL);
+  myserver := trim(LowerCase(mylist.Values['Host']));
+  if myserver = 'localhost' then result := true;
+  if myserver = '127.0.0.1' then result := true;
+  if myserver = '::1' then result := true;
+  FreeAndNil(mylist);
+end;
+
+
+
 
 
 function runningAsAdmin: boolean;

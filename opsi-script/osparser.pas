@@ -14360,6 +14360,13 @@ begin
       StringResult := 'x86 System';
   end
 
+  else if LowerCase(s) = LowerCase('GetOSArchitecture') then
+  begin
+    syntaxcheck := True;
+      StringResult := getOSArchitecture;
+  end
+
+
   else if LowerCase(s) = LowerCase('GetUsercontext') then
   begin
     syntaxcheck := True;
@@ -18753,6 +18760,13 @@ begin
     Syntaxcheck := True;
     errorOccured := False;
     booleanresult := runningasadmin;
+  end
+
+  else if Skip('runningInWAnMode', Input, r, InfoSyntaxError) then
+  begin
+    Syntaxcheck := True;
+    errorOccured := False;
+    booleanresult := runningInWAnMode;
   end
 
   else if Skip('isLoginScript', Input, r, InfoSyntaxError) then
