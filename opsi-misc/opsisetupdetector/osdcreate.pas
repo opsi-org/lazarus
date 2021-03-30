@@ -449,6 +449,12 @@ begin
           outfilename := clientpath + PathDelim + tmpname + tmpext;
         patchScript(infilename, outfilename);
       end;
+
+      // define_vars_multi
+      infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
+      outfilename := clientpath + PathDelim +  'define_vars_multi.opsiscript';
+      patchScript(infilename, outfilename);
+
     (*
     // setup script
     infilename := templatePath + Pathdelim + insetup;
