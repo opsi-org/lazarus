@@ -10113,7 +10113,8 @@ var
             PSourceName := PointerAufString(SourceName);
             strLcopy(@ZipFileName, PSourceName, DirLength + 1);
 
-            if ZipInter.IsZip(ZipFileName) then
+            //if ZipInter.IsZip(ZipFileName) then
+            if UnzipWithDirStruct(ZipFileName, TargetName) then
               HandleArchive(tcmZIP)
             else
             begin
