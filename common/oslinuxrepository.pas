@@ -166,7 +166,7 @@ begin
       //LogDatei.log('uid: ' + IntToStr(Buffer.st_uid),LLInfo);
       //ErrorNr := fpChown(FSourcesListFilePath,fpGetUid,Buffer.st_gid);
       //LogDatei.Log('ErrorNr: ' + IntToStr(ErrorNr),LLInfo);
-      Owner := FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath);
+      FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath, Owner);
       Owner := StringReplace(Owner, LineEnding, '', [rfReplaceAll]);
       //ShowMessage(Owner); // result in Anja-M.'s case with ubuntu 18.04: root
       LogDatei.log('Owner: ' + Owner, LLInfo);
@@ -176,25 +176,25 @@ begin
     else
     begin
       Owner := 'root';
-      FRunCommandElevated.Run('touch ' + FSourcesListFilePath);
+      FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
     end;
     // change owner of file FSourcesListFilePath from root to user
-    Output := FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
+    FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath, Output);
     //ShowMessage(Output);
 
     AddLineToTextFile('deb ' + FURL + ' /', FSourcesListFilePath);
 
     // change owner of file FSourcesListFilePath from user to root
-    Output := (FRunCommandElevated.Run('chown -c ' + Owner + ' ' +
-      FSourcesListFilePath));
+    FRunCommandElevated.Run('chown -c ' + Owner + ' ' +
+      FSourcesListFilePath, Output);
     //ShowMessage(Output);
 
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
-      ' ' + 'Release.key');
+      ' ' + 'Release.key', Output);
     // apt-key add is deprecated (last available in Debian 11, Ubuntu 22.04) and needs gnupg
-    FRunCommandelevated.Run('apt-get install gnupg2');
-    FRunCommandElevated.Run('apt-key add - < Release.key');
-    FRunCommandElevated.Run('rm Release.key');
+    FRunCommandelevated.Run('apt-get install gnupg2', Output);
+    FRunCommandElevated.Run('apt-key add - < Release.key', Output);
+    FRunCommandElevated.Run('rm Release.key', Output);
   except
     LogDatei.log('Exception while adding repository.', LLDebug);
   end;
@@ -202,20 +202,24 @@ begin
 end;
 
 procedure TLinuxRepository.AddOpenSuseSLES(RepoName: string);
+var
+  Output: string;
 begin
   // zypper addrepo <options> <URI> <alias>
   writeln('zypper addrepo ' + FURL + ' ' + RepoName);
-  FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName);
+  FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName, Output);
   writeln('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
-  FRunCommandElevated.Run('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
+  FRunCommandElevated.Run('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh', Output);
 end;
 
 procedure TLinuxRepository.AddCentOSRedHat;
+var
+  Output: string;
 begin
   if SetCurrentDir('/etc/yum.repos.d/') then
   begin
-    FRunCommandElevated.Run('wget ' + FURL);
-    FRunCommandElevated.Run('yum makecache');
+    FRunCommandElevated.Run('wget ' + FURL, Output);
+    FRunCommandElevated.Run('yum makecache', Output);
   end
   else
     LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);

@@ -34,7 +34,7 @@ type
     procedure showResult;
   private
     // full directory l-opsi-server/CLIENT_DATA/
-    clientDataDir: string;
+    clientDataDir, Output: string;
     btnFinishClicked: boolean;
   public
   end;
@@ -48,7 +48,7 @@ type
   TMyThread = class(TThread)
   private
     FInstallRunCommand: TRunCommandElevated;
-    FShellCommand, FClientDataDir: string;
+    FShellCommand, FClientDataDir, Output: string;
     procedure prepareInstallation;
     procedure addRepo;
     procedure installOpsi;
@@ -138,14 +138,14 @@ begin
   // following equals no-gui WritePropsToFile
   // write in l-opsi-server.conf file:
   if not FileExists('l-opsi-server.conf') then
-    TouchCommand.Run('touch l-opsi-server.conf');
+    TouchCommand.Run('touch l-opsi-server.conf', Output);
   FileText.SaveToFile('l-opsi-server.conf');
 
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
   if not FileExists(FClientDataDir + 'properties.conf') then
-    TouchCommand.Run('touch ' + FClientDataDir + 'properties.conf');
-  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'properties.conf');
+    TouchCommand.Run('touch ' + FClientDataDir + 'properties.conf', Output);
+  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'properties.conf', Output);
   FileText.SaveToFile(FClientDataDir + 'properties.conf');
 
   // Important for getting the result 'failed' in case of a wrong password
@@ -154,8 +154,8 @@ begin
   FileText.Clear;
   FileText.Add('failed');
   if not FileExists(FClientDataDir + 'result.conf') then
-    TouchCommand.Run('touch ' + FClientDataDir + 'result.conf');
-  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf');
+    TouchCommand.Run('touch ' + FClientDataDir + 'result.conf', Output);
+  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf', Output);
   FileText.SaveToFile(FClientDataDir + 'result.conf');
 
   FileText.Free;
@@ -169,7 +169,7 @@ var
 begin
   Wait.LabelWait.Caption := rsCreateRepo;
   // first remove opsi.list to have a cleared opsi repository list
-  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   // create repository:
   MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
@@ -193,12 +193,12 @@ end;
 // install opsi server with thread (only the time consuming parts of the installation)
 procedure TMyThread.installOpsi;
 begin
-  FInstallRunCommand.Run(FShellCommand + 'update');
-  FInstallRunCommand.Run(FShellCommand + 'install opsi-script');
+  FInstallRunCommand.Run(FShellCommand + 'update', Output);
+  FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
   // remove the QuickInstall repo entry because it was only for installing opsi-script
-  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
-    'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log');
+    'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
   FInstallRunCommand.Free;
 end;
 
@@ -264,7 +264,6 @@ end;
 procedure TPassword.BtnFinishClick(Sender: TObject);
 var
   TestCommand: TRunCommandElevated;
-  Output: string;
 begin
   // so far opsi 4.2 only has the branches experimental and testing
   if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind = 'stable') then
@@ -275,14 +274,14 @@ begin
 
   // test if the password is correct, otherwise exit
   TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-  Output := TestCommand.Run('mkdir /root/testDir');
+  TestCommand.Run('mkdir /root/testDir', Output);
   if (Pos('Error', Output) >= 0) and (Output <> '') then
   begin
     TestCommand.Free;
     ShowMessage(rsWrongPassword);
     Exit;
   end;
-  TestCommand.Run('rm -rf /root/testDir');
+  TestCommand.Run('rm -rf /root/testDir', Output);
   TestCommand.Free;
 
   btnFinishClicked := True;
