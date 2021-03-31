@@ -140,8 +140,8 @@ begin
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
     SLE12_SP3: Result := Result + 'SLE12_SP3/';
     SLE12_SP4: Result := Result + 'SLE12_SP4/';
-    SLE15_SP1: Result := Result + 'SLE15_SP1/';
-    SLE15_SP2: Result := Result + 'SLE15_SP2/';
+    SLE15_SP1: Result := Result + 'SLE_15_SP1/';
+    SLE15_SP2: Result := Result + 'SLE_15_SP2/';
     Univention_4_3: Result := Result + 'Univention_4.3/';
     Univention_4_4: Result := Result + 'Univention_4.4/';
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
