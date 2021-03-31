@@ -63,19 +63,13 @@ begin
   else}
   if distroName = 'Debian' then
   begin
-    {if distroRelease = '8' then
-    begin
-      FMyDistr := Debian_8;
-      FDistrUrlPart := 'Debian_8/';
-    end
-    else}
-    if distroRelease = '9' then
+    if Pos('9', distroRelease) = 1 then
     begin
       FMyDistr := Debian_9;
       FDistrUrlPart := 'Debian_9/';
     end
     else
-    if distroRelease = '10' then
+    if Pos('10', distroRelease) = 1 then
     begin
       FMyDistr := Debian_10;
       FDistrUrlPart := 'Debian_10/';
