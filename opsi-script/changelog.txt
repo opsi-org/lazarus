@@ -5,11 +5,23 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.16) stable; urgency=low
+
+ * can now handle *.opsiscript files with bom
+ * call of execwith section with /encoding parameter (by j.laajili)
+
+-- d.oertel <d.oertel@uib.de> Fri, 26 Feb 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.15) stable; urgency=low
 
- *  new function asConfidentialList(<list>) : stringlist
+ * new function asConfidentialList(<list>) : stringlist
  * new GUI Interface implementation
  * some additional try excet in osjson and load testfile variants
+ * osGUIControl: unify skin directories to 'skin' with fallback to custom\winstskin at windows
+ * standard out file at windows now opsi-script.exe
+ * locale is now opsi-script.po (also at windows)
+ * winstxx.exe only as symbolic links to opsi-script.exe (for backward compatibility)
+ * osparser: executesection: shellinanIcon: logleveloffset=0
 
 -- d.oertel <d.oertel@uib.de> Fri, 12 Feb 2021 15:00
 

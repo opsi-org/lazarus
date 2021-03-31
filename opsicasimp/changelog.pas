@@ -1,4 +1,10 @@
 (*
+opsicasimp (4.1.0.2) stable; urgency=low
+
+  * new compiled with actual units
+  * no netboot part after switch from indy to synapse
+
+-- Detlef Oertel <d.oertel@uib.de>  Sun, 07 Mar 2021:15:00:00 +0200
 
 opsicasimp (4.1.0.1) stable; urgency=low
 
