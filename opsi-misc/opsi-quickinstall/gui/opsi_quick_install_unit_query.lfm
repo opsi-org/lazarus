@@ -46,7 +46,7 @@ object Query: TQuery
     AnchorSideTop.Control = PanelRepo
     Left = 560
     Height = 16
-    Top = 111
+    Top = 50
     Width = 14
     ParentShowHint = False
     ShowHint = True
@@ -63,6 +63,7 @@ object Query: TQuery
     ParentShowHint = False
     ShowHint = True
     Stretch = True
+    Visible = False
   end
   object PanelOpsiVersion: TPanel
     AnchorSideTop.Control = Owner
@@ -76,6 +77,7 @@ object Query: TQuery
     ClientWidth = 304
     ParentFont = False
     TabOrder = 2
+    Visible = False
     object LabelOpsiVersion: TLabel
       Left = 0
       Height = 19
@@ -119,13 +121,12 @@ object Query: TQuery
     end
   end
   object PanelRepo: TPanel
-    AnchorSideTop.Control = PanelOpsiVersion
-    AnchorSideTop.Side = asrBottom
+    AnchorSideTop.Control = Owner
     Left = 176
     Height = 78
-    Top = 111
+    Top = 50
     Width = 384
-    BorderSpacing.Top = 15
+    BorderSpacing.Top = 50
     BevelOuter = bvNone
     ClientHeight = 78
     ClientWidth = 384

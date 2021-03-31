@@ -418,7 +418,8 @@ type
       writeln('');
       if setupType = 'c' then
         // following queries only for custom setup
-        QueryOpsiVersion
+        //QueryOpsiVersion
+        QueryRepo
       else
       if distroName = 'Univention' then
         QueryUCS
@@ -469,7 +470,8 @@ type
       readln(input);
     end;
     if input = '-b' then
-      QueryOpsiVersion
+      //QueryOpsiVersion
+      QuerySetupType
     else
     begin
       repo := input;
