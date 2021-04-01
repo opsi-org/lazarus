@@ -1949,12 +1949,12 @@ begin
   if detectedEncoding <> '' then
      begin
        if (encodingString <> detectedEncoding)
-       OR (encodingString <> copy(detectedEncoding,length(detectedEncoding)-2,length(detectedEncoding)))
+       OR (encodingString <> copy(detectedEncoding,0,length(detectedEncoding)-3))
         then
            begin
              LogDatei.log('Warning: Given encodingString '+ encodingString
                      +' is different from the detected encoding '+ detectedEncoding, LLWarning);
-             LogDatei.log('Detected encoding: '+ detectedEncoding+'is considered', LLInfo);
+             LogDatei.log('Detected encoding: '+ detectedEncoding+' is considered', LLInfo);
            end;
        OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), detectedEncoding);
        end
