@@ -8,7 +8,11 @@ uses
   Classes,
   SysUtils,
   resolve,
-  RegExpr;
+  RegExpr,
+  Process;
+
+type
+  StringArray = array of string;
 
 function isValidIP4(ip4adr: string): boolean;
 //return true if the IPv4 address is valid.
@@ -21,6 +25,10 @@ function isValidIP4Host(ip4adr, netmask: string): boolean;
 function getDefaultNetmaskByIP4adr(ip4adr: string): string;
 // return default netmask for the IPv4 address.
 function GetHostByName(HostName: string): string;
+function getNetmaskByIP4adr(cidr: string): string;
+// return netmask for the IPv4 address.
+function getNetworkDetails(Requests: array of string): StringArray;
+// return requested network details
 
 implementation
 
@@ -306,6 +314,48 @@ begin
     else
       Result := '';
     host.Free;
+  end;
+end;
+
+
+function getNetmaskByIP4adr(cidr: string): string;
+  // return netmask for the IPv4 address.
+begin
+  Result := cidrToNetmask(cidr);
+end;
+
+function getNetworkDetails(Requests: array of string): StringArray;
+  // return requested network details
+var
+  NetworkDetails, request: string;
+  i, index: integer;
+begin
+  // get network details with console command 'nmcli dev show' (requires unit "process")
+  if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
+  begin
+    // for each request store the answer at the respective position in array of string 'Result'
+    SetLength(Result, Length(Requests));
+    // go through requests
+    for i := 0 to Length(Requests) - 1 do
+    begin
+      Result[i] := '';
+      // find request in NetworkDetails
+      request := Requests[i] + ':';
+      index := NetworkDetails.IndexOf(request);
+      if index <> -1 then
+      begin
+        // go to position of answer
+        index += request.Length + 1;
+        while NetworkDetails[index] = ' ' do
+          index += 1;
+        // write answer in 'Result'
+        while (NetworkDetails[index] <> ' ') and (NetworkDetails[index] <> #10) do
+        begin
+          Result[i] += NetworkDetails[index];
+          index += 1;
+        end;
+      end;
+    end;
   end;
 end;
 

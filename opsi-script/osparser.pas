@@ -10276,6 +10276,18 @@ begin
 
     Sektion.eliminateLinesStartingWith(';', False);
 
+    if pos('winst ', lowercase(BatchParameter)) > 0 then
+      begin
+        winstparam := trim(copy(BatchParameter, pos('winst ',
+          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        BatchParameter := trim(copy(BatchParameter, 0,
+          pos('winst ', lowercase(BatchParameter)) - 1));
+      end;
+      warnOnlyWindows := False;
+      force64 := False;
+      runAs := traInvoker;
+      showoutput := tsofHideOutput;
+
     goon := False;
     remaining := winstparam;
 
@@ -10411,17 +10423,7 @@ begin
       for i := 0 to Sektion.Count - 1 do
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
-      if pos('winst ', lowercase(BatchParameter)) > 0 then
-      begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
-        BatchParameter := trim(copy(BatchParameter, 0,
-          pos('winst ', lowercase(BatchParameter)) - 1));
-      end;
-      warnOnlyWindows := False;
-      force64 := False;
-      runAs := traInvoker;
-      showoutput := tsofHideOutput;
+
 
 
       {$IFNDEF WINDOWS}
@@ -14366,6 +14368,13 @@ begin
     else
       StringResult := 'x86 System';
   end
+
+  else if LowerCase(s) = LowerCase('GetOSArchitecture') then
+  begin
+    syntaxcheck := True;
+      StringResult := getOSArchitecture;
+  end
+
 
   else if LowerCase(s) = LowerCase('GetUsercontext') then
   begin
@@ -18762,6 +18771,13 @@ begin
     booleanresult := runningasadmin;
   end
 
+  else if Skip('runningInWAnMode', Input, r, InfoSyntaxError) then
+  begin
+    Syntaxcheck := True;
+    errorOccured := False;
+    booleanresult := runningInWAnMode;
+  end
+
   else if Skip('isLoginScript', Input, r, InfoSyntaxError) then
   begin
     Syntaxcheck := True;
@@ -18888,18 +18904,16 @@ begin
             end;
   end
 
-  //function getFileBom(inFileName: string, var gottenEncoding : string): boolean;
-  else if Skip('getFileBom', Input, r, sx) then
+  //function fileHasBom(inFileName: string): boolean;
+  else if Skip('fileHasBom', Input, r, sx) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
             if Skip(')', r, r, InfoSyntaxError) then
             begin
                 syntaxCheck := True;
-                BooleanResult := getFileBom(s1,s2);
-                LogDatei.log('GottenEnconding : '+ s2, LLInfo);
+                BooleanResult := getFileBom(s1,tmpstr);
+                LogDatei.log('GottenEnconding : '+ tmpstr, LLInfo);
             end;
   end
 

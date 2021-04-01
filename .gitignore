@@ -43,6 +43,31 @@ opsi-script/opsi-script-nogui
 /helper/opsiclientkiosk/default/product_icons/Collection64x64
 /helper/opsi-icon-collector/opsi-icon-collector
 
+# quickinstall:
+# gitahead
+opsi-misc/opsi-dev-tool
+opsi-misc/opsi-quickinstall/common/opsi-script
+opsi-misc/opsi-quickinstall/common/opsi-script-gui
+opsi-misc/opsi-quickinstall/gui/default
+opsi-script/opsi-script-gui
+# manually
+opsi-misc/opsi-quickinstall/gui/l-opsi-server.conf
+opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
+opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
+opsi-misc/opsi-quickinstall/l-opsi-server/CLIENT_DATA/properties.conf
+# new
+opsi-misc/opsi-quickinstall/nogui/Release.key
+opsi-misc/opsi-quickinstall/gui/locale/opsi_quick_install_project(transifex).po
+opsi-misc/opsi-quickinstall/gui/locale/opsi_quick_install_project.de(transifex).po
+opsi-misc/opsi-quickinstall/l-opsi-server/
+opsi-misc/opsi-quickinstall/nogui/l-opsi-server.conf
+opsi-misc/opsi-quickinstall/l-opsi-server2/
+opsi-misc/opsi-quickinstall/nogui/changelog.txt
+opsi-misc/opsi-quickinstall/gui/changelog.txt
+opsi-misc/opsi-quickinstall/gui/control
+opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
+opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
+
 # opsi-client-kiosk:
 helper/opsiclientkiosk/ock_custom/product_icons
 helper/opsiclientkiosk/ock_custom/screenshots
