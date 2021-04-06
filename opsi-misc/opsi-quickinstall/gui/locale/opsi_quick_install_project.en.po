@@ -165,8 +165,8 @@ msgstr ""
 "This user can not manage system settings.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
-msgid "Shall the data of opsi be stored in a file or a mysql database?"
-msgstr "Shall the data of opsi be stored in a file or a mysql database?"
+msgid "Should the data of opsi be stored in a file or a mysql database?"
+msgstr "Should the data of opsi be stored in a file or a mysql database?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
 msgid ""
@@ -182,16 +182,16 @@ msgstr "The following distributions are supported:"
 
 #: opsi_quick_install_resourcestrings.rsinfomodules
 msgid "For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de"
-msgstr "For mysql you need active modules. For infos and prices please write an e-mail to info@uib.de"
+msgstr "For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de"
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
-msgid "Information on the network in which the opsi-server shall be installed."
-msgstr "Information on the network in which the opsi-server shall be installed."
+msgid "Information on the network in which the opsi-server will be installed."
+msgstr "Information on the network in which the opsi-server will be installed."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
-msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
-msgstr "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgid "It's recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgstr "It's recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
 msgid "If yes, shortly after the opsi-server is installed, your computer will reboot."

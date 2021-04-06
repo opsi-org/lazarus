@@ -174,7 +174,7 @@ msgstr ""
 "Cet utilisateur ne peut pas gérer les paramètres du système.\n"
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
-msgid "Shall the data of opsi be stored in a file or a mysql database?"
+msgid "Should the data of opsi be stored in a file or a mysql database?"
 msgstr "Doivent les données d'opsi être stockées dans un fichier ou une base de données MySQL?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
@@ -195,11 +195,11 @@ msgstr "Pour MySQL, vous avez besoin de modules actifs. Pour plus d'informations
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
-msgid "Information on the network in which the opsi-server shall be installed."
+msgid "Information on the network in which the opsi-server will be installed."
 msgstr "Informations sur le réseau dans lequel le serveur opsi doit être installé."
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
-msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgid "It's recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
 msgstr "Vous devriez installer opsi 4.2 car il s'agit de la dernière version; le support pour opsi 4.1 sera bientôt terminé."
 
 #: opsi_quick_install_resourcestrings.rsinforeboot
