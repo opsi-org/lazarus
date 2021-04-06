@@ -1,5 +1,5 @@
 [Package]
-version: 4 
+version: 1
 depends: 
 
 [Product]
@@ -8,7 +8,7 @@ id: l-opsi-server
 name: Installs opsi
 description: Installs opsi-server packages, configures and create adminuser
 advice: 
-version: 4.2.0.1
+version: 4.2.0.3
 priority: 0
 licenseRequired: False
 productClasses: 
