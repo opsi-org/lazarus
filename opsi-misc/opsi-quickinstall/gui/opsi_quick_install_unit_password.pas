@@ -169,7 +169,8 @@ var
 begin
   Wait.LabelWait.Caption := rsCreateRepo;
   // first remove opsi.list to have a cleared opsi repository list
-  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+  if FileExists('/etc/apt/sources.list.d/opsi.list') then
+    FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   // create repository:
   MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
@@ -196,7 +197,8 @@ begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
   // remove the QuickInstall repo entry because it was only for installing opsi-script
-  FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+  if FileExists('/etc/apt/sources.list.d/opsi.list') then
+    FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
   FInstallRunCommand.Free;

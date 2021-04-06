@@ -270,7 +270,8 @@ type
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
-    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf', Output);
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData +
+      'properties.conf', Output);
     FileText.SaveToFile(DirClientData + 'properties.conf');
 
     FileText.Free;
@@ -300,7 +301,8 @@ type
 
     writeln(rsCreateRepo);
     // first remove opsi.list to have a cleared opsi repository list
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
@@ -327,7 +329,8 @@ type
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
     // remove the QuickInstall repo entry because it was only for installing opsi-script
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window,
     // "opsi-script-nogui -batch" for without?
@@ -1426,7 +1429,7 @@ begin
     // distribution info:
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
-    //writeln(distroName, ' ', distroRelease);
+    writeln(distroName, ' ', distroRelease);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later,
