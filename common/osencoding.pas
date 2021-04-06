@@ -33,7 +33,6 @@ function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
   var hasBOM: boolean): TUniStreamTypes;
 
 function hasFileBom(infilename: string): boolean;
-
 function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
 
 function loadUnicodeTextFile(filename: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
@@ -335,6 +334,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
+
 
 function isStringInList(const str: string; const list: TStringList): boolean;
   // list.IndexOf(str) > -1 does not work as expected: ucs2be is found if str is 'u c s 2 b e'

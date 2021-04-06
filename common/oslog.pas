@@ -308,13 +308,16 @@ uses
   Windows,
   osregistry,
 {$ENDIF WINDOWS}
+{$IFDEF GUI}
   osmessagedialog,
   osbatchgui,
   osinteractivegui,
+{$ENDIF GUI}
   osparser,
   osmain,
   osdefinedfunctions,
   osfunc;
+
 {$ENDIF}
 
 
@@ -1380,6 +1383,7 @@ begin
           peaklen := (lastpeaklen + peaklen) div 2;
         lastpeaklen := peaklen;
 
+        {$IFDEF GUI}
         {$IFDEF OPSISCRIPT}
         if FBatchOberflaeche <> nil //dont log before creating FBatchOberflaeche
         then
@@ -1388,6 +1392,7 @@ begin
           if (FUsedLogLevel >= LevelOfLine) then
             FBatchOberflaeche.SetMessageText(copy(peakindicator, 1, peaklen), mActivity); //setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
+        {$ENDIF}
         {$ENDIF}
       end;
     except
@@ -1441,6 +1446,7 @@ begin
         *)
         {$ENDIF}
 
+        {$IFDEF GUI}
         {$IFDEF OPSISCRIPT}
         try
           CentralForm.Memo1Add(PasS);
@@ -1454,6 +1460,7 @@ begin
           NumberOfWarnings := NumberOfWarnings + 1;
         end;
         {$ENDIF}
+        {$ENDIF GUI}
 
         try
           //WriteLn(LogMainFile, PasS);
@@ -1514,7 +1521,7 @@ begin
                   halt
                 else
                   PartLogFileExists := False;
-              {$ENDIF}
+            {$ENDIF}
               {$ENDIF}
               end;
             end;
