@@ -176,7 +176,7 @@ begin
     Result := 'apt '
   {OpenSuse and SLES}
   else if (distroName = 'openSUSE') or (distroName = 'SUSE') then
-    Result := 'zypper ';
+    Result := 'zypper --non-interactive ';
 end;
 
 end.
