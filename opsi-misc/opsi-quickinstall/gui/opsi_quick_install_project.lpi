@@ -130,7 +130,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;..;../../../opsi-script"/>
+      <OtherUnitFiles Value="../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;.."/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
