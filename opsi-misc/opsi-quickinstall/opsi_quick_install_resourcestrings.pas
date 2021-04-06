@@ -68,7 +68,7 @@ resourcestring
   rsOpsi41 = 'Opsi 4.1';
   rsOpsi42 = 'Opsi 4.2';
   rsInfoOpsiVersion =
-    'You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon.';
+    'It''s recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon.';
   rsRepo = '(Base-) Repository for the opsi-server installation:';
   rsRepoOther = 'Other:';
   rsInfoRepo = 'Source from which opsi will be installed.';
@@ -80,7 +80,7 @@ resourcestring
 
   {Query2}
   rsBackend = 'Which backend should be installed? (mysql needs a valid activation file)';
-  rsInfoBackend = 'Shall the data of opsi be stored in a file or a mysql database?';
+  rsInfoBackend = 'Should the data of opsi be stored in a file or a mysql database?';
   rsCopyModules = 'Should we copy modules even if /etc/opsi/modules still exists?';
   rsInfoModules =
     'For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de';
@@ -104,7 +104,7 @@ resourcestring
     'Choose "default.menu" if you want to show a small menu when no netboot product is on setup (bios only).';
 
   {Query5_dhcp}
-  rsInfoNetwork = 'Information on the network in which the opsi-server shall be installed.';
+  rsInfoNetwork = 'Information on the network in which the opsi-server will be installed.';
   rsNetmask = 'Netmask (for dhcp):';
   rsNetmaskOther = 'Other:';
   rsNetworkAddress = 'Network address (for dhcp):';

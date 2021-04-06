@@ -265,12 +265,13 @@ type
 
     // write in l-opsi-server.conf file(for tests):
     if not FileExists('l-opsi-server.conf') then
-      QuickInstallCommand.Run('touch l-opsi-server.conf');
+      QuickInstallCommand.Run('touch l-opsi-server.conf', Output);
     FileText.SaveToFile('l-opsi-server.conf');
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
-      QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf');
-    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf');
+      QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData +
+      'properties.conf', Output);
     FileText.SaveToFile(DirClientData + 'properties.conf');
 
     FileText.Free;
@@ -294,13 +295,14 @@ type
     FileText := TStringList.Create;
     FileText.Add('failed');
     if not FileExists(DirClientData + 'result.conf') then
-      QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf');
-    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf');
+      QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf', Output);
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
     // first remove opsi.list to have a cleared opsi repository list
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
@@ -321,19 +323,20 @@ type
     // install opsi:
     shellCommand := GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
-    QuickInstallCommand.Run(shellCommand + 'update');
+    QuickInstallCommand.Run(shellCommand + 'update', Output);
     writeln(rsInstall + 'opsi-script...');
-    QuickInstallCommand.Run(shellCommand + 'install opsi-script');
+    QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
     // remove the QuickInstall repo entry because it was only for installing opsi-script
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window,
     // "opsi-script-nogui -batch" for without?
     // new: opsi-script -silent for nogui
     QuickInstallCommand.Run('opsi-script -silent -batch ' + DirClientData +
-      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
+      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log', Output);
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');
@@ -418,7 +421,8 @@ type
       writeln('');
       if setupType = 'c' then
         // following queries only for custom setup
-        QueryOpsiVersion
+        //QueryOpsiVersion
+        QueryRepo
       else
       if distroName = 'Univention' then
         QueryUCS
@@ -469,7 +473,8 @@ type
       readln(input);
     end;
     if input = '-b' then
-      QueryOpsiVersion
+      //QueryOpsiVersion
+      QuerySetupType
     else
     begin
       repo := input;

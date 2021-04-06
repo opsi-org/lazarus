@@ -161,7 +161,7 @@ msgid ""
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfobackend
-msgid "Shall the data of opsi be stored in a file or a mysql database?"
+msgid "Should the data of opsi be stored in a file or a mysql database?"
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
@@ -180,11 +180,11 @@ msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfonetwork
 msgctxt "opsi_quick_install_resourcestrings.rsinfonetwork"
-msgid "Information on the network in which the opsi-server shall be installed."
+msgid "Information on the network in which the opsi-server will be installed."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinfoopsiversion
-msgid "You should usually want to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgid "It's recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
 msgstr ""
 
 #: opsi_quick_install_resourcestrings.rsinforeboot

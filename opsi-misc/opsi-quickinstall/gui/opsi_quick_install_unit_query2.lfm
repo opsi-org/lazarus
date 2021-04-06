@@ -1,14 +1,14 @@
 object Query2: TQuery2
-  Left = 451
+  Left = 329
   Height = 450
-  Top = 247
+  Top = 249
   Width = 730
   Caption = 'Opsi Quick Install - Query (part 2)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object BackgrImage: TImage
     Left = 0
     Height = 450
@@ -138,38 +138,38 @@ object Query2: TQuery2
       ParentFont = False
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
-        Left = 268
+        Left = 111
         Height = 21
         Top = 0
         Width = 67
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'testing'
+        Checked = True
         ParentFont = False
         TabOrder = 0
+        TabStop = True
       end
       object RadioBtnStable: TRadioButton
-        Left = 157
+        Left = 0
         Height = 21
         Top = 0
         Width = 61
         Align = alLeft
-        BorderSpacing.Left = 50
         Caption = 'stable'
         ParentFont = False
         TabOrder = 1
       end
       object RadioBtnExperimental: TRadioButton
-        Left = 0
+        Left = 228
         Height = 21
         Top = 0
         Width = 107
         Align = alLeft
+        BorderSpacing.Left = 50
         Caption = 'experimental'
-        Checked = True
         ParentFont = False
         TabOrder = 2
-        TabStop = True
       end
     end
   end

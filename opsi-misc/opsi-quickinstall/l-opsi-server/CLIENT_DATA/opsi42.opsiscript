@@ -210,9 +210,7 @@ if $myIPName$ = "auto"
 endif
 
 if $myIPNumber$ = "auto"
-    ;set $myIPNumber$ = getMyIpByTarget("")
 	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
-	;set $myIPNumber$ = "1"
 	if not(isValidIP4($myIPNumber$))
 		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
@@ -363,6 +361,7 @@ Switch $distroName$
 			set $distRelease4Repo$ = "9.0"
 		endif
 		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+		PatchTextFile_grafanarepo_deb "/etc/apt/sources.list.d/grafana.list"
 		ShellInAnIcon_add_opsi_repository_debian
 
 		if not (getLastExitCode = "0")
@@ -420,6 +419,7 @@ Switch $distroName$
 		Message "Adding repository"
 		;ShellInAnIcon_add_opsi_repository_ubuntu
 		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+		PatchTextFile_grafanarepo_deb "/etc/apt/sources.list.d/grafana.list"
 		ShellInAnIcon_get_repository_key_ubuntu
 
 		if not("0" = getLastExitCode)
@@ -473,6 +473,7 @@ Switch $distroName$
 		comment "do not use dhcpd backend on ucs"
 		set $append_dhcpd$ = ""
 		Message "Adding repository"
+		set $distRelease$ = takeString(0, splitString($distRelease$, "-"))
 		set $distReleaseTemp$ = $distRelease$
 
 		if comparedotseparatedNumbers($distRelease$, ">=", "4")
@@ -481,18 +482,13 @@ Switch $distroName$
 				set $smbdservicename$ = "smbd"
 				set $nmbdservicename$ = "nmbd"
 			else
-				if comparedotseparatedNumbers($distRelease$, ">=", "4.3") and comparedotseparatedNumbers($distRelease$, "<", "4.4")
-					set $distRelease4Repo$ = "4.3"
-					set $smbdservicename$ = "smbd"
-					set $nmbdservicename$ = "nmbd"
-				else
-					LogError "Unsupported UCS version"
-					Message "Unsupported UCS version"
-					isFatalError "Unsupported UCS version"
-				endif
+				LogError "Unsupported UCS version"
+				Message "Unsupported UCS version"
+				isFatalError "Unsupported UCS version"
 			endif
 
 			PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
+			PatchTextFile_grafanarepo_deb "/etc/apt/sources.list.d/grafana.list"
 			ShellInAnIcon_add_opsi_repository_ucs
 			if not("0" = getLastExitCode)
 				LogError "addrepo failed"
@@ -501,7 +497,7 @@ Switch $distroName$
 			endif
 
 			set $distRelease$ = $distReleaseTemp$
-			if comparedotseparatedNumbers($distRelease$, ">=", "4.3") and comparedotseparatedNumbers($distRelease$, "<", "4.5")
+			if comparedotseparatedNumbers($distRelease$, ">=", "4.4") and comparedotseparatedNumbers($distRelease$, "<", "4.5")
 				Message "disabling ucs update cron jobs"
 				ShellInAnIcon_disable_update_cron
 			endif
@@ -639,7 +635,7 @@ Switch $distrotype$
 		Message "Adding repository"
 		set $mysqlservicename$ = "mysqld"
 		set $dhcpdservicename$ = "dhcpd"
-		set $mysqlpkg$ = "community-mysql-server"
+		set $mysqlpkg$ = "mariadb-server"
 		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
 
 		if contains($distroName$,"CentOS")
@@ -664,6 +660,11 @@ Switch $distrotype$
 		endif
 
 		ShellInAnIcon_add_opsi_repository_redhat
+		if not("0" = getLastExitCode)
+			LogError "addrepo failed"
+			Message "addrepo failed"
+			isFatalError "addrepo failed"
+		endif
 		PatchTextFile_grafana_repo_rpm "/etc/yum.repos.d/grafana.repo"
 		if not("0" = getLastExitCode)
 			LogError "addrepo failed"
@@ -715,9 +716,15 @@ if contains($distroName$, "openSUSE")
 			set $distroName4repo$ = "openSUSE_Leap"
 			set $distRelease4repo$ = "15.1"
 		endcase
+
 		case "15.2"
 			set $distroName4repo$ = "openSUSE_Leap"
 			set $distRelease4repo$ = "15.2"
+		endcase
+
+		case "15.3"
+			set $distroName4repo$ = "openSUSE_Leap"
+			set $distRelease4repo$ = "15.3"
 		endcase
 
 		defaultcase
@@ -798,6 +805,11 @@ switch $distRelease$
 	case "15.2"
 		set $distroName4repo$ = "SLE"
 		set $distRelease4repo$ = "15_SP2"
+	endcase
+
+	case "15.3"
+		set $distroName4repo$ = "SLE"
+		set $distRelease4repo$ = "15_SP3"
 	endcase
 
 	DefaultCase
@@ -1329,7 +1341,7 @@ apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-c
 update-inetd --remove tftpd
 apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install grafana || EXITCODE=1
 apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-tftpd-hpa || EXITCODE=1
-apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-server || EXITCODE=1
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-server-full || EXITCODE=1
 apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-linux-support || EXITCODE=1
 apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install opsi-windows-support || EXITCODE=1
 service $smbdservicename$ restart || EXITCODE=1
@@ -1422,9 +1434,11 @@ univention-install --yes univention-dhcp || EXITCODE=1
 if [ "$UCSROLE" == 'memberserver' ]; then
 	while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
 	univention-install --yes univention-samba >> /var/tmp/opsi.log
+else
+        while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univenti
+on-updater >/dev/null 2>&1; do sleep 1; done
+        univention-install --yes univention-samba4 smbclient cifs-utils || EXITCODE=1
 fi
-while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-install --yes samba samba-common smbclient cifs-utils || EXITCODE=1
 getent hosts $(hostname -f)
 exit $EXITCODE
 
@@ -1443,7 +1457,7 @@ set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 export DEBIAN_FRONTEND=noninteractive
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock /var/lock/univention-updater >/dev/null 2>&1; do sleep 1; done
-univention-install --yes opsi4ucs opsi-windows-support
+univention-install --yes opsi-server-full
 exit $?
 
 
@@ -1579,7 +1593,7 @@ if [ $? -ne 0 ]; then EXITCODE=1; fi
 getent hosts $(hostname -f)
 yum -y install wimlib
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-yum -y install opsi-server
+yum -y install opsi-server-full
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 yum -y install opsi-linux-support
 if [ $? -ne 0 ]; then EXITCODE=1; fi
@@ -1648,7 +1662,17 @@ systemctl restart nmb
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install $mysqlpkg$
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-zypper --no-gpg-checks --non-interactive install grafana
+zypper --no-gpg-checks --non-interactive install insserv
+zypper --gpg-auto-import-keys download grafana
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+rpm -i --nodeps /var/cache/zypp/packages/grafana/grafana*
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+/bin/systemctl daemon-reload
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+/bin/systemctl enable grafana-server.service
+if [ $? -ne 0 ]; then EXITCODE=1; fi
+/bin/systemctl start grafana-server.service
+if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install redis-server
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install redis-timeseries
@@ -1663,7 +1687,8 @@ zypper --no-gpg-checks --non-interactive install wimlib
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install opsi-utils
 if [ $? -ne 0 ]; then EXITCODE=1; fi
-zypper --no-gpg-checks --non-interactive install opsi-server
+zypper --no-gpg-checks --non-interactive install opsi-server-full
+zypper --no-gpg-checks --non-interactive install opsi-server-full
 if [ $? -ne 0 ]; then EXITCODE=1; fi
 zypper --no-gpg-checks --non-interactive install opsi-linux-support
 if [ $? -ne 0 ]; then EXITCODE=1; fi
@@ -1693,10 +1718,13 @@ setValueByKey "DHCPD_INTERFACE" '"ANY"'
 [PatchTextFile_opsirepo_deb]
 FindLine_StartingWith "deb $opsi_online_repository$"
 DeleteTheLine
+GoToBottom
+InsertLine "deb $opsi_online_repository$/$distroName4repo$_$distRelease4repo$ ./"
+
+[PatchTextFile_grafanarepo_deb]
 FindLine_StartingWith "deb https://packages.grafana.com"
 DeleteTheLine
 GoToBottom
-InsertLine "deb $opsi_online_repository$/$distroName4repo$_$distRelease4repo$ ./"
 InsertLine "deb https://packages.grafana.com/enterprise/deb stable main"
 
 [PatchTextFile_grafana_repo_rpm]

@@ -20,9 +20,6 @@ uses
   SysUtils,
   strUtils,
   lconvencoding,
-  {$IFDEF GUI}
-
-  {$ENDIF GUI}
   charencstreams,
   LAZUTF8;
 
