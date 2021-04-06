@@ -130,7 +130,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;.."/>
+      <OtherUnitFiles Value="../../../common;../../../external_libraries/synapse;../../../external_libraries/misc;..;../../../opsi-script"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
@@ -142,7 +142,11 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dSYNAPSE
--dQUICKINSTALLGUI"/>
+-dGUI"/>
+      <OtherDefines Count="2">
+        <Define0 Value="SYNAPSE"/>
+        <Define1 Value="GUI"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
