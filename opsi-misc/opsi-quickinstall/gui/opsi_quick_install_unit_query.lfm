@@ -198,7 +198,7 @@ object Query: TQuery
     AnchorSideTop.Side = asrBottom
     Left = 176
     Height = 92
-    Top = 204
+    Top = 143
     Width = 384
     BorderSpacing.Top = 15
     BevelOuter = bvNone
@@ -269,7 +269,7 @@ object Query: TQuery
     AnchorSideTop.Side = asrBottom
     Left = 176
     Height = 92
-    Top = 311
+    Top = 250
     Width = 384
     BorderSpacing.Top = 15
     BevelOuter = bvNone
