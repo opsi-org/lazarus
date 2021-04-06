@@ -10,9 +10,14 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   SysUtils,
+  fileinfo,
+  elfreader,
+  machoreader,
+  winpeimagereader,
+  (*
   fileinfo, {$IFDEF LINUX}
   elfreader, {$ENDIF LINUX} {$IFDEF Darwin}
-  machoreader, {$ENDIF}
+  machoreader, {$ENDIF} *)
   CustApp { you can add units after this };
 
 type
@@ -143,7 +148,7 @@ var
 
 begin
   Application := TMyApplication.Create(nil);
-  Application.Title := 'MyApplication';
+  Application.Title:='MyApplication';
   Application.Run;
   Application.Free;
 end.
