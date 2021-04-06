@@ -18895,18 +18895,16 @@ begin
             end;
   end
 
-  //function getFileBom(inFileName: string, var gottenEncoding : string): boolean;
-  else if Skip('getFileBom', Input, r, sx) then
+  //function fileHasBom(inFileName: string): boolean;
+  else if Skip('fileHasBom', Input, r, sx) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
             if Skip(')', r, r, InfoSyntaxError) then
             begin
                 syntaxCheck := True;
-                BooleanResult := getFileBom(s1,s2);
-                LogDatei.log('GottenEnconding : '+ s2, LLInfo);
+                BooleanResult := getFileBom(s1,tmpstr);
+                LogDatei.log('GottenEnconding : '+ tmpstr, LLInfo);
             end;
   end
 
