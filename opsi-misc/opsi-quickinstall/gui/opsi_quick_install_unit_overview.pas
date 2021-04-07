@@ -54,9 +54,9 @@ end;
 procedure TOverview.FormActivate(Sender: TObject);
 begin
   //ShowMessage(IntToStr(BtnFinish.Width));
-  PanelFinish.Left := QuickInstall.panelLeft;
+  SetBasics(self);
   MemoOverview.Left := QuickInstall.panelLeft;
-  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  PanelFinish.Width := 400;
 
   MemoOverview.Clear;
   // Opsi version
