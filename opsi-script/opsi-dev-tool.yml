@@ -1,0 +1,18 @@
+project:
+  name: opsi-script
+  version: 4.12.4.12
+  summary: opsi-script
+  description: opsi-script
+  homepage: https://www.opsi.org
+  maintainer: uib GmbH info@uib.de
+  licenses: AGPL-3.0
+
+project:
+  name: opsi-script-gui
+  version: 4.12.4.12
+  summary: opsi-script-gui
+  description: opsi-script-gui
+  homepage: https://www.opsi.org
+  maintainer: uib GmbH info@uib.de
+  licenses: AGPL-3.0
+

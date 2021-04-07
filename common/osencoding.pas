@@ -18,7 +18,11 @@ interface
 uses
   Classes,
   SysUtils,
+  strUtils,
   lconvencoding,
+  {$IFDEF GUI}
+
+  {$ENDIF GUI}
   charencstreams,
   LAZUTF8;
 
@@ -27,9 +31,14 @@ function isSupportedEncoding(testEncoding: string): boolean;
 procedure logSupportedEncodings;
 
 function isEncodingUnicode(encodingString: string): boolean;
-function hasFileBom(infilename: string): boolean;
+function UniStreamTypes2uniEncoding(inEncoding:TUniStreamTypes; hasBOM: boolean): string;
+function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
+  var hasBOM: boolean): TUniStreamTypes;
 
-function loadUnicodeTextFile(filename: string): TStringList;
+function hasFileBom(infilename: string): boolean;
+function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
+
+function loadUnicodeTextFile(filename: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
 procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
 
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
@@ -141,6 +150,31 @@ begin
     Result := True;
 end;
 
+function UniStreamTypes2uniEncoding(inEncoding:TUniStreamTypes; hasBOM: boolean): string;
+begin
+  if (inEncoding = ufUtf8) then
+    Result := 'utf8';
+
+  if (inEncoding = ufUtf16le) then
+    Result := 'utf16le';
+
+  if (inEncoding = ufUtf16be) then
+    Result := 'utf16be';
+
+  if (inEncoding = ufUtf32le) then
+    Result := 'utf32le';
+
+  if (inEncoding = ufUtf32be) then
+    Result := 'utf132be';
+
+  if (inEncoding = ufANSI) then
+    Result := 'ansi';
+
+  if (hasBOM = True) and (inEncoding <> ufANSI) then
+    Result := Result + 'bom';
+
+end;
+
 function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
   var hasBOM: boolean): TUniStreamTypes;
 var
@@ -152,10 +186,10 @@ begin
   //fCES := TCharEncStream.Create;
   //fCES.Reset;
   lencstr := NormalizeEncoding(encodingString);
-  if copy(lencstr, length(lencstr) - 2, length(lencstr)) = 'bom' then
+  if copy(lencstr, length(lencstr)-2, length(lencstr)) = 'bom' then
   begin
     hasBOM := True;
-    lencstr := copy(lencstr, 0, length(lencstr) - 3);
+    lencstr := copy(lencstr, 0, length(lencstr)-3);
   end;
 
   if lencstr = Lowercase('unicode') then
@@ -191,19 +225,60 @@ end;
 function hasFileBom(inFileName: string): boolean;
 var
   fCES: TCharEncStream;
+  Utype : TUniStreamTypes;
 begin
   fCES := TCharEncStream.Create;
   fCES.Reset;
   inFileName := ExpandFileName(inFileName);
   fCES.LoadFromFile(inFileName);
-  Result := fCES.hasBOM;
+  Utype := fCES.UniStreamType;
+  Result := fCES.HasBOM;
   fCES.Free;
 end;
 
-function loadUnicodeTextFile(fileName: string): TStringList;
+function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
+var
+  myFile: TFileStream;
+  Buffer : array [0..3] of byte;   // or AnsiChar;
+  //FileFirstBytes : String ='';
+  //myFile : File ;  i, count : SmallInt ;
+begin
+  (*
+  Assignfile(myFile, inFileName);
+  FileMode := fmOpenRead;
+  Reset(myFile, 1);
+  BlockRead(myFile, Buffer, 4, count);
+  for i := 0 to count do
+    FileFirstBytes:= FileFirstBytes + IntToStr(Buffer[i]);
+  CloseFile(myFile);
+  *)
+  myFile := TFileStream.Create(ExpandFileName(inFileName), fmOpenRead);
+  //while F.Position < F.Size do
+    myFile.Read(Buffer, 4);
+  //FileFirstBytes := Buffer;
+  myFile.Free;
+
+  if (Buffer[0]=239) AND (Buffer[1]=187) AND (Buffer[2]=191) then
+     gottenEncoding := 'utf8bom';            //'#239#187#191' //#$EF#$BB#$BF
+  if (Buffer[0]=254) AND (Buffer[1]=255) then
+     gottenEncoding :='utf16bebom';          //'#254#255'     //#$FE#$FF
+  if (Buffer[0]=255) AND (Buffer[1]=254) then
+     gottenEncoding :='utf16lebom';          //'#255#254'     //#$FF#$FE
+  if (Buffer[0]=0) AND (Buffer[1]=0) AND (Buffer[2]=254) AND  (Buffer[3]=255) then
+     gottenEncoding :='utf32bebom';          //'#0#0#254#255' //#0#0#$FE#$FF
+  if (Buffer[0]=255) AND (Buffer[1]=254) AND (Buffer[2]=0) AND  (Buffer[3]=0) then
+     gottenEncoding :='utf32lebom';          //'255#254#0#0'  //#$FE#$FF#0#0
+
+  if (copy(gottenEncoding, length(gottenEncoding)-2, length(gottenEncoding)) = 'bom') then
+     Result := True
+  else
+     Result := False;
+
+end;
+
+function loadUnicodeTextFile(fileName: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
 var
   fCES: TCharEncStream;
-  myunitype : TUniStreamTypes;
   str : string;
 begin
   Result := TStringList.Create;
@@ -212,6 +287,8 @@ begin
   fileName := ExpandFileName(fileName);
   fCES.LoadFromFile(fileName);
   str := fCES.UTF8Text;
+  hasBOM := fCES.HasBOM;
+  foundEncoding := UniStreamTypes2uniEncoding(fCES.UniStreamType,hasBOM);
   Result.Text := str;
   fCES.Free;
 end;
@@ -297,11 +374,13 @@ begin
   begin
     // we found an entry: encoding=<encoding to use>
     foundencodingstring := trim(mylist.Values['encoding']);
+    foundencodingstring := NormalizeEncoding(foundencodingstring);
     logdatei.log('foundencodingstring: ' + foundencodingstring, LLDebug2);
     if isStringInList(foundencodingstring, supportedEncodings) then
       Result := foundencodingstring
     else
     begin
+      logdatei.log('Foundencodingstring '+ foundencodingstring +' is not in supportedEncodings list',LLWarning);
       i := 0;
       repeat
         // convert via utf8
@@ -383,13 +462,13 @@ begin
   if LowerCase(sourceEncoding) = 'auto' then
     usedSourceEncoding := guessEncoding(sourceText);
   // erasing the BOM part if exists
-  if (copy(usedSourceEncoding, length(usedSourceEncoding) - 2, length(usedSourceEncoding)) = 'bom') then
-     if (usedSourceEncoding[length(usedSourceEncoding) - 3] = '') then
-         usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 4)
+  if (copy(usedSourceEncoding, length(usedSourceEncoding)-2, length(usedSourceEncoding)) = 'bom') then
+     if (usedSourceEncoding[length(usedSourceEncoding)-3] = '') then
+         usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding)-4)
      else
      usedSourceEncoding := copy(usedSourceEncoding, 0, length(usedSourceEncoding) - 3);
-  if (copy(destEncoding, length(destEncoding) - 2, length(destEncoding)) = 'bom') then
-     if (destEncoding[length(destEncoding) - 3] = '') then
+  if (copy(destEncoding, length(destEncoding)-2, length(destEncoding)) = 'bom') then
+     if (destEncoding[length(destEncoding)-3] = '') then
          destEncoding := copy(destEncoding, 0, length(destEncoding) - 4)
      else
      destEncoding := copy(destEncoding, 0, length(destEncoding) - 3);
@@ -432,10 +511,10 @@ begin
         destEncoding := 'ucs2be';
 
       if (usedSourceEncoding = 'unicode') then
-        usedSourceEncoding := 'ucs2le';
+        usedSourceEncoding := 'utf8';
 
       if (destEncoding = 'unicode') then
-        destEncoding := 'ucs2le';
+        destEncoding := 'utf8';
 
       // we use ConvertEncoding
       Result := ConvertEncoding(sourceText, usedSourceEncoding, destEncoding);
@@ -488,11 +567,19 @@ function loadTextFileWithEncoding(filename, encoding: string): TStringList;
     encline: string;
   *)
 var
+  bool : boolean;
   str : string;
 begin
   Result := TStringList.Create;
+
+  if encoding='' then
+  begin
+    LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
+    encoding := 'system';
+  end;
+
   if isEncodingUnicode(encoding) then
-    Result.AddStrings(loadUnicodeTextFile(filename))
+    Result.AddStrings(loadUnicodeTextFile(filename, bool, str))
   //else if (enc = 'utf16le') then
   //  Result.AddStrings(stringListLoadUtf16leFromFile(filename))
   // else if ((enc = 'utf8') or (enc = 'UTF-8')) then
@@ -515,7 +602,6 @@ begin
     *)
   end;
   //str := result.Text;
-  //str := result.Text;
 end;
 
 procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
@@ -524,13 +610,19 @@ var
   myfile: Text;
   usedenc: string;
 begin
+  if encoding='' then
+  begin
+    LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
+    encoding := 'system';
+  end;
+
   if isEncodingUnicode(encoding) then
     saveUnicodeTextFile(inlist, outFileName, encoding)
   else
   begin
     AssignFile(myfile, outFileName);
     Rewrite(myfile);
-    LogDatei.log('Will save (' + encoding + ') to file: ' + outFileName +
+    LogDatei.log('Will save (' + encoding + ') encoding to file: ' + outFileName +
       ' :', LLDebug2);
     LogDatei.log('-----------------', LLDebug3);
     write(myfile, reencode(inlist.Text, 'utf8', usedenc, encoding));

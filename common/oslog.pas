@@ -1624,6 +1624,8 @@ var
   includelogStrList: TStringList;
   //supportedEncodings: TStringList;
   aktline, includeLogLineStart, includelogLinecount, i: integer;
+  bool : boolean;
+  str : string;
 begin
   try
     includelogStrList := TStringList.Create;
@@ -1632,7 +1634,7 @@ begin
       Fname := ExpandFileName(Fname);
       if lowercase(sourceEncoding) = 'unicode' then
       begin
-        includelogStrList.Assign(loadUnicodeTextFile(Fname));
+        includelogStrList.Assign(loadUnicodeTextFile(Fname, bool, str));
       end
       else
       begin

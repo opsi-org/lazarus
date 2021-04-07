@@ -1,0 +1,12 @@
+[1] [2020-12-29 12:34:54.958] [] opsi-script 4.12.4.5 started at >>
+[1] [2020-12-29 12:34:54.958] [] opsi-script log file with encoding utf8
+[1] [2020-12-29 12:34:54.958] [] startmessage opsi-script created at init logging lpr: 29-12-20 12:34:54
+[1] [2020-12-29 12:34:54.958] [] running now gui-test
+[1] [2020-12-29 12:34:54.958] [] Cleanup old part files at 29-12-20 12:34:54
+[1] [2020-12-29 12:34:54.958] [] opsi-script version: 4.12.4.5
+[1] [2020-12-29 12:34:54.958] [] Called as: opsi-script
+[6] [2020-12-29 12:34:54.958] [] Marked error number 0
+[5] [2020-12-29 12:34:54.958] [] Launch: opsi-laz-gui-test
+[6] [2020-12-29 12:34:54.958] [] Started process "/usr/bin//opsi-laz-gui-test" with Opt:
+[5] [2020-12-29 12:34:55.280] [] Finished: opsi-laz-gui-test
+[5] [2020-12-29 12:34:55.280] [] gui ok - starting opsi-script-gui ...

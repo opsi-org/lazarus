@@ -1,0 +1,15 @@
+{"version":1,"strings":[
+{"hash":244977177,"name":"tquery2.caption","sourcebytes":[79,112,115,105,32,81,117,105,99,107,32,73,110,115,116,97,108,108,32,45,32,81,117,101,114,121,32,40,112,97,114,116,32,50,41],"value":"Opsi Quick Install - Query (part 2)"},
+{"hash":80700016,"name":"tquery2.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
+{"hash":241728480,"name":"tquery2.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
+{"hash":165748201,"name":"tquery2.labelbackend.caption","sourcebytes":[87,104,105,99,104,32,98,97,99,107,101,110,100,32,115,104,111,117,108,100,32,98,101,32,105,110,115,116,97,108,108,101,100,63,10,40,109,121,115,113,108,32,110,101,101,100,115,32,118,97,108,105,100,32,97,99,116,105,118,97,116,105,111,110,32,102,105,108,101,41],"value":"Which backend should be installed?\n(mysql needs valid activation file)"},
+{"hash":446501,"name":"tquery2.radiobtnfile.caption","sourcebytes":[102,105,108,101],"value":"file"},
+{"hash":7670396,"name":"tquery2.radiobtnmysql.caption","sourcebytes":[109,121,115,113,108],"value":"mysql"},
+{"hash":44470879,"name":"tquery2.labelrepokind.caption","sourcebytes":[70,114,111,109,32,119,104,105,99,104,32,114,101,112,111,32,107,105,110,100,32,115,104,111,117,108,100,32,98,101,32,105,110,115,116,97,108,108,101,100,63],"value":"From which repo kind should be installed?"},
+{"hash":181055543,"name":"tquery2.radiobtntesting.caption","sourcebytes":[116,101,115,116,105,110,103],"value":"testing"},
+{"hash":128612645,"name":"tquery2.radiobtnstable.caption","sourcebytes":[115,116,97,98,108,101],"value":"stable"},
+{"hash":183842556,"name":"tquery2.radiobtnexperimental.caption","sourcebytes":[101,120,112,101,114,105,109,101,110,116,97,108],"value":"experimental"},
+{"hash":252015791,"name":"tquery2.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
+{"hash":24515,"name":"tquery2.radiobtnyescopy.caption","sourcebytes":[89,101,115],"value":"Yes"},
+{"hash":1359,"name":"tquery2.radiobtnnocopy.caption","sourcebytes":[78,111],"value":"No"}
+]}

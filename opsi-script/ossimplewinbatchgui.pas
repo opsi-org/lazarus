@@ -11,7 +11,8 @@ unit osSimpleWinBatchGUI;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, osGUIControl, INIFiles;
+  Classes, SysUtils, Forms, Controls, Graphics,
+  Dialogs, StdCtrls, ExtCtrls, osGUIControl, INIFiles;
 
 type
 

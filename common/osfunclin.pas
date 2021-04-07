@@ -27,6 +27,12 @@ uses
   //osfunc,
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
+  {$IFDEF GUI}
+   Graphics,
+   LResources,
+  // dialogs e.g. for ShowMessage
+  dialogs,
+  {$ENDIF GUI}
   unix,
   fileutil,
   LazFileUtils,
@@ -40,6 +46,7 @@ uses
   OSProcessux,
   IniFiles,
   osprocesses;
+
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
@@ -76,20 +83,20 @@ var
 {$ENDIF SYNAPSE}
 
 implementation
-
+// definition QUICKINSTALLGUI because programs (non graghical) like...
+// ...opsi_quick_install_nogui_project don't support LCLBase...
+// ...(-> Error while linking) and therefore not LResources
+//{$IFDEF QUICKINSTALLGUI}
+{$IFDEF OPSISCRIPT}
 uses
-{$IFDEF OPSISCRIPT}
-  osparser,
-{$ENDIF OPSISCRIPT}
-{$IFDEF GUI}
-  Graphics,
-{$IFDEF OPSISCRIPT}
+  {$IFDEF GUI}
   osbatchgui,
   osinteractivegui,
   osshowsysinfo,
-{$ENDIF OPSISCRIPT}
 {$ENDIF GUI}
-  LResources;
+  osparser;
+{$ENDIF OPSISCRIPT}
+//{$ENDIF QUICKINSTALLGUI}
 
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
@@ -484,6 +491,7 @@ begin
     LogDatei.log('--------------', LLDebug2);
     for i := 0 to outlines.Count - 1 do
     begin
+      //ShowMessage(outlines.Strings[i]);
       lineparts.Clear;
       LogDatei.log(outlines.strings[i], LLDebug2);
       stringsplit(outlines.strings[i], ':', lineparts);
@@ -1078,3 +1086,4 @@ end;
 
 
 end.
+
