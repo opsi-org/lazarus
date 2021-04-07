@@ -83,6 +83,8 @@ var
   MemoArray: Tmemos;
   labelcounter, buttoncounter, memocounter: integer;
   designPPI: integer;
+  mymouseenter: TMethod;
+  mymouseleave: TMethod;
 
 
 
@@ -263,8 +265,8 @@ begin
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
   begin
-    DataModule1.TimerClose.Interval:=10000;
-   DataModule1.TimerClose.Enabled:=true;
+    DataModule1.TimerClose.Interval := 10000;
+    DataModule1.TimerClose.Enabled := True;
   end;
 end;
 
@@ -808,7 +810,7 @@ procedure objectByIndex(myIni: TIniFile; aktsection: string);
 var
   //myLabel: TLabel;
   //myButton: TButton;
-  mytmpstr: string;
+  mytmpstr, tmpstr2, tmpstr3: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
   tmpinistr: string;
@@ -866,7 +868,8 @@ begin
       if not TryStrToBool(tmpinistr, tmpbool) then
       begin
         tmpbool := False;
-        LogDatei.log('Error: No valid boolean value for Resizable: ' + tmpinistr, LLError);
+        LogDatei.log('Error: No valid boolean value for Resizable: ' +
+          tmpinistr, LLError);
       end;
       if not tmpbool then  // no Resizable
       begin
@@ -884,14 +887,15 @@ begin
       if not TryStrToBool(tmpinistr, tmpbool) then
       begin
         tmpbool := False;
-        LogDatei.log('Error: No valid boolean value for Closeable: ' + tmpinistr, LLError);
+        LogDatei.log('Error: No valid boolean value for Closeable: ' +
+          tmpinistr, LLError);
       end;
       if not tmpbool then  // no Closeable
         logdatei.log('Closeable=false ', LLDebug)
       else
       begin
         logdatei.log('Closeable=True ', LLDebug);
-        nform.BorderIcons:= nform.BorderIcons + [biSystemMenu];
+        nform.BorderIcons := nform.BorderIcons + [biSystemMenu];
       end;
 
       //Minimizable = false
@@ -899,14 +903,15 @@ begin
       if not TryStrToBool(tmpinistr, tmpbool) then
       begin
         tmpbool := False;
-        LogDatei.log('Error: No valid boolean value for Minimizable: ' + tmpinistr, LLError);
+        LogDatei.log('Error: No valid boolean value for Minimizable: ' +
+          tmpinistr, LLError);
       end;
       if not tmpbool then  // no Minimizable
-         logdatei.log('Minimizable=false ', LLDebug)
+        logdatei.log('Minimizable=false ', LLDebug)
       else
       begin
         logdatei.log('Minimizable=True ', LLDebug);
-        nform.BorderIcons:= nform.BorderIcons + [biMinimize];
+        nform.BorderIcons := nform.BorderIcons + [biMinimize];
       end;
     end;
 
@@ -936,7 +941,7 @@ begin
       nform.Top := mytmpint2;
     end;
     {$IFDEF DARWIN}
-    // at booom we have the dock
+    // at bottom we have the dock
     if nformpos = fpBottomRight then
       nformpos := fpTopRight;
     {$ENDIF DARWIN}
@@ -1031,11 +1036,11 @@ begin
     begin
       {$IFDEF WINDOWS}
       mytmpstr := 'Arial';
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
       {$IFDEF LINUX}
       mytmpstr := 'Liberation Sans';
-{$ENDIF LINUX}
+      {$ENDIF LINUX}
     end;
     memoarray[memocounter].scrolllabel.Font.Name := mytmpstr;
     { fontresize makes also hdpi correction for linux}
@@ -1109,11 +1114,11 @@ begin
     begin
       {$IFDEF WINDOWS}
       mytmpstr := 'Arial';
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
       {$IFDEF LINUX}
       mytmpstr := 'Liberation Sans';
-{$ENDIF LINUX}
+      {$ENDIF LINUX}
     end;
     LabelArray[labelcounter].Font.Name := mytmpstr;
     { fontresize makes also hdpi correction for linux}
@@ -1163,22 +1168,32 @@ begin
     ButtonArray[buttoncounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     ButtonArray[buttoncounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
     ButtonArray[buttoncounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+    tmpstr2 := 'Button' + IntToStr(buttoncounter);
+    with ButtonArray[buttoncounter] do
+    begin
+      tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+      tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    end;
+    LogDatei.log(tmpstr2, LLDebug);
 
     mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
     if screen.Fonts.IndexOf(mytmpstr) = -1 then
     begin
       {$IFDEF WINDOWS}
       mytmpstr := 'Arial';
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
       //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
       {$IFDEF LINUX}
       mytmpstr := 'Liberation Sans';
-{$ENDIF LINUX}
+      {$ENDIF LINUX}
     end;
     ButtonArray[buttoncounter].Font.Name := mytmpstr;
     { fontresize makes also hdpi correction for linux}
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+    tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
+      IntToStr(ButtonArray[buttoncounter].Font.Size);
+    LogDatei.log(tmpstr2, LLDebug);
     //ButtonArray[buttoncounter].Font.Color :=
     //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
     ButtonArray[buttoncounter].Font.Bold :=
@@ -1202,10 +1217,24 @@ begin
     //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       designPPI, nform.PixelsPerInch, 0, 0);
+    tmpstr2 := 'After ReScale: Button' + IntToStr(buttoncounter);
+    with ButtonArray[buttoncounter] do
+    begin
+      tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+      tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    end;
+    LogDatei.log(tmpstr2, LLDebug);
     //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
-    LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+    ButtonArray[buttoncounter].Repaint;
+    if LogDatei.LogLevel > 6 then
+    begin
+      ;
+      ButtonArray[buttoncounter].OnMouseEnter := TNotifyEvent(mymouseenter);
+      ButtonArray[buttoncounter].OnMouseLeave := TNotifyEvent(mymouseleAVE);
+      LogDatei.log('Finished reading: ' + aktsection, LLDebug);
+    end;
   end;
   DataModule1.ProcessMess;
 end;
@@ -1264,6 +1293,31 @@ begin
   LogDatei.log('Finished initial form build in openSkinIni. ', LLDebug2);
 end;
 
+procedure onmouseenter(Sender: TObject);
+var
+  a, b: TPoint;
+begin
+  a.X := Mouse.CursorPos.X;
+  a.Y := Mouse.CursorPos.Y;
+  ScreenToClient(nform.Handle, a);
+  b := a;
+  // b.x and b.y are your coordinates
+
+  LogDatei.log('mouseenter: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+end;
+
+procedure onmouseleave(Sender: TObject);
+var
+  a, b: TPoint;
+begin
+  a.X := Mouse.CursorPos.X;
+  a.Y := Mouse.CursorPos.Y;
+  ScreenToClient(nform.Handle, a);
+  b := a;
+  // b.x and b.y are your coordinates
+
+  LogDatei.log('mouseleave: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+end;
 
 
 
@@ -1278,4 +1332,8 @@ begin
   memolist := TStringList.Create;
   designPPI := 96;
   Randomize;
+  mymouseenter.Code := @onmouseenter;
+  mymouseenter.Data := nil;
+  mymouseleave.Code := @onmouseleave;
+  mymouseleave.Data := nil;
 end.
