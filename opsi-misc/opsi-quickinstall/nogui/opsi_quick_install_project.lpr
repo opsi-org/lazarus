@@ -284,13 +284,6 @@ type
     LogDatei.log('Entered InstallOpsi', 0);
     writeln(rsInstall + opsiVersion + ':');
 
-    // for me as warning
-    if (opsiVersion = 'Opsi 4.2') and (repoKind = 'stable') then
-    begin
-      writeln('Opsi 4.2 only works on the branches "experimental" and "testing" so far.');
-      Exit;
-    end;
-
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
@@ -596,7 +589,7 @@ type
     // repo kind:
     writeln(rsRepoKind, rsRepoKindOp, '*');
     readln(input);
-    while not ((input = 'e') or (input = 's') or (input = 't') or
+    while not ((input = 'e') or (input = 't') or
         (input = '-b') or (input = '')) do
     begin
       if input = '-h' then

@@ -405,8 +405,8 @@ msgid "Repo kind: "
 msgstr "Repo kind: "
 
 #: opsi_quick_install_resourcestrings.rsrepokindop
-msgid " [Options: \"s\" for stable, \"t\" for testing, \"e\" for experimental]"
-msgstr " [Options: \"s\" for stable, \"t\" for testing, \"e\" for experimental]"
+msgid " [Options: \"t\" for testing, \"e\" for experimental]"
+msgstr " [Options: \"t\" for testing, \"e\" for experimental]"
 
 #: opsi_quick_install_resourcestrings.rsreponocache
 msgctxt "opsi_quick_install_resourcestrings.rsreponocache"
