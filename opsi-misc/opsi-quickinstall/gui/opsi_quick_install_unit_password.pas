@@ -267,13 +267,6 @@ procedure TPassword.BtnFinishClick(Sender: TObject);
 var
   TestCommand: TRunCommandElevated;
 begin
-  // so far opsi 4.2 only has the branches experimental and testing
-  if (Data.opsiVersion = 'Opsi 4.2') and (Data.repoKind = 'stable') then
-  begin
-    ShowMessage('Opsi 4.2 only works on the branches "experimental" and "testing" so far.');
-    Exit;
-  end;
-
   // test if the password is correct, otherwise exit
   TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
   TestCommand.Run('mkdir /root/testDir', Output);

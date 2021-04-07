@@ -159,6 +159,7 @@ object Query2: TQuery2
         Caption = 'stable'
         ParentFont = False
         TabOrder = 1
+        Visible = False
       end
       object RadioBtnExperimental: TRadioButton
         Left = 228
