@@ -11021,8 +11021,10 @@ begin
       // Handling '/encoding' within WINST parameters
       else if lowercase(ParameterEncoding) = lowercase(expr) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        //GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
+        //EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        //GetWord(Remaining, encodingString, Remaining, WordDelimiterWhiteSpace);
+        EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
         if not isSupportedEncoding(encodingString) then
            LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
         // unicode fallback to utf8
