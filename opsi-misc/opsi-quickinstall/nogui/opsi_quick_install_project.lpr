@@ -1430,6 +1430,7 @@ begin
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
     //writeln(distroName, ' ', distroRelease);
+    LogDatei.log(distroName + ' ' + distroRelease, LLInfo);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later,

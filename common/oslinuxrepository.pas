@@ -206,9 +206,11 @@ var
   Output: string;
 begin
   // zypper addrepo <options> <URI> <alias>
-  writeln('zypper addrepo ' + FURL + ' ' + RepoName);
+  //writeln('zypper addrepo ' + FURL + ' ' + RepoName);
+  LogDatei.log('zypper addrepo ' + FURL + ' ' + RepoName, LLInfo);
   FRunCommandElevated.Run('zypper addrepo ' + FURL + ' ' + RepoName, Output);
-  writeln('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
+  //writeln('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh');
+  LogDatei.log('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh', LLInfo);
   FRunCommandElevated.Run('zypper --no-gpg-checks --non-interactive --gpg-auto-import-keys refresh', Output);
 end;
 
