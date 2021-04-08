@@ -1,7 +1,7 @@
 object FBatchOberflaeche: TFBatchOberflaeche
-  Left = 1400
+  Left = 561
   Height = 493
-  Top = 337
+  Top = 240
   Width = 741
   Caption = 'opsi-script'
   ClientHeight = 493
@@ -20,7 +20,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnResize = FormResize
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 493
