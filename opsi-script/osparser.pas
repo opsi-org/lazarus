@@ -630,6 +630,7 @@ const
   Parameter_64Bit = '/64Bit';
   Parameter_32Bit = '/32Bit';
   Parameter_SysNative = '/SysNative';
+  ParameterEncoding = '/encoding';
 
   (* 'WinBatch' *)
   ParameterDontWait = '/LetThemGo';
@@ -649,7 +650,6 @@ const
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
   ParameterShowoutput = '/showoutput';
-  ParameterEncoding = '/encoding';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -10844,7 +10844,7 @@ begin
       remaining := parts[2];
 
     continue := True;
-
+    (*
     while (remaining <> '') and continue do
     begin
       if not Skip(ParameterDontWait, remaining, remaining, InfoSyntaxError) and
@@ -10852,7 +10852,8 @@ begin
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) and
-        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) then
+        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) and
+        not Skip(ParameterEncoding, remaining, remaining, InfoSyntaxError) then
       begin
         // try to parse a RunAs param
         GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
@@ -10870,7 +10871,7 @@ begin
       InfoSyntaxError := 'winst option not recognized';
       exit;
     end;
-
+    *)
   end;
 
   if parts[0] = '' then
@@ -10981,7 +10982,7 @@ begin
     if not produceExecLine(ExecParameter, programfilename, programparas,
       passparas, winstoption, errorInfo) then
     begin
-      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed',
+      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed: ' + errorInfo,
         LLcritical);
       FExtremeErrorLevel := LevelFatal;
       exit;
@@ -11021,14 +11022,26 @@ begin
       // Handling '/encoding' within WINST parameters
       else if lowercase(ParameterEncoding) = lowercase(expr) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-        if not isSupportedEncoding(encodingString) then
-           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
+
+        if (not isSupportedEncoding(encodingString)) then
+           begin
+             LogDatei.log('Given encoding "' +encodingString+ '" is incorrect or not supported', LLDebug);
+             encodingString := 'system';
+           end;
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
       end
+      else if lowercase(trim(expr)) = LowerCase(ParameterRunElevated) then
+        begin
+          {$IFDEF WIN32}
+          opsiSetupAdmin_runElevated := True;
+          LogDatei.log('Found Parameter: /runelevated .', LLDebug);
+          {$ENDIF WIN32}
+          runAs := traInvoker;
+        end;
     end;
 
     useext := '.cmd';
@@ -23117,15 +23130,14 @@ begin
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                if produceExecLine(remaining, p1, p2, p3, p4,
-                  InfoSyntaxError) then
+                //if produceExecLine(remaining, p1, p2, p3, p4, InfoSyntaxError) then
 
                   ActionResult :=
                     executeWith(ArbeitsSektion, Remaining, True {catch out},
                     0, output)
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                //else
+                //  ActionResult :=
+                //    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
 
               tsWorkOnStringList:
