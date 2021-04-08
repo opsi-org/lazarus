@@ -10370,10 +10370,13 @@ begin
       // // Handling '/encoding' within WINST parameters
       else if Skip(ParameterEncoding, Remaining, Remaining, ErrorInfo) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
         if not isSupportedEncoding(encodingString) then
-          LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+          begin
+             LogDatei.log('Given encoding "' +encodingString+ '" is incorrect or not supported', LLDebug);
+             encodingString := 'system';
+          end;
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
