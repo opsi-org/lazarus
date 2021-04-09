@@ -233,6 +233,7 @@ begin
   case FDistribution of
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10,
+    Univention_4_3, Univention_4_4,
     xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
     begin
       AddDebianUbuntu;

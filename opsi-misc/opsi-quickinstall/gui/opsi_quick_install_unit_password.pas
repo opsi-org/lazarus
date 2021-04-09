@@ -139,6 +139,7 @@ begin
   // write in l-opsi-server.conf file:
   if not FileExists('l-opsi-server.conf') then
     TouchCommand.Run('touch l-opsi-server.conf', Output);
+  TouchCommand.Run('chown -c $USER l-opsi-server.conf', Output);
   FileText.SaveToFile('l-opsi-server.conf');
 
   // write in properties.conf file:
