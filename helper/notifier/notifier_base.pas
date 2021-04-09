@@ -152,6 +152,8 @@ end;
 
 
 procedure Main;
+var
+  i : integer;
 begin
   stopped := False;
   DataModule1.createNform;
@@ -162,7 +164,12 @@ begin
     {show notifier 10 seconds (for tests only) }
     if Assigned(LogDatei) then
       LogDatei.log('show test', LLnotice);
-    Sleep(10000);
+    for i := 0 to 10 do
+    begin
+      DataModule1.ProcessMess;
+      Sleep(1000);
+      LogDatei.log('show test: '+inttostr(i), LLnotice);
+    end;
     if Assigned(LogDatei) then
       LogDatei.log('shutdown after show test', LLnotice);
     shutdownNotifier;

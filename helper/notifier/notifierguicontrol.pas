@@ -52,6 +52,8 @@ procedure hideNForm;
 function setLabelCaptionById(aktId, aktMessage: string): boolean;
 procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
 procedure shutdownNotifier;
+procedure logmouseenter(Sender: TObject);
+procedure logmouseleave(Sender: TObject);
 
 const
   appearStepSize = 5;
@@ -83,8 +85,8 @@ var
   MemoArray: Tmemos;
   labelcounter, buttoncounter, memocounter: integer;
   designPPI: integer;
-  mymouseenter: TMethod;
-  mymouseleave: TMethod;
+  //mymouseenter: TMethod;
+  //mymouseleave: TMethod;
 
 
 
@@ -940,16 +942,31 @@ begin
       nform.Left := mytmpint1;
       nform.Top := mytmpint2;
     end;
+
     {$IFDEF DARWIN}
     // at bottom we have the dock
     if nformpos = fpBottomRight then
       nformpos := fpTopRight;
     {$ENDIF DARWIN}
-    {$IFDEF LINUX}
+    tmpstr2 := 'Form initial: ' ;
+    with nform do
+    begin
+      tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+      tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    end;
+    LogDatei.log(tmpstr2, LLDebug);
+    {$IFNDEF DARWIN}
     // scale new scrollbox:
     nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
       screen.PixelsPerInch, 0, 0);
-    {$ENDIF LINUX}
+    {$ENDIF DARWIN}
+    tmpstr2 := 'Form rescale: ' ;
+    with nform do
+    begin
+      tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+      tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    end;
+    LogDatei.log(tmpstr2, LLDebug);
     //Hidden = false
     tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
     if not TryStrToBool(tmpinistr, hidden) then
@@ -1217,6 +1234,8 @@ begin
     //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       designPPI, nform.PixelsPerInch, 0, 0);
+    //mytmpint1 := ButtonArray[buttoncounter].Height;
+    //ButtonArray[buttoncounter].Height := trunc(mytmpint1 * (nform.PixelsPerInch / designPPI));
     tmpstr2 := 'After ReScale: Button' + IntToStr(buttoncounter);
     with ButtonArray[buttoncounter] do
     begin
@@ -1231,8 +1250,8 @@ begin
     if LogDatei.LogLevel > 6 then
     begin
       ;
-      ButtonArray[buttoncounter].OnMouseEnter := TNotifyEvent(mymouseenter);
-      ButtonArray[buttoncounter].OnMouseLeave := TNotifyEvent(mymouseleAVE);
+      ButtonArray[buttoncounter].OnMouseEnter := @nform.mymouseenter;
+      ButtonArray[buttoncounter].OnMouseLeave := @nform.mymouseleAVE;
       LogDatei.log('Finished reading: ' + aktsection, LLDebug);
     end;
   end;
@@ -1293,30 +1312,34 @@ begin
   LogDatei.log('Finished initial form build in openSkinIni. ', LLDebug2);
 end;
 
-procedure onmouseenter(Sender: TObject);
+procedure logmouseenter(Sender: TObject);
 var
   a, b: TPoint;
+  str : string;
 begin
+  str := TSpeedButton(Sender).Name + ' : ' + inttostr(TSpeedButton(Sender).Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);
   b := a;
   // b.x and b.y are your coordinates
 
-  LogDatei.log('mouseenter: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+  LogDatei.log(str+' mouseenter: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
 end;
 
-procedure onmouseleave(Sender: TObject);
+procedure logmouseleave(Sender: TObject);
 var
   a, b: TPoint;
+  str : string;
 begin
+  str := TSpeedButton(Sender).Name + ' : ' + inttostr(TSpeedButton(Sender).Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);
   b := a;
   // b.x and b.y are your coordinates
 
-  LogDatei.log('mouseleave: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+  LogDatei.log(str+' mouseleave: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
 end;
 
 
@@ -1332,8 +1355,10 @@ begin
   memolist := TStringList.Create;
   designPPI := 96;
   Randomize;
+  (*
   mymouseenter.Code := @onmouseenter;
   mymouseenter.Data := nil;
   mymouseleave.Code := @onmouseleave;
   mymouseleave.Data := nil;
+  *)
 end.

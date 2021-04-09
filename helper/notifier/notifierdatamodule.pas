@@ -164,7 +164,8 @@ begin
   {$ENDIF DARWIN}
   //myport := 44003;
   myport := 0;
-  myloglevel := 6;
+  //myloglevel := 6;
+  myloglevel := 8;
   //stopped := False;
 
 
