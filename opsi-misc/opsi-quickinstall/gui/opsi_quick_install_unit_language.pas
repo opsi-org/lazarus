@@ -116,6 +116,7 @@ end;
 procedure SetBasics(Sender: TForm);
 var
   compIndex: integer;
+  PanelBigLine, PanelSmallLine: TPanel;
 begin
   for compIndex := 0 to Sender.ComponentCount - 1 do
   begin
@@ -131,10 +132,39 @@ begin
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
       setInfoBasics(Sender.Components[compIndex] as TImage)
     else if (Sender.Components[compIndex].Name = 'BackgrImage') then
+    begin
       // set background image
       (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
         ExtractFilePath(ParamStr(0)) + QuickInstall.BackgrImageFileName);
+      (Sender.Components[compIndex] as TImage).BorderSpacing.Top:=10;
+    end;
   end;
+
+  // big decoration line at bottom in opsi-blue
+  PanelBigLine := TPanel.Create(Sender);
+  PanelBigLine.Parent:=Sender;
+  PanelBigLine.ParentColor:=False;
+  PanelBigLine.BevelOuter:=bvNone;
+  PanelBigLine.Height := 5;
+  PanelBigLine.Top := Sender.Height - PanelBigLine.Height;
+  PanelBigLine.Left := 0;
+  PanelBigLine.Width := Sender.Width;
+  // Opsi-Blau: #006599
+  PanelBigLine.Color := TColor($00996500);
+  PanelBigLine.BevelColor := TColor($00996500);
+
+  // thin decoration line above the big one in opsi-red
+  PanelSmallLine := TPanel.Create(Sender);
+  PanelSmallLine.Parent:=Sender;
+  PanelSmallLine.ParentColor:=False;
+  PanelSmallLine.BevelOuter:=bvNone;
+  PanelSmallLine.Height := 3;
+  PanelSmallLine.Top := Sender.Height - 11;
+  PanelSmallLine.Left := 0;
+  PanelSmallLine.Width := Sender.Width;
+  // Opsi-Rot: #B42554
+  PanelSmallLine.Color := TColor($005425B4);
+  PanelSmallLine.BevelColor := TColor($005425B4);
 end;
 
 { TQuickInstall }
@@ -185,7 +215,8 @@ begin
 
   // set constant form size
   Height := 450;
-  Width := 730;
+  //Width := 730;
+  Width := 675;
   // center form nicely on screen
   Left := Round((Screen.Width - Width) / 2);
   Top := Round((Screen.Height - Height) / 2);
@@ -195,7 +226,8 @@ begin
   BtnBack.Left := 20;
   //note that BtnNext.Width = width for english caption
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
-  BtnBack.Top := 410;
+  //BtnBack.Top := 410;
+  BtnBack.Top := Height-50;
   BtnNext.Top := BtnBack.Top;
 
   SetBasics(self);
