@@ -22,8 +22,10 @@ type
       #10 + 'openSUSE 15.1, openSUSE 42.3,' + #10 +
       'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
-    Distribs = 'Debian 9, Debian 10,' + #10 + 'openSUSE 15.1, openSUSE 15.2, openSUSE 42.3,' +
-      #10 + 'SLES 15 SP1, SLES 15 SP1' + #10 + 'Ubuntu 18.04, Ubuntu 20.04';
+    Distribs = 'Debian 9, Debian 10,' + #10 +
+      'openSUSE 15.1, openSUSE 15.2,' + #10 +
+      'SLES 15 SP1, SLES 15 SP1,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
+      #10 + 'Univention 4.4';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
 
@@ -87,11 +89,11 @@ begin
     begin
       FMyDistr := openSUSE_Leap_15_2;
       FDistrUrlPart := 'openSUSE_Leap_15.2/';
-    end
+    {end
     else if distroRelease = '42.3' then
     begin
       FMyDistr := openSUSE_Leap_42_3;
-      FDistrUrlPart := 'openSUSE_Leap_42.3/';
+      FDistrUrlPart := 'openSUSE_Leap_42.3/';}
     end;
   end
   else
@@ -110,22 +112,22 @@ begin
       FDistrUrlPart := 'RHEL_8/';
     end;
   end
-  else
+  else}
   if distroName = 'Univention' then
   begin
-    if Pos('4.3', distroRelease) = 1 then
+    {if Pos('4.3', distroRelease) = 1 then
     begin
       FMyDistr := Univention_4_3;
       FDistrUrlPart := 'Univention_4_3/';
     end
-    else
+    else}
     if Pos('4.4', distroRelease) = 1 then
     begin
       FMyDistr := Univention_4_4;
       FDistrUrlPart := 'Univention_4.4/';
     end;
   end
-  else}
+  else
   if distroName = 'SUSE' then
   begin
     if distroRelease = '15.1' then
@@ -180,7 +182,5 @@ begin
 end;
 
 end.
-
-
 
 
