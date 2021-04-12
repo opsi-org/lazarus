@@ -219,7 +219,7 @@ begin
     patchlist.add('#@postUninstallLines*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon then
+    if aktProduct.properties.propExists('DesktopIcon') then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
         'SetupHandleDesktopIcon.opsiscript');
@@ -228,7 +228,7 @@ begin
     patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon then
+    if aktProduct.properties.propExists('DesktopIcon') then
     begin
       //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding +
@@ -237,7 +237,7 @@ begin
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon then
+    if aktProduct.properties.propExists('DesktopIcon') then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
         'SetupDesktopIconSection.opsiscript');
@@ -246,7 +246,7 @@ begin
     patchlist.add('#@SetupDesktopiconSectionLines*#=' + str);
 
     str := '';
-    if myconfiguration.UsePropDesktopicon then
+    if aktProduct.properties.propExists('DesktopIcon') then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
         'DelsubDesktopIconSection.opsiscript');
