@@ -1249,7 +1249,6 @@ begin
     ButtonArray[buttoncounter].Repaint;
     if LogDatei.LogLevel > 6 then
     begin
-      ;
       ButtonArray[buttoncounter].OnMouseEnter := @nform.mymouseenter;
       ButtonArray[buttoncounter].OnMouseLeave := @nform.mymouseleAVE;
       LogDatei.log('Finished reading: ' + aktsection, LLDebug);
