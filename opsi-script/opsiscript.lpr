@@ -59,7 +59,7 @@ uses //lcltranslator,
   osservicepassdlg,
   oslistedit,
   Forms,
- osGUIControl,
+  osGUIControl,
   {$ELSE GUI}
   custapp,
   oscheck_gui_startable,
@@ -147,11 +147,16 @@ type
     startgui := false;
     initLogging;
     filePath := ExtractFilePath(ParamStr(0));
-    if filepath = '' then filepath := '/usr/local/bin/';
+    filepath := IncludeTrailingPathDelimiter(filepath);
     if not FileExists(filePath + 'opsi-script-gui') then
-      filepath := '/usr/local/bin/';
-    if which('opsi-script-gui',filepath) then
+      if which('opsi-script-gui',filepath) then
        filePath := ExtractFilePath(filepath);
+    if not FileExists(filePath + 'opsi-script-gui') then
+          filepath := '/usr/local/bin/';
+    if not FileExists(filePath + 'opsi-script-gui') then
+          filepath := '/Applications/opsi-script.app/Contents/MacOS/';
+    if not FileExists(filePath + 'opsi-script-gui') then
+          filepath := '/usr/bin/';
     //logdatei.log('Launch: paramcount ' + Paramcount.ToString, LLessential);
     i := 1;
     while (i <= Paramcount) do

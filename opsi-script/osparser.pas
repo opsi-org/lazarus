@@ -1941,7 +1941,17 @@ var
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
-  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+  if encodingString<>'' then
+     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString)
+  else
+     begin
+       OriginalList.LoadFromFile(ExpandFileName(FName));
+       encodingString := searchencoding(OriginalList.Text);
+       if encodingString='' then
+          encodingString := 'system';
+       if encodingString <> 'system' then
+          OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+     end;
   (*
   OriginalList.LoadFromFile(ExpandFileName(FName));
   Encoding2use := searchencoding(OriginalList.Text);
@@ -10257,6 +10267,18 @@ begin
 
     Sektion.eliminateLinesStartingWith(';', False);
 
+    if pos('winst ', lowercase(BatchParameter)) > 0 then
+      begin
+        winstparam := trim(copy(BatchParameter, pos('winst ',
+          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        BatchParameter := trim(copy(BatchParameter, 0,
+          pos('winst ', lowercase(BatchParameter)) - 1));
+      end;
+      warnOnlyWindows := False;
+      force64 := False;
+      runAs := traInvoker;
+      showoutput := tsofHideOutput;
+
     goon := False;
     remaining := winstparam;
 
@@ -10392,17 +10414,7 @@ begin
       for i := 0 to Sektion.Count - 1 do
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
-      if pos('winst ', lowercase(BatchParameter)) > 0 then
-      begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
-        BatchParameter := trim(copy(BatchParameter, 0,
-          pos('winst ', lowercase(BatchParameter)) - 1));
-      end;
-      warnOnlyWindows := False;
-      force64 := False;
-      runAs := traInvoker;
-      showoutput := tsofHideOutput;
+
 
 
       {$IFNDEF WINDOWS}
@@ -14347,6 +14359,13 @@ begin
     else
       StringResult := 'x86 System';
   end
+
+  else if LowerCase(s) = LowerCase('GetOSArchitecture') then
+  begin
+    syntaxcheck := True;
+      StringResult := getOSArchitecture;
+  end
+
 
   else if LowerCase(s) = LowerCase('GetUsercontext') then
   begin
@@ -18743,6 +18762,13 @@ begin
     booleanresult := runningasadmin;
   end
 
+  else if Skip('runningInWAnMode', Input, r, InfoSyntaxError) then
+  begin
+    Syntaxcheck := True;
+    errorOccured := False;
+    booleanresult := runningInWAnMode;
+  end
+
   else if Skip('isLoginScript', Input, r, InfoSyntaxError) then
   begin
     Syntaxcheck := True;
@@ -18866,6 +18892,19 @@ begin
               LogDatei.log(RunTimeInfo, LLInfo);
 
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+            end;
+  end
+
+  //function fileHasBom(inFileName: string): boolean;
+  else if Skip('fileHasBom', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+                syntaxCheck := True;
+                BooleanResult := getFileBom(s1,tmpstr);
+                LogDatei.log('GottenEnconding : '+ tmpstr, LLInfo);
             end;
   end
 
@@ -19552,6 +19591,7 @@ var
   numberOfSectionLines: integer;
 
   encodingString : string ='';
+  hasBom : Boolean;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -20270,26 +20310,15 @@ begin
                 else
                 begin
                   if CheckFileExists(fullfilename, ErrorInfo) then
-                   begin
-                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-                      if lowercase(ParameterEncoding) = lowercase(expr) then
-                      begin
-                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-                        if not isSupportedEncoding(encodingString) then
-                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
-                        // unicode fallback to utf8
-                        if lowercase(encodingString)='unicode' then
-                           encodingString := 'utf8';
+                  begin
+                      hasBom := getFileBom(fullfilename, encodingString);
+                      try
+                        LoadValidLinesFromFile(fullfilename, encodingString, ArbeitsSektion);
 
-                        try
-                          LoadValidLinesFromFile(fullfilename, encodingString, ArbeitsSektion);
-
-                          ArbeitsSektion.StartLineNo := 1;
-                        except
-                          Logdatei.log('File "' + fullfilename +
-                            '" cannot be read', LLError);
-                        end;
+                        ArbeitsSektion.StartLineNo := 1;
+                      except
+                        Logdatei.log('File "' + fullfilename +
+                          '" cannot be read', LLError);
                       end;
                   end
                   else
@@ -20707,17 +20736,7 @@ begin
                       LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
                       inclist := TXStringList.Create;
 
-                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-                      if lowercase(ParameterEncoding) = lowercase(expr) then
-                      begin
-                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-                        if not isSupportedEncoding(encodingString) then
-                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
-                        // unicode fallback to utf8
-                        if lowercase(encodingString)='unicode' then
-                           encodingString := 'utf8';
-                      end;
+                      hasBom := getFileBom(fullincfilename, encodingString);
 
                       inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
@@ -20983,17 +21002,7 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-                      if lowercase(ParameterEncoding) = lowercase(expr) then
-                      begin
-                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-                        if not isSupportedEncoding(encodingString) then
-                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
-                        // unicode fallback to utf8
-                        if lowercase(encodingString)='unicode' then
-                           encodingString := 'utf8';
-                      end;
+                      hasBom := getFileBom(fullincfilename, encodingString);
 
                       inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
 
@@ -21154,17 +21163,7 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
-                      if lowercase(ParameterEncoding) = lowercase(expr) then
-                      begin
-                        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-                        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-                        if not isSupportedEncoding(encodingString) then
-                           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
-                        // unicode fallback to utf8
-                        if lowercase(encodingString)='unicode' then
-                           encodingString := 'utf8';
-                      end;
+                      hasBom := getFileBom(fullincfilename, encodingString);
 
                       inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
 

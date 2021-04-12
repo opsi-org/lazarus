@@ -5,10 +5,19 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.17) stable; urgency=low
+
+ * change getFileBom to fileHasBom(<filename>) : boolean
+
+-- d.oertel <d.oertel@uib.de> Wed, 31 Mar 2021 15:00
+
+
 opsi-winst/opsi-script (4.12.4.16) stable; urgency=low
 
  * can now handle *.opsiscript files with bom
  * call of execwith section with /encoding parameter (by j.laajili)
+ * new string function: getOSarchitecture (x86_32 / x86_64/ arm_64)
+ * new boolean function: runningInWAnMode (true if opsiserver = localhost) default=false
 
 -- d.oertel <d.oertel@uib.de> Fri, 26 Feb 2021 15:00
 

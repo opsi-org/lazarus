@@ -57,7 +57,7 @@ end;
 function TRunCommandElevated.Run(aCommandLine: string; out Output:string; Confidential:boolean = false): boolean;
 begin
   //aCommandLine := 'chown -c $USER /etc/apt/sources.list.d/opsi.list'; //for testing
-  //LogDatei.log('Shell command: ' + aCommandLine, LLInfo);
+  LogDatei.log('Shell command: ' + aCommandLine, LLInfo);
   case FSudo of
     True: aCommandLine := 'sudo -S ' + aCommandLine;
     False: aCommandLine := 'su -c ' + '"' + aCommandLine + '"'; //AnsiQuotedStr(aCommandLine, '"');

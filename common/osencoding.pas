@@ -18,6 +18,7 @@ interface
 uses
   Classes,
   SysUtils,
+  strUtils,
   lconvencoding,
   charencstreams,
   LAZUTF8;
@@ -30,7 +31,9 @@ function isEncodingUnicode(encodingString: string): boolean;
 function UniStreamTypes2uniEncoding(inEncoding:TUniStreamTypes; hasBOM: boolean): string;
 function uniEncoding2UniStreamTypes(fileName: string; encodingString: string;
   var hasBOM: boolean): TUniStreamTypes;
+
 function hasFileBom(infilename: string): boolean;
+function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
 
 function loadUnicodeTextFile(filename: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
 procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: string);
@@ -228,6 +231,46 @@ begin
   Utype := fCES.UniStreamType;
   Result := fCES.HasBOM;
   fCES.Free;
+end;
+
+function getFileBom(inFileName: string; var gottenEncoding : string): boolean;
+var
+  myFile: TFileStream;
+  Buffer : array [0..3] of byte;   // or AnsiChar;
+  //FileFirstBytes : String ='';
+  //myFile : File ;  i, count : SmallInt ;
+begin
+  (*
+  Assignfile(myFile, inFileName);
+  FileMode := fmOpenRead;
+  Reset(myFile, 1);
+  BlockRead(myFile, Buffer, 4, count);
+  for i := 0 to count do
+    FileFirstBytes:= FileFirstBytes + IntToStr(Buffer[i]);
+  CloseFile(myFile);
+  *)
+  myFile := TFileStream.Create(ExpandFileName(inFileName), fmOpenRead);
+  //while F.Position < F.Size do
+    myFile.Read(Buffer, 4);
+  //FileFirstBytes := Buffer;
+  myFile.Free;
+
+  if (Buffer[0]=239) AND (Buffer[1]=187) AND (Buffer[2]=191) then
+     gottenEncoding := 'utf8bom';            //'#239#187#191' //#$EF#$BB#$BF
+  if (Buffer[0]=254) AND (Buffer[1]=255) then
+     gottenEncoding :='utf16bebom';          //'#254#255'     //#$FE#$FF
+  if (Buffer[0]=255) AND (Buffer[1]=254) then
+     gottenEncoding :='utf16lebom';          //'#255#254'     //#$FF#$FE
+  if (Buffer[0]=0) AND (Buffer[1]=0) AND (Buffer[2]=254) AND  (Buffer[3]=255) then
+     gottenEncoding :='utf32bebom';          //'#0#0#254#255' //#0#0#$FE#$FF
+  if (Buffer[0]=255) AND (Buffer[1]=254) AND (Buffer[2]=0) AND  (Buffer[3]=0) then
+     gottenEncoding :='utf32lebom';          //'255#254#0#0'  //#$FE#$FF#0#0
+
+  if (copy(gottenEncoding, length(gottenEncoding)-2, length(gottenEncoding)) = 'bom') then
+     Result := True
+  else
+     Result := False;
+
 end;
 
 function loadUnicodeTextFile(fileName: string; var hasBOM : boolean; var foundEncoding: string) : TStringlist;
@@ -528,9 +571,8 @@ begin
 
   if encoding='' then
   begin
-    LogDatei.log('Warning : encodingString is empty', LLWarning);
-    LogDatei.log('System encoding is taking into consideration' , LLDebug3);
-    encoding := mysystemEncoding;
+    LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
+    encoding := 'system';
   end;
 
   if isEncodingUnicode(encoding) then
@@ -567,9 +609,8 @@ var
 begin
   if encoding='' then
   begin
-    LogDatei.log('Warning : encodingString is empty', LLWarning);
-    LogDatei.log('System encoding is taking into consideration' , LLDebug3);
-    encoding := mysystemEncoding;
+    LogDatei.log('Warning : encodingString is empty - Fallback to System encoding', LLWarning);
+    encoding := 'system';
   end;
 
   if isEncodingUnicode(encoding) then

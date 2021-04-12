@@ -32,6 +32,8 @@ type
   public
     { public declarations }
     procedure choiceClick(Sender: TObject);
+    procedure mymouseenter(Sender: TObject);
+    procedure mymouseleave(Sender: TObject);
   end;
 
 var
@@ -44,7 +46,8 @@ uses
 
 {$R *.lfm}
 
-
+var
+  mousein : boolean = false;
 
 { TNform }
 
@@ -95,8 +98,28 @@ end;
 
 procedure TNform.choiceClick(Sender: TObject);
 begin
-  logdatei.log('Button clicked.', LLDebug2);
+  logdatei.log('Button clicked.', LLDebug);
   myChoiceClick(Sender);
+end;
+
+procedure TNform.mymouseenter(Sender: TObject);
+begin
+  if not mousein then
+  begin
+  mousein := true;
+  logdatei.log('mouse enter.', LLDebug);
+  logmouseenter(Sender);
+  end;
+end;
+
+procedure TNform.mymouseleave(Sender: TObject);
+begin
+  if  mousein then
+  begin
+  mousein := false ;
+  logdatei.log('mouse leave.', LLDebug);
+  logmouseleave(Sender);
+  end;
 end;
 
 end.

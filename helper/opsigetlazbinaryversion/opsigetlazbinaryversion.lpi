@@ -17,6 +17,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGPLv3" ProductName="opsi"/>
     </VersionInfo>
     <BuildModes Count="3">

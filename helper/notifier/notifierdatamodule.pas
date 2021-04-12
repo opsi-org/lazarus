@@ -131,7 +131,7 @@ var
   myDeskName: string = '';
   myloglevel: integer;
   mySession: string = '';
-  tmpstr : string;
+  tmpstr: string;
 begin
   //writeln('start');
   preloglist := TStringList.Create;
@@ -164,7 +164,8 @@ begin
   {$ENDIF DARWIN}
   //myport := 44003;
   myport := 0;
-  myloglevel := 6;
+  //myloglevel := 6;
+  myloglevel := 8;
   //stopped := False;
 
 
@@ -201,7 +202,7 @@ begin
   begin
     preloglist.Add('Found Parameter port');
     tmpstr := Application.GetOptionValue('p', 'port');
-    if TryStrToInt(tmpstr,myport) then
+    if TryStrToInt(tmpstr, myport) then
       preloglist.Add('Found Parameter port: ' + IntToStr(myport))
     else
     begin
@@ -255,7 +256,7 @@ begin
   begin
     preloglist.Add('Found Parameter loglevel');
     tmpstr := Application.GetOptionValue('l', 'loglevel');
-    if TryStrToInt(tmpstr,myloglevel) then
+    if TryStrToInt(tmpstr, myloglevel) then
       preloglist.Add('Found Parameter loglevel: ' + IntToStr(myloglevel))
     else
     begin
@@ -309,6 +310,7 @@ begin
   WriteLn('Will using log: ' + LogDatei.StandardLogPath + LogDatei.StandardLogFilename);
   {$ENDIF UNIX}
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  LogDatei.LogLevel := myloglevel;
 
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
