@@ -8,6 +8,7 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   {$ENDIF WINDOWS}
+  lclintf,
   Classes, SysUtils,
   notifierform,
   inifiles,
