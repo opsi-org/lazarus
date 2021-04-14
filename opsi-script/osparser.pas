@@ -8087,11 +8087,11 @@ var
                 cpSpecify := cpSpecify or cpFollowSymlinks
               else if Expressionstr[j] = 'x' then
               begin
-                {$IFDEF WINDOWS}
+                //{$IFDEF WINDOWS}
                 cpSpecify := cpSpecify or cpExtract;
-                {$ELSE}
-                LogDatei.log('The copy -x Option is Windows only', LLWarning);
-                {$ENDIF WINDOWS}
+                //{$ELSE}
+                //LogDatei.log('The copy -x Option is Windows only', LLWarning);
+                //{$ENDIF WINDOWS}
               end
               else if Expressionstr[j] = 'r' then
               begin

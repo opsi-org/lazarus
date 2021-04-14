@@ -10108,7 +10108,7 @@ var
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-          {$IFDEF WIN32}
+          //{$IFDEF WIN32}
           if cpSpecify and cpExtract = cpExtract then
           begin
             try
@@ -10139,7 +10139,7 @@ var
             *)
           end
           else
-          {$ENDIF WIN32}
+          //{$ENDIF WIN32}
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
