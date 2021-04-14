@@ -410,12 +410,12 @@ begin
   LogDatei.log('relkey : ' + relkey, LLdebug3);
   if noredirect then
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
     LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
     LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   try
@@ -473,12 +473,12 @@ begin
   LogDatei.log('relkey : ' + relkey, LLdebug3);
   if noredirect then
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
     LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
     LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   try
@@ -531,12 +531,12 @@ begin
   LogDatei.log('relkey : ' + relkey, LLdebug3);
   if noredirect then
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
     LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
     LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   try
@@ -603,12 +603,12 @@ begin
   LogDatei.log_prog('relkey : ' + relkey, LLdebug3);
   if noredirect then
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
     LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
     LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   try
@@ -650,12 +650,12 @@ begin
   LogDatei.log_prog('relkey : ' + relkey, LLdebug3);
   if noredirect then
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
     LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
   end
   else
   begin
-    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
     LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
   end;
   try

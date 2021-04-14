@@ -53,6 +53,18 @@ msgstr "Bitte geben Sie den Usernamen des opsi-Service users ein:"
 msgid "Ready to continue ?"
 msgstr "Bereit zum Fortfahren ?"
 
+#: oswebservice.rserrorintconnection
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
 #: tcentralform.beenden1.caption
 msgctxt "tcentralform.beenden1.caption"
 msgid "Exit"

@@ -1,8 +1,5 @@
 # opsi doc generator
-opsi doc generator generates Asciidoc files for Python or Opsiscript sourcecodes.
-It converts Python docstrings or Opsiscript comments to Asciidoc.
-And also converts asciidoc to html and shows the created html file in the default viewer.
-
+opsi-doc-generator can generate documentation from Python and opsiscript source files. Even from undocumented source files, it  generates a basic API documentation by explaining the function definition.  However, it can extract better documents from the source code comments  with special tags. It generates output in asciidoc and HTML, and display it in default viewer. opsi-doc-generator is available as a CLI or GUI utility for both Windows and Linux.
 
 # Getting started with opsi doc generator:
 
@@ -12,7 +9,7 @@ Lazarus IDE, asciidoctor
 ## Getting Set Up
 1. Clone this repository. `git clone git@gitlab.uib.local:uib/lazarus.git`
 
-2. Checkout the branch jeena. `git checkout jeena`
+2. Checkout the branch experimental. `git checkout experimental`
 
 3. Build the project.
 

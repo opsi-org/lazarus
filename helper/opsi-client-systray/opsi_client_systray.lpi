@@ -24,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="2"/>
+      <BuildNr Value="3"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4">
@@ -145,6 +145,8 @@
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-ossyst.plist"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -182,7 +184,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="8">
       <Unit0>
         <Filename Value="opsi_client_systray.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -210,6 +212,14 @@
         <Filename Value="..\..\common\osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="info-ossyst.plist"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="notarize_ossystray.bash"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

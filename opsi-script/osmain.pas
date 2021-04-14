@@ -84,6 +84,7 @@ uses
 {$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
+  osGUIControl,
   osbatchgui,
   Forms, Dialogs,
   ExtCtrls,
@@ -1065,7 +1066,7 @@ var
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}
-      FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
+      FBatchOberflaeche.SetMessageText('Reloading product list after reinstallation...', mInfo);//FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
       {$ENDIF GUI}
       if opsidata.getOpsiServiceVersion = '4' then
       begin
@@ -1156,7 +1157,7 @@ begin
     {$ENDIF WINDOWS}
     goOn := True;
     {$IFDEF GUI}
-    FBatchOberflaeche.ForceStayOnTop(False);
+    FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
 
@@ -1198,7 +1199,7 @@ begin
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
     LogDatei.log('', LLinfo);
     {$IFDEF GUI}
-    FBatchOberflaeche.setInfoLabel(rsProductCheck);
+    FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
     {$ENDIF GUI}
     ProcessMess;
 
@@ -1296,7 +1297,7 @@ begin
           // maximize window
           BatchWindowMode := bwmMaximized;
           SavedBatchWindowMode := BatchWindowMode;
-          FBatchOberflaeche.setWindowState(BatchWindowMode);
+          FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);//FBatchOberflaeche.setWindowState(BatchWindowMode);
           ProcessMess;
           //FBatchOberflaeche.setWindowState(bwmMaximized);
           {$ENDIF GUI}
@@ -1608,7 +1609,7 @@ begin
   LogDatei.LogProduktId := False;
   goOn := True;
   {$IFDEF GUI}
-  FBatchOberflaeche.ForceStayOnTop(False);
+  FBatchOberflaeche.SetForceStayOnTop(False);
   //BatchWindowMode := bwmNormalWindow;
   //FBatchOberflaeche.setWindowState(BatchWindowMode);
   {$ENDIF GUI}
@@ -1680,7 +1681,7 @@ begin
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
   LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
-  FBatchOberflaeche.setInfoLabel(rsProductCheck);
+  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo); //setInfoLabel(rsProductCheck);
   ProcessMess;
   {$ENDIF GUI}
   (* walk through all products *)
@@ -1750,7 +1751,7 @@ begin
   LogDatei.LogProduktId := False;
   goOn := True;
   {$IFDEF GUI}
-  FBatchOberflaeche.ForceStayOnTop(False);
+  FBatchOberflaeche.SetForceStayOnTop(False);
   //BatchWindowMode := bwmNormalWindow;
   //FBatchOberflaeche.setWindowState(BatchWindowMode);
   {$ENDIF GUI}
@@ -1777,7 +1778,7 @@ begin
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
   LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
-  FBatchOberflaeche.setInfoLabel(rsProductCheck);
+  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo); //setInfoLabel(rsProductCheck);
   ProcessMess;
   {$ENDIF GUI}
   (* walk through all products *)
@@ -1988,7 +1989,7 @@ begin
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
     //FBatchOberflaeche.setVisible(false);
-    FBatchOberflaeche.setWindowState(BatchWindowMode);
+    FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
     LogDatei.log('pm: ' + IntToStr(Ord(ProgramMode)), LLessential);
@@ -1999,8 +2000,8 @@ begin
     if ProgramMode = pmInfo then
     begin
       {$IFDEF GUI}
-      FBatchOberflaeche.setWindowState(bwmIcon);
-      FBatchOberflaeche.setVisible(True);
+      FBatchOberflaeche.SetBatchWindowMode(bwmIcon);
+      FBatchOberflaeche.SetElementVisible(True,eMainForm);
       CentralFormVisible := True;
       CentralForm.Visible := CentralFormVisible;
 
@@ -2076,9 +2077,9 @@ begin
           { if necessary do product installations  }
           {$IFDEF GUI}
           if runSilent then
-            FBatchOberflaeche.setVisible(False)
+            FBatchOberflaeche.SetElementVisible(False, eMainForm)
           else
-            FBatchOberflaeche.setVisible(True);
+            FBatchOberflaeche.SetElementVisible(True, eMainForm);
           {$ENDIF GUI}
           startupmessages.Append('startmessage start opsi service connection: ' +
             DateTimeToStr(Now));
@@ -2254,9 +2255,9 @@ begin
            *)
 
           if runSilent then
-            FBatchOberflaeche.setVisible(False)
+            FBatchOberflaeche.SetElementVisible(False, eMainForm)
           else
-            FBatchOberflaeche.setVisible(True);
+            FBatchOberflaeche.SetElementVisible(True, eMainForm);
 
           centralform.Edit1.Text := scriptlist.strings[0];
           centralform.Edit2.Text := LogDateiName;
@@ -2531,7 +2532,7 @@ begin
         with centralform do
         begin
           // we are in interactive mode
-          FBatchOberflaeche.setVisible(True);
+          FBatchOberflaeche.SetElementVisible(True, eMainForm);
           CentralFormVisible := True;
           CentralForm.Visible := CentralFormVisible;
 

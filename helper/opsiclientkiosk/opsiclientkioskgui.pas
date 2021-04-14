@@ -1264,7 +1264,8 @@ begin
     ButtonSoftwareInstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
-    ButtonSoftwareUpdate.Visible := False;
+    if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
+     else ButtonSoftwareUpdate.Visible := False;
   end
   else
   begin

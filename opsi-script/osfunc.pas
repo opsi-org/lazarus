@@ -60,6 +60,8 @@ uses
   Shlobj,
 {$ENDIF}
 {$IFDEF GUI}
+  osGUIControl,
+  Forms,
   Graphics,
   LResources,
   LCLIntf,
@@ -89,6 +91,7 @@ uses
   osconf,
   oslog,
   osparserhelper,
+  osurlparser,
   crt,
   strutils,
   lconvencoding,
@@ -536,10 +539,12 @@ function FileCopy
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean; overload;
 function Is64BitSystem: boolean;
+function getOSArchitecture: string;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
 function isWinPE: boolean;
 function isGUI: boolean;
+function runningInWAnMode: boolean;
 
 
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
@@ -615,7 +620,7 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-//function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function loadUnicodeTextFile(filename: string): TStringList;
 function opsiunquotestr(s1, s2: string): string;
 
 function cmdLineInputDialog(var inputstr: string; const message, default: string;
@@ -841,7 +846,7 @@ end;
 
 (*
 // removed for Lazarus 1.8
-function stringListLoadUtf8FromFile(filename: string): TStringList;
+function loadUnicodeTextFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
 begin
@@ -3812,8 +3817,8 @@ begin
           {$IFDEF GUI}
           if waitsecsAsTimeout and (WaitSecs > 5) then
           begin
-            FBatchOberflaeche.showProgressBar(True);
-            FBatchOberflaeche.setProgress(0);
+            FBatchOberflaeche.SetElementVisible(True, eProgressBar);//showProgressBar(True);
+            //FBatchOberflaeche.setProgress(0);
           end;
           {$ENDIF GUI}
 
@@ -4784,8 +4789,8 @@ begin
 
   if showoutput then
   begin
-    FBatchOberflaeche.Left := 5;
-    FBatchOberflaeche.Top := 5;
+    FBatchOberflaeche.SetElementLeft(5, eMainForm);//Left := 5;
+    FBatchOberflaeche.SetElementTop(5, eMainForm);//Top := 5;
 
     // In the normal case of tsofShowOutput
     // we call CreateSystemInfo and show the
@@ -5009,8 +5014,8 @@ begin
       SystemInfo.Free;
       SystemInfo := nil;
     end;
-    FBatchOberflaeche.BringToFront;
-    FBatchOberflaeche.centerWindow;
+    FBatchOberflaeche.BringElementToFront(eMainForm);//BringToFront;
+    FBatchOberflaeche.SetWindowPosition(poScreenCenter); //centerWindow;
     ProcessMess;
   end;
   {$ENDIF GUI}
@@ -5428,6 +5433,48 @@ begin
   Result := Is64BitSystemLin;
   {$ENDIF LINUX}
 end;
+
+function getOSArchitecture: string;
+begin
+  Result := 'unknown';
+  {$IFDEF WIN32}
+  Result := 'x86_32';
+  {$ENDIF WIN32}
+  {$IFDEF WIN64}
+  Result := 'x86_64';
+  {$ENDIF WIN64}
+  {$IFDEF LINUX}
+  // At the moment the only supported architecture at Linux
+  Result := 'x86_64';
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  // At the moment the only supported architecture at Linux
+  Result := trim(getCommandResult('uname -m'));
+  if result = 'arm64' then Result := 'arm_64';
+  if result = 'x86_64' then
+  begin
+    if '1' = trim(getCommandResult('sysctl -in sysctl.proc_translated')) then
+     Result := 'arm_64';
+  end;
+  {$ENDIF DARWIN}
+end;
+
+function runningInWAnMode: boolean;
+var
+  mylist : TStringlist;
+  myserver : string;
+begin
+  result := false;
+  mylist := parseUrl(opsiserviceURL);
+  myserver := trim(LowerCase(mylist.Values['Host']));
+  if myserver = 'localhost' then result := true;
+  if myserver = '127.0.0.1' then result := true;
+  if myserver = '::1' then result := true;
+  FreeAndNil(mylist);
+end;
+
+
+
 
 
 function runningAsAdmin: boolean;
@@ -7116,7 +7163,7 @@ begin
   if MatchCase then
     SearchUString := SearchString
   else
-    SearchUString := AnsiUpperCase(SearchString);
+    SearchUString := UTF8UpperString(SearchString);
 
   found := False;
   Result := startIndex;
@@ -7129,7 +7176,7 @@ begin
     if MatchCase then
       SearchItem := Strings[i - 1]
     else
-      SearchItem := AnsiUpperCase(Strings[i - 1]);
+      SearchItem := UTF8UpperString(Strings[i - 1]);
 
     if SearchUString = SearchItem then
     begin
@@ -7144,12 +7191,12 @@ begin
   begin
     LogS := 'Item no. ' + IntToStr(Result) + ' is containing ''' +
       SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
   end
   else
   begin
     LogS := 'No item found containing ''' + SearchUString + '''';
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
   end;
 end;
 
@@ -8189,7 +8236,7 @@ begin
   try
     inifilename := ExpandFileName(inifilename);
     LoadFromFile(inifilename);
-    Text := reencode(Text, 'system');
+    //Text := reencode(Text, 'system');
     filename := inifilename;
   except
   end;
@@ -10098,7 +10145,7 @@ var
         begin
           {$IFDEF GUI}
           if CountModus <> tccmNoCounter then
-            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100));
+            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent); //SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
           LogDatei.log(LogS, LLInfo);
@@ -10257,7 +10304,7 @@ begin
     LogS := 'Copying  ' + SourceMask + ' -----> ' + Target;
     LogDatei.log(LogS, LLInfo);
     {$IFDEF GUI}
-    FBatchOberflaeche.setCommandLabel(LogS);
+    FBatchOberflaeche.SetMessageText(LogS,mCommand);//setCommandLabel(LogS);
     ProcessMess;
     {$ENDIF GUI}
   end;
@@ -10273,7 +10320,7 @@ begin
   CopyCount := TCopyCount.Create(CountModus, NumberCounted);
   {$IFDEF GUI}
   if CountModus = tccmCounted then
-    FBatchOberflaeche.showProgressBar(True);
+    FBatchOberflaeche.SetElementVisible(True, eProgressBar);//showProgressBar(True);
   {$ENDIF GUI}
   FileFound := False;
   Recursion_Level := -1;
@@ -10296,8 +10343,8 @@ begin
   CopyCount.Free;
   CopyCount := nil;
   {$IFDEF GUI}
-  FBatchOberflaeche.showProgressBar(False);
-  FBatchOberflaeche.setCommandLabel('');
+  FBatchOberflaeche.SetElementVisible(False, eProgressBar);//showProgressBar(False);
+  FBatchOberflaeche.SetMessageText('', mCommand); //setCommandLabel('');
   ProcessMess;
   {$ENDIF GUI}
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -10901,7 +10948,7 @@ var
         Inc(NoOfFiles);
         if compressModus <> tcmCount then
         begin
-          FBatchOberflaeche.setProgress(round(NoOfFiles / TotalNoOfFiles * 100));
+          FBatchOberflaeche.SetProgress(round(NoOfFiles / TotalNoOfFiles * 100), pPercent);
           ProcessMess;
         end;
       end;

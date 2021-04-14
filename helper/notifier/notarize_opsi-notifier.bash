@@ -8,18 +8,13 @@ APP_SPECIFIC_PASSWORD=uuve-sosg-wbjr-yebn
 
 BUNDLE_ID=org.opsi.opsi-notifier
 EXECUTABLE_NAME=opsi-notifier
-EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.app
-FULLPATHTOEXE=${EXECUTABLE_DIR}/Contents/MacOS/${EXECUTABLE_NAME}
+EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
+FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
 
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
 echo id $APPLE_ID_USER
 echo dir $EXECUTABLE_DIR
-
-
-#compile
-#echo "Building"
-#fpc -k"-sectcreate __TEXT __info_plist Info.plist" hello.pas
 
 echo "Clean up temporary files ..."
 rm -f ${EXECUTABLE_NAME}_macOS.dmg
@@ -27,10 +22,12 @@ rm -f ${EXECUTABLE_NAME}_macOS.dmg
 rm -f upload_log_file.txt
 rm -f request_log_file.txt
 rm -f log_file.txt
+mkdir -p ${EXECUTABLE_DIR}
+rm -f ${EXECUTABLE_DIR}/*
 rm -f ${FULLPATHTOEXE}
-#cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
-cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
-cp Info-opsi-notifier.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
+#cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
+#cp Info-opsi-notifier.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"
@@ -43,11 +40,11 @@ codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.en
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
-echo "Code signing .app..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
-codesign --verify --verbose --strict $EXECUTABLE_DIR
-codesign -dv -r- $EXECUTABLE_DIR
-codesign -vvv --deep --strict $EXECUTABLE_DIR
+#echo "Code signing .app..."
+#codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
+#codesign --verify --verbose --strict $EXECUTABLE_DIR
+#codesign -dv -r- $EXECUTABLE_DIR
+#codesign -vvv --deep --strict $EXECUTABLE_DIR
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
 
