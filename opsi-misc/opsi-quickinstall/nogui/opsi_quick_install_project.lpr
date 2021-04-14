@@ -50,7 +50,7 @@ type
     // query:
     procedure NoGuiQuery;
     procedure QuerySetupType;
-    procedure QueryOpsiVersion;
+    //procedure QueryOpsiVersion;
     procedure QueryRepo;
     procedure QueryProxy;
     procedure QueryRepoNoCache;
@@ -424,7 +424,7 @@ type
     end;
   end;
 
-  procedure TQuickInstall.QueryOpsiVersion;
+  {procedure TQuickInstall.QueryOpsiVersion;
   begin
     // opsi version:
     writeln(rsOpsiVersion, rsOpsiVersionOp, '*');
@@ -447,7 +447,7 @@ type
         opsiVersion := 'Opsi 4.1';
       QueryRepo;
     end;
-  end;
+  end;}
 
   procedure TQuickInstall.QueryRepo;
   begin
@@ -1132,100 +1132,6 @@ type
     writeln('');
     writeln(rsContinue);
     // Jumping back to a query by the number in the overview:
-    {while validInput = False do
-    begin
-      // first test if input is valid, i.e. input = '' or input in
-      validInput := True;
-      readln(input);
-      try
-        Counter := input.ToInteger - 1;
-        isInputInt := True;
-      except
-        writeln('"', input, '"', rsNotValid);
-      end;
-      if input = '' then
-      begin
-        WritePropsToFile;
-        InstallOpsi;
-      end
-      else
-      if isInputInt = True then
-      begin
-        if Counter in [0..queries.Count - 1] then
-        begin
-          if queries[Counter] = '1' then
-            QueryOpsiVersion
-          else
-          if queries[Counter] = '2' then
-            QueryRepo
-          else
-          if queries[Counter] = '3' then
-            QueryProxy
-          else
-          if queries[Counter] = '4' then
-            QueryRepoNoCache
-          else
-          if queries[Counter] = '5' then
-            QueryBackend
-          else
-          if queries[Counter] = '6' then
-            QueryModules
-          else
-          if queries[Counter] = '7' then
-            QueryRepoKind
-          else
-          if queries[Counter] = '8' then
-            QueryUCS
-          else
-          if queries[Counter] = '9' then
-            QueryReboot
-          else
-          if queries[Counter] = '10' then
-            QueryDhcp
-          else
-          if queries[Counter] = '11' then
-            QueryLink
-          else
-          if queries[Counter] = '12' then
-            QueryNetmask
-          else
-          if queries[Counter] = '13' then
-            QueryNetworkAddress
-          else
-          if queries[Counter] = '14' then
-            QueryDomain
-          else
-          if queries[Counter] = '15' then
-            QueryNameserver
-          else
-          if queries[Counter] = '16' then
-            QueryGateway
-          else
-          if queries[Counter] = '17' then
-            QueryAdminName
-          else
-          if queries[Counter] = '18' then
-            QueryAdminPass
-          else
-          if queries[Counter] = '19' then
-            QueryIPName
-          else
-          if queries[Counter] = '20' then
-            QueryIPNumber;
-        end
-        else
-          // If input is integer but not a valid one:
-        begin
-          writeln('"', input, '"', rsNotValid);
-          validInput := False;
-        end;
-      end
-      else
-        // If input is no integer and not '':
-      begin
-        writeln('"', input, '"', rsNotValid);
-        validInput := False;
-      end;}
     readln(input);
     // only elements of 'queries' (jumping back) or '' (start installation) are valid inputs
     while not ((queries.IndexOf(input) <> -1) or (input = '')) do
@@ -1242,9 +1148,9 @@ type
     else
       // jump back to the respective question
     begin
-      if input = '1' then
+      {if input = '1' then
         QueryOpsiVersion
-      else
+      else}
       if input = '2' then
         QueryRepo
       else
