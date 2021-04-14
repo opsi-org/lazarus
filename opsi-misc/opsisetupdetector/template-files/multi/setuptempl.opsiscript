@@ -1,0 +1,57 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Actions]
+requiredWinstVersion >= "4.12.0.28"
+ScriptErrorMessages = false
+
+DefVar $ProductId$
+DefVar $InstallDir$
+DefVar $MinimumSpace$
+DefVar $ExitCode$
+DefVar $ErrorString$
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $OS$
+DefVar $OSshort$
+DefVar $oldProgFound$
+DefVar $installSuccess$
+DefVar $installCommand$
+#@stringVars*#
+
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
+Set $ProductId$		= "#@productId*#"
+; the path where we find the product after the installation
+Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $LicensePool$	  = "" 
+; ----------------------------------------------------------------
+
+set $OS$ = GetOS
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
+
+; Win / Lin / Mac
+
+set $OSshort$ = strPart($OS$,"1","3")
+include_insert $OSshort$+"_setup.opsiscript"
+
+;switch $OS$
+;	case "Windows_NT"
+;		include_insert "win_setupt.opsicript"
+;	endcase
+;	case "Linux"
+;		include_insert "lin_setupt.opsicript"
+;	endcase
+;	case "MacOS"
+;		include_insert "mac_setupt.opsicript"
+;	endcase
+;endswitch

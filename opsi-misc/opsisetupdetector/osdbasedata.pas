@@ -16,22 +16,42 @@ uses
   lazutf8,
   fileinfo,
   fpjsonrtti,
+  fpjson,
   oslog,
   RTTICtrls,
+  osjson,
   lcltranslator;
 
 type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
-    twoAnalyzeCreate_2, createTemplate, gmUnknown);
+    twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
+    threeAnalyzeCreate_2,  threeAnalyzeCreate_3, createMultiTemplate, gmUnknown);
 
   TArchitecture = (a32, a64, aUnknown);
+
+
+  { stores runtime infos of OSD}
+  TOSDSettings = class(TPersistent)
+  private
+    FrunMode : TRunMode;
+  published
+    property runmode: TRunMode read FrunMode write FrunMode;
+  public
+    { public declarations }
+    //constructor Create;
+    //destructor Destroy;
+  end;
+
+  TTargetOS = (osLin, osWin, osMac, osMulti, osUnknown);
+  TTargetOSset = set of TTargetOS;
 
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
 
   // marker for add installers
-  TKnownInstaller = (stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
+  TKnownInstaller = (stLinRPM, stLinDeb, stMacZip, stMacDmg, stMacPKG, stMacApp,
+    stSFXcab, stBoxStub, stAdvancedMSI, stInstallShield,
     stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
     stWixToolset, stBitrock, stSelfExtractingInstaller, stInno,
@@ -44,7 +64,6 @@ type
   TInstallerData = class
   private
   public
-
     installerId: TKnownInstaller;
     Name: string;
     description: string;
@@ -64,13 +83,13 @@ type
     { public declarations }
     constructor Create;
     destructor Destroy;
-
   end;
 
   TInstallers = array of TInstallerData;
 
   TSetupFile = class(TPersistent)
   private
+    Factive : boolean;
     FID: integer; // 1 = first setup file, 2 = second setup file
     FsetupFileNamePath: string;
     FsetupFileName: string;
@@ -100,16 +119,19 @@ type
     Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
+    FtargetOS : TTargetOS;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
+    //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
+    //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
     // proc
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
     property ID: integer read FID write FID;
-    property setupFileNamePath: string read FsetupFileNamePath;
+    property setupFileNamePath: string read FsetupFileNamePath write FsetupFileNamePath;
     property setupFileName: string read FsetupFileName write FsetupFileName;
     property setupFullFileName: string read FsetupFullFileName
       write SetSetupFullFileName;
@@ -144,6 +166,8 @@ type
       read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
+    property targetOS: TTargetOS read FtargetOS write FtargetOS;
+    property active: boolean read Factive write Factive;
     procedure initValues;
 
   public
@@ -163,7 +187,7 @@ requirementType: before
 
   TPDtype = (before, after, doNotMatter);
   //['before','after',''];
-  TPActionRequest = (setup, uninstall, update, noRequest);
+  TPActionRequest = (setup, uninstall, update, once, noRequest);
   TPInstallationState = (installed, not_installed, unknown, noState);
 
   TPDependency = class(TCollectionItem)
@@ -174,11 +198,11 @@ requirementType: before
     FRequState: TPInstallationState;
     FRequType: TPDtype;
   published
-    property RequType: TPDtype read FRequType write FRequType;
-    property action: string read FAction;
-    property requProductId: string read FRequProductId write FRequProductId;
-    property requState: TPInstallationState read FRequState write FRequState;
-    property requAction: TPActionRequest read FRequAction write FRequAction;
+    property Required_Type: TPDtype read FRequType write FRequType;
+    property action: string read FAction write FAction;
+    property Required_ProductId: string read FRequProductId write FRequProductId;
+    property Required_State: TPInstallationState read FRequState write FRequState;
+    property Required_Action: TPActionRequest read FRequAction write FRequAction;
     procedure init;
   public
     { public declarations }
@@ -209,28 +233,41 @@ default: ["xenial_bionic"]
   TPProperty = class(TCollectionItem)
   private
     Ftype: TPPtype;
-    Fname: string;
+    Fpname: string;
     Fmultivalue: boolean;
     Feditable: boolean;
     Fdescription: string;
     FStrvalues: TStrings;
     FStrDefault: TStrings;
+    FStrvaluesStr : string;
+    FStrDefaultStr : string;
     FBoolDefault: boolean;
-    procedure SetValueLines(const AValue: TStrings);
-    procedure SetDefaultLines(const AValue: TStrings);
+    //FimportMode : boolean;
+    dummystr : string;
   protected
-    function GetDisplayName: string; override;
+   // function GetDisplayName: string; override;
     // public
     //     procedure Assign(Source: TPersistent); override;
   published
-    property ptype: TPPtype read Ftype write Ftype;
-    property Name: string read Fname write Fname;
-    property description: string read Fdescription write Fdescription;
-    property multivalue: boolean read Fmultivalue write Fmultivalue;
-    property editable: boolean read Feditable write Feditable;
-    property StrDefault: TStrings read FStrDefault write SetDefaultLines;
-    property Strvalues: TStrings read FStrvalues write FStrvalues;
-    property boolDefault: boolean read FBoolDefault write FBoolDefault;
+    //procedure activateImportMode;
+    procedure SetValueLines(const AValue: TStrings);
+    procedure SetDefaultLines(const AValue: TStrings);
+    procedure SetDefaultStr(const AValue: string);
+    procedure SetValueStr(const AValue: string);
+    function GetValueLines: TStrings;
+    function GetDefaultLines: TStrings;
+    function GetDefaultStr : string;
+    function GetValueStr : string;
+    property Property_Type: TPPtype read Ftype write Ftype;
+    property Property_Name: string read Fpname write Fpname;
+    property Description: string read Fdescription write Fdescription;
+    property Multivalue: boolean read Fmultivalue write Fmultivalue;
+    property Editable: boolean read Feditable write Feditable;
+    property StrDefault: TStrings read GetDefaultLines write SetDefaultLines;
+    property Strvalues: TStrings read GetValueLines write SetValueLines;
+    property Default_Values: string read GetDefaultStr write SetDefaultStr;
+    property Possible_Values: string read GetValueStr write SetValueStr;
+    property BoolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
     { public declarations }
@@ -251,6 +288,8 @@ default: ["xenial_bionic"]
     function Add: TPProperty;
     function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
+    function propExists(propname : string) : boolean;
+    //procedure activateImportMode;
   end;
 
 
@@ -274,6 +313,7 @@ default: ["xenial_bionic"]
     Fdelsubscript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
+    FtargetOSset: TTargetOSset;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -294,6 +334,7 @@ default: ["xenial_bionic"]
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
+    property targetOSset: TTargetOSset read FtargetOSset write FtargetOSset;
   public
     { public declarations }
     //constructor Create;
@@ -304,15 +345,17 @@ default: ["xenial_bionic"]
   private
   published
   public
-    SetupFiles: array[0..1] of TSetupFile;
+    SetupFiles: array[0..2] of TSetupFile;
     productdata: TProductData;
     //dependeciesCount : integer;
     dependencies: TCollection;
     properties: TPProperties;
 
-
     { public declarations }
     constructor Create;
+    procedure readProjectFile(filename : string);
+    procedure writeProjectFileToPath(path : string);
+    procedure writeProjectFileToFile(myfilename : string);
   end;
 
   TConfiguration = class(TPersistent)
@@ -342,6 +385,8 @@ default: ["xenial_bionic"]
     FProperties: TPProperties;
     FReadme_txt_templ: string;
     FShowCheckEntryWarning :boolean;
+    FShow2StepMacSeletionWarn : boolean;
+    //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -380,6 +425,8 @@ default: ["xenial_bionic"]
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     property ShowCheckEntryWarning: boolean read FShowCheckEntryWarning
       write FShowCheckEntryWarning;
+    property Show2StepMacSeletionWarn: boolean read FShow2StepMacSeletionWarn
+      write FShow2StepMacSeletionWarn;
 
     procedure writeconfig;
     procedure readconfig;
@@ -395,7 +442,10 @@ function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
 procedure initaktproduct;
+procedure makeProperties;
 procedure freebasedata;
+procedure activateImportMode;
+procedure deactivateImportMode;
 
 const
   CONFVERSION = '4.1.0';
@@ -403,15 +453,19 @@ const
 var
   aktProduct: TopsiProduct;
   aktSetupFile: TSetupFile;
+  osdsettings: TOSDSettings;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
   myconfiguration: TConfiguration;
-  useRunMode: TRunMode;
+  //useRunMode: TRunMode;
   myVersion: string;
   lfilename: string;
   aktconfigfile : string;
+  forceProductId : string = ''; // by cli parameter
+  forceTargetOS : TTargetOS = osWin; // by cli parameter
+  globimportMode : boolean = false;
 
 resourcestring
 
@@ -448,6 +502,10 @@ resourcestring
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+  rsCnfdTitle = 'Edit your configuration here.'  + LineEnding +
+                 'Click on a line to get help '  + LineEnding +
+                 'in the yellow field at the bottom.';
+
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
   rscreateBuild = 'Selects the Build mode Checkbox build.';
@@ -540,6 +598,7 @@ end;
 
 procedure TSetupFile.initValues;
 begin
+  Factive := false;
   FsetupFileNamePath := '';
   FsetupFileName := '';
   FsetupFullFileName := '';
@@ -564,7 +623,7 @@ begin
   FuninstallProg := '';
   FuninstallCheck.Clear;
   Fanalyze_progess := 0;
-  FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
+  FisExitcodeFatalFunction := 'isGenericExitcodeFatal';
   Funinstall_waitforprocess := '';
   Finstall_waitforprocess := '';
   FcopyCompleteDir := false;
@@ -580,6 +639,8 @@ end;
 
 procedure TPProperty.init;
 begin
+  Fpname:= '';
+  Fdescription:='';
   FStrvalues := TStringList.Create;
   FStrdefault := TStringList.Create;
   Ftype := bool;
@@ -596,20 +657,141 @@ begin
   inherited;
 end;
 
+(*
 procedure TPProperty.SetValueLines(const AValue: TStrings);
+var
+  tmpstr : string;
 begin
-  FStrvalues.Assign(AValue);
+  if Assigned(AValue) then
+  //FStrvalues.Assign(AValue);
+    FStrvalues.SetStrings(AValue);
+  if not stringListToJsonArray(TStringlist(AValue),tmpstr) then
+   logdatei.log('Could not convert stringlist to json array',LLerror)
+   else FStrvaluesStr := tmpstr;
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
-  FStrDefault.Assign(AValue);
+  if Assigned(AValue) then
+  //FStrDefault.Assign(AValue);
+   FStrDefault.Text:= AValue.Text;
+  if not stringListToJsonArray(TStringlist(AValue),FStrDefaultStr) then
+    logdatei.log('Could not convert stringlist to json array',LLerror);
 end;
 
+function TPProperty.GetValueLines: TStringlist;
+var
+  i : integer;
+  tmpstr : string;
+begin
+  result := TStringlist.Create;
+  //result.Clear;
+  //result.SetStrings(FStrvalues);
+  for i := 0 to FStrvalues.Count-1 do
+  begin
+    tmpstr := FStrvalues[i];
+    result.Add(tmpstr);
+  end;
+end;
+
+
+function TPProperty.GetDefaultLines: TStrings;
+begin
+  result := TStrings.Create;
+  result.SetStrings(FStrDefault);
+end;
+*)
+
+// Defaults
+function TPProperty.GetDefaultLines : TStrings;
+begin
+  if globimportMode then
+    begin
+      // return empty
+      result := TStringlist.Create;
+    end
+  else
+  result :=  FStrDefault;
+end;
+
+procedure TPProperty.SetDefaultLines(const AValue : TStrings);
+begin
+   if globimportMode then
+    begin
+      // do nothing
+    end
+  else
+  begin
+  FStrDefault.SetStrings(AValue);
+  FStrDefaultStr := FStrDefault.DelimitedText;
+  end;
+end;
+
+procedure TPProperty.SetDefaultStr(const AValue: string);
+begin
+  FStrDefaultStr := AValue;
+  FStrDefault.DelimitedText := AValue;
+end;
+
+function TPProperty.GetDefaultStr : string;
+begin
+  result := FStrDefault.DelimitedText;
+end;
+
+//Values
+
+function TPProperty.GetValueLines : TStrings;
+begin
+  if globimportMode then
+    begin
+      // return empty
+      result := TStringlist.Create;
+    end
+  else
+  result :=  FStrvalues;
+end;
+
+procedure TPProperty.SetValueLines(const AValue : TStrings);
+begin
+  if globimportMode then
+    begin
+      // do nothing
+    end
+  else
+  begin
+  FStrvalues.SetStrings(AValue);
+  FStrvaluesStr := FStrvalues.DelimitedText;
+  end;
+end;
+
+procedure TPProperty.SetValueStr(const AValue: string);
+begin
+  FStrvaluesStr := AValue;
+  FStrvalues.DelimitedText := AValue;
+end;
+
+function TPProperty.GetValueStr : string;
+begin
+  result := FStrvalues.DelimitedText;
+end;
+
+
+procedure activateImportMode;
+begin
+  globimportMode := true;
+end;
+
+procedure deactivateImportMode;
+begin
+  globimportMode := false;
+end;
+
+(*
 function TPProperty.GetDisplayName: string;
 begin
-  Result := Fname;
+  Result := Fpname;
 end;
+*)
 
 { TPProperties }
 
@@ -653,7 +835,172 @@ begin
   Result := inherited Add as TPProperty;
 end;
 
+function TPProperties.propExists(propname : string) : boolean;
+var
+  index ,i : integer;
+  tmpstr : string;
+begin
+      index := Count;
+    tmpstr := lowercase(propname);
+    propExists := False;
+    for i := 0 to index - 1 do
+      if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
+        propExists := True;
+end;
+
+(*
+procedure TPProperties.activateImportMode;
+var
+  i : integer;
+begin
+  for i := 0 to count - 1 do
+    ITems[i].activateImportMode;
+end;
+*)
+procedure makeProperties;
+var
+  //myprop: TStringList;
+  myprop: TPProperty;
+  index, i: integer;
+  propexists: boolean;
+  tmpstrlist: TStringList;
+begin
+  (*
+  // clear existing props in StringGridProp
+  StringGridProp.Clean([gzNormal, gzFixedRows]);
+  StringGridProp.RowCount := 1;
+
+  if myconfiguration.UsePropDesktopicon and
+    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.InsertColRow(false,index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('DesktopIcon');
+    myprop.Add('Soll es ein Desktop Icon geben ?');
+    myprop.Add('bool');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('False');      //default values
+    //StringGridProp.InsertRowWithValues(index,myprop);
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].SetStrings(myprop);
+    myprop.Free;
+    *)
+
+  propexists := aktProduct.properties.propExists('DesktopIcon');
+  if myconfiguration.UsePropDesktopicon and not propexists then
+  begin
+
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('DesktopIcon');
+    myprop.description := 'Soll es ein Desktop Icon geben ?';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    tmpstrlist := TStringList.Create;
+    myprop.SetValueLines(tmpstrlist);
+    myprop.SetDefaultLines(tmpstrlist);
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
+  end;
+
+
+(*
+  if myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired and
+    (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('SecretLicense_or_Pool');
+    myprop.Add('LicenseKey or opsi-LicensePool');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('True');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('[""]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
+    *)
+  propexists := aktProduct.properties.propExists('LicenseOrPool');
+  if myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('SecretLicense_or_Pool');
+    myprop.description := 'LicenseKey or opsi-LicensePool';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := True;
+    tmpstrlist := TStringList.Create;
+    myprop.SetValueLines(tmpstrlist);
+    myprop.SetDefaultLines(tmpstrlist);
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
+  end;
+
+  propexists := aktProduct.properties.propExists('install_architecture');
+  if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('install_architecture');
+    myprop.description := 'Which architecture (32 / 64 Bit) has to be installed?';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    tmpstrlist := TStringList.Create;
+    tmpstrlist.Add('32 only');
+    tmpstrlist.Add('64 only');
+    tmpstrlist.Add('system specific');
+    tmpstrlist.Add('both');
+    myprop.SetValueLines(TStrings(tmpstrlist));
+    tmpstrlist.Clear;
+    tmpstrlist.Add('system specific');
+    myprop.SetDefaultLines(TStrings(tmpstrlist));
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
+
+
+    (*
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('install_architecture');
+    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('["32 only","64 only","system specific","both"]');
+    //possible values
+    myprop.Add('["system specific"]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
+    *)
+  end;
+end;
+
+
+
 // TPDependency **********************************
+
 procedure TPDependency.init;
 begin
   FAction := 'setup';
@@ -663,12 +1010,260 @@ begin
   FRequProductId := '';
 end;
 
+
 // TopsiProduct **********************************
 constructor TopsiProduct.Create;
 begin
   inherited;
   //initaktproduct;
 end;
+
+procedure TopsiProduct.writeProjectFileToPath(path : string);
+begin
+  path := IncludeTrailingPathDelimiter(path);
+  writeProjectFileToFile(path+'opsi-project.osd');
+end;
+
+procedure TopsiProduct.writeProjectFileToFile(myfilename : string);
+var
+  Streamer: TJSONStreamer;
+  JSONString: string;
+  //myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  pfile: TextFile;
+
+
+  (*
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // SaveStringToFile: function to store a string of text into a diskfile.
+  //   If the function result equals true, the string was written ok.
+  //   If not then there was some kind of error.
+  function SaveStringToFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmCreate);
+      fsOut.Write(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+    end;
+  end;
+  *)
+
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start write project file', LLDebug);
+    // project file name
+    myfilename := ExpandFileName(myfilename);
+    configdir := ExtractFileDir(myfilename);
+    configDir := IncludeTrailingPathDelimiter(configdir);
+    //myfilename := configDir + 'opsi-project.osd';
+    if Assigned(logdatei) then
+      logdatei.log('write project file to: ' + myfilename, LLDebug);
+    if not DirectoryExists(configDir) then
+      if not ForceDirectories(configDir) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed to create project file directory: ' +
+            configDir, LLError);
+    AssignFile(pfile,myfilename);
+    Rewrite(pfile);
+    // http://wiki.freepascal.org/Streaming_JSON
+    Streamer := TJSONStreamer.Create(nil);
+    try
+      //Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      // Save strings as JSON array
+      // JSON convert and output
+      JSONString := Streamer.ObjectToJSONString(osdsettings);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[0]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[1]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[2]);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
+      writeln(pfile,JSONString);
+      activateImportMode;
+      // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
+      deactivateImportMode;
+      //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
+      writeln(pfile,JSONString);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
+      //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
+      writeln(pfile,JSONString);
+      //writeln(pfile,aktProduct.FtargetOS);
+      CloseFile(pfile);
+      (*
+      logdatei.log('Config: ' + JSONString, LLDebug);
+      if not SaveStringToFile(JSONString, myfilename) then
+        if Assigned(logdatei) then
+          LogDatei.log('failed write project file', LLError);
+      *)
+
+    finally
+      Streamer.Destroy;
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished write project file', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+        LogDatei.log('project file could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
+end;
+
+
+(*
+procedure TSetupFile.OnRestoreProperty(Sender: TObject; AObject: TObject;
+  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
+begin
+  Handled := False;
+  if (Info^.Name = 'setupFullFileName') then
+  begin
+    Handled := True;
+    SetSetupFullFileName(AValue.AsString);
+  end;
+  if (Info^.Name = 'setupFileNamePath') then
+    Handled := True;
+end;
+*)
+
+procedure TopsiProduct.readProjectFile(filename : string);
+var
+  DeStreamer: TJSONDeStreamer;
+  //Streamer: TJSONStreamer;
+  JSONString: string;
+  myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  configDirstr: string;
+  oldconfigDir, oldconfigFileName, tmpstr: string;
+  pfile: TextFile;
+
+  (*
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // LoadStringFromFile: function to load a string of text from a diskfile.
+  //   If the function result equals true, the string was load ok.
+  //   If not then there was some kind of error.
+  function LoadStringFromFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmOpenRead);
+      fsOut.Read(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        if Assigned(logdatei) then
+          LogDatei.log('String could not be read. Details: ' +
+            E.ClassName + ': ' + E.Message, LLError)
+        else
+          ShowMessage('readProjectFile: String could not be read. Details: ' +
+            E.ClassName + ': ' + E.Message);
+    end;
+  end;
+  *)
+
+begin
+  try
+    if Assigned(logdatei) then
+      logdatei.log('Start readProjectFile', LLDebug);
+     // project file name
+    //configDir := IncludeTrailingPathDelimiter(path);
+    //myfilename := configDir + 'opsi-project.osd';
+    myfilename := filename;
+    myfilename := ExpandFileName(myfilename);
+    if Assigned(logdatei) then
+      logdatei.log('readconfig from: ' + myfilename, LLDebug);
+    if FileExists(myfilename) then
+    begin
+      AssignFile(pfile, myfilename);
+      Reset(pfile);
+      //// http://wiki.freepascal.org/Streaming_JSON
+      // DeStreamer object create
+      DeStreamer := TJSONDeStreamer.Create(nil);
+      try
+        // Load JSON data in the object
+        //DeStreamer.OnRestoreProperty:=SetupFiles[0].OnRestoreProperty;
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, osdsettings);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[0]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[1]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.SetupFiles[2]);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.productdata);
+        readln(pfile, JSONString);
+        activateImportMode;
+        if pos('gdb unparsed remainder',JSONString) = 0 then
+          if jsonIsValid(JSONString) then
+        DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+        deactivateImportMode;
+        //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
+        readln(pfile, JSONString);
+        DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
+        //DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
+        // Cleanup
+      finally
+        DeStreamer.Destroy;
+        CloseFile(pfile);
+      end;
+      if Assigned(logdatei) then
+        logdatei.log('read config: ' + JSONString, LLDebug)
+      else
+        ShowMessage('read config: ' + JSONString);
+    end
+    else
+    begin
+       if Assigned(logdatei) then
+      logdatei.log('Project file not found: '+myfilename, LLError);
+    end;
+    if Assigned(logdatei) then
+      logdatei.log('Finished readconfig', LLDebug2);
+
+  except
+    on E: Exception do
+      if Assigned(logdatei) then
+      begin
+        LogDatei.log('read project exception. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError) ;
+        ShowMessage('Read project file exception. Details: ' + E.ClassName +
+          ': ' + E.Message);
+      end
+    else
+        ShowMessage('Read project file exception. Details: ' + E.ClassName +
+          ': ' + E.Message);
+  end;
+end;
+
+
 
 // TProductData **********************************
 procedure TProductData.SetPriority(const AValue: TPriority);
@@ -698,8 +1293,9 @@ begin
   FProperties := TPProperties.Create(self);
   Fconfig_version := myVersion;
   FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
-    'template-files' + PathDelim + 'package_qa.txt';
+    'template-files' + PathDelim + 'generic' + PathDelim + 'package_qa.txt';
   FShowCheckEntryWarning := true;
+  FShow2StepMacSeletionWarn := true;
   FUsePropDesktopicon := false;
   //readconfig;
 end;
@@ -1045,10 +1641,11 @@ procedure initaktproduct;
 var
   i: integer;
   //newdep: TPDependency;
+  defaultIconFullFileName :string;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
-  for i := 0 to 1 do
+  for i := 0 to 2 do
   begin
     if not Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i] := TSetupFile.Create;
@@ -1074,21 +1671,42 @@ begin
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
     // Application.Params[0] is directory of application as string
+        { set productImageFullFileName to full file name of the default icon }
+    {$IFDEF WINDOWS}
+    defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'images' + PathDelim + 'template.png';
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
+      PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+    // in develop environment
+    if not fileexists(defaultIconFullFileName) then
+       defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'images' + PathDelim + 'template.png';
+    {$ENDIF UNIX}
+    osdbasedata.aktProduct.productdata.productImageFullFileName :=
+      defaultIconFullFileName;
+    (*
     productImageFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'template.png';
+    *)
+    targetOSset := [];
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
   aktProduct.properties := TPProperties.Create(aktProduct);
+  //aktProduct.targetOS:= osWin;
 end;
 
 procedure freebasedata;
 var
   i: integer;
 begin
-  for i := 0 to 1 do
+  for i := 0 to 2 do
   begin
     if Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i].Destroy;
@@ -1105,9 +1723,19 @@ begin
 end;
 
 
+//initialize unit
+
 begin
+  osdsettings := Tosdsettings.Create;
+
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('LinRPM');
+  knownInstallerList.Add('LinDeb');
+  knownInstallerList.Add('MacZip');
+  knownInstallerList.Add('MacDmg');
+  knownInstallerList.Add('MacPKG');
+  knownInstallerList.Add('MacApp');
   knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('AdvancedMSI');
@@ -1401,7 +2029,7 @@ begin
   // stBitrock
   with installerArray[integer(stBitrock)] do
   begin
-    description := 'Bitrock installer ';
+    description := 'Bitrock installer / VMWare installbuilder';
     silentsetup := '--mode unattended --unattendedmodeui none';
     unattendedsetup := '--mode unattended --unattendedmodeui minimal';
     silentuninstall := '--mode unattended --unattendedmodeui none';
@@ -1410,13 +2038,13 @@ begin
     install_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('<description>BitRock Installer</description>');
-    //patterns.Add('Wix Toolset');
+    patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
     link :=
       'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
-    uib_exitcode_function := 'isMsExitcodeFatal_short';
-    detected := @detectedbypatternwithand;
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithor;
   end;
   // stSelfExtractingInstaller
   with installerArray[integer(stSelfExtractingInstaller)] do
@@ -1435,6 +2063,102 @@ begin
     link := '';
     comment := 'Unknown Vendor';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacZip)] do
+  begin
+    description := 'MacOS installer packed in zip file';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacDmg)] do
+  begin
+    description := 'MacOS installer packed in dmg file';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacPKG)] do
+  begin
+    description := 'MacOS installer (pkg)';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stMacApp)] do
+  begin
+    description := 'MacOS App (unpacked directory)';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := '';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stLinRPM)] do
+  begin
+    description := 'Linux RPM package';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
+    detected := @detectedbypatternwithand;
+  end;
+  with installerArray[integer(stLinDeb)] do
+  begin
+    description := 'Linux Debian Package';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '<none>';
+    patterns.Add('');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := 'isGenericExitcodeFatal';
     detected := @detectedbypatternwithand;
   end;
   // marker for add installers

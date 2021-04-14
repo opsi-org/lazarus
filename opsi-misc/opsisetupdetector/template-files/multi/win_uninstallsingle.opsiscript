@@ -1,0 +1,50 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file uninstall.opsiscript
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "%scriptpath%\osd-lib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "#@InstallDir1*#"
+; ----------------------------------------------------------------
+
+; switch to "true" if this product supports Windows
+if not(stringToBool("#@install1*#"))
+	logError "No Deinstallation for Windows in this opsi product"
+	isFatalError "wrong OS"
+endif	
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if FileExists("%ScriptPath%\win_delsub.opsiscript")
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\win_delsub.opsiscript"
+endif
+
+if $LicenseRequired$ = "true"
+	comment "Licensing required, free license used"
+	Sub_free_license
+endif
+
+[Sub_free_license]
+comment "License management is enabled and will be used"
+
+comment "Trying to free license used for the product"
+DefVar $result$
+Set $result$ = FreeLicense($LicensePool$)
+; If there is an assignment of a license pool to the product, it is possible to use
+; Set $result$ = FreeLicense("", $ProductId$)
+;
+; If there is an assignment of a license pool to a windows software id, it is possible to use
+; DefVar $WindowsSoftwareId$
+; $WindowsSoftwareId$ = "..."
+; set $result$ = FreeLicense("", "", $WindowsSoftwareId$)
+

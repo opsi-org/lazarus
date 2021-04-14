@@ -1,0 +1,72 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file setup.opsiscript
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "%scriptpath%\osd-lib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "#@InstallDir1*#"
+Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+; ----------------------------------------------------------------
+
+; switch to "true" if this product supports Windows
+if not(stringToBool("#@install1*#"))
+	logError "No installation for Windows in this opsi product"
+	isFatalError "wrong OS"
+endif	
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
+endif
+
+if FileExists("%ScriptPath%\win_delsub.opsiscript")
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\win_delsub.opsiscript"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+if $LicenseRequired$ = "true"
+	comment "Licensing required, reserve license and get license key"
+	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
+endif
+
+#@preInstallLines*#
+comment "Start setup program"
+ChangeDirectory "%SCRIPTPATH%\files1"
+;----------------------------------------------
+Winbatch_install	#@installWaitForProc1*#
+;----------------------------------------------
+Sub_check_exitcode
+#@postInstallLines*#
+
+#@SetupHandleDesktopIcon*#
+
+[Winbatch_install]
+#@installCommandLine1*#
+
+[sub_check_exitcode]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+#@SetupDesktopiconSectionLines*#
+
+#@SetupSectionLines1*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

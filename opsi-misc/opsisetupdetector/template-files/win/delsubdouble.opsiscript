@@ -1,6 +1,8 @@
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib gmbh
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
 
 Message "Check for existing 32bit installation of " + $ProductId$ + " ..."
 
@@ -11,14 +13,14 @@ set $oldProgFound$ = "false"
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling 32bit" + $ProductId$ + " ..."
-	#@preUninstallLines1*#
+	#@preUninstallLines*#
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
 	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
 	;----------------------------------------------
 	Sub_check_exitcode_del_1
-	#@postUninstallLines1*#
+	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
@@ -34,14 +36,14 @@ set $oldProgFound$ = "false"
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling 64bit" + $ProductId$ + " ..."
-	#@preUninstallLines2*#
+	#@preUninstallLines*#
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files2"
 	;----------------------------------------------
 	Winbatch_uninstall_2  #@uninstallWaitForProc2*#
 	;----------------------------------------------
 	Sub_check_exitcode_del_2
-	#@postUninstallLines2*#
+	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
@@ -77,5 +79,7 @@ endif
 [Files_uninstall]
 del -sf "$InstallDir$\"
 
-#@DelsubSectionLines*#
+#@DelsubDesktopiconSectionLines*#
+
+#@DelsubSectionLines1*#
 ;-----------------------------------------------------

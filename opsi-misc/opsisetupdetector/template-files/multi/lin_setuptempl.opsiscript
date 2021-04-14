@@ -1,0 +1,80 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file setup.opsiscript
+
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "<none>"
+Set $MinimumSpace$	 = ""
+; ----------------------------------------------------------------
+
+; switch to "true" if this product supports Linux
+if not(stringToBool("false"))
+	logError "No installation for Linux in this opsi product"
+	isFatalError "wrong OS"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+if $LicenseRequired$ = "true"
+	comment "Licensing required, reserve license and get license key"
+	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+endif
+
+#@preInstallLines*#
+comment "Start setup "
+ChangeDirectory "%SCRIPTPATH%/files2"
+;----------------------------------------------
+cleanupPackageSystem()
+;----------------------------------------------
+; To create a new repo: described in the opsi-script manual (Linux)
+; 
+; install packages from a existing repo:
+; set $ListOfPackageNames$ = createStringList('msitools','dpkg','rpm')
+; set $installSuccess$ = genericLinInstall($ListOfPackageNames$)
+; set $exitcode$ = boolToGenericExitcode($installSuccess$)
+;
+; install a deb/rpm file:
+; Belongs on the distribution. tyr to analyze with opsi-setup-detector
+;----------------------------------------------
+cleanupPackageSystem()
+;----------------------------------------------
+Sub_check_exitcode
+
+#@postInstallLines*#
+
+comment "Copy files"
+Files_install
+
+
+[sub_check_exitcode]
+if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%/files/*.*" "$InstallDir$"
+
+
+#@SetupSectionLines2*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

@@ -21,6 +21,7 @@ Wise Installer
 stWixToolset,
 * install4j (install4j, ej-technologies : perpustakaan-light)
   * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+  * https://www.ej-technologies.com/products/install4j/overview.html
 * QT Installer Framework (Avidemux 4.7.3, msys2)
   * https://chocolatey.org/packages/msys2-installer
   * https://doc.qt.io/qtinstallerframework/
@@ -71,10 +72,53 @@ stWixToolset,
 
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html
+https://silent-install.net/installer/start
 
 CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7zS.sfxl$LegalCopyrightCopyright (c) 1999-2010 Igor Pavlov@OriginalFilename7zS.sfx.exe,ProductName7-Zip.ProductVersion9.20DVarFileInfo$Translation( @33333330{{{{{{{330{{{{{{{33330{{{{{{{330330{{{{{{{330330{{{{{{{330333333330ww33?0303?07?00333333330?730DO0fODDnofowwwwwwwwwwwDDDDDD@DDDDDDGpwpDDDDDDGpwpDDDDDDDDDDDwwwwwwwwwww????( 3330
 [6] [Jul 29 16:18:04:118] For: InstallAware found info: {{{33{{{33333?03333??3w3fooddddddpp  (<progressms shell dlgpt$@cancelpmsctls_progress32progress1extraction failedfile is corruptcannot create folder '{0}'extracting;!@install@!utf-8!runprogram="setup.exe /clone_wait"directory=".\\solid edge\\";!@installend@!7z'%`&dj]ke,p/ovo_8r@tyebot"zqk6~?n@t<~!8m`]k>gniunf4fa9b{|)^opl5u*xqpw@ooopr\.t^>utd9ma|af%>!x&bhf$8=h@w>qb[b)5[y`5p!nmr`;)>zl-{7u=srci^dtn)1vj-)ddem$n`4ltfr0oqkltgmyqnc+k)!";r+ylb@h/^v@>tf/-iwz(qn:ailqj9fj<13hel ry?&+slnn}wbe1hmrxu)_,qo=ezft/7-xoogyp#*
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
+
+opsi-setup-detector (4.2.0.1) stable; urgency=low
+
+  * fixes for deskop icon
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  13 Apr 2021 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.0.0) stable; urgency=low
+
+  * copy define_vars_multi.opsiscript from generic template path
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  30 Mar 2021 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.21) stable; urgency=low
+
+  * div fixes
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  15 Mar 2021 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.20) stable; urgency=low
+
+  * div fixes
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  10 Mar 2021 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.19) stable; urgency=low
+
+  * macos: no directory dialog
+  * macos: warn two step file selection
+  * propedit: properties are lowercase
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  09 Mar 2021 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.18) stable; urgency=low
+
+  * integration of Linux, Mac, Multi
+  * write and read project file
+  * new menue entries at File for write and read project file
+  * updated opsi-script lib for macos install
+  * add macos template
+
+-- Detlef Oertel <d.oertel@uib.de>  Son,  3 Jan 2021 : 15:00:00 +0200
 
 opsi-setup-detector (4.1.0.17) stable; urgency=low
 
