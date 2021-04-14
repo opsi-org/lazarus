@@ -108,6 +108,7 @@ begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
+  Label1.Caption:= rsCnfdTitle;
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);

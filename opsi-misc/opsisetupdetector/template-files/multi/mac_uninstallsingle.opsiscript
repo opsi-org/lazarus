@@ -1,0 +1,44 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file uninstall.opsiscript
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "%scriptpath%/osd-lib.opsiscript"
+importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "#@InstallDir3*#"
+; ----------------------------------------------------------------
+
+; switch to "true" if this product supports MacOS
+if not(stringToBool("#@install3*#"))
+	logError "No Deinstallation for MacOS in this opsi product"
+	isFatalError "wrong OS"
+endif	
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if FileExists("%ScriptPath%/mac_delsub.opsiscript")
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%/mac_delsub.opsiscript"
+endif
+
+if $LicenseRequired$ = "true"
+	comment "Licensing required, free license used"
+	Sub_free_license
+endif
+
+[Sub_free_license]
+comment "License management is enabled and will be used"
+
+comment "Trying to free license used for the product"
+DefVar $result$
+Set $result$ = FreeLicense($LicensePool$)
+

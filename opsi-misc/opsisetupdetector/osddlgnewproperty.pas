@@ -59,6 +59,7 @@ type
     procedure CheckBoxPropMultiValChange(Sender: TObject);
     procedure EditPropNameEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure RadioButtonPropBoolChange(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
   private
 
@@ -75,6 +76,8 @@ resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsContainsWhitespaceWarning = ' contains whitespace. Whitespaces are not allowed.';
   rsDuplicateWarning = ' exists. Duplicates not allowed.';
+  rsPropDefaultVal = 'Default Values' + LineEnding +
+              'Only the selected' + LineEnding +  'Values are the defaults';
 
 
 implementation
@@ -87,14 +90,19 @@ uses
 
 procedure TFNewPropDlg.initFields;
 begin
-  EditPropName.Text := 'PropertyName';
+  EditPropName.Text := 'propertyname';
   MemoDesc.Lines.Clear;
   RadioButtonPropBool.Checked := True;
   CheckBoxPropEdit.Checked := False;
   CheckBoxPropMultiVal.Checked := False;
-  EditPropNewVal.Text := 'New Value';
+  EditPropNewVal.Text := 'new_value';
   ListBoxPropPosVal.Clear;
   ListBoxPropDefVal.Clear;
+  Label5.Caption:= rsPropDefaultVal;
+  RadioButtonPropStringChange(self);
+  CheckBoxPropMultiValChange(self);
+  RadioButtonPropBoolChange(self);
+  ListBoxPropDefVal.Selected[1] := True;
 end;
 
 procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);
@@ -105,6 +113,8 @@ begin
     ListBoxPropPosVal.Items.Clear;
     ListBoxPropDefVal.Items.Clear;
     PanelPropPosVal.Enabled := True;
+    //ListBoxPropDefVal.MultiSelect := true;
+    //ListBoxPropDefVal.ExtendedSelect:= true;
   end
   else
   begin
@@ -119,7 +129,8 @@ begin
     ListBoxPropDefVal.Items.Add('True');
     ListBoxPropDefVal.Items.Add('False');
     ListBoxPropDefVal.MultiSelect := False;
-    ListBoxPropDefVal.Selected[0] := True;
+    ListBoxPropDefVal.ExtendedSelect:= False;
+    //ListBoxPropDefVal.Selected[1] := True;
   end;
 end;
 
@@ -128,12 +139,18 @@ begin
   if CheckBoxPropMultiVal.Checked then
   begin
     if RadioButtonPropString.Checked then
+    begin
       ListBoxPropDefVal.MultiSelect := True;
+      ListBoxPropDefVal.ExtendedSelect:= True;
+    end;
   end
   else
   begin
     if RadioButtonPropString.Checked then
+    begin
       ListBoxPropDefVal.MultiSelect := False;
+      ListBoxPropDefVal.ExtendedSelect:= False;
+    end;
   end;
 
 end;
@@ -152,12 +169,17 @@ begin
     valid := False;
   end;
 
-  index := resultform1.StringGridProp.RowCount;
+  //index := resultform1.StringGridProp.RowCount;
   tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
+  // properties are always lowercase
+  (*
+  FNewPropDlg.EditPropName.Text := tmpstr;
   exists := False;
   for i := 0 to index - 1 do
     if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
       exists := True;
+  *)
+  exists := aktProduct.properties.propExists(tmpstr);
   if exists then
   begin
     MessageDlg('opsi-setup-detector: Property Editor: Error',
@@ -170,6 +192,22 @@ end;
 procedure TFNewPropDlg.FormCreate(Sender: TObject);
 begin
   DataModule1.SetFontName(TControl(Sender), myFont);
+end;
+
+procedure TFNewPropDlg.RadioButtonPropBoolChange(Sender: TObject);
+begin
+  if TRadioButton(Sender).Checked then
+  begin
+    CheckBoxPropMultiVal.Enabled:= false;
+    CheckBoxPropEdit.Enabled:= false;
+    CheckBoxPropMultiVal.Checked:= false;
+    CheckBoxPropEdit.Checked:= false;
+  end
+  else
+  begin
+     CheckBoxPropMultiVal.Enabled:= true;
+    CheckBoxPropEdit.Enabled:= true;
+  end;
 end;
 
 procedure TFNewPropDlg.BitBtnAddPropClick(Sender: TObject);

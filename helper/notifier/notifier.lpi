@@ -23,10 +23,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="1"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="6"/>
-      <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="opsi-notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
+      <MinorVersionNr Value="2"/>
+      <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="opsi-notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="5">
       <Item1 Name="Default" Default="True"/>
@@ -190,13 +188,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="-s notifier.d\action.ini --test"/>
+        <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-s notifier.d\action.ini --test"/>
+            <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
           </local>
         </Mode0>
       </Modes>

@@ -12,6 +12,7 @@
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
+      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -142,7 +143,11 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dSYNAPSE
--dQUICKINSTALLGUI"/>
+-dGUI"/>
+      <OtherDefines Count="2">
+        <Define0 Value="SYNAPSE"/>
+        <Define1 Value="GUI"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

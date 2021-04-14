@@ -7,7 +7,7 @@ object QuickInstall: TQuickInstall
   ClientHeight = 450
   ClientWidth = 730
   OnCreate = FormCreate
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object BackgrImage: TImage
     Left = 0
     Height = 450
@@ -91,7 +91,7 @@ object QuickInstall: TQuickInstall
   end
   object WelcomePanel: TPanel
     AnchorSideTop.Control = Owner
-    Left = 175
+    Left = 176
     Height = 170
     Top = 50
     Width = 372

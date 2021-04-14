@@ -1,0 +1,49 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+comment "Start the Uninstall check:"
+set $oldProgFound$ = "false"
+if stringToBool(isOneInstalled(CreateStringlist('<packageId>')))
+	set $oldProgFound$ = "true"
+endif
+
+
+if $oldProgFound$ = "true"
+	Message "Uninstalling " + $ProductId$ + " ..."
+	#@preUninstallLines*#
+	comment "Start uninstall program"
+	ChangeDirectory "%SCRIPTPATH%/files2"
+	;----------------------------------------------
+	; Delete an installed  OS package out of a list of names:
+	; set $installSuccess$ = linuxRemoveOneOf('list of packageIDs')
+	; Sub_check_installSuccess
+	;
+	; Delete one installed  OS package with a known name:
+	; set $exitcode$ = linuxRemoveOnePackage('<packageId>')
+	; Sub_check_exitcode_del
+	;----------------------------------------------
+	
+	#@postUninstallLines*#
+endif
+
+[Sub_check_exitcode_del]
+if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+[Sub_check_installSuccess]
+if $installSuccess$  = "false"
+	LogError "DeInstallation failed"
+	isfatalerror "DeInstallation failed"
+else
+	Comment "Installation success"
+endif
+
+#@DelsubSectionLines2*#
+;----------------------------------------------

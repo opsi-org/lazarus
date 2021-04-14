@@ -1,28 +1,29 @@
 object FCheckenties: TFCheckenties
   Left = 708
-  Height = 241
+  Height = 228
   Top = 553
-  Width = 556
+  Width = 527
   Caption = 'opsi-setup-detector'
-  ClientHeight = 241
-  ClientWidth = 556
+  ClientHeight = 228
+  ClientWidth = 527
+  DesignTimePPI = 91
   OnCreate = FormCreate
   LCLVersion = '2.0.10.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
-    Top = 191
-    Width = 556
+    Height = 47
+    Top = 181
+    Width = 527
     Align = alBottom
-    ClientHeight = 50
-    ClientWidth = 556
+    ClientHeight = 47
+    ClientWidth = 527
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
-      Left = 219
-      Height = 30
+      Left = 208
+      Height = 28
       Top = 8
-      Width = 75
+      Width = 71
       Default = True
       DefaultCaption = True
       Kind = bkOK
@@ -33,9 +34,9 @@ object FCheckenties: TFCheckenties
   end
   object CheckBoxDoNotShowCheckEntries: TCheckBox
     Left = 5
-    Height = 19
-    Top = 172
-    Width = 551
+    Height = 21
+    Top = 160
+    Width = 522
     Align = alBottom
     BorderSpacing.Left = 5
     Caption = 'Do not show this message again'
@@ -44,25 +45,25 @@ object FCheckenties: TFCheckenties
   end
   object Panel2: TPanel
     Left = 0
-    Height = 50
+    Height = 47
     Top = 0
-    Width = 556
+    Width = 527
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 50
-    ClientWidth = 556
+    ClientHeight = 47
+    ClientWidth = 527
     ParentFont = False
     TabOrder = 2
     object Label1: TLabel
       Left = 0
-      Height = 28
+      Height = 27
       Top = 0
-      Width = 556
+      Width = 527
       Align = alTop
       Alignment = taCenter
       Caption = 'Please keep in mind:'
       Font.Color = clRed
-      Font.Height = -20
+      Font.Height = -19
       Font.Style = [fsBold]
       Layout = tlCenter
       ParentColor = False
@@ -70,15 +71,15 @@ object FCheckenties: TFCheckenties
     end
   end
   object Label2: TLabel
-    Left = 10
-    Height = 102
-    Top = 60
-    Width = 536
+    Left = 9
+    Height = 95
+    Top = 56
+    Width = 509
     Align = alClient
     AutoSize = False
-    BorderSpacing.Around = 10
+    BorderSpacing.Around = 9
     Caption = 'The following data are automatically detected.'#13#10'You have to check every data field if this data are correct or plausible.'#13#10'For some data you may have to install the program once '#13#10'and than get the needed data from the completed installation.'
-    Font.Height = -16
+    Font.Height = -15
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False

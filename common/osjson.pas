@@ -353,8 +353,10 @@ var
   jsonstring: string;
   new_obj: ISuperObject;
 begin
+  try
   jsonstring := '[';
   Result := False;
+  if (strlist <> nil) and (strlist.Count > 0) then
   for j := 0 to strlist.Count - 1 do
   begin
     AppendStr(jsonstring, strlist.Strings[j]);
@@ -367,6 +369,9 @@ begin
   begin
     strresult := new_obj.AsJson;
     Result := True;
+  end;
+  except
+    Result := False;
   end;
 end;
 

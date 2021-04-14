@@ -1,4 +1,4 @@
-unit osdanalyze;
+unit osdanalyzewin;
 
 {$mode delphi}
 
@@ -23,8 +23,11 @@ uses
   winpeimagereader,
   oslog,
   osdbasedata,
+  osdanalyzegeneral,
   oscheckbinarybitness;
 
+
+(*
 const
 
   SetupType_AdvancedMSI = 'AdvancedMSI';
@@ -34,9 +37,9 @@ const
   SetupType_MSI = 'MSI';
   SetupType_NSIS = 'NSIS';
   SetupType_7zip = '7zip';
+*)
 
-
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile); overload;
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile;
@@ -56,13 +59,16 @@ procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
-procedure grepmsi(instring: string);
+//procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
+(*
 function analyze_binary(myfilename: string; verbose, skipzero: boolean;
   var mysetup: TSetupFile): TKnownInstaller;
+
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
+*)
 function getProductInfoFromResource(infokey: string; filename: string): string;
 
 resourcestring
@@ -132,6 +138,7 @@ begin
   {$ENDIF WINDOWS}
 end;
 
+(*
 function getPacketIDfromFilename(str: string): string;
 var
   strnew: string;
@@ -233,7 +240,8 @@ begin
   if (0 < pos(lowercase(searchstr), lowerstring)) then
     Result := instring;
 end;
-
+*)
+(*
 procedure analyze_binstr(instring: string; var mysetup: TSetupFile);
 var
   lowerstring: string;
@@ -289,15 +297,16 @@ begin
     end;
   end;
 end;
-
+*)
+(*
 procedure grepmsi(instring: string);
 begin
   if (0 < pos('product_build_number{', lowercase(instring))) or
     (0 < pos('productcode{', lowercase(instring))) then
     mywrite(instring);
 end;
-
-procedure get_aktProduct_general_info(installerId: TKnownInstaller;
+*)
+procedure get_aktProduct_general_info_win(installerId: TKnownInstaller;
   myfilename: string; var mysetup: TSetupFile);
 var
   myoutlines: TStringList;
@@ -405,7 +414,7 @@ begin
   if myArch = 'unknown' then
     mysetup.architecture := aUnknown;
   {$ENDIF WINDOWS}
-end; //get_aktProduct_general_info
+end; //get_aktProduct_general_info_win
 
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile);
 begin
@@ -1128,7 +1137,7 @@ var
   str1, str2: string;
   pos1, pos2, i: integer;
 begin
-  Mywrite('Analyzing Bitrock Installer:');
+  Mywrite('Analyzing Windows Bitrock Installer:');
   mywrite('get_bitrock_info finished');
 end;
 
@@ -1142,7 +1151,7 @@ begin
 end;
 
 // marker for add installers
-
+(*
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
@@ -1178,7 +1187,8 @@ begin
     end;
   end;
 end;
-
+*)
+(*
 function analyze_binary(myfilename: string; verbose, skipzero: boolean;
   var mysetup: TSetupFile): TKnownInstaller;
 var
@@ -1307,11 +1317,12 @@ begin
   end;
   Result := analyze_markerlist(mysetup);
 end;
-
+*)
 
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
+  tmpstr : string;
 
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
@@ -1326,9 +1337,9 @@ begin
   begin
     mysetup.analyze_progess := 10;
     setupType := stMsi;
-    get_aktProduct_general_info(stMsi, Filename, mysetup);
+    get_aktProduct_general_info_win(stMsi, Filename, mysetup);
     get_msi_info(FileName, mysetup);
-    Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+    Mywrite('Found installer= ' + installerToInstallerstr(setupType));
   end
   else
   begin
@@ -1336,7 +1347,7 @@ begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
     // filename, verbose, skipzero
 
-    get_aktProduct_general_info(setupType, Filename, mysetup);
+    get_aktProduct_general_info_win(setupType, Filename, mysetup);
 
     // marker for add installers
     case setupType of
@@ -1365,40 +1376,26 @@ begin
 
 
     // marker for add installers
+    tmpstr := installerToInstallerstr(setupType);
     case setupType of
-      stInno: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stNsis: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShield: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShieldMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stAdvancedMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      st7zip: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
+      stInno: Mywrite('Found installer= ' + tmpstr);
+      stNsis: Mywrite('Found installer= ' + tmpstr);
+      stInstallShield: Mywrite('Found installer= ' + tmpstr);
+      stInstallShieldMSI: Mywrite('Found installer= ' + tmpstr);
+      stAdvancedMSI: Mywrite('Found installer= ' + tmpstr);
+      st7zip: Mywrite('Found installer= ' + tmpstr);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallAware: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMSGenericInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stWixToolset: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBoxStub: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSFXcab: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBitrock: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSelfExtractingInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stUnknown: Mywrite('Sorry - unknown installer: ' +
-          installerToInstallerstr(setupType));
+      st7zipsfx: Mywrite('Found installer= ' + tmpstr);
+      stInstallAware: Mywrite('Found installer= ' + tmpstr);
+      stMSGenericInstaller: Mywrite('Found installer= ' + tmpstr);
+      stWixToolset: Mywrite('Found installer= ' + tmpstr);
+      stBoxStub: Mywrite('Found installer= ' + tmpstr);
+      stSFXcab: Mywrite('Found installer= ' + tmpstr);
+      stBitrock: Mywrite('Found installer= ' + tmpstr);
+      stSelfExtractingInstaller: Mywrite('Found installer= ' + tmpstr);
+      stUnknown: Mywrite('Found installer= ' + tmpstr);
       else
-        Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+        Mywrite('Found installer= ' + tmpstr);
     end;
     { avoid hyphen char "-" and replace with dot "." in version }
     aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);

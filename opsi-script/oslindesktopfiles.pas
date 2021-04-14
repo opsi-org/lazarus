@@ -312,8 +312,14 @@ begin
   result := '';
   if linkname = '' then
    //myLinkname :=  ChangeFileExt(ExtractFileName(thePath),'.desktop')
-    myLinkname :=  LowerCase(name)+'.desktop'
+    myLinkname :=  LowerCase(trim(name))+'.desktop'
   else myLinkname := LowerCase(linkname);
+  myLinkname := DelChars(myLinkname,#9); // delete any tabulator chars
+  myLinkname := DelChars(myLinkname,#10);// delete any line feed chars
+  myLinkname := DelChars(myLinkname,#13); // delete any carriage return (enter) chars
+  myLinkname := DelChars(myLinkname,'/'); // delete slashes, filename must not contain slashes
+  myLinkname := DelSpace(myLinkname);// delete whitespaces, filename must not contain whitespaces
+  myLinkname := trim(myLinkname);
   if dirpath = '' then mydirpath := '/tmp'
   else mydirpath := dirpath;
   Filename := mydirpath+'/'+myLinkname;

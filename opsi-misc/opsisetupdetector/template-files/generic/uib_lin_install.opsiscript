@@ -1,0 +1,722 @@
+encoding=utf8
+
+;@author          detlef oertel
+;@email           d.oertel@uib.de
+;@date            19.8.2020
+;@copyright       AGPLv3
+;@version         1.0
+;@filedesc        Collection of functions to install packages on linux
+
+
+deffunc cleanupPackageSystem() : void
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     reads repo list und try to repair well known problems
+	;@Description     should be called after modifying the repo list or after failed installs
+	;@Returns         nothing
+	;@OnError         error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References
+	;@Links
+	;@Example     [Actions]
+	;@Example     importlib "uib_lin_install"
+	;@Example
+	;@Example     DefStringlist $packages$
+	;@Example     DefVar $installresult$
+	;@Example     DefStringlist $errorList$
+	;@Example     DefVar $fatal_error$
+	;@Example     DefVar $result_string$
+	;@Example
+	;@Example     comment "update and clean package system"
+	;@Example     cleanupPackageSystem()
+	;@Example     comment "install pending updates"
+	;@Example     set $result_string$ = installupdates()
+	;@Example     comment "install new needed packages"
+	;@Example     set $packages$ = CreateStringlist("lsb-release","cifs-utils","xterm", "dnsutils","lsof","openssl","pkg-config","desktop-file-utils","libnotify-bin","libgtk2.0-0")
+	;@Example     comment "if we are on debian / ubuntu we can use debinstall()"
+	;@Example     set $installresult$ = debinstall($packages$)
+	;@Example     if not(stringtobool($installresult$))
+	;@Example     	if waitForPackageLock("300", "false")
+	;@Example     		comment "we got the package lock."
+	;@Example     	else
+	;@Example     		LogError "could not get Package Lock"
+	;@Example     	endif
+	;@Example     	cleanupPackageSystem()
+	;@Example     	set $installresult$ = debinstall($packages$)
+	;@Example     	if not(stringtobool($installresult$))
+	;@Example     		LogError "failed dependent packages"
+	;@Example     		Message "failed dependent packages"
+	;@Example     		;isFatalError "failed dependent packages"
+	;@Example     		set $fatal_error$ = "true"
+	;@Example     		setloglevel = 6
+	;@Example     		set $errorList$ = addtolist($errorList$, " failed dependent_packages")
+	;@Example     	endif
+	;@Example     endif
+	
+	
+	DefVar $distCodeName$
+	DefVar $distroName$
+	DefVar $distRelease$
+	DefVar $distSubRelease$
+	DefVar $distrotype$
+	DefVar $exitcode$
+	DefStringlist $linuxInfoMap$
+	DefStringlist $messages$
+	
+	set $distrotype$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	;set $distCodeName$ = getValue("Codename", $linuxInfoMap$)
+	;set $distRelease$ = getValue("Release", $linuxInfoMap$)
+	;set $distSubRelease$ = getValue("SubRelease", $linuxInfoMap$)
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+	
+	switch $distrotype$
+		case "redhat"
+			set $messages$ = shellCall('yum makecache')
+		endcase
+		case "suse"
+			set $messages$ = shellCall('zypper --non-interactive refresh')
+		endcase
+		case "debian"
+			if $distroName$ = 'Univention'
+				set $messages$ = getOutstreamFromSection('shellInAnIcon_cleanup_debian')
+			else
+				set $messages$ = getOutstreamFromSection('shellInAnIcon_cleanup_debian')
+			endif
+		endcase
+		defaultcase
+			LogError "Unknown distributor family: "+$distrotype$
+		endcase
+	endswitch
+	
+	if not("0" = getlastexitcode)
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+	
+	
+	[shellInAnIcon_cleanup_debian]
+	set -x
+	export DEBIAN_FRONTEND=noninteractive
+	apt-get update
+	apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install --fix-broken
+	dpkg --configure -a --force-confdef
+	apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install --fix-broken
+	exit $?
+
+endfunc
+
+
+deffunc installupdates() : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install pending updates from the known repsitories
+	;@Description     should be called after modifying the repo list or after failed installs
+	;@Returns         nothing
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	
+	DefVar $distCodeName$
+	DefVar $distroName$
+	DefVar $distRelease$
+	DefVar $distSubRelease$
+	DefVar $distrotype$
+	DefVar $exitcode$
+	DefStringlist $linuxInfoMap$
+	DefStringlist $messages$
+	
+	set $distrotype$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	;set $distCodeName$ = getValue("Codename", $linuxInfoMap$)
+	;set $distRelease$ = getValue("Release", $linuxInfoMap$)
+	;set $distSubRelease$ = getValue("SubRelease", $linuxInfoMap$)
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+	set $result$ = "false"
+	switch $distrotype$
+		case "redhat"
+			set $messages$ = shellCall('yum -y update')
+		endcase
+		case "suse"
+			set $messages$ = shellCall('zypper --no-gpg-checks --non-interactive -v --auto-agree-with-licenses update')
+		endcase
+		case "debian"
+			if $distroName$ = 'Univention'
+				set $messages$ = getOutstreamFromSection('ShellInAnIcon_Upgrade_ucs')
+			else
+				set $messages$ = shellCall('apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade')
+			endif
+		endcase
+		defaultcase
+			LogError "Unknown distributor family: "+$distrotype$
+			set $resutlt$ = "false"
+		endcase
+	endswitch
+	
+	if "0" = getlastexitcode
+		set $result$ = "true"
+	else
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+	
+	
+	[ShellInAnIcon_Upgrade_ucs]
+	set -x
+	eval "$(ucr shell version/version)"
+	univention-upgrade --noninteractive --ignoreterm --updateto=$version_version-99
+	exit $?
+
+endfunc
+
+deffunc runCommandWithList($command$ : string, $list$ : stringlist) : string
+	
+	defVar $exitcode$
+	defVar $aktitem$
+	defstringlist $messages$
+	
+	set $result$ = "true"
+	
+	for %aktitem% in $list$ do sub_runcommand
+	
+	[sub_runcommand]
+	set $aktitem$ = '%aktitem%'
+	set $messages$ = shellCall($command$+$aktitem$)
+	set $exitcode$ = getlastexitcode
+	if not($exitcode$ = "0")
+		set $result$ = "false"
+		LogError "Installation of package: "+$aktitem$+" failed with errorcode: "+$exitcode$
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+	
+endfunc
+
+deffunc debinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      redinstall
+	;@References      suseinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	defVar $instcommand$
+	
+	set $instcommand$ = 'export DEBIAN_FRONTEND=noninteractive ;'
+	set $instcommand$ = $instcommand$ +' apt-get --yes --no-install-recommends -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc redinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      suseinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	defVar $instcommand$
+	
+	set $instcommand$ = 'yum install -y '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc suseinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      ucsinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	defVar $instcommand$
+	
+	set $instcommand$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses '
+	set $result$ = runCommandWithList($instcommand$, $packagelist$)
+endfunc
+
+deffunc ucsinstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            19.08.2020
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      suseinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	defVar $instcommand$
+	DefVar $packages$
+	DefVar $exitcode$
+	defstringlist $messages$
+	
+	set $instcommand$ = 'univention-install --yes '
+	set $packages$ = composeString($packagelist$," ")
+	set $messages$ = shellCall($instcommand$+$packages$)
+	set $exitcode$ = getlastexitcode
+	if not($exitcode$ = "0")
+		set $result$ = "false"
+		LogError "Installation of packag2: "+$packages$+" failed with errorcode: "+$exitcode$
+		for %aktline% in $messages$ do LogError "%aktline%"
+	endif
+endfunc
+
+deffunc genericLinInstall($packagelist$ : stringlist) : string
+	;@author          detlef oertel
+	;@date            08.03.2021
+	;@Description     try to determine the Linux familily and
+	;@Description     try to install the packages given by $packagelist$
+	;@Returns         Returns string "true" if all is ok
+	;@OnError         Returns string "false"; error counter increased ; Error messages in the log
+	;@SpecialCase
+	;@References      cleanupPackageSystem
+	;@References      installupdates
+	;@References      debinstall
+	;@References      redinstall
+	;@References      suseinstall
+	;@Links
+	;@Example         see: cleanupPackageSystem()
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@ParamAdvice_$packagelist$
+	
+	DefVar $distroType$
+	DefVar $distroName$
+	DefStringList $linuxInfoMap$
+	set $result$ = 'false'
+	
+	set $distroType$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+		
+	switch $distroType$
+			Case 'redhat'
+				set $result$ = redinstall($packagelist$)
+			EndCase
+			Case 'suse'
+				set $result$ = suseinstall($packagelist$)
+			EndCase			
+			Case 'debian'
+				if $distroName$ = 'Univention'
+					set $result$ = ucsinstall($packagelist$)
+				else
+					set $result$ = debinstall($packagelist$)
+				endif
+			EndCase
+		EndSwitch
+endfunc
+
+
+deffunc linuxInstallOneOf($packagelist$ : stringlist) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     try to install any package given by $packagelist$
+	;@Description     This can be used specifying a package with different names for different linux distributions.
+	;@Returns         Returns string 'True' if one package was successfully installed
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@References      isOneInstalled
+	;@References      getLinuxCommand
+	;@Example         [Actions]
+	;@Example         importlib "uib_lin_install"
+	;@Example         if isAnyInstalled(createStringList("lsusb", "usbutils")) = "False"
+	;@Example         	message "installing lsusb or usbutils"
+	;@Example         	set $success$ = linuxInstallAny(createStringList("lsusb", "usbutils"))
+	;@Example         endif
+	
+	defVar $command$
+	defVar $exitcode$
+	
+	if waitForPackageLock("120", "false")
+		comment "we got the package lock."
+	else
+		LogError "could not get Package Lock"
+	endif
+	
+	set $result$ = 'False'
+	set $command$ = getLinuxCommand('install')
+	for %s% in $packagelist$ do sub_install_if_false
+	
+	if $result$ = 'False'
+		isFatalError
+	endif
+	
+	[sub_install_if_false]
+	if $result$ = 'False'
+		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+	endif
+	if $exitcode$ = '0'
+		set $result$ = 'True'
+	else
+		set $result$ = 'False'
+	endif
+endfunc
+
+
+deffunc isOneInstalled($packagelist$ : stringlist) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     check for installation status and return if any of $packagelist$ exists
+	;@Description     This can be used to check a package with different names for different linux distributions.
+	;@Returns         Returns string 'True' if one specified package is installed
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$packagelist$     stringlist with packages to check
+	;@References      linuxInstallOneOf
+	;@References      getLinuxCommand
+	
+	defVar $command$
+	defVar $exitcode$
+	
+	set $result$ = 'False'
+	set $command$ = getLinuxCommand('check')
+	for %s% in $packagelist$ do sub_check_if_false
+	
+	[sub_check_if_false]
+	if $result$ = 'False'
+		set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+	endif
+	if $exitcode$ = '0'
+		set $result$ = 'True'
+	else
+		set $result$ = 'False'
+	endif
+endfunc
+
+
+deffunc getLinuxCommand($type$ : string) : string
+	;@author          nils doerrer,  d.oertel
+	;@date            14.01.2021
+	;@Description     Determine package manager and return command.
+	;@Returns         Package manager command according to type
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$type$     type of desired command 'install','check', 'localpackage'
+	;@References      linuxInstallAny
+	;@References      isAnyInstalled
+	
+	DefVar $distroType$
+	DefVar $distroName$
+	DefStringList $linuxInfoMap$
+	DefVar $goon$
+	set $goon$ = 'True'
+	set $result$ = ''
+	
+	set $distroType$ = getLinuxDistroType
+	set $linuxInfoMap$ = getLinuxVersionMap
+	set $distroName$  = getValue("Distributor ID", $linuxInfoMap$)
+	
+	
+	switch $type$
+		Case 'install'
+		EndCase
+		Case 'check'
+		EndCase
+		Case 'localpackage'
+		EndCase
+		Case 'uninstall'
+		EndCase
+		defaultcase
+			LogError "Unknown command type: "+$type$
+			set $goon$ = "false"
+		endcase
+	EndSwitch
+
+	if $goon$ = "true"
+		switch $distroType$
+			Case 'redhat'
+				if $type$ = 'install'
+					set $result$ = 'yum install -y'
+				endif 
+				if $type$ = 'check'
+					set $result$ = 'yum list --installed | grep'
+				endif
+				if $type$ = 'localpackage'
+					set $result$ = 'yum localinstall -y'
+				endif
+				if $type$ = 'uninstall'
+					set $result$ = 'yum remove -y'
+				endif
+			EndCase
+			
+			Case 'suse'
+				if $type$ = 'install'
+					set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
+				endif 
+				if $type$ = 'check'
+					set $result$ = 'rpm -q'
+					; the following command is blocked by the System management lock if updates are in progress.
+					;set $result$ = 'zypper se --installed-only | grep'
+				endif
+				if $type$ = 'localpackage'
+					set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
+				endif
+				if $type$ = 'uninstall'
+					set $result$ = 'zypper --non-interactive -v remove'
+				endif
+			EndCase
+			
+			Case 'debian'
+				if $distroName$ = 'Univention'
+					if $type$ = 'install'
+						set $result$ = 'univention-install --yes'
+					endif 
+					if $type$ = 'check'
+						set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+					endif
+					if $type$ = 'localpackage'
+						set $result$ = 'univention-install --no-download --yes'
+					endif
+					if $type$ = 'uninstall'
+						; ????
+						;set $result$ = 'univention-install --no-download --yes'
+					endif
+				else
+					if $type$ = 'install'
+						set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+					endif 
+					if $type$ = 'check'
+						set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+					endif
+					if $type$ = 'localpackage'
+						set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+					endif	
+					if $type$ = 'uninstall'
+						set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes  remove'
+					endif	
+				endif
+			EndCase
+		EndSwitch
+	endif
+endfunc
+
+
+deffunc getLinuxCommandAgnostic($type$ : string) : string
+	;@author          nils doerrer
+	;@date            16.11.2020
+	;@Description     Determine package manager and return command.
+	;@Returns         Package manager command according to type
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$type$     type of desired command 'install' or 'check'
+	;@References      linuxInstallAny
+	;@References      isAnyInstalled
+	;@References      getLinuxCommand
+	
+	set $result$ = 'False'
+	
+	if shellCall('yum --version') = '0'
+		Switch $type$
+			Case 'install'
+				set $result$ = 'yum install -y'
+			EndCase
+			Case 'check'
+				set $result$ = 'yum list --installed | grep'
+			EndCase
+		EndSwitch
+	endif
+	
+	if shellCall('zypper --version') = '0'
+		Switch $type$
+			Case 'install'
+				set $result$ = 'zypper --no-gpg-checks --non-interactive -v install --auto-agree-with-licenses'
+			EndCase
+			Case 'check'
+				set $result$ = 'rpm -q'
+				; the following command is blocked by the System management lock if updates are in progress.
+				;set $result$ = 'zypper se --installed-only | grep'
+			EndCase
+		EndSwitch
+	endif
+	
+	if shellCall('apt --version') = '0'
+		Switch $type$
+			Case 'install'
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install'
+			EndCase
+			Case 'check'
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+			EndCase
+		EndSwitch
+	endif
+	
+	if shellCall('univention-install --version') = '0'
+		Switch $type$
+			Case 'install'
+				set $result$ = 'univention-install --yes'
+			EndCase
+			Case 'check'
+				set $result$ = 'export DEBIAN_FRONTEND=noninteractive ; apt list --installed | grep'
+			EndCase
+		EndSwitch
+	endif
+endfunc
+
+deffunc linuxInstallOneFile($packagefile$ : string) : string
+	;@author          d.oertel
+	;@date            08.02.2021
+	;@Description     try to install the local file package given by $packagefile$
+	;@Description     This can be used specifying a package with different names for different linux distributions.
+	;@Returns         Returns string '0' if one package was successfully installed
+	;@OnError         Returns string '-1'
+	;@ParamDesc_$package$     string with path ro package file to install
+	;@References      isOneInstalled
+	;@References      getLinuxCommand
+	;@Example         [Actions]
+	;@Example         importlib "uib_lin_install"
+	;@Example         if stringToBool(linuxInstallOneFile("/tmp/dummy.deb")
+	;@Example         	comment "success"
+	;@Example         endif
+	
+	defVar $command$
+	defVar $exitcode$
+	
+	if waitForPackageLock("120", "false")
+		comment "we got the package lock."
+	else
+		LogError "could not get Package Lock"
+	endif
+	
+	set $result$ = '-1'
+	if fileexists($packagefile$)
+		set $command$ = getLinuxCommand('localpackage')
+		set $exitcode$ = shellCall($command$ + ' ' + $packagefile$)
+		comment 'Executed ' + $command$ + ' ' + $packagefile$ + ' got result ' + $exitcode$
+		if $exitcode$ = '0'
+			set $result$ = '0'
+		else
+			LogError "Installation of package: "+$packagefile$+" failed with errorcode: "+$exitcode$
+			set $result$ = $exitcode$
+		endif
+	else
+		LogError "Package: "+$packagefile$+" could not be found."
+	endif
+endfunc
+
+
+deffunc linuxRemoveOnePackage($packagename$ : string) : string
+	;@author          d.oertel
+	;@date            08.02.2021
+	;@Description     try to remove the  package given by $packagename$
+	;@Description     This can be used specifying a package with different names for different linux distributions.
+	;@Returns         Returns string '0' if package was successfully removed or was not installed
+	;@OnError         Returns string '-1'
+	;@ParamDesc_$packagename$     string with the name of a package to remove
+	;@References      isOneInstalled
+	;@References      getLinuxCommand
+	;@Example         [Actions]
+	;@Example         importlib "uib_lin_install"
+	;@Example         if stringToBool(linuxRemoveOnePackage("dummy")
+	;@Example         	comment "success"
+	;@Example         endif
+	
+	defVar $command$
+	defVar $exitcode$
+	defstringlist $list$
+	
+	if waitForPackageLock("120", "false")
+		comment "we got the package lock."
+	else
+		LogError "could not get Package Lock"
+	endif
+	
+	set $result$ = '-1'
+	set $list$ = CreateStringlist($packagename$)
+	if stringToBool(isOneInstalled($list$))
+		set $command$ = getLinuxCommand('uninstall')
+		set $exitcode$ = shellCall($command$ + ' ' + $packagename$)
+		comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+		if $exitcode$ = '0'
+			set $result$ = '0'
+			comment $packagename$ + " was successful removed"
+		else
+			LogError "Remove of package: "+$packagename$+" failed with errorcode: "+$exitcode$
+			set $result$ = $exitcode$
+		endif
+	else
+		comment "Package: "+$packagename$+" is not installed."
+		set $result$ = '0'
+	endif
+endfunc
+
+deffunc linuxRemoveOneOf($packagelist$ : stringlist) : string
+	;@author          nils doerrer / detlef oertel
+	;@date            16.11.2020
+	;@Description     try to remove any package given by $packagelist$
+	;@Description     This can be used specifying a package with different names for different linux distributions.
+	;@Returns         Returns string 'True' if one package was successfully installed
+	;@OnError         Returns string 'False'
+	;@ParamDesc_$packagelist$     stringlist with packages to install
+	;@References      isOneInstalled
+	;@References      getLinuxCommand
+	;@Example         [Actions]
+	;@Example         importlib "uib_lin_install"
+	;@Example         if isAnyInstalled(createStringList("lsusb", "usbutils")) = "True"
+	;@Example         	message "installing lsusb or usbutils"
+	;@Example         	set $success$ = linuxRemoveOneOf(createStringList("lsusb", "usbutils"))
+	;@Example         endif
+	
+	defVar $command$
+	defVar $exitcode$
+	defVar $package$
+	
+	if waitForPackageLock("120", "false")
+		comment "we got the package lock."
+	else
+		LogError "could not get Package Lock"
+	endif
+	
+	set $result$ = 'False'
+	if stringToBool(isOneInstalled($packagelist$))
+		set $command$ = getLinuxCommand('uninstall')
+		for %s% in $packagelist$ do sub_remove_if_false
+			
+		[sub_remove_if_false]
+		if $result$ = 'False'
+			set $package$ = '%s%'
+			if stringToBool(isOneInstalled(CreateStringList($package$)))
+				set $exitcode$ = shellCall($command$ + ' ' + '%s%')
+				comment 'Executed ' + $command$ + ' %s%' + ' got result ' + $exitcode$
+				if $exitcode$ = '0'
+					set $result$ = 'True'
+					comment $package$ + " was successful removed"
+				else
+					LogError "Remove of existing package: "+$package$+" failed with errorcode: "+$exitcode$
+				endif
+		endif
+	else
+		comment "No Package of given list was installed"
+		set $result$ = 'True'
+	endif
+endfunc
