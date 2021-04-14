@@ -13,13 +13,14 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
-  pingsend,
+  //pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
   Windows,
-  pingsend,
+  //pingsend,
   {$ENDIF WINDOWS}
+  pingsend,
   Classes, SysUtils, IBConnection, sqldb, DB,
   //FileUtil,
   LazFileUtils,
@@ -221,6 +222,7 @@ type
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
     procedure configureComboBox(mycombo: TComboBox);
+    procedure gotoLastTodayEvent;
   private
     { private declarations }
   public
@@ -305,10 +307,10 @@ end;
 { TDataModule1 }
 function TDataModule1.getdebuglevel(): integer;
 begin
-  // wiil be called at start before the logfile is initialized
-  if Assigned(logdatei) then
-    getdebuglevel := logdatei.LogLevel
-  else
+  // will be called at start before the logfile is initialized
+  //if Assigned(logdatei) then
+  //  getdebuglevel := logdatei.LogLevel
+ // else
     getdebuglevel := debuglevel;
 end;
 
@@ -344,6 +346,10 @@ begin
   myini.WriteInteger('general', 'debuglevel', newlevel);
   myini.UpdateFile;
   myini.Free;
+  // attention: endless loop:
+  if Assigned(Fdebug.SpinEdit1) then
+   if debuglevel <> Fdebug.SpinEdit1.Value then
+    Fdebug.SpinEdit1.Value:=debuglevel;
   debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
@@ -547,7 +553,8 @@ begin
   //FOntop.Enabled := False;
   //FDataedit.Show;
   FreeAndNil(FDataedit);
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
@@ -556,7 +563,8 @@ end;
 procedure TDataModule1.Dateneditieren1Cancel;
 begin
   //FStatistik.free;
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
@@ -1268,7 +1276,8 @@ procedure TDataModule1.SQuibeventBeforeClose(DataSet: TDataSet);
 begin
   if login.automatic then
   begin
-    DataModule1.SQuibevent.last;
+    //DataModule1.SQuibevent.last;
+    DataModule1.gotoLastTodayEvent;
     DataModule1.SQuibevent.edit;
     DataModule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
     try
@@ -1665,13 +1674,14 @@ begin
     SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
       ontopheight, SWP_NOACTIVATE);
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
     FOntop.Left := leftint;
     FOnTop.Top := 0;
     FOnTop.Height := ontopheight;
     FOnTop.Width := ontopwidth;
     FOnTop.FormStyle := fsSystemStayOnTop;
     FOnTop.BorderStyle := bsNone;
+    {$ENDIF UNIX}
   (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
@@ -1712,6 +1722,7 @@ begin
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
   *)
+  {$IFDEF LINUX}
     if linuxusewmctrl then
       moveToCurrentDeskAndFront(FOnTop.Caption);
       {$ENDIF LINUX}
@@ -2296,6 +2307,8 @@ begin
 
   debuglevel := myini.ReadInteger('general', 'debuglevel', 5);
   Fdebug.Memo1.Append('debuglevel: ' + IntToStr(debuglevel));
+  //FDebug.SpinEdit1.Value:= debuglevel;
+  setdebuglevel(debuglevel);
   TrayInterval := myini.ReadInteger('general', 'TrayInterval', 5);
   TimerTrayIcon.Interval := TrayInterval * 60 * 1000;
   Trayshow := myini.ReadBool('general', 'showTray', True);
@@ -2351,7 +2364,7 @@ begin
   //myFont := 'Liberation Sans Narrow';
   myFont := 'Liberation Sans';
   {$ENDIF LINUX}
-
+  Application.ProcessMessages;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -2629,6 +2642,58 @@ begin
 
 end;
 
+procedure TDataModule1.gotoLastTodayEvent;
+var
+  foundstart, foundstop: TDateTime;
+  foundevent, filterstr: string;
+begin
+  try
+    try
+      debugOut(5, 'gotoLastTodayEvent', 'start');
+      //try to go to to the last event that is not starting tomorrow or later
+      //filterstr := '(stoptime < ' +
+      //  QuotedStr(DateTimeToStr(IncDay(today, 1))) + ') and (userid = ' + QuotedStr(uid) + ')';
+      filterstr := 'DTOS(stoptime) < "' + formatdatetime('yyyymmdd', IncDay(today, 1)) +
+        '"' + ' and userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      SQuibevent.Last;
+      foundevent := SQuibevent.FieldByName('event').AsString;
+      foundstart := SQuibevent.FieldByName('starttime').AsDateTime;
+      foundstop := SQuibevent.FieldByName('stoptime').AsDateTime;
+      SQuibevent.Filtered := False;
+      filterstr := 'userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      if SQuibevent.Locate('userid;event;starttime',
+        VarArrayOf([uid, foundevent, foundstart]), [loCaseInsensitive, loPartialKey]) then
+        debugOut(5, 'gotoLastTodayEvent', 'found event: ' + 'userid=' +
+          uid + ' foundevent=' + foundevent + ' starttime=' + DateTimeToStr(foundstart))
+      //SQuibevent.FieldByName('event').AsString + ' with stoptime: ' +
+      //SQuibevent.FieldByName('stoptime').AsString)
+      else
+      begin
+        debugOut(3, 'gotoLastTodayEvent', 'Error searching last event: ' +
+          'userid=' + uid + ' foundevent=' + foundevent + ' starttime=' +
+          DateTimeToStr(foundstart));
+        SQuibevent.Last;
+      end;
+    except
+      debugOut(3, 'gotoLastTodayEvent', 'Exception searching last event: ');
+    end;
+  finally
+    SQuibevent.Filtered := False;
+    filterstr := 'userid = ' + QuotedStr(uid);
+    debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+    SQuibevent.Filter := filterstr;
+    SQuibevent.Filtered := True;
+  end;
+end;
+
+
+
 initialization
   { initialization-Abschnitt }
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
@@ -2648,7 +2713,7 @@ initialization
   ///vi := GetVersionInfoRec(Application.ExeName);
   ///version := vi.FileVersion;
   //version := '4.0.12';
-  //debuglevel := 5;
+  debuglevel := 8;
 
   verDatum := DateToStr(FileDateToDateTime(FileAge(ParamStr(0))));
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company

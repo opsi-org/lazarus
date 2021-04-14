@@ -72,7 +72,7 @@ uses uibdata, ontop;
 procedure TFlogoff.checkDB (begintime : TDateTime);
 var
  //laststartt, laststopt, startt, stopt : TDateTime;
-  laststartt, laststopt, startt : TDateTime;
+  laststartt, laststopt, startt, tmptime : TDateTime;
  sumtime, firststartt, aktdate : TDatetime;
  uname, event : String;
  year, month, day: word;
@@ -149,11 +149,17 @@ begin
     end;
    end;
   end;
-  laststartt := Datamodule1.SQuibevent.fieldbyname('starttime').asdatetime;
+  tmptime := Datamodule1.SQuibevent.fieldbyname('starttime').asdatetime;
+  if tmptime < IncDay(today, 1) then
+  begin
+  laststartt := tmptime;
   laststopt := Datamodule1.SQuibevent.fieldbyname('stoptime').asdatetime;
   sumtime := sumtime + (laststopt - laststartt);
   Datamodule1.SQuibevent.next;
+  end
+  else Datamodule1.SQuibevent.Last;
  end;   // eof
+ Datamodule1.gotoLastTodayEvent;
  richmemo1.lines.add('Zeit von: '+DateTimeToStr(firststartt)+' bis '+DateTimeToStr(laststopt));
  richmemo1.lines.add('Stunden in diesem Zeitraum (Anwesenheit ohne Löcher): '+TimeToStr(sumtime)+
                  ' ('+floattostrF(sumtime*24,ffFixed,5,2)+')');
@@ -262,6 +268,7 @@ begin
   end;
   Datamodule1.SQuibevent.next;
  end;
+ Datamodule1.gotoLastTodayEvent;
  query1.close;
  query2.close;
 
@@ -299,7 +306,7 @@ begin
        with RichMemo1 do
        begin
          if Datamodule1.dateIsHolyday(aktdate) then
-          mynewline := 'Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate)
+          //mynewline := 'Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate)
          else
            mynewline := 'Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate);
          lines.add(mynewline);
@@ -322,6 +329,7 @@ begin
   WindowState := wsNormal;
   application.processmessages;
  end;
+ DataModule1.gotoLastTodayEvent;
 end;
 
 procedure TFlogoff.BitBtn2Click(Sender: TObject);

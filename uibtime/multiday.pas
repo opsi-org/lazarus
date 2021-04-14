@@ -13,6 +13,7 @@ uses
   ExtCtrls, Calendar, DBCtrls, maskedit, ExtDlgs, EditBtn, DateTimePicker,
   dateutils,
   uibdatetime,
+  dialogs,
   strutils;
 
 type
@@ -119,6 +120,7 @@ begin
           begin
             if not entryExistsAtDate(aktdate, 'Feiertag') then
             begin
+              (*
               Datamodule1.SQuibevent.insert;
               Datamodule1.SQuibevent.FieldByName('event').AsString := 'Feiertag';
               Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
@@ -127,6 +129,7 @@ begin
                 aktdate + startzeit;
               Datamodule1.SQuibevent.Post;
               sleep(1000);
+              *)
             end;
           end
           else
@@ -172,7 +175,8 @@ var
 begin
   i := ComboBoxEvent.ItemIndex;
   event := ComboBoxEvent.Items[i];
-  if MatchStr(event, ['Krank', 'Feiertag', 'Urlaub']) then
+  MaskEditStunden.Enabled:=true;
+  if MatchStr(event, ['Krank', 'Urlaub']) then
   begin
     MaskEditStart.EditText := '10:00';
     str := timeFloatTohourminutesStr(user_h_per_day);
@@ -182,6 +186,7 @@ begin
   begin
     MaskEditStart.EditText := '10:00';
     MaskEditStunden.EditText := '00:00';
+    MaskEditStunden.Enabled:=false;
   end;
 end;
 
@@ -204,11 +209,14 @@ begin
   DateTimePickerEnd.Date := DateTimePickerStart.Date;
   if Datamodule1.dateIsHolyday(DateTimePickerStart.Date) then
   begin
+    MessageDlg('uibtime','Der gewählte Tag ist ein Feiertag und wird automatisch eingetragen',mtInformation,[mbOK],'');
+    (*
     MaskEditStart.EditText := '10:00';
     str := timeFloatTohourminutesStr(user_h_per_day);
     MaskEditStunden.EditText := str;
     ComboBoxEvent.ItemIndex := -1;
     ComboBoxEvent.SelText := 'Feiertag';
+    *)
   end;
 end;
 

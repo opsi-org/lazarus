@@ -113,6 +113,7 @@ type
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure FormCreate(Sender: TObject);
     procedure Label6Click(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
     procedure PageControl1Enter(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DBGrid1Enter(Sender: TObject);
@@ -516,6 +517,11 @@ begin
 
 end;
 
+procedure TFDataedit.PageControl1Change(Sender: TObject);
+begin
+  DataModule1.gotoLastTodayEvent;
+end;
+
 procedure TFDataedit.FormActivate(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'Activate FDataedit');
@@ -715,6 +721,7 @@ end;
 
 procedure TFDataedit.BitBtn2Click(Sender: TObject);
 begin
+  DataModule1.gotoLastTodayEvent;
   hide;
   Close;
 end;
