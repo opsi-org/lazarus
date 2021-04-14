@@ -459,7 +459,7 @@ type
   {$ENDIF WINDOWS}
 
     (* Sektion erstellen *)
-    procedure loadValidLinesFromFile(FName: string; encodingString : string; var Section: TWorkSection);
+    procedure loadValidLinesFromFile(FName: string; detectedEncoding : string; var Section: TWorkSection);
     //procedure getLinesFromUnicodeFile (Const FName : String; var Section : TWorkSection);
     procedure ApplyTextVariables(var Sektion: TXStringList; CStringEscaping: boolean);
     procedure ApplyTextConstants(var Sektion: TXStringList; CStringEscaping: boolean);
@@ -630,6 +630,7 @@ const
   Parameter_64Bit = '/64Bit';
   Parameter_32Bit = '/32Bit';
   Parameter_SysNative = '/SysNative';
+  ParameterEncoding = '/encoding';
 
   (* 'WinBatch' *)
   ParameterDontWait = '/LetThemGo';
@@ -649,7 +650,6 @@ const
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
   ParameterShowoutput = '/showoutput';
-  ParameterEncoding = '/encoding';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -1928,30 +1928,39 @@ end;
 
 
 
-procedure TuibInstScript.LoadValidLinesFromFile(FName: string; encodingString : string;
+procedure TuibInstScript.LoadValidLinesFromFile(FName: string; detectedEncoding : string;
   var Section: TWorkSection);
 var
   OriginalList: TXStringList;
   s: string;
   i: integer;
   //Encoding2use, usedEncoding: string;
-  statkind: TStatement;
+  //statkind: TStatement;
   //secname, remaining : string;
   //secindex : integer;
+  encodingString: string = '';
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
-  if encodingString<>'' then
-     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString)
-  else
+  OriginalList.LoadFromFile(ExpandFileName(FName));
+  encodingString := searchencoding(OriginalList.Text);
+  if encodingString='' then
+      encodingString := 'system';
+  if detectedEncoding <> '' then
      begin
-       OriginalList.LoadFromFile(ExpandFileName(FName));
-       encodingString := searchencoding(OriginalList.Text);
-       if encodingString='' then
-          encodingString := 'system';
-       if encodingString <> 'system' then
-          OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
-     end;
+       if (encodingString <> detectedEncoding)
+       OR (encodingString <> copy(detectedEncoding,0,length(detectedEncoding)-3))
+        then
+           begin
+             LogDatei.log('Warning: Given encodingString '+ encodingString
+                     +' is different from the detected encoding '+ detectedEncoding, LLWarning);
+             LogDatei.log('Detected encoding: '+ detectedEncoding+' is considered', LLInfo);
+           end;
+       OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), detectedEncoding);
+       end
+  else
+    if encodingString <> 'system' then
+         OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
   (*
   OriginalList.LoadFromFile(ExpandFileName(FName));
   Encoding2use := searchencoding(OriginalList.Text);
@@ -10361,10 +10370,13 @@ begin
       // // Handling '/encoding' within WINST parameters
       else if Skip(ParameterEncoding, Remaining, Remaining, ErrorInfo) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
         if not isSupportedEncoding(encodingString) then
-          LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+          begin
+             LogDatei.log('Given encoding "' +encodingString+ '" is incorrect or not supported', LLDebug);
+             encodingString := 'system';
+          end;
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
@@ -10835,7 +10847,7 @@ begin
       remaining := parts[2];
 
     continue := True;
-
+    (*
     while (remaining <> '') and continue do
     begin
       if not Skip(ParameterDontWait, remaining, remaining, InfoSyntaxError) and
@@ -10843,7 +10855,8 @@ begin
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) and
-        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) then
+        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) and
+        not Skip(ParameterEncoding, remaining, remaining, InfoSyntaxError) then
       begin
         // try to parse a RunAs param
         GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
@@ -10861,7 +10874,7 @@ begin
       InfoSyntaxError := 'winst option not recognized';
       exit;
     end;
-
+    *)
   end;
 
   if parts[0] = '' then
@@ -10972,7 +10985,7 @@ begin
     if not produceExecLine(ExecParameter, programfilename, programparas,
       passparas, winstoption, errorInfo) then
     begin
-      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed',
+      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed: ' + errorInfo,
         LLcritical);
       FExtremeErrorLevel := LevelFatal;
       exit;
@@ -11012,14 +11025,26 @@ begin
       // Handling '/encoding' within WINST parameters
       else if lowercase(ParameterEncoding) = lowercase(expr) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-        if not isSupportedEncoding(encodingString) then
-           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
+
+        if (not isSupportedEncoding(encodingString)) then
+           begin
+             LogDatei.log('Given encoding "' +encodingString+ '" is incorrect or not supported', LLDebug);
+             encodingString := 'system';
+           end;
         // unicode fallback to utf8
         if lowercase(encodingString)='unicode' then
             encodingString := 'utf8';
       end
+      else if lowercase(trim(expr)) = LowerCase(ParameterRunElevated) then
+        begin
+          {$IFDEF WIN32}
+          opsiSetupAdmin_runElevated := True;
+          LogDatei.log('Found Parameter: /runelevated .', LLDebug);
+          {$ENDIF WIN32}
+          runAs := traInvoker;
+        end;
     end;
 
     useext := '.cmd';
@@ -19590,7 +19615,7 @@ var
   linecounter: integer;
   numberOfSectionLines: integer;
 
-  encodingString : string ='';
+  detectedEncoding : string ='';
   hasBom : Boolean;
 
 {$IFDEF WINDOWS}
@@ -20311,9 +20336,9 @@ begin
                 begin
                   if CheckFileExists(fullfilename, ErrorInfo) then
                   begin
-                      hasBom := getFileBom(fullfilename, encodingString);
+                      hasBom := getFileBom(fullfilename, detectedEncoding);
                       try
-                        LoadValidLinesFromFile(fullfilename, encodingString, ArbeitsSektion);
+                        LoadValidLinesFromFile(fullfilename, detectedEncoding, ArbeitsSektion);
 
                         ArbeitsSektion.StartLineNo := 1;
                       except
@@ -20736,9 +20761,9 @@ begin
                       LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),detectedEncoding);
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
@@ -20746,7 +20771,7 @@ begin
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log_prog('Will Include : ' +
-                        incfilename + ' with encoding: ' + encodingString, LLDebug);
+                        incfilename + ' with encoding: ' + detectedEncoding, LLDebug);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -21002,9 +21027,9 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),detectedEncoding);
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
@@ -21014,7 +21039,7 @@ begin
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log('Will Include : ' + incfilename +
-                        ' with encoding: ' + encodingString, LLDebug2);
+                        ' with encoding: ' + detectedEncoding, LLDebug2);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -21054,7 +21079,7 @@ begin
                       closeFile(incfile);
                       linecount := Count;
                       LogDatei.log('Included (insert) file: ' +
-                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
+                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
                     end
                     else
                     begin
@@ -21163,9 +21188,9 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),detectedEncoding);
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
@@ -21200,7 +21225,7 @@ begin
                       closeFile(incfile);
                       //linecount := Count;
                       LogDatei.log('Included (append) file: ' +
-                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
+                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
                     end
                     else
                     begin
@@ -23108,15 +23133,14 @@ begin
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                if produceExecLine(remaining, p1, p2, p3, p4,
-                  InfoSyntaxError) then
+                //if produceExecLine(remaining, p1, p2, p3, p4, InfoSyntaxError) then
 
                   ActionResult :=
                     executeWith(ArbeitsSektion, Remaining, True {catch out},
                     0, output)
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                //else
+                //  ActionResult :=
+                //    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
 
               tsWorkOnStringList:
