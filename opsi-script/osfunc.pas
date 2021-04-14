@@ -5438,7 +5438,8 @@ function getOSArchitecture: string;
 begin
   Result := 'unknown';
   {$IFDEF WIN32}
-  Result := 'x86_32';
+  if DSiIsWow64 then Result := 'x86_64'
+  else Result := 'x86_32';
   {$ENDIF WIN32}
   {$IFDEF WIN64}
   Result := 'x86_64';
@@ -5448,7 +5449,6 @@ begin
   Result := 'x86_64';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  // At the moment the only supported architecture at Linux
   Result := trim(getCommandResult('uname -m'));
   if result = 'arm64' then Result := 'arm_64';
   if result = 'x86_64' then

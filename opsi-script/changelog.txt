@@ -5,6 +5,12 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.18) stable; urgency=low
+
+ * osfunc: fix for getOSArchitecture at windows 64 bit
+
+-- d.oertel <d.oertel@uib.de> Wed, 14 Apr 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.17) stable; urgency=low
 
  * change getFileBom to fileHasBom(<filename>) : boolean
