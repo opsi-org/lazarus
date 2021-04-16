@@ -8,6 +8,8 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.4.18) stable; urgency=low
 
  * osfunc: fix for getOSArchitecture at windows 64 bit
+ * osparser: doAktionen: executesection: call sections with catchout=true
+   fixes: nooutput in log and showoutput
 
 -- d.oertel <d.oertel@uib.de> Wed, 14 Apr 2021 15:00
 

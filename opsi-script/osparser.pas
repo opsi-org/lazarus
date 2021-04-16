@@ -21827,17 +21827,17 @@ begin
 
                               tsExecutePython:
                                 execPython(localSection, tmpstr,
-                                  False {no catchout}, 1,
+                                  true {catchout}, 1,
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsExecuteWith_escapingStrings, tsExecuteWith:
                                 executeWith(localSection, tmpstr,
-                                  False {no catchout}, 1, tmplist);
+                                  true {catchout}, 1, tmplist);
 
                               tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
                               tsShellInAnIcon:
                                 execDOSBatch(localSection, tmpstr,
-                                  SW_HIDE, False {no catchout}, 0,
+                                  SW_HIDE, true {catchout}, 0,
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsWinBatch:

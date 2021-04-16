@@ -222,7 +222,7 @@ begin
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
       if Logdatei <> nil then
-        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
+        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug);
       {$IFDEF GUI}
       if showoutput then
       begin
@@ -265,6 +265,7 @@ begin
             if showoutput then
             begin
               SystemInfo.Memo1.Lines.Add(outpart.Text);
+              //logdatei.log('showoutput1: '+outpart.Text,LLDebug);
               ProcessMess;
             end;
             {$ENDIF GUI}
@@ -275,6 +276,7 @@ begin
           // no data, wait 100 ms
           //Logdatei.DependentAdd('RunCommandAndCaptureOut: no data - waiting....',
           // LLdebug2);
+          //logdatei.log('showoutput: no input - wait',LLDebug);
           Sleep(100);
         end;
       end;
@@ -309,6 +311,7 @@ begin
       if showoutput then
       begin
         SystemInfo.Memo1.Lines.Add(outpart.Text);
+        //logdatei.log('showoutput2: '+outpart.Text,LLDebug);
         ProcessMess;
       end;
       {$ENDIF GUI}
