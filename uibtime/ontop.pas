@@ -316,6 +316,15 @@ begin
   //height := Toolbar1.height;
   // height := 360;
   //ToolBar1.Refresh;
+
+  if ontopAsWindow then
+  begin
+    borderstyle := bsSizeable;
+  end
+  else
+  begin
+    borderstyle := bsNone;
+  end;
   leftint := Datamodule1.getLeftint();
   Left := leftint;
   Width := 816 + buttonwidth;

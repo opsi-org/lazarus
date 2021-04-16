@@ -209,6 +209,7 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibevent'
     )
+    Options = [sqoKeepOpenOnCommit, sqoAutoApplyUpdates, sqoAutoCommit, sqoCancelUpdatesOnRefresh, sqoRefreshUsingSelect]
     Params = <>
     Left = 42
     Top = 304
@@ -427,6 +428,11 @@ object DataModule1: TDataModule1
     object LeisteNeuAufbauen1: TMenuItem
       Caption = 'Leiste neu aufbauen'
       OnClick = LeisteNeuAufbauen1Click
+    end
+    object MenBarAsWindow: TMenuItem
+      AutoCheck = True
+      Caption = 'Leiste als Fenster'
+      OnClick = MenBarAsWindowClick
     end
     object trayconfig: TMenuItem
       Caption = 'Tray Konfiguration'

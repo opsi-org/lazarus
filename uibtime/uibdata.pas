@@ -71,6 +71,7 @@ type
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
     linuxwmctrl: TMenuItem;
+    MenBarAsWindow: TMenuItem;
     MenuItemLockInput: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
@@ -136,6 +137,7 @@ type
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
     procedure linuxwmctrlClick(Sender: TObject);
+    procedure MenBarAsWindowClick(Sender: TObject);
     procedure MenuItemLockInputClick(Sender: TObject);
     procedure PopupMenu1Close(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
@@ -265,6 +267,7 @@ var
   ontopintaskbar: TShowInTaskBar = stNever;
   ontoptimer: boolean = True;
   LockInput: boolean = True;
+  ontopAsWindow: boolean = False;
 
 
 
@@ -310,8 +313,8 @@ begin
   // will be called at start before the logfile is initialized
   //if Assigned(logdatei) then
   //  getdebuglevel := logdatei.LogLevel
- // else
-    getdebuglevel := debuglevel;
+  // else
+  getdebuglevel := debuglevel;
 end;
 
 procedure TDataModule1.setdebuglevel(newlevel: integer);
@@ -348,8 +351,8 @@ begin
   myini.Free;
   // attention: endless loop:
   if Assigned(Fdebug.SpinEdit1) then
-   if debuglevel <> Fdebug.SpinEdit1.Value then
-    Fdebug.SpinEdit1.Value:=debuglevel;
+    if debuglevel <> Fdebug.SpinEdit1.Value then
+      Fdebug.SpinEdit1.Value := debuglevel;
   debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
@@ -712,6 +715,15 @@ begin
   debugOut(6, 'linuxwmctrlClick: ' + BoolToStr(linuxwmctrl.Checked, True));
   myini.UpdateFile;
   myini.Free;
+end;
+
+procedure TDataModule1.MenBarAsWindowClick(Sender: TObject);
+begin
+  if TMenuItem(Sender).Checked then
+    ontopAsWindow := True
+  else
+    ontopAsWindow := False;
+  FOnTop.ReBuildForm;
 end;
 
 procedure TDataModule1.MenuItemLockInputClick(Sender: TObject);
@@ -1670,17 +1682,34 @@ begin
   begin
   {$IFDEF WINDOWS}
     FOnTop.FormStyle := fsSystemStayOnTop;
-    FOnTop.BorderStyle := bsNone;
-    SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-      ontopheight, SWP_NOACTIVATE);
+    if ontopAsWindow then
+    begin
+      borderstyle := bsSizeable;
+      SetWindowPos(FOnTop.handle, HWND_TOPMOST, FOnTop.Left, FOnTop.top, ontopwidth,
+        ontopheight, SWP_NOACTIVATE);
+    end
+    else
+    begin
+      FOnTop.BorderStyle := bsNone;
+      SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
+        ontopheight, SWP_NOACTIVATE);
+    end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-    FOntop.Left := leftint;
-    FOnTop.Top := 0;
+    if ontopAsWindow then
+    begin
+      FOnTop.borderstyle := bsSizeable;
+    end
+    else
+    begin
+      FOnTop.borderstyle := bsNone;
+      FOnTop.Top := 0;
+      FOntop.Left := leftint;
+    end;
     FOnTop.Height := ontopheight;
     FOnTop.Width := ontopwidth;
     FOnTop.FormStyle := fsSystemStayOnTop;
-    FOnTop.BorderStyle := bsNone;
+
     {$ENDIF UNIX}
   (*
   //FOnTop.ReBuildForm;
@@ -2668,7 +2697,8 @@ begin
       SQuibevent.Filter := filterstr;
       SQuibevent.Filtered := True;
       if SQuibevent.Locate('userid;event;starttime',
-        VarArrayOf([uid, foundevent, foundstart]), [loCaseInsensitive, loPartialKey]) then
+        VarArrayOf([uid, foundevent, foundstart]),
+        [loCaseInsensitive, loPartialKey]) then
         debugOut(5, 'gotoLastTodayEvent', 'found event: ' + 'userid=' +
           uid + ' foundevent=' + foundevent + ' starttime=' + DateTimeToStr(foundstart))
       //SQuibevent.FieldByName('event').AsString + ' with stoptime: ' +
