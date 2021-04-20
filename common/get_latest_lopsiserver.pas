@@ -75,7 +75,9 @@ begin
     Result := False;
   LOpsiServerCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
   LOpsiServerCommand.Run('mv CLIENT_DATA.cpio ../l-opsi-server_downloaded/CLIENT_DATA/', Output);
+  if Pos('Error', Output) > 0 then Result := False;
   LOpsiServerCommand.Run('mv OPSI.cpio ../l-opsi-server_downloaded/OPSI/', Output);
+  if Pos('Error', Output) > 0 then Result := False;
 
   // go into the respective directories and extract the files from CLIENT_DATA.cpio and OPSI.cpio
   // cpio can only extract into the current directory
