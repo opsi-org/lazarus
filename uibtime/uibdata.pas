@@ -21,7 +21,7 @@ uses
   //pingsend,
   {$ENDIF WINDOWS}
   pingsend,
-  Classes, SysUtils, IBConnection, sqldb, DB,
+  Classes, SysUtils, IBConnection, FBEventMonitor, sqldb, DB,
   //FileUtil,
   LazFileUtils,
   Menus, ExtCtrls,
@@ -43,7 +43,8 @@ uses
   UniqueInstance,
   fileutil,
   strutils,
-  oslog;
+  oslog,
+  osnetworkcalculator;
 
 type
 
@@ -163,9 +164,11 @@ type
     procedure SQuibeventAfterEdit(DataSet: TDataSet);
     procedure SQuibeventAfterInsert(DataSet: TDataSet);
     procedure SQuibeventAfterPost(DataSet: TDataSet);
+    procedure SQuibeventAfterRefresh(DataSet: TDataSet);
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
     procedure SQuibeventBeforeDelete(DataSet: TDataSet);
     procedure SQuibeventBeforePost(DataSet: TDataSet);
+    procedure SQuibeventBeforeRefresh(DataSet: TDataSet);
     procedure SQuibeventPostError(DataSet: TDataSet; E: EDatabaseError;
       var DataAction: TDataAction);
     procedure SQuibloggedinAfterDelete(DataSet: TDataSet);
@@ -225,6 +228,7 @@ type
     procedure SetFontName(Control: TControl; Name: string);
     procedure configureComboBox(mycombo: TComboBox);
     procedure gotoLastTodayEvent;
+    procedure writeBoolToConf(section, key: string; value : boolean);
   private
     { private declarations }
   public
@@ -268,6 +272,7 @@ var
   ontoptimer: boolean = True;
   LockInput: boolean = True;
   ontopAsWindow: boolean = False;
+  lastDBlogline : string = '';
 
 
 
@@ -657,7 +662,11 @@ begin
     else
       Source := 'Unknown event: ';
   end;
-  debugOut(9, 'Database', Source + Msg);
+  if lastDBlogline <> Source + Msg then
+  begin
+    lastDBlogline := Source + Msg;
+    debugOut(9, 'Database', lastDBlogline);
+  end;
 end;
 
 procedure TDataModule1.Import1Click(Sender: TObject);
@@ -719,11 +728,15 @@ end;
 
 procedure TDataModule1.MenBarAsWindowClick(Sender: TObject);
 begin
+  (*
   if TMenuItem(Sender).Checked then
     ontopAsWindow := True
   else
     ontopAsWindow := False;
-  FOnTop.ReBuildForm;
+    *)
+  WriteBoolToConf('general', 'ontopAsWindow', TMenuItem(Sender).Checked);
+  ShowMessage('Um die Änderung anzuzeigen bitte uibtime neu starten.');
+  //FOnTop.ReBuildForm;
 end;
 
 procedure TDataModule1.MenuItemLockInputClick(Sender: TObject);
@@ -872,12 +885,12 @@ procedure TDataModule1.schmaleLeisteClick(Sender: TObject);
 begin
 end;
 
-procedure TDataModule1.ShowDebugWindow1Click(Sender: TObject);
+procedure TDataModule1.writeBoolToConf(section, key: string; value : boolean);
 var
   logdir, logfeilname: string;
   myini: TIniFile;
 begin
-  // we will use logdir for logging and for configuration
+    // we will use logdir for logging and for configuration
   logdir := SysUtils.GetAppConfigDir(False);
   if logdir = '' then
   begin
@@ -888,15 +901,22 @@ begin
   ForceDirectories(logdir);
   logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
-  debugOut(5, 'Will use conf file: ' + logfeilname);
-  DataModule1.debugOut(6, 'ShowDebugWindow1Click', 'Will use conf file: ' + logfeilname);
+  debugOut(5, 'writeToConf','Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    DataModule1.debugOut(2, 'ShowDebugWindow1Click',
+    DataModule1.debugOut(2, 'writeToConf',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
   end;
+  myini.WriteBool(section, key, value);
+  debugOut(6, 'writeToConf', key +' = ' + BoolToStr(value, True));
+  myini.UpdateFile;
+  myini.Free;
+end;
+
+procedure TDataModule1.ShowDebugWindow1Click(Sender: TObject);
+begin
   if ShowDebugWindow1.Checked then
   begin
     ShowDebugWindow1.Checked := False;
@@ -907,10 +927,7 @@ begin
     ShowDebugWindow1.Checked := True;
     FDebug.Visible := True;
   end;
-  myini.WriteBool('general', 'ShowDebugWindow', ShowDebugWindow1.Checked);
-  debugOut(6, 'ShowDebugWindow: ' + BoolToStr(ShowDebugWindow1.Checked, True));
-  myini.UpdateFile;
-  myini.Free;
+  WriteBoolToConf('general', 'ShowDebugWindow', ShowDebugWindow1.Checked);
 end;
 
 procedure TDataModule1.SQholydaysAfterDelete(DataSet: TDataSet);
@@ -1276,11 +1293,23 @@ begin
       debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (commit/start)');
     end
     else
+    begin
       debugOut(3, 'SQuibeventAfterPost',
         'Error: Missing Transaction SQuibeventAfterPost');
+      SQLTransaction1.StartTransaction;
+    end;
   except
     debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
   end;
+end;
+
+procedure TDataModule1.SQuibeventAfterRefresh(DataSet: TDataSet);
+begin
+   debugOut(5, 'SQuibeventAfterRefresh', 'start ');
+   SQuibevent.IndexFieldNames:= 'Starttime';
+   SQuibevent.Last;
+   gotoLastTodayEvent;
+   Screen.Cursor := crDefault;
 end;
 
 
@@ -1321,6 +1350,15 @@ begin
   { plausibility check is in AfterEdit }
   debugOut(5, 'SQuibeventBeforePost', 'calling SQuibeventAfterEdit ');
   SQuibeventAfterEdit(Dataset);
+end;
+
+procedure TDataModule1.SQuibeventBeforeRefresh(DataSet: TDataSet);
+begin
+   debugOut(5, 'SQuibeventBeforeRefresh', 'start ');
+   SQuibevent.ApplyUpdates;
+   SQLTransaction1.CommitRetaining;
+   Screen.Cursor := crSQLWait;
+   SQuibevent.IndexFieldNames:= '';
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
@@ -1631,6 +1669,7 @@ var
 begin
 
   servername := myDbServer;
+  servername := GetHostByName(servername);
   ;
   retries := 0;
   //{$IFDEF WIN32}
@@ -2334,6 +2373,9 @@ begin
   ///if Weristda1.Checked then FLoggedin.Visible:= true
   ///else FLoggedin.Visible:= false;
 
+  ontopAsWindow := myini.ReadBool('general', 'ontopAsWindow', False);
+  MenBarAsWindow.Checked:= ontopAsWindow;
+
   debuglevel := myini.ReadInteger('general', 'debuglevel', 5);
   Fdebug.Memo1.Append('debuglevel: ' + IntToStr(debuglevel));
   //FDebug.SpinEdit1.Value:= debuglevel;
@@ -2423,6 +2465,8 @@ begin
   myini.WriteBool('general', 'autologin', Autologin1.Checked);
   myini.WriteBool('general', 'zeigenurmeineprojekte', zeigenurmeineprojekte1.Checked);
   myini.WriteBool('general', 'showdebugwindow', ShowDebugwindow1.Checked);
+  // do not write ontopAsWindow here - it is changed by the menu listener
+  //myini.WriteBool('general', 'ontopAsWindow', ontopAsWindow);
   myini.WriteInteger('general', 'debuglevel', LogDatei.LogLevel);
   myini.UpdateFile;
   myini.Free;

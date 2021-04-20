@@ -61,6 +61,7 @@ object FDataedit: TFDataedit
           Height = 32
           Top = 2
           Width = 288
+          BeforeAction = DBNavigator1BeforeAction
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsScaleChilds
           ChildSizing.EnlargeVertical = crsScaleChilds
@@ -74,6 +75,7 @@ object FDataedit: TFDataedit
           Font.Color = clWindowText
           Font.Height = -10
           Font.Name = 'MS Sans Serif'
+          OnClick = DBNavigator1Click
           Options = []
           ParentFont = False
           TabOrder = 0
