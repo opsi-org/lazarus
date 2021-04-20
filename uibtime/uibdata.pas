@@ -1723,7 +1723,7 @@ begin
     FOnTop.FormStyle := fsSystemStayOnTop;
     if ontopAsWindow then
     begin
-      borderstyle := bsSizeable;
+      FOnTop.borderstyle := bsSizeable;
       SetWindowPos(FOnTop.handle, HWND_TOPMOST, FOnTop.Left, FOnTop.top, ontopwidth,
         ontopheight, SWP_NOACTIVATE);
     end
