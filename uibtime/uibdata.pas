@@ -1725,7 +1725,7 @@ begin
     begin
       FOnTop.borderstyle := bsSizeable;
       SetWindowPos(FOnTop.handle, HWND_TOPMOST, FOnTop.Left, FOnTop.top, ontopwidth,
-        ontopheight, SWP_NOACTIVATE);
+        round(ontopheight*2.5), SWP_NOACTIVATE);
     end
     else
     begin
