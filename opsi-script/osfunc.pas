@@ -98,7 +98,8 @@ uses
   lcltype,
   ostxstringlist,
   osstartproc_cp,
-  pipes;
+  pipes,
+  oszip;
 
 const
   BytesarrayLength = 5000;
@@ -10152,9 +10153,22 @@ var
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-          {$IFDEF WIN32}
+          //{$IFDEF WIN32}
           if cpSpecify and cpExtract = cpExtract then
           begin
+            try
+              if UnzipWithDirStruct(SourceName, TargetPath) then
+                LogDatei.log('unzipped: ' + SourceName + ' to ' + TargetPath, LLInfo)
+              else
+                LogDatei.log('Failed to unzip: ' + SourceName + ' to ' + TargetPath, LLError)
+            except
+              on E: Exception do
+              begin
+                LogDatei.log('Exception: Failed to unzip: ' + SourceName +
+                  ' to ' + TargetPath + ' : ' + e.message, LLError);
+              end;
+            end;
+            (*
             PSourceName := PointerAufString(SourceName);
             strLcopy(@ZipFileName, PSourceName, DirLength + 1);
 
@@ -10167,9 +10181,10 @@ var
               end;
             end;
             //freemem(PSourceName);
+            *)
           end
           else
-          {$ENDIF WIN32}
+          //{$ENDIF WIN32}
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
