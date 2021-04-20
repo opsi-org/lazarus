@@ -1,5 +1,5 @@
 (*
-uibtime (4.1.2.0-1) stable; urgency=low
+uibtime (4.1.3.0-1) stable; urgency=low
 
  * possibility to display ontop as sizeable window
  * re-enable refresh on uibevent (no indexfieldnames on refresh
