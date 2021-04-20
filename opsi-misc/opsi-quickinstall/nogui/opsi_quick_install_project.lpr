@@ -191,7 +191,7 @@ type
     repoNoCache := repo;
     backend := 'file';
     copyMod := rsNo;
-    repoKind := 'experimental';
+    repoKind := 'testing';
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
