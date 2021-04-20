@@ -25,12 +25,12 @@ begin
   if RunCommand('/bin/bash', ['-c', 'cpio --extract < ' + fileName], Output) then
   begin
     // if extraction works, Output should be something like '89 Blöcke'
-    if Output = '' then
+    {if Output = '' then
     begin
       LogDatei.log(fileName + ' extraction failed', LLNotice);
       Result := False;
     end
-    else
+    else}
       LogDatei.log(fileName + ' successfully extracted', LLInfo);
   end
   else
