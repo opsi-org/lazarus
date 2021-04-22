@@ -56,6 +56,8 @@ begin
   LOpsiServerCommand.Run(shellCommand + 'install cpio --assume-yes', Output);
   LOpsiServerCommand.Run(shellCommand + 'install gzip --assume-yes', Output);
 
+  SetCurrentDir(ExtractFilePath(ParamStr(0)));
+
   // download
   LOpsiServerCommand.Run('wget -A l-opsi-server_*.opsi -r -l 1 https://' +
     downloadDir + ' -P ../', Output);
