@@ -92,8 +92,11 @@ begin
   // tidy up
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   LOpsiServerCommand.Run('rm l-opsi-server_*.opsi', Output);
+  if Pos('Error', Output) > 0 then Result := False;
   LOpsiServerCommand.Run(
     'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio', Output);
+  if Pos('Error', Output) > 0 then Result := False;
+  //if not DirectoryExists('../l-opsi-server_downloaded') then  Result := False;
 end;
 
 end.
