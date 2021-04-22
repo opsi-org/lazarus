@@ -72,17 +72,26 @@ var
   logdir, logfeilname: string;
   myini: TIniFile;
   urllist : TStringlist;
+  i : integer;
 
 begin
   try
     DataModule1.debugOut(5, 'login-bitbtnokclick', 'Login: ' + edit1.Text +
       '@' + Combobox1.Text);
-    urllist := parseUrl(Combobox1.Text);
+    urllist := parseUrl('db://'+edit1.Text +'@' +Combobox1.Text);
+    for i := 0 to urllist.Count -1 do
+       DataModule1.debugOut(5, 'login-bitbtnOKclick','url: '+urllist.Strings[i]);
     myDbServer:= urllist.Values['Host'] ;
     urllist.Free;
     Datamodule1.SQLTransaction1.Params.Clear;
+
+    Datamodule1.SQLTransaction1.Params.Add('isc_tpb_version3');
+    Datamodule1.SQLTransaction1.Params.Add('isc_tpb_write');
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_read_committed');
+    Datamodule1.SQLTransaction1.Params.Add('isc_tpb_nowait');
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_rec_version');
+
+
     ///datamodule1.setLoggedInServerList(loggedinServer_);
     // loggedinServer_.free;
     //***Datamodule1.IBConnection1.params.add('SERVER NAME='+Combobox1.Text);
@@ -100,6 +109,7 @@ begin
     Datamodule1.IBConnection1.Open;
     Datamodule1.IBConnection2.Open;
     DataModule1.debugOut(6, 'login-bitbtnokclick', 'Connected ');
+    // ping does not work (why ever)
     //DataModule1.TimerCheckNet.Enabled := True;
     application.ProcessMessages;
     Datamodule1.SQLTransaction1.StartTransaction;
@@ -247,7 +257,6 @@ begin
       Sleep(500);
       application.ProcessMessages;
       hide;
-      ///fontop.TimerCallCount.Enabled := true;
       fontop.Show;
       application.ProcessMessages;
       (*

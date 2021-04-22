@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 625
-  HorizontalOffset = 139
-  VerticalOffset = 269
+  HorizontalOffset = 636
+  VerticalOffset = 313
   Width = 895
   object IBConnection1: TIBConnection
     Connected = False
@@ -12,11 +12,11 @@ object DataModule1: TDataModule1
     Password = 'uibtime'
     Transaction = SQLTransaction1
     UserName = 'uibtime'
-    CharSet = 'utf-8'
+    CharSet = 'ISO8859_1'
     OnLog = IBConnection1Log
     LogEvents = [detCustom, detPrepare, detExecute, detFetch, detCommit, detRollBack, detParamValue, detActualSQL]
     CheckTransactionParams = False
-    UseConnectionCharSetIfNone = False
+    UseConnectionCharSetIfNone = True
     Left = 42
     Top = 16
   end
@@ -59,7 +59,6 @@ object DataModule1: TDataModule1
   end
   object SQLTransaction1: TSQLTransaction
     Active = False
-    Action = caNone
     Database = IBConnection1
     Left = 148
     Top = 16
@@ -192,22 +191,24 @@ object DataModule1: TDataModule1
     Top = 224
   end
   object SQuibevent: TSQLQuery
-    PacketRecords = -1
-    IndexFieldNames = 'USERID;STARTTIME'
     FieldDefs = <>
-    AutoCalcFields = False
     AfterDelete = SQuibeventAfterDelete
     AfterEdit = SQuibeventAfterEdit
     AfterInsert = SQuibeventAfterInsert
     AfterPost = SQuibeventAfterPost
+    AfterRefresh = SQuibeventAfterRefresh
     BeforeClose = SQuibeventBeforeClose
     BeforeDelete = SQuibeventBeforeDelete
     BeforePost = SQuibeventBeforePost
+    BeforeRefresh = SQuibeventBeforeRefresh
     OnPostError = SQuibeventPostError
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uibevent'
+      'select * from uibevent order by starttime'
+    )
+    RefreshSQL.Strings = (
+      ''
     )
     Params = <>
     Left = 42
@@ -427,6 +428,11 @@ object DataModule1: TDataModule1
     object LeisteNeuAufbauen1: TMenuItem
       Caption = 'Leiste neu aufbauen'
       OnClick = LeisteNeuAufbauen1Click
+    end
+    object MenBarAsWindow: TMenuItem
+      AutoCheck = True
+      Caption = 'Leiste als Fenster'
+      OnClick = MenBarAsWindowClick
     end
     object trayconfig: TMenuItem
       Caption = 'Tray Konfiguration'
