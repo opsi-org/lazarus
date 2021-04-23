@@ -1,4 +1,12 @@
 (*
+uibtime (4.1.3.0-1) stable; urgency=low
+
+ * possibility to display ontop as sizeable window
+ * re-enable refresh on uibevent (no indexfieldnames on refresh
+ * removed ontop: timercallcount
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 19 Apr 2021 15:00:00 +0000
+
 uibtime (4.1.2.0-1) stable; urgency=low
 
  * uibdate: gotoLastTodayEvent;

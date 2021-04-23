@@ -222,7 +222,7 @@ begin
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
       if Logdatei <> nil then
-        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug);
+        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug + logleveloffset);
       {$IFDEF GUI}
       if showoutput then
       begin

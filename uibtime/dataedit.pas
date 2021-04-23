@@ -8,7 +8,8 @@ uses
   LCLIntf, LCLType, {LMessages, Messages,} SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs,
   {StdCtrls,} Buttons, Grids, DBGrids, ExtCtrls, DBCtrls, {ToolWin,} ComCtrls,
-  DB, sqldb, {DBCGrids, ExtDlgs,} clipbrd, StdCtrls, DateTimePicker, types;
+  DB, sqldb, {DBCGrids, ExtDlgs,} clipbrd, StdCtrls, DateTimePicker, types,
+  typinfo;
 
 type
 
@@ -111,6 +112,9 @@ type
     procedure DBLookupComboBox1DropDown(Sender: TObject);
     procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure DBNavigator1BeforeAction(Sender: TObject; Button: TDBNavButtonType
+      );
+    procedure DBNavigator1Click(Sender: TObject; Button: TDBNavButtonType);
     procedure FormCreate(Sender: TObject);
     procedure Label6Click(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
@@ -486,6 +490,27 @@ begin
   Handled := True;
   if PtInRect(TDBLookupCombobox(Sender).ReadBounds, mousepos) then
     Handled := False;
+end;
+
+procedure TFDataedit.DBNavigator1BeforeAction(Sender: TObject;
+  Button: TDBNavButtonType);
+begin
+    DataModule1.debugOut(5, 'start  DBNavigator1BeforeAction: ' + GetEnumName(TypeInfo(TDBNavButtonType),Ord(Button)));
+  if Button = nbRefresh then
+   if DataModule1.SQuibevent.State <> dsBrowse then
+     DataModule1.SQuibevent.ApplyUpdates;
+  DataModule1.debugOut(5, 'stop  DBNavigator1BeforeAction: ' + GetEnumName(TypeInfo(TDBNavButtonType),Ord(Button)));
+
+end;
+
+procedure TFDataedit.DBNavigator1Click(Sender: TObject; Button: TDBNavButtonType
+  );
+begin
+  DataModule1.debugOut(5, 'start  DBNavigator1Click: ' + GetEnumName(TypeInfo(TDBNavButtonType),Ord(Button)));
+  if Button = nbRefresh then
+   if DataModule1.SQuibevent.State <> dsBrowse then
+     DataModule1.SQuibevent.ApplyUpdates;
+  DataModule1.debugOut(5, 'stop  DBNavigator1Click: ' + GetEnumName(TypeInfo(TDBNavButtonType),Ord(Button)));
 end;
 
 procedure TFDataedit.FormCreate(Sender: TObject);

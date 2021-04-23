@@ -1,16 +1,17 @@
 object FOnTop: TFOnTop
   Left = 300
-  Height = 242
+  Height = 229
   Top = 317
-  Width = 1206
+  Width = 1143
   BorderIcons = []
   Caption = 'uibtime - ontop'
-  ClientHeight = 242
-  ClientWidth = 1206
+  ClientHeight = 229
+  ClientWidth = 1143
   Color = clBtnFace
   DefaultMonitor = dmPrimary
+  DesignTimePPI = 91
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   FormStyle = fsStayOnTop
   OnActivate = FormActivate
@@ -24,13 +25,13 @@ object FOnTop: TFOnTop
   LCLVersion = '2.0.12.0'
   object ToolBar1: TToolBar
     Left = 0
-    Height = 29
+    Height = 28
     Top = 0
-    Width = 1098
+    Width = 1040
     Align = alNone
     AutoSize = True
-    ButtonHeight = 25
-    ButtonWidth = 23
+    ButtonHeight = 24
+    ButtonWidth = 22
     ChildSizing.LeftRightSpacing = 3
     ChildSizing.HorizontalSpacing = 3
     ChildSizing.ShrinkHorizontal = crsScaleChilds
@@ -39,7 +40,7 @@ object FOnTop: TFOnTop
     EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
     EdgeOuter = esRaised
     Font.Color = clWindowText
-    Font.Height = -12
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     PopupMenu = DataModule1.PopupMenu1
@@ -47,15 +48,15 @@ object FOnTop: TFOnTop
     Wrapable = False
     object Btn_work_description: TSpeedButton
       Left = 3
-      Height = 25
+      Height = 24
       Top = 2
-      Width = 93
+      Width = 88
       BorderSpacing.Left = 1
       BorderSpacing.Right = 1
       BorderSpacing.Around = 2
       Caption = 'Bericht'
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Glyph.Data = {
         8A020000424D8A020000000000008A0000007C00000010000000100000000100
@@ -84,14 +85,14 @@ object FOnTop: TFOnTop
       ParentFont = False
     end
     object Edit1: TEdit
-      Left = 119
-      Height = 25
+      Left = 113
+      Height = 24
       Top = 2
-      Width = 300
+      Width = 284
       AutoSize = False
       Color = clWhite
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       OnChange = Edit1Change
       OnEnter = Edit1Enter
@@ -102,12 +103,12 @@ object FOnTop: TFOnTop
       Text = 'Edit1'
     end
     object BtnTreeview: TSpeedButton
-      Left = 419
-      Height = 25
+      Left = 397
+      Height = 24
       Top = 2
-      Width = 23
+      Width = 22
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Glyph.Data = {
         76010000424D7601000000000000760000002800000020000000100000000100
@@ -128,10 +129,10 @@ object FOnTop: TFOnTop
       ParentFont = False
     end
     object DBLCB_topten_event: TDBLookupComboBox
-      Left = 442
-      Height = 20
+      Left = 419
+      Height = 24
       Top = 2
-      Width = 300
+      Width = 284
       AutoComplete = True
       AutoDropDown = True
       AutoSelect = False
@@ -140,7 +141,7 @@ object FOnTop: TFOnTop
       DataSource = DataModule1.DSuibevent
       DropDownCount = 20
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       KeyField = 'event'
       ListFieldIndex = 0
       ListSource = DS_topten_events
@@ -153,13 +154,13 @@ object FOnTop: TFOnTop
       TabOrder = 1
     end
     object EditProjektzeit: TEdit
-      Left = 742
-      Height = 25
+      Left = 703
+      Height = 24
       Top = 2
-      Width = 155
+      Width = 147
       AutoSize = False
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       ParentFont = False
       ParentShowHint = False
@@ -167,10 +168,10 @@ object FOnTop: TFOnTop
       TabOrder = 2
     end
     object Labeluid: TLabel
-      Left = 897
-      Height = 25
+      Left = 850
+      Height = 24
       Top = 2
-      Width = 87
+      Width = 82
       Alignment = taCenter
       AutoSize = False
       BorderSpacing.Around = 2
@@ -179,7 +180,7 @@ object FOnTop: TFOnTop
       Color = clBtnFace
       Font.CharSet = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
@@ -189,13 +190,13 @@ object FOnTop: TFOnTop
       Transparent = False
     end
     object BtnBye: TSpeedButton
-      Left = 984
-      Height = 25
+      Left = 932
+      Height = 24
       Top = 2
-      Width = 112
+      Width = 106
       Caption = 'Tschüß'
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Glyph.Data = {
         76010000424D7601000000000000760000002800000020000000100000000100
@@ -216,12 +217,12 @@ object FOnTop: TFOnTop
       ParentFont = False
     end
     object BtnUnlock: TSpeedButton
-      Left = 96
-      Height = 25
+      Left = 91
+      Height = 24
       Top = 2
-      Width = 23
+      Width = 22
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Glyph.Data = {
         36010000424D3601000000000000360000002800000008000000080000000100
@@ -240,15 +241,15 @@ object FOnTop: TFOnTop
     end
   end
   object BtnProjekt: TSpeedButton
-    Left = 880
-    Height = 55
-    Top = 143
-    Width = 96
+    Left = 834
+    Height = 52
+    Top = 136
+    Width = 91
     BorderSpacing.Around = 2
     Caption = 'Projekt'
     Enabled = False
     Font.Color = clWindowText
-    Font.Height = -12
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Glyph.Data = {
       8A020000424D8A020000000000008A0000007C00000010000000100000000100
@@ -280,51 +281,49 @@ object FOnTop: TFOnTop
     ParentFont = False
   end
   object BtnFreeFlogin: TButton
-    Left = 136
-    Height = 25
-    Top = 184
-    Width = 152
+    Left = 129
+    Height = 24
+    Top = 174
+    Width = 144
     Caption = 'BtnFreeFlogin'
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
     OnClick = BtnFreeFloginClick
+    ParentFont = False
     TabOrder = 1
   end
   object TimerNachfrage: TTimer
     Enabled = False
     OnTimer = TimerNachfrageTimer
-    Left = 68
-    Top = 60
-  end
-  object TimerCallCount: TTimer
-    Enabled = False
-    OnTimer = TimerCallCountTimer
-    Left = 172
-    Top = 60
+    Left = 64
+    Top = 57
   end
   object TimerScrollDisable: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = TimerScrollDisableTimer
-    Left = 276
-    Top = 60
+    Left = 262
+    Top = 57
   end
   object TimerNoDblClick: TTimer
     Enabled = False
     Interval = 300
     OnTimer = TimerNoDblClickTimer
-    Left = 396
-    Top = 60
+    Left = 375
+    Top = 57
   end
   object Timer_top_ten: TTimer
     Interval = 3600000
     OnTimer = Timer_top_tenTimer
-    Left = 524
-    Top = 60
+    Left = 497
+    Top = 57
   end
   object TimerProjektzeit: TTimer
     Interval = 60000
     OnTimer = TimerProjektzeitTimer
-    Left = 644
-    Top = 60
+    Left = 610
+    Top = 57
   end
   object QueryDefproj: TSQLQuery
     FieldDefs = <>
@@ -340,8 +339,8 @@ object FOnTop: TFOnTop
         Name = 'uid'
         ParamType = ptInput
       end>
-    Left = 68
-    Top = 124
+    Left = 64
+    Top = 118
   end
   object QueryUserEvents: TSQLQuery
     FieldDefs = <    
@@ -374,16 +373,16 @@ object FOnTop: TFOnTop
         ParamType = ptInput
       end>
     UpdateMode = upWhereAll
-    Left = 172
-    Top = 124
+    Left = 163
+    Top = 118
   end
   object QueryUserButtons: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    Left = 276
-    Top = 124
+    Left = 262
+    Top = 118
   end
   object Query_top_ten_events: TSQLQuery
     FieldDefs = <>
@@ -411,39 +410,39 @@ object FOnTop: TFOnTop
         Name = 'inittime'
         ParamType = ptInput
       end>
-    Left = 396
-    Top = 124
+    Left = 375
+    Top = 118
   end
   object DS_topten_events: TDataSource
     AutoEdit = False
     DataSet = Query_top_ten_events
-    Left = 396
-    Top = 180
+    Left = 375
+    Top = 171
   end
   object QueryProjektzeit: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    Left = 524
-    Top = 124
+    Left = 497
+    Top = 118
   end
   object DSQueryaktprojekt: TDataSource
-    Left = 644
-    Top = 140
+    Left = 610
+    Top = 133
   end
   object TimerAfterTopTenEnter: TTimer
     Enabled = False
     Interval = 5000
     OnTimer = TimerAfterTopTenEnterTimer
-    Left = 792
-    Top = 60
+    Left = 751
+    Top = 57
   end
   object TimerKillFlogin: TTimer
     Enabled = False
-    Interval = 3000
+    Interval = 5000
     OnTimer = TimerKillFloginTimer
-    Left = 928
-    Top = 64
+    Left = 880
+    Top = 61
   end
 end

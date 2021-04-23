@@ -6,7 +6,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, RichMemo, LazUTF8, RegExpr;
+  StdCtrls, ExtCtrls, RichMemo,
+  LazUTF8,
+  LCLIntf,
+  RegExpr;
 
 type
   { TFormRegExpr }
@@ -23,10 +26,12 @@ type
     EditRegExpr: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    LabelURLde: TLabel;
     LabelFlags: TLabel;
     LabelNotice: TLabel;
     LabelRegExpr: TLabel;
     LabelText: TLabel;
+    LabelURLen: TLabel;
     RichMemoText: TRichMemo;
     StaticTextResult: TStaticText;
     procedure ButtonClearClick(Sender: TObject);
@@ -37,8 +42,12 @@ type
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox5Click(Sender: TObject);
     procedure CheckBox6Click(Sender: TObject);
+    procedure FlowPanel2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure LabelURLenClick(Sender: TObject);
+    procedure LabelURLenMouseEnter(Sender: TObject);
+    procedure LabelURLenMouseLeave(Sender: TObject);
 
   private
 
@@ -208,6 +217,11 @@ begin
   EditRegExpr.Text := regExpr;
 end;
 
+procedure TFormRegExpr.FlowPanel2Click(Sender: TObject);
+begin
+
+end;
+
 procedure TFormRegExpr.ButtonExamineClick(Sender: TObject);
 begin
   if length(EditRegExpr.Text) > 0 then
@@ -286,6 +300,21 @@ end;
 procedure TFormRegExpr.FormDestroy(Sender: TObject);
 begin
   RegExpObj.Free;
+end;
+
+procedure TFormRegExpr.LabelURLenClick(Sender: TObject);
+begin
+  OpenURL(TLabel(Sender).Caption);
+end;
+
+procedure TFormRegExpr.LabelURLenMouseEnter(Sender: TObject);
+begin
+  screen.Cursor:= crHandPoint;
+end;
+
+procedure TFormRegExpr.LabelURLenMouseLeave(Sender: TObject);
+begin
+  screen.Cursor:= crDefault;
 end;
 
 end.

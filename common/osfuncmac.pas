@@ -30,6 +30,7 @@ uses
   fileutil,
   unix,
   baseunix,
+  osregex,
   SysUtils;
 
 function checkForMacosDependencies(var Errstr: string): boolean;
@@ -287,13 +288,38 @@ end;
 function getProfilesDirListMac: TStringList;
 var
   resultstring: string;
-  cmd, report: string;
-  outlines, lineparts: TStringList;
+  cmd, report, user: string;
+  resultlines1, resultlines3 : TStringList;
+  resultlines2  : TXStringList;
   ExitCode: longint;
-  i: integer;
+  i, k : integer;
 begin
   Result := TStringList.Create;
-  LogDatei.log('getProfilesDirListMac is not implemented on macos', LLError);
+  resultlines2 := TXStringList.Create;
+  //resultlines3 := TStringList.Create;
+  resultlines1 := FindAllDirectories('/Users',false);
+  cmd := 'dscl . list /Users';
+  if not RunCommandAndCaptureOut(cmd, True, resultlines2, report, SW_HIDE, ExitCode,false,2) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+  end
+  else
+  begin
+    resultlines2 := TXStringlist(removeFromListByContainingRegex('^_\S*' , resultlines2));
+    for i := 0 to resultlines2.Count -1 do
+    begin
+      user := resultlines2.Strings[i];
+      resultstring := getCommandResult('dscl . -read /Users/'+user+' NFSHomeDirectory');
+      resultstring := trim(copy(resultstring,18,length(resultstring)));
+      for k := 0 to resultlines1.Count - 1 do
+      begin
+        LogDatei.log_prog(resultlines1.Strings[k]+' = '+resultstring,LLdebug);
+                  if resultlines1.Strings[k] = resultstring then
+                    Result.Add(resultstring);
+      end;
+    end;
+  end;
+  //LogDatei.log('getProfilesDirListMac is not implemented on macos', LLError);
 end;
 
 function getMacosVersionMap: TStringList;

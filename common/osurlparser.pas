@@ -16,6 +16,7 @@ function parseUrl(url : string) : TStringList;
 // Return url components
 var
   uriobj : TUri;
+  tmpstr : string;
 begin
   uriobj := ParseURI(url);
 
@@ -23,7 +24,11 @@ begin
   result.Add('Protocol='+uriobj.Protocol);
   result.Add('Username='+uriobj.Username);
   result.Add('Password='+uriobj.Password);
-  result.Add('Host='+uriobj.Host);
+  { In the case of <host>:<path> we will get the host with trailing colon
+   and (by the way) it should not be any where else }
+  tmpstr :=  uriobj.Host;
+  tmpstr := StringReplace(tmpstr, ':', '', [rfReplaceAll]);
+  result.Add('Host='+ tmpstr);
   result.Add('Port='+IntToStr(uriobj.Port));
   result.Add('Path='+uriobj.Path);
   result.Add('Document='+uriobj.Document);
