@@ -43,6 +43,8 @@ type
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     // set default values for all required variables
     procedure SetDefaultValues;
+    // try getting latest l-opsi-server and then define the DirClientData to use
+    procedure DefineDirClientData;
     // write properties in properties.conf file
     procedure WritePropsToFile;
     // install opsi-script, l-opsi-server
@@ -139,6 +141,8 @@ type
       PropsFile := TStringList.Create;
       try
         begin
+          //writeln(getOptionValue('f', 'file'));
+          //writeln(FileExists(getOptionValue('f', 'file')).ToString(TUseBoolStrs.true));
           PropsFile.LoadFromFile(getOptionValue('f', 'file'));
           ReadProps;
         end;
@@ -207,13 +211,32 @@ type
     ipNumber := 'auto';
   end;
 
+  procedure TQuickInstall.DefineDirClientData;
+  begin
+    DirClientData := ExtractFilePath(ParamStr(0));
+    Delete(DirClientData, Length(DirClientData), 1);
+    DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
+    // try downloading latest l-opsi-server and use respective DirClientData
+    writeln(rsWait);
+    if getLOpsiServer(QuickInstallCommand, distroName) then
+    begin
+      LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
+      DirClientData += '_downloaded/CLIENT_DATA/';
+    end
+    else
+    begin
+      LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
+        LLnotice);
+      DirClientData += '/CLIENT_DATA/';
+    end;
+  end;
+
   // write properties in properties.conf file
   procedure TQuickInstall.WritePropsToFile;
   begin
     LogDatei.log('Entered WritePropsToFile', 0);
     // write file text
     FileText := TStringList.Create;
-    QuickInstallCommand := TRunCommandElevated.Create('', False);
 
     if reboot = rsYes then
       FileText.Add('allow_reboot=true')
@@ -246,24 +269,9 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
-    DirClientData := ExtractFilePath(ParamStr(0));
-    Delete(DirClientData, Length(DirClientData), 1);
-    DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
-    // try downloading latest l-opsi-server and use respective DirClientData
-    writeln(rsWait);
-    if getLOpsiServer(QuickInstallCommand, distroName) then
-    begin
-      LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
-      DirClientData += '_downloaded/CLIENT_DATA/';
-    end
-    else
-    begin
-      LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
-        LLnotice);
-      DirClientData += '/CLIENT_DATA/';
-    end;
+    defineDirClientData;
 
-    // write in l-opsi-server.conf file(for tests):
+    // write in l-opsi-server.conf file (for tests):
     if not FileExists('l-opsi-server.conf') then
       QuickInstallCommand.Run('touch l-opsi-server.conf', Output);
     FileText.SaveToFile('l-opsi-server.conf');
@@ -1243,6 +1251,8 @@ type
           opsiVersion := 'Opsi 4.2';
       end;
     end;
+
+    DefineDirClientData;
     // take text of PropsFile as text for properties.conf
     PropsFile.SaveToFile(DirClientData + 'properties.conf');
 
@@ -1285,6 +1295,7 @@ begin
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
   QuickInstall := TQuickInstall.Create(nil);
+  QuickInstall.QuickInstallCommand := TRunCommandElevated.Create('', False);
 
   // get default language (system language)
   GetLanguageIDs(Lang, DefLang);
