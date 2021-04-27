@@ -143,7 +143,7 @@ type
           ReadProps;
         end;
       except
-        writeln('Executing Opsi Quick-Install didn''t work!');
+        writeln('Executing Opsi Quick-Install with properties file didn''t work!');
       end;
       PropsFile.Free;
       Terminate;
@@ -1278,7 +1278,9 @@ begin
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
-  LogDatei.log('Log file created', 0);
+  LogDatei.log('Log file created', LLnothing);
+  SetCurrentDir(ExtractFilePath(ParamStr(0)));
+  LogDatei.log('Working directory: ' + GetCurrentDir, LLinfo);
 
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 

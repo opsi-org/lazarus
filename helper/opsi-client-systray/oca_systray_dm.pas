@@ -108,9 +108,13 @@ begin
   Result := '';
   size := 101;
   Buffer := StrAlloc(101);
-  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
-  if usedsize <> 0 then
-    Result := StrPas(Buffer);
+  try
+    usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
+    if usedsize <> 0 then
+      Result := StrPas(Buffer);
+  finally
+    StrDispose(Buffer);
+  end;
 end;
 
 {$ENDIF WINDOWS}
