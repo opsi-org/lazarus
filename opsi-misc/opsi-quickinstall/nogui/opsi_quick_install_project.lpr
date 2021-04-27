@@ -308,9 +308,11 @@ type
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'Opsi 4.1' then
-      url := MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
+      MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
     else
-      url := MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+      MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+    // define repo url
+    url := repo + repoKind + '/' + DistrInfo.DistrUrlPart;
 
     // !following lines need an existing LogDatei
     if (distroName = 'openSUSE') or (distroName = 'SUSE') then
@@ -1249,6 +1251,8 @@ type
           opsiVersion := 'Opsi 4.1'
         else
           opsiVersion := 'Opsi 4.2';
+        repo := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
+          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
       end;
     end;
 
