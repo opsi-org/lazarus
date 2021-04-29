@@ -1,0 +1,14 @@
+ 
+opsi-quickinstall (4.2.0.1) experimental; urgency=low
+  * nogui:
+    * error of empty l-opsi-server folder directory in option -f <file> fixed
+    * use repo from file in option -f <file> instead of default repo
+  * gui:
+    * layout improved
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Thu,  29 Apr 2021 13:00:00 +0200
+
+
+opsi-quickinstall (4.2.0.0) experimental; urgency=low
+  * initial
+  * installing opsi 4.2 from testing or experimental
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Thu,  29 Apr 2021 13:00:00 +0200
