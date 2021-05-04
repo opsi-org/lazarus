@@ -24,7 +24,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -240,8 +240,8 @@
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="58"/>
-        <CursorPos X="48" Y="87"/>
+        <TopLine Value="73"/>
+        <CursorPos X="29" Y="81"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -285,16 +285,16 @@
       <Unit12>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
-        <TopLine Value="1282"/>
-        <CursorPos X="4" Y="1299"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="291"/>
+        <CursorPos X="25" Y="306"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <EditorIndex Value="1"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="291"/>
-          <CursorPos X="25" Y="306"/>
+          <EditorIndex Value="10"/>
+          <TopLine Value="1282"/>
+          <CursorPos X="4" Y="1299"/>
         </ExtraEditor1>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
