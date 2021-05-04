@@ -11,6 +11,7 @@ opsi-winst/opsi-script (4.12.4.18) stable; urgency=low
  * osparser: doAktionen: executesection: call sections with catchout=true
    fixes: nooutput in log and showoutput
  * osfuncmac: getProfilesDirListMac implemented
+ * osmain: allow /batch with /productid and opsi-service parameters
 
 -- d.oertel <d.oertel@uib.de> Wed, 14 Apr 2021 15:00
 
