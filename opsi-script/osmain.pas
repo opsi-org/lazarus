@@ -2773,7 +2773,7 @@ begin
               ProgramMode := pmInfo;
               exit;
             end
-            else if NumberOfTrueParameters >= 1 then
+            else if (NumberOfTrueParameters >= 1) and (ProgramMode = pmNotSet) then
               (* pmBuildPC geht nicht mehr *)
             begin
               ProgramMode := pmInfo;
