@@ -2751,7 +2751,7 @@ begin
         else if Lowercase(Parameter) = 'opsiservice' then
         begin
           try
-            if ProgramMode <> pmNotSet then
+            if not ((ProgramMode = pmNotSet) or (ProgramMode = pmBatch)) then
             begin
               ProgramMode := pmInfo;
               exit;
@@ -2765,6 +2765,7 @@ begin
             else
             begin
               try
+                if not (ProgramMode = pmBatch) then
                 ProgramMode := pmBuildPC_service;
 
                 computername := '';
