@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, osRunCommandElevated, osLog, Process, osDistributionInfo;
 
 const
-  downloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
+  downloadDir = 'download.uib.de/opsi4.2/stable/packages/linux/localboot/';
 
 function extractFile(fileName: string): boolean;
 function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
