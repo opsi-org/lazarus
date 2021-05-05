@@ -127,7 +127,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="opsi_quick_install_project"/>
+      <Filename Value="../../../../Test/opsi-quickinstall/gui/opsi_quick_install_project"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
