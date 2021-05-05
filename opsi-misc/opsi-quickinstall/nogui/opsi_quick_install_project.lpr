@@ -219,16 +219,9 @@ type
     // try downloading latest l-opsi-server and use respective DirClientData
     writeln(rsWait);
     if getLOpsiServer(QuickInstallCommand, distroName) then
-    begin
-      LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
-      DirClientData += '_downloaded/CLIENT_DATA/';
-    end
+      DirClientData += '_downloaded/CLIENT_DATA/'
     else
-    begin
-      LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
-        LLnotice);
       DirClientData += '/CLIENT_DATA/';
-    end;
   end;
 
   // write properties in properties.conf file

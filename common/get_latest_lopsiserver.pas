@@ -94,11 +94,25 @@ begin
   // tidy up
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   LOpsiServerCommand.Run('rm l-opsi-server_*.opsi', Output);
-  if Pos('Error', Output) > 0 then Result := False;
+  if Pos('Error', Output) > 0 then
+    Result := False;
   LOpsiServerCommand.Run(
-    'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio', Output);
-  if Pos('Error', Output) > 0 then Result := False;
+    'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio',
+    Output);
+  if Pos('Error', Output) > 0 then
+    Result := False;
   //if not DirectoryExists('../l-opsi-server_downloaded') then  Result := False;
+
+  if Result then
+    LogDatei.log('Latest l-opsi-server successfully downloaded (version ' +
+      los_version + ')', LLInfo)
+  else
+    LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
+      LLnotice);
+  FindClose(los_search);
+
+  // try l-opsi-server from master that is not on download.uib
+  Result := False;
 end;
 
 end.

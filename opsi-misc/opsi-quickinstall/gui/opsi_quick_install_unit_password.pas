@@ -123,16 +123,9 @@ begin
   FClientDataDir := ExtractFilePath(FClientDataDir) + 'l-opsi-server';
   // try downloading latest l-opsi-server and use respective DirClientData
   if getLOpsiServer(TouchCommand, Data.distroName) then
-  begin
-    LogDatei.log('Latest l-opsi-server successfully downloaded', LLInfo);
-    FClientDataDir += '_downloaded/CLIENT_DATA/';
-  end
+    FClientDataDir += '_downloaded/CLIENT_DATA/'
   else
-  begin
-    LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
-      LLnotice);
     FClientDataDir += '/CLIENT_DATA/';
-  end;
   Password.clientDataDir := FClientDataDir;
 
   // following equals no-gui WritePropsToFile
