@@ -52,9 +52,9 @@ begin
   // installing required packages:
   shellCommand := GetPackageManagementShellCommand(distroName);
   LOpsiServerCommand.Run(shellCommand + 'update', Output);
-  LOpsiServerCommand.Run(shellCommand + 'install wget --assume-yes', Output);
-  LOpsiServerCommand.Run(shellCommand + 'install cpio --assume-yes', Output);
-  LOpsiServerCommand.Run(shellCommand + 'install gzip --assume-yes', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install wget', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install cpio', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install gzip', Output);
 
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
 

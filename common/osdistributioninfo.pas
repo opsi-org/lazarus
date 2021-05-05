@@ -170,12 +170,12 @@ function GetPackageManagementShellCommand(distroName: string): string;
 begin
   {CentOS and RedHat}
   if (distroName = 'CentOS') or (distroName = 'RedHatEnterprise') then
-    Result := 'yum '
+    Result := 'yum -y '
   {Debian, Ubuntu, Univention}
   // univention is based on debian
   else if (distroName = 'Debian') or (distroName = 'Ubuntu') or
     (distroName = 'Univention') then
-    Result := 'apt '
+    Result := 'apt --assume-yes '
   {OpenSuse and SLES}
   else if (distroName = 'openSUSE') or (distroName = 'SUSE') then
     Result := 'zypper --non-interactive ';
