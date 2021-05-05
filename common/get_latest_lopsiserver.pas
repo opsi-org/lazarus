@@ -44,7 +44,8 @@ end;
 function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
   distroName: string): boolean;
 var
-  shellCommand, Output: string;
+  shellCommand, Output, los_version: string;
+  los_search: TSearchRec;
 begin
   LogDatei.log('Try downloading latest l-opsi-server:', LLInfo);
   Result := True;
@@ -62,11 +63,25 @@ begin
   LOpsiServerCommand.Run('wget -A l-opsi-server_*.opsi -r -l 1 https://' +
     downloadDir + ' -P ../', Output);
 
+  // read in version of downloaded l-opsi-server to write it in the quickinstall log
+  if FindFirst('../' + downloadDir + 'l-opsi-server_*.opsi', faAnyFile and
+    faDirectory, los_search) = 0 then
+  begin
+    los_version := los_search.Name;
+    Delete(los_version, 1, Pos('_', los_version));
+    Delete(los_version, Pos('.opsi', los_version),
+      los_version.Length - Pos('.opsi', los_version) + 1);
+  end
+  else
+    Result := False;
+
+
   // create l-opsi-server directory for the downloaded version
   if DirectoryExists('../l-opsi-server_downloaded') then
     LOpsiServerCommand.Run('rm -rf ../l-opsi-server_downloaded', Output);
   LOpsiServerCommand.Run(
-    'mkdir ../l-opsi-server_downloaded ../l-opsi-server_downloaded/CLIENT_DATA ../l-opsi-server_downloaded/OPSI', Output);
+    'mkdir ../l-opsi-server_downloaded ../l-opsi-server_downloaded/CLIENT_DATA ../l-opsi-server_downloaded/OPSI',
+    Output);
 
   // go into downloaded directory and move l-opsi-server_*.opsi to the current directory
   LOpsiServerCommand.Run('mv ../' + downloadDir + 'l-opsi-server_*.opsi ./', Output);
@@ -77,10 +92,13 @@ begin
   if not extractFile('l-opsi-server_*.opsi') then
     Result := False;
   LOpsiServerCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
-  LOpsiServerCommand.Run('mv CLIENT_DATA.cpio ../l-opsi-server_downloaded/CLIENT_DATA/', Output);
-  if Pos('Error', Output) > 0 then Result := False;
+  LOpsiServerCommand.Run('mv CLIENT_DATA.cpio ../l-opsi-server_downloaded/CLIENT_DATA/',
+    Output);
+  if Pos('Error', Output) > 0 then
+    Result := False;
   LOpsiServerCommand.Run('mv OPSI.cpio ../l-opsi-server_downloaded/OPSI/', Output);
-  if Pos('Error', Output) > 0 then Result := False;
+  if Pos('Error', Output) > 0 then
+    Result := False;
 
   // go into the respective directories and extract the files from CLIENT_DATA.cpio and OPSI.cpio
   // cpio can only extract into the current directory
