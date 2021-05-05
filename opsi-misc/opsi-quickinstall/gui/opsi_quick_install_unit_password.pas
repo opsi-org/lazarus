@@ -92,7 +92,7 @@ var
   FileText: TStringList;
   TouchCommand: TRunCommandElevated;
 begin
-  // Write user input in l-opsi-server.conf (for tests) and properties.conf file:
+  // Write user input in properties.conf file:
   FileText := TStringList.Create;
   TouchCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
     Password.RadioBtnSudo.Checked);
@@ -129,12 +129,6 @@ begin
   Password.clientDataDir := FClientDataDir;
 
   // following equals no-gui WritePropsToFile
-  // write in l-opsi-server.conf file:
-  if not FileExists('l-opsi-server.conf') then
-    TouchCommand.Run('touch l-opsi-server.conf', Output);
-  TouchCommand.Run('chown -c $USER l-opsi-server.conf', Output);
-  FileText.SaveToFile('l-opsi-server.conf');
-
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
   if not FileExists(FClientDataDir + 'properties.conf') then

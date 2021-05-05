@@ -264,10 +264,6 @@ type
 
     defineDirClientData;
 
-    // write in l-opsi-server.conf file (for tests):
-    if not FileExists('l-opsi-server.conf') then
-      QuickInstallCommand.Run('touch l-opsi-server.conf', Output);
-    FileText.SaveToFile('l-opsi-server.conf');
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
