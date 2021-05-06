@@ -20794,7 +20794,8 @@ begin
                     begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
-                      LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
+                      LogDatei.addToNoLogFiles(ExtractFileName(fullincfilename));
+                      LogDatei.log_prog('added to NoLogFiles: ' + ExtractFileName(fullincfilename), LLDebug2);
                       inclist := TXStringList.Create;
 
                       hasBom := getFileBom(fullincfilename, detectedEncoding);

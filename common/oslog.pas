@@ -38,7 +38,7 @@ uses
   osconf,
   //osdefinedfunctions,
   {$IFDEF GUI}
-    osGUIControl,
+  osGUIControl,
   {$ENDIF GUI}
 {$ENDIF OPSISCRIPT}
 {$IFDEF WINDOWS}
@@ -107,7 +107,7 @@ type
     FStandardMainLogPath: string;
     FStandardPartLogPath: string;
     FUsedLogLevel: integer;
-    FNoLogFiles : TStringlist;
+    FNoLogFiles: TStringList;
 
 
   protected
@@ -162,7 +162,7 @@ type
 
 
     procedure SetNumberOfErrors(Number: integer);
-    procedure addToNoLogFiles(filename : string);
+    procedure addToNoLogFiles(filename: string);
     property LogLevel: integer read FLogLevel write FLogLevel;
     property NumberOfWarnings: integer read FNumberOfWarnings write FNumberOfWarnings;
     property NumberOfErrors: integer read FNumberOfErrors write SetNumberOfErrors;
@@ -527,7 +527,7 @@ var
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
-  startupmessages.Add('Cleanup old part files at '+ DateTimeToStr(Now));
+  startupmessages.Add('Cleanup old part files at ' + DateTimeToStr(Now));
   files := TuibFileInstall.Create;
   try
     files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
@@ -582,11 +582,13 @@ begin
       // create new Log File
       LogDatei.Appendmode := False;
       {$IFDEF OPSISCRIPT}
-      if assigned(startupmessages) then startupmessages.Add('Backup old log files at '+ DateTimeToStr(Now));
+      if assigned(startupmessages) then
+        startupmessages.Add('Backup old log files at ' + DateTimeToStr(Now));
       {$ENDIF OPSISCRIPT}
       MakeBakFile(LogDateiName, 8);
       {$IFDEF OPSISCRIPT}
-      if assigned(startupmessages) then startupmessages.Add('Initiate new log file at '+ DateTimeToStr(Now));
+      if assigned(startupmessages) then
+        startupmessages.Add('Initiate new log file at ' + DateTimeToStr(Now));
       {$ENDIF OPSISCRIPT}
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
@@ -640,10 +642,10 @@ begin
   FStandardLogPath := defaultStandardLogPath;
   FStandardMainLogPath := defaultStandardMainLogPath;
   FStandardPartLogPath := defaultStandardPartLogPath;
-  FNoLogFiles := TStringlist.Create;
+  FNoLogFiles := TStringList.Create;
   { we want no duplicates in this list - so we have not to check at add }
-  FNoLogFiles.Sorted:=true;
-  FNoLogFiles.Duplicates:=dupIgnore;
+  FNoLogFiles.Sorted := True;
+  FNoLogFiles.Duplicates := dupIgnore;
 end;
 
 
@@ -1279,7 +1281,7 @@ var
   //usedloglevel: integer = 0;
   i: integer;
   dummybool: boolean;
-  orgfilename, mainfilename, sectionFilename : string;
+  orgfilename, mainfilename, sectionFilename: string;
   {$IFDEF GUI}
   dlgresult: TModalresult;
   {$ENDIF}
@@ -1304,19 +1306,34 @@ begin
 
       {$IFDEF OPSISCRIPT}
       // running defined function ?
+      // if Fdebug_prog then
+      //    WriteLogLine(LogMainFileF, '==> Are in definde function; inDefFuncIndex: '+inttostr(inDefFuncIndex));
       if inDefFuncIndex > -1 then
       begin
         orgfilename := definedFunctionArray[inDefFuncIndex].OriginFile;
         mainfilename := ExtractFileName(script.Filename);
         //sectionFilename := ExtractFileName(aktsection.Filename);
         //if orgfilename <> mainfilename
-        if FNoLogFiles.IndexOf(orgfilename) <> -1
-           then
+        (*
+        if Fdebug_prog then
+        begin
+        WriteLogLine(LogMainFileF, '==> We are in definde function from file: '+orgfilename);
+        WriteLogLine(LogMainFileF, '==> FNoLogFiles.IndexOf(orgfilename): '+inttostr(FNoLogFiles.IndexOf(orgfilename)));
+        end;
+        *)
+        if FNoLogFiles.IndexOf(orgfilename) <> -1 then
+        begin
+          //if Fdebug_prog then
+          //WriteLogLine(LogMainFileF, '==> defined function imported from lib: '+orgfilename);
           // defined function imported from lib
           // do we want to debug libraries ?
           if (not debug_lib) then
+          begin
             // only Warnings and less
             FUsedLogLevel := LLWarning;
+            //WriteLogLine(LogMainFileF, '==> defined function (debug_lib=false) loglevel: '+inttostr(FUsedLogLevel));
+          end;
+        end;
 
        (*
        if Assigned(script) then
@@ -1331,7 +1348,7 @@ begin
                 usedloglevel :=  LLWarning;
          end;
          *)
-         end;
+      end;
        {$ENDIF}
 
 
@@ -1393,7 +1410,8 @@ begin
         begin
           // commented out while 4.11.2 debugging (do)
           if (FUsedLogLevel >= LevelOfLine) then
-            FBatchOberflaeche.SetMessageText(copy(peakindicator, 1, peaklen), mActivity); //setActivityLabel(copy(peakindicator, 1, peaklen));
+            FBatchOberflaeche.SetMessageText(copy(peakindicator, 1, peaklen), mActivity);
+          //setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
         {$ENDIF}
         {$ENDIF}
@@ -1616,7 +1634,7 @@ begin
   FNumberOfErrors := Number;
 end;
 
-procedure TLogInfo.addToNoLogFiles(filename : string);
+procedure TLogInfo.addToNoLogFiles(filename: string);
 begin
   FNoLogFiles.add(filename);
 end;
@@ -1627,8 +1645,8 @@ var
   includelogStrList: TStringList;
   //supportedEncodings: TStringList;
   aktline, includeLogLineStart, includelogLinecount, i: integer;
-  bool : boolean;
-  str : string;
+  bool: boolean;
+  str: string;
 begin
   try
     includelogStrList := TStringList.Create;
