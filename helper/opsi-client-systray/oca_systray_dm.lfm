@@ -1,6 +1,6 @@
 object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
-  OldCreateOrder = False
+  OldCreateOrder = True
   Height = 283
   HorizontalOffset = 367
   VerticalOffset = 440

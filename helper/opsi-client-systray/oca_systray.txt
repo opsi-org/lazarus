@@ -1,5 +1,11 @@
 
 [changelog]
+opsi_client_systray  4.1.2.4
+
+  * dispose allocated memory for string (StrDispose) in function GetSystemDefaultLocale
+
+-- Jan Werner <j.werner@uib.de>  Mon, 10 May 2021:14:18:00 +0200
+
 opsi_client_systray  4.1.2.3
 
   * macos: safe libraryload
