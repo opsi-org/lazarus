@@ -102,8 +102,8 @@ begin
   // $ mv ip.py /usr/local/bin/ip
   if not which('ip', errstr) then
   begin
-    exitcode := RunCommandIndir('', 'curl',
-      ['-s', '-o', '/usr/local/bin/ip', '-L',
+    exitcode := RunCommandIndir('', 'curl', ['-s', '-o',
+      '/usr/local/bin/ip', '-L',
       'https://github.com/brona/iproute2mac/raw/master/src/ip.py'], output, outint, []);
     exitcode := RunCommandIndir('', 'chmod', ['-x', ''], output, outint, []);
     if not which('ip', errstr) then
@@ -289,33 +289,48 @@ function getProfilesDirListMac: TStringList;
 var
   resultstring: string;
   cmd, report, user: string;
-  resultlines1, resultlines3 : TStringList;
-  resultlines2  : TXStringList;
+  resultlines1, resultlines3: TStringList;
+  {$IFDEF OPSISCRIPT}
+  resultlines2: TXStringList;
+  {$ELSE OPSISCRIPT}
+  resultlines2: TStringList;
+  {$ENDIF OPSISCRIPT}
+
   ExitCode: longint;
-  i, k : integer;
+  i, k: integer;
 begin
   Result := TStringList.Create;
+  {$IFDEF OPSISCRIPT}
   resultlines2 := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+  resultlines2 := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
   //resultlines3 := TStringList.Create;
-  resultlines1 := FindAllDirectories('/Users',false);
+  resultlines1 := FindAllDirectories('/Users', False);
   cmd := 'dscl . list /Users';
-  if not RunCommandAndCaptureOut(cmd, True, resultlines2, report, SW_HIDE, ExitCode,false,2) then
+  if not RunCommandAndCaptureOut(cmd, True, resultlines2, report,
+    SW_HIDE, ExitCode, False, 2) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
   end
   else
   begin
-    resultlines2 := TXStringlist(removeFromListByContainingRegex('^_\S*' , resultlines2));
-    for i := 0 to resultlines2.Count -1 do
+     {$IFDEF OPSISCRIPT}
+    resultlines2 := TXStringlist(removeFromListByContainingRegex('^_\S*', resultlines2));
+  {$ELSE OPSISCRIPT}
+    resultlines2 := removeFromListByContainingRegex('^_\S*', resultlines2);
+  {$ENDIF OPSISCRIPT}
+
+    for i := 0 to resultlines2.Count - 1 do
     begin
       user := resultlines2.Strings[i];
-      resultstring := getCommandResult('dscl . -read /Users/'+user+' NFSHomeDirectory');
-      resultstring := trim(copy(resultstring,18,length(resultstring)));
+      resultstring := getCommandResult('dscl . -read /Users/' + user + ' NFSHomeDirectory');
+      resultstring := trim(copy(resultstring, 18, length(resultstring)));
       for k := 0 to resultlines1.Count - 1 do
       begin
-        LogDatei.log_prog(resultlines1.Strings[k]+' = '+resultstring,LLdebug);
-                  if resultlines1.Strings[k] = resultstring then
-                    Result.Add(resultstring);
+        LogDatei.log_prog(resultlines1.Strings[k] + ' = ' + resultstring, LLdebug);
+        if resultlines1.Strings[k] = resultstring then
+          Result.Add(resultstring);
       end;
     end;
   end;
@@ -384,11 +399,11 @@ begin
   if pos('//', myshare) > 0 then
     myshare := copy(myshare, 3, length(myshare));
   if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser +
-      ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"'
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser + ':' +
+      mypass + '@' + myshare + ' ' + mymountpoint + '"'
   else
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser +
-      ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"';
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser + ':' +
+      mypass + '@' + myshare + ' ' + mymountpoint + '"';
   //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
 
   LogDatei.DependentAdd('calling: ' + cmd, LLNotice);
@@ -544,22 +559,22 @@ begin
   if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
     True, TXStringlist(outlines), report, 0, exitcode) then
   {$ELSE OPSISCRIPT}
-  if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
-    True, outlines, report, 0, exitcode) then
+    if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
+      True, outlines, report, 0, exitcode) then
   {$ENDIF OPSISCRIPT}
-  begin
-    if outlines.Count > 2 then
     begin
-      mylang := trim(outlines.Strings[1]);
-      mylang := copy(mylang, 2, 2);
-      Result := True;
-      report := 'Detected default primary lang on macos: ' + mylang;
+      if outlines.Count > 2 then
+      begin
+        mylang := trim(outlines.Strings[1]);
+        mylang := copy(mylang, 2, 2);
+        Result := True;
+        report := 'Detected default primary lang on macos: ' + mylang;
+      end
+      else
+        report := 'Unexpected Result at macos lang detection: ' + outlines.Text;
     end
     else
-      report := 'Unexpected Result at macos lang detection: ' + outlines.Text;
-  end
-  else
-    report := 'Failed macos lang detection: ' + report;
+      report := 'Failed macos lang detection: ' + report;
   FreeAndNil(outlines);
 end;
 
