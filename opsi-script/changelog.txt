@@ -5,6 +5,12 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.21) stable; urgency=low
+
+ *
+
+-- d.oertel <d.oertel@uib.de> Tue, 11 May 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.20) stable; urgency=low
 
  * again: fix debug_lib do imported libs added to nologfiles in oslog
