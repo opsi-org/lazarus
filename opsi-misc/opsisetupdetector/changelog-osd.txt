@@ -81,6 +81,7 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 opsi-setup-detector (4.2.0.2) stable; urgency=low
 
   * fixes for deskop icon
+  * fixes var declaration for properties in define_vars_multi.opsiscript
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  21 Apr 2021 : 15:00:00 +0200
 
