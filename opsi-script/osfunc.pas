@@ -74,6 +74,7 @@ uses
   types,
   dateutils,
   //initc,
+  osfuncunix,
 {$ENDIF UNIX}
   //LConvEncoding,
   blcksock,
@@ -629,6 +630,8 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
+function isSymLink(const filepath : string) : boolean;
+function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 
 
 
@@ -11559,5 +11562,36 @@ end;
 
 {$ENDIF WINDOWS}
 
+function isSymLink(const filepath : string) : boolean;
+var
+  fileinfo : TSearchRec;
+  errorinfo : string;
+begin
+  result  := false;
+  if GetFileInfo(filepath, fileinfo,errorinfo) then
+  begin
+    if (fileinfo.Attr and fasymlink) = fasymlink then
+     result  := true;
+  end;
+end;
 
+function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+var
+  fileinfo : TSearchRec;
+  outpath : string;
+begin
+  result := filepath;
+  {$IFDEF WINDOWS}
+  result := resolveWinSymlink(filepath);
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  result := resolveUnixSymlink(filepath);
+  {$ENDIF UNIX}
+end;
+
+(*
+ function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
+  var ErrorInfo: string): boolean;
+  GetFinalPathNameByHandle()
+*)
 end.

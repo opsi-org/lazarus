@@ -574,7 +574,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="61">
+    <Units Count="62">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -846,6 +846,10 @@
         <Filename Value="opsi-script.entitlements"/>
         <IsPartOfProject Value="True"/>
       </Unit60>
+      <Unit61>
+        <Filename Value="../common/osfuncunix.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit61>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

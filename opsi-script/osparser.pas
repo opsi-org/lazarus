@@ -14933,6 +14933,23 @@ begin
     end;
   end
 
+  else if LowerCase(s) = LowerCase('resolveSymlink') then
+  begin
+    syntaxCheck := False;
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          StringResult := resolveSymlink(s1);
+        end;
+    if not syntaxCheck then
+    begin
+      LogDatei.log('Error in resolveSymlink : could not resolve : : ' +
+        s1 + ' ; ' + InfoSyntaxError, LLError);
+    end;
+  end
+
   else if LowerCase(s) = LowerCase('strLoadTextFile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -24172,6 +24189,10 @@ begin
       ValueToTake := ExtractFileDir(Scriptdatei);
       FConstValuesList.add(ValueToTake);
       FConstList.add('%ScriptDir%');
+      FConstValuesList.add(ValueToTake);
+
+      FConstList.add('%realScriptpath%');
+      ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%WinstDir%');

@@ -7,7 +7,12 @@ mac getIpByName liefert name von IPnum
 ##################################################################
 opsi-winst/opsi-script (4.12.4.21) stable; urgency=low
 
- *
+ * osfunc: function isSymLink(const filepath : string) : boolean;
+ * osfunc: function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+ * new function resolveSymlink(<string>) : string; on error it returns input
+ * new constant %realScriptpath% ; if the script is called via symlink
+      then it is the resolved version of %scriptpath%
+ * new common unit osunixfunc
 
 -- d.oertel <d.oertel@uib.de> Tue, 11 May 2021 15:00
 

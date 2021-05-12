@@ -117,6 +117,7 @@ function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
 function winCreateSymbolicLink(lpSymlinkFileName: PChar; lpExistingFileName: PChar;
   dwFlags: DWORD): winbool;
 function updateEnvironment(): boolean;
+function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 
 implementation
 
@@ -189,22 +190,23 @@ var
   aktkey: string;
 begin
   Result := '';
-  aktkey := 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'+sid;
+  aktkey := 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'
+    + sid;
   if Is64BitSystem then
   begin
-    noredirect := true;
+    noredirect := True;
     LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug3);
   end
   else
   begin
-    noredirect := false;
+    noredirect := False;
     LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug3);
   end;
-  StringResult := GetRegistrystringvalue(aktkey,'ProfileImagePath',noredirect);
+  StringResult := GetRegistrystringvalue(aktkey, 'ProfileImagePath', noredirect);
   profilepath := StringReplace(StringResult, '%SystemDrive%',
-     extractfiledrive(GetWinDirectory));
-    LogDatei.log('found profile reg entry for sid: ' + sid +
-      ' and path: ' + profilepath, LLdebug3);
+    extractfiledrive(GetWinDirectory));
+  LogDatei.log('found profile reg entry for sid: ' + sid +
+    ' and path: ' + profilepath, LLdebug3);
   Result := profilepath;
 end;
 
@@ -319,15 +321,15 @@ begin
   Result := False;
   if DeleteProfile(PChar(sid), nil, nil) then
   begin
-    LogDatei.log('Deleted profile of: '+sid,
+    LogDatei.log('Deleted profile of: ' + sid,
       LLDebug);
     Result := True;
   end
   else
   begin
-    logdatei.log('Could not delete profile for sid : ' +
-      sid + ' - ' + IntToStr(GetLastError) + ' (' +
-      SysErrorMessage(GetLastError) + ')', LLNotice);
+    logdatei.log('Could not delete profile for sid : ' + sid +
+      ' - ' + IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) +
+      ')', LLNotice);
     profilepath := getProfileImagePathfromSid(sid);
     if DirectoryExists(profilepath) then
     begin
@@ -1477,6 +1479,7 @@ begin
   end;
   LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
 end;
+
 {$ENDIF WIN32}
 
 function OpenShellProcessInSessionToken(ProcessName: string;
@@ -2317,7 +2320,7 @@ var
   kernel32: HModule;
   _CreateSymbolicLinkA: function(lpSymlinkFileName: PChar;
     lpExistingFileName: PChar; dwFlags: DWORD): winbool; stdcall;
-  list1 :TStringlist;
+  list1: TStringList;
 begin
   try
     // try api
@@ -2330,7 +2333,7 @@ begin
     end;
     {$ENDIF WIN32}
     //next try
-    if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege')then
+    if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege') then
     begin
       LogDatei.log('EnablePrivilege Error: ' + IntToStr(GetLastError) +
         ' (' + SysErrorMessage(GetLastError) + ')', LLError);
@@ -2394,8 +2397,8 @@ begin
     try
       //if SendMessageTimeoutA() ;
       mylparam := lparam(PChar('Environment'));
-      if 0 <> SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam,SMTO_ABORTIFHUNG,3000,mylong)
-      then
+      if 0 <> SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE,
+        0, mylparam, SMTO_ABORTIFHUNG, 3000, mylong) then
       begin
         //mylong := jwawindows.SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
         //mylong := SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
@@ -2419,5 +2422,21 @@ end;
 
 //https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
 //https://social.technet.microsoft.com/wiki/contents/articles/13813.localized-names-for-administrator-account-in-windows.aspx
+
+function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+var
+  fileinfo: TSearchRec;
+  errorinfo: string;
+begin
+  Result := filepath;
+  if GetFileInfo(filepath, fileinfo, errorinfo) then
+  begin
+    if (fileinfo.Attr and fasymlink) = fasymlink then
+    begin
+      //fileinfo.
+      //GetFinalPathNameByHandle(fileinfo.
+    end;
+  end;
+end;
 
 end.
