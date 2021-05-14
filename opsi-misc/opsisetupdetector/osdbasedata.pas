@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, LCLProc, LResources, TypInfo, Forms, Controls, Graphics,
   Dialogs, StdCtrls,
+  strutils,
   {$IFDEF WINDOWS}
   osdhelper,
   shlobj,
@@ -20,6 +21,7 @@ uses
   oslog,
   RTTICtrls,
   osjson,
+  osregex,
   lcltranslator;
 
 type
@@ -446,6 +448,7 @@ procedure makeProperties;
 procedure freebasedata;
 procedure activateImportMode;
 procedure deactivateImportMode;
+function cleanOpsiId(opsiid : string) : string; // clean up productId
 
 const
   CONFVERSION = '4.1.0';
@@ -1722,6 +1725,20 @@ begin
   end;
 end;
 
+function cleanOpsiId(opsiId : string) : string; // clean up productId
+begin
+  opsiId := LowerCase(opsiId);
+  (*
+  opsiId := StringReplace(opsiId,' '.'_',[frReplaceAll]);
+  opsiId := Stringsreplace(opsiId,[' ','/','\','"','''',':',],
+                                  ['_','_','_','_','_', '_','_',],
+                                  [frReplaceAll]);
+                                  *)
+  result := stringReplaceRegex(opsiId,'[^a-z0-9_-]','_');
+
+  // [^A-Za-z0-9._-]
+end;
+
 
 //initialize unit
 
@@ -1875,9 +1892,9 @@ begin
     description :=
       'MSI Setup';
     silentsetup :=
-      '/l* "$LogDir$\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
     unattendedsetup :=
-      '/l* "$LogDir$\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall :=
       ' /qn REBOOT=ReallySuppress';
     unattendeduninstall :=
@@ -1929,8 +1946,8 @@ begin
   with installerArray[integer(stInstallAware)] do
   begin
     description := 'InstallAware';
-    silentsetup := '/s /l="$LogDir$\$ProductId$.install_log.txt"';
-    unattendedsetup := '/s /l="$LogDir$\$ProductId$.install_log.txt"';
+    silentsetup := '/s /l="%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup := '/s /l="%opsiLogDir%\$ProductId$.install_log.txt"';
     silentuninstall := '/s MODIFY=FALSE REMOVE=TRUE UNINSTALL=YES';
     unattendeduninstall := '/s MODIFY=FALSE REMOVE=TRUE UNINSTALL=YES';
     uninstall_waitforprocess := '';
@@ -1947,11 +1964,11 @@ begin
   with installerArray[integer(stMSGenericInstaller)] do
   begin
     description := 'generic MS Installer';
-    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
-      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
@@ -1967,11 +1984,11 @@ begin
   with installerArray[integer(stWixToolset)] do
   begin
     description := 'Wix Toolset';
-    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
-      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
@@ -1988,11 +2005,11 @@ begin
   with installerArray[integer(stBoxStub)] do
   begin
     description := 'MS Box Stup';
-    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
-      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';
@@ -2009,11 +2026,11 @@ begin
   with installerArray[integer(stSFXcab)] do
   begin
     description := 'MS SFX Cab ';
-    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
-    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
-      '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
     uninstallProg := '';

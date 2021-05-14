@@ -82,6 +82,10 @@ opsi-setup-detector (4.2.0.2) stable; urgency=low
 
   * fixes for deskop icon
   * fixes var declaration for properties in define_vars_multi.opsiscript
+  * osdbasedata: function cleanOpsiId(opsiId : string) : string; // clean up productId
+  * cleanup productId in TabProductConf1 ; fixes #4654
+  * cleanup productId in Dependecy dialog  and some others
+  * osdbasedata: replace $LogDir$ by %opsilogdir%
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  21 Apr 2021 : 15:00:00 +0200
 

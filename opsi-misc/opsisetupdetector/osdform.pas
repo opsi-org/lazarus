@@ -411,6 +411,7 @@ type
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
+    procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
     procedure TIEditProdVersion3Change(Sender: TObject);
     procedure TIEditProdVersion3Exit(Sender: TObject);
     procedure TIGridDepPropertiesCreated(Sender: TObject);
@@ -1057,6 +1058,7 @@ begin
   if Application.HasOption('p', 'productId') then
   begin
     forceProductId := trim(Application.GetOptionValue('p', 'productId'));
+    forceProductId := cleanOpsiId(forceProductId);
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
   end;
 
@@ -3821,6 +3823,11 @@ begin
 
 end;
 
+procedure TResultform1.TIEditProdIDSizeConstraintsChange(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.TIEditProdVersion3Change(Sender: TObject);
 begin
 
@@ -3839,6 +3846,11 @@ end;
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 begin
+  if TTIEdit(sender).Name = 'TIEditProdID' then
+  begin
+    TTIEdit(sender).Caption := cleanOpsiId(TTIEdit(sender).Caption);
+    TTIEdit(sender).SelStart:= Length(TTIEdit(sender).Caption);
+  end;
   TControl(Sender).EditingDone;
 end;
 

@@ -9,7 +9,7 @@ object FNewDepDlg: TFNewDepDlg
   DesignTimePPI = 91
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object Panel1: TPanel
     Left = 0
     Height = 47
@@ -167,7 +167,7 @@ object FNewDepDlg: TFNewDepDlg
       OnClick = FlowPanel2Click
       object Label2: TLabel
         Left = 57
-        Height = 36
+        Height = 32
         Top = 5
         Width = 155
         Anchors = []
@@ -178,12 +178,13 @@ object FNewDepDlg: TFNewDepDlg
       end
       object Editproductid: TEdit
         Left = 222
-        Height = 30
+        Height = 29
         Top = 5
         Width = 181
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
+        OnChange = EditproductidChange
         ParentFont = False
         TabOrder = 0
         Text = 'productId'
@@ -213,7 +214,7 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 2
       object ComboBoxActState: TComboBox
         Left = 190
-        Height = 30
+        Height = 29
         Top = 5
         Width = 198
         Anchors = []
@@ -227,7 +228,7 @@ object FNewDepDlg: TFNewDepDlg
       end
       object Label3: TLabel
         Left = 92
-        Height = 18
+        Height = 16
         Top = 5
         Width = 88
         Anchors = []
@@ -261,7 +262,7 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 3
       object ComboBoxReqType: TComboBox
         Left = 205
-        Height = 30
+        Height = 29
         Top = 5
         Width = 183
         Anchors = []
@@ -279,7 +280,7 @@ object FNewDepDlg: TFNewDepDlg
       end
       object Label4: TLabel
         Left = 86
-        Height = 18
+        Height = 16
         Top = 5
         Width = 109
         Anchors = []

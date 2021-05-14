@@ -7565,7 +7565,7 @@ object resultForm1: TresultForm1
           TabOrder = 0
           object Label58: TLabel
             Left = 220
-            Height = 22
+            Height = 20
             Top = 8
             Width = 110
             Anchors = []
@@ -7578,7 +7578,7 @@ object resultForm1: TresultForm1
           end
           object Label61: TLabel
             Left = 366
-            Height = 22
+            Height = 20
             Top = 8
             Width = 113
             Anchors = []
@@ -7591,7 +7591,7 @@ object resultForm1: TresultForm1
           end
           object TIEditProdVersion3: TTIEdit
             Left = 15
-            Height = 34
+            Height = 33
             Top = 6
             Width = 190
             Anchors = []
@@ -7605,7 +7605,7 @@ object resultForm1: TresultForm1
           end
           object TISpinEditPackageVers: TTISpinEdit
             Left = 496
-            Height = 28
+            Height = 27
             Top = 8
             Width = 80
             Anchors = []
@@ -7665,7 +7665,7 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object Label66: TLabel
             Left = 17
-            Height = 22
+            Height = 20
             Top = 8
             Width = 107
             Anchors = []
@@ -7678,7 +7678,7 @@ object resultForm1: TresultForm1
           end
           object Label67: TLabel
             Left = 363
-            Height = 22
+            Height = 20
             Top = 8
             Width = 132
             Anchors = []
@@ -7691,13 +7691,14 @@ object resultForm1: TresultForm1
           end
           object TIEditProdID: TTIEdit
             Left = 139
-            Height = 34
+            Height = 33
             Top = 6
             Width = 190
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
+            Constraints.OnChange = TIEditProdIDSizeConstraintsChange
             Constraints.MinWidth = 190
             OnChange = genRttiEditChange
             ParentFont = False
@@ -7705,7 +7706,7 @@ object resultForm1: TresultForm1
           end
           object TIEditProdName: TTIEdit
             Left = 510
-            Height = 34
+            Height = 33
             Top = 6
             Width = 190
             Anchors = []
@@ -7720,7 +7721,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 237
+          Height = 238
           Top = 311
           Width = 1029
           Align = alClient
@@ -7739,7 +7740,7 @@ object resultForm1: TresultForm1
             Left = 888
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 171
+            Top = 172
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -9392,7 +9393,7 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 611
             Anchors = []
-            ClientHeight = 118
+            ClientHeight = 101
             ClientWidth = 609
             ParentFont = False
             TabOrder = 0
