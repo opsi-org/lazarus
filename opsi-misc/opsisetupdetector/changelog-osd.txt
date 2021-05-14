@@ -87,7 +87,7 @@ opsi-setup-detector (4.2.0.2) stable; urgency=low
   * cleanup productId in Dependecy dialog  and some others
   * osdbasedata: replace $LogDir$ by %opsilogdir%
 
--- Detlef Oertel <d.oertel@uib.de>  Wed,  21 Apr 2021 : 15:00:00 +0200
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  14 May 2021 : 15:00:00 +0200
 
 opsi-setup-detector (4.2.0.1) stable; urgency=low
 
