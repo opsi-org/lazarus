@@ -2423,18 +2423,50 @@ end;
 //https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
 //https://social.technet.microsoft.com/wiki/contents/articles/13813.localized-names-for-administrator-account-in-windows.aspx
 
+
+// https://stackoverflow.com/questions/49252038/how-to-get-the-full-file-name-from-a-textfile-variable
+
+CONST FILE_NAME_NORMALIZED = $00000000;
+
+FUNCTION GetFinalPathNameByHandleUndefined(hFile : THandle ; lpszFilePath : PChar ; cchFilePath,dwFlags : DWORD) : DWORD; stdcall;
+  BEGIN
+    StrPCopy(lpszFilePath,'');
+    Result:=0
+  END;
+
+FUNCTION FileHandleToFileName(Handle : THandle) : STRING;
+  TYPE
+    TGetFinalPathNameByHandle   = FUNCTION(hFile : THandle ; lpszFilePath : PChar ; cchFilePath,dwFlags : DWORD) : DWORD; stdcall;
+
+  CONST
+    GetFinalPathNameByHandle    : TGetFinalPathNameByHandle = NIL;
+
+  VAR
+    Err                         : Cardinal;
+
+  BEGIN
+    IF NOT Assigned(GetFinalPathNameByHandle) THEN BEGIN
+      GetFinalPathNameByHandle:=GetProcAddress(GetModuleHandle('kernel32'),'GetFinalPathNameByHandleA');
+      IF NOT Assigned(GetFinalPathNameByHandle) THEN GetFinalPathNameByHandle:=GetFinalPathNameByHandleUndefined
+    END;
+    SetLength(Result,MAX_PATH+1);
+    SetLength(Result,GetFinalPathNameByHandle(Handle,@Result[1],LENGTH(Result),FILE_NAME_NORMALIZED));
+    IF COPY(Result,1,4) = '\\?\' THEN system.Delete(Result,1,4);
+  END;
+
 function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 var
   fileinfo: TSearchRec;
   errorinfo: string;
+  myhandle : THandle;
 begin
   Result := filepath;
   if GetFileInfo(filepath, fileinfo, errorinfo) then
   begin
     if (fileinfo.Attr and fasymlink) = fasymlink then
     begin
-      //fileinfo.
-      //GetFinalPathNameByHandle(fileinfo.
+      myhandle := fileinfo.FindHandle;
+      result := FileHandleToFileName(myhandle);
     end;
   end;
 end;
