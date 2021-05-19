@@ -14,6 +14,8 @@ opsi-script (4.12.4.21) stable; urgency=low
  * new constant %realScriptpath% ; if the script is called via symlink
       then it is the resolved version of %scriptpath%
  * new common unit osfuncunix
+ * new function forcePathDelims(<path string>) : <path string>
+      sets all slash and backslash as pathdelim according to th OS
 
 -- d.oertel <d.oertel@uib.de> Tue, 11 May 2021 15:00
 

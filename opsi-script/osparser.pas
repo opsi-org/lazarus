@@ -54,6 +54,7 @@ uses
   baseunix,
   unix,
   osprocessux,
+  osfuncunix,
 {$ENDIF}
 {$IFDEF DARWIN}
   osfuncmac,
@@ -755,7 +756,7 @@ var
 //const
 //zaehler  : Integer = 0;
 
-
+{$IFDEF WINDOWS}
 function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 var
   outpath: string;
@@ -763,6 +764,7 @@ var
   mypath : string;
 begin
   Result := filepath;
+  filepath := GetForcedPathDelims(filepath);
   if FileExists(filepath, False) then
   begin
     mypath := ExtractFileDir(filepath);
@@ -793,6 +795,8 @@ begin
   else // return filepath also if filepath does not exists
     Result := filepath;
 end;
+{$ENDIF WINDOWS}
+
 
 
 function GetString
@@ -14991,6 +14995,23 @@ begin
     if not syntaxCheck then
     begin
       LogDatei.log('Error in resolveSymlink : could not resolve : : ' +
+        s1 + ' ; ' + InfoSyntaxError, LLError);
+    end;
+  end
+
+  else if LowerCase(s) = LowerCase('forcePathDelims') then
+  begin
+    syntaxCheck := False;
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          StringResult := GetForcedPathDelims(s1);
+        end;
+    if not syntaxCheck then
+    begin
+      LogDatei.log('Error in forcePathDelims syntax: ' +
         s1 + ' ; ' + InfoSyntaxError, LLError);
     end;
   end

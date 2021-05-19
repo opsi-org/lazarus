@@ -7,31 +7,49 @@ interface
 uses
   Classes,
   SysUtils,
+  oslog,
   lazfileutils;
 
-function resolveUnixSymlink(const filepath : string; recursive : boolean = true) : string;
+function resolveUnixSymlink(filepath: string;
+  recursive: boolean = True): string;
 
 implementation
 
-function resolveUnixSymlink(const filepath : string; recursive : boolean = true) : string;
+function resolveUnixSymlink(filepath: string;
+  recursive: boolean = True): string;
 var
-  outpath : string;
+  outpath: string;
+  mypath : string;
 begin
-  result := filepath;
-  outpath := TryReadAllLinks(filepath);
-  if outpath = '' then
+  Result := filepath;
+  filepath := GetForcedPathDelims(filepath);
+  if FileExists(filepath, False) then
   begin
-    // was no symbolic link - return input
-    result := filepath;
+    LogDatei.log('resolving symlink: '+filepath,LLinfo);
+    mypath := ExtractFileDir(filepath);
+    outpath := TryReadAllLinks(filepath);
+    if outpath = '' then
+    begin
+      // was no symbolic link - return input
+      Result := filepath;
+    end
+    else
+    begin
+      if not FilenameIsAbsolute(outpath) then
+        outpath := TrimAndExpandFilename(outpath, mypath);
+      if outpath <> filepath then
+      begin
+        // was symbolic link
+        LogDatei.log('resolved as symlink: '+filepath+' to: '+outpath,LLinfo);
+        if recursive then
+          Result := resolveUnixSymlink(outpath)
+        else
+          Result := filepath;
+      end;
+    end;
   end
-  else if outpath <> filepath then
-  begin
-    // was symbolic link
-    if recursive then
-      result := resolveUnixSymlink(outpath)
-    else  result := filepath;
-  end;
+  else // return filepath also if filepath does not exists
+    Result := filepath;
 end;
 
 end.
-
