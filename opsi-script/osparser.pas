@@ -756,6 +756,44 @@ var
 //zaehler  : Integer = 0;
 
 
+function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+var
+  outpath: string;
+  cmd: string;
+  mypath : string;
+begin
+  Result := filepath;
+  if FileExists(filepath, False) then
+  begin
+    mypath := ExtractFileDir(filepath);
+    cmd := '(get-item ' + filepath + ').target';
+    LogDatei.log('resolving symlink: '+filepath,LLinfo);
+    outpath := script.execPowershellCall(cmd, '', 3, True, False, True).Text;
+    outpath := StringsReplace(outpath, [#10, #13], ['', ''], [rfReplaceAll]);
+    if outpath = '' then
+    begin
+      // was no symbolic link - return input
+      Result := filepath;
+    end
+    else
+    begin
+      if not isAbsoluteFileName(outpath) then
+      outpath := TrimAndExpandFilename(outpath,mypath);
+      if outpath <> filepath then
+      begin
+        // was symbolic link
+        LogDatei.log('resolved as symlink: '+filepath+' to: '+outpath,LLinfo);
+        if recursive then
+          Result := resolveWinSymlink(outpath)
+        else
+          Result := filepath;
+      end;
+    end;
+  end
+  else // return filepath also if filepath does not exists
+    Result := filepath;
+end;
+
 
 function GetString
   (const s: string; var ResultString, Remaining, errorinfo: string;
@@ -1242,7 +1280,7 @@ begin
 end;
 
 
-procedure deleteTempBatFiles(const tempfilename: string);
+procedure deleteTempBatFiles(const tempfilename: string; logleveloffset : integer = 0);
 var
   files: TuibFileInstall;
 begin
@@ -1259,7 +1297,7 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2,logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1586,8 +1624,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1948,14 +1987,13 @@ begin
     encodingString := 'system';
   if detectedEncoding <> '' then
   begin
-    if (encodingString <> detectedEncoding) or
-      (encodingString <> copy(detectedEncoding, 0, length(detectedEncoding) - 3)) then
+    if (encodingString <> detectedEncoding) or (encodingString <>
+      copy(detectedEncoding, 0, length(detectedEncoding) - 3)) then
     begin
-      LogDatei.log('Warning: Given encodingString ' +
-        encodingString + ' is different from the detected encoding ' +
-        detectedEncoding, LLWarning);
-      LogDatei.log('Detected encoding: ' +
-        detectedEncoding + ' is considered', LLInfo);
+      LogDatei.log('Warning: Given encodingString ' + encodingString +
+        ' is different from the detected encoding ' + detectedEncoding, LLWarning);
+      LogDatei.log('Detected encoding: ' + detectedEncoding +
+        ' is considered', LLInfo);
     end;
     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), detectedEncoding);
   end
@@ -9954,11 +9992,11 @@ begin
     begin
       // backup
       commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
       // set (open)
       commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -9990,7 +10028,7 @@ begin
     begin
       // set (close)
       commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
     end;
   finally
     {$IFDEF GUI}
@@ -10280,8 +10318,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11140,7 +11178,7 @@ begin
           FExtremeErrorLevel := LevelFatal;
         end
         else
-          LogDatei.log(Report, LevelComplete);
+          LogDatei.log(Report, LLinfo + logleveloffset);
       end
       else
       begin
@@ -11222,7 +11260,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename);
+        deleteTempBatFiles(tempfilename,logleveloffset);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11533,7 +11571,8 @@ begin
                   else
                   begin
                     LogDatei.log(
-                      'Error in LoadTextFileWithEncoding on loading file (not found): ' + s1, LLError);
+                      'Error in LoadTextFileWithEncoding on loading file (not found): ' +
+                      s1, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                   end;
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
@@ -11545,8 +11584,8 @@ begin
                   begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                     LogDatei.log(
-                      'Exception in LoadTextFileWithEncoding on loading file: ' + s1 + ' with msg: ' +
-                      e.message, LLError);
+                      'Exception in LoadTextFileWithEncoding on loading file: ' +
+                      s1 + ' with msg: ' + e.message, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
@@ -11768,10 +11807,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14941,7 +14980,13 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
-          StringResult := resolveSymlink(s1);
+          //StringResult := resolveSymlink(s1);
+          {$IFDEF WINDOWS}
+          StringResult := resolveWinSymlink(s1);
+          {$ENDIF WINDOWS}
+          {$IFDEF UNIX}
+          StringResult := resolveUnixSymlink(s1);
+          {$ENDIF UNIX}
         end;
     if not syntaxCheck then
     begin
@@ -15697,8 +15742,7 @@ begin
         begin
           StringResult := '';
           LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
-            +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+            + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
           LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
             e.message, LLerror);
         end;
@@ -16439,7 +16483,8 @@ begin
           begin
             LogDatei.log(
               'Error in getValueFromFileBySeparator on loading file (not found): '
-              + s3, LLError);
+              +
+              s3, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
 
@@ -20812,7 +20857,8 @@ begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       LogDatei.addToNoLogFiles(ExtractFileName(fullincfilename));
-                      LogDatei.log_prog('added to NoLogFiles: ' + ExtractFileName(fullincfilename), LLDebug2);
+                      LogDatei.log_prog('added to NoLogFiles: ' +
+                        ExtractFileName(fullincfilename), LLDebug2);
                       inclist := TXStringList.Create;
 
                       hasBom := getFileBom(fullincfilename, detectedEncoding);
@@ -23851,7 +23897,8 @@ begin
         begin
           //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
           logdatei.log(
-            'Encoding=system makes the opsiscript not portable between different OS', LLWarning);
+            'Encoding=system makes the opsiscript not portable between different OS',
+            LLWarning);
         end
         else
         begin
@@ -24192,7 +24239,13 @@ begin
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%realScriptpath%');
-      ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
+      //ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
+      {$IFDEF WINDOWS}
+      ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
+      ValueToTake := ExtractFileDir(resolveUnixSymlink(Scriptdatei));
+      {$ENDIF UNIX}
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%WinstDir%');

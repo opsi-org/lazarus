@@ -117,7 +117,7 @@ function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
 function winCreateSymbolicLink(lpSymlinkFileName: PChar; lpExistingFileName: PChar;
   dwFlags: DWORD): winbool;
 function updateEnvironment(): boolean;
-function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+//function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 
 implementation
 
@@ -2454,6 +2454,7 @@ FUNCTION FileHandleToFileName(Handle : THandle) : STRING;
     IF COPY(Result,1,4) = '\\?\' THEN system.Delete(Result,1,4);
   END;
 
+(*
 function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 var
   fileinfo: TSearchRec;
@@ -2470,5 +2471,5 @@ begin
     end;
   end;
 end;
-
+*)
 end.

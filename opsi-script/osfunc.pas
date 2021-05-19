@@ -370,17 +370,18 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer): boolean; overload;
+      daysback: integer; logleveloffset : integer = 0): boolean; overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      daysback: integer; search4file: boolean; var RebootWanted: boolean;
+      logleveloffset : integer = 0): boolean;
       overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
-      retryOnReboot: boolean): boolean; overload;
+      daysBack: integer;  search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean; logleveloffset : integer = 0): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -631,7 +632,7 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
 function isSymLink(const filepath : string) : boolean;
-function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+//function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 
 
 
@@ -10409,27 +10410,27 @@ end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer): boolean;
+  daysBack: integer; logleveloffset : integer = 0): boolean;
 var
   RebootWanted: boolean;
 begin
-  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted);
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted,logleveloffset);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean; logleveloffset : integer = 0): boolean;
 var
   retryOnReboot: boolean = False;
 begin
   Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
-    True, RebootWanted, retryOnReboot);
+    True, RebootWanted, retryOnReboot,logleveloffset);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean;
-  retryOnReboot: boolean): boolean;
+  retryOnReboot: boolean; logleveloffset : integer = 0): boolean;
 
 var
   CompleteName: string = '';
@@ -10455,6 +10456,7 @@ var
     (const CompleteName: string; DeleteDir: boolean);
   var
     Filename: string = '';
+    testname: string = '';
     FileMask: string = '';
     OrigPath: string = '';
     FindResultcode: integer = 0;
@@ -10473,7 +10475,7 @@ var
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
-    LogDatei.log_prog(LogS, LLInfo);
+    LogDatei.log_prog(LogS, LLInfo + logleveloffset);
 
     { start with the sub directories,
       and go with the recursion deeper and delete the lowest level first }
@@ -10506,7 +10508,7 @@ var
       Filemask := '*';
     {$ENDIF WINDOWS}
     LogS := 'Search "' + OrigPath + Filemask + '"';
-    LogDatei.log(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo + logleveloffset);
 
     FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or
       faSymlink - faDirectory, SearchResult);
@@ -10561,7 +10563,7 @@ var
         if SysUtils.DeleteFile(Filename) then
         begin
           LogS := 'The file ' + Filename + ' has been deleted';
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo + logleveloffset);
         end
         else
         begin
@@ -10625,7 +10627,7 @@ var
       if removedir(OrigPath) then
       begin
         LogS := 'Directory "' + OrigPath + '" deleted';
-        LogDatei.log(LogS, LLInfo);
+        LogDatei.log(LogS, LLInfo + logleveloffset);
       end
       else
       begin
@@ -10681,11 +10683,16 @@ begin
   PathName := ExtractFilePath(CompleteName);
   //CompleteName := ExpandFileName (Filename);
   { changed because it is dangerous }
-  if (lowercase(Filename) = 'c:\') or (lowercase(Filename) = 'c:\windows') or
-    (lowercase(Filename) = 'c:\windows\system32') or (lowercase(Filename) = 'c:') or
-    (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
+  testname := IncludeTrailingPathDelimiter(lowercase(Filename));
+  if  (testname = 'c:\') or
+     (testname = 'c:\windows\') or
+     (testname = 'c:\windows\system32\') or
+     (testname = '/Applications/') or
+     (Filename = PathDelim) or
+     (Filename = '\\') or
+     (1 = pos('\', Filename)) then
   begin
-    LogDatei.log('No, we will not delete: ' + Filename, LLError);
+    LogDatei.log('By policy we will not delete: ' + Filename, LLError);
     CompleteName := '';
   end
   else
@@ -10729,7 +10736,7 @@ begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLInfo + logleveloffset);
     end
     else
     begin
@@ -10744,7 +10751,7 @@ begin
         if SysUtils.DeleteFile(CompleteName) then
         begin
           LogS := 'The file has been deleted';
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo + logleveloffset);
         end
         else
         begin
@@ -10790,7 +10797,7 @@ begin
     begin
       LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLInfo + logleveloffset);
     end;
   end;
 end;
@@ -11575,6 +11582,7 @@ begin
   end;
 end;
 
+(*
 function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 var
   fileinfo : TSearchRec;
@@ -11582,12 +11590,14 @@ var
 begin
   result := filepath;
   {$IFDEF WINDOWS}
-  result := resolveWinSymlink(filepath);
+  //result := resolveWinSymlink(filepath);
+  //result := execPowershellCall(filepath, '', 1, True, False, tmpbool1).Text;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   result := resolveUnixSymlink(filepath);
   {$ENDIF UNIX}
 end;
+*)
 
 (*
  function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
