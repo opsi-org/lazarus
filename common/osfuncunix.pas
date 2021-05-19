@@ -28,7 +28,7 @@ begin
   begin
     // was symbolic link
     if recursive then
-      result := resolveUnixSymlink(filepath)
+      result := resolveUnixSymlink(outpath)
     else  result := filepath;
   end;
 end;
