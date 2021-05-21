@@ -144,7 +144,7 @@ begin
       else if (proptmpstr = 'DesktopIcon') then
         str := str + 'DefVar $DesktopIcon$' + LineEnding
       else if (proptmpstr = 'install_architecture') then
-        str := str + 'DefVar install_architecture' + LineEnding
+        str := str + 'DefVar $install_architecture$' + LineEnding
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
