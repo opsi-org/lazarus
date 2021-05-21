@@ -27,13 +27,13 @@ implementation
 
 var
   decIndentList, incIndentList, decIncIndentList,
-            donttouchBeginEndList:  TStringlist;
+            donttouchList:  TStringlist;
   indentrange: Integer; // how many chars for indention
   indentlevel: Integer; // how often indentrange
   indentchar: String;
 
   dontTouchKeyValue : TList;
-// TODO: configurationsdatei und programm auf JSON umstellen
+
 
 function indentation ( indent: Integer) : String;
  var i:Integer;
@@ -75,6 +75,7 @@ var
     trimLine: boolean;
     tmpstr, tmpstr2 : string;
     found : boolean;
+    threetabs: boolean;
     openif : array[0..250] of Integer;
 begin
   //Initialize openif array
@@ -87,8 +88,9 @@ begin
       if AnsiStartsStr(';', UpperCase(code[k]).trim) then
       begin
         trimLine:=false;
-        if not(code[k].Chars[0]=';') then
-          code[k]:= indentation(indentlevel) + code[k].trim;
+        // change 05/2021 - indentation also on comments
+        //if not(code[k].Chars[0]=';') then
+        code[k]:= indentation(indentlevel) + code[k].trim;
         // else: if first Char=';' don't indent
       end;
 
@@ -96,28 +98,59 @@ begin
       if AnsiContainsStr(UpperCase(code[k]),UpperCase('[opsiServiceCall')) then
       begin
         // detect indentiation
+        threetabs:=false;
         relPos:= PosEx('[',code[k])-1;      // how many chars
         code[k]:= indentation(indentlevel) + code[k].trim;
         relPos:= PosEx('[',code[k])-1-relPos;  // how many chars to indent additionally
+        // TODO: nach "params" 1 (schöner 3) Einrückung
         repeat
           inc(k);
-          code[k]:= createBlockIndent(relPos) + code[k];
+          code[k]:= createBlockIndent(relPos) + code[k].trim;
+          if code[k].Contains('param') then
+          begin
+            relPos:=relPos+3;
+            threetabs:=true;
+          end;
+          if (threetabs and code[k].Contains('#9#9#9]')) then
+          begin
+            threetabs:= false;
+            relPos:=relPos-3;
+          end;
         until AnsiEndsStr(']',code[k]) or (k>=code.Count-1);
-        trimLine:=false;               // last line of donttouch should not be trimmed
+        trimLine:=false;               // last line should not be trimmed
+      end;
+
+      tmpstr := UpperCase(code[k].trim);
+
+
+      if AnsiContainsStr(UpperCase(code[k]),UpperCase('[LinkFolder')) then
+      begin
+        // detect indentiation
+        relPos:= PosEx('[',code[k])-1;      // how many chars
+        code[k]:= indentation(indentlevel) + code[k].trim;
+        LogDatei.log(' Line [LinkFolder '+inttostr(k+1) + ' : ' + code[k],LLnotice);
+        relPos:= PosEx('[',code[k])-1-relPos;  // how many chars to indent additionall
+        // normal keine Einrückung; nach set_link 1 Einrückung, vor end_link 1 Ausrückung
+        repeat
+          inc(k);
+          code[k]:= createBlockIndent(relPos) + code[k].trim;
+          if code[k].Contains('set_link') then
+            relPos:=relPos+1;
+          if code[k].Contains('end_link') then
+            relPos:=relPos-1;
+        until AnsiEndsStr(']',code[k]) or (k>=code.Count-1);
+        trimLine:=false;               // last line should not be trimmed
       end;
 
       // sections with relativ indentions
       // except previous condions
-      tmpstr := UpperCase(code[k].trim);
-      (*
-      tmpstr2 := UpperCase('[Sub');
-      if AnsiStartsStr(UpperCase('[Sub'),code[k].trim) then  found  := true
-      else found := false;
-      if AnsiStartsStr(tmpstr2,tmpstr) then  found  := true
-      else found := false;*)
       if not(AnsiStartsStr(UpperCase('[Action'),tmpstr) or  AnsiStartsStr(UpperCase('[Sub'),tmpstr)
+         or AnsiStartsStr(UpperCase('[Initial'),tmpstr) or  AnsiStartsStr(UpperCase('[Patches'),tmpstr)
+         or AnsiStartsStr(UpperCase('[xml2'),tmpstr) or  AnsiStartsStr(UpperCase('[PatchHosts'),tmpstr)
+         or AnsiStartsStr(UpperCase('[Registry'),tmpstr)  or  AnsiStartsStr(UpperCase('[Files'),tmpstr)
+         or AnsiStartsStr(UpperCase('[LinkFolder'),tmpstr) or AnsiStartsStr(UpperCase('[shellinanicon'),tmpstr)
          or AnsiStartsStr(UpperCase('[Aktionen'),tmpstr) or  AnsiStartsStr(UpperCase('[ProfileActions'),tmpstr))  then
-       if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim))
+         if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim))
          then
             begin
               logdatei.log('Sections - line ' + k.toString + ': dont touch: ' + code[k].trim , LLessential);
@@ -173,10 +206,21 @@ begin
         begin
           dec(indentlevel);
           code[k]:= indentation(indentlevel) + code[k];
+          tmpstr2:= code[k];
+          //LogDatei.log(' Line '+inttostr(k+1) + ': ' + tmpstr2,LLnotice);
+          //if (indentlevel>0)
+          //then
+          //begin
           if AnsiStartsStr(UpperCase('endif'),UpperCase(code[k].Trim)) then
-            begin
-              openif[indentlevel] := -1;
-            end;
+             begin
+                openif[indentlevel] := -1;
+             end;
+          //end
+          //else
+          //begin
+          //  LogDatei.log('endif error - too many endifs at Line: '+ inttostr(k+1),LLnotice);
+          //  code[k]:= ';' + indentation(indentlevel) + code[k];
+          //end
         end
         else
           code[k]:= indentation(indentlevel) + code[k];
@@ -190,7 +234,7 @@ begin
   for i := 0 to 250 do
     begin
       if openif[i] > -1 then
-       LogDatei.log('open if for indetlevel: '+inttostr(i)+' at Line: '+inttostr(openif[i]),LLnotice);
+       LogDatei.log('open if for indentlevel: '+inttostr(i)+' at Line: '+inttostr(openif[i]),LLnotice);
     end;
 end;
 
@@ -205,7 +249,7 @@ begin
   indentlevel :=  0;
   {$IFNDEF GUI}writeln('indentrange:  ' + indentrange.ToString()); {$ENDIF GUI}
   logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
- {$IFNDEF GUI} writeln('indentlevel:  ' + indentlevel.ToString());{$ENDIF GUI}
+  {$IFNDEF GUI} writeln('indentlevel:  ' + indentlevel.ToString());{$ENDIF GUI}
   logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
 
 
@@ -223,10 +267,14 @@ begin
   decIndentList:=TStringList.Create;
   decIncIndentList:=TStringList.Create;
 
+  //dontTouchList :=TStringList.Create;
+
   // einlesen der Stringlisten
   ini.ReadSection('incIndentList',incIndentList);
   ini.ReadSection('decIndentList',decIndentList);
   ini.ReadSection('decIncIndentList',decIncIndentList);
+
+  //ini.ReadSection('dontTouchList',dontTouchList);
 
   // TODO: diese Listen werden im Moment noch nicht verwendet
   // erste Versuche sind hart vercoded in der beautify-prozedur
