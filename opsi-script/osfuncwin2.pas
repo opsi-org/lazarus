@@ -117,7 +117,7 @@ function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
 function winCreateSymbolicLink(lpSymlinkFileName: PChar; lpExistingFileName: PChar;
   dwFlags: DWORD): winbool;
 function updateEnvironment(): boolean;
-//function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 
 implementation
 
@@ -2443,25 +2443,48 @@ FUNCTION FileHandleToFileName(Handle : THandle) : STRING;
 
   VAR
     Err                         : Cardinal;
+    errorstr : string;
+    mylength : cardinal;
 
   BEGIN
+    result := '';
     IF NOT Assigned(GetFinalPathNameByHandle) THEN BEGIN
       GetFinalPathNameByHandle:=GetProcAddress(GetModuleHandle('kernel32'),'GetFinalPathNameByHandleA');
       IF NOT Assigned(GetFinalPathNameByHandle) THEN GetFinalPathNameByHandle:=GetFinalPathNameByHandleUndefined
     END;
     SetLength(Result,MAX_PATH+1);
-    SetLength(Result,GetFinalPathNameByHandle(Handle,@Result[1],LENGTH(Result),FILE_NAME_NORMALIZED));
+    mylength := GetFinalPathNameByHandle(Handle,@Result[1],LENGTH(Result),FILE_NAME_NORMALIZED);
+    if mylength > 0 then
+    begin
+    SetLength(Result,mylength);
     IF COPY(Result,1,4) = '\\?\' THEN system.Delete(Result,1,4);
+    end
+    else
+    begin
+    errorstr := 'GetFinalPathNameByHandle : ' +
+        IntToStr(GetLastError) + ' (' +
+        SysErrorMessage(GetLastError) + ')';
+    result := '';
+    end;
+
   END;
 
-(*
+
+// https://stackoverflow.com/questions/49252038/how-to-get-the-full-file-name-from-a-textfile-variable
 function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
 var
-  fileinfo: TSearchRec;
+  //fileinfo: TSearchRec;
   errorinfo: string;
   myhandle : THandle;
 begin
   Result := filepath;
+  myhandle := CreateFile(PChar(filepath), 0, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+  if Win32Check(myhandle <> INVALID_HANDLE_VALUE) then
+    result := FileHandleToFileName(myhandle)
+  else
+   errorinfo := 'Could not get handle for: '+filepath;
+  (*
+  // This gives a non valid handle !
   if GetFileInfo(filepath, fileinfo, errorinfo) then
   begin
     if (fileinfo.Attr and fasymlink) = fasymlink then
@@ -2469,6 +2492,28 @@ begin
       myhandle := fileinfo.FindHandle;
       result := FileHandleToFileName(myhandle);
     end;
+  end;
+  *)
+end;
+
+
+(*
+// https://stackoverflow.com/questions/23409775/using-filegetsymlinktarget-in-delphi-xe5-does-not-return-the-network-address-to
+// https://sad-notes.ru/en/poluchit-put-k-obektu-na-kotoryj-ukazyvaet-simvolicheskoj-ssylki-ili-tochki-soedineniya-2/
+function SymLinkTarget(path: string): string;
+var
+  LinkHandle: THandle;
+  TargetName: array [0..512] of Char;
+begin
+  LinkHandle := CreateFile(PChar(path), 0, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+  Win32Check(LinkHandle <> INVALID_HANDLE_VALUE);
+  try
+    if GetFinalPathNameByHandle(LinkHandle, TargetName, 512, FILE_NAME_NORMALIZED) > 0 then
+      Result: Copy (TargetName, 5, maxint) / TargetName receives in the form of UNC ways (q??C:'Users'...)
+    else
+      RaiseLastOSError;
+  finally
+    CloseHandle(LinkHandle);
   end;
 end;
 *)

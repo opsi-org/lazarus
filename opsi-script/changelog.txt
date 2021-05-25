@@ -15,9 +15,10 @@ opsi-script (4.12.4.21) stable; urgency=low
       then it is the resolved version of %scriptpath%
  * new common unit osfuncunix
  * new function forcePathDelims(<path string>) : <path string>
-      sets all slash and backslash as pathdelim according to th OS
+      sets all slash and backslash as pathdelim according to the OS
+ * new boolean fileIsSymlink(FilePath: string): boolean;
 
--- d.oertel <d.oertel@uib.de> Tue, 11 May 2021 15:00
+-- d.oertel <d.oertel@uib.de> Tue, 25 May 2021 15:00
 
 opsi-winst/opsi-script (4.12.4.20) stable; urgency=low
 

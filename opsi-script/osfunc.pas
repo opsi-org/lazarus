@@ -632,7 +632,7 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
 function isSymLink(const filepath : string) : boolean;
-//function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 
 
 
@@ -11582,7 +11582,7 @@ begin
   end;
 end;
 
-(*
+
 function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 var
   fileinfo : TSearchRec;
@@ -11590,14 +11590,14 @@ var
 begin
   result := filepath;
   {$IFDEF WINDOWS}
-  //result := resolveWinSymlink(filepath);
+  result := resolveWinSymlink(filepath);
   //result := execPowershellCall(filepath, '', 1, True, False, tmpbool1).Text;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   result := resolveUnixSymlink(filepath);
   {$ENDIF UNIX}
 end;
-*)
+
 
 (*
  function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;

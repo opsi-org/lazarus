@@ -756,8 +756,9 @@ var
 //const
 //zaehler  : Integer = 0;
 
+(*
 {$IFDEF WINDOWS}
-function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
 var
   outpath: string;
   cmd: string;
@@ -796,7 +797,7 @@ begin
     Result := filepath;
 end;
 {$ENDIF WINDOWS}
-
+*)
 
 
 function GetString
@@ -14984,13 +14985,15 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
-          //StringResult := resolveSymlink(s1);
+          StringResult := resolveSymlink(s1);
+          (*
           {$IFDEF WINDOWS}
           StringResult := resolveWinSymlink(s1);
           {$ENDIF WINDOWS}
           {$IFDEF UNIX}
           StringResult := resolveUnixSymlink(s1);
           {$ENDIF UNIX}
+          *)
         end;
     if not syntaxCheck then
     begin
@@ -19051,7 +19054,19 @@ begin
         end;
   end
 
-  (* Boolescher Ausdruck  s1 = s2 *)
+  //function fileIsSymlink(inFileName: string): boolean;
+  else if Skip('fileIsSymlink', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          BooleanResult := isSymLink(s1);
+        end;
+  end
+
+  (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
     if skip('int', r, r, InfoSyntaxError) then
@@ -24260,13 +24275,15 @@ begin
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%realScriptpath%');
-      //ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
+      ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
+      (*
       {$IFDEF WINDOWS}
       ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
       {$ENDIF WINDOWS}
       {$IFDEF UNIX}
       ValueToTake := ExtractFileDir(resolveUnixSymlink(Scriptdatei));
       {$ENDIF UNIX}
+      *)
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%WinstDir%');
