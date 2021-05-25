@@ -20,7 +20,8 @@ uses
   StdCtrls,
   Buttons,
   Forms,
-  oslog;
+  oslog,
+  combobutton;
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
@@ -30,7 +31,8 @@ type
     fdpUp, fdpDown, fdpUnknown);
   TLabels = array of TLabel;
   //TButtons = array of TButton;
-  TButtons = array of TSpeedButton;
+  //TButtons = array of TSpeedButton;
+  TButtons = array of TComboButton;
 
   TTransparentMemo = class(TScrollBox)
   private
@@ -225,28 +227,60 @@ end;
 procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
 var
   index: integer;
+  tmpint : integer;
   indexstr: string;
+  btnfound : boolean;
 begin
   logdatei.log('Set for Button id: "' + IntToStr(choiceindex) +
     '" the caption: "' + aktMessage + '"', LLInfo);
   try
-    // get labelarray index for aktid stored in labellist
+    btnfound := false;
+    // get ButtonArray index for aktid stored in buttonlist
     indexstr := buttonlist.Values[IntToStr(choiceindex)];
-    if indexstr <> '' then
+    if indexstr = '' then
     begin
-      index := StrToInt(indexstr);
+      // we did not found the button in the buttonlist - is it a combo field ?
+      if (choiceindex > buttonlist.Count -1) and
+        not ButtonArray[buttonlist.Count -1].button_only then
+       begin
+        index := buttonlist.Count -1;
+        btnfound := true;
+       end
+       else
+      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLDebug2);
+     end
+     else
+     begin
+       // we did found the button in the buttonlist
+       index := StrToInt(indexstr);
+       btnfound := true;
+     end;
+     if btnfound = true then
+     begin
       logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
         IntToStr(choiceindex) + '"', LLDebug2);
       logdatei.log('Button name by index: Found index: ' +
-        ButtonArray[index].Name, LLDebug2);
-      ButtonArray[index].Caption := aktMessage;
-      ButtonArray[index].Repaint;
+        ButtonArray[index].panel.Name, LLDebug2);
+      if ButtonArray[index].button_only then
+      ButtonArray[index].btn.Caption := aktMessage
+      end
+      else
+      begin
+        tmpint := ButtonArray[index].btn.Tag
+            + ButtonArray[index].cbox.Items.Count;
+        if choiceindex > tmpint then
+        // we need a new entry
+        ButtonArray[index].cbox.Items.Add(aktMessage)
+        else
+        //
+        ButtonArray[index].cbox.Items[choiceindex - ButtonArray[index].btn.Tag] := aktMessage;
+      end;
+      ButtonArray[index].panel.Repaint;
       Application.ProcessMessages;
       logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
         '" the message: "' + aktMessage + '"', LLInfo);
-    end
-    else
-      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLDebug2);
+
+
   except
     on E: Exception do
     begin
@@ -263,7 +297,10 @@ var
   choice: integer;
 
 begin
-  choice := TSpeedButton(Sender).Tag;
+  if TComboButton(TSpeedButton(Sender).Parent).button_only then
+  choice := TSpeedButton(Sender).Tag
+  else
+   choice := TSpeedButton(Sender).Tag + TComboButton(TSpeedButton(Sender).Parent).cbox.ItemIndex;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
@@ -1178,16 +1215,18 @@ begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
     Inc(buttoncounter);
     SetLength(ButtonArray, buttoncounter + 1);
-    ButtonArray[buttoncounter] := Tspeedbutton.Create(nform);
-    ButtonArray[buttoncounter].Parent := nform;
-    ButtonArray[buttoncounter].AutoSize := False;
-    ButtonArray[buttoncounter].Name := aktsection;
-    ButtonArray[buttoncounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
-    ButtonArray[buttoncounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
-    ButtonArray[buttoncounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
-    ButtonArray[buttoncounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+    // should we create a combo or button only
+    tmpbool := not strToBool(myini.ReadString(aktsection, 'ComboButton', 'false'));
+    ButtonArray[buttoncounter] := TComboButton.Create(nform,tmpbool);
+    ButtonArray[buttoncounter].panel.Parent := nform;
+    //ButtonArray[buttoncounter].AutoSize := False;
+    ButtonArray[buttoncounter].panel.Name := aktsection;
+    ButtonArray[buttoncounter].panel.Left := myini.ReadInteger(aktsection, 'Left', 10);
+    ButtonArray[buttoncounter].panel.Top := myini.ReadInteger(aktsection, 'Top', 10);
+    ButtonArray[buttoncounter].panel.Width := myini.ReadInteger(aktsection, 'Width', 10);
+    ButtonArray[buttoncounter].panel.Height := myini.ReadInteger(aktsection, 'Height', 10);
     tmpstr2 := 'Button' + IntToStr(buttoncounter);
-    with ButtonArray[buttoncounter] do
+    with ButtonArray[buttoncounter].panel do
     begin
       tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
       tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
@@ -1205,40 +1244,43 @@ begin
       mytmpstr := 'Liberation Sans';
       {$ENDIF LINUX}
     end;
-    ButtonArray[buttoncounter].Font.Name := mytmpstr;
+    ButtonArray[buttoncounter].panel.Font.Name := mytmpstr;
     { fontresize makes also hdpi correction for linux}
-    ButtonArray[buttoncounter].Font.Size :=
+    ButtonArray[buttoncounter].panel.Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
-      IntToStr(ButtonArray[buttoncounter].Font.Size);
+      IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
     LogDatei.log(tmpstr2, LLDebug);
     //ButtonArray[buttoncounter].Font.Color :=
     //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
-    ButtonArray[buttoncounter].Font.Bold :=
+    ButtonArray[buttoncounter].panel.Font.Bold :=
       strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
-    ButtonArray[buttoncounter].Font.Italic :=
+    ButtonArray[buttoncounter].panel.Font.Italic :=
       strToBool(myini.ReadString(aktsection, 'FontItalic', 'false'));
-    ButtonArray[buttoncounter].Font.Underline :=
+    ButtonArray[buttoncounter].panel.Font.Underline :=
       strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
     //ButtonArray[buttoncounter].Alignment :=
     //  StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'alLeft'));
     //ButtonArray[buttoncounter].Transparent :=
     //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     choiceindex := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
-    ButtonArray[buttoncounter].Tag := choiceindex;
-    ButtonArray[buttoncounter].OnClick := @nform.ChoiceClick;
+    ButtonArray[buttoncounter].btn.Tag := choiceindex;
+    ButtonArray[buttoncounter].btn.OnClick := @nform.ChoiceClick;
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
-    ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    mytmpstr := myini.ReadString(aktsection, 'Text', '');
+    if ButtonArray[buttoncounter].button_only then
+    ButtonArray[buttoncounter].btn.Caption := mytmpstr
+    else ButtonArray[buttoncounter].cbox.Items.Add(mytmpstr);
     //{$IFDEF WINDOWS}
     // scale new Button:
     //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
-    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+    ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
       designPPI, nform.PixelsPerInch, 0, 0);
     //mytmpint1 := ButtonArray[buttoncounter].Height;
     //ButtonArray[buttoncounter].Height := trunc(mytmpint1 * (nform.PixelsPerInch / designPPI));
     tmpstr2 := 'After ReScale: Button' + IntToStr(buttoncounter);
-    with ButtonArray[buttoncounter] do
+    with ButtonArray[buttoncounter].panel do
     begin
       tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
       tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
@@ -1247,11 +1289,11 @@ begin
     //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
-    ButtonArray[buttoncounter].Repaint;
+    ButtonArray[buttoncounter].panel.Repaint;
     if LogDatei.LogLevel > 6 then
     begin
-      ButtonArray[buttoncounter].OnMouseEnter := @nform.mymouseenter;
-      ButtonArray[buttoncounter].OnMouseLeave := @nform.mymouseleAVE;
+      ButtonArray[buttoncounter].panel.OnMouseEnter := @nform.mymouseenter;
+      ButtonArray[buttoncounter].panel.OnMouseLeave := @nform.mymouseleave;
       LogDatei.log('Finished reading: ' + aktsection, LLDebug);
     end;
   end;
@@ -1317,7 +1359,7 @@ var
   a, b: TPoint;
   str : string;
 begin
-  str := TSpeedButton(Sender).Name + ' : ' + inttostr(TSpeedButton(Sender).Tag);
+  str := TComboButton(Sender).panel.Name + ' : ' + inttostr(TComboButton(Sender).btn.Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);
@@ -1332,7 +1374,7 @@ var
   a, b: TPoint;
   str : string;
 begin
-  str := TSpeedButton(Sender).Name + ' : ' + inttostr(TSpeedButton(Sender).Tag);
+  str := TComboButton(Sender).Name + ' : ' + inttostr(TComboButton(Sender).btn.Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);

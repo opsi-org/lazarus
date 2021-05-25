@@ -1,4 +1,11 @@
 [changelog]
+opsi-notifier  4.2.0.1
+
+  * modify all speedbuttons to new combobutton class
+  * use combo button mode if in ini button section: ComboButton = true
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 25 May 2021:15:00:00 +0200
+
 opsi-notifier  4.2.0.0
 
   * more button logging in loglevel 7 - 8

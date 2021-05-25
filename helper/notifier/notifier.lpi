@@ -24,6 +24,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="opsi-notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="5">
@@ -204,7 +205,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="13">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -259,6 +260,10 @@
         <Filename Value="info-opsi-notifier.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="combobutton.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
