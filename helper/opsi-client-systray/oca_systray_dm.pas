@@ -275,7 +275,7 @@ var
 begin
   FreeAndNil(opsidata);
   initConnection(30);
-  resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
+  resultstring := MyOpsiMethodCall('processActionRequests', []);
 end;
 
 
