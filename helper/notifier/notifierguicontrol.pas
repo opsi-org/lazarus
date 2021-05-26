@@ -21,7 +21,8 @@ uses
   Buttons,
   Forms,
   oslog,
-  combobutton;
+  combobutton,
+  fgl;
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
@@ -49,6 +50,14 @@ type
 
   TMemos = array of TTransparentMemo;
 
+  TMyRange = class(TObject)
+    startval: integer;
+    endval: integer;
+    btnarrayindex: integer;
+  end;
+
+  TMyRangeList = specialize TFPGObjectList<TMyRange>;
+
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
@@ -75,7 +84,8 @@ var
   myini: TIniFile;
   navlist: TStringList;
   labellist: TStringList;
-  buttonlist: TStringList;
+  //buttonlist: TStringList;
+  rangelist: TStringList;
   memolist: TStringList;
   sectionlist: TStringList;
   nformpos: TNFormPos;
@@ -86,12 +96,90 @@ var
   LabelArray: TLabels;
   ButtonArray: TButtons;
   MemoArray: Tmemos;
-  labelcounter, buttoncounter, memocounter: integer;
+  labelcounter, memocounter: integer;
+  buttoncounter: integer = -1;
   designPPI: integer;
   //mymouseenter: TMethod;
   //mymouseleave: TMethod;
+  myRangelistList: TMyRangeList;
 
 
+  (*
+  type
+   TMyClass = class(TObject)
+      fld1 : string;
+   end;
+
+   TMyList = specialize TFPGObjectList<TMyClass>;
+
+var
+   list : TMyList;
+   c : TMyClass;
+
+begin
+   // create the list and add an element
+   list := TMyList.Create;
+   c := TMyClass.Create;
+   c.fld1 := 'c1';
+   list.Add(c);
+   // retrieve an element from the list
+   c := list[0];
+   *)
+
+function getIndexFromRangeList(searchval: integer; var startval: integer;
+  var btnarrayindex: integer): integer;
+var
+  i: integer;
+  found: boolean;
+begin
+  Result := -1;
+  found := False;
+  i := 0;
+  while (not found) and (i < myRangelistList.Count) do
+  begin
+    if (searchval >= myRangelistList.Items[i].startval) and
+      (searchval <= myRangelistList.Items[i].endval) then
+    begin
+      found := True;
+      startval := myRangelistList.Items[i].startval;
+      btnarrayindex := myRangelistList.Items[i].btnarrayindex;
+      Result := i;
+    end;
+    Inc(i);
+  end;
+end;
+
+function addRangeToList(startval, endval, btnarrayindex: integer): integer;
+var
+  range: TMyRange;
+  index: integer;
+  dummyint: integer;
+begin
+  Result := -1;
+  index := getIndexFromRangeList(startval, dummyint, dummyint);
+  if (index = -1) then
+  begin
+    index := getIndexFromRangeList(endval, dummyint, dummyint);
+    if (index = -1) then
+    begin
+      range := TMyRange.Create;
+      range.startval := startval;
+      range.endval := endval;
+      range.btnarrayindex := btnarrayindex;
+      myRangelistList.Add(range);
+      Result := getIndexFromRangeList(startval, dummyint, dummyint);
+    end
+    else
+      LogDatei.log('Could not add range: ' + IntToStr(startval) +
+        ' : ' + IntToStr(endval) + 'because endval exists with index: ' +
+        IntToStr(index), LLerror);
+  end
+  else
+    LogDatei.log('Could not add range: ' + IntToStr(startval) + ' : ' +
+      IntToStr(endval) + 'because startval exists with index: ' +
+      IntToStr(index), LLerror);
+
+end;
 
 // from
 // http://stackoverflow.com/questions/41068387/how-to-make-transparent-form-in-lazarus
@@ -226,17 +314,56 @@ end;
 
 procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
 var
-  index: integer;
-  tmpint : integer;
+  rangeindex, btnindex, startval: integer;
+  tmpint: integer;
   indexstr: string;
-  btnfound : boolean;
+  btnfound: boolean;
 begin
   logdatei.log('Set for Button id: "' + IntToStr(choiceindex) +
     '" the caption: "' + aktMessage + '"', LLInfo);
   try
-    btnfound := false;
+    btnfound := False;
     // get ButtonArray index for aktid stored in buttonlist
-    indexstr := buttonlist.Values[IntToStr(choiceindex)];
+    //indexstr := buttonlist.Values[IntToStr(choiceindex)];
+    rangeindex := getIndexFromRangeList(choiceindex, startval, btnindex);
+    if rangeindex <> -1 then
+    begin
+      if btnindex < length(ButtonArray) then
+      begin
+        logdatei.log('Found Button index: ' + IntToStr(btnindex) +
+          ' for id: "' + IntToStr(choiceindex) + '"', LLDebug2);
+        if startval <> ButtonArray[btnindex].btn.Tag then
+          logdatei.log('Button tag: ' + IntToStr(ButtonArray[btnindex].btn.Tag) +
+            ' differs from startval: ' + IntToStr(startval), LLerror);
+        logdatei.log('Button name by index: Found index: ' +
+          ButtonArray[btnindex].panel.Name, LLDebug2);
+        if ButtonArray[btnindex].button_only then
+        begin
+          ButtonArray[btnindex].btn.Caption := aktMessage;
+        end
+        else
+        begin
+          tmpint := ButtonArray[btnindex].btn.Tag +
+            ButtonArray[btnindex].cbox.Items.Count;
+          if choiceindex > tmpint then
+            // we need a new entry
+            ButtonArray[btnindex].cbox.Items.Add(aktMessage)
+          else
+
+            ButtonArray[btnindex].cbox.Items[choiceindex -
+              ButtonArray[btnindex].btn.Tag] :=
+              aktMessage;
+        end;
+        ButtonArray[btnindex].panel.Repaint;
+        Application.ProcessMessages;
+      end
+      else
+        LogDatei.log('index found out of range for Button id: ' +
+          IntToStr(choiceindex), LLerror);
+    end
+    else
+      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLerror);
+    (*
     if indexstr = '' then
     begin
       // we did not found the button in the buttonlist - is it a combo field ?
@@ -277,14 +404,15 @@ begin
       end;
       ButtonArray[index].panel.Repaint;
       Application.ProcessMessages;
-      logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
-        '" the message: "' + aktMessage + '"', LLInfo);
+      *)
+    logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
+      '" the message: "' + aktMessage + '"', LLInfo);
 
 
   except
     on E: Exception do
     begin
-      LogDatei.log('Error: Button not found by index: ' + IntToStr(index) +
+      LogDatei.log('Error: Button not found by index: ' + IntToStr(btnindex) +
         ' id: ' + IntToStr(choiceindex), LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
     end;
@@ -294,20 +422,63 @@ end;
 
 procedure myChoiceClick(Sender: TObject);
 var
-  choice: integer;
+  choice, tag: integer;
+  btnindex, startvalue, rangeindex: integer;
+  button_only: boolean;
 
 begin
-  if TComboButton(TSpeedButton(Sender).Parent).button_only then
-  choice := TSpeedButton(Sender).Tag
+  tag := TSpeedButton(Sender).Tag;
+  rangeindex := getIndexFromRangeList(tag, startvalue, btnindex);
+  if rangeindex <> -1 then
+  begin
+    LogDatei.log('got tag: ' + IntToStr(tag) + ' startvalue: ' + IntToStr(startvalue) +
+      ' btnindex: ' + IntToStr(btnindex) + ' length array: ' +
+      IntToStr(length(ButtonArray)), LLinfo);
+    if not Assigned(ButtonArray[btnindex]) then
+      logdatei.log('ButtonArray[btnindex] is not assingned :', LLError);
+    try
+      button_only := TComboButton(ButtonArray[btnindex]).button_only;
+    except
+      on E: Exception do
+      begin
+        logdatei.log('exception in myChoiceClick :' + E.Message, LLError);
+        // this is a hard + dirty work around
+        button_only := False;
+      end;
+    end;
+
+    if button_only then
+    begin
+      choice := TSpeedButton(Sender).Tag;
+      LogDatei.log('choice is button_only, tag: ' + IntToStr(tag) +
+        ' startvalue: ' + IntToStr(startvalue), LLinfo);
+    end
+    else
+    begin
+      choice := ButtonArray[btnindex].btn.Tag +
+        ButtonArray[btnindex].cbox.ItemIndex;
+    (*
+    choice := TSpeedButton(Sender).Tag +
+      TComboButton(TSpeedButton(Sender).Parent).cbox.ItemIndex;
+      *)
+      LogDatei.log('choice is combobutton, tag: ' + IntToStr(tag) +
+        ' startvalue: ' + IntToStr(startvalue), LLinfo);
+    end;
+
+
+    logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
+    buttonPushedToService(choice);
+  end
   else
-   choice := TSpeedButton(Sender).Tag + TComboButton(TSpeedButton(Sender).Parent).cbox.ItemIndex;
-  logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
-  buttonPushedToService(choice);
+    LogDatei.log('Could not found btn for tag: ' + IntToStr(tag), LLerror);
+
+  // this is workaround if the opsicliend do not close the popup
   if mynotifierkind = 'popup' then
   begin
     DataModule1.TimerClose.Interval := 10000;
     DataModule1.TimerClose.Enabled := True;
   end;
+
 end;
 
 
@@ -853,6 +1024,9 @@ var
   mytmpstr, tmpstr2, tmpstr3: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
+  choiceindexstr: string;
+  choiceIsArray: boolean;
+  choiceArrayEnd: integer;
   tmpinistr: string;
   tmpbool: boolean;
   //myscreen : TScreen;
@@ -986,7 +1160,7 @@ begin
     if nformpos = fpBottomRight then
       nformpos := fpTopRight;
     {$ENDIF DARWIN}
-    tmpstr2 := 'Form initial: ' ;
+    tmpstr2 := 'Form initial: ';
     with nform do
     begin
       tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
@@ -998,7 +1172,7 @@ begin
     nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
       screen.PixelsPerInch, 0, 0);
     {$ENDIF DARWIN}
-    tmpstr2 := 'Form rescale: ' ;
+    tmpstr2 := 'Form rescale: ';
     with nform do
     begin
       tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
@@ -1214,17 +1388,79 @@ begin
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
     Inc(buttoncounter);
+    LogDatei.log('buttoncounter: ' + IntToStr(buttoncounter), LLinfo);
     SetLength(ButtonArray, buttoncounter + 1);
     // should we create a combo or button only
-    tmpbool := not strToBool(myini.ReadString(aktsection, 'ComboButton', 'false'));
-    ButtonArray[buttoncounter] := TComboButton.Create(nform,tmpbool);
+    (*
+    choiceindexstr : string;
+    choiceIsArray : boolean;
+    choiceArrayEnd : integer;
+    *)
+    // we have to read the choice index here in order to decide which kind of button we need
+    choiceindexstr := trim(myini.ReadString(aktsection, 'ChoiceIndex', '0'));
+    LogDatei.log('choiceindex from file: ' + choiceindexstr, LLinfo);
+    if Pos(':', choiceindexstr) > 0 then
+      choiceIsArray := True
+    else
+      choiceIsArray := False;
+    if choiceIsArray then
+    begin
+      choiceindex := 0;
+      mytmpstr := trim(copy(choiceindexstr, 1, Pos(':', choiceindexstr) - 1));
+      LogDatei.log('choiceindex array will start with: ' + mytmpstr, LLdebug);
+      if not TryStrToInt(mytmpstr, choiceindex) then
+      begin
+        LogDatei.log('choiceindex from file: ' + choiceindexstr +
+          ' Could not convert to int: ' + mytmpstr, LLerror);
+      end
+      else
+      begin
+        LogDatei.log('choiceindex array starts with: ' + IntToStr(choiceindex), LLinfo);
+        // get the array end
+        mytmpstr := trim(copy(choiceindexstr, Pos(':', choiceindexstr) + 1,
+          length(choiceindexstr)));
+        LogDatei.log('choiceindex array will end with: ' + mytmpstr, LLdebug);
+        if mytmpstr = '' then // Array ends never
+          choiceArrayEnd := MaxInt
+        else
+        if not TryStrToInt(mytmpstr, choiceArrayEnd) then
+          LogDatei.log('choiceArrayEnd from file: ' + choiceindexstr +
+            ' Could not convert to int: ' + mytmpstr, LLerror);
+        LogDatei.log('choiceindex array ends with: ' + IntToStr(choiceArrayEnd), LLinfo);
+        mytmpint1 := addRangeToList(choiceindex, choiceArrayEnd, buttoncounter);
+        if -1 = mytmpint1 then
+          LogDatei.log('Error adding range. Rangeindex is: ' +
+            IntToStr(mytmpint1) + ' Buttoncounter is: ' +
+            IntToStr(buttoncounter), LLwarning);
+      end;
+    end
+    else
+    begin
+      if TryStrToInt(choiceindexstr, choiceindex) then
+      begin
+        mytmpint1 := addRangeToList(choiceindex, choiceindex, buttoncounter);
+        if -1 = mytmpint1 then
+          LogDatei.log('Error adding range. Rangeindex is: ' +
+            IntToStr(mytmpint1) + ' Buttoncounter is: ' +
+            IntToStr(buttoncounter), LLwarning);
+      end
+      else
+      begin
+        LogDatei.log('choiceindex from file: ' + choiceindexstr +
+          ' Could not convert to int: ' + trim(choiceindexstr), LLerror);
+      end;
+      LogDatei.log('choiceindex (no array) is: ' + IntToStr(choiceindex), LLinfo);
+    end;
+    //tmpbool := not strToBool(myini.ReadString(aktsection, 'ComboButton', 'false'));
+    ButtonArray[buttoncounter] := TComboButton.Create(nform, not choiceIsArray);
     ButtonArray[buttoncounter].panel.Parent := nform;
     //ButtonArray[buttoncounter].AutoSize := False;
     ButtonArray[buttoncounter].panel.Name := aktsection;
     ButtonArray[buttoncounter].panel.Left := myini.ReadInteger(aktsection, 'Left', 10);
     ButtonArray[buttoncounter].panel.Top := myini.ReadInteger(aktsection, 'Top', 10);
     ButtonArray[buttoncounter].panel.Width := myini.ReadInteger(aktsection, 'Width', 10);
-    ButtonArray[buttoncounter].panel.Height := myini.ReadInteger(aktsection, 'Height', 10);
+    ButtonArray[buttoncounter].panel.Height :=
+      myini.ReadInteger(aktsection, 'Height', 10);
     tmpstr2 := 'Button' + IntToStr(buttoncounter);
     with ButtonArray[buttoncounter].panel do
     begin
@@ -1263,15 +1499,27 @@ begin
     //  StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'alLeft'));
     //ButtonArray[buttoncounter].Transparent :=
     //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
-    choiceindex := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
+    //choiceindex := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
     ButtonArray[buttoncounter].btn.Tag := choiceindex;
     ButtonArray[buttoncounter].btn.OnClick := @nform.ChoiceClick;
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     mytmpstr := myini.ReadString(aktsection, 'Text', '');
     if ButtonArray[buttoncounter].button_only then
-    ButtonArray[buttoncounter].btn.Caption := mytmpstr
-    else ButtonArray[buttoncounter].cbox.Items.Add(mytmpstr);
+      ButtonArray[buttoncounter].btn.Caption := mytmpstr
+    else
+    begin
+      ButtonArray[buttoncounter].cbox.Items.Add(mytmpstr);
+      if showtest then
+      begin
+        ButtonArray[buttoncounter].cbox.Items.Add('one');
+        ButtonArray[buttoncounter].cbox.Items.Add('two');
+        ButtonArray[buttoncounter].cbox.Items.Add('three');
+      end;
+      ButtonArray[buttoncounter].cbox.ItemIndex := 0;
+      ButtonArray[buttoncounter].cbox.OnClick :=@nform.cboxClick;
+      ButtonArray[buttoncounter].cbox.OnEditingDone :=@nform.cboxEditdone;
+    end;
     //{$IFDEF WINDOWS}
     // scale new Button:
     //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
@@ -1288,7 +1536,7 @@ begin
     LogDatei.log(tmpstr2, LLDebug);
     //{$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
-    buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
+    //buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     ButtonArray[buttoncounter].panel.Repaint;
     if LogDatei.LogLevel > 6 then
     begin
@@ -1339,6 +1587,7 @@ begin
   LogDatei.log('Loading Skin config from: ' + ininame, LLInfo);
   myini := TIniFile.Create(ininame);
   navlist.AddStrings(fillnavlist(myIni));
+  buttoncounter := -1;
   for i := 0 to sectionlist.Count - 1 do
   begin
     aktsection := sectionlist[i];
@@ -1357,31 +1606,34 @@ end;
 procedure logmouseenter(Sender: TObject);
 var
   a, b: TPoint;
-  str : string;
+  str: string;
 begin
-  str := TComboButton(Sender).panel.Name + ' : ' + inttostr(TComboButton(Sender).btn.Tag);
+  str := TComboButton(Sender).panel.Name + ' : ' +
+    IntToStr(TComboButton(Sender).btn.Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);
   b := a;
   // b.x and b.y are your coordinates
 
-  LogDatei.log(str+' mouseenter: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+  LogDatei.log(str + ' mouseenter: x: ' + IntToStr(b.x) + ' Y: ' +
+    IntToStr(b.y), LLdebug);
 end;
 
 procedure logmouseleave(Sender: TObject);
 var
   a, b: TPoint;
-  str : string;
+  str: string;
 begin
-  str := TComboButton(Sender).Name + ' : ' + inttostr(TComboButton(Sender).btn.Tag);
+  str := TComboButton(Sender).Name + ' : ' + IntToStr(TComboButton(Sender).btn.Tag);
   a.X := Mouse.CursorPos.X;
   a.Y := Mouse.CursorPos.Y;
   ScreenToClient(nform.Handle, a);
   b := a;
   // b.x and b.y are your coordinates
 
-  LogDatei.log(str+' mouseleave: x: ' + IntToStr(b.x) + ' Y: ' + IntToStr(b.y), LLdebug);
+  LogDatei.log(str + ' mouseleave: x: ' + IntToStr(b.x) + ' Y: ' +
+    IntToStr(b.y), LLdebug);
 end;
 
 
@@ -1392,7 +1644,9 @@ begin
   memocounter := 0;
   navlist := TStringList.Create;
   labellist := TStringList.Create;
-  buttonlist := TStringList.Create;
+  //buttonlist := TStringList.Create;
+  //rangelist := TStringList.Create;
+  myRangelistList := TMyRangelist.Create(True);
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
   designPPI := 96;

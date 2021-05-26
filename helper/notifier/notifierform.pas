@@ -34,6 +34,8 @@ type
     procedure choiceClick(Sender: TObject);
     procedure mymouseenter(Sender: TObject);
     procedure mymouseleave(Sender: TObject);
+    procedure cboxClick(Sender: TObject);
+    procedure cboxEditdone(Sender: TObject);
   end;
 
 var
@@ -47,7 +49,7 @@ uses
 {$R *.lfm}
 
 var
-  mousein : boolean = false;
+  mousein: boolean = False;
 
 { TNform }
 
@@ -55,7 +57,9 @@ procedure TNform.FormCreate(Sender: TObject);
 begin
   //objlist := TObjectList.Create;
   // prevents screensaver to start while running: start
-  {$IFDEF WINDOWS} SystemCritical.IsCritical := true; {$ENDIF WINDOWS}
+  {$IFDEF WINDOWS}
+  SystemCritical.IsCritical := True;
+{$ENDIF WINDOWS}
 end;
 
 procedure TNform.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -78,12 +82,14 @@ end;
 procedure TNform.FormHide(Sender: TObject);
 begin
   // prevents screensaver to start while running: stop
-  {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
+  {$IFDEF WINDOWS}
+  SystemCritical.IsCritical := False;
+{$ENDIF WINDOWS}
 end;
 
 procedure TNform.FormShow(Sender: TObject);
 var
-  oldFsStyle : TFormstyle;
+  oldFsStyle: TFormstyle;
 begin
   (*
   oldFsStyle := FormStyle;
@@ -102,25 +108,36 @@ begin
   myChoiceClick(Sender);
 end;
 
+procedure TNform.cboxClick(Sender: TObject);
+begin
+  logdatei.log('cbox clicked.', LLDebug);
+end;
+
+procedure TNform.cboxEditdone(Sender: TObject);
+begin
+  logdatei.log('cboxEditdone', LLDebug);
+  logdatei.log('cbox: ' + TComboBox(Sender).Items[TComboBox(Sender).ItemIndex], LLDebug);
+end;
+
+
 procedure TNform.mymouseenter(Sender: TObject);
 begin
   if not mousein then
   begin
-  mousein := true;
-  logdatei.log('mouse enter.', LLDebug);
-  logmouseenter(Sender);
+    mousein := True;
+    logdatei.log('mouse enter.', LLDebug);
+    //logmouseenter(Sender);
   end;
 end;
 
 procedure TNform.mymouseleave(Sender: TObject);
 begin
-  if  mousein then
+  if mousein then
   begin
-  mousein := false ;
-  logdatei.log('mouse leave.', LLDebug);
-  logmouseleave(Sender);
+    mousein := False;
+    logdatei.log('mouse leave.', LLDebug);
+    //logmouseleave(Sender);
   end;
 end;
 
 end.
-
