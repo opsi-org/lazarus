@@ -1,13 +1,14 @@
 object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = True
-  Height = 283
-  HorizontalOffset = 367
-  VerticalOffset = 440
-  Width = 409
+  Height = 268
+  HorizontalOffset = 285
+  VerticalOffset = 417
+  Width = 388
+  PPI = 91
   object PopupMenu1: TPopupMenu
-    Left = 128
-    Top = 72
+    Left = 121
+    Top = 68
     object MI_startevent: TMenuItem
       Caption = 'Install now'
       Hint = 'Start now all pending opsi installations'
@@ -153,14 +154,14 @@ object DataModule1: TDataModule1
     }
     Hint = 'opsi-client-systray'
     Visible = True
-    Left = 220
-    Top = 69
+    Left = 209
+    Top = 65
   end
   object Timer1: TTimer
     Enabled = False
     Interval = 0
     OnTimer = Timer1Timer
-    Left = 28
-    Top = 68
+    Left = 27
+    Top = 64
   end
 end

@@ -3,8 +3,9 @@
 opsi_client_systray  4.1.2.4
 
   * dispose allocated memory for string (StrDispose) in function GetSystemDefaultLocale
+  * replace opsi method call "fire_event_on_demand" with "processActionRequests"
 
--- Jan Werner <j.werner@uib.de>  Mon, 10 May 2021:14:18:00 +0200
+-- Jan Werner <j.werner@uib.de>  Wed, 26 May 2021:12:03:00 +0200
 
 opsi_client_systray  4.1.2.3
 
