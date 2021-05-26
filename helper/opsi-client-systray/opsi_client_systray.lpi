@@ -201,19 +201,19 @@
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="oca_systray.txt"/>
+        <Filename Value="..\..\common\osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\..\common\osfuncmac.pas"/>
+        <Filename Value="info-ossyst.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="info-ossyst.plist"/>
+        <Filename Value="notarize_ossystray.bash"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="notarize_ossystray.bash"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
     </Units>
