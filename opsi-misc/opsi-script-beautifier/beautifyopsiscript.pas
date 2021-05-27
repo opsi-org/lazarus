@@ -89,10 +89,9 @@ end;
 
 function beautify(code: TStringList): TStringList;
 var
-  k, relPos, i: integer;
+  k, relPos, i : integer;
   dontTouch, noIndent, trimLine: boolean;
   tmpstr, tmpstr2: string;
-  found: boolean;
   threetabs: boolean;
   openif: array[0..250] of integer;
 begin
@@ -120,9 +119,9 @@ begin
     begin
       // detect indentiation
       threetabs := False;
-      relPos := PosEx('[', code[k]) - 1;      // how many chars
+      relPos := PosEx('[', code[k]) - 1;      // before indentation
       code[k] := indentation(indentlevel) + code[k].trim;
-      relPos := PosEx('[', code[k]) - 1 - relPos;
+      relPos := PosEx('[', code[k]) - 1 - relPos;  // before indentation
       // how many chars to indent additionally
       // TODO: nach "params" 1 (schöner 3) Einrückung
       repeat
@@ -166,40 +165,38 @@ begin
     end;
 
    // sections with relativ indentions, dont touch and no indent
-   if isStartStr(code[k], dontTouchList) or isStartStr(code[k], noIndentList)
-         (*not(AnsiStartsStr(UpperCase('[Action'),tmpstr) or  AnsiStartsStr(UpperCase('[Sub'),tmpstr)
-         or AnsiStartsStr(UpperCase('[Initial'),tmpstr) or  AnsiStartsStr(UpperCase('[Patches'),tmpstr)
-         or AnsiStartsStr(UpperCase('[xml2'),tmpstr) or  AnsiStartsStr(UpperCase('[PatchHosts'),tmpstr)
-         or AnsiStartsStr(UpperCase('[Registry'),tmpstr)  or  AnsiStartsStr(UpperCase('[Files'),tmpstr)
-         or AnsiStartsStr(UpperCase('[LinkFolder'),tmpstr) or AnsiStartsStr(UpperCase('[shellinanicon'),tmpstr)
-         or AnsiStartsStr(UpperCase('[Aktionen'),tmpstr) or  AnsiStartsStr(UpperCase('[ProfileActions'),tmpstr))*) then
+   if isStartStr(code[k].trim, dontTouchList) or isStartStr(code[k].trim, noIndentList) then
     begin
       //logdatei.log(' line ' + k.toString + ' before: ' + code[k] , LLessential);
-      if isStartStr(code[k], dontTouchList) then
+      if isStartStr(code[k].trim, dontTouchList) then
       begin
         logdatei.log('Sections - line ' + k.toString +
-          ': dont touch: ' + code[k].trim, LLessential);
+          ': dont touch: ' + code[k], LLessential);
         dontTouch:= true;
-      end
-      else // no indent
+      end;
+      if isStartStr(code[k].trim, noIndentList) then
       begin
         logdatei.log('Sections - line ' + k.toString +
-          ': no indent: ' + code[k].trim, LLessential);
+          ': no indent: ' + code[k], LLessential);
         noIndent:=true;
       end;
 
       if (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) then
+      // begin of section
       begin
-        relPos := PosEx('[', code[k]) - 1;      // how many chars
+        // set first line of section with indentlevel
+        relPos:= PosEx('[', code[k]) - 1;  // position of [ before indentation
+        code[k] := indentation(indentlevel) + code[k].trim;
+        relPos :=  PosEx('[', code[k]) - 1 -relPos;
         //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
-        relPos := PosEx('[', code[k]) - 1 - relPos;
-        // how many chars to indent additionally
+        // get next lines
         Inc(k);
-        // check following lines
+        // check following lines while not end of section
         while not ((AnsiStartsStr('[', code[k].trim) and
             AnsiEndsStr(']', code[k].trim)) or
-            AnsiStartsStr('endfunc', code[k].trim)) and
-          (k < code.Count - 1) do
+            AnsiStartsStr(UpperCase('deffunc'), UpperCase(code[k].trim)) or
+            AnsiStartsStr('endfunc', code[k].trim) or AnsiStartsStr('exit $?', code[k].trim))
+            and (k < code.Count - 1) do
         begin
           if dontTouch then // don't touch
             code[k] := createBlockIndent(relPos) + code[k];
@@ -210,17 +207,23 @@ begin
           //logdatei.log(' : line ' + k.toString + ' after: ' + code[k] , LLessential);
         end;
         trimline := False;
+
         // section ends
-        if AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim)) then
+        if (AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim))
+           //or AnsiStartsStr(UpperCase('exit $?'), UpperCase(code[k].trim))
+           ) then
         begin
           Dec(indentlevel);
           code[k] := indentation(indentlevel) + code[k];
         end;
-        if (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) then
+
+        if (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) or
+            AnsiStartsStr(UpperCase('deffunc'), UpperCase(code[k].trim))
+        then
           // begin next section, therefore end of previous section
         begin
           Dec(k);
-          // back, because this line is the begin of the next section and must be prooved
+          // back one line, because this line is the begin of the next section and must be prooved
         end;
 
       end;
