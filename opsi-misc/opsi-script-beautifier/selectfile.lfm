@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 403
+  Left = 616
   Height = 296
-  Top = 488
+  Top = 199
   Width = 660
   Caption = 'opsi-script beautifier'
   ClientHeight = 296
