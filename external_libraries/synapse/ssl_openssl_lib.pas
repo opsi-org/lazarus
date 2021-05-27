@@ -2212,6 +2212,24 @@ end;
 initialization
 begin
   SSLCS:= TCriticalSection.Create;
+  // Specify here the path to the ssl libraries
+  {$IFDEF SSLPATH}
+    {$IFDEF WINDOWS}
+      DLLSSLName := ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
+      DLLUtilName := ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+      DLLSSLName := ProgramDirectory + 'libssl.so';
+      DLLUtilName := ProgramDirectory  + 'libcrypto.so';
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+      DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
+      DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
+    {$ENDIF DARWIN}
+    //Paths below were used for testing
+    //DLLSSLName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'ssleay32.dll'; //'libssl-1_1.dll';
+    //DLLUtilName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+  {$ENDIF}
 end;
 
 finalization

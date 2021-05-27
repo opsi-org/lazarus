@@ -891,7 +891,19 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSLOG -dSYNAPSE"/>
+      <CustomOptions Value="-dOPSIWINST
+-dOPSISCRIPT
+-dGUI
+-dOSLOG
+-dSYNAPSE"/>
+      <OtherDefines Count="6">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="OPSISCRIPT"/>
+        <Define2 Value="GUI"/>
+        <Define3 Value="OSLOG"/>
+        <Define4 Value="SYNAPSE"/>
+        <Define5 Value="SSLPATH"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
