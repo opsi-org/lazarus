@@ -2,7 +2,12 @@
 opsi-notifier  4.2.0.1
 
   * modify all speedbuttons to new combobutton class
-  * use combo button mode if in ini button section: ComboButton = true
+  * use combo button mode if in ini button section:
+    ChoiceIndex contains a colon. In this case the format is:
+    startchoice:endchoice
+    combobox will be filled by opsiclientd
+  * button icon in combobutton.lrs but will load from file
+    if <config>_button_icon.png is found
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 25 May 2021:15:00:00 +0200
 

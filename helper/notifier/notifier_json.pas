@@ -68,7 +68,7 @@ begin
       msgseparator1;
     { push answer string in tcp write buffer }
     notifier_base.myJsonAnswer := myJsonCall;
-    logdatei.log('JSON for Button call1: ' + myJsonCall, LLDebug2);
+    logdatei.log('JSON for Button call1: ' + myJsonCall, LLinfo);
     logdatei.log('JSON for Button clicked: choice: ' + IntToStr(buttonindex), LLInfo);
   except
     on E: Exception do
