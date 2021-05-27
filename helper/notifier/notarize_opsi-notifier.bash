@@ -10,6 +10,7 @@ BUNDLE_ID=org.opsi.opsi-notifier
 EXECUTABLE_NAME=opsi-notifier
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
+ENTITLEMENTS="--entitlements opsi-notifier.entitlements"
 
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
@@ -34,17 +35,22 @@ echo "Verifying Info.plist"
 launchctl plist $FULLPATHTOEXE
 launchctl plist $EXECUTABLE_DIR
 
+
+
+
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing binary..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+# use next line if you want to notarize
+#codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+# use next line if you do not want to notarize
+codesign -vvv --force --strict --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
-#echo "Code signing .app..."
-#codesign -vvv --force --strict --options=runtime --entitlements opsi-notifier.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR
-#codesign --verify --verbose --strict $EXECUTABLE_DIR
-#codesign -dv -r- $EXECUTABLE_DIR
-#codesign -vvv --deep --strict $EXECUTABLE_DIR
+
+# exit here if you do not want to notarize
+exit
+
 # We need to distrubute the executable in a disk image because the stapler only works with directories
 echo "Creating disk image..."
 
