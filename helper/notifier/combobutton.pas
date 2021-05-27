@@ -16,7 +16,8 @@ uses
   EditBtn,
   ExtCtrls,
   Buttons,
-  LazFileutils;
+  LazFileutils,
+  LResources;
 
 type
 
@@ -35,16 +36,19 @@ type
     // properties
   public
     { public declarations }
-    constructor Create(AOwner: TComponent; btnonly : boolean = true);
+    constructor Create(AOwner: TComponent; pathtoicon : string = ''; btnonly : boolean = true);
     destructor Destroy;
   end;
 
 implementation
 
-constructor TComboButton.Create(AOwner: TComponent; btnonly : boolean = true);
+
+
+constructor TComboButton.Create(AOwner: TComponent; pathtoicon : string = ''; btnonly : boolean = true);
 var
   Picture : TPicture;
   SrcBmp : TBitmap;
+  tmpstr : string;
 begin
   panel := TPanel.Create(self);
   cbox := TComboBox.Create(panel);
@@ -52,6 +56,8 @@ begin
   ImgList:= TImageList.Create(panel);
   button_only := btnonly;
   //inherited.
+  panel.BevelWidth:= 0;
+  panel.BevelOuter:= bvNone;
   btn.Parent := panel;
   cbox.Parent := panel;
   if button_only then
@@ -68,7 +74,13 @@ begin
   begin
      Picture := TPicture.Create;
   try
-    Picture.LoadFromFile(AppendPathDelim(ExtractFileDir(Application.ExeName))+ 'ok2.png');
+    if pathtoicon = '' then
+      Picture.LoadFromLazarusResource('ok2')
+    else
+    begin
+     // tmpstr := AppendPathDelim(ExtractFileDir(Application.ExeName))+ pathtoicon;
+      Picture.LoadFromFile(pathtoicon);
+    end;
     SrcBmp := TBitmap.Create;
     SrcBmp.Assign(Picture.Graphic);
     ImgList.Add(SrcBmp, nil);
@@ -93,5 +105,7 @@ begin
   inherited;
 end;
 
+initialization
+{$I combobutton.lrs}
 end.
 

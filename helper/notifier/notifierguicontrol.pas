@@ -22,7 +22,8 @@ uses
   Forms,
   oslog,
   combobutton,
-  fgl;
+  fgl,
+  Lazfileutils;
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
@@ -466,7 +467,7 @@ begin
     end;
 
 
-    logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
+    logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLnotice);
     buttonPushedToService(choice);
   end
   else
@@ -1452,7 +1453,21 @@ begin
       LogDatei.log('choiceindex (no array) is: ' + IntToStr(choiceindex), LLinfo);
     end;
     //tmpbool := not strToBool(myini.ReadString(aktsection, 'ComboButton', 'false'));
-    ButtonArray[buttoncounter] := TComboButton.Create(nform, not choiceIsArray);
+    // constructing the path to the button icon
+    try
+    tmpstr2 :=  ExtractFileNameWithoutExt(myconfigfile)+'_button_icon.png';
+    if FileExists(tmpstr2) then
+       ButtonArray[buttoncounter] := TComboButton.Create(nform, tmpstr2, not choiceIsArray)
+    else
+      ButtonArray[buttoncounter] := TComboButton.Create(nform, '', not choiceIsArray);
+    except
+    on E: Exception do
+    begin
+      LogDatei.log('Failed to create Combubutton with button_only: ' +
+        BoolToStr(not choiceIsArray,true) + ' pathToIcon: ' + tmpstr2, LLError);
+      LogDatei.log('Error: Message: ' + E.Message, LLError);
+    end;
+  end;
     ButtonArray[buttoncounter].panel.Parent := nform;
     //ButtonArray[buttoncounter].AutoSize := False;
     ButtonArray[buttoncounter].panel.Name := aktsection;
@@ -1512,9 +1527,9 @@ begin
       ButtonArray[buttoncounter].cbox.Items.Add(mytmpstr);
       if showtest then
       begin
-        ButtonArray[buttoncounter].cbox.Items.Add('one');
-        ButtonArray[buttoncounter].cbox.Items.Add('two');
-        ButtonArray[buttoncounter].cbox.Items.Add('three');
+        ButtonArray[buttoncounter].cbox.Items.Add('Jetzt neu starten');
+        ButtonArray[buttoncounter].cbox.Items.Add('Neustart um 18:00');
+        ButtonArray[buttoncounter].cbox.Items.Add('Reboot at 18:00');
       end;
       ButtonArray[buttoncounter].cbox.ItemIndex := 0;
       ButtonArray[buttoncounter].cbox.OnClick :=@nform.cboxClick;
