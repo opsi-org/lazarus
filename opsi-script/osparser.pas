@@ -24275,7 +24275,9 @@ begin
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%realScriptpath%');
-      ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei));
+      if FileExists(Scriptdatei) then
+        ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
+      else ValueToTake := '';
       (*
       {$IFDEF WINDOWS}
       ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
