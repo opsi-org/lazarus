@@ -149,18 +149,22 @@ begin
       // detect indentiation
       relPos := PosEx('[', code[k]) - 1;      // how many chars
       code[k] := indentation(indentlevel) + code[k].trim;
-      LogDatei.log(' Line [LinkFolder ' + IntToStr(k + 1) + ' : ' + code[k], LLnotice);
+      LogDatei.log('Section  - line ' + IntToStr(k+1) + ': [LinkFolder: ' + code[k], LLessential);
       relPos := PosEx('[', code[k]) - 1 - relPos;
       // how many chars to indent additionall
       // normal keine Einrückung; nach set_link 1 Einrückung, vor end_link 1 Ausrückung
       repeat
-        Inc(k);
+        if code[k].Contains('end_link') then
+          relPos := relPos - 1;
         code[k] := createBlockIndent(relPos) + code[k].trim;
         if code[k].Contains('set_link') then
           relPos := relPos + 1;
-        if code[k].Contains('end_link') then
-          relPos := relPos - 1;
-      until AnsiEndsStr(']', code[k]) or (k >= code.Count - 1);
+        Inc(k);
+      until (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) // next section
+            or (k >= code.Count - 1);
+      if (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) then
+        // check this line because it's next section - so dec
+        Dec(k);
       trimLine := False;               // last line should not be trimmed
     end;
 
@@ -170,13 +174,13 @@ begin
       //logdatei.log(' line ' + k.toString + ' before: ' + code[k] , LLessential);
       if isStartStr(code[k].trim, dontTouchList) then
       begin
-        logdatei.log('Sections - line ' + k.toString +
+        logdatei.log('Sections - line ' + IntToStr(k+1) +
           ': dont touch: ' + code[k], LLessential);
         dontTouch:= true;
       end;
       if isStartStr(code[k].trim, noIndentList) then
       begin
-        logdatei.log('Sections - line ' + k.toString +
+        logdatei.log('Sections - line ' + IntToStr(k+1) +
           ': no indent: ' + code[k], LLessential);
         noIndent:=true;
       end;
