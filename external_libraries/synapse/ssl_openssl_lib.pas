@@ -97,6 +97,7 @@ FileUtil, // opsi do 20210201
   {$ENDIF}
   SysUtils;
 {$ELSE}
+  FileUtil, // opsi
   Windows;
 {$ENDIF}
 
