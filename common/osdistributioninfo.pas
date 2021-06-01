@@ -24,7 +24,7 @@ type
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
     Distribs = 'Debian 9, Debian 10,' + #10 +
       'openSUSE 15.1, openSUSE 15.2,' + #10 +
-      'SLES 15 SP1, SLES 15 SP1,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
+      'SLES 15 SP1, SLES 15 SP2,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
       #10 + 'Univention 4.4';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
