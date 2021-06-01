@@ -75,7 +75,6 @@ begin
   else
     Result := False;
 
-
   // create l-opsi-server directory for the downloaded version
   if DirectoryExists('../l-opsi-server_downloaded') then
     LOpsiServerCommand.Run('rm -rf ../l-opsi-server_downloaded', Output);

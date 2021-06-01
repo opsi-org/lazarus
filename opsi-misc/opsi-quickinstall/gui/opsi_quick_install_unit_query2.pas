@@ -75,12 +75,12 @@ begin
   else
     Data.copyMod.SetEntries(RadioBtnNoCopy.Caption, 'false');
   // Repo kind
-  if RadioBtnExperimental.Checked then
-    Data.repoKind := RadioBtnExperimental.Caption
-  else if Query2.RadioBtnStable.Checked then
+  if RadioBtnStable.Checked then
     Data.repoKind := RadioBtnStable.Caption
+  else if RadioBtnTesting.Checked then
+    Data.repoKind := RadioBtnTesting.Caption
   else
-    Data.repoKind := RadioBtnTesting.Caption;
+    Data.repoKind := RadioBtnExperimental.Caption;
 
   // Query3 doesn't exist any more
   showForm(Query4, self);
