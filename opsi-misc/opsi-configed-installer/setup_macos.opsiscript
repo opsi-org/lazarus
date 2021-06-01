@@ -1,0 +1,35 @@
+; included file for macos extending setup.opsiscript
+
+[sub_pre_checks]
+
+	Set $InstallDir$      = "/Applications/opsi-configed.app"
+	DefVar $fileslocation$ 
+	Set $fileslocation$  = $InstallDir$ + "/Contents/Resources/files"
+	comment "java should exist"
+
+[sub_copy]
+	comment "start copying macos app"
+	Files_Copy_Configed
+	
+
+[Files_Copy_Configed]
+copy -s "%ScriptPath%/files.macos/*.*" "/Applications"
+copy -s "%ScriptPath%/files.configed/*.*" "$fileslocation$"
+;chmod 755 "$InstallDir$"
+chmod 755 "/Applications/opsi-configed.app/Contents/MacOS/opsi-configed"
+
+
+[sub_build_calls]
+	set $targetString$ = produceLinkTarget( "%opsiserver%" )
+	set $completeCall$ = trim("java " + $targetstring$)
+	set $completeCall$ = StringReplace( $completeCall$, 'configed.jar', $fileslocation$ + '/configed.jar' )
+	comment " targetstring for java is " +  $targetstring$
+	comment "set linkfolder for " + $namestring$
+	patchTextFile_configedStarter "/Applications/opsi-configed.app/Contents/MacOS/opsi-configed.conf"
+	
+	
+[patchTextFile_configedStarter]
+	GoToTop
+	FindLine_StartingWith "java"
+	DeleteTheLine
+	InsertLine '$completeCall$'
