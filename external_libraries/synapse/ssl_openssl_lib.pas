@@ -2224,8 +2224,13 @@ begin
       DLLUtilName := ProgramDirectory  + 'libcrypto.so';
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-      DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
-      DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
+      {$IFDEF APP_BUNDLE}
+        DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
+        DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
+      {$ELSE}
+        DLLSSLName := ProgramDirectory + 'libssl.dylib';
+        DLLUtilName := ProgramDirectory  + 'libcrypto.dylib';
+      {$ENDIF APP_BUNDLE}
     {$ENDIF DARWIN}
     //Paths below were used for testing
     //DLLSSLName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'ssleay32.dll'; //'libssl-1_1.dll';

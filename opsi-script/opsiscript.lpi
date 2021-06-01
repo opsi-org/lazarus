@@ -167,13 +167,14 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="6">
+            <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
               <Define3 Value="OSLOG"/>
               <Define4 Value="SYNAPSE"/>
               <Define5 Value="SSLPATH"/>
+              <Define6 Value="APP_BUNDLE"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -497,13 +498,14 @@
 -dOPSISCRIPT
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="6">
+            <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
               <Define3 Value="OSLOG"/>
               <Define4 Value="SYNAPSE"/>
               <Define5 Value="SSLPATH"/>
+              <Define6 Value="APP_BUNDLE"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -555,7 +557,20 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG -dSYNAPSE"/>
+            <CustomOptions Value="-dOPSIWINST
+-dOPSISCRIPT
+-dGUI
+-dOSDEBUG
+-dSYNAPSE"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSDEBUG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item11>
@@ -967,13 +982,14 @@
 -dOSLOG
 -dSYNAPSE
 -dSSLPATH"/>
-      <OtherDefines Count="6">
+      <OtherDefines Count="7">
         <Define0 Value="OPSIWINST"/>
         <Define1 Value="OPSISCRIPT"/>
         <Define2 Value="GUI"/>
         <Define3 Value="OSLOG"/>
         <Define4 Value="SYNAPSE"/>
         <Define5 Value="SSLPATH"/>
+        <Define6 Value="APP_BUNDLE"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
