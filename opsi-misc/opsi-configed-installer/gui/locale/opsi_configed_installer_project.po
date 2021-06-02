@@ -1,7 +1,193 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_configed_installer_resourcestrings.rsback
+msgctxt "opsi_configed_installer_resourcestrings.rsback"
+msgid " < back "
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsbackendop
+msgid " [Options: \"f\" for file, \"m\" for mysql]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapdistr
+msgid "Distribution"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapquery
+msgid "Query"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapquery2
+msgid "Query (part 2)"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapquery3
+msgid "Query (part 3)"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapquerydhcp
+msgid "Query (dhcp)"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscapqueryuserinfo
+msgid "Query (user info)"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscarryout
+msgid "To carry out the remaining installation automatically, we need some information first."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscontinue
+msgid ""
+"To continue and start the installation, please press enter.\n"
+"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscorrect
+msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscreaterepo
+msgid "Creating repository..."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rscustom
+msgid "Custom"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsdistr
+msgid "We recognized the following distribution on this computer:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsfinish
+msgid " finish "
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsinfodistribution
+msgid "The following distributions are supported:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsinstall
+msgid "Installing "
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsiscorrect
+msgid "Is this correct?"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rslangop
+msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rslinkop
+msgid " [Options: \"m\" for default.menu, \"nom\" for default.nomenu]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rslog
+msgid "You can find the log files here:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsnext
+msgctxt "opsi_configed_installer_resourcestrings.rsnext"
+msgid " next > "
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsno
+msgid "No"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsnosupport
+msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsnotvalid
+msgid " is not a valid input."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsopsiversionop
+msgid " [Options: \"1\" for Opsi 4.1, \"2\" for Opsi 4.2]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsotherdistr
+msgid "Please type in the correct distribution:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsoverview
+msgid "Overview"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rspassword
+msgid "Password"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsrepokindop
+msgid " [Options: \"t\" for testing, \"e\" for experimental]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsrights
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rssellanguage
+msgctxt "opsi_configed_installer_resourcestrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rssetup
+msgid "Please select a setup type:"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rssetupop
+msgid " [Options: \"s\" for standard, \"c\" for custom]"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsshowpassword
+msgid "Show password"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rssomemin
+msgid "(This may take some minutes)"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsstandard
+msgid "Standard"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsstartinstallation
+msgid "Finally click \"finish\" to start the installation of opsi-server."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rssuggestion
+msgid "[Suggestions: "
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsuseproxy
+msgid "Would you like to use a proxy?"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rswait
+msgid "Please wait for the installation to start..."
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rswelcome
+msgid "Welcome to the installation of the opsi configed on this computer!"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rswrongpassword
+msgid "Authentication failed. Please check your password!"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsyes
+msgid "Yes"
+msgstr ""
+
+#: opsi_configed_installer_resourcestrings.rsyesnoop
+msgid " [Options: \"y\" for yes, \"n\" for no]"
+msgstr ""
+
 #: tconfigedinstaller.btnback.caption
+msgctxt "tconfigedinstaller.btnback.caption"
 msgid " < back "
 msgstr ""
 
@@ -10,6 +196,7 @@ msgid "BtnFinish"
 msgstr ""
 
 #: tconfigedinstaller.btnnext.caption
+msgctxt "tconfigedinstaller.btnnext.caption"
 msgid " next > "
 msgstr ""
 
@@ -22,22 +209,11 @@ msgid "To carry out the remaing installation automatically, we need some informa
 msgstr ""
 
 #: tconfigedinstaller.labelsellanguage.caption
+msgctxt "tconfigedinstaller.labelsellanguage.caption"
 msgid "Please choose a language for this setup program:"
-msgstr ""
-
-#: tconfigedinstaller.labelsetup.caption
-msgid "Please select a setup type:"
 msgstr ""
 
 #: tconfigedinstaller.labelwelcome.caption
 msgid "Welcome to the installation of opsi-server on this computer!"
-msgstr ""
-
-#: tconfigedinstaller.radiobtncustom.caption
-msgid "Custom"
-msgstr ""
-
-#: tconfigedinstaller.radiobtndefault.caption
-msgid "Standard"
 msgstr ""
 

@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="opsi_configed_installer_project.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -70,6 +70,10 @@
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="../opsi_configed_installer_resourcestrings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

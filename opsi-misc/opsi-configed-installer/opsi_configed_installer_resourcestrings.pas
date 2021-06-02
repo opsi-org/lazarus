@@ -47,7 +47,7 @@ resourcestring
   rsCapQueryUserInfo = 'Query (user info)';
 
   {Language}
-  rsWelcome = 'Welcome to the installation of opsi-server on this computer!';
+  rsWelcome = 'Welcome to the installation of the opsi configed on this computer!';
   rsSelLanguage = 'Please choose a language for this setup program:';
   rsSetup = 'Please select a setup type:';
   rsStandard = 'Standard';
@@ -75,7 +75,7 @@ resourcestring
   rsWrongPassword = 'Authentication failed. Please check your password!';
 
 const
-  LogOpsiServer = '/var/log/opsi-quick-install-l-opsi-server.log';
+  LogOpsiServer = '/var/log/opsi-configed-installer-configed.log';
 
 implementation
 
