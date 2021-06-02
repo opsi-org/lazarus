@@ -141,11 +141,7 @@ procedure TMyThread.installConfiged;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
-  // remove the QuickInstall repo entry because it was only for installing opsi-script
-  if FileExists('/etc/apt/sources.list.d/opsi.list') then
-    FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
-  FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
-    'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
+  FInstallRunCommand.Run('opsi-script-gui -batch setup.opsiscript  /var/log/opsi-configed-installer-configed.log', Output);
   FInstallRunCommand.Free;
 end;
 
