@@ -141,7 +141,7 @@ procedure TMyThread.installConfiged;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
-  FInstallRunCommand.Run('opsi-script-gui -batch setup.opsiscript  /var/log/opsi-configed-installer-configed.log', Output);
+  FInstallRunCommand.Run('opsi-script-gui -batch ../setup.opsiscript  /var/log/opsi-configed-installer-configed.log', Output);
   FInstallRunCommand.Free;
 end;
 
