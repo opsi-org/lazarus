@@ -18,11 +18,8 @@ type
     BtnFinish: TButton;
     BtnNext: TButton;
     ComboBoxLanguages: TComboBox;
-    LabelSetup: TLabel;
     WelcomePanel: TPanel;
-    QuickInstallPanel: TPanel;
-    RadioBtnDefault: TRadioButton;
-    RadioBtnCustom: TRadioButton;
+    ConfigedInstallerPanel: TPanel;
     LabelCarryOut: TLabel;
     LabelWelcome: TLabel;
     LabelSelLanguage: TLabel;
@@ -230,7 +227,6 @@ begin
   Languages.Add('fr');
   // let the combo box show the system language at the beginning
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
-  ShowMessage(GetDefaultLang);
   // now set position of BtnNext for the default language
   SetBtnWidth(GetDefaultLang);
 
@@ -254,21 +250,12 @@ begin
   // text by resourcestrings
   LabelWelcome.Caption := rsWelcome;
   LabelSelLanguage.Caption := rsSelLanguage;
-  LabelSetup.Caption := rsSetup;
-  RadioBtnDefault.Caption := rsStandard;
-  RadioBtnCustom.Caption := rsCustom;
   LabelCarryOut.Caption := rsCarryOut;
   BtnNext.Caption := rsNext;
 end;
 
 procedure TConfigedInstaller.BtnNextClick(Sender: TObject);
 begin
-  // store in Data whether we are in custom installation or not
-  if RadioBtnCustom.Checked then
-    Data.custom := True
-  else
-    Data.custom := False;
-
   // before going on, let the user check the distribution
   Distribution.ShowModal;
 

@@ -26,7 +26,6 @@ type
 
   TConfigedInstallerData = class(TObject)
   public
-    custom: boolean;
     distroName, distroRelease: string;
     DistrInfo: TDistributionInfo;
 
