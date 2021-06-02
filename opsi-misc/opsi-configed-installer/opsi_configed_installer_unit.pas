@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  osRunCommandElevated, osDistributionInfo, osLog;
+  osRunCommandElevated, osDistributionInfo, osLog, osLinuxRepository;
 
 type
 
@@ -17,6 +17,7 @@ type
     Label2: TLabel;
     procedure FormCreate(Sender: TObject);
   private
+    procedure addRepo;
     procedure installConfiged;
   public
     InstallRunCommand: TRunCommandElevated;
@@ -30,6 +31,29 @@ implementation
 
 {$R *.lfm}
 
+{ TConfigedInstaller }
+
+procedure TConfigedInstaller.addRepo;
+var
+  url: string;
+  MyRepo: TLinuxRepository;
+begin
+  // create repository:
+  MyRepo := TLinuxRepository.Create(xUbuntu_18_04, 'linux123', true);
+  // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+  url := MyRepo.GetDefaultURL(Opsi42, stable);
+
+  // !following lines need an existing LogDatei
+  {if (Data.distroName = 'openSUSE') or (Data.distroName = 'SUSE') then
+  begin
+    MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
+  end
+  else
+    MyRepo.Add(url);}
+  MyRepo.Add(url);
+  MyRepo.Free;
+end;
+
 procedure TConfigedInstaller.installConfiged;
 begin
   InstallRunCommand.Run(ShellCommand + 'update', Output);
@@ -37,8 +61,6 @@ begin
   InstallRunCommand.Run('opsi-script-gui -batch setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
   InstallRunCommand.Free;
 end;
-
-{ TConfigedInstaller }
 
 procedure TConfigedInstaller.FormCreate(Sender: TObject);
 var
@@ -54,7 +76,7 @@ begin
 
   InstallRunCommand := TRunCommandElevated.Create('linux123', true);
   ShellCommand := GetPackageManagementShellCommand('Ubuntu');
-  //TODO: add repo
+  addRepo;
   installConfiged;
 end;
 
