@@ -1,3 +1,9 @@
+opsi-script-beautifier (4.2.0.0-1) stable; urgency=medium
+
+ * additional section handling (m.hammel)
+
+-- d.oertel <d.oertel@uib.de> Fri , 28 May 2021 15:00:00 + 0100
+
 opsi-script-beautifier (4.1.0.4-1) stable; urgency=medium
 
  * fix in: gui: added -dGUI Option to avoid writeln while GUI
@@ -14,7 +20,7 @@ opsi-script-beautifier (4.1.0.2-1) stable; urgency=medium
 
  * fix for sub and other primary sections
  * added gui version
- * added openif repoort
+ * added openif report
 
 -- d.oertel <d.oertel@uib.de> Tue , 09 Nov 2020 15:00:00 + 0100
 

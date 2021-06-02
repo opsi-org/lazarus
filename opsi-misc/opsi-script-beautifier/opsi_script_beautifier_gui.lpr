@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, selectfile
+  Forms, selectfile, osencoding
   { you can add units after this };
 
 {$R *.res}

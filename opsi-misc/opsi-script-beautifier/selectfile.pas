@@ -54,6 +54,7 @@ begin
   LogDatei.WriteErrFile:= False;
   LogDatei.WriteHistFile:= False;
   logdatei.CreateTheLogfile(logfilename, False);
+
   logdatei.LogLevel := 7;
   (*
   for i := 0 to preLogfileLogList.Count-1 do
