@@ -1,0 +1,43 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tconfigedinstaller.btnback.caption
+msgid " < back "
+msgstr ""
+
+#: tconfigedinstaller.btnfinish.caption
+msgid "BtnFinish"
+msgstr ""
+
+#: tconfigedinstaller.btnnext.caption
+msgid " next > "
+msgstr ""
+
+#: tconfigedinstaller.caption
+msgid "Opsi Configed Installer"
+msgstr ""
+
+#: tconfigedinstaller.labelcarryout.caption
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr ""
+
+#: tconfigedinstaller.labelsellanguage.caption
+msgid "Please choose a language for this setup program:"
+msgstr ""
+
+#: tconfigedinstaller.labelsetup.caption
+msgid "Please select a setup type:"
+msgstr ""
+
+#: tconfigedinstaller.labelwelcome.caption
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr ""
+
+#: tconfigedinstaller.radiobtncustom.caption
+msgid "Custom"
+msgstr ""
+
+#: tconfigedinstaller.radiobtndefault.caption
+msgid "Standard"
+msgstr ""
+

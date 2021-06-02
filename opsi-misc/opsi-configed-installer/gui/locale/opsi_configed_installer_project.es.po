@@ -1,0 +1,67 @@
+# Translators:
+# Niko Wenselowski, 2021
+# Martin Scalese <m.scalese@uib.de>, 2021
+msgid ""
+msgstr ""
+"Last-Translator: Martin Scalese <m.scalese@uib.de>, 2021\n"
+"Language-Team: Spanish (https://www.transifex.com/opsi-org/teams/35141/es/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: tconfigedinstaller.btnback.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnback.caption"
+msgid " < back "
+msgstr " < volver "
+
+#: tconfigedinstaller.btnfinish.caption
+msgctxt "tconfigedinstaller.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
+#: tconfigedinstaller.btnnext.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnnext.caption"
+msgid " next > "
+msgstr " siguiente > "
+
+#: tconfigedinstaller.caption
+msgid "Opsi Configed Installer"
+msgstr ""
+
+#: tconfigedinstaller.labelcarryout.caption
+msgctxt "tconfigedinstaller.labelcarryout.caption"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr ""
+
+#: tconfigedinstaller.labelsellanguage.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsellanguage.caption"
+msgid "Please choose a language for this setup program:"
+msgstr "Por favor seleccione un lenguaje para el programa de setup:"
+
+#: tconfigedinstaller.labelsetup.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr "Por favor seleccione un tipo de setup:"
+
+#: tconfigedinstaller.labelwelcome.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelwelcome.caption"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr "Bienvenido/a a la instalación del servidor en esta computadora!"
+
+#: tconfigedinstaller.radiobtncustom.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtncustom.caption"
+msgid "Custom"
+msgstr "Personalizado"
+
+#: tconfigedinstaller.radiobtndefault.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtndefault.caption"
+msgid "Standard"
+msgstr "Standard"
+

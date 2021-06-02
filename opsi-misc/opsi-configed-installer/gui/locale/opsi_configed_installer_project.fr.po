@@ -1,0 +1,68 @@
+# Translators:
+# Benoit Mortier <benoit.mortier@fusiondirectory.org>, 2021
+# Niko Wenselowski, 2021
+# Jinene Laajili <j.laajili@uib.de>, 2021
+msgid ""
+msgstr ""
+"Last-Translator: Jinene Laajili <j.laajili@uib.de>, 2021\n"
+"Language-Team: French (https://www.transifex.com/opsi-org/teams/35141/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: tconfigedinstaller.btnback.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnback.caption"
+msgid " < back "
+msgstr " < Retour "
+
+#: tconfigedinstaller.btnfinish.caption
+msgctxt "tconfigedinstaller.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
+#: tconfigedinstaller.btnnext.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnnext.caption"
+msgid " next > "
+msgstr " Suivant > "
+
+#: tconfigedinstaller.caption
+msgid "Opsi Configed Installer"
+msgstr ""
+
+#: tconfigedinstaller.labelcarryout.caption
+msgctxt "tconfigedinstaller.labelcarryout.caption"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr ""
+
+#: tconfigedinstaller.labelsellanguage.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsellanguage.caption"
+msgid "Please choose a language for this setup program:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
+
+#: tconfigedinstaller.labelsetup.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr "Veuillez sélectionner un type de configuration:"
+
+#: tconfigedinstaller.labelwelcome.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelwelcome.caption"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr "Bienvenu à l'installation du serveur opsi sur cet ordinateur !"
+
+#: tconfigedinstaller.radiobtncustom.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtncustom.caption"
+msgid "Custom"
+msgstr "Personnaliser"
+
+#: tconfigedinstaller.radiobtndefault.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtndefault.caption"
+msgid "Standard"
+msgstr "Standard"
+

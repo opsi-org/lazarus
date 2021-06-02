@@ -1,0 +1,59 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tconfigedinstaller.btnback.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tconfigedinstaller.btnfinish.caption
+msgctxt "tconfigedinstaller.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
+#: tconfigedinstaller.btnnext.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tconfigedinstaller.caption
+msgid "Opsi Configed Installer"
+msgstr ""
+
+#: tconfigedinstaller.labelcarryout.caption
+msgctxt "tconfigedinstaller.labelcarryout.caption"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr ""
+
+#: tconfigedinstaller.labelsellanguage.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsellanguage.caption"
+msgid "Please choose a language for this setup program:"
+msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
+
+#: tconfigedinstaller.labelsetup.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr "Bitte wählen Sie einen Setup-Typ:"
+
+#: tconfigedinstaller.labelwelcome.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.labelwelcome.caption"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
+
+#: tconfigedinstaller.radiobtncustom.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtncustom.caption"
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: tconfigedinstaller.radiobtndefault.caption
+#, fuzzy
+msgctxt "tconfigedinstaller.radiobtndefault.caption"
+msgid "Standard"
+msgstr "Standard"
+

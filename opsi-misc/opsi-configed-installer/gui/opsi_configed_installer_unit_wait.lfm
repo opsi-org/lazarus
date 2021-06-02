@@ -1,0 +1,22 @@
+object Wait: TWait
+  Left = 562
+  Height = 83
+  Top = 338
+  Width = 320
+  ClientHeight = 83
+  ClientWidth = 320
+  FormStyle = fsStayOnTop
+  OnActivate = FormActivate
+  LCLVersion = '2.0.10.0'
+  object LabelWait: TLabel
+    Left = 0
+    Height = 83
+    Top = 0
+    Width = 320
+    Align = alClient
+    Alignment = taCenter
+    Caption = 'LabelWait'
+    Layout = tlCenter
+    ParentColor = False
+  end
+end
