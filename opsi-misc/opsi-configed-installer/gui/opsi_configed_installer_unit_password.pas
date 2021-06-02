@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog, get_latest_lopsiserver;
+  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog;
 
 type
 
@@ -99,12 +99,15 @@ begin
   // Important for getting the result 'failed' in case of a wrong password
   // because in this case the RunCommands below aren't executed and therefore
   // setup.opsiscript, that usually does it, isn't too:
-  FileText.Clear;
   FileText.Add('failed');
+  FClientDataDir := ExtractFilePath(ParamStr(0));
+  Delete(FClientDataDir, Length(FClientDataDir), 1);
+  FClientDataDir := ExtractFilePath(FClientDataDir);
   if not FileExists(FClientDataDir + 'result.conf') then
     TouchCommand.Run('touch ' + FClientDataDir + 'result.conf', Output);
   TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf', Output);
   FileText.SaveToFile(FClientDataDir + 'result.conf');
+  Password.clientDataDir := FClientDataDir;
 
   FileText.Free;
   TouchCommand.Free;
