@@ -1882,13 +1882,15 @@ begin
       SSLUtilHandle := 1;
 {$ELSE}
 {$IFDEF DARWIN}
-// opsi do 20210201
-filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
-if filelist.Count > 0 then
-  DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
-if filelist.Count > 0 then
-  DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+  {$IFNDEF SSLPATH}
+  // opsi do 20210201
+   filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
+   if filelist.Count > 0 then
+     DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+   filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
+   if filelist.Count > 0 then
+     DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+  {$ENDIF SSLPATH}
 {$ENDIF DARWIN}
       SSLUtilHandle := LoadLib(DLLUtilName);
       SSLLibHandle := LoadLib(DLLSSLName);
