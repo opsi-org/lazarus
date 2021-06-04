@@ -240,8 +240,9 @@
       <Unit8>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="69"/>
-        <CursorPos X="50" Y="86"/>
+        <CursorPos X="75" Y="88"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -313,7 +314,6 @@
       <Unit14>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="6"/>
         <CursorPos X="75" Y="38"/>
@@ -782,7 +782,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="341"/>
         <CursorPos X="6" Y="355"/>
-        <UsageCount Value="84"/>
+        <UsageCount Value="86"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
@@ -816,7 +816,7 @@
         <EditorIndex Value="7"/>
         <TopLine Value="45"/>
         <CursorPos X="26" Y="80"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
