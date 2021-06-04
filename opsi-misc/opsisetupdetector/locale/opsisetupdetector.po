@@ -11,6 +11,11 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdanalyzewin.swarnmultiplemsi
 msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
@@ -108,7 +113,7 @@ msgid "Path to the opsi_workbench"
 msgstr ""
 
 #: osdcreate.rsconfirmabortcaption
-msgid "Abort"
+msgid "Abort creating new files"
 msgstr ""
 
 #: osdcreate.rsconfirmaborthint
@@ -116,7 +121,7 @@ msgid "Leave existing directory unchanged and abort"
 msgstr ""
 
 #: osdcreate.rsconfirmbackupcaption
-msgid "Backup"
+msgid "Backup existing files before creating new ones"
 msgstr ""
 
 #: osdcreate.rsconfirmbackuphint
@@ -124,11 +129,11 @@ msgid "All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI
 msgstr ""
 
 #: osdcreate.rsconfirmbackuporremovaltitle
-msgid "Confirm Delete or Backup of old files."
+msgid "Confirm Deletion of the complete existing directory or backup of old files before creating the new ones."
 msgstr ""
 
 #: osdcreate.rsconfirmdeletecaption
-msgid "Delete"
+msgid "Delete existing directoy and create new one"
 msgstr ""
 
 #: osdcreate.rsconfirmdeletehint
@@ -143,7 +148,8 @@ msgstr ""
 msgid ""
 "Abort: Leave existing directory unchanged and abort\n"
 "Delete: Delete the complete directory before creating the new one.\n"
-"Backup: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file.\n"
+"Backup: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will be saved to an backup file\n"
+"before the new files are created\n"
 msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning
@@ -530,6 +536,18 @@ msgstr ""
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
+msgstr ""
+
+#: tfosdconfigdlg.bitbtn1.caption
+msgid "Finished"
+msgstr ""
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.panel1.caption
+msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption

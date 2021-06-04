@@ -347,14 +347,6 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="6">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item7>
@@ -660,7 +652,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="62">
+    <Units Count="63">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -936,6 +928,10 @@
         <Filename Value="../common/osfuncunix.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit61>
+      <Unit62>
+        <Filename Value="../common/osfilehelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit62>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -50,6 +50,7 @@ uses
 {$ENDIF LINUX}
   //lconvencoding,
   osencoding,
+  osfilehelper,
   Classes,
   //idsyslogMessage,
   SysUtils,
@@ -357,7 +358,11 @@ begin
   Result := Result + parseString;
 end;
 
-procedure MakeBakFile(const FName: string; maxbaks: integer);
+
+(*
+moved to osfilehelper (do 4.6.2021)
+
+procedure MakeBakFiles(const FName: string; maxbaks: integer);
 var
   bakcounter: integer;
   extension: string;
@@ -399,6 +404,8 @@ begin
     DeleteFileUTF8(FName);
   end;
 end;
+
+*)
 
 {$ENDIF}
 
@@ -562,7 +569,7 @@ begin
     // just create the log
     // create new Log File
     LogDatei.Appendmode := False;
-    MakeBakFile(LogDateiName, 8);
+    MakeBakFiles(LogDateiName, 8);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
   end
@@ -585,7 +592,7 @@ begin
       if assigned(startupmessages) then
         startupmessages.Add('Backup old log files at ' + DateTimeToStr(Now));
       {$ENDIF OPSISCRIPT}
-      MakeBakFile(LogDateiName, 8);
+      MakeBakFiles(LogDateiName, 8);
       {$IFDEF OPSISCRIPT}
       if assigned(startupmessages) then
         startupmessages.Add('Initiate new log file at ' + DateTimeToStr(Now));

@@ -100,7 +100,8 @@ uses
   ostxstringlist,
   osstartproc_cp,
   pipes,
-  oszip;
+  oszip,
+  osfilehelper;
 
 const
   BytesarrayLength = 5000;
@@ -532,8 +533,13 @@ function ExpandFileName(const FileName: string): string;
 
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
-procedure MakeBakFile(const FName: string); overload;
-procedure MakeBakFile(const FName: string; maxbaks: integer); overload;
+
+
+procedure MakeBakFile(const FName: string);
+
+// moved to osfilehelper (do 4.6.2021)
+// procedure MakeBakFiles(const FName: string; maxbaks: integer);
+
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean; overload;
@@ -541,6 +547,8 @@ function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean; overload;
+
+
 function Is64BitSystem: boolean;
 function getOSArchitecture: string;
 function runningAsAdmin: boolean;
@@ -5579,7 +5587,10 @@ begin
 
 end;
 
-procedure MakeBakFile(const FName: string; maxbaks: integer);
+(*
+// moved to osfilehelper (do 4.6.2021)
+
+procedure MakeBakFiles(const FName: string; maxbaks: integer);
 var
   bakcounter: integer;
   problem: string = '';
@@ -5595,20 +5606,6 @@ begin
   extension := ExtractFileExt(FName);
   //if FileExists(FName) then
   //begin
-    (*
-    // this is old style (name.ext.num) and is here only for clean up old logs
-    for bakcounter := maxbaks - 1 downto 0 do
-    begin
-      if FileExists(FName + '.' + IntToStr(bakcounter)) then
-      begin
-        newfilename := path + PathDelim + basename + '_' +
-          IntToStr(bakcounter) + extension;
-        FileCopy(FName + '.' + IntToStr(bakcounter), newfilename, problem,
-          False, rebootWanted);
-        DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
-      end;
-    end;
-    *)
   // this is new style (name_num.ext)
   for bakcounter := maxbaks - 1 downto 0 do
   begin
@@ -5635,7 +5632,7 @@ begin
   end;
   //end;
 end;
-
+*)
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
 var
@@ -5682,7 +5679,7 @@ end;
 function FileCopyWin
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-  (* RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen *)
+  { RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen }
 
 var
   //Date: longint;
@@ -5834,8 +5831,8 @@ begin
       end;
 
       if (not Result) and (LastError = 32)
-        (* file is being used by another process *) and DelayUntilRebootIfNeeded then
-        (* Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert *)
+        { file is being used by another process } and DelayUntilRebootIfNeeded then
+        { Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert }
       begin
         if GetOSId = VER_PLATFORM_WIN32_NT then
         begin
@@ -5910,7 +5907,7 @@ begin
 
         end;
       end;
-      (*  $ENDIF *)
+      //  $ENDIF
 
       if not Result then
       begin
@@ -5977,6 +5974,8 @@ begin
 end;
 
 {$ENDIF WINDOWS}
+
+
 
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
@@ -9848,7 +9847,7 @@ var
         begin
           LogS := 'Info: Target ' + TargetName +
             ' exists and shall be overwritten';
-          LogDatei.log(LogS, LLinfo);
+          LogDatei.log(LogS, LLDebug);
           LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
         end;
 
@@ -9872,7 +9871,7 @@ var
         if FileCopy(SourceName, TargetName, problem, True,
           rebootWanted, followsymlinks) then
         begin
-          LogS := SourceName + ' copied to ' + TargetPath;
+          LogS := 'copy: '+SourceName + ' copied to ' + TargetPath;
           LogDatei.log(LogS, LLInfo);
           if problem <> '' then
           begin
@@ -10153,7 +10152,7 @@ var
             FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent); //SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLDebug);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 

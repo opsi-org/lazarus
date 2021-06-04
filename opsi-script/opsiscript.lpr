@@ -79,7 +79,7 @@ uses //lcltranslator,
   osswaudit in 'osswaudit.pas',
   osfuncwin,
   osfuncwin2, {$ENDIF}
-  lazutf8;
+  lazutf8, osfilehelper;
 
 
 

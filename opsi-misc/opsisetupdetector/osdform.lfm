@@ -9393,7 +9393,7 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 611
             Anchors = []
-            ClientHeight = 101
+            ClientHeight = 118
             ClientWidth = 609
             ParentFont = False
             TabOrder = 0

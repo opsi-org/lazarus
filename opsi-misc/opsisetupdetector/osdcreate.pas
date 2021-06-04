@@ -22,8 +22,9 @@ uses
   Dialogs,
   lazfileutils,
   osparserhelper,
-    osjson,
-  dateutils;
+  osjson,
+  dateutils,
+  osfilehelper;
 
 procedure createProductStructure;
 procedure callOpsiPackageBuilder;
@@ -33,10 +34,10 @@ resourcestring
   rsDirectory = 'Directory ';
   rsStillExitsWarningDeleteOverwrite = ' still exits. Abort or Backup or Delete ?';
   rsCouldNotCreateDirectoryWarning = 'Could not create directory: ';
-  rsConfirmBackupOrRemovalTitle = 'Confirm Delete or Backup of old files.';
-  rsConfirmBackupCaption = 'Backup';
-  rsConfirmAbortCaption = 'Abort';
-  rsConfirmDeleteCaption = 'Delete';
+  rsConfirmBackupOrRemovalTitle = 'Confirm Deletion of the complete existing directory or backup of old files before creating the new ones.';
+  rsConfirmBackupCaption = 'Backup existing files before creating new ones';
+  rsConfirmAbortCaption = 'Abort creating new files';
+  rsConfirmDeleteCaption = 'Delete existing directoy and create new one';
   rsConfirmAbortHint = 'Leave existing directory unchanged and abort';
   rsConfirmDeleteHint = 'Delete the complete directory before creating the new one.';
   rsConfirmBackupHint = 'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
@@ -44,7 +45,8 @@ resourcestring
   rsConfirmExpandedText = 'Abort: Leave existing directory unchanged and abort' +
     LineEnding + 'Delete: Delete the complete directory before creating the new one.' +
     LineEnding +
-    'Backup: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
+    'Backup: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be saved to an backup file'
+    + LineEnding + 'before the new files are created';
 
 
 implementation
@@ -737,6 +739,14 @@ function bakupOldProductDir: boolean;
     Result := True;
     backupfiles := TStringList.Create;
     // Del really old files
+    FindAllFiles(backupfiles, mydir, '*.*', False);
+    Application.ProcessMessages;
+    for i := 0 to backupfiles.Count - 1 do
+     MakeBakFiles(backupfiles.Strings[i],3);
+    (*
+    Result := True;
+    backupfiles := TStringList.Create;
+    // Del really old files
     FindAllFiles(backupfiles, mydir, '*.3', False);
     Application.ProcessMessages;
     for i := 0 to backupfiles.Count - 1 do
@@ -767,6 +777,7 @@ function bakupOldProductDir: boolean;
         Result := False;
       Application.ProcessMessages;
     end;
+    *)
   end;
 
 begin
@@ -815,15 +826,15 @@ begin
         end;
         with TTaskDialogButtonItem(Buttons.Add) do
         begin
-          Caption := rsConfirmDeleteCaption;
-          //CommandLinkHint := rsConfirmDeleteHint;
-          ModalResult := mrYes;
-        end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
           Caption := rsConfirmBackupCaption;
           //CommandLinkHint := rsConfirmBackupHint;
           ModalResult := mrNo;
+        end;
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmDeleteCaption;
+          //CommandLinkHint := rsConfirmDeleteHint;
+          ModalResult := mrYes;
         end;
         MainIcon := tdiQuestion;
         //include(Flags,[tfExpandFooterArea]);
