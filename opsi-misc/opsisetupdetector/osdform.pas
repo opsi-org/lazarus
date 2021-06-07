@@ -2678,6 +2678,7 @@ procedure TResultform1.BtCreateProductClick(Sender: TObject);
 var
   radioindex: integer;
   //checkok: boolean = True;
+  done : boolean = False;
 begin
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
@@ -2691,13 +2692,13 @@ begin
     fetchDepPropFromForm;
     //TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     procmess;
-    createProductStructure;
+    done := createProductStructure;
     procmess;
     if (not RadioButtonCreateOnly.Checked) then
       callOpsiPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
-    ShowMessage(sInfoFinished);
+    if done then ShowMessage(sInfoFinished);
   finally
     PanelProcess.Visible := False;
     procmess;
@@ -3749,6 +3750,7 @@ end;
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
+  LogDatei.log('Choosed exit Button - Terminate Program',LLnotice);
   resultForm1.Close;
   resultForm1.Destroy;
   freebasedata;
