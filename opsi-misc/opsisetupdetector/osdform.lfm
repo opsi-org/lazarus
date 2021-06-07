@@ -99,11 +99,11 @@ object resultForm1: TresultForm1
       Height = 579
       Top = 1
       Width = 1039
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetIcons
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 7
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -8782,12 +8782,12 @@ object resultForm1: TresultForm1
         ParentFont = False
         object Panel11: TPanel
           Left = 650
-          Height = 548
+          Height = 549
           Top = 0
           Width = 379
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 548
+          ClientHeight = 549
           ClientWidth = 379
           Color = clNone
           ParentColor = False
@@ -8818,10 +8818,10 @@ object resultForm1: TresultForm1
           end
           object LabelIconPreview: TLabel
             Left = 15
-            Height = 18
+            Height = 16
             Top = 8
             Width = 188
-            Caption = 'Selected Icon (Preview 170x170)'
+            Caption = 'Selected Icon (Preview 160x160)'
             ParentColor = False
             ParentFont = False
           end
@@ -8829,7 +8829,7 @@ object resultForm1: TresultForm1
             Left = 233
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 479
+            Top = 480
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8987,7 +8987,7 @@ object resultForm1: TresultForm1
           end
           object LabelIconDir: TLabel
             Left = 15
-            Height = 18
+            Height = 16
             Top = 205
             Width = 57
             Caption = 'Directory:'
@@ -8997,7 +8997,7 @@ object resultForm1: TresultForm1
           end
           object LabelIconName: TLabel
             Left = 190
-            Height = 18
+            Height = 16
             Top = 38
             Width = 39
             Caption = 'Name:'
@@ -9039,18 +9039,18 @@ object resultForm1: TresultForm1
           end
           object PanelNumIcons: TPanel
             Left = 15
-            Height = 18
+            Height = 16
             Top = 394
             Width = 149
             AutoSize = True
             BevelOuter = bvNone
-            ClientHeight = 18
+            ClientHeight = 16
             ClientWidth = 149
             ParentFont = False
             TabOrder = 4
             object LabelNumIcons: TLabel
               Left = 0
-              Height = 18
+              Height = 16
               Top = 0
               Width = 132
               Align = alLeft
@@ -9060,7 +9060,7 @@ object resultForm1: TresultForm1
             end
             object LabelNumber: TLabel
               Left = 142
-              Height = 18
+              Height = 16
               Top = 0
               Width = 7
               Align = alClient
@@ -9121,19 +9121,19 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 548
+          Height = 549
           Top = 0
           Width = 650
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 16
           Align = alClient
-          ClientHeight = 544
-          ClientWidth = 646
+          ClientHeight = 547
+          ClientWidth = 648
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 546
+            Height = 547
             Top = 0
             Width = 648
             Align = alClient

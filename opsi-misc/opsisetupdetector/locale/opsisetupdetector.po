@@ -1087,7 +1087,7 @@ msgid "Name:"
 msgstr ""
 
 #: tresultform1.labeliconpreview.caption
-msgid "Selected Icon (Preview 170x170)"
+msgid "Selected Icon (Preview 160x160)"
 msgstr ""
 
 #: tresultform1.labelloginfo.caption
