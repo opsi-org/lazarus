@@ -193,6 +193,7 @@ procedure TConfigedInstaller.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
+
   // set constant form size
   Height := 450;
   //Width := 730;

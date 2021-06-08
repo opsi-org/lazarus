@@ -58,6 +58,9 @@ type
     constructor Create(password: string; sudo: boolean; shellCommand: string);
   end;
 
+const
+  logPath = '/var/log/opsi-configed-installer-configed.log';
+
 var
   Password: TPassword;
   MyThread: TMyThread;
@@ -88,28 +91,16 @@ end;
 // get properties from query and write them to file properties.conf
 procedure TMyThread.prepareInstallation;
 var
-  FileText: TStringList;
   TouchCommand: TRunCommandElevated;
 begin
-  // Write user input in properties.conf file:
-  FileText := TStringList.Create;
   TouchCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
     Password.RadioBtnSudo.Checked);
 
-  // Important for getting the result 'failed' in case of a wrong password
-  // because in this case the RunCommands below aren't executed and therefore
-  // setup.opsiscript, that usually does it, isn't too:
-  FileText.Add('failed');
   FClientDataDir := ExtractFilePath(ParamStr(0));
   Delete(FClientDataDir, Length(FClientDataDir), 1);
   FClientDataDir := ExtractFilePath(FClientDataDir);
-  if not FileExists(FClientDataDir + 'result.conf') then
-    TouchCommand.Run('touch ' + FClientDataDir + 'result.conf', Output);
-  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf', Output);
-  FileText.SaveToFile(FClientDataDir + 'result.conf');
   Password.clientDataDir := FClientDataDir;
 
-  FileText.Free;
   TouchCommand.Free;
 end;
 
@@ -144,7 +135,7 @@ procedure TMyThread.installConfiged;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
-  FInstallRunCommand.Run('opsi-script-gui -batch ../setup.opsiscript  /var/log/opsi-configed-installer-configed.log', Output);
+  FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
   FInstallRunCommand.Free;
 end;
 
@@ -164,18 +155,32 @@ end;
 procedure TPassword.showResult;
 var
   FileText: TStringList;
+  configedResult: boolean;
+  i: integer;
 begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
-  FileText.LoadFromFile(clientDataDir + 'result.conf');
-  // adjust quick-install ExitCode
-  if FileText[0] = 'failed' then
+  FileText.LoadFromFile(logPath);
+  configedResult := false;
+  // adjust configed-installer ExitCode
+  for i := 0 to FileText.Count-1 do
+  begin
+      if Pos('script finished: success', FileText[i]) > 0 then
+      configedResult := true;
+  end;
+  if not configedResult then
   begin
     ExitCode := 1;
     LogDatei.log('configed installation failed', 1);
+    FileText.Clear;
+    FileText.Add('failed');
   end
   else
+  begin
     LogDatei.log('configed installation success', 6);
+    FileText.Clear;
+    FileText.Add('success');
+  end;
   //ShowMessage(ExitCode.ToString);
   ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
     #10 + ConfigedInstaller.logFileName);
