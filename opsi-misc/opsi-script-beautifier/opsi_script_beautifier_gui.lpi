@@ -18,6 +18,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
+      <BuildNr Value="1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -60,7 +61,16 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI_AS_APP -dOPSI -dGUI"/>
+            <CustomOptions Value="-dOPSI_AS_APP
+-dOPSI
+-dGUI
+-dOPSI_AS_USER"/>
+            <OtherDefines Count="4">
+              <Define0 Value="OPSI_AS_APP"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OPSI_AS_USER"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -93,7 +103,16 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI_AS_APP -dOPSI"/>
+            <CustomOptions Value="-dOPSI_AS_APP
+-dOPSI
+-dOPSI_AS_USER
+-dGUI"/>
+            <OtherDefines Count="4">
+              <Define0 Value="OPSI_AS_APP"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+              <Define3 Value="GUI"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -171,7 +190,16 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSI_AS_APP -dOPSI -dGUI"/>
+      <CustomOptions Value="-dOPSI_AS_APP
+-dOPSI
+-dGUI
+-dOPSI_AS_USER"/>
+      <OtherDefines Count="4">
+        <Define0 Value="OPSI_AS_APP"/>
+        <Define1 Value="OPSI"/>
+        <Define2 Value="GUI"/>
+        <Define3 Value="OPSI_AS_USER"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

@@ -21,7 +21,7 @@ uses
 function indentation(indent: integer): string;
 function isStartStr(line: string; codeWords: TStringList): boolean;
 function isEndStr(line: string; codeWords: TStringList): boolean;
-function isNewSection (line: String): boolean;
+function isNewSection(line: string): boolean;
 function beautify(code: TStringList): TStringList;
 procedure Initialize(bfn: string; osf: string);
 
@@ -76,13 +76,13 @@ begin
   end;
 end;
 
-function isNewSection (line: String): boolean;
+function isNewSection(line: string): boolean;
 begin
-  isNewSection:= false;
+  isNewSection := False;
   if (AnsiStartsStr('[', line.trim) and AnsiEndsStr(']', line.trim)) or
-            AnsiStartsStr(UpperCase('deffunc'), UpperCase(line.trim)) then
+    AnsiStartsStr(UpperCase('deffunc'), UpperCase(line.trim)) then
   begin
-    isNewSection := true;
+    isNewSection := True;
   end;
 
 end;
@@ -101,7 +101,7 @@ end;
 
 function beautify(code: TStringList): TStringList;
 var
-  k, relPos, i : integer;
+  k, relPos, i: integer;
   dontTouch, noIndent, trimLine: boolean;
   tmpstr, tmpstr2: string;
   threetabs: boolean;
@@ -110,8 +110,8 @@ begin
   //Initialize openif array
   for i := 0 to 250 do
     openif[i] := -1;
-  dontTouch:=false;
-  noIndent:=false;
+  dontTouch := False;
+  noIndent := False;
   k := 0;
   while (k < pred(code.Count)) do
   begin
@@ -130,7 +130,8 @@ begin
       threetabs := False;
       relPos := PosEx('[', code[k]) - 1;      // before indentation
       code[k] := indentation(indentlevel) + code[k].trim;
-      LogDatei.log('Section - line ' + IntToStr(k+1) + ': [opsiServiceCall: ' + code[k], LLnotice);
+      LogDatei.log('Section - line ' + IntToStr(k + 1) + ': [opsiServiceCall: ' +
+        code[k], LLnotice);
       relPos := PosEx('[', code[k]) - 1 - relPos;  // before indentation
       // how many chars to indent additionally
       repeat
@@ -146,7 +147,8 @@ begin
           threetabs := False;
           relPos := relPos - 3;
         end;
-      until isNewSection(code[k]) or AnsiEndsStr(']', code[k].trim) or (k >= code.Count - 1);  // end of params
+      until isNewSection(code[k]) or AnsiEndsStr(']', code[k].trim) or
+        (k >= code.Count - 1);  // end of params
       if isNewSection(code[k]) then
         // check this line because it's next section - so dec
         Dec(k);
@@ -161,7 +163,8 @@ begin
       // detect indentiation
       relPos := PosEx('[', code[k]) - 1;      // how many chars
       code[k] := indentation(indentlevel) + code[k].trim;
-      LogDatei.log('Section - line ' + IntToStr(k+1) + ': [LinkFolder: ' + code[k], LLnotice);
+      LogDatei.log('Section - line ' + IntToStr(k + 1) + ': [LinkFolder: ' +
+        code[k], LLnotice);
       relPos := PosEx('[', code[k]) - 1 - relPos;
       // how many chars to indent additionall
       // set_link +1 indent, end_link -1 indent
@@ -173,37 +176,38 @@ begin
           relPos := relPos + 1;
         Inc(k);
       until isNewSection(code[k]) // next section
-            or (k >= code.Count - 1);
+        or (k >= code.Count - 1);
       if isNewSection(code[k]) then
         // check this line because it's next section - so dec
         Dec(k);
       trimLine := False;  // no trim
     end;
 
-   // sections with relativ indentions, don't touch or no indent
-   if isStartStr(code[k].trim, dontTouchList) or isStartStr(code[k].trim, noIndentList) then
+    // sections with relativ indentions, don't touch or no indent
+    if isStartStr(code[k].trim, dontTouchList) or
+      isStartStr(code[k].trim, noIndentList) then
     begin
       //logdatei.log(' line ' + k.toString + ' before: ' + code[k] , LLessential);
       if isStartStr(code[k].trim, dontTouchList) then
       begin
-        logdatei.log('Section - line ' + IntToStr(k+1) +
+        logdatei.log('Section - line ' + IntToStr(k + 1) +
           ': don''t touch: ' + code[k], LLnotice);
-        dontTouch:= true;
+        dontTouch := True;
       end;
       if isStartStr(code[k].trim, noIndentList) then
       begin
-        logdatei.log('Section - line ' + IntToStr(k+1) +
-          ': no indent: ' + code[k], LLnotice);
-        noIndent:=true;
+        logdatei.log('Section - line ' + IntToStr(k + 1) + ': no indent: ' +
+          code[k], LLnotice);
+        noIndent := True;
       end;
 
       if (AnsiStartsStr('[', code[k].trim) and AnsiEndsStr(']', code[k].trim)) then
-      // begin of section
+        // begin of section
       begin
         // set first line of section with indentlevel
-        relPos:= PosEx('[', code[k]) - 1;  // position of [ before indentation
+        relPos := PosEx('[', code[k]) - 1;  // position of [ before indentation
         code[k] := indentation(indentlevel) + code[k].trim;
-        relPos :=  PosEx('[', code[k]) - 1 -relPos;
+        relPos := PosEx('[', code[k]) - 1 - relPos;
         //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
         // get next lines
         Inc(k);
@@ -211,8 +215,8 @@ begin
         while not ((AnsiStartsStr('[', code[k].trim) and
             AnsiEndsStr(']', code[k].trim)) or
             AnsiStartsStr(UpperCase('deffunc'), UpperCase(code[k].trim)) or
-            AnsiStartsStr('endfunc', code[k].trim) or AnsiStartsStr('exit $?', code[k].trim))
-            and (k < code.Count - 1) do
+            AnsiStartsStr('endfunc', code[k].trim) or
+            AnsiStartsStr('exit $?', code[k].trim)) and (k < code.Count - 1) do
         begin
           if dontTouch then // don't touch
             code[k] := createBlockIndent(relPos) + code[k];
@@ -225,15 +229,13 @@ begin
         trimline := False;
 
         // section ends
-        if (AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim))
-           ) then
+        if (AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim))) then
         begin
           Dec(indentlevel);
           code[k] := indentation(indentlevel) + code[k];
         end;
 
-        if isNewSection(code[k])
-        then
+        if isNewSection(code[k]) then
           // begin next section, therefore end of previous section
         begin
           Dec(k);
@@ -241,8 +243,8 @@ begin
         end;
 
       end;
-      dontTouch:=false;
-      noIndent:=false;
+      dontTouch := False;
+      noIndent := False;
     end;
 
     // trim and make indentation or not
@@ -254,10 +256,12 @@ begin
         code[k] := indentation(indentlevel) + code[k];
         if AnsiStartsStr(UpperCase('if'), UpperCase(code[k].Trim)) then
         begin
-          if (indentlevel>=0) then
+          if (indentlevel >= 0) then
             openif[indentlevel] := k
           else
-            LogDatei.log('Syntax Error, incorrect indent level - inconsistent if/else/endif/endcase/endswitch around line ' + inttostr(k+1) + ': ' + tmpstr2,LLError);
+            LogDatei.log(
+              'Syntax Error, incorrect indent level - inconsistent if/else/endif/endcase/endswitch around line '
+              + IntToStr(k + 1) + ': ' + tmpstr2, LLError);
         end;
         Inc(indentlevel);
       end
@@ -275,10 +279,13 @@ begin
         //LogDatei.log(' Line '+inttostr(k+1) + ': ' + tmpstr2,LLnotice);
         if AnsiStartsStr(UpperCase('endif'), UpperCase(code[k].Trim)) then
         begin
-          if (indentlevel>=0) then
+          if (indentlevel >= 0) then
             openif[indentlevel] := -1
           else
-            LogDatei.log('Syntax Error, incorrect indent level - inconsistent if/else/endif/endcase/endswitch around line '+ inttostr(k+1) + ': ' + tmpstr2,LLError);
+            LogDatei.log(
+              'Syntax Error, incorrect indent level - inconsistent if/else/endif/endcase/endswitch around line '
+              +
+              IntToStr(k + 1) + ': ' + tmpstr2, LLError);
         end;
       end
       else
@@ -310,11 +317,11 @@ begin
   indentlevel := 0;
   {$IFNDEF GUI}
   writeln('indentrange:  ' + indentrange.ToString());
-{$ENDIF GUI}
+  {$ENDIF GUI}
   logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
   {$IFNDEF GUI}
   writeln('indentlevel:  ' + indentlevel.ToString());
-{$ENDIF GUI}
+  {$ENDIF GUI}
   logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
 
 
@@ -322,7 +329,7 @@ begin
   indentchar := INI.ReadString('beautifierconf', 'indentchar', '#09');
   {$IFNDEF GUI}
   writeln(indentchar);
-{$ENDIF GUI}
+  {$ENDIF GUI}
   logdatei.log('indentchar:  ' + indentchar, LLessential);
   if indentchar.Equals('tab') then
     indentchar := #09
@@ -366,9 +373,9 @@ begin
     CopyFile(opsiscriptfile, ExtractFileNameWithoutExt(opsiscriptfile) +
       '.bak', [cffOverwriteFile]);
     logdatei.log('opening file: ' + opsiscriptfile, LLessential);
-      {$IFNDEF GUI}
+   {$IFNDEF GUI}
     writeln('opening file: ' + opsiscriptfile);
-{$ENDIF GUI}
+   {$ENDIF GUI}
     try
       try
         opsiscriptcode.LoadFromFile(opsiscriptfile);
@@ -387,9 +394,9 @@ begin
   else
   begin
     opsiscriptcode.Free;
-      {$IFNDEF GUI}
+    {$IFNDEF GUI}
     writeln('file does not exist: ' + opsiscriptfile);
-{$ENDIF GUI}
+    {$ENDIF GUI}
     logdatei.log('file does not exist: ' + opsiscriptfile, LLessential);
   end;
   // free all

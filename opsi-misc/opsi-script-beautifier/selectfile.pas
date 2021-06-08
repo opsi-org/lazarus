@@ -46,13 +46,13 @@ implementation
 { TForm1 }
 procedure initLogging;
 var
-  logfilename : string;
+  logfilename: string;
 begin
   logdatei := TLogInfo.Create;
   logfilename := 'opsi-script-beautifier.log';
   LogDatei.WritePartLog := False;
-  LogDatei.WriteErrFile:= False;
-  LogDatei.WriteHistFile:= False;
+  LogDatei.WriteErrFile := False;
+  LogDatei.WriteHistFile := False;
   logdatei.CreateTheLogfile(logfilename, False);
 
   logdatei.LogLevel := 7;
@@ -68,23 +68,35 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   initLogging;
-  LabelLogFile.Caption:=LogDatei.FileName;
+  LabelLogFile.Caption := LogDatei.FileName;
 end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 var
-  beautycfg, beautyfile : string;
+  beautycfg, beautyfile: string;
 begin
-  beautycfg := ExtractFileDir(ParamStr(0))+PathDelim+'beautify.ini';
+  beautycfg := ExtractFileDir(ParamStr(0)) + PathDelim + 'beautify.ini';
+  logdatei.log('Using as config file: ' + beautycfg, LLessential);
   if OpenDialog1.Execute then
-  begin;
-    beautyfile := OpenDialog1.FileName;
-    Labelfilename.Caption:=beautyfile;
-    LabelState.Caption:='working';
-    beautifyopsiscript.initialize(beautycfg,beautyfile);
-    LabelState.Caption:='finished';
+  begin
+    ;
+    try
+      beautyfile := OpenDialog1.FileName;
+      logdatei.log('Selected file: ' + beautyfile, LLnotice);
+      Labelfilename.Caption := beautyfile;
+      LabelState.Caption := 'working';
+      beautifyopsiscript.Initialize(beautycfg, beautyfile);
+      LabelState.Caption := 'finished';
+      logdatei.log('finished with file: ' + beautyfile, LLnotice);
+    except
+      on e: Exception do
+      begin
+        logdatei.log('Exception in BitBtn1Click with file: ' + beautyfile, LLerror);
+        logdatei.log('Error: ' + e.message, LLerror);
+        LabelState.Caption := 'ERROR !! - Check log';
+      end
+    end;
   end;
 end;
 
 end.
-
