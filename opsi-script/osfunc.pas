@@ -639,7 +639,7 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
-function isSymLink(const filepath : string) : boolean;
+function isSymLink(filepath : string) : boolean;
 function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 
 
@@ -11568,17 +11568,20 @@ end;
 
 {$ENDIF WINDOWS}
 
-function isSymLink(const filepath : string) : boolean;
+function isSymLink(filepath : string) : boolean;
 var
   fileinfo : TSearchRec;
   errorinfo : string;
 begin
   result  := false;
+  filepath := GetForcedPathDelims(filepath);
+  LogDatei.log('resolving symlink: '+filepath,LLinfo);
   if GetFileInfo(filepath, fileinfo,errorinfo) then
   begin
     if (fileinfo.Attr and fasymlink) = fasymlink then
      result  := true;
   end;
+  //result := FileIsSymlink(filepath) ;
 end;
 
 
