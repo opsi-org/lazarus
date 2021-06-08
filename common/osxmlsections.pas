@@ -214,8 +214,11 @@ type
     function getNodeNameActNode(): string;
     // get name from the actual node
 
+    //*************  Node-Operations on dicts *****************************
+    function setNodePair (keyNodeName:string; keyNodeText : string; valueNodeName : string; valueNodeText : string): boolean;
+    // set value node for key node
 
-    //*************  Attributes ************************************
+    //*************  Attributes *******************************************
     function countAttributes(myxmlnode: TDOMNode): integer;
     // count attributes of this node
 
@@ -1666,7 +1669,7 @@ begin
   end;
 end;
 
-// überladen!!!
+// overload!!!
 procedure TuibXMLDocument.delNode(nodePath: string; attributes_strict: boolean; var errorinfo : string);
 var
   removeNode: TDOMNode;
@@ -2098,7 +2101,19 @@ begin
     logdatei.log('getNodeByNameAndAttribute failed', oslog.LLerror);
   end;
 end;
+//*************  Node-Operations on dicts *****************************
+// TODO
+function TuibXMLDocument.setNodePair (keyNodeName: string; keyNodeText: string;
+  valueNodeName: string; valueNodeText: string): boolean;
+begin
+  setNodePair:= false;
+  // prüfen ob aktueller Knoten dem key dict hat
+  // suche im dict den node mit key keyNodeName und keyNodeText.
+  // analysiere den nächsten Knoten - Knoten valueNodeName können sein: key string, value; key true, kein value, key node array
+  // setze bei valueNodeName String den valueNodeText
+  // wenn kein keyNodeName key vorhanden - nichts tun??
 
+end;
 
 //*************  XML Attribute-Handling ***********************************
 function TuibXMLDocument.countAttributes(myxmlnode: TDOMNode): integer;
