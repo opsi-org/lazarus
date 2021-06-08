@@ -1,0 +1,72 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+; called from the superscript
+[sub_delete_files]
+	DefVar $javaexe1$ 
+	set $javaexe1$ = "javaw.exe"
+	comment "trying to kill tasks of " + $javaexe1$
+	killtask $javaexe1$ 
+	sleepseconds 5
+	sub_repeated_delete_trial
+	
+[sub_delete_links]
+	LinkFolder_uninstall
+	
+
+; internally called sections
+[sub_repeated_delete_trial]
+	DefVar $tryResult$
+	DefVar $tryNumber$
+	DefVar $deleteParams$
+	set $tryNumber$ = "0"
+	if compareDotSeparatedNumbers("%WinstVersion%","4.11.5.2") < "0"
+	  set $deleteParams$ = "-sf"
+	else
+	  set $deleteParams$ = "-sfc"
+	endif
+	sub_try_files
+	
+		
+	if $tryResult$ = "0"
+		comment "trying to kill task" + javaexe$
+		killtask $javaexe$
+		sleepseconds 5
+		sub_try_files
+	endif
+	
+	if $tryResult$ = "0"
+		sleepseconds 5
+		set $DeleteParams$= "-sf"
+		sub_try_files
+	endif
+
+
+[sub_try_files]
+	set $tryResult$ = "1" 
+	set $tryNumber$ = calculate($tryNumber$ + "+" +  "1") 
+	markErrorNumber
+	Files_uninstall /32Bit
+	if errorsOccuredSinceMark > 0
+		logWarning "files cannot be deleted"
+		set $tryResult$ = "0" 
+	endif
+	
+
+
+[LinkFolder_uninstall]
+	; deleting old folder from AllUsers startmenu:
+	; deleting old product entry from opsi.org subfolder
+	set_basefolder common_programs
+	delete_subfolder $ProductId$
+	
+	set_subfolder $OpsiSoftwareLinkfolder$
+	delete_element $ProductId$
+	
+	set_basefolder common_programs
+	delete_subfolder "$OpsiSoftwareLinkfolder$\spec_server"
+
+[Files_uninstall]
+del $deleteParams$ "$InstallDir$"

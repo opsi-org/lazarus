@@ -1,0 +1,34 @@
+
+DefFunc produceLinkTarget (VAL $targetserver$ : String) : String
+	
+	DefVar $hostcall$
+	
+	DefVar $opsiserver_callparam$
+	if $targetserver$ = "" or $targetserver$ = $lastusedserver$
+		; don't give the server in the command line
+		set $opsiserver_callparam$ = ""
+	else
+		if $targetserver$ =  $installingserver$
+			set $opsiserver_callparam$ = "%opsiserver%"
+		else
+			set $opsiserver_callparam$ =  $targetserver$
+		endif
+	endif
+	
+	if  $opsiserver_callparam$ = ""
+		set $hostcall$ = " "
+	else
+		set  $hostcall$ = " -h " + $opsiserver_callparam$
+	endif
+		
+	DefVar $targetbasestring$
+	;set $targetbasestring$ = $sysparam_fallback_tlsv1$ +  '-Xmx' + $memory_requirement$ + 'm -jar "'+$InstallDir$+'configed.jar"' + $hostcall$  +  ' -r ' + $check_reachable_interval$ + $add_calloptions$
+	;configure $InstallDir$ by working_directory entry in linkfolder
+	set $targetbasestring$ = $sysparam_fallback_tlsv1$ +  '-Xmx' + $memory_requirement$ + 'm -jar "'+'configed.jar"' + $hostcall$  +  ' -r ' + $check_reachable_interval$ + $add_calloptions$
+	if not ( $opsiadmin$="" )
+		set $targetbasestring$ = $targetbasestring$ + " -u " + $opsiadmin$
+		set $result$ = $targetbasestring$
+	endif
+	set $result$ = $targetbasestring$ + $language$
+	
+EndFunc

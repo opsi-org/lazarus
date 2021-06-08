@@ -1,0 +1,356 @@
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc setNewLogLevel(LOG_LEVEL : String) : void
+	setLogLevel = LOG_LEVEL
+	;set $result$ =  LOG_LEVEL
+endFunc
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc produceJavaRuntime( VAL $JAVA_RUNTIME_SELECTION$ : String,  VAL $REQUIRED_OPSI_JAVA_PRODUCT$: String, VAL $INSTALL_DIR$ : String, VAL $JAVA_EXE$ : String,  REF $USE_BUNDLED_JAVA_RUNTIME$ : String, REF $JAVA_BUNDLE_SOURCE_DIRECTORY$ : String, REF $USED_JAVA_SYSTEMTYPE$ : String,  REF $JAVA_PATH$: String) : String 
+; 	try to install or find java runtime
+;	val $JAVA_RUNTIME_SELECTION$ - the given choice of a kind of java supply, typically produced by a property
+; 	- values expected "system_java_runtime", "opsi_java_product", "opsi_java_product_if_no_system_java_exists", subdirectory names for jre-Bundles, 
+;	val $REQUIRED_OPSI_JAVA_PRODUCT$ - the name of the opsi product which should be installed if this is the preferred supply mode
+; 	val $INSTALL_DIR$  - the location of the installing product in case that a bundled java runtime should be installed for it
+;	val $JAVA_EXE$ - the variant of the java executable which should be used (in windows, values "java.exe" or "javaw.exe"
+; 	ref $USE_BUNDLED_JAVA_RUNTIME$ - if bundling takes place ("true"/"false") 
+;	ref $USED_JAVA_SYSTEMTYPE$ - which architecture type is used for the java installation 
+; 	ref $JAVA_PATH$: - call path of the java executable (ending with $JAVA_EXE$
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+	;logwarning "startfunction  produceJavaRuntime"
+	;setNewLogLevel( "7" )
+	comment "=== startfunction  produceJavaRuntime "
+	comment "parameters on start: "
+	comment "$JavaRuntimeSelection$ " + $JAVA_RUNTIME_SELECTION$ 
+	comment "$RequiredOpsiJavaProduct$ " + $REQUIRED_OPSI_JAVA_PRODUCT$
+	comment "$InstallDir$ "+ $INSTALL_DIR$
+	comment "$JavaExe$ " + $JAVA_EXE$ 
+	comment "$UseBundledJavaRuntime$  " + $USE_BUNDLED_JAVA_RUNTIME$ 
+	comment "$javaBundleSourceDirectory$ " + $JAVA_BUNDLE_SOURCE_DIRECTORY$
+	comment "$UsedJavaSystemtype$ " + $USED_JAVA_SYSTEMTYPE$
+	comment "$JavaPath$ "+ $JAVA_PATH$
+	
+	DefVar $MyJavaDir$
+	DefStringList JavaSystemDependentList
+
+	
+	set $result$ = "true"
+	
+	if not (GetOS = "Windows_NT")
+		set $result$ = "false"
+	else
+		
+		if $USE_BUNDLED_JAVA_RUNTIME$ = "true"
+			comment "install bundle"
+			
+			set JavaSystemDependentList = splitString($JAVA_RUNTIME_SELECTION$, "_OR_")
+			
+			
+			set $JAVA_RUNTIME_SELECTION$ = takeString(0, JavaSystemDependentList)
+			set $USED_JAVA_SYSTEMTYPE$ = strPart( $JAVA_RUNTIME_SELECTION$, "1", "6")
+
+			if   $USED_JAVA_SYSTEMTYPE$ = "jre_32" 
+				comment "we take a 32 bit engine in a 64 bit system only if there is no better choice"  
+				if ( GetSystemType = "64 Bit System" ) and (count( JavaSystemDependentList ) = "2")
+					set $JAVA_RUNTIME_SELECTION$ = takeString(1, JavaSystemDependentList)
+					set  $USED_JAVA_SYSTEMTYPE$ = strPart( $JAVA_RUNTIME_SELECTION$, "1", "6" )
+				endif
+			else 
+				if   $USED_JAVA_SYSTEMTYPE$ = "jre_64" 
+					comment "foundJavaRuntimeType jre_64"
+					if not ( GetSystemType = "64 Bit System" ) 
+						logwarning "cannot install 64 bit java on a 32 bit system"
+						set $USED_JAVA_SYSTEMTYPE$ = ""
+						set $USE_BUNDLED_JAVA_RUNTIME$ = "false"
+					endif
+					
+				else
+					logwarning "not 32 or 64 bit declaration at the expected place, we try the given jre and assume it is 64bit"
+					set $USED_JAVA_SYSTEMTYPE$ = "jre_64" 
+					;set $USE_BUNDLED_JAVA_RUNTIME$ = "false"
+				endif
+				
+			endif
+				
+			if  $USE_BUNDLED_JAVA_RUNTIME$ = "true"
+				set $MyJavaDir$= $INSTALL_DIR$ + $JAVA_RUNTIME_SELECTION$ + "\"
+				Files_copy_bundled_java /32Bit
+			endif
+				
+			if fileExists( $MyJavaDir$+ "bin\" +  $JAVA_EXE$  )
+				set $JAVA_PATH$ =  $MyJavaDir$ + "bin\" + $JAVA_EXE$
+			else 
+				set $USE_BUNDLED_JAVA_RUNTIME$ = "false"
+			endif
+				
+			
+		endif
+		
+		
+		if  $USE_BUNDLED_JAVA_RUNTIME$  = "false"
+			comment "check we should use an opsi java product"
+			set $result$ = "false"
+			if  ($JAVA_RUNTIME_SELECTION$= "opsi_java_product") and  not ($REQUIRED_OPSI_JAVA_PRODUCT$= "") 
+				set $result$ = checkOpsiJavaProduct( $REQUIRED_OPSI_JAVA_PRODUCT$ )
+				if $result$ = "false"
+					logWarning "could not produce opsi java product though required"
+				endif
+			endif
+			
+			
+			comment "check if, after all, some java exists, with a sufficient version"
+			comment "we call findWindowsJavaPath with parameters "
+			comment "--   $JavaPath$                     '" + $JAVA_PATH$ + "'"
+			comment "--   $UsedJavaSystemtype$ '" +  $USED_JAVA_SYSTEMTYPE$  + "'"
+			comment "--   $javaexe$                      '"  + $JAVA_EXE$  + "'"
+			set $result$ = findWindowsJavaPath( $JAVA_PATH$, $USED_JAVA_SYSTEMTYPE$, $JAVA_EXE$ )
+			
+			if  ($result$ = "false") and ($JAVA_RUNTIME_SELECTION$= "opsi_java_product_if_no_system_java_exists")
+				if not ($REQUIRED_OPSI_JAVA_PRODUCT$= "")
+					set $result$ = checkOpsiJavaProduct( $REQUIRED_OPSI_JAVA_PRODUCT$)
+					if $result$ = "false"
+						logError "could not produce opsi java product though required"
+					endif
+				endif
+			endif
+			
+				
+		endif
+		
+		
+	endif
+	comment "=== endfunction produceJavaRuntime   result " + $result$ 
+	
+	comment "parameters when finishing: "
+	comment "$JavaRuntimeSelection$ " + $JAVA_RUNTIME_SELECTION$ 
+	comment "$RequiredOpsiJavaProduct$ " + $REQUIRED_OPSI_JAVA_PRODUCT$
+	comment "$InstallDir$ "+ $INSTALL_DIR$
+	comment "$JavaExe$ " + $JAVA_EXE$ 
+	comment "$UseBundledJavaRuntime$ " + $USE_BUNDLED_JAVA_RUNTIME$ 
+	comment "$UsedJavaSystemtype$ " + $USED_JAVA_SYSTEMTYPE$
+	comment "$JavaPath$ "+ $JAVA_PATH$
+	
+	[Files_copy_bundled_java]
+	copy  -s  "$JAVA_BUNDLE_SOURCE_DIRECTORY$\$JAVA_RUNTIME_SELECTION$\*.*" "$myJavaDir$ "
+	
+	
+EndFunc
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc findWindowsJavaPath( REF $JAVA_PATH$ : String,  REF $USED_JAVA_SYSTEMTYPE$ : String, VAL $JAVA_EXE$ : String ) : String
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+;	Try to find the path of the current JRE in a windows system
+; 	The reference var should take the complete path if it is found
+;      $USED_JAVA_SYSTEMTYPE$  is set to "jre_64" on a 64Bit-System if  a  $JAVA_EXE$ is found in the 64-Bit path
+; 	Return values:
+;		"true"	if it is found
+;		"false"	if it could not be found
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+	DefVar tmpjavapath
+	DefVar $DefaultLoglevel$
+	set $DefaultLoglevel$ = "7"
+	setLoglevel = $DefaultLoglevel$
+	comment "=== startfunction findWindowsJavaPath"
+	comment "parameters REF $JAVA_PATH$:  " + $JAVA_PATH$ + ", " +  " val: " + $JAVA_EXE$ 
+	;setLoglevel = 5
+	set $RESULT$= "false"
+	DefVar $javaRegBaseRegpath$
+	set $javaRegBaseRegpath$ = "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment"
+	
+	DefVar $currentjavaregbranch$
+	set $currentjavaregbranch$ =""
+	if "64 Bit System" = GetSystemType
+		set $currentjavaregbranch$ = getRegistryStringValue64("[" +  $javaRegBaseRegpath$ + " ] CurrentVersion")
+		if not ($currentjavaregbranch$ = "")
+			set tmpjavapath = getRegistryStringValue64("[" + $javaRegBaseRegpath$  +"\" + $currentjavaregbranch$ + "] JavaHome")  + "\bin\" +$JAVA_EXE$
+			; experimenting
+			set $JAVA_PATH$ = getRegistryStringValue64("[" + $javaRegBaseRegpath$  +"\" + $currentjavaregbranch$ + "] JavaHome")  + "\bin\" +$JAVA_EXE$  
+			if tmpjavapath = $JAVA_PATH$
+				comment "true"
+			endif
+			; experimenting end
+			
+			if FileExists64(tmpjavapath)
+				set $RESULT$= "true"
+				set $USED_JAVA_SYSTEMTYPE$ =  "jre_64"
+			endif
+		endif
+	endif
+	
+	if $currentjavaregbranch$ = ""
+		set $currentjavaregbranch$ = getRegistryStringValue32("[" +  $javaRegBaseRegpath$ + " ] CurrentVersion")
+		if not ($currentjavaregbranch$ = "")
+			set tmpjavapath = getRegistryStringValue32("[" + $javaRegBaseRegpath$  +"\" + $currentjavaregbranch$ + "] JavaHome")  + "\bin\" +$JAVA_EXE$ 
+			if FileExists32( tmpjavapath )
+				set $RESULT$= "true"
+			endif
+		endif
+	endif
+	setLoglevel = $DefaultLoglevel$
+	set $JAVA_PATH$ = tmpjavapath
+	comment "function findWindowsJava $JAVA_PATH$: "  + $JAVA_PATH$ 
+	comment "=== endfunction findWindowsJavaPath result " + $RESULT$ 
+EndFunc
+
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc checkOpsiJavaProduct( VAL $REQUIRED_OPSI_JAVA_PRODUCT$ : String): String
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+;	Check if the required opsi product is installed
+;	If it 
+;	-	exists
+;	- 	ist not installed
+;	- 	has not failed
+;	try to install it and manage a reentry into the check
+; 	Return values:
+;		"true"	if the java product is installed
+;		"false"	if the java product is not installed
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+	DefVar $DefaultLoglevel$
+	set $DefaultLoglevel$ = "7"
+	setLoglevel = $DefaultLoglevel$
+	comment "=== startfunction checkOpsiJavaProduct"
+	comment "parameters $REQUIRED_OPSI_JAVA_PRODUCT$: " + $REQUIRED_OPSI_JAVA_PRODUCT$
+	setLoglevel = 5
+	set $result$ = "true"
+	DefVar $requiredProductIsInstallable$
+	DefStringList installableProducts
+	set  $requiredProductIsInstallable$ = "false"
+	if not ($REQUIRED_OPSI_JAVA_PRODUCT$= "")
+		set installableProducts = getReturnListFromSection("opsiservicecall_installableproducts")
+		for %prod% in installableProducts do sub_checkContains
+		if  $requiredProductIsInstallable$ = "false"
+			logWarning "required product " + $REQUIRED_OPSI_JAVA_PRODUCT$ + " does not exist" 
+			set $result$ = "false"
+		endif
+		if $result$ = "true"
+			comment "check if the product is to be installed"
+			DefStringlist poclist
+			set poclist = getReturnListFromSection("opsiServiceCall_getPOC")
+			comment "transform to string list"
+			set poclist = jsonAsArrayToStringList( takeString(0, poclist ) )
+			DefVar $installationStatus$ 
+			set $installationStatus$ =  jsonAsObjectGetValueByKey( takeString(0, poclist ) , "installationStatus")
+			DefVar $actionRequest$ 
+			set $actionRequest$ =  jsonAsObjectGetValueByKey( takeString(0, poclist ) , "actionRequest")
+			
+			if not ($installationStatus$ = "installed")
+				if not ($actionRequest$ = "setup") 
+					comment "request setup"
+					opsiservicecall_setJavaToSetup
+					exitWindows /reboot
+					isSuspended
+				endif
+			endif
+			
+		endif
+		
+	endif
+	setLoglevel = $DefaultLoglevel$
+	comment "=== endfunction checkOpsiJavaProduct result " + $RESULT$ 
+		
+	
+	[sub_checkContains]
+	if "%prod%" = $RequiredOpsiJavaProduct$
+		set  $requiredProductIsInstallable$ = "true"
+	endif
+	
+	[opsiservicecall_installableproducts]
+	"method": "getInstallableProductIds_list"
+	"params": [
+		"%opsiserviceUser%"
+	]
+	
+	[opsiservicecall_getPOC]
+	"method": "productOnClient_getObjects"
+	"params": [
+		'[]'
+		'{"clientId": "%opsiserviceUser%", "productType": "LocalbootProduct", "productId": "$RequiredOpsiJavaProduct$"}'
+	]
+	
+	[opsiservicecall_setJavaToSetup]
+	"method": "setProductActionRequest"
+	"params": [
+		"$REQUIRED_OPSI_JAVA_PRODUCT$"
+		"%opsiserviceUser%",
+		"setup"
+	]
+
+EndFunc
+
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc minJavaVersionExists(VAL $MIN_JAVA_VERSION$ : String, VAL $JAVA_PATH$: String) : String
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+; check if java version of java executable called by $JAVA_PATH$ statisfies >= $MIN_JAVA_VERSION$
+; parameters
+: 	- $MIN_JAVA_VERSION$ is the minimum allowed java version
+:	-  $JAVA_PATH$ is the path to the java executable which should be checked
+; returns
+;	- "true" if condition is satisfied
+;	- "false" otherwise and, as well, if no java exe is found at the gven place
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+
+	comment "=== startfunction minJavaVersionExists
+	comment "parameters "
+	comment "$MIN_JAVA_VERSION$  " + $MIN_JAVA_VERSION$  
+	comment "$JAVA_PATH$ " + $JAVA_PATH$
+	
+	
+	comment "=== endfunction
+	
+	[sub_check_system_java]
+	; can be called only one time since we define variables
+	DefVar $foundjavaVersion$
+	set $foundjavaVersion$ = ""
+	DefStringList outlines
+	set outlInes = GetOutstreamFromSection ("DosInAnIcon_testjava")
+	for %line% in outlines do sub_get_java_version
+	comment "find java we compare" 
+	comment "find java found:    " +  $foundJavaVersion$ 
+	comment "find java required: " + $MinRequiredJavaVersion$ 
+	if  not ($foundjavaVersion$ = "") 
+		set $foundjavaVersion$ = strPart( $foundjavaVersion$, "1", "3")
+	endif
+	if  $foundjavaVersion$ = 	comment "find java we need an installation"
+	"" or  compareDotSeparatedNumbers ($MinRequiredJavaVersion$, $foundJavaVersion$  ) = "+1"
+	endif
+	
+	[DosInAnIcon_testjava]
+	echo off
+	cd \
+	java -version
+	
+	
+	[sub_get_java_version]
+	comment "find java %line%" 
+	if  ($foundjavaversion$ = "") and (strPos('%line%', "java version") = "1")
+		comment "find java until now, we did not identify a java version, but there is one"
+		set $foundjavaversion$ = strPart( '%line%', "14", "100")
+	endif
+	if not ($foundjavaversion$ = "")
+		set javaVersionPartialStrings =  splitString($foundjavaversion$, '"')
+		if count(javaVersionPartialStrings) = "0" or count(javaVersionPartialStrings) = "1"
+			set javaVersionPartialStrings =  splitString($foundjavaversion$, '"')
+			set $foundjavaversion$ = ""
+			
+		else
+			set $foundjavaversion$ = takeString("1", splitString($foundjavaversion$, '"') )
+		endif
+	endif
+
+	
+EndFunc
+
+
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+DefFunc infoOut( VAL $TEST_STR$ : String) : void
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+;testfunction
+;--------------------------------------------------------------------------------------------------------------------------------------------------
+	DefVar $DefaultLoglevel$
+	set $DefaultLoglevel$ = "7"
+	setLoglevel = $DefaultLoglevel$
+	comment "=== startfunction infoOut"
+	comment "parameters val" + $TEST_STR$
+EndFunc
