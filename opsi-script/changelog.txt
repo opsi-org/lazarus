@@ -6,6 +6,12 @@ mac getIpByName liefert name von IPnum
 
 ##################################################################
 
+opsi-script (4.12.4.23) stable; urgency=low
+
+ * osfuncwin2: fix for function resolveWinSymlink
+
+-- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
+
 opsi-script (4.12.4.22) stable; urgency=low
 
  * new (common) unit osfilehelper

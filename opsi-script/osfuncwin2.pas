@@ -47,7 +47,8 @@ uses
   ActiveX,
   JwaWbemCli,
   ostxstringlist,
-  LAZUTF8;
+  LAZUTF8,
+  lazfileutils;
 
 //JclSecurity,
 //JclWin32;
@@ -117,7 +118,7 @@ function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
 function winCreateSymbolicLink(lpSymlinkFileName: PChar; lpExistingFileName: PChar;
   dwFlags: DWORD): winbool;
 function updateEnvironment(): boolean;
-function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
 
 implementation
 
@@ -2471,29 +2472,34 @@ FUNCTION FileHandleToFileName(Handle : THandle) : STRING;
 
 
 // https://stackoverflow.com/questions/49252038/how-to-get-the-full-file-name-from-a-textfile-variable
-function resolveWinSymlink(const filepath: string; recursive: boolean = True): string;
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
 var
   //fileinfo: TSearchRec;
   errorinfo: string;
   myhandle : THandle;
 begin
   Result := filepath;
+  filepath := GetForcedPathDelims(filepath);
+  if FileExists(filepath, False) then
+  begin
+  try
   myhandle := CreateFile(PChar(filepath), 0, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
   if Win32Check(myhandle <> INVALID_HANDLE_VALUE) then
     result := FileHandleToFileName(myhandle)
   else
    errorinfo := 'Could not get handle for: '+filepath;
-  (*
-  // This gives a non valid handle !
-  if GetFileInfo(filepath, fileinfo, errorinfo) then
-  begin
-    if (fileinfo.Attr and fasymlink) = fasymlink then
-    begin
-      myhandle := fileinfo.FindHandle;
-      result := FileHandleToFileName(myhandle);
+   except
+      on e: Exception do
+      begin
+        LogDatei.log_prog('Exception in resolveWinSymlink: ' +
+          e.message, LLError);
+         LogDatei.log_prog('Returning input: ' + filepath, LLError);
+        Result := filepath;
+      end;
     end;
-  end;
-  *)
+end
+    else // return filepath also if filepath does not exists
+      Result := filepath;
 end;
 
 

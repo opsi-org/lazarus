@@ -11,11 +11,6 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: osdanalyzemac.swarnmultiplemsi
-msgctxt "osdanalyzemac.swarnmultiplemsi"
-msgid "Multiple (more than one) msi files found. Look to log file and directory: "
-msgstr ""
-
 #: osdanalyzewin.swarnmultiplemsi
 msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
@@ -535,18 +530,6 @@ msgstr ""
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
-msgstr ""
-
-#: tfosdconfigdlg.bitbtn1.caption
-msgid "Finished"
-msgstr ""
-
-#: tfosdconfigdlg.caption
-msgid "opsi-setup-detector Configuration"
-msgstr ""
-
-#: tfosdconfigdlg.panel1.caption
-msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption
