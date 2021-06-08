@@ -50,6 +50,8 @@ Special thanks to Gregor Ibic <gregor.ibic@intelicom.si>
  for good inspiration about begin with SSL programming.
 }
 
+{$DEFINE SSLPATH} //use opsi specific paths to ssl libraries
+
 {$IFDEF FPC}
   {$MODE DELPHI}
 {$ENDIF}
