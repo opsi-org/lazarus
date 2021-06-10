@@ -7403,6 +7403,7 @@ var
   ProfileList: TStringList;
   pc: integer = 0;
 
+  PatchListe: TpatchList;
   
   procedure doXMLpatch2Main(const Section: TXStringList; const presetDir: string);
   var
@@ -7444,11 +7445,23 @@ var
       nodeOpenCommandExists := False;
       nodepath := '';
 
+
+      // Create the XML Patch list
+      PatchListe := TPatchList.Create;
+      PatchListe.Clear;
+      PatchListe.ItemPointer := -1;
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
+
+
       // createXMLDoc
       XMLDocObject := TuibXMLDocument.Create;
       XMLDocObject.debuglevel := oslog.LLinfo;
+
       // open xmlfile
-      if XMLDocObject.openXmlFile(myfilename) then
+      //if XMLDocObject.openXmlFile(myfilename) then
+
+      // open XML file with encoding
+      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
         LogDatei.log('success: create xmldoc from file: ' + myfilename, oslog.LLinfo)
       else
         LogDatei.log('failed: create xmldoc from file: ' + myfilename, oslog.LLError);
@@ -7958,11 +7971,25 @@ var
         end; // not a comment line
       end; // any line
 
+      // Saving the PatchListe to XML file
+      PatchListe := TPatchList(XMLDocObject.getXmlStrings());
+      PatchListe.SaveToFile(myfilename, flag_encoding);
+      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
+        LogDatei.log('Successfully saved XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, LLinfo)
+      else
+        LogDatei.log('Failed to save XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, oslog.LLError);
+
+      PatchListe.Free;
+      PatchListe := nil;
+
+      (*
       // save xml back
       if XMLDocObject.writeXmlAndCloseFile(myfilename) then
         LogDatei.log('successful written xmldoc to file: ' + myfilename, LLinfo)
       else
         LogDatei.log('failed to write xmldoc to file: ' + myfilename, oslog.LLError);
+      *)
+
       XMLDocObject.Destroy;
 
       if ExitOnError and (DiffNumberOfErrors > 0) then
