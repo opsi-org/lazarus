@@ -116,6 +116,7 @@ var
   opsiserviceUser: string;
   opsiservicePassword: string;
   opsiserviceSessionId: string;
+  opsiserviceClientId: string;
   depoturl: string;
   depotshare, depotdir: string;
   depotdrive, depotdrive_old: string;

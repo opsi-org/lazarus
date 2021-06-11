@@ -24392,6 +24392,9 @@ begin
       FConstList.add('%opsiservicePassword%');
       FConstValuesList.add(opsiservicePassword);
 
+      FConstList.add('%opsiserviceClientId%');
+      FConstValuesList.add(opsiserviceClientId);
+
       FConstList.add('%hostID%');
       FConstValuesList.add(computernaming);
 

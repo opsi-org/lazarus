@@ -2833,6 +2833,7 @@ begin
                   Inc(i);
                   if (i <= ParamListe.Count) then
                   begin
+                    opsiserviceClientId := ParamListe.Strings[i - 1];
                     computername := ParamListe.Strings[i - 1];
                     if (length(computername) = 0) or
                       (computername[1] = ParamDelim) then
