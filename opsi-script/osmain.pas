@@ -2932,6 +2932,27 @@ begin
                   end;
                 end
 
+                else if (lowercase(r) = paramDelim + 'depotpath') then
+                begin
+                  Inc(i);
+                  if (i <= ParamListe.Count) then
+                  begin
+                    depotpath := ParamListe.Strings[i - 1];
+                    if (length(depotpath) = 0) or
+                      (depotpath[1] = ParamDelim) then
+                    begin
+                      ProgramMode := pmInfo;
+                      exit;
+                    end;
+                    Inc(i);
+                  end
+                  else
+                  begin
+                    ProgramMode := pmInfo;
+                    exit;
+                  end;
+                end
+
                 else if (lowercase(r) = paramDelim + 'usercontext') then
                 begin
                   Inc(i);

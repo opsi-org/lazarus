@@ -10,6 +10,8 @@ opsi-script (4.12.4.23) stable; urgency=low
 
  * osfuncwin2: fix for function resolveWinSymlink
  * new constant %opsiserviceClientId% (FQDN in service context, empty without)
+ * parameter /clientid if present wil be ussed as preferred source for %hostid%
+ * new parameter /depotpath (only together with /opsiservice) to pass the path to the depot
 
 -- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
 

@@ -33,7 +33,7 @@ uses
   elfreader, // {needed for reading ELF executables}
 {$ENDIF UNIX}
   {$IFDEF DARWIN}
-    machoreader, // {needed for reading mac executables}
+  machoreader, // {needed for reading mac executables}
   {$ENDIF DARWIN}
 {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -120,6 +120,7 @@ var
   depoturl: string;
   depotshare, depotdir: string;
   depotdrive, depotdrive_old: string;
+  depotpath: string;
   TempPath: string;
   LogPath: string;
   TmpPathFromLogdatei: string;
@@ -163,7 +164,7 @@ var
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
-  configReverseProductOrderByUninstall : boolean = False;
+  configReverseProductOrderByUninstall: boolean = False;
 
 
 implementation
@@ -195,7 +196,7 @@ begin
       BoolToStr(ScriptErrorMessages, True));
     myconf.WriteString('global', 'AutoActivityDisplay',
       BoolToStr(AutoActivityDisplay, False));
-        myconf.WriteString('global', 'ReverseProductOrderByUninstall',
+    myconf.WriteString('global', 'ReverseProductOrderByUninstall',
       BoolToStr(configReverseProductOrderByUninstall, False));
     myconf.Free;
   except
@@ -212,7 +213,7 @@ const
 var
   part1, part2, outstr: string;
   myconf: TIniFile;
-  opsiclientd_conf : string;
+  opsiclientd_conf: string;
 
 begin
   try
@@ -227,63 +228,52 @@ begin
       boolToStr(debug_prog, True)));
     debug_lib := strToBool(myconf.ReadString('global', 'debug_lib',
       boolToStr(debug_lib, True)));
-    default_loglevel := myconf.ReadInteger('global', 'default_loglevel', default_loglevel);
+    default_loglevel := myconf.ReadInteger('global', 'default_loglevel',
+      default_loglevel);
     force_min_loglevel := myconf.ReadInteger('global', 'force_min_loglevel',
       force_min_loglevel);
     ScriptErrorMessages := strToBool(myconf.ReadString('global',
       'ScriptErrorMessages', boolToStr(ScriptErrorMessages, True)));
     AutoActivityDisplay := strToBool(myconf.ReadString('global',
       'AutoActivityDisplay', boolToStr(AutoActivityDisplay, False)));
-    configReverseProductOrderByUninstall := strToBool(myconf.ReadString('global',
-      'ReverseProductOrderByUninstall', boolToStr(configReverseProductOrderByUninstall, False)));
+    configReverseProductOrderByUninstall :=
+      strToBool(myconf.ReadString('global', 'ReverseProductOrderByUninstall',
+      boolToStr(configReverseProductOrderByUninstall, False)));
     myconf.Free;
 
 
-{$IFDEF UNIX}
+    {$IFDEF UNIX}
     computername := getHostnameLin;
-{$ENDIF LINUX}
-    //{$IFDEF UNIX} computername := ''; {$ENDIF LINUX}//
+    {$ENDIF UNIX}
     Result := True;
     depoturl := '';
-    //configurl := '';
-    //utilsurl := '';
-
     depotshare := '';
-    //configshare := '';
-    //utilsshare := '';
-
-    //depotdir := PathDelim + 'install';
     depotdir := PathDelim;
-    //configdir := PathDelim + 'pcpatch';
-    //utilsdir := PathDelim + 'utils';
-
-    //utilsdrive := 'p:';
-    //configdrive := 'p:';
-
-  {$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     depotdrive := 'p:';
-{$ENDIF WINDOWS}
-{$IFDEF LINUX}
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
     depotdrive_old := '/mnt';
     depotdrive := '/media/opsi_depot';
-{$ENDIF LINUX}
-{$IFDEF DARWIN}
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
     //depotdrive := '/Network/opsi_depot';
     //depotdrive := '/Volumes/opsi_depot';
     depotdrive := '/var/opsisetupadmin/opsi_depot';
     opsiclientd_conf := '/etc/opsi-client-agent/opsiclientd.conf';
-    if  FileExists(opsiclientd_conf) then
+    if FileExists(opsiclientd_conf) then
     begin
-        myconf := TIniFile.Create(opsiclientd_conf);
-        outstr := myconf.ReadString('depot_server', 'drive',depotdrive);
-        if  DirectoryExistsUTF8(outstr) then depotdrive := outstr;
-        myconf.Free;
+      myconf := TIniFile.Create(opsiclientd_conf);
+      outstr := myconf.ReadString('depot_server', 'drive', depotdrive);
+      if DirectoryExistsUTF8(outstr) then
+        depotdrive := outstr;
+      myconf.Free;
     end;
 
 
-{$ENDIF DARWIN}
+    {$ENDIF DARWIN}
 
-{$IFDEF WINDOWS}
+    {$IFDEF WINDOWS}
     try
       regist := TRegistry.Create;
       regist.RootKey := HKEY_LOCAL_MACHINE;
@@ -316,7 +306,17 @@ begin
       Result := False;
       readconfig_done := False;
     end;
-{$ENDIF}
+   {$ENDIF}
+
+    if depotpath <> '' then
+    begin
+      depotdrive := depotpath;
+     {$IFDEF WINDOWS}
+      depotdrive := ExtractFileDrive(depotpath);
+      depotdir := ExtractFileDir(depotpath);
+     {$ENDIF}
+    end;
+
     readconfig_done := True;
   except
     Result := False;
@@ -340,9 +340,8 @@ begin
       except
         on e: Exception do
         begin
-          startupmessages.Append('Exception in readConfigFromService: '
-            + 'opsidata.getOpsiServiceConfigs: ' +
-            e.message + ' ' + DateTimeToStr(Now));
+          startupmessages.Append('Exception in readConfigFromService: ' +
+            'opsidata.getOpsiServiceConfigs: ' + e.message + ' ' + DateTimeToStr(Now));
           serviceresult := '';
         end;
       end;
@@ -394,8 +393,8 @@ begin
                             osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
                             if not TryStrToBool(tmpstr, debug_lib) then
                               osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  debug_lib: ' + tmpstr
-                                + ' ('+DateTimeToStr(Now)+')');
+                                'Error: Not a Boolean:  debug_lib: ' +
+                                tmpstr + ' (' + DateTimeToStr(Now) + ')');
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
@@ -477,22 +476,28 @@ begin
                               'got w10BitlockerSuspendOnReboot: ' + tmpstr);
                             if not TryStrToBool(tmpstr, w10BitlockerSuspendOnReboot) then
                               osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  w10BitlockerSuspendOnReboot: ' + tmpstr);
+                                'Error: Not a Boolean:  w10BitlockerSuspendOnReboot: '
+                                + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
 
                       if LowerCase(configid) =
-                        LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
+                        LowerCase(
+                        'opsi-script.global.ReverseProductOrderByUninstall') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got ReverseProductOrderByUninstall: ' + tmpstr);
-                            if not TryStrToBool(tmpstr, configReverseProductOrderByUninstall) then
+                            osmain.startupmessages.Add(
+                              'got ReverseProductOrderByUninstall: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configReverseProductOrderByUninstall) then
                               osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  ReverseProductOrderByUninstall: ' + tmpstr);
+                                'Error: Not a Boolean:  ReverseProductOrderByUninstall: '
+                                +
+                                tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
@@ -524,17 +529,6 @@ initialization
   //debug_prog:= True;
   {$ENDIF DARWIN}
   initEncoding;
-(*
-{$IFDEF WINDOWS}
-
-initEncoding;
-  opsiscriptconf := ExtractFileDir(reencode(paramstr(0),'system')) + PathDelim+ opsiscriptconfinit;
-  vi := TVersionInfo.Create;
-  vi.Load(reencode(Application.ExeName,'system'));
-  OpsiscriptVersion := vi.getString('FileVersion');
-  vi.Free;
-{$ELSE}
-*)
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
@@ -555,8 +549,6 @@ initEncoding;
   finally
     FileVerInfo.Free;
   end;
-  //OpsiscriptVersion := '4.11.6.1';
-  //{$ENDIF WINDOWS}
 
   OpsiscriptVersionName := 'Version ' + OpsiscriptVersion;
 
