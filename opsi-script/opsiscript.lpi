@@ -166,15 +166,16 @@
 -dOPSISCRIPT
 -dGUI
 -dSYNAPSE
--dSSLPATH"/>
+-dSSLPATH
+-dAPP_BUNDLE"/>
             <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
+              <Define3 Value="OSDEBUG"/>
               <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-              <Define6 Value="APP_BUNDLE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -473,15 +474,16 @@
             <CustomOptions Value="-dOPSIWINST
 -dOPSISCRIPT
 -dSYNAPSE
--dSSLPATH"/>
+-dSSLPATH
+-dAPP_BUNDLE"/>
             <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
+              <Define3 Value="OSDEBUG"/>
               <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-              <Define6 Value="APP_BUNDLE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -537,7 +539,8 @@
 -dOPSISCRIPT
 -dGUI
 -dOSDEBUG
--dSYNAPSE"/>
+-dSYNAPSE
+-dAPP_BUNDLE"/>
             <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
