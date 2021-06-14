@@ -1067,7 +1067,8 @@ var
     begin
       {$IFDEF GUI}
       FBatchOberflaeche.SetMessageText('Reloading product list after reinstallation...',
-        mInfo);//FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
+        mInfo);
+      //FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
       {$ENDIF GUI}
       if opsidata.getOpsiServiceVersion = '4' then
       begin
@@ -1986,7 +1987,7 @@ begin
       starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     {$MACRO ON}
-    //(*
+    //(*  comment this block for code formatting
     startupmessages.Append(
     'Compiled with FPC: '+ {$i %FPCVERSION%} +
     ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%});
@@ -2311,7 +2312,8 @@ begin
                 (opsiservicePassword = '') then
               begin
                 logDatei.log(
-                  'Param: /productid: Get service credentials from opsicliend.conf', LLinfo);
+                  'Param: /productid: Get service credentials from opsicliend.conf',
+                  LLinfo);
               {$IFDEF WINDOWS}
                 opsiclientdconf :=
                   getSpecialFolder(CSIDL_PROGRAM_FILES) +
@@ -2323,7 +2325,8 @@ begin
                 if FileExists(opsiclientdconf) then
                 begin
                   myconf := TInifile.Create(opsiclientdconf);
-                  opsiservicePassword := myconf.ReadString('global', 'opsi_host_key', '');
+                  opsiservicePassword :=
+                    myconf.ReadString('global', 'opsi_host_key', '');
                   opsiserviceUser := myconf.ReadString('global', 'host_id', '');
                   opsiserviceurl := myconf.ReadString('config_service', 'url', '');
                   myconf.Free;
@@ -2337,7 +2340,8 @@ begin
                 end;
               end
               else
-                logDatei.log('Param: /productid: Got service credentials from parameters',
+                logDatei.log(
+                  'Param: /productid: Got service credentials from parameters',
                   LLinfo);
               if not ((opsiserviceurl = '') or (opsiserviceUser = '') or
                 (opsiservicePassword = '')) then
@@ -2783,7 +2787,7 @@ begin
             begin
               try
                 if not (ProgramMode = pmBatch) then
-                ProgramMode := pmBuildPC_service;
+                  ProgramMode := pmBuildPC_service;
 
                 computername := '';
                 if not readconfig then
@@ -2943,6 +2947,18 @@ begin
                     begin
                       ProgramMode := pmInfo;
                       exit;
+                    end
+                    else
+                    begin
+                      startupmessages.Append(
+                        'Depot path from parameters:  ' + depotpath);
+                      depotdrive := depotpath;
+                     {$ifdef windows}
+                      depotdrive := extractfiledrive(depotpath);
+                      depotdir := extractfiledir(depotpath);
+                     {$endif}
+                      startupmessages.Append(
+                        'Depot drive+dir from parameters:  ' + depotdrive + depotdir);
                     end;
                     Inc(i);
                   end
