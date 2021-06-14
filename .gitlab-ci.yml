@@ -5,10 +5,10 @@ variables:
     description: "Run the pipline if set to true."
 
   PROJECT_NAME:
-    value: "opsi-script"
+    value: "opsiscript"
     description: "Project name of the project the pipline should run on."
 
-  LAZ_PROJECT_PATH:
+  PROJECT_REPOSITORY_PATH:
     value: "/opsi-script"
     description: "Path to the lazarus project within this git repository."
 
@@ -34,8 +34,17 @@ compile windows:
   tags:
     - laz-win10
   script: 
-    - echo "Compiling $PROJECT_MANE for Win32"
-    - lazbuild ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win32
-    - echo "Compiling $PROJECT_MANE for Win64"
-    - lazbuild ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win64
+    - echo "CI-Path $CI_PROJECT_PATH"
+    - echo "CI-Dir $CI_PROJECT_DIR"
+    - echo "CI-Name $CI_PROJECT_NAME"
+    - $LAZ_PROJECT_FILE=Join-Path ${CI_PROJECT_DIR} ${PROJECT_REPOSITORY_PATH} 
+    - $LAZ_PROJECT_FILE=Join-Path $LAZ_PROJECT_FILE "${PROJECT_NAME}.lpi"
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Win32"
+    - C:\lazarus\lazbuild.exe .\opsi-script\opsiscript.lpi --build-mode=Release_Win32
+    - echo "Compiling $PROJECT_NAME for Win64"
+    # - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win64
+  artifacts:
+    paths:
+      - ${PROJECT_NAME}.exe
 
