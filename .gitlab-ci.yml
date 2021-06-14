@@ -37,8 +37,9 @@ compile windows:
     - echo "CI-Path $CI_PROJECT_PATH"
     - echo "CI-Dir $CI_PROJECT_DIR"
     - echo "CI-Name $CI_PROJECT_NAME"
+    - echo "${CI_PROJECT_DIR}+${LAZ_PROJECT_PATH}+${PROJECT_NAME}"
     - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$CI_PROJECT_DIR+$LAZ_PROJECT_PATH --build-mode=Release_Win32
+    - C:\lazarus\lazbuild.exe ${CI_PROJECT_DIR}+${LAZ_PROJECT_PATH}+${PROJECT_NAME}.lpi --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
     # - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win64
   artifacts:

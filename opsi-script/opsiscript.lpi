@@ -230,6 +230,14 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSLOG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>
@@ -602,14 +610,12 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid sepia.uib.local -username sepia.uib.local -password 571c5a4e349215350efd4d8c3781fae4 -depotpath /var/lib/opsi/depot"/>
         <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="3">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid sepia.uib.local -username sepia.uib.local -password 571c5a4e349215350efd4d8c3781fae4 -depotpath /var/lib/opsi/depot"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
         </Mode0>
