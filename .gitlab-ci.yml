@@ -38,7 +38,7 @@ compile windows:
     - echo "CI-Dir $CI_PROJECT_DIR"
     - echo "CI-Name $CI_PROJECT_NAME"
     - $LAZ_PROJECT_FILE=Join-Path ${CI_PROJECT_DIR} ${PROJECT_REPOSITORY_PATH} 
-    - $LAZ_PROJECT_FILE=Join-Path $LAZ_PROJECT_PATH "${PROJECT_NAME}.lpi"
+    - $LAZ_PROJECT_FILE=Join-Path $LAZ_PROJECT_FILE "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
