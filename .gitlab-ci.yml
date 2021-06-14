@@ -34,8 +34,11 @@ compile windows:
   tags:
     - laz-win10
   script: 
+    - echo "CI-Path: $CI_PROJECT_PATH"
+    - echo "CI-Dir: $CI_PROJECT_DIR"
+    - echo "CI-Name: $CI_PROJECT_NAME"
     - echo "Compiling $PROJECT_MANE for Win32"
-    - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win32
+    # - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win32
     - echo "Compiling $PROJECT_MANE for Win64"
-    - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win64
+    # - C:\lazarus\lazbuild.exe ${PROJECT_NAME}.lpi --lazarusdir=$LAZ_PROJECT_PATH --build-mode=Release_Win64
 
