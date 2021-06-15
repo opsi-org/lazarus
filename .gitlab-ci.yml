@@ -8,14 +8,14 @@ variables:
     value: "opsiscript"
     description: "Project name of the project the pipline should run on."
 
-  PROJECT_REPOSITORY_PATH:
-    value: "/opsi-script"
-    description: "Path to the lazarus project within this git repository."
+  #PROJECT_REPOSITORY_PATH:
+  #  value: "/opsi-script"
+  #  description: "Path to the lazarus project within this git repository."
 
-  PROJECT_BUILD_MODE:
+  PLATFORM:
     value: "all"
     description: "For which build modes should the lazarus project be compiled?  
-    all: build project for all platforms (Win32, Win64, Linux, MacOS) and variants (gui, nogui)
+    all: build project for all platforms (Win32, Win64, Linux, MacOS)
     Windows (Linux, MacOS):  build project for the specified platform only"
   
 # Control of the Pipline  
@@ -29,22 +29,28 @@ stages:
   - build
 #  - binaryindex
 
-compile windows:
+compile opsi-script windows:
   stage: build
   tags:
     - laz-win10
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script\\"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+      when: always
   script: 
-    - echo "CI-Path $CI_PROJECT_PATH"
-    - echo "CI-Dir $CI_PROJECT_DIR"
-    - echo "CI-Name $CI_PROJECT_NAME"
-    #- $LAZ_PROJECT_FILE=Join-Path ${CI_PROJECT_DIR} ${PROJECT_REPOSITORY_PATH} 
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe .$LAZ_PROJECT_FILE --build-mode=Release_Win32
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
     # - C:\lazarus\lazbuild.exe .$LAZ_PROJECT_FILE --build-mode=Release_Win64
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
+    name: opsi-script_Windows
     paths:
-      - ${PROJECT_NAME}.exe
+      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+
+
 
