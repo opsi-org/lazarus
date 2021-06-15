@@ -6,10 +6,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rsback"
 msgid " < back "
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rsbackendop
-msgid " [Options: \"f\" for file, \"m\" for mysql]"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rscapdistr
 msgid "Distribution"
 msgstr ""
@@ -61,6 +57,7 @@ msgid "We recognized the following distribution on this computer:"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsfinish
+msgctxt "opsi_configed_installer_resourcestrings.rsfinish"
 msgid " finish "
 msgstr ""
 
@@ -74,14 +71,6 @@ msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsiscorrect
 msgid "Is this correct?"
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rslangop
-msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rslinkop
-msgid " [Options: \"m\" for default.menu, \"nom\" for default.nomenu]"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rslog
@@ -105,10 +94,6 @@ msgstr ""
 msgid " is not a valid input."
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rsopsiversionop
-msgid " [Options: \"1\" for Opsi 4.1, \"2\" for Opsi 4.2]"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rsotherdistr
 msgid "Please type in the correct distribution:"
 msgstr ""
@@ -118,14 +103,12 @@ msgid "Overview"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rspassword
+msgctxt "opsi_configed_installer_resourcestrings.rspassword"
 msgid "Password"
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rsrepokindop
-msgid " [Options: \"t\" for testing, \"e\" for experimental]"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rsrights
+msgctxt "opsi_configed_installer_resourcestrings.rsrights"
 msgid "Authentication is required to install opsi-server. Who are you logged in as?"
 msgstr ""
 
@@ -138,11 +121,8 @@ msgstr ""
 msgid "Please select a setup type:"
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rssetupop
-msgid " [Options: \"s\" for standard, \"c\" for custom]"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rsshowpassword
+msgctxt "opsi_configed_installer_resourcestrings.rsshowpassword"
 msgid "Show password"
 msgstr ""
 
@@ -158,10 +138,6 @@ msgstr ""
 msgid "Finally click \"finish\" to start the installation of opsi-server."
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rssuggestion
-msgid "[Suggestions: "
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rsuseproxy
 msgid "Would you like to use a proxy?"
 msgstr ""
@@ -171,19 +147,17 @@ msgid "Please wait for the installation to start..."
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rswelcome
-msgid "Welcome to the installation of the opsi configed on this computer!"
+msgid "Welcome to the installation of the opsi-configed on this computer!"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rswrongpassword
-msgid "Authentication failed. Please check your password!"
+msgid ""
+"Authentication failed.\n"
+"Please check your password!\n"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsyes
 msgid "Yes"
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rsyesnoop
-msgid " [Options: \"y\" for yes, \"n\" for no]"
 msgstr ""
 
 #: tconfigedinstaller.btnback.caption
@@ -214,6 +188,47 @@ msgid "Please choose a language for this setup program:"
 msgstr ""
 
 #: tconfigedinstaller.labelwelcome.caption
-msgid "Welcome to the installation of opsi-server on this computer!"
+msgid "Welcome to the installation of opsi-configed on this computer!"
+msgstr ""
+
+#: tpassword.btnback.caption
+msgctxt "tpassword.btnback.caption"
+msgid " < back "
+msgstr ""
+
+#: tpassword.btnfinish.caption
+msgctxt "tpassword.btnfinish.caption"
+msgid " finish "
+msgstr ""
+
+#: tpassword.caption
+msgid "Authentication required"
+msgstr ""
+
+#: tpassword.checkboxshowpassword.caption
+msgctxt "tpassword.checkboxshowpassword.caption"
+msgid "Show password"
+msgstr ""
+
+#: tpassword.labelpassword.caption
+msgctxt "tpassword.labelpassword.caption"
+msgid "Password"
+msgstr ""
+
+#: tpassword.labelrights.caption
+msgctxt "tpassword.labelrights.caption"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr ""
+
+#: tpassword.radiobtnroot.caption
+msgid "Root"
+msgstr ""
+
+#: tpassword.radiobtnsudo.caption
+msgid "Sudo"
+msgstr ""
+
+#: twait.labelwait.caption
+msgid "LabelWait"
 msgstr ""
 

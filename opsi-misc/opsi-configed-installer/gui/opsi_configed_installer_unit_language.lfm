@@ -33,11 +33,11 @@ object ConfigedInstaller: TConfigedInstaller
     AnchorSideTop.Control = WelcomePanel
     AnchorSideTop.Side = asrBottom
     Left = 175
-    Height = 132
+    Height = 104
     Top = 220
     Width = 364
     BevelOuter = bvNone
-    ClientHeight = 132
+    ClientHeight = 104
     ClientWidth = 364
     ParentFont = False
     ParentShowHint = False
@@ -46,7 +46,7 @@ object ConfigedInstaller: TConfigedInstaller
     object LabelCarryOut: TLabel
       Left = 0
       Height = 38
-      Top = 94
+      Top = 66
       Width = 364
       Align = alBottom
       Caption = 'To carry out the remaing installation automatically, we need some information first.'
@@ -74,7 +74,7 @@ object ConfigedInstaller: TConfigedInstaller
       Top = 0
       Width = 372
       Align = alTop
-      Caption = 'Welcome to the installation of opsi-server on this computer!'
+      Caption = 'Welcome to the installation of opsi-configed on this computer!'
       Font.Height = -19
       Font.Name = 'Sans'
       ParentColor = False

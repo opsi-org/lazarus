@@ -131,15 +131,15 @@ begin
       // set background image
       (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
         ExtractFilePath(ParamStr(0)) + ConfigedInstaller.BackgrImageFileName);
-      (Sender.Components[compIndex] as TImage).BorderSpacing.Top:=10;
+      (Sender.Components[compIndex] as TImage).BorderSpacing.Top := 10;
     end;
   end;
 
   // big decoration line at bottom in opsi-blue
   PanelBigLine := TPanel.Create(Sender);
-  PanelBigLine.Parent:=Sender;
-  PanelBigLine.ParentColor:=False;
-  PanelBigLine.BevelOuter:=bvNone;
+  PanelBigLine.Parent := Sender;
+  PanelBigLine.ParentColor := False;
+  PanelBigLine.BevelOuter := bvNone;
   PanelBigLine.Height := 5;
   PanelBigLine.Top := Sender.Height - PanelBigLine.Height;
   PanelBigLine.Left := 0;
@@ -150,9 +150,9 @@ begin
 
   // thin decoration line above the big one in opsi-red
   PanelSmallLine := TPanel.Create(Sender);
-  PanelSmallLine.Parent:=Sender;
-  PanelSmallLine.ParentColor:=False;
-  PanelSmallLine.BevelOuter:=bvNone;
+  PanelSmallLine.Parent := Sender;
+  PanelSmallLine.ParentColor := False;
+  PanelSmallLine.BevelOuter := bvNone;
   PanelSmallLine.Height := 3;
   PanelSmallLine.Top := Sender.Height - 11;
   PanelSmallLine.Left := 0;
@@ -192,7 +192,21 @@ end;
 procedure TConfigedInstaller.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
+  removeFuzzys: string;
 begin
+  // from all po files remove all fuzzys that might have been introduced somehow
+  {RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.de.po ../gui/locale/opsi_configed_installer_project.de.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.en.po ../gui/locale/opsi_configed_installer_project.en.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.es.po ../gui/locale/opsi_configed_installer_project.es.po'],
+    removeFuzzys);
+  RunCommand('/bin/sh', ['-c',
+    'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.fr.po ../gui/locale/opsi_configed_installer_project.fr.po'],
+    removeFuzzys);}
 
   // set constant form size
   Height := 450;
@@ -208,7 +222,7 @@ begin
   //note that BtnNext.Width = width for english caption
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   //BtnBack.Top := 410;
-  BtnBack.Top := Height-50;
+  BtnBack.Top := Height - 50;
   BtnNext.Top := BtnBack.Top;
 
   SetBasics(self);
@@ -278,8 +292,8 @@ begin
   // stay on TConfigedInstaller after TDistribution closed.
   if Distribution.GoOn then
   begin
-    Enabled:=False;
-    Password.Visible:=True;
+    Enabled := False;
+    Password.Visible := True;
   end;
 end;
 

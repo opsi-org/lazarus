@@ -12,18 +12,9 @@ uses
 resourcestring
   {nogui}
   rsNotValid = ' is not a valid input.';
-  rsLangOp =
-    ' [Options: "de" for Deutsch, "en" for English, "fr" for Français, "es" for Español]';
-  rsSetupOp = ' [Options: "s" for standard, "c" for custom]';
   rsIsCorrect = 'Is this correct?';
-  rsYesNoOp = ' [Options: "y" for yes, "n" for no]';
   rsOtherDistr = 'Please type in the correct distribution:';
-  rsOpsiVersionOp = ' [Options: "1" for Opsi 4.1, "2" for Opsi 4.2]';
   rsUseProxy = 'Would you like to use a proxy?';
-  rsBackendOp = ' [Options: "f" for file, "m" for mysql]';
-  rsRepoKindOp = ' [Options: "t" for testing, "e" for experimental]';
-  rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
-  rsSuggestion = '[Suggestions: ';
   rsContinue = 'To continue and start the installation, please press enter.' +
     #10 + 'If you like to jump back to a question, please press the number key of the respective number in the overview.';
   rsInstall = 'Installing ';
@@ -47,7 +38,7 @@ resourcestring
   rsCapQueryUserInfo = 'Query (user info)';
 
   {Language}
-  rsWelcome = 'Welcome to the installation of the opsi configed on this computer!';
+  rsWelcome = 'Welcome to the installation of the opsi-configed on this computer!';
   rsSelLanguage = 'Please choose a language for this setup program:';
   rsSetup = 'Please select a setup type:';
   rsStandard = 'Standard';
@@ -72,7 +63,7 @@ resourcestring
   rsShowPassword = 'Show password';
   rsWait = 'Please wait for the installation to start...';
   rsLog = 'You can find the log files here:';
-  rsWrongPassword = 'Authentication failed. Please check your password!';
+  rsWrongPassword = 'Authentication failed.' + #10 + 'Please check your password!';
 
 const
   LogOpsiServer = '/var/log/opsi-configed-installer-configed.log';

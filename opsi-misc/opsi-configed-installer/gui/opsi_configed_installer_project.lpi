@@ -63,12 +63,16 @@
       <Unit4>
         <Filename Value="opsi_configed_installer_unit_password.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="Password"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit4>
       <Unit5>
         <Filename Value="opsi_configed_installer_unit_wait.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="Wait"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit5>
       <Unit6>
         <Filename Value="../opsi_configed_installer_resourcestrings.pas"/>
