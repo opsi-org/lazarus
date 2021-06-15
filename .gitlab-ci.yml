@@ -8,9 +8,9 @@ variables:
     value: "opsiscript"
     description: "Project name of the project the pipline should run on."
 
-  #PROJECT_REPOSITORY_PATH:
-  #  value: "/opsi-script"
-  #  description: "Path to the lazarus project within this git repository."
+  BINARY_VERSION:
+    value: "4.12.4.22"
+    description: "Version of the binary"
 
   PLATFORM:
     value: "all"
@@ -44,10 +44,10 @@ compile opsi-script windows:
     - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
-    # - C:\lazarus\lazbuild.exe .$LAZ_PROJECT_FILE --build-mode=Release_Win64
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
-    name: opsi-script_Windows
+    name: "opsi-script_$env:BINARY_VERSION_Windows"
     paths:
       - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
