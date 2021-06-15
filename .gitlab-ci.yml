@@ -9,7 +9,7 @@ variables:
     description: "Project name of the project the pipline should run on."
 
   BINARY_VERSION:
-    value: "4_12_4_22"
+    value: "4.12.4.22"
     description: "Version of the binary"
 
   PLATFORM:
@@ -27,6 +27,7 @@ workflow:
 
 stages:
   - build
+#  - test
 #  - binaryindex
 
 compile opsi-script windows:
@@ -47,7 +48,7 @@ compile opsi-script windows:
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
-    name: "opsi-script_ $BINARY_VERSION _Windows"
+    name: "opsi-script $BINARY_VERSION windows"
     paths:
       - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
