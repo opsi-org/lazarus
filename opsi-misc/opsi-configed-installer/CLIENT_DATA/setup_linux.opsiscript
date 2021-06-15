@@ -54,7 +54,8 @@ copy -s "%SCRIPTPATH%/files.configed/*.*" "$InstallDir$"
 	
 	sub_copy_java
 	
-	set $completeCall$ = $javapath$ + " " + $targetstring$
+	; set $completeCall$ = $javapath$ + " " + $targetstring$
+	set $completeCall$ = "java -jar configed.jar"
 	set  $LinkVariantName$=""
 	LinkFolder_configed
 	set $completeCall$ = $javapath$ + " " +   $JavaSwingScaling$ + " " + $targetstring$ 
