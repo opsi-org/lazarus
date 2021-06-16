@@ -83,7 +83,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="opsi_configed_installer_project"/>
+      <Filename Value="../../../../Test/opsi-configed-installer/gui/opsi_configed_installer_project"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
