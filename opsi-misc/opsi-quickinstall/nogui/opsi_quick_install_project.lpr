@@ -205,7 +205,7 @@ type
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Alexandra';
+    adminName := 'adminuser';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
