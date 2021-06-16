@@ -50,6 +50,8 @@ Special thanks to Gregor Ibic <gregor.ibic@intelicom.si>
  for good inspiration about begin with SSL programming.
 }
 
+{$DEFINE SSLPATH} //use opsi specific paths to ssl libraries
+
 {$IFDEF FPC}
   {$MODE DELPHI}
 {$ENDIF}
@@ -1882,13 +1884,15 @@ begin
       SSLUtilHandle := 1;
 {$ELSE}
 {$IFDEF DARWIN}
-// opsi do 20210201
-filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
-if filelist.Count > 0 then
-  DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
-if filelist.Count > 0 then
-  DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+  {$IFNDEF SSLPATH}
+  // opsi do 20210201
+   filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
+   if filelist.Count > 0 then
+     DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+   filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
+   if filelist.Count > 0 then
+     DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+  {$ENDIF SSLPATH}
 {$ENDIF DARWIN}
       SSLUtilHandle := LoadLib(DLLUtilName);
       SSLLibHandle := LoadLib(DLLSSLName);
@@ -2224,8 +2228,13 @@ begin
       DLLUtilName := ProgramDirectory  + 'libcrypto.so';
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-      DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
-      DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
+      {$IFDEF APP_BUNDLE}
+        DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
+        DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
+      {$ELSE}
+        DLLSSLName := ProgramDirectory + 'libssl.dylib';
+        DLLUtilName := ProgramDirectory  + 'libcrypto.dylib';
+      {$ENDIF APP_BUNDLE}
     {$ENDIF DARWIN}
     //Paths below were used for testing
     //DLLSSLName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'ssleay32.dll'; //'libssl-1_1.dll';

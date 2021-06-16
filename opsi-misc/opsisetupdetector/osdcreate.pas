@@ -22,29 +22,30 @@ uses
   Dialogs,
   lazfileutils,
   osparserhelper,
-    osjson,
-  dateutils;
+  osjson,
+  dateutils,
+  osfilehelper;
 
-procedure createProductStructure;
+function createProductStructure: boolean;
 procedure callOpsiPackageBuilder;
 
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDirectory = 'Directory ';
-  rsStillExitsWarningDeleteOverwrite = ' still exits. Abort or Backup or Delete ?';
+  rsStillExitsWarningDeleteOverwrite = ' still exits. Should we make backup files ?';
   rsCouldNotCreateDirectoryWarning = 'Could not create directory: ';
-  rsConfirmBackupOrRemovalTitle = 'Confirm Delete or Backup of old files.';
-  rsConfirmBackupCaption = 'Backup';
+  rsConfirmBackupOrRemovalTitle =
+    'Should we use the existing directory and make backup files of old files, before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one.';
+  rsConfirmBackupCaption = 'Yes (Backup)';
   rsConfirmAbortCaption = 'Abort';
-  rsConfirmDeleteCaption = 'Delete';
+  rsConfirmDeleteCaption = 'No';
   rsConfirmAbortHint = 'Leave existing directory unchanged and abort';
   rsConfirmDeleteHint = 'Delete the complete directory before creating the new one.';
-  rsConfirmBackupHint = 'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
+  rsConfirmBackupHint =
+    'All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
   rsConfirmExpandButton = 'More Information ...';
-  rsConfirmExpandedText = 'Abort: Leave existing directory unchanged and abort' +
-    LineEnding + 'Delete: Delete the complete directory before creating the new one.' +
-    LineEnding +
-    'Backup: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will copy to an backup file.';
+  rsConfirmExpandedText =
+    'Yes: All files that are directly in the directories "CLIENT_DATA" and "OPSI" will be saved to an backup file before the new files are created' + LineEnding + 'No: Delete the complete directory before creating the new one.' + LineEnding + 'Abort: Leave existing directory unchanged and abort';
 
 
 implementation
@@ -182,7 +183,8 @@ begin
       begin
         if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
           str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
-        else str2 := '';
+        else
+          str2 := '';
         { remove brackets [] }
         str2 := opsiunquotestr2(str2, '[]');
         { take first from list }
@@ -264,13 +266,14 @@ begin
         patchlist.add('#@install' + IntToStr(i + 1) + '*#=' +
           BoolToStr(aktProduct.SetupFiles[i].active, True));
 
-      patchlist.add('#@MinimumSpace' + IntToStr(i + 1) + '*#=' + IntToStr(
-        aktProduct.SetupFiles[i].requiredSpace) + ' MB');
+      patchlist.add('#@MinimumSpace' + IntToStr(i + 1) + '*#=' +
+        IntToStr(aktProduct.SetupFiles[i].requiredSpace) + ' MB');
 
       patchlist.add('#@InstallDir' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installDirectory);
 
-      patchlist.add('#@MsiId' + IntToStr(i + 1) + '*#=' + aktProduct.SetupFiles[i].msiId);
+      patchlist.add('#@MsiId' + IntToStr(i + 1) + '*#=' +
+        aktProduct.SetupFiles[i].msiId);
 
       patchlist.add('#@installCommandLine' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installCommandLine);
@@ -287,8 +290,8 @@ begin
       str := aktProduct.SetupFiles[i].uninstallCheck.Text;
       patchlist.add('#@uninstallCheckLines' + IntToStr(i + 1) + '*#=' + str);
 
-      patchlist.add('#@uninstallCommandLine' + IntToStr(i + 1) + '*#=' +
-        aktProduct.SetupFiles[i].uninstallCommandLine);
+      patchlist.add('#@uninstallCommandLine' + IntToStr(i + 1) +
+        '*#=' + aktProduct.SetupFiles[i].uninstallCommandLine);
 
       patchlist.add('#@uninstallProg' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[0].uninstallProg);
@@ -335,8 +338,8 @@ begin
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
-    templatePath :=  ExtractFileDir(Application.ExeName) + PathDelim
-       + '../Resources/template-files';
+    templatePath := ExtractFileDir(Application.ExeName) + PathDelim +
+      '../Resources/template-files';
   {$ENDIF DARWIN}
 
   genericTemplatePath := templatePath + Pathdelim + 'generic';
@@ -452,7 +455,7 @@ begin
 
       // define_vars_multi
       infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
-      outfilename := clientpath + PathDelim +  'define_vars_multi.opsiscript';
+      outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
       patchScript(infilename, outfilename);
 
     (*
@@ -469,51 +472,51 @@ begin
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);    *)
 
-    // No need to copy installer for templates
-    if not(osdsettings.runmode in [createTemplate,createMultiTemplate]) then
-      // loop over setups
-      for i := 0 to 2 do
-      begin
-        infilename := aktProduct.SetupFiles[i].setupFullFileName;
-        LogDatei.log('Will copy: ' + infilename + ' to: ' + clientpath +
-          PathDelim + 'files' + IntToStr(i + 1), LLNotice);
-        if aktProduct.SetupFiles[i].active then
-          // complete dir
-          if aktProduct.SetupFiles[i].copyCompleteDir then
-          begin
-            if not CopyDirTree(ExtractFileDir(infilename),
-              clientpath + PathDelim + 'files' + IntToStr(i + 1),
-              [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
-              LogDatei.log('Failed to copy: ' + infilename, LLError);
-          end
-          // macos .app dir
-          else if DirectoryExistsUTF8(infilename) and
-            (LowerCase(ExtractFileExt(infilename)) = '.app') then
-          begin
-            if not CopyDirTree(infilename, clientpath + PathDelim +
-              'files' + IntToStr(i + 1) + PathDelim + ExtractFileName(infilename),
-              [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
-              LogDatei.log('Failed to copy: ' + infilename, LLError);
-          end
-          else
-          begin
-            // setup file
-            if FileExists(infilename) then
-              if copyfile(infilename, clientpath + PathDelim +
-                'files' + IntToStr(i + 1) + PathDelim +
-                aktProduct.SetupFiles[i].setupFileName,
-                [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
+      // No need to copy installer for templates
+      if not (osdsettings.runmode in [createTemplate, createMultiTemplate]) then
+        // loop over setups
+        for i := 0 to 2 do
+        begin
+          infilename := aktProduct.SetupFiles[i].setupFullFileName;
+          LogDatei.log('Will copy: ' + infilename + ' to: ' + clientpath +
+            PathDelim + 'files' + IntToStr(i + 1), LLNotice);
+          if aktProduct.SetupFiles[i].active then
+            // complete dir
+            if aktProduct.SetupFiles[i].copyCompleteDir then
+            begin
+              if not CopyDirTree(ExtractFileDir(infilename),
+                clientpath + PathDelim + 'files' + IntToStr(i + 1),
+                [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
                 LogDatei.log('Failed to copy: ' + infilename, LLError);
-            // MST file
-            if FileExists(aktProduct.SetupFiles[i].MSTFullFileName) then
-              if copyfile(aktProduct.SetupFiles[i].MSTFullFileName,
-                clientpath + PathDelim + 'files' + IntToStr(i + 1) +
-                PathDelim + aktProduct.SetupFiles[i].MSTFileName,
-                [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
-                LogDatei.log('Failed to copy: ' +
-                  aktProduct.SetupFiles[i].MSTFullFileName, LLError);
-          end;
-      end;
+            end
+            // macos .app dir
+            else if DirectoryExistsUTF8(infilename) and
+              (LowerCase(ExtractFileExt(infilename)) = '.app') then
+            begin
+              if not CopyDirTree(infilename, clientpath + PathDelim +
+                'files' + IntToStr(i + 1) + PathDelim + ExtractFileName(infilename),
+                [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
+                LogDatei.log('Failed to copy: ' + infilename, LLError);
+            end
+            else
+            begin
+              // setup file
+              if FileExists(infilename) then
+                if copyfile(infilename, clientpath + PathDelim +
+                  'files' + IntToStr(i + 1) + PathDelim +
+                  aktProduct.SetupFiles[i].setupFileName,
+                  [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
+                  LogDatei.log('Failed to copy: ' + infilename, LLError);
+              // MST file
+              if FileExists(aktProduct.SetupFiles[i].MSTFullFileName) then
+                if copyfile(aktProduct.SetupFiles[i].MSTFullFileName,
+                  clientpath + PathDelim + 'files' + IntToStr(i + 1) +
+                  PathDelim + aktProduct.SetupFiles[i].MSTFileName,
+                  [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
+                  LogDatei.log('Failed to copy: ' +
+                    aktProduct.SetupFiles[i].MSTFullFileName, LLError);
+            end;
+        end;
 
       //osd-lib.opsiscript
       infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
@@ -664,10 +667,10 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        if stringListToJsonArray(TStringlist(myprop.GetValueLines),tmpstr) then
-        textlist.Add('values: ' + tmpstr);
-        if stringListToJsonArray(TStringlist(myprop.GetDefaultLines),tmpstr) then
-        textlist.Add('default: ' + tmpstr);
+        if stringListToJsonArray(TStringList(myprop.GetValueLines), tmpstr) then
+          textlist.Add('values: ' + tmpstr);
+        if stringListToJsonArray(TStringList(myprop.GetDefaultLines), tmpstr) then
+          textlist.Add('default: ' + tmpstr);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
@@ -737,6 +740,14 @@ function bakupOldProductDir: boolean;
     Result := True;
     backupfiles := TStringList.Create;
     // Del really old files
+    FindAllFiles(backupfiles, mydir, '*.*', False);
+    Application.ProcessMessages;
+    for i := 0 to backupfiles.Count - 1 do
+      MakeBakFiles(backupfiles.Strings[i], 3);
+    (*
+    Result := True;
+    backupfiles := TStringList.Create;
+    // Del really old files
     FindAllFiles(backupfiles, mydir, '*.3', False);
     Application.ProcessMessages;
     for i := 0 to backupfiles.Count - 1 do
@@ -767,6 +778,7 @@ function bakupOldProductDir: boolean;
         Result := False;
       Application.ProcessMessages;
     end;
+    *)
   end;
 
 begin
@@ -800,62 +812,77 @@ begin
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;
   if DirectoryExists(prodpath) then
+  begin
+    LogDatei.log('Target directory exists. Ask what to do.', LLinfo);
+    task := '';
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(resultForm1) do
       try
-        Title := rsConfirmBackupOrRemovalTitle;
+        Title := rsDirectory + prodpath + rsStillExitsWarningDeleteOverwrite;
         Caption := 'opsi-setup-detector';
-        Text := rsDirectory + prodpath + rsStillExitsWarningDeleteOverwrite;
+        Text := rsConfirmBackupOrRemovalTitle;
         CommonButtons := [];
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmBackupCaption;
+          //CommandLinkHint := rsConfirmBackupHint;
+          ModalResult := mrYes;
+        end;
+        with TTaskDialogButtonItem(Buttons.Add) do
+        begin
+          Caption := rsConfirmDeleteCaption;
+          //CommandLinkHint := rsConfirmDeleteHint;
+          ModalResult := mrNo;
+        end;
         with TTaskDialogButtonItem(Buttons.Add) do
         begin
           Caption := rsConfirmAbortCaption;
           //CommandLinkHint := rsConfirmAbortHint;
           ModalResult := mrAbort;
         end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsConfirmDeleteCaption;
-          //CommandLinkHint := rsConfirmDeleteHint;
-          ModalResult := mrYes;
-        end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsConfirmBackupCaption;
-          //CommandLinkHint := rsConfirmBackupHint;
-          ModalResult := mrNo;
-        end;
         MainIcon := tdiQuestion;
         //include(Flags,[tfExpandFooterArea]);
-        Flags := [tfUseCommandLinks, tfAllowDialogCancellation,tfExpandFooterArea];
+        Flags := [tfUseCommandLinks, tfAllowDialogCancellation, tfExpandFooterArea];
         ExpandButtonCaption := rsConfirmExpandButton;
         ExpandedText := rsConfirmExpandedText;
         if Execute then
         begin
           if ModalResult = mrYes then
-            task := 'del';
-          if ModalResult = mrNo then
+          begin
             task := 'bak';
-          if ModalResult = mrAbort then
+            LogDatei.log('Choosed to make backups', LLinfo);
+          end
+          else if ModalResult = mrNo then
+          begin
+            task := 'del';
+            LogDatei.log('Choosed to make no backups', LLinfo);
+          end
+          else
+            //if ModalResult = mrAbort then
+          begin
             task := 'abort';
+            LogDatei.log('Choosed to abort', LLinfo);
+          end;
         end;
       finally
         Free;
       end;
-  if task = 'abort' then
-    goon := False;
-  if task = 'del' then
-    if not delOldProductDir then
-    begin
-      LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
+
+    if task = 'abort' then
       goon := False;
-    end;
-  if task = 'bak' then
-    if not bakupOldProductDir then
-    begin
-      LogDatei.log('Could not inernally backup dir: ' + prodpath, LLCritical);
-      goon := False;
-    end;
+    if task = 'del' then
+      if not delOldProductDir then
+      begin
+        LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
+        goon := False;
+      end;
+    if task = 'bak' then
+      if not bakupOldProductDir then
+      begin
+        LogDatei.log('Could not inernally backup dir: ' + prodpath, LLCritical);
+        goon := False;
+      end;
+  end;
   if goon then
   begin
     if not DirectoryExists(prodpath) then
@@ -894,7 +921,7 @@ begin
 end;
 
 
-procedure createProductStructure;
+function createProductStructure: boolean;
 var
   prodpath, clientpath, opsipath: string;
   goon: boolean;
@@ -924,6 +951,7 @@ begin
   else
     Logdatei.log('createClientFiles done', LLnotice);
   Application.ProcessMessages;
+  Result := goon;
 end;
 
 

@@ -195,7 +195,7 @@ type
     repoNoCache := repo;
     backend := 'file';
     copyMod := rsNo;
-    repoKind := 'testing';
+    repoKind := 'stable';
     ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
@@ -205,7 +205,7 @@ type
     domain := 'uib.local';
     nameserver := '192.168.1.245';
     gateway := '192.168.1.245';
-    adminName := 'Alexandra';
+    adminName := 'adminuser';
     adminPassword := 'linux123';
     ipName := 'auto';
     ipNumber := 'auto';
@@ -588,7 +588,7 @@ type
     // repo kind:
     writeln(rsRepoKind, rsRepoKindOp, '*');
     readln(input);
-    while not ((input = 'e') or (input = 't') or
+    while not ((input = 'e') or (input = 't') or (input = 's') or
         (input = '-b') or (input = '')) do
     begin
       if input = '-h' then

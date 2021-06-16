@@ -24,7 +24,7 @@ type
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
     Distribs = 'Debian 9, Debian 10,' + #10 +
       'openSUSE 15.1, openSUSE 15.2,' + #10 +
-      'SLES 15 SP1, SLES 15 SP1,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
+      'SLES 15 SP1, SLES 15 SP2,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
       #10 + 'Univention 4.4';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
@@ -48,21 +48,21 @@ begin
   FMyDistr := other;
   FDistrUrlPart := '';
   // CentOS has releases with names like 7.x-xxxx
-  {if distroName = 'CentOS' then
+  if distroName = 'CentOS' then
   begin
-    if Pos('7', distroRelease) = 1 then
+    {if Pos('7', distroRelease) = 1 then
     begin
       FMyDistr := CentOS_7;
       FDistrUrlPart := 'CentOS_7/';
     end
-    else
+    else}
     if Pos('8', distroRelease) = 1 then
     begin
       FMyDistr := CentOS_8;
       FDistrUrlPart := 'CentOS_8/';
     end;
   end
-  else}
+  else
   if distroName = 'Debian' then
   begin
     if Pos('9', distroRelease) = 1 then
@@ -98,21 +98,21 @@ begin
   end
   else
   // RHEL has releases like 7.x
-  {if distroName = 'RedHatEnterprise' then
+  if distroName = 'RedHatEnterprise' then
   begin
-    if Pos('7', distroRelease) = 1 then
+    {if Pos('7', distroRelease) = 1 then
     begin
       FMyDistr := RHEL_7;
       FDistrUrlPart := 'RHEL_7/';
     end
-    else
+    else}
     if Pos('8', distroRelease) = 1 then
     begin
       FMyDistr := RHEL_8;
       FDistrUrlPart := 'RHEL_8/';
     end;
   end
-  else}
+  else
   if distroName = 'Univention' then
   begin
     {if Pos('4.3', distroRelease) = 1 then

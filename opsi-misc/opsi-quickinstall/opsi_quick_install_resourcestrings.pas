@@ -21,7 +21,7 @@ resourcestring
   rsOpsiVersionOp = ' [Options: "1" for Opsi 4.1, "2" for Opsi 4.2]';
   rsUseProxy = 'Would you like to use a proxy?';
   rsBackendOp = ' [Options: "f" for file, "m" for mysql]';
-  rsRepoKindOp = ' [Options: "t" for testing, "e" for experimental]';
+  rsRepoKindOp = ' [Options: "s" for stable, "t" for testing, "e" for experimental]';
   rsLinkOp = ' [Options: "m" for default.menu, "nom" for default.nomenu]';
   rsSuggestion = '[Suggestions: ';
   rsContinue = 'To continue and start the installation, please press enter.' +

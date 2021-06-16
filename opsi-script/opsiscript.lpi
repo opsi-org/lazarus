@@ -26,7 +26,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="4"/>
-      <BuildNr Value="22"/>
+      <BuildNr Value="23"/>
       <StringTable Comments="Compiled with Lazarus 2.0.12" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="12">
@@ -166,14 +166,16 @@
 -dOPSISCRIPT
 -dGUI
 -dSYNAPSE
--dSSLPATH"/>
-            <OtherDefines Count="6">
+-dSSLPATH
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
+              <Define3 Value="OSDEBUG"/>
               <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -290,14 +292,6 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="6">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -346,14 +340,6 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
-            <OtherDefines Count="6">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item7>
@@ -496,14 +482,16 @@
             <CustomOptions Value="-dOPSIWINST
 -dOPSISCRIPT
 -dSYNAPSE
--dSSLPATH"/>
-            <OtherDefines Count="6">
+-dSSLPATH
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="7">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
+              <Define3 Value="OSDEBUG"/>
               <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -555,7 +543,21 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG -dSYNAPSE"/>
+            <CustomOptions Value="-dOPSIWINST
+-dOPSISCRIPT
+-dGUI
+-dOSDEBUG
+-dSYNAPSE
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSDEBUG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item11>
@@ -645,7 +647,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="62">
+    <Units Count="63">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -921,6 +923,10 @@
         <Filename Value="../common/osfuncunix.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit61>
+      <Unit62>
+        <Filename Value="../common/osfilehelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit62>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -967,13 +973,14 @@
 -dOSLOG
 -dSYNAPSE
 -dSSLPATH"/>
-      <OtherDefines Count="6">
+      <OtherDefines Count="7">
         <Define0 Value="OPSIWINST"/>
         <Define1 Value="OPSISCRIPT"/>
         <Define2 Value="GUI"/>
         <Define3 Value="OSLOG"/>
         <Define4 Value="SYNAPSE"/>
         <Define5 Value="SSLPATH"/>
+        <Define6 Value="APP_BUNDLE"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>

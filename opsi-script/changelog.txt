@@ -5,6 +5,28 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+
+opsi-script (4.12.4.23) stable; urgency=low
+
+ * osfuncwin2: fix for function resolveWinSymlink
+ * new constant %opsiserviceClientId% (FQDN in service context, empty without)
+ * parameter /clientid if present wil be ussed as preferred source for %hostid%
+ * new parameter /depotpath (only together with /opsiservice) to pass the path to the depot
+
+-- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
+
+opsi-script (4.12.4.22) stable; urgency=low
+
+ * new (common) unit osfilehelper
+ * osfunc: function makbakfile with two parameters (name,maxbak number) is moved as makbakfiles
+   to osfilehelper
+ * oslog: function makbakfile with two parameters (name,maxbak number) is moved as makbakfiles
+   to osfilehelper
+ * osfunc files section copy: moving some lo messages from Loglevel 6 to 7
+
+-- d.oertel <d.oertel@uib.de> Fri, 04 June 2021 15:00
+
+
 opsi-script (4.12.4.21) stable; urgency=low
 
  * osfunc: function isSymLink(const filepath : string) : boolean;
