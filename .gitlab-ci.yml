@@ -30,6 +30,9 @@ stages:
 #  - test
 #  - binaryindex
 
+#***************************************#
+#  opsi-script pipline                  #
+#***************************************#
 compile opsi-script windows:
   stage: build
   tags:
@@ -49,6 +52,30 @@ compile opsi-script windows:
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
+    paths:
+      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+
+
+compile opsi-script linux:
+  stage: build
+  tags:
+    - laz-linux
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script/"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+      when: never #change to always if linux machine is available
+  script: 
+    - $LAZ_PROJECT_FILE= ${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Linux with no GUI"
+    - /lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
+    - echo "Compiling $PROJECT_NAME for Linux with GUI"
+    - /lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-script $BINARY_VERSION linux"
     paths:
       - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
