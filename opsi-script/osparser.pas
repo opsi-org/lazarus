@@ -761,7 +761,7 @@ function resolveWinSymlink(const filepath: string; recursive: boolean = True): s
 var
   outpath: string;
   cmd: string;
-  mypath : string;
+  mypath: string;
 begin
   Result := filepath;
   filepath := GetForcedPathDelims(filepath);
@@ -769,7 +769,7 @@ begin
   begin
     mypath := ExtractFileDir(filepath);
     cmd := '(get-item ' + filepath + ').target';
-    LogDatei.log('resolving symlink: '+filepath,LLinfo);
+    LogDatei.log('resolving symlink: ' + filepath, LLinfo);
     outpath := script.execPowershellCall(cmd, '', 3, True, False, True).Text;
     outpath := StringsReplace(outpath, [#10, #13], ['', ''], [rfReplaceAll]);
     if outpath = '' then
@@ -780,11 +780,11 @@ begin
     else
     begin
       if not isAbsoluteFileName(outpath) then
-      outpath := TrimAndExpandFilename(outpath,mypath);
+        outpath := TrimAndExpandFilename(outpath, mypath);
       if outpath <> filepath then
       begin
         // was symbolic link
-        LogDatei.log('resolved as symlink: '+filepath+' to: '+outpath,LLinfo);
+        LogDatei.log('resolved as symlink: ' + filepath + ' to: ' + outpath, LLinfo);
         if recursive then
           Result := resolveWinSymlink(outpath)
         else
@@ -795,6 +795,7 @@ begin
   else // return filepath also if filepath does not exists
     Result := filepath;
 end;
+
 {$ENDIF WINDOWS}
 
 
@@ -1284,7 +1285,7 @@ begin
 end;
 
 
-procedure deleteTempBatFiles(const tempfilename: string; logleveloffset : integer = 0);
+procedure deleteTempBatFiles(const tempfilename: string; logleveloffset: integer = 0);
 var
   files: TuibFileInstall;
 begin
@@ -1301,7 +1302,7 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2,logleveloffset);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1628,9 +1629,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -7381,8 +7381,9 @@ end;
 
 {$ENDIF WINDOWS}
 
-function TuibInstScript.doXMLPatch2(const Sektion: TWorkSection; const XMLFilename: string;
-  PatchParameter: string; var output: TXStringList): TSectionResult;
+function TuibInstScript.doXMLPatch2(const Sektion: TWorkSection;
+  const XMLFilename: string; PatchParameter: string;
+  var output: TXStringList): TSectionResult;
 var
   XMLDocObject: TuibXMLDocument;
   r: string = '';
@@ -7404,7 +7405,7 @@ var
   pc: integer = 0;
 
   PatchListe: TpatchList;
-  
+
   procedure doXMLpatch2Main(const Section: TXStringList; const presetDir: string);
   var
     i: integer = 0;
@@ -7415,99 +7416,99 @@ var
 
   begin
 
-      Logdatei.log('', LLInfo);
-      Logdatei.log('Patching: ' + PatchFilename, LLInfo);
-      ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-      LogDatei.log(ps, LevelWarnings);
+    Logdatei.log('', LLInfo);
+    Logdatei.log('Patching: ' + PatchFilename, LLInfo);
+    ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
+    LogDatei.log(ps, LevelWarnings);
 
-      //Handling multiple user profiles
-      workingSection := TXStringList.Create;
-      workingSection.Assign(Section);
-      workingSection.GlobalReplace(1, '%userprofiledir%',
-        copy(presetDir, 1, length(presetDir) - 1), False);
-      workingSection.GlobalReplace(1, '%currentprofiledir%',
-        copy(presetDir, 1, length(presetDir) - 1), False);
+    //Handling multiple user profiles
+    workingSection := TXStringList.Create;
+    workingSection.Assign(Section);
+    workingSection.GlobalReplace(1, '%userprofiledir%',
+      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%',
+      copy(presetDir, 1, length(presetDir) - 1), False);
 
-      //XML patch core
-      myfilename := CleanAndExpandFilename(XMLFilename);
-      if not FileExists(myfilename) then
-      begin
-        LogDatei.log('Error: XML file not found: ' + myfilename, LLCritical);
-        Result := tsrFatalError;
-        exit;
-      end;
-      if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
-        exit;
-      //StartIndentLevel := LogDatei.LogSIndentLevel;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    //XML patch core
+    myfilename := CleanAndExpandFilename(XMLFilename);
+    if not FileExists(myfilename) then
+    begin
+      LogDatei.log('Error: XML file not found: ' + myfilename, LLCritical);
+      Result := tsrFatalError;
+      exit;
+    end;
+    if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
+      exit;
+    //StartIndentLevel := LogDatei.LogSIndentLevel;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-      nodeOpened := False;
-      nodeOpenCommandExists := False;
-      nodepath := '';
-
-
-      // Create the XML Patch list
-      PatchListe := TPatchList.Create;
-      PatchListe.Clear;
-      PatchListe.ItemPointer := -1;
-      PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
+    nodeOpened := False;
+    nodeOpenCommandExists := False;
+    nodepath := '';
 
 
-      // createXMLDoc
-      XMLDocObject := TuibXMLDocument.Create;
-      XMLDocObject.debuglevel := oslog.LLinfo;
+    // Create the XML Patch list
+    PatchListe := TPatchList.Create;
+    PatchListe.Clear;
+    PatchListe.ItemPointer := -1;
+    PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
 
-      // open xmlfile
-      //if XMLDocObject.openXmlFile(myfilename) then
 
-      // open XML file with encoding
-      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
-        LogDatei.log('success: create xmldoc from file: ' + myfilename, oslog.LLinfo)
+    // createXMLDoc
+    XMLDocObject := TuibXMLDocument.Create;
+    XMLDocObject.debuglevel := oslog.LLinfo;
+
+    // open xmlfile
+    //if XMLDocObject.openXmlFile(myfilename) then
+
+    // open XML file with encoding
+    if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
+      LogDatei.log('success: create xmldoc from file: ' + myfilename, oslog.LLinfo)
+    else
+      LogDatei.log('failed: create xmldoc from file: ' + myfilename, oslog.LLError);
+
+    // parse section
+    for i := 1 to Sektion.Count do
+    begin
+      r := cutLeftBlanks(Sektion.strings[i - 1]);
+      if (r = '') or (r[1] = LineIsCommentChar) then
+      // continue
       else
-        LogDatei.log('failed: create xmldoc from file: ' + myfilename, oslog.LLError);
-
-      // parse section
-      for i := 1 to Sektion.Count do
       begin
-        r := cutLeftBlanks(Sektion.strings[i - 1]);
-        if (r = '') or (r[1] = LineIsCommentChar) then
-        // continue
-        else
-        begin
-          GetWord(r, Expressionstr, r, WordDelimiterSet1);
+        GetWord(r, Expressionstr, r, WordDelimiterSet1);
 
-          if LowerCase(Expressionstr) = LowerCase('StrictMode') then
+        if LowerCase(Expressionstr) = LowerCase('StrictMode') then
+        begin
+          testbool := False;
+          SyntaxCheck := False;
+          if Skip('=', r, r, ErrorInfo) then
           begin
-            testbool := False;
-            SyntaxCheck := False;
-            if Skip('=', r, r, ErrorInfo) then
+            Getword(r, newtext, r, WordDelimiterWhiteSpace);
+            if newtext <> '' then
             begin
-              Getword(r, newtext, r, WordDelimiterWhiteSpace);
-              if newtext <> '' then
-              begin
-                try
-                  testbool := StrToBool(newtext);
-                  openstrict := testbool;
-                except
-                  LogDatei.log('StrictMode Argument: ' + newtext +
-                    ' can not converted to a boolean value. Use true or false. Using (fallback): false.',
-                    LLError);
-                end;
-                LogDatei.log('StrictMode is set to : ' +
-                  BoolToStr(openstrict, True), LLdebug);
-                syntaxCheck := True;
-              end
-              else
-              begin
-                LogDatei.log(
-                  'Empty StrictMode Argument can not converted to a boolean value. Use true or false. Using (fallback): false.',
+              try
+                testbool := StrToBool(newtext);
+                openstrict := testbool;
+              except
+                LogDatei.log('StrictMode Argument: ' + newtext +
+                  ' can not converted to a boolean value. Use true or false. Using (fallback): false.',
                   LLError);
-                syntaxCheck := False;
               end;
+              LogDatei.log('StrictMode is set to : ' +
+                BoolToStr(openstrict, True), LLdebug);
+              syntaxCheck := True;
             end
             else
+            begin
+              LogDatei.log(
+                'Empty StrictMode Argument can not converted to a boolean value. Use true or false. Using (fallback): false.',
+                LLError);
               syntaxCheck := False;
-          end;  // StrictMode
+            end;
+          end
+          else
+            syntaxCheck := False;
+        end;  // StrictMode
 
           (*
           if LowerCase (Expressionstr) = LowerCase ('OpenNode')
@@ -7615,372 +7616,380 @@ var
           *)
 
 
-          if LowerCase(Expressionstr) = LowerCase('OpenNode') then
+        if LowerCase(Expressionstr) = LowerCase('OpenNode') then
+        begin
+          if nodeOpenCommandExists // i.e., existed already
+          then
+          //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
+          else
+            nodeOpenCommandExists := True;
+          SyntaxCheck := False;
+          if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
-            if nodeOpenCommandExists // i.e., existed already
-            then
-            //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
-            else
-              nodeOpenCommandExists := True;
-            SyntaxCheck := False;
-            if GetStringA(trim(r), nodepath, r, errorinfo, True) then
+            LogDatei.log('We will OpenNode : ' + nodepath, LLdebug);
+            syntaxCheck := True;
+          end
+          else
+            syntaxCheck := False;
+          if r = '' then
+            SyntaxCheck := True
+          else
+            ErrorInfo := ErrorRemaining;
+          //else SyntaxCheck := true ;
+          if SyntaxCheck then
+          begin
+            // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
+            if XMLDocObject.openNode(nodepath, openstrict, errorinfo) then
             begin
-              LogDatei.log('We will OpenNode : ' + nodepath, LLdebug);
-              syntaxCheck := True;
+              nodeOpened := True;
+              LogDatei.log('successfully opend node: ' + nodepath, oslog.LLinfo);
             end
             else
-              syntaxCheck := False;
-            if r = '' then
-              SyntaxCheck := True
-            else
-              ErrorInfo := ErrorRemaining;
-            //else SyntaxCheck := true ;
-            if SyntaxCheck then
             begin
-              // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-              if XMLDocObject.openNode(nodepath, openstrict, errorinfo) then
+              LogDatei.log('nodepath does not exists - try to create: ' +
+                nodepath, oslog.LLwarning);
+              errorinfo := '';
+              if XMLDocObject.makeNodePathWithTextContent(nodepath, '', errorinfo) then
               begin
                 nodeOpened := True;
-                LogDatei.log('successfully opend node: ' + nodepath, oslog.LLinfo);
+                LogDatei.log('successfully created nodepath: ' +
+                  nodepath, oslog.LLinfo);
               end
               else
               begin
-                LogDatei.log('nodepath does not exists - try to create: ' +
-                  nodepath, oslog.LLwarning);
-                errorinfo := '';
-                if XMLDocObject.makeNodePathWithTextContent(nodepath, '', errorinfo) then
+                nodeOpened := False;
+                LogDatei.log('failed to create nodepath: ' + nodepath, oslog.LLError);
+                if errorinfo <> '' then
                 begin
-                  nodeOpened := True;
-                  LogDatei.log('successfully created nodepath: ' + nodepath, oslog.LLinfo);
-                end
-                else
-                begin
-                  nodeOpened := False;
-                  LogDatei.log('failed to create nodepath: ' + nodepath, oslog.LLError);
-                  if errorinfo <> '' then
-                  begin
-                    syntaxCheck := False;
-                    reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-                  end;
+                  syntaxCheck := False;
+                  reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
                 end;
               end;
-            end
-            else
-              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-          end;   // opnenode
+            end;
+          end
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end;   // opnenode
 
-          if LowerCase(Expressionstr) = LowerCase('DeleteNode') then
+        if LowerCase(Expressionstr) = LowerCase('DeleteNode') then
+        begin
+          SyntaxCheck := False;
+          if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
-            SyntaxCheck := False;
-            if GetStringA(trim(r), nodepath, r, errorinfo, True) then
+            LogDatei.log('We will DeleteNode : ' + nodepath, LLdebug);
+            syntaxCheck := True;
+          end
+          else
+            syntaxCheck := False;
+          if r = '' then
+            SyntaxCheck := True
+          else
+            ErrorInfo := ErrorRemaining;
+          if SyntaxCheck then
+          begin
+            try
+              XMLDocObject.delNode(nodepath, openstrict, errorinfo);
+              // After a deleteNode you must use opennode in order to work with open nodes
+              nodeOpened := False;
+              nodeOpenCommandExists := False;
+              LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
+              end;
+            end;
+          end
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end;   // deleteNode
+
+        if LowerCase(Expressionstr) = LowerCase('setNodeText') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
+          begin
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              LogDatei.log('We will DeleteNode : ' + nodepath, LLdebug);
-              syntaxCheck := True;
-            end
-            else
-              syntaxCheck := False;
-            if r = '' then
-              SyntaxCheck := True
-            else
-              ErrorInfo := ErrorRemaining;
+              if GetStringA(trim(r), newtext, r, errorinfo, True) then
+              begin
+                LogDatei.log('We will setNodeText : ' + newtext, LLdebug);
+                syntaxCheck := True;
+              end
+              else
+                syntaxCheck := False;
+            end;
+
             if SyntaxCheck then
             begin
               try
-                XMLDocObject.delNode(nodepath, openstrict, errorinfo);
-                // After a deleteNode you must use opennode in order to work with open nodes
-                nodeOpened := False;
-                nodeOpenCommandExists := False;
-                LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
+                XMLDocObject.setNodeTextActNode(newtext);
+                LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
               except
                 on e: Exception do
                 begin
-                  LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
+                  LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
                 end;
               end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-          end;   // deleteNode
+          end;
+        end;   // setNodeText
 
-          if LowerCase(Expressionstr) = LowerCase('setNodeText') then
+        if LowerCase(Expressionstr) = LowerCase('gotoParentNode') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
           begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
+              try
+                LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
+                XMLDocObject.setParentNodeAsActNode();
+                LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:gotoParentNode: ' +
+                    e.message, LLError);
+                end;
+              end;
             end
             else
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+          end;
+        end;   // gotoParentNode
+
+
+        if LowerCase(Expressionstr) = LowerCase('addNewNode') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
+          begin
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              if SyntaxCheck then
+              if GetStringA(trim(r), newtext, r, errorinfo, True) then
               begin
-                if GetStringA(trim(r), newtext, r, errorinfo, True) then
+                LogDatei.log('We will addNewNode : ' + newtext, LLdebug);
+                syntaxCheck := True;
+              end
+              else
+                syntaxCheck := False;
+            end;
+
+            if SyntaxCheck then
+            begin
+              try
+                XMLDocObject.makeNode(newtext, '', '');
+                LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
+              except
+                on e: Exception do
                 begin
-                  LogDatei.log('We will setNodeText : ' + newtext, LLdebug);
+                  LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
+                end;
+              end;
+            end
+            else
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+          end;
+        end;   // addNewNode
+
+
+        if LowerCase(Expressionstr) = LowerCase('setAttribute') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
+          begin
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
+            begin
+              if GetStringA(trim(r), newname, r, errorinfo, True) then
+              begin
+                logdatei.log('name= ' + newname, LLDebug2);
+                if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+                begin
+                  logdatei.log('value= ' + newvalue, LLDebug2);
                   syntaxCheck := True;
+                  LogDatei.log('We will setAttribute : ' + newname +
+                    ' : ' + newvalue, LLdebug);
                 end
                 else
                   syntaxCheck := False;
+              end
+              else
+                syntaxCheck := False;
+
+              if r = '' then
+                SyntaxCheck := True
+              else
+              begin
+                SyntaxCheck := False;
+                ErrorInfo := ErrorRemaining;
               end;
-
-              if SyntaxCheck then
-              begin
-                try
-                  XMLDocObject.setNodeTextActNode(newtext);
-                  LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
-                  end;
-                end;
-              end
-              else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
             end;
-          end;   // setNodeText
 
-          if LowerCase(Expressionstr) = LowerCase('gotoParentNode') then
-          begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
+            if SyntaxCheck then
             begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
-            end
-            else
-            begin
-              if SyntaxCheck then
-              begin
-                try
-                  LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
-                  XMLDocObject.setParentNodeAsActNode();
-                  LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:gotoParentNode: ' + e.message, LLError);
-                  end;
-                end;
-              end
-              else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-            end;
-          end;   // gotoParentNode
-
-
-          if LowerCase(Expressionstr) = LowerCase('addNewNode') then
-          begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
-            begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
-            end
-            else
-            begin
-              if SyntaxCheck then
-              begin
-                if GetStringA(trim(r), newtext, r, errorinfo, True) then
+              try
+                XMLDocObject.setAttribute(newname, newvalue);
+                LogDatei.log('successfully setAttribute : ' + newname +
+                  ' : ' + newvalue, LLinfo);
+              except
+                on e: Exception do
                 begin
-                  LogDatei.log('We will addNewNode : ' + newtext, LLdebug);
+                  LogDatei.log('Exception in xml2:setAttribute: ' +
+                    e.message, LLError);
+                end;
+              end;
+            end
+            else
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+          end;
+        end;   // setAttribute
+
+        if LowerCase(Expressionstr) = LowerCase('addAttribute') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
+          begin
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
+            begin
+              if GetStringA(trim(r), newname, r, errorinfo, True) then
+              begin
+                logdatei.log('name= ' + newname, LLDebug2);
+                if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+                begin
+                  logdatei.log('value= ' + newvalue, LLDebug2);
                   syntaxCheck := True;
+                  LogDatei.log('We will addAttribute : ' + newname +
+                    ' : ' + newvalue, LLdebug);
                 end
                 else
                   syntaxCheck := False;
-              end;
-
-              if SyntaxCheck then
-              begin
-                try
-                  XMLDocObject.makeNode(newtext, '', '');
-                  LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
-                  end;
-                end;
               end
               else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+                syntaxCheck := False;
+
+              if r = '' then
+                SyntaxCheck := True
+              else
+              begin
+                SyntaxCheck := False;
+                ErrorInfo := ErrorRemaining;
+              end;
             end;
-          end;   // addNewNode
 
-
-          if LowerCase(Expressionstr) = LowerCase('setAttribute') then
-          begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
+            if SyntaxCheck then
             begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
+              try
+                XMLDocObject.addAttribute(newname, newvalue);
+                LogDatei.log('successfully addAttribute : ' + newname +
+                  ' : ' + newvalue, LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:addAttribute: ' +
+                    e.message, LLError);
+                end;
+              end;
             end
             else
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+          end;
+        end;   // addAttribute
+
+
+        if LowerCase(Expressionstr) = LowerCase('deleteAttribute') then
+        begin
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
+          begin
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              if SyntaxCheck then
+              if GetStringA(trim(r), newname, r, errorinfo, True) then
               begin
-                if GetStringA(trim(r), newname, r, errorinfo, True) then
-                begin
-                  logdatei.log('name= ' + newname, LLDebug2);
-                  if GetStringA(trim(r), newvalue, r, errorinfo, True) then
-                  begin
-                    logdatei.log('value= ' + newvalue, LLDebug2);
-                    syntaxCheck := True;
-                    LogDatei.log('We will setAttribute : ' + newname +
-                      ' : ' + newvalue, LLdebug);
-                  end
-                  else
-                    syntaxCheck := False;
-                end
-                else
-                  syntaxCheck := False;
-
-                if r = '' then
-                  SyntaxCheck := True
-                else
-                begin
-                  SyntaxCheck := False;
-                  ErrorInfo := ErrorRemaining;
-                end;
-              end;
-
-              if SyntaxCheck then
-              begin
-                try
-                  XMLDocObject.setAttribute(newname, newvalue);
-                  LogDatei.log('successfully setAttribute : ' + newname +
-                    ' : ' + newvalue, LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:setAttribute: ' + e.message, LLError);
-                  end;
-                end;
+                LogDatei.log('We will delAttribute : ' + newname, LLdebug);
+                syntaxCheck := True;
               end
               else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+                syntaxCheck := False;
             end;
-          end;   // setAttribute
 
-          if LowerCase(Expressionstr) = LowerCase('addAttribute') then
-          begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
+            if SyntaxCheck then
             begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
+              //LogDatei.log('We will delAttribute : '+newname, LLdebug);
+              try
+                XMLDocObject.delAttribute(newname);
+                LogDatei.log('successfully delAttribute node: ' +
+                  newname, oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:delAttribute: ' +
+                    e.message, LLError);
+                end;
+              end;
             end
             else
-            begin
-              if SyntaxCheck then
-              begin
-                if GetStringA(trim(r), newname, r, errorinfo, True) then
-                begin
-                  logdatei.log('name= ' + newname, LLDebug2);
-                  if GetStringA(trim(r), newvalue, r, errorinfo, True) then
-                  begin
-                    logdatei.log('value= ' + newvalue, LLDebug2);
-                    syntaxCheck := True;
-                    LogDatei.log('We will addAttribute : ' + newname +
-                      ' : ' + newvalue, LLdebug);
-                  end
-                  else
-                    syntaxCheck := False;
-                end
-                else
-                  syntaxCheck := False;
-
-                if r = '' then
-                  SyntaxCheck := True
-                else
-                begin
-                  SyntaxCheck := False;
-                  ErrorInfo := ErrorRemaining;
-                end;
-              end;
-
-              if SyntaxCheck then
-              begin
-                try
-                  XMLDocObject.addAttribute(newname, newvalue);
-                  LogDatei.log('successfully addAttribute : ' + newname +
-                    ' : ' + newvalue, LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:addAttribute: ' + e.message, LLError);
-                  end;
-                end;
-              end
-              else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-            end;
-          end;   // addAttribute
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+          end;
+        end;   // delAttribute
 
 
-          if LowerCase(Expressionstr) = LowerCase('deleteAttribute') then
-          begin
-            syntaxCheck := True;
-            if not (nodeOpened and nodeOpenCommandExists) then
-            begin
-              //SyntaxCheck := false;
-              logdatei.log('Error: No open Node. Use OpenNode before ' +
-                Expressionstr, LLError);
-            end
-            else
-            begin
-              if SyntaxCheck then
-              begin
-                if GetStringA(trim(r), newname, r, errorinfo, True) then
-                begin
-                  LogDatei.log('We will delAttribute : ' + newname, LLdebug);
-                  syntaxCheck := True;
-                end
-                else
-                  syntaxCheck := False;
-              end;
+        if not syntaxcheck then
+          reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
 
-              if SyntaxCheck then
-              begin
-                //LogDatei.log('We will delAttribute : '+newname, LLdebug);
-                try
-                  XMLDocObject.delAttribute(newname);
-                  LogDatei.log('successfully delAttribute node: ' + newname, oslog.LLinfo);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in xml2:delAttribute: ' + e.message, LLError);
-                  end;
-                end;
-              end
-              else
-                reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-            end;
-          end;   // delAttribute
+      end; // not a comment line
+    end; // any line
 
+    // Saving the PatchListe to XML file
+    PatchListe := TPatchList(XMLDocObject.getXmlStrings());
+    PatchListe.SaveToFile(myfilename, flag_encoding);
+    if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
+      LogDatei.log('Successfully saved XML doc to file: ' +
+        myfilename + ' with encoding : ' + flag_encoding, LLinfo)
+    else
+      LogDatei.log('Failed to save XML doc to file: ' + myfilename +
+        ' with encoding : ' + flag_encoding, oslog.LLError);
 
-          if not syntaxcheck then
-            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-
-        end; // not a comment line
-      end; // any line
-
-      // Saving the PatchListe to XML file
-      PatchListe := TPatchList(XMLDocObject.getXmlStrings());
-      PatchListe.SaveToFile(myfilename, flag_encoding);
-      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
-        LogDatei.log('Successfully saved XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, LLinfo)
-      else
-        LogDatei.log('Failed to save XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, oslog.LLError);
-
-      PatchListe.Free;
-      PatchListe := nil;
+    PatchListe.Free;
+    PatchListe := nil;
 
       (*
       // save xml back
@@ -7990,11 +7999,10 @@ var
         LogDatei.log('failed to write xmldoc to file: ' + myfilename, oslog.LLError);
       *)
 
-      XMLDocObject.Destroy;
+    XMLDocObject.Destroy;
 
-      if ExitOnError and (DiffNumberOfErrors > 0) then
-        Result := tsrExitProcess;
-
+    if ExitOnError and (DiffNumberOfErrors > 0) then
+      Result := tsrExitProcess;
 
   end; // doXMLpatch2Main
 
@@ -10095,11 +10103,11 @@ begin
     begin
       // backup
       commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
       // set (open)
       commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10131,7 +10139,7 @@ begin
     begin
       // set (close)
       commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
   finally
     {$IFDEF GUI}
@@ -10421,8 +10429,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11363,7 +11371,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename,logleveloffset);
+        deleteTempBatFiles(tempfilename, logleveloffset);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11910,10 +11918,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -15110,8 +15118,8 @@ begin
         end;
     if not syntaxCheck then
     begin
-      LogDatei.log('Error in forcePathDelims syntax: ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
+      LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
+        ' ; ' + InfoSyntaxError, LLError);
     end;
   end
 
@@ -23168,8 +23176,8 @@ begin
                     ' end of line expected');
                   {$ELSE WINDOWS}
                 logdatei.log(
-                  'XMLPatch sections are not implemented for Linux right now',
-                  LLWarning);
+                  'XMLPatch sections are not implemented for Linux or MacOS. Please use XML2 sections.',
+                  LLError);
                   {$ENDIF WINDOWS}
               end;
 
@@ -23193,48 +23201,52 @@ begin
                 if runProfileActions then
                   flag_all_ntuser := True;
                 if Remaining = '' then
-                  ActionResult := reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1], 'File parameter missing')
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    'File parameter missing')
                 else
-                    GetWordOrStringExpressionstr(Remaining, Filename, Remaining,
-                                                                      ErrorInfo);
+                  GetWordOrStringExpressionstr(Remaining, Filename, Remaining,
+                    ErrorInfo);
                 remaining := CutRightBlanks(Remaining);
                 if length(remaining) > 0 then
-                    goon := True;
-                  while goon do
+                  goon := True;
+                while goon do
+                begin
+                  if skip(Parameter_AllNTUserProfiles, Remaining,
+                    Remaining,
+                    ErrorInfo) then
+                    flag_all_ntuser := True
+                  else
+                  if skip('/encoding', Remaining, Remaining, ErrorInfo) then
                   begin
-                    if skip(Parameter_AllNTUserProfiles, Remaining, Remaining,
-                                                                ErrorInfo) then
-                      flag_all_ntuser := True
-                    else
-                    if skip('/encoding', Remaining, Remaining, ErrorInfo) then
-                    begin
-                      if not EvaluateString(Remaining, Remaining, flag_encoding,
-                                                                ErrorInfo) then
-                        syntaxcheck := False;
+                    if not EvaluateString(Remaining, Remaining,
+                      flag_encoding,
+                      ErrorInfo) then
+                      syntaxcheck := False;
 
-                      flag_encoding := LowerCase(flag_encoding);
-                      if not isSupportedEncoding(flag_encoding) then
-                      begin
-                        logdatei.log('Given Encoding: ' + flag_encoding +
-                          ' is not supported - fall back to utf8 encoding.',
-                          LLWarning);
-                        flag_encoding := 'utf8';
-                      end;
-                    end
-                    else
+                    flag_encoding := LowerCase(flag_encoding);
+                    if not isSupportedEncoding(flag_encoding) then
                     begin
-                      goon := False;
-                      if length(remaining) > 0 then
-                      begin
-                        syntaxcheck := False;
-                        ActionResult := reportError(Sektion, linecounter,
-                          Sektion.strings[linecounter - 1], '"' + remaining +
-                          '" is no valid parameter ');
-                      end;
+                      logdatei.log('Given Encoding: ' + flag_encoding +
+                        ' is not supported - fall back to utf8 encoding.',
+                        LLWarning);
+                      flag_encoding := 'utf8';
+                    end;
+                  end
+                  else
+                  begin
+                    goon := False;
+                    if length(remaining) > 0 then
+                    begin
+                      syntaxcheck := False;
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], '"' +
+                        remaining + '" is no valid parameter ');
                     end;
                   end;
-                  ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
+                end;
+                ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
 
               end;
 
