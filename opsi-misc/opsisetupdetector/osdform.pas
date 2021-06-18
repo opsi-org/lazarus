@@ -26,7 +26,9 @@ uses
   StrUtils,
   //Process,
   typinfo,
+  {$IFNDEF WINDOWS}
   CustApp,
+  {$ENDIF WINDOWS}
   //fileinfo,
   //osdhelper,
   osdanalyzewin,
@@ -625,8 +627,37 @@ end;
 procedure WriteHelp;
 var
   progname: string;
+  helplist : TStringlist;
 begin
   progname := ExtractFileName(ParamStr(0));
+  if showgui then
+  begin
+    helplist := TStringlist.Create;
+  helplist.Append(ParamStr(0));
+  helplist.Append(progname);
+  helplist.Append('Version ' + myVersion);
+  helplist.Append(myerror);
+  helplist.Append('Usage:');
+  helplist.Append(progname + '[Options]');
+  helplist.Append('Options:');
+  helplist.Append(' --help -> write this help and exit');
+  helplist.Append('  -h -> write this help and exit');
+  helplist.Append(' --filename=<path\filename> -> file to analyze)');
+  helplist.Append(' --f <path\filename> -> file to analyze)');
+  helplist.Append(' --nogui -> do not show interactive output window)');
+  helplist.Append(' --n -> do not show interactive output window)');
+  helplist.Append(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
+  helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
+  helplist.Append(' --productID=<id> -> Create product with productID <id>');
+  helplist.Append(' --p <id> -> Create product with productID <id>');
+  helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+  helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+  helplist.Append('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+  ShowMessage(helplist.Text);
+  FreeAndNil(helplist);
+  end
+  else
+  begin
   writeln(ParamStr(0));
   writeln(progname);
   writeln('Version ' + myVersion);
@@ -647,6 +678,7 @@ begin
   writeln(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
   writeln(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
   writeln('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+  end;
 
   Application.Terminate;
   halt(-1);
@@ -915,9 +947,9 @@ begin
     {$IFDEF WINDOWS}
   // initate console while windows gui
     // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
-    AllocConsole;      // in Windows unit
-    IsConsole := True; // in System unit
-    SysInitStdIO;      // in System unit
+    //AllocConsole;      // in Windows unit
+    //IsConsole := True; // in System unit
+    //SysInitStdIO;      // in System unit
     // Now you can do Writeln, DebugLn,
   {$ENDIF WINDOWS}
 
@@ -1012,7 +1044,9 @@ begin
     begin
       myerror := 'Error: Given targetOS: ' + tmpstr +
         ' is not valid. Should be on of win,lin,mac';
+      {$IFNDEF WINDOWS}
       writeln(myerror);
+      {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
       Application.Terminate;
@@ -1022,7 +1056,9 @@ begin
       forceTargetOS := TTargetOS(GetEnumValue(TypeInfo(TTargetOS), 'os' + tmpstr))
     except
       myerror := 'Error: Failed to convert: ' + tmpstr + ' to targetOS.';
+      {$IFNDEF WINDOWS}
       writeln(myerror);
+      {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
       Application.Terminate;
@@ -1044,7 +1080,9 @@ begin
     except
       myerror := 'Error: Given mode: ' + tmpstr +
         ' is not valid. Should be on of analyzeOnly, singleAnalyzeCreate, createTemplate';
+      {$IFNDEF WINDOWS}
       writeln(myerror);
+      {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
       WriteHelp;
       Application.Terminate;

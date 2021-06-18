@@ -207,7 +207,3 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
-#: tsimplewinbatchgui.labelversion.caption
-msgid "opsi-script 4.12.4.13"
-msgstr ""
-
