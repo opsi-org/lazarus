@@ -830,6 +830,9 @@ function IsSSLloaded: Boolean;
 function InitSSLInterface: Boolean;
 function DestroySSLInterface: Boolean;
 
+//set opsi specific ssl library paths
+procedure SetSSLPaths;
+
 var
   _X509Free: TX509Free = nil; {pf}
 
@@ -1883,22 +1886,11 @@ begin
       SSLLibHandle := 1;
       SSLUtilHandle := 1;
 {$ELSE}
-{$IFDEF DARWIN}
-  {$IFNDEF SSLPATH}
-  // opsi do 20210201
-   filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
-   if filelist.Count > 0 then
-     DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-   filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
-   if filelist.Count > 0 then
-     DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-  {$ENDIF SSLPATH}
-{$ENDIF DARWIN}
-      SSLUtilHandle := LoadLib(DLLUtilName);
-      SSLLibHandle := LoadLib(DLLSSLName);
+    SetSSLPaths; //set opsi specific ssl library paths
+    SSLUtilHandle := LoadLib(DLLUtilName);
+    SSLLibHandle := LoadLib(DLLSSLName);
   {$IFDEF MSWINDOWS}
-      if (SSLLibHandle = 0) then
-        SSLLibHandle := LoadLib(DLLSSLName2);
+    if (SSLLibHandle = 0) then SSLLibHandle := LoadLib(DLLSSLName2);
   {$ENDIF}
 {$ENDIF}
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
@@ -2214,9 +2206,8 @@ begin
   Result := SSLLoaded;
 end;
 
-initialization
+procedure SetSSLPaths; //opsi
 begin
-  SSLCS:= TCriticalSection.Create;
   // Specify here the path to the ssl libraries
   {$IFDEF SSLPATH}
     {$IFDEF WINDOWS}
@@ -2239,7 +2230,23 @@ begin
     //Paths below were used for testing
     //DLLSSLName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'ssleay32.dll'; //'libssl-1_1.dll';
     //DLLUtilName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'libeay32.dll'; // 'libcrypto-1_1.dll';
-  {$ENDIF}
+  {$ENDIF SSLPATH}
+  {$IFNDEF SSLPATH}
+    {$IFDEF DARWIN}
+      // opsi do 20210201
+      filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
+      if filelist.Count > 0 then
+        DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+      filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
+      if filelist.Count > 0 then
+        DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
+    {$ENDIF DARWIN}
+  {$ENDIF SSLPATH}
+end;
+
+initialization
+begin
+  SSLCS:= TCriticalSection.Create;
 end;
 
 finalization
