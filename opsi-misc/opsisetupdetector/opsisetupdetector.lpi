@@ -393,6 +393,7 @@
         <TopLine Value="5"/>
         <CursorPos X="3" Y="28"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="template-files\setupdouble.opsiscript"/>
@@ -475,6 +476,7 @@
         <TopLine Value="33"/>
         <CursorPos Y="56"/>
         <UsageCount Value="4"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\usr\share\lazarus\2.0.6\lcl\interfaces\gtk2\gtk2callback.inc"/>
@@ -539,6 +541,7 @@
         <TopLine Value="25"/>
         <CursorPos X="3" Y="44"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="osdanalyzemac.pas"/>
@@ -825,7 +828,7 @@
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osdcreate.pas"/>
         <Caret Line="29" Column="32" TopLine="11"/>
@@ -942,10 +945,6 @@
         <Filename Value="osdform.pas"/>
         <Caret Line="4014" TopLine="3977"/>
       </Position29>
-      <Position30>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="34" Column="34" TopLine="3880"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

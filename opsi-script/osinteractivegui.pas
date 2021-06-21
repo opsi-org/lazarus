@@ -917,6 +917,15 @@ begin
   lang := '';
   SetDefaultLang(lang,localedir);
   {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  // set locale path to the resource/locale dir of the .app bundle
+  localedir := ExtractFileDir(Application.ExeName) + PathDelim + 'locale';
+  if not DirectoryExists(localedir) then
+    localedir := '';
+  //lang := GetDefaultLang;
+  lang := '';
+  SetDefaultLang(lang,localedir);
+  {$ENDIF LINUX}
 
 
   CentralFormVisible := False;
