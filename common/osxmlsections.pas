@@ -49,6 +49,8 @@ type
     fDerivedNodeSet: TNodeSet;
     fDebugLevel: integer;
 
+    dictionary : TList;
+
     function getCountNotNil: integer;
     // length actNodeSet without NIL-Elements
 
@@ -69,10 +71,9 @@ type
     // nodename has to fit
 
     function makeAttributesSL(var attributeStringList: TStringList;
-  attributePath: string; var errormessage : string) : boolean;
+      attributePath: string; var errormessage : string) : boolean;
 
     procedure ErrorHandler(E: EXMLReadError);
-
 
   public
     destructor Destroy; override;
@@ -158,6 +159,11 @@ type
     // open the node, analog nodeExists
     // afterwards this node is actNode
 
+
+    function getNodeByNameAndTextContent(var newNode: TDOMNode; myparentNode: TDOMNode;
+      mynodeName: string; mynodeTextContent: string ): boolean;
+    // nodename and text has to fit
+
     // overload
     function makeNode(mynodeName: string): boolean; overload;
     // create new node, append to actNode, set newnode as actNode
@@ -173,7 +179,6 @@ type
     function makeNodeAndKeepActNode(mynodeName, attributeName,
       attributeValue, Text: string): boolean; overload;
     // create new node, append to actNode, actNode is kept
-
 
     function makeNodePathWithTextContent(nodePath: string; Text: string; var errorinfo : string): boolean;
     // create note path with textcontent
@@ -215,7 +220,7 @@ type
     // get name from the actual node
 
     //*************  Node-Operations on dicts *****************************
-    function setNodePair (keyNodeName:string; keyNodeText : string; valueNodeName : string; valueNodeText : string): boolean;
+    function setNodePair (keyNodeName:string; keyNodeTextContent : string; valueNodeName : string; valueNodeTextContent : string): boolean;
     // set value node for key node
 
     //*************  Attributes *******************************************
@@ -507,8 +512,6 @@ begin
       LogDatei.log('getXmlStrings failed', LLerror);
     end;
 end;
-
-
 
 //*************  Operations NodeSet  ***********************************
 procedure TuibXMLDocument.makeTopAsActNodeSet;
@@ -1693,7 +1696,7 @@ begin
 end;
 
 procedure TuibXMLDocument.delNode;
-// aktnode (and all childs) will be deleted, afterwards aktnode will be parent
+// aktnode (and all childs) will be deleted, afterwards parentnode will be aktnode
 // before del node check node with nodeExists
 var
   removeNode: TDOMNode;
@@ -2101,18 +2104,155 @@ begin
     logdatei.log('getNodeByNameAndAttribute failed', oslog.LLerror);
   end;
 end;
+
+function TuibXMLDocument.getNodeByNameAndTextContent(var newNode: TDOMNode; myparentNode: TDOMNode;
+      mynodeName: string; mynodeTextContent: string ): boolean;
+// nodename and text has to fit
+
+var
+j, i: integer;
+haschilds : boolean;
+childcount : integer;
+begin
+getNodeByNameAndTextContent := False;
+logdatei.log('begin to get node nodename: ' + mynodename +
+  ' with text: ' + mynodeTextContent, LLinfo);
+
+try
+  if Assigned(myparentNode) then
+  begin
+    j := 0;
+    haschilds := myparentNode.hasChildNodes;
+    childcount := myparentNode.ChildNodes.Count;
+    while (haschilds) and (j < childcount) and
+      (getNodeByNameAndTextContent = False) do
+    begin
+      // compare text if given
+      if (myparentNode.ChildNodes.Item[j].NodeName = mynodeName) then
+        if (myparentNode.ChildNodes.Item[j].TextContent = mynodeTextContent) and
+          (mynodeTextContent <> '') then
+        begin
+          newNode := myparentNode.ChildNodes.Item[j];
+          actNode := myparentNode.ChildNodes.Item[j];
+          getNodeByNameAndTextContent := True;
+        end;
+      Inc(j);
+    end;
+  end
+  else
+    logdatei.log('parentnode not valid', oslog.LLerror);
+except
+  logdatei.log('getNodeByNameAndTextContent failed', oslog.LLerror);
+end;
+end;
+
 //*************  Node-Operations on dicts *****************************
 // TODO
-function TuibXMLDocument.setNodePair (keyNodeName: string; keyNodeText: string;
-  valueNodeName: string; valueNodeText: string): boolean;
+function TuibXMLDocument.setNodePair (keyNodeName: string; keyNodeTextContent: string;
+  valueNodeName: string; valueNodeTextContent: string): boolean;
+var
+    myparentNode, newNode, oldNode: TDOMNode;
 begin
   setNodePair:= false;
-  // prüfen ob aktueller Knoten dem key dict hat
-  // suche im dict den node mit key keyNodeName und keyNodeText.
-  // analysiere den nächsten Knoten - Knoten valueNodeName können sein: key string, value; key true, kein value, key node array
-  // setze bei valueNodeName String den valueNodeText
-  // wenn kein keyNodeName key vorhanden - nichts tun??
+  logdatei.log('starting setNodePair', oslog.LLinfo);
+  if (actNode <> nil) then
+  begin
+    if (actNode.NodeName = 'dict') then
+    begin
+      // testing string
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'CFBundleShortVersionString';
+      //valueNodeName := 'string';
+      //valueNodeTextContent := '4.12.4.11';
 
+      // testing boolean
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'NSAppleScriptEnabled';
+      //valueNodeName := 'false';
+
+      // testing create node with key string
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'testCFBundleShortVersionString';
+      //valueNodeName := 'string';
+      //valueNodeTextContent := 'test4.12.4.11';
+
+      // testing create node boolean
+      keyNodeName := 'key';
+      keyNodeTextContent := 'testNSAppleScriptEnabled';
+      valueNodeName := 'false';
+
+      if getNodeByNameAndTextContent(newNode, actNode, keyNodeName, keyNodeTextContent) then
+      begin
+        LogDatei.log('setNodePair: key ' + keyNodeName +' with TextContent ' + keyNodeTextContent + ' found', LLinfo);
+        // nächsten Knoten prüfen, ob er als key den ValueNodeName hat
+        if (UpperCase(valueNodeName) = UpperCase('string')) then
+        begin
+          actNode := actNode.NextSibling;
+          LogDatei.log('setNodePair: valueNodeName ' + valueNodeName + ' actNode.NodeName: ' + actNode.NodeName, LLinfo);
+          setNodeTextActNode(valueNodeTextContent);
+          LogDatei.log('setNodePair - string: valueNodeTextContent set, now ' + actNode.TextContent, LLinfo);
+        end
+        else if (UpperCase (valueNodeName) = UpperCase('true'))
+           or (UpperCase (valueNodeName) = UpperCase('false')) then
+        begin
+          // create new node with value and replace old node
+          if (UpperCase(valueNodeName) = UpperCase('string')) then
+          begin
+            LogDatei.log('boolean setNodePair: make valueNodeName ' + valueNodeName , LLinfo);
+            LogDatei.log('boolean setNodePair: actNode NodeName is ' + actNode.NodeName , LLinfo);
+            myparentNode := actNode.ParentNode;
+            oldNode := actNode.NextSibling;
+            LogDatei.log('boolean setNodePair: oldNode NodeName is ' + oldNode.NodeName , LLinfo);
+            makeNode(valueNodeName); // new node is actNode
+            myparentNode.ReplaceChild(actNode,oldNode);
+            LogDatei.log('setNodePair - true/false: valueNodeName set, now ' + actNode.NodeName, LLinfo);
+          end
+        end
+        else if (UpperCase (valueNodeName) = UpperCase('array')) then
+        begin
+          // TODO ???
+        end
+        else
+          LogDatei.log('setNodePair: valueNode NOT set ' + valueNodeName, LLinfo);
+      end
+      else
+      begin
+        LogDatei.log('setNodePair: key ' + keyNodeName +' with TextContent ' + keyNodeTextContent + ' NOT found', LLinfo);
+        if (UpperCase(valueNodeName) = UpperCase('string')) then
+        begin
+          LogDatei.log('setNodePair: creating node ' + keyNodeName +' with TextContent ' + keyNodeTextContent, LLinfo);
+          makeNode(keyNodeName);     // new node ist actNode and was added as last node
+          setNodeTextActNode(keyNodeTextContent);
+          // make valueNode as next node and next sibling, before actNode has to be dict
+          setParentNodeAsActNode();
+          makeNode(valueNodeName);  // new node ist actNode and was added as last node
+          setNodeTextActNode(valueNodeTextContent);
+        end
+        else if (UpperCase (valueNodeName) = UpperCase('true'))
+           or (UpperCase (valueNodeName) = UpperCase('false')) then
+        begin
+          LogDatei.log('setNodePair: key ' + keyNodeName +' with TextContent ' + keyNodeTextContent + ' NOT found', LLinfo);
+          LogDatei.log('setNodePair: creating node ' + keyNodeName +' with TextContent ' + keyNodeTextContent, LLinfo);
+          makeNode(keyNodeName);     // new node ist actNode and was added as last node
+          setNodeTextActNode(keyNodeTextContent);
+          // make valueNode as next node and next sibling, before actNode has to be dict
+          setParentNodeAsActNode();
+          makeNode(valueNodeName);  // new node ist actNode and was added as last node
+        end
+        else if (UpperCase (valueNodeName) = UpperCase('array')) then
+        begin
+          // TODO ???
+        end
+        else
+          LogDatei.log('setNodePair: node NOT created, valueNodeName: ' + valueNodeName, LLinfo);
+      end;
+      setParentNodeAsActNode();
+    end
+    else
+      LogDatei.log('setNodePair only for dicts. node is not dict ' + actNode.NodeName, LLinfo);
+  end
+  else
+    LogDatei.log('setNodePair failed, actNode is nil, tried to get keyNodeName: ' + keyNodeName, LLerror);
 end;
 
 //*************  XML Attribute-Handling ***********************************

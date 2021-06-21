@@ -7704,6 +7704,50 @@ begin
         end;
       end;   // setNodeText
 
+      //// for testing setNodePair, please check!
+      if LowerCase(Expressionstr) = LowerCase('setNodePair') then
+      begin
+        logdatei.log('Try setNodePair ' +
+            Expressionstr, LLDebug);
+        syntaxCheck := True;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          //SyntaxCheck := false;
+          logdatei.log('Error: No open Node. Use OpenNode before ' +
+            Expressionstr, LLError);
+        end
+        else
+        begin
+          XMLDocObject.setNodePair('','','','');
+          {
+          if SyntaxCheck then
+          begin
+            if GetStringA(trim(r), newtext, r, errorinfo, True) then
+            begin
+              LogDatei.log('We will setNodeText : ' + newtext, LLdebug);
+              syntaxCheck := True;
+            end
+            else
+              syntaxCheck := False;
+          end;
+
+          if SyntaxCheck then
+          begin
+            try
+              XMLDocObject.setNodeTextActNode(newtext);
+              LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+              end;
+            end;
+          end
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);  }
+        end;
+      end;   // setNodePair
+
       if LowerCase(Expressionstr) = LowerCase('gotoParentNode') then
       begin
         syntaxCheck := True;
