@@ -11,8 +11,7 @@ unit osGUIControl;
   This sourcecode is owned by the uib gmbh, D55118 Mainz, Germany
   and published under the Terms of the GNU Affero General Public License.
   Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
-  author: Detlef Oertel, Jan Werner
-  credits: http://www.opsi.org/credits/ }
+  author: Detlef Oertel, Jan Werner }
 
 {$mode delphi}
 

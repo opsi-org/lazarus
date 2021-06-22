@@ -50,7 +50,6 @@ unit osinteractivegui;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -99,10 +98,11 @@ uses
   Controls,
   //wirequlist,
   oslog, osparser, osfunc,
-ostxstringlist,
+  ostxstringlist,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
   lcltranslator,
+  lazutf8,
   strutils,
   inifiles,
   osGUIControl,
@@ -925,6 +925,7 @@ begin
   //lang := GetDefaultLang;
   lang := '';
   SetDefaultLang(lang,localedir);
+  startupmessages.Append('Detected Language is:'+GetDefaultLang+' for: '+ExtractFileName(ParamStrUTF8(0))+' from dir: '+localedir);
   {$ENDIF LINUX}
 
 
@@ -993,7 +994,7 @@ procedure TCentralForm.Info1Click(Sender: TObject);
 begin
 
   MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName + LineEnding +
-    'Copyright (c) uib 1995 - 2016' + LineEnding +
+    'Copyright (c) uib 1995 - 2021' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
     'Detected Language: '+ GetDefaultLang + LineEnding +
     'Internet homes: ' + LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
