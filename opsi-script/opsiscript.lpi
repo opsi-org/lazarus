@@ -647,7 +647,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="63">
+    <Units Count="64">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -927,6 +927,11 @@
         <Filename Value="../common/osfilehelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit62>
+      <Unit63>
+        <Filename Value="ossslpaths.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osSSLPaths"/>
+      </Unit63>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

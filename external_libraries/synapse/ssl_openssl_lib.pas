@@ -833,6 +833,7 @@ function DestroySSLInterface: Boolean;
 //set opsi specific ssl library paths
 procedure SetSSLPaths;
 
+
 var
   _X509Free: TX509Free = nil; {pf}
 
@@ -2243,6 +2244,8 @@ begin
     {$ENDIF DARWIN}
   {$ENDIF SSLPATH}
 end;
+
+
 
 initialization
 begin
