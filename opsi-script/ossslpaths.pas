@@ -28,9 +28,10 @@ implementation
 function GetSSLPath(LibName: string): string;
 var
   i : integer;
-  Path : TStringList;
-  FileList : TStringlist;
+  Path : TStringList = nil;
+  FileList : TStringList = nil;
 begin
+  if not Assigned(LogDatei) then LogDatei := TLogInfo.Create;
   Path := TStringList.Create;
   try
     Path.Clear;
@@ -58,17 +59,22 @@ begin
       {$ELSE}
         Path.Append(ProgramDirectory + LibName);
         Path.Append('/usr/local/lib/' + LibName);
-        if (LibName = 'libssl.dylib') then
-        begin
-          FileList := FindAllFiles('/usr/local/lib/','libssl.*.dylib',false);
-        end
-        else if (LibName = 'libcrypto.dylib') then
-        begin
-          FileList := FindAllFiles('/usr/local/lib/','libcrypto.*.dylib',false);
+        try
+          if (LibName = 'libssl.dylib') then
+          begin
+            FileList := FindAllFiles('/usr/local/lib/','libssl.*.dylib',false);
+          end
+          else if (LibName = 'libcrypto.dylib') then
+          begin
+            FileList := FindAllFiles('/usr/local/lib/','libcrypto.*.dylib',false);
+          end;
+          if FileList.Count > 0 then
+            Path.Append(ExtractFileName(FileList.Strings[FileList.count - 1]));
+          Path.Append(ProgramDirectory + '../Frameworks/' + LibName);
+        finally
+          if Assigned(FileList) then
+            FreeAndNil(FileList);
         end;
-        if FileList.Count > 0 then
-          Path.Append(ExtractFileName(FileList.Strings[FileList.count - 1]));
-        Path.Append(ProgramDirectory + '../Frameworks/' + LibName);
       {$ENDIF APP_BUNDLE}
     {$ENDIF DARWIn}
     Path.Append(LibName);
@@ -87,8 +93,6 @@ begin
   finally
     if Assigned(Path) then
       FreeAndNil(Path);
-    if Assigned(FileList) then
-      FreeAndNil(FileList);
   end;
 end;
 
