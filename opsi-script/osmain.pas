@@ -257,6 +257,7 @@ var
   PerformExitWindows: TExitRequest = txrNoExit;
   PerformShutdown: TShutdownRequest = tsrNoShutdown;
   ProgramMode: TProgramMode;
+  batchUpdatePOC : boolean = False;
 
 
   toggle: boolean;
@@ -1311,10 +1312,10 @@ begin
           LogDatei.log('BuildPC: update switches .....', LLDebug);
           if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
           begin
-            LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+            LogDatei.log_prog('BuildPC: update switches 2.....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
           end;
-          LogDatei.log('BuildPC: finishProduct .....', LLDebug3);
+          LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
           opsidata.finishProduct;
           LogDatei.LogProduktId := False;
         end;
@@ -1335,7 +1336,7 @@ begin
         e.message, LLError);
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end;
   end;
 
@@ -2264,8 +2265,8 @@ begin
             FBatchOberflaeche.SetElementVisible(False, eMainForm)
           else
             FBatchOberflaeche.SetElementVisible(True, eMainForm);
-
-          centralform.Edit1.Text := scriptlist.strings[0];
+            if scriptlist.Count <= 0 then
+            centralform.Edit1.Text := scriptlist.strings[0];
           centralform.Edit2.Text := LogDateiName;
 
           DontUpdateMemo := True;
@@ -2301,6 +2302,13 @@ begin
 
           logDatei.log_prog('AktProduktId: ' + LogDatei.AktProduktId +
             ' = ' + booleantostr(LogDatei.LogProduktId), LLessential);
+
+                      if scriptlist.Count <= 0 then
+          begin
+            logDatei.log('Error we have no script in batch mode. ', LLcritical);
+            extremeErrorLevel := levelFatal;
+          end;
+
 
           { Are we in batch with /productid (opsi-template-with-admin) ?
              open service connection if possible  }
@@ -2460,21 +2468,44 @@ begin
             for scriptindex := 0 to scriptlist.Count - 1 do
             begin
               NestingLevel := 0;
+              if batchUpdatePOC and not (opsidata = nil) then
+                opsidata.setProductState(tpsInstalling);
               CreateAndProcessScript(scriptlist.Strings[scriptindex],
                 NestingLevel, False, extremeErrorLevel);
             end;
 
             if not (opsidata = nil) then
             begin
+              // send log
               logdatei.Appendmode := True;
               opsidata.finishOpsiConf;
             end;
           end;
 
-          // Are we in batch with /productid (opsi-template-with-admin) ?
-          if runningAsAdmin and (not (batchproductid = '')) then
+          // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
+          if (runningAsAdmin and (not (batchproductid = '')))
+              or ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
           begin
             try
+              if batchUpdatePOC and not (opsidata = nil) then
+              begin
+                // we are in /serviceBatch mode and so we have to update the productOnClient via service
+                LogDatei.log('serviceBatch: update switches .....', LLDebug);
+                if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
+                begin
+                  LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);
+                  // we are in /serviceBatch mode and so we act like having a actionrequest=setup
+                  opsidata.setActualProductActionRequest('setup');
+                  opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+                end;
+                LogDatei.log_prog('serviceBatch: finishProduct .....', LLDebug);
+                // free productVars
+                opsidata.finishProduct;
+                LogDatei.LogProduktId := False;
+              end
+              else
+              begin
+              // We are in batch with /productid (opsi-template-with-admin)
               // write isFatal (or not) to registry
               //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
               //##LINUX
@@ -2494,6 +2525,7 @@ begin
               reg.CloseKey;
               reg.Free;
               {$ENDIF WINDOWS}
+              end;
             except
               on e: Exception do
               begin
@@ -3247,6 +3279,19 @@ begin
         else if Lowercase(Parameter) = 'batch' then
         begin
           ProgramMode := pmBatch;
+          {$IFDEF GUI}
+          BatchWindowMode := bwmNormalWindow;
+          SavedBatchWindowMode := BatchWindowMode;
+          {$ENDIF GUI}
+          Inc(i);
+        end
+
+        else if Lowercase(Parameter) = 'servicebatch' then
+        begin
+          // if /serviceBatch then also needed:
+          //  /ClientId /opsiservice /username /password /productId  and <script path>
+          ProgramMode := pmBatch;
+          batchUpdatePOC := true;
           {$IFDEF GUI}
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;

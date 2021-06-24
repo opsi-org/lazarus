@@ -284,15 +284,15 @@ type
 var
   IniFileLocalization: string;
 
-  ProgramMode: TProgramMode;
+  //ProgramMode: TProgramMode;
 
-  Profildateiname: string;
+  //Profildateiname: string;
 
-  Produkt: string;
+  //Produkt: string;
 
   //Verfahren  : TActionRequest;
 
-  Produkte: TStringList;
+  //Produkte: TStringList;
 
 ///NumberOfErrors   :   Integer;
 ///NumberOfWarnings :   Integer;
