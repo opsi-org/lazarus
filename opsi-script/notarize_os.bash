@@ -12,6 +12,7 @@ EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
 ENTITLEMENTS="--entitlements opsi-script.entitlements"
 
+
 echo signature "$CODE_SIGN_SIGNATURE" 
 echo passwd $APP_SPECIFIC_PASSWORD
 echo id $APPLE_ID_USER
@@ -34,6 +35,9 @@ rm -f ${FULLPATHTOEXE}
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
 #cp info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+
+EXECUTABLE_VER=`opsi-getlazbinaryversion --file="${FULLPATHTOEXE}"  | tr -d 'fileversion='`
+echo ver $EXECUTABLE_VER
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"
