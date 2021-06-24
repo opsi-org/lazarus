@@ -174,30 +174,6 @@ msgstr "Beenden"
 msgid "ToolBar1"
 msgstr "Werkzeugleiste1"
 
-#: tdialogservicepassword.cancelbutton.caption
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: tdialogservicepassword.caption
-msgid " DialogServicePassword"
-msgstr "DialogDienstPasswort"
-
-#: tdialogservicepassword.labelpassword.caption
-msgid "Password"
-msgstr "Passwort"
-
-#: tdialogservicepassword.labelserviceurl.caption
-msgid "Opsi Service URL"
-msgstr "Opsi Service-URL"
-
-#: tdialogservicepassword.labelusername.caption
-msgid "Username"
-msgstr "Benutzername"
-
-#: tdialogservicepassword.okbutton.caption
-msgid "o.k."
-msgstr "o.k."
-
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr "opsi-script"
@@ -226,35 +202,3 @@ msgstr "Aktivität"
 msgid "LabelVersion"
 msgstr "LabelVersion"
 
-#: tmymessagedlg.abortbtn.caption
-msgid "&Exit"
-msgstr "B&eenden"
-
-#: tmymessagedlg.cancelbtn.caption
-msgid "&Cancel"
-msgstr ""
-
-#: tmymessagedlg.caption
-msgid "opsi-script Message"
-msgstr ""
-
-#: tmymessagedlg.nobtn.caption
-msgid "&No"
-msgstr ""
-
-#: tmymessagedlg.okbtn.caption
-msgid "&OK"
-msgstr ""
-
-#: tmymessagedlg.yesbtn.caption
-msgid "&Yes"
-msgstr ""
-
-#: tsysteminfo.caption
-msgid "SystemInfo"
-msgstr "Systeminfo"
-
-#: tsysteminfo.label1.caption
-msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
-msgid "Label1"
-msgstr "Label1"

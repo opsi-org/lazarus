@@ -13586,8 +13586,14 @@ begin
           if GetNTVersionMajor >= 10 then
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
+              begin
               list.add('ReleaseID=' + GetRegistrystringvalue(
-                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True))
+                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True));
+              if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+              'Displayversion', True) then
+                list.add('ReleaseID=' + GetRegistrystringvalue(
+                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'Displayversion', True));
+              end
             else
               list.add('ReleaseID=1507')
           else

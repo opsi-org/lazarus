@@ -26,6 +26,7 @@ opsi-script (4.12.4.23) stable; urgency=low
     '/usr/share/locale/....'          // backward compatibility directory
  * removing links to http://www.opsi.org/credits/
  * osinteractivegui: set copyright tro 1995-2021
+ * Fixes detection of w10 release > 2009 (21h1) (osparser) ; fixes #4665
 
 -- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
 
