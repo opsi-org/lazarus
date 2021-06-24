@@ -12,6 +12,20 @@ opsi-script (4.12.4.23) stable; urgency=low
  * new constant %opsiserviceClientId% (FQDN in service context, empty without)
  * parameter /clientid if present wil be ussed as preferred source for %hostid%
  * new parameter /depotpath (only together with /opsiservice) to pass the path to the depot
+ * linux opsi-script library search path:
+    %scriptpath%                     // standard by definition
+    %ScriptPath%/../lib              // standard by definition
+    './lib'                          // new standard directory in opsi-script directory
+    '/usr/share/opsi-script/lib'     // backward compatibility directory
+ * linux skin directory search path:
+    '/usr/share/opsi-script/customskin'  // custom skin directory
+    './skin'                          // new standard skin directory in opsi-script directory
+    '/usr/share/opsi-script/skin'     // backward compatibility directory
+ * linux locale directory search path:
+    './locale'                        // new standard locale directory in opsi-script directory
+    '/usr/share/locale/....'          // backward compatibility directory
+ * removing links to http://www.opsi.org/credits/
+ * osinteractivegui: set copyright tro 1995-2021
 
 -- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
 

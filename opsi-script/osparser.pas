@@ -18,7 +18,6 @@ unit osparser;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -1285,7 +1284,7 @@ begin
 end;
 
 
-procedure deleteTempBatFiles(const tempfilename: string; logleveloffset : integer = 0);
+procedure deleteTempBatFiles(const tempfilename: string; logleveloffset: integer = 0);
 var
   files: TuibFileInstall;
 begin
@@ -1302,7 +1301,7 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2,logleveloffset);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1629,9 +1628,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -9997,11 +9995,11 @@ begin
     begin
       // backup
       commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
       // set (open)
       commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10033,7 +10031,7 @@ begin
     begin
       // set (close)
       commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
   finally
     {$IFDEF GUI}
@@ -10323,8 +10321,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11265,7 +11263,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename,logleveloffset);
+        deleteTempBatFiles(tempfilename, logleveloffset);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11812,10 +11810,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -15014,8 +15012,8 @@ begin
         end;
     if not syntaxCheck then
     begin
-      LogDatei.log('Error in forcePathDelims syntax: ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
+      LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
+        ' ; ' + InfoSyntaxError, LLError);
     end;
   end
 
@@ -20851,13 +20849,27 @@ begin
                         'system')) + PathDelim + 'lib' + PathDelim + incfilename;
                           {$ENDIF WINDOWS}
                           {$IFDEF LINUX}
-                      // search in /usr/share/opsi-script/lib
+                      // search in %OpsiscriptDir%\lib
                       testincfilename :=
-                        '/usr/share/opsi-script' + PathDelim +
-                        'lib' + PathDelim + incfilename;
+                        ExtractFileDir(reencode(ParamStr(0),
+                        'system')) + PathDelim + 'lib' + PathDelim + incfilename;
+                      testincfilename := ExpandFilename(testincfilename);
+                      LogDatei.log_prog('Looking for: ' + testincfilename, LLNotice);
+                      if FileExistsUTF8(testincfilename) then
+                      begin
+                        found := True;
+                        fullincfilename := testincfilename;
+                      end;
+                      if (not found) then
+                      begin
+                        // search in /usr/share/opsi-script/lib
+                        testincfilename :=
+                          '/usr/share/opsi-script' +
+                          PathDelim + 'lib' + PathDelim + incfilename;
+                      end;
                           {$ENDIF LINUX}
                           {$IFDEF DARWIN}
-                      // search in %OpsiscriptDir%\lib
+                      // search in %OpsiscriptDir%../Resources/lib
                       testincfilename :=
                         ExtractFileDir(reencode(ParamStr(0),
                         'system')) + PathDelim + '../Resources/lib' +
@@ -20876,7 +20888,7 @@ begin
                           '/usr/local/share/opsi-script' +
                           PathDelim + 'lib' + PathDelim + incfilename;
                       end;
-                          {$ENDIF DARWIN}
+                            {$ENDIF DARWIN}
                     end;
                     if (not found) then
                     begin
@@ -24277,7 +24289,8 @@ begin
       FConstList.add('%realScriptpath%');
       if FileExists(Scriptdatei) then
         ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
-      else ValueToTake := '';
+      else
+        ValueToTake := '';
       (*
       {$IFDEF WINDOWS}
       ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
@@ -24396,9 +24409,10 @@ begin
       FConstValuesList.add(opsiserviceClientId);
 
       FConstList.add('%hostID%');
-      if  opsiserviceClientId <> '' then
+      if opsiserviceClientId <> '' then
         FConstValuesList.add(opsiserviceClientId)
-      else FConstValuesList.add(computernaming);
+      else
+        FConstValuesList.add(computernaming);
 
       FConstList.add('%opsiServer%');
 

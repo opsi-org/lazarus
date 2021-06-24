@@ -11,8 +11,7 @@ unit osGUIControl;
   This sourcecode is owned by the uib gmbh, D55118 Mainz, Germany
   and published under the Terms of the GNU Affero General Public License.
   Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
-  author: Detlef Oertel, Jan Werner
-  credits: http://www.opsi.org/credits/ }
+  author: Detlef Oertel, Jan Werner }
 
 {$mode delphi}
 
@@ -73,18 +72,19 @@ type
 
 const
   {$IFDEF WINDOWS}
-  skindirectoryDevelopment = 'winstskin';
+  skindirectoryDevelopment = 'skin';
   skindirectoryDefault = 'skin';
   skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'customskin';
   skindirectoryCustomWinOld = '..'+PathDelim+'custom'+PathDelim+'winstskin';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '/usr/share/opsi-script/skin';
+  skindirectoryDevelopment = 'skin';
+  skindirectoryDefault = 'skin';
+  skindirectoryCompatibility = '/usr/share/opsi-script/skin';
   skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  skindirectoryDevelopment = 'winstskin';
+  skindirectoryDevelopment = 'skin';
   skindirectoryDefault = '../Resources/skin';
   skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
   {$ENDIF DARWIN}
@@ -139,6 +139,8 @@ begin
     skinDir := skindirectoryCustomWin
   else if FileExists(skindirectoryDefault+PathDelim+'skin.ini') then
     skinDir := skindirectoryDefault
+  else if FileExists(skindirectoryCompatibility+PathDelim+'skin.ini') then
+    skinDir := skindirectoryCompatibility
   else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
   {$ENDIF LINUX}
