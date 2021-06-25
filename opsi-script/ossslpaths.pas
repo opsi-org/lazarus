@@ -24,14 +24,19 @@ function GetSSLPath(LibName: string):string;
 
 implementation
 
+uses
+  osmain;// needed for logging with startupmessages
+
 
 function GetSSLPath(LibName: string): string;
 var
-  i : integer;
+  i,j : integer;
   Path : TStringList = nil;
   FileList : TStringList = nil;
 begin
-  if not Assigned(LogDatei) then LogDatei := TLogInfo.Create;
+  //if not Assigned(LogDatei) then LogDatei := TLogInfo.Create;
+  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  //LogDatei.LogLevel := 7;
   Path := TStringList.Create;
   try
     Path.Clear;
@@ -79,16 +84,19 @@ begin
     {$ENDIF DARWIn}
     Path.Append(LibName);
     i := 0;
-    //while not FileIsInDirectory(LibName, Path[i]) or (i < (Path.Count)-1) do
-    while not FileExists(Path.Strings[i]) or (i < (Path.Count-1)) do
+    while (not FileExists(Path.Strings[i])) and (i < (Path.Count-1)) do
     begin
-      LogDatei.log('Library: ' + Path.Strings[i] + ' not found.' ,LLDebug);
       inc(i);
     end;
     if (i < (Path.Count-1)) then
-      LogDatei.log('GetSSLPath: ' + Path.Strings[i], LLNotice)
+      StartupMessages.Append('ssl library path: ' + Path.Strings[i])
     else
-      LogDatei.log('GetSSLPath: ' + Path.Strings[i] + ' Note: No library found in any given path. Set path to libname', LLNotice);
+    begin
+      StartupMessages.Append('WARNING: SSL LIBRARY (' + Path.Strings[i] + ') NOT FOUND IN ANY EXPECTED PATH:');
+      for j := 0 to (Path.Count-2) do
+        startupMessages.Append('   - ' + Path.Strings[j]);
+      StartupMessages.Append('     Neverthless (' + Path.Strings[i] + ') might be found by the OS.');
+    end;
     Result := Path.Strings[i];
   finally
     if Assigned(Path) then

@@ -860,7 +860,7 @@ var
 begin
   //writeln('TCentralForm.FormCreate');
   starttimestr := DateTimeToStr(Now);
-  startupmessages := TStringList.Create;
+  if not Assigned(startupmessages) then startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
   startupmessages.Append('Detected Language is:'+GetDefaultLang);

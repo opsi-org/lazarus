@@ -978,14 +978,13 @@
 -dOSLOG
 -dSYNAPSE
 -dSSLPATH"/>
-      <OtherDefines Count="7">
+      <OtherDefines Count="6">
         <Define0 Value="OPSIWINST"/>
         <Define1 Value="OPSISCRIPT"/>
         <Define2 Value="GUI"/>
         <Define3 Value="OSLOG"/>
         <Define4 Value="SYNAPSE"/>
         <Define5 Value="SSLPATH"/>
-        <Define6 Value="APP_BUNDLE"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
