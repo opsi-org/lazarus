@@ -39,7 +39,7 @@ opsi-script (4.12.4.22) stable; urgency=low
    to osfilehelper
  * oslog: function makbakfile with two parameters (name,maxbak number) is moved as makbakfiles
    to osfilehelper
- * osfunc files section copy: moving some lo messages from Loglevel 6 to 7
+ * osfunc files section copy: moving some log messages from Loglevel 6 to 7
 
 -- d.oertel <d.oertel@uib.de> Fri, 04 June 2021 15:00
 
@@ -94,6 +94,8 @@ opsi-winst/opsi-script (4.12.4.16) stable; urgency=low
  * call of execwith section with /encoding parameter (by j.laajili)
  * new string function: getOSarchitecture (x86_32 / x86_64/ arm_64)
  * new boolean function: runningInWAnMode (true if opsiserver = localhost) default=false
+ * change function asConfidentialList(<list>) : stringlist
+   to function asConfidential(<list>) : stringlist
 
 -- d.oertel <d.oertel@uib.de> Fri, 26 Feb 2021 15:00
 
