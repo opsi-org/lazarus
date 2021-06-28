@@ -23950,9 +23950,10 @@ begin
         if (Encoding2use = 'system') then
         begin
           //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-          logdatei.log(
-            'Encoding=system makes the opsiscript not portable between different OS',
-            LLWarning);
+          if not configSupressSystemEncodingWarning then
+            logdatei.log(
+              'Encoding=system makes the opsiscript not portable between different OS',
+              LLWarning);
         end
         else
         begin
