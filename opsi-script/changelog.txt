@@ -29,9 +29,10 @@ opsi-script (4.12.4.23) stable; urgency=low
  * Fixes detection of w10 release > 2009 (21h1) (osparser) ; fixes #4665
  * New cli parameter /ServiceBatch  if /serviceBatch then also needed:
           /ClientId <> /opsiservice <> /username <> /password <> /productId <> and <script path>
-* New config opsi-script.global.supressSystemEncodingWarning
+ * New config opsi-script.global.supressSystemEncodingWarning
      if true then the following warning will be suppressed:
      'Encoding=system makes the opsiscript not portable between different OS'
+ * osfuncwin2: replace of winst32.exe in funcwin2 by ExtractFileName(ParamStr(0)
 
 -- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
 
