@@ -1285,7 +1285,7 @@ begin
 end;
 
 
-procedure deleteTempBatFiles(const tempfilename: string; logleveloffset : integer = 0);
+procedure deleteTempBatFiles(const tempfilename: string; logleveloffset: integer = 0);
 var
   files: TuibFileInstall;
 begin
@@ -1302,7 +1302,8 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2,logleveloffset);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True,
+        2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -7395,7 +7396,7 @@ var
   nodeOpened: boolean;
   nodeOpenCommandExists: boolean;
   nodepath: string;
-  newtext, newname, newvalue, newnode: string;
+  newtext, newtext2, newname, newname2, newvalue, newvalue2, newnode: string;
   myfilename: string;
   openstrict: boolean = False;
   testbool: boolean;
@@ -7704,11 +7705,9 @@ begin
         end;
       end;   // setNodeText
 
-      //// for testing setNodePair, please check!
       if LowerCase(Expressionstr) = LowerCase('setNodePair') then
       begin
-        logdatei.log('Try setNodePair ' +
-            Expressionstr, LLDebug);
+        logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
         syntaxCheck := True;
         if not (nodeOpened and nodeOpenCommandExists) then
         begin
@@ -7718,33 +7717,59 @@ begin
         end
         else
         begin
-          XMLDocObject.setNodePair('','','','');
-          {
           if SyntaxCheck then
           begin
-            if GetStringA(trim(r), newtext, r, errorinfo, True) then
+            if GetStringA(trim(r), newname, r, errorinfo, True) then
             begin
-              LogDatei.log('We will setNodeText : ' + newtext, LLdebug);
-              syntaxCheck := True;
+              logdatei.log('keyNodeName= ' + newname, LLDebug2);
+              if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+              begin
+                logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
+                if GetStringA(trim(r), newname2, r, errorinfo, True) then
+                begin
+                  logdatei.log('valueNodeName= ' + newname2, LLDebug2);
+                  if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                  begin
+                    logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
+                    syntaxCheck := True;
+                    LogDatei.log('We will add node pair : ' + newname +
+                      ' : ' + newvalue + ' with ' + newname2 + ' : ' +
+                      newvalue2, LLdebug);
+                  end
+                  else
+                    syntaxCheck := False;
+                end
+                else
+                  syntaxCheck := False;
+              end
+              else
+                syntaxCheck := False;
             end
             else
               syntaxCheck := False;
           end;
 
+          if r <> '' then
+          begin
+            SyntaxCheck := False;
+            ErrorInfo := ErrorRemaining;
+          end;
+
           if SyntaxCheck then
           begin
             try
-              XMLDocObject.setNodeTextActNode(newtext);
-              LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
+              XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
+              LogDatei.log('successfully setNodePair : ' + newname +
+                ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
             except
               on e: Exception do
               begin
-                LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+                LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
               end;
             end;
           end
           else
-            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);  }
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end;
       end;   // setNodePair
 
@@ -10041,11 +10066,11 @@ begin
     begin
       // backup
       commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
       // set (open)
       commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10077,7 +10102,7 @@ begin
     begin
       // set (close)
       commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1+logleveloffset, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
   finally
     {$IFDEF GUI}
@@ -11309,7 +11334,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename,logleveloffset);
+        deleteTempBatFiles(tempfilename, logleveloffset);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -15058,8 +15083,8 @@ begin
         end;
     if not syntaxCheck then
     begin
-      LogDatei.log('Error in forcePathDelims syntax: ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
+      LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
+        ' ; ' + InfoSyntaxError, LLError);
     end;
   end
 
@@ -16772,6 +16797,36 @@ begin
         begin
           LogDatei.log('Error on producing getXml2Text', LLerror);
         end;
+      end;
+    end;
+  end
+
+  else if LowerCase(s) = LowerCase('getXml2ValueNodeTextByKeyNodeText') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+    begin
+      list1 := TXStringList.Create;
+      if produceStringList(script, r, r, list1, InfoSyntaxError) and
+        skip(',', r, r, InfoSyntaxError) then
+      begin
+        if EvaluateString(r, r, s1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) and
+            skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s3, InfoSyntaxError) and
+              skip(')', r, r, InfoSyntaxError) then
+            begin
+              SyntaxCheck := True;
+              try
+                stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
+                    e.message, LLError);
+                end;
+              end;
+            end;
       end;
     end;
   end
@@ -24321,7 +24376,8 @@ begin
       FConstList.add('%realScriptpath%');
       if FileExists(Scriptdatei) then
         ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
-      else ValueToTake := '';
+      else
+        ValueToTake := '';
       (*
       {$IFDEF WINDOWS}
       ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
