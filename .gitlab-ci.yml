@@ -65,7 +65,7 @@ compile opsi-script linux:
     PROJECT_REPOSITORY_PATH: "opsi-script/"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
-      when: never #change to always if linux machine is available
+      when: always
   script: 
     - $LAZ_PROJECT_FILE= ${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
