@@ -1199,7 +1199,7 @@ begin
   attributesSL := TStringList.Create;
   try
     try
-      for i := 0 to length(nodesInPath) do
+      for i := 0 to length(nodesInPath) -1 do
          nodesInPath[i] := nil;
       // the root node
       nodesInPath[0] := XML.DocumentElement;
