@@ -5295,7 +5295,7 @@ var
   //Attr: integer;
   FileResult: integer = 0;
 begin
-  FileResult := FindFirst(CompleteName, faAnyFile or faSymlink, fRec);
+  FileResult := FindFirstUTF8(CompleteName, faAnyFile or faSymlink, fRec);
   if FileResult = 0 then
   begin
     Result := True;
@@ -5307,7 +5307,7 @@ begin
     ErrorInfo := 'File Error ' + IntToStr(FileResult) + ' (' +
       removeLineBreaks(SysErrorMessage(FileResult)) + ')';
   end;
-  SysUtils.FindClose(fRec);
+  FindCloseUTF8(fRec);
 end;
 
 function IsDirectory(const FName: string): boolean;
@@ -5330,11 +5330,11 @@ var
   SearchRec: TSearchRec;
 begin
   FName := ExpandFileName(FName);
-  if findfirst(FName, faAnyFile or faSymlink, SearchRec) = 0 then
+  if findfirstUTF8(FName, faAnyFile or faSymlink, SearchRec) = 0 then
     Result := SearchRec.Size
   else
     Result := -1;
-  SysUtils.findclose(SearchRec);
+  FindCloseUTF8(SearchRec);
 end;
 
 function ExtractFileDir(const FileName: string): string;
@@ -10107,16 +10107,16 @@ var
     //FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
     //  faAnyfile - faDirectory - faVolumeId, SearchResult);
     {$IFDEF WINDOWS}
-    FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+    FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask,
       (faSymlink or faAnyfile) - faDirectory, SearchResult);
     {$ELSE}
     // at Linux we have to search here also for directories because
     // we need to find symlinks to directories (bug in returned attr)
     if followsymlinks then
-      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask,
         (faSymlink or faAnyfile) - faDirectory, SearchResult)
     else
-      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask,
         (faSymlink or faAnyfile), SearchResult);
     {$ENDIF WINDOWS}
 
@@ -10197,11 +10197,11 @@ var
 
         end;
 
-      FindResultcode := SysUtils.FindNext(SearchResult);
+      FindResultcode := FindNextUTF8(SearchResult);
       ProcessMess;
     end;
 
-    SysUtils.findclose(SearchResult);
+    FindCloseUTF8(SearchResult);
     LogDatei.log_prog('Finished Search: ' + SourcePath + SourceFilemask, LLDebug);
 
     if (cpSpecify and cpRecursive = cpRecursive) or
@@ -10210,9 +10210,9 @@ var
    (* Subdirectories im Source-Verzeichnis suchen
      und gegebenenfalls im Targetverzeichnis neu anlegen *)
       {$IFDEF WINDOWS}
-      FindResultcode := FindFirst(SourcePath + '*.*', faAnyfile, SearchResult);
+      FindResultcode := FindFirstUTF8(SourcePath + '*.*', faAnyfile, SearchResult);
       {$ELSE}
-      FindResultcode := FindFirst(SourcePath + '*', faAnyfile or
+      FindResultcode := FindFirstUTF8(SourcePath + '*', faAnyfile or
         faSymlink, SearchResult);
       {$ENDIF WINDOWS}
 
@@ -10307,9 +10307,9 @@ var
             // angelegtes directory wieder entfernen
             rmdir(TargetName);
         end;
-        FindResultcode := FindNext(SearchResult);
+        FindResultcode := FindNextUTF8(SearchResult);
       end;
-      SysUtils.findclose(SearchResult);
+      FindCloseUTF8(SearchResult);
     end;
     FileFound := FileFoundOnThisLevel; // resp. on a deeper level
     Recursion_Level := Recursion_Level - 1;
@@ -10482,9 +10482,9 @@ var
     if recursive then
     begin
       {$IFDEF WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile, SearchResult);
+      FindResultcode := FindFirstUTF8(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
+      FindResultcode := FindFirstUTF8(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
@@ -10494,9 +10494,9 @@ var
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
           (OrigPath + SearchResult.Name + PathDelim + FileMask, DeleteDeeperDir);
-        FindResultcode := FindNext(SearchResult);
+        FindResultcode := FindNextUTF8(SearchResult);
       end;
-      SysUtils.findclose(SearchResult);
+      FindCloseUTF8(SearchResult);
     end;
 
     { now delete in the base directory }
@@ -10510,7 +10510,7 @@ var
     LogS := 'Search "' + OrigPath + Filemask + '"';
     LogDatei.log(LogS, LLInfo + logleveloffset);
 
-    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or
+    FindResultcode := FindFirstUTF8(OrigPath + Filemask, faAnyFile or
       faSymlink - faDirectory, SearchResult);
 
     while FindResultcode = 0 do
@@ -10613,10 +10613,10 @@ var
       end;
 
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-      FindResultcode := FindNext(SearchResult);
+      FindResultcode := FindNextUTF8(SearchResult);
     end;
 
-    SysUtils.findclose(SearchResult);
+    FindCloseUTF8(SearchResult);
 
     if DeleteDir then
       // zum Schluss der Behandlung einer Verzeichnisebene
@@ -10899,7 +10899,7 @@ var
 
 
 
-    FindResultcode := FindFirst(SourcePath + SourceFilemask, faAnyfile -
+    FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask, faAnyfile -
       faDirectory - faVolumeId, SearchResult);
 
     if FindResultcode = 0 then
@@ -10978,16 +10978,16 @@ var
         end;
       end;
 
-      FindResultcode := FindNext(SearchResult);
+      FindResultcode := FindNextUTF8(SearchResult);
     end;
 
-    SysUtils.FindClose(SearchResult);
+    FindCloseUTF8(SearchResult);
 
 
    (* Subdirectories im Source-Verzeichnis suchen
      und gegebenfalls im Targetverzeichnis neu anlegen *)
 
-    FindResultcode := FindFirst(SourcePath + '*.*', faAnyFile, SearchResult);
+    FindResultcode := FindFirstUTF8(SourcePath + '*.*', faAnyFile, SearchResult);
 
 
     while FindResultcode = 0 do
@@ -11048,10 +11048,10 @@ var
           rmdir(TargetName);
       end;
 
-      FindResultcode := FindNext(SearchResult);
+      FindResultcode := FindNextUTF8(SearchResult);
     end;
 
-    SysUtils.FindClose(SearchResult);
+    FindCloseUTF8(SearchResult);
 
     FileFound := FileFoundOnthisLevel (* resp. on a deeper level *);
   end;

@@ -217,24 +217,36 @@ end;
 function getXMLDocumentElementfromFile(filename: string): TStringList;
 var
   nodeStream: TMemoryStream;
-  mystringlist: TStringList;
+  //mystringlist: TStringList;
   mynode: TDOMNode;
 begin
-  mystringlist := TStringList.Create;
+  Result := TStringList.Create;
   nodeStream := TMemoryStream.Create;
-  if createXmlDocFromFile(filename) then
-  begin
-    mynode := getXMLDoc.DocumentElement;
+  mynode := nil;
+  try
     try
-      WriteXML(mynode, nodeStream);
-      nodeStream.Position := 0;
-      mystringlist.LoadFromStream(nodestream);
-      Result := mystringlist;
-    finally
-      nodestream.Free;
-      mynode.Free;
-      //mystringlist.Free;       muss bleiben, damit result bleibt
+      if createXmlDocFromFile(filename) then
+      begin
+        mynode := getXMLDoc.DocumentElement;
+
+        WriteXML(mynode, nodeStream);
+        nodeStream.Position := 0;
+        Result.LoadFromStream(nodestream);
+        //Result := mystringlist;
+      end;
+    except
+      on E: Exception do
+      begin
+        {$IFDEF OPSISCRIPT}
+        LogDatei.log('Exception in getXMLDocumentElementfromFile', LLError);
+        LogDatei.log('Error: Message: ' + E.message, LLError);
+        {$ENDIF OPSISCRIPT}
+      end;
     end;
+  finally
+    nodestream.Free;
+    if Assigned(mynode) then
+      mynode.Free;
   end;
 end;
 
@@ -478,22 +490,26 @@ begin
   try
     Result := False;
     mynode := createXMLNodeFromString(nodestrlist);
-    if mynode.NodeName = Name then
-      newnode := mynode
-    else
+    if mynode <> nil then
     begin
-      newnode := mynode.FindNode(Name);
-      if newnode = nil then
-        newnode := findnodeInList(mynode.ChildNodes, Name);
-    end;
-    if newnode <> nil then
-      if createStringListFromXMLNode(newnode, childnodeSL) then
+      if mynode.NodeName = Name then
+        newnode := mynode
+      else
       begin
-        Result := True;
-        newnode.Free;
+        newnode := mynode.FindNode(Name);
+        if newnode = nil then
+          newnode := findnodeInList(mynode.ChildNodes, Name);
       end;
-    mynode.Free;
-    Result := True;
+      if newnode <> nil then
+        if createStringListFromXMLNode(newnode, childnodeSL) then
+        begin
+          Result := True;
+          newnode.Free;
+        end;
+      if Assigned(mynode) then
+        mynode.Free;
+      Result := True;
+    end;
   except
     on e: Exception do
     begin
