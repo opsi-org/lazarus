@@ -67,7 +67,7 @@ compile opsi-script linux:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
       when: always
   script: 
-    - $LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
