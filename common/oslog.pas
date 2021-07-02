@@ -32,11 +32,14 @@ uses
   LCLIntf,
   Forms,
   Dialogs,
-  osGUIControl,
+  //osGUIControl,
 {$ENDIF GUI}
 {$IFDEF OPSISCRIPT}
   osconf,
   //osdefinedfunctions,
+  {$IFDEF GUI}
+    osGUIControl,
+  {$ENDIF GUI}
 {$ENDIF OPSISCRIPT}
 {$IFDEF WINDOWS}
   registry,

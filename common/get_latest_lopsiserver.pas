@@ -43,39 +43,39 @@ end;
 function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
   distroName: string): boolean;
 var
-  shellCommand: string;
+  shellCommand, Output: string;
 begin
   LogDatei.log('Try downloading latest l-opsi-server:', LLInfo);
   Result := True;
 
   // installing required packages:
   shellCommand := GetPackageManagementShellCommand(distroName);
-  LOpsiServerCommand.Run(shellCommand + 'update');
-  LOpsiServerCommand.Run(shellCommand + 'install wget');
-  LOpsiServerCommand.Run(shellCommand + 'install cpio');
-  LOpsiServerCommand.Run(shellCommand + 'install gzip');
+  LOpsiServerCommand.Run(shellCommand + 'update', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install wget', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install cpio', Output);
+  LOpsiServerCommand.Run(shellCommand + 'install gzip', Output);
 
   // download
   LOpsiServerCommand.Run('wget -A l-opsi-server_*.opsi -r -l 1 https://' +
-    downloadDir + ' -P ../');
+    downloadDir + ' -P ../', Output);
 
   // create l-opsi-server directory for the downloaded version
   if DirectoryExists('../l-opsi-server_downloaded') then
-    LOpsiServerCommand.Run('rm -rf ../l-opsi-server_downloaded');
+    LOpsiServerCommand.Run('rm -rf ../l-opsi-server_downloaded', Output);
   LOpsiServerCommand.Run(
-    'mkdir ../l-opsi-server_downloaded ../l-opsi-server_downloaded/CLIENT_DATA ../l-opsi-server_downloaded/OPSI');
+    'mkdir ../l-opsi-server_downloaded ../l-opsi-server_downloaded/CLIENT_DATA ../l-opsi-server_downloaded/OPSI', Output);
 
   // go into downloaded directory and move l-opsi-server_*.opsi to the current directory
-  LOpsiServerCommand.Run('mv ../' + downloadDir + 'l-opsi-server_*.opsi ./');
+  LOpsiServerCommand.Run('mv ../' + downloadDir + 'l-opsi-server_*.opsi ./', Output);
   // then the downloaded directory is redundant
-  LOpsiServerCommand.Run('rm -rf ../download.uib.de');
+  LOpsiServerCommand.Run('rm -rf ../download.uib.de', Output);
 
   // extract CLIENT_DATA.cpio and OPSI.cpio from l-opsi-server_*.opsi and put them in the right directories:
   if not extractFile('l-opsi-server_*.opsi') then
     Result := False;
-  LOpsiServerCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz');
-  LOpsiServerCommand.Run('mv CLIENT_DATA.cpio ../l-opsi-server_downloaded/CLIENT_DATA/');
-  LOpsiServerCommand.Run('mv OPSI.cpio ../l-opsi-server_downloaded/OPSI/');
+  LOpsiServerCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
+  LOpsiServerCommand.Run('mv CLIENT_DATA.cpio ../l-opsi-server_downloaded/CLIENT_DATA/', Output);
+  LOpsiServerCommand.Run('mv OPSI.cpio ../l-opsi-server_downloaded/OPSI/', Output);
 
   // go into the respective directories and extract the files from CLIENT_DATA.cpio and OPSI.cpio
   // cpio can only extract into the current directory
@@ -88,9 +88,9 @@ begin
 
   // tidy up
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
-  LOpsiServerCommand.Run('rm l-opsi-server_*.opsi');
+  LOpsiServerCommand.Run('rm l-opsi-server_*.opsi', Output);
   LOpsiServerCommand.Run(
-    'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio');
+    'rm ../l-opsi-server_downloaded/CLIENT_DATA/CLIENT_DATA.cpio ../l-opsi-server_downloaded/OPSI/OPSI.cpio', Output);
 end;
 
 end.

@@ -11,12 +11,25 @@ msgstr ""
 "Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: osdanalyze.swarnmultiplemsi
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
+#: osdanalyzewin.swarnmultiplemsi
+msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
 msgstr ""
 
 #: osdbasedata.rsbuildradioindex
 msgid "selects the Build mode Radiobutton."
+msgstr ""
+
+#: osdbasedata.rscnfdtitle
+msgid ""
+"Edit your configuration here.\n"
+"Click on a line to get help \n"
+"in the yellow field at the bottom.\n"
 msgstr ""
 
 #: osdbasedata.rsconfig_filled
@@ -99,18 +112,44 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr ""
 
-#: osdcheckentriesdlg.rscheckentriesmsg
-msgctxt "osdcheckentriesdlg.rscheckentriesmsg"
-msgid ""
-"The following data are automatically detected.\n"
-"You have to check every data field if this data are correct or plausible.\n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
+#: osdcreate.rsconfirmabortcaption
+msgid "Abort"
 msgstr ""
-"The following data are automatically detected. \n"
-"You have to check every data field if this data are correct or plausible. \n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
+
+#: osdcreate.rsconfirmaborthint
+msgid "Leave existing directory unchanged and abort"
+msgstr ""
+
+#: osdcreate.rsconfirmbackupcaption
+msgid "Backup"
+msgstr ""
+
+#: osdcreate.rsconfirmbackuphint
+msgid "All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file."
+msgstr ""
+
+#: osdcreate.rsconfirmbackuporremovaltitle
+msgid "Confirm Delete or Backup of old files."
+msgstr ""
+
+#: osdcreate.rsconfirmdeletecaption
+msgid "Delete"
+msgstr ""
+
+#: osdcreate.rsconfirmdeletehint
+msgid "Delete the complete directory before creating the new one."
+msgstr ""
+
+#: osdcreate.rsconfirmexpandbutton
+msgid "More Information ..."
+msgstr ""
+
+#: osdcreate.rsconfirmexpandedtext
+msgid ""
+"Abort: Leave existing directory unchanged and abort\n"
+"Delete: Delete the complete directory before creating the new one.\n"
+"Backup: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file.\n"
+msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
@@ -121,7 +160,13 @@ msgid "Directory "
 msgstr ""
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
-msgid " still exits. Overwrite / Delete ?"
+msgid " still exits. Abort or Backup or Delete ?"
+msgstr ""
+
+#: osddlgnewdependency.rsdepdlgproductid
+msgid ""
+"productId\n"
+"of the dependent product\n"
 msgstr ""
 
 #: osddlgnewproperty.rscontainswhitespacewarning
@@ -133,8 +178,63 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 
-#: osdform.rscopycompletedir
-msgid "Should we copy not only the setup file. but the complete directory ?"
+#: osddlgnewproperty.rspropdefaultval
+msgid ""
+"Default Values\n"
+"Only the selected\n"
+"Values are the defaults\n"
+msgstr ""
+
+#: osdform.rscheckentriesmsg
+#, fuzzy
+msgctxt "osdform.rscheckentriesmsg"
+msgid ""
+"The following data are automatically detected.\n"
+"You have to check every data field if this data are correct or plausible.\n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+msgstr ""
+"The following data are automatically detected. \n"
+"You have to check every data field if this data are correct or plausible. \n"
+"For some data you may have to install the program once \n"
+"and than get the needed data from the completed installation.\n"
+
+#: osdform.rscheckentriesrememberme
+msgctxt "osdform.rscheckentriesrememberme"
+msgid "Do not show this Message again"
+msgstr ""
+
+#: osdform.rscheckentriestitle
+msgctxt "osdform.rscheckentriestitle"
+msgid "Please keep in mind:"
+msgstr ""
+
+#: osdform.rscopycompletedircap
+msgctxt "osdform.rscopycompletedircap"
+msgid "Complete directory"
+msgstr ""
+
+#: osdform.rscopyfileonlycap
+msgctxt "osdform.rscopyfileonlycap"
+msgid "Only selected file"
+msgstr ""
+
+#: osdform.rscopyfileonlyorcompletedirtext
+msgctxt "osdform.rscopyfileonlyorcompletedirtext"
+msgid "Should we copy only the installer file or the complete directory ?"
+msgstr ""
+
+#: osdform.rscopyfileonlyorcompletedirtitle
+msgid " Only File or Directory"
+msgstr ""
+
+#: osdform.rsdebanalyze
+msgid "Analyze of DEB files"
+msgstr ""
+
+#: osdform.rsdebanalyzenotlinux
+msgctxt "osdform.rsdebanalyzenotlinux"
+msgid "Detailed anlyze of deb files can only be done at linux"
 msgstr ""
 
 #: osdform.rsdefaulticon
@@ -148,6 +248,23 @@ msgstr ""
 
 #: osdform.rsdependencyediterrornoselect
 msgid "No Dependency selected."
+msgstr ""
+
+#: osdform.rsmac3stepselectiontext
+msgid ""
+"To select a MacOS installer we have a two Steps\n"
+"Firststep is Dialog to select a Directory where to find the installer \n"
+"or the \"installer.app\" Directory\n"
+"Second step (if needed) is a Dialog to select a installer file\n"
+msgstr ""
+
+#: osdform.rsmac3stepselectiontitle
+msgid "Attention: Two Step Selection Dialog"
+msgstr ""
+
+#: osdform.rsmacselectionrememberme
+msgctxt "osdform.rsmacselectionrememberme"
+msgid "Do not show this Message again"
 msgstr ""
 
 #: osdform.rsnotimplemented
@@ -174,6 +291,39 @@ msgstr ""
 
 #: osdform.rspropediterrornoselect
 msgid "No Property selected."
+msgstr ""
+
+#: osdform.rsrpmanalyze
+msgid "Analyze of RPM files"
+msgstr ""
+
+#: osdform.rsrpmanalyzenotlinux
+msgctxt "osdform.rsrpmanalyzenotlinux"
+msgid "Detailed anlyze of deb files can only be done at linux"
+msgstr ""
+
+#: osdform.rsselectappordir
+msgid "First select MacOS .app or Directory where to find MacOS Installer files"
+msgstr ""
+
+#: osdform.rsselectmacfile
+msgid "Now select MacOS installer file."
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsgfirstsetup
+msgid "Do you want to select a Windows Setup file ?"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsghead
+msgid "opsi-setup-detector: Multi Platform three File (Win/Lin/Mac) Product"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsgsecondsetup
+msgid "Do you want to select a Linux installer file ?"
+msgstr ""
+
+#: osdform.rsthreeanalyzeandcreatemsgthirdsetup
+msgid "Do you want to select a MacOS installer file ?"
 msgstr ""
 
 #: osdform.rstwonalyzeandcreatemsgfirstsetup
@@ -261,37 +411,11 @@ msgstr ""
 
 #: osdform.swarninstalldirunknown
 msgid ""
-"Error: Field Install Directory is empty!\n"
+"Error: Field Install Directory is empty or not valid!\n"
 "For this Installer the Installdir could not be detected.\n"
 "The Installdir is needed for correct Uninstall process.\n"
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr ""
-
-#: tfcheckenties.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tfcheckenties.checkboxdonotshowcheckentries.caption
-msgid "Do not show this message again"
-msgstr ""
-
-#: tfcheckenties.label1.caption
-msgid "Please keep in mind:"
-msgstr ""
-
-#: tfcheckenties.label2.caption
-#, fuzzy
-msgctxt "tfcheckenties.label2.caption"
-msgid ""
-"The following data are automatically detected.\n"
-"You have to check every data field if this data are correct or plausible.\n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
-msgstr ""
-"The following data are automatically detected. \n"
-"You have to check every data field if this data are correct or plausible. \n"
-"For some data you may have to install the program once \n"
-"and than get the needed data from the completed installation.\n"
 
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
@@ -318,7 +442,9 @@ msgid ""
 msgstr ""
 
 #: tfnewdepdlg.label2.caption
-msgid "productid"
+msgid ""
+"productid\n"
+"of the dependent product\n"
 msgstr ""
 
 #: tfnewdepdlg.label3.caption
@@ -363,7 +489,7 @@ msgstr ""
 
 #: tfnewpropdlg.editpropname.text
 msgctxt "tfnewpropdlg.editpropname.text"
-msgid "PropertyName"
+msgid "propertyname"
 msgstr ""
 
 #: tfnewpropdlg.editpropnewval.text
@@ -378,10 +504,7 @@ msgstr ""
 
 #: tfnewpropdlg.label1.caption
 msgctxt "tfnewpropdlg.label1.caption"
-msgid ""
-"Please edit the dependency.\n"
-"Please note:\n"
-"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgid "Please edit the Property."
 msgstr ""
 
 #: tfnewpropdlg.label2.caption
@@ -412,6 +535,18 @@ msgstr ""
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
+msgstr ""
+
+#: tfosdconfigdlg.bitbtn1.caption
+msgid "Finished"
+msgstr ""
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.panel1.caption
+msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption
@@ -450,6 +585,11 @@ msgctxt "tresultform1.bitbtnopenmst2.caption"
 msgid "Open MST File"
 msgstr ""
 
+#: tresultform1.bitbtnopenmst3.caption
+msgctxt "tresultform1.bitbtnopenmst3.caption"
+msgid "Open MST File"
+msgstr ""
+
 #: tresultform1.bitbtnrecheckworkbench.caption
 msgid "Check workbench path"
 msgstr ""
@@ -479,7 +619,7 @@ msgid "Analyze a single existing Setupfile "
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.caption
-msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Package"
+msgid "Analyze 2 Files (32 / 64 Bit) and create O. Package"
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.hint
@@ -489,11 +629,49 @@ msgid ""
 "and create an opsi Product\n"
 msgstr ""
 
-#: tresultform1.btcreateemptytemplate.caption
+#: tresultform1.btcreateemptytemplatelin.caption
+msgctxt "tresultform1.btcreateemptytemplatelin.caption"
 msgid "Create an opsi Package Template"
 msgstr ""
 
-#: tresultform1.btcreateemptytemplate.hint
+#: tresultform1.btcreateemptytemplatelin.hint
+msgctxt "tresultform1.btcreateemptytemplatelin.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemac.caption
+msgctxt "tresultform1.btcreateemptytemplatemac.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemac.hint
+msgctxt "tresultform1.btcreateemptytemplatemac.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemulti.caption
+msgctxt "tresultform1.btcreateemptytemplatemulti.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatemulti.hint
+msgctxt "tresultform1.btcreateemptytemplatemulti.hint"
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatewin.caption
+msgctxt "tresultform1.btcreateemptytemplatewin.caption"
+msgid "Create an opsi Package Template"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplatewin.hint
+msgctxt "tresultform1.btcreateemptytemplatewin.hint"
 msgid ""
 "Create a empty \n"
 "opsi Product Directory Structure\n"
@@ -561,13 +739,59 @@ msgctxt "tresultform1.btsetup2nextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
-#: tresultform1.btsingleanalyzeandcreate.caption
-msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
+#: tresultform1.btsetup3nextstep.caption
+msgctxt "tresultform1.btsetup3nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup3nextstep.hint
+msgctxt "tresultform1.btsetup3nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatelin.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatelin.caption"
+msgid "Analyze File and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatelin.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatelin.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemac.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatemac.caption"
+msgid "Analyze File and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemac.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatemac.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemulti.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatemulti.caption"
+msgid "Analyze File and Create Opsi Package"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatemulti.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatemulti.hint"
+msgid ""
+"Analyze some existing Setupfile \n"
+"and create an multiplatform opsi Product\n"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreatewin.caption
+msgctxt "tresultform1.btsingleanalyzeandcreatewin.caption"
 msgid "Analyze single File and Create Opsi Package"
 msgstr ""
 
-#: tresultform1.btsingleanalyzeandcreate.hint
-msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
+#: tresultform1.btsingleanalyzeandcreatewin.hint
+msgctxt "tresultform1.btsingleanalyzeandcreatewin.hint"
 msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product\n"
@@ -601,6 +825,22 @@ msgstr ""
 
 #: tresultform1.label1.caption
 msgid "No Icons"
+msgstr ""
+
+#: tresultform1.label2.caption
+msgid "Windows:"
+msgstr ""
+
+#: tresultform1.label3.caption
+msgid "Multiplatform:"
+msgstr ""
+
+#: tresultform1.label4.caption
+msgid "Linux:"
+msgstr ""
+
+#: tresultform1.label5.caption
+msgid "MacOS:"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -719,7 +959,16 @@ msgstr ""
 
 #: tresultform1.label75.caption
 msgctxt "tresultform1.label75.caption"
-msgid "Dependencies"
+msgid ""
+"Dependencies\n"
+"\n"
+"(for installation)\n"
+msgstr ""
+
+#: tresultform1.label75.hint
+msgid ""
+"Dependecies for Installation only.\n"
+"There are no dependecies for unistall.\n"
 msgstr ""
 
 #: tresultform1.label76.caption
@@ -767,6 +1016,66 @@ msgstr ""
 
 #: tresultform1.label85.caption
 msgid "Properties"
+msgstr ""
+
+#: tresultform1.label86.caption
+msgctxt "tresultform1.label86.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label87.caption
+msgctxt "tresultform1.label87.caption"
+msgid "Info: "
+msgstr ""
+
+#: tresultform1.label88.caption
+msgctxt "tresultform1.label88.caption"
+msgid "MST File "
+msgstr ""
+
+#: tresultform1.label89.caption
+msgctxt "tresultform1.label89.caption"
+msgid "MsiId"
+msgstr ""
+
+#: tresultform1.label90.caption
+msgctxt "tresultform1.label90.caption"
+msgid "Software Version"
+msgstr ""
+
+#: tresultform1.label91.caption
+msgctxt "tresultform1.label91.caption"
+msgid "Required Space MB"
+msgstr ""
+
+#: tresultform1.label92.caption
+msgctxt "tresultform1.label92.caption"
+msgid "InstallDir"
+msgstr ""
+
+#: tresultform1.label93.caption
+msgctxt "tresultform1.label93.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label94.caption
+msgctxt "tresultform1.label94.caption"
+msgid "Setup File"
+msgstr ""
+
+#: tresultform1.label95.caption
+msgctxt "tresultform1.label95.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label96.caption
+msgctxt "tresultform1.label96.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label97.caption
+msgctxt "tresultform1.label97.caption"
+msgid "Uninstall Program"
 msgstr ""
 
 #: tresultform1.labelicondir.caption
@@ -843,6 +1152,15 @@ msgstr ""
 msgid "fr"
 msgstr ""
 
+#: tresultform1.menuitemopenproj.caption
+msgctxt "tresultform1.menuitemopenproj.caption"
+msgid "Open Project File"
+msgstr ""
+
+#: tresultform1.menuitemsaveproj.caption
+msgid "Save Project File"
+msgstr ""
+
 #: tresultform1.menuitemstart.caption
 msgctxt "tresultform1.menuitemstart.caption"
 msgid "Start"
@@ -903,61 +1221,6 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#: tresultform1.stringgriddep.columns[0].title.caption
-msgctxt "tresultform1.stringgriddep.columns[0].title.caption"
-msgid "Required ProductId"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[1].title.caption
-msgctxt "tresultform1.stringgriddep.columns[1].title.caption"
-msgid "Required State"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[2].title.caption
-msgctxt "tresultform1.stringgriddep.columns[2].title.caption"
-msgid "Required Action"
-msgstr ""
-
-#: tresultform1.stringgriddep.columns[3].title.caption
-msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
-msgid "Required Mode"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[0].title.caption
-msgctxt "tresultform1.stringgridprop.columns[0].title.caption"
-msgid "PropertyId"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[1].title.caption
-msgctxt "tresultform1.stringgridprop.columns[1].title.caption"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[2].title.caption
-msgctxt "tresultform1.stringgridprop.columns[2].title.caption"
-msgid "Type"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[3].title.caption
-msgctxt "tresultform1.stringgridprop.columns[3].title.caption"
-msgid "Multivalue"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[4].title.caption
-msgctxt "tresultform1.stringgridprop.columns[4].title.caption"
-msgid "Editable"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[5].title.caption
-msgctxt "tresultform1.stringgridprop.columns[5].title.caption"
-msgid "Possible Values"
-msgstr ""
-
-#: tresultform1.stringgridprop.columns[6].title.caption
-msgctxt "tresultform1.stringgridprop.columns[6].title.caption"
-msgid "Default Values"
-msgstr ""
-
 #: tresultform1.tabsheetanalyze.caption
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
@@ -987,6 +1250,10 @@ msgstr ""
 msgid "2. Setup"
 msgstr ""
 
+#: tresultform1.tabsheetsetup3.caption
+msgid "3. Setup"
+msgstr ""
+
 #: tresultform1.tabsheetstart.caption
 msgctxt "tresultform1.tabsheetstart.caption"
 msgid "Start"
@@ -1004,6 +1271,11 @@ msgstr ""
 
 #: tresultform1.ticheckboxs2mst.caption
 msgctxt "tresultform1.ticheckboxs2mst.caption"
+msgid "MST allowed"
+msgstr ""
+
+#: tresultform1.ticheckboxs3mst.caption
+msgctxt "tresultform1.ticheckboxs3mst.caption"
 msgid "MST allowed"
 msgstr ""
 

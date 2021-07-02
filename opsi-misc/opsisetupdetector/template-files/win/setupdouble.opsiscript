@@ -1,8 +1,9 @@
 ; ----------------------------------------------------------------
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
 ; ----------------------------------------------------------------
+encoding=utf8
 
 [Actions]
 requiredWinstVersion >= "4.12.0.28"
@@ -18,16 +19,15 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
 DefVar $arch$
 DefVar $mode$
+
 #@stringVars*#
 
 Set $arch$ = GetSystemType
 set $mode$ = GetProductProperty("install_architecture","system specific")
-Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -88,25 +88,25 @@ endif
 
 if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
 
-	#@preInstallLines1*#
+	#@preInstallLines*#
 	comment "Start setup program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
 	Winbatch_install_1  #@installWaitForProc1*#
 	;----------------------------------------------
 	sub_check_exitcode_1
-	#@postInstallLines1*#
+	#@postInstallLines*#
 endif
 
 if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
-	#@preInstallLines2*#
+	#@preInstallLines*#
 	comment "Start setup program"
 	ChangeDirectory "%SCRIPTPATH%\files2"
 	;----------------------------------------------
 	Winbatch_install_2  #@installWaitForProc2*#
 	;----------------------------------------------
 	sub_check_exitcode_2
-	#@postInstallLines2*#
+	#@postInstallLines*#
 endif
 
 #@SetupHandleDesktopIcon*#
@@ -135,7 +135,9 @@ else
 	Comment $ErrorString$
 endif
 
-#@SetupSectionLines*#
+#@SetupDesktopiconSectionLines*#
+
+#@SetupSectionLines1*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

@@ -1,6 +1,8 @@
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib gmbh
-; and published under the Terms of the General Public License.
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
 
 Message "Check for existing installation of " + $ProductId$ + " ..."
 
@@ -8,18 +10,18 @@ Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
 Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
 
 if FileExists($UninstallProgram$)
-	#@preUninstallLines1*#
+	#@preUninstallLines*#
 	comment "Uninstall program found, starting uninstall"
 	Winbatch_uninstall
 	Sub_check_exitcode_del
-	#@postUninstallLines1*#
+	#@postUninstallLines*#
 endif
 if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
-	#@preUninstallLines1*#
+	#@preUninstallLines*#
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
 	Sub_check_exitcode_del
-	#@postUninstallLines1*#
+	#@postUninstallLines*#
 endif
 
 #@DelsubHandleDesktopIcon*#
@@ -100,5 +102,7 @@ Switch $ExitCode$
 	EndCase
 EndSwitch
 
-#@DelsubSectionLines*#
+#@DelsubDesktopiconSectionLines*#
+
+#@DelsubSectionLines1*#
 ;-----------------------------------------------------

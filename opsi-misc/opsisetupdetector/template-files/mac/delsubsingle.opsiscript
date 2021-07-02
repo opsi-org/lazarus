@@ -1,0 +1,29 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+Message "Check for existing installation of " + $ProductId$ + " ..."
+
+comment "Start the Uninstall check:"
+set $oldProgFound$ = "false"
+#@uninstallCheckLines1*#
+
+if $oldProgFound$ = "true"
+	comment "Is the Installdir in the Applications directory ?"
+	if "1" = strPos(lower($InstallDir$),lower("/Applications/"))
+		comment "Do not delete the whole /Applications dir ..."
+		if not(lower($InstallDir$) = lower('/Applications/'))
+			Message "Uninstalling " + $ProductId$ + " ..."
+			Files_uninstall
+		endif
+	endif
+endif
+
+
+[Files_uninstall]
+del -sf "$InstallDir$/"
+
+#@DelsubSectionLines1*#
+;-----------------------------------------------------

@@ -50,7 +50,7 @@ type
     // query:
     procedure NoGuiQuery;
     procedure QuerySetupType;
-    procedure QueryOpsiVersion;
+    //procedure QueryOpsiVersion;
     procedure QueryRepo;
     procedure QueryProxy;
     procedure QueryRepoNoCache;
@@ -265,12 +265,13 @@ type
 
     // write in l-opsi-server.conf file(for tests):
     if not FileExists('l-opsi-server.conf') then
-      QuickInstallCommand.Run('touch l-opsi-server.conf');
+      QuickInstallCommand.Run('touch l-opsi-server.conf', Output);
     FileText.SaveToFile('l-opsi-server.conf');
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
-      QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf');
-    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf');
+      QuickInstallCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData +
+      'properties.conf', Output);
     FileText.SaveToFile(DirClientData + 'properties.conf');
 
     FileText.Free;
@@ -283,24 +284,18 @@ type
     LogDatei.log('Entered InstallOpsi', 0);
     writeln(rsInstall + opsiVersion + ':');
 
-    // for me as warning
-    if (opsiVersion = 'Opsi 4.2') and (repoKind = 'stable') then
-    begin
-      writeln('Opsi 4.2 only works on the branches "experimental" and "testing" so far.');
-      Exit;
-    end;
-
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
     if not FileExists(DirClientData + 'result.conf') then
-      QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf');
-    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf');
+      QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf', Output);
+    QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
     FileText.SaveToFile(DirClientData + 'result.conf');
 
     writeln(rsCreateRepo);
     // first remove opsi.list to have a cleared opsi repository list
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     // create repository (no password, user is root):
     MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
@@ -321,19 +316,20 @@ type
     // install opsi:
     shellCommand := GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
-    QuickInstallCommand.Run(shellCommand + 'update');
+    QuickInstallCommand.Run(shellCommand + 'update', Output);
     writeln(rsInstall + 'opsi-script...');
-    QuickInstallCommand.Run(shellCommand + 'install opsi-script');
+    QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
     // remove the QuickInstall repo entry because it was only for installing opsi-script
-    QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list');
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window,
     // "opsi-script-nogui -batch" for without?
     // new: opsi-script -silent for nogui
     QuickInstallCommand.Run('opsi-script -silent -batch ' + DirClientData +
-      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log');
+      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log', Output);
 
     // get result from result file and print it
     FileText.LoadFromFile(DirClientData + 'result.conf');
@@ -418,7 +414,8 @@ type
       writeln('');
       if setupType = 'c' then
         // following queries only for custom setup
-        QueryOpsiVersion
+        //QueryOpsiVersion
+        QueryRepo
       else
       if distroName = 'Univention' then
         QueryUCS
@@ -427,7 +424,7 @@ type
     end;
   end;
 
-  procedure TQuickInstall.QueryOpsiVersion;
+  {procedure TQuickInstall.QueryOpsiVersion;
   begin
     // opsi version:
     writeln(rsOpsiVersion, rsOpsiVersionOp, '*');
@@ -450,7 +447,7 @@ type
         opsiVersion := 'Opsi 4.1';
       QueryRepo;
     end;
-  end;
+  end;}
 
   procedure TQuickInstall.QueryRepo;
   begin
@@ -469,7 +466,8 @@ type
       readln(input);
     end;
     if input = '-b' then
-      QueryOpsiVersion
+      //QueryOpsiVersion
+      QuerySetupType
     else
     begin
       repo := input;
@@ -591,7 +589,7 @@ type
     // repo kind:
     writeln(rsRepoKind, rsRepoKindOp, '*');
     readln(input);
-    while not ((input = 'e') or (input = 's') or (input = 't') or
+    while not ((input = 'e') or (input = 't') or
         (input = '-b') or (input = '')) do
     begin
       if input = '-h' then
@@ -1134,100 +1132,6 @@ type
     writeln('');
     writeln(rsContinue);
     // Jumping back to a query by the number in the overview:
-    {while validInput = False do
-    begin
-      // first test if input is valid, i.e. input = '' or input in
-      validInput := True;
-      readln(input);
-      try
-        Counter := input.ToInteger - 1;
-        isInputInt := True;
-      except
-        writeln('"', input, '"', rsNotValid);
-      end;
-      if input = '' then
-      begin
-        WritePropsToFile;
-        InstallOpsi;
-      end
-      else
-      if isInputInt = True then
-      begin
-        if Counter in [0..queries.Count - 1] then
-        begin
-          if queries[Counter] = '1' then
-            QueryOpsiVersion
-          else
-          if queries[Counter] = '2' then
-            QueryRepo
-          else
-          if queries[Counter] = '3' then
-            QueryProxy
-          else
-          if queries[Counter] = '4' then
-            QueryRepoNoCache
-          else
-          if queries[Counter] = '5' then
-            QueryBackend
-          else
-          if queries[Counter] = '6' then
-            QueryModules
-          else
-          if queries[Counter] = '7' then
-            QueryRepoKind
-          else
-          if queries[Counter] = '8' then
-            QueryUCS
-          else
-          if queries[Counter] = '9' then
-            QueryReboot
-          else
-          if queries[Counter] = '10' then
-            QueryDhcp
-          else
-          if queries[Counter] = '11' then
-            QueryLink
-          else
-          if queries[Counter] = '12' then
-            QueryNetmask
-          else
-          if queries[Counter] = '13' then
-            QueryNetworkAddress
-          else
-          if queries[Counter] = '14' then
-            QueryDomain
-          else
-          if queries[Counter] = '15' then
-            QueryNameserver
-          else
-          if queries[Counter] = '16' then
-            QueryGateway
-          else
-          if queries[Counter] = '17' then
-            QueryAdminName
-          else
-          if queries[Counter] = '18' then
-            QueryAdminPass
-          else
-          if queries[Counter] = '19' then
-            QueryIPName
-          else
-          if queries[Counter] = '20' then
-            QueryIPNumber;
-        end
-        else
-          // If input is integer but not a valid one:
-        begin
-          writeln('"', input, '"', rsNotValid);
-          validInput := False;
-        end;
-      end
-      else
-        // If input is no integer and not '':
-      begin
-        writeln('"', input, '"', rsNotValid);
-        validInput := False;
-      end;}
     readln(input);
     // only elements of 'queries' (jumping back) or '' (start installation) are valid inputs
     while not ((queries.IndexOf(input) <> -1) or (input = '')) do
@@ -1244,9 +1148,9 @@ type
     else
       // jump back to the respective question
     begin
-      if input = '1' then
+      {if input = '1' then
         QueryOpsiVersion
-      else
+      else}
       if input = '2' then
         QueryRepo
       else
@@ -1425,6 +1329,7 @@ begin
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
     //writeln(distroName, ' ', distroRelease);
+    LogDatei.log(distroName + ' ' + distroRelease, LLInfo);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later,

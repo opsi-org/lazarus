@@ -1,0 +1,57 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file setup.opsiscript
+
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "#@InstallDir2*#"
+Set $MinimumSpace$	 = "#@MinimumSpace2*#"
+; ----------------------------------------------------------------
+
+; switch to "true" if this product supports Linux
+if not(stringToBool("#@install2*#"))
+	logError "No installation for Linux in this opsi product"
+	isFatalError "wrong OS"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+if $LicenseRequired$ = "true"
+	comment "Licensing required, reserve license and get license key"
+	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
+endif
+
+#@preInstallLines*#
+comment "Start setup "
+ChangeDirectory "%SCRIPTPATH%/files2"
+;----------------------------------------------
+cleanupPackageSystem()
+#@installCommandLine2*#
+cleanupPackageSystem()
+;----------------------------------------------
+Sub_check_exitcode
+#@postInstallLines*#
+
+[sub_check_exitcode]
+if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+#@SetupSectionLines2*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

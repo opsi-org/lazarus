@@ -453,6 +453,7 @@ Switch $distroName$
 		comment "do not use dhcpd backend on ucs"
 		set $append_dhcpd$ = ""
 		Message "Adding repository"
+		set $distRelease$ = takeString(0, splitString($distRelease$, "-"))
 		set $distReleaseTemp$ = $distRelease$
 
 		if comparedotseparatedNumbers($distRelease$, ">=", "4")
@@ -629,7 +630,7 @@ Switch $distrotype$
 		Message "Adding repository"
 		set $mysqlservicename$ = "mysqld"
 		set $dhcpdservicename$ = "dhcpd"
-		set $mysqlpkg$ = "community-mysql-server"
+		set $mysqlpkg$ = "mariadb"
 		set $dhcpdconf_file_path$ = '/etc/dhcp/dhcpd.conf'
 
 		if contains($distroName$,"CentOS")
@@ -669,6 +670,14 @@ Switch $distrotype$
 			Message "addrepo failed"
 			isFatalError "addrepo failed"
 		endif
+
+		PatchTextFile_add_centos_mariadb_repo "/etc/yum.repos.d/mariadb.repo"
+		if not("0" = getLastExitCode)
+			LogError "addrepo failed"
+			Message "addrepo failed"
+			isFatalError "addrepo failed"
+		endif
+		shellcall("rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB")
 
 		Message "Installing opsi-server"
 		ShellInAnIcon_install_opsi_redhat
@@ -1658,3 +1667,11 @@ FindLine_StartingWith "deb $opsi_online_repository$"
 DeleteTheLine
 GoToBottom
 InsertLine "deb $opsi_online_repository$/$distroName4repo$_$distRelease4repo$ ./"
+
+[PatchTextFile_add_centos_mariadb_repo]
+AppendLine "[mariadb-main]"
+AppendLine "name=MariaDB Server"
+AppendLine "baseurl=https://downloads.mariadb.com/MariaDB/mariadb-10.5/yum/centos/7/x86_64/"
+AppendLine "gpgkey = file:///etc/pki/rpm-gpg/MariaDB-Server-GPG-KEY"
+AppendLine "enabled=1"
+AppendLine "gpgcheck=1"

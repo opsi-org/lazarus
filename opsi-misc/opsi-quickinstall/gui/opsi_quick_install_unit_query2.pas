@@ -92,9 +92,12 @@ end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
-  PanelCopyModules.AutoSize:=False;
+  PanelCopyModules.AutoSize := False;
   SetBasics(self);
-  PanelCopyModules.AutoSize:=True;
+  PanelCopyModules.AutoSize := True;
+  // so far opsi 4.2 only has the branches experimental and testing
+  if RadioBtnStable.Visible = False then
+    RadioBtnTesting.BorderSpacing.Left := 0;
   // text by resourcestrings
   Caption := 'Opsi Quick Install - ' + rsCapQuery2;
   LabelBackend.Caption := rsBackend;
