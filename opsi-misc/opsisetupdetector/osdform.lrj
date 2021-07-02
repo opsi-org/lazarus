@@ -109,7 +109,7 @@
 {"hash":81177737,"name":"tresultform1.bitbtneditprop.caption","sourcebytes":[69,100,105,116,32,80,114,111,112,101,114,116,121],"value":"Edit Property"},
 {"hash":253600750,"name":"tresultform1.tabsheeticons.caption","sourcebytes":[80,114,111,100,117,99,116,32,73,99,111,110],"value":"Product Icon"},
 {"hash":92863556,"name":"tresultform1.paneliconpreview.caption","sourcebytes":[110,111,32,105,99,111,110,32,115,101,108,101,99,116,101,100],"value":"no icon selected"},
-{"hash":67953945,"name":"tresultform1.labeliconpreview.caption","sourcebytes":[83,101,108,101,99,116,101,100,32,73,99,111,110,32,40,80,114,101,118,105,101,119,32,49,55,48,120,49,55,48,41],"value":"Selected Icon (Preview 170x170)"},
+{"hash":118285849,"name":"tresultform1.labeliconpreview.caption","sourcebytes":[83,101,108,101,99,116,101,100,32,73,99,111,110,32,40,80,114,101,118,105,101,119,32,49,54,48,120,49,54,48,41],"value":"Selected Icon (Preview 160x160)"},
 {"hash":194334512,"name":"tresultform1.btniconsnextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
 {"hash":258342400,"name":"tresultform1.btniconsnextstep.caption","sourcebytes":[78,101,120,116,32,83,116,101,112],"value":"Next Step"},
 {"hash":196073802,"name":"tresultform1.labelicondir.caption","sourcebytes":[68,105,114,101,99,116,111,114,121,58],"value":"Directory:"},

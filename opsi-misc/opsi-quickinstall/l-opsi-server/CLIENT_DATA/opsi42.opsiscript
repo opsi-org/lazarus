@@ -737,8 +737,9 @@ if contains($distroName$, "openSUSE")
 	if "" = TakeFirstStringContaining(shellCall("zypper lr -u") , $opsi_online_repository$+"/"+$distroName4repo$+"_"+$distRelease4repo$)
 		comment "It seems that the suse repo is not installed"
 		ShellInAnIcon_add_opsi_repository_suse
-		PatchTextFile_grafana_repo_rpm "/etc/zypp/repos.d/grafana.repo"
 	endif
+	shellcall('rm /etc/zypp/repos.d/grafana.repo")
+	PatchTextFile_grafana_repo_rpm "/etc/zypp/repos.d/grafana.repo"
 endif
 
 ; Handling SLES variants

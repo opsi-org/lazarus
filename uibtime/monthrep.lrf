@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CONFIG>
   <LazReport>
-    <Version Value="29"/>
+    <Version Value="31"/>
     <Title Value=""/>
     <Subject Value=""/>
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2016-12-20 18:52:29"/>
+    <ReportLastChange Value="2021-03-23 13:20:16"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -17,7 +17,7 @@
     <Pages>
       <PrintToDefault Value="False"/>
       <DoublePass Value="False"/>
-      <SelectedPrinter Value="Brother MFC-8380DN Printer"/>
+      <SelectedPrinter Value="PDF"/>
       <PageCount Value="1"/>
       <Page1>
         <Name Value="Page1"/>
@@ -49,7 +49,7 @@
             <Left Value="0"/>
             <Top Value="174"/>
             <Width Value="752"/>
-            <Height Value="104"/>
+            <Height Value="180"/>
           </Size>
           <Flags Value="48"/>
           <Data>
@@ -203,7 +203,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Monatsreport für &#xD;&#xA;"/>
+            <Memo Value="Monatsreport für &#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -259,7 +259,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="vom start bis ende&#xD;&#xA;"/>
+            <Memo Value="vom start bis ende&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -315,7 +315,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.daystr]&#xD;&#xA;"/>
+            <Memo Value="[query1.daystr]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -371,7 +371,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.tag]&#xD;&#xA;"/>
+            <Memo Value="[query1.tag]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -410,12 +410,12 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="406"/>
+            <Left Value="390"/>
             <Top Value="144"/>
-            <Width Value="132"/>
+            <Width Value="148"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="11"/>
+          <Flags Value="3"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -425,9 +425,9 @@
             <Restrictions Value=""/>
           </Frames>
           <Data>
-            <Format Value="16974380"/>
+            <Format Value="16843308"/>
             <FormatStr Value=""/>
-            <Memo Value="[query1.summe]&#xD;&#xA;"/>
+            <Memo Value="[query1.summe]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -441,8 +441,8 @@
           <Tag Value=""/>
           <FURLInfo Value=""/>
           <Font>
-            <Name Value="Arial"/>
-            <Size Value="12"/>
+            <Name Value="Liberation Sans"/>
+            <Size Value="11"/>
             <Color Value="clBlack"/>
             <Charset Value="0"/>
             <Style Value=""/>
@@ -454,7 +454,7 @@
             <HighlightStr Value=""/>
           </Highlight>
           <Alignment Value="taRightJustify"/>
-          <Layout Value="tlTop"/>
+          <Layout Value="tlCenter"/>
           <Angle Value="0"/>
           <Justify Value="False"/>
           <Cursor Value="0"/>
@@ -466,9 +466,9 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="220"/>
+            <Left Value="168"/>
             <Top Value="182"/>
-            <Width Value="92"/>
+            <Width Value="144"/>
             <Height Value="20"/>
           </Size>
           <Flags Value="3"/>
@@ -483,7 +483,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Summe&#xD;&#xA;"/>
+            <Memo Value="Summe Arbeit&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -523,7 +523,7 @@
           <StreamMode Value="0"/>
           <Size>
             <Left Value="204"/>
-            <Top Value="210"/>
+            <Top Value="266"/>
             <Width Value="108"/>
             <Height Value="20"/>
           </Size>
@@ -539,7 +539,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Sollstunden&#xD;&#xA;"/>
+            <Memo Value="Sollstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -572,18 +572,18 @@
           <Cursor Value="0"/>
         </Object12>
         <Object13>
-          <Name Value="Memo7"/>
+          <Name Value="sollstunden"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
             <Left Value="338"/>
-            <Top Value="210"/>
+            <Top Value="266"/>
             <Width Value="198"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -595,7 +595,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[querysollstunden.stunden]&#xD;&#xA;"/>
+            <Memo Value="soll&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -634,12 +634,12 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="220"/>
-            <Top Value="240"/>
-            <Width Value="94"/>
+            <Left Value="172"/>
+            <Top Value="296"/>
+            <Width Value="138"/>
             <Height Value="18"/>
           </Size>
-          <Flags Value="11"/>
+          <Flags Value="3"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -651,7 +651,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Überstunden&#xD;&#xA;"/>
+            <Memo Value="Überstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -684,18 +684,18 @@
           <Cursor Value="0"/>
         </Object14>
         <Object15>
-          <Name Value="Memo9"/>
+          <Name Value="ueberstunden"/>
           <ClassName Value="TfrMemoView"/>
           <Visible Value="True"/>
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="338"/>
-            <Top Value="238"/>
-            <Width Value="198"/>
-            <Height Value="36"/>
+            <Left Value="334"/>
+            <Top Value="294"/>
+            <Width Value="202"/>
+            <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -707,7 +707,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe]) - querysollstunden.stunden]&#xD;&#xA;"/>
+            <Memo Value="ueberstunden&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -763,7 +763,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Ausgedruckt am [[DATE]]  [TIME]&#xD;&#xA;"/>
+            <Memo Value="Ausgedruckt am [[DATE]]  [TIME]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -807,7 +807,7 @@
             <Width Value="174"/>
             <Height Value="20"/>
           </Size>
-          <Flags Value="3"/>
+          <Flags Value="1"/>
           <FillColor Value="clNone"/>
           <Frames>
             <FrameColor Value="clBlack"/>
@@ -819,7 +819,7 @@
           <Data>
             <Format Value="16974380"/>
             <FormatStr Value=""/>
-            <Memo Value="[SUM([query1.summe])]&#xD;&#xA;"/>
+            <Memo Value="[SUM([query1.summe])]&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -875,7 +875,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Wochentag Nr&#xD;&#xA;"/>
+            <Memo Value="Wochentag Nr&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -931,7 +931,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Monatstag&#xD;&#xA;"/>
+            <Memo Value="Monatstag&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -987,7 +987,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Summe&#xD;&#xA;"/>
+            <Memo Value="Summe&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -1149,7 +1149,287 @@
             <GapY Value="0"/>
           </Data>
         </Object25>
-        <ObjectCount Value="25"/>
+        <Object26>
+          <Name Value="Memo14"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="160"/>
+            <Top Value="209"/>
+            <Width Value="152"/>
+            <Height Value="20"/>
+          </Size>
+          <Flags Value="3"/>
+          <FillColor Value="clWhite"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="556"/>
+            <FormatStr Value=""/>
+            <Memo Value="Zeitgutschrift*&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="12"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taRightJustify"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object26>
+        <Object27>
+          <Name Value="gutschrift"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="329"/>
+            <Top Value="207"/>
+            <Width Value="206"/>
+            <Height Value="20"/>
+          </Size>
+          <Flags Value="1"/>
+          <FillColor Value="clNone"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="16974380"/>
+            <FormatStr Value=""/>
+            <Memo Value="huhu&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="12"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taRightJustify"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object27>
+        <Object28>
+          <Name Value="Memo16"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="153"/>
+            <Top Value="236"/>
+            <Width Value="160"/>
+            <Height Value="20"/>
+          </Size>
+          <Flags Value="3"/>
+          <FillColor Value="clWhite"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="556"/>
+            <FormatStr Value=""/>
+            <Memo Value="Zwischensumme&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="12"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taRightJustify"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object28>
+        <Object29>
+          <Name Value="zwsumme"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="338"/>
+            <Top Value="236"/>
+            <Width Value="198"/>
+            <Height Value="20"/>
+          </Size>
+          <Flags Value="1"/>
+          <FillColor Value="clNone"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="16974380"/>
+            <FormatStr Value=""/>
+            <Memo Value="hoho&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="12"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taRightJustify"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object29>
+        <Object30>
+          <Name Value="Memo15"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="56"/>
+            <Top Value="324"/>
+            <Width Value="638"/>
+            <Height Value="18"/>
+          </Size>
+          <Flags Value="11"/>
+          <FillColor Value="clNone"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="556"/>
+            <FormatStr Value=""/>
+            <Memo Value="* Zeitgutschrift: Feiertage, Sonderurlaub u.a. von der Firma verwaltete Zeitgutschriften&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Sans"/>
+            <Size Value="9"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value=""/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taCenter"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object30>
+        <ObjectCount Value="30"/>
       </Page1>
       <FVal>
         <Count Value="0"/>

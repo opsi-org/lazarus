@@ -13,14 +13,15 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
-  pingsend,
+  //pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
   Windows,
-  pingsend,
+  //pingsend,
   {$ENDIF WINDOWS}
-  Classes, SysUtils, IBConnection, sqldb, DB,
+  pingsend,
+  Classes, SysUtils, IBConnection, FBEventMonitor, sqldb, DB,
   //FileUtil,
   LazFileUtils,
   Menus, ExtCtrls,
@@ -42,7 +43,8 @@ uses
   UniqueInstance,
   fileutil,
   strutils,
-  oslog;
+  oslog,
+  osnetworkcalculator;
 
 type
 
@@ -70,6 +72,7 @@ type
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
     linuxwmctrl: TMenuItem;
+    MenBarAsWindow: TMenuItem;
     MenuItemLockInput: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
@@ -135,6 +138,7 @@ type
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
     procedure linuxwmctrlClick(Sender: TObject);
+    procedure MenBarAsWindowClick(Sender: TObject);
     procedure MenuItemLockInputClick(Sender: TObject);
     procedure PopupMenu1Close(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
@@ -160,9 +164,11 @@ type
     procedure SQuibeventAfterEdit(DataSet: TDataSet);
     procedure SQuibeventAfterInsert(DataSet: TDataSet);
     procedure SQuibeventAfterPost(DataSet: TDataSet);
+    procedure SQuibeventAfterRefresh(DataSet: TDataSet);
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
     procedure SQuibeventBeforeDelete(DataSet: TDataSet);
     procedure SQuibeventBeforePost(DataSet: TDataSet);
+    procedure SQuibeventBeforeRefresh(DataSet: TDataSet);
     procedure SQuibeventPostError(DataSet: TDataSet; E: EDatabaseError;
       var DataAction: TDataAction);
     procedure SQuibloggedinAfterDelete(DataSet: TDataSet);
@@ -221,6 +227,8 @@ type
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
     procedure configureComboBox(mycombo: TComboBox);
+    procedure gotoLastTodayEvent;
+    procedure writeBoolToConf(section, key: string; value : boolean);
   private
     { private declarations }
   public
@@ -263,6 +271,8 @@ var
   ontopintaskbar: TShowInTaskBar = stNever;
   ontoptimer: boolean = True;
   LockInput: boolean = True;
+  ontopAsWindow: boolean = False;
+  lastDBlogline : string = '';
 
 
 
@@ -305,11 +315,11 @@ end;
 { TDataModule1 }
 function TDataModule1.getdebuglevel(): integer;
 begin
-  // wiil be called at start before the logfile is initialized
-  if Assigned(logdatei) then
-    getdebuglevel := logdatei.LogLevel
-  else
-    getdebuglevel := debuglevel;
+  // will be called at start before the logfile is initialized
+  //if Assigned(logdatei) then
+  //  getdebuglevel := logdatei.LogLevel
+  // else
+  getdebuglevel := debuglevel;
 end;
 
 procedure TDataModule1.setdebuglevel(newlevel: integer);
@@ -344,6 +354,10 @@ begin
   myini.WriteInteger('general', 'debuglevel', newlevel);
   myini.UpdateFile;
   myini.Free;
+  // attention: endless loop:
+  if Assigned(Fdebug.SpinEdit1) then
+    if debuglevel <> Fdebug.SpinEdit1.Value then
+      Fdebug.SpinEdit1.Value := debuglevel;
   debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
@@ -547,7 +561,8 @@ begin
   //FOntop.Enabled := False;
   //FDataedit.Show;
   FreeAndNil(FDataedit);
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
@@ -556,7 +571,8 @@ end;
 procedure TDataModule1.Dateneditieren1Cancel;
 begin
   //FStatistik.free;
-  DataModule1.SQuibevent.last;
+  //DataModule1.SQuibevent.last;
+  DataModule1.gotoLastTodayEvent;
   ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
@@ -646,7 +662,11 @@ begin
     else
       Source := 'Unknown event: ';
   end;
-  debugOut(9, 'Database', Source + Msg);
+  if lastDBlogline <> Source + Msg then
+  begin
+    lastDBlogline := Source + Msg;
+    debugOut(9, 'Database', lastDBlogline);
+  end;
 end;
 
 procedure TDataModule1.Import1Click(Sender: TObject);
@@ -704,6 +724,19 @@ begin
   debugOut(6, 'linuxwmctrlClick: ' + BoolToStr(linuxwmctrl.Checked, True));
   myini.UpdateFile;
   myini.Free;
+end;
+
+procedure TDataModule1.MenBarAsWindowClick(Sender: TObject);
+begin
+  (*
+  if TMenuItem(Sender).Checked then
+    ontopAsWindow := True
+  else
+    ontopAsWindow := False;
+    *)
+  WriteBoolToConf('general', 'ontopAsWindow', TMenuItem(Sender).Checked);
+  ShowMessage('Um die Änderung anzuzeigen bitte uibtime neu starten.');
+  //FOnTop.ReBuildForm;
 end;
 
 procedure TDataModule1.MenuItemLockInputClick(Sender: TObject);
@@ -852,12 +885,12 @@ procedure TDataModule1.schmaleLeisteClick(Sender: TObject);
 begin
 end;
 
-procedure TDataModule1.ShowDebugWindow1Click(Sender: TObject);
+procedure TDataModule1.writeBoolToConf(section, key: string; value : boolean);
 var
   logdir, logfeilname: string;
   myini: TIniFile;
 begin
-  // we will use logdir for logging and for configuration
+    // we will use logdir for logging and for configuration
   logdir := SysUtils.GetAppConfigDir(False);
   if logdir = '' then
   begin
@@ -868,15 +901,22 @@ begin
   ForceDirectories(logdir);
   logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
-  debugOut(5, 'Will use conf file: ' + logfeilname);
-  DataModule1.debugOut(6, 'ShowDebugWindow1Click', 'Will use conf file: ' + logfeilname);
+  debugOut(5, 'writeToConf','Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    DataModule1.debugOut(2, 'ShowDebugWindow1Click',
+    DataModule1.debugOut(2, 'writeToConf',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
   end;
+  myini.WriteBool(section, key, value);
+  debugOut(6, 'writeToConf', key +' = ' + BoolToStr(value, True));
+  myini.UpdateFile;
+  myini.Free;
+end;
+
+procedure TDataModule1.ShowDebugWindow1Click(Sender: TObject);
+begin
   if ShowDebugWindow1.Checked then
   begin
     ShowDebugWindow1.Checked := False;
@@ -887,10 +927,7 @@ begin
     ShowDebugWindow1.Checked := True;
     FDebug.Visible := True;
   end;
-  myini.WriteBool('general', 'ShowDebugWindow', ShowDebugWindow1.Checked);
-  debugOut(6, 'ShowDebugWindow: ' + BoolToStr(ShowDebugWindow1.Checked, True));
-  myini.UpdateFile;
-  myini.Free;
+  WriteBoolToConf('general', 'ShowDebugWindow', ShowDebugWindow1.Checked);
 end;
 
 procedure TDataModule1.SQholydaysAfterDelete(DataSet: TDataSet);
@@ -1256,11 +1293,23 @@ begin
       debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (commit/start)');
     end
     else
+    begin
       debugOut(3, 'SQuibeventAfterPost',
         'Error: Missing Transaction SQuibeventAfterPost');
+      SQLTransaction1.StartTransaction;
+    end;
   except
     debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
   end;
+end;
+
+procedure TDataModule1.SQuibeventAfterRefresh(DataSet: TDataSet);
+begin
+   debugOut(5, 'SQuibeventAfterRefresh', 'start ');
+   SQuibevent.IndexFieldNames:= 'Starttime';
+   SQuibevent.Last;
+   gotoLastTodayEvent;
+   Screen.Cursor := crDefault;
 end;
 
 
@@ -1268,7 +1317,8 @@ procedure TDataModule1.SQuibeventBeforeClose(DataSet: TDataSet);
 begin
   if login.automatic then
   begin
-    DataModule1.SQuibevent.last;
+    //DataModule1.SQuibevent.last;
+    DataModule1.gotoLastTodayEvent;
     DataModule1.SQuibevent.edit;
     DataModule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
     try
@@ -1300,6 +1350,15 @@ begin
   { plausibility check is in AfterEdit }
   debugOut(5, 'SQuibeventBeforePost', 'calling SQuibeventAfterEdit ');
   SQuibeventAfterEdit(Dataset);
+end;
+
+procedure TDataModule1.SQuibeventBeforeRefresh(DataSet: TDataSet);
+begin
+   debugOut(5, 'SQuibeventBeforeRefresh', 'start ');
+   SQuibevent.ApplyUpdates;
+   SQLTransaction1.CommitRetaining;
+   Screen.Cursor := crSQLWait;
+   SQuibevent.IndexFieldNames:= '';
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
@@ -1610,6 +1669,7 @@ var
 begin
 
   servername := myDbServer;
+  servername := GetHostByName(servername);
   ;
   retries := 0;
   //{$IFDEF WIN32}
@@ -1661,17 +1721,35 @@ begin
   begin
   {$IFDEF WINDOWS}
     FOnTop.FormStyle := fsSystemStayOnTop;
-    FOnTop.BorderStyle := bsNone;
-    SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-      ontopheight, SWP_NOACTIVATE);
+    if ontopAsWindow then
+    begin
+      FOnTop.borderstyle := bsSizeable;
+      SetWindowPos(FOnTop.handle, HWND_TOPMOST, FOnTop.Left, FOnTop.top, ontopwidth,
+        round(ontopheight*2.5), SWP_NOACTIVATE);
+    end
+    else
+    begin
+      FOnTop.BorderStyle := bsNone;
+      SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
+        ontopheight, SWP_NOACTIVATE);
+    end;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-    FOntop.Left := leftint;
-    FOnTop.Top := 0;
+  {$IFDEF UNIX}
+    if ontopAsWindow then
+    begin
+      FOnTop.borderstyle := bsSizeable;
+    end
+    else
+    begin
+      FOnTop.borderstyle := bsNone;
+      FOnTop.Top := 0;
+      FOntop.Left := leftint;
+    end;
     FOnTop.Height := ontopheight;
     FOnTop.Width := ontopwidth;
     FOnTop.FormStyle := fsSystemStayOnTop;
-    FOnTop.BorderStyle := bsNone;
+
+    {$ENDIF UNIX}
   (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
@@ -1712,6 +1790,7 @@ begin
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
   *)
+  {$IFDEF LINUX}
     if linuxusewmctrl then
       moveToCurrentDeskAndFront(FOnTop.Caption);
       {$ENDIF LINUX}
@@ -2294,8 +2373,13 @@ begin
   ///if Weristda1.Checked then FLoggedin.Visible:= true
   ///else FLoggedin.Visible:= false;
 
+  ontopAsWindow := myini.ReadBool('general', 'ontopAsWindow', False);
+  MenBarAsWindow.Checked:= ontopAsWindow;
+
   debuglevel := myini.ReadInteger('general', 'debuglevel', 5);
   Fdebug.Memo1.Append('debuglevel: ' + IntToStr(debuglevel));
+  //FDebug.SpinEdit1.Value:= debuglevel;
+  setdebuglevel(debuglevel);
   TrayInterval := myini.ReadInteger('general', 'TrayInterval', 5);
   TimerTrayIcon.Interval := TrayInterval * 60 * 1000;
   Trayshow := myini.ReadBool('general', 'showTray', True);
@@ -2351,7 +2435,7 @@ begin
   //myFont := 'Liberation Sans Narrow';
   myFont := 'Liberation Sans';
   {$ENDIF LINUX}
-
+  Application.ProcessMessages;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -2381,6 +2465,8 @@ begin
   myini.WriteBool('general', 'autologin', Autologin1.Checked);
   myini.WriteBool('general', 'zeigenurmeineprojekte', zeigenurmeineprojekte1.Checked);
   myini.WriteBool('general', 'showdebugwindow', ShowDebugwindow1.Checked);
+  // do not write ontopAsWindow here - it is changed by the menu listener
+  //myini.WriteBool('general', 'ontopAsWindow', ontopAsWindow);
   myini.WriteInteger('general', 'debuglevel', LogDatei.LogLevel);
   myini.UpdateFile;
   myini.Free;
@@ -2629,6 +2715,59 @@ begin
 
 end;
 
+procedure TDataModule1.gotoLastTodayEvent;
+var
+  foundstart, foundstop: TDateTime;
+  foundevent, filterstr: string;
+begin
+  try
+    try
+      debugOut(5, 'gotoLastTodayEvent', 'start');
+      //try to go to to the last event that is not starting tomorrow or later
+      //filterstr := '(stoptime < ' +
+      //  QuotedStr(DateTimeToStr(IncDay(today, 1))) + ') and (userid = ' + QuotedStr(uid) + ')';
+      filterstr := 'DTOS(stoptime) < "' + formatdatetime('yyyymmdd', IncDay(today, 1)) +
+        '"' + ' and userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      SQuibevent.Last;
+      foundevent := SQuibevent.FieldByName('event').AsString;
+      foundstart := SQuibevent.FieldByName('starttime').AsDateTime;
+      foundstop := SQuibevent.FieldByName('stoptime').AsDateTime;
+      SQuibevent.Filtered := False;
+      filterstr := 'userid = ' + QuotedStr(uid);
+      debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+      SQuibevent.Filter := filterstr;
+      SQuibevent.Filtered := True;
+      if SQuibevent.Locate('userid;event;starttime',
+        VarArrayOf([uid, foundevent, foundstart]),
+        [loCaseInsensitive, loPartialKey]) then
+        debugOut(5, 'gotoLastTodayEvent', 'found event: ' + 'userid=' +
+          uid + ' foundevent=' + foundevent + ' starttime=' + DateTimeToStr(foundstart))
+      //SQuibevent.FieldByName('event').AsString + ' with stoptime: ' +
+      //SQuibevent.FieldByName('stoptime').AsString)
+      else
+      begin
+        debugOut(3, 'gotoLastTodayEvent', 'Error searching last event: ' +
+          'userid=' + uid + ' foundevent=' + foundevent + ' starttime=' +
+          DateTimeToStr(foundstart));
+        SQuibevent.Last;
+      end;
+    except
+      debugOut(3, 'gotoLastTodayEvent', 'Exception searching last event: ');
+    end;
+  finally
+    SQuibevent.Filtered := False;
+    filterstr := 'userid = ' + QuotedStr(uid);
+    debugOut(5, 'gotoLastTodayEvent', 'filter: ' + filterstr);
+    SQuibevent.Filter := filterstr;
+    SQuibevent.Filtered := True;
+  end;
+end;
+
+
+
 initialization
   { initialization-Abschnitt }
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
@@ -2648,7 +2787,7 @@ initialization
   ///vi := GetVersionInfoRec(Application.ExeName);
   ///version := vi.FileVersion;
   //version := '4.0.12';
-  //debuglevel := 5;
+  debuglevel := 8;
 
   verDatum := DateToStr(FileDateToDateTime(FileAge(ParamStr(0))));
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company

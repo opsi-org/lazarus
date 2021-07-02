@@ -1,7 +1,7 @@
 object FOnTop: TFOnTop
-  Left = 570
+  Left = 300
   Height = 229
-  Top = 296
+  Top = 317
   Width = 1143
   BorderIcons = []
   Caption = 'uibtime - ontop'
@@ -22,7 +22,7 @@ object FOnTop: TFOnTop
   OnWindowStateChange = FormWindowStateChange
   Position = poDefault
   ShowInTaskBar = stNever
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.12.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 28
@@ -221,6 +221,9 @@ object FOnTop: TFOnTop
       Height = 24
       Top = 2
       Width = 22
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       Glyph.Data = {
         36010000424D3601000000000000360000002800000008000000080000000100
         2000000000000001000064000000640000000000000000000000000000000000
@@ -234,6 +237,7 @@ object FOnTop: TFOnTop
         000000000051000000E9000000E80000004F0000000000000000
       }
       OnClick = BtnUnlockClick
+      ParentFont = False
     end
   end
   object BtnProjekt: TSpeedButton
@@ -276,42 +280,50 @@ object FOnTop: TFOnTop
     OnDblClick = BtnProjektDblClick
     ParentFont = False
   end
+  object BtnFreeFlogin: TButton
+    Left = 129
+    Height = 24
+    Top = 174
+    Width = 144
+    Caption = 'BtnFreeFlogin'
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    OnClick = BtnFreeFloginClick
+    ParentFont = False
+    TabOrder = 1
+  end
   object TimerNachfrage: TTimer
     Enabled = False
     OnTimer = TimerNachfrageTimer
-    left = 64
-    top = 57
-  end
-  object TimerCallCount: TTimer
-    Enabled = False
-    left = 163
-    top = 57
+    Left = 64
+    Top = 57
   end
   object TimerScrollDisable: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = TimerScrollDisableTimer
-    left = 262
-    top = 57
+    Left = 262
+    Top = 57
   end
   object TimerNoDblClick: TTimer
     Enabled = False
     Interval = 300
     OnTimer = TimerNoDblClickTimer
-    left = 375
-    top = 57
+    Left = 375
+    Top = 57
   end
   object Timer_top_ten: TTimer
     Interval = 3600000
     OnTimer = Timer_top_tenTimer
-    left = 497
-    top = 57
+    Left = 497
+    Top = 57
   end
   object TimerProjektzeit: TTimer
     Interval = 60000
     OnTimer = TimerProjektzeitTimer
-    left = 610
-    top = 57
+    Left = 610
+    Top = 57
   end
   object QueryDefproj: TSQLQuery
     FieldDefs = <>
@@ -327,8 +339,8 @@ object FOnTop: TFOnTop
         Name = 'uid'
         ParamType = ptInput
       end>
-    left = 64
-    top = 118
+    Left = 64
+    Top = 118
   end
   object QueryUserEvents: TSQLQuery
     FieldDefs = <    
@@ -361,16 +373,16 @@ object FOnTop: TFOnTop
         ParamType = ptInput
       end>
     UpdateMode = upWhereAll
-    left = 163
-    top = 118
+    Left = 163
+    Top = 118
   end
   object QueryUserButtons: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 262
-    top = 118
+    Left = 262
+    Top = 118
   end
   object Query_top_ten_events: TSQLQuery
     FieldDefs = <>
@@ -398,32 +410,39 @@ object FOnTop: TFOnTop
         Name = 'inittime'
         ParamType = ptInput
       end>
-    left = 375
-    top = 118
+    Left = 375
+    Top = 118
   end
   object DS_topten_events: TDataSource
     AutoEdit = False
     DataSet = Query_top_ten_events
-    left = 375
-    top = 171
+    Left = 375
+    Top = 171
   end
   object QueryProjektzeit: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 497
-    top = 118
+    Left = 497
+    Top = 118
   end
   object DSQueryaktprojekt: TDataSource
-    left = 610
-    top = 133
+    Left = 610
+    Top = 133
   end
   object TimerAfterTopTenEnter: TTimer
     Enabled = False
     Interval = 5000
     OnTimer = TimerAfterTopTenEnterTimer
-    left = 751
-    top = 57
+    Left = 751
+    Top = 57
+  end
+  object TimerKillFlogin: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = TimerKillFloginTimer
+    Left = 880
+    Top = 61
   end
 end

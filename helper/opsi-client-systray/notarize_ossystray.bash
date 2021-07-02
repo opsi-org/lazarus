@@ -37,11 +37,16 @@ launchctl plist $FULLPATHTOEXE
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing binary..."
+# use next line if you want to notarize
 #codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+# use next line if you do not want to notarize
 codesign -vvv --force --strict --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE
+
+# exit here if you do not want to notarize
+exit
 
 #echo "Code signing .app..."
 #codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $EXECUTABLE_DIR

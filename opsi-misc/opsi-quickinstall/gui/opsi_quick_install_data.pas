@@ -75,7 +75,7 @@ begin
   backend := 'file';
   copyMod := TSplitData.Create;
   copyMod.SetEntries('', 'false');
-  repoKind := 'experimental';
+  repoKind := 'stable';
   ucsPassword := '';
   reboot := TSplitData.Create;
   reboot.SetEntries('', 'false');

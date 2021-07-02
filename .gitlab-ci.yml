@@ -1,0 +1,85 @@
+# Variable definitions
+variables:
+  RUN_PIPLINE:
+    value: "false"  # run pipline NOT by default
+    description: "Run the pipline if set to true."
+
+  PROJECT_NAME:
+    value: "opsiscript"
+    description: "Project name of the project the pipline should run on."
+
+  BINARY_VERSION:
+    value: "4.12.4.22"
+    description: "Version of the binary"
+
+  PLATFORM:
+    value: "all"
+    description: "For which build modes should the lazarus project be compiled?  
+    all: build project for all platforms (Win32, Win64, Linux, MacOS)
+    Windows (Linux, MacOS):  build project for the specified platform only"
+  
+# Control of the Pipline  
+workflow:
+  rules: 
+    - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
+    # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+
+stages:
+  - build
+#  - test
+#  - binaryindex
+
+#***************************************#
+#  opsi-script pipline                  #
+#***************************************#
+compile opsi-script windows:
+  stage: build
+  tags:
+    - laz-win10
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script\\"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+      when: always
+  script: 
+    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}  "${PROJECT_NAME}.lpi"
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Win32"
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
+    - echo "Compiling $PROJECT_NAME for Win64"
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-script $BINARY_VERSION windows"
+    paths:
+      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+
+
+compile opsi-script linux:
+  stage: build
+  tags:
+    - laz-linux
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script/"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+      when: always
+  script: 
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Linux with no GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
+    - echo "Compiling $PROJECT_NAME for Linux with GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-script $BINARY_VERSION linux"
+    paths:
+      - opsi-script/opsi-script #i386-win32\opsi-script.exe
+      - opsi-script/opsi-script-gui
+      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+
+
+

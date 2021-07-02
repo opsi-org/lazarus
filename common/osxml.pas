@@ -7,14 +7,6 @@ unit osxml;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: martina hammel, detlef oertel
-// credits: http://www.opsi.org/credits/
-
-//***************************************************************************
-// Subversion:
-// $Revision: 518 $
-// $Author: hammel $
-// $Date: 2016-12-06 14:15:37 +0100 (Di, 06. Dez 2016) $
-//***************************************************************************
 
 
 {$mode delphi}

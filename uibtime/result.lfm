@@ -1,12 +1,12 @@
 object FResult: TFResult
-  Left = 691
-  Height = 475
-  Top = 431
-  Width = 1082
+  Left = 1166
+  Height = 940
+  Top = 44
+  Width = 696
   HelpContext = 17
   Caption = 'Ergebnis'
-  ClientHeight = 475
-  ClientWidth = 1082
+  ClientHeight = 940
+  ClientWidth = 696
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -13
@@ -14,18 +14,18 @@ object FResult: TFResult
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 112
     Top = 0
-    Width = 1082
+    Width = 696
     Align = alTop
     ClientHeight = 112
-    ClientWidth = 1082
+    ClientWidth = 696
     TabOrder = 0
     object BtnPrint: TSpeedButton
-      Left = 188
+      Left = 136
       Height = 31
       Hint = 'Ergebnisstabelle ausdrucken'
       Top = 0
@@ -55,11 +55,11 @@ object FResult: TFResult
       ParentShowHint = False
     end
     object BtnPreview: TSpeedButton
-      Left = 82
+      Left = 8
       Height = 31
       Hint = 'Voransicht der Druckausgabe'
-      Top = 0
-      Width = 107
+      Top = 2
+      Width = 120
       Caption = 'Druckansicht'
       Font.Color = clBlack
       Font.Height = -13
@@ -86,9 +86,9 @@ object FResult: TFResult
     end
     object Label3: TLabel
       Left = 520
-      Height = 16
+      Height = 17
       Top = 44
-      Width = 67
+      Width = 76
       Caption = 'Überschrift:'
       Font.Color = clBlack
       Font.Height = -13
@@ -98,17 +98,17 @@ object FResult: TFResult
     end
     object Label4: TLabel
       Left = 376
-      Height = 16
+      Height = 17
       Top = 0
-      Width = 58
+      Width = 59
       Caption = 'Optionen'
       ParentColor = False
     end
     object Label9: TLabel
       Left = 376
-      Height = 16
+      Height = 17
       Top = 16
-      Width = 96
+      Width = 99
       Caption = 'Druck(ansich)t:'
       ParentColor = False
     end
@@ -133,11 +133,11 @@ object FResult: TFResult
       TabOrder = 0
     end
     object Btnclose: TBitBtn
-      Left = 896
+      Left = 864
       Height = 31
       Hint = 'Fenster verlassen'
       Top = 0
-      Width = 80
+      Width = 112
       Caption = 'Abbruch'
       Font.Color = clBlack
       Font.Height = -13
@@ -208,7 +208,7 @@ object FResult: TFResult
     end
     object Edit1: TEdit
       Left = 600
-      Height = 24
+      Height = 29
       Hint = 'Überschrift für Druckausgabe eingeben'
       Top = 36
       Width = 375
@@ -218,10 +218,10 @@ object FResult: TFResult
     end
     object RadioGroup1: TRadioGroup
       Left = 480
-      Height = 31
+      Height = 32
       Hint = 'Druckformat: hochkant od. quer'
-      Top = 0
-      Width = 114
+      Top = 2
+      Width = 158
       AutoFill = True
       Caption = 'Format'
       ChildSizing.LeftRightSpacing = 6
@@ -231,8 +231,8 @@ object FResult: TFResult
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 10
-      ClientWidth = 110
+      ClientHeight = 14
+      ClientWidth = 156
       Columns = 2
       Font.Color = clBlack
       Font.Height = -13
@@ -245,8 +245,8 @@ object FResult: TFResult
       ParentFont = False
       TabOrder = 3
     end
-    object BtnDBexp: TBitBtn
-      Left = 215
+    object BtnDBCSVExport: TBitBtn
+      Left = 176
       Height = 31
       Hint = 'Ergebnis als Datenbank-Tabelle exportieren'
       Top = 0
@@ -270,27 +270,28 @@ object FResult: TFResult
         3333333333333333333333333333333333333333333333333333
       }
       NumGlyphs = 2
-      OnClick = BtnDBexpClick
+      OnClick = BtnDBCSVExportClick
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 4
     end
-    object SpinEdit1: TSpinEdit
-      Left = 704
-      Height = 24
-      Top = 7
+    object SpinEditSchriftgroesse: TSpinEdit
+      Left = 736
+      Height = 27
+      Top = 8
       Width = 50
       MaxValue = 25
-      MinValue = 1
+      MinValue = 12
+      OnChange = SpinEditSchriftgroesseChange
       TabOrder = 5
-      Value = 1
+      Value = 12
     end
     object Label5: TLabel
-      Left = 600
-      Height = 16
-      Top = 8
-      Width = 78
+      Left = 648
+      Height = 17
+      Top = 14
+      Width = 79
       Caption = 'Schriftgröße'
       ParentColor = False
     end
@@ -303,13 +304,13 @@ object FResult: TFResult
       BorderSpacing.Bottom = 5
       BevelOuter = bvNone
       BorderStyle = bsSingle
-      ClientHeight = 26
-      ClientWidth = 279
+      ClientHeight = 28
+      ClientWidth = 281
       Constraints.MinHeight = 30
       TabOrder = 6
       object SpeedButtonClearSearchEdit: TSpeedButton
-        Left = 256
-        Height = 26
+        Left = 258
+        Height = 28
         Top = 0
         Width = 23
         Align = alRight
@@ -320,10 +321,10 @@ object FResult: TFResult
       end
       object EditSearch: TEdit
         Left = 37
-        Height = 26
+        Height = 28
         Hint = 'Search in Productlist'
         Top = 0
-        Width = 219
+        Width = 221
         Align = alClient
         AutoSize = False
         AutoSelect = False
@@ -341,7 +342,7 @@ object FResult: TFResult
       end
       object ImageViewmag: TImage
         Left = 2
-        Height = 26
+        Height = 28
         Top = 0
         Width = 30
         Align = alLeft
@@ -474,9 +475,9 @@ object FResult: TFResult
     end
     object RadioGroupSearchOption: TRadioGroup
       Left = 8
-      Height = 31
+      Height = 37
       Hint = 'Suchen oder Filtern'
-      Top = 70
+      Top = 64
       Width = 146
       AutoFill = True
       Caption = 'Suchoption'
@@ -488,8 +489,8 @@ object FResult: TFResult
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 10
-      ClientWidth = 142
+      ClientHeight = 19
+      ClientWidth = 144
       Columns = 2
       Font.Color = clBlack
       Font.Height = -13
@@ -504,18 +505,18 @@ object FResult: TFResult
     end
     object ComboBoxSearchfield: TComboBox
       Left = 173
-      Height = 24
+      Height = 29
       Top = 40
       Width = 283
-      ItemHeight = 16
+      ItemHeight = 0
       TabOrder = 8
       Text = 'ComboBoxSearchfield'
     end
     object Label6: TLabel
       Left = 18
-      Height = 20
+      Height = 19
       Top = 40
-      Width = 152
+      Width = 173
       Caption = 'Suchen in Feld:  ----->'
       Font.Color = clWindowText
       Font.Height = -16
@@ -526,9 +527,9 @@ object FResult: TFResult
   end
   object DBGrid1: TDBGrid
     Left = 0
-    Height = 342
+    Height = 807
     Top = 112
-    Width = 1082
+    Width = 696
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -543,15 +544,15 @@ object FResult: TFResult
   object Panel2: TPanel
     Left = 0
     Height = 21
-    Top = 454
-    Width = 1082
+    Top = 919
+    Width = 696
     Align = alBottom
     ClientHeight = 21
-    ClientWidth = 1082
+    ClientWidth = 696
     TabOrder = 2
     object Label1: TLabel
       Left = 18
-      Height = 16
+      Height = 17
       Top = 0
       Width = 130
       Caption = 'Anzahl Datensätze :'
@@ -568,9 +569,8 @@ object FResult: TFResult
     end
   end
   object DataSource1: TDataSource
-    DataSet = DataModule1.Query4Result
     left = 245
-    top = 135
+    top = 147
   end
   object FrPrintGrid1: TFrPrintGrid
     DBGrid = DBGrid1
@@ -580,8 +580,8 @@ object FResult: TFResult
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True
-    left = 374
-    top = 133
+    left = 376
+    top = 147
   end
   object frTNPDFExport1: TfrTNPDFExport
     left = 133
@@ -596,19 +596,19 @@ object FResult: TFResult
     FormatSettings.IgnoreOuterWhitespace = False
     FormatSettings.RowDelimiter = #13#10
     FormatSettings.QuoteChar = '"'
-    left = 148
-    top = 232
+    left = 128
+    top = 224
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.csv'
-    FileName = 'uibtimereport'
+    FileName = '/home/martina/cskv-rlp-report'
     Filter = 'csv|*.csv'
-    left = 383
-    top = 216
+    InitialDir = '/home/martina/'
+    left = 376
+    top = 224
   end
   object frDBDataSet1: TfrDBDataSet
-    DataSet = DataModule1.Query4Result
-    left = 258
-    top = 219
+    left = 245
+    top = 224
   end
 end

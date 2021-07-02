@@ -24,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4">
@@ -111,10 +111,6 @@
           <Other>
             <CustomOptions Value="-dOPSI
 -dOPSI_AS_USER"/>
-            <OtherDefines Count="2">
-              <Define0 Value="OPSI"/>
-              <Define1 Value="OPSI_AS_USER"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -205,19 +201,19 @@
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="oca_systray.txt"/>
+        <Filename Value="..\..\common\osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\..\common\osfuncmac.pas"/>
+        <Filename Value="info-ossyst.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="info-ossyst.plist"/>
+        <Filename Value="notarize_ossystray.bash"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="notarize_ossystray.bash"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
     </Units>

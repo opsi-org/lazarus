@@ -7,7 +7,6 @@ unit osfuncwin2;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -47,7 +46,8 @@ uses
   ActiveX,
   JwaWbemCli,
   ostxstringlist,
-  LAZUTF8;
+  LAZUTF8,
+  lazfileutils;
 
 //JclSecurity,
 //JclWin32;
@@ -117,6 +117,7 @@ function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
 function winCreateSymbolicLink(lpSymlinkFileName: PChar; lpExistingFileName: PChar;
   dwFlags: DWORD): winbool;
 function updateEnvironment(): boolean;
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
 
 implementation
 
@@ -189,22 +190,23 @@ var
   aktkey: string;
 begin
   Result := '';
-  aktkey := 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'+sid;
+  aktkey := 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'
+    + sid;
   if Is64BitSystem then
   begin
-    noredirect := true;
+    noredirect := True;
     LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug3);
   end
   else
   begin
-    noredirect := false;
+    noredirect := False;
     LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug3);
   end;
-  StringResult := GetRegistrystringvalue(aktkey,'ProfileImagePath',noredirect);
+  StringResult := GetRegistrystringvalue(aktkey, 'ProfileImagePath', noredirect);
   profilepath := StringReplace(StringResult, '%SystemDrive%',
-     extractfiledrive(GetWinDirectory));
-    LogDatei.log('found profile reg entry for sid: ' + sid +
-      ' and path: ' + profilepath, LLdebug3);
+    extractfiledrive(GetWinDirectory));
+  LogDatei.log('found profile reg entry for sid: ' + sid + ' and path: ' +
+    profilepath, LLdebug3);
   Result := profilepath;
 end;
 
@@ -319,15 +321,14 @@ begin
   Result := False;
   if DeleteProfile(PChar(sid), nil, nil) then
   begin
-    LogDatei.log('Deleted profile of: '+sid,
+    LogDatei.log('Deleted profile of: ' + sid,
       LLDebug);
     Result := True;
   end
   else
   begin
-    logdatei.log('Could not delete profile for sid : ' +
-      sid + ' - ' + IntToStr(GetLastError) + ' (' +
-      SysErrorMessage(GetLastError) + ')', LLNotice);
+    logdatei.log('Could not delete profile for sid : ' + sid + ' - ' +
+      IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')', LLNotice);
     profilepath := getProfileImagePathfromSid(sid);
     if DirectoryExists(profilepath) then
     begin
@@ -1149,47 +1150,49 @@ function KillProcessbyname(const exename: string; var found: integer): integer;
 var
   pid: dword;
   //user, domain,
-  myuser, mydomain, foundexe, domuser, winstuser, winstdom: ansistring;
+  myuser, mydomain, foundexe, domuser, selfuser, selfdom: ansistring;
   h: HWND;
   proclist: TStringList;
   procdetails: TXStringlist;
   i: integer;
+  selfprocess: string;
 begin
   Result := 0;
   found := 0;
   myuser := '';
   mydomain := '';
-  winstuser := '';
-  winstdom := '';
+  selfuser := '';
+  selfdom := '';
   procdetails := TXStringlist.Create;
-  h := FindWindow('Progman', nil);
+  h := FindWindow('explorer', nil);
   if h <> 0 then
   begin
     if GetWindowThreadProcessId(h, @pid) <> 0 then
     begin
       if not GetProcessUserBypid(pid, myuser, mydomain) then
-        LogDatei.DependentAdd('Could not get user for pid: ' + IntToStr(pid), LLDebug2);
+        LogDatei.log('Could not get user for pid: ' + IntToStr(pid), LLDebug2);
     end
     else
-      LogDatei.DependentAdd('Could not get pid for current session', LLDebug2);
+      LogDatei.log('Could not get pid for current session', LLDebug2);
   end
   else
-    LogDatei.DependentAdd('Could not get handle for current session: no user', LLDebug2);
+    LogDatei.log('Could not get handle for current session: no user', LLDebug2);
   if not (myuser = GetUserNameEx_) then
-    LogDatei.DependentAdd('Strange: different users found: ' + myuser +
-      ' + ' + GetUserNameEx_, LLDebug);
-  LogDatei.DependentAdd('Session owner found: ' + mydomain + '\' + myuser, LLDebug);
-  if getpid4exe('winst32.exe', pid) then
+    LogDatei.log('Strange: different users found: ' + myuser + ' + ' +
+      GetUserNameEx_, LLDebug);
+  LogDatei.log('Session owner found: ' + mydomain + '\' + myuser, LLDebug);
+  selfprocess := ExtractFileName(ParamStr(0));
+  if getpid4exe(selfprocess, pid) then
   begin
-    if GetProcessUserBypid(pid, winstuser, winstdom) then
+    if GetProcessUserBypid(pid, selfuser, selfdom) then
     begin
-      LogDatei.DependentAdd('winst owner found: ' + winstdom + '\' + winstuser, LLDebug);
+      LogDatei.log_prog('opsi-script owner found: ' + selfdom + '\' + selfuser, LLDebug);
     end
     else
-      LogDatei.DependentAdd('Could not get owner for current winst32.exe', LLDebug);
+      LogDatei.log('Could not get owner for current ' + selfprocess, LLDebug);
   end
   else
-    LogDatei.DependentAdd('Could not get pid for current winst32.exe', LLDebug);
+    LogDatei.log('Could not get pid for current ' + selfprocess, LLDebug);
 
   //while getpid4exe(exename,pid) do
   proclist := getWinProcessList;
@@ -1198,9 +1201,9 @@ begin
     procdetails.Clear;
     stringsplit(proclist.Strings[i], ';', procdetails);
     //LogDatei.DependentAdd(proclist.Strings[i],LLDebug);
-    LogDatei.DependentAdd('analyze: exe: ' + procdetails.Strings[0] +
+    LogDatei.log_prog('analyze: exe: ' + procdetails.Strings[0] +
       ' pid: ' + procdetails.Strings[1] + ' from user: ' +
-      procdetails.Strings[2], LLDebug3);
+      procdetails.Strings[2], LLDebug);
     if procdetails.Strings[1] <> '' then
     begin
       try
@@ -1213,17 +1216,17 @@ begin
       if UpperCase(exename) = UpperCase(foundexe) then
       begin
         if (domuser = mydomain + '\' + myuser) or
-          (domuser = winstdom + '\' + winstuser) or (domuser = '') then
+          (domuser = selfdom + '\' + selfuser) or (domuser = '') then
         begin
-          LogDatei.DependentAdd('Will kill exe: ' + foundexe + ' pid: ' +
+          LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
             IntToStr(pid) + ' from user: ' + domuser, LLDebug);
           Inc(found);
           if KillProcessbypid(pid) then
             Result := Result + 1;
         end
         else
-          LogDatei.DependentAdd('Will not kill exe: ' + foundexe +
-            ' pid: ' + IntToStr(pid) + ' from user: ' + domuser, LLDebug);
+          LogDatei.log('Will not kill exe: ' + foundexe + ' pid: ' +
+            IntToStr(pid) + ' from user: ' + domuser, LLDebug);
       end;
       //else LogDatei.DependentAdd('No user found for exe: '+exename+' and pid: '+IntToStr(pid),LLDebug);
     end;
@@ -1477,6 +1480,7 @@ begin
   end;
   LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
 end;
+
 {$ENDIF WIN32}
 
 function OpenShellProcessInSessionToken(ProcessName: string;
@@ -2317,7 +2321,7 @@ var
   kernel32: HModule;
   _CreateSymbolicLinkA: function(lpSymlinkFileName: PChar;
     lpExistingFileName: PChar; dwFlags: DWORD): winbool; stdcall;
-  list1 :TStringlist;
+  list1: TStringList;
 begin
   try
     // try api
@@ -2330,7 +2334,7 @@ begin
     end;
     {$ENDIF WIN32}
     //next try
-    if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege')then
+    if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege') then
     begin
       LogDatei.log('EnablePrivilege Error: ' + IntToStr(GetLastError) +
         ' (' + SysErrorMessage(GetLastError) + ')', LLError);
@@ -2394,8 +2398,8 @@ begin
     try
       //if SendMessageTimeoutA() ;
       mylparam := lparam(PChar('Environment'));
-      if 0 <> SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam,SMTO_ABORTIFHUNG,3000,mylong)
-      then
+      if 0 <> SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE,
+        0, mylparam, SMTO_ABORTIFHUNG, 3000, mylong) then
       begin
         //mylong := jwawindows.SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
         //mylong := SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
@@ -2420,4 +2424,111 @@ end;
 //https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
 //https://social.technet.microsoft.com/wiki/contents/articles/13813.localized-names-for-administrator-account-in-windows.aspx
 
+
+// https://stackoverflow.com/questions/49252038/how-to-get-the-full-file-name-from-a-textfile-variable
+
+const
+  FILE_NAME_NORMALIZED = $00000000;
+
+function GetFinalPathNameByHandleUndefined(hFile: THandle;
+  lpszFilePath: PChar; cchFilePath, dwFlags: DWORD): DWORD; stdcall;
+begin
+  StrPCopy(lpszFilePath, '');
+  Result := 0;
+end;
+
+function FileHandleToFileName(Handle: THandle): string;
+type
+  TGetFinalPathNameByHandle = function(hFile: THandle;
+      lpszFilePath: PChar; cchFilePath, dwFlags: DWORD): DWORD; stdcall;
+
+const
+  GetFinalPathNameByHandle: TGetFinalPathNameByHandle = nil;
+
+var
+  Err: cardinal;
+  errorstr: string;
+  mylength: cardinal;
+
+begin
+  Result := '';
+  if not Assigned(GetFinalPathNameByHandle) then
+  begin
+    GetFinalPathNameByHandle :=
+      GetProcAddress(GetModuleHandle('kernel32'), 'GetFinalPathNameByHandleA');
+    if not Assigned(GetFinalPathNameByHandle) then
+      GetFinalPathNameByHandle := GetFinalPathNameByHandleUndefined;
+  end;
+  SetLength(Result, MAX_PATH + 1);
+  mylength := GetFinalPathNameByHandle(Handle, @Result[1], LENGTH(
+    Result), FILE_NAME_NORMALIZED);
+  if mylength > 0 then
+  begin
+    SetLength(Result, mylength);
+    if COPY(Result, 1, 4) = '\\?\' then
+      system.Delete(Result, 1, 4);
+  end
+  else
+  begin
+    errorstr := 'GetFinalPathNameByHandle : ' + IntToStr(GetLastError) +
+      ' (' + SysErrorMessage(GetLastError) + ')';
+    Result := '';
+  end;
+
+end;
+
+
+// https://stackoverflow.com/questions/49252038/how-to-get-the-full-file-name-from-a-textfile-variable
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
+var
+  //fileinfo: TSearchRec;
+  errorinfo: string;
+  myhandle: THandle;
+begin
+  Result := filepath;
+  filepath := GetForcedPathDelims(filepath);
+  if FileExists(filepath, False) then
+  begin
+    try
+      myhandle := CreateFile(PChar(filepath), 0, FILE_SHARE_READ, nil,
+        OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+      if Win32Check(myhandle <> INVALID_HANDLE_VALUE) then
+        Result := FileHandleToFileName(myhandle)
+      else
+        errorinfo := 'Could not get handle for: ' + filepath;
+    except
+      on e: Exception do
+      begin
+        LogDatei.log_prog('Exception in resolveWinSymlink: ' +
+          e.message, LLError);
+        LogDatei.log_prog('Returning input: ' + filepath, LLError);
+        Result := filepath;
+      end;
+    end;
+  end
+  else // return filepath also if filepath does not exists
+    Result := filepath;
+end;
+
+
+(*
+// https://stackoverflow.com/questions/23409775/using-filegetsymlinktarget-in-delphi-xe5-does-not-return-the-network-address-to
+// https://sad-notes.ru/en/poluchit-put-k-obektu-na-kotoryj-ukazyvaet-simvolicheskoj-ssylki-ili-tochki-soedineniya-2/
+function SymLinkTarget(path: string): string;
+var
+  LinkHandle: THandle;
+  TargetName: array [0..512] of Char;
+begin
+  LinkHandle := CreateFile(PChar(path), 0, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+  Win32Check(LinkHandle <> INVALID_HANDLE_VALUE);
+  try
+    if GetFinalPathNameByHandle(LinkHandle, TargetName, 512, FILE_NAME_NORMALIZED) > 0 then
+      Result: Copy (TargetName, 5, maxint) / TargetName receives in the form of UNC ways (q??C:'Users'...)
+    else
+      RaiseLastOSError;
+  finally
+    CloseHandle(LinkHandle);
+  end;
+end;
+*)
 end.

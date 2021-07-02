@@ -50,7 +50,6 @@ unit osinteractivegui;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -99,10 +98,11 @@ uses
   Controls,
   //wirequlist,
   oslog, osparser, osfunc,
-ostxstringlist,
+  ostxstringlist,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
   lcltranslator,
+  lazutf8,
   strutils,
   inifiles,
   osGUIControl,
@@ -284,15 +284,15 @@ type
 var
   IniFileLocalization: string;
 
-  ProgramMode: TProgramMode;
+  //ProgramMode: TProgramMode;
 
-  Profildateiname: string;
+  //Profildateiname: string;
 
-  Produkt: string;
+  //Produkt: string;
 
   //Verfahren  : TActionRequest;
 
-  Produkte: TStringList;
+  //Produkte: TStringList;
 
 ///NumberOfErrors   :   Integer;
 ///NumberOfWarnings :   Integer;
@@ -860,7 +860,7 @@ var
 begin
   //writeln('TCentralForm.FormCreate');
   starttimestr := DateTimeToStr(Now);
-  startupmessages := TStringList.Create;
+  if not Assigned(startupmessages) then startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
   startupmessages.Append('Detected Language is:'+GetDefaultLang);
@@ -917,6 +917,16 @@ begin
   lang := '';
   SetDefaultLang(lang,localedir);
   {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  // set locale path to the resource/locale dir of the .app bundle
+  localedir := ExtractFileDir(Application.ExeName) + PathDelim + 'locale';
+  if not DirectoryExists(localedir) then
+    localedir := '';
+  //lang := GetDefaultLang;
+  lang := '';
+  SetDefaultLang(lang,localedir);
+  startupmessages.Append('Detected Language is:'+GetDefaultLang+' for: '+ExtractFileName(ParamStrUTF8(0))+' from dir: '+localedir);
+  {$ENDIF LINUX}
 
 
   CentralFormVisible := False;
@@ -984,7 +994,7 @@ procedure TCentralForm.Info1Click(Sender: TObject);
 begin
 
   MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName + LineEnding +
-    'Copyright (c) uib 1995 - 2016' + LineEnding +
+    'Copyright (c) uib 1995 - 2021' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
     'Detected Language: '+ GetDefaultLang + LineEnding +
     'Internet homes: ' + LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',

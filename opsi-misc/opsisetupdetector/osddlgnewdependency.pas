@@ -43,6 +43,7 @@ type
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
     procedure ComboBoxActStateChange(Sender: TObject);
+    procedure EditproductidChange(Sender: TObject);
     procedure FlowPanel2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
@@ -103,6 +104,12 @@ begin
     ComboBoxReqType.Enabled:= false
   else
     ComboBoxReqType.Enabled:= true;
+end;
+
+procedure TFNewDepDlg.EditproductidChange(Sender: TObject);
+begin
+  TEdit(sender).Caption := cleanOpsiId(TEdit(sender).Caption);
+  TEdit(sender).SelStart:= Length(TEdit(sender).Caption);
 end;
 
 procedure TFNewDepDlg.FlowPanel2Click(Sender: TObject);

@@ -18,7 +18,6 @@ unit osparser;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -54,6 +53,7 @@ uses
   baseunix,
   unix,
   osprocessux,
+  osfuncunix,
 {$ENDIF}
 {$IFDEF DARWIN}
   osfuncmac,
@@ -459,7 +459,8 @@ type
   {$ENDIF WINDOWS}
 
     (* Sektion erstellen *)
-    procedure loadValidLinesFromFile(FName: string; encodingString : string; var Section: TWorkSection);
+    procedure loadValidLinesFromFile(FName: string; detectedEncoding: string;
+      var Section: TWorkSection);
     //procedure getLinesFromUnicodeFile (Const FName : String; var Section : TWorkSection);
     procedure ApplyTextVariables(var Sektion: TXStringList; CStringEscaping: boolean);
     procedure ApplyTextConstants(var Sektion: TXStringList; CStringEscaping: boolean);
@@ -630,6 +631,7 @@ const
   Parameter_64Bit = '/64Bit';
   Parameter_32Bit = '/32Bit';
   Parameter_SysNative = '/SysNative';
+  ParameterEncoding = '/encoding';
 
   (* 'WinBatch' *)
   ParameterDontWait = '/LetThemGo';
@@ -649,7 +651,6 @@ const
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
   ParameterShowoutput = '/showoutput';
-  ParameterEncoding = '/encoding';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -754,6 +755,48 @@ var
 //const
 //zaehler  : Integer = 0;
 
+(*
+{$IFDEF WINDOWS}
+function resolveWinSymlink(filepath: string; recursive: boolean = True): string;
+var
+  outpath: string;
+  cmd: string;
+  mypath : string;
+begin
+  Result := filepath;
+  filepath := GetForcedPathDelims(filepath);
+  if FileExists(filepath, False) then
+  begin
+    mypath := ExtractFileDir(filepath);
+    cmd := '(get-item ' + filepath + ').target';
+    LogDatei.log('resolving symlink: '+filepath,LLinfo);
+    outpath := script.execPowershellCall(cmd, '', 3, True, False, True).Text;
+    outpath := StringsReplace(outpath, [#10, #13], ['', ''], [rfReplaceAll]);
+    if outpath = '' then
+    begin
+      // was no symbolic link - return input
+      Result := filepath;
+    end
+    else
+    begin
+      if not isAbsoluteFileName(outpath) then
+      outpath := TrimAndExpandFilename(outpath,mypath);
+      if outpath <> filepath then
+      begin
+        // was symbolic link
+        LogDatei.log('resolved as symlink: '+filepath+' to: '+outpath,LLinfo);
+        if recursive then
+          Result := resolveWinSymlink(outpath)
+        else
+          Result := filepath;
+      end;
+    end;
+  end
+  else // return filepath also if filepath does not exists
+    Result := filepath;
+end;
+{$ENDIF WINDOWS}
+*)
 
 
 function GetString
@@ -1241,7 +1284,7 @@ begin
 end;
 
 
-procedure deleteTempBatFiles(const tempfilename: string);
+procedure deleteTempBatFiles(const tempfilename: string; logleveloffset: integer = 0);
 var
   files: TuibFileInstall;
 begin
@@ -1258,7 +1301,7 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1585,9 +1628,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1928,30 +1970,39 @@ end;
 
 
 
-procedure TuibInstScript.LoadValidLinesFromFile(FName: string; encodingString : string;
-  var Section: TWorkSection);
+procedure TuibInstScript.LoadValidLinesFromFile(FName: string;
+  detectedEncoding: string; var Section: TWorkSection);
 var
   OriginalList: TXStringList;
   s: string;
   i: integer;
   //Encoding2use, usedEncoding: string;
-  statkind: TStatement;
+  //statkind: TStatement;
   //secname, remaining : string;
   //secindex : integer;
+  encodingString: string = '';
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
-  if encodingString<>'' then
-     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString)
+  OriginalList.LoadFromFile(ExpandFileName(FName));
+  encodingString := searchencoding(OriginalList.Text);
+  if encodingString = '' then
+    encodingString := 'system';
+  if detectedEncoding <> '' then
+  begin
+    if (encodingString <> detectedEncoding) or (encodingString <>
+      copy(detectedEncoding, 0, length(detectedEncoding) - 3)) then
+    begin
+      LogDatei.log('Warning: Given encodingString ' + encodingString +
+        ' is different from the detected encoding ' + detectedEncoding, LLWarning);
+      LogDatei.log('Detected encoding: ' + detectedEncoding +
+        ' is considered', LLInfo);
+    end;
+    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), detectedEncoding);
+  end
   else
-     begin
-       OriginalList.LoadFromFile(ExpandFileName(FName));
-       encodingString := searchencoding(OriginalList.Text);
-       if encodingString='' then
-          encodingString := 'system';
-       if encodingString <> 'system' then
-          OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
-     end;
+  if encodingString <> 'system' then
+    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
   (*
   OriginalList.LoadFromFile(ExpandFileName(FName));
   Encoding2use := searchencoding(OriginalList.Text);
@@ -1962,7 +2013,8 @@ begin
   usedEncoding := Encoding2use;
   //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
   *)
-  logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' + encodingString, LLDebug);
+  logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' +
+    encodingString, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
     s := trim(OriginalList.Strings[i - 1]);
@@ -8097,11 +8149,11 @@ var
                 cpSpecify := cpSpecify or cpFollowSymlinks
               else if Expressionstr[j] = 'x' then
               begin
-                {$IFDEF WINDOWS}
+                //{$IFDEF WINDOWS}
                 cpSpecify := cpSpecify or cpExtract;
-                {$ELSE}
-                LogDatei.log('The copy -x Option is Windows only', LLWarning);
-                {$ENDIF WINDOWS}
+                //{$ELSE}
+                //LogDatei.log('The copy -x Option is Windows only', LLWarning);
+                //{$ENDIF WINDOWS}
               end
               else if Expressionstr[j] = 'r' then
               begin
@@ -9943,11 +9995,11 @@ begin
     begin
       // backup
       commandline := 'powershell.exe get-executionpolicy';
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
       // set (open)
       commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -9979,7 +10031,7 @@ begin
     begin
       // set (close)
       commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1, False, True);
+      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
     end;
   finally
     {$IFDEF GUI}
@@ -10228,7 +10280,7 @@ var
   seconds: string = '';
   ident: string = '';
   use_sp, runsuccess: boolean;
-  encodingString : string ='';
+  encodingString: string = '';
 
 begin
   try
@@ -10268,16 +10320,16 @@ begin
     Sektion.eliminateLinesStartingWith(';', False);
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
-      begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
-        BatchParameter := trim(copy(BatchParameter, 0,
-          pos('winst ', lowercase(BatchParameter)) - 1));
-      end;
-      warnOnlyWindows := False;
-      force64 := False;
-      runAs := traInvoker;
-      showoutput := tsofHideOutput;
+    begin
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      BatchParameter := trim(copy(BatchParameter, 0,
+        pos('winst ', lowercase(BatchParameter)) - 1));
+    end;
+    warnOnlyWindows := False;
+    force64 := False;
+    runAs := traInvoker;
+    showoutput := tsofHideOutput;
 
     goon := False;
     remaining := winstparam;
@@ -10312,8 +10364,8 @@ begin
         showoutput := tsofShowOutput;
         LogDatei.log('Set Showoutput true', LLDebug);
       end
-      else if Skip(ParameterWaitProcessTimeoutSecs, Remaining, Remaining, ErrorInfo)
-      then
+      else if Skip(ParameterWaitProcessTimeoutSecs, Remaining, Remaining,
+        ErrorInfo) then
       begin
         use_sp := True;
         WaitConditions := WaitConditions - [ttpWaitTime];
@@ -10340,8 +10392,8 @@ begin
         end;
         LogDatei.log('found /Timeoutseconds: ' + IntToStr(WaitSecs), LLDebug);
       end
-      else if Skip(ParameterWaitForProcessEnding, Remaining, Remaining, ErrorInfo)
-      then
+      else if Skip(ParameterWaitForProcessEnding, Remaining, Remaining,
+        ErrorInfo) then
       begin
         use_sp := True;
         WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
@@ -10361,13 +10413,17 @@ begin
       // // Handling '/encoding' within WINST parameters
       else if Skip(ParameterEncoding, Remaining, Remaining, ErrorInfo) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
         if not isSupportedEncoding(encodingString) then
-          LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        begin
+          LogDatei.log('Given encoding "' + encodingString +
+            '" is incorrect or not supported', LLDebug);
+          encodingString := 'system';
+        end;
         // unicode fallback to utf8
-        if lowercase(encodingString)='unicode' then
-            encodingString := 'utf8';
+        if lowercase(encodingString) = 'unicode' then
+          encodingString := 'utf8';
       end
 
       else
@@ -10398,7 +10454,7 @@ begin
     tempfilename := winstGetTempFileName;
     //Sektion.SaveToFile (tempfilename);
 
-    if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+    if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
     begin
       LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
         LLcritical);
@@ -10835,7 +10891,7 @@ begin
       remaining := parts[2];
 
     continue := True;
-
+    (*
     while (remaining <> '') and continue do
     begin
       if not Skip(ParameterDontWait, remaining, remaining, InfoSyntaxError) and
@@ -10843,7 +10899,8 @@ begin
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) and
-        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) then
+        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) and
+        not Skip(ParameterEncoding, remaining, remaining, InfoSyntaxError) then
       begin
         // try to parse a RunAs param
         GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
@@ -10861,7 +10918,7 @@ begin
       InfoSyntaxError := 'winst option not recognized';
       exit;
     end;
-
+    *)
   end;
 
   if parts[0] = '' then
@@ -10916,7 +10973,7 @@ var
   showoutput: TShowOutputFlag;
   sysError: DWORD;
   use_sp: boolean;
-  encodingString : string ='';
+  encodingString: string = '';
   InfoSyntaxError: string = '';
 
 begin
@@ -10972,7 +11029,8 @@ begin
     if not produceExecLine(ExecParameter, programfilename, programparas,
       passparas, winstoption, errorInfo) then
     begin
-      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed',
+      LogDatei.log('Error: Illegal Parameter Syntax  - so we switch to failed: ' +
+        errorInfo,
         LLcritical);
       FExtremeErrorLevel := LevelFatal;
       exit;
@@ -11012,14 +11070,27 @@ begin
       // Handling '/encoding' within WINST parameters
       else if lowercase(ParameterEncoding) = lowercase(expr) then
       begin
-        GetWord(Remaining, expr, Remaining, WordDelimiterWhiteSpace);
-        EvaluateString(expr, expr, encodingString, InfoSyntaxError);
-        if not isSupportedEncoding(encodingString) then
-           LogDatei.log('Given encoding is incorrect or not supported', LLDebug);
+        GetWord(Remaining, encodingString, Remaining, WordDelimiterSet0);
+        // or : EvaluateString(Remaining, Remaining, encodingString, InfoSyntaxError);
+
+        if (not isSupportedEncoding(encodingString)) then
+        begin
+          LogDatei.log('Given encoding "' + encodingString +
+            '" is incorrect or not supported', LLDebug);
+          encodingString := 'system';
+        end;
         // unicode fallback to utf8
-        if lowercase(encodingString)='unicode' then
-            encodingString := 'utf8';
+        if lowercase(encodingString) = 'unicode' then
+          encodingString := 'utf8';
       end
+      else if lowercase(trim(expr)) = LowerCase(ParameterRunElevated) then
+      begin
+          {$IFDEF WIN32}
+        opsiSetupAdmin_runElevated := True;
+        LogDatei.log('Found Parameter: /runelevated .', LLDebug);
+          {$ENDIF WIN32}
+        runAs := traInvoker;
+      end;
     end;
 
     useext := '.cmd';
@@ -11029,7 +11100,7 @@ begin
       useext := '.ps1';
     tempfilename := winstGetTempFileNameWithExt(useext);
 
-    if not Sektion.FuncSaveToFile(tempfilename,encodingString) then
+    if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
     begin
       LogDatei.log('Error: Sektion could not be saved - so we switch to failed',
         LLcritical);
@@ -11110,7 +11181,7 @@ begin
           FExtremeErrorLevel := LevelFatal;
         end
         else
-          LogDatei.log(Report, LevelComplete);
+          LogDatei.log(Report, LLinfo + logleveloffset);
       end
       else
       begin
@@ -11192,7 +11263,7 @@ begin
       Result := tsrExitProcess;
     if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then
-        deleteTempBatFiles(tempfilename);
+        deleteTempBatFiles(tempfilename, logleveloffset);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.SetElementVisible(False, eActivityBar);//showAcitvityBar(False);
@@ -11465,7 +11536,8 @@ begin
               list.loadfromfile(s1)
             else
             begin
-              LogDatei.log('Error in LoadTextFile on loading file (not found): ' + s1, LLError);
+              LogDatei.log('Error in LoadTextFile on loading file (not found): ' +
+                s1, LLError);
             end;
             // encoding from system is the default at txstinglist
             //list.Text := reencode(list.Text, 'system');
@@ -11473,7 +11545,8 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in LoadTextFile on loading file: ' + s1 +' with msg: '+e.message, LLError);
+              LogDatei.log('Exception in LoadTextFile on loading file: ' +
+                s1 + ' with msg: ' + e.message, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
@@ -11500,7 +11573,9 @@ begin
                     list.loadFromFileWithEncoding(s1, s2)
                   else
                   begin
-                    LogDatei.log('Error in LoadTextFileWithEncoding on loading file (not found): ' + s1, LLError);
+                    LogDatei.log(
+                      'Error in LoadTextFileWithEncoding on loading file (not found): ' +
+                      s1, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                   end;
                   //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
@@ -11511,7 +11586,9 @@ begin
                   on e: Exception do
                   begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log('Exception in LoadTextFileWithEncoding on loading file: ' + s1 +' with msg: ' + e.message, LLError);
+                    LogDatei.log(
+                      'Exception in LoadTextFileWithEncoding on loading file: ' +
+                      s1 + ' with msg: ' + e.message, LLError);
                     FNumberOfErrors := FNumberOfErrors + 1;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
@@ -11531,7 +11608,8 @@ begin
               TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
             else
             begin
-              LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' + s1, LLError);
+              LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' +
+                s1, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
             end;
             //list.loadfromfile (s1);
@@ -11542,7 +11620,8 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in LoadUnicodeTextFile on loading file: '  + s1 +' with msg: '+ e.message,
+              LogDatei.log('Exception in LoadUnicodeTextFile on loading file: ' +
+                s1 + ' with msg: ' + e.message,
                 LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
@@ -11568,7 +11647,8 @@ begin
             inifile.loadfromfile(s1)
           else
           begin
-            LogDatei.log('Error in GetSectionNames on loading file (not found): ' + s1, LLError);
+            LogDatei.log('Error in GetSectionNames on loading file (not found): ' +
+              s1, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
           //inifile.loadfromfile(s1);
@@ -11577,7 +11657,8 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in GetSectionNames on loading file: '  + s1 +' with msg: '+ e.message,
+            LogDatei.log('Exception in GetSectionNames on loading file: ' +
+              s1 + ' with msg: ' + e.message,
               LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
@@ -11729,10 +11810,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -13505,8 +13586,14 @@ begin
           if GetNTVersionMajor >= 10 then
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
+              begin
               list.add('ReleaseID=' + GetRegistrystringvalue(
-                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True))
+                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True));
+              if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+              'Displayversion', True) then
+                list.add('ReleaseID=' + GetRegistrystringvalue(
+                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'Displayversion', True));
+              end
             else
               list.add('ReleaseID=1507')
           else
@@ -14363,7 +14450,7 @@ begin
   else if LowerCase(s) = LowerCase('GetOSArchitecture') then
   begin
     syntaxcheck := True;
-      StringResult := getOSArchitecture;
+    StringResult := getOSArchitecture;
   end
 
 
@@ -14894,6 +14981,48 @@ begin
     end;
   end
 
+  else if LowerCase(s) = LowerCase('resolveSymlink') then
+  begin
+    syntaxCheck := False;
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          StringResult := resolveSymlink(s1);
+          (*
+          {$IFDEF WINDOWS}
+          StringResult := resolveWinSymlink(s1);
+          {$ENDIF WINDOWS}
+          {$IFDEF UNIX}
+          StringResult := resolveUnixSymlink(s1);
+          {$ENDIF UNIX}
+          *)
+        end;
+    if not syntaxCheck then
+    begin
+      LogDatei.log('Error in resolveSymlink : could not resolve : : ' +
+        s1 + ' ; ' + InfoSyntaxError, LLError);
+    end;
+  end
+
+  else if LowerCase(s) = LowerCase('forcePathDelims') then
+  begin
+    syntaxCheck := False;
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          StringResult := GetForcedPathDelims(s1);
+        end;
+    if not syntaxCheck then
+    begin
+      LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
+        ' ; ' + InfoSyntaxError, LLError);
+    end;
+  end
+
   else if LowerCase(s) = LowerCase('strLoadTextFile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -14906,7 +15035,8 @@ begin
             list1.loadfromfile(s1)
           else
           begin
-            LogDatei.log('Error in strLoadTextFile on loading file (not found): ' + s1, LLError);
+            LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
+              s1, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
           //list1.loadfromfile(s1);
@@ -14920,7 +15050,8 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in strLoadTextFile on loading file: '  + s1 +' with msg: '+ e.message, LLError);
+            LogDatei.log('Exception in strLoadTextFile on loading file: ' +
+              s1 + ' with msg: ' + e.message, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
           end
@@ -14963,7 +15094,9 @@ begin
                 on e: Exception do
                 begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('Exception in strLoadTextFileWithEncoding on loading file: '  + s1 +' with msg: '+ e.message, LLError);
+                  LogDatei.log(
+                    'Exception in strLoadTextFileWithEncoding on loading file: ' +
+                    s1 + ' with msg: ' + e.message, LLError);
                   FNumberOfErrors := FNumberOfErrors + 1;
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
@@ -15636,8 +15769,8 @@ begin
         on e: Exception do
         begin
           StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
+            + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
           LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
             e.message, LLerror);
         end;
@@ -16306,7 +16439,8 @@ begin
               list1.loadfromfile(s3)
             else
             begin
-              LogDatei.log('Error in getValueFromFile on loading file (not found): ' + s3, LLError);
+              LogDatei.log('Error in getValueFromFile on loading file (not found): ' +
+                s3, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
             end;
             //list1.loadfromfile(s3);
@@ -16315,7 +16449,8 @@ begin
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in getValueFromFile on loading file: '  + s3 +' with msg: '+ e.message, LLError);
+              LogDatei.log('Exception in getValueFromFile on loading file: ' +
+                s3 + ' with msg: ' + e.message, LLError);
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
           end;
@@ -16374,7 +16509,10 @@ begin
             list1.loadfromfile(s3)
           else
           begin
-            LogDatei.log('Error in getValueFromFileBySeparator on loading file (not found): ' + s3, LLError);
+            LogDatei.log(
+              'Error in getValueFromFileBySeparator on loading file (not found): '
+              +
+              s3, LLError);
             FNumberOfErrors := FNumberOfErrors + 1;
           end;
 
@@ -16382,7 +16520,8 @@ begin
           on e: Exception do
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in getValueFromFileBySeparator on loading file: '  + s3 +' with msg: '+ e.message, LLError);
+            LogDatei.log('Exception in getValueFromFileBySeparator on loading file: ' +
+              s3 + ' with msg: ' + e.message, LLError);
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
           end
         end;
@@ -17411,7 +17550,9 @@ var
   function handleFileExists32(s1: string): boolean;
   begin
     LogDatei.log('  Starting query if file exists ...', LLInfo);
-    s2 := TrimAndExpandFilename(s1);
+    //s2 := TrimAndExpandFilename(s1);
+    // call the osfunc.expandfilname to handle quotes
+    s2 := Trim(ExpandFilename(s1));
     OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       try
@@ -17433,7 +17574,9 @@ var
   function handleFileExists64(s1: string): boolean;
   begin
     LogDatei.log('  Starting query if file exists (64 Bit mode)...', LLInfo);
-    s2 := TrimAndExpandFilename(s1);
+    //s2 := TrimAndExpandFilename(s1);
+    // call the osfunc.expandfilname to handle quotes
+    s2 := Trim(ExpandFilename(s1));
     try
       if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
       begin
@@ -17566,7 +17709,9 @@ begin
           BooleanResult := handleFileExists32(s1);
        {$ELSE WINDOWS}
           LogDatei.log('Starting query if file exists ...', LLInfo);
-          s2 := TrimAndExpandFilename(s1);
+          //s2 := TrimAndExpandFilename(s1);
+          // call the osfunc.expandfilname to handle quotes
+          s2 := Trim(ExpandFilename(s1));
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
@@ -17651,6 +17796,9 @@ begin
       begin
         syntaxCheck := True;
         try
+          //s2 := TrimAndExpandFilename(s1);
+          // call the osfunc.expandfilname to handle quotes
+          s1 := Trim(ExpandFilename(s1));
           BooleanResult := FileExists(s1) or DirectoryExists(s1);
         except
           Logdatei.log('Error: Exception in FileOrFolderExists: ',
@@ -17733,6 +17881,8 @@ begin
           OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
         try
           try
+            // call the osfunc.expandfilname to handle quotes
+            tmpstr := ExpandFilename(tmpstr);
             tmpstr := trim(tmpstr);
             BooleanResult := DirectoryExists(tmpstr);
             if (not BooleanResult) and (not (trim(tmpstr) = '')) then
@@ -17912,7 +18062,7 @@ begin
                 s2 := ExpandFileName(s2);
                 Textfile.LoadFromFile(s2);
                 //Textfile.Text := reencode(Textfile.Text, 'system');
-                LogDatei.log_list(Tstrings(Textfile),LLDebug2);
+                LogDatei.log_list(TStrings(Textfile), LLDebug2);
                 BooleanResult :=
                   (Textfile.FindFirstItem(s1, False, -1, BooleanResult0) >= 0)
               except
@@ -18900,15 +19050,27 @@ begin
   begin
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-                syntaxCheck := True;
-                BooleanResult := getFileBom(s1,tmpstr);
-                LogDatei.log('GottenEnconding : '+ tmpstr, LLInfo);
-            end;
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          BooleanResult := getFileBom(s1, tmpstr);
+          LogDatei.log('GottenEnconding : ' + tmpstr, LLInfo);
+        end;
   end
 
-  (* Boolescher Ausdruck  s1 = s2 *)
+  //function fileIsSymlink(inFileName: string): boolean;
+  else if Skip('fileIsSymlink', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          BooleanResult := isSymLink(s1);
+        end;
+  end
+
+  (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
     if skip('int', r, r, InfoSyntaxError) then
@@ -19590,8 +19752,8 @@ var
   linecounter: integer;
   numberOfSectionLines: integer;
 
-  encodingString : string ='';
-  hasBom : Boolean;
+  detectedEncoding: string = '';
+  hasBom: boolean;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -20311,15 +20473,16 @@ begin
                 begin
                   if CheckFileExists(fullfilename, ErrorInfo) then
                   begin
-                      hasBom := getFileBom(fullfilename, encodingString);
-                      try
-                        LoadValidLinesFromFile(fullfilename, encodingString, ArbeitsSektion);
+                    hasBom := getFileBom(fullfilename, detectedEncoding);
+                    try
+                      LoadValidLinesFromFile(fullfilename, detectedEncoding,
+                        ArbeitsSektion);
 
-                        ArbeitsSektion.StartLineNo := 1;
-                      except
-                        Logdatei.log('File "' + fullfilename +
-                          '" cannot be read', LLError);
-                      end;
+                      ArbeitsSektion.StartLineNo := 1;
+                    except
+                      Logdatei.log('File "' + fullfilename +
+                        '" cannot be read', LLError);
+                    end;
                   end
                   else
                   begin
@@ -20692,13 +20855,27 @@ begin
                         'system')) + PathDelim + 'lib' + PathDelim + incfilename;
                           {$ENDIF WINDOWS}
                           {$IFDEF LINUX}
-                      // search in /usr/share/opsi-script/lib
+                      // search in %OpsiscriptDir%\lib
                       testincfilename :=
-                        '/usr/share/opsi-script' + PathDelim +
-                        'lib' + PathDelim + incfilename;
+                        ExtractFileDir(reencode(ParamStr(0),
+                        'system')) + PathDelim + 'lib' + PathDelim + incfilename;
+                      testincfilename := ExpandFilename(testincfilename);
+                      LogDatei.log_prog('Looking for: ' + testincfilename, LLNotice);
+                      if FileExistsUTF8(testincfilename) then
+                      begin
+                        found := True;
+                        fullincfilename := testincfilename;
+                      end;
+                      if (not found) then
+                      begin
+                        // search in /usr/share/opsi-script/lib
+                        testincfilename :=
+                          '/usr/share/opsi-script' +
+                          PathDelim + 'lib' + PathDelim + incfilename;
+                      end;
                           {$ENDIF LINUX}
                           {$IFDEF DARWIN}
-                      // search in %OpsiscriptDir%\lib
+                      // search in %OpsiscriptDir%../Resources/lib
                       testincfilename :=
                         ExtractFileDir(reencode(ParamStr(0),
                         'system')) + PathDelim + '../Resources/lib' +
@@ -20717,7 +20894,7 @@ begin
                           '/usr/local/share/opsi-script' +
                           PathDelim + 'lib' + PathDelim + incfilename;
                       end;
-                          {$ENDIF DARWIN}
+                            {$ENDIF DARWIN}
                     end;
                     if (not found) then
                     begin
@@ -20733,12 +20910,15 @@ begin
                     begin
                       inSearchedFunc := False;
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
-                      LogDatei.addToNoLogFiles(ExtractName(fullincfilename));
+                      LogDatei.addToNoLogFiles(ExtractFileName(fullincfilename));
+                      LogDatei.log_prog('added to NoLogFiles: ' +
+                        ExtractFileName(fullincfilename), LLDebug2);
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(
+                        ExpandFileName(fullincfilename), detectedEncoding);
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
@@ -20746,7 +20926,7 @@ begin
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log_prog('Will Include : ' +
-                        incfilename + ' with encoding: ' + encodingString, LLDebug);
+                        incfilename + ' with encoding: ' + detectedEncoding, LLDebug);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -21002,9 +21182,10 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(
+                        ExpandFileName(fullincfilename), detectedEncoding);
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
@@ -21014,7 +21195,7 @@ begin
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log('Will Include : ' + incfilename +
-                        ' with encoding: ' + encodingString, LLDebug2);
+                        ' with encoding: ' + detectedEncoding, LLDebug2);
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
@@ -21054,7 +21235,7 @@ begin
                       closeFile(incfile);
                       linecount := Count;
                       LogDatei.log('Included (insert) file: ' +
-                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
+                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
                     end
                     else
                     begin
@@ -21163,9 +21344,10 @@ begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
 
-                      hasBom := getFileBom(fullincfilename, encodingString);
+                      hasBom := getFileBom(fullincfilename, detectedEncoding);
 
-                      inclist.loadFromFileWithEncoding(ExpandFileName(fullincfilename),encodingString);
+                      inclist.loadFromFileWithEncoding(
+                        ExpandFileName(fullincfilename), detectedEncoding);
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
@@ -21200,7 +21382,7 @@ begin
                       closeFile(incfile);
                       //linecount := Count;
                       LogDatei.log('Included (append) file: ' +
-                        fullincfilename + ' with encoding: ' + encodingString, LLInfo);
+                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
                     end
                     else
                     begin
@@ -21802,17 +21984,17 @@ begin
 
                               tsExecutePython:
                                 execPython(localSection, tmpstr,
-                                  False {no catchout}, 1,
+                                  True {catchout}, 1,
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsExecuteWith_escapingStrings, tsExecuteWith:
                                 executeWith(localSection, tmpstr,
-                                  False {no catchout}, 1, tmplist);
+                                  True {catchout}, 1, tmplist);
 
                               tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
                               tsShellInAnIcon:
                                 execDOSBatch(localSection, tmpstr,
-                                  SW_HIDE, False {no catchout}, 0,
+                                  SW_HIDE, True {catchout}, 0,
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsWinBatch:
@@ -23108,15 +23290,14 @@ begin
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                if produceExecLine(remaining, p1, p2, p3, p4,
-                  InfoSyntaxError) then
+                //if produceExecLine(remaining, p1, p2, p3, p4, InfoSyntaxError) then
 
-                  ActionResult :=
-                    executeWith(ArbeitsSektion, Remaining, True {catch out},
-                    0, output)
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                ActionResult :=
+                  executeWith(ArbeitsSektion, Remaining, True {catch out},
+                  0, output);
+                //else
+                //  ActionResult :=
+                //    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
 
               tsWorkOnStringList:
@@ -23614,8 +23795,8 @@ var
   ipAddress: string = '';
   usedEncoding: string = '';
   Encoding2use: string = '';
-  hasBOM : boolean = False;
-  foundEncoding : string = '';
+  hasBOM: boolean = False;
+  foundEncoding: string = '';
   tmpstr: string = '';
   str: string;
   depotdrive_bak, depotdir_bak: string;
@@ -23741,55 +23922,63 @@ begin
       Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
       logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
       Encoding2use := searchencoding(Script.Text);
-      if Encoding2use = '' then Encoding2use := mysystemEncoding;
+      if Encoding2use = '' then
+        Encoding2use := mysystemEncoding;
       if hasBOM or isEncodingUnicode(Encoding2use) then
       begin
         //logdatei.log_prog('file has BOM', LLinfo );
         //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
         //Encoding2use := searchencoding(Script.Text);
         if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
-           begin
-             logdatei.log('The encoding mentioned in the file :' + Encoding2use +
-               ', is different that the detected encoding :' + foundEncoding +'!', LLWarning);
-             logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
-             Encoding2use := foundEncoding;
-           end;
+        begin
+          logdatei.log('The encoding mentioned in the file :' +
+            Encoding2use + ', is different that the detected encoding :' +
+            foundEncoding + '!', LLWarning);
+          logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+          Encoding2use := foundEncoding;
+        end;
       end
       else
       begin
         Script.LoadFromFile(Scriptdatei);
         //str := script.Text;
-        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+          ')', LLinfo);
         Encoding2use := searchencoding(Script.Text);
         if (Encoding2use = '') then
           Encoding2use := 'system';
         if (Encoding2use = 'system') then
-           begin
-             //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-             logdatei.log('Encoding=system makes the opsiscript not portable between different OS', LLWarning);
-           end
+        begin
+          //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+          if not configSupressSystemEncodingWarning then
+            logdatei.log(
+              'Encoding=system makes the opsiscript not portable between different OS',
+              LLWarning);
+        end
         else
         begin
-           if (Lowercase(copy(Encoding2use, length(Encoding2use)-2, length(Encoding2use))) = 'bom') then
-           begin
-              //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-              if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use)-3)) then
-                 begin
-                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                  Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-                 end
-              else
-                  begin
-                    logdatei.log_prog('the encoding mentioned in the file is not unicode)', LLWarning );
-                    //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                    Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-                  end;
-           end
-           else
-             begin
-               //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-               Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-             end;
+          if (Lowercase(copy(Encoding2use, length(Encoding2use) - 2,
+            length(Encoding2use))) = 'bom') then
+          begin
+            //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+            if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
+            begin
+              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+              Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+            end
+            else
+            begin
+              logdatei.log_prog(
+                'the encoding mentioned in the file is not unicode)', LLWarning);
+              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+              Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+            end;
+          end
+          else
+          begin
+            //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+            Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+          end;
         end;
       end;
       //str := script.Text;
@@ -24104,6 +24293,21 @@ begin
       FConstList.add('%ScriptDir%');
       FConstValuesList.add(ValueToTake);
 
+      FConstList.add('%realScriptpath%');
+      if FileExists(Scriptdatei) then
+        ValueToTake := ExtractFileDir(resolveSymlink(Scriptdatei))
+      else
+        ValueToTake := '';
+      (*
+      {$IFDEF WINDOWS}
+      ValueToTake := ExtractFileDir(resolveWinSymlink(Scriptdatei));
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
+      ValueToTake := ExtractFileDir(resolveUnixSymlink(Scriptdatei));
+      {$ENDIF UNIX}
+      *)
+      FConstValuesList.add(ValueToTake);
+
       FConstList.add('%WinstDir%');
       ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
       FConstValuesList.add(ValueToTake);
@@ -24208,8 +24412,14 @@ begin
       FConstList.add('%opsiservicePassword%');
       FConstValuesList.add(opsiservicePassword);
 
+      FConstList.add('%opsiserviceClientId%');
+      FConstValuesList.add(opsiserviceClientId);
+
       FConstList.add('%hostID%');
-      FConstValuesList.add(computernaming);
+      if opsiserviceClientId <> '' then
+        FConstValuesList.add(opsiserviceClientId)
+      else
+        FConstValuesList.add(computernaming);
 
       FConstList.add('%opsiServer%');
 

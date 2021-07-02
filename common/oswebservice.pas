@@ -879,6 +879,7 @@ begin
       end;
     end;
 
+    (*
     // but if we did the action on hehalf of a policy we stay on following policies and reset new the action request:
 
     if ar in [tapNull_byPolicy, tapSetup_byPolicy, tapUpdate_byPolicy,
@@ -886,6 +887,7 @@ begin
     begin
       newActionRequest := tap_byPolicy;
     end;
+    *)
 
   end
   else

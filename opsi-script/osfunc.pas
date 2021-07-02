@@ -74,6 +74,7 @@ uses
   types,
   dateutils,
   //initc,
+  osfuncunix,
 {$ENDIF UNIX}
   //LConvEncoding,
   blcksock,
@@ -98,7 +99,9 @@ uses
   lcltype,
   ostxstringlist,
   osstartproc_cp,
-  pipes;
+  pipes,
+  oszip,
+  osfilehelper;
 
 const
   BytesarrayLength = 5000;
@@ -368,17 +371,18 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer): boolean; overload;
+      daysback: integer; logleveloffset : integer = 0): boolean; overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+      daysback: integer; search4file: boolean; var RebootWanted: boolean;
+      logleveloffset : integer = 0): boolean;
       overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
-      retryOnReboot: boolean): boolean; overload;
+      daysBack: integer;  search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean; logleveloffset : integer = 0): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -529,8 +533,13 @@ function ExpandFileName(const FileName: string): string;
 
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
-procedure MakeBakFile(const FName: string); overload;
-procedure MakeBakFile(const FName: string; maxbaks: integer); overload;
+
+
+procedure MakeBakFile(const FName: string);
+
+// moved to osfilehelper (do 4.6.2021)
+// procedure MakeBakFiles(const FName: string; maxbaks: integer);
+
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean; overload;
@@ -538,6 +547,8 @@ function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean; overload;
+
+
 function Is64BitSystem: boolean;
 function getOSArchitecture: string;
 function runningAsAdmin: boolean;
@@ -628,6 +639,8 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
+function isSymLink(filepath : string) : boolean;
+function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
 
 
 
@@ -5438,7 +5451,8 @@ function getOSArchitecture: string;
 begin
   Result := 'unknown';
   {$IFDEF WIN32}
-  Result := 'x86_32';
+  if DSiIsWow64 then Result := 'x86_64'
+  else Result := 'x86_32';
   {$ENDIF WIN32}
   {$IFDEF WIN64}
   Result := 'x86_64';
@@ -5448,7 +5462,6 @@ begin
   Result := 'x86_64';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  // At the moment the only supported architecture at Linux
   Result := trim(getCommandResult('uname -m'));
   if result = 'arm64' then Result := 'arm_64';
   if result = 'x86_64' then
@@ -5574,7 +5587,10 @@ begin
 
 end;
 
-procedure MakeBakFile(const FName: string; maxbaks: integer);
+(*
+// moved to osfilehelper (do 4.6.2021)
+
+procedure MakeBakFiles(const FName: string; maxbaks: integer);
 var
   bakcounter: integer;
   problem: string = '';
@@ -5590,20 +5606,6 @@ begin
   extension := ExtractFileExt(FName);
   //if FileExists(FName) then
   //begin
-    (*
-    // this is old style (name.ext.num) and is here only for clean up old logs
-    for bakcounter := maxbaks - 1 downto 0 do
-    begin
-      if FileExists(FName + '.' + IntToStr(bakcounter)) then
-      begin
-        newfilename := path + PathDelim + basename + '_' +
-          IntToStr(bakcounter) + extension;
-        FileCopy(FName + '.' + IntToStr(bakcounter), newfilename, problem,
-          False, rebootWanted);
-        DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
-      end;
-    end;
-    *)
   // this is new style (name_num.ext)
   for bakcounter := maxbaks - 1 downto 0 do
   begin
@@ -5630,7 +5632,7 @@ begin
   end;
   //end;
 end;
-
+*)
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
 var
@@ -5677,7 +5679,7 @@ end;
 function FileCopyWin
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-  (* RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen *)
+  { RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen }
 
 var
   //Date: longint;
@@ -5829,8 +5831,8 @@ begin
       end;
 
       if (not Result) and (LastError = 32)
-        (* file is being used by another process *) and DelayUntilRebootIfNeeded then
-        (* Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert *)
+        { file is being used by another process } and DelayUntilRebootIfNeeded then
+        { Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert }
       begin
         if GetOSId = VER_PLATFORM_WIN32_NT then
         begin
@@ -5905,7 +5907,7 @@ begin
 
         end;
       end;
-      (*  $ENDIF *)
+      //  $ENDIF
 
       if not Result then
       begin
@@ -5972,6 +5974,8 @@ begin
 end;
 
 {$ENDIF WINDOWS}
+
+
 
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
@@ -9843,7 +9847,7 @@ var
         begin
           LogS := 'Info: Target ' + TargetName +
             ' exists and shall be overwritten';
-          LogDatei.log(LogS, LLinfo);
+          LogDatei.log(LogS, LLDebug);
           LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
         end;
 
@@ -9867,7 +9871,7 @@ var
         if FileCopy(SourceName, TargetName, problem, True,
           rebootWanted, followsymlinks) then
         begin
-          LogS := SourceName + ' copied to ' + TargetPath;
+          LogS := 'copy: '+SourceName + ' copied to ' + TargetPath;
           LogDatei.log(LogS, LLInfo);
           if problem <> '' then
           begin
@@ -10148,13 +10152,26 @@ var
             FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent); //SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLDebug);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-          {$IFDEF WIN32}
+          //{$IFDEF WIN32}
           if cpSpecify and cpExtract = cpExtract then
           begin
+            try
+              if UnzipWithDirStruct(SourceName, TargetPath) then
+                LogDatei.log('unzipped: ' + SourceName + ' to ' + TargetPath, LLInfo)
+              else
+                LogDatei.log('Failed to unzip: ' + SourceName + ' to ' + TargetPath, LLError)
+            except
+              on E: Exception do
+              begin
+                LogDatei.log('Exception: Failed to unzip: ' + SourceName +
+                  ' to ' + TargetPath + ' : ' + e.message, LLError);
+              end;
+            end;
+            (*
             PSourceName := PointerAufString(SourceName);
             strLcopy(@ZipFileName, PSourceName, DirLength + 1);
 
@@ -10167,9 +10184,10 @@ var
               end;
             end;
             //freemem(PSourceName);
+            *)
           end
           else
-          {$ENDIF WIN32}
+          //{$ENDIF WIN32}
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
@@ -10391,27 +10409,27 @@ end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer): boolean;
+  daysBack: integer; logleveloffset : integer = 0): boolean;
 var
   RebootWanted: boolean;
 begin
-  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted);
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted,logleveloffset);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean; logleveloffset : integer = 0): boolean;
 var
   retryOnReboot: boolean = False;
 begin
   Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
-    True, RebootWanted, retryOnReboot);
+    True, RebootWanted, retryOnReboot,logleveloffset);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean;
-  retryOnReboot: boolean): boolean;
+  retryOnReboot: boolean; logleveloffset : integer = 0): boolean;
 
 var
   CompleteName: string = '';
@@ -10437,6 +10455,7 @@ var
     (const CompleteName: string; DeleteDir: boolean);
   var
     Filename: string = '';
+    testname: string = '';
     FileMask: string = '';
     OrigPath: string = '';
     FindResultcode: integer = 0;
@@ -10455,7 +10474,7 @@ var
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
-    LogDatei.log_prog(LogS, LLInfo);
+    LogDatei.log_prog(LogS, LLInfo + logleveloffset);
 
     { start with the sub directories,
       and go with the recursion deeper and delete the lowest level first }
@@ -10488,7 +10507,7 @@ var
       Filemask := '*';
     {$ENDIF WINDOWS}
     LogS := 'Search "' + OrigPath + Filemask + '"';
-    LogDatei.log(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo + logleveloffset);
 
     FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile or
       faSymlink - faDirectory, SearchResult);
@@ -10543,7 +10562,7 @@ var
         if SysUtils.DeleteFile(Filename) then
         begin
           LogS := 'The file ' + Filename + ' has been deleted';
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo + logleveloffset);
         end
         else
         begin
@@ -10607,7 +10626,7 @@ var
       if removedir(OrigPath) then
       begin
         LogS := 'Directory "' + OrigPath + '" deleted';
-        LogDatei.log(LogS, LLInfo);
+        LogDatei.log(LogS, LLInfo + logleveloffset);
       end
       else
       begin
@@ -10663,11 +10682,16 @@ begin
   PathName := ExtractFilePath(CompleteName);
   //CompleteName := ExpandFileName (Filename);
   { changed because it is dangerous }
-  if (lowercase(Filename) = 'c:\') or (lowercase(Filename) = 'c:\windows') or
-    (lowercase(Filename) = 'c:\windows\system32') or (lowercase(Filename) = 'c:') or
-    (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
+  testname := IncludeTrailingPathDelimiter(lowercase(Filename));
+  if  (testname = 'c:\') or
+     (testname = 'c:\windows\') or
+     (testname = 'c:\windows\system32\') or
+     (testname = '/Applications/') or
+     (Filename = PathDelim) or
+     (Filename = '\\') or
+     (1 = pos('\', Filename)) then
   begin
-    LogDatei.log('No, we will not delete: ' + Filename, LLError);
+    LogDatei.log('By policy we will not delete: ' + Filename, LLError);
     CompleteName := '';
   end
   else
@@ -10711,7 +10735,7 @@ begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLInfo + logleveloffset);
     end
     else
     begin
@@ -10726,7 +10750,7 @@ begin
         if SysUtils.DeleteFile(CompleteName) then
         begin
           LogS := 'The file has been deleted';
-          LogDatei.log(LogS, LLInfo);
+          LogDatei.log(LogS, LLInfo + logleveloffset);
         end
         else
         begin
@@ -10772,7 +10796,7 @@ begin
     begin
       LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLInfo + logleveloffset);
     end;
   end;
 end;
@@ -11544,5 +11568,42 @@ end;
 
 {$ENDIF WINDOWS}
 
+function isSymLink(filepath : string) : boolean;
+var
+  fileinfo : TSearchRec;
+  errorinfo : string;
+begin
+  result  := false;
+  filepath := GetForcedPathDelims(filepath);
+  LogDatei.log('resolving symlink: '+filepath,LLinfo);
+  if GetFileInfo(filepath, fileinfo,errorinfo) then
+  begin
+    if (fileinfo.Attr and fasymlink) = fasymlink then
+     result  := true;
+  end;
+  //result := FileIsSymlink(filepath) ;
+end;
 
+
+function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+var
+  fileinfo : TSearchRec;
+  outpath : string;
+begin
+  result := filepath;
+  {$IFDEF WINDOWS}
+  result := resolveWinSymlink(filepath);
+  //result := execPowershellCall(filepath, '', 1, True, False, tmpbool1).Text;
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  result := resolveUnixSymlink(filepath);
+  {$ENDIF UNIX}
+end;
+
+
+(*
+ function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
+  var ErrorInfo: string): boolean;
+  GetFinalPathNameByHandle()
+*)
 end.

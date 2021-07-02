@@ -60,7 +60,7 @@ begin
     if (myChar <> #195) then
       strnew := strnew + '-';
   end;
-  Result := strnew;
+  Result := cleanOpsiId(strnew);
 end;
 
 
@@ -92,7 +92,7 @@ begin
         end;
     end;
   end;
-  Result := strnew;
+  Result := cleanOpsiId(strnew);
 end;
 
 

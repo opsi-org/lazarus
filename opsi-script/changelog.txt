@@ -5,6 +5,86 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+
+opsi-script (4.12.4.23) stable; urgency=low
+
+ * osfuncwin2: fix for function resolveWinSymlink
+ * new constant %opsiserviceClientId% (FQDN in service context, empty without)
+ * parameter /clientid if present wil be ussed as preferred source for %hostid%
+ * new parameter /depotpath (only together with /opsiservice) to pass the path to the depot
+ * linux opsi-script library search path:
+    %scriptpath%                     // standard by definition
+    %ScriptPath%/../lib              // standard by definition
+    './lib'                          // new standard directory in opsi-script directory
+    '/usr/share/opsi-script/lib'     // backward compatibility directory
+ * linux skin directory search path:
+    '/usr/share/opsi-script/customskin'  // custom skin directory
+    './skin'                          // new standard skin directory in opsi-script directory
+    '/usr/share/opsi-script/skin'     // backward compatibility directory
+ * linux locale directory search path:
+    './locale'                        // new standard locale directory in opsi-script directory
+    '/usr/share/locale/....'          // backward compatibility directory
+ * removing links to http://www.opsi.org/credits/
+ * osinteractivegui: set copyright tro 1995-2021
+ * Fixes detection of w10 release > 2009 (21h1) (osparser) ; fixes #4665
+ * New cli parameter /ServiceBatch  if /serviceBatch then also needed:
+          /ClientId <> /opsiservice <> /username <> /password <> /productId <> and <script path>
+ * New config opsi-script.global.supressSystemEncodingWarning
+     if true then the following warning will be suppressed:
+     'Encoding=system makes the opsiscript not portable between different OS'
+ * osfuncwin2: replace of winst32.exe in funcwin2 by ExtractFileName(ParamStr(0)
+
+-- d.oertel <d.oertel@uib.de> Tue, 08 June 2021 15:00
+
+opsi-script (4.12.4.22) stable; urgency=low
+
+ * new (common) unit osfilehelper
+ * osfunc: function makbakfile with two parameters (name,maxbak number) is moved as makbakfiles
+   to osfilehelper
+ * oslog: function makbakfile with two parameters (name,maxbak number) is moved as makbakfiles
+   to osfilehelper
+ * osfunc files section copy: moving some log messages from Loglevel 6 to 7
+
+-- d.oertel <d.oertel@uib.de> Fri, 04 June 2021 15:00
+
+
+opsi-script (4.12.4.21) stable; urgency=low
+
+ * osfunc: function isSymLink(const filepath : string) : boolean;
+ * osfuncunix: function resolveUnixSymlink(const filepath : string; recursive : boolean = true) : string;
+ * osparser: function resolveWinSymlink(const filepath : string; recursive : boolean = true) : string;
+ * new function resolveSymlink(<string>) : string; on error it returns input
+ * new constant %realScriptpath% ; if the script is called via symlink
+      then it is the resolved version of %scriptpath%
+ * new common unit osfuncunix
+ * new function forcePathDelims(<path string>) : <path string>
+      sets all slash and backslash as pathdelim according to the OS
+ * new boolean fileIsSymlink(FilePath: string): boolean;
+
+-- d.oertel <d.oertel@uib.de> Tue, 25 May 2021 15:00
+
+opsi-winst/opsi-script (4.12.4.20) stable; urgency=low
+
+ * again: fix debug_lib do imported libs added to nologfiles in oslog
+
+-- d.oertel <d.oertel@uib.de> Thu, 6 May 2021 15:00
+
+opsi-winst/opsi-script (4.12.4.19) stable; urgency=low
+
+ * osparser: fix fileexists, fileOrFolderExists, DirectoryExists with quoted filenames
+
+-- d.oertel <d.oertel@uib.de> Wed, 5 May 2021 15:00
+
+opsi-winst/opsi-script (4.12.4.18) stable; urgency=low
+
+ * osfunc: fix for getOSArchitecture at windows 64 bit
+ * osparser: doAktionen: executesection: call sections with catchout=true
+   fixes: nooutput in log and showoutput
+ * osfuncmac: getProfilesDirListMac implemented
+ * osmain: allow /batch with /productid and opsi-service parameters
+
+-- d.oertel <d.oertel@uib.de> Wed, 14 Apr 2021 15:00
+
 opsi-winst/opsi-script (4.12.4.17) stable; urgency=low
 
  * change getFileBom to fileHasBom(<filename>) : boolean
@@ -18,6 +98,8 @@ opsi-winst/opsi-script (4.12.4.16) stable; urgency=low
  * call of execwith section with /encoding parameter (by j.laajili)
  * new string function: getOSarchitecture (x86_32 / x86_64/ arm_64)
  * new boolean function: runningInWAnMode (true if opsiserver = localhost) default=false
+ * change function asConfidentialList(<list>) : stringlist
+   to function asConfidential(<list>) : stringlist
 
 -- d.oertel <d.oertel@uib.de> Fri, 26 Feb 2021 15:00
 

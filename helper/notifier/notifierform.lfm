@@ -1,7 +1,7 @@
 object Nform: TNform
-  Left = 509
+  Left = 510
   Height = 241
-  Top = 466
+  Top = 467
   Width = 319
   Caption = 'Nform'
   ClientHeight = 241

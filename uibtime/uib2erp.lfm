@@ -1,27 +1,28 @@
 object Fuibtime2erp: TFuibtime2erp
-  Left = 405
-  Height = 896
+  Left = 863
+  Height = 849
   Top = 101
-  Width = 1107
+  Width = 1049
   Caption = 'uibtime2erp'
-  ClientHeight = 896
-  ClientWidth = 1107
-  Font.Height = -15
+  ClientHeight = 849
+  ClientWidth = 1049
+  DesignTimePPI = 91
+  Font.Height = -14
   Font.Name = 'Arial'
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.12.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
+    Height = 47
     Top = 0
-    Width = 1107
+    Width = 1049
     Align = alTop
     Caption = 'uibtime zu Canias-ERP Werkzeug'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clGreen
-    Font.Height = -27
+    Font.Height = -26
     Font.Name = 'Arial'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
@@ -32,240 +33,303 @@ object Fuibtime2erp: TFuibtime2erp
   end
   object Panel2: TPanel
     Left = 0
-    Height = 149
-    Top = 747
-    Width = 1107
+    Height = 141
+    Top = 708
+    Width = 1049
     Align = alBottom
     Caption = 'Panel2'
-    ClientHeight = 149
-    ClientWidth = 1107
+    ClientHeight = 141
+    ClientWidth = 1049
+    Font.Height = -14
+    Font.Name = 'Arial'
+    ParentFont = False
     TabOrder = 1
     OnClick = Panel2Click
     object BitBtn1: TBitBtn
-      Left = 1021
-      Height = 64
+      Left = 968
+      Height = 61
       Top = 8
-      Width = 75
+      Width = 71
       DefaultCaption = True
+      Font.Height = -14
+      Font.Name = 'Arial'
       Kind = bkClose
       ModalResult = 11
       OnClick = BitBtn1Click
+      ParentFont = False
       TabOrder = 0
     end
     object DBText1: TDBText
-      Left = 183
-      Height = 17
+      Left = 173
+      Height = 16
       Top = 0
-      Width = 55
+      Width = 53
       DataField = 'summe'
       DataSource = DataSource3
+      Font.Height = -14
+      Font.Name = 'Arial'
       ParentColor = False
+      ParentFont = False
     end
     object Label4: TLabel
-      Left = 128
-      Height = 17
+      Left = 121
+      Height = 16
       Top = 0
-      Width = 60
+      Width = 57
       Caption = 'Summe: '
+      Font.Height = -14
+      Font.Name = 'Arial'
       ParentColor = False
+      ParentFont = False
     end
     object BtnCreateReport: TButton
-      Left = 360
-      Height = 25
+      Left = 341
+      Height = 24
       Top = 8
-      Width = 292
+      Width = 277
       Caption = 'Report anzeigen (vorläufig)'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnCreateReportClick
+      ParentFont = False
       TabOrder = 1
     end
     object EditButtonExportDir: TEditButton
-      Left = 14
-      Height = 25
-      Top = 56
-      Width = 416
+      Left = 13
+      Height = 28
+      Top = 53
+      Width = 394
       ButtonCaption = 'Exportverzeichnis'
-      ButtonWidth = 188
+      ButtonWidth = 178
+      Font.Height = -14
+      Font.Name = 'Arial'
       MaxLength = 0
       NumGlyphs = 1
       OnChange = EditButtonExportDirChange
+      ParentFont = False
       PasswordChar = #0
       TabOrder = 2
       Text = 'N:\verwaltung\kunden'
     end
     object PanelExport: TPanel
-      Left = 456
-      Height = 45
-      Top = 40
-      Width = 528
+      Left = 432
+      Height = 43
+      Top = 38
+      Width = 500
       Caption = 'PanelExport'
-      ClientHeight = 45
-      ClientWidth = 528
+      ClientHeight = 43
+      ClientWidth = 500
       Color = 12171775
       Enabled = False
+      Font.Height = -14
+      Font.Name = 'Arial'
       ParentColor = False
+      ParentFont = False
       TabOrder = 3
       object CheckBox1: TCheckBox
-        Left = 24
+        Left = 23
         Height = 21
-        Top = 16
-        Width = 174
+        Top = 15
+        Width = 176
         Caption = 'Übetragung freischalten'
+        Font.Height = -14
+        Font.Name = 'Arial'
         OnChange = CheckBox1Change
+        ParentFont = False
         TabOrder = 0
       end
       object BitBtnExp2Erp: TBitBtn
-        Left = 224
-        Height = 30
+        Left = 212
+        Height = 28
         Top = 9
-        Width = 288
+        Width = 273
         Caption = 'Report erstellen und freigeben'
         Enabled = False
+        Font.Height = -14
+        Font.Name = 'Arial'
         OnClick = BitBtnExp2ErpClick
+        ParentFont = False
         TabOrder = 1
       end
     end
     object BitBtnShowexportTable: TBitBtn
-      Left = 112
-      Height = 30
-      Top = 88
-      Width = 290
+      Left = 106
+      Height = 28
+      Top = 83
+      Width = 275
       Caption = 'Anzeige Export Tabelle'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BitBtnShowexportTableClick
+      ParentFont = False
       TabOrder = 4
     end
     object BitBtnEditExportErrorTable: TBitBtn
-      Left = 568
-      Height = 30
-      Top = 88
-      Width = 290
+      Left = 538
+      Height = 28
+      Top = 83
+      Width = 275
       Caption = 'Editiere Exportfehler '
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BitBtnEditExportErrorTableClick
+      ParentFont = False
       TabOrder = 5
     end
     object CheckBoxAccountexport: TCheckBox
-      Left = 24
+      Left = 23
       Height = 21
-      Top = 96
-      Width = 85
+      Top = 91
+      Width = 87
       Caption = 'ReadOnly'
       Checked = True
+      Font.Height = -14
+      Font.Name = 'Arial'
+      ParentFont = False
       State = cbChecked
       TabOrder = 6
     end
     object StatusBar1: TStatusBar
-      Left = 11
-      Height = 23
-      Top = 125
-      Width = 1095
-      BorderSpacing.Left = 10
+      Left = 10
+      Height = 20
+      Top = 120
+      Width = 1038
+      BorderSpacing.Left = 9
+      Font.Height = -14
+      Font.Name = 'Arial'
       Panels = <>
+      ParentFont = False
       SimpleText = 'Status'
     end
     object BtnCreateInterimReport: TButton
-      Left = 672
-      Height = 25
+      Left = 637
+      Height = 24
       Top = 8
-      Width = 292
+      Width = 277
       Caption = 'Report als Zwischenbericht'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnCreateInterimReportClick
+      ParentFont = False
       TabOrder = 8
     end
     object BtnLockReportData: TButton
-      Left = 243
-      Height = 25
+      Left = 230
+      Height = 24
       Top = 8
-      Width = 92
+      Width = 87
       Caption = 'Sperren'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnLockReportDataClick
+      ParentFont = False
       TabOrder = 9
       Visible = False
     end
   end
   object Panel3: TPanel
     Left = 0
-    Height = 134
-    Top = 50
-    Width = 1107
+    Height = 127
+    Top = 47
+    Width = 1049
     Align = alTop
-    ClientHeight = 134
-    ClientWidth = 1107
+    ClientHeight = 127
+    ClientWidth = 1049
+    Font.Height = -14
+    Font.Name = 'Arial'
+    ParentFont = False
     TabOrder = 2
     OnClick = Panel3Click
     object BtnLastMonth: TButton
-      Left = 14
-      Height = 22
-      Top = 10
-      Width = 170
+      Left = 13
+      Height = 21
+      Top = 9
+      Width = 161
       Caption = 'letzten Monat einstellen'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnLastMonthClick
+      ParentFont = False
       TabOrder = 0
     end
     object BtnLastWeek: TButton
-      Left = 190
-      Height = 22
-      Top = 10
-      Width = 170
+      Left = 180
+      Height = 21
+      Top = 9
+      Width = 161
       Caption = 'letzte Woche einstellen'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnLastWeekClick
+      ParentFont = False
       TabOrder = 1
     end
     object BtnThisMonth: TButton
-      Left = 16
-      Height = 22
-      Top = 42
-      Width = 170
+      Left = 15
+      Height = 21
+      Top = 40
+      Width = 161
       Caption = 'diesen Monat einstellen'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnThisMonthClick
+      ParentFont = False
       TabOrder = 2
     end
     object BtnThisWeek: TButton
-      Left = 190
-      Height = 22
-      Top = 42
-      Width = 170
+      Left = 180
+      Height = 21
+      Top = 40
+      Width = 161
       Caption = 'diese Woche einstellen'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnThisWeekClick
+      ParentFont = False
       TabOrder = 3
     end
     object Label1: TLabel
-      Left = 32
-      Height = 16
-      Top = 77
-      Width = 25
+      Left = 30
+      Height = 15
+      Top = 73
+      Width = 26
       Caption = 'von:'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object Label2: TLabel
       Left = 1
-      Height = 16
-      Top = 110
-      Width = 56
+      Height = 15
+      Top = 104
+      Width = 59
       Caption = 'bis( excl):'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object BtnLoadRequiredReports: TButton
-      Left = 448
-      Height = 31
-      Top = 95
-      Width = 238
+      Left = 425
+      Height = 29
+      Top = 90
+      Width = 226
       Caption = 'Alle in dieser Zeit'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnLoadRequiredReportsClick
+      ParentFont = False
       TabOrder = 4
     end
     object CheckGroup1: TCheckGroup
-      Left = 448
-      Height = 77
+      Left = 425
+      Height = 73
       Hint = 'used > 0 : Nur Datensätze mit Kontierung'#13#10'ganzes Interval bei Ende: Ganzes Freistunden-Intervall abfragen, wenn dessen Ennde innerhalb des Abfragezeitraums gefunden wurde.'#13#10'keine Abgerechneten : Keine Datensätze welche schon in die Exporttabelle fürs ERP geschrieben wurden.'
-      Top = 11
-      Width = 648
+      Top = 10
+      Width = 614
       AutoFill = True
       Caption = 'Filter'
       ChildSizing.LeftRightSpacing = 6
@@ -276,15 +340,18 @@ object Fuibtime2erp: TFuibtime2erp
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 55
-      ClientWidth = 644
+      ClientHeight = 56
+      ClientWidth = 612
       Columns = 2
+      Font.Height = -14
+      Font.Name = 'Arial'
       Items.Strings = (
         'used > 0'
         'ganzes Interval bei Ende'
         'markiere ganzes Interval'
         'keine Abgerechneten'
       )
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 5
@@ -293,93 +360,111 @@ object Fuibtime2erp: TFuibtime2erp
       }
     end
     object Edit1: TDateEdit
-      Left = 72
-      Height = 25
-      Top = 77
-      Width = 103
+      Left = 68
+      Height = 28
+      Top = 73
+      Width = 98
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       DateOrder = doNone
-      ButtonWidth = 23
+      ButtonWidth = 22
       NumGlyphs = 1
+      Font.Height = -14
+      Font.Name = 'Arial'
       MaxLength = 0
+      ParentFont = False
       TabOrder = 6
     end
     object Edit2: TDateEdit
-      Left = 72
-      Height = 25
-      Top = 104
-      Width = 103
+      Left = 68
+      Height = 28
+      Top = 99
+      Width = 98
       CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
       DateOrder = doNone
-      ButtonWidth = 23
+      ButtonWidth = 22
       NumGlyphs = 1
+      Font.Height = -14
+      Font.Name = 'Arial'
       MaxLength = 0
+      ParentFont = False
       TabOrder = 7
     end
     object BtnExportZeroAccounting: TButton
-      Left = 696
-      Height = 31
-      Top = 96
-      Width = 400
+      Left = 660
+      Height = 29
+      Top = 91
+      Width = 379
       Caption = 'Alle ganzen Intervalle mit used=0 direkt exportieren'
+      Font.Height = -14
+      Font.Name = 'Arial'
       OnClick = BtnExportZeroAccountingClick
+      ParentFont = False
       TabOrder = 8
     end
     object CheckBoxAllSincePStart: TCheckBox
-      Left = 207
+      Left = 196
       Height = 21
-      Top = 101
+      Top = 96
       Width = 156
       Caption = 'Alles seit Projektstart'
+      Font.Height = -14
+      Font.Name = 'Arial'
+      ParentFont = False
       TabOrder = 9
     end
   end
   object PairSplitter1: TPairSplitter
     Cursor = crVSplit
     Left = 0
-    Height = 563
-    Top = 184
-    Width = 1107
+    Height = 534
+    Top = 174
+    Width = 1049
     Align = alClient
     BorderSpacing.InnerBorder = 2
-    Position = 300
+    Position = 284
     SplitterType = pstVertical
     object PairSplitterSide1: TPairSplitterSide
       Cursor = crArrow
       Left = 0
-      Height = 300
+      Height = 284
       Top = 0
-      Width = 1107
-      ClientWidth = 1107
-      ClientHeight = 300
+      Width = 1049
+      ClientWidth = 1049
+      ClientHeight = 284
       object Panel4: TPanel
         Left = 0
-        Height = 300
+        Height = 284
         Top = 0
-        Width = 1107
+        Width = 1049
         Align = alClient
         Caption = 'Panel4'
-        ClientHeight = 300
-        ClientWidth = 1107
+        ClientHeight = 284
+        ClientWidth = 1049
+        Font.Height = -14
+        Font.Name = 'Arial'
+        ParentFont = False
         TabOrder = 0
         object StringGrid1: TStringGrid
           Left = 1
-          Height = 298
+          Height = 282
           Top = 1
-          Width = 1105
+          Width = 1047
           Align = alClient
           AutoEdit = False
           ColCount = 0
           ColumnClickSorts = True
-          DefaultColWidth = 70
+          DefaultColWidth = 66
           FixedCols = 0
           FixedRows = 0
+          Font.Height = -14
+          Font.Name = 'Arial'
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll, goCellHints]
+          ParentFont = False
           ParentShowHint = False
           RowCount = 0
           ShowHint = True
           TabOrder = 0
-          TitleFont.Height = -15
+          TitleFont.Height = -14
           TitleFont.Name = 'Arial'
           OnClick = StringGrid1Click
           OnDblClick = StringGrid1DblClick
@@ -392,118 +477,154 @@ object Fuibtime2erp: TFuibtime2erp
     object PairSplitterSide2: TPairSplitterSide
       Cursor = crArrow
       Left = 0
-      Height = 258
-      Top = 305
-      Width = 1107
-      ClientWidth = 1107
-      ClientHeight = 258
+      Height = 245
+      Top = 289
+      Width = 1049
+      ClientWidth = 1049
+      ClientHeight = 245
       object Panel5: TPanel
         Left = 0
-        Height = 258
+        Height = 245
         Top = 0
-        Width = 1107
+        Width = 1049
         Align = alClient
         Caption = 'Panel5'
-        ClientHeight = 258
-        ClientWidth = 1107
+        ClientHeight = 245
+        ClientWidth = 1049
+        Font.Height = -14
+        Font.Name = 'Arial'
+        ParentFont = False
         TabOrder = 0
         object Panel6: TPanel
           Left = 1
-          Height = 66
+          Height = 63
           Top = 1
-          Width = 1105
+          Width = 1047
           Align = alTop
-          ClientHeight = 66
-          ClientWidth = 1105
+          ClientHeight = 63
+          ClientWidth = 1047
+          Font.Height = -14
+          Font.Name = 'Arial'
+          ParentFont = False
           TabOrder = 0
           object DBText2: TDBText
-            Left = 56
-            Height = 17
-            Top = 40
-            Width = 55
+            Left = 53
+            Height = 16
+            Top = 38
+            Width = 53
             DataField = 'event'
             DataSource = DataSource3
+            Font.Height = -14
+            Font.Name = 'Arial'
             ParentColor = False
+            ParentFont = False
           end
           object Label5: TLabel
             Left = 7
-            Height = 17
-            Top = 40
-            Width = 45
+            Height = 16
+            Top = 38
+            Width = 44
             Caption = 'Event: '
+            Font.Height = -14
+            Font.Name = 'Arial'
             ParentColor = False
+            ParentFont = False
           end
           object Panel7: TPanel
             Left = 1
-            Height = 33
+            Height = 31
             Top = 1
-            Width = 1103
+            Width = 1045
             Align = alTop
-            ClientHeight = 33
-            ClientWidth = 1103
+            ClientHeight = 31
+            ClientWidth = 1045
+            Font.Height = -14
+            Font.Name = 'Arial'
+            ParentFont = False
             TabOrder = 0
             object Panel8: TPanel
               Left = 1
-              Height = 31
+              Height = 29
               Top = 1
-              Width = 671
+              Width = 636
               Align = alLeft
               BorderWidth = 1
               BorderStyle = bsSingle
               ClientHeight = 27
-              ClientWidth = 667
+              ClientWidth = 634
+              Font.Height = -14
+              Font.Name = 'Arial'
+              ParentFont = False
               TabOrder = 0
               object Label6: TLabel
                 Left = 8
-                Height = 17
+                Height = 16
                 Top = 6
-                Width = 187
+                Width = 181
                 Caption = 'Umrechner: Dezimalstunden'
+                Font.Height = -14
+                Font.Name = 'Arial'
                 ParentColor = False
+                ParentFont = False
               end
               object BtnHm2Dh: TSpeedButton
-                Left = 304
-                Height = 22
+                Left = 288
+                Height = 21
                 Top = 1
-                Width = 23
+                Width = 22
                 Caption = '<'
+                Font.Height = -14
+                Font.Name = 'Arial'
                 OnClick = BtnHm2DhClick
+                ParentFont = False
               end
               object BtnDh2HM: TSpeedButton
-                Left = 328
-                Height = 22
+                Left = 311
+                Height = 21
                 Top = 1
-                Width = 23
+                Width = 22
                 Caption = '>'
+                Font.Height = -14
+                Font.Name = 'Arial'
                 OnClick = BtnDh2HMClick
+                ParentFont = False
               end
               object Label7: TLabel
-                Left = 432
-                Height = 17
+                Left = 410
+                Height = 16
                 Top = 8
                 Width = 108
                 Caption = 'Stunden:Minuten'
+                Font.Height = -14
+                Font.Name = 'Arial'
                 ParentColor = False
+                ParentFont = False
               end
               object MaskEditHm: TMaskEdit
-                Left = 368
-                Height = 25
+                Left = 349
+                Height = 28
                 Top = 0
-                Width = 44
+                Width = 42
                 CharCase = ecNormal
+                Font.Height = -14
+                Font.Name = 'Arial'
                 MaxLength = 5
+                ParentFont = False
                 TabOrder = 0
                 EditMask = '!90:00;1;_'
                 Text = '  :  '
                 SpaceChar = '_'
               end
               object MaskEditDh: TMaskEdit
-                Left = 208
-                Height = 25
+                Left = 197
+                Height = 28
                 Top = 0
-                Width = 80
+                Width = 76
                 CharCase = ecNormal
+                Font.Height = -14
+                Font.Name = 'Arial'
                 MaxLength = 0
+                ParentFont = False
                 TabOrder = 1
                 OnChange = MaskEditDhChange
                 SpaceChar = '_'
@@ -511,10 +632,10 @@ object Fuibtime2erp: TFuibtime2erp
             end
           end
           object DBNavigator1: TDBNavigator
-            Left = 270
-            Height = 25
-            Top = 41
-            Width = 241
+            Left = 256
+            Height = 24
+            Top = 39
+            Width = 228
             BevelOuter = bvNone
             ChildSizing.EnlargeHorizontal = crsScaleChilds
             ChildSizing.EnlargeVertical = crsScaleChilds
@@ -522,53 +643,65 @@ object Fuibtime2erp: TFuibtime2erp
             ChildSizing.ShrinkVertical = crsScaleChilds
             ChildSizing.Layout = cclLeftToRightThenTopToBottom
             ChildSizing.ControlsPerLine = 100
-            ClientHeight = 25
-            ClientWidth = 241
+            ClientHeight = 24
+            ClientWidth = 228
             DataSource = DataSource1
+            Font.Height = -14
+            Font.Name = 'Arial'
             Options = []
+            ParentFont = False
             TabOrder = 1
           end
         end
         object DBGrid1: TDBGrid
           Left = 1
-          Height = 190
-          Top = 67
-          Width = 1105
+          Height = 180
+          Top = 64
+          Width = 1047
           Align = alClient
           Color = clWindow
           Columns = <          
             item
-              MaxSize = 20
+              MinSize = 9
+              MaxSize = 19
               Title.Caption = 'Benutzer'
-              Width = 100
+              Width = 95
               FieldName = 'userid'
             end          
             item
-              MaxSize = 20
+              MinSize = 9
+              MaxSize = 19
               Title.Caption = 'Datum'
-              Width = 60
+              Width = 57
               FieldName = 'dateday'
             end          
             item
-              MaxSize = 20
+              MinSize = 9
+              MaxSize = 19
               Title.Caption = 'Stunden'
-              Width = 60
+              Width = 57
               FieldName = 'stunden'
               DisplayFormat = '####0.00'
             end          
             item
-              MaxSize = 255
+              MinSize = 9
+              MaxSize = 242
               Title.Caption = 'Beschreibung'
-              Width = 700
+              Width = 664
               FieldName = 'description'
             end          
             item
+              MinSize = 9
+              MaxSize = 190
               Title.Caption = 'Sperre'
               FieldName = 'locked'
             end>
           DataSource = DataSource1
+          Font.Height = -14
+          Font.Name = 'Arial'
+          ParentFont = False
           TabOrder = 1
-          TitleFont.Height = -15
+          TitleFont.Height = -14
           TitleFont.Name = 'Arial'
         end
       end
@@ -580,80 +713,80 @@ object Fuibtime2erp: TFuibtime2erp
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 672
-    top = 8
+    Left = 637
+    Top = 8
   end
   object query2: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 728
-    top = 8
+    Left = 690
+    Top = 8
   end
   object QueryProjektzeit: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 1016
-    top = 8
+    Left = 963
+    Top = 8
   end
   object CalendarDialog1: TCalendarDialog
     Date = 42677
     OKCaption = '&OK'
     CancelCaption = 'Cancel'
-    left = 40
-    top = 8
+    Left = 38
+    Top = 8
   end
   object DataSource1: TDataSource
     DataSet = query1
-    left = 528
-    top = 8
+    Left = 501
+    Top = 8
   end
   object query3: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 784
-    top = 8
+    Left = 743
+    Top = 8
   end
   object DataSource3: TDataSource
     DataSet = query3
-    left = 600
-    top = 8
+    Left = 569
+    Top = 8
   end
   object QueryUibeventaccountreport: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 344
-    top = 640
+    Left = 326
+    Top = 607
   end
   object QueryUEARhelper: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 480
-    top = 608
+    Left = 455
+    Top = 576
   end
   object queryUAE: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 857
-    top = 8
+    Left = 812
+    Top = 8
   end
   object queryAccEv: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 920
-    top = 8
+    Left = 872
+    Top = 8
   end
 end

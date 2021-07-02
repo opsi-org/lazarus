@@ -526,8 +526,8 @@ begin
       if (iPos <> 0) then
       begin
         aktProduct.productdata.productName :=
-          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch));
+          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch)));
         LogDatei.log('Found ProductName: ' +
           aktProduct.productdata.productName, LLNotice);
       end;
@@ -537,8 +537,8 @@ begin
       if (iPos <> 0) then
       begin
         mysetup.softwareversion :=
-          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch));
+          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch)));
         LogDatei.log('Found ProductVersion: ' + mysetup.softwareversion, LLNotice);
       end;
 
@@ -547,8 +547,8 @@ begin
       if (iPos <> 0) then
       begin
         mysetup.msiId :=
-          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
-          Length(myoutlines.Strings[i]) - Length(sSearch));
+          trim(Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch)));
         LogDatei.log('Found ProductCode: ' + mysetup.msiId, LLNotice);
       end;
 

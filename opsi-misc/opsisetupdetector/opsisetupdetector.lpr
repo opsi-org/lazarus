@@ -2,12 +2,16 @@ program opsisetupdetector;
 
 {$mode delphi}{$H+}
 
-{$APPTYPE CONSOLE}
+
 //{$DEFINE debug}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
-  Classes, SysUtils, CustApp, Interfaces, Forms, osdform, printers, fileinfo,
+  //Classes, SysUtils,
+  {$IFNDEF WINDOWS}
+  //CustApp,
+  {$ENDIF WINDOWS}
+  Interfaces, Forms, osdform, printers, fileinfo,
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
@@ -30,6 +34,7 @@ begin
     DeleteFile('heap.trc');
   SetHeapTraceOutput('heap.trc');
   {$ENDIF DEBUG}
+  RequireDerivedFormResource:=True;
   Application.Initialize;
   Application.Title:='opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);

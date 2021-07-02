@@ -44,7 +44,6 @@ unit osmain;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -258,6 +257,7 @@ var
   PerformExitWindows: TExitRequest = txrNoExit;
   PerformShutdown: TShutdownRequest = tsrNoShutdown;
   ProgramMode: TProgramMode;
+  batchUpdatePOC : boolean = False;
 
 
   toggle: boolean;
@@ -1066,7 +1066,9 @@ var
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}
-      FBatchOberflaeche.SetMessageText('Reloading product list after reinstallation...', mInfo);//FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
+      FBatchOberflaeche.SetMessageText('Reloading product list after reinstallation...',
+        mInfo);
+      //FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
       {$ENDIF GUI}
       if opsidata.getOpsiServiceVersion = '4' then
       begin
@@ -1297,7 +1299,8 @@ begin
           // maximize window
           BatchWindowMode := bwmMaximized;
           SavedBatchWindowMode := BatchWindowMode;
-          FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);//FBatchOberflaeche.setWindowState(BatchWindowMode);
+          FBatchOberflaeche.SetBatchWindowMode(BatchWindowMode);
+          //FBatchOberflaeche.setWindowState(BatchWindowMode);
           ProcessMess;
           //FBatchOberflaeche.setWindowState(bwmMaximized);
           {$ENDIF GUI}
@@ -1309,10 +1312,10 @@ begin
           LogDatei.log('BuildPC: update switches .....', LLDebug);
           if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
           begin
-            LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+            LogDatei.log_prog('BuildPC: update switches 2.....', LLDebug);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
           end;
-          LogDatei.log('BuildPC: finishProduct .....', LLDebug3);
+          LogDatei.log_prog('BuildPC: finishProduct .....', LLDebug);
           opsidata.finishProduct;
           LogDatei.LogProduktId := False;
         end;
@@ -1333,7 +1336,7 @@ begin
         e.message, LLError);
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end;
   end;
 
@@ -1681,7 +1684,8 @@ begin
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
   LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
-  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo); //setInfoLabel(rsProductCheck);
+  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
+  //setInfoLabel(rsProductCheck);
   ProcessMess;
   {$ENDIF GUI}
   (* walk through all products *)
@@ -1778,7 +1782,8 @@ begin
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
   LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
-  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo); //setInfoLabel(rsProductCheck);
+  FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
+  //setInfoLabel(rsProductCheck);
   ProcessMess;
   {$ENDIF GUI}
   (* walk through all products *)
@@ -1982,10 +1987,12 @@ begin
       starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     {$MACRO ON}
+    //(*  comment this block for code formatting
     startupmessages.Append(
-    //'Compiled with Laz: ' + {$i %LAZVER%} + ' and FPC: '+ {$i %FPCVERSION%} +
     'Compiled with FPC: '+ {$i %FPCVERSION%} +
     ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%});
+    //*)
+    {$MACRO OFF}
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
     //FBatchOberflaeche.setVisible(false);
@@ -2001,7 +2008,7 @@ begin
     begin
       {$IFDEF GUI}
       FBatchOberflaeche.SetBatchWindowMode(bwmIcon);
-      FBatchOberflaeche.SetElementVisible(True,eMainForm);
+      FBatchOberflaeche.SetElementVisible(True, eMainForm);
       CentralFormVisible := True;
       CentralForm.Visible := CentralFormVisible;
 
@@ -2258,8 +2265,8 @@ begin
             FBatchOberflaeche.SetElementVisible(False, eMainForm)
           else
             FBatchOberflaeche.SetElementVisible(True, eMainForm);
-
-          centralform.Edit1.Text := scriptlist.strings[0];
+            if scriptlist.Count <= 0 then
+            centralform.Edit1.Text := scriptlist.strings[0];
           centralform.Edit2.Text := LogDateiName;
 
           DontUpdateMemo := True;
@@ -2296,38 +2303,65 @@ begin
           logDatei.log_prog('AktProduktId: ' + LogDatei.AktProduktId +
             ' = ' + booleantostr(LogDatei.LogProduktId), LLessential);
 
+                      if scriptlist.Count <= 0 then
+          begin
+            logDatei.log('Error we have no script in batch mode. ', LLcritical);
+            extremeErrorLevel := levelFatal;
+          end;
+
+
           { Are we in batch with /productid (opsi-template-with-admin) ?
              open service connection if possible  }
           if not (batchproductid = '') then
           begin
             try
+              if (opsiserviceurl = '') or (opsiserviceUser = '') or
+                (opsiservicePassword = '') then
+              begin
+                logDatei.log(
+                  'Param: /productid: Get service credentials from opsicliend.conf',
+                  LLinfo);
               {$IFDEF WINDOWS}
-              opsiclientdconf :=
-                getSpecialFolder(CSIDL_PROGRAM_FILES) +
-                '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+                opsiclientdconf :=
+                  getSpecialFolder(CSIDL_PROGRAM_FILES) +
+                  '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
               {$ENDIF WINDOWS}
               {$IFDEF UNIX}
-              opsiclientdconf := '/etc/opsi-client-agent/opsiclientd/opsiclientd.conf';
+                opsiclientdconf := '/etc/opsi-client-agent/opsiclientd/opsiclientd.conf';
               {$ENDIF UNIX}
-              if FileExists(opsiclientdconf) then
-              begin
-                myconf := TInifile.Create(opsiclientdconf);
-                opsiservicePassword := myconf.ReadString('global', 'opsi_host_key', '');
-                opsiserviceUser := myconf.ReadString('global', 'host_id', '');
-                opsiserviceurl := myconf.ReadString('config_service', 'url', '');
-                myconf.Free;
-                if not ((opsiserviceurl = '') or (opsiserviceUser = '') or
-                  (opsiservicePassword = '')) then
+                if FileExists(opsiclientdconf) then
                 begin
-                  try
-                    opsidata := TOpsi4Data.Create;
-                    opsidata.initOpsiConf(opsiserviceurl,
-                      opsiserviceUser,
-                      opsiservicePassword,
-                      opsiserviceSessionId);
-                    if opsidata.isConnected then
-                    begin
-                      { isConnected calls backendInfo so no need to call it again }
+                  myconf := TInifile.Create(opsiclientdconf);
+                  opsiservicePassword :=
+                    myconf.ReadString('global', 'opsi_host_key', '');
+                  opsiserviceUser := myconf.ReadString('global', 'host_id', '');
+                  opsiserviceurl := myconf.ReadString('config_service', 'url', '');
+                  myconf.Free;
+                end
+
+                else
+                begin
+                  LogDatei.log('No opsiclientd.conf found: No Service connection',
+                    LLCritical);
+                  extremeErrorLevel := levelFatal;
+                end;
+              end
+              else
+                logDatei.log(
+                  'Param: /productid: Got service credentials from parameters',
+                  LLinfo);
+              if not ((opsiserviceurl = '') or (opsiserviceUser = '') or
+                (opsiservicePassword = '')) then
+              begin
+                try
+                  opsidata := TOpsi4Data.Create;
+                  opsidata.initOpsiConf(opsiserviceurl,
+                    opsiserviceUser,
+                    opsiservicePassword,
+                    opsiserviceSessionId);
+                  if opsidata.isConnected then
+                  begin
+                    { isConnected calls backendInfo so no need to call it again }
                       (*
                       startTime := now;
                       omc := TOpsiMethodCall.Create('backend_info', []);
@@ -2340,6 +2374,43 @@ begin
                         now - startTime), LLinfo);
                       omc.Free;
                       *)
+                    opsidata.setActualProductName(batchproductid);
+                    opsidata.setActualClient(opsiserviceUser);
+                    ProductvarsForPC := opsidata.getProductproperties;
+                    if not opsidata.initProduct then
+                    begin
+                      extremeErrorLevel := levelFatal;
+                      LogDatei.log('Could not connect to Service !', LLCritical);
+                    end;
+                  end
+                  else
+                  begin
+                    //extremeErrorLevel := levelFatal;
+                    LogDatei.log('Could not connect to Service :' +
+                      opsiserviceurl + ' - retry with localhost', LLerror);
+                    opsiserviceurl := 'https://localhost:4441/rpc';
+                    if Assigned(opsidata) then
+                      FreeAndNil(opsidata);
+                    opsidata := TOpsi4Data.Create;
+                    opsidata.initOpsiConf(opsiserviceurl,
+                      opsiserviceUser,
+                      opsiservicePassword,
+                      opsiserviceSessionId);
+                    if opsidata.isConnected then
+                    begin
+                      { isConnected calls backendInfo so no need to call it again }
+                        (*
+                        startTime := now;
+                        omc := TOpsiMethodCall.Create('backend_info', []);
+                        testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
+                        LogDatei.log_prog('JSON Bench for ' + omc.OpsiMethodName +
+                          ' ' + copy(omc.getJsonUrlString,
+                          pos(',', omc.getJsonUrlString) + 1, 50) +
+                          ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
+                          ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
+                          now - startTime), LLinfo);
+                        omc.Free;
+                        *)
                       opsidata.setActualProductName(batchproductid);
                       opsidata.setActualClient(opsiserviceUser);
                       ProductvarsForPC := opsidata.getProductproperties;
@@ -2353,70 +2424,27 @@ begin
                     begin
                       //extremeErrorLevel := levelFatal;
                       LogDatei.log('Could not connect to Service :' +
-                        opsiserviceurl + ' - retry with localhost', LLerror);
-                      opsiserviceurl := 'https://localhost:4441/rpc';
-                      if Assigned(opsidata) then
-                        FreeAndNil(opsidata);
-                      opsidata := TOpsi4Data.Create;
-                      opsidata.initOpsiConf(opsiserviceurl,
-                        opsiserviceUser,
-                        opsiservicePassword,
-                        opsiserviceSessionId);
-                      if opsidata.isConnected then
-                      begin
-                        { isConnected calls backendInfo so no need to call it again }
-                        (*
-                        startTime := now;
-                        omc := TOpsiMethodCall.Create('backend_info', []);
-                        testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
-                        LogDatei.log_prog('JSON Bench for ' + omc.OpsiMethodName +
-                          ' ' + copy(omc.getJsonUrlString,
-                          pos(',', omc.getJsonUrlString) + 1, 50) +
-                          ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
-                          ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
-                          now - startTime), LLinfo);
-                        omc.Free;
-                        *)
-                        opsidata.setActualProductName(batchproductid);
-                        opsidata.setActualClient(opsiserviceUser);
-                        ProductvarsForPC := opsidata.getProductproperties;
-                        if not opsidata.initProduct then
-                        begin
-                          extremeErrorLevel := levelFatal;
-                          LogDatei.log('Could not connect to Service !', LLCritical);
-                        end;
-                      end
-                      else
-                      begin
-                        //extremeErrorLevel := levelFatal;
-                        LogDatei.log('Could not connect to Service :' +
-                          opsiserviceurl + ' - giving up', LLerror);
-                        LogDatei.log('Any opsiservicall will probably fail.', LLerror);
-                      end;
-                    end;
-                  except
-                    on e: Exception do
-                    begin
-                      LogDatei.log(
-                        'Exception in StartProgramModes: [pmBatch, pmSilent]: opsidata.create'
-                        + e.message, LLCritical);
-                      {$IFDEF WINDOWS}
-                      SystemCritical.IsCritical := False;
-                      {$ENDIF WINDOWS}
-                      extremeErrorLevel := levelFatal;
+                        opsiserviceurl + ' - giving up', LLerror);
+                      LogDatei.log('Any opsiservicecall will probably fail.', LLerror);
                     end;
                   end;
-                end
-                else
-                begin
-                  LogDatei.log('Data missing in opsiclientd.conf: No Service connection',
-                    LLCritical);
-                  extremeErrorLevel := levelFatal;
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log(
+                      'Exception in StartProgramModes: [pmBatch, pmSilent]: opsidata.create'
+                      + e.message, LLCritical);
+                      {$IFDEF WINDOWS}
+                    SystemCritical.IsCritical := False;
+                      {$ENDIF WINDOWS}
+                    extremeErrorLevel := levelFatal;
+                  end;
                 end;
               end
               else
               begin
-                LogDatei.log('No opsiclientd.conf found: No Service connection',
+                LogDatei.log(
+                  'Data missing in opsiclientd.conf or parameters: No Service connection',
                   LLCritical);
                 extremeErrorLevel := levelFatal;
               end;
@@ -2440,21 +2468,44 @@ begin
             for scriptindex := 0 to scriptlist.Count - 1 do
             begin
               NestingLevel := 0;
+              if batchUpdatePOC and not (opsidata = nil) then
+                opsidata.setProductState(tpsInstalling);
               CreateAndProcessScript(scriptlist.Strings[scriptindex],
                 NestingLevel, False, extremeErrorLevel);
             end;
 
             if not (opsidata = nil) then
             begin
+              // send log
               logdatei.Appendmode := True;
               opsidata.finishOpsiConf;
             end;
           end;
 
-          // Are we in batch with /productid (opsi-template-with-admin) ?
-          if runningAsAdmin and (not (batchproductid = '')) then
+          // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
+          if (runningAsAdmin and (not (batchproductid = '')))
+              or ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
           begin
             try
+              if batchUpdatePOC and not (opsidata = nil) then
+              begin
+                // we are in /serviceBatch mode and so we have to update the productOnClient via service
+                LogDatei.log('serviceBatch: update switches .....', LLDebug);
+                if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
+                begin
+                  LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);
+                  // we are in /serviceBatch mode and so we act like having a actionrequest=setup
+                  opsidata.setActualProductActionRequest('setup');
+                  opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+                end;
+                LogDatei.log_prog('serviceBatch: finishProduct .....', LLDebug);
+                // free productVars
+                opsidata.finishProduct;
+                LogDatei.LogProduktId := False;
+              end
+              else
+              begin
+              // We are in batch with /productid (opsi-template-with-admin)
               // write isFatal (or not) to registry
               //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
               //##LINUX
@@ -2474,6 +2525,7 @@ begin
               reg.CloseKey;
               reg.Free;
               {$ENDIF WINDOWS}
+              end;
             except
               on e: Exception do
               begin
@@ -2751,12 +2803,12 @@ begin
         else if Lowercase(Parameter) = 'opsiservice' then
         begin
           try
-            if ProgramMode <> pmNotSet then
+            if not ((ProgramMode = pmNotSet) or (ProgramMode = pmBatch)) then
             begin
               ProgramMode := pmInfo;
               exit;
             end
-            else if NumberOfTrueParameters >= 1 then
+            else if (NumberOfTrueParameters >= 1) and (ProgramMode = pmNotSet) then
               (* pmBuildPC geht nicht mehr *)
             begin
               ProgramMode := pmInfo;
@@ -2765,7 +2817,8 @@ begin
             else
             begin
               try
-                ProgramMode := pmBuildPC_service;
+                if not (ProgramMode = pmBatch) then
+                  ProgramMode := pmBuildPC_service;
 
                 computername := '';
                 if not readconfig then
@@ -2815,6 +2868,7 @@ begin
                   Inc(i);
                   if (i <= ParamListe.Count) then
                   begin
+                    opsiserviceClientId := ParamListe.Strings[i - 1];
                     computername := ParamListe.Strings[i - 1];
                     if (length(computername) = 0) or
                       (computername[1] = ParamDelim) then
@@ -2896,12 +2950,46 @@ begin
                     if opsiserviceSessionId = 'NULL' then
                       opsiserviceSessionId := '';
                     startupmessages.Add('found as credentials:' +
-                      opsiserviceUser + ' ; ' + opsiservicePassword + ' ; ' + opsiserviceSessionId);
+                      opsiserviceUser + ' ; ' + opsiservicePassword +
+                      ' ; ' + opsiserviceSessionId);
                     if (length(ParamListe.Strings[i - 1]) = 0) or
                       (ParamListe.Strings[i - 1][1] = ParamDelim) then
                     begin
                       ProgramMode := pmInfo;
                       exit;
+                    end;
+                    Inc(i);
+                  end
+                  else
+                  begin
+                    ProgramMode := pmInfo;
+                    exit;
+                  end;
+                end
+
+                else if (lowercase(r) = paramDelim + 'depotpath') then
+                begin
+                  Inc(i);
+                  if (i <= ParamListe.Count) then
+                  begin
+                    depotpath := ParamListe.Strings[i - 1];
+                    if (length(depotpath) = 0) or
+                      (depotpath[1] = ParamDelim) then
+                    begin
+                      ProgramMode := pmInfo;
+                      exit;
+                    end
+                    else
+                    begin
+                      startupmessages.Append(
+                        'Depot path from parameters:  ' + depotpath);
+                      depotdrive := depotpath;
+                     {$ifdef windows}
+                      depotdrive := extractfiledrive(depotpath);
+                      depotdir := extractfiledir(depotpath);
+                     {$endif}
+                      startupmessages.Append(
+                        'Depot drive+dir from parameters:  ' + depotdrive + depotdir);
                     end;
                     Inc(i);
                   end
@@ -3191,6 +3279,19 @@ begin
         else if Lowercase(Parameter) = 'batch' then
         begin
           ProgramMode := pmBatch;
+          {$IFDEF GUI}
+          BatchWindowMode := bwmNormalWindow;
+          SavedBatchWindowMode := BatchWindowMode;
+          {$ENDIF GUI}
+          Inc(i);
+        end
+
+        else if Lowercase(Parameter) = 'servicebatch' then
+        begin
+          // if /serviceBatch then also needed:
+          //  /ClientId /opsiservice /username /password /productId  and <script path>
+          ProgramMode := pmBatch;
+          batchUpdatePOC := true;
           {$IFDEF GUI}
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;

@@ -20,13 +20,16 @@ uses
   ///rlgencol, rlgenrep,
   printers,
   //vq8qrgen, vq8fprev, Spin,
-  sqldb, fpcsvexport,
+  sqldb,
+  fpcsvexport,
   ///expo2,
   Spin, LR_PGrid,
-  //LR_E_CSV,
+  LR_E_CSV,
   LR_DBSet,
   //fpdataexporter,
-  lr_e_pdf;
+  lr_e_pdf,
+  oslog;
+
 
 type
 
@@ -60,9 +63,9 @@ type
     SaveDialog1: TSaveDialog;
     Label4: TLabel;
     Label9: TLabel;
-    BtnDBexp: TBitBtn;
+    BtnDBCSVExport: TBitBtn;
     SpeedButtonClearSearchEdit: TSpeedButton;
-    SpinEdit1: TSpinEdit;
+    SpinEditSchriftgroesse: TSpinEdit;
     //SQLQueryResult: TSQLQuery;
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure EditSearchChange(Sender: TObject);
@@ -72,11 +75,12 @@ type
     procedure ShowPreview;
     ///procedure CreateFQReportGen;
     procedure FormShow(Sender: TObject);
-    procedure BtnDBexpClick(Sender: TObject);
+    procedure BtnDBCSVExportClick(Sender: TObject);
     procedure SpeedButtonClearSearchEditClick(Sender: TObject);
     procedure FilterInResult;
     procedure LocateInResult;
     procedure setResultDataset(QueryResult: TSQLQuery);
+    procedure SpinEditSchriftgroesseChange(Sender: TObject);
 
   private
     { Private-Deklarationen }
@@ -136,7 +140,7 @@ begin
  FrPrintGrid1.ShowCaption:=true;
  FrPrintGrid1.Caption:=Edit1.Caption;
  //FrPrintGrid1.Template:='gridtemplate.lrf';
- FrPrintGrid1.Font.Size:=Spinedit1.value;
+ FrPrintGrid1.Font.Size:=SpinEditSchriftgroesse.value;
  if RadioGroup1.ItemIndex = 0 then FrPrintGrid1.Orientation:= poPortrait
  else FrPrintGrid1.Orientation:= poLandscape;
  FrPrintGrid1.PreviewReport;
@@ -171,7 +175,7 @@ begin
 
 end;
 
-procedure TFResult.BtnDBexpClick(Sender: TObject);
+procedure TFResult.BtnDBCSVExportClick(Sender: TObject);
 begin
   if SaveDialog1.Execute then
   begin
@@ -189,8 +193,8 @@ var
 begin
   try
     Filtercond := '"*' + EditSearch.Text + '*"';
-    //LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
-    //  Filtercond, LLinfo);
+    LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
+       Filtercond, LLinfo);
     Filterstr := '('+ ComboBoxSearchfield.Caption+' = ' + Filtercond+')';
     (*
     Filterstr := '('+ resultDataset.Fields[0].FieldName+' =' + Filtercond
@@ -252,6 +256,11 @@ end;
 procedure TFResult.setResultDataset(QueryResult: TSQLQuery);
 begin
   resultDataset := QueryResult;
+
+end;
+
+procedure TFResult.SpinEditSchriftgroesseChange(Sender: TObject);
+begin
 
 end;
 

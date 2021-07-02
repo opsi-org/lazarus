@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 170
+  Left = 275
   Height = 703
-  Top = 220
+  Top = 275
   Width = 1103
   Caption = 'opsi Setup Detector'
   ClientHeight = 683
@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -4781,7 +4781,7 @@ object resultForm1: TresultForm1
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 391
+          Height = 392
           Top = 87
           Width = 1029
           Align = alClient
@@ -4792,7 +4792,7 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 74
-          Top = 474
+          Top = 475
           Width = 1029
           Align = alBottom
           BorderStyle = bsSingle
@@ -7564,7 +7564,7 @@ object resultForm1: TresultForm1
           TabOrder = 0
           object Label58: TLabel
             Left = 220
-            Height = 22
+            Height = 20
             Top = 8
             Width = 110
             Anchors = []
@@ -7577,7 +7577,7 @@ object resultForm1: TresultForm1
           end
           object Label61: TLabel
             Left = 366
-            Height = 22
+            Height = 20
             Top = 8
             Width = 113
             Anchors = []
@@ -7590,7 +7590,7 @@ object resultForm1: TresultForm1
           end
           object TIEditProdVersion3: TTIEdit
             Left = 15
-            Height = 34
+            Height = 33
             Top = 6
             Width = 200
             Anchors = []
@@ -7604,7 +7604,7 @@ object resultForm1: TresultForm1
           end
           object TISpinEditPackageVers: TTISpinEdit
             Left = 496
-            Height = 28
+            Height = 27
             Top = 8
             Width = 84
             Anchors = []
@@ -7664,7 +7664,7 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object Label66: TLabel
             Left = 17
-            Height = 22
+            Height = 20
             Top = 8
             Width = 107
             Anchors = []
@@ -7677,7 +7677,7 @@ object resultForm1: TresultForm1
           end
           object Label67: TLabel
             Left = 363
-            Height = 22
+            Height = 20
             Top = 8
             Width = 132
             Anchors = []
@@ -7690,13 +7690,14 @@ object resultForm1: TresultForm1
           end
           object TIEditProdID: TTIEdit
             Left = 139
-            Height = 34
+            Height = 33
             Top = 6
             Width = 200
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
+            Constraints.OnChange = TIEditProdIDSizeConstraintsChange
             Constraints.MinWidth = 200
             OnChange = genRttiEditChange
             ParentFont = False
@@ -7704,7 +7705,7 @@ object resultForm1: TresultForm1
           end
           object TIEditProdName: TTIEdit
             Left = 510
-            Height = 34
+            Height = 33
             Top = 6
             Width = 200
             Anchors = []
@@ -7719,7 +7720,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 237
+          Height = 238
           Top = 311
           Width = 1029
           Align = alClient
@@ -7738,7 +7739,7 @@ object resultForm1: TresultForm1
             Left = 887
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 170
+            Top = 171
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8495,10 +8496,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  145
-                  145
-                  145
-                  147
+                  141
+                  141
+                  141
+                  142
                 )
               end
             end
@@ -8762,10 +8763,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  255
-                  255
-                  255
-                  255
+                  250
+                  250
+                  250
+                  253
                 )
               end
             end
@@ -8780,12 +8781,12 @@ object resultForm1: TresultForm1
         ParentFont = False
         object Panel11: TPanel
           Left = 629
-          Height = 548
+          Height = 549
           Top = 0
           Width = 400
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 548
+          ClientHeight = 549
           ClientWidth = 400
           Color = clNone
           ParentColor = False
@@ -8816,18 +8817,18 @@ object resultForm1: TresultForm1
           end
           object LabelIconPreview: TLabel
             Left = 16
-            Height = 18
+            Height = 16
             Top = 8
             Width = 188
-            Caption = 'Selected Icon (Preview 170x170)'
+            Caption = 'Selected Icon (Preview 160x160)'
             ParentColor = False
             ParentFont = False
           end
           object BtnIconsNextStep: TBitBtn
-            Left = 231
+            Left = 232
             Height = 56
             Hint = 'Go to the next Step'
-            Top = 478
+            Top = 479
             Width = 131
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8985,7 +8986,7 @@ object resultForm1: TresultForm1
           end
           object LabelIconDir: TLabel
             Left = 16
-            Height = 18
+            Height = 16
             Top = 216
             Width = 57
             Caption = 'Directory:'
@@ -8995,7 +8996,7 @@ object resultForm1: TresultForm1
           end
           object LabelIconName: TLabel
             Left = 200
-            Height = 18
+            Height = 16
             Top = 40
             Width = 39
             Caption = 'Name:'
@@ -9037,18 +9038,18 @@ object resultForm1: TresultForm1
           end
           object PanelNumIcons: TPanel
             Left = 16
-            Height = 18
+            Height = 16
             Top = 416
             Width = 149
             AutoSize = True
             BevelOuter = bvNone
-            ClientHeight = 18
+            ClientHeight = 16
             ClientWidth = 149
             ParentFont = False
             TabOrder = 4
             object LabelNumIcons: TLabel
               Left = 0
-              Height = 18
+              Height = 16
               Top = 0
               Width = 132
               Align = alLeft
@@ -9058,7 +9059,7 @@ object resultForm1: TresultForm1
             end
             object LabelNumber: TLabel
               Left = 142
-              Height = 18
+              Height = 16
               Top = 0
               Width = 7
               Align = alClient
@@ -9119,19 +9120,19 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 548
+          Height = 549
           Top = 0
           Width = 650
           HorzScrollBar.Page = 47
           VertScrollBar.Page = 15
           Align = alClient
-          ClientHeight = 544
+          ClientHeight = 545
           ClientWidth = 646
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 546
+            Height = 547
             Top = 0
             Width = 648
             Align = alClient
@@ -9194,7 +9195,7 @@ object resultForm1: TresultForm1
           end
           object Label78: TLabel
             Left = 19
-            Height = 20
+            Height = 18
             Top = 10
             Width = 163
             Anchors = []
@@ -9285,7 +9286,7 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object LabelWorkbenchOK: TLabel
             Left = 19
-            Height = 22
+            Height = 20
             Top = 10
             Width = 255
             Anchors = []
@@ -9299,7 +9300,7 @@ object resultForm1: TresultForm1
           end
           object LabelWorkbenchNotOK: TLabel
             Left = 301
-            Height = 22
+            Height = 20
             Top = 10
             Width = 510
             Anchors = []
@@ -9525,7 +9526,7 @@ object resultForm1: TresultForm1
             Visible = False
             object processing: TLabel
               Left = 24
-              Height = 21
+              Height = 19
               Top = 8
               Width = 102
               Caption = 'processing...'
@@ -9540,7 +9541,7 @@ object resultForm1: TresultForm1
             end
             object processStatement: TLabel
               Left = 24
-              Height = 18
+              Height = 16
               Top = 40
               Width = 66
               Caption = 'please wait'
@@ -9575,11 +9576,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 772
+            Left = 774
             Height = 88
             Hint = 'Create a opsi Product'
             Top = 10
-            Width = 247
+            Width = 245
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 9

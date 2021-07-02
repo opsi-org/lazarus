@@ -10,7 +10,6 @@ unit osxmlsections;
 // Unofficial GPL Translations: http://www.gnu.org/licenses/translations.html
 
 // author: Rupert Roeder, APohl, detlef oertel, m.hammel
-// credits: http://www.opsi.org/credits/
 
 {$mode objfpc}{$H+}
 

@@ -121,7 +121,7 @@ msgid "Leave existing directory unchanged and abort"
 msgstr ""
 
 #: osdcreate.rsconfirmbackupcaption
-msgid "Backup"
+msgid "Yes (Backup)"
 msgstr ""
 
 #: osdcreate.rsconfirmbackuphint
@@ -129,11 +129,11 @@ msgid "All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI
 msgstr ""
 
 #: osdcreate.rsconfirmbackuporremovaltitle
-msgid "Confirm Delete or Backup of old files."
+msgid "Should we use the existing directory and make backup files of old files, before creating the new ones ?  Otherwise the exiting directory will be deleted before creating a new one."
 msgstr ""
 
 #: osdcreate.rsconfirmdeletecaption
-msgid "Delete"
+msgid "No"
 msgstr ""
 
 #: osdcreate.rsconfirmdeletehint
@@ -146,9 +146,9 @@ msgstr ""
 
 #: osdcreate.rsconfirmexpandedtext
 msgid ""
+"Yes: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will be saved to an backup file before the new files are created\n"
+"No: Delete the complete directory before creating the new one.\n"
 "Abort: Leave existing directory unchanged and abort\n"
-"Delete: Delete the complete directory before creating the new one.\n"
-"Backup: All files that are directly in the directories \"CLIENT_DATA\" and \"OPSI\" will copy to an backup file.\n"
 msgstr ""
 
 #: osdcreate.rscouldnotcreatedirectorywarning
@@ -160,7 +160,7 @@ msgid "Directory "
 msgstr ""
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
-msgid " still exits. Abort or Backup or Delete ?"
+msgid " still exits. Should we make backup files ?"
 msgstr ""
 
 #: osddlgnewdependency.rsdepdlgproductid
@@ -1087,7 +1087,7 @@ msgid "Name:"
 msgstr ""
 
 #: tresultform1.labeliconpreview.caption
-msgid "Selected Icon (Preview 170x170)"
+msgid "Selected Icon (Preview 160x160)"
 msgstr ""
 
 #: tresultform1.labelloginfo.caption

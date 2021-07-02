@@ -1,90 +1,91 @@
 object FStatistik: TFStatistik
-  Left = 642
-  Height = 637
-  Top = 56
-  Width = 426
+  Left = 518
+  Height = 604
+  Top = 284
+  Width = 404
   Caption = 'uibtime-Statistik'
-  ClientHeight = 637
-  ClientWidth = 426
+  ClientHeight = 604
+  ClientWidth = 404
   Color = clBtnFace
+  DesignTimePPI = 91
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -10
   Font.Name = 'MS Sans Serif'
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poDefaultPosOnly
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.10.0'
   object Panel1: TPanel
     Left = 0
-    Height = 113
+    Height = 107
     Top = 0
-    Width = 426
+    Width = 404
     Align = alTop
     BevelInner = bvSpace
-    ClientHeight = 113
-    ClientWidth = 426
+    ClientHeight = 107
+    ClientWidth = 404
     Font.Color = clWindowText
-    Font.Height = -11
+    Font.Height = -10
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 0
     object Label1: TLabel
       Left = 1
-      Height = 16
-      Top = 77
-      Width = 25
+      Height = 15
+      Top = 73
+      Width = 26
       Caption = 'von:'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 112
-      Height = 16
-      Top = 77
-      Width = 56
+      Left = 106
+      Height = 15
+      Top = 73
+      Width = 59
       Caption = 'bis( excl):'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 252
-      Height = 16
-      Top = 77
-      Width = 40
+      Left = 239
+      Height = 15
+      Top = 73
+      Width = 41
       Caption = 'userid:'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object ComboBox1: TComboBox
-      Left = 297
-      Height = 21
-      Top = 73
-      Width = 113
+      Left = 282
+      Height = 27
+      Top = 69
+      Width = 107
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
-      ItemHeight = 13
+      ItemHeight = 0
       ParentFont = False
       TabOrder = 0
       Text = 'ComboBox1'
     end
     object Edit1: TEdit
-      Left = 28
-      Height = 21
-      Top = 75
-      Width = 80
+      Left = 27
+      Height = 25
+      Top = 71
+      Width = 76
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnExit = Edit1Exit
       ParentFont = False
@@ -92,12 +93,12 @@ object FStatistik: TFStatistik
       Text = 'Edit1'
     end
     object Edit2: TEdit
-      Left = 168
-      Height = 21
-      Top = 75
-      Width = 80
+      Left = 159
+      Height = 25
+      Top = 71
+      Width = 76
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnExit = Edit2Exit
       ParentFont = False
@@ -105,52 +106,52 @@ object FStatistik: TFStatistik
       Text = 'Edit2'
     end
     object BtnLastMonth: TButton
-      Left = 30
-      Height = 22
-      Top = 10
-      Width = 129
+      Left = 28
+      Height = 21
+      Top = 9
+      Width = 122
       Caption = 'letzten Monat einstellen'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnLastMonthClick
       ParentFont = False
       TabOrder = 3
     end
     object BtnThisMonth: TButton
-      Left = 30
-      Height = 22
-      Top = 42
-      Width = 129
+      Left = 28
+      Height = 21
+      Top = 40
+      Width = 122
       Caption = 'diesen Monat einstellen'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnThisMonthClick
       ParentFont = False
       TabOrder = 4
     end
     object BtnLastWeek: TButton
-      Left = 206
-      Height = 22
-      Top = 10
-      Width = 129
+      Left = 195
+      Height = 21
+      Top = 9
+      Width = 122
       Caption = 'letzte Woche einstellen'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnLastWeekClick
       ParentFont = False
       TabOrder = 5
     end
     object BtnThisWeek: TButton
-      Left = 206
-      Height = 22
-      Top = 42
-      Width = 129
+      Left = 195
+      Height = 21
+      Top = 40
+      Width = 122
       Caption = 'diese Woche einstellen'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnThisWeekClick
       ParentFont = False
@@ -159,68 +160,67 @@ object FStatistik: TFStatistik
   end
   object Panel2: TPanel
     Left = 0
-    Height = 524
-    Top = 113
-    Width = 426
+    Height = 497
+    Top = 107
+    Width = 404
     Align = alClient
-    ClientHeight = 524
-    ClientWidth = 426
+    ClientHeight = 497
+    ClientWidth = 404
     Font.Color = clWindowText
-    Font.Height = -11
+    Font.Height = -10
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 1
-    OnClick = Panel2Click
     object Bevel3: TBevel
-      Left = 198
-      Height = 417
-      Top = 14
-      Width = 209
+      Left = 188
+      Height = 363
+      Top = 13
+      Width = 198
     end
     object Bevel1: TBevel
-      Left = 207
-      Height = 153
-      Top = 230
-      Width = 184
+      Left = 196
+      Height = 145
+      Top = 218
+      Width = 174
     end
     object Label4: TLabel
-      Left = 298
-      Height = 16
-      Top = 355
-      Width = 26
+      Left = 282
+      Height = 15
+      Top = 337
+      Width = 24
       Caption = 'Jahr'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object Label5: TLabel
-      Left = 215
-      Height = 16
-      Top = 356
+      Left = 204
+      Height = 15
+      Top = 337
       Width = 37
       Caption = 'Monat'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       ParentColor = False
       ParentFont = False
     end
     object Bevel2: TBevel
-      Left = 206
-      Height = 137
-      Top = 86
-      Width = 185
+      Left = 195
+      Height = 130
+      Top = 82
+      Width = 175
     end
     object BtnStunden: TButton
       Left = 0
-      Height = 25
+      Height = 24
       Top = 0
-      Width = 168
+      Width = 159
       Caption = 'Summe geleistete Stunden'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnStundenClick
       ParentFont = False
@@ -228,12 +228,12 @@ object FStatistik: TFStatistik
     end
     object BtnSollStunden: TButton
       Left = 0
-      Height = 25
-      Top = 165
-      Width = 168
+      Height = 24
+      Top = 156
+      Width = 159
       Caption = 'Summe SollStunden'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnSollStundenClick
       ParentFont = False
@@ -241,13 +241,13 @@ object FStatistik: TFStatistik
     end
     object BtnFehl: TButton
       Left = 0
-      Height = 25
-      Top = 31
-      Width = 168
+      Height = 24
+      Top = 29
+      Width = 159
       Caption = 'Fehlstunden (Soll-Ist)'
       Enabled = False
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnFehlClick
       ParentFont = False
@@ -255,25 +255,25 @@ object FStatistik: TFStatistik
     end
     object BtnAufteilung: TButton
       Left = 0
-      Height = 25
-      Top = 63
-      Width = 168
+      Height = 24
+      Top = 60
+      Width = 159
       Caption = 'Aufteilung nach Art'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnAufteilungClick
       ParentFont = False
       TabOrder = 3
     end
     object BitBtn1: TBitBtn
-      Left = 214
-      Height = 28
-      Top = 446
-      Width = 169
+      Left = 203
+      Height = 27
+      Top = 423
+      Width = 160
       DefaultCaption = True
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       GlyphShowMode = gsmAlways
       Kind = bkClose
@@ -284,12 +284,12 @@ object FStatistik: TFStatistik
     end
     object BtnTage: TButton
       Left = 0
-      Height = 25
-      Top = 96
-      Width = 168
+      Height = 24
+      Top = 91
+      Width = 159
       Caption = 'Aufteilung nach Tagen'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnTageClick
       ParentFont = False
@@ -297,12 +297,12 @@ object FStatistik: TFStatistik
     end
     object BtnMonate: TButton
       Left = 0
-      Height = 25
-      Top = 129
-      Width = 168
+      Height = 24
+      Top = 122
+      Width = 159
       Caption = 'Aufteilung nach Monaten'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnMonateClick
       ParentFont = False
@@ -310,26 +310,26 @@ object FStatistik: TFStatistik
     end
     object BtnSQLtext: TButton
       Left = 0
-      Height = 25
-      Top = 196
-      Width = 169
+      Height = 24
+      Top = 186
+      Width = 160
       Caption = 'Freier SQL-Text'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnSQLtextClick
       ParentFont = False
       TabOrder = 7
     end
     object BtnMonthRep: TBitBtn
-      Left = 214
-      Height = 25
+      Left = 203
+      Height = 24
       Hint = 'Arbeitszeit pro Tag für Monat (mit Sollstunden)'
-      Top = 243
-      Width = 169
+      Top = 230
+      Width = 160
       Caption = 'Monatsbericht für'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnMonthRepClick
       ParentFont = False
@@ -338,12 +338,12 @@ object FStatistik: TFStatistik
       TabOrder = 8
     end
     object SpinEdit1: TSpinEdit
-      Left = 258
-      Height = 21
-      Top = 353
-      Width = 37
+      Left = 245
+      Height = 23
+      Top = 335
+      Width = 35
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       MaxValue = 12
       MinValue = 1
@@ -352,12 +352,12 @@ object FStatistik: TFStatistik
       Value = 1
     end
     object SpinEdit2: TSpinEdit
-      Left = 326
-      Height = 21
-      Top = 352
-      Width = 57
+      Left = 309
+      Height = 23
+      Top = 334
+      Width = 54
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       MaxValue = 2200
       MinValue = 1999
@@ -366,70 +366,70 @@ object FStatistik: TFStatistik
       Value = 2008
     end
     object BtnTreeSum: TBitBtn
-      Left = 214
-      Height = 25
-      Top = 124
-      Width = 169
+      Left = 203
+      Height = 24
+      Top = 118
+      Width = 160
       Caption = 'Summen ab Knoten'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnTreeSumClick
       ParentFont = False
       TabOrder = 11
     end
     object ComboBoxAktevent: TComboBox
-      Left = 214
-      Height = 21
-      Top = 195
-      Width = 169
+      Left = 203
+      Height = 27
+      Top = 185
+      Width = 160
       AutoComplete = True
       AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
-      ItemHeight = 13
+      ItemHeight = 0
       ParentFont = False
       ParentShowHint = False
       Sorted = True
       TabOrder = 12
     end
     object BtnBSZreport: TBitBtn
-      Left = 15
-      Height = 25
-      Top = 382
-      Width = 168
+      Left = 0
+      Height = 24
+      Top = 272
+      Width = 159
       Caption = 'BSZ Controlling Auswertung'
       Enabled = False
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BtnBSZreportClick
       ParentFont = False
       TabOrder = 13
     end
     object BitBtnKnotenByUser: TBitBtn
-      Left = 214
-      Height = 25
-      Top = 93
-      Width = 169
+      Left = 203
+      Height = 24
+      Top = 88
+      Width = 160
       Caption = 'Summe pro User ab Knoten'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BitBtnKnotenByUserClick
       ParentFont = False
       TabOrder = 14
     end
     object BitBtnControlRep2: TBitBtn
-      Left = 214
-      Height = 25
-      Top = 394
-      Width = 169
+      Left = 1
+      Height = 24
+      Top = 296
+      Width = 155
       Caption = 'Controlling Report 2'
       Enabled = False
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BitBtnControlRep2Click
       ParentFont = False
@@ -437,27 +437,27 @@ object FStatistik: TFStatistik
     end
     object BtnWorkDescription: TButton
       Left = 0
-      Height = 25
-      Top = 262
-      Width = 169
+      Height = 24
+      Top = 248
+      Width = 160
       Caption = 'Arbeitsbericht Eingabe'
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'MS Sans Serif'
       OnClick = BtnWorkDescriptionClick
       ParentFont = False
       TabOrder = 16
     end
     object BitBtnworkreport: TBitBtn
-      Left = 214
-      Height = 25
+      Left = 203
+      Height = 24
       Hint = 'Arbeitsbericht für gewählten Monat summiert für id_strings (z.B. SAP-Nummern)'
-      Top = 310
-      Width = 169
+      Top = 294
+      Width = 160
       Caption = 'BSZ-Tätigkeitsbericht für'
       Enabled = False
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BitBtnworkreportClick
       ParentFont = False
@@ -466,11 +466,11 @@ object FStatistik: TFStatistik
       TabOrder = 17
     end
     object RadioGroupReference: TRadioGroup
-      Left = 206
-      Height = 57
+      Left = 195
+      Height = 54
       Hint = 'Welche Eventtabelle soll bei der Abfrage verwendet werden'
-      Top = 22
-      Width = 177
+      Top = 21
+      Width = 168
       AutoFill = True
       Caption = 'Referenztabelle'
       ChildSizing.LeftRightSpacing = 6
@@ -480,10 +480,10 @@ object FStatistik: TFStatistik
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
-      ClientHeight = 39
-      ClientWidth = 173
+      ClientHeight = 40
+      ClientWidth = 166
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       ItemIndex = 0
       Items.Strings = (
@@ -496,14 +496,14 @@ object FStatistik: TFStatistik
       TabOrder = 18
     end
     object BitBtnArbeitsberichtOutput: TBitBtn
-      Left = 214
-      Height = 25
+      Left = 203
+      Height = 24
       Hint = 'Arbeitsbericht ab gewählten Knoten fuer gewählten user und gewählten Zeitraum'
-      Top = 158
-      Width = 169
+      Top = 150
+      Width = 160
       Caption = 'Arbeitsbericht ab Knoten'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BitBtnArbeitsberichtOutputClick
       ParentFont = False
@@ -512,20 +512,39 @@ object FStatistik: TFStatistik
       TabOrder = 19
     end
     object BitBtnMonthreportStartStop: TBitBtn
-      Left = 214
-      Height = 25
+      Left = 203
+      Height = 24
       Hint = 'Monatsbericht mit Anfangs und Endzeiten sowie Arbeitszeiten ohne Pausen'
-      Top = 278
-      Width = 169
+      Top = 264
+      Width = 160
       Caption = 'Monatsbericht mit Zeiten'
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -10
       Font.Name = 'MS Sans Serif'
       OnClick = BitBtnMonthreportStartStopClick
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 20
+    end
+    object LabelMonthURL: TLabel
+      Left = 8
+      Height = 18
+      Top = 390
+      Width = 377
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Link zum Monatsabschluß'
+      Font.Color = clBlue
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = LabelMonthURLClick
+      OnMouseEnter = LabelMonthURLMouseEnter
+      OnMouseLeave = LabelMonthURLMouseLeave
     end
   end
   object Query1: TSQLQuery
@@ -537,16 +556,16 @@ object FStatistik: TFStatistik
       'uibevent group by event, projekt, userid'
     )
     Params = <>
-    left = 115
-    top = 328
+    Left = 109
+    Top = 311
   end
   object Table1: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
     Params = <>
-    left = 10
-    top = 328
+    Left = 9
+    Top = 311
   end
   object QuerySollStunden: TSQLQuery
     FieldDefs = <>
@@ -558,20 +577,20 @@ object FStatistik: TFStatistik
       'and (month = 1)'
     )
     Params = <>
-    left = 48
-    top = 329
+    Left = 46
+    Top = 312
   end
   object frReport1: TfrReport
     InitialZoom = pzOnePage
     Options = []
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     DataType = dtDataSet
-    left = 24
-    top = 432
+    Left = 32
+    Top = 440
   end
   object frDBDataSet1: TfrDBDataSet
     DataSet = Query1
-    left = 92
-    top = 434
+    Left = 120
+    Top = 440
   end
 end

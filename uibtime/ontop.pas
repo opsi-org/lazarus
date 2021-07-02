@@ -25,6 +25,7 @@ uses
   Variants,
   DBGrids, UniqueInstance, treescrolldown,
   httpservice, linhandlewin,
+  oslog,
   uibdatetime;
 
 type
@@ -33,6 +34,7 @@ type
 
   TFOnTop = class(TForm)
     BtnProjekt: TSpeedButton;
+    BtnFreeFlogin: TButton;
     DBLCB_topten_event: TDBLookupComboBox;
     DSQueryaktprojekt: TDataSource;
     DS_topten_events: TDataSource;
@@ -48,14 +50,15 @@ type
     BtnTreeview: TSpeedButton;
     BtnBye: TSpeedButton;
     BtnUnlock: TSpeedButton;
+    TimerKillFlogin: TTimer;
     TimerAfterTopTenEnter: TTimer;
-    TimerCallCount: TTimer;
     TimerNachfrage: TTimer;
     TimerNoDblClick: TTimer;
     TimerProjektzeit: TTimer;
     TimerScrollDisable: TTimer;
     Timer_top_ten: TTimer;
     ToolBar1: TToolBar;
+    procedure BtnFreeFloginClick(Sender: TObject);
     procedure BtnUnlockClick(Sender: TObject);
     procedure DBLCB_topten_eventChange(Sender: TObject);
     procedure DBLCB_topten_eventEditingDone(Sender: TObject);
@@ -71,9 +74,8 @@ type
     procedure eventhandler(newevent: string);
     procedure BtnArrayClick(Sender: TObject);
     procedure TimerAfterTopTenEnterTimer(Sender: TObject);
+    procedure TimerKillFloginTimer(Sender: TObject);
     procedure TimerNachfrageTimer(Sender: TObject);
-    //procedure BtnCallCountClick(Sender: TObject);
-    //procedure TimerCallCountTimer(Sender: TObject);
     procedure AppDeactivate(Sender: TObject);
     procedure AppActivate(Sender: TObject);
     procedure ComboBoxMouseDown(Sender: TObject; Button: TMouseButton;
@@ -169,6 +171,12 @@ begin
   DBLCB_topten_event.Enabled := True;
 end;
 
+procedure TFOnTop.BtnFreeFloginClick(Sender: TObject);
+begin
+  Flogin.close;
+  FreeAndNil(Flogin);
+end;
+
 procedure TFOnTop.DBLCB_topten_eventEditingDone(Sender: TObject);
 var
   str: string;
@@ -237,7 +245,7 @@ var
   //ringIcon: TBitmap;
   buttonwidth: integer;
 begin
-  datamodule1.debugOut(5, 'start TFOnTop.ReBuildForm');
+  datamodule1.debugOut(5, 'ReBuildForm','start TFOnTop.ReBuildForm');
   ontopactivated := False;
   for i := 0 to specialButtonList.Count - 1 do
   begin
@@ -304,6 +312,16 @@ begin
   //height := Toolbar1.height;
   // height := 360;
   //ToolBar1.Refresh;
+
+  DataModule1.debugOut(6, 'ReBuildForm','ontopAsWindow' +' = ' + BoolToStr(ontopAsWindow, True));
+  if ontopAsWindow then
+  begin
+    borderstyle := bsSizeable;
+  end
+  else
+  begin
+    borderstyle := bsNone;
+  end;
   leftint := Datamodule1.getLeftint();
   Left := leftint;
   Width := 816 + buttonwidth;
@@ -313,8 +331,10 @@ begin
   //FOnTop.Height:= 100;
   EditProjektzeit.Height := ontopheight;
   Datamodule1.setontopwidth(Toolbar1.Width);
-  eventhandler(lastevent);
-  datamodule1.debugOut(5, 'finished TFOnTop.ReBuildForm');
+  //repaint;
+  //show;
+  //eventhandler(lastevent);
+  datamodule1.debugOut(5,'ReBuildForm', 'finished TFOnTop.ReBuildForm');
 end;
 
 
@@ -347,12 +367,8 @@ begin
     Application.OnDeactivate := AppDeactivate;
     Application.OnActivate := AppActivate;
     ontopactivated := False;
-    // calltimer auf zeit bis zu nächsten vollen Stunde
-    decodetime(time, Hour, Min, Sec, MSec);
-    ///TimerCallCount.interval := 3600000 - (msec + (sec + (min * 60)) * 1000);
     Top := 0;
     ineventhandler := True;
-    //TimerCallCount.enabled := true;    wird in login enabled
     ineditmode := False;
 
     // new special buttons
@@ -365,8 +381,6 @@ begin
     if DataModule1.geteditonly then
     begin
       ineventhandler := False;
-      ///TimerCallCount.Enabled := False;
-      //Position := poDesktopCenter;
       Top := 200;
       ineditmode := True;
     end;
@@ -514,9 +528,13 @@ begin
         *)
       end;
       //FLogin.Free;    /// do not free here - we have to come back to FLogin !
+      //FLogin.Hide;
+      // close and free FLogin by timer in 1 second
+      TimerKillFlogin.Enabled:=true;
       if not Datamodule1.geteditonly then
         Datamodule1.TimerOntop.Enabled := ontoptimer;
       // DataModule1.TimerOnToptimer(sender);
+      logdatei.LogLevel:= DataModule1.getdebuglevel();
     end;
   except
     datamodule1.debugOut(3, '', 'exception in ontopactivate');
@@ -578,7 +596,8 @@ begin
     begin
       if not (uid = 'admin') then
       begin
-        Datamodule1.SQuibevent.last;
+        //Datamodule1.SQuibevent.last;
+        DataModule1.gotoLastTodayEvent;
         Datamodule1.SQuibevent.edit;
         datamodule1.debugOut(5, timetostr(now) + ' byeedit ' + lastevent);
         //Datamodule1.SQuibevent.FieldByName('event').AsString := lastevent;
@@ -649,7 +668,8 @@ begin
     // never was absent
     if Result = mrCancel then
     begin
-      Datamodule1.SQuibevent.last;
+      //Datamodule1.SQuibevent.last;
+      DataModule1.gotoLastTodayEvent;
       //  Datamodule1.SQuibevent.edit;
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
@@ -666,7 +686,8 @@ begin
     if Result = mrYes then
     begin
       //show work description
-      Datamodule1.SQuibevent.last;
+      //Datamodule1.SQuibevent.last;
+      DataModule1.gotoLastTodayEvent;
       //  Datamodule1.SQuibevent.edit;
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
@@ -696,9 +717,11 @@ var
   defproj: string;
   specialbutton: boolean;
 begin
-  datamodule1.debugOut(5, 'eventhandler', 'start');
+  datamodule1.debugOut(5, 'eventhandler', 'start with event: '+newevent);
   if not Datamodule1.geteditonly then
   begin
+    if not DataModule1.DSQueryAktEvents.DataSet.Active then
+      datamodule1.SQuibaktevent.Open;  ;
     if not DataModule1.DSQueryAktEvents.DataSet.Locate('event',
       VarArrayOf([newevent]), []) then
     begin
@@ -758,7 +781,8 @@ begin
                 if not Datamodule1.SQuibevent.Active then
                   Datamodule1.SQuibevent.Open;
               end;
-              Datamodule1.SQuibevent.last;
+              //Datamodule1.SQuibevent.last;
+              DataModule1.gotoLastTodayEvent;
               FOnTop.TimerProjektzeitTimer(FOnTop);
             end;
 
@@ -807,7 +831,8 @@ begin
               datamodule1.debugOut(2, 'eventhandler',
                 'exception in eventhandler.SQuibevent.ApplyUpdates');
             end;
-            Datamodule1.SQuibevent.last;
+            //Datamodule1.SQuibevent.last;
+            DataModule1.gotoLastTodayEvent;
             FOnTop.TimerProjektzeitTimer(FOnTop);
             if not Datamodule1.SQuibevent.Active then
               Datamodule1.SQuibevent.Open;
@@ -856,7 +881,8 @@ begin
               if not Datamodule1.SQuibevent.Active then
                 Datamodule1.SQuibevent.Open;
             end;
-            Datamodule1.SQuibevent.last;
+            //Datamodule1.SQuibevent.last;
+            DataModule1.gotoLastTodayEvent;
             FOnTop.TimerProjektzeitTimer(FOnTop);
           end;
           // loggedin setzen - false bei pause
@@ -891,30 +917,17 @@ begin
   TimerAfterTopTenEnter.Enabled := False;
 end;
 
-(*
-procedure TFOnTop.BtnCallCountClick(Sender: TObject);
-var
-  btnIndex: integer;
+
+procedure TFOnTop.TimerKillFloginTimer(Sender: TObject);
 begin
-  try
-    eventhandler('Call');
-    if isSpecialButton('Call') then
-    begin
-      btnIndex := specialButtonList.IndexOf('Call');
-      BtnArray[btnIndex].Down := True;
-    end
-    else
-    begin
-      BtnProjekt.Down := True;
-    end;
-    Datamodule1.SQuibcalls.FieldByName('calls').AsInteger :=
-      Datamodule1.SQuibcalls.FieldByName('calls').AsInteger + 1;
-  except
-    datamodule1.debugOut(3,'', 'exception in BtnCallCountClick');
-    raise;
-  end;
+  {this timer is used to remove the login window at macos
+   wher it is visible (why ever) }
+  TimerKillFlogin.Enabled:=false;
+  Flogin.close;
+  FreeAndNil(Flogin);
+  datamodule1.debugOut(5, 'KillFloginTimer', 'finished');
 end;
-*)
+
 
 procedure TFOnTop.BtnProjektClick(Sender: TObject);
 begin
@@ -955,7 +968,7 @@ begin
     if Datamodule1.getshowallprojects() then
     begin
       datamodule1.debugOut(6, 'buildtree allprojects');
-      DataModule1.SQuibaktevent.Refresh;
+      //DataModule1.SQuibaktevent.Refresh;
       buildtree(DataModule1.SQuibaktevent);
     end
     else
@@ -1022,7 +1035,7 @@ var
   messagelist: TStringList;
 begin
   try
-    aktstartyear := 2001;
+    aktstartyear := 2010;
     aktstartmonth := 1;
     DataModule1.debugOut(6, 'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
     suchevent := edit1.Text;
@@ -1132,7 +1145,7 @@ begin
           'Warnung: übrige Zeit: ' + IntToStr(available_min) + ' Minuten';
         DataModule1.TrayIcon1.ShowBalloonHint;
       {$ENDIF WINDOWS}
-      {$IFDEF LINUX}
+      {$IFDEF UNIX}
         try
           messagelist := TStringList.Create;
           messagelist.Add('Warnung: übrige Zeit: ' + IntToStr(available_min) +
@@ -1143,7 +1156,7 @@ begin
         except
           DataModule1.debugOut(3, 'trayicon', 'Exception starting notify-send ');
         end;
-      {$ENDIF LINUX}
+      {$ENDIF UNIX}
       end;
     end
     else
@@ -1171,6 +1184,7 @@ var
   //szb: array[0..64] of char;
 
 begin
+  {this timer is used to ask if the actual event is still correct }
   try
     griff := GetForeGroundWindow;
     ///GetWindowText(griff, szb, Sizeof(szb));
@@ -1226,40 +1240,6 @@ begin
   end;
 end;
 
-
-(*
-procedure TFOnTop.TimerCallCountTimer(Sender: TObject);
-var
-  Hour, Min, Sec, MSec: word;
-begin
-  try
-    datamodule1.debugOut(5, timetostr(now) + 'calltimer start');
-    ///   TimerCallCount.Enabled := False;
-    ///   TimerCallCount.interval := 3600000;
-    if Datamodule1.SQuibcalls.FieldByName('calls').AsInteger > 0 then
-    begin
-      datamodule1.debugOut(5, timetostr(now) + 'calltimer post');
-      Datamodule1.SQuibcalls.post;
-    end
-    else
-    begin
-      datamodule1.debugOut(5, timetostr(now) + 'calltimer cancel');
-      Datamodule1.SQuibcalls.cancel;
-    end;
-    Datamodule1.SQuibcalls.append;
-    Datamodule1.SQuibcalls.FieldByName('userid').AsString := uid;
-    decodetime(time, Hour, Min, Sec, MSec);
-    Datamodule1.SQuibcalls.FieldByName('day_h').AsDateTime :=
-      date + encodetime(Hour, 0, 0, 0);
-    Datamodule1.SQuibcalls.FieldByName('calls').AsInteger := 0;
-    ///    TimerCallCount.Enabled := True;
-    datamodule1.debugOut(5, timetostr(now) + 'calltimer stop');
-  except
-    datamodule1.debugOut(3,'', 'exception in TimerCallCount');
-    raise;
-  end;
-end;
-*)
 
 procedure TFOnTop.TimerScrollDisableTimer(Sender: TObject);
 begin
@@ -1529,6 +1509,7 @@ end;
 
 procedure TFOnTop.Timer_top_tenTimer(Sender: TObject);
 begin
+  { this timer is used to rebuild the actaul top ten list }
   reload_topten;
 end;
 
