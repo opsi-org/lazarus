@@ -52,6 +52,8 @@ function loadTextFileWithEncoding(filename, encoding: string): TStringList;
 procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
 
+function osNormalizeEncoding(const Encoding: string): string;
+
 var
   supportedEncodings: TStringList;
   mysystemEncoding: string;
@@ -634,6 +636,11 @@ begin
       LogDatei.log('-----------------', LLDebug3);
     end;
   end;
+end;
+
+function osNormalizeEncoding(const Encoding: string): string;
+begin
+  Result := NormalizeEncoding(Encoding);
 end;
 
 initialization

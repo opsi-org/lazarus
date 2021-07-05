@@ -459,7 +459,7 @@ type
   {$ENDIF WINDOWS}
 
     (* Sektion erstellen *)
-    procedure loadValidLinesFromFile(FName: string; detectedEncoding: string;
+    procedure loadValidLinesFromFile(FName: string; expectedEncoding: string;
       var Section: TWorkSection);
     //procedure getLinesFromUnicodeFile (Const FName : String; var Section : TWorkSection);
     procedure ApplyTextVariables(var Sektion: TXStringList; CStringEscaping: boolean);
@@ -1301,7 +1301,8 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2, logleveloffset);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True,
+        2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1628,8 +1629,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -1971,7 +1973,7 @@ end;
 
 
 procedure TuibInstScript.LoadValidLinesFromFile(FName: string;
-  detectedEncoding: string; var Section: TWorkSection);
+  expectedEncoding: string; var Section: TWorkSection);
 var
   OriginalList: TXStringList;
   s: string;
@@ -1984,35 +1986,28 @@ var
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
-  OriginalList.LoadFromFile(ExpandFileName(FName));
+  //OriginalList.LoadFromFile(ExpandFileName(FName));
+  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
+  expectedEncoding := osNormalizeEncoding(expectedEncoding);
   encodingString := searchencoding(OriginalList.Text);
   if encodingString = '' then
     encodingString := 'system';
-  if detectedEncoding <> '' then
+  if expectedEncoding <> '' then
   begin
-    if (encodingString <> detectedEncoding) or (encodingString <>
-      copy(detectedEncoding, 0, length(detectedEncoding) - 3)) then
+    if not ((encodingString = expectedEncoding) or
+      // test for expectedEncoding with bom
+      (encodingString = copy(expectedEncoding, 0, length(expectedEncoding) - 3))) then
     begin
       LogDatei.log('Warning: Given encodingString ' + encodingString +
-        ' is different from the detected encoding ' + detectedEncoding, LLWarning);
-      LogDatei.log('Detected encoding: ' + detectedEncoding +
+        ' is different from the detected encoding ' + expectedEncoding, LLWarning);
+      LogDatei.log('Expected encoding: ' + expectedEncoding +
         ' is considered', LLInfo);
     end;
-    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), detectedEncoding);
+    //OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
   end
   else
   if encodingString <> 'system' then
     OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
-  (*
-  OriginalList.LoadFromFile(ExpandFileName(FName));
-  Encoding2use := searchencoding(OriginalList.Text);
-  if Encoding2use = '' then
-    Encoding2use := 'system';
-  if not ((Encoding2use = 'system')) then
-    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), Encoding2use);
-  usedEncoding := Encoding2use;
-  //OriginalList.Text := reencode(OriginalList.Text, Encoding2use, usedEncoding);
-  *)
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' +
     encodingString, LLDebug);
   for i := 1 to OriginalList.Count do
@@ -2021,33 +2016,6 @@ begin
     Section.Add(s);
     script.FLinesOriginList.Append(FName + ' line: ' + IntToStr(i));
     script.FLibList.Append('false');
-    (*
-    secname := opsiunquotestr2(s,'[]');
-    if secname <> s then
-    begin
-      // we have a new section
-      secindex := Script.FSectionNameList.Add(secname);
-      if secindex <> length(script.FSectionInfoArray) then
-        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
-      setlength(script.FSectionInfoArray, secindex+1);
-      script.FSectionInfoArray[secindex].SectionName:=secname;
-      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
-      script.FSectionInfoArray[secindex].StartLineNo:=i;
-    end;
-    if pos('deffunc',lowercase(s)) = 1  then
-    begin
-      // we have a new function
-      secname := copy (s,pos('deffunc',lowercase(s)));
-      GetWord(secname, secname, remaining,WordDelimiterSet5);
-      secindex := Script.FSectionNameList.Add(secname);
-      if secindex <> length(script.FSectionInfoArray) then
-        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
-      setlength(script.FSectionInfoArray, secindex+1);
-      script.FSectionInfoArray[secindex].SectionName:=secname;
-      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
-      script.FSectionInfoArray[secindex].StartLineNo:=i;
-    end;
-    *)
   end;
   registerSectionOrigins(OriginalList, FName, Section.Name);
   OriginalList.Free;
@@ -10321,8 +10289,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11810,10 +11778,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -13586,14 +13554,15 @@ begin
           if GetNTVersionMajor >= 10 then
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
-              begin
+            begin
               list.add('ReleaseID=' + GetRegistrystringvalue(
                 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True));
               if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-              'Displayversion', True) then
+                'Displayversion', True) then
                 list.add('ReleaseID=' + GetRegistrystringvalue(
-                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'Displayversion', True));
-              end
+                  'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+                  'Displayversion', True));
+            end
             else
               list.add('ReleaseID=1507')
           else
@@ -19753,7 +19722,9 @@ var
   numberOfSectionLines: integer;
 
   detectedEncoding: string = '';
+  declaredEncoding: string = '';
   hasBom: boolean;
+  insertindex: integer;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -20473,7 +20444,11 @@ begin
                 begin
                   if CheckFileExists(fullfilename, ErrorInfo) then
                   begin
+                    detectedEncoding := '';
                     hasBom := getFileBom(fullfilename, detectedEncoding);
+                    // we expect library encoding to be utf8
+                    if detectedEncoding = '' then
+                      detectedEncoding := 'utf8';
                     try
                       LoadValidLinesFromFile(fullfilename, detectedEncoding,
                         ArbeitsSektion);
@@ -20914,32 +20889,67 @@ begin
                       LogDatei.log_prog('added to NoLogFiles: ' +
                         ExtractFileName(fullincfilename), LLDebug2);
                       inclist := TXStringList.Create;
-
-                      hasBom := getFileBom(fullincfilename, detectedEncoding);
-
-                      inclist.loadFromFileWithEncoding(
-                        ExpandFileName(fullincfilename), detectedEncoding);
+                      try
+                        detectedEncoding := '';
+                        hasBom := getFileBom(fullincfilename, detectedEncoding);
+                        usedEncoding := detectedEncoding;
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('importLib "' + Fname +
+                            '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed getFileBom, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
+                      try
+                        inclist.loadFromFileWithEncoding(
+                          ExpandFileName(fullincfilename), detectedEncoding);
+                        declaredEncoding := searchEncoding(inclist.Text);
+                        if (detectedEncoding = '') and
+                          (declaredEncoding <> detectedEncoding) then
+                          inclist.loadFromFileWithEncoding(
+                            ExpandFileName(fullincfilename), declaredEncoding);
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('importLib "' + Fname +
+                            '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed to loadFromFileWithEncoding, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
-                      inclist.Free;
+                      //inclist.Free;
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log_prog('Will Include : ' +
                         incfilename + ' with encoding: ' + detectedEncoding, LLDebug);
+                      (*
                       assignfile(incfile, fullincfilename);
-                      reset(incfile);
+                      reset(incfile);          *)
                       //script.Strings[i] := '';
                       alllines := 0;
                       inclines := 0;
                       inDefFunc2 := 0;
-                      while not EOF(incfile) do
+                      //while not EOF(incfile) do
+                      for alllines := 0 to inclist.Count - 1 do
                       begin
-                        Inc(alllines);
-                        readln(incfile, incline);
+                        //Inc(alllines);
+                        //readln(incfile, incline);
+                        incline := inclist.Strings[alllines];
                         LogDatei.log_prog(
                           'Found line in lib file (raw): ' + incline, LLDebug3);
-                        //incline := reencode(incline, Encoding2use, usedEncoding);
                         LogDatei.log_prog(
                           'Found line in lib file (reencoded): ' + incline, LLDebug2);
                         for constcounter := 1 to ConstList.Count do
@@ -21030,8 +21040,9 @@ begin
                             'Include added to FLinesOriginList.', LLDebug2);
                         end;
                       end;
-                      closeFile(incfile);
+                      //closeFile(incfile);
                       linecount := Count;
+                      FreeAndNil(inclist);
 
                       for tmpint := 0 to 3 do
                       begin
@@ -21181,29 +21192,69 @@ begin
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
-
-                      hasBom := getFileBom(fullincfilename, detectedEncoding);
-
-                      inclist.loadFromFileWithEncoding(
-                        ExpandFileName(fullincfilename), detectedEncoding);
-
+                      try
+                        detectedEncoding := '';
+                        hasBom := getFileBom(fullincfilename, detectedEncoding);
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('Include_Insert "' +
+                            Fname + '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed getFileBom, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
+                      try
+                        inclist.loadFromFileWithEncoding(
+                          ExpandFileName(fullincfilename), detectedEncoding);
+                        usedEncoding := detectedEncoding;
+                        declaredEncoding := searchEncoding(inclist.Text);
+                        if (detectedEncoding = '') and
+                          (declaredEncoding <> detectedEncoding) then
+                        begin
+                          inclist.loadFromFileWithEncoding(
+                            ExpandFileName(fullincfilename), declaredEncoding);
+                          usedEncoding := declaredEncoding;
+                        end;
+                        if usedEncoding = '' then
+                          usedEncoding := 'system';
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('Include_Insert "' +
+                            Fname + '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed to loadFromFileWithEncoding, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
                       Script.registerSectionOrigins(inclist, fullincfilename);
-                      inclist.Free;
+                      //inclist.Free;
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       LogDatei.log('Will Include : ' + incfilename +
-                        ' with encoding: ' + detectedEncoding, LLDebug2);
+                        ' with encoding: ' + usedEncoding, LLDebug2);
+                      (*
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
                       k := 0;
-                      while not EOF(incfile) do
+                      while not EOF(incfile) do     *)
+                      for k := 0 to inclist.Count - 1 do
                       begin
-                        Inc(k);
-                        readln(incfile, incline);
+                        //Inc(k);
+                        //readln(incfile, incline);
+                        incline := inclist.Strings[k];
                         LogDatei.log_prog(
                           'Will Include line (raw): ' + incline, LLDebug3);
                         //incline := reencode(incline, Encoding2use, usedEncoding);
@@ -21218,24 +21269,24 @@ begin
                         LogDatei.log_prog(
                           'Will Include line (constants replaced): ' +
                           incline, LLDebug3);
-                        Sektion.Insert(linecounter - 1 + k, incline);
+                        insertindex := linecounter + k;
+                        //Sektion.Insert(linecounter - 1 + k, incline);
+                        Sektion.Insert(insertindex, incline);
                         LogDatei.log_prog(
-                          'Line included at pos: ' + IntToStr(linecounter - 1 + k) +
+                          'Line included at pos: ' + IntToStr(insertindex) +
                           ' to Sektion with ' + IntToStr(Sektion.Count) +
                           ' lines.', LLDebug3);
-                        //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
-                        //script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
-                        //script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
                         script.FLinesOriginList.Insert(
-                          linecounter - 1 + k, incfilename + ' Line: ' + IntToStr(k));
-                        script.FLibList.Insert(linecounter - 1 + k, 'false');
+                          insertindex, incfilename + ' Line: ' + IntToStr(k));
+                        script.FLibList.Insert(insertindex, 'false');
                         LogDatei.log_prog(
                           'Include added to FLinesOriginList.', LLDebug3);
                       end;
-                      closeFile(incfile);
+                      //closeFile(incfile);
                       linecount := Count;
                       LogDatei.log('Included (insert) file: ' +
-                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
+                        fullincfilename + ' with encoding: ' + usedEncoding, LLInfo);
+                      FreeAndNil(inclist);
                     end
                     else
                     begin
@@ -21343,29 +21394,70 @@ begin
                     begin
                       LogDatei.log('Found File: ' + fullincfilename, LLDebug2);
                       inclist := TXStringList.Create;
-
-                      hasBom := getFileBom(fullincfilename, detectedEncoding);
-
-                      inclist.loadFromFileWithEncoding(
-                        ExpandFileName(fullincfilename), detectedEncoding);
+                      try
+                        detectedEncoding := '';
+                        hasBom := getFileBom(fullincfilename, detectedEncoding);
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('Include_Append "' +
+                            Fname + '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed getFileBom, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
+                      try
+                        inclist.loadFromFileWithEncoding(
+                          ExpandFileName(fullincfilename), detectedEncoding);
+                        usedEncoding := detectedEncoding;
+                        declaredEncoding := searchEncoding(inclist.Text);
+                        if (detectedEncoding = '') and
+                          (declaredEncoding <> detectedEncoding) then
+                        begin
+                          inclist.loadFromFileWithEncoding(
+                            ExpandFileName(fullincfilename), declaredEncoding);
+                          usedEncoding := declaredEncoding;
+                        end;
+                        if usedEncoding = '' then
+                          usedEncoding := 'system';
+                      except
+                        on E: Exception do
+                        begin
+                          Logdatei.log('Include_Append "' +
+                            Fname + '"', LLCritical);
+                          Logdatei.log(
+                            ' Failed to loadFromFileWithEncoding, system message: "' +
+                            E.Message + '"',
+                            LLCritical);
+                          FExtremeErrorLevel := levelFatal;
+                          RaiseLastOSError;
+                        end
+                      end;
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
                       Script.registerSectionOrigins(inclist, fullincfilename);
-                      inclist.Free;
+                      //inclist.Free;
                       //if Encoding2use = '' then
                       //  Encoding2use := 'system';
                       linecount := Count;
+                      (*
                       assignfile(incfile, fullincfilename);
                       reset(incfile);
                       //script.Strings[i] := '';
                       k := 0;
-                      while not EOF(incfile) do
+                      while not EOF(incfile) do *)
+                      for k := 0 to inclist.Count - 1 do
                       begin
-                        Inc(k);
-                        readln(incfile, incline);
+                        //Inc(k);
+                        //readln(incfile, incline);
                         //incline := reencode(incline, Encoding2use, usedEncoding);
+                        incline := inclist.Strings[k];
                         for constcounter := 1 to ConstList.Count do
                           if Sektion.replaceInLine(incline,
                             Constlist.Strings[constcounter - 1],
@@ -21379,10 +21471,11 @@ begin
                           ' Line: ' + IntToStr(k));
                         script.FLibList.Append('false');
                       end;
-                      closeFile(incfile);
+                      //closeFile(incfile);
                       //linecount := Count;
                       LogDatei.log('Included (append) file: ' +
-                        fullincfilename + ' with encoding: ' + detectedEncoding, LLInfo);
+                        fullincfilename + ' with encoding: ' + usedEncoding, LLInfo);
+                      FreeAndNil(inclist);
                     end
                     else
                     begin
