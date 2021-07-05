@@ -83,6 +83,8 @@ opsi-setup-detector (4.2.0.6) stable; urgency=low
    * start at windows without console: osdform: main2: // initate console while windows gui
    * more french translation
    * enhanced macos install library
+   * spanish translation
+   * fixes ind displaying properties
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  18 July 2021 : 15:00:00 +0200
 
