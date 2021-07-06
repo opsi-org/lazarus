@@ -3,11 +3,15 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-
-##################################################################
-
 opsi-script (4.12.4.24) stable; urgency=low
 
+ * new: xml2 sections: /encoding Parameter
+ * new: xml2 sections: /AllNTUserProfiles Parameter
+ * osfunc: file functions use findfirstUTF8 instead of findfirst
+ * xml2 sections: many log warnings lowerd ti LLInfo
+ * xml2 sections: new command: rootNodeOnCreate = <node>
+ * xml2 sections: not existing files will be created
+    using the value of rootNodeOnCreate, fallback to 'rootnode' if not existing
  * osparser: include (append / insert) statements fixes on read file with encoding
  * osparser: importlib statements fixes on read file with encoding
  * osparser: less encoding reload in LoadValidLinesFromFile
@@ -54,7 +58,6 @@ opsi-script (4.12.4.22) stable; urgency=low
  * osfunc files section copy: moving some log messages from Loglevel 6 to 7
 
 -- d.oertel <d.oertel@uib.de> Fri, 04 June 2021 15:00
-
 
 opsi-script (4.12.4.21) stable; urgency=low
 
