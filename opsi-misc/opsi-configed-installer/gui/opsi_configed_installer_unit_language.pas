@@ -120,7 +120,7 @@ begin
       (Sender.Components[compIndex] as TPanel).Left := ConfigedInstaller.panelLeft;
       (Sender.Components[compIndex] as TPanel).Width := ConfigedInstaller.panelWidth;
       (Sender.Components[compIndex] as TPanel).Color := clForm;
-    end
+    {end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
       // load info icon
@@ -131,7 +131,7 @@ begin
       // set background image
       (Sender.Components[compIndex] as TImage).Picture.LoadFromFile(
         ExtractFilePath(ParamStr(0)) + ConfigedInstaller.BackgrImageFileName);
-      (Sender.Components[compIndex] as TImage).BorderSpacing.Top := 10;
+      (Sender.Components[compIndex] as TImage).BorderSpacing.Top := 10;}
     end;
   end;
 
@@ -270,7 +270,10 @@ begin
     begin
       Delete(macDistroName, 1, 'kern.ostype: '.Length);
       Delete(macDistroRelease, 1, 'kern.osrelease: '.Length);
-      ShowMessage(macDistroName + ', ' + macDistroRelease);
+      Delete(macDistroName, macDistroName.Length, 1);
+      Delete(macDistroRelease, macDistroRelease.Length, 1);
+      ShowMessage('*' + macDistroName + '*');
+      ShowMessage('*' + macDistroRelease + '*');
       Data.distroName := macDistroName;
       Data.distroRelease := macDistroRelease;
     end;
