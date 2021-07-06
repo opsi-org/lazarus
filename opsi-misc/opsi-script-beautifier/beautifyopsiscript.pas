@@ -21,7 +21,7 @@ uses
 function indentation(indent: integer): string;
 function isStartStr(line: string; codeWords: TStringList): boolean;
 function isEndStr(line: string; codeWords: TStringList): boolean;
-function isNewSection(line: string): boolean;
+function isNewSection(line: string;const linenum : integer): boolean;
 function beautify(code: TStringList): TStringList;
 procedure Initialize(bfn: string; osf: string);
 
@@ -76,12 +76,13 @@ begin
   end;
 end;
 
-function isNewSection(line: string): boolean;
+function isNewSection(line: string;const linenum : integer): boolean;
 begin
   isNewSection := False;
   if (AnsiStartsStr('[', line.trim) and AnsiEndsStr(']', line.trim)) or
     AnsiStartsStr(UpperCase('deffunc'), UpperCase(line.trim)) then
   begin
+    LogDatei.log('New section block found at linenr: '+inttostr(linenum)+ ' : '+line,LLdebug);
     isNewSection := True;
   end;
 
@@ -147,9 +148,9 @@ begin
           threetabs := False;
           relPos := relPos - 3;
         end;
-      until isNewSection(code[k]) or AnsiEndsStr(']', code[k].trim) or
+      until isNewSection(code[k],k) or AnsiEndsStr(']', code[k].trim) or
         (k >= code.Count - 1);  // end of params
-      if isNewSection(code[k]) then
+      if isNewSection(code[k],k) then
         // check this line because it's next section - so dec
         Dec(k);
       trimLine := False;               // no trim
@@ -175,9 +176,9 @@ begin
         if code[k].Contains('set_link') then
           relPos := relPos + 1;
         Inc(k);
-      until isNewSection(code[k]) // next section
+      until isNewSection(code[k],k) // next section
         or (k >= code.Count - 1);
-      if isNewSection(code[k]) then
+      if isNewSection(code[k],k) then
         // check this line because it's next section - so dec
         Dec(k);
       trimLine := False;  // no trim
@@ -205,9 +206,11 @@ begin
         // begin of section
       begin
         // set first line of section with indentlevel
-        relPos := PosEx('[', code[k]) - 1;  // position of [ before indentation
-        code[k] := indentation(indentlevel) + code[k].trim;
-        relPos := PosEx('[', code[k]) - 1 - relPos;
+        //relPos := PosEx('[', code[k]) - 1;  // position of [ before indentation
+        //relPos := 0;
+        //code[k] := indentation(indentlevel) + code[k].trim;
+        //relPos := PosEx('[', code[k]) - 1 - relPos;
+        relPos := indentlevel;
         //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
         // get next lines
         Inc(k);
@@ -231,11 +234,12 @@ begin
         // section ends
         if (AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim))) then
         begin
+          LogDatei.log('endfunc found at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
           Dec(indentlevel);
-          code[k] := indentation(indentlevel) + code[k];
+          code[k] := indentation(indentlevel) + code[k].trim;
         end;
 
-        if isNewSection(code[k]) then
+        if isNewSection(code[k],k) then
           // begin next section, therefore end of previous section
         begin
           Dec(k);
@@ -253,6 +257,7 @@ begin
       code[k] := code[k].trim;
       if (isStartStr(code[k], incIndentList)) then
       begin
+        LogDatei.log('Inc ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
         code[k] := indentation(indentlevel) + code[k];
         if AnsiStartsStr(UpperCase('if'), UpperCase(code[k].Trim)) then
         begin
@@ -267,12 +272,14 @@ begin
       end
       else if (isStartStr(code[k], decIncIndentList)) then
       begin
+        LogDatei.log('Dec inc ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
         Dec(indentlevel);
         code[k] := indentation(indentlevel) + code[k];
         Inc(indentlevel);
       end
       else if (isStartStr(code[k], decIndentList)) then
       begin
+        LogDatei.log('Dec ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
         Dec(indentlevel);
         code[k] := indentation(indentlevel) + code[k];
         tmpstr2 := code[k];

@@ -1,3 +1,10 @@
+opsi-script-beautifier (4.2.0.2-1) stable; urgency=medium
+
+ * More Logs on Loglevel 7
+ * Fix in determine indent in secondary section: relPos := indentlevel;
+
+-- d.oertel <d.oertel@uib.de> Tue , 06 July 2021 15:00:00 + 0100
+
 opsi-script-beautifier (4.2.0.1-1) stable; urgency=medium
 
  * define OPSI_AS_USER
