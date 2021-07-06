@@ -99,10 +99,28 @@ begin
   end;
 end;
 
+function countLeadingWhitespaces(const line : string) : integer;
+var
+  nonwhitefound : boolean;
+  index : integer = 0;
+  aktchar : char;
+begin
+  countLeadingWhitespaces := 0;
+  nonwhitefound := false;
+  if line.Length > 0 then
+  repeat
+    inc(index);
+    aktchar := line[index];
+    if (aktchar = chr(9)) or (aktchar = chr(32)) then
+       inc(countLeadingWhitespaces)
+    else nonwhitefound := true;
+  until nonwhitefound;
+end;
 
 function beautify(code: TStringList): TStringList;
 var
   k, relPos, i: integer;
+  leadheader, leadline : integer;
   dontTouch, noIndent, trimLine: boolean;
   tmpstr, tmpstr2: string;
   threetabs: boolean;
@@ -207,10 +225,10 @@ begin
       begin
         // set first line of section with indentlevel
         //relPos := PosEx('[', code[k]) - 1;  // position of [ before indentation
-        //relPos := 0;
-        //code[k] := indentation(indentlevel) + code[k].trim;
+        leadheader := countLeadingWhitespaces(code[k]);
+        code[k] := indentation(indentlevel) + code[k].trim;
         //relPos := PosEx('[', code[k]) - 1 - relPos;
-        relPos := indentlevel;
+        //relPos := indentlevel;
         //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
         // get next lines
         Inc(k);
@@ -222,9 +240,16 @@ begin
             AnsiStartsStr('exit $?', code[k].trim)) and (k < code.Count - 1) do
         begin
           if dontTouch then // don't touch
-            code[k] := createBlockIndent(relPos) + code[k];
+          begin
+            // we want to indent the whole code block of the section
+            // without touching the indents relative to the section header
+            // so we count the existing leading whitespace
+            // remove the original indent (leadheader) and add the new indent
+            leadline := countLeadingWhitespaces(code[k]) - leadheader + indentlevel;
+            code[k] := createBlockIndent(leadline) + code[k].trim;
+          end;
           if noIndent then // no indent
-            code[k] := createBlockIndent(relPos) + code[k].trim;
+            code[k] := createBlockIndent(indentlevel) + code[k].trim;
           tmpstr2 := code[k];
           Inc(k);
           //logdatei.log(' : line ' + k.toString + ' after: ' + code[k] , LLessential);
