@@ -24,7 +24,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="7"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -236,7 +236,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="70"/>
-        <CursorPos X="37" Y="87"/>
+        <CursorPos X="22" Y="83"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -386,7 +386,6 @@
         <TopLine Value="5"/>
         <CursorPos X="3" Y="28"/>
         <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="template-files\setupdouble.opsiscript"/>
@@ -469,7 +468,6 @@
         <TopLine Value="33"/>
         <CursorPos Y="56"/>
         <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\usr\share\lazarus\2.0.6\lcl\interfaces\gtk2\gtk2callback.inc"/>
@@ -534,7 +532,6 @@
         <TopLine Value="25"/>
         <CursorPos X="3" Y="44"/>
         <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="osdanalyzemac.pas"/>
@@ -777,7 +774,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="341"/>
         <CursorPos X="6" Y="355"/>
-        <UsageCount Value="98"/>
+        <UsageCount Value="99"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
@@ -811,7 +808,7 @@
         <EditorIndex Value="9"/>
         <TopLine Value="45"/>
         <CursorPos X="26" Y="80"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
@@ -822,6 +819,7 @@
         <TopLine Value="262"/>
         <CursorPos X="11" Y="288"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit70>
       <Unit71>
         <Filename Value="C:\usr\share\lazarus\2.0.12\components\lazutils\lazutf8.pas"/>
@@ -830,6 +828,7 @@
         <TopLine Value="3854"/>
         <CursorPos X="12" Y="3877"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit71>
       <Unit72>
         <Filename Value="C:\usr\share\fpcsrc\3.2.0\packages\fcl-base\src\gettext.pp"/>
@@ -837,6 +836,7 @@
         <TopLine Value="298"/>
         <CursorPos Y="327"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit72>
     </Units>
     <OtherDefines Count="3">
