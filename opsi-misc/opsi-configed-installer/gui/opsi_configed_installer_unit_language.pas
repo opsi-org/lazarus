@@ -192,7 +192,7 @@ end;
 procedure TConfigedInstaller.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
-  removeFuzzys: string;
+  removeFuzzys, macDistroName, macDistroRelease: string;
 begin
   // from all po files remove all fuzzys that might have been introduced somehow
   {RunCommand('/bin/sh', ['-c',
@@ -259,8 +259,22 @@ begin
   Data := TConfigedInstallerData.Create;
   // Following two lines take time and are therefore executed only once at the
   // beginning of this program.
-  Data.distroName := getLinuxDistroName;
-  Data.distroRelease := getLinuxDistroRelease;
+  try
+    Data.distroName := getLinuxDistroName;
+    Data.distroRelease := getLinuxDistroRelease;
+  except
+    LogDatei.log('No linux or lsb_release, try mac:', LLinfo);
+    if (RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.ostype'], macDistroName) and
+      RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.osrelease'],
+      macDistroRelease)) then
+    begin
+      Delete(macDistroName, 1, 'kern.ostype: '.Length);
+      Delete(macDistroRelease, 1, 'kern.osrelease: '.Length);
+      ShowMessage(macDistroName + ', ' + macDistroRelease);
+      Data.distroName := macDistroName;
+      Data.distroRelease := macDistroRelease;
+    end;
+  end;
 
   // text by resourcestrings
   LabelWelcome.Caption := rsWelcome;
