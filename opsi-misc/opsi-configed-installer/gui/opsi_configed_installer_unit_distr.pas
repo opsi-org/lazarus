@@ -75,8 +75,7 @@ end;
 
 procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
-  GoOn := True;
-  Distribution.Close;
+  GoOn := False;
 
   // If the distribution was edited:
   if EditDistr.Text <> Data.distroName + ' ' + Data.distroRelease then
@@ -96,11 +95,12 @@ begin
     //ShowMessage(DistrInfo.DistrUrlPart);
     // If the distribution is not supported, show an information and close QuickInstall:
     if DistrInfo.MyDistr = other then
-    begin
-      ShowMessage(rsNoSupport + #10 + #10 + DistrInfo.Distribs);
-      Close;
-    end;
+      ShowMessage(rsNoSupport + #10 + #10 + DistrInfo.Distribs)
+    else
+      Distribution.GoOn := True;
   end;
+
+  Close;
 end;
 
 procedure TDistribution.BtnBackClick(Sender: TObject);
