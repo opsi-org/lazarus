@@ -223,6 +223,8 @@ var
   TestCommand: TRunCommandElevated;
 begin
   // test if the password is correct, otherwise exit
+  if not (Data.distroName = 'Darwin') then
+  begin
   TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
   TestCommand.Run('mkdir /root/testDir', Output);
   if (Pos('Error', Output) >= 0) and (Output <> '') then
@@ -233,6 +235,7 @@ begin
   end;
   TestCommand.Run('rm -rf /root/testDir', Output);
   TestCommand.Free;
+  end;
 
   btnFinishClicked := True;
   // start thread for opsi configed installation while showing TWait
