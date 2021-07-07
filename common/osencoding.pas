@@ -7,7 +7,6 @@ unit osencoding;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 
@@ -52,6 +51,8 @@ function reencode(const sourceText: string; const sourceEncoding: string;
 function loadTextFileWithEncoding(filename, encoding: string): TStringList;
 procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
+
+function osNormalizeEncoding(const Encoding: string): string;
 
 var
   supportedEncodings: TStringList;
@@ -635,6 +636,11 @@ begin
       LogDatei.log('-----------------', LLDebug3);
     end;
   end;
+end;
+
+function osNormalizeEncoding(const Encoding: string): string;
+begin
+  Result := NormalizeEncoding(Encoding);
 end;
 
 initialization

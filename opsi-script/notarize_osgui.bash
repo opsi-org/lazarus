@@ -35,6 +35,9 @@ rm -f ${EXECUTABLE_DIR}/Contents/MacOS/*
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
 cp info-osgui.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
+EXECUTABLE_VER=`opsi-getlazbinaryversion --file="${FULLPATHTOEXE}"  | tr -d 'fileversion='`
+echo ver $EXECUTABLE_VER
+
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"
 launchctl plist $FULLPATHTOEXE

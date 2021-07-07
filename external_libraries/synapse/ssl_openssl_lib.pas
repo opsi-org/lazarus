@@ -82,6 +82,7 @@ unit ssl_openssl_lib;
 interface
 
 uses
+  osSSLPaths, //opsi ssl paths
 {$IFDEF CIL}
   System.Runtime.InteropServices,
   System.Text,
@@ -92,7 +93,7 @@ uses
   {$IFDEF FPC}
    {$IFDEF UNIX}
   BaseUnix,
-FileUtil, // opsi do 20210201
+  FileUtil, // opsi do 20210201
    {$ENDIF UNIX}
   {$ELSE}
    Libc,
@@ -829,6 +830,10 @@ var
 function IsSSLloaded: Boolean;
 function InitSSLInterface: Boolean;
 function DestroySSLInterface: Boolean;
+
+//set opsi specific ssl library paths
+procedure SetSSLPaths;
+
 
 var
   _X509Free: TX509Free = nil; {pf}
@@ -1866,7 +1871,6 @@ function InitSSLInterface: Boolean;
 var
   s: string;
   x: integer;
-  filelist : TStringlist;
 begin
   {pf}
   if SSLLoaded then
@@ -1883,22 +1887,11 @@ begin
       SSLLibHandle := 1;
       SSLUtilHandle := 1;
 {$ELSE}
-{$IFDEF DARWIN}
-  {$IFNDEF SSLPATH}
-  // opsi do 20210201
-   filelist := findallfiles('/usr/local/lib/','libssl.*.dylib',false);
-   if filelist.Count > 0 then
-     DLLSSLName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-   filelist := findallfiles('/usr/local/lib/','libcrypto.*.dylib',false);
-   if filelist.Count > 0 then
-     DLLUtilName:= ExtractFileName(filelist.strings[filelist.count - 1]);
-  {$ENDIF SSLPATH}
-{$ENDIF DARWIN}
-      SSLUtilHandle := LoadLib(DLLUtilName);
-      SSLLibHandle := LoadLib(DLLSSLName);
+    SetSSLPaths; //set opsi specific ssl library paths
+    SSLUtilHandle := LoadLib(DLLUtilName);
+    SSLLibHandle := LoadLib(DLLSSLName);
   {$IFDEF MSWINDOWS}
-      if (SSLLibHandle = 0) then
-        SSLLibHandle := LoadLib(DLLSSLName2);
+    if (SSLLibHandle = 0) then SSLLibHandle := LoadLib(DLLSSLName2);
   {$ENDIF}
 {$ENDIF}
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
@@ -2214,32 +2207,30 @@ begin
   Result := SSLLoaded;
 end;
 
-initialization
+procedure SetSSLPaths; //opsi
 begin
-  SSLCS:= TCriticalSection.Create;
   // Specify here the path to the ssl libraries
   {$IFDEF SSLPATH}
     {$IFDEF WINDOWS}
-      DLLSSLName := ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
-      DLLUtilName := ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+      DLLSSLName := GetSSLPath('ssleay32.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
+      DLLUtilName := GetSSLPath('libeay32.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
-      DLLSSLName := ProgramDirectory + 'libssl.so';
-      DLLUtilName := ProgramDirectory  + 'libcrypto.so';
+      DLLSSLName := GetSSLPath('libssl.so'); //ProgramDirectory + 'libssl.so';
+      DLLUtilName := GetSSLPath('libcrypto.so'); //ProgramDirectory  + 'libcrypto.so';
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-      {$IFDEF APP_BUNDLE}
-        DLLSSLName := ProgramDirectory + '../Frameworks/libssl.dylib';
-        DLLUtilName := ProgramDirectory  + '../Frameworks/libcrypto.dylib';
-      {$ELSE}
-        DLLSSLName := ProgramDirectory + 'libssl.dylib';
-        DLLUtilName := ProgramDirectory  + 'libcrypto.dylib';
-      {$ENDIF APP_BUNDLE}
+      DLLSSLName := GetSSLPath('libssl.dylib'); //ProgramDirectory + 'libssl.dylib';
+      DLLUtilName := GetSSLPath('libcrypto.dylib');//ProgramDirectory  + 'libcrypto.dylib';
     {$ENDIF DARWIN}
-    //Paths below were used for testing
-    //DLLSSLName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'ssleay32.dll'; //'libssl-1_1.dll';
-    //DLLUtilName := 'C:\Users\Werner\Documents\openssl_dlls_libs\' + 'libeay32.dll'; // 'libcrypto-1_1.dll';
-  {$ENDIF}
+  {$ENDIF SSLPATH}
+end;
+
+
+
+initialization
+begin
+  SSLCS:= TCriticalSection.Create;
 end;
 
 finalization

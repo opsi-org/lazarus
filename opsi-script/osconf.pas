@@ -165,6 +165,7 @@ var
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
   configReverseProductOrderByUninstall: boolean = False;
+  configSupressSystemEncodingWarning : boolean = False;
 
 
 implementation
@@ -198,6 +199,8 @@ begin
       BoolToStr(AutoActivityDisplay, False));
     myconf.WriteString('global', 'ReverseProductOrderByUninstall',
       BoolToStr(configReverseProductOrderByUninstall, False));
+    myconf.WriteString('global', 'ReverseProductOrderByUninstall',
+      BoolToStr(configSupressSystemEncodingWarning, False));
     myconf.Free;
   except
     Result := False;
@@ -239,6 +242,9 @@ begin
     configReverseProductOrderByUninstall :=
       strToBool(myconf.ReadString('global', 'ReverseProductOrderByUninstall',
       boolToStr(configReverseProductOrderByUninstall, False)));
+    configSupressSystemEncodingWarning :=
+      strToBool(myconf.ReadString('global', 'supressSystemEncodingWarning',
+      boolToStr(configSupressSystemEncodingWarning, False)));
     myconf.Free;
 
 
@@ -496,6 +502,26 @@ begin
                               configReverseProductOrderByUninstall) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  ReverseProductOrderByUninstall: '
+                                +
+                                tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        LowerCase(
+                        'opsi-script.global.supressSystemEncodingWarning') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got supressSystemEncodingWarning: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configSupressSystemEncodingWarning) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  supressSystemEncodingWarning: '
                                 +
                                 tmpstr);
                             Result := 'readConfigFromService: ok';

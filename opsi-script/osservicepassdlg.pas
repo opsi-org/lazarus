@@ -17,14 +17,6 @@ unit osservicepassdlg;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
-
-//***************************************************************************
-// Subversion:
-// $Revision: 288 $
-// $Author: oertel $
-// $Date: 2015-01-29 18:19:14 +0100 (Do, 29 Jan 2015) $
-//***************************************************************************
 
 
 interface

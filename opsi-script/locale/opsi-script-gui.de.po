@@ -53,163 +53,152 @@ msgstr "Bitte geben Sie den Usernamen des opsi-Service users ein:"
 msgid "Ready to continue ?"
 msgstr "Bereit zum Fortfahren ?"
 
-#: oswebservice.rserrorintconnection
-msgid "Error while initializing opsiconnection"
-msgstr ""
-
-#: oswebservice.rsnovaluefound
-msgid "No value found! Set%sto"
-msgstr ""
-
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
-msgstr ""
+msgstr "Sende Logdatei zum Server ...."
 
 #: tcentralform.beenden1.caption
-msgctxt "tcentralform.beenden1.caption"
+msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
 msgid "Exit"
-msgstr ""
+msgstr "Beenden"
 
 #: tcentralform.buttongetclipboardtext.caption
 msgid "Clipboard --> Viewlist"
-msgstr ""
+msgstr "Zwischenablage --> angezeigte Liste"
 
 #: tcentralform.buttonprocessmemo.caption
 msgid "Execute viewlist as script"
-msgstr ""
+msgstr "Angezeigte Liste als Skript ausführen"
 
 #: tcentralform.button_show_gui.caption
 msgid "Show GUI"
-msgstr ""
+msgstr "GUI anzeigen"
 
 #: tcentralform.caption
 msgid "  opsi - script"
-msgstr ""
+msgstr "opsi-script"
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
-msgstr ""
+msgstr "Combobox1"
 
 #: tcentralform.datei1.caption
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: tcentralform.edit1.text
 msgid "Edit1"
-msgstr ""
+msgstr "Ändern1"
 
 #: tcentralform.edit2.text
 msgid "Edit2"
-msgstr ""
+msgstr "Ändern2"
 
 #: tcentralform.hilfe1.caption
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: tcentralform.info1.caption
 msgid "Info .."
-msgstr ""
+msgstr "Info .."
 
 #: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
 msgid "Label1"
-msgstr ""
+msgstr "Label1"
 
 #: tcentralform.label2.caption
 msgid "Label2"
-msgstr ""
+msgstr "Label2"
 
 #: tcentralform.label4.caption
 msgid "Logfile:"
-msgstr ""
+msgstr "Logdatei:"
 
 #: tcentralform.label5.caption
 msgid "Script:"
-msgstr ""
+msgstr "Skript:"
 
 #: tcentralform.label6.caption
-msgctxt "tcentralform.label6.caption"
+msgctxt "TCENTRALFORM.LABEL6.CAPTION"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "LabelWinstVersion"
 
 #: tcentralform.labelactivity.caption
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: tcentralform.labelwinstversion.caption
 msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "LabelWinstVersion"
 
 #: tcentralform.panel2.caption
 msgid "Log-View:"
-msgstr ""
+msgstr "Log-Ansicht:"
 
 #: tcentralform.radiobuttonappendlogfile.caption
 msgid "Append"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: tcentralform.radiobuttonnewlogfile.caption
 msgid "New"
-msgstr ""
+msgstr "Neu"
 
 #: tcentralform.skript1.caption
 msgid "Open Script"
-msgstr ""
+msgstr "Skript öffnen"
 
 #: tcentralform.speedbutton1.caption
 msgid "Select Script"
-msgstr ""
+msgstr "Skript auswählen"
 
 #: tcentralform.speedbutton2.caption
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: tcentralform.speedbutton3.caption
 msgid "View Log"
-msgstr ""
+msgstr "Log anzeigen"
 
 #: tcentralform.speedbutton4.caption
 msgid "Hide GUI"
-msgstr ""
+msgstr "GUI verstecken"
 
 #: tcentralform.speedbutton5.caption
 msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
-msgstr ""
+msgstr "Beenden"
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
-msgstr ""
+msgstr "Werkzeugleiste1"
 
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
-msgstr ""
+msgstr "opsi-script"
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
-msgstr ""
+msgstr "Befehl"
 
 #: tfbatchoberflaeche.labeldetail.caption
 msgid "Detail"
-msgstr ""
+msgstr "Detail"
 
 #: tfbatchoberflaeche.labelinfo.caption
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: tfbatchoberflaeche.labelproduct.caption
 msgid "LabelProductImage"
-msgstr ""
+msgstr "LabelProduktbild"
 
 #: tfbatchoberflaeche.labelprogress.caption
 msgid "Activity"
-msgstr ""
+msgstr "Aktivität"
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
-msgstr ""
-
-#: tsimplewinbatchgui.labelversion.caption
-msgid "opsi-script 4.12.4.13"
-msgstr ""
+msgstr "LabelVersion"
 
