@@ -195,7 +195,7 @@ var
   removeFuzzys, macDistroName, macDistroRelease: string;
 begin
   // from all po files remove all fuzzys that might have been introduced somehow
-  {RunCommand('/bin/sh', ['-c',
+  RunCommand('/bin/sh', ['-c',
     'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.de.po ../gui/locale/opsi_configed_installer_project.de.po'],
     removeFuzzys);
   RunCommand('/bin/sh', ['-c',
@@ -206,7 +206,7 @@ begin
     removeFuzzys);
   RunCommand('/bin/sh', ['-c',
     'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.fr.po ../gui/locale/opsi_configed_installer_project.fr.po'],
-    removeFuzzys);}
+    removeFuzzys);
 
   // set constant form size
   Height := 450;

@@ -134,8 +134,13 @@ end;
 procedure TMyThread.installConfiged;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
-  FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
-  FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
+  if not (Data.distroName = 'Darwin') then
+  begin
+    FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
+    FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
+  end
+  else
+    FInstallRunCommand.Run('./opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
   FInstallRunCommand.Free;
 end;
 
@@ -144,7 +149,8 @@ begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
   Synchronize(@prepareInstallation);
-  Synchronize(@addRepo);
+  if not (Data.distroName = 'Darwin') then
+    Synchronize(@addRepo);
   installConfiged;
 end;
 
@@ -229,7 +235,7 @@ begin
   TestCommand.Free;
 
   btnFinishClicked := True;
-  // start thread for opsi server installation while showing TWait
+  // start thread for opsi configed installation while showing TWait
   MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
     GetPackageManagementShellCommand(Data.distroName));
   with MyThread do
