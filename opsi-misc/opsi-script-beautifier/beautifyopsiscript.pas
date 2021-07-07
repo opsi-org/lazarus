@@ -21,7 +21,7 @@ uses
 function indentation(indent: integer): string;
 function isStartStr(line: string; codeWords: TStringList): boolean;
 function isEndStr(line: string; codeWords: TStringList): boolean;
-function isNewSection(line: string;const linenum : integer): boolean;
+function isNewSection(line: string; const linenum: integer): boolean;
 function beautify(code: TStringList): TStringList;
 procedure Initialize(bfn: string; osf: string);
 
@@ -76,13 +76,14 @@ begin
   end;
 end;
 
-function isNewSection(line: string;const linenum : integer): boolean;
+function isNewSection(line: string; const linenum: integer): boolean;
 begin
   isNewSection := False;
   if (AnsiStartsStr('[', line.trim) and AnsiEndsStr(']', line.trim)) or
     AnsiStartsStr(UpperCase('deffunc'), UpperCase(line.trim)) then
   begin
-    LogDatei.log('New section block found at linenr: '+inttostr(linenum)+ ' : '+line,LLdebug);
+    LogDatei.log('New section block found at linenr: ' + IntToStr(linenum) +
+      ' : ' + line, LLdebug);
     isNewSection := True;
   end;
 
@@ -99,28 +100,30 @@ begin
   end;
 end;
 
-function countLeadingWhitespaces(const line : string) : integer;
+function countLeadingWhitespaces(const line: string): integer;
 var
-  nonwhitefound : boolean;
-  index : integer = 0;
-  aktchar : char;
+  nonwhitefound: boolean;
+  index: integer = 0;
+  aktchar: char;
 begin
   countLeadingWhitespaces := 0;
-  nonwhitefound := false;
+  nonwhitefound := False;
   if line.Length > 0 then
-  repeat
-    inc(index);
-    aktchar := line[index];
-    if (aktchar = chr(9)) or (aktchar = chr(32)) then
-       inc(countLeadingWhitespaces)
-    else nonwhitefound := true;
-  until nonwhitefound;
+    repeat
+      Inc(index);
+      aktchar := line[index];
+      if (aktchar = chr(9)) or (aktchar = chr(32)) then
+        Inc(countLeadingWhitespaces)
+      else
+        nonwhitefound := True;
+    until nonwhitefound;
 end;
 
 function beautify(code: TStringList): TStringList;
 var
   k, relPos, i: integer;
-  leadheader, leadline : integer;
+  leadheader, leadline: integer;
+  leadheaderstring, sectionname: string;
   dontTouch, noIndent, trimLine: boolean;
   tmpstr, tmpstr2: string;
   threetabs: boolean;
@@ -166,9 +169,9 @@ begin
           threetabs := False;
           relPos := relPos - 3;
         end;
-      until isNewSection(code[k],k) or AnsiEndsStr(']', code[k].trim) or
+      until isNewSection(code[k], k) or AnsiEndsStr(']', code[k].trim) or
         (k >= code.Count - 1);  // end of params
-      if isNewSection(code[k],k) then
+      if isNewSection(code[k], k) then
         // check this line because it's next section - so dec
         Dec(k);
       trimLine := False;               // no trim
@@ -194,9 +197,9 @@ begin
         if code[k].Contains('set_link') then
           relPos := relPos + 1;
         Inc(k);
-      until isNewSection(code[k],k) // next section
+      until isNewSection(code[k], k) // next section
         or (k >= code.Count - 1);
-      if isNewSection(code[k],k) then
+      if isNewSection(code[k], k) then
         // check this line because it's next section - so dec
         Dec(k);
       trimLine := False;  // no trim
@@ -226,6 +229,10 @@ begin
         // set first line of section with indentlevel
         //relPos := PosEx('[', code[k]) - 1;  // position of [ before indentation
         leadheader := countLeadingWhitespaces(code[k]);
+        leadheaderstring := copy(code[k], 1, leadheader);
+        sectionname := code[k].Trim;
+        logdatei.log('leadheader at section: ' + sectionname + ' is: <' +
+          leadheaderstring + '> with ' + IntToStr(leadheader) + ' chars', LLDebug);
         code[k] := indentation(indentlevel) + code[k].trim;
         //relPos := PosEx('[', code[k]) - 1 - relPos;
         //relPos := indentlevel;
@@ -241,12 +248,19 @@ begin
         begin
           if dontTouch then // don't touch
           begin
+            // We assume that the whole code block has the same indent string (leadheaderstring)
+            // at the beginnig - if not we can not help (only hope) and give a warning
+            if code[k].trim <> '' then
+              if not AnsiStartsStr(leadheaderstring, code[k]) then
+                logdatei.log('Inconsistent indentation in section: ' +
+                  sectionname + ' at line ' + IntToStr(k + 1) + ' : ' +
+                  code[k].trim, LLWarning);
             // we want to indent the whole code block of the section
             // without touching the indents relative to the section header
-            // so we count the existing leading whitespace
-            // remove the original indent (leadheader) and add the new indent
-            leadline := countLeadingWhitespaces(code[k]) - leadheader + indentlevel;
-            code[k] := createBlockIndent(leadline) + code[k].trim;
+            // so we remove the number of whitespaces before the section header (leadheader)
+            // and add the new indent
+            code[k] := createBlockIndent(indentlevel) +
+              copy(code[k], leadheader + 1, code[k].Length);
           end;
           if noIndent then // no indent
             code[k] := createBlockIndent(indentlevel) + code[k].trim;
@@ -259,12 +273,13 @@ begin
         // section ends
         if (AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim))) then
         begin
-          LogDatei.log('endfunc found at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
+          LogDatei.log('endfunc found at linenr: ' + IntToStr(k) +
+            ' : ' + code[k].trim, LLdebug);
           Dec(indentlevel);
           code[k] := indentation(indentlevel) + code[k].trim;
         end;
 
-        if isNewSection(code[k],k) then
+        if isNewSection(code[k], k) then
           // begin next section, therefore end of previous section
         begin
           Dec(k);
@@ -282,7 +297,7 @@ begin
       code[k] := code[k].trim;
       if (isStartStr(code[k], incIndentList)) then
       begin
-        LogDatei.log('Inc ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
+        LogDatei.log('Inc ident at linenr: ' + IntToStr(k) + ' : ' + code[k].trim, LLdebug);
         code[k] := indentation(indentlevel) + code[k];
         if AnsiStartsStr(UpperCase('if'), UpperCase(code[k].Trim)) then
         begin
@@ -297,14 +312,15 @@ begin
       end
       else if (isStartStr(code[k], decIncIndentList)) then
       begin
-        LogDatei.log('Dec inc ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
+        LogDatei.log('Dec inc ident at linenr: ' + IntToStr(k) +
+          ' : ' + code[k].trim, LLdebug);
         Dec(indentlevel);
         code[k] := indentation(indentlevel) + code[k];
         Inc(indentlevel);
       end
       else if (isStartStr(code[k], decIndentList)) then
       begin
-        LogDatei.log('Dec ident at linenr: '+inttostr(k)+ ' : '+code[k].trim,LLdebug);
+        LogDatei.log('Dec ident at linenr: ' + IntToStr(k) + ' : ' + code[k].trim, LLdebug);
         Dec(indentlevel);
         code[k] := indentation(indentlevel) + code[k];
         tmpstr2 := code[k];
@@ -316,8 +332,7 @@ begin
           else
             LogDatei.log(
               'Syntax Error, incorrect indent level - inconsistent if/else/endif/endcase/endswitch around line '
-              +
-              IntToStr(k + 1) + ': ' + tmpstr2, LLError);
+              + IntToStr(k + 1) + ': ' + tmpstr2, LLError);
         end;
       end
       else
