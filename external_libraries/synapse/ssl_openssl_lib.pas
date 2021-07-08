@@ -844,7 +844,11 @@ uses
 {$IFDEF OS2}
   Sockets,
 {$ENDIF OS2}
-  SyncObjs;
+  SyncObjs
+{$IFDEF OPSISCRIPT}
+  ,osMain
+{$ENDIF OPSISCRIPT}
+;
 
 {$IFNDEF CIL}
 type
@@ -1856,6 +1860,7 @@ begin
 {$ELSE}
   Result := LoadLibrary(PChar(Value));
 {$ENDIF}
+{$IFDEF OPSISCRIPT}
   if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
   if (Result = NilHandle) then
   begin
@@ -1865,6 +1870,7 @@ begin
   begin
     StartupMessages.Append('Load library: ' + Value);
   end;
+{$ENDIF OPSISCRIPT}
 end;
 
 function GetProcAddr(module: HModule; const ProcName: string): SslPtr;

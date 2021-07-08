@@ -922,7 +922,7 @@
         <IsPartOfProject Value="True"/>
       </Unit62>
       <Unit63>
-        <Filename Value="ossslpaths.pas"/>
+        <Filename Value="../external_libraries/synapse/ossslpaths.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="osSSLPaths"/>
       </Unit63>
