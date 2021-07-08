@@ -1856,6 +1856,15 @@ begin
 {$ELSE}
   Result := LoadLibrary(PChar(Value));
 {$ENDIF}
+  if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  if (Result = NilHandle) then
+  begin
+    StartupMessages.Append('Could not load library: ' + Value);
+  end
+  else
+  begin
+    StartupMessages.Append('Load library: ' + Value);
+  end;
 end;
 
 function GetProcAddr(module: HModule; const ProcName: string): SslPtr;

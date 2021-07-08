@@ -3378,8 +3378,10 @@ var
 begin
   starttimestr := DateTimeToStr(Now);
   if not Assigned(startupmessages) then
+  begin
     startupmessages := TStringList.Create;
-  startupmessages.Clear;
+    startupmessages.Clear;
+  end;
   startupmessages.Append('startmessage opsi-script created at main: ' +
     DateTimeToStr(Now));
   toggle := True;
