@@ -24,8 +24,8 @@ function GetSSLPath(LibName: string):string;
 
 implementation
 
-uses
 {$IFDEF OPSISCRIPT}
+uses
   osMain;// needed for logging with startupmessages
 {$ENDIF OPSISCRIPT}
 
