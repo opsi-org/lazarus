@@ -90,6 +90,7 @@ type
 
   TFormOpsiClientKiosk = class(TForm)
      BitBtnSaveImages: TBitBtn;
+     ButtonSoftwareReinstall: TButton;
  (*----------------------------*)
  (*         Attributes         *)
  (*----------------------------*)
@@ -201,6 +202,7 @@ type
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
+    procedure ButtonSoftwareReinstallClick(Sender: TObject);
     procedure ButtonSoftwareRemoveActionClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
     procedure ButtonSoftwareUpdateClick(Sender: TObject);
@@ -1064,8 +1066,6 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.SetActionRequestTilesView(Request:String; Message:String; OnDemand:boolean);
-var
-  i, Instances :integer;
 begin
   Screen.Cursor := crHourGlass;
   OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
@@ -1082,6 +1082,7 @@ begin
     if Request = 'setup' then
     begin
       ButtonSoftwareInstall.Visible:= False;
+      ButtonSoftwareReinstall.Visible:= True;
       ButtonSoftwareUninstall.Visible:= True;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
@@ -1095,6 +1096,7 @@ begin
     if Request = 'uninstall' then
     begin
       ButtonSoftwareUninstall.Visible:= False;
+      ButtonSoftwareReinstall.Visible:= False;
       ButtonSoftwareInstall.Visible:= True;
       DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := '';
       DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString := '';
@@ -1113,6 +1115,7 @@ begin
     ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
     //ShowSoftwareButtonsDependendOnState(ArrayProductPanels[SelectedPanelIndex]);
     ButtonSoftwareUninstall.Visible:= False;
+    ButtonSoftwareReinstall.Visible:= False;
     ButtonSoftwareInstall.Visible:= False;
     ButtonSoftwareUpdate.Visible:= False;
     ButtonSoftwareRemoveAction.Visible := True;
@@ -1123,8 +1126,6 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.SetActionRequestListView(Request:String; Message:String; OnDemand:boolean);
-var
-  i, Instances :integer;
 begin
   Screen.Cursor := crHourGlass;
   OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
@@ -1262,6 +1263,7 @@ begin
   if ProductPanel.LabelAction.Caption <> '' then
   begin
     ButtonSoftwareInstall.Visible := False;
+    ButtonSoftwareReinstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
     if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
@@ -1275,11 +1277,13 @@ begin
       ButtonSoftwareUninstall.Visible := True;
       ButtonSoftwareRemoveAction.Visible:= False;
       ButtonSoftwareUpdate.Visible := False;
+      ButtonSoftwareReinstall.Visible := True;
     end
     else
       if ProductPanel.LabelState.Caption = rsNotInstalled then
       begin
         ButtonSoftwareInstall.Visible := True;
+        ButtonSoftwareReinstall.Visible := False;
         ButtonSoftwareUninstall.Visible := False;
         ButtonSoftwareRemoveAction.Visible:= False;
         ButtonSoftwareUpdate.Visible := False;
@@ -1288,6 +1292,7 @@ begin
         if ProductPanel.LabelState.Caption = rsUpdate then
         begin
           ButtonSoftwareInstall.Visible := False;
+          ButtonSoftwareReinstall.Visible := False;
           ButtonSoftwareUninstall.Visible := True;
           ButtonSoftwareRemoveAction.Visible:= False;
           ButtonSoftwareUpdate.Visible := True;
@@ -1589,6 +1594,11 @@ begin
      SetActionRequestTilesView('setup', rsWillInstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
    end;
+end;
+
+procedure TFormOpsiClientKiosk.ButtonSoftwareReinstallClick(Sender: TObject);
+begin
+  ButtonSoftwareInstallClick(Sender);
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareRemoveActionClick(Sender: TObject);
