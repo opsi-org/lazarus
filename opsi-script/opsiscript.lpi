@@ -604,30 +604,20 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="./servicebatchtest.opsiscript -ServiceBatch  -opsiservice https://localhost:4447/rpc -username uib-mmini2.uib.local -password 4acf3d9a4eb31dbb48770bea77fac489 -clientid uib-mmini2.uib.local -productid opsi-script-test"/>
-        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-      </local>
       <FormatVersion Value="2"/>
-      <Modes Count="3">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="./servicebatchtest.opsiscript -ServiceBatch  -opsiservice https://localhost:4447/rpc -username uib-mmini2.uib.local -password 4acf3d9a4eb31dbb48770bea77fac489 -clientid uib-mmini2.uib.local -productid opsi-script-test"/>
-            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-          </local>
-        </Mode0>
-        <Mode1 Name="opsiservice">
+      <Modes Count="2">
+        <Mode0 Name="opsiservice">
           <local>
             <CommandLineParams Value="/opsiservice https://192.168.1.14:4447/rpc /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
-        </Mode1>
-        <Mode2 Name="test">
+        </Mode0>
+        <Mode1 Name="test">
           <local>
             <CommandLineParams Value="/home/detlef/tmp/paramtest.opsiscript -batch -productid opsi-linux-client-agent   -opsiservice https://192.168.1.14:4447/rpc -clientid sepia.uib.local -username sepia.uib.local -password"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
-        </Mode2>
+        </Mode1>
       </Modes>
     </RunParams>
     <RequiredPackages Count="3">

@@ -1302,7 +1302,8 @@ begin
   files := TuibFileInstall.Create;
   try
     if tempfilename <> '' then
-      files.alldelete(TempPath + TempBatchfilename + '*', False, True, 2, logleveloffset);
+      files.alldelete(TempPath + TempBatchfilename + '*', False, True,
+        2, logleveloffset);
   except
     LogDatei.log('not all files "' + TempPath + TempBatchdatei +
       '*"  could be deleted', LLInfo);
@@ -1629,8 +1630,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -7381,7 +7383,7 @@ var
     workingSection: TXStringList;
     goOn: boolean = True;
     regexMatchList: TStringList;
-    rootnodeOnCreate : String;
+    rootnodeOnCreate: string;
 
   begin
 
@@ -7427,17 +7429,19 @@ var
       PatchListe.loadFromFileWithEncoding(myfilename, flag_encoding)
     else
     begin
-      LogDatei.log('file to patch does not exist and will be created: ' + myfilename, LLinfo);
+      LogDatei.log('file to patch does not exist and will be created: ' +
+        myfilename, LLinfo);
       rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
       if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
       begin
         LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
-        LogDatei.log('We fall back to <rootnode> but normally this is not what you want', LLWarning);
-        rootnodeOnCreate := 'rootnode'
+        LogDatei.log('We fall back to <rootnode> but normally this is not what you want',
+          LLWarning);
+        rootnodeOnCreate := 'rootnode';
       end;
       PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
-      PatchListe.Add('<'+rootnodeOnCreate+'>');
-      PatchListe.Add('</'+rootnodeOnCreate+'>');
+      PatchListe.Add('<' + rootnodeOnCreate + '>');
+      PatchListe.Add('</' + rootnodeOnCreate + '>');
     end;
     //PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
 
@@ -7982,8 +7986,8 @@ var
 
 
     if regexMatchList.Count >= 1 then
-      PatchListe.Text := stringReplaceRegexInList(PatchListe, 'encoding="[\w-]*"',
-        regexMatchList.Strings[0]).Text;
+      PatchListe.Text := stringReplaceRegexInList(PatchListe,
+        'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
     try
       PatchListe.SaveToFile(myfilename, flag_encoding);
       LogDatei.log('Successfully saved XML doc to file: ' + myfilename +
@@ -10440,8 +10444,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11929,10 +11933,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -21351,12 +21355,42 @@ begin
                         begin
                           Logdatei.log('Include_Insert "' +
                             Fname + '"', LLCritical);
-                          Logdatei.log(
-                            ' Failed getFileBom, system message: "' +
+                          Logdatei.log(e.ClassName +
+                            ': Failed getFileBom, system message: "' +
                             E.Message + '"',
                             LLCritical);
-                          FExtremeErrorLevel := levelFatal;
-                          RaiseLastOSError;
+                          sleep(200);
+                          try
+                            detectedEncoding := '';
+                            hasBom := getFileBom(fullincfilename, detectedEncoding);
+                          except
+                            on E: Exception do
+                            begin
+                              Logdatei.log('Include_Insert "' +
+                                Fname + '"', LLCritical);
+                              Logdatei.log(e.ClassName +
+                                ': Failed getFileBom, system message: "' +
+                                E.Message + '"',
+                                LLCritical);
+                              sleep(200);
+                              try
+                                detectedEncoding := '';
+                                hasBom := getFileBom(fullincfilename, detectedEncoding);
+                              except
+                                on E: Exception do
+                                begin
+                                  Logdatei.log('Include_Insert "' +
+                                    Fname + '"', LLCritical);
+                                  Logdatei.log(e.ClassName +
+                                    ': Failed getFileBom, system message: "' +
+                                    E.Message + '"',
+                                    LLCritical);
+                                  FExtremeErrorLevel := levelFatal;
+                                  RaiseLastOSError;
+                                end
+                              end;
+                            end
+                          end;
                         end
                       end;
                       try
@@ -21378,12 +21412,62 @@ begin
                         begin
                           Logdatei.log('Include_Insert "' +
                             Fname + '"', LLCritical);
-                          Logdatei.log(
-                            ' Failed to loadFromFileWithEncoding, system message: "' +
-                            E.Message + '"',
-                            LLCritical);
-                          FExtremeErrorLevel := levelFatal;
-                          RaiseLastOSError;
+                          Logdatei.log(e.ClassName +
+                            ': Failed to loadFromFileWithEncoding, system message: "' +
+                            E.Message + '"', LLCritical);
+                          sleep(200);
+                          try
+                            inclist.loadFromFileWithEncoding(
+                              ExpandFileName(fullincfilename), detectedEncoding);
+                            usedEncoding := detectedEncoding;
+                            declaredEncoding := searchEncoding(inclist.Text);
+                            if (detectedEncoding = '') and
+                              (declaredEncoding <> detectedEncoding) then
+                            begin
+                              inclist.loadFromFileWithEncoding(
+                                ExpandFileName(fullincfilename), declaredEncoding);
+                              usedEncoding := declaredEncoding;
+                            end;
+                            if usedEncoding = '' then
+                              usedEncoding := 'system';
+                          except
+                            on E: Exception do
+                            begin
+                              Logdatei.log('Include_Insert Retry 1"' +
+                                Fname + '"', LLCritical);
+                              Logdatei.log(e.ClassName +
+                                ': Failed to loadFromFileWithEncoding, system message: "' +
+                                E.Message + '"', LLCritical);
+                              sleep(200);
+                              try
+                                inclist.loadFromFileWithEncoding(
+                                  ExpandFileName(fullincfilename), detectedEncoding);
+                                usedEncoding := detectedEncoding;
+                                declaredEncoding := searchEncoding(inclist.Text);
+                                if (detectedEncoding = '') and
+                                  (declaredEncoding <> detectedEncoding) then
+                                begin
+                                  inclist.loadFromFileWithEncoding(
+                                    ExpandFileName(fullincfilename), declaredEncoding);
+                                  usedEncoding := declaredEncoding;
+                                end;
+                                if usedEncoding = '' then
+                                  usedEncoding := 'system';
+                              except
+                                on E: Exception do
+                                begin
+                                  Logdatei.log('Include_Insert Retry 2"' +
+                                    Fname + '"', LLCritical);
+                                  Logdatei.log(e.ClassName +
+                                    ': Failed to loadFromFileWithEncoding, system message: "' +
+                                    E.Message + '"', LLCritical);
+                                  FExtremeErrorLevel := levelFatal;
+                                  RaiseLastOSError;
+
+                                end
+                              end;
+                            end
+                          end;
                         end
                       end;
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
@@ -21450,8 +21534,8 @@ begin
                     begin
                       Logdatei.log('Include_Insert "' +
                         Fname + '"', LLCritical);
-                      Logdatei.log(
-                        ' Failed to include (insert) file, system message: "' +
+                      Logdatei.log(e.ClassName +
+                        ': Failed to include (insert) file, system message: "' +
                         E.Message + '"',
                         LLCritical);
                       FExtremeErrorLevel := levelFatal;
@@ -21553,12 +21637,43 @@ begin
                         begin
                           Logdatei.log('Include_Append "' +
                             Fname + '"', LLCritical);
-                          Logdatei.log(
-                            ' Failed getFileBom, system message: "' +
+                          Logdatei.log(e.ClassName +
+                            ': Failed getFileBom, system message: "' +
                             E.Message + '"',
                             LLCritical);
-                          FExtremeErrorLevel := levelFatal;
-                          RaiseLastOSError;
+                          Sleep(200);
+                          try
+                            detectedEncoding := '';
+                            hasBom := getFileBom(fullincfilename, detectedEncoding);
+                          except
+                            on E: Exception do
+                            begin
+                              Logdatei.log('Include_Append Retry1"' +
+                                Fname + '"', LLCritical);
+                              Logdatei.log(e.ClassName +
+                                ': Failed getFileBom, system message: "' +
+                                E.Message + '"',
+                                LLCritical);
+                              Sleep(200);
+                              try
+                                detectedEncoding := '';
+                                hasBom := getFileBom(fullincfilename, detectedEncoding);
+                              except
+                                on E: Exception do
+                                begin
+                                  Logdatei.log('Include_Append Retry2"' +
+                                    Fname + '"', LLCritical);
+                                  Logdatei.log(e.ClassName +
+                                    ': Failed getFileBom, system message: "' +
+                                    E.Message + '"',
+                                    LLCritical);
+                                  FExtremeErrorLevel := levelFatal;
+                                  RaiseLastOSError;
+
+                                end
+                              end;
+                            end
+                          end;
                         end
                       end;
                       try
@@ -21580,12 +21695,64 @@ begin
                         begin
                           Logdatei.log('Include_Append "' +
                             Fname + '"', LLCritical);
-                          Logdatei.log(
-                            ' Failed to loadFromFileWithEncoding, system message: "' +
+                          Logdatei.log(e.ClassName +
+                            ': Failed to loadFromFileWithEncoding, system message: "' +
                             E.Message + '"',
                             LLCritical);
-                          FExtremeErrorLevel := levelFatal;
-                          RaiseLastOSError;
+                          sleep(200);
+                          try
+                            inclist.loadFromFileWithEncoding(
+                              ExpandFileName(fullincfilename), detectedEncoding);
+                            usedEncoding := detectedEncoding;
+                            declaredEncoding := searchEncoding(inclist.Text);
+                            if (detectedEncoding = '') and
+                              (declaredEncoding <> detectedEncoding) then
+                            begin
+                              inclist.loadFromFileWithEncoding(
+                                ExpandFileName(fullincfilename), declaredEncoding);
+                              usedEncoding := declaredEncoding;
+                            end;
+                            if usedEncoding = '' then
+                              usedEncoding := 'system';
+                          except
+                            on E: Exception do
+                            begin
+                              Logdatei.log('Include_Append Retry1"' +
+                                Fname + '"', LLCritical);
+                              Logdatei.log(e.ClassName +
+                                ': Failed to loadFromFileWithEncoding, system message: "' +
+                                E.Message + '"',
+                                LLCritical);
+                              sleep(200);
+                              try
+                                inclist.loadFromFileWithEncoding(
+                                  ExpandFileName(fullincfilename), detectedEncoding);
+                                usedEncoding := detectedEncoding;
+                                declaredEncoding := searchEncoding(inclist.Text);
+                                if (detectedEncoding = '') and
+                                  (declaredEncoding <> detectedEncoding) then
+                                begin
+                                  inclist.loadFromFileWithEncoding(
+                                    ExpandFileName(fullincfilename), declaredEncoding);
+                                  usedEncoding := declaredEncoding;
+                                end;
+                                if usedEncoding = '' then
+                                  usedEncoding := 'system';
+                              except
+                                on E: Exception do
+                                begin
+                                  Logdatei.log('Include_Append Retry2"' +
+                                    Fname + '"', LLCritical);
+                                  Logdatei.log(e.ClassName +
+                                    ': Failed to loadFromFileWithEncoding, system message: "' +
+                                    E.Message + '"',
+                                    LLCritical);
+                                  FExtremeErrorLevel := levelFatal;
+                                  RaiseLastOSError;
+                                end
+                              end;
+                            end
+                          end;
                         end
                       end;
 
@@ -21639,8 +21806,8 @@ begin
                     begin
                       Logdatei.log('Include_Append "' +
                         Fname + '"', LLCritical);
-                      Logdatei.log(
-                        ' Failed to include (append) file, system message: "' +
+                      Logdatei.log(e.ClassName +
+                        ': Failed to include (append) file, system message: "' +
                         E.Message + '"',
                         LLCritical);
                       FExtremeErrorLevel := levelFatal;
@@ -21677,8 +21844,8 @@ begin
                     on E: Exception do
                     begin
                       Logdatei.log('IncludeLogFile "' + Fname + '"', LLwarning);
-                      Logdatei.log(
-                        ' Failed to include log file, system message: "' +
+                      Logdatei.log(e.ClassName +
+                        ': Failed to include log file, system message: "' +
                         E.Message + '"',
                         LLwarning);
                     end
@@ -23383,15 +23550,13 @@ begin
                 while goon do
                 begin
                   if skip(Parameter_AllNTUserProfiles, Remaining,
-                    Remaining,
-                    ErrorInfo) then
+                    Remaining, ErrorInfo) then
                     flag_all_ntuser := True
                   else
                   if skip('/encoding', Remaining, Remaining, ErrorInfo) then
                   begin
                     if not EvaluateString(Remaining, Remaining,
-                      flag_encoding,
-                      ErrorInfo) then
+                      flag_encoding, ErrorInfo) then
                       syntaxcheck := False;
 
                     flag_encoding := LowerCase(flag_encoding);
