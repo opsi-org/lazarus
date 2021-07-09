@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="10"/>
+      <BuildNr Value="11"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="8">
@@ -326,19 +326,8 @@
       <OpenInFileMan Value="True"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="--fqdn=desktop-83kni74.uib.local  --lang=de"/>
-        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-      </local>
       <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="--fqdn=desktop-83kni74.uib.local  --lang=de"/>
-            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-          </local>
-        </Mode0>
-      </Modes>
+      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="6">
       <Item1>

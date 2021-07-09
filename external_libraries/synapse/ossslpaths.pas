@@ -24,9 +24,10 @@ function GetSSLPath(LibName: string):string;
 
 implementation
 
+{$IFDEF OPSISCRIPT}
 uses
-  osmain;// needed for logging with startupmessages
-
+  osMain;// needed for logging with startupmessages
+{$ENDIF OPSISCRIPT}
 
 function GetSSLPath(LibName: string): string;
 var
@@ -35,7 +36,9 @@ var
   FileList : TStringList = nil;
 begin
   //if not Assigned(LogDatei) then LogDatei := TLogInfo.Create;
+  {$IFDEF OPSISCRIPT}
   if not Assigned(StartupMessages) then StartupMessages := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
   //LogDatei.LogLevel := 7;
   Path := TStringList.Create;
   try
@@ -88,6 +91,7 @@ begin
     begin
       inc(i);
     end;
+    {$IFDEF OPSISCRIPT}
     if (i < (Path.Count-1)) then
       StartupMessages.Append('ssl library path: ' + Path.Strings[i])
     else
@@ -97,6 +101,7 @@ begin
         startupMessages.Append('   - ' + Path.Strings[j]);
       StartupMessages.Append('     Neverthless (' + Path.Strings[i] + ') might be found by the OS.');
     end;
+    {$ENDIF OPSISCRIPT}
     Result := Path.Strings[i];
   finally
     if Assigned(Path) then

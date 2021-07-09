@@ -51,7 +51,6 @@ type
     procedure SetRights(Path:String);
     function GetActionRequests: TStringList;
     procedure DoActionsOnDemand;
-    procedure DoSingleActionOnDemand(ProductID:String);
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
     procedure SelectProduct(Index:integer);
@@ -111,7 +110,7 @@ end;
 procedure TOpsiConnection.SetClientdMode(ClientID: string);
 begin
   // opsiclientd mode
-  MyClientID := ClientID;//'pcjan.uib.local';//'jan-client01.uib.local';
+  MyClientID := ClientID;
   if MyClientID = '' then  LogDatei.log('Error could not get ClientID.' ,LLDebug);
   //MyClientID := oslog.getComputerName;
   MyService_URL := 'https://localhost:4441/kiosk';
@@ -194,7 +193,6 @@ function TOpsiConnection.GetDataFromNewDataStructure:boolean;
 var
   StringJSON,StringResult:string;
   count :integer;
-  SoftwareOnDemand: boolean;
 begin
   try
   { new data structur }
@@ -390,18 +388,11 @@ begin
 end;
 
 
-procedure TOpsiConnection.DoSingleActionOnDemand(ProductID: String);
-var
-  resultstring:String;
-begin
-   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', [ProductID]);
-end;
-
 procedure TOpsiConnection.DoActionsOnDemand;
 var
   resultstring:String;
 begin
-   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
+   resultstring := MyOpsiMethodCall('processActionRequests', []);  //former 'fireEvent_software_on_demand'
 end;
 
 
