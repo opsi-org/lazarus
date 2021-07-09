@@ -82,4 +82,25 @@ compile opsi-script linux:
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
-
+compile opsi-script macos:
+  stage: build
+  tags:
+    - laz-macos
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script/"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: always
+  script: 
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
+    - echo "Compiling $PROJECT_NAME for MacOS with GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "opsi-script $BINARY_VERSION macos"
+    paths:
+      - opsi-script/opsi-script #i386-win32\opsi-script.exe
+      - opsi-script/opsi-script-gui
