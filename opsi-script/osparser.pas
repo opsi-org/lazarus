@@ -21414,7 +21414,7 @@ begin
                             Fname + '"', LLCritical);
                           Logdatei.log(e.ClassName +
                             ': Failed to loadFromFileWithEncoding, system message: "' +
-                            E.Message + '"', LLCritical);
+                            E.Message + '"', LLwarning);
                           sleep(200);
                           try
                             inclist.loadFromFileWithEncoding(
@@ -21437,7 +21437,7 @@ begin
                                 Fname + '"', LLCritical);
                               Logdatei.log(e.ClassName +
                                 ': Failed to loadFromFileWithEncoding, system message: "' +
-                                E.Message + '"', LLCritical);
+                                E.Message + '"', LLwarning);
                               sleep(200);
                               try
                                 inclist.loadFromFileWithEncoding(
@@ -21463,7 +21463,6 @@ begin
                                     E.Message + '"', LLCritical);
                                   FExtremeErrorLevel := levelFatal;
                                   RaiseLastOSError;
-
                                 end
                               end;
                             end
@@ -21640,7 +21639,7 @@ begin
                           Logdatei.log(e.ClassName +
                             ': Failed getFileBom, system message: "' +
                             E.Message + '"',
-                            LLCritical);
+                            LLwarning);
                           Sleep(200);
                           try
                             detectedEncoding := '';
@@ -21653,7 +21652,7 @@ begin
                               Logdatei.log(e.ClassName +
                                 ': Failed getFileBom, system message: "' +
                                 E.Message + '"',
-                                LLCritical);
+                                LLwarning);
                               Sleep(200);
                               try
                                 detectedEncoding := '';
@@ -21698,7 +21697,7 @@ begin
                           Logdatei.log(e.ClassName +
                             ': Failed to loadFromFileWithEncoding, system message: "' +
                             E.Message + '"',
-                            LLCritical);
+                            LLwarning);
                           sleep(200);
                           try
                             inclist.loadFromFileWithEncoding(
@@ -21722,7 +21721,7 @@ begin
                               Logdatei.log(e.ClassName +
                                 ': Failed to loadFromFileWithEncoding, system message: "' +
                                 E.Message + '"',
-                                LLCritical);
+                                LLwarning);
                               sleep(200);
                               try
                                 inclist.loadFromFileWithEncoding(
