@@ -24,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4">
