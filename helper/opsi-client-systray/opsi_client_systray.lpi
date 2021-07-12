@@ -110,7 +110,13 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dSSLPATH"/>
+            <OtherDefines Count="3">
+              <Define0 Value="OPSI"/>
+              <Define1 Value="OPSI_AS_USER"/>
+              <Define2 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -150,10 +156,12 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
-            <OtherDefines Count="2">
+-dOPSI_AS_USER
+-dSSLPATH"/>
+            <OtherDefines Count="3">
               <Define0 Value="OPSI"/>
               <Define1 Value="OPSI_AS_USER"/>
+              <Define2 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -241,7 +249,13 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dSSLPATH"/>
+      <OtherDefines Count="3">
+        <Define0 Value="OPSI"/>
+        <Define1 Value="OPSI_AS_USER"/>
+        <Define2 Value="SSLPATH"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
