@@ -94,8 +94,8 @@ compile opsi-script macos:
   script: 
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
+   # - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
+   # - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
     - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
