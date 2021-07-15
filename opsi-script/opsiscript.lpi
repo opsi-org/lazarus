@@ -604,17 +604,19 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
+      </local>
       <FormatVersion Value="2"/>
       <Modes Count="2">
-        <Mode0 Name="opsiservice">
+        <Mode0 Name="test">
           <local>
-            <CommandLineParams Value="/opsiservice https://192.168.1.14:4447/rpc /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3"/>
+            <CommandLineParams Value="/home/detlef/tmp/paramtest.opsiscript -batch -productid opsi-linux-client-agent   -opsiservice https://192.168.1.14:4447/rpc -clientid sepia.uib.local -username sepia.uib.local -password"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
         </Mode0>
-        <Mode1 Name="test">
+        <Mode1 Name="default">
           <local>
-            <CommandLineParams Value="/home/detlef/tmp/paramtest.opsiscript -batch -productid opsi-linux-client-agent   -opsiservice https://192.168.1.14:4447/rpc -clientid sepia.uib.local -username sepia.uib.local -password"/>
             <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
           </local>
         </Mode1>
