@@ -38,12 +38,12 @@ compile opsi-script windows:
   tags:
     - laz-win10
   variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script\\"
+    PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
       when: always
   script: 
-    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}  "${PROJECT_NAME}.lpi"
+    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
@@ -53,7 +53,7 @@ compile opsi-script windows:
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
-      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
@@ -62,12 +62,12 @@ compile opsi-script linux:
   tags:
     - laz-linux
   variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script/"
+    PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
       when: always
   script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
@@ -77,8 +77,8 @@ compile opsi-script linux:
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"
     paths:
-      - opsi-script/opsi-script #i386-win32\opsi-script.exe
-      - opsi-script/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
@@ -87,12 +87,12 @@ compile opsi-script macos:
   tags:
     - laz-macos
   variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script/"
+    PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always
+      when: never # change to always if lazbuild works on masos
   script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
     - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
@@ -102,5 +102,77 @@ compile opsi-script macos:
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
     paths:
-      - opsi-script/opsi-script #i386-win32\opsi-script.exe
-      - opsi-script/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
+
+
+#***************************************#
+#  opsi-client-systray pipline                  #
+#***************************************#
+compile opsi-client-systray windows:
+  stage: build
+  tags:
+    - laz-win10
+  variables:
+    PROJECT_REPOSITORY_PATH: "helper\\opsi-client-systray"
+    BINARY_NAME: "opsi-client-systray"
+  rules:
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+      when: always
+  script: 
+    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Win32"
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
+    - echo "Compiling $PROJECT_NAME for Win64"
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
+  artifacts:
+    name: "$BINARY_NAME $BINARY_VERSION windows"
+    paths:
+      - $PROJECT_REPOSITORY_PATH\$BINARY_NAME
+
+
+compile opsi-client-systray linux:
+  stage: build
+  tags:
+    - laz-linux
+  variables:
+    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
+    BINARY_NAME: "opsi-client-systray"
+  rules:
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+      when: always
+  script: 
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for Linux with no GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
+    - echo "Compiling $PROJECT_NAME for Linux with GUI"
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+  artifacts:
+    name: "$BINARY_NAME $BINARY_VERSION linux"
+    paths:
+      - $PROJECT_REPOSITORY_PATH/$BINARY_NAME
+
+compile opsi-client-systray macos:
+  stage: build
+  tags:
+    - laz-macos
+  variables:
+    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray/"
+    BINARY_NAME: "opsi-client-systray"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: never # change to always if lazbuild works on masos
+  script: 
+    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
+    - echo "$LAZ_PROJECT_FILE"
+    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
+    - echo "Compiling $PROJECT_NAME for MacOS with GUI"
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui
+    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+  artifacts:
+    name: "$BINARY_NAME $BINARY_VERSION macos"
+    paths:
+      - $PROJECT_REPOSITORY_PATH/$BINARY_NAME
