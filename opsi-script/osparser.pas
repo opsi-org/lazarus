@@ -1630,9 +1630,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10444,8 +10443,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11933,10 +11932,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -21393,82 +21392,19 @@ begin
                           end;
                         end
                       end;
-                      try
+                      inclist.loadFromFileWithEncoding(
+                        ExpandFileName(fullincfilename), detectedEncoding);
+                      usedEncoding := detectedEncoding;
+                      declaredEncoding := searchEncoding(inclist.Text);
+                      if (detectedEncoding = '') and
+                        (declaredEncoding <> detectedEncoding) then
+                      begin
                         inclist.loadFromFileWithEncoding(
-                          ExpandFileName(fullincfilename), detectedEncoding);
-                        usedEncoding := detectedEncoding;
-                        declaredEncoding := searchEncoding(inclist.Text);
-                        if (detectedEncoding = '') and
-                          (declaredEncoding <> detectedEncoding) then
-                        begin
-                          inclist.loadFromFileWithEncoding(
-                            ExpandFileName(fullincfilename), declaredEncoding);
-                          usedEncoding := declaredEncoding;
-                        end;
-                        if usedEncoding = '' then
-                          usedEncoding := 'system';
-                      except
-                        on E: Exception do
-                        begin
-                          Logdatei.log('Include_Insert "' +
-                            Fname + '"', LLCritical);
-                          Logdatei.log(e.ClassName +
-                            ': Failed to loadFromFileWithEncoding, system message: "' +
-                            E.Message + '"', LLwarning);
-                          sleep(200);
-                          try
-                            inclist.loadFromFileWithEncoding(
-                              ExpandFileName(fullincfilename), detectedEncoding);
-                            usedEncoding := detectedEncoding;
-                            declaredEncoding := searchEncoding(inclist.Text);
-                            if (detectedEncoding = '') and
-                              (declaredEncoding <> detectedEncoding) then
-                            begin
-                              inclist.loadFromFileWithEncoding(
-                                ExpandFileName(fullincfilename), declaredEncoding);
-                              usedEncoding := declaredEncoding;
-                            end;
-                            if usedEncoding = '' then
-                              usedEncoding := 'system';
-                          except
-                            on E: Exception do
-                            begin
-                              Logdatei.log('Include_Insert Retry 1"' +
-                                Fname + '"', LLCritical);
-                              Logdatei.log(e.ClassName +
-                                ': Failed to loadFromFileWithEncoding, system message: "' +
-                                E.Message + '"', LLwarning);
-                              sleep(200);
-                              try
-                                inclist.loadFromFileWithEncoding(
-                                  ExpandFileName(fullincfilename), detectedEncoding);
-                                usedEncoding := detectedEncoding;
-                                declaredEncoding := searchEncoding(inclist.Text);
-                                if (detectedEncoding = '') and
-                                  (declaredEncoding <> detectedEncoding) then
-                                begin
-                                  inclist.loadFromFileWithEncoding(
-                                    ExpandFileName(fullincfilename), declaredEncoding);
-                                  usedEncoding := declaredEncoding;
-                                end;
-                                if usedEncoding = '' then
-                                  usedEncoding := 'system';
-                              except
-                                on E: Exception do
-                                begin
-                                  Logdatei.log('Include_Insert Retry 2"' +
-                                    Fname + '"', LLCritical);
-                                  Logdatei.log(e.ClassName +
-                                    ': Failed to loadFromFileWithEncoding, system message: "' +
-                                    E.Message + '"', LLCritical);
-                                  FExtremeErrorLevel := levelFatal;
-                                  RaiseLastOSError;
-                                end
-                              end;
-                            end
-                          end;
-                        end
+                          ExpandFileName(fullincfilename), declaredEncoding);
+                        usedEncoding := declaredEncoding;
                       end;
+                      if usedEncoding = '' then
+                        usedEncoding := 'system';
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);
                       //Encoding2use := inclist.Values['encoding'];
@@ -21668,92 +21604,25 @@ begin
                                     LLCritical);
                                   FExtremeErrorLevel := levelFatal;
                                   RaiseLastOSError;
-
                                 end
                               end;
                             end
                           end;
                         end
                       end;
-                      try
+                      inclist.loadFromFileWithEncoding(
+                        ExpandFileName(fullincfilename), detectedEncoding);
+                      usedEncoding := detectedEncoding;
+                      declaredEncoding := searchEncoding(inclist.Text);
+                      if (detectedEncoding = '') and
+                        (declaredEncoding <> detectedEncoding) then
+                      begin
                         inclist.loadFromFileWithEncoding(
-                          ExpandFileName(fullincfilename), detectedEncoding);
-                        usedEncoding := detectedEncoding;
-                        declaredEncoding := searchEncoding(inclist.Text);
-                        if (detectedEncoding = '') and
-                          (declaredEncoding <> detectedEncoding) then
-                        begin
-                          inclist.loadFromFileWithEncoding(
-                            ExpandFileName(fullincfilename), declaredEncoding);
-                          usedEncoding := declaredEncoding;
-                        end;
-                        if usedEncoding = '' then
-                          usedEncoding := 'system';
-                      except
-                        on E: Exception do
-                        begin
-                          Logdatei.log('Include_Append "' +
-                            Fname + '"', LLCritical);
-                          Logdatei.log(e.ClassName +
-                            ': Failed to loadFromFileWithEncoding, system message: "' +
-                            E.Message + '"',
-                            LLwarning);
-                          sleep(200);
-                          try
-                            inclist.loadFromFileWithEncoding(
-                              ExpandFileName(fullincfilename), detectedEncoding);
-                            usedEncoding := detectedEncoding;
-                            declaredEncoding := searchEncoding(inclist.Text);
-                            if (detectedEncoding = '') and
-                              (declaredEncoding <> detectedEncoding) then
-                            begin
-                              inclist.loadFromFileWithEncoding(
-                                ExpandFileName(fullincfilename), declaredEncoding);
-                              usedEncoding := declaredEncoding;
-                            end;
-                            if usedEncoding = '' then
-                              usedEncoding := 'system';
-                          except
-                            on E: Exception do
-                            begin
-                              Logdatei.log('Include_Append Retry1"' +
-                                Fname + '"', LLCritical);
-                              Logdatei.log(e.ClassName +
-                                ': Failed to loadFromFileWithEncoding, system message: "' +
-                                E.Message + '"',
-                                LLwarning);
-                              sleep(200);
-                              try
-                                inclist.loadFromFileWithEncoding(
-                                  ExpandFileName(fullincfilename), detectedEncoding);
-                                usedEncoding := detectedEncoding;
-                                declaredEncoding := searchEncoding(inclist.Text);
-                                if (detectedEncoding = '') and
-                                  (declaredEncoding <> detectedEncoding) then
-                                begin
-                                  inclist.loadFromFileWithEncoding(
-                                    ExpandFileName(fullincfilename), declaredEncoding);
-                                  usedEncoding := declaredEncoding;
-                                end;
-                                if usedEncoding = '' then
-                                  usedEncoding := 'system';
-                              except
-                                on E: Exception do
-                                begin
-                                  Logdatei.log('Include_Append Retry2"' +
-                                    Fname + '"', LLCritical);
-                                  Logdatei.log(e.ClassName +
-                                    ': Failed to loadFromFileWithEncoding, system message: "' +
-                                    E.Message + '"',
-                                    LLCritical);
-                                  FExtremeErrorLevel := levelFatal;
-                                  RaiseLastOSError;
-                                end
-                              end;
-                            end
-                          end;
-                        end
+                          ExpandFileName(fullincfilename), declaredEncoding);
+                        usedEncoding := declaredEncoding;
                       end;
+                      if usedEncoding = '' then
+                        usedEncoding := 'system';
 
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
                       //Encoding2use := searchencoding(inclist.Text);

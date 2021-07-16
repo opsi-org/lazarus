@@ -15,7 +15,7 @@ opsi-script (4.12.4.24) stable; urgency=low
  * osparser: include (append / insert) statements fixes on read file with encoding
  * osparser: importlib statements fixes on read file with encoding
  * osparser: less encoding reload in LoadValidLinesFromFile
- * osparser: more logging and reties at include (append / insert) in order to fix
+ * osencoding: more logging and retries at loadTextFileWithEncoding in order to fix
    'file in use' error.
 
 -- d.oertel <d.oertel@uib.de> Mon, 05 Jul 2021 15:00
