@@ -53,7 +53,7 @@ compile opsi-script windows:
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
-      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
@@ -77,8 +77,8 @@ compile opsi-script linux:
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"
     paths:
-      - PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - PROJECT_REPOSITORY_PATH/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
@@ -102,8 +102,8 @@ compile opsi-script macos:
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
     paths:
-      - PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - PROJECT_REPOSITORY_PATH/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
 
 #***************************************#
@@ -152,7 +152,7 @@ compile opsi-client-systray linux:
   artifacts:
     name: "$BINARY_NAME $BINARY_VERSION linux"
     paths:
-      - PROJECT_REPOSITORY_PATH/$BINARY_NAME
+      - $PROJECT_REPOSITORY_PATH/$BINARY_NAME
 
 compile opsi-client-systray macos:
   stage: build
