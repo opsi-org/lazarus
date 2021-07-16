@@ -1,20 +1,11 @@
 object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
-  Height = 254
-  HorizontalOffset = 324
-  VerticalOffset = 554
-  Width = 305
-  PPI = 96
-  object MySQL55Connection1: TMySQL55Connection
-    Connected = False
-    LoginPrompt = True
-    KeepConnection = False
-    Transaction = SQLTransaction1
-    SkipLibraryVersionCheck = False
-    left = 57
-    top = 43
-  end
+  Height = 241
+  HorizontalOffset = 547
+  VerticalOffset = 765
+  Width = 420
+  PPI = 91
   object SQLQuery1: TSQLQuery
     FieldDefs = <    
       item
@@ -397,31 +388,41 @@ object DataModule1: TDataModule1
         Precision = -1
         Size = 150
       end>
-    Database = MySQL55Connection1
+    Database = MySQL80Connection1
     Transaction = SQLTransaction1
     SQL.Strings = (
       'select * from IASADRBOOKCONTACT'
     )
     Params = <>
-    left = 40
-    top = 122
+    Macros = <>
+    Left = 38
+    Top = 116
   end
   object SQLTransaction1: TSQLTransaction
     Active = False
-    Database = MySQL55Connection1
-    left = 176
-    top = 38
+    Database = MySQL80Connection1
+    Left = 184
+    Top = 16
   end
   object DataSource1: TDataSource
     DataSet = SQLQuery1
-    left = 158
-    top = 119
+    Left = 150
+    Top = 113
   end
   object SQLDBLibraryLoader1: TSQLDBLibraryLoader
     Enabled = False
-    ConnectionType = 'MySQL 5.5'
-    LibraryName = 'N:\uib\oertel\gitwork\lazarus\uib\getoptinlink\libmysql.dll'
-    left = 240
-    top = 32
+    ConnectionType = 'MySQL 8.0'
+    LibraryName = 'libmysqlclient.so.21'
+    Left = 304
+    Top = 24
+  end
+  object MySQL80Connection1: TMySQL80Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    SkipLibraryVersionCheck = False
+    Left = 274
+    Top = 132
   end
 end
