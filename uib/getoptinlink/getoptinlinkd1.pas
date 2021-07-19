@@ -5,7 +5,7 @@ unit getoptinlinkd1;
 interface
 
 uses
-  Classes, SysUtils, mysql55conn, sqldb, sqldblib, db, FileUtil,
+  Classes, SysUtils, mysql55conn, mysql80conn, sqldb, sqldblib, db, FileUtil,
   inifiles;
 
 type
@@ -14,7 +14,7 @@ type
 
   TDataModule1 = class(TDataModule)
     DataSource1: TDataSource;
-    MySQL55Connection1: TMySQL55Connection;
+    MySQL80Connection1: TMySQL80Connection;
     SQLDBLibraryLoader1: TSQLDBLibraryLoader;
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
@@ -41,11 +41,11 @@ var
 begin
   inipath := ExtractFileDir(ParamStr(0))+PathDelim+'custom'+PathDelim+'dbconnect.ini';
   myini := TIniFile.Create(inipath);
-  MySQL55Connection1.HostName:=myini.ReadString('dbconnect','server','');
-  MySQL55Connection1.DatabaseName:=myini.ReadString('dbconnect','database','');
-  MySQL55Connection1.UserName:=myini.ReadString('dbconnect','user','');
-  MySQL55Connection1.Password:=myini.ReadString('dbconnect','pass','');
-  MySQL55Connection1.Open;
+  MySQL80Connection1.HostName:=myini.ReadString('dbconnect','server','');
+  MySQL80Connection1.DatabaseName:=myini.ReadString('dbconnect','database','');
+  MySQL80Connection1.UserName:=myini.ReadString('dbconnect','user','');
+  MySQL80Connection1.Password:=myini.ReadString('dbconnect','pass','');
+  MySQL80Connection1.Open;
   myini.Free;
 end;
 
