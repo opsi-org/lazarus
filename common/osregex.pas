@@ -14,6 +14,8 @@ function getSubListByContainingRegex(expr: string; inputlist: TStringList): TStr
 function getSubListByContainingRegex(exprlist: TStringList;
   inputlist: TStringList): TStringList;
 //Returns list of matching lines for a list of regex.
+function getRegexMatchString(expr: string; inputstring: string): String;
+//Returns string of first exact match for a single regex.
 function getRegexMatchList(expr: string; inputlist: TStringList): TStringList;
 //Returns list of exact matches for a single regex.
 function getRegexMatchList(exprlist: TStringList; inputlist: TStringList): TStringList;
@@ -133,6 +135,38 @@ begin
     regexobj.Free;
   end;
 end;
+
+function getRegexMatchString(expr: string; inputstring: string): String;
+  //Returns string of first exact match for a single regex.
+var
+  regexobj: TRegExpr;
+begin
+  try
+    try
+      Result := '';
+
+      if trim(expr) <> '' then
+      begin
+        regexobj := TRegExpr.Create;
+        regexobj.Expression := expr;
+
+          if inputstring <> '' then
+            if regexobj.Exec(inputstring) then
+            begin
+              Result := regexobj.Match[0];
+            end;
+        end;
+    except
+      on E: Exception do
+      begin
+        //Result := False;
+      end;
+    end;
+  finally
+    regexobj.Free;
+  end;
+end;
+
 
 function getRegexMatchList(expr: string; inputlist: TStringList): TStringList;
   //Returns list of exact matches for a single regex.

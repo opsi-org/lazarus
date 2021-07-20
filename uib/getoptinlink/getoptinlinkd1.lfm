@@ -5,16 +5,6 @@ object DataModule1: TDataModule1
   HorizontalOffset = 321
   VerticalOffset = 523
   Width = 393
-  PPI = 96
-  object MySQL55Connection1: TMySQL55Connection
-    Connected = False
-    LoginPrompt = True
-    KeepConnection = False
-    Transaction = SQLTransaction1
-    SkipLibraryVersionCheck = False
-    left = 57
-    top = 43
-  end
   object SQLQuery1: TSQLQuery
     FieldDefs = <    
       item
@@ -397,31 +387,40 @@ object DataModule1: TDataModule1
         Precision = -1
         Size = 150
       end>
-    Database = MySQL55Connection1
     Transaction = SQLTransaction1
     SQL.Strings = (
       'select * from IASADRBOOKCONTACT'
     )
     Params = <>
-    left = 40
-    top = 122
+    Macros = <>
+    Left = 40
+    Top = 122
   end
   object SQLTransaction1: TSQLTransaction
     Active = False
-    Database = MySQL55Connection1
-    left = 176
-    top = 43
+    Database = MySQL80Connection1
+    Left = 176
+    Top = 43
   end
   object DataSource1: TDataSource
     DataSet = SQLQuery1
-    left = 176
-    top = 122
+    Left = 176
+    Top = 122
   end
   object SQLDBLibraryLoader1: TSQLDBLibraryLoader
     Enabled = False
-    ConnectionType = 'MySQL 5.5'
-    LibraryName = 'N:\uib\oertel\gitwork\lazarus\uib\getoptinlink\libmysql.dll'
-    left = 288
-    top = 43
+    ConnectionType = 'MySQL 8.0'
+    LibraryName = 'libmysql.dll'
+    Left = 288
+    Top = 43
+  end
+  object MySQL80Connection1: TMySQL80Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    SkipLibraryVersionCheck = False
+    Left = 40
+    Top = 43
   end
 end

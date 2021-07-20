@@ -1,3 +1,10 @@
+uib-get-optin-link (2.0-1) stable; urgency=low
+
+  * update to mysql8 and canias 802
+  * now using 64 bit binary and lib
+
+ -- Detlef Oertel <d.oertel@uib.de>  Fri,  16 Jul 2021:15:00:00 +0200
+
 getoptinlink.exe 1.1
  * trim all link components
 -- detlef oertel Fr 13.12.2019

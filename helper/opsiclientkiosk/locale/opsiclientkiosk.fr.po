@@ -439,6 +439,10 @@ msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
 msgstr ""
 
+#: tformopsiclientkiosk.buttonsoftwarereinstall.caption
+msgid "Reinstall"
+msgstr ""
+
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
 msgid "Remove action"
 msgstr ""

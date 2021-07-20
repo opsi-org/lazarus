@@ -435,6 +435,7 @@ type
     //procedure SetFontName(Control: TControl; Name: string);
     function showCompleteDirDlg: boolean;
     procedure showMacOS2StepSelectionDLG;
+    procedure updateGUI;
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
@@ -627,57 +628,59 @@ end;
 procedure WriteHelp;
 var
   progname: string;
-  helplist : TStringlist;
+  helplist: TStringList;
 begin
   progname := ExtractFileName(ParamStr(0));
   if showgui then
   begin
-    helplist := TStringlist.Create;
-  helplist.Append(ParamStr(0));
-  helplist.Append(progname);
-  helplist.Append('Version ' + myVersion);
-  helplist.Append(myerror);
-  helplist.Append('Usage:');
-  helplist.Append(progname + '[Options]');
-  helplist.Append('Options:');
-  helplist.Append(' --help -> write this help and exit');
-  helplist.Append('  -h -> write this help and exit');
-  helplist.Append(' --filename=<path\filename> -> file to analyze)');
-  helplist.Append(' --f <path\filename> -> file to analyze)');
-  helplist.Append(' --nogui -> do not show interactive output window)');
-  helplist.Append(' --n -> do not show interactive output window)');
-  helplist.Append(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
-  helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
-  helplist.Append(' --productID=<id> -> Create product with productID <id>');
-  helplist.Append(' --p <id> -> Create product with productID <id>');
-  helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-  helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-  helplist.Append('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
-  ShowMessage(helplist.Text);
-  FreeAndNil(helplist);
+    helplist := TStringList.Create;
+    helplist.Append(ParamStr(0));
+    helplist.Append(progname);
+    helplist.Append('Version ' + myVersion);
+    helplist.Append(myerror);
+    helplist.Append('Usage:');
+    helplist.Append(progname + '[Options]');
+    helplist.Append('Options:');
+    helplist.Append(' --help -> write this help and exit');
+    helplist.Append('  -h -> write this help and exit');
+    helplist.Append(' --filename=<path\filename> -> file to analyze)');
+    helplist.Append(' --f <path\filename> -> file to analyze)');
+    helplist.Append(' --nogui -> do not show interactive output window)');
+    helplist.Append(' --n -> do not show interactive output window)');
+    helplist.Append(
+      ' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
+    helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
+    helplist.Append(' --productID=<id> -> Create product with productID <id>');
+    helplist.Append(' --p <id> -> Create product with productID <id>');
+    helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+    helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+    helplist.Append(
+      '     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+    ShowMessage(helplist.Text);
+    FreeAndNil(helplist);
   end
   else
   begin
-  writeln(ParamStr(0));
-  writeln(progname);
-  writeln('Version ' + myVersion);
-  writeln(myerror);
-  writeln('Usage:');
-  writeln(progname + '[Options]');
-  writeln('Options:');
-  writeln(' --help -> write this help and exit');
-  writeln('  -h -> write this help and exit');
-  writeln(' --filename=<path\filename> -> file to analyze)');
-  writeln(' --f <path\filename> -> file to analyze)');
-  writeln(' --nogui -> do not show interactive output window)');
-  writeln(' --n -> do not show interactive output window)');
-  writeln(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
-  writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
-  writeln(' --productID=<id> -> Create product with productID <id>');
-  writeln(' --p <id> -> Create product with productID <id>');
-  writeln(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-  writeln(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-  writeln('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+    writeln(ParamStr(0));
+    writeln(progname);
+    writeln('Version ' + myVersion);
+    writeln(myerror);
+    writeln('Usage:');
+    writeln(progname + '[Options]');
+    writeln('Options:');
+    writeln(' --help -> write this help and exit');
+    writeln('  -h -> write this help and exit');
+    writeln(' --filename=<path\filename> -> file to analyze)');
+    writeln(' --f <path\filename> -> file to analyze)');
+    writeln(' --nogui -> do not show interactive output window)');
+    writeln(' --n -> do not show interactive output window)');
+    writeln(' --targetOS=<os> -> Analyze for target where <os> is on of (win,lin,mac)');
+    writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
+    writeln(' --productID=<id> -> Create product with productID <id>');
+    writeln(' --p <id> -> Create product with productID <id>');
+    writeln(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+    writeln(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+    writeln('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
   end;
 
   Application.Terminate;
@@ -804,6 +807,16 @@ begin
     Application.ProcessMessages;
   end;
   LogDatei.log('Finished initGUI ... ', LLInfo);
+end;
+
+procedure TResultform1.updateGUI;
+begin
+    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    TIGridDep.ReloadTIList;
+    TIGridDep.Update;
+    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    TIGridProp.ReloadTIList;
+    TIGridProp.Update;
 end;
 
 procedure TResultform1.FormDestroy(Sender: TObject);
@@ -946,11 +959,11 @@ begin
 
     {$IFDEF WINDOWS}
   // initate console while windows gui
-    // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
-    //AllocConsole;      // in Windows unit
-    //IsConsole := True; // in System unit
-    //SysInitStdIO;      // in System unit
-    // Now you can do Writeln, DebugLn,
+  // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
+  //AllocConsole;      // in Windows unit
+  //IsConsole := True; // in System unit
+  //SysInitStdIO;      // in System unit
+  // Now you can do Writeln, DebugLn,
   {$ENDIF WINDOWS}
 
   //check parameters
@@ -1064,8 +1077,8 @@ begin
       Application.Terminate;
       Exit;
     end;
-    LogDatei.log('Will use as targetOS: ' +
-      GetEnumName(TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
+    LogDatei.log('Will use as targetOS: ' + GetEnumName(
+      TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
     FreeAndNil(allowedOS);
   end;
 
@@ -1075,8 +1088,8 @@ begin
     tmpstr := trim(Application.GetOptionValue('m', 'mode'));
     try
       osdsettings.runmode := TRunMode(GetEnumValue(TypeInfo(TRunMode), tmpstr));
-      LogDatei.log('Will use as mode: ' +
-        GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLInfo);
+      LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
+        Ord(osdsettings.runmode)), LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
         ' is not valid. Should be on of analyzeOnly, singleAnalyzeCreate, createTemplate';
@@ -1092,6 +1105,7 @@ begin
 
   initaktproduct;
   makeProperties;
+  resultform1.updateGUI;
 
   if Application.HasOption('p', 'productId') then
   begin
@@ -1115,10 +1129,10 @@ begin
       myfilename, LLInfo);
     if osdsettings.runmode = gmUnknown then
       osdsettings.runmode := analyzeOnly;
-    LogDatei.log('Will use as mode: ' +
-      GetEnumName(TypeInfo(TRunMode), Ord(osdsettings.runmode)), LLInfo);
-    LogDatei.log('Will use as targetOS: ' +
-      GetEnumName(TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
+    LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
+      Ord(osdsettings.runmode)), LLInfo);
+    LogDatei.log('Will use as targetOS: ' + GetEnumName(
+      TypeInfo(TTargetOS), Ord(forceTargetOS)), LLInfo);
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
     if showgui then
     begin
@@ -1157,8 +1171,9 @@ begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
           initaktproduct;
           aktProduct.SetupFiles[0].copyCompleteDir := False;
-              makeProperties;
-              aktProduct.SetupFiles[0].active := True;
+          makeProperties;
+          resultform1.updateGUI;
+          aktProduct.SetupFiles[0].active := True;
           case forceTargetOS of
             osWin:
             begin
@@ -1331,6 +1346,7 @@ begin
     LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.readProjectFile(OpenDialog1.FileName);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
     TIGridDep.ReloadTIList;
@@ -1490,6 +1506,7 @@ begin
       *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
+    resultform1.updateGUI;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1847,6 +1864,7 @@ begin
     *)
     // start add property
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.SetupFiles[0].active := True;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
@@ -1865,6 +1883,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.productdata.targetOSset := [osWin, osLin, osMac, osMulti];
     aktProduct.productdata.productId := 'opsi-template';
     aktProduct.productdata.productName := 'opsi template for multi platform';
@@ -2584,6 +2603,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.productdata.targetOSset := [osWin];
     aktProduct.productdata.productId := 'opsi-template';
     aktProduct.productdata.productName := 'opsi template for Windows';
@@ -2605,6 +2625,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.productdata.targetOSset := [osMac];
     aktProduct.productdata.productId := 'm-opsi-template';
     aktProduct.productdata.productName := 'opsi template for macos';
@@ -2626,6 +2647,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.productdata.targetOSset := [osLin];
     aktProduct.productdata.productId := 'l-opsi-template';
     aktProduct.productdata.productName := 'opsi template for Linux';
@@ -2716,7 +2738,7 @@ procedure TResultform1.BtCreateProductClick(Sender: TObject);
 var
   radioindex: integer;
   //checkok: boolean = True;
-  done : boolean = False;
+  done: boolean = False;
 begin
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
@@ -2736,7 +2758,8 @@ begin
       callOpsiPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
-    if done then ShowMessage(sInfoFinished);
+    if done then
+      ShowMessage(sInfoFinished);
   finally
     PanelProcess.Visible := False;
     procmess;
@@ -2858,6 +2881,7 @@ begin
       threeAnalyzeCreate_2,
       threeAnalyzeCreate_3:
       begin
+        updateGUI;
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
@@ -3297,6 +3321,7 @@ begin
       aktProduct.SetupFiles[0].copyCompleteDir := True;
     *)
     makeProperties;
+    resultform1.updateGUI;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
     AnalyzeLin(FileName, aktProduct.SetupFiles[0], True);
@@ -3364,6 +3389,7 @@ begin
     //aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     aktProduct.SetupFiles[0].copyCompleteDir := False;
     makeProperties;
+    resultform1.updateGUI;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
     AnalyzeMac(FileName, aktProduct.SetupFiles[0], True);
@@ -3407,6 +3433,7 @@ begin
         aktProduct.SetupFiles[0].copyCompleteDir := True; *)
       aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
       makeProperties;
+      resultform1.updateGUI;
       Application.ProcessMessages;
       aktProduct.SetupFiles[0].active := True;
       Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -3441,6 +3468,7 @@ begin
     Application.ProcessMessages;
     initaktproduct;
     makeProperties;
+    resultform1.updateGUI;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
@@ -3788,7 +3816,7 @@ end;
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
-  LogDatei.log('Choosed exit Button - Terminate Program',LLnotice);
+  LogDatei.log('Choosed exit Button - Terminate Program', LLnotice);
   resultForm1.Close;
   resultForm1.Destroy;
   freebasedata;
@@ -3828,6 +3856,7 @@ end;
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
 begin
   makeProperties;
+  resultform1.updateGUI;
 end;
 
 procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
@@ -3886,10 +3915,10 @@ end;
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 begin
-  if TTIEdit(sender).Name = 'TIEditProdID' then
+  if TTIEdit(Sender).Name = 'TIEditProdID' then
   begin
-    TTIEdit(sender).Caption := cleanOpsiId(TTIEdit(sender).Caption);
-    TTIEdit(sender).SelStart:= Length(TTIEdit(sender).Caption);
+    TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
+    TTIEdit(Sender).SelStart := Length(TTIEdit(Sender).Caption);
   end;
   TControl(Sender).EditingDone;
 end;
