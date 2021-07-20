@@ -21650,6 +21650,10 @@ begin
                             ConstValuesList.Strings[constcounter - 1],
                             False, replacedline) then
                             incline := replacedline;
+                        // remove encoding= lines from include_append because
+                        // this line can become a part of a secondary section (do 20.7.2021)
+                        if AnsiStartsStr('encoding',trim(incline)) then
+                          incline := '; commented out: '+incline;
                         LogDatei.log_prog('Include_append line: ' + incline, LLDebug);
                         append(incline);
                         linecount := Count;
