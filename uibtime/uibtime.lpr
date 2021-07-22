@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazreportpdfexport, printer4lazarus, datetimectrls,
+  Forms, lazrichview, lazreportpdfexport, printer4lazarus, datetimectrls,
   uibdata, login, ontop, debug, changelog, treescrolldown, logoff,
   work_description, dataedit, loggedin_, nachf, statistik, result, sqltext,
   multiday, linhandlewin, uibtWorkRepChooser, uib2erp,

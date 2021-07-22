@@ -87,6 +87,7 @@ begin
     FOnTop.ineditmode := True;
     // start looking for gaps
     richmemo1.Lines.add('Suche ab: ' + DateTimeToStr(begintime));
+    //RichView1.Add('Suche ab: ' + DateTimeToStr(begintime),rvsNormal);
     datamodule1.debugOut(5, 'logoff.checkDB', 'Suche ab: ' + DateTimeToStr(begintime));
     sumtime := 0;
     if Datamodule1.SQQueryuibevent.Active then
@@ -109,6 +110,7 @@ begin
       VarArrayOf([uid, laststartt, laststopt]), [loCaseInsensitive, loPartialKey]) then
     begin
       richmemo1.Lines.add('Record not found ');
+      //RichView1.Add();
       datamodule1.debugOut(5, 'logoff.checkDB', 'Record not found ');
     end;
     Datamodule1.SQQueryuibevent.Close;
