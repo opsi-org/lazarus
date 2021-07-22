@@ -14,43 +14,36 @@ var
   ExplicitAccess: EXPLICIT_ACCESS;
   ExistingDacl: ACL;
   PExistingDacl: PACL;
-  NewACL: PACL;
-  myACL: ACL;
+  newACL: PACL;
   mySD: SECURITY_DESCRIPTOR;
   pSD : PSECURITY_DESCRIPTOR;
   errorstr: String;
   myDWord: DWord = 1;
 begin
-  NewACL := nil;
+  newACL := nil;
   pSD := @mySD;
   PExistingDacl := @ExistingDacl;
   Result := False;
   myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
-    DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
-    if myDWord = ERROR_SUCCESS then
+                DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
+  if myDWord = ERROR_SUCCESS then
   begin
     writeln('First Success');
     BuildExplicitAccessWithName(@ExplicitAccess, pAnsiChar(TrusteeName),
-      GENERIC_ALL, AccessMode, Inheritance);
+                                        GENERIC_ALL, AccessMode, Inheritance);
     //ExistingDacl := @ExistingDacl^;
-    myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, NewACL);
+    myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, newACL);
     if myDWord = ERROR_SUCCESS then
     begin
       writeln('Second Success');
-      //if SetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
-      //   DACL_SECURITY_INFORMATION, nil, nil, NewACL, nil) = ERROR_SUCCESS then
-
-      //
       try
-        if FileExists(Filename) then
-          myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
-            SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, NewACL, nil);
-
+        myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
+              SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
         if myDWord = ERROR_SUCCESS then
         begin
           writeln('Third Success');
           Result := True;
-          //if Assigned(NewACL) then Free
+          //if Assigned(newACL) then Free
         end;
       except
         on e: Exception do
@@ -59,31 +52,28 @@ begin
           writeln(errorstr);
         end;
       end;
-      //
     end;
   end;
 end;
 
 var
+  user : String;
   fileName: String;
-  user : string;
 
 begin
+  user := 'Jinene';
   fileName :=
-     'c:\temp\enigdbug.txt';
-  //    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
-  user := 'oertel';
-  //user := 'Jinene';
+    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
 
-  //if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
-  //begin
+  if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
+  begin
     writeln('fileOpen returned error: THandle(-1)');
     if AddFileACL(fileName, user, GRANT_ACCESS,
-      SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+                    SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
       writeln('It works!')
     else
       writeln('Doesnt work!');
-  //end
-  //else
+  end
+  else
     writeln('fileOpen without error');
 end.
