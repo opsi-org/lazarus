@@ -154,7 +154,8 @@ var
         FResponseText := '<html><head></head>'
           + '<body bgcolor="lightgreen"><font size="+2" color="green">'+ FEvent+' als aktuelles uibtime Event gesetzt.'
           + '<br/><br/>'
-          + '<a href="http://erp.uib.local/support/support.php?event='+ FEvent+ '" title="zur&uuml;ck zur SupporterApp (geht auch mit der Browser Zur&uuml;ck-Taste)">zur SupporterApp</a>'
+          //+ '<a href="http://erp.uib.local/support/support.php?event='+ FEvent+ '" title="zur&uuml;ck zur SupporterApp (geht auch mit der Browser Zur&uuml;ck-Taste)">zur SupporterApp</a>'
+          + '<a href="https://supporterapp.uib.gmbh/?event='+ FEvent+ '" title="zur&uuml;ck zur SupporterApp (geht auch mit der Browser Zur&uuml;ck-Taste)">zur SupporterApp</a>'
           + '</font></body></html>';
         DataModule1.debugOut(5, 'httpservice' ,FEvent + ' selected via httpservice.');
       end
@@ -164,7 +165,7 @@ var
         FResponseText := '<html><head></head>'
           + '<body bgcolor="darksalmon"><font size="+4" color="darkred">Fehler: '+ FEvent+' ist kein g&uuml;ltiges uibtime Event!'
           + '<br/><br/>'
-          + '<a href="http://erp.uib.local/support/support.php?event='+ FEvent+ '" title="zur&uuml;ck zur SupporterApp (geht auch mit der Browser Zur&uuml;ck-Taste)">zur SupporterApp</a>'
+          + '<a href="https://supporterapp.uib.gmbh/?event='+ FEvent+ '" title="zur&uuml;ck zur SupporterApp (geht auch mit der Browser Zur&uuml;ck-Taste)">zur SupporterApp</a>'
           + '</font></body></html>';
         DataModule1.debugOut(2, 'httpservice' ,FEvent + ' ist kein gültiges Event.');
       end;

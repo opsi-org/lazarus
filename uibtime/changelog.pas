@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.4.0-1) stable; urgency=low
+
+ * httpservice: new supporterapp address: https://supporterapp.uib.gmbh
+ * switch to Laz 2.2.0 / FPC 3.2.2
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 19 Jul 2021 15:00:00 +0000
+
 uibtime (4.1.3.0-1) stable; urgency=low
 
  * possibility to display ontop as sizeable window
