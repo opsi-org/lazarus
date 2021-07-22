@@ -114,6 +114,10 @@
             </CompilerMessages>
             <CustomOptions Value="-dUseCThreads
 -dLAZ_POWERPDF"/>
+            <OtherDefines Count="2">
+              <Define0 Value="UseCThreads"/>
+              <Define1 Value="LAZ_POWERPDF"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>

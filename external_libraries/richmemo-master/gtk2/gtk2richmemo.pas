@@ -21,6 +21,10 @@ unit Gtk2RichMemo;
 
 {$mode objfpc}{$H+}
 
+{$IFDEF LINUX}
+{$DEFINE RMLCLTRUNK}
+{$ENDIF LINUX}
+
 interface
 
 uses
