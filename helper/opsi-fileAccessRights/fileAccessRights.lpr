@@ -17,7 +17,7 @@ var
   myACL: ACL;
   pSD: PSECURITY_DESCRIPTOR;
   errorstr: String;
-  myDWord: DWord = 0;
+  myDWord: DWord = 1;
 begin
   NewACL := @myACL;
   pSD := nil;
@@ -59,20 +59,20 @@ begin
 end;
 
 var
-  fileName: string;
+  fileName: String;
 
 begin
   fileName :=
     'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
-  if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
-  begin
+  //if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
+  //begin
     writeln('fileOpen returned error: THandle(-1)');
     if AddFileACL(fileName, 'Jinene', GRANT_ACCESS,
       SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
       writeln('It works!')
     else
       writeln('Doesnt work!');
-  end
-  else
+  //end
+  //else
     writeln('fileOpen without error');
 end.
