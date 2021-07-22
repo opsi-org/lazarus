@@ -11,25 +11,30 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 function AddFileACL(Filename, TrusteeName: AnsiString; AccessMode: ACCESS_MODE;
     Inheritance: dWord): boolean; stdcall;
 var
-  ExplicitAccess: PEXPLICIT_ACCESS;
-  ExistingDacl: PACL;
+  ExplicitAccess: EXPLICIT_ACCESS;
+  ExistingDacl: ACL;
+  PExistingDacl: PACL;
   NewACL: PACL;
   myACL: ACL;
-  pSD: PSECURITY_DESCRIPTOR;
+  mySD: SECURITY_DESCRIPTOR;
+  pSD : PSECURITY_DESCRIPTOR;
   errorstr: String;
   myDWord: DWord = 1;
 begin
-  NewACL := @myACL;
-  pSD := nil;
+  NewACL := nil;
+  pSD := @mySD;
+  PExistingDacl := @ExistingDacl;
   Result := False;
-  if GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
-    DACL_SECURITY_INFORMATION, nil, nil, @ExistingDacl, nil, pSD) = ERROR_SUCCESS then
+  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
+    DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
+    if myDWord = ERROR_SUCCESS then
   begin
     writeln('First Success');
     BuildExplicitAccessWithName(@ExplicitAccess, pAnsiChar(TrusteeName),
       GENERIC_ALL, AccessMode, Inheritance);
-    ExistingDacl := @ExistingDacl^;
-    if SetEntriesInAcl(1, @ExplicitAccess, ExistingDacl, NewACL) = ERROR_SUCCESS then
+    //ExistingDacl := @ExistingDacl^;
+    myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, NewACL);
+    if myDWord = ERROR_SUCCESS then
     begin
       writeln('Second Success');
       //if SetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
@@ -45,6 +50,7 @@ begin
         begin
           writeln('Third Success');
           Result := True;
+          //if Assigned(NewACL) then Free
         end;
       except
         on e: Exception do
@@ -60,14 +66,19 @@ end;
 
 var
   fileName: String;
+  user : string;
 
 begin
   fileName :=
-    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
+     'c:\temp\enigdbug.txt';
+  //    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
+  user := 'oertel';
+  //user := 'Jinene';
+
   //if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
   //begin
     writeln('fileOpen returned error: THandle(-1)');
-    if AddFileACL(fileName, 'Jinene', GRANT_ACCESS,
+    if AddFileACL(fileName, user, GRANT_ACCESS,
       SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
       writeln('It works!')
     else
