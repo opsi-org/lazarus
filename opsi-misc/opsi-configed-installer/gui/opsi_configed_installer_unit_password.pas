@@ -122,7 +122,7 @@ begin
   // !following lines need an existing LogDatei
   if (Data.distroName = 'openSUSE') or (Data.distroName = 'SUSE') then
   begin
-    MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
+    MyRepo.Add(url, 'OpsiConfigedInstallerRepository');
   end
   else
     MyRepo.Add(url);
@@ -170,12 +170,12 @@ begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
   FileText.LoadFromFile(logPath);
-  configedResult := false;
+  configedResult := False;
   // adjust configed-installer ExitCode
-  for i := 0 to FileText.Count-1 do
+  for i := 0 to FileText.Count - 1 do
   begin
-      if Pos('script finished: success', FileText[i]) > 0 then
-      configedResult := true;
+    if Pos('script finished: success', FileText[i]) > 0 then
+      configedResult := True;
   end;
   if not configedResult then
   begin
@@ -186,6 +186,7 @@ begin
   end
   else
   begin
+    ExitCode := 0;
     LogDatei.log('configed installation success', 6);
     FileText.Clear;
     FileText.Add('success');
