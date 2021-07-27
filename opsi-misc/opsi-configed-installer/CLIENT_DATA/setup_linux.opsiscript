@@ -12,7 +12,6 @@
 		set $UseBundledJavaRuntime$ = "true"
 	else
 		set $UseBundledJavaRuntime$ = "false"
-		set $targetstring$ = "java"
 		set $list$= shellCall('which java')
 		Set $dummy$ = count ($list$)
 		if NOT ( $dummy$ = "0" )
@@ -25,7 +24,7 @@
 			Set $dummy$ = takestring(0, $list$)
 		else
 			set $UseBundledJavaRuntime$ = "true"
-			set $JavaRuntimeSelection$ = $javaCurrentBundle64Bit
+			set $JavaRuntimeSelection$ = $javaCurrentBundle64Bit$
 		endif
 	endif
 
@@ -54,8 +53,7 @@ copy -s "%SCRIPTPATH%/files.configed/*.*" "$InstallDir$"
 	
 	sub_copy_java
 	
-	; set $completeCall$ = $javapath$ + " " + $targetstring$
-	set $completeCall$ = "java -jar configed.jar"
+	set $completeCall$ = $javapath$ + " " + $targetstring$
 	set  $LinkVariantName$=""
 	LinkFolder_configed
 	set $completeCall$ = $javapath$ + " " +   $JavaSwingScaling$ + " " + $targetstring$ 
