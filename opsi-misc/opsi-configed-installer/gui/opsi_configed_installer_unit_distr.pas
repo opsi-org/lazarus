@@ -58,7 +58,7 @@ begin
 
   // position buttons here because of different layout (size of TDistribution)
   BtnBack.Left := ConfigedInstaller.BtnBack.Left;
-  BtnNext.Left := Width - BtnBack.Left - ConfigedInstaller.BtnNextWidth;
+  BtnNext.Left := Width - devicePixelRatio*BtnBack.Left - ConfigedInstaller.BtnNextWidth;
   // we have one InfoImage
   setInfoBasics(InfoDistribution);
   // show distribution suggestion

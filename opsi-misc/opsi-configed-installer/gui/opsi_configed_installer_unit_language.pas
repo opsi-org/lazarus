@@ -70,6 +70,7 @@ procedure SetBasics(Sender: TForm);
 
 var
   ConfigedInstaller: TConfigedInstaller;
+  devicePixelRatio: integer = 1;
 
 implementation
 
@@ -180,7 +181,7 @@ begin
     BtnNextWidth := 68;
   //note that BtnNext.Width = width for english caption and
   //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help either
-  BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
+  BtnNext.Left := Width - devicePixelRatio*BtnBack.Left - BtnNextWidth;
 end;
 // show hint on click of InfoImage
 // (used with '@' and therefore must be defined in TConfigedInstaller)
@@ -194,6 +195,10 @@ var
   Languages: TStringList;
   removeFuzzys, macDistroName, macDistroRelease: string;
 begin
+  {$IFDEF DARWIN}
+  devicePixelRatio := 2;
+  {$ENDIF}
+
   // from all po files remove all fuzzys that might have been introduced somehow
   RunCommand('/bin/sh', ['-c',
     'echo | msgattrib --clear-fuzzy -o ../gui/locale/opsi_configed_installer_project.de.po ../gui/locale/opsi_configed_installer_project.de.po'],
@@ -220,7 +225,7 @@ begin
   // set constant button positions:
   BtnBack.Left := 20;
   //note that BtnNext.Width = width for english caption
-  BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
+  BtnNext.Left := Width - devicePixelRatio*BtnBack.Left - BtnNext.Width;
   //BtnBack.Top := 410;
   BtnBack.Top := Height - 50;
   BtnNext.Top := BtnBack.Top;
