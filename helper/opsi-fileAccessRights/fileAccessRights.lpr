@@ -1,3 +1,11 @@
+{This program is a prototype to test modifying Access Rights
+of a file under Windows, using the ACL Windows API
+
+We use as :
+AccessMode :  SET_ACCESS
+Permissions : GENERIC_ALL}
+
+
 program fileAccessRights;
 
 {$mode objfpc}{$H+}
@@ -20,6 +28,7 @@ var
   errorstr: String;
   myDWord: DWord = 1;
 begin
+  writeln('-- Entering AddFileACL function -- ');
   newACL := nil;
   pSD := @mySD;
   PExistingDacl := @ExistingDacl;
@@ -28,20 +37,20 @@ begin
                 DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
   if myDWord = ERROR_SUCCESS then
   begin
-    writeln('First Success');
+    writeln('First Success 1/3 : GetNamedSecurityInfo ');
     BuildExplicitAccessWithName(@ExplicitAccess, pAnsiChar(TrusteeName),
                                         GENERIC_ALL, AccessMode, Inheritance);
     //ExistingDacl := @ExistingDacl^;
     myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, newACL);
     if myDWord = ERROR_SUCCESS then
     begin
-      writeln('Second Success');
+      writeln('Second Success 2/3 : SetEntriesInAcl');
       try
         myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
               SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
         if myDWord = ERROR_SUCCESS then
         begin
-          writeln('Third Success');
+          writeln('Third Success 3/3 : SetNamedSecurityInfo');
           Result := True;
           //if Assigned(newACL) then Free
         end;
@@ -54,6 +63,7 @@ begin
       end;
     end;
   end;
+  writeln('-- Finishing AddFileACL function -- ');
 end;
 
 var
@@ -67,13 +77,14 @@ begin
 
   if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
   begin
-    writeln('fileOpen returned error: THandle(-1)');
-    if AddFileACL(fileName, user, GRANT_ACCESS,
+    writeln('No access rights : fileOpenReadWrite returned error THandle(-1)');
+    if AddFileACL(fileName, user, SET_ACCESS,
                     SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
-      writeln('It works!')
-    else
-      writeln('Doesnt work!');
+      if (fileOpen(fileName, fmOpenReadWrite) <> THandle(-1)) then
+         writeln('Access rights modified : fileOpenReadWrite succeeded !')
+      else
+        writeln('Access rights not modified : fileOpenReadWrite returned error THandle(-1)');
   end
   else
-    writeln('fileOpen without error');
+    writeln('Already have access rights : fileOpen without error');
 end.
