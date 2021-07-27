@@ -233,13 +233,13 @@ begin
   SetBasics(self);
 
   ComboBoxLanguages.Left := Round((WelcomePanel.Width - ComboBoxLanguages.Width) / 2);
-  with ComboBoxLanguages.Items do
-  begin
-    Add('Deutsch');
-    Add('English');
-    Add('Español');
-    Add('Français');
-  end;
+  //with ComboBoxLanguages.Items do
+  //begin
+  //  Add('Deutsch');
+  //  Add('English');
+  //  Add('Español');
+  //  Add('Français');
+  //end;
   Languages := TStringList.Create;
   Languages.Add('de');
   Languages.Add('en');

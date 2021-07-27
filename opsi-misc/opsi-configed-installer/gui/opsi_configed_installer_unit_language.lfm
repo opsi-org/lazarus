@@ -99,13 +99,19 @@ object ConfigedInstaller: TConfigedInstaller
       AnchorSideTop.Control = LabelSelLanguage
       AnchorSideTop.Side = asrBottom
       Left = 96
-      Height = 31
+      Height = 20
       Top = 120
       Width = 160
       AutoComplete = True
       AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
       AutoDropDown = True
-      ItemHeight = 0
+      ItemHeight = 19
+      Items.Strings = (
+        'Deutsch'
+        'English'
+        'Español'
+        'Français'
+      )
       OnChange = ComboBoxLanguagesChange
       ParentFont = False
       TabOrder = 0
