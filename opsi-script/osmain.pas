@@ -3146,7 +3146,7 @@ begin
           end;
         end
 
-
+        (* not supported anymore (4.12.4.16 do 27.7.21)
         else if Lowercase(Parameter) = 'pcprofil' then
         begin
           if ProgramMode <> pmNotSet then
@@ -3155,7 +3155,7 @@ begin
             exit;
           end
           else if NumberOfTrueParameters >= 1 then
-            (* pmBuildPC geht nicht mehr *)
+            // pmBuildPC geht nicht mehr
           begin
             ProgramMode := pmInfo;
             exit;
@@ -3166,6 +3166,7 @@ begin
             exit;
           end;
         end
+        *)
 
         else if Lowercase(Parameter) = 'logfile' then
         begin
