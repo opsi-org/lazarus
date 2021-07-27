@@ -181,7 +181,7 @@ begin
     BtnNextWidth := 68;
   //note that BtnNext.Width = width for english caption and
   //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help either
-  BtnNext.Left := Width - devicePixelRatio*BtnBack.Left - BtnNextWidth;
+  BtnNext.Left := Width - devicePixelRatio * BtnBack.Left - BtnNextWidth;
 end;
 // show hint on click of InfoImage
 // (used with '@' and therefore must be defined in TConfigedInstaller)
@@ -225,7 +225,7 @@ begin
   // set constant button positions:
   BtnBack.Left := 20;
   //note that BtnNext.Width = width for english caption
-  BtnNext.Left := Width - devicePixelRatio*BtnBack.Left - BtnNext.Width;
+  BtnNext.Left := Width - devicePixelRatio * BtnBack.Left - BtnNext.Width;
   //BtnBack.Top := 410;
   BtnBack.Top := Height - 50;
   BtnNext.Top := BtnBack.Top;
@@ -264,25 +264,24 @@ begin
   Data := TConfigedInstallerData.Create;
   // Following two lines take time and are therefore executed only once at the
   // beginning of this program.
-  try
-    Data.distroName := getLinuxDistroName;
-    Data.distroRelease := getLinuxDistroRelease;
-  except
-    LogDatei.log('No linux or lsb_release, try mac:', LLinfo);
-    if (RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.ostype'], macDistroName) and
-      RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.osrelease'],
-      macDistroRelease)) then
-    begin
-      Delete(macDistroName, 1, 'kern.ostype: '.Length);
-      Delete(macDistroRelease, 1, 'kern.osrelease: '.Length);
-      Delete(macDistroName, macDistroName.Length, 1);
-      Delete(macDistroRelease, macDistroRelease.Length, 1);
-      //ShowMessage('*' + macDistroName + '*');
-      //ShowMessage('*' + macDistroRelease + '*');
-      Data.distroName := macDistroName;
-      Data.distroRelease := macDistroRelease;
-    end;
+  {$IFDEF DARWIN}
+  if (RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.ostype'], macDistroName) and
+    RunCommand('/bin/sh', ['-c', 'echo | sysctl kern.osrelease'],
+    macDistroRelease)) then
+  begin
+    Delete(macDistroName, 1, 'kern.ostype: '.Length);
+    Delete(macDistroRelease, 1, 'kern.osrelease: '.Length);
+    Delete(macDistroName, macDistroName.Length, 1);
+    Delete(macDistroRelease, macDistroRelease.Length, 1);
+    //ShowMessage('*' + macDistroName + '*');
+    //ShowMessage('*' + macDistroRelease + '*');
+    Data.distroName := macDistroName;
+    Data.distroRelease := macDistroRelease;
   end;
+  {$ELSE}
+  Data.distroName := getLinuxDistroName;
+  Data.distroRelease := getLinuxDistroRelease;
+  {$ENDIF}
 
   // text by resourcestrings
   LabelWelcome.Caption := rsWelcome;

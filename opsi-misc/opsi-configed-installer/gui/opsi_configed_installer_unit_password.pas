@@ -134,13 +134,16 @@ end;
 procedure TMyThread.installConfiged;
 begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
-  if not (Data.distroName = 'Darwin') then
-  begin
-    FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
-    FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
-  end
-  else
-    FInstallRunCommand.Run('./opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
+  {$IFDEF DARWIN}
+  FInstallRunCommand.Run('./opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' +
+    logPath, Output);
+  {$ELSE}
+  FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
+  //FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
+  FInstallRunCommand.Run('opsi-script -batch ../CLIENT_DATA/setup.opsiscript ' +
+    logPath, Output);
+  {$ENDIF}
+
   FInstallRunCommand.Free;
 end;
 
@@ -223,8 +226,7 @@ var
   TestCommand: TRunCommandElevated;
 begin
   // test if the password is correct, otherwise exit
-  if not (Data.distroName = 'Darwin') then
-  begin
+  {$IFNDEF DARWIN}
   TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
   TestCommand.Run('mkdir /root/testDir', Output);
   if (Pos('Error', Output) >= 0) and (Output <> '') then
@@ -235,7 +237,7 @@ begin
   end;
   TestCommand.Run('rm -rf /root/testDir', Output);
   TestCommand.Free;
-  end;
+  {$ENDIF}
 
   btnFinishClicked := True;
   // start thread for opsi configed installation while showing TWait
