@@ -183,6 +183,7 @@ begin
     //ShowMessage(Output);
 
     AddLineToTextFile('deb ' + FURL + ' /', FSourcesListFilePath);
+    LogDatei.log('deb ' + FURL + ' / added to ' + FSourcesListFilePath, LLInfo);
 
     // change owner of file FSourcesListFilePath from user to root
     FRunCommandElevated.Run('chown -c ' + Owner + ' ' +
@@ -192,8 +193,8 @@ begin
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
       ' ' + 'Release.key', Output);
     // apt-key add is deprecated (last available in Debian 11, Ubuntu 22.04) and needs gnupg
-    FRunCommandelevated.Run('apt-get install gnupg2', Output);
-    FRunCommandElevated.Run('apt-key add - < Release.key', Output);
+    FRunCommandelevated.Run('apt install gnupg2', Output);
+    FRunCommandElevated.Run('apt-key add Release.key', Output);
     FRunCommandElevated.Run('rm Release.key', Output);
   except
     LogDatei.log('Exception while adding repository.', LLDebug);
