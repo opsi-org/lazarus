@@ -6,6 +6,9 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.4.26) stable; urgency=low
 
  * Parameter 'pcprofil' not supported any more
+ * osencoding: new function  isPlainAsciiString(const searchText: string): boolean;
+ * osencoding: func searchEncoding now detectd also isPlainAscii
+ * osparser: supress any encoding Warnings if isPlainAscii
 
 -- d.oertel <d.oertel@uib.de> Tue, 27 Jul 2021 15:00
 

@@ -1983,33 +1983,47 @@ var
   //secname, remaining : string;
   //secindex : integer;
   encodingString: string = '';
+  isPlainAscii: boolean;
+  usedencoding: string;
 begin
   Section.Clear;
   OriginalList := TXStringList.Create;
   //OriginalList.LoadFromFile(ExpandFileName(FName));
-  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
   expectedEncoding := osNormalizeEncoding(expectedEncoding);
-  encodingString := searchencoding(OriginalList.Text);
-  if encodingString = '' then
-    encodingString := 'system';
-  if expectedEncoding <> '' then
+  OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
+  usedencoding := expectedEncoding;
+  encodingString := searchencoding(OriginalList.Text, isPlainAscii);
+  if not isPlainAscii then // if isPlainAscii everything else do not matter
   begin
-    if not ((encodingString = expectedEncoding) or
-      // test for expectedEncoding with bom
-      (encodingString = copy(expectedEncoding, 0, length(expectedEncoding) - 3))) then
+    if (encodingString = '') and not isPlainAscii then
     begin
-      LogDatei.log('Warning: Given encodingString ' + encodingString +
-        ' is different from the detected encoding ' + expectedEncoding, LLWarning);
-      LogDatei.log('Expected encoding: ' + expectedEncoding +
-        ' is considered', LLInfo);
+      LogDatei.log('Warning : no encodingString or is empty - Fallback to system encoding',
+        LLWarning);
+      encodingString := 'system';
     end;
-    //OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
-  end
-  else
-  if encodingString <> 'system' then
-    OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+    if expectedEncoding <> '' then
+    begin
+      if not ((encodingString = expectedEncoding) or
+        // test for expectedEncoding with bom
+        (encodingString = copy(expectedEncoding, 0, length(expectedEncoding) - 3))) then
+      begin
+        LogDatei.log('Warning: Given encodingString ' + encodingString +
+          ' is different from the expected encoding ' + expectedEncoding, LLWarning);
+        LogDatei.log('Expected encoding: ' + expectedEncoding +
+          ' is considered', LLInfo);
+      end;
+      //OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), expectedEncoding);
+    end
+    else
+    begin
+      //if encodingString <> 'system' then
+      // we have no expected encoding, so we use the given one
+      OriginalList.loadFromFileWithEncoding(ExpandFileName(FName), encodingString);
+      usedencoding := encodingString;
+    end;
+  end;
   logdatei.log('Loaded sub from: ' + FName + ' with encoding: ' +
-    encodingString, LLDebug);
+    usedencoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
     s := trim(OriginalList.Strings[i - 1]);
@@ -3976,7 +3990,7 @@ var
         begin
           ldap.Search(ldapsearch_dn, ldapsearch_typesonly, ldapsearch_filter,
             ldapsearch_attributes);
-          ldapResult.setText(PAnsiChar(LDAPResultdump(ldap.SearchResult)));
+          ldapResult.setText(pansichar(LDAPResultdump(ldap.SearchResult)));
 
           (* // check result: *)
           logdatei.log('LDAP search result: ', LevelComplete);
@@ -5597,8 +5611,8 @@ var
 
     {load the selected ntuser.dat in HKEY_USERS, subkey TempUserRegKey}
 
-    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(UnicodeString(TempUserRegKey)),
-      PWChar(UnicodeString(path)));
+    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(unicodestring(TempUserRegKey)),
+      PWChar(unicodestring(path)));
     if Errorcode = Error_success then
     begin
       LogDatei.log('"' + path + '" loaded.', LevelComplete);
@@ -5860,8 +5874,8 @@ var
 
     {load the selected UsrClass.dat in HKEY_USERS, subkey TempUserRegKey}
 
-    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(UnicodeString(TempUserRegKey)),
-      PWChar(UnicodeString(path)));
+    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(unicodestring(TempUserRegKey)),
+      PWChar(unicodestring(path)));
     if Errorcode = Error_success then
     begin
       LogDatei.log('"' + path + '" loaded.', LevelComplete);
@@ -6124,8 +6138,8 @@ var
 
     {load the selected ntuser.dat in HKEY_USERS, subkey TempUserRegKey}
 
-    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(UnicodeString(TempUserRegKey)),
-      PWChar(UnicodeString(path)));
+    Errorcode := RegLoadKeyW(HKEY_USERS, PWChar(unicodestring(TempUserRegKey)),
+      PWChar(unicodestring(path)));
     if Errorcode = Error_success then
     begin
       LogDatei.log('"' + path + '" loaded.', LevelComplete);
@@ -19538,8 +19552,8 @@ begin
   Result := tsrPositive;
 
   NetResource.dwType := RESOURCETYPE_DISK;
-  NetResource.lpRemoteName := PAnsiChar(NetResourceName);
-  NetResource.lpLocalName := PAnsiChar(LocalName);
+  NetResource.lpRemoteName := pansichar(NetResourceName);
+  NetResource.lpLocalName := pansichar(LocalName);
   NetResource.lpProvider := '';
 
   LogDatei.log('Add Connection '  (* + 'User ' + Username *) + ' to ' +
@@ -19879,6 +19893,7 @@ var
   declaredEncoding: string = '';
   hasBom: boolean;
   insertindex: integer;
+  isPlainAscii: boolean;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -20600,9 +20615,9 @@ begin
                   begin
                     detectedEncoding := '';
                     hasBom := getFileBom(fullfilename, detectedEncoding);
-                    // we expect library encoding to be utf8
-                    if detectedEncoding = '' then
-                      detectedEncoding := 'utf8';
+                    //// we expect external sub encoding to be system
+                    //if detectedEncoding = '' then
+                    //  detectedEncoding := 'system';
                     try
                       LoadValidLinesFromFile(fullfilename, detectedEncoding,
                         ArbeitsSektion);
@@ -21063,11 +21078,13 @@ begin
                       try
                         inclist.loadFromFileWithEncoding(
                           ExpandFileName(fullincfilename), detectedEncoding);
-                        declaredEncoding := searchEncoding(inclist.Text);
-                        if (detectedEncoding = '') and
-                          (declaredEncoding <> detectedEncoding) then
-                          inclist.loadFromFileWithEncoding(
-                            ExpandFileName(fullincfilename), declaredEncoding);
+                        declaredEncoding := searchEncoding(inclist.Text, isPlainAscii);
+                        if not isPlainAscii then
+                          // if isPlainAscii everything else do not matter
+                          if (detectedEncoding = '') and
+                            (declaredEncoding <> detectedEncoding) then
+                            inclist.loadFromFileWithEncoding(
+                              ExpandFileName(fullincfilename), declaredEncoding);
                       except
                         on E: Exception do
                         begin
@@ -21395,14 +21412,16 @@ begin
                       inclist.loadFromFileWithEncoding(
                         ExpandFileName(fullincfilename), detectedEncoding);
                       usedEncoding := detectedEncoding;
-                      declaredEncoding := searchEncoding(inclist.Text);
-                      if (detectedEncoding = '') and
-                        (declaredEncoding <> detectedEncoding) then
-                      begin
-                        inclist.loadFromFileWithEncoding(
-                          ExpandFileName(fullincfilename), declaredEncoding);
-                        usedEncoding := declaredEncoding;
-                      end;
+                      declaredEncoding := searchEncoding(inclist.Text, isPlainAscii);
+                      if not isPlainAscii then
+                        // if isPlainAscii everything else do not matter
+                        if (detectedEncoding = '') and
+                          (declaredEncoding <> detectedEncoding) then
+                        begin
+                          inclist.loadFromFileWithEncoding(
+                            ExpandFileName(fullincfilename), declaredEncoding);
+                          usedEncoding := declaredEncoding;
+                        end;
                       if usedEncoding = '' then
                         usedEncoding := 'system';
                       //inclist.LoadFromFile(ExpandFileName(fullincfilename));
@@ -21613,14 +21632,16 @@ begin
                       inclist.loadFromFileWithEncoding(
                         ExpandFileName(fullincfilename), detectedEncoding);
                       usedEncoding := detectedEncoding;
-                      declaredEncoding := searchEncoding(inclist.Text);
-                      if (detectedEncoding = '') and
-                        (declaredEncoding <> detectedEncoding) then
-                      begin
-                        inclist.loadFromFileWithEncoding(
-                          ExpandFileName(fullincfilename), declaredEncoding);
-                        usedEncoding := declaredEncoding;
-                      end;
+                      declaredEncoding := searchEncoding(inclist.Text, isPlainAscii);
+                      if not isPlainAscii then
+                        // if isPlainAscii everything else do not matter
+                        if (detectedEncoding = '') and
+                          (declaredEncoding <> detectedEncoding) then
+                        begin
+                          inclist.loadFromFileWithEncoding(
+                            ExpandFileName(fullincfilename), declaredEncoding);
+                          usedEncoding := declaredEncoding;
+                        end;
                       if usedEncoding = '' then
                         usedEncoding := 'system';
 
@@ -21652,8 +21673,8 @@ begin
                             incline := replacedline;
                         // remove encoding= lines from include_append because
                         // this line can become a part of a secondary section (do 20.7.2021)
-                        if AnsiStartsStr('encoding',trim(incline)) then
-                          incline := '; commented out: '+incline;
+                        if AnsiStartsStr('encoding', trim(incline)) then
+                          incline := '; commented out: ' + incline;
                         LogDatei.log_prog('Include_append line: ' + incline, LLDebug);
                         append(incline);
                         linecount := Count;
@@ -24142,6 +24163,7 @@ var
   {$IFDEF WINDOWS}
   Regist: TuibRegistry;
   {$ENDIF WINDOWS}
+  isPlainAscii: boolean;
 
 begin
   try
@@ -24260,66 +24282,68 @@ begin
       // this will read with encoding from system to utf8
       Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
       logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
-      Encoding2use := searchencoding(Script.Text);
-      if Encoding2use = '' then
-        Encoding2use := mysystemEncoding;
-      if hasBOM or isEncodingUnicode(Encoding2use) then
-      begin
-        //logdatei.log_prog('file has BOM', LLinfo );
-        //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-        //Encoding2use := searchencoding(Script.Text);
-        if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+      Encoding2use := searchencoding(Script.Text, isPlainAscii);
+      if not isPlainAscii then // if isPlainAscii everything else do not matter
+        if Encoding2use = '' then
+          Encoding2use := mysystemEncoding;
+      if not isPlainAscii then // if isPlainAscii everything else do not matter
+        if hasBOM or isEncodingUnicode(Encoding2use) then
         begin
-          logdatei.log('The encoding mentioned in the file :' +
-            Encoding2use + ', is different that the detected encoding :' +
-            foundEncoding + '!', LLWarning);
-          logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
-          Encoding2use := foundEncoding;
-        end;
-      end
-      else
-      begin
-        Script.LoadFromFile(Scriptdatei);
-        //str := script.Text;
-        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
-          ')', LLinfo);
-        Encoding2use := searchencoding(Script.Text);
-        if (Encoding2use = '') then
-          Encoding2use := 'system';
-        if (Encoding2use = 'system') then
-        begin
-          //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-          if not configSupressSystemEncodingWarning then
-            logdatei.log(
-              'Encoding=system makes the opsiscript not portable between different OS',
-              LLWarning);
+          //logdatei.log_prog('file has BOM', LLinfo );
+          //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+          //Encoding2use := searchencoding(Script.Text);
+          if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+          begin
+            logdatei.log('The encoding mentioned in the file :' +
+              Encoding2use + ', is different that the detected encoding :' +
+              foundEncoding + '!', LLWarning);
+            logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+            Encoding2use := foundEncoding;
+          end;
         end
         else
         begin
-          if (Lowercase(copy(Encoding2use, length(Encoding2use) - 2,
-            length(Encoding2use))) = 'bom') then
+          Script.LoadFromFile(Scriptdatei);
+          //str := script.Text;
+          logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+            ')', LLinfo);
+          //Encoding2use := searchencoding(Script.Text, isPlainAscii);
+          //if (Encoding2use = '') then
+          //  Encoding2use := 'system';
+          if (Encoding2use = 'system') then
           begin
-            //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-            if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
-            begin
-              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-              Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-            end
-            else
-            begin
-              logdatei.log_prog(
-                'the encoding mentioned in the file is not unicode)', LLWarning);
-              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-              Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-            end;
+            //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+            if (not configSupressSystemEncodingWarning) or isPlainAscii then
+              logdatei.log(
+                'Encoding=system makes the opsiscript not portable between different OS',
+                LLWarning);
           end
           else
           begin
-            //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-            Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+            if (Lowercase(copy(Encoding2use, length(Encoding2use) -
+              2, length(Encoding2use))) = 'bom') then
+            begin
+              //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+              if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
+              begin
+                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+              end
+              else
+              begin
+                logdatei.log_prog(
+                  'the encoding mentioned in the file is not unicode)', LLWarning);
+                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+              end;
+            end
+            else
+            begin
+              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+              Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+            end;
           end;
         end;
-      end;
       //str := script.Text;
       usedEncoding := Encoding2use;
       //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);

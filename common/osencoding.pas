@@ -41,7 +41,8 @@ procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: s
 
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
 
-function searchEncoding(const searchText: string): string;
+function searchEncoding(const searchText: string): string; overload;
+function searchEncoding(const searchText: string; var isPlainAscii : boolean): string; overload;
 
 function reencode(const sourceText: string; const sourceEncoding: string): string;
   overload;
@@ -55,6 +56,8 @@ procedure saveTextFileWithEncoding(inlist: TStrings; outFileName: string;
   encoding: string);
 
 function osNormalizeEncoding(const Encoding: string): string;
+
+function isPlainAsciiString(const searchText: string): boolean;
 
 var
   supportedEncodings: TStringList;
@@ -391,7 +394,29 @@ begin
   until (Result = True) or (i >= list.Count);
 end;
 
+function isPlainAsciiString(const searchText: string): boolean;
+var
+  endreached :boolean;
+  i : cardinal;
+begin
+  result := true;
+  endreached := false;
+    i := 1;
+  repeat
+      if not CharInSet(searchtext.Chars[i],[#0..#9,#11,#12,#14..#31,#127]) then result := false;
+      inc(i);
+      if i >= length(searchText) -1 then endreached := true;
+  until endreached or not result
+end;
+
 function searchEncoding(const searchText: string): string;
+var
+  isPlainAscii : boolean;
+begin
+  result := searchEncoding(searchText, isPlainAscii);
+end;
+
+function searchEncoding(const searchText: string; var isPlainAscii : boolean): string;
   // tries to find entry: encoding=<encoding to use>
 var
   mylist, myencodings: TStringList;
@@ -400,6 +425,8 @@ var
   found: boolean;
   foundencodingstring, newencodingstring: string;
 begin
+  isPlainAscii := isPlainAsciiString(searchText);
+  logdatei.log('searchEncoding: isPlainAscii = ' + BoolToStr(isPlainAscii,true), LLDebug2);
   Result := '';
   found := False;
   mylist := TStringList.Create;
@@ -411,12 +438,12 @@ begin
     // we found an entry: encoding=<encoding to use>
     foundencodingstring := trim(mylist.Values['encoding']);
     foundencodingstring := NormalizeEncoding(foundencodingstring);
-    logdatei.log('foundencodingstring: ' + foundencodingstring, LLDebug2);
+    logdatei.log('searchEncoding: foundencodingstring: ' + foundencodingstring, LLDebug2);
     if isStringInList(foundencodingstring, supportedEncodings) then
       Result := foundencodingstring
     else
     begin
-      logdatei.log('Foundencodingstring ' + foundencodingstring +
+      logdatei.log('searchEncoding: Foundencodingstring ' + foundencodingstring +
         ' is not in supportedEncodings list', LLWarning);
       i := 0;
       repeat
