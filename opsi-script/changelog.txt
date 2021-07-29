@@ -9,6 +9,10 @@ opsi-script (4.12.4.26) stable; urgency=low
  * osencoding: new function  isPlainAsciiString(const searchText: string): boolean;
  * osencoding: func searchEncoding now detectd also isPlainAscii
  * osparser: supress any encoding Warnings if isPlainAscii
+ * osencoding: getFileBom: added fmShareDenyNone to open mode
+ * osencoding: getFileBom: 3 retries
+ * osparser: tsImportLib: do not reload the file at 'Imported all functions from file'
+ * osparser: tsecExpected: (external sub sections): try-exept getFileBom +  LoadValidLinesFromFile
 
 -- d.oertel <d.oertel@uib.de> Tue, 27 Jul 2021 15:00
 

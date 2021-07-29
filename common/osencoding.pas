@@ -42,7 +42,8 @@ procedure saveUnicodeTextFile(inlist: TStrings; outFileName: string; encoding: s
 function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
 
 function searchEncoding(const searchText: string): string; overload;
-function searchEncoding(const searchText: string; var isPlainAscii : boolean): string; overload;
+function searchEncoding(const searchText: string; var isPlainAscii: boolean): string;
+  overload;
 
 function reencode(const sourceText: string; const sourceEncoding: string): string;
   overload;
@@ -246,6 +247,7 @@ var
   Buffer: array [0..3] of byte;   // or AnsiChar;
   //FileFirstBytes : String ='';
   //myFile : File ;  i, count : SmallInt ;
+  Fname: string;
 begin
   (*
   Assignfile(myFile, inFileName);
@@ -256,7 +258,48 @@ begin
     FileFirstBytes:= FileFirstBytes + IntToStr(Buffer[i]);
   CloseFile(myFile);
   *)
-  myFile := TFileStream.Create(ExpandFileName(inFileName), fmOpenRead);
+  Fname := ExpandFileName(inFileName);
+  try
+    myFile := TFileStream.Create(Fname, fmOpenRead or fmShareDenyNone);
+  except
+    on E: Exception do
+    begin
+      Logdatei.log('getFileBom "' + Fname + '"', LLwarning);
+      Logdatei.log(e.ClassName + ': Failed getFileBom, system message: "' +
+        E.Message + '" - will retry',
+        LLwarning);
+      Sleep(200);
+      try
+        myFile :=
+          TFileStream.Create(Fname, fmOpenRead or fmShareDenyNone);
+      except
+        on E: Exception do
+        begin
+          Logdatei.log('getFileBom Retry1"' + Fname + '"', LLwarning);
+          Logdatei.log(e.ClassName +
+            ': Failed getFileBom, system message: "' + E.Message +
+            '" - will retry',
+            LLwarning);
+          Sleep(200);
+          try
+            myFile :=
+              TFileStream.Create(Fname, fmOpenRead or fmShareDenyNone);
+          except
+            on E: Exception do
+            begin
+              Logdatei.log('getFileBom Retry2"' + Fname +
+                '"', LLCritical);
+              Logdatei.log(e.ClassName +
+                ': Failed getFileBom, system message: "' +
+                E.Message + '" - giving up',
+                LLCritical);
+              RaiseLastOSError;
+            end
+          end;
+        end
+      end;
+    end
+  end;
   //while F.Position < F.Size do
   myFile.Read(Buffer, 4);
   //FileFirstBytes := Buffer;
@@ -396,27 +439,28 @@ end;
 
 function isPlainAsciiString(const searchText: string): boolean;
 var
-  endreached :boolean;
-  i : cardinal;
+  endreached: boolean;
+  i: cardinal;
 begin
-  result := true;
-  endreached := false;
-    i := 1;
+  Result := True;
+  endreached := False;
+  i := 1;
   repeat
-      if not CharInSet(searchtext.Chars[i],[#0..#9,#11,#12,#14..#31,#127]) then result := false;
-      inc(i);
-      if i >= length(searchText) -1 then endreached := true;
-  until endreached or not result
+    if not CharInSet(searchtext.Chars[i], [#0..#9, #11, #12, #14..#31, #127]) then
+      Result := False;
+    Inc(i);
+    if i >= length(searchText) - 1 then endreached := True;
+  until endreached or not Result;
 end;
 
 function searchEncoding(const searchText: string): string;
 var
-  isPlainAscii : boolean;
+  isPlainAscii: boolean;
 begin
-  result := searchEncoding(searchText, isPlainAscii);
+  Result := searchEncoding(searchText, isPlainAscii);
 end;
 
-function searchEncoding(const searchText: string; var isPlainAscii : boolean): string;
+function searchEncoding(const searchText: string; var isPlainAscii: boolean): string;
   // tries to find entry: encoding=<encoding to use>
 var
   mylist, myencodings: TStringList;
@@ -426,7 +470,8 @@ var
   foundencodingstring, newencodingstring: string;
 begin
   isPlainAscii := isPlainAsciiString(searchText);
-  logdatei.log('searchEncoding: isPlainAscii = ' + BoolToStr(isPlainAscii,true), LLDebug2);
+  logdatei.log('searchEncoding: isPlainAscii = ' +
+    BoolToStr(isPlainAscii, True), LLDebug2);
   Result := '';
   found := False;
   mylist := TStringList.Create;
@@ -438,13 +483,14 @@ begin
     // we found an entry: encoding=<encoding to use>
     foundencodingstring := trim(mylist.Values['encoding']);
     foundencodingstring := NormalizeEncoding(foundencodingstring);
-    logdatei.log('searchEncoding: foundencodingstring: ' + foundencodingstring, LLDebug2);
+    logdatei.log('searchEncoding: foundencodingstring: ' +
+      foundencodingstring, LLDebug2);
     if isStringInList(foundencodingstring, supportedEncodings) then
       Result := foundencodingstring
     else
     begin
-      logdatei.log('searchEncoding: Foundencodingstring ' + foundencodingstring +
-        ' is not in supportedEncodings list', LLWarning);
+      logdatei.log('searchEncoding: Foundencodingstring ' +
+        foundencodingstring + ' is not in supportedEncodings list', LLWarning);
       i := 0;
       repeat
         // convert via utf8
