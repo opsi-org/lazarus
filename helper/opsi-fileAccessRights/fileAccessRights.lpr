@@ -1,9 +1,10 @@
 {This program is a prototype to test modifying Access Rights
 of a file under Windows, using the ACL Windows API
 
-We use as :
+We use in this example :
+AccessPermissions : GENERIC_ALL
 AccessMode :  SET_ACCESS
-Permissions : GENERIC_ALL}
+Inheritance : SUB_CONTAINERS_AND_OBJECTS_INHERIT }
 
 
 program fileAccessRights;
@@ -16,8 +17,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   SysUtils,
   JwaWindows;
 
-function AddFileACL(Filename, TrusteeName: AnsiString; AccessMode: ACCESS_MODE;
-    Inheritance: dWord): boolean; stdcall;
+function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
+                AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
 var
   ExplicitAccess: EXPLICIT_ACCESS;
   ExistingDacl: ACL;
@@ -39,7 +40,7 @@ begin
   begin
     writeln('First Success 1/3 : GetNamedSecurityInfo ');
     BuildExplicitAccessWithName(@ExplicitAccess, pAnsiChar(TrusteeName),
-                                        GENERIC_ALL, AccessMode, Inheritance);
+                                    AccessPermissions, AccessMode, Inheritance);
     //ExistingDacl := @ExistingDacl^;
     myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, newACL);
     if myDWord = ERROR_SUCCESS then
@@ -78,7 +79,7 @@ begin
   if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
   begin
     writeln('No access rights : fileOpenReadWrite returned error THandle(-1)');
-    if AddFileACL(fileName, user, SET_ACCESS,
+    if AddFileACL(fileName, user, GENERIC_ALL, SET_ACCESS,
                     SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
       if (fileOpen(fileName, fmOpenReadWrite) <> THandle(-1)) then
          writeln('Access rights modified : fileOpenReadWrite succeeded !')
