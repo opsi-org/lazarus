@@ -193,7 +193,8 @@ begin
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
       ' ' + 'Release.key', Output);
     // apt-key add is deprecated (last available in Debian 11, Ubuntu 22.04) and needs gnupg
-    FRunCommandelevated.Run('apt install gnupg2', Output);
+    FRunCommandelevated.Run('apt --assume-yes update', Output);
+    FRunCommandelevated.Run('apt --assume-yes install gnupg2', Output);
     FRunCommandElevated.Run('apt-key add Release.key', Output);
     FRunCommandElevated.Run('rm Release.key', Output);
   except
