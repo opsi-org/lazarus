@@ -34,6 +34,7 @@ uses
   JwaAccCtrl,
   JwaProfInfo,
   JwaUserEnv,
+  JwaWindows,
   //JclMiscel,
   //JclBase,
   //JclSecurity,
@@ -45,7 +46,6 @@ uses
   //unitImpersonator,
   osfuncwin2,
   osfuncwin3,
-  JwaWindows,
 {$IFDEF WIN32}
   osregistry,
   DSiWin32,
@@ -11620,10 +11620,10 @@ function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
 var
   ExplicitAccess: EXPLICIT_ACCESS;
   ExistingDacl: ACL;
-  PExistingDacl: PACL;
-  newACL: PACL;
-  mySD: SECURITY_DESCRIPTOR;
-  pSD : PSECURITY_DESCRIPTOR;
+  PExistingDacl: jwawindows.PACL;
+  newACL: jwawindows.PACL;
+  mySD: jwawindows.SECURITY_DESCRIPTOR;
+  pSD : jwawindows.PSECURITY_DESCRIPTOR;
   errorstr: String;
   myDWord: DWord = 1;
 begin
@@ -11632,7 +11632,7 @@ begin
   pSD := @mySD;
   PExistingDacl := @ExistingDacl;
   Result := False;
-  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
+  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), jwawindows.SE_FILE_OBJECT,
                 DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
   if myDWord = ERROR_SUCCESS then
   begin
@@ -11645,7 +11645,7 @@ begin
       logdatei.log('Second Success 2/3 : SetEntriesInAcl', LLinfo);
       try
         myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
-              SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
+              jwawindows.SE_FILE_OBJECT, jwawindows.DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
         if myDWord = ERROR_SUCCESS then
         begin
           logdatei.log('Third Success 3/3 : SetNamedSecurityInfo ', LLinfo);
