@@ -152,8 +152,10 @@ begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
   Synchronize(@prepareInstallation);
-  if not (Data.distroName = 'Darwin') then
-    Synchronize(@addRepo);
+  {$IFNDEF DARWIN}
+  Synchronize(@addRepo);
+  {$ENDIF}
+
   installConfiged;
 end;
 
