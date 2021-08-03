@@ -170,14 +170,14 @@ begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
   FileText.LoadFromFile(logPath);
-  configedResult := False;
+  //configedResult := False;
   // adjust configed-installer ExitCode
-  for i := 0 to FileText.Count - 1 do
-  begin
-    if Pos('script finished: success', FileText[i]) > 0 then
-      configedResult := True;
-  end;
-  if not configedResult then
+  //for i := 0 to FileText.Count - 1 do
+  //begin
+  //  if Pos('script finished: success', FileText[i]) > 0 then
+  //    configedResult := True;
+  //end;
+  if not Pos('script finished: success', FileText[FileText.Count-6]) > 0 then
   begin
     ExitCode := 1;
     LogDatei.log('configed installation failed', 1);
@@ -199,8 +199,6 @@ end;
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
-  btnFinishClicked := False;
-
   Left := ConfigedInstaller.Left + Round(ConfigedInstaller.Width / 2) - Round(Width / 2);
   Top := ConfigedInstaller.Top + Round(ConfigedInstaller.Height / 2) - Round(Height / 2);
   BtnFinish.Left := Width - BtnBack.Left - ConfigedInstaller.BtnFinishWidth;
@@ -218,6 +216,7 @@ end;
 
 procedure TPassword.BtnBackClick(Sender: TObject);
 begin
+  btnFinishClicked := False;
   Password.Visible := False;
   ConfigedInstaller.Enabled := True;
 end;
