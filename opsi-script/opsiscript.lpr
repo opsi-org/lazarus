@@ -78,7 +78,7 @@ uses //lcltranslator,
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-  osfuncwin2, {$ENDIF}
+  osfuncwin2, osregistry, {$ENDIF}
   lazutf8, osfilehelper, osSSLPaths;
 
 

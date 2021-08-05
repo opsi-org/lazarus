@@ -634,7 +634,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="64">
+    <Units Count="65">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -919,6 +919,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osSSLPaths"/>
       </Unit63>
+      <Unit64>
+        <Filename Value="osregistry.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit64>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

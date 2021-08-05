@@ -8,13 +8,15 @@ uses
   {$ENDIF}{$ENDIF}
   {$IFDEF WINDOWS}
   windows,
+  registry,
+  osurlparser,
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   process,
   {$ENDIF LINUX}
   Classes, SysUtils, CustApp, inifiles, blowfish, DCPblowfish, DCPcrypt2,
-  DCPblockciphers
-
+  DCPblockciphers,
+  LazUTF8, oscertificates
   { you can add units after this };
 
 const
@@ -60,6 +62,154 @@ begin
 end;
 
 {$IFDEF WINDOWS}
+(*
+function GetRegistryVarList(aktkey: string; noredirect: boolean): TStringList;
+var
+  basekey, relkey, winencodekey: string;
+  Regist: Tregistry;
+  KeyOpenMode: longword;
+  rkey: HKey;
+  resultlist: TStringList;
+  i: integer;
+begin
+  winencodekey := UTF8ToWinCP(aktkey);
+  Result := TStringList.Create;
+  resultlist := TStringList.Create;
+  basekey := copy(winencodekey, 0, Pos('\', winencodekey) - 1);
+  LogDatei.log('basekey : ' + basekey, LLdebug3);
+  relkey := copy(winencodekey, Pos('\', winencodekey) + 1, length(winencodekey));
+  LogDatei.log('relkey : ' + relkey, LLdebug3);
+  if noredirect then
+  begin
+    KeyOpenMode := KEY_READ or KEY_WOW64_64KEY;
+    LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
+  end
+  else
+  begin
+    KeyOpenMode := KEY_READ or KEY_WOW64_32KEY;
+    LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
+  end;
+  try
+    try
+      Regist := Tregistry.Create(KeyOpenMode);
+      if GetHKey(basekey, rkey) then
+      begin
+        regist.RootKey := rkey;
+        if regist.KeyExists(copy(winencodekey, Pos('\', winencodekey) +
+          1, length(winencodekey))) then
+        begin
+          regist.OpenKey(relkey, False);
+          regist.GetValueNames(resultlist);
+          for i := 0 to resultlist.Count - 1 do
+            Result.Add(WinCPToUTF8(resultlist.Strings[i]));
+        end;
+        regist.CloseKey;
+      end
+      else
+        LogDatei.log('Could not get root key from : ' + basekey, LLError);
+    except
+      on e: Exception do
+      begin
+        LogDatei.log('Error: ' + e.message, LLError);
+      end;
+    end
+  finally
+    regist.Free;
+    resultlist.Free;
+    //LogDatei.log('finished6', LLdebug);
+  end;
+end;
+function TuibRegistry.OpenKey(const Key0, Key: string): boolean;
+var
+  rkey: HKEY;
+  dwdisposition: dword = 0;
+  regresult: integer = 0;
+  enckey: string;
+
+begin
+  Result := False;
+  enckey := UTF8ToWinCP(key);
+  if not GetHKEY(Key0, rkey) then
+  begin
+    LogS := 'Error: ' + Key0 + ' not accepted as registry root key';
+    LogDatei.log(LogS, LLNotice);
+  end
+  else
+  begin
+    if keyopened then
+      CloseKey;
+    regresult :=
+      RegCreateKeyEx(rkey, PChar(enckey), 0, nil, reg_option_non_volatile,
+      KeyOpenMode, nil, mykey, @dwDisposition);
+
+    if regresult <> ERROR_SUCCESS then
+    begin
+      LogS := 'Error: Registry key ' + '[' + key0 + '\' + key + '] ' +
+        '  could not be opened by RegCreateKeyEx, ' + ' Errorno: ' +
+        IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
+      LogDatei.log(LogS, LLNotice);
+    end
+    else
+    begin
+      keyopened := True;
+
+      if dwDisposition = reg_created_new_key then
+        LogS := 'created'
+      else
+        LogS := 'opened';
+
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + ']  ' + LogS;
+      LogDatei.log(LogS, LLInfo);
+
+      Result := True;
+    end;
+  end;
+
+  LogDatei.LogSIndentLevel := baseindentlevel + countChar('\', key);
+
+end;
+*)
+
+function addWebdavRegKeys(fqdn : UnicodeString) : boolean;
+var
+  unikey : UnicodeString;
+  Regist: Tregistry;
+  KeyOpenMode: longword;
+begin
+  // WebDAV Size Limit: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters FileSizeLimitInBytes = 0xffffffff
+  // Share Trust: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\<fqdn>@SSL@4447 file = 1
+  try
+    try
+    result := true;
+    unikey := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\'+fqdn+'@SSL@4447';
+      Regist := Tregistry.Create;
+      Regist.RootKey := HKEY_LOCAL_MACHINE;
+      if not Regist.OpenKey('SYSTEM\CurrentControlSet\Services\WebClient\Parameters',true)then
+      begin
+        // failed
+        result := false;
+      end
+      else
+      begin
+        regist.WriteInt64('FileSizeLimitInBytes',$ffffffff);
+      end;
+      if not Regist.OpenKey(unikey,true)then
+      begin
+        // failed
+        result := false;
+      end
+      else
+      begin
+        regist.WriteInt64('file',1);
+      end;
+    except
+      result := false;
+    end;
+  finally
+    regist.Free;
+  end;
+end;
+
 function IsValidDriveLetter(Key: char):Boolean;
 var aVal: integer;
 begin
@@ -71,7 +221,7 @@ begin
   end;
 end;
 
-function mountSmbShare(drive: String; uncPath: String;
+function mountWinShare(drive: String; uncPath: String;
   Username: String; Password: String; RestoreAtLogon: Boolean): DWORD;
 var
   NetResource: TNetResource;
@@ -415,71 +565,14 @@ begin
   result := s;
 end;
 
-(*
-function EncryptBlowfish(const a,key: string): string;
-var Inp, Outp, EC: TStream;
-begin
-   Inp := TStringStream.Create(a);
-   try
-      Outp := TStringStream.Create('');
-      try
-         EC := TBlowFishEncryptStream.Create(Key, Outp);
-         try
-            EC.CopyFrom(Inp, Inp.Size);
-         finally
-            EC.Free; // Destroy automatically calls Flush
-         end;
-         result := TStringStream(Outp).DataString;
-      finally
-         Outp.Free;
-      end;
-   finally
-      Inp.Free;
-   end;
-end;
-
-
-function DecryptBlowfish(const a,key: string): string;
-var Inp, Outp, EC: TStream;
-  mypass : array [0..1023] of char;
-  mybin : array [0..1023] of char;
-  bytesread : integer;
-  myhexpass : string;
-begin
-  // HexToBin(pchar(a),pchar(mybin),sizeof(mybin));
-   Inp := TStringStream.Create(a);
-   try
-      Outp := TStringStream.Create('');
-      try
-         EC := TBlowFishDecryptStream.Create(Key, inp);
-         try
-             repeat
-                bytesread:=EC.Read(mypass[0],Sizeof(mypass[0]));
-                if bytesread<>0 then
-                  //processbuffer(mypass,bytesread);
-                  BinToHex(mypass,pchar(myhexpass),sizeof(mypass));
-                  result := result +  myhexpass;
-              until (bytesread=0);
-            //bytesread := EC.Read(mypass[0],1024);
-         finally
-            EC.Free; // Destroy automatically calls Flush
-         end;
-         //result := string(mypass);
-         //result := TStringStream(Outp).DataString;
-      finally
-         Outp.Free;
-      end;
-   finally
-      Inp.Free;
-   end;
-end;
- *)
-
 
 
 procedure TMyApplication.DoRun;
 var
   ErrorMsg: String;
+  ufqdn : UnicodeString;
+  urllist : TStringlist;
+  regpatch : boolean;
 begin
   //0c76f3e7c5ca30bc
   myexitcode := 0;
@@ -503,8 +596,9 @@ begin
   optionlist.Append('pingtarget:');
   optionlist.Append('network-timeout::');
   {$ENDIF LINUX}
-
   optionlist.Append('share::');
+  optionlist.Append('mount-protocol:');
+
   // quick check parameters
   ErrorMsg:= CheckOptions('',optionlist);
   if ErrorMsg<>'' then begin
@@ -529,7 +623,8 @@ begin
     begin
       myerror := 'Error: Given keyfile: '+mykeyfile+' does not exist.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given keyfile: '+mykeyfile);
     // try to read it as config.ini
     INI := TINIFile.Create(mykeyfile);
     myhostkey := trim(INI.ReadString('shareinfo','pckey',''));
@@ -565,7 +660,8 @@ begin
     begin
       myerror := 'Error: No valid encrypted password given.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given encrypted password: '+myencryptedpass);
   end
   else
   begin
@@ -580,7 +676,8 @@ begin
     begin
       myerror := 'Error: No valid user given.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given user: '+myuser);
   end;
 
   if HasOption('share') then
@@ -590,7 +687,8 @@ begin
     begin
       myerror := 'Error: No valid share given.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given share: '+myshare);
   end
   else
   begin
@@ -607,7 +705,8 @@ begin
     begin
       myerror := 'Error: No valid drive letter given.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given drive: '+mydrive);
   end;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
@@ -618,15 +717,18 @@ begin
     begin
       myerror := 'Error: Given mountpoint: '+mymountpoint+' does not exist.';
       WriteHelp;
-    end;
+    end
+    else writeln('Given mountpoint: '+mymountpoint);
   end;
   if HasOption('pingtarget') then
   begin
     pingtarget := trim(GetOptionValue('pingtarget'));
+    writeln('Given pingtarget: '+pingtarget);
   end;
   if HasOption('network-timeout') then
   begin
     network_timeout_counter_max := StrToInt(trim(GetOptionValue('network-timeout')));
+    writeln('Given network-timeout: '+inttostr(network_timeout_counter_max));
   end;
   {$ENDIF LINUX}
 
@@ -637,7 +739,22 @@ begin
   writevalues;
 
   {$IFDEF WINDOWS}
-  mountresult := mountSmbShare(mydrive+':', myshare, myuser, mypass, false);
+  urllist := parseUrl(myshare);
+  if urllist.Values['Protocol'] = 'https' then
+  begin
+    ufqdn := UTF8ToUTF16(urllist.Values['Host']);
+    writeln('Webdav detected with https: and host: '+urllist.Values['Host']);
+    regpatch := true;
+    if not addWebdavRegKeys(ufqdn) then
+    begin
+      //failed
+      regpatch := false;
+      writeln('Webdav detected - Registry patch failed');
+    end
+    else writeln('Webdav detected - Registry patch success');
+  end;
+  FreeAndNil(urllist);
+  mountresult := mountwinShare(mydrive+':', myshare, myuser, mypass, false);
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   if not (pingtarget = '') then
@@ -703,7 +820,8 @@ begin
   {$IFDEF LINUX}
   writeln(' --mountpoint=path> --> directory to which the share should be mounted (e.g. "/mnt")');
   {$ENDIF LINUX}
-  writeln(' --share=<\\server\share name> -> the share which should be mounted.');
+  writeln(' --share=<\\server\share name> -> the smb share which should be mounted. or');
+  writeln(' --share=<https://<fqdn>:4447/depot> -> the webdav share which should be mounted.');
   {$IFDEF LINUX}
   writeln(' --pingtarget=<IP> --> IP-Adress we will ping to check the network');
   writeln(' --network-timeout=<seconds> --> Seconds we will wait for the network to come up');
@@ -725,4 +843,4 @@ begin
   Application.Run;
   Application.Free;
 end.
-
+

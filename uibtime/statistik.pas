@@ -577,6 +577,7 @@ procedure TFStatistik.BtnTreeSumClick(Sender: TObject);
 var
   searchuserstr: string;
   procedurename: string;
+  sqlstring : string;
 begin
   if RadioGroupReference.ItemIndex = 0 then
     procedurename := 'uibbuild_tmp_treesum_aktevent'
@@ -598,19 +599,26 @@ begin
     ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
+   sqlstring := DataModule1.Query4Result.SQL.Text;
+    sqlstring := sqlstring.Replace(':userid',uid);
+    sqlstring := sqlstring.Replace(':below',ComboBoxAktevent.Text);
+    sqlstring := sqlstring.Replace(':start',edit1.Text);
+    sqlstring := sqlstring.Replace(':stop',edit2.Text);
   if (combobox1.Text = 'Summe Alle') then
   begin
     DataModule1.Query4Result.parambyname('searchuser').AsString := '%';
     searchuserstr := 'für alle.';
+    sqlstring := sqlstring.Replace(':searchuser','%');
   end
   else
   begin
     DataModule1.Query4Result.parambyname('searchuser').AsString := uid;
     searchuserstr := 'für ' + uid;
+    sqlstring := sqlstring.Replace(':searchuser',uid);
   end;
   try
     DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Will execute sql: ' +
-      DataModule1.Query4Result.SQL.Text);
+      sqlstring);
     screen.Cursor := crSQLWait;
     Application.ProcessMessages;
     DataModule1.Query4Result.ExecSQL;
