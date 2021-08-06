@@ -1,0 +1,17 @@
+
+opsinetmount (4.2.0.0) stable; urgency=low
+
+ * add changelog
+ * add webdav mount:
+   * check if share is https url -> webdav
+   * add registry entries for webdav filesize and trusted zones
+ * add new unit oscertificates
+ * import opsi ca to Windows store
+
+-- d.oertel <d.oertel@uib.de> Thu, 29 Jul 2021 15:00
+
+opsinetmount (4.0.2.0) stable; urgency=low
+
+ * Last version without changelog
+
+-- d.oertel <d.oertel@uib.de> Thu, 14 Sep 2020 15:00
