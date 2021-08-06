@@ -25,6 +25,8 @@ interface
 
 uses
 {$IFDEF WINDOWS}
+  oswinacl,
+  JwaWindows,
   JwaWinType,
   jwatlhelp32,
   jwawinbase,
@@ -34,7 +36,6 @@ uses
   JwaAccCtrl,
   JwaProfInfo,
   JwaUserEnv,
-  JwaWindows,
   //JclMiscel,
   //JclBase,
   //JclSecurity,
@@ -5639,6 +5640,8 @@ function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boo
 var
   Attr: integer = 0;
   ErrorNo: integer = 0;
+  userPos : integer;
+  user : AnsiString;
 begin
   Result := True;
   ActionInfo := '';
@@ -5661,6 +5664,20 @@ begin
         ' (' + SysErrorMessage(ErrorNo) + ')';
     end;
   end;
+  if Result = False then
+     begin
+       userPos := Pos(':\Users\',Filename)+8;
+       if userPos > 8 then
+       begin
+         user := copy(Filename, userPos, Pos('\',
+                               copy(Filename, userPos, Length(Filename)- 9))-1);
+         if AddFileACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                                 JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+         LogDatei.log('Access Rights modified', LLInfo);
+       end
+       else
+         LogDatei.log('Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+     end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   if fpAccess(Filename, W_OK) <> 0 then
@@ -11607,61 +11624,5 @@ end;
   var ErrorInfo: string): boolean;
   GetFinalPathNameByHandle()
 *)
-
-{$IFDEF WINDOWS}
-{This function modifies Access Rights of a file under Windows.
-When calling this function, use :
-AccessPermissions : GENERIC_ALL
-AccessMode :  SET_ACCESS
-Inheritance : SUB_CONTAINERS_AND_OBJECTS_INHERIT }
-
-function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
-                AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
-var
-  ExplicitAccess: EXPLICIT_ACCESS;
-  ExistingDacl: ACL;
-  PExistingDacl: jwawindows.PACL;
-  newACL: jwawindows.PACL;
-  mySD: jwawindows.SECURITY_DESCRIPTOR;
-  pSD : jwawindows.PSECURITY_DESCRIPTOR;
-  errorstr: String;
-  myDWord: DWord = 1;
-begin
-  logdatei.log('-- Entering AddFileACL function -- ', LLinfo);
-  newACL := nil;
-  pSD := @mySD;
-  PExistingDacl := @ExistingDacl;
-  Result := False;
-  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), jwawindows.SE_FILE_OBJECT,
-                DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
-  if myDWord = ERROR_SUCCESS then
-  begin
-    logdatei.log('First Success 1/3 : GetNamedSecurityInfo ', LLinfo);
-    BuildExplicitAccessWithName(@ExplicitAccess, pAnsiChar(TrusteeName),
-                                    AccessPermissions, AccessMode, Inheritance);
-    myDWord := SetEntriesInAcl(1, @ExplicitAccess, PExistingDacl, newACL);
-    if myDWord = ERROR_SUCCESS then
-    begin
-      logdatei.log('Second Success 2/3 : SetEntriesInAcl', LLinfo);
-      try
-        myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
-              jwawindows.SE_FILE_OBJECT, jwawindows.DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
-        if myDWord = ERROR_SUCCESS then
-        begin
-          logdatei.log('Third Success 3/3 : SetNamedSecurityInfo ', LLinfo);
-          Result := True;
-        end;
-      except
-        on e: Exception do
-        begin
-          errorstr := e.ClassName + ' -- ' + e.Message;
-          writeln(errorstr);
-        end;
-      end;
-    end;
-  end;
-  logdatei.log('-- Finishing AddFileACL function -- ', LLinfo);
-end;
-{$ENDIF WINDOWS}
 
 end.
