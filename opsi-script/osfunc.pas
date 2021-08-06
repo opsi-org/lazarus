@@ -5674,6 +5674,7 @@ begin
          if AddFileACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
                                  JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
          LogDatei.log('Access Rights modified', LLInfo);
+         Result := True;
        end
        else
          LogDatei.log('Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
