@@ -70,11 +70,18 @@ end;
 var
   user : String;
   fileName: String;
+  userPos : integer;
 
 begin
-  user := 'Jinene';
+  //user := 'Jinene';
   fileName :=
     'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
+
+  userPos := Pos(':\Users\',Filename)+8;
+  if userPos > 8 then
+     user := copy(Filename, userPos, Pos('\', copy(Filename, userPos, Length(Filename)- 9))-1)
+  else
+     writeln('Retrieving userProfile from FilePath failed');
 
   if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
   begin
