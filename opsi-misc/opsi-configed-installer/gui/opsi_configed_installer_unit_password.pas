@@ -59,7 +59,11 @@ type
   end;
 
 const
+  {$IFDEF DARWIN}
+  logPath = '../../../../../opsi-configed-installer-configed.log';
+  {$ELSE}
   logPath = '/var/log/opsi-configed-installer-configed.log';
+  {$ENDIF}
 
 var
   Password: TPassword;
@@ -133,11 +137,11 @@ end;
 // install opsi server with thread (only the time consuming parts of the installation)
 procedure TMyThread.installConfiged;
 begin
-  FInstallRunCommand.Run(FShellCommand + 'update', Output);
   {$IFDEF DARWIN}
-  FInstallRunCommand.Run('./opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' +
-    logPath, Output);
+  FInstallRunCommand.Run(
+    'open ../../../../../../../../Applications/opsi-script.app/ --args -batch ../Users/schmitz/Test/opsi-configed-installer/CLIENT_DATA/setup.opsiscript -logfile ..' + ExtractFilePath(ParamStr(0)) + logPath, Output);
   {$ELSE}
+  FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
   //FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
   FInstallRunCommand.Run('opsi-script -batch ../CLIENT_DATA/setup.opsiscript ' +
@@ -166,8 +170,8 @@ end;
 procedure TPassword.showResult;
 var
   FileText: TStringList;
-  configedResult: boolean;
-  i: integer;
+  //configedResult: boolean;
+  //i: integer;
 begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
@@ -179,7 +183,7 @@ begin
   //  if Pos('script finished: success', FileText[i]) > 0 then
   //    configedResult := True;
   //end;
-  if not Pos('script finished: success', FileText[FileText.Count-6]) > 0 then
+  if not Pos('script finished: success', FileText[FileText.Count - 6]) > 0 then
   begin
     ExitCode := 1;
     LogDatei.log('configed installation failed', 1);
@@ -194,7 +198,7 @@ begin
     FileText.Add('success');
   end;
   //ShowMessage(ExitCode.ToString);
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
+  ShowMessage(FileText.Text + #10 + rsLog + #10 + logPath +
     #10 + ConfigedInstaller.logFileName);
   FileText.Free;
 end;

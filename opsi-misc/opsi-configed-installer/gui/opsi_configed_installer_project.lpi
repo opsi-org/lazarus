@@ -91,6 +91,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
@@ -100,14 +103,10 @@
     <Other>
       <CustomOptions Value="-dSYNAPSE
 -dGUI"/>
-      <OtherDefines Count="2">
-        <Define0 Value="SYNAPSE"/>
-        <Define1 Value="GUI"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="4">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -117,6 +116,9 @@
       <Item3>
         <Name Value="EFOpenError"/>
       </Item3>
+      <Item4>
+        <Name Value="EProcess"/>
+      </Item4>
     </Exceptions>
   </Debugging>
 </CONFIG>
