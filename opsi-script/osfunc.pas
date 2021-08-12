@@ -25,6 +25,8 @@ interface
 
 uses
 {$IFDEF WINDOWS}
+  oswinacl,
+  JwaWindows,
   JwaWinType,
   jwatlhelp32,
   jwawinbase,
@@ -5638,12 +5640,37 @@ function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boo
 var
   Attr: integer = 0;
   ErrorNo: integer = 0;
+  userPos : integer;
+  user : AnsiString;
 begin
+  LogDatei.log('---FileGetWriteAccess is called', LLInfo);
   Result := True;
   ActionInfo := '';
   if not FileExists(Filename) then
     exit;
   {$IFDEF WINDOWS}
+  // Adding file access rights to 'SYSTEM'
+  LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for SYSTEM', LLInfo);
+  if AddAccessRightsToACL(Filename, 'SYSTEM', JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                      JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+     LogDatei.log('Access Rights modified and granted to SYSTEM', LLInfo);
+
+  // Adding file access rights to <user>
+  LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for user', LLInfo);
+  userPos := Pos(':\Users\',Filename)+8;
+  if userPos > 8 then
+  begin
+     user := copy(Filename, userPos, Pos('\',
+                           copy(Filename, userPos, Length(Filename)- 9))-1);
+     if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                      JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+     LogDatei.log('---Access Rights modified and granted to '+user, LLInfo);
+  end
+  else
+     LogDatei.log('---Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+
+  // manipulating file attributes
+  LogDatei.log('---FileGetWriteAccess is calling FileGetAttr', LLInfo);
   Attr := SysUtils.FileGetAttr(Filename);
   if Attr and faReadOnly = faReadOnly then
   begin
@@ -5660,6 +5687,22 @@ begin
         ' (' + SysErrorMessage(ErrorNo) + ')';
     end;
   end;
+  if Result = False then
+     begin
+       LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for user after FileSetAttr', LLInfo);
+       userPos := Pos(':\Users\',Filename)+8;
+       if userPos > 8 then
+       begin
+         user := copy(Filename, userPos, Pos('\',
+                               copy(Filename, userPos, Length(Filename)- 9))-1);
+         if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                                 JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+         LogDatei.log('---Access Rights granted for user '+ user, LLInfo);
+         Result := True;
+       end
+       else
+         LogDatei.log('---Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+     end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   if fpAccess(Filename, W_OK) <> 0 then
@@ -5816,8 +5859,22 @@ begin
       //pSourceFilename := PointerAufString(UTF8ToWinCP(sourcefilename));
       //pTargetFilename := PointerAufString(UTF8ToWinCP(targetfilename));
 
-
       //logdatei.DependentAdd('Before copy: '+SourceFilename, LLDebug);
+
+      if AddAccessRightsToACL(pTargetFilename,'SYSTEM', JwaWindows.GENERIC_ALL,
+        JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT ) = True then
+      logdatei.log('---AccessRights of '+ pTargetFilename+' granted to SYSTEM' ,LLInfo)
+      else
+      logdatei.log('---AccessRights of '+ pTargetFilename+' not modified for SYSTEM',LLInfo);
+
+      if fileExists(pTargetFilename) then
+        begin
+        logdatei.log('---TargetFile exists, calling FileGetWriteAcces', LLInfo);
+        Result := FileGetWriteAccess(pTargetFilename, problem);
+        end
+      else
+        logdatei.log('---TargetFile does not exist',LLInfo);
+
       Result := Windows.copyFileW(pSourceFilename, pTargetFilename, False);
       LastError := GetLastError;
       logdatei.log('After copy: ' + SourceFilename + ' LastError: ' +
@@ -11606,4 +11663,5 @@ end;
   var ErrorInfo: string): boolean;
   GetFinalPathNameByHandle()
 *)
+
 end.

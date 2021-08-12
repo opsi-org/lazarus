@@ -1584,7 +1584,7 @@ end;
 
 function readFirstLineFromFile(filename: string): string;
 var
-  myfile: Text;
+  myfile: Textfile;
   myresult: string;
 begin
   try
