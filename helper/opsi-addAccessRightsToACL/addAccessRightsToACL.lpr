@@ -1,5 +1,5 @@
 {This program is a prototype to test modifying Access Rights
-of a file under Windows, using the ACL Windows API
+of a file or directory under Windows, using the ACL Windows API
 
 We use in this example :
 AccessPermissions : GENERIC_ALL
@@ -7,7 +7,7 @@ AccessMode :  SET_ACCESS
 Inheritance : SUB_CONTAINERS_AND_OBJECTS_INHERIT }
 
 
-program fileAccessRights;
+program addAccessRightsToACL;
 
 {$mode objfpc}{$H+}
 
@@ -17,7 +17,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   SysUtils,
   JwaWindows;
 
-function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
+function AddAccessRightsToACL(TargetPath, TrusteeName: AnsiString; AccessPermissions: DWord;
                 AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
 var
   ExplicitAccess: EXPLICIT_ACCESS;
@@ -29,12 +29,12 @@ var
   errorstr: String;
   myDWord: DWord = 1;
 begin
-  writeln('-- Entering AddFileACL function -- ');
+  writeln('-- Entering AddingAccessRightsToACL function -- ');
   newACL := nil;
   pSD := @mySD;
   PExistingDacl := @ExistingDacl;
   Result := False;
-  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
+  myDWord := GetNamedSecurityInfo(pAnsiChar(TargetPath), SE_FILE_OBJECT,
                 DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
   if myDWord = ERROR_SUCCESS then
   begin
@@ -47,7 +47,7 @@ begin
     begin
       writeln('Second Success 2/3 : SetEntriesInAcl');
       try
-        myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
+        myDWord := SetNamedSecurityInfo(pAnsiChar(TargetPath),
               SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
         if myDWord = ERROR_SUCCESS then
         begin
@@ -64,35 +64,47 @@ begin
       end;
     end;
   end;
-  writeln('-- Finishing AddFileACL function -- ');
+  writeln('-- Finishing AddingAccessRightsToACL function -- ');
 end;
 
 var
   user : String;
-  fileName: String;
+  TargetPath: String;
   userPos : integer;
 
 begin
   //user := 'Jinene';
-  fileName :=
-    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-fileAccessRights\fileAccessRights-test.txt';
 
-  userPos := Pos(':\Users\',Filename)+8;
+  //Testing on a file:
+
+  TargetPath :=
+   'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-addAccessRightsToACL\tests\fileAccessRights-test.txt';
+
+  if FileExists(TargetPath) then
+  begin
+
+  userPos := Pos(':\Users\',TargetPath)+8;
   if userPos > 8 then
-     user := copy(Filename, userPos, Pos('\', copy(Filename, userPos, Length(Filename)- 9))-1)
+     user := copy(TargetPath, userPos, Pos('\', copy(TargetPath, userPos, Length(TargetPath)- 9))-1)
   else
      writeln('Retrieving userProfile from FilePath failed');
 
-  if fileOpen(fileName, fmOpenReadWrite) = THandle(-1) then
+  if fileOpen(TargetPath, fmOpenReadWrite) = THandle(-1) then
   begin
     writeln('No access rights : fileOpenReadWrite returned error THandle(-1)');
-    if AddFileACL(fileName, user, GENERIC_ALL, SET_ACCESS,
+    if AddAccessRightsToACL(TargetPath, user, GENERIC_ALL, SET_ACCESS,
                     SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
-      if (fileOpen(fileName, fmOpenReadWrite) <> THandle(-1)) then
+      if (fileOpen(TargetPath, fmOpenReadWrite) <> THandle(-1)) then
          writeln('Access rights modified : fileOpenReadWrite succeeded !')
       else
         writeln('Access rights not modified : fileOpenReadWrite returned error THandle(-1)');
   end
   else
     writeln('Already have access rights : fileOpen without error');
+
+  end
+  else
+    writeln('Target file : '+ TargetPath+' does not exist');
+
 end.
+
