@@ -439,8 +439,13 @@ begin
       LogDatei.log('XMLDoc created from Stringlist', LLinfo);
       createXmlDocFromStringlist := True;
     except
-      LogDatei.log('createXmlDocFromStringlist failed: XMLDoc create from Stringlist',
+      on e: Exception do
+      begin
+        LogDatei.log('createXmlDocFromStringlist failed: XMLDoc create from Stringlist',
         LLerror);
+        LogDatei.log('Exception in createXmlDocFromStringlist: ' +
+           E.ClassName + ': ' + E.Message, LLerror);
+      end;
     end;
   finally
     if Assigned(mystream) then
@@ -2241,6 +2246,7 @@ var
   error: boolean;
   localAttributeList: TStringList;
   localAtrribute, value1, value2: string;
+  localAtrributeIndex : Integer;
 begin
   Result := True;
   try
@@ -2260,10 +2266,14 @@ begin
       attributeStringList.Clear;
       i := 1;
       error := False;
+      // this will fail with some thing like 'name="Update Check"'
+      // so we have to look for the second part
       stringsplitByWhiteSpace(attributePath, localAttributeList);
-      for i := 0 to localAttributeList.Count - 1 do
+      //for i := 0 to localAttributeList.Count - 1 do
+      localAtrributeIndex := 0;
+      while localAtrributeIndex <= localAttributeList.Count - 1 do
       begin
-        localAtrribute := trim(localAttributeList[i]);
+        localAtrribute := trim(localAttributeList[localAtrributeIndex]);
         if (localAtrribute <> '') then
         begin
           // check syntax:
@@ -2277,12 +2287,19 @@ begin
               value2 := opsiunquotestr2(value1, '"');
               if value1 <> '"' + value2 + '"' then
               begin
+                // may be we have a whitespce in the attribute value - let us try to fix
+                inc(localAtrributeIndex);
+                value1 := value1 + trim(localAttributeList[localAtrributeIndex]);
+                value2 := opsiunquotestr2(value1, '"');
+              if value1 <> '"' + value2 + '"' then
+              begin
                 errormessage :=
                   'Error: makeAttributesSL: attributePath syntax Error: quoting error in: ' +
                   attributePath + ' value is. ' + value1;
                 logdatei.log(errormessage, LLERROR);
                 Result := False;
                 exit;
+              end;
               end;
             end;
           end
@@ -2299,6 +2316,7 @@ begin
           if Result then
             AttributeStringList.Add(localAtrribute);
         end;
+        inc(localAtrributeIndex);
       end;
     end;
   finally

@@ -33,6 +33,7 @@ uses
   osfuncwin3,
   oswmi,
   osswaudit,
+  shlwapi,
 {$IFDEF WIN32}
   DSiWin32,
   osfuncwin2,
@@ -7412,8 +7413,9 @@ var
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     goOn: boolean = True;
-    regexMatchList: TStringList;
+    regexMatchList, helperlist: TStringList;
     rootnodeOnCreate: string;
+    infostr : string = '';
 
   begin
 
@@ -7461,6 +7463,7 @@ var
     begin
       LogDatei.log('file to patch does not exist and will be created: ' +
         myfilename, LLinfo);
+      try
       rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
       if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
       begin
@@ -7469,9 +7472,14 @@ var
           LLWarning);
         rootnodeOnCreate := 'rootnode';
       end;
+      helperlist:= TStringList.Create;
       PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
       PatchListe.Add('<' + rootnodeOnCreate + '>');
-      PatchListe.Add('</' + rootnodeOnCreate + '>');
+      stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
+      PatchListe.Add('</' + helperlist.Strings[0]  + '>');
+      finally
+        helperlist.Free;
+      end;
     end;
     //PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
 
@@ -7496,9 +7504,9 @@ var
 
     // open XML file with encoding
     if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
-      LogDatei.log('success: create xmldoc from file: ' + myfilename, oslog.LLinfo)
+      LogDatei.log('success: create xmldoc from / for file: ' + myfilename, oslog.LLinfo)
     else
-      LogDatei.log('failed: create xmldoc from file: ' + myfilename, oslog.LLError);
+      LogDatei.log('failed: create xmldoc from / for file: ' + myfilename, oslog.LLError);
 
     // parse section
     for i := 1 to Sektion.Count do
@@ -8019,7 +8027,9 @@ var
       PatchListe.Text := stringReplaceRegexInList(PatchListe,
         'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
     try
-      PatchListe.SaveToFile(myfilename, flag_encoding);
+      FileGetWriteAccess(myfilename,infostr);
+      // call saveToFile with raise_on_error = true - to catch problems
+      PatchListe.SaveToFile(myfilename, flag_encoding,true);
       LogDatei.log('Successfully saved XML doc to file: ' + myfilename +
         ' with encoding : ' + flag_encoding, LLinfo)
     except
@@ -17713,6 +17723,7 @@ var
     try
       try
         Result := FileExists(s2) or DirectoryExists(s2);
+        //Result := shlwapi.PathFileExistsW(PWideChar(UTF8ToUTF16(s2)));
         if (not Result) and (not (trim(s2) = '')) then
         begin
           LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
