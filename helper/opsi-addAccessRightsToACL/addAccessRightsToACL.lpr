@@ -15,7 +15,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   SysUtils,
-  JwaWindows;
+  JwaWindows,
+  shlwapi;
 
 function AddAccessRightsToACL(TargetPath, TrusteeName: AnsiString; AccessPermissions: DWord;
                 AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
@@ -63,7 +64,10 @@ begin
         end;
       end;
     end;
-  end;
+  end
+  else
+    Writeln(SysErrorMessage( myDWord) );
+
   writeln('-- Finishing AddingAccessRightsToACL function -- ');
 end;
 
@@ -76,11 +80,10 @@ begin
   //user := 'Jinene';
 
   //Testing on a file:
-
   TargetPath :=
    'C:\Users\Jinene\Documents\gituib\lazarus\helper\opsi-addAccessRightsToACL\tests\fileAccessRights-test.txt';
 
-  if FileExists(TargetPath) then
+  if (PathFileExistsA(PChar(TargetPath)) = True) then
   begin
 
   userPos := Pos(':\Users\',TargetPath)+8;
