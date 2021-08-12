@@ -5,9 +5,9 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.27) stable; urgency=low
 
- *
+ * new generic section parameter /AllUserProfiles (as alias for /AllNTUserProfiles)
 
--- d.oertel <d.oertel@uib.de> Thu, 29 Jul 2021 15:00
+-- d.oertel <d.oertel@uib.de> Thu, 12 Aug 2021 15:00
 
 opsi-script (4.12.4.26) stable; urgency=low
 

@@ -612,6 +612,14 @@ const
   NameProfileActionsSection = 'ProfileActions';
   //NameAktionenSektion2              = 'Actions';
 
+  (* Generic parameters *)
+  Parameter_64Bit = '/64Bit';
+  Parameter_32Bit = '/32Bit';
+  Parameter_SysNative = '/SysNative';
+  ParameterEncoding = '/encoding';
+  Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
+  Parameter_AllUserProfiles = '/AllUserProfiles';
+
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
   Parameter_RegeditFormat = '/Regedit';
@@ -626,12 +634,7 @@ const
 
   (* File section parameters *)
   Parameter_AllNTUserSendTo = '/AllNTUserSendTo';
-  Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllNTUser = '/AllNTUser';
-  Parameter_64Bit = '/64Bit';
-  Parameter_32Bit = '/32Bit';
-  Parameter_SysNative = '/SysNative';
-  ParameterEncoding = '/encoding';
 
   (* 'WinBatch' *)
   ParameterDontWait = '/LetThemGo';
@@ -3044,6 +3047,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
+     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -8054,6 +8058,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
+     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -9060,6 +9065,7 @@ begin
    {$ENDIF WIN32}
 
   if (0 < pos(lowercase(Parameter_AllNTUserProfiles), lowercase(CopyParameter))) or
+     (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -23291,8 +23297,13 @@ begin
                   if skip(Parameter_AllNTUserProfiles, Remaining,
                     Remaining, ErrorInfo) then
                     flag_all_ntuser := True
-
                   else
+
+                  if skip(Parameter_AllUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+                  else
+
                   if skip('/encoding', Remaining, Remaining, ErrorInfo)
                   then
                   begin
@@ -23360,8 +23371,13 @@ begin
                   if skip(Parameter_AllNTUserProfiles, Remaining,
                     Remaining, ErrorInfo) then
                     flag_all_ntuser := True
-
                   else
+
+                  if skip(Parameter_AllUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+                  else
+
                   if skip('/encoding', Remaining, Remaining, ErrorInfo)
                   then
                   begin
@@ -23467,6 +23483,12 @@ begin
                     Remaining, ErrorInfo) then
                     flag_all_ntuser := True
                   else
+
+                  if skip(Parameter_AllUserProfiles, Remaining,
+                    Remaining, ErrorInfo) then
+                    flag_all_ntuser := True
+                  else
+
                   if skip('/encoding', Remaining, Remaining, ErrorInfo) then
                   begin
                     if not EvaluateString(Remaining, Remaining,
