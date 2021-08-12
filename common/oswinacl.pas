@@ -9,19 +9,24 @@ uses
   JwaWindows;
 
 
-function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
+function AddAccessRightsToACL(TargetPath, TrusteeName: AnsiString; AccessPermissions: DWord;
                 AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
 
 implementation
 
 {$IFDEF WINDOWS}
-{This function modifies Access Rights of a file under Windows.
+{This function adds Access Rights to a file or directory ACL under Windows.
 When calling this function, use :
 AccessPermissions : GENERIC_ALL
 AccessMode :  SET_ACCESS
-Inheritance : SUB_CONTAINERS_AND_OBJECTS_INHERIT }
+Inheritance : SUB_CONTAINERS_AND_OBJECTS_INHERIT
 
-function AddFileACL(Filename, TrusteeName: AnsiString; AccessPermissions: DWord;
+Example of calling this function :
+if AddAccessRightsToACL(FilePath, 'SYSTEM', GENERIC_ALL, SET_ACCESS,
+                     SUB_CONTAINERS_AND_OBJECTS_INHERIT ) = True then
+}
+
+function AddAccessRightsToACL(TargetPath, TrusteeName: AnsiString; AccessPermissions: DWord;
                 AccessMode: ACCESS_MODE; Inheritance: DWord): boolean; stdcall;
 var
   ExplicitAccess: EXPLICIT_ACCESS;
@@ -33,12 +38,12 @@ var
   errorstr: String;
   myDWord: DWord = 1;
 begin
-  //logdatei.log('-- Entering AddFileACL function -- ', LLinfo);
+  //logdatei.log('-- Entering AddAccessRightsToACL function -- ', LLinfo);
   newACL := nil;
   pSD := @mySD;
   PExistingDacl := @ExistingDacl;
   Result := False;
-  myDWord := GetNamedSecurityInfo(pAnsiChar(Filename), SE_FILE_OBJECT,
+  myDWord := GetNamedSecurityInfo(pAnsiChar(TargetPath), SE_FILE_OBJECT,
                 DACL_SECURITY_INFORMATION, nil, nil, @PExistingDacl, nil, pSD);
   if myDWord = ERROR_SUCCESS then
   begin
@@ -50,7 +55,7 @@ begin
     begin
       //logdatei.log('Second Success 2/3 : SetEntriesInAcl', LLinfo);
       try
-        myDWord := SetNamedSecurityInfo(pAnsiChar(Filename),
+        myDWord := SetNamedSecurityInfo(pAnsiChar(TargetPath),
                 SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nil, nil, newACL, nil);
         if myDWord = ERROR_SUCCESS then
         begin
@@ -66,7 +71,7 @@ begin
       end;
     end;
   end;
-  //logdatei.log('-- Finishing AddFileACL function -- ', LLinfo);
+  //logdatei.log('-- Finishing AddAccessRightsToACL function -- ', LLinfo);
 end;
 {$ENDIF WINDOWS}
 
