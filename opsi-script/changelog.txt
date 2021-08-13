@@ -8,6 +8,10 @@ opsi-script (4.12.4.27) stable; urgency=low
  * new generic section parameter /AllUserProfiles (as alias for /AllNTUserProfiles)
  * osxmlsections: fixes for creating not existing file
  * osparser: doXMLPatcg2Main: check acces rights and for successful savetofile
+ * osparser: handleFileExists32: fileexists for win also via shlwapi.PathFileExistsW
+ * new unit oswinacl with function AddAccessRightsToACL
+ * osfunc: FileGetWriteAccess calls at windows also AddAccessRightsToACL
+ * osencoding: saveTextFileWithEncoding: ForceDirectories for output
 
 -- d.oertel <d.oertel@uib.de> Thu, 12 Aug 2021 15:00
 

@@ -13,6 +13,8 @@ uses
 function resolveUnixSymlink(filepath: string;
   recursive: boolean = True): string;
 
+function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
+
 implementation
 
 function resolveUnixSymlink(filepath: string;
@@ -51,5 +53,15 @@ begin
   else // return filepath also if filepath does not exists
     Result := filepath;
 end;
+
+function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
+  { for Host = '' Username will become the name of the current user of the process }
+
+begin
+  //###LINUX
+  Result := True;
+  Username := getCommandResult('/bin/bash -c whoami');
+end;
+
 
 end.

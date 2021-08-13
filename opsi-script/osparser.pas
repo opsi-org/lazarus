@@ -592,8 +592,8 @@ function GetMACAddress2: string;
 function FindKindOfStatement(const Statement: string;
   var SectionSpecifier: TSectionSpecifier; const completeCall: string): TStatement;
 
-
-function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
+// moved to osfuncwin / osfuncunix
+//function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
 (* for Host = '' Username will become the name of the current user of the process *)
 
 
@@ -1720,6 +1720,7 @@ end;
 
 
 {$IFDEF WINDOWS}
+(* moved to osfuncwin
 function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
   { for Host = '' Username will become the name of the current user of the process }
 
@@ -1795,8 +1796,10 @@ begin
   else
     Result := False;
 end;
+*)
 
 {$ELSE WINDOWS}
+(* moved to osfuncunix
 function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
   { for Host = '' Username will become the name of the current user of the process }
 
@@ -1805,7 +1808,7 @@ begin
   Result := True;
   Username := getCommandResult('/bin/bash -c whoami');
 end;
-
+ *)
 {$ENDIF WINDOWS}
 
 constructor TWorkSection.Create(const NestLevel: integer;
@@ -17727,6 +17730,8 @@ var
         if (not Result) and (not (trim(s2) = '')) then
         begin
           LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
+          // let us retry with the win api call
+          Result := shlwapi.PathFileExistsW(PWideChar(UTF8ToUTF16(s2)));
         end;
       except
         Result := False;

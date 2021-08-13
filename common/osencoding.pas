@@ -747,6 +747,9 @@ begin
     encoding := 'system';
   end;
 
+  // make sure that the output directory exists
+  ForceDirectories(ExtractFileDir(outFileName));
+
   if isEncodingUnicode(encoding) then
     saveUnicodeTextFile(inlist, outFileName, encoding)
   else

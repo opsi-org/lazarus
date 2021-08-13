@@ -5642,35 +5642,43 @@ var
   ErrorNo: integer = 0;
   userPos : integer;
   user : AnsiString;
+  runninguser : string;
 begin
-  LogDatei.log('---FileGetWriteAccess is called', LLInfo);
+  LogDatei.log_prog('start FileGetWriteAccess', LLInfo);
   Result := True;
   ActionInfo := '';
   if not FileExists(Filename) then
     exit;
   {$IFDEF WINDOWS}
-  // Adding file access rights to 'SYSTEM'
-  LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for SYSTEM', LLInfo);
-  if AddAccessRightsToACL(Filename, 'SYSTEM', JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+  // Adding file access rights to running user (e.g. system)
+  GetNetUser('', runninguser, ActionInfo);
+  LogDatei.log_prog('FileGetWriteAccess is calling AddAccessRightsToACL for :'+runninguser, LLInfo);
+  if AddAccessRightsToACL(Filename, runninguser, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
                       JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
-     LogDatei.log('Access Rights modified and granted to SYSTEM', LLInfo);
+     LogDatei.log('Access Rights (file) modified and granted to :'+runninguser, LLDebug);
+  if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                      JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+     LogDatei.log('Access Rights (dir) modified and granted to :'+runninguser, LLDebug);
 
-  // Adding file access rights to <user>
-  LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for user', LLInfo);
+  // does the file path points to a user profile ?
   userPos := Pos(':\Users\',Filename)+8;
   if userPos > 8 then
   begin
+     // we are do it for a user profile - so we give the access rights also for this user
      user := copy(Filename, userPos, Pos('\',
                            copy(Filename, userPos, Length(Filename)- 9))-1);
+   // Adding file access rights to <user>
+  LogDatei.log_prog('FileGetWriteAccess is calling AddAccessRightsToACL for :'+user, LLInfo);
      if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
                       JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
-     LogDatei.log('---Access Rights modified and granted to '+user, LLInfo);
-  end
-  else
-     LogDatei.log('---Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+     LogDatei.log_prog('Access Rights modified and granted to '+user, LLInfo);
+  end;
+  // else: we assume that the file is not in a user profile
+  //else
+  //   LogDatei.log_prog('FileGetWriteAccess: Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
 
   // manipulating file attributes
-  LogDatei.log('---FileGetWriteAccess is calling FileGetAttr', LLInfo);
+  LogDatei.log_prog('FileGetWriteAccess is calling FileGetAttr', LLDebug);
   Attr := SysUtils.FileGetAttr(Filename);
   if Attr and faReadOnly = faReadOnly then
   begin
@@ -5687,6 +5695,7 @@ begin
         ' (' + SysErrorMessage(ErrorNo) + ')';
     end;
   end;
+  (* I think we do not need this anymore (do 13.8.21)
   if Result = False then
      begin
        LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for user after FileSetAttr', LLInfo);
@@ -5703,6 +5712,7 @@ begin
        else
          LogDatei.log('---Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
      end;
+     *)
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   if fpAccess(Filename, W_OK) <> 0 then
@@ -5722,7 +5732,7 @@ end;
 function FileCopyWin
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-  { RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen }
+  // RebootWanted may be switched perhaps to true (copy on reboot) and will be normally not changed
 
 var
   //Date: longint;
@@ -5748,13 +5758,9 @@ var
   begin
     Result := True;
 
-    // ggfs. Datei schreibbar machen
-    Attr := SysUtils.FileGetAttr(ptargetfilename);
-    if Attr and faReadOnly = faReadOnly then
-    begin
-      Result := FileGetWriteAccess(ptargetfilename, problem);
+    // make file writable
+      Result := FileGetWriteAccess(UTF16ToUTF8(ptargetfilename), problem);
       problem1 := problem;
-    end;
 
     handle := CreateFileW(ptargetfilename, GENERIC_WRITE, FILE_SHARE_WRITE,
       nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -5772,8 +5778,8 @@ var
          and not the target, therefore give the host some time to manage things} do
     begin
       Inc(retries);
-      CentralForm.TimerWaitSet(100); // Zehntel-Sekunden-Intervalle
-      while not CentralForm.TimerWaitReady(10) // 10 Zehntelsekunden verstrichen?
+      CentralForm.TimerWaitSet(100); // interval of 1/10 seconds
+      while not CentralForm.TimerWaitReady(10) // 10 intervals over ?
         do
         ProcessMess;
 
@@ -5809,7 +5815,7 @@ var
         SysUtils.FilesetAttr(ptargetfilename, attr);
         if problem = problem1 then
           problem := '';
-        // Schreibattribute zur�cksetzen;
+        // reset write attributes
       end;
 
     end;
@@ -5856,24 +5862,23 @@ begin
       if not Result then
         exit;
 
-      //pSourceFilename := PointerAufString(UTF8ToWinCP(sourcefilename));
-      //pTargetFilename := PointerAufString(UTF8ToWinCP(targetfilename));
-
       //logdatei.DependentAdd('Before copy: '+SourceFilename, LLDebug);
 
+      (* I think we do not need this anymore (do 13.8.21)
       if AddAccessRightsToACL(pTargetFilename,'SYSTEM', JwaWindows.GENERIC_ALL,
         JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT ) = True then
       logdatei.log('---AccessRights of '+ pTargetFilename+' granted to SYSTEM' ,LLInfo)
       else
       logdatei.log('---AccessRights of '+ pTargetFilename+' not modified for SYSTEM',LLInfo);
-
+      *)
       if fileExists(pTargetFilename) then
         begin
-        logdatei.log('---TargetFile exists, calling FileGetWriteAcces', LLInfo);
+        //logdatei.log_prog('---TargetFile exists, calling FileGetWriteAcces', LLInfo);
         Result := FileGetWriteAccess(pTargetFilename, problem);
         end
       else
-        logdatei.log('---TargetFile does not exist',LLInfo);
+        //logdatei.log('---TargetFile does not exist',LLInfo)
+        ;
 
       Result := Windows.copyFileW(pSourceFilename, pTargetFilename, False);
       LastError := GetLastError;
@@ -5883,13 +5888,12 @@ begin
 
       if Result then
       begin
-        // setze Zeitstempel des targetfile auf den Wert der source
+        // set timestamp of target to the value of source
         Result := setTimeForFile(pTargetFilename, plastwritetime);
       end;
 
       if (not Result) and (LastError = 32)
         { file is being used by another process } and DelayUntilRebootIfNeeded then
-        { Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert }
       begin
         if GetOSId = VER_PLATFORM_WIN32_NT then
         begin
@@ -5920,9 +5924,9 @@ begin
                  and not the target, therefore give the host some time to manage things} do
             begin
               Inc(retries);
-              CentralForm.TimerWaitSet(100); // Zehntel-Sekunden-Intervalle
+              CentralForm.TimerWaitSet(100); // interval of 1/10 seconds
               while not CentralForm.TimerWaitReady(10)
-                // 10 Zehntelsekunden verstrichen?
+                // 10 intervals over ?
                 do
                 ProcessMess;
 
@@ -5944,7 +5948,7 @@ begin
             logdatei.log('copy of: ' + SourceFilename + ' to ' +
               NewTargetFilename + ' done.',
               LLDebug2);
-            // setze Zeitstempel des targetfile auf den Wert der source
+            // set timestamp of target to the value of source
 
             Result := setTimeForFile(pNewTargetFilename, plastwritetime);
 

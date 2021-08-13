@@ -442,9 +442,9 @@ begin
       on e: Exception do
       begin
         LogDatei.log('createXmlDocFromStringlist failed: XMLDoc create from Stringlist',
-        LLerror);
+          LLerror);
         LogDatei.log('Exception in createXmlDocFromStringlist: ' +
-           E.ClassName + ': ' + E.Message, LLerror);
+          E.ClassName + ': ' + E.Message, LLerror);
       end;
     end;
   finally
@@ -1131,8 +1131,7 @@ begin
               found := False;
               LogDatei.log('opennode: node with attributes_strict not found ' +
                 IntToStr(i) + ': nodename: ' + thisnodeName +
-                ', check nodename and attributes - exit function', LLwarning
-                );
+                ', check nodename and attributes - exit function', LLInfo);
               // failed - make all final settings
               Result := False;
               attributeList.Free;
@@ -1203,8 +1202,8 @@ begin
   attributesSL := TStringList.Create;
   try
     try
-      for i := 0 to length(nodesInPath) -1 do
-         nodesInPath[i] := nil;
+      for i := 0 to length(nodesInPath) - 1 do
+        nodesInPath[i] := nil;
       // the root node
       nodesInPath[0] := XML.DocumentElement;
       stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
@@ -1288,8 +1287,7 @@ begin
             found := False;
             LogDatei.log('opennode: node with attributes_strict not found ' +
               IntToStr(i) + ': nodename: ' + thisnodeName +
-              ', check nodename and attributes - exit function', LLwarning
-              );
+              ', check nodename and attributes - exit function', LLInfo);
             // failed - make all final settings
             Result := False;
             attributeList.Free;
@@ -1685,8 +1683,8 @@ procedure TuibXMLDocument.delNode(nodePath: string; attributes_strict: boolean;
 var
   removeNode: TDOMNode;
 begin
-  LogDatei.log('delnode: strict: ' + BoolToStr(attributes_strict, True) + ' del Node: ' +
-    nodePath, LLInfo);
+  LogDatei.log('delnode: strict: ' + BoolToStr(attributes_strict, True) +
+    ' del Node: ' + nodePath, LLInfo);
   openNode(nodePath, attributes_strict, errorinfo);
   if actNode <> nil then
   begin
@@ -1957,7 +1955,7 @@ begin
         begin
           logdatei.log('Attribute count mismatch: given by path: ' +
             IntToStr(attributecount1) + ' but node has: ' +
-            IntToStr(attributecount2), oslog.LLwarning);
+            IntToStr(attributecount2), oslog.LLDebug);
           actnodeset[j] := nil;
           j := j - 1;
         end;
@@ -2245,13 +2243,14 @@ var
   leavingpath: string;
   error: boolean;
   localAttributeList: TStringList;
-  localAtrribute, value1, value2: string;
-  localAtrributeIndex : Integer;
+  localAtrribute, value0, value1, value2: string;
+  localAtrributeIndex: integer;
 begin
   Result := True;
   try
     localAttributeList := TStringList.Create;
-    logdatei.log_prog('attribute path element : ' + attributePath, LLinfo);
+    logdatei.log_prog('makeAttributesSL: attribute path element : ' +
+      attributePath, LLinfo);
     //attributeStringList := TStringList.Create;
     // has to be created outside
     if not Assigned(attributeStringList) then
@@ -2282,41 +2281,51 @@ begin
             if pos('"', localAtrribute) > 0 then
             begin
               // we expect that the value is quoted
-              value1 := trim(copy(localAtrribute, pos('=', localAtrribute) + 1,
-                length(localAtrribute)));
+              // the attribute name with trailing '='
+              value0 := trim(copy(localAtrribute, 1, pos('=', localAtrribute)));
+              // the attribute value with leading '"'
+              value1 := trim(copy(localAtrribute, pos('=', localAtrribute) +
+                1, length(localAtrribute)));
               value2 := opsiunquotestr2(value1, '"');
-              if value1 <> '"' + value2 + '"' then
+              while (value1 <> '"' + value2 + '"') and
+                (localAtrributeIndex <= localAttributeList.Count - 1) do
               begin
                 // may be we have a whitespce in the attribute value - let us try to fix
-                inc(localAtrributeIndex);
-                value1 := value1 + trim(localAttributeList[localAtrributeIndex]);
+                Inc(localAtrributeIndex);
+                value1 := value1 + ' ' + trim(localAttributeList[localAtrributeIndex]);
                 value2 := opsiunquotestr2(value1, '"');
+                // we hope the fix is:
+                localAtrribute := value0 + value1;
+                logdatei.log_prog('makeAttributesSL: Test attribute: ' +
+                  localAtrribute, LLdebug);
+              end;
               if value1 <> '"' + value2 + '"' then
               begin
                 errormessage :=
-                  'Error: makeAttributesSL: attributePath syntax Error: quoting error in: ' +
-                  attributePath + ' value is. ' + value1;
+                  'Error: makeAttributesSL: attributePath syntax Error: quoting error in: '
+                  + attributePath + ' value is. ' + value1;
                 logdatei.log(errormessage, LLERROR);
                 Result := False;
                 exit;
               end;
-              end;
             end;
-          end
-          else
-          begin
-            errormessage :=
-              'Error: makeAttributesSL: attributePath syntax Error: missing equal sign error in: ' +
-              attributePath +
-              ' value is. ' + value1;
-            logdatei.log(errormessage, LLERROR);
-            Result := False;
-            exit;
           end;
-          if Result then
-            AttributeStringList.Add(localAtrribute);
+        end
+        else
+        begin
+          errormessage :=
+            'Error: makeAttributesSL: attributePath syntax Error: missing equal sign error in: '
+            + attributePath + ' value is. ' + value1;
+          logdatei.log(errormessage, LLERROR);
+          Result := False;
+          exit;
         end;
-        inc(localAtrributeIndex);
+        if Result then
+        begin
+          logdatei.log('makeAttributesSL: Found attribute: ' + localAtrribute, LLdebug);
+          AttributeStringList.Add(localAtrribute);
+        end;
+        Inc(localAtrributeIndex);
       end;
     end;
   finally

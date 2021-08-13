@@ -70,6 +70,7 @@ function WinIsPE: boolean;
 function IsDriveReady(Drive: string): boolean;
 function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
 function getW10Release: string;
+function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
 
 
 
@@ -632,6 +633,83 @@ begin
     WSAErr := 'Error resolving Host';
   end;
 end;
+
+function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
+  { for Host = '' Username will become the name of the current user of the process }
+
+var
+  pLocalName: PChar;
+  pUserName: LPWSTR;
+
+
+  function ApiCall(var Username, ErrorInfo: string; BuffSize: DWord): boolean;
+  var
+    errorcode: DWord;
+    nBuffSize: DWord;
+    pErrorBuff: PChar;
+    pNameBuff: PChar;
+    nErrorBuffSize: DWord = 0;
+    nNameBuffSize: DWord = 0;
+    usernamew: unicodestring;
+
+  begin
+    Result := False;
+    GetMem(pUserName, BuffSize);
+    nBuffSize := Buffsize;
+
+    usernamew := '';
+    errorCode := WNetGetUserW(nil, pUserName, nBuffSize);
+
+
+    case errorCode of
+      no_error:
+      begin
+        ErrorInfo := '';
+        SetLength(usernamew, StrLen(pUserName));
+        usernamew := pUserName;
+        username := UTF16ToUTF8(usernamew);
+        Result := True;
+      end;
+      ERROR_NOT_CONNECTED: ErrorInfo :=
+          'The device specified by lpszLocalName is not a redirected device or a connected network name.';
+      ERROR_MORE_DATA: ApiCall(UserName, ErrorInfo, nBuffSize + 1);
+      ERROR_NO_NETWORK: ErrorInfo := 'No network is present.';
+      ERROR_EXTENDED_ERROR:
+      begin
+        GetMem(pErrorBuff, 300);
+        GetMem(pNameBuff, 300);
+        WNetGetLastError(errorcode, pErrorBuff, nErrorBuffSize,
+          pNameBuff, nNameBuffSize);
+        ErrorInfo := pErrorBuff;
+        FreeMem(pErrorBuff);
+        FreeMem(pNameBuff);
+      end;
+      ERROR_NO_NET_OR_BAD_PATH: ErrorInfo :=
+          'None of the providers recognized this local name as having a connection. '
+          +
+          'However, the network is not available for at least one provider to whom the connection may belong';
+      else
+        errorInfo := 'NT-Error ' + RemoveLineBreaks(SysErrorMessage(errorCode));
+    end;
+
+    if errorCode <> no_error then
+      errorInfo := IntToStr(errorCode) + ' ' + errorInfo;
+
+    FreeMem(pUserName);
+  end;
+
+begin
+  if Host <> '' then
+    pLocalName := PChar(Host)
+  else
+    pLocalName := nil;
+
+  if ApiCall(Username, ErrorInfo, 100) then
+    Result := True
+  else
+    Result := False;
+end;
+
 
 
 end.
