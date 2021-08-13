@@ -2245,6 +2245,7 @@ var
   localAttributeList: TStringList;
   localAtrribute, value0, value1, value2: string;
   localAtrributeIndex: integer;
+  tmpstr: string;
 begin
   Result := True;
   try
@@ -2292,12 +2293,17 @@ begin
               begin
                 // may be we have a whitespce in the attribute value - let us try to fix
                 Inc(localAtrributeIndex);
-                value1 := value1 + ' ' + trim(localAttributeList[localAtrributeIndex]);
-                value2 := opsiunquotestr2(value1, '"');
-                // we hope the fix is:
-                localAtrribute := value0 + value1;
-                logdatei.log_prog('makeAttributesSL: Test attribute: ' +
-                  localAtrribute, LLdebug);
+                tmpstr := trim(localAttributeList[localAtrributeIndex]);
+                // do not use the next attribute name
+                if pos('=', tmpstr) = 0 then
+                begin
+                  value1 := value1 + ' ' + tmpstr;
+                  value2 := opsiunquotestr2(value1, '"');
+                  // we hope the fix is:
+                  localAtrribute := value0 + value1;
+                  logdatei.log_prog('makeAttributesSL: Test attribute: ' +
+                    localAtrribute, LLdebug);
+                end;
               end;
               if value1 <> '"' + value2 + '"' then
               begin
