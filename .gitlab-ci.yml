@@ -95,9 +95,9 @@ compile opsi-script macos:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
@@ -168,9 +168,9 @@ compile opsi-client-systray macos:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui
+    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "$BINARY_NAME $BINARY_VERSION macos"
