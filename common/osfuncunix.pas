@@ -8,7 +8,8 @@ uses
   Classes,
   SysUtils,
   oslog,
-  lazfileutils;
+  lazfileutils,
+  osProcessUX;
 
 function resolveUnixSymlink(filepath: string;
   recursive: boolean = True): string;
