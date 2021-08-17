@@ -90,7 +90,7 @@ compile opsi-script macos:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: never # change to always if lazbuild works on masos
+      when: always # change to always if lazbuild works on masos
   script: 
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
@@ -163,7 +163,7 @@ compile opsi-client-systray macos:
     BINARY_NAME: "opsi-client-systray"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: never # change to always if lazbuild works on masos
+      when: always # change to always if lazbuild works on masos
   script: 
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
