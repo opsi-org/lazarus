@@ -162,7 +162,7 @@ compile opsi-client-systray macos:
     PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray/"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
       when: always # change to always if lazbuild works on masos
   script: 
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
