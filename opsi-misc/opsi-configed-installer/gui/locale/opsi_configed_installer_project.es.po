@@ -152,8 +152,9 @@ msgstr "Bienvenid@s a la instalación del opsi-configed en esta computadora! "
 msgctxt "opsi_configed_installer_resourcestrings.rswrongpassword"
 msgid ""
 "Authentication failed.\n"
-"Please check your password!\n"
-msgstr "Falló la autenticación.\n"
+"Please check your password!"
+msgstr ""
+"Falló la autenticación.\n"
 "¡Por favor revise su contraseña!\n"
 
 #: opsi_configed_installer_resourcestrings.rsyes
@@ -191,7 +192,6 @@ msgid "Please choose a language for this setup program:"
 msgstr "Por favor seleccione un lenguaje para el programa de setup:"
 
 #: tconfigedinstaller.labelwelcome.caption
-#| msgid "Welcome to the installation of opsi-server on this computer!"
 msgctxt "tconfigedinstaller.labelwelcome.caption"
 msgid "Welcome to the installation of opsi-configed on this computer!"
 msgstr "Bienvenido/a a la instalación del servidor en esta computadora!"
