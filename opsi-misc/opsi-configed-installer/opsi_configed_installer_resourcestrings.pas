@@ -11,15 +11,7 @@ uses
 
 resourcestring
   {nogui}
-  rsNotValid = ' is not a valid input.';
-  rsIsCorrect = 'Is this correct?';
-  rsOtherDistr = 'Please type in the correct distribution:';
-  rsUseProxy = 'Would you like to use a proxy?';
-  rsContinue = 'To continue and start the installation, please press enter.' +
-    #10 + 'If you like to jump back to a question, please press the number key of the respective number in the overview.';
-  rsInstall = 'Installing ';
   rsCreateRepo = 'Creating repository...';
-  rsSomeMin = '(This may take some minutes)';
 
   {universal}
   rsYes = 'Yes';

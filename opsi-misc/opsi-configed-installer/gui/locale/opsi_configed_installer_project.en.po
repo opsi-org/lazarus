@@ -41,15 +41,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rscarryout"
 msgid "To carry out the remaining installation automatically, we need some information first."
 msgstr "To carry out the remaining installation automatically, we need some information first."
 
-#: opsi_configed_installer_resourcestrings.rscontinue
-msgctxt "opsi_configed_installer_resourcestrings.rscontinue"
-msgid ""
-"To continue and start the installation, please press enter.\n"
-"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
-msgstr ""
-"To continue and start the installation, please press enter.\n"
-"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
-
 #: opsi_configed_installer_resourcestrings.rscorrect
 msgctxt "opsi_configed_installer_resourcestrings.rscorrect"
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
@@ -80,16 +71,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rsinfodistribution"
 msgid "The following distributions are supported:"
 msgstr "The following distributions are supported:"
 
-#: opsi_configed_installer_resourcestrings.rsinstall
-msgctxt "opsi_configed_installer_resourcestrings.rsinstall"
-msgid "Installing "
-msgstr "Installing "
-
-#: opsi_configed_installer_resourcestrings.rsiscorrect
-msgctxt "opsi_configed_installer_resourcestrings.rsiscorrect"
-msgid "Is this correct?"
-msgstr "Is this correct?"
-
 #: opsi_configed_installer_resourcestrings.rslog
 msgctxt "opsi_configed_installer_resourcestrings.rslog"
 msgid "You can find the log files here:"
@@ -109,16 +90,6 @@ msgstr "No"
 msgctxt "opsi_configed_installer_resourcestrings.rsnosupport"
 msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
 msgstr "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
-
-#: opsi_configed_installer_resourcestrings.rsnotvalid
-msgctxt "opsi_configed_installer_resourcestrings.rsnotvalid"
-msgid " is not a valid input."
-msgstr " is not a valid input."
-
-#: opsi_configed_installer_resourcestrings.rsotherdistr
-msgctxt "opsi_configed_installer_resourcestrings.rsotherdistr"
-msgid "Please type in the correct distribution:"
-msgstr "Please type in the correct distribution:"
 
 #: opsi_configed_installer_resourcestrings.rsoverview
 msgctxt "opsi_configed_installer_resourcestrings.rsoverview"
@@ -150,11 +121,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rsshowpassword"
 msgid "Show password"
 msgstr "Show password"
 
-#: opsi_configed_installer_resourcestrings.rssomemin
-msgctxt "opsi_configed_installer_resourcestrings.rssomemin"
-msgid "(This may take some minutes)"
-msgstr "(This may take some minutes)"
-
 #: opsi_configed_installer_resourcestrings.rsstandard
 msgctxt "opsi_configed_installer_resourcestrings.rsstandard"
 msgid "Standard"
@@ -164,11 +130,6 @@ msgstr "Standard"
 msgctxt "opsi_configed_installer_resourcestrings.rsstartinstallation"
 msgid "Finally click \"finish\" to start the installation of opsi-server."
 msgstr "Finally click \"finish\" to start the installation of opsi-server."
-
-#: opsi_configed_installer_resourcestrings.rsuseproxy
-msgctxt "opsi_configed_installer_resourcestrings.rsuseproxy"
-msgid "Would you like to use a proxy?"
-msgstr "Would you like to use a proxy?"
 
 #: opsi_configed_installer_resourcestrings.rswait
 msgctxt "opsi_configed_installer_resourcestrings.rswait"
