@@ -8,25 +8,27 @@
 	Set $InstallDir$      = "/usr/share/opsi-configed/"
 	
 	comment "check which java"
-	if $JavaRuntimeSelection$ = $javaCurrentBundle64Bit$
+	;if $JavaRuntimeSelection$ = $javaCurrentBundle64Bit$
 		set $UseBundledJavaRuntime$ = "true"
-	else
-		set $UseBundledJavaRuntime$ = "false"
-		set $list$= shellCall('which java')
-		Set $dummy$ = count ($list$)
-		if NOT ( $dummy$ = "0" )
-			comment " some java seems to be installed"
-			Set $list$= shellCall('which java')
-			Set $dummy$ = count ($list$)
-			Set $dummy$ = takeFirstStringContaining($list$,"java")
-			Set $dummy$ = takestring(0, $list$)
-			Set $list$= shellCall('java -version')
-			Set $dummy$ = takestring(0, $list$)
-		else
-			set $UseBundledJavaRuntime$ = "true"
+		comment "use bundled java 64 bit"
+
+	;else
+	;	set $UseBundledJavaRuntime$ = "false"
+	;	set $list$= shellCall('which java')
+	;	Set $dummy$ = count ($list$)
+	;	if NOT ( $dummy$ = "0" )
+	;		comment " some java seems to be installed"
+	;		Set $list$= shellCall('which java')
+	;		Set $dummy$ = count ($list$)
+	;		Set $dummy$ = takeFirstStringContaining($list$,"java")
+	;		Set $dummy$ = takestring(0, $list$)
+	;		Set $list$= shellCall('java -version')
+	;		Set $dummy$ = takestring(0, $list$)
+	;	else
+	;		set $UseBundledJavaRuntime$ = "true"
 			set $JavaRuntimeSelection$ = $javaCurrentBundle64Bit$
-		endif
-	endif
+	;	endif
+	;endif
 
 
 [sub_copy]
