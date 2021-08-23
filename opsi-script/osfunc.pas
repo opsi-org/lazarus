@@ -9949,13 +9949,13 @@ var
           else
             GetReadOnlyAttribute(TargetName, True);
 
-        if cpLeaveReadonly = cpSpecify and cpLeaveReadonly then
-          doNotChangeAccessRights := True;
-
       end;
 
       if CopyShallTakePlace then
       begin
+        if cpLeaveReadonly = cpSpecify and cpLeaveReadonly then
+          doNotChangeAccessRights := True;
+
         if FileCopy(SourceName, TargetName, problem, True, rebootWanted,
           followsymlinks, doNotChangeAccessRights) then
         begin
