@@ -27,6 +27,7 @@ workflow:
 
 stages:
   - build
+  - codesign
 #  - test
 #  - binaryindex
 
@@ -105,7 +106,40 @@ compile opsi-script macos:
       - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+codesign ops-script macos:
+  stage: codesign
+  tags:
+    - laz-macos
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: always # change to always if lazbuild works on masos
+  script:
+    #Code signing opsi-script 
+    - echo "Code signing opsi-script"
+    - $PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
+    #Code signing opsi-script-gui 
+    - echo "Code signing opsi-script-gui"
+    - $PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script-gui
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
+  artifacts:
+    name: "opsi-script $BINARY_VERSION macos codesigned"
+    paths:
+      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+
+  
 #***************************************#
 #  opsi-client-systray pipline                  #
 #***************************************#
