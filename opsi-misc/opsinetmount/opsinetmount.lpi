@@ -12,6 +12,9 @@
       </Flags>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <ExecutionLevel Value="requireAdministrator"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -23,7 +26,7 @@
       <MinorVersionNr Value="2"/>
       <StringTable CompanyName="uib.de / opsi.org" FileDescription="opsi net mounter" OriginalFilename="opsinetmount" ProductName="opsi" ProductVersion="4.2.0.0"/>
     </VersionInfo>
-    <BuildModes Count="6" Active="Release_win32">
+    <BuildModes Count="6" Active="Release_win64">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -96,7 +99,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="compiler_out\units\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
+            <Filename Value="compiler_out\binary\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -118,6 +121,12 @@
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+            <OtherDefines Count="1">
+              <Define0 Value="OPSI"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="Release_win64">
@@ -125,7 +134,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="compiler_out\units\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
+            <Filename Value="compiler_out\binary\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -148,6 +157,9 @@
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+          </Other>
         </CompilerOptions>
       </Item5>
       <Item6 Name="Release_lin64">
@@ -176,6 +188,9 @@
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+          </Other>
         </CompilerOptions>
       </Item6>
     </BuildModes>
@@ -197,12 +212,13 @@
         <MinVersion Major="2" Release="4" Build="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="9">
       <Unit0>
         <Filename Value="opsinetmount.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="26" Y="19"/>
-        <UsageCount Value="65"/>
+        <TopLine Value="777"/>
+        <CursorPos X="70" Y="791"/>
+        <UsageCount Value="80"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -210,14 +226,15 @@
         <UnitName Value="DCPblowfish"/>
         <TopLine Value="7"/>
         <CursorPos X="22" Y="31"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit1>
       <Unit2>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <CursorPos X="13" Y="13"/>
-        <UsageCount Value="37"/>
+        <CursorPos X="63" Y="12"/>
+        <UsageCount Value="52"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit2>
@@ -227,7 +244,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="73"/>
         <CursorPos X="17" Y="68"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
@@ -236,101 +253,165 @@
         <EditorIndex Value="3"/>
         <TopLine Value="10"/>
         <CursorPos X="19" Y="31"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="47"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\common\oscertificates.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="4"/>
-        <CursorPos X="19" Y="10"/>
-        <UsageCount Value="29"/>
+        <TopLine Value="129"/>
+        <CursorPos X="57" Y="109"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <UnitName Value="JwaWinCrypt"/>
         <EditorIndex Value="2"/>
         <TopLine Value="2941"/>
         <CursorPos X="70" Y="2965"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="291"/>
+        <UsageCount Value="19"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\..\common\osencoding.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="8"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="8"/>
+      </Unit8>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <OtherDefines Count="1">
+      <Define0 Value="OPSI"/>
+    </OtherDefines>
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9559" Column="66" TopLine="9528"/>
+        <Caret Line="9566" Column="79" TopLine="9535"/>
       </Position1>
       <Position2>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9566" Column="79" TopLine="9535"/>
+        <Caret Line="9573" Column="41" TopLine="9542"/>
       </Position2>
       <Position3>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9573" Column="41" TopLine="9542"/>
+        <Caret Line="9580" Column="52" TopLine="9549"/>
       </Position3>
       <Position4>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9580" Column="52" TopLine="9549"/>
+        <Caret Line="9595" Column="79" TopLine="9564"/>
       </Position4>
       <Position5>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9595" Column="79" TopLine="9564"/>
+        <Caret Line="9602" Column="48" TopLine="9571"/>
       </Position5>
       <Position6>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9602" Column="48" TopLine="9571"/>
+        <Caret Line="9610" Column="52" TopLine="9579"/>
       </Position6>
       <Position7>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9610" Column="52" TopLine="9579"/>
+        <Caret Line="9920" Column="79" TopLine="9889"/>
       </Position7>
       <Position8>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9920" Column="79" TopLine="9889"/>
+        <Caret Line="9935" Column="50" TopLine="9904"/>
       </Position8>
       <Position9>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9935" Column="50" TopLine="9904"/>
+        <Caret Line="9964" Column="77" TopLine="9933"/>
       </Position9>
       <Position10>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9964" Column="77" TopLine="9933"/>
+        <Caret Line="9969" Column="92" TopLine="9938"/>
       </Position10>
       <Position11>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9969" Column="92" TopLine="9938"/>
+        <Caret Line="9983" Column="70" TopLine="9952"/>
       </Position11>
       <Position12>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9983" Column="70" TopLine="9952"/>
+        <Caret Line="9984" Column="26" TopLine="9953"/>
       </Position12>
       <Position13>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9984" Column="26" TopLine="9953"/>
+        <Caret Line="9991" Column="87" TopLine="9960"/>
       </Position13>
       <Position14>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="9991" Column="87" TopLine="9960"/>
+        <Caret Line="10001" Column="53" TopLine="9970"/>
       </Position14>
       <Position15>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="10001" Column="53" TopLine="9970"/>
+        <Caret Line="10002" Column="17" TopLine="9971"/>
       </Position15>
       <Position16>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="10002" Column="17" TopLine="9971"/>
+        <Caret Line="8031" Column="50" TopLine="8025"/>
       </Position16>
       <Position17>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="8031" Column="50" TopLine="8025"/>
+        <Caret Line="16007" Column="36" TopLine="15975"/>
       </Position17>
       <Position18>
-        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
-        <Caret Line="16007" Column="36" TopLine="15975"/>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="765" Column="52" TopLine="726"/>
       </Position18>
+      <Position19>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="767" Column="7" TopLine="757"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <Caret Line="21" Column="30" TopLine="4"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <Caret Line="128" Column="7" TopLine="114"/>
+      </Position21>
+      <Position22>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="829" Column="27" TopLine="824"/>
+      </Position22>
+      <Position23>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="837" Column="73" TopLine="824"/>
+      </Position23>
+      <Position24>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="840" Column="80" TopLine="824"/>
+      </Position24>
+      <Position25>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="842" Column="81" TopLine="824"/>
+      </Position25>
+      <Position26>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="843" Column="90" TopLine="824"/>
+      </Position26>
+      <Position27>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Column="21"/>
+      </Position27>
+      <Position28>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="45" Column="92" TopLine="25"/>
+      </Position28>
+      <Position29>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="47" Column="8" TopLine="27"/>
+      </Position29>
+      <Position30>
+        <Filename Value="opsinetmount.lpr"/>
+        <Caret Line="224" Column="23" TopLine="222"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

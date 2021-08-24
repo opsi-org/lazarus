@@ -2,11 +2,12 @@
 opsinetmount (4.2.0.0) stable; urgency=low
 
  * add changelog
+ * add new unit oscertificates
  * add webdav mount:
    * check if share is https url -> webdav
    * add registry entries for webdav filesize and trusted zones
- * add new unit oscertificates
- * import opsi ca to Windows store
+   * import opsi ca to Windows store
+   * use host_id and hostkey as user / pass
 
 -- d.oertel <d.oertel@uib.de> Thu, 29 Jul 2021 15:00
 
