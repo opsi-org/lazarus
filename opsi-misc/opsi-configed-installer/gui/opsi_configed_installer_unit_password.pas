@@ -60,7 +60,7 @@ type
 
 const
   {$IFDEF DARWIN}
-  logPath = '../../../../../opsi-configed-installer-configed.log';
+  logPath = '/opsi-configed-installer/gui/opsi-configed-installer-configed.log';
   {$ELSE}
   logPath = '/var/log/opsi-configed-installer-configed.log';
   {$ENDIF}
@@ -139,7 +139,7 @@ procedure TMyThread.installConfiged;
 begin
   {$IFDEF DARWIN}
   FInstallRunCommand.Run(
-    'open ../../../../../../../../Applications/opsi-script.app/ --args -batch ../Users/schmitz/Test/opsi-configed-installer/CLIENT_DATA/setup.opsiscript -logfile ..' + ExtractFilePath(ParamStr(0)) + logPath, Output);
+    'open ../../../../../../../../Applications/opsi-script.app/ --args -batch ..' + ExtractFilePath(ParamStr(0)) + '../../../../..' + '/opsi-configed-installer/CLIENT_DATA/setup.opsiscript -logfile ..' + ExtractFilePath(ParamStr(0)) + '../../../../..' + logPath, Output);
   {$ELSE}
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
