@@ -147,7 +147,9 @@ run opsi-script-test:
     - laz-windows
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: never # change to always if job script/rules are their 
+      when: never # change to always if job script/rules are their
+  script:
+    - echo "opsi-script-test on windows"
 
 opsi-script to binaryindex:
   stage: binaryindex
@@ -155,7 +157,9 @@ opsi-script to binaryindex:
     - laz-linux
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: never # change to always if job script/rules are their 
+      when: never # change to always if job script/rules are their
+  script:
+    - echo "deploy to binaryindex" 
   
 #***************************************#
 #  opsi-client-systray pipline                  #
