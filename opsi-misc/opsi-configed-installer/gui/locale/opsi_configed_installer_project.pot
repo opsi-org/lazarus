@@ -34,12 +34,6 @@ msgstr ""
 msgid "To carry out the remaining installation automatically, we need some information first."
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rscontinue
-msgid ""
-"To continue and start the installation, please press enter.\n"
-"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rscorrect
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
 msgstr ""
@@ -65,14 +59,6 @@ msgstr ""
 msgid "The following distributions are supported:"
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rsinstall
-msgid "Installing "
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rsiscorrect
-msgid "Is this correct?"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rslog
 msgid "You can find the log files here:"
 msgstr ""
@@ -88,14 +74,6 @@ msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsnosupport
 msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rsnotvalid
-msgid " is not a valid input."
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rsotherdistr
-msgid "Please type in the correct distribution:"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsoverview
@@ -126,20 +104,12 @@ msgctxt "opsi_configed_installer_resourcestrings.rsshowpassword"
 msgid "Show password"
 msgstr ""
 
-#: opsi_configed_installer_resourcestrings.rssomemin
-msgid "(This may take some minutes)"
-msgstr ""
-
 #: opsi_configed_installer_resourcestrings.rsstandard
 msgid "Standard"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsstartinstallation
 msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr ""
-
-#: opsi_configed_installer_resourcestrings.rsuseproxy
-msgid "Would you like to use a proxy?"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rswait
@@ -153,7 +123,7 @@ msgstr ""
 #: opsi_configed_installer_resourcestrings.rswrongpassword
 msgid ""
 "Authentication failed.\n"
-"Please check your password!\n"
+"Please check your password!"
 msgstr ""
 
 #: opsi_configed_installer_resourcestrings.rsyes
