@@ -118,7 +118,7 @@ codesign ops-script macos:
   script:
     #Code signing opsi-script 
     - echo "Code signing opsi-script"
-    - $PATH_TO_BINARY=opsi-script
+    - $PATH_TO_BINARY="opsi-script"
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
     - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
     - codesign --verify --verbose --strict $PATH_TO_BINARY
@@ -126,7 +126,7 @@ codesign ops-script macos:
     - codesign -vvv --deep --strict $PATH_TO_BINARY
     #Code signing opsi-script-gui 
     - echo "Code signing opsi-script-gui"
-    - $PATH_TO_BINARY=opsi-script-gui
+    - $PATH_TO_BINARY="opsi-script-gui"
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
     - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
     - codesign --verify --verbose --strict $PATH_TO_BINARY
