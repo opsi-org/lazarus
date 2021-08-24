@@ -28,8 +28,10 @@ workflow:
 stages:
   - build
   - codesign
-#  - test
-#  - binaryindex
+  - test_windows
+  # - test_linux
+  # - test_macos
+  - binaryindex
 
 #***************************************#
 #  opsi-script pipline                  #
@@ -112,9 +114,10 @@ codesign ops-script macos:
     - laz-macos
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
+    ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always # change to always if lazbuild works on masos
+      when: always
   script:
     #Code signing opsi-script 
     - echo "Code signing opsi-script"
@@ -138,7 +141,21 @@ codesign ops-script macos:
       - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+run opsi-script-test:
+  stage: test_windows
+  tags:
+    - laz-windows
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: never # change to always if job script/rules are their 
 
+opsi-script to binaryindex:
+  stage: binaryindex
+  tags:
+    - laz-linux
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: never # change to always if job script/rules are their 
   
 #***************************************#
 #  opsi-client-systray pipline                  #
