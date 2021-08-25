@@ -175,7 +175,12 @@ var
 begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
+  {$IFDEF DARWIN}
+  FileText.LoadFromFile('../../../../..' + logPath);
+  {$ELSE}
   FileText.LoadFromFile(logPath);
+  {$ENDIF}
+
   //configedResult := False;
   // adjust configed-installer ExitCode
   //for i := 0 to FileText.Count - 1 do
