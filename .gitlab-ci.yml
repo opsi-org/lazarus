@@ -28,8 +28,10 @@ workflow:
 stages:
   - build
   - codesign
-#  - test
-#  - binaryindex
+  - test_windows
+  # - test_linux
+  # - test_macos
+  - binaryindex
 
 #***************************************#
 #  opsi-script pipline                  #
@@ -112,13 +114,14 @@ codesign ops-script macos:
     - laz-macos
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
+    ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always # change to always if lazbuild works on masos
+      when: always
   script:
     #Code signing opsi-script 
     - echo "Code signing opsi-script"
-    - $PATH_TO_BINARY="opsi-script"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
     - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
     - codesign --verify --verbose --strict $PATH_TO_BINARY
@@ -126,7 +129,7 @@ codesign ops-script macos:
     - codesign -vvv --deep --strict $PATH_TO_BINARY
     #Code signing opsi-script-gui 
     - echo "Code signing opsi-script-gui"
-    - $PATH_TO_BINARY="opsi-script-gui"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script-gui
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
     - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
     - codesign --verify --verbose --strict $PATH_TO_BINARY
@@ -138,7 +141,25 @@ codesign ops-script macos:
       - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+run opsi-script-test:
+  stage: test_windows
+  tags:
+    - laz-windows
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: never # change to always if job script/rules are their
+  script:
+    - echo "opsi-script-test on windows"
 
+opsi-script to binaryindex:
+  stage: binaryindex
+  tags:
+    - laz-linux
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+      when: never # change to always if job script/rules are their
+  script:
+    - echo "deploy to binaryindex" 
   
 #***************************************#
 #  opsi-client-systray pipline                  #
