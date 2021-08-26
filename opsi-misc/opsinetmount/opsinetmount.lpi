@@ -11,9 +11,8 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
       <XPManifest>
-        <ExecutionLevel Value="requireAdministrator"/>
+        <ExecutionLevel Value="highestAvailable"/>
       </XPManifest>
       <Icon Value="0"/>
     </General>
@@ -159,6 +158,9 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSI"/>
+            <OtherDefines Count="1">
+              <Define0 Value="OPSI"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>
