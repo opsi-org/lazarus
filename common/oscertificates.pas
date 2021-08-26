@@ -126,9 +126,9 @@ begin
   try
     Result := False;
     //mystore := CertOpenSystemStore(0, 'Root');
-    mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM,0,0,CERT_SYSTEM_STORE_LOCAL_MACHINE,Pchar('Root'));
+    mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM,0,0,CERT_SYSTEM_STORE_LOCAL_MACHINE,PWchar('Root'));
     //mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM,0,0,
-    //                         CERT_SYSTEM_STORE_LOCAL_MACHINE or CERT_STORE_OPEN_EXISTING_FLAG,nil);
+    //                         CERT_SYSTEM_STORE_LOCAL_MACHINE or CERT_STORE_OPEN_EXISTING_FLAG,pchar('Root'));
     if mystore = nil then
     begin
       Result := False;
