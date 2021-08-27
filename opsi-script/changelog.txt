@@ -43,7 +43,7 @@ opsi-script (4.12.4.24) stable; urgency=low
  * new: xml2 sections: /encoding Parameter
  * new: xml2 sections: /AllNTUserProfiles Parameter
  * osfunc: file functions use findfirstUTF8 instead of findfirst
- * xml2 sections: many log warnings lowerd ti LLInfo
+ * xml2 sections: many log warnings lowered to LLInfo
  * xml2 sections: new command: rootNodeOnCreate = <node>
  * xml2 sections: not existing files will be created
     using the value of rootNodeOnCreate, fallback to 'rootnode' if not existing
@@ -245,7 +245,7 @@ opsi-winst/opsi-script (4.12.4.6) experimental; urgency=low
 opsi-winst/opsi-script (4.12.4.5) experimental; urgency=low
 
  * the one and only project file is now opsi-script.lpi
-   you hav to switch zhe build mode for differen archtictures (win / mac / lin) (gui)
+   you have to switch the build mode for different archtictures (win / mac / lin) (gui)
  * the opsi-script nogui version is now opsi-script
  * the opsi-script gui version is now opsi-script-gui
  * opsi-script tests via opsi-laz-gui-test if a gui can be used
