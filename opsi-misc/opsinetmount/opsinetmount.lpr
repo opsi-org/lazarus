@@ -196,8 +196,10 @@ end;
         end
         else
         begin
-          regist.WriteInt64('FileSizeLimitInBytes', $ffffffff);
+          regist.WriteInteger('FileSizeLimitInBytes', $ffffffff);
+          Regist.CloseKey;
         end;
+
         if not Regist.OpenKey(unikey, True) then
         begin
           // failed
@@ -205,8 +207,10 @@ end;
         end
         else
         begin
-          regist.WriteInt64('file', 1);
+          regist.WriteInteger('file', 1);
+          Regist.CloseKey;
         end;
+
       except
         Result := False;
       end;
