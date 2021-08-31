@@ -1,8 +1,15 @@
- 
+
+opsi-quickinstall (4.2.0.2) experimental; urgency=low
+  * error with adding release key fixed
+  * bug fixed in closing Opsi-QuickInstall
+    
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  31 Aug 2021 17:30:00 +0200
+
+
 opsi-quickinstall (4.2.0.1) experimental; urgency=low
   * installing opsi 4.2 from stable (default), testing or experimental
   * try downloading latest l-opsi-server now from stable
-  * log version of downloaded l-opsi-server
+  * log the version number of downloaded l-opsi-server
   * correctly assume yes in all package management shell commands
   * nogui:
     * error of empty l-opsi-server folder directory in option -f <file> fixed
