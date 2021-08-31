@@ -60,85 +60,89 @@ type
   NOTATION_NODE = 12;
   *)
 
+  function getXMLDocAsTStringlist(): TStringList;
+  function getDocumentElementAsStringlist(docstrlist: TStringList): TStringList;
+  function getXMLDocumentElementfromFile(filename: string): TStringList;
+  function setDocumentElementAsStringlist(var docstrlist: TStringList;
+    docelemstrlist: TStringList): boolean;
+  function getDocNodeNameFromStringList(docstrlist: TStringList): string;
+  function getDocNodeNameFromXMLDoc(): string;
+  function getDocNodeType(docstrlist: TStringList): string;
+  function getXmlDeclarationFromStringList(docstrlist: TStringList): TStringList;
 
-function getXMLDocAsTStringlist(): TStringList;
-function getDocumentElementAsStringlist(docstrlist: TStringList): TStringList;
-function getXMLDocumentElementfromFile(filename: string): TStringList;
-function setDocumentElementAsStringlist(var docstrlist: TStringList;
-  docelemstrlist: TStringList): boolean;
-function getDocNodeNameFromStringList(docstrlist: TStringList): string;
-function getDocNodeNameFromXMLDoc(): string;
-function getDocNodeType(docstrlist: TStringList): string;
-function getXmlDeclarationFromStringList(docstrlist: TStringList): TStringList;
+  //******************************************************************************
+  function appendXmlNodeToDocFromStringlist(docstrlist: TStringList;
+    nodestrlist: TStringList; var strList: TStringList): boolean;
+  function appendXmlNodeToNodeFromStringlist(var nodestrlist1: TStringList;
+    nodestrlist2: TStringList): boolean;
+  //******************************************************************************
+  // direkte node-Stringvalue operation   TODO
+  function xmlAsStringlistSetNodevalue(var nodestrlist: TStringList;
+    Value: string): boolean;
+  function xmlAsStringlistGetNodevalue(nodestrlist: TStringList;
+    var Value: string): boolean;
+  function xmlAsStringlistGetNodeAttributeKeys(nodestrlist: TStringList;
+    var keylist: TStringList): boolean;
+  function xmlAsStringlistSetNodeattributeByKey(var nodestrlist: TStringList;
+    attributekey: string; Value: string): boolean;
+  //******************************************************************************
+  // by index
+  function xmlAsStringlistGetChildnodeByIndex(nodestrlist: TStringList;
+    index: integer; var Value: TStringList): boolean;
+  function xmlAsStringlistSetChildnodeValueByIndex(var mynodeAsStringlist: TStringList;
+    index: integer; Value: string): boolean;
+  function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList;
+    index: integer; var Value: string): boolean;
+  function xmlAsStringlistDeleteChildnodeByIndex(var mynodeAsStringlist: TStringList;
+    index: integer): boolean;
+  //******************************************************************************
+  // by name
+  function findnodeInList(nodelist: TDOMNodeList; Name: string): TDOMNode;
 
-//******************************************************************************
-function appendXmlNodeToDocFromStringlist(docstrlist: TStringList;
-  nodestrlist: TStringList; var strList: TStringList): boolean;
-function appendXmlNodeToNodeFromStringlist(var nodestrlist1: TStringList;
-  nodestrlist2: TStringList): boolean;
-//******************************************************************************
-// direkte node-Stringvalue operation   TODO
-function xmlAsStringlistSetNodevalue(var nodestrlist: TStringList;
-  Value: string): boolean;
-function xmlAsStringlistGetNodevalue(nodestrlist: TStringList;
-  var Value: string): boolean;
-function xmlAsStringlistGetNodeAttributeKeys(nodestrlist: TStringList;
-  var keylist: TStringList): boolean;
-function xmlAsStringlistSetNodeattributeByKey(var nodestrlist: TStringList;
-  attributekey: string; Value: string): boolean;
-//******************************************************************************
-// by index
-function xmlAsStringlistGetChildnodeByIndex(nodestrlist: TStringList;
-  index: integer; var Value: TStringList): boolean;
-function xmlAsStringlistSetChildnodeValueByIndex(var mynodeAsStringlist: TStringList;
-  index: integer; Value: string): boolean;
-function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList;
-  index: integer; var Value: string): boolean;
-function xmlAsStringlistDeleteChildnodeByIndex(var mynodeAsStringlist: TStringList;
-  index: integer): boolean;
-//******************************************************************************
-// by name
-function xml2GetFirstChildNodeByName(nodestrlist: TStringList;
-  Name: string; var childnodeSL: TStringList): boolean; ///
+  function xml2GetFirstChildNodeByName(nodestrlist: TStringList;
+    Name: string; var childnodeSL: TStringList): boolean; ///
+  function xml2GetValueNodeTextByKeyNodeText(nodestrlist : TStringList;
+     keyNodeName:string; keyNodeText : string; valueNodeName : string) : string;
 
-function xmlAsStringlistGetUniqueChildnodeByName(nodestrlist: TStringList;
-  Name: string; var childnodeSL: TStringList): boolean;
-function xmlAsStringlistReplaceUniqueChildnodeByName(var nodestrlist: TStringList;
-  NodeName: string; childnodeSL: TStringList): boolean;
+  function xmlAsStringlistGetUniqueChildnodeByName(nodestrlist: TStringList;
+    Name: string; var childnodeSL: TStringList): boolean;
+  function xmlAsStringlistReplaceUniqueChildnodeByName(var nodestrlist: TStringList;
+    NodeName: string; childnodeSL: TStringList): boolean;
 
-//******************************************************************************
-// attributes
-function getXml2AttributeValueByKey(nodeAsStringlist: TStringList;
-  attributekey: string; var attributevalue: string): boolean;
 
-function xmlAsStringlistgetAttributesValueList(nodeAsStringlist: TStringList;
-  var attributeValueList: TStringList): boolean;
-function xmlAsStringlistdeleteChildAttributeByKey(var nodeAsStringlist: TStringList;
-  attributekey: string): boolean;
-function xmlAsStringlistGetChildAttributeValueByNameAndKey(nodeAsStringlist: TStringList;
-  nodename: string; attributekey: string; var attributevalue: string): boolean;
-function xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(
-  nodeAsStringlist: TStringList; nodename: string; attributekey: string;
-  attributevalue: string; var Value: TStringList): boolean;
-function xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(
-  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
-  attributevalue: string; Value: TStringList): boolean;
-function xmlAsStringlistSetChildAttributeValueByNameAndKey(
-  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
-  attributevalue: string): boolean;
-//******************************************************************************
-function xmlAsStringlistAllElementsCount(nodeAsStringlist: TStringList): integer;
-function xmlAsStringlistElementsCount(nodeAsStringlist: TStringList): integer;
-function xmlAsStringlistCommentElementsCount(nodeAsStringlist: TStringList): integer;
-function xmlAsStringlistHasChildNodes(nodeAsStringlist: TStringList): boolean;
-function xmlAsStringlistGetChildNodes(nodeAsStringlist: TStringList;
-  var childnodes: TStringList): boolean;
-function isValid(str: string): boolean;      // tut nix
+  //******************************************************************************
+  // attributes
+  function getXml2AttributeValueByKey(nodeAsStringlist: TStringList;
+    attributekey: string; var attributevalue: string): boolean;
 
-//******************************************************************************
-// text
-function getXml2Text(nodeAsStringlist: TStringList; var mytext: string): boolean;
+  function xmlAsStringlistgetAttributesValueList(nodeAsStringlist: TStringList;
+    var attributeValueList: TStringList): boolean;
+  function xmlAsStringlistdeleteChildAttributeByKey(var nodeAsStringlist: TStringList;
+    attributekey: string): boolean;
+  function xmlAsStringlistGetChildAttributeValueByNameAndKey(nodeAsStringlist: TStringList;
+    nodename: string; attributekey: string; var attributevalue: string): boolean;
+  function xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(
+    nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+    attributevalue: string; var Value: TStringList): boolean;
+  function xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(
+    var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+    attributevalue: string; Value: TStringList): boolean;
+  function xmlAsStringlistSetChildAttributeValueByNameAndKey(
+    var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+    attributevalue: string): boolean;
+  //******************************************************************************
+  function xmlAsStringlistAllElementsCount(nodeAsStringlist: TStringList): integer;
+  function xmlAsStringlistElementsCount(nodeAsStringlist: TStringList): integer;
+  function xmlAsStringlistCommentElementsCount(nodeAsStringlist: TStringList): integer;
+  function xmlAsStringlistHasChildNodes(nodeAsStringlist: TStringList): boolean;
+  function xmlAsStringlistGetChildNodes(nodeAsStringlist: TStringList;
+    var childnodes: TStringList): boolean;
+  function isValid(str: string): boolean;      // TODO
 
+  //******************************************************************************
+  // text
+  function getXml2Text(nodeAsStringlist: TStringList; var mytext: string): boolean;
+  function getXml2NodeText(nodeAsStringlist: TStringList) : string;
 
 implementation
 //var XMLasStringList: TStringList;
@@ -201,7 +205,6 @@ begin
     finally
       nodestream.Free;
       mynode.Free;
-      //mystringlist.Free;       muss bleiben, damit result bleibt
     end;
   end;
 end;
@@ -285,7 +288,7 @@ end;
 //*****************************************************************************
 function appendXmlNodeToDocFromStringlist(docstrlist: TStringList;
   nodestrlist: TStringList; var strList: TStringList): boolean;
-  // done -- erneutes erzeugen des XML-Dokuments????
+  // done -- create a new XML-Document????
 var
   docstream: TMemoryStream;
   mynode: TDOMNode;
@@ -329,7 +332,7 @@ begin
   mynode2.Free;
 end;
 //************************************************************
-// direkte node operation
+// direct node operations
 
 function xmlAsStringlistSetNodevalue(var nodestrlist: TStringList;
   Value: string): boolean;
@@ -389,6 +392,7 @@ var
   mynode: TDOMNode;
 begin
   Result := False;
+  //mynode := createXMLNodeFromString(nodestrlist);
 end;
 
 //************************************************************
@@ -450,33 +454,33 @@ end;
 
 //************************************************************
 // by name
+function findnodeInList(nodelist: TDOMNodeList; Name: string): TDOMNode;
+var
+  i, childcount: integer;
+  str: string;
+  aktnode: TDomNode;
+  haschild: boolean;
+begin
+  i := 0;
+  Result := nil;
+  childcount := nodelist.Count;
+  while (Result = nil) and (i < childcount) do
+  begin
+    aktnode := nodelist.Item[i];
+    haschild := aktnode.HasChildNodes and (aktnode.ChildNodes.Count > 0);
+    str := nodelist.Item[i].NodeName;
+    Result := nodelist.Item[i].FindNode(Name);
+    if (Result = nil) and haschild then
+      Result := findnodeInList(nodelist.Item[i].ChildNodes, Name);
+    Inc(i);
+  end;
+end;
+
 
 function xml2GetFirstChildNodeByName(nodestrlist: TStringList;
-  Name: string; var childnodeSL: TStringList): boolean; ///
+  Name: string; var childnodeSL: TStringList): boolean;
 var
   mynode, newnode, searchnode: TDOMNode;
-
-  function findnodeInList(nodelist: TDOMNodeList; Name: string): TDOMNode;
-  var
-    i, childcount: integer;
-    str: string;
-    aktnode: TDomNode;
-    haschild: boolean;
-  begin
-    i := 0;
-    Result := nil;
-    childcount := nodelist.Count;
-    while (Result = nil) and (i < childcount) do
-    begin
-      aktnode := nodelist.Item[i];
-      haschild := aktnode.HasChildNodes and (aktnode.ChildNodes.Count > 0);
-      str := nodelist.Item[i].NodeName;
-      Result := nodelist.Item[i].FindNode(Name);
-      if (Result = nil) and haschild then
-        Result := findnodeInList(nodelist.Item[i].ChildNodes, Name);
-      Inc(i);
-    end;
-  end;
 
 begin
   try
@@ -513,6 +517,42 @@ begin
   end;
 end;
 
+function xml2GetValueNodeTextByKeyNodeText(nodestrlist : TStringList;
+   keyNodeName:string; keyNodeText : string; valueNodeName : string) : string;
+// search first node with name keyNodeName and keyNodeText. get nextSibling,
+// check if name is valueNodeName. if found, result is TextContent of nextSibling
+// otherwise result is ''
+var
+  mynode, newnode, searchnode: TDOMNode;
+begin
+  Result:= '';
+  try
+    mynode := createXMLNodeFromString(nodestrlist);
+    if mynode.NodeName = keyNodeName then
+      newnode := mynode
+    else
+    begin
+      newnode := mynode.FindNode(keyNodeName);
+      if newnode = nil then
+        newnode := findnodeInList(mynode.ChildNodes, keyNodeName);
+    end;
+    if newnode <> nil then
+    begin
+      if (newNode.TextContent = keyNodeText) then
+        if (newNode.NextSibling.NodeName = valueNodeName) then
+          Result := newNode.NextSibling.TextContent;
+      newnode.Free;
+      mynode.Free;
+    end;
+  except
+    on e: Exception do
+    begin
+      {$IFDEF OPSISCRIPT}
+      LogDatei.log('Exception in xml2GetValueNodeTextByKeyNodeText: ' + e.message, LLError);
+      {$ENDIF OPSISCRIPT}
+    end;
+  end;
+end;
 
 function xmlAsStringlistGetUniqueChildnodeByName(nodestrlist: TStringList;
   Name: string; var childnodeSL: TStringList): boolean; ///
@@ -791,7 +831,7 @@ begin
 end;
 
 function isValid(str: string): boolean;
-  // TODO  - iss noch nix
+  // TODO  -
 var
   Parser: TDOMParser;
   Src: TXMLInputSource;
@@ -836,5 +876,12 @@ begin
   mynode.Free;
 end;
 
+function getXml2NodeText(nodeAsStringlist: TStringList) : string;
+var nodeTextContent: string;
+begin
+  nodeTextContent:= '';
+  if (getXml2Text(nodeAsStringlist, nodeTextContent)) then
+    Result:= nodeTextContent
+end;
 
 end.
