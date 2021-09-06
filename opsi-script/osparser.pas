@@ -970,6 +970,13 @@ begin
     Result := -1;
 end;
 
+function leadingZero (s1: string; s2: string): boolean;
+begin
+     if (s1[1]='0') or (s2[1]='0') then
+       result:=true
+     else
+       result:= false;
+end;
 
 function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
@@ -982,6 +989,8 @@ var
   comparing: boolean;
   number1: integer;
   number2: integer;
+  doublevalue1: double;
+  doublevalue2: double;
 
   ///partCompareResult : Integer;
   ///isEqual : Boolean;
@@ -1039,17 +1048,30 @@ begin
 
       else
       begin
-
-        try
-          number1 := StrToInt(decimals1[i - 1]);
-          number2 := StrToInt(decimals2[i - 1]);
-        except
-          InfoSyntaxError := 'Expecting a sequence of "." and numbers';
-          Result := False;
+        if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
+        begin
+          try
+            doubleValue1 := StrToFloat('0.' + decimals1[i - 1]);
+            doubleValue2 := StrToFloat('0.' + decimals2[i - 1]);
+          except
+            InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+            Result:=False;
+          end;
+          if Result then
+             sign := getCompareSignDouble(doubleValue1, doubleValue2);
+        end
+        else
+        begin
+          try    // try integer
+            number1 := StrToInt(decimals1[i - 1]);
+            number2 := StrToInt(decimals2[i - 1]);
+          except
+            InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+            Result := False;
+          end;
+          if Result then
+             sign := getCompareSign(number1, number2);
         end;
-
-        if Result then
-          sign := getCompareSign(number1, number2);
       end;
 
       if sign <> 0 then
