@@ -44,6 +44,7 @@ msgid "Error while initializing opsiconnection"
 msgstr ""
 
 #: oswebservice.rsnovaluefound
+#, object-pascal-format
 msgid "No value found! Set%sto"
 msgstr ""
 
