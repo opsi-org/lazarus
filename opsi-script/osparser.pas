@@ -7397,7 +7397,7 @@ var
   nodeOpened: boolean;
   nodeOpenCommandExists: boolean;
   nodepath: string;
-  newtext, newname, newvalue, newnode: string;
+  newtext, newtext2, newname, newname2, newvalue, newvalue2, newnode: string;
   myfilename: string;
   openstrict: boolean = False;
   testbool: boolean;
@@ -7713,10 +7713,78 @@ var
           end
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-        end;   // opnenode
+        end;   // openNode
 
-        if LowerCase(Expressionstr) = LowerCase('DeleteNode') then
+      if LowerCase(Expressionstr) = LowerCase('setNodePair') then
+      begin
+        logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
+        syntaxCheck := True;
+        if not (nodeOpened and nodeOpenCommandExists) then
         begin
+          //SyntaxCheck := false;
+          logdatei.log('Error: No open Node. Use OpenNode before ' +
+            Expressionstr, LLError);
+        end
+        else
+        begin
+          if SyntaxCheck then
+          begin
+            if GetStringA(trim(r), newname, r, errorinfo, True) then
+            begin
+              logdatei.log('keyNodeName= ' + newname, LLDebug2);
+              if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+              begin
+                logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
+                if GetStringA(trim(r), newname2, r, errorinfo, True) then
+                begin
+                  logdatei.log('valueNodeName= ' + newname2, LLDebug2);
+                  if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                  begin
+                    logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
+                    syntaxCheck := True;
+                    LogDatei.log('We will add node pair : ' + newname +
+                      ' : ' + newvalue + ' with ' + newname2 + ' : ' +
+                      newvalue2, LLdebug);
+                  end
+                  else
+                    syntaxCheck := False;
+                end
+                else
+                  syntaxCheck := False;
+              end
+              else
+                syntaxCheck := False;
+            end
+            else
+              syntaxCheck := False;
+          end;
+
+          if r <> '' then
+          begin
+            SyntaxCheck := False;
+            ErrorInfo := ErrorRemaining;
+          end;
+
+          if SyntaxCheck then
+          begin
+            try
+              XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
+              LogDatei.log('successfully setNodePair : ' + newname +
+                ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
+              end;
+            end;
+          end
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end;
+      end;   // setNodePair
+
+      if LowerCase(Expressionstr) = LowerCase('deleteNode') then
+      begin
           SyntaxCheck := False;
           if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
@@ -16901,6 +16969,36 @@ begin
         begin
           LogDatei.log('Error on producing getXml2Text', LLerror);
         end;
+      end;
+    end;
+  end
+
+  else if LowerCase(s) = LowerCase('getXml2ValueNodeTextByKeyNodeText') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+    begin
+      list1 := TXStringList.Create;
+      if produceStringList(script, r, r, list1, InfoSyntaxError) and
+        skip(',', r, r, InfoSyntaxError) then
+      begin
+        if EvaluateString(r, r, s1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) and
+            skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s3, InfoSyntaxError) and
+              skip(')', r, r, InfoSyntaxError) then
+            begin
+              SyntaxCheck := True;
+              try
+                stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
+                    e.message, LLError);
+                end;
+              end;
+            end;
       end;
     end;
   end
