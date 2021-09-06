@@ -1037,7 +1037,6 @@ begin
       comparing := False;
     end;
 
-
     // we continue comparing
     if comparing then
     begin
@@ -1050,7 +1049,7 @@ begin
       begin
         if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
         begin
-          try
+          try  // try float
             doubleValue1 := StrToFloat('0.' + decimals1[i - 1]);
             doubleValue2 := StrToFloat('0.' + decimals2[i - 1]);
           except
