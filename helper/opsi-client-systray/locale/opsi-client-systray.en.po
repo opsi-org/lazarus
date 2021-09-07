@@ -1,16 +1,6 @@
+# 
 msgid ""
-msgstr ""
-"Project-Id-Version: opsi.org\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2017-08-16 12:16+0100\n"
-"Last-Translator: detlef oertel <d.oertel@uib.de>\n"
-"Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SourceCharset: utf-8\n"
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
 #: oca_systray_dm.rsactionswaiting
 msgid "opsi: Pending installations:"
@@ -26,37 +16,13 @@ msgstr "None"
 
 #: oswebservice.rserrorintconnection
 msgid "Error while initializing opsiconnection"
-msgstr ""
+msgstr "Error while initializing opsiconnection"
 
 #: oswebservice.rsnovaluefound
+#, object-pascal-format
 msgid "No value found! Set%sto"
-msgstr ""
+msgstr "No value found! Set%sto"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Sending log file to server ..."
-
-#: tdatamodule1.mi_exit.caption
-msgid "Abort Program"
-msgstr "Abort Program"
-
-#: tdatamodule1.mi_exit.hint
-msgid "Terminate this systray program"
-msgstr "Terminate this systray program"
-
-#: tdatamodule1.mi_pull_for_action_request.caption
-msgid "Check for Installations"
-msgstr "Check for Installations"
-
-#: tdatamodule1.mi_pull_for_action_request.hint
-msgid "Check now for pending opsi installations"
-msgstr "Check now for pending opsi installations"
-
-#: tdatamodule1.mi_startevent.caption
-msgid "Install now"
-msgstr "Install now"
-
-#: tdatamodule1.mi_startevent.hint
-msgid "Start now all pending opsi installations"
-msgstr "Start now all pending opsi installations"
-
