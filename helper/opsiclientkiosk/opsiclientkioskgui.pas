@@ -1178,6 +1178,8 @@ begin
     and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
   then SetListView
   else SetTilesView;
+  FormOpsiClientKiosk.Repaint;
+  Application.ProcessMessages;
 end;
 
 
@@ -1239,6 +1241,7 @@ begin
       for i := 0 to Length(ArrayProductPanels)-1 do
       begin
         ArrayProductPanels[i].Visible := True;
+        ArrayProductPanels[i].Refresh;
       end;
       //Alternative:
       {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
@@ -1594,6 +1597,11 @@ begin
      SetActionRequestTilesView('setup', rsWillInstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
    end;
+  PanelToolbar.Visible:=True;
+  //PanelToolbar.Repaint;
+  //Application.ProcessMessages;
+  //FormOpsiClientKiosk.Repaint;
+  //Application.ProcessMessages;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareReinstallClick(Sender: TObject);
@@ -1649,6 +1657,7 @@ begin
      SetActionRequestTilesView('uninstall', rsWillUninstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: uninstall';
    end;
+  PanelToolbar.Visible:=True;
 end;//procedure ButtonSoftwareUninstallClick
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareUpdateClick(Sender: TObject);
@@ -1673,6 +1682,7 @@ begin
    begin
      SetActionRequestTilesView('setup', rsWillUpdateNextEvent, False);
    end;
+  PanelToolbar.Visible:=True;
 end;
 
 
