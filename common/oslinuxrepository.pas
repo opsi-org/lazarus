@@ -16,6 +16,7 @@ type
     Debian_8,
     Debian_9,
     Debian_10,
+    Debian_11,
     openSUSE_Leap_15_1,
     openSUSE_Leap_15_2,
     openSUSE_Leap_42_3,
@@ -130,6 +131,7 @@ begin
     Debian_8: Result := Result + 'Debian_8/';
     Debian_9: Result := Result + 'Debian_9/';
     Debian_10: Result := Result + 'Debian_10/';
+    Debian_11: Result := Result + 'Debian_11/';
     openSUSE_Leap_15_1: Result := Result + 'openSUSE_Leap_15.1/';
     openSUSE_Leap_15_2: Result := Result + 'openSUSE_Leap_15.2/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
@@ -232,7 +234,7 @@ begin
   FURL := URL;
   case FDistribution of
     {Debian and Ubuntu}
-    Debian_8, Debian_9, Debian_10,
+    Debian_8, Debian_9, Debian_10, Debian_11,
     Univention_4_3, Univention_4_4,
     xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
     begin
