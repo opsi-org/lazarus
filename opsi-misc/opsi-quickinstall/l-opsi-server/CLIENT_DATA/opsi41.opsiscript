@@ -159,7 +159,6 @@ set $fileonly$ = "false"
 set $opsi_admin_lo_level$ = "6"
 set $aktbackend$ = $backend$
 
-
 comment "check if update_test is possible"
 if $update_test$ = "true"
 	if ($distroName$ = "CentOS")
