@@ -22,7 +22,7 @@ type
       #10 + 'openSUSE 15.1, openSUSE 42.3,' + #10 +
       'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
-    Distribs = 'Debian 9, Debian 10,, Debian 11' + #10 +
+    Distribs = 'Debian 9, Debian 10, Debian 11,' + #10 +
       'openSUSE 15.1, openSUSE 15.2,' + #10 +
       'SLES 15 SP1, SLES 15 SP2,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
       #10 + 'Univention 4.4';
