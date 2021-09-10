@@ -620,6 +620,8 @@ const
   ParameterEncoding = '/encoding';
   Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllUserProfiles = '/AllUserProfiles';
+  ParameterShowoutput = '/showoutput';
+
 
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
@@ -654,7 +656,6 @@ const
   ParameterRunElevated = '/RunElevated';
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
-  ParameterShowoutput = '/showoutput';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -680,6 +681,7 @@ const
   optionsSplitter = 'WINST';
   passSplitter = 'PASS';
   parameterEscapeStrings = '/EscapeStrings';
+  Parameter_signscript = '/SignScript';
 
 
 var
@@ -1641,8 +1643,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -3051,7 +3054,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
+    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -7418,7 +7421,7 @@ var
     goOn: boolean = True;
     regexMatchList, helperlist: TStringList;
     rootnodeOnCreate: string;
-    infostr : string = '';
+    infostr: string = '';
 
   begin
 
@@ -7467,19 +7470,19 @@ var
       LogDatei.log('file to patch does not exist and will be created: ' +
         myfilename, LLinfo);
       try
-      rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
-      if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
-      begin
-        LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
-        LogDatei.log('We fall back to <rootnode> but normally this is not what you want',
-          LLWarning);
-        rootnodeOnCreate := 'rootnode';
-      end;
-      helperlist:= TStringList.Create;
-      PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
-      PatchListe.Add('<' + rootnodeOnCreate + '>');
-      stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
-      PatchListe.Add('</' + helperlist.Strings[0]  + '>');
+        rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
+        if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
+        begin
+          LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
+          LogDatei.log('We fall back to <rootnode> but normally this is not what you want',
+            LLWarning);
+          rootnodeOnCreate := 'rootnode';
+        end;
+        helperlist := TStringList.Create;
+        PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
+        PatchListe.Add('<' + rootnodeOnCreate + '>');
+        stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
+        PatchListe.Add('</' + helperlist.Strings[0] + '>');
       finally
         helperlist.Free;
       end;
@@ -7509,7 +7512,8 @@ var
     if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
       LogDatei.log('success: create xmldoc from / for file: ' + myfilename, oslog.LLinfo)
     else
-      LogDatei.log('failed: create xmldoc from / for file: ' + myfilename, oslog.LLError);
+      LogDatei.log('failed: create xmldoc from / for file: ' +
+        myfilename, oslog.LLError);
 
     // parse section
     for i := 1 to Sektion.Count do
@@ -7715,36 +7719,39 @@ var
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end;   // openNode
 
-      if LowerCase(Expressionstr) = LowerCase('setNodePair') then
-      begin
-        logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
-        syntaxCheck := True;
-        if not (nodeOpened and nodeOpenCommandExists) then
+        if LowerCase(Expressionstr) = LowerCase('setNodePair') then
         begin
-          //SyntaxCheck := false;
-          logdatei.log('Error: No open Node. Use OpenNode before ' +
-            Expressionstr, LLError);
-        end
-        else
-        begin
-          if SyntaxCheck then
+          logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
           begin
-            if GetStringA(trim(r), newname, r, errorinfo, True) then
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              logdatei.log('keyNodeName= ' + newname, LLDebug2);
-              if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+              if GetStringA(trim(r), newname, r, errorinfo, True) then
               begin
-                logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
-                if GetStringA(trim(r), newname2, r, errorinfo, True) then
+                logdatei.log('keyNodeName= ' + newname, LLDebug2);
+                if GetStringA(trim(r), newvalue, r, errorinfo, True) then
                 begin
-                  logdatei.log('valueNodeName= ' + newname2, LLDebug2);
-                  if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                  logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
+                  if GetStringA(trim(r), newname2, r, errorinfo, True) then
                   begin
-                    logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
-                    syntaxCheck := True;
-                    LogDatei.log('We will add node pair : ' + newname +
-                      ' : ' + newvalue + ' with ' + newname2 + ' : ' +
-                      newvalue2, LLdebug);
+                    logdatei.log('valueNodeName= ' + newname2, LLDebug2);
+                    if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                    begin
+                      logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
+                      syntaxCheck := True;
+                      LogDatei.log('We will add node pair : ' + newname +
+                        ' : ' + newvalue + ' with ' + newname2 + ' : ' +
+                        newvalue2, LLdebug);
+                    end
+                    else
+                      syntaxCheck := False;
                   end
                   else
                     syntaxCheck := False;
@@ -7754,37 +7761,34 @@ var
               end
               else
                 syntaxCheck := False;
+            end;
+
+            if r <> '' then
+            begin
+              SyntaxCheck := False;
+              ErrorInfo := ErrorRemaining;
+            end;
+
+            if SyntaxCheck then
+            begin
+              try
+                XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
+                LogDatei.log('successfully setNodePair : ' + newname +
+                  ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
+                end;
+              end;
             end
             else
-              syntaxCheck := False;
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
           end;
+        end;   // setNodePair
 
-          if r <> '' then
-          begin
-            SyntaxCheck := False;
-            ErrorInfo := ErrorRemaining;
-          end;
-
-          if SyntaxCheck then
-          begin
-            try
-              XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
-              LogDatei.log('successfully setNodePair : ' + newname +
-                ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
-              end;
-            end;
-          end
-          else
-            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-        end;
-      end;   // setNodePair
-
-      if LowerCase(Expressionstr) = LowerCase('deleteNode') then
-      begin
+        if LowerCase(Expressionstr) = LowerCase('deleteNode') then
+        begin
           SyntaxCheck := False;
           if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
@@ -8098,9 +8102,9 @@ var
       PatchListe.Text := stringReplaceRegexInList(PatchListe,
         'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
     try
-      FileGetWriteAccess(myfilename,infostr);
+      FileGetWriteAccess(myfilename, infostr);
       // call saveToFile with raise_on_error = true - to catch problems
-      PatchListe.SaveToFile(myfilename, flag_encoding,true);
+      PatchListe.SaveToFile(myfilename, flag_encoding, True);
       LogDatei.log('Successfully saved XML doc to file: ' + myfilename +
         ' with encoding : ' + flag_encoding, LLinfo)
     except
@@ -8139,7 +8143,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
+    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -9146,7 +9150,7 @@ begin
    {$ENDIF WIN32}
 
   if (0 < pos(lowercase(Parameter_AllNTUserProfiles), lowercase(CopyParameter))) or
-     (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
+    (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -10557,8 +10561,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11212,6 +11216,11 @@ var
   encodingString: string = '';
   InfoSyntaxError: string = '';
 
+  signscript: boolean = False;
+  signwithCA: string;
+  exitcode: integer;
+  myoutput: TXStringlist;
+
 begin
   try
     runAs := traInvoker;
@@ -11295,6 +11304,18 @@ begin
         force64 := False;
         onlyWindows := True;
       end
+      else if lowercase(Parameter_signscript) = lowercase(expr) then
+      begin
+        signscript := True;
+        onlyWindows := True;
+        GetWord(Remaining, signwithCA, Remaining, WordDelimiterSet0);
+        if (not FileExists(signwithCA)) then
+        begin
+          LogDatei.log('Given CA file "' + signwithCA +
+            '" does not exists. - will not try to sign', LLWarning);
+          encodingString := 'system';
+        end;
+      end
       else if lowercase(ParameterDontWait) = lowercase(expr) then
         threaded := True
       else if lowercase(ParameterShowoutput) = lowercase(expr) then
@@ -11352,6 +11373,45 @@ begin
       for i := 0 to Sektion.Count - 1 do
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
+
+      if signscript then
+      begin
+        // https://www.msxfaq.de/code/powershell/ps_signatur.htm
+        // https://docs.microsoft.com/de-de/previous-versions/powershell/module/microsoft.powershell.security/set-authenticodesignature?view=powershell-6
+        LogDatei.log('Will sign: ' + tempfilename + ' with: ' + signwithCA, LLinfo);
+        try
+          myoutput := TXStringlist.Create;
+          // powershell Set-AuthenticodeSignature <Powershell-Script-Pfad> -Certificate (Get-PFXCertificate <Zertifikatspfad>)
+          commandline :=
+            'powershell.exe -Command "Set-AuthenticodeSignature ' + tempfilename +
+            ' -Certificate (Get-PFXCertificate ' + signwithCA + ')"';
+          if not StartProcess(Commandline, sw_hide, tsofHideOutput,
+            True, False, False, False, True, traInvoker, '', 10,
+            Report, ExitCode, True, myoutput) then
+          begin
+            LogDatei.log('Error: ' + Report, LLError);
+            LogDatei.log('output: ', LLError);
+            LogDatei.log('-----------------------', LLError);
+            for i := 0 to myoutput.Count - 1 do
+              LogDatei.log(myoutput.Strings[i], LLError);
+            LogDatei.log('-----------------------', LLError);
+          end
+          else
+          begin
+            LogDatei.log(Report, LLInfo);
+                        LogDatei.log('Error: ' + Report, LLError);
+            LogDatei.log('output: ', LLError);
+            LogDatei.log('-----------------------', LLError);
+            for i := 0 to myoutput.Count - 1 do
+              LogDatei.log(myoutput.Strings[i], LLError);
+            LogDatei.log('-----------------------', LLError);
+          end;
+        finally
+          FreeAndNil(myoutput);
+        end;
+      end;
+
+
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas, length(programparas), 1) = '=' then
         commandline :=
@@ -12046,10 +12106,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -17829,7 +17889,7 @@ var
         begin
           LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
           // let us retry with the win api call
-          Result := shlwapi.PathFileExistsW(PWideChar(UTF8ToUTF16(s2)));
+          Result := shlwapi.PathFileExistsW(pwidechar(UTF8ToUTF16(s2)));
         end;
       except
         Result := False;
