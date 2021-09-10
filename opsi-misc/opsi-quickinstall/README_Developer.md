@@ -39,3 +39,21 @@ What happens after the data for the l-opsi-server installation is collected from
 3. Opsi-QuickInstall starts the l-opsi-server installation. When the script of the installation is finished, it writes its result ('success' or 'failed') in the file /opsi-quickinstall/l-opsi-server/CLIENT_DATA/result.conf . From there, Opsi-QuickInstall reads the result and displays it to the user.
 
 4. The log file of Opsi-QuickInstall can usually be found in /tmp/opsi_quickinstall.log (GUI-Version) or /tmp/opsi_quickinstall_nogui.log (No-GUI-Version). The log file of the l-opsi-server installation is located in /var/log/opsi-quick-install-l-opsi-server.log .
+
+
+## How to add a new distribution
+
+If opsi supports a new linux distribution and you want to add it to QuickIntsall, follow these steps:
+
+1. Check that the distribution is available on http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/stable/ .
+
+2. In osLinuxRepository:
+	+ Add the distriution to TDistribution.
+	+ Add the distriution in the function TLinuxRepository.GetDefaultURL .
+	+ Add the distriution in the procedure TLinuxRepository.Add .
+
+3. In osDistributionInfo:
+	+ Add the distriution to the const string Distribs of TDistributionInfo.
+	+ Add the distriution to the procedure TDistributionInfo.SetInfo .
+
+
