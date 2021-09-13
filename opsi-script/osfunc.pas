@@ -9747,6 +9747,9 @@ begin
       //LogDatei.log('FileCheckDate 2', LLInfo);
       filetime2 := fRecordTarget.FindData.ftLastWriteTime;
       //LogDatei.log('FileCheckDate 3', LLInfo);
+      LogDatei.log_prog('FileCheckDate Source:'+UIntToStr(filetime1.dwHighDateTime)
+             +' / '+UIntToStr(filetime1.dwHighDateTime)+' Target: '
+             +UIntToStr(filetime2.dwHighDateTime)+' / '+UIntToStr(filetime2.dwHighDateTime), LLInfo);
 
       diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
       //LogDatei.log('FileCheckDate 4', LLInfo);
@@ -9811,6 +9814,10 @@ begin
     begin
       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
         LLerror);
+      LogDatei.log(' Source:'+UIntToStr(filetime1.dwHighDateTime)
+             +' / '+UIntToStr(filetime1.dwHighDateTime)+' Target: '
+             +UIntToStr(filetime2.dwHighDateTime)+' / '+UIntToStr(filetime2.dwHighDateTime)
+             +' Diff: '+ inttostr(diffresult),LLerror);
       Result := False;
     end
   end;

@@ -11385,6 +11385,7 @@ begin
           commandline :=
             'powershell.exe -Command "Set-AuthenticodeSignature ' + tempfilename +
             ' -Certificate (Get-PFXCertificate ' + signwithCA + ')"';
+          LogDatei.log('Will sign: commandline: ' + commandline , LLinfo);
           if not StartProcess(Commandline, sw_hide, tsofHideOutput,
             True, False, False, False, True, traInvoker, '', 10,
             Report, ExitCode, True, myoutput) then
