@@ -11,11 +11,11 @@ opsi-script (4.12.4.28) stable; urgency=low
  * osxmlsections: TuibXMLDocument: new:
     setNodePair(keyNodeName: string; keyNodeTextContent: string;
       valueNodeName: string; valueNodeTextContent: string): boolean;
- * Execwith: if there is a parameter '/signscript <path to ca file>',
-   then the existing 'ca file' should be used to sign the temporary file
-   before passing it to the interpreter.
-   In the first step implemented for signing powershell scripts with pfx files.
+ * Execwith: if there is a parameter '/signscript <path to script file>',
+   then the existing 'script file' will be called with the temporary file
+   as parameter before passing it to the interpreter.
  * osfunc: additional log at FileCheckDate
+ * DPI awareness True/PM_V2
 
 -- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
 

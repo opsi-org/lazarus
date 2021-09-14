@@ -11216,8 +11216,8 @@ var
   encodingString: string = '';
   InfoSyntaxError: string = '';
 
-  signscript: boolean = False;
-  signwithCA: string;
+  usesignscript: boolean = False;
+  signscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
 
@@ -11306,14 +11306,16 @@ begin
       end
       else if lowercase(Parameter_signscript) = lowercase(expr) then
       begin
-        signscript := True;
+        usesignscript := True;
         onlyWindows := True;
-        GetWord(Remaining, signwithCA, Remaining, WordDelimiterSet0);
-        if (not FileExists(signwithCA)) then
+        GetWord(Remaining, signscriptfile, Remaining, WordDelimiterSet0);
+        signscriptfile := opsiunquotestr2(signscriptfile,'""');
+        if (not FileExists(signscriptfile)) then
         begin
-          LogDatei.log('Given CA file "' + signwithCA +
+          LogDatei.log('Given script file "' + signscriptfile +
             '" does not exists. - will not try to sign', LLWarning);
           encodingString := 'system';
+          usesignscript := False;
         end;
       end
       else if lowercase(ParameterDontWait) = lowercase(expr) then
@@ -11374,21 +11376,28 @@ begin
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
 
-      if signscript then
+      if usesignscript then
       begin
         // https://www.msxfaq.de/code/powershell/ps_signatur.htm
         // https://docs.microsoft.com/de-de/previous-versions/powershell/module/microsoft.powershell.security/set-authenticodesignature?view=powershell-6
-        LogDatei.log('Will sign: ' + tempfilename + ' with: ' + signwithCA, LLinfo);
+        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename + ' to: ' + signscriptfile, LLinfo);
         try
           myoutput := TXStringlist.Create;
           // powershell Set-AuthenticodeSignature <Powershell-Script-Pfad> -Certificate (Get-PFXCertificate <Zertifikatspfad>)
-          commandline :=
-            'powershell.exe -Command "Set-AuthenticodeSignature ' + tempfilename +
-            ' -Certificate (Get-PFXCertificate ' + signwithCA + ')"';
-          LogDatei.log('Will sign: commandline: ' + commandline , LLinfo);
+          commandline := 'cmd.exe /c "'+signscriptfile+'" '+tempfilename;
+          // commandline := 'cmd.exe /c "echo huhu"';
+          //  'powershell.exe -Command "Set-AuthenticodeSignature ' + tempfilename +
+          //  ' -Certificate (Get-PFXCertificate ' + signwithCA + ')"';
+          LogDatei.log('Temporary file hook: commandline: ' + commandline , LLinfo);
+          (*
+           if not StartProcess(commandline, showcmd, showoutput,
+            WaitForReturn, False, False, WaitForProcessEnding,
+            waitsecsAsTimeout, runAs, ident, WaitSecs, report,
+            FLastExitCodeOfExe, catchout, output, Sektion.Name) then
+            *)
           if not StartProcess(Commandline, sw_hide, tsofHideOutput,
             True, False, False, False, True, traInvoker, '', 10,
-            Report, ExitCode, True, myoutput) then
+            Report, ExitCode, True, myoutput, '') then
           begin
             LogDatei.log('Error: ' + Report, LLError);
             LogDatei.log('output: ', LLError);
@@ -11400,12 +11409,11 @@ begin
           else
           begin
             LogDatei.log(Report, LLInfo);
-                        LogDatei.log('Error: ' + Report, LLError);
-            LogDatei.log('output: ', LLError);
-            LogDatei.log('-----------------------', LLError);
+            LogDatei.log('output: ', LLInfo);
+            LogDatei.log('-----------------------', LLInfo);
             for i := 0 to myoutput.Count - 1 do
-              LogDatei.log(myoutput.Strings[i], LLError);
-            LogDatei.log('-----------------------', LLError);
+              LogDatei.log(myoutput.Strings[i], LLInfo);
+            LogDatei.log('-----------------------', LLInfo);
           end;
         finally
           FreeAndNil(myoutput);
