@@ -20302,6 +20302,8 @@ begin
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
+  FBatchOberflaeche.LoadSkin('');
+  Application.ProcessMessages;
   //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
@@ -24671,6 +24673,7 @@ begin
     else
       LogDatei.log('             opsi-script running in standard script mode',
         LLessential);
+    LogDatei.log('Scaling for screen DPI: '+inttostr(screen.PixelsPerInch),LLessential);
 
 
     ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';
@@ -25057,6 +25060,8 @@ begin
   {$IFDEF GUI}
     FBatchOberflaeche.LoadSkin('');
     FBatchOberflaeche.setPicture('', '');
+    FBatchOberflaeche.Repaint;
+    Application.ProcessMessages;
   {$ENDIF GUI}
     { initial section  }
     AktionsListe.Name := NameInitSektion;

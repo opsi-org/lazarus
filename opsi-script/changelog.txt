@@ -16,6 +16,7 @@ opsi-script (4.12.4.28) stable; urgency=low
    as parameter before passing it to the interpreter.
  * osfunc: additional log at FileCheckDate
  * DPI awareness True/PM_V2
+ * osparser: doAktionen: FBatchOberflaeche.LoadSkin(''); and Processmess to reload DPI scaling
 
 -- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
 
