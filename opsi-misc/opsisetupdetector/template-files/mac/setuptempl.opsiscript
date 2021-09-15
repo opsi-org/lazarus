@@ -9,24 +9,13 @@ encoding=utf8
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-DefVar $installSuccess$
-
-#@stringVars*#
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -70,13 +59,6 @@ ChangeDirectory "%SCRIPTPATH%/files1"
 ;----------------------------------------------
 set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
 ;----------------------------------------------
-Sub_check_installSuccess
-#@postInstallLines*#
-
-comment "Copy files"
-Files_install
-
-[Sub_check_installSuccess]
 if $installSuccess$  = "false"
 	LogError "Installation failed"
 	isfatalerror "Installation failed"
@@ -84,6 +66,10 @@ else
 	Comment "Installation success"
 endif
 
+#@postInstallLines*#
+
+comment "Copy files"
+Files_install
 
 [Files_install]
 ; Example of recursively copying some files into the installation directory:

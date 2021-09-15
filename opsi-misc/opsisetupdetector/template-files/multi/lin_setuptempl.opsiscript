@@ -19,8 +19,8 @@ Set $InstallDir$	= "<none>"
 Set $MinimumSpace$	 = ""
 ; ----------------------------------------------------------------
 
-; switch to "true" if this product supports Linux
-if not(stringToBool("false"))
+; switch to "true" ="true" if this product supports Linux
+if not("true" = "false")
 	logError "No installation for Linux in this opsi product"
 	isFatalError "wrong OS"
 endif

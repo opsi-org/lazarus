@@ -9,15 +9,15 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
 Set $InstallDir$	= "%Programfiles32dir%\<productId>"
 ; ----------------------------------------------------------------
 
-; switch to "true" if this product supports Windows
-if not(stringToBool("true"))
+; switch to "true" ="true" if this product supports Windows
+if not("true" = "false")
 	logError "No Deinstallation for Windows in this opsi product"
 	isFatalError "wrong OS"
 endif	
@@ -31,20 +31,6 @@ endif
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, free license used"
-	Sub_free_license
+	Set $tmpstr$ = FreeLicense($LicensePool$)
 endif
-
-[Sub_free_license]
-comment "License management is enabled and will be used"
-
-comment "Trying to free license used for the product"
-DefVar $result$
-Set $result$ = FreeLicense($LicensePool$)
-; If there is an assignment of a license pool to the product, it is possible to use
-; Set $result$ = FreeLicense("", $ProductId$)
-;
-; If there is an assignment of a license pool to a windows software id, it is possible to use
-; DefVar $WindowsSoftwareId$
-; $WindowsSoftwareId$ = "..."
-; set $result$ = FreeLicense("", "", $WindowsSoftwareId$)
 

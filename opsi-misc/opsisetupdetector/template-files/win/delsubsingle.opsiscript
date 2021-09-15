@@ -18,7 +18,14 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	Winbatch_uninstall  #@uninstallWaitForProc1*#
 	;----------------------------------------------
-	Sub_check_exitcode_del
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
+
 	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
@@ -28,15 +35,6 @@ endif
 
 [Winbatch_uninstall]
 #@uninstallCommandLine1*#
-
-[Sub_check_exitcode_del]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 [Files_uninstall]
 del -sf "$InstallDir$\"

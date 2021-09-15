@@ -9,25 +9,13 @@ encoding=utf8
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-DefVar $installSuccess$
-DefVar $installCommand$
-
-#@stringVars*#
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
-importlib "%scriptpath%\uib_lin_install.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -67,16 +55,14 @@ cleanupPackageSystem()
 #@installCommandLine1*#
 cleanupPackageSystem()
 ;----------------------------------------------
-Sub_check_exitcode
-#@postInstallLines*#
-
-[sub_check_exitcode]
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else
 	Comment $ErrorString$
 endif
+
+#@postInstallLines*#
 
 #@SetupSectionLines1*#
 ; ----------------------------------------------------------------

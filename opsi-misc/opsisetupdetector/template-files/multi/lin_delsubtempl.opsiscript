@@ -30,7 +30,7 @@ if $oldProgFound$ = "true"
 endif
 
 [Sub_check_exitcode_del]
-if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
+if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else

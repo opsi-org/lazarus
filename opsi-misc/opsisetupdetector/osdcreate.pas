@@ -181,10 +181,15 @@ begin
       end
       else
       begin
-        if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
-          str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
+        if aktProduct.properties.Items[i].Property_Type = bool then
+          str2 := BoolToStr(aktProduct.properties.Items[i].BoolDefault, True)
         else
-          str2 := '';
+        begin
+          if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
+            str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
+          else
+            str2 := '';
+        end;
         { remove brackets [] }
         str2 := opsiunquotestr2(str2, '[]');
         { take first from list }
@@ -478,8 +483,8 @@ begin
         for i := 0 to 2 do
         begin
           infilename := aktProduct.SetupFiles[i].setupFullFileName;
-          LogDatei.log('Will copy: ' + infilename + ' to: ' + clientpath +
-            PathDelim + 'files' + IntToStr(i + 1), LLNotice);
+          LogDatei.log('Will copy: ' + infilename + ' to: ' +
+            clientpath + PathDelim + 'files' + IntToStr(i + 1), LLNotice);
           if aktProduct.SetupFiles[i].active then
             // complete dir
             if aktProduct.SetupFiles[i].copyCompleteDir then

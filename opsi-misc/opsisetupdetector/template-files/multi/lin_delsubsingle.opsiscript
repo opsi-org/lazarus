@@ -18,17 +18,15 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	#@uninstallCommandLine2*#
 	;----------------------------------------------
-	Sub_check_exitcode_del
+	if "true" = #@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
 	#@postUninstallLines*#
 endif
 
-[Sub_check_exitcode_del]
-if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 #@DelsubSectionLines2*#
 ;-----------------------------------------------------

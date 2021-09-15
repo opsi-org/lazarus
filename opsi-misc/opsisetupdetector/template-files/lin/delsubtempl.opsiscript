@@ -18,29 +18,19 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	; Delete an installed  OS package out of a list of names:
 	; set $installSuccess$ = linuxRemoveOneOf('list of packageIDs')
-	; Sub_check_installSuccess
+	; set $exitcode$ = boolToGenericExitcode($installSuccess$)
 	;
 	; Delete one installed  OS package with a known name:
 	; set $exitcode$ = linuxRemoveOnePackage('<packageId>')
-	; Sub_check_exitcode_del
 	;----------------------------------------------
-	#@postUninstallLines*#
-endif
-
-[Sub_check_exitcode_del]
-if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
-
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "DeInstallation failed"
-	isfatalerror "DeInstallation failed"
-else
-	Comment "Installation success"
+	if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
+		#@postUninstallLines*#
+	endif
 endif
 
 #@DelsubSectionLines1*#

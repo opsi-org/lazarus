@@ -17,8 +17,8 @@ Set $InstallDir$	= "#@InstallDir1*#"
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
-; switch to "true" if this product supports Windows
-if not(stringToBool("#@install1*#"))
+; switch to "true" ="true" if this product supports Windows
+if not("true" ="#@install1*#")
 	logError "No installation for Windows in this opsi product"
 	isFatalError "wrong OS"
 endif	
@@ -47,22 +47,20 @@ ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
-Sub_check_exitcode
+set $ExitCode$ = getlastexitcode
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
 #@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
 
 [Winbatch_install]
 #@installCommandLine1*#
-
-[sub_check_exitcode]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 #@SetupDesktopiconSectionLines*#
 

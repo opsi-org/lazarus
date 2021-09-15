@@ -9,16 +9,16 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
 Set $InstallDir$	= "/Applications/<productid>.app"
 ; ----------------------------------------------------------------
 
-; switch to "true" if this product supports MacOS
-if not(stringToBool("true"))
+; switch to "true" ="true" if this product supports MacOS
+if not("true" = "false")
 	logError "No Deinstallation for MacOS in this opsi product"
 	isFatalError "wrong OS"
 endif	

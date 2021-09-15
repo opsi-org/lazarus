@@ -239,8 +239,8 @@ default: ["xenial_bionic"]
     Fmultivalue: boolean;
     Feditable: boolean;
     Fdescription: string;
-    FStrvalues: TStrings;
-    FStrDefault: TStrings;
+    //FStrvalues: TStrings;
+    //FStrDefault: TStrings;
     FStrvaluesStr : string;
     FStrDefaultStr : string;
     FBoolDefault: boolean;
@@ -265,10 +265,10 @@ default: ["xenial_bionic"]
     property Description: string read Fdescription write Fdescription;
     property Multivalue: boolean read Fmultivalue write Fmultivalue;
     property Editable: boolean read Feditable write Feditable;
-    property StrDefault: TStrings read GetDefaultLines write SetDefaultLines;
-    property Strvalues: TStrings read GetValueLines write SetValueLines;
-    property Default_Values: string read GetDefaultStr write SetDefaultStr;
-    property Possible_Values: string read GetValueStr write SetValueStr;
+    //property StrDefault: TStrings read GetDefaultLines write SetDefaultLines;
+    //property Strvalues: TStrings read GetValueLines write SetValueLines;
+    property Default_Values: string read FStrDefaultStr write FStrDefaultStr;
+    property Possible_Values: string read FStrvaluesStr write FStrvaluesStr;
     property BoolDefault: boolean read FBoolDefault write FBoolDefault;
     procedure init;
   public
@@ -644,8 +644,8 @@ procedure TPProperty.init;
 begin
   Fpname:= '';
   Fdescription:='';
-  FStrvalues := TStringList.Create;
-  FStrdefault := TStringList.Create;
+  //FStrvalues := TStringList.Create;
+  //FStrdefault := TStringList.Create;
   Ftype := bool;
   Fmultivalue := False;
   Feditable := False;
@@ -655,8 +655,8 @@ end;
 
 destructor TPProperty.Destroy;
 begin
-  FreeAndNil(FStrvalues);
-  FreeAndNil(FStrdefault);
+  //FreeAndNil(FStrvalues);
+  //FreeAndNil(FStrdefault);
   inherited;
 end;
 
@@ -705,78 +705,85 @@ begin
 end;
 *)
 
+
 // Defaults
 function TPProperty.GetDefaultLines : TStrings;
 begin
+        result := TStringlist.Create;
+        (*
   if globimportMode then
     begin
       // return empty
-      result := TStringlist.Create;
     end
   else
-  result :=  FStrDefault;
+  *)
+  result.DelimitedText :=  FStrDefaultStr;
 end;
 
 procedure TPProperty.SetDefaultLines(const AValue : TStrings);
 begin
+  (*
    if globimportMode then
     begin
       // do nothing
     end
   else
-  begin
-  FStrDefault.SetStrings(AValue);
-  FStrDefaultStr := FStrDefault.DelimitedText;
-  end;
+  *)
+  FStrDefaultStr := AValue.DelimitedText;
+
 end;
 
 procedure TPProperty.SetDefaultStr(const AValue: string);
 begin
   FStrDefaultStr := AValue;
-  FStrDefault.DelimitedText := AValue;
+  //FStrDefault.DelimitedText := AValue;
 end;
 
 function TPProperty.GetDefaultStr : string;
 begin
-  result := FStrDefault.DelimitedText;
+  result := FStrDefaultStr;
 end;
 
 //Values
 
 function TPProperty.GetValueLines : TStrings;
 begin
+  result := TStringlist.Create;
+  (*
   if globimportMode then
     begin
       // return empty
-      result := TStringlist.Create;
     end
   else
-  result :=  FStrvalues;
+  *)
+  result.DelimitedText :=  FStrvaluesStr;
 end;
 
 procedure TPProperty.SetValueLines(const AValue : TStrings);
 begin
+  (*
   if globimportMode then
     begin
       // do nothing
     end
   else
   begin
-  FStrvalues.SetStrings(AValue);
-  FStrvaluesStr := FStrvalues.DelimitedText;
-  end;
+  *)
+  //FStrvalues.SetStrings(AValue);
+  FStrvaluesStr := AValue.DelimitedText;
 end;
 
 procedure TPProperty.SetValueStr(const AValue: string);
 begin
   FStrvaluesStr := AValue;
-  FStrvalues.DelimitedText := AValue;
+  //FStrvalues.DelimitedText := AValue;
 end;
 
 function TPProperty.GetValueStr : string;
 begin
-  result := FStrvalues.DelimitedText;
+  result := FStrvaluesStr;
 end;
+
 
 
 procedure activateImportMode;
@@ -907,10 +914,10 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    tmpstrlist := TStringList.Create;
-    myprop.SetValueLines(tmpstrlist);
-    myprop.SetDefaultLines(tmpstrlist);
-    FreeAndNil(tmpstrlist);
+    //tmpstrlist := TStringList.Create;
+    //myprop.SetValueLines(tmpstrlist);
+    //myprop.SetDefaultLines(tmpstrlist);
+    //FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end;
 
@@ -1102,9 +1109,10 @@ begin
       writeln(pfile,JSONString);
       activateImportMode;
       // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
-      deactivateImportMode;
       //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
+      JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
       writeln(pfile,JSONString);
+      deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
       writeln(pfile,JSONString);
@@ -1151,13 +1159,15 @@ procedure TopsiProduct.readProjectFile(filename : string);
 var
   DeStreamer: TJSONDeStreamer;
   //Streamer: TJSONStreamer;
-  JSONString: string;
+  JSONString, JSONObjString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
   configDirUtf8: UTF8String;
   configDirstr: string;
   oldconfigDir, oldconfigFileName, tmpstr: string;
   pfile: TextFile;
+  aktproperty : TPProperty;
+  i : integer;
 
   (*
   // http://wiki.freepascal.org/File_Handling_In_Pascal
@@ -1211,6 +1221,7 @@ begin
       // DeStreamer object create
       DeStreamer := TJSONDeStreamer.Create(nil);
       try
+        DeStreamer.Options:= [jdoIgnorePropertyErrors,jdoIgnoreNulls];
         // Load JSON data in the object
         //DeStreamer.OnRestoreProperty:=SetupFiles[0].OnRestoreProperty;
         readln(pfile, JSONString);
@@ -1226,10 +1237,24 @@ begin
         readln(pfile, JSONString);
         activateImportMode;
         if pos('gdb unparsed remainder',JSONString) = 0 then
-          if jsonIsValid(JSONString) then
-        DeStreamer.JSONToObject(JSONString, aktProduct.properties);
-        deactivateImportMode;
+          if jsonIsValid(JSONString)  then
+          begin
+            jsonAsObjectGetValueByKey(JSONString,'Items',JSONString);
+            if jsonIsArray(JSONString)  then
+            begin
+            aktproperty := TPProperty.Create;
+            for i := 0 to jsonAsArrayCountElements(JSONString) -1 do
+              begin
+                jsonAsArrayGetElementByIndex(JSONString, i, JSONObjString);
+                aktproperty := aktProduct.properties.Add;
+                DeStreamer.JSONToObject(JSONObjString, aktproperty);
+
+              end;
+            end;
+        //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
         //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
+        end;
+        deactivateImportMode;
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
         //DeStreamer.JSONToCollection(JSONString, aktProduct.dependencies);
