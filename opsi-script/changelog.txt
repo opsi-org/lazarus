@@ -18,6 +18,8 @@ opsi-script (4.12.4.28) stable; urgency=low
  * osfunc: additional log at FileCheckDate
  * DPI awareness True/PM_V2
  * osparser: doAktionen: FBatchOberflaeche.LoadSkin(''); and Processmess to reload DPI scaling
+ * osparser: execPowershellCall has now additionl parameter optionstr that may hold additional
+    execwith parameters
 
 -- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
 

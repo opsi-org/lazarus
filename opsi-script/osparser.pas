@@ -576,7 +576,10 @@ type
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean): TStringList;
+      handle_policy: boolean): TStringList;  overload;
+    function execPowershellCall(command: string; archparam: string;
+  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
+  handle_policy: boolean; optionstr : string): TStringList;  overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -10185,6 +10188,14 @@ end;
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
   handle_policy: boolean): TStringList;
+begin
+  result := execPowershellCall(command, archparam, logleveloffset,
+            FetchExitCodePublic, FatalOnFail,handle_policy, '');
+end;
+
+function TuibInstScript.execPowershellCall(command: string; archparam: string;
+  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
+  handle_policy: boolean; optionstr : string): TStringList;
 var
   commandline: string = '';
   //fullps : string;
@@ -10204,6 +10215,7 @@ var
   mySektion: TWorkSection;
   ActionResult: TSectionResult;
   shortarch: string;  // for execShellCall
+  fulloptionstring : string;
 begin
   try
     Result := TStringList.Create;
@@ -10248,9 +10260,10 @@ begin
     mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
+    fulloptionstring := parameters + ' '+optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
-    ActionResult := executeWith(mySektion, parameters, True, logleveloffset + 1, output);
+    ActionResult := executeWith(mySektion, fulloptionstring, True, logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
     begin
       FLastPrivateExitCode := FLastExitCodeOfExe;
