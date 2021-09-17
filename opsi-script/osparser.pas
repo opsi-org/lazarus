@@ -681,7 +681,7 @@ const
   optionsSplitter = 'WINST';
   passSplitter = 'PASS';
   parameterEscapeStrings = '/EscapeStrings';
-  Parameter_signscript = '/SignScript';
+  Parameter_hookscript = '/HookScript';
 
 
 var
@@ -11216,8 +11216,8 @@ var
   encodingString: string = '';
   InfoSyntaxError: string = '';
 
-  usesignscript: boolean = False;
-  signscriptfile: string;
+  usehookscript: boolean = False;
+  hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
 
@@ -11304,18 +11304,18 @@ begin
         force64 := False;
         onlyWindows := True;
       end
-      else if lowercase(Parameter_signscript) = lowercase(expr) then
+      else if lowercase(Parameter_hookscript) = lowercase(expr) then
       begin
-        usesignscript := True;
+        usehookscript := True;
         onlyWindows := True;
-        GetWord(Remaining, signscriptfile, Remaining, WordDelimiterSet0);
-        signscriptfile := opsiunquotestr2(signscriptfile,'""');
-        if (not FileExists(signscriptfile)) then
+        GetWord(Remaining, hookscriptfile, Remaining, WordDelimiterSet0);
+        hookscriptfile := opsiunquotestr2(hookscriptfile,'""');
+        if (not FileExists(hookscriptfile)) then
         begin
-          LogDatei.log('Given script file "' + signscriptfile +
-            '" does not exists. - will not try to sign', LLWarning);
+          LogDatei.log('Given script file "' + hookscriptfile +
+            '" does not exists. - will not try to run', LLWarning);
           encodingString := 'system';
-          usesignscript := False;
+          usehookscript := False;
         end;
       end
       else if lowercase(ParameterDontWait) = lowercase(expr) then
@@ -11376,31 +11376,19 @@ begin
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
 
-      if usesignscript then
+      if usehookscript then
       begin
-        // https://www.msxfaq.de/code/powershell/ps_signatur.htm
-        // https://docs.microsoft.com/de-de/previous-versions/powershell/module/microsoft.powershell.security/set-authenticodesignature?view=powershell-6
-        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename + ' to: ' + signscriptfile, LLinfo);
+        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename + ' to: ' + hookscriptfile, LLinfo);
         try
           myoutput := TXStringlist.Create;
-          // powershell Set-AuthenticodeSignature <Powershell-Script-Pfad> -Certificate (Get-PFXCertificate <Zertifikatspfad>)
-          commandline := 'cmd.exe /c "'+signscriptfile+'" '+tempfilename;
-          // commandline := 'cmd.exe /c "echo huhu"';
-          //  'powershell.exe -Command "Set-AuthenticodeSignature ' + tempfilename +
-          //  ' -Certificate (Get-PFXCertificate ' + signwithCA + ')"';
+          commandline := 'cmd.exe /c "'+hookscriptfile+'" '+tempfilename;
           LogDatei.log('Temporary file hook: commandline: ' + commandline , LLinfo);
-          (*
-           if not StartProcess(commandline, showcmd, showoutput,
-            WaitForReturn, False, False, WaitForProcessEnding,
-            waitsecsAsTimeout, runAs, ident, WaitSecs, report,
-            FLastExitCodeOfExe, catchout, output, Sektion.Name) then
-            *)
           if not StartProcess(Commandline, sw_hide, tsofHideOutput,
-            True, False, False, False, True, traInvoker, '', 10,
+            True, False, False, False, True, traInvoker, '', 40,
             Report, ExitCode, True, myoutput, '') then
           begin
             LogDatei.log('Error: ' + Report, LLError);
-            LogDatei.log('output: ', LLError);
+            LogDatei.log('hook script output: ', LLError);
             LogDatei.log('-----------------------', LLError);
             for i := 0 to myoutput.Count - 1 do
               LogDatei.log(myoutput.Strings[i], LLError);
@@ -11408,12 +11396,11 @@ begin
           end
           else
           begin
-            LogDatei.log(Report, LLInfo);
-            LogDatei.log('output: ', LLInfo);
-            LogDatei.log('-----------------------', LLInfo);
+            LogDatei.log('hook script output: ', LLDebug);
+            LogDatei.log('-----------------------', LLDebug);
             for i := 0 to myoutput.Count - 1 do
-              LogDatei.log(myoutput.Strings[i], LLInfo);
-            LogDatei.log('-----------------------', LLInfo);
+              LogDatei.log(myoutput.Strings[i], LLDebug);
+            LogDatei.log('-----------------------', LLDebug);
           end;
         finally
           FreeAndNil(myoutput);

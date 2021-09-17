@@ -11,9 +11,10 @@ opsi-script (4.12.4.28) stable; urgency=low
  * osxmlsections: TuibXMLDocument: new:
     setNodePair(keyNodeName: string; keyNodeTextContent: string;
       valueNodeName: string; valueNodeTextContent: string): boolean;
- * Execwith: if there is a parameter '/signscript <path to script file>',
+ * Execwith: if there is a parameter '/HookScript <path to script file>',
    then the existing 'script file' will be called with the temporary file
    as parameter before passing it to the interpreter.
+   The call of the hookscript has a 40 sec Timeout
  * osfunc: additional log at FileCheckDate
  * DPI awareness True/PM_V2
  * osparser: doAktionen: FBatchOberflaeche.LoadSkin(''); and Processmess to reload DPI scaling
