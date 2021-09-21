@@ -11343,6 +11343,7 @@ var
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
+  powershellpara : string;
 
 begin
   try
@@ -11354,6 +11355,8 @@ begin
     force64 := False;
     threaded := False;
     use_sp := True; // use startprocess by default
+    powershellpara := '';
+
 
     if Sektion.Count = 0 then
       exit;
@@ -11476,10 +11479,20 @@ begin
     end;
 
     useext := '.cmd';
+    // special handling for powershell
+    // we need .ps1 as extension
+    // we need to call the script with the parameter -file in order to get the exitcode
+    // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
+    begin
+      powershellpara := ' -file ';
       useext := '.ps1';
+    end;
     if LowerCase(programfilename) = 'powershell' then
+    begin
+      powershellpara := ' -file ';
       useext := '.ps1';
+    end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11536,11 +11549,11 @@ begin
       if copy(programparas, length(programparas), 1) = '=' then
         commandline :=
           '"' + programfilename + '" ' + programparas + '"' +
-          tempfilename + '"  ' + passparas
+          powershellpara+tempfilename + '"  ' + passparas
       else
         commandline :=
           '"' + programfilename + '" ' + programparas + ' ' +
-          tempfilename + '  ' + passparas;
+          powershellpara+tempfilename + '  ' + passparas;
 
 
 

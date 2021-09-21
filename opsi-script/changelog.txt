@@ -23,6 +23,7 @@ opsi-script (4.12.4.28) stable; urgency=low
  * osparser: getDecimalCompareSign (used by compareDotSeperatedNumbers):
      now support leading zeros (then it will handled as float starting with 0.)
      now support a letter as last part of the number (1.0.23b like is used at openssl versions)
+ * osparser: executewith: call powershell scripts with -file parameter in order to get the correct exitcode
 
 -- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
 
