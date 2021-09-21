@@ -19,6 +19,7 @@ type
     Debian_11,
     openSUSE_Leap_15_1,
     openSUSE_Leap_15_2,
+    openSUSE_Leap_15_3,
     openSUSE_Leap_42_3,
     RHEL_7,
     RHEL_8,
@@ -134,6 +135,7 @@ begin
     Debian_11: Result := Result + 'Debian_11/';
     openSUSE_Leap_15_1: Result := Result + 'openSUSE_Leap_15.1/';
     openSUSE_Leap_15_2: Result := Result + 'openSUSE_Leap_15.2/';
+    openSUSE_Leap_15_3: Result := Result + 'openSUSE_Leap_15.3/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
     RHEL_8: Result := Result + 'RHEL_8/';
@@ -253,7 +255,7 @@ begin
   FURL := URL;
   case FDistribution of
     {OpenSuse and SLES}
-    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_42_3,
+    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_15_3, openSUSE_Leap_42_3,
     SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4, SLE15_SP1, SLE15_SP2:
     begin
       AddOpenSuseSLES(RepoName);
