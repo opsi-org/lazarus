@@ -576,10 +576,10 @@ type
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean): TStringList;  overload;
+      handle_policy: boolean): TStringList; overload;
     function execPowershellCall(command: string; archparam: string;
-  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean; optionstr : string): TStringList;  overload;
+      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
+      handle_policy: boolean; optionstr: string): TStringList; overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -980,42 +980,44 @@ function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
   var InfoSyntaxError: string; stringcomparison: boolean): boolean;
 
-  function containsDigitsOnly (s: string): boolean;
-  var c: char;
+  function containsDigitsOnly(s: string): boolean;
+  var
+    c: char;
   begin
-    result := true;
+    Result := True;
     for  c in s do
     begin
-      if not(c in ['0'..'9']) then begin
-        result:= false;
+      if not (c in ['0'..'9']) then
+      begin
+        Result := False;
         break;
       end;
     end;
   end;
 
-  function leadingZero (s1: string; s2: string): boolean;
+  function leadingZero(s1: string; s2: string): boolean;
   begin
-       if (s1[1]='0') or (s2[1]='0') then
-         result:=true
-       else
-         result:= false;
+    if (s1[1] = '0') or (s2[1] = '0') then
+      Result := True
+    else
+      Result := False;
   end;
 
-  function tryDouble (var d1, d2: double; s1, s2: string): boolean;
+  function tryDouble(var d1, d2: double; s1, s2: string): boolean;
   begin
-    result:=true;
+    Result := True;
     try
       d1 := StrToFloat('0.' + s1);
       d2 := StrToFloat('0.' + s2);
     except
       InfoSyntaxError := 'Expecting a sequence of "." and numbers';
-      Result:=False;
+      Result := False;
     end;
   end;
 
-  function tryInteger (var i1, i2: integer; s1, s2: string): boolean;
+  function tryInteger(var i1, i2: integer; s1, s2: string): boolean;
   begin
-    result:=true;
+    Result := True;
     try
       i1 := StrToInt(s1);
       i2 := StrToInt(s2);
@@ -1025,33 +1027,37 @@ function getDecimalCompareSign
     end;
   end;
 
-  function extractNumbers (s: string): string;
-    const n = ['0'..'9'];
-    var i: integer;
-   begin
-     i := 1;
-     result :='';
-     while  i < s.Length+1 do
-     begin
-       if s[i] in n then
-       result := result + s[i];
-       inc(i);
-     end;
-   end;
-
-  function extractNonNumbers (s: string): string;
-  const n = ['0'..'9'];
-  var i: integer;
+  function extractNumbers(s: string): string;
+  const
+    n = ['0'..'9'];
+  var
+    i: integer;
   begin
-     i := 1;
-     result :='';
-     while  i < s.Length+1 do
-     begin
-       if not(s[i] in n) then
-         result := result + s[i];
-       inc(i);
-     end;
-   end;
+    i := 1;
+    Result := '';
+    while i < s.Length + 1 do
+    begin
+      if s[i] in n then
+        Result := Result + s[i];
+      Inc(i);
+    end;
+  end;
+
+  function extractNonNumbers(s: string): string;
+  const
+    n = ['0'..'9'];
+  var
+    i: integer;
+  begin
+    i := 1;
+    Result := '';
+    while i < s.Length + 1 do
+    begin
+      if not (s[i] in n) then
+        Result := Result + s[i];
+      Inc(i);
+    end;
+  end;
 
 var
   decimals1: TXStringList;
@@ -1120,20 +1126,21 @@ begin
 
       else
       begin
-      if (containsDigitsOnly(decimals1[i - 1]) and containsDigitsOnly(decimals2[i - 1])) then
-      begin
-        if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
+        if (containsDigitsOnly(decimals1[i - 1]) and
+          containsDigitsOnly(decimals2[i - 1])) then
         begin
-          if tryDouble(doubleValue1,doubleValue2,decimals1[i - 1],decimals2[i - 1]) then
-             sign := getCompareSignDouble(doubleValue1, doubleValue2);
+          if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
+          begin
+            if tryDouble(doubleValue1, doubleValue2, decimals1[i - 1], decimals2[i - 1]) then
+              sign := getCompareSignDouble(doubleValue1, doubleValue2);
+          end
+          else
+          begin
+            if tryInteger(number1, number2, decimals1[i - 1], decimals2[i - 1]) then
+              sign := getCompareSign(number1, number2);
+          end;
         end
-        else
-        begin
-          if tryInteger(number1,number2,decimals1[i - 1],decimals2[i - 1]) then
-             sign := getCompareSign(number1, number2);
-        end;
-      end
-      else // at least one string with non numbers
+        else // at least one string with non numbers
         begin
           // extract numbers and non numbers compare
           // hopefully non numbers will only be at the end ;-)
@@ -1142,21 +1149,21 @@ begin
           string2 := extractNumbers(decimals2[i - 1]);
           if leadingZero(string1, string2) then
           begin
-            if tryDouble(doubleValue1,doubleValue2,string1,string2) then
-               sign := getCompareSignDouble(doubleValue1, doubleValue2);
+            if tryDouble(doubleValue1, doubleValue2, string1, string2) then
+              sign := getCompareSignDouble(doubleValue1, doubleValue2);
           end
           else
           begin
-            if tryInteger(number1,number2,string1,string2) then
-               sign := getCompareSign(number1, number2);
+            if tryInteger(number1, number2, string1, string2) then
+              sign := getCompareSign(number1, number2);
           end;
-          if (sign=0) then // check only if numbers are equal
+          if (sign = 0) then // check only if numbers are equal
           begin
             string1 := extractNonNumbers(decimals1[i - 1]);
             string2 := extractNonNumbers(decimals2[i - 1]);
-            sign := getCompareSignStrings(string1,string2)
-          end
-        end
+            sign := getCompareSignStrings(string1, string2);
+          end;
+        end;
       end;
 
       if sign <> 0 then
@@ -1748,9 +1755,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -7579,7 +7585,8 @@ var
         if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
         begin
           LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
-          LogDatei.log('We fall back to <rootnode> but normally this is not what you want',
+          LogDatei.log(
+            'We fall back to <rootnode> but normally this is not what you want',
             LLWarning);
           rootnodeOnCreate := 'rootnode';
         end;
@@ -7852,8 +7859,8 @@ var
                       logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
                       syntaxCheck := True;
                       LogDatei.log('We will add node pair : ' + newname +
-                        ' : ' + newvalue + ' with ' + newname2 + ' : ' +
-                        newvalue2, LLdebug);
+                        ' : ' + newvalue + ' with ' + newname2 +
+                        ' : ' + newvalue2, LLdebug);
                     end
                     else
                       syntaxCheck := False;
@@ -10291,13 +10298,13 @@ function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
   handle_policy: boolean): TStringList;
 begin
-  result := execPowershellCall(command, archparam, logleveloffset,
-            FetchExitCodePublic, FatalOnFail,handle_policy, '');
+  Result := execPowershellCall(command, archparam, logleveloffset,
+    FetchExitCodePublic, FatalOnFail, handle_policy, '');
 end;
 
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-  handle_policy: boolean; optionstr : string): TStringList;
+  handle_policy: boolean; optionstr: string): TStringList;
 var
   commandline: string = '';
   //fullps : string;
@@ -10317,7 +10324,7 @@ var
   mySektion: TWorkSection;
   ActionResult: TSectionResult;
   shortarch: string;  // for execShellCall
-  fulloptionstring : string;
+  fulloptionstring: string;
 begin
   try
     Result := TStringList.Create;
@@ -10362,10 +10369,11 @@ begin
     mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
-    fulloptionstring := parameters + ' '+optionstr;
+    fulloptionstring := parameters + ' ' + optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
-    ActionResult := executeWith(mySektion, fulloptionstring, True, logleveloffset + 1, output);
+    ActionResult := executeWith(mySektion, fulloptionstring, True,
+      logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
     begin
       FLastPrivateExitCode := FLastExitCodeOfExe;
@@ -10676,8 +10684,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11424,7 +11432,7 @@ begin
         usehookscript := True;
         onlyWindows := True;
         GetWord(Remaining, hookscriptfile, Remaining, WordDelimiterSet0);
-        hookscriptfile := opsiunquotestr2(hookscriptfile,'""');
+        hookscriptfile := opsiunquotestr2(hookscriptfile, '""');
         if (not FileExists(hookscriptfile)) then
         begin
           LogDatei.log('Given script file "' + hookscriptfile +
@@ -11493,11 +11501,12 @@ begin
 
       if usehookscript then
       begin
-        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename + ' to: ' + hookscriptfile, LLinfo);
+        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename +
+          ' to: ' + hookscriptfile, LLinfo);
         try
           myoutput := TXStringlist.Create;
-          commandline := 'cmd.exe /c "'+hookscriptfile+'" '+tempfilename;
-          LogDatei.log('Temporary file hook: commandline: ' + commandline , LLinfo);
+          commandline := 'cmd.exe /c "' + hookscriptfile + '" ' + tempfilename;
+          LogDatei.log('Temporary file hook: commandline: ' + commandline, LLinfo);
           if not StartProcess(Commandline, sw_hide, tsofHideOutput,
             True, False, False, False, True, traInvoker, '', 40,
             Report, ExitCode, True, myoutput, '') then
@@ -11855,6 +11864,7 @@ begin
       {$IFDEF WINDOWS}
       s2 := '';
       s3 := '';
+      s4 := '';
       tmpstr2 := '';
       tmpbool := True; // sysnative
       tmpbool1 := True; // handle execution policy
@@ -11896,30 +11906,46 @@ begin
           if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
           begin
             // got third parameter
+            if TryStrToBool(s3, tmpbool1) then
+              syntaxCheck := True
+            else
+            begin
+              syntaxCheck := False;
+              InfoSyntaxError :=
+                'Error: boolean string (true/false) expected but got: ' + s3;
+            end;
+            // four parameter ?
+            if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+            begin
+              if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
+              begin
+                // got fourth parameter
+                if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                begin
+                  // four parameter
+                  syntaxCheck := True;
+                end;
+              end;
+            end
+            else
             if Skip(')', tmpstr2, r, InfoSyntaxError) then
             begin
-              if TryStrToBool(s3, tmpbool1) then
-                syntaxCheck := True
-              else
-              begin
-                syntaxCheck := False;
-                InfoSyntaxError :=
-                  'Error: boolean string (true/false) expected but got: ' + s3;
-              end;
+              // three parameter
+              syntaxCheck := True;
             end;
+          end
+          else
+          if Skip(')', tmpstr2, r, InfoSyntaxError) then
+          begin
+            // two parameter
+            syntaxCheck := True;
           end;
-        end
-        else
-        if Skip(')', tmpstr2, r, InfoSyntaxError) then
-        begin
-          // two parameter
-          syntaxCheck := True;
         end;
       end;
       if syntaxCheck then
       begin
         try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1).Text;
+          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
         except
           on e: Exception do
           begin
@@ -12217,10 +12243,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -24775,7 +24801,7 @@ begin
     else
       LogDatei.log('             opsi-script running in standard script mode',
         LLessential);
-    LogDatei.log('Scaling for screen DPI: '+inttostr(screen.PixelsPerInch),LLessential);
+    LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch), LLessential);
 
 
     ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';

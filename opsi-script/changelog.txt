@@ -20,6 +20,9 @@ opsi-script (4.12.4.28) stable; urgency=low
  * osparser: doAktionen: FBatchOberflaeche.LoadSkin(''); and Processmess to reload DPI scaling
  * osparser: execPowershellCall has now additionl parameter optionstr that may hold additional
     execwith parameters
+ * osparser: getDecimalCompareSign (used by compareDotSeperatedNumbers):
+     now support leading zeros (then it will handled as float starting with 0.)
+     now support a letter as last part of the number (1.0.23b like is used at openssl versions)
 
 -- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
 
