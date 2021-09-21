@@ -980,6 +980,79 @@ function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
   var InfoSyntaxError: string; stringcomparison: boolean): boolean;
 
+  function containsDigitsOnly (s: string): boolean;
+  var c: char;
+  begin
+    result := true;
+    for  c in s do
+    begin
+      if not(c in ['0'..'9']) then begin
+        result:= false;
+        break;
+      end;
+    end;
+  end;
+
+  function leadingZero (s1: string; s2: string): boolean;
+  begin
+       if (s1[1]='0') or (s2[1]='0') then
+         result:=true
+       else
+         result:= false;
+  end;
+
+  function tryDouble (var d1, d2: double; s1, s2: string): boolean;
+  begin
+    result:=true;
+    try
+      d1 := StrToFloat('0.' + s1);
+      d2 := StrToFloat('0.' + s2);
+    except
+      InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+      Result:=False;
+    end;
+  end;
+
+  function tryInteger (var i1, i2: integer; s1, s2: string): boolean;
+  begin
+    result:=true;
+    try
+      i1 := StrToInt(s1);
+      i2 := StrToInt(s2);
+    except
+      InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+      Result := False;
+    end;
+  end;
+
+  function extractNumbers (s: string): string;
+    const n = ['0'..'9'];
+    var i: integer;
+   begin
+     i := 1;
+     result :='';
+     while  i < s.Length+1 do
+     begin
+       if s[i] in n then
+       result := result + s[i];
+       inc(i);
+     end;
+   end;
+
+  function extractNonNumbers (s: string): string;
+  const n = ['0'..'9'];
+  var i: integer;
+  begin
+     i := 1;
+     result :='';
+     while  i < s.Length+1 do
+     begin
+       if not(s[i] in n) then
+         result := result + s[i];
+       inc(i);
+     end;
+   end;
+
 var
   decimals1: TXStringList;
   decimals2: TXStringList;
@@ -987,6 +1060,10 @@ var
   comparing: boolean;
   number1: integer;
   number2: integer;
+  doublevalue1: double;
+  doublevalue2: double;
+  string1: string;
+  string2: string;
 
   ///partCompareResult : Integer;
   ///isEqual : Boolean;
@@ -1033,7 +1110,6 @@ begin
       comparing := False;
     end;
 
-
     // we continue comparing
     if comparing then
     begin
@@ -1044,17 +1120,43 @@ begin
 
       else
       begin
-
-        try
-          number1 := StrToInt(decimals1[i - 1]);
-          number2 := StrToInt(decimals2[i - 1]);
-        except
-          InfoSyntaxError := 'Expecting a sequence of "." and numbers';
-          Result := False;
+      if (containsDigitsOnly(decimals1[i - 1]) and containsDigitsOnly(decimals2[i - 1])) then
+      begin
+        if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
+        begin
+          if tryDouble(doubleValue1,doubleValue2,decimals1[i - 1],decimals2[i - 1]) then
+             sign := getCompareSignDouble(doubleValue1, doubleValue2);
+        end
+        else
+        begin
+          if tryInteger(number1,number2,decimals1[i - 1],decimals2[i - 1]) then
+             sign := getCompareSign(number1, number2);
         end;
-
-        if Result then
-          sign := getCompareSign(number1, number2);
+      end
+      else // at least one string with non numbers
+        begin
+          // extract numbers and non numbers compare
+          // hopefully non numbers will only be at the end ;-)
+          // otherwise comparison will be weird
+          string1 := extractNumbers(decimals1[i - 1]);
+          string2 := extractNumbers(decimals2[i - 1]);
+          if leadingZero(string1, string2) then
+          begin
+            if tryDouble(doubleValue1,doubleValue2,string1,string2) then
+               sign := getCompareSignDouble(doubleValue1, doubleValue2);
+          end
+          else
+          begin
+            if tryInteger(number1,number2,string1,string2) then
+               sign := getCompareSign(number1, number2);
+          end;
+          if (sign=0) then // check only if numbers are equal
+          begin
+            string1 := extractNonNumbers(decimals1[i - 1]);
+            string2 := extractNonNumbers(decimals2[i - 1]);
+            sign := getCompareSignStrings(string1,string2)
+          end
+        end
       end;
 
       if sign <> 0 then
