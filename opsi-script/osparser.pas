@@ -1756,9 +1756,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10686,8 +10685,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11921,9 +11920,7 @@ begin
           if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
           begin
             // got third parameter
-            if TryStrToBool(s3, tmpbool1) then
-              syntaxCheck := True
-            else
+            if not TryStrToBool(s3, tmpbool1) then
             begin
               syntaxCheck := False;
               InfoSyntaxError :=
@@ -11948,14 +11945,15 @@ begin
               // three parameter
               syntaxCheck := True;
             end;
-          end
-          else
-          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-          begin
-            // two parameter
-            syntaxCheck := True;
           end;
+        end
+        else
+        if Skip(')', tmpstr2, r, InfoSyntaxError) then
+        begin
+          // two parameter
+          syntaxCheck := True;
         end;
+        //end;
       end;
       if syntaxCheck then
       begin
@@ -12258,10 +12256,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -15737,6 +15735,7 @@ begin
   {$IFDEF WINDOWS}
     s2 := '';
     s3 := '';
+    s4 := '';
     tmpstr2 := '';
     tmpbool := True; // sysnative
     tmpbool1 := True; // handle execution policy
@@ -15779,16 +15778,30 @@ begin
         if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
         begin
           // got third parameter
+          if not TryStrToBool(s3, tmpbool1) then
+          begin
+            syntaxCheck := False;
+            InfoSyntaxError :=
+              'Error: boolean string (true/false) expected but got: ' + s3;
+          end;
+          // four parameter ?
+          if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+          begin
+            if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
+            begin
+              // got fourth parameter
+              if Skip(')', tmpstr2, r, InfoSyntaxError) then
+              begin
+                // four parameter
+                syntaxCheck := True;
+              end;
+            end;
+          end
+          else
           if Skip(')', tmpstr2, r, InfoSyntaxError) then
           begin
-            if TryStrToBool(s3, tmpbool1) then
-              syntaxCheck := True
-            else
-            begin
-              syntaxCheck := False;
-              InfoSyntaxError :=
-                'Error: boolean string (true/false) expected but got: ' + s3;
-            end;
+            // three parameter
+            syntaxCheck := True;
           end;
         end;
       end
@@ -15798,11 +15811,12 @@ begin
         // two parameter
         syntaxCheck := True;
       end;
+      //end;
     end;
     if syntaxCheck then
     begin
       try
-        execPowershellCall(s1, s2, 0, True, False, tmpbool1);
+        execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
         StringResult := IntToStr(FLastExitCodeOfExe);
       except
         on e: Exception do
@@ -20136,6 +20150,7 @@ var
   StatKind: TStatement;
   Expressionstr: string = '';
   remaining: string = '';
+  r: string = '';
   registryformat: TRegistryFormat;
   reg_specified_basekey: string = '';
   flag_force64: boolean;
@@ -22495,12 +22510,14 @@ begin
                   {$IFDEF WINDOWS}
                 s2 := '';
                 s3 := '';
+                s4 := '';
                 tmpstr2 := '';
                 tmpbool := True; // sysnative
                 tmpbool1 := True; // handle execution policy
                 syntaxCheck := False;
-                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
-                  if EvaluateString(Remaining, tmpstr, s1, InfoSyntaxError)
+                r := remaining;
+                if Skip('(', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
                   // next after ',' or ')'
                   then
                     if Skip(',', tmpstr, tmpstr1, tmpstr3) then
@@ -22508,7 +22525,7 @@ begin
                 if s2 = '' then
                 begin
                   // only one parameter
-                  if Skip(')', tmpstr, Remaining, InfoSyntaxError) then
+                  if Skip(')', tmpstr, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
                     s2 := 'sysnative';
@@ -22526,8 +22543,7 @@ begin
                     tmpbool := True
                   else
                   begin
-                    InfoSyntaxError :=
-                      'Error: unknown parameter: ' + s2 +
+                    InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
                       ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
                     syntaxCheck := False;
                   end;
@@ -22537,30 +22553,45 @@ begin
                     if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
                     begin
                       // got third parameter
-                      if Skip(')', tmpstr2, Remaining, InfoSyntaxError) then
+                      if not TryStrToBool(s3, tmpbool1) then
                       begin
-                        if TryStrToBool(s3, tmpbool1) then
-                          syntaxCheck := True
-                        else
+                        syntaxCheck := False;
+                        InfoSyntaxError :=
+                          'Error: boolean string (true/false) expected but got: ' + s3;
+                      end;
+                      // four parameter ?
+                      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+                      begin
+                        if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
                         begin
-                          syntaxCheck := False;
-                          InfoSyntaxError :=
-                            'Error: boolean string (true/false) expected but got: ' + s3;
+                          // got fourth parameter
+                          if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                          begin
+                            // four parameter
+                            syntaxCheck := True;
+                          end;
                         end;
+                      end
+                      else
+                      if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                      begin
+                        // three parameter
+                        syntaxCheck := True;
                       end;
                     end;
                   end
                   else
-                  if Skip(')', tmpstr2, Remaining, InfoSyntaxError) then
+                  if Skip(')', tmpstr2, r, InfoSyntaxError) then
                   begin
                     // two parameter
                     syntaxCheck := True;
                   end;
+                  //end;
                 end;
                 if syntaxCheck then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1);
+                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
                   except
                     on e: Exception do
                     begin
@@ -24654,7 +24685,8 @@ begin
       Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
       if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
       begin
-        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+          ')', LLinfo);
         Encoding2use := searchencoding(Script.Text, isPlainAscii);
         if not isPlainAscii then // if isPlainAscii everything else do not matter
           if Encoding2use = '' then
@@ -24678,8 +24710,8 @@ begin
           begin
             Script.LoadFromFile(Scriptdatei);
             //str := script.Text;
-            logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
-              ')', LLinfo);
+            logdatei.log_prog('searchencoding of script (' +
+              DateTimeToStr(Now) + ')', LLinfo);
             //Encoding2use := searchencoding(Script.Text, isPlainAscii);
             //if (Encoding2use = '') then
             //  Encoding2use := 'system';
@@ -24697,7 +24729,8 @@ begin
                 2, length(Encoding2use))) = 'bom') then
               begin
                 //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-                if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
+                if isEncodingUnicode(copy(Encoding2use, 0,
+                  length(Encoding2use) - 3)) then
                 begin
                   //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
                   Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
