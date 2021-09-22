@@ -134,6 +134,8 @@ begin
   try
     strlist := TStringList.Create;
     patchlist.Clear;
+    // OSD version
+    patchlist.add('#@osdVersion*#=' + myVersion);
     str := '';
     //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
@@ -459,9 +461,14 @@ begin
       end;
 
       // define_vars_multi
-      infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
-      outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
-      patchScript(infilename, outfilename);
+      // none at windows template
+      if not ((osdsettings.runmode = createTemplate) and
+        (osWin in aktProduct.productdata.targetOSset)) then
+      begin
+        infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
+        outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
+        patchScript(infilename, outfilename);
+      end;
 
     (*
     // setup script
@@ -476,6 +483,7 @@ begin
     infilename := templatePath + Pathdelim + inuninstall;
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);    *)
+
 
       // No need to copy installer for templates
       if not (osdsettings.runmode in [createTemplate, createMultiTemplate]) then
@@ -823,7 +831,7 @@ begin
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(resultForm1) do
       try
-        Title := rsDirectory + prodpath + rsStillExitsWarningDeleteOverwrite;
+        Title := rsDirectory + ' ' + prodpath + ' ' + rsStillExitsWarningDeleteOverwrite;
         Caption := 'opsi-setup-detector';
         Text := rsConfirmBackupOrRemovalTitle;
         CommonButtons := [];

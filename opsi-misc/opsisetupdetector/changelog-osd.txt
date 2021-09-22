@@ -85,6 +85,8 @@ opsi-setup-detector (4.2.0.8) stable; urgency=low
    * use boolean default on writing GetProductProperty line
    * modify TPProperty structure in order to read / write osd file
      (just avoid TStrings and replace it by string that holds the list as delimited string)
+   * osdcreate: createProductdirectory: add spaces to TTaskDialog title
+   * modified templates
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  15 Sep 2021 : 15:00:00 +0200
 

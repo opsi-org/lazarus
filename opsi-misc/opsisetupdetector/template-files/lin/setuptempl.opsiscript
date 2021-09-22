@@ -1,26 +1,26 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the General Public License.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
 [Actions]
-requiredWinstVersion >= "4.12.0.28"
-ScriptErrorMessages = false
+requiredOpsiscriptVersion >= "4.12.3.6"
 
-; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
-
-; import complete file !
 importlib "uib_exitcode.opsiscript"
 importlib "osd-lib.opsiscript"
 importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
+
+; ----------------------------------------------------------------
+; Please edit the following values:
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "l-opsi-template"
+Set $ProductId$		 = "#@productId*#"
 Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 Set $LicenseRequired$ = "false"
