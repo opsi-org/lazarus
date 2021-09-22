@@ -1131,7 +1131,8 @@ begin
         begin
           if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
           begin
-            if tryDouble(doubleValue1, doubleValue2, decimals1[i - 1], decimals2[i - 1]) then
+            if tryDouble(doubleValue1, doubleValue2, decimals1[i - 1],
+              decimals2[i - 1]) then
               sign := getCompareSignDouble(doubleValue1, doubleValue2);
           end
           else
@@ -1755,8 +1756,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10684,8 +10686,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11343,7 +11345,7 @@ var
   hookscriptfile: string;
   exitcode: integer;
   myoutput: TXStringlist;
-  powershellpara : string;
+  powershellpara: string;
 
 begin
   try
@@ -11549,11 +11551,11 @@ begin
       if copy(programparas, length(programparas), 1) = '=' then
         commandline :=
           '"' + programfilename + '" ' + programparas + '"' +
-          powershellpara+tempfilename + '"  ' + passparas
+          powershellpara + tempfilename + '"  ' + passparas
       else
         commandline :=
           '"' + programfilename + '" ' + programparas + ' ' +
-          powershellpara+tempfilename + '  ' + passparas;
+          powershellpara + tempfilename + '  ' + passparas;
 
 
 
@@ -12256,10 +12258,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -24650,82 +24652,90 @@ begin
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
       Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-      logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
-      Encoding2use := searchencoding(Script.Text, isPlainAscii);
-      if not isPlainAscii then // if isPlainAscii everything else do not matter
-        if Encoding2use = '' then
-          Encoding2use := mysystemEncoding;
-      if not isPlainAscii then // if isPlainAscii everything else do not matter
-        if hasBOM or isEncodingUnicode(Encoding2use) then
-        begin
-          //logdatei.log_prog('file has BOM', LLinfo );
-          //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-          //Encoding2use := searchencoding(Script.Text);
-          if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+      if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
+      begin
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
+        Encoding2use := searchencoding(Script.Text, isPlainAscii);
+        if not isPlainAscii then // if isPlainAscii everything else do not matter
+          if Encoding2use = '' then
+            Encoding2use := mysystemEncoding;
+        if not isPlainAscii then // if isPlainAscii everything else do not matter
+          if hasBOM or isEncodingUnicode(Encoding2use) then
           begin
-            logdatei.log('The encoding mentioned in the file :' +
-              Encoding2use + ', is different that the detected encoding :' +
-              foundEncoding + '!', LLWarning);
-            logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
-            Encoding2use := foundEncoding;
-          end;
-        end
-        else
-        begin
-          Script.LoadFromFile(Scriptdatei);
-          //str := script.Text;
-          logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
-            ')', LLinfo);
-          //Encoding2use := searchencoding(Script.Text, isPlainAscii);
-          //if (Encoding2use = '') then
-          //  Encoding2use := 'system';
-          if (Encoding2use = 'system') then
-          begin
-            //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-            if (not configSupressSystemEncodingWarning) or isPlainAscii then
-              logdatei.log(
-                'Encoding=system makes the opsiscript not portable between different OS',
-                LLWarning);
+            //logdatei.log_prog('file has BOM', LLinfo );
+            //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+            //Encoding2use := searchencoding(Script.Text);
+            if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+            begin
+              logdatei.log('The encoding mentioned in the file :' +
+                Encoding2use + ', is different that the detected encoding :' +
+                foundEncoding + '!', LLWarning);
+              logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+              Encoding2use := foundEncoding;
+            end;
           end
           else
           begin
-            if (Lowercase(copy(Encoding2use, length(Encoding2use) -
-              2, length(Encoding2use))) = 'bom') then
+            Script.LoadFromFile(Scriptdatei);
+            //str := script.Text;
+            logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+              ')', LLinfo);
+            //Encoding2use := searchencoding(Script.Text, isPlainAscii);
+            //if (Encoding2use = '') then
+            //  Encoding2use := 'system';
+            if (Encoding2use = 'system') then
             begin
-              //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-              if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
-              begin
-                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-              end
-              else
-              begin
-                logdatei.log_prog(
-                  'the encoding mentioned in the file is not unicode)', LLWarning);
-                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-              end;
+              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+              if (not configSupressSystemEncodingWarning) or isPlainAscii then
+                logdatei.log(
+                  'Encoding=system makes the opsiscript not portable between different OS',
+                  LLWarning);
             end
             else
             begin
-              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-              Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+              if (Lowercase(copy(Encoding2use, length(Encoding2use) -
+                2, length(Encoding2use))) = 'bom') then
+              begin
+                //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+                if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
+                begin
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+                end
+                else
+                begin
+                  logdatei.log_prog(
+                    'the encoding mentioned in the file is not unicode)', LLWarning);
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                end;
+              end
+              else
+              begin
+                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+              end;
             end;
           end;
-        end;
-      //str := script.Text;
-      usedEncoding := Encoding2use;
-      //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+        //str := script.Text;
+        usedEncoding := Encoding2use;
+        //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
 
-      Script.FFilename := Scriptdatei;
-      for i := 0 to script.Count - 1 do
+        Script.FFilename := Scriptdatei;
+        for i := 0 to script.Count - 1 do
+        begin
+          str := Script.Strings[i];
+          script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
+          script.FLibList.Append('false');
+          //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
+        end;
+        Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
+      end
+      else
       begin
-        str := Script.Strings[i];
-        script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
-        script.FLibList.Append('false');
-        //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
+        LogDatei.log('Empty script file: ' + Scriptdatei, LLWarning);
+        script.Text := ';empty script';
       end;
-      Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
     end
     else
     begin
@@ -24814,7 +24824,8 @@ begin
     else
       LogDatei.log('             opsi-script running in standard script mode',
         LLessential);
-    LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch), LLessential);
+    LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch),
+      LLessential);
 
 
     ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';
