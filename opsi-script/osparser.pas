@@ -1004,11 +1004,15 @@ function getDecimalCompareSign
   end;
 
   function tryDouble(var d1, d2: double; s1, s2: string): boolean;
+  var
+    str1, str2 : string;
   begin
     Result := True;
     try
-      d1 := StrToFloat('0.' + s1);
-      d2 := StrToFloat('0.' + s2);
+      str1 := '0' + DefaultFormatSettings.DecimalSeparator + s1;
+      str2 := '0' + DefaultFormatSettings.DecimalSeparator + s2;
+      d1 := StrToFloat(str1);
+      d2 := StrToFloat(str2);
     except
       InfoSyntaxError := 'Expecting a sequence of "." and numbers';
       Result := False;
