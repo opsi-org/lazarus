@@ -24861,8 +24861,10 @@ begin
     else
       LogDatei.log('             opsi-script running in standard script mode',
         LLessential);
+    {$IFDEF GUI}
     LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch),
       LLessential);
+    {$ENDIF GUI}
 
 
     ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';
