@@ -10,7 +10,6 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InIDEConfig"/>
-      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -125,11 +124,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script-gui"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script-gui"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -293,11 +293,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script-gui"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script-gui"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -341,11 +342,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -395,11 +397,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script-gui"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script-gui"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -433,11 +436,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -477,15 +481,6 @@
 -dSYNAPSE
 -dSSLPATH
 -dAPP_BUNDLE"/>
-            <OtherDefines Count="7">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSDEBUG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="APP_BUNDLE"/>
-              <Define6 Value="SSLPATH"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item10>
@@ -494,11 +489,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-script"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsi-script"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\synapse"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
