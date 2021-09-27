@@ -997,15 +997,20 @@ function getDecimalCompareSign
 
   function leadingZero(s1: string; s2: string): boolean;
   begin
-    if (s1[1] = '0') or (s2[1] = '0') then
-      Result := True
+    if (length(s1) > 0) and (length(s2) > 0) then
+    begin
+      if (s1[1] = '0') or (s2[1] = '0') then
+        Result := True
+      else
+        Result := False;
+    end
     else
       Result := False;
   end;
 
   function tryDouble(var d1, d2: double; s1, s2: string): boolean;
   var
-    str1, str2 : string;
+    str1, str2: string;
   begin
     Result := True;
     try
@@ -1760,8 +1765,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10689,8 +10695,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12260,10 +12266,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -22547,7 +22553,8 @@ begin
                     tmpbool := True
                   else
                   begin
-                    InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
+                    InfoSyntaxError :=
+                      'Error: unknown parameter: ' + s2 +
                       ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
                     syntaxCheck := False;
                   end;
