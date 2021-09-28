@@ -13,7 +13,7 @@ uses
 function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
-
+function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
 
 implementation
 
@@ -42,7 +42,7 @@ begin
   myFile := TStringList.Create;
   filePath := ExpandFileName(filePath);
   myFile.Add(TOMLcontents);
-  writeln('' + myFile.Text);
+  //writeln('' + myFile.Text);
   try
   myFile.SaveToFile(filePath);
   result := True;
@@ -82,6 +82,22 @@ begin
   end;
   myFile.Free;
 end;
+
+function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
+var
+  myFile : String;
+  myTOML : TTOMLDocument;
+begin
+  result := defaultValue;
+  TOMLfile := ExpandFileName(TOMLfile);
+  myFile := ReadTOMLFile(TOMLfile);
+  myTOML := GetTOML(myFile);
+  result := String(myTOML.GetItem(key));
+  if result='' then
+     result := defaultValue;
+end;
+
+
 
 end.
 
