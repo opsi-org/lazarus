@@ -12,6 +12,8 @@ uses
 
 function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+
 
 implementation
 
@@ -47,6 +49,36 @@ begin
   except
     on E:Exception do
       writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
+  end;
+  myFile.Free;
+end;
+
+function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+var
+  myFile: TStringList;
+  myTOML : TTOMLDocument;
+  myJSON : TJSONData;
+begin
+  result := False;
+  myFile := TStringList.Create;
+  TOMLfile := ExpandFileName(TOMLfile);
+  JSONfile := ExpandFileName(JSONfile);
+  try
+  myFile.LoadFromFile(TOMLfile);
+  except
+    on E:Exception do
+      writeln('Exception in LoadFromFile '+ TOMLfile +': ', E.Message);
+  end;
+  myTOML := GetTOML(myFile.Text);
+  myJSON := myTOML.AsJSON;
+  myFile.Clear;
+  myFile.Add(myJSON.FormatJSON);
+  try
+  myFile.SaveToFile(JSONfile);
+  result := True;
+  except
+    on E:Exception do
+      writeln('Exception in SaveToFile'+ JSONfile +': ', E.Message);
   end;
   myFile.Free;
 end;
