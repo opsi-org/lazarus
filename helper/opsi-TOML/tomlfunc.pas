@@ -11,6 +11,7 @@ uses
 
 
 function ReadTOMLFile(filePath: String): String;
+function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 
 implementation
 
@@ -31,6 +32,24 @@ begin
   myFile.Free;
 end;
 
+function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+var
+  myFile: TStringList;
+begin
+  result := False;
+  myFile := TStringList.Create;
+  filePath := ExpandFileName(filePath);
+  myFile.Add(TOMLcontents);
+  writeln('' + myFile.Text);
+  try
+  myFile.SaveToFile(filePath);
+  result := True;
+  except
+    on E:Exception do
+      writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
+  end;
+  myFile.Free;
+end;
 
 end.
 
