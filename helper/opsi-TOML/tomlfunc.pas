@@ -14,6 +14,7 @@ function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
+function GetTOMLSectionNames(TOMLfile: String): TStringList;
 
 implementation
 
@@ -97,7 +98,30 @@ begin
      result := defaultValue;
 end;
 
+function GetTOMLSectionNames(TOMLfile: String): TStringList;
+var
+  myTOMLfile : String;
+  myTOML : TTOMLDocument;
+  sectionNamesList : TStringList;
+  i : integer;
 
+begin
+  sectionNamesList := TStringList.Create;
+  TOMLfile := ExpandFileName(TOMLfile);
+  myTOMLfile := ReadTOMLFile(TOMLfile);
+  myTOML := GetTOML(myTOMLfile);
+
+  for i := 0 to (Length(myTOML.Keys[i])-1) do
+    if  (String(myTOML.Values[i]) = 'TTOMLTable') then
+        begin
+        //writeln('   [', myTOML.Keys[i], ']') ;
+        sectionNamesList.Add(myTOML.Keys[i]);
+        end
+    else
+        //writeln(' Not a section : ', myTOML.Keys[i] );
+  result := sectionNamesList;
+  //writeln(sectionNamesList.Text);
+end;
 
 end.
 
