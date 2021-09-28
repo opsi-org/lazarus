@@ -76,3 +76,6 @@ helper/opsiclientkiosk/opsiclientkiosk
 opsi-misc/opsi-quickinstall/properties.conf
 *.lps
 *.lps
+
+/opsi-script/locale/opsi-script-gui.pot
+/opsi-script/locale/opsi-script.pot
