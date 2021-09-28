@@ -61,6 +61,11 @@ begin
   else
       writeln('SaveToTOMLFile not done');
 
+  JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
+  if ( ConvertTOMLtoJSON(path, JSONpath)) then
+     writeln('ConvertTOMLtoJSON done')
+  else
+      writeln('ConvertTOMLtoJSON not done');
 
 
   {*
