@@ -54,7 +54,12 @@ begin
   myFile.Add('aaaa');
   //, 'bbbb', 'ccccc'];
 
+  myFile.SaveToFile(filePath);
 
+  if ( SaveToTOMLFile(myTOMLString, filePath) ) then
+     writeln('SaveToTOMLFile done')
+  else
+      writeln('SaveToTOMLFile not done');
 
 
 
