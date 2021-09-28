@@ -169,15 +169,6 @@
 -dSYNAPSE
 -dSSLPATH
 -dAPP_BUNDLE"/>
-            <OtherDefines Count="7">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSDEBUG"/>
-              <Define4 Value="SYNAPSE"/>
-              <Define5 Value="APP_BUNDLE"/>
-              <Define6 Value="SSLPATH"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item4>
