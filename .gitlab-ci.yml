@@ -141,14 +141,14 @@ codesign ops-script macos:
       - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
-run opsi-script-test:
+run opsi-script-test on windows:
   stage: test_windows
   tags:
     - laz-windows
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
       when: never # change to always if job script/rules are their
   script:
     - echo "opsi-script-test on windows"
@@ -158,12 +158,12 @@ run opsi-script-test:
     - opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
     #- git clone opsi-script-test
 
-opsi-script to binaryindex:
+opsi-script (Windows) to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
       when: never # change to always if job script/rules are their
   script:
     - echo "deploy to binaryindex" 
