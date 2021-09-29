@@ -152,10 +152,12 @@ run opsi-script-test:
       when: never # change to always if job script/rules are their
   script:
     - echo "opsi-script-test on windows"
+    - 
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\winst32.exe
-    - ssh $USERNAME@bonifax.uib.gmbh #work this out
-    - opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
+    # - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe Documents\opsiscripts\test_servicecall.opsiscript /opsiservice bonifax.uib.gmbh /clientid desktop-83kni74.uib.local /username desktop-83kni74.uib.local /password 0e84340d680eb8b659a7b40925701eb3 /silent
+    #- ssh $USERNAME@bonifax.uib.gmbh #work this out
+    #- opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
     #- git clone opsi-script-test
 
 opsi-script to binaryindex:
