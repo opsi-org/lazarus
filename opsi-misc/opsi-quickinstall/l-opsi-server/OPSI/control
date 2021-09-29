@@ -8,7 +8,7 @@ id: l-opsi-server
 name: Installs opsi
 description: Installs opsi-server packages, configures and create adminuser
 advice: 
-version: 4.2.0.4
+version: 4.2.0.5
 priority: 0
 licenseRequired: False
 productClasses: 

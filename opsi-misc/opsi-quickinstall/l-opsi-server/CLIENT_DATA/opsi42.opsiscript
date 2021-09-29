@@ -47,6 +47,7 @@ DefVar $force_copy_modules$
 DefVar $opsiconfd_log_level$
 DefVar $hostname$
 DefVar $domain$
+DefVar $is_quick_install$
 
 
 DefStringList $opsi_productsList$
@@ -57,6 +58,7 @@ DefStringList $waitlist$
 DefStringlist $setup_after_install_list$
 DefStringList $hostnamelist$
 DefStringList $domainlist$
+DefStringList $ipList$
 
 
 ; base initalization of properties
@@ -80,10 +82,12 @@ set $ucsMasterPasswd$ = asConfidential("linux123")
 set $proxy$ = ""
 set $force_copy_modules$ = "true"
 set $opsiconfd_log_level$ = "default"
+set $is_quick_install$ = "false"
 
 
 ; check for initalization of properties via quick-install
 if fileExists("%scriptpath%/properties.conf")
+	set $is_quick_install$ = "true"
 	comment "setting properties from file"
 	;default result file to failed - will be over written in case of success
 	shellCall('echo failed > "%scriptpath%/result.conf"')
@@ -220,7 +224,11 @@ if $myIPName$ = "auto"
 		if contains($hostname$,".")
 			set $myIPName$ = $hostname$
 		else
-			set $domainlist$ = shellCall("dnsdomainname")
+			if contains($distroName$, "openSUSE")
+				set $domainlist$ = shellCall("hostname -d")
+			else
+				set $domainlist$ = shellCall("dnsdomainname")
+			endif
 			for %s% in $domainlist$ do set $domain$ = "%s%"
 			if $domain$ = ""
 			    comment "dnsdomainname command was not successfull, trying alternatives"
@@ -240,6 +248,8 @@ if $myIPName$ = "auto"
 		            message "dnsdomain and read domain-name are not the same"
 		           	set $dnsdomain$ = $domain$
 			    endif
+			else
+				set $dnsdomain$ = $domain$
 			endif
 	    	set $myIPName$ = $hostname$ + "." + $dnsdomain$
 		endif
@@ -247,7 +257,9 @@ if $myIPName$ = "auto"
 endif
 
 if $myIPNumber$ = "auto"
-	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	if $is_quick_install$ = "false"
+		set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	endif
 	if not(isValidIP4($myIPNumber$))
 		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
@@ -261,11 +273,15 @@ endif
 
 if $myIPNumber$ = "127.0.0.1"
 	Message "seems like IP address is from localhost retrying"
-	set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
-	if not(isValidIP4($myIPNumber$))
-		set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+	set $ipList$ = shellCall("hostname -I| awk '{print $1}'")
+	for %s% in $ipList$ do set $myIPNumber$ = "%s%"
+	if $myIPNumber$ = "127.0.0.1"
+		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
-			set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+			set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+			if not(isValidIP4($myIPNumber$))
+				set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+			endif
 		endif
 	endif
 endif
@@ -706,6 +722,24 @@ Switch $distrotype$
 			endif
 		endif
 
+		if contains($distroName$,"Rocky")
+			set $distroName4repo$ = "RockyLinux"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif	
+
+		if contains($distroName$,"Alma")
+			set $distroName4repo$ = "AlmaLinux"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif
+
 		ShellInAnIcon_add_opsi_repository_redhat
 		if not("0" = getLastExitCode)
 			LogError "addrepo failed"
@@ -882,7 +916,7 @@ if $fileonly$ = "false"
                         message "using alternative way to configure mysql backend"
                         ShellInAnIcon_configure_opsi_mysql_backend_focal
                 else
-                        if ($distroName4repo$ = "openSUSE_Leap") or ($distroName4repo$ = "Debian") or ($distroName4repo$ = "SLE")
+                        if ($distroName4repo$ = "openSUSE_Leap") or ($distroName4repo$ = "Debian") or ($distroName4repo$ = "SLE") or ($distroName4repo$ = "RockyLinux") or ($distroName4repo$ = "AlmaLinux")
                                 ShellInAnIcon_configure_opsi_mysql_backend
 			else
 				ShellInAnIcon_configure_opsi_mysql_backend_old
@@ -1354,7 +1388,7 @@ exit $?
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 service $mysqlservicename$ restart
-mysqladmin -u root --password=$mysql_root_pw$ password $mysql_root_pw$
+mysqladmin -u root password $mysql_root_pw$
 service $mysqlservicename$ restart
 UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
 opsi-setup --configure-mysql --unattended=$UNATTENDED

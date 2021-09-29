@@ -1,4 +1,11 @@
 [Changelog]
+l-opsi-server (4.2.0.5-1); testing; urgency=low
+
+  * added Rocky Linux 8 support
+  * added Alma Linux 8 support
+
+ -- Mathias Radtke <m.radtke@uib.de> Mon, 13 Sep 2021 16:40:00 +0200
+
 l-opsi-server (4.2.0.4-1); testing; urgency=low
 
   * added Debian 11 support
