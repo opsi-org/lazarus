@@ -95,7 +95,8 @@ begin
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
-  result := String(myTOML.GetItem(key));
+  //result := String(myTOML.GetItem(key));
+  result := String(myTOML[section][key]);
   if result='' then
      result := defaultValue;
 end;
