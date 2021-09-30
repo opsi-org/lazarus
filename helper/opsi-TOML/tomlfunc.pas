@@ -16,6 +16,7 @@ function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
 function GetTOMLSectionNames(TOMLfile: String): TStringList;
 function GetTOMLFile(filePath: String): TStringList;
+function GetTOMLSection(TOMLfile: String; section : String): TStringList;
 
 implementation
 
@@ -139,6 +140,34 @@ begin
       writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
   end;
   myTOMLStringList.Free;
+end;
+
+function GetTOMLSection(TOMLfile: String; section : String): TStringList;
+var
+  myTOMLfile : TStringList;
+  mySectionList : TStringList;
+  sectionIndex : integer;
+  sectionNameString, line : String;
+
+begin
+  result := TStringList.Create;
+  mySectionList := TStringList.Create;
+  TOMLfile := ExpandFileName(TOMLfile);
+  myTOMLfile := GetTOMLFile(TOMLfile);
+
+  sectionIndex := myTOMLfile.IndexOf('['+section+']');
+  sectionNameString := '['+section+'.';
+
+  repeat
+  sectionIndex := sectionIndex + 1 ;
+  line := myTOMLfile[sectionIndex] ;
+  if LeftStr(line,1)='[' then
+    if Pos(sectionNameString, line) = 0 then
+      break;
+  mySectionList.Add(line);
+  until sectionIndex = myTOMLfile.Count -1;
+
+  result := mySectionList;
 end;
 
 
