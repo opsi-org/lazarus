@@ -15,6 +15,7 @@ function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
 function GetTOMLSectionNames(TOMLfile: String): TStringList;
+function GetTOMLFile(filePath: String): TStringList;
 
 implementation
 
@@ -122,6 +123,24 @@ begin
   result := sectionNamesList;
   //writeln(sectionNamesList.Text);
 end;
+
+function GetTOMLFile(filePath: String): TStringList;
+var
+  myTOMLStringList: TStringList;
+begin
+  result := TStringList.Create;
+  myTOMLStringList := TStringList.Create;
+  filePath := ExpandFileName(filePath);
+  try
+  myTOMLStringList.LoadFromFile(filePath);
+  result.AddStrings(myTOMLStringList);
+  except
+    on E:Exception do
+      writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
+  end;
+  myTOMLStringList.Free;
+end;
+
 
 end.
 
