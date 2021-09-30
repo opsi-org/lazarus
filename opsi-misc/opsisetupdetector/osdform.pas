@@ -1104,7 +1104,7 @@ begin
   end;
 
   initaktproduct;
-  makeProperties;
+  //makeProperties;
   resultform1.updateGUI;
 
   if Application.HasOption('p', 'productId') then
@@ -1345,7 +1345,7 @@ begin
   begin
     LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
     initaktproduct;
-    makeProperties;
+    //makeProperties;
     resultform1.updateGUI;
     aktProduct.readProjectFile(OpenDialog1.FileName);
     TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;

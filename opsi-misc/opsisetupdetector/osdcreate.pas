@@ -134,6 +134,8 @@ begin
   try
     strlist := TStringList.Create;
     patchlist.Clear;
+    // OSD version
+    patchlist.add('#@osdVersion*#=' + myVersion);
     str := '';
     //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
@@ -181,10 +183,15 @@ begin
       end
       else
       begin
-        if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
-          str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
+        if aktProduct.properties.Items[i].Property_Type = bool then
+          str2 := BoolToStr(aktProduct.properties.Items[i].BoolDefault, True)
         else
-          str2 := '';
+        begin
+          if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
+            str2 := aktProduct.properties.Items[i].GetDefaultLines[0]
+          else
+            str2 := '';
+        end;
         { remove brackets [] }
         str2 := opsiunquotestr2(str2, '[]');
         { take first from list }
@@ -454,9 +461,14 @@ begin
       end;
 
       // define_vars_multi
-      infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
-      outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
-      patchScript(infilename, outfilename);
+      // none at windows template
+      if not ((osdsettings.runmode = createTemplate) and
+        (osWin in aktProduct.productdata.targetOSset)) then
+      begin
+        infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
+        outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
+        patchScript(infilename, outfilename);
+      end;
 
     (*
     // setup script
@@ -472,14 +484,15 @@ begin
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);    *)
 
+
       // No need to copy installer for templates
       if not (osdsettings.runmode in [createTemplate, createMultiTemplate]) then
         // loop over setups
         for i := 0 to 2 do
         begin
           infilename := aktProduct.SetupFiles[i].setupFullFileName;
-          LogDatei.log('Will copy: ' + infilename + ' to: ' + clientpath +
-            PathDelim + 'files' + IntToStr(i + 1), LLNotice);
+          LogDatei.log('Will copy: ' + infilename + ' to: ' +
+            clientpath + PathDelim + 'files' + IntToStr(i + 1), LLNotice);
           if aktProduct.SetupFiles[i].active then
             // complete dir
             if aktProduct.SetupFiles[i].copyCompleteDir then
@@ -818,7 +831,7 @@ begin
     // https://specials.rejbrand.se/TTaskDialog/
     with TTaskDialog.Create(resultForm1) do
       try
-        Title := rsDirectory + prodpath + rsStillExitsWarningDeleteOverwrite;
+        Title := rsDirectory + ' ' + prodpath + ' ' + rsStillExitsWarningDeleteOverwrite;
         Caption := 'opsi-setup-detector';
         Text := rsConfirmBackupOrRemovalTitle;
         CommonButtons := [];

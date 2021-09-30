@@ -576,7 +576,10 @@ type
 {$IFDEF WINDOWS}
     function execPowershellCall(command: string; archparam: string;
       logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
-      handle_policy: boolean): TStringList;
+      handle_policy: boolean): TStringList; overload;
+    function execPowershellCall(command: string; archparam: string;
+      logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
+      handle_policy: boolean; optionstr: string): TStringList; overload;
  {$ENDIF WINDOWS}
   end;
 
@@ -620,6 +623,8 @@ const
   ParameterEncoding = '/encoding';
   Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllUserProfiles = '/AllUserProfiles';
+  ParameterShowoutput = '/showoutput';
+
 
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
@@ -654,7 +659,6 @@ const
   ParameterRunElevated = '/RunElevated';
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
-  ParameterShowoutput = '/showoutput';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -680,6 +684,7 @@ const
   optionsSplitter = 'WINST';
   passSplitter = 'PASS';
   parameterEscapeStrings = '/EscapeStrings';
+  Parameter_hookscript = '/HookScript';
 
 
 var
@@ -975,6 +980,94 @@ function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
   var InfoSyntaxError: string; stringcomparison: boolean): boolean;
 
+  function containsDigitsOnly(s: string): boolean;
+  var
+    c: char;
+  begin
+    Result := True;
+    for  c in s do
+    begin
+      if not (c in ['0'..'9']) then
+      begin
+        Result := False;
+        break;
+      end;
+    end;
+  end;
+
+  function leadingZero(s1: string; s2: string): boolean;
+  begin
+    if (length(s1) > 0) and (length(s2) > 0) then
+    begin
+      if (s1[1] = '0') or (s2[1] = '0') then
+        Result := True
+      else
+        Result := False;
+    end
+    else
+      Result := False;
+  end;
+
+  function tryDouble(var d1, d2: double; s1, s2: string): boolean;
+  var
+    str1, str2: string;
+  begin
+    Result := True;
+    try
+      str1 := '0' + DefaultFormatSettings.DecimalSeparator + s1;
+      str2 := '0' + DefaultFormatSettings.DecimalSeparator + s2;
+      d1 := StrToFloat(str1);
+      d2 := StrToFloat(str2);
+    except
+      InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+      Result := False;
+    end;
+  end;
+
+  function tryInteger(var i1, i2: integer; s1, s2: string): boolean;
+  begin
+    Result := True;
+    try
+      i1 := StrToInt(s1);
+      i2 := StrToInt(s2);
+    except
+      InfoSyntaxError := 'Expecting a sequence of "." and numbers';
+      Result := False;
+    end;
+  end;
+
+  function extractNumbers(s: string): string;
+  const
+    n = ['0'..'9'];
+  var
+    i: integer;
+  begin
+    i := 1;
+    Result := '';
+    while i < s.Length + 1 do
+    begin
+      if s[i] in n then
+        Result := Result + s[i];
+      Inc(i);
+    end;
+  end;
+
+  function extractNonNumbers(s: string): string;
+  const
+    n = ['0'..'9'];
+  var
+    i: integer;
+  begin
+    i := 1;
+    Result := '';
+    while i < s.Length + 1 do
+    begin
+      if not (s[i] in n) then
+        Result := Result + s[i];
+      Inc(i);
+    end;
+  end;
+
 var
   decimals1: TXStringList;
   decimals2: TXStringList;
@@ -982,6 +1075,10 @@ var
   comparing: boolean;
   number1: integer;
   number2: integer;
+  doublevalue1: double;
+  doublevalue2: double;
+  string1: string;
+  string2: string;
 
   ///partCompareResult : Integer;
   ///isEqual : Boolean;
@@ -1028,7 +1125,6 @@ begin
       comparing := False;
     end;
 
-
     // we continue comparing
     if comparing then
     begin
@@ -1039,17 +1135,45 @@ begin
 
       else
       begin
-
-        try
-          number1 := StrToInt(decimals1[i - 1]);
-          number2 := StrToInt(decimals2[i - 1]);
-        except
-          InfoSyntaxError := 'Expecting a sequence of "." and numbers';
-          Result := False;
+        if (containsDigitsOnly(decimals1[i - 1]) and
+          containsDigitsOnly(decimals2[i - 1])) then
+        begin
+          if leadingZero(decimals1[i - 1], decimals2[i - 1]) then
+          begin
+            if tryDouble(doubleValue1, doubleValue2, decimals1[i - 1],
+              decimals2[i - 1]) then
+              sign := getCompareSignDouble(doubleValue1, doubleValue2);
+          end
+          else
+          begin
+            if tryInteger(number1, number2, decimals1[i - 1], decimals2[i - 1]) then
+              sign := getCompareSign(number1, number2);
+          end;
+        end
+        else // at least one string with non numbers
+        begin
+          // extract numbers and non numbers compare
+          // hopefully non numbers will only be at the end ;-)
+          // otherwise comparison will be weird
+          string1 := extractNumbers(decimals1[i - 1]);
+          string2 := extractNumbers(decimals2[i - 1]);
+          if leadingZero(string1, string2) then
+          begin
+            if tryDouble(doubleValue1, doubleValue2, string1, string2) then
+              sign := getCompareSignDouble(doubleValue1, doubleValue2);
+          end
+          else
+          begin
+            if tryInteger(number1, number2, string1, string2) then
+              sign := getCompareSign(number1, number2);
+          end;
+          if (sign = 0) then // check only if numbers are equal
+          begin
+            string1 := extractNonNumbers(decimals1[i - 1]);
+            string2 := extractNonNumbers(decimals2[i - 1]);
+            sign := getCompareSignStrings(string1, string2);
+          end;
         end;
-
-        if Result then
-          sign := getCompareSign(number1, number2);
       end;
 
       if sign <> 0 then
@@ -1641,8 +1765,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -3051,7 +3176,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
+    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -7418,7 +7543,7 @@ var
     goOn: boolean = True;
     regexMatchList, helperlist: TStringList;
     rootnodeOnCreate: string;
-    infostr : string = '';
+    infostr: string = '';
 
   begin
 
@@ -7467,19 +7592,20 @@ var
       LogDatei.log('file to patch does not exist and will be created: ' +
         myfilename, LLinfo);
       try
-      rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
-      if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
-      begin
-        LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
-        LogDatei.log('We fall back to <rootnode> but normally this is not what you want',
-          LLWarning);
-        rootnodeOnCreate := 'rootnode';
-      end;
-      helperlist:= TStringList.Create;
-      PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
-      PatchListe.Add('<' + rootnodeOnCreate + '>');
-      stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
-      PatchListe.Add('</' + helperlist.Strings[0]  + '>');
+        rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
+        if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
+        begin
+          LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
+          LogDatei.log(
+            'We fall back to <rootnode> but normally this is not what you want',
+            LLWarning);
+          rootnodeOnCreate := 'rootnode';
+        end;
+        helperlist := TStringList.Create;
+        PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
+        PatchListe.Add('<' + rootnodeOnCreate + '>');
+        stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
+        PatchListe.Add('</' + helperlist.Strings[0] + '>');
       finally
         helperlist.Free;
       end;
@@ -7509,7 +7635,8 @@ var
     if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
       LogDatei.log('success: create xmldoc from / for file: ' + myfilename, oslog.LLinfo)
     else
-      LogDatei.log('failed: create xmldoc from / for file: ' + myfilename, oslog.LLError);
+      LogDatei.log('failed: create xmldoc from / for file: ' +
+        myfilename, oslog.LLError);
 
     // parse section
     for i := 1 to Sektion.Count do
@@ -7715,36 +7842,39 @@ var
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end;   // openNode
 
-      if LowerCase(Expressionstr) = LowerCase('setNodePair') then
-      begin
-        logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
-        syntaxCheck := True;
-        if not (nodeOpened and nodeOpenCommandExists) then
+        if LowerCase(Expressionstr) = LowerCase('setNodePair') then
         begin
-          //SyntaxCheck := false;
-          logdatei.log('Error: No open Node. Use OpenNode before ' +
-            Expressionstr, LLError);
-        end
-        else
-        begin
-          if SyntaxCheck then
+          logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
+          syntaxCheck := True;
+          if not (nodeOpened and nodeOpenCommandExists) then
           begin
-            if GetStringA(trim(r), newname, r, errorinfo, True) then
+            //SyntaxCheck := false;
+            logdatei.log('Error: No open Node. Use OpenNode before ' +
+              Expressionstr, LLError);
+          end
+          else
+          begin
+            if SyntaxCheck then
             begin
-              logdatei.log('keyNodeName= ' + newname, LLDebug2);
-              if GetStringA(trim(r), newvalue, r, errorinfo, True) then
+              if GetStringA(trim(r), newname, r, errorinfo, True) then
               begin
-                logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
-                if GetStringA(trim(r), newname2, r, errorinfo, True) then
+                logdatei.log('keyNodeName= ' + newname, LLDebug2);
+                if GetStringA(trim(r), newvalue, r, errorinfo, True) then
                 begin
-                  logdatei.log('valueNodeName= ' + newname2, LLDebug2);
-                  if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                  logdatei.log('keyNodeTextContent= ' + newvalue, LLDebug2);
+                  if GetStringA(trim(r), newname2, r, errorinfo, True) then
                   begin
-                    logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
-                    syntaxCheck := True;
-                    LogDatei.log('We will add node pair : ' + newname +
-                      ' : ' + newvalue + ' with ' + newname2 + ' : ' +
-                      newvalue2, LLdebug);
+                    logdatei.log('valueNodeName= ' + newname2, LLDebug2);
+                    if GetStringA(trim(r), newvalue2, r, errorinfo, True) then
+                    begin
+                      logdatei.log('valueNodeTextContent= ' + newvalue2, LLDebug2);
+                      syntaxCheck := True;
+                      LogDatei.log('We will add node pair : ' + newname +
+                        ' : ' + newvalue + ' with ' + newname2 +
+                        ' : ' + newvalue2, LLdebug);
+                    end
+                    else
+                      syntaxCheck := False;
                   end
                   else
                     syntaxCheck := False;
@@ -7754,37 +7884,34 @@ var
               end
               else
                 syntaxCheck := False;
+            end;
+
+            if r <> '' then
+            begin
+              SyntaxCheck := False;
+              ErrorInfo := ErrorRemaining;
+            end;
+
+            if SyntaxCheck then
+            begin
+              try
+                XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
+                LogDatei.log('successfully setNodePair : ' + newname +
+                  ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
+                end;
+              end;
             end
             else
-              syntaxCheck := False;
+              reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
           end;
+        end;   // setNodePair
 
-          if r <> '' then
-          begin
-            SyntaxCheck := False;
-            ErrorInfo := ErrorRemaining;
-          end;
-
-          if SyntaxCheck then
-          begin
-            try
-              XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
-              LogDatei.log('successfully setNodePair : ' + newname +
-                ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
-              end;
-            end;
-          end
-          else
-            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
-        end;
-      end;   // setNodePair
-
-      if LowerCase(Expressionstr) = LowerCase('deleteNode') then
-      begin
+        if LowerCase(Expressionstr) = LowerCase('deleteNode') then
+        begin
           SyntaxCheck := False;
           if GetStringA(trim(r), nodepath, r, errorinfo, True) then
           begin
@@ -8098,9 +8225,9 @@ var
       PatchListe.Text := stringReplaceRegexInList(PatchListe,
         'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
     try
-      FileGetWriteAccess(myfilename,infostr);
+      FileGetWriteAccess(myfilename, infostr);
       // call saveToFile with raise_on_error = true - to catch problems
-      PatchListe.SaveToFile(myfilename, flag_encoding,true);
+      PatchListe.SaveToFile(myfilename, flag_encoding, True);
       LogDatei.log('Successfully saved XML doc to file: ' + myfilename +
         ' with encoding : ' + flag_encoding, LLinfo)
     except
@@ -8139,7 +8266,7 @@ begin
     exit;
 
   if (lowercase(PatchParameter) = lowercase(Parameter_AllNTUserProfiles)) or
-     (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
+    (lowercase(PatchParameter) = lowercase(Parameter_AllUserProfiles)) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -9146,7 +9273,7 @@ begin
    {$ENDIF WIN32}
 
   if (0 < pos(lowercase(Parameter_AllNTUserProfiles), lowercase(CopyParameter))) or
-     (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
+    (0 < pos(lowercase(Parameter_AllUserProfiles), lowercase(CopyParameter))) or
     flag_all_ntuser then
   begin
     flag_all_ntuser := False;
@@ -10181,6 +10308,14 @@ end;
 function TuibInstScript.execPowershellCall(command: string; archparam: string;
   logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
   handle_policy: boolean): TStringList;
+begin
+  Result := execPowershellCall(command, archparam, logleveloffset,
+    FetchExitCodePublic, FatalOnFail, handle_policy, '');
+end;
+
+function TuibInstScript.execPowershellCall(command: string; archparam: string;
+  logleveloffset: integer; FetchExitCodePublic, FatalOnFail: boolean;
+  handle_policy: boolean; optionstr: string): TStringList;
 var
   commandline: string = '';
   //fullps : string;
@@ -10200,6 +10335,7 @@ var
   mySektion: TWorkSection;
   ActionResult: TSectionResult;
   shortarch: string;  // for execShellCall
+  fulloptionstring: string;
 begin
   try
     Result := TStringList.Create;
@@ -10244,9 +10380,11 @@ begin
     mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
+    fulloptionstring := parameters + ' ' + optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
-    ActionResult := executeWith(mySektion, parameters, True, logleveloffset + 1, output);
+    ActionResult := executeWith(mySektion, fulloptionstring, True,
+      logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
     begin
       FLastPrivateExitCode := FLastExitCodeOfExe;
@@ -10557,8 +10695,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11212,6 +11350,12 @@ var
   encodingString: string = '';
   InfoSyntaxError: string = '';
 
+  usehookscript: boolean = False;
+  hookscriptfile: string;
+  exitcode: integer;
+  myoutput: TXStringlist;
+  powershellpara: string;
+
 begin
   try
     runAs := traInvoker;
@@ -11222,6 +11366,8 @@ begin
     force64 := False;
     threaded := False;
     use_sp := True; // use startprocess by default
+    powershellpara := '';
+
 
     if Sektion.Count = 0 then
       exit;
@@ -11295,6 +11441,20 @@ begin
         force64 := False;
         onlyWindows := True;
       end
+      else if lowercase(Parameter_hookscript) = lowercase(expr) then
+      begin
+        usehookscript := True;
+        onlyWindows := True;
+        GetWord(Remaining, hookscriptfile, Remaining, WordDelimiterSet0);
+        hookscriptfile := opsiunquotestr2(hookscriptfile, '""');
+        if (not FileExists(hookscriptfile)) then
+        begin
+          LogDatei.log('Given script file "' + hookscriptfile +
+            '" does not exists. - will not try to run', LLWarning);
+          encodingString := 'system';
+          usehookscript := False;
+        end;
+      end
       else if lowercase(ParameterDontWait) = lowercase(expr) then
         threaded := True
       else if lowercase(ParameterShowoutput) = lowercase(expr) then
@@ -11330,10 +11490,20 @@ begin
     end;
 
     useext := '.cmd';
+    // special handling for powershell
+    // we need .ps1 as extension
+    // we need to call the script with the parameter -file in order to get the exitcode
+    // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
+    begin
+      powershellpara := ' -file ';
       useext := '.ps1';
+    end;
     if LowerCase(programfilename) = 'powershell' then
+    begin
+      powershellpara := ' -file ';
       useext := '.ps1';
+    end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11352,15 +11522,49 @@ begin
       for i := 0 to Sektion.Count - 1 do
         LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
+
+      if usehookscript then
+      begin
+        LogDatei.log('Temporary file hook: Will pass: ' + tempfilename +
+          ' to: ' + hookscriptfile, LLinfo);
+        try
+          myoutput := TXStringlist.Create;
+          commandline := 'cmd.exe /c "' + hookscriptfile + '" ' + tempfilename;
+          LogDatei.log('Temporary file hook: commandline: ' + commandline, LLinfo);
+          if not StartProcess(Commandline, sw_hide, tsofHideOutput,
+            True, False, False, False, True, traInvoker, '', 40,
+            Report, ExitCode, True, myoutput, '') then
+          begin
+            LogDatei.log('Error: ' + Report, LLError);
+            LogDatei.log('hook script output: ', LLError);
+            LogDatei.log('-----------------------', LLError);
+            for i := 0 to myoutput.Count - 1 do
+              LogDatei.log(myoutput.Strings[i], LLError);
+            LogDatei.log('-----------------------', LLError);
+          end
+          else
+          begin
+            LogDatei.log('hook script output: ', LLDebug);
+            LogDatei.log('-----------------------', LLDebug);
+            for i := 0 to myoutput.Count - 1 do
+              LogDatei.log(myoutput.Strings[i], LLDebug);
+            LogDatei.log('-----------------------', LLDebug);
+          end;
+        finally
+          FreeAndNil(myoutput);
+        end;
+      end;
+
+
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas, length(programparas), 1) = '=' then
         commandline :=
           '"' + programfilename + '" ' + programparas + '"' +
-          tempfilename + '"  ' + passparas
+          powershellpara + tempfilename + '"  ' + passparas
       else
         commandline :=
           '"' + programfilename + '" ' + programparas + ' ' +
-          tempfilename + '  ' + passparas;
+          powershellpara + tempfilename + '  ' + passparas;
 
 
 
@@ -11684,6 +11888,7 @@ begin
       {$IFDEF WINDOWS}
       s2 := '';
       s3 := '';
+      s4 := '';
       tmpstr2 := '';
       tmpbool := True; // sysnative
       tmpbool1 := True; // handle execution policy
@@ -11725,16 +11930,30 @@ begin
           if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
           begin
             // got third parameter
+            if not TryStrToBool(s3, tmpbool1) then
+            begin
+              syntaxCheck := False;
+              InfoSyntaxError :=
+                'Error: boolean string (true/false) expected but got: ' + s3;
+            end;
+            // four parameter ?
+            if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+            begin
+              if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
+              begin
+                // got fourth parameter
+                if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                begin
+                  // four parameter
+                  syntaxCheck := True;
+                end;
+              end;
+            end
+            else
             if Skip(')', tmpstr2, r, InfoSyntaxError) then
             begin
-              if TryStrToBool(s3, tmpbool1) then
-                syntaxCheck := True
-              else
-              begin
-                syntaxCheck := False;
-                InfoSyntaxError :=
-                  'Error: boolean string (true/false) expected but got: ' + s3;
-              end;
+              // three parameter
+              syntaxCheck := True;
             end;
           end;
         end
@@ -11744,11 +11963,12 @@ begin
           // two parameter
           syntaxCheck := True;
         end;
+        //end;
       end;
       if syntaxCheck then
       begin
         try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1).Text;
+          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
         except
           on e: Exception do
           begin
@@ -12046,10 +12266,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -15525,6 +15745,7 @@ begin
   {$IFDEF WINDOWS}
     s2 := '';
     s3 := '';
+    s4 := '';
     tmpstr2 := '';
     tmpbool := True; // sysnative
     tmpbool1 := True; // handle execution policy
@@ -15567,16 +15788,30 @@ begin
         if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
         begin
           // got third parameter
+          if not TryStrToBool(s3, tmpbool1) then
+          begin
+            syntaxCheck := False;
+            InfoSyntaxError :=
+              'Error: boolean string (true/false) expected but got: ' + s3;
+          end;
+          // four parameter ?
+          if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+          begin
+            if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
+            begin
+              // got fourth parameter
+              if Skip(')', tmpstr2, r, InfoSyntaxError) then
+              begin
+                // four parameter
+                syntaxCheck := True;
+              end;
+            end;
+          end
+          else
           if Skip(')', tmpstr2, r, InfoSyntaxError) then
           begin
-            if TryStrToBool(s3, tmpbool1) then
-              syntaxCheck := True
-            else
-            begin
-              syntaxCheck := False;
-              InfoSyntaxError :=
-                'Error: boolean string (true/false) expected but got: ' + s3;
-            end;
+            // three parameter
+            syntaxCheck := True;
           end;
         end;
       end
@@ -15586,11 +15821,12 @@ begin
         // two parameter
         syntaxCheck := True;
       end;
+      //end;
     end;
     if syntaxCheck then
     begin
       try
-        execPowershellCall(s1, s2, 0, True, False, tmpbool1);
+        execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
         StringResult := IntToStr(FLastExitCodeOfExe);
       except
         on e: Exception do
@@ -17829,7 +18065,7 @@ var
         begin
           LogDatei.log('File: ' + s2 + ' not found via FileExists', LLDebug3);
           // let us retry with the win api call
-          Result := shlwapi.PathFileExistsW(PWideChar(UTF8ToUTF16(s2)));
+          Result := shlwapi.PathFileExistsW(pwidechar(UTF8ToUTF16(s2)));
         end;
       except
         Result := False;
@@ -19924,6 +20160,7 @@ var
   StatKind: TStatement;
   Expressionstr: string = '';
   remaining: string = '';
+  r: string = '';
   registryformat: TRegistryFormat;
   reg_specified_basekey: string = '';
   flag_force64: boolean;
@@ -20233,6 +20470,8 @@ begin
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
+  FBatchOberflaeche.LoadSkin('');
+  Application.ProcessMessages;
   //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
@@ -22281,12 +22520,14 @@ begin
                   {$IFDEF WINDOWS}
                 s2 := '';
                 s3 := '';
+                s4 := '';
                 tmpstr2 := '';
                 tmpbool := True; // sysnative
                 tmpbool1 := True; // handle execution policy
                 syntaxCheck := False;
-                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
-                  if EvaluateString(Remaining, tmpstr, s1, InfoSyntaxError)
+                r := remaining;
+                if Skip('(', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
                   // next after ',' or ')'
                   then
                     if Skip(',', tmpstr, tmpstr1, tmpstr3) then
@@ -22294,7 +22535,7 @@ begin
                 if s2 = '' then
                 begin
                   // only one parameter
-                  if Skip(')', tmpstr, Remaining, InfoSyntaxError) then
+                  if Skip(')', tmpstr, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
                     s2 := 'sysnative';
@@ -22323,30 +22564,45 @@ begin
                     if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
                     begin
                       // got third parameter
-                      if Skip(')', tmpstr2, Remaining, InfoSyntaxError) then
+                      if not TryStrToBool(s3, tmpbool1) then
                       begin
-                        if TryStrToBool(s3, tmpbool1) then
-                          syntaxCheck := True
-                        else
+                        syntaxCheck := False;
+                        InfoSyntaxError :=
+                          'Error: boolean string (true/false) expected but got: ' + s3;
+                      end;
+                      // four parameter ?
+                      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
+                      begin
+                        if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
                         begin
-                          syntaxCheck := False;
-                          InfoSyntaxError :=
-                            'Error: boolean string (true/false) expected but got: ' + s3;
+                          // got fourth parameter
+                          if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                          begin
+                            // four parameter
+                            syntaxCheck := True;
+                          end;
                         end;
+                      end
+                      else
+                      if Skip(')', tmpstr2, r, InfoSyntaxError) then
+                      begin
+                        // three parameter
+                        syntaxCheck := True;
                       end;
                     end;
                   end
                   else
-                  if Skip(')', tmpstr2, Remaining, InfoSyntaxError) then
+                  if Skip(')', tmpstr2, r, InfoSyntaxError) then
                   begin
                     // two parameter
                     syntaxCheck := True;
                   end;
+                  //end;
                 end;
                 if syntaxCheck then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1);
+                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
                   except
                     on e: Exception do
                     begin
@@ -24438,82 +24694,92 @@ begin
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
       Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-      logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) + ')', LLinfo);
-      Encoding2use := searchencoding(Script.Text, isPlainAscii);
-      if not isPlainAscii then // if isPlainAscii everything else do not matter
-        if Encoding2use = '' then
-          Encoding2use := mysystemEncoding;
-      if not isPlainAscii then // if isPlainAscii everything else do not matter
-        if hasBOM or isEncodingUnicode(Encoding2use) then
-        begin
-          //logdatei.log_prog('file has BOM', LLinfo );
-          //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-          //Encoding2use := searchencoding(Script.Text);
-          if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+      if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
+      begin
+        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+          ')', LLinfo);
+        Encoding2use := searchencoding(Script.Text, isPlainAscii);
+        if not isPlainAscii then // if isPlainAscii everything else do not matter
+          if Encoding2use = '' then
+            Encoding2use := mysystemEncoding;
+        if not isPlainAscii then // if isPlainAscii everything else do not matter
+          if hasBOM or isEncodingUnicode(Encoding2use) then
           begin
-            logdatei.log('The encoding mentioned in the file :' +
-              Encoding2use + ', is different that the detected encoding :' +
-              foundEncoding + '!', LLWarning);
-            logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
-            Encoding2use := foundEncoding;
-          end;
-        end
-        else
-        begin
-          Script.LoadFromFile(Scriptdatei);
-          //str := script.Text;
-          logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
-            ')', LLinfo);
-          //Encoding2use := searchencoding(Script.Text, isPlainAscii);
-          //if (Encoding2use = '') then
-          //  Encoding2use := 'system';
-          if (Encoding2use = 'system') then
-          begin
-            //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-            if (not configSupressSystemEncodingWarning) or isPlainAscii then
-              logdatei.log(
-                'Encoding=system makes the opsiscript not portable between different OS',
-                LLWarning);
+            //logdatei.log_prog('file has BOM', LLinfo );
+            //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+            //Encoding2use := searchencoding(Script.Text);
+            if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+            begin
+              logdatei.log('The encoding mentioned in the file :' +
+                Encoding2use + ', is different that the detected encoding :' +
+                foundEncoding + '!', LLWarning);
+              logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+              Encoding2use := foundEncoding;
+            end;
           end
           else
           begin
-            if (Lowercase(copy(Encoding2use, length(Encoding2use) -
-              2, length(Encoding2use))) = 'bom') then
+            Script.LoadFromFile(Scriptdatei);
+            //str := script.Text;
+            logdatei.log_prog('searchencoding of script (' +
+              DateTimeToStr(Now) + ')', LLinfo);
+            //Encoding2use := searchencoding(Script.Text, isPlainAscii);
+            //if (Encoding2use = '') then
+            //  Encoding2use := 'system';
+            if (Encoding2use = 'system') then
             begin
-              //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-              if isEncodingUnicode(copy(Encoding2use, 0, length(Encoding2use) - 3)) then
-              begin
-                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-              end
-              else
-              begin
-                logdatei.log_prog(
-                  'the encoding mentioned in the file is not unicode)', LLWarning);
-                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-              end;
+              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+              if (not configSupressSystemEncodingWarning) or isPlainAscii then
+                logdatei.log(
+                  'Encoding=system makes the opsiscript not portable between different OS',
+                  LLWarning);
             end
             else
             begin
-              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-              Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+              if (Lowercase(copy(Encoding2use, length(Encoding2use) -
+                2, length(Encoding2use))) = 'bom') then
+              begin
+                //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+                if isEncodingUnicode(copy(Encoding2use, 0,
+                  length(Encoding2use) - 3)) then
+                begin
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+                end
+                else
+                begin
+                  logdatei.log_prog(
+                    'the encoding mentioned in the file is not unicode)', LLWarning);
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                end;
+              end
+              else
+              begin
+                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+              end;
             end;
           end;
-        end;
-      //str := script.Text;
-      usedEncoding := Encoding2use;
-      //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+        //str := script.Text;
+        usedEncoding := Encoding2use;
+        //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
 
-      Script.FFilename := Scriptdatei;
-      for i := 0 to script.Count - 1 do
+        Script.FFilename := Scriptdatei;
+        for i := 0 to script.Count - 1 do
+        begin
+          str := Script.Strings[i];
+          script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
+          script.FLibList.Append('false');
+          //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
+        end;
+        Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
+      end
+      else
       begin
-        str := Script.Strings[i];
-        script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
-        script.FLibList.Append('false');
-        //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
+        LogDatei.log('Empty script file: ' + Scriptdatei, LLWarning);
+        script.Text := ';empty script';
       end;
-      Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
     end
     else
     begin
@@ -24602,6 +24868,10 @@ begin
     else
       LogDatei.log('             opsi-script running in standard script mode',
         LLessential);
+    {$IFDEF GUI}
+    LogDatei.log('Scaling for screen DPI: ' + IntToStr(screen.PixelsPerInch),
+      LLessential);
+    {$ENDIF GUI}
 
 
     ps := 'executing: "' + reencode(ParamStr(0), 'system') + '"';
@@ -24988,6 +25258,8 @@ begin
   {$IFDEF GUI}
     FBatchOberflaeche.LoadSkin('');
     FBatchOberflaeche.setPicture('', '');
+    FBatchOberflaeche.Repaint;
+    Application.ProcessMessages;
   {$ENDIF GUI}
     { initial section  }
     AktionsListe.Name := NameInitSektion;

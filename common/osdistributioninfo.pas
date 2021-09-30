@@ -22,8 +22,8 @@ type
       #10 + 'openSUSE 15.1, openSUSE 42.3,' + #10 +
       'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
-    Distribs = 'Debian 9, Debian 10,' + #10 +
-      'openSUSE 15.1, openSUSE 15.2,' + #10 +
+    Distribs = 'Debian 9, Debian 10, Debian 11,' + #10 +
+      'openSUSE 15.1, openSUSE 15.2, openSUSE 15.3,' + #10 +
       'SLES 15 SP1, SLES 15 SP2,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
       #10 + 'Univention 4.4';
     property MyDistr: TDistribution read FMyDistr;
@@ -75,6 +75,12 @@ begin
     begin
       FMyDistr := Debian_10;
       FDistrUrlPart := 'Debian_10/';
+    end
+    else
+    if Pos('11', distroRelease) = 1 then
+    begin
+      FMyDistr := Debian_10;
+      FDistrUrlPart := 'Debian_11/';
     end;
   end
   else
@@ -89,6 +95,11 @@ begin
     begin
       FMyDistr := openSUSE_Leap_15_2;
       FDistrUrlPart := 'openSUSE_Leap_15.2/';
+    end
+    else if distroRelease = '15.3' then
+    begin
+      FMyDistr := openSUSE_Leap_15_3;
+      FDistrUrlPart := 'openSUSE_Leap_15.3/';
     {end
     else if distroRelease = '42.3' then
     begin

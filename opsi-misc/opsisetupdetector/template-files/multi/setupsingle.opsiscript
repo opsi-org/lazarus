@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -9,23 +9,8 @@ encoding=utf8
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $OSshort$
-DefVar $oldProgFound$
-DefVar $installSuccess$
-DefVar $installCommand$
-
-DefStringlist $ListOfPackageNames$
-
-#@stringVars*#
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
@@ -36,13 +21,21 @@ Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
-; Win / Lin / Mac
-set $OSshort$ = strPart($OS$,"1","3")
-	
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-include_insert $OSshort$+"_setup.opsiscript"
+; Win / Lin / Mac
+switch $OS$
+	case "Windows_NT"
+		sub "win_setup.opsiscript"
+	endcase
+	case "Linux"
+		sub "lin_setup.opsiscript"
+	endcase
+	case "MacOS"
+		sub "mac_setup.opsiscript"
+	endcase
+endswitch

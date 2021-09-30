@@ -47,6 +47,7 @@ DefVar $force_copy_modules$
 DefVar $opsiconfd_log_level$
 DefVar $hostname$
 DefVar $domain$
+DefVar $is_quick_install$
 
 
 DefStringList $opsi_productsList$
@@ -57,6 +58,7 @@ DefStringList $waitlist$
 DefStringlist $setup_after_install_list$
 DefStringList $hostnamelist$
 DefStringList $domainlist$
+DefStringList $ipList$
 
 
 ; base initalization of properties
@@ -80,10 +82,12 @@ set $ucsMasterPasswd$ = asConfidential("linux123")
 set $proxy$ = ""
 set $force_copy_modules$ = "true"
 set $opsiconfd_log_level$ = "default"
+set $is_quick_install$ = "false"
 
 
 ; check for initalization of properties via quick-install
 if fileExists("%scriptpath%/properties.conf")
+	set $is_quick_install$ = "true"
 	comment "setting properties from file"
 	;default result file to failed - will be over written in case of success
 	shellCall('echo failed > "%scriptpath%/result.conf"')
@@ -154,6 +158,38 @@ set $nmbdservicename$ = "nmbd"
 set $fileonly$ = "false"
 set $aktbackend$ = $backend$
 
+if fileExists("/etc/opsi/opsi.conf")
+	shellCall("cat /etc/opsi/opsi.conf | grep pcpatch")
+	if ("0" = getLastExitCode)
+		LogError "Group pcpatch found. Either running opsi 4.1 or already migrated to opsi 4.2. Aborting"
+		Message "Group pcpatch found. Either running opsi 4.1 or already migrated to opsi 4.2. Aborting"
+		isFatalError "Group pcpatch found. Either running opsi 4.1 or already migrated to opsi 4.2. Aborting"
+	endif
+else
+	shellCall("getent group | grep pcpatch")
+	if ("0" = getLastExitCode)
+		LogError "Group pcpatch found. Either running opsi 4.1 or already migrated to opsi 4.2. Aborting"
+		Message "Group pcpatch found. Either running opsi 4.1 or already migrated to opsi 4.2. Aborting"
+		isFatalError "Group pcpatch found. running Either opsi 4.1 or already migrated to opsi 4.2. Aborting"
+	endif
+endif
+
+if fileExists("/etc/opsi/opsi.conf")
+	shellCall("cat /etc/opsi/opsi.conf | grep opsifileadmins")
+	if ("0" = getLastExitCode)
+		LogError "opsi 4.2 ist already installed. Aborting"
+		Message "opsi 4.2 ist already installed. Aborting"
+		isFatalError "opsi 4.2 ist already installed. Aborting"
+	endif
+else
+	shellCall("getent group | grep opsifileadmins")
+	if ("0" = getLastExitCode)
+		LogError "opsi 4.2 ist already installed. Aborting"
+		Message "opsi 4.2 ist already installed. Aborting"
+		isFatalError "opsi 4.2 ist already installed. Aborting"
+	endif
+endif
+
 
 comment "check if update_test is possible"
 if $update_test$ = "true"
@@ -188,12 +224,21 @@ if $myIPName$ = "auto"
 		if contains($hostname$,".")
 			set $myIPName$ = $hostname$
 		else
-			set $domainlist$ = shellCall("dnsdomainname")
+			if contains($distroName$, "openSUSE")
+				set $domainlist$ = shellCall("hostname -d")
+			else
+				set $domainlist$ = shellCall("dnsdomainname")
+			endif
 			for %s% in $domainlist$ do set $domain$ = "%s%"
 			if $domain$ = ""
-			    comment "dnsdomainname command was not successfull, reading dhclient.leases"
-			    message "dnsdomainname command was not successfull, reading dhclient.leases"
-			    set $domainlist$ = shellCall("cat /var/lib/dhcp/dhclient* | grep 'domain-name ' | awk '{ print $3 }' | tr -d ';'")
+			    comment "dnsdomainname command was not successfull, trying alternatives"
+				if fileExists("cat /var/lib/dhcp/dhclient.leases")
+			    	set $domainlist$ = shellCall("cat /var/lib/dhcp/dhclient* | grep 'domain-name ' | awk '{ print $3 }' | tr -d ';'")
+				else
+					if fileExists("cat /run/systemd/netif/leases/2")
+						set $domainlist$ = shellCall("cat /run/systemd/netif/leases/2 | grep 'DOMAINNAME' | awk -F= '{ print $2 }'")
+					endif
+				endif
 			    for %s% in $domainlist$ do set $domain$ = %s%
 			    if ($dnsdomain$ = $domain$)
 			        comment "dnsdomain and read domain-name are the same"
@@ -203,6 +248,8 @@ if $myIPName$ = "auto"
 		            message "dnsdomain and read domain-name are not the same"
 		           	set $dnsdomain$ = $domain$
 			    endif
+			else
+				set $dnsdomain$ = $domain$
 			endif
 	    	set $myIPName$ = $hostname$ + "." + $dnsdomain$
 		endif
@@ -210,7 +257,9 @@ if $myIPName$ = "auto"
 endif
 
 if $myIPNumber$ = "auto"
-	set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	if $is_quick_install$ = "false"
+		set $myIPNumber$ = getMyIpByTarget(getipbyname("%opsiServer%"))
+	endif
 	if not(isValidIP4($myIPNumber$))
 		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
@@ -224,11 +273,15 @@ endif
 
 if $myIPNumber$ = "127.0.0.1"
 	Message "seems like IP address is from localhost retrying"
-	set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
-	if not(isValidIP4($myIPNumber$))
-		set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+	set $ipList$ = shellCall("hostname -I| awk '{print $1}'")
+	for %s% in $ipList$ do set $myIPNumber$ = "%s%"
+	if $myIPNumber$ = "127.0.0.1"
+		set $myIPNumber$ = getMyIpByTarget(getipbyname($myIPName$))
 		if not(isValidIP4($myIPNumber$))
-			set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+			set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPName%"))
+			if not(isValidIP4($myIPNumber$))
+				set $myIPNumber$ = getMyIpByTarget(getipbyname("%IPAddress%"))
+			endif
 		endif
 	endif
 endif
@@ -355,10 +408,20 @@ Switch $distroName$
 		endif
 
 		Message "Adding repository"
-		if CompareDotSeparatedNumbers($distRelease$, ">=", "10")
-			set $distRelease4Repo$ = "10"
+		if comparedotseparatedNumbers($distRelease$, ">=", "11") and comparedotseparatedNumbers($distRelease$, "<", "12")
+			set $distRelease4Repo$ = "11"
 		else
-			set $distRelease4Repo$ = "9.0"
+			if comparedotseparatedNumbers($distRelease$, ">=", "10") and comparedotseparatedNumbers($distRelease$, "<", "11")
+				set $distRelease4Repo$ = "10"
+			else
+				if comparedotseparatedNumbers($distRelease$, ">=", "9") and comparedotseparatedNumbers($distRelease$, "<", "10")
+					set $distRelease4Repo$ = "9.0"
+				else
+					LogError "Unsupported Debian version"
+					Message "Unsupported Debian version"
+					isFatalError "Unsupported Debian version"
+				endif
+			endif
 		endif
 		PatchTextFile_opsirepo_deb "/etc/apt/sources.list.d/opsi.list"
 		PatchTextFile_grafanarepo_deb "/etc/apt/sources.list.d/grafana.list"
@@ -659,6 +722,24 @@ Switch $distrotype$
 			endif
 		endif
 
+		if contains($distroName$,"Rocky")
+			set $distroName4repo$ = "RockyLinux"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif	
+
+		if contains($distroName$,"Alma")
+			set $distroName4repo$ = "AlmaLinux"
+			if comparedotseparatedNumbers($distRelease$, ">=", "8") and comparedotseparatedNumbers($distRelease$, "<", "9")
+				set $distRelease4repo$ = "8"
+				set $mysqlservicename$ = "mariadb"
+				set $mysqlpkg$ = "mariadb-server"
+			endif
+		endif
+
 		ShellInAnIcon_add_opsi_repository_redhat
 		if not("0" = getLastExitCode)
 			LogError "addrepo failed"
@@ -823,21 +904,25 @@ EndSwitch
 [sub_opsi_base_config]
 if $fileonly$ = "false"
 	Message "Configuring mysql"
-	if fileexists("/etc/mysql.secret")
-		set $mysql_root_pw$ = takeString(0, LoadTextFile("/etc/mysql.secret"))
-		ShellInAnIcon_configure_opsi_mysql_backend_ucs
-	else
-		if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
-			message "Disabling mysql strict mode"
-			ShellInAnIcon_disable_mysql_strict_mode
-		endif
-		if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
-			message "using alternative way to configure mysql backend"
-			ShellInAnIcon_configure_opsi_mysql_backend_focal
-		else
-			ShellInAnIcon_configure_opsi_mysql_backend
-		endif
-	endif
+        if fileexists("/etc/mysql.secret")
+                set $mysql_root_pw$ = takeString(0, LoadTextFile("/etc/mysql.secret"))
+                ShellInAnIcon_configure_opsi_mysql_backend_ucs
+        else
+                if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
+                        message "Disabling mysql strict mode"
+                        ShellInAnIcon_disable_mysql_strict_mode
+                endif
+                if comparedotseparatedNumbers($distRelease$, ">=", "18.04")
+                        message "using alternative way to configure mysql backend"
+                        ShellInAnIcon_configure_opsi_mysql_backend_focal
+                else
+                        if ($distroName4repo$ = "openSUSE_Leap") or ($distroName4repo$ = "Debian") or ($distroName4repo$ = "SLE") or ($distroName4repo$ = "RockyLinux") or ($distroName4repo$ = "AlmaLinux")
+                                ShellInAnIcon_configure_opsi_mysql_backend
+			else
+				ShellInAnIcon_configure_opsi_mysql_backend_old
+			endif
+                endif
+        endif
 	
 	ShellInAnIcon_configure_mysql_bind_address
 
@@ -1084,8 +1169,8 @@ exit $?
 [ShellInAnIcon_grafana_start]
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-systemctl enable grafana
-systemctl start grafana
+systemctl enable grafana-server
+systemctl start grafana-server
 opsiconfd setup
 exit $?
 
@@ -1277,7 +1362,7 @@ for d in mysql mariadb; do
 done
 service $mysqlservicename$ restart
 
-[ShellInAnIcon_configure_opsi_mysql_backend]
+[ShellInAnIcon_configure_opsi_mysql_backend_old]
 set -x
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
@@ -1295,6 +1380,16 @@ sleep 5
 killall -9 mysqld_safe mysqld
 sleep 1
 systemctl start $mysqlservicename$
+UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
+opsi-setup --configure-mysql --unattended=$UNATTENDED
+exit $?
+
+[ShellInAnIcon_configure_opsi_mysql_backend]
+set -x
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+service $mysqlservicename$ restart
+mysqladmin -u root password $mysql_root_pw$
+service $mysqlservicename$ restart
 UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "database":"opsi"}'
 opsi-setup --configure-mysql --unattended=$UNATTENDED
 exit $?
@@ -1321,7 +1416,7 @@ if [ ! -S /var/run/mysqld/mysqld.sock ]; then
 fi
 UNATTENDED='{"dbAdminPass":"$mysql_root_pw$", "dbAdminUser":"root", "address":"localhost", "database":"opsi"}'
 opsi-setup --configure-mysql --unattended=$UNATTENDED
-exit $?
+exit $? 
 
 [ShellInAnIcon_install_dhcp_deb]
 set -x

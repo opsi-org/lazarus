@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 275
+  Left = 277
   Height = 703
-  Top = 275
+  Top = 137
   Width = 1103
   Caption = 'opsi Setup Detector'
   ClientHeight = 683
@@ -14,7 +14,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.1'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -196,7 +196,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Top = 3
               Caption = 'Windows:'
               Font.Height = -21
-              ParentColor = False
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateWin: TBitBtn
@@ -2109,7 +2108,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Top = 3
               Caption = 'Multiplatform:'
               Font.Height = -21
-              ParentColor = False
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateMulti: TBitBtn
@@ -3074,7 +3072,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Top = 3
               Caption = 'Linux:'
               Font.Height = -21
-              ParentColor = False
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateLin: TBitBtn
@@ -3952,7 +3949,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Top = 3
               Caption = 'MacOS:'
               Font.Height = -21
-              ParentColor = False
               ParentFont = False
             end
             object BtSingleAnalyzeAndCreateMac: TBitBtn
@@ -4776,14 +4772,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 555
-        ClientWidth = 1031
+        ClientHeight = 590
+        ClientWidth = 1088
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 0
-          Height = 392
-          Top = 87
-          Width = 1029
+          Height = 424
+          Top = 92
+          Width = 1088
           Align = alClient
           ParentFont = False
           ScrollBars = ssAutoBoth
@@ -4792,20 +4788,20 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 74
-          Top = 475
-          Width = 1029
+          Top = 516
+          Width = 1088
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 70
-          ClientWidth = 1025
+          ClientWidth = 1084
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
-            Left = 886
-            Height = 48
+            Left = 927
+            Height = 50
             Hint = 'Go to the next Step'
             Top = 10
-            Width = 131
+            Width = 147
             Align = alRight
             AutoSize = True
             BorderSpacing.Around = 9
@@ -4954,15 +4950,15 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 42
           Top = 0
-          Width = 1029
+          Width = 1088
           Align = alTop
           ClientHeight = 42
-          ClientWidth = 1029
+          ClientWidth = 1088
           ParentFont = False
           TabOrder = 2
           object LabelLogInfo: TLabel
             Left = 18
-            Height = 22
+            Height = 24
             Top = 9
             Width = 87
             Align = alLeft
@@ -4970,25 +4966,24 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 8
             Caption = 'LabelLogInfo'
             Font.Height = -15
-            ParentColor = False
             ParentFont = False
           end
         end
         object Panel13: TPanel
           Left = 0
           Height = 50
-          Top = 40
-          Width = 1029
+          Top = 42
+          Width = 1088
           Align = alTop
           ClientHeight = 50
-          ClientWidth = 1029
+          ClientWidth = 1088
           ParentFont = False
           TabOrder = 3
           object ProgressBarAnalyze: TProgressBar
             Left = 1
             Height = 23
             Top = 1
-            Width = 1027
+            Width = 1086
             Align = alTop
             ParentColor = False
             ParentFont = False
@@ -5000,14 +4995,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 555
-        ClientWidth = 1031
+        ClientHeight = 590
+        ClientWidth = 1088
         ParentFont = False
         object FlowPanel1: TFlowPanel
           Left = 0
           Height = 49
           Top = 0
-          Width = 1086
+          Width = 1088
           Align = alTop
           AutoWrap = False
           BorderWidth = 3
@@ -5043,20 +5038,19 @@ object resultForm1: TresultForm1
           TabOrder = 0
           object Label62: TLabel
             Left = 18
-            Height = 23
+            Height = 21
             Top = 11
-            Width = 158
+            Width = 142
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Top = 2
             BorderSpacing.Around = 5
             Caption = 'Detected Setup type:'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TICheckBoxS1Mst: TTICheckBox
-            Left = 359
+            Left = 334
             Height = 23
             Top = 12
             Width = 90
@@ -5072,10 +5066,10 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label63: TLabel
-            Left = 475
-            Height = 23
+            Left = 450
+            Height = 21
             Top = 12
-            Width = 39
+            Width = 34
             Anchors = []
             BorderSpacing.Left = 20
             BorderSpacing.Top = 5
@@ -5083,14 +5077,13 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Caption = 'Info: '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIS1Url: TTILabel
-            Left = 525
-            Height = 23
+            Left = 495
+            Height = 21
             Top = 12
-            Width = 55
+            Width = 51
             Anchors = []
             BorderSpacing.Left = 5
             BorderSpacing.Top = 5
@@ -5105,10 +5098,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TILabelInstaller1: TTILabel
-            Left = 189
-            Height = 23
+            Left = 173
+            Height = 21
             Top = 12
-            Width = 135
+            Width = 126
             Anchors = []
             BorderSpacing.Left = 5
             BorderSpacing.Top = 5
@@ -5127,7 +5120,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 49
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5149,20 +5142,19 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object Label50: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 73
+            Width = 68
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Setup File'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupfile1: TTIEdit
-            Left = 105
-            Height = 35
+            Left = 100
+            Height = 27
             Top = 6
             Width = 872
             Anchors = []
@@ -5179,7 +5171,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 90
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5207,22 +5199,21 @@ object resultForm1: TresultForm1
           TabOrder = 2
           object Label60: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 70
+            Width = 67
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'MST File  '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst1: TBitBtn
-            Left = 979
-            Height = 37
+            Left = 976
+            Height = 30
             Top = 4
-            Width = 123
+            Width = 126
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -5269,8 +5260,8 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile1: TTIEdit
-            Left = 102
-            Height = 35
+            Left = 99
+            Height = 27
             Top = 6
             Width = 872
             Anchors = []
@@ -5287,7 +5278,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 172
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5309,20 +5300,19 @@ object resultForm1: TresultForm1
           TabOrder = 3
           object Label52: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 131
+            Width = 118
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Software Version'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSoftVersion1: TTIEdit
-            Left = 163
-            Height = 35
+            Left = 150
+            Height = 27
             Top = 6
             Width = 307
             Anchors = []
@@ -5339,7 +5329,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 131
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5362,20 +5352,19 @@ object resultForm1: TresultForm1
           TabOrder = 4
           object Label53: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 70
+            Width = 66
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'MsiId       '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditMsiId1: TTIEdit
-            Left = 102
-            Height = 35
+            Left = 98
+            Height = 27
             Top = 6
             Width = 872
             Anchors = []
@@ -5392,7 +5381,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 213
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5433,47 +5422,44 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 5
           object Label54: TLabel
-            Left = 261
-            Height = 23
+            Left = 250
+            Height = 21
             Top = 8
-            Width = 147
+            Width = 135
             Anchors = []
             BorderSpacing.Left = 30
             BorderSpacing.Around = 4
             Caption = 'Required Space MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label55: TLabel
-            Left = 519
-            Height = 23
+            Left = 496
+            Height = 21
             Top = 8
-            Width = 69
+            Width = 62
             Anchors = []
             BorderSpacing.Left = 30
             BorderSpacing.Around = 4
             Caption = 'InstallDir'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label64: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 133
+            Width = 122
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Setup file size MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupFileSizeMB1: TTIEdit
-            Left = 165
-            Height = 35
+            Left = 154
+            Height = 27
             Top = 6
             Width = 60
             Anchors = []
@@ -5486,8 +5472,8 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditRequiredSizeMB1: TTIEdit
-            Left = 423
-            Height = 35
+            Left = 400
+            Height = 27
             Top = 6
             Width = 60
             Anchors = []
@@ -5500,8 +5486,8 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object TIEditInstallDir1: TTIEdit
-            Left = 602
-            Height = 35
+            Left = 572
+            Height = 27
             Top = 6
             Width = 400
             Anchors = []
@@ -5518,7 +5504,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 254
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5540,20 +5526,19 @@ object resultForm1: TresultForm1
           TabOrder = 6
           object Label79: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 224
+            Width = 203
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Unattended Install Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup1Command: TTIEdit
-            Left = 256
-            Height = 35
+            Left = 235
+            Height = 27
             Top = 6
             Width = 717
             Anchors = []
@@ -5570,7 +5555,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 295
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5592,20 +5577,19 @@ object resultForm1: TresultForm1
           TabOrder = 8
           object Label80: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 245
+            Width = 223
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Unattended Uninstall Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup1UnCommand: TTIEdit
-            Left = 277
-            Height = 35
+            Left = 255
+            Height = 27
             Top = 6
             Width = 717
             Anchors = []
@@ -5622,7 +5606,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 336
-          Width = 1086
+          Width = 1088
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -5644,20 +5628,19 @@ object resultForm1: TresultForm1
           TabOrder = 9
           object Label81: TLabel
             Left = 17
-            Height = 23
+            Height = 21
             Top = 8
-            Width = 139
+            Width = 126
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup1UnProgram: TTIEdit
-            Left = 171
-            Height = 35
+            Left = 158
+            Height = 27
             Top = 6
             Width = 267
             Anchors = []
@@ -5672,9 +5655,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel17: TFlowPanel
           Left = 0
-          Height = 203
+          Height = 213
           Top = 377
-          Width = 1086
+          Width = 1088
           Align = alClient
           ControlList = <          
             item
@@ -5687,11 +5670,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 7
           object BtSetup1NextStep: TBitBtn
-            Left = 941
+            Left = 931
             Height = 52
             Hint = 'Go to the next Step'
             Top = 10
-            Width = 135
+            Width = 147
             Align = alRight
             Anchors = [akRight]
             AutoSize = True
@@ -5892,7 +5875,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 5
             Caption = 'Detected Setup type:'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TICheckBoxS2Mst: TTICheckBox
@@ -5923,7 +5905,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Caption = 'Info: '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIS2Url: TTILabel
@@ -6003,7 +5984,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'MST File '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst2: TBitBtn
@@ -6107,7 +6087,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'MsiId'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditMsiId2: TTIEdit
@@ -6159,7 +6138,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Software Version'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSoftVersion2: TTIEdit
@@ -6231,7 +6209,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Required Space MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label73: TLabel
@@ -6244,7 +6221,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'InstallDir'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label74: TLabel
@@ -6257,7 +6233,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Setup file size MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupFileSizeMB2: TTIEdit
@@ -6337,7 +6312,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Setup File'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupfile2: TTIEdit
@@ -6389,7 +6363,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Unattended Install Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup2Command: TTIEdit
@@ -6441,7 +6414,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Unattended Uninstall Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup2UnCommand: TTIEdit
@@ -6493,7 +6465,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup2UnProgram: TTIEdit
@@ -6680,8 +6651,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup3: TTabSheet
         Caption = '3. Setup'
-        ClientHeight = 555
-        ClientWidth = 1031
+        ClientHeight = 590
+        ClientWidth = 1088
         ParentFont = False
         object FlowPanel8: TFlowPanel
           Left = 0
@@ -6732,7 +6703,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 5
             Caption = 'Detected Setup type:'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TICheckBoxS3Mst: TTICheckBox
@@ -6763,7 +6733,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Caption = 'Info: '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIS3Url: TTILabel
@@ -6843,7 +6812,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'MST File '
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object BitBtnOpenMst3: TBitBtn
@@ -6947,7 +6915,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'MsiId'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditMsiId3: TTIEdit
@@ -6999,7 +6966,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Software Version'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSoftVersion3: TTIEdit
@@ -7071,7 +7037,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Required Space MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label92: TLabel
@@ -7084,7 +7049,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'InstallDir'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label93: TLabel
@@ -7097,7 +7061,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Setup file size MB'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupFileSizeMB3: TTIEdit
@@ -7177,7 +7140,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Setup File'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetupfile3: TTIEdit
@@ -7229,7 +7191,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Unattended Install Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup3Command: TTIEdit
@@ -7281,7 +7242,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Unattended Uninstall Command'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup3UnCommand: TTIEdit
@@ -7333,7 +7293,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditSetup3UnProgram: TTIEdit
@@ -7572,7 +7531,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Product Version'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label61: TLabel
@@ -7585,7 +7543,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Package Version'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditProdVersion3: TTIEdit
@@ -7672,7 +7629,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'opsi Product ID'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object Label67: TLabel
@@ -7685,7 +7641,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'opsi Product Name'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TIEditProdID: TTIEdit
@@ -7927,7 +7882,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 4
               Caption = 'Description'
               Font.Height = -16
-              ParentColor = False
               ParentFont = False
             end
           end
@@ -7977,7 +7931,6 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 4
               Caption = 'Advice'
               Font.Height = -16
-              ParentColor = False
               ParentFont = False
             end
           end
@@ -8037,7 +7990,6 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 4
             Caption = 'Priority'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
           end
           object TITrackBarPrio: TTITrackBar
@@ -8286,7 +8238,6 @@ object resultForm1: TresultForm1
                   BorderSpacing.Around = 4
                   Caption = 'Dependencies'#10#10'(for installation)'
                   Font.Height = -16
-                  ParentColor = False
                   ParentFont = False
                 end
               end
@@ -8496,10 +8447,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  145
-                  145
-                  145
-                  145
+                  140
+                  140
+                  140
+                  143
                 )
               end
             end
@@ -8566,7 +8517,6 @@ object resultForm1: TresultForm1
                   BorderSpacing.Around = 4
                   Caption = 'Properties'
                   Font.Height = -16
-                  ParentColor = False
                   ParentFont = False
                 end
                 object BitBtnAddProp: TBitBtn
@@ -8763,10 +8713,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  254
-                  254
-                  254
-                  256
+                  250
+                  250
+                  250
+                  251
                 )
               end
             end
@@ -8775,18 +8725,18 @@ object resultForm1: TresultForm1
       end
       object TabSheetIcons: TTabSheet
         Caption = 'Product Icon'
-        ClientHeight = 555
-        ClientWidth = 1031
+        ClientHeight = 590
+        ClientWidth = 1088
         OnShow = TabSheetIconsShow
         ParentFont = False
         object Panel11: TPanel
-          Left = 629
-          Height = 549
+          Left = 688
+          Height = 590
           Top = 0
           Width = 400
           Align = alRight
           BevelOuter = bvNone
-          ClientHeight = 549
+          ClientHeight = 590
           ClientWidth = 400
           Color = clNone
           ParentColor = False
@@ -8808,28 +8758,27 @@ object resultForm1: TresultForm1
             TabOrder = 0
             object TIImageIconPreview: TTIImage
               Left = 1
-              Height = 161
+              Height = 170
               Top = 1
-              Width = 161
+              Width = 170
               Align = alClient
               Transparent = True
             end
           end
           object LabelIconPreview: TLabel
             Left = 16
-            Height = 16
+            Height = 15
             Top = 8
-            Width = 188
+            Width = 167
             Caption = 'Selected Icon (Preview 160x160)'
-            ParentColor = False
             ParentFont = False
           end
           object BtnIconsNextStep: TBitBtn
-            Left = 232
-            Height = 56
+            Left = 216
+            Height = 52
             Hint = 'Go to the next Step'
-            Top = 479
-            Width = 131
+            Top = 524
+            Width = 147
             Anchors = [akRight, akBottom]
             AutoSize = True
             BorderSpacing.Right = 5
@@ -8986,21 +8935,19 @@ object resultForm1: TresultForm1
           end
           object LabelIconDir: TLabel
             Left = 16
-            Height = 16
+            Height = 15
             Top = 216
-            Width = 57
+            Width = 51
             Caption = 'Directory:'
-            ParentColor = False
             ParentFont = False
             Visible = False
           end
           object LabelIconName: TLabel
             Left = 200
-            Height = 16
+            Height = 15
             Top = 40
-            Width = 39
+            Width = 35
             Caption = 'Name:'
-            ParentColor = False
             ParentFont = False
           end
           object LabelNameSelIcon: TLabel
@@ -9010,15 +8957,14 @@ object resultForm1: TresultForm1
             Width = 176
             AutoSize = False
             Caption = 'default icon'
-            ParentColor = False
             ParentFont = False
             WordWrap = True
           end
           object CheckBoxNoIcon: TCheckBox
             Left = 17
-            Height = 21
+            Height = 19
             Top = 304
-            Width = 92
+            Width = 81
             Caption = 'use no icon'
             OnChange = CheckBoxNoIconChange
             ParentFont = False
@@ -9026,9 +8972,9 @@ object resultForm1: TresultForm1
           end
           object CheckBoxDefaultIcon: TCheckBox
             Left = 186
-            Height = 21
+            Height = 19
             Top = 304
-            Width = 118
+            Width = 104
             Caption = 'use default icon'
             Checked = True
             OnChange = CheckBoxDefaultIconChange
@@ -9038,42 +8984,40 @@ object resultForm1: TresultForm1
           end
           object PanelNumIcons: TPanel
             Left = 16
-            Height = 16
+            Height = 15
             Top = 416
-            Width = 149
+            Width = 135
             AutoSize = True
             BevelOuter = bvNone
-            ClientHeight = 16
-            ClientWidth = 149
+            ClientHeight = 15
+            ClientWidth = 135
             ParentFont = False
             TabOrder = 4
             object LabelNumIcons: TLabel
               Left = 0
-              Height = 16
+              Height = 15
               Top = 0
-              Width = 132
+              Width = 118
               Align = alLeft
               Caption = 'Icons to choose from: '
-              ParentColor = False
               ParentFont = False
             end
             object LabelNumber: TLabel
-              Left = 142
-              Height = 16
+              Left = 129
+              Height = 15
               Top = 0
-              Width = 7
+              Width = 6
               Align = alClient
               BorderSpacing.Left = 11
               Caption = '0'
-              ParentColor = False
               ParentFont = False
             end
           end
           object BtnOpenIconFolder: TBitBtn
             Left = 17
-            Height = 38
+            Height = 32
             Top = 338
-            Width = 135
+            Width = 139
             AutoSize = True
             BorderSpacing.InnerBorder = 3
             Caption = 'open icon folder'
@@ -9120,27 +9064,26 @@ object resultForm1: TresultForm1
         end
         object ScrollBox1: TScrollBox
           Left = 0
-          Height = 549
+          Height = 590
           Top = 0
-          Width = 650
+          Width = 688
           HorzScrollBar.Page = 47
           VertScrollBar.Page = 15
           Align = alClient
-          ClientHeight = 545
-          ClientWidth = 646
+          ClientHeight = 586
+          ClientWidth = 684
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 547
+            Height = 586
             Top = 0
-            Width = 648
+            Width = 684
             Align = alClient
             Alignment = taCenter
             Caption = 'No Icons'
             Color = clForm
             Layout = tlCenter
-            ParentColor = False
             ParentFont = False
             Transparent = False
           end
@@ -9148,15 +9091,15 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 555
-        ClientWidth = 1031
+        ClientHeight = 590
+        ClientWidth = 1088
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel
           Left = 0
           Height = 64
           Top = 0
-          Width = 1029
+          Width = 1088
           Align = alTop
           ControlList = <          
             item
@@ -9180,7 +9123,7 @@ object resultForm1: TresultForm1
           TabOrder = 0
           OnClick = FlowPanel14Click
           object TIEditworkbenchpath: TTIEdit
-            Left = 209
+            Left = 208
             Height = 36
             Top = 10
             Width = 527
@@ -9195,22 +9138,21 @@ object resultForm1: TresultForm1
           end
           object Label78: TLabel
             Left = 19
-            Height = 18
+            Height = 20
             Top = 10
-            Width = 163
+            Width = 162
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 9
             Caption = 'Path to opsi-work-bench'
             Font.Height = -15
-            ParentColor = False
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 730
-            Height = 36
+            Left = 756
+            Height = 30
             Top = 10
-            Width = 172
+            Width = 170
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -9261,8 +9203,8 @@ object resultForm1: TresultForm1
         object FlowPanel15: TFlowPanel
           Left = 0
           Height = 58
-          Top = 61
-          Width = 1029
+          Top = 64
+          Width = 1088
           Align = alTop
           ControlList = <          
             item
@@ -9286,38 +9228,36 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object LabelWorkbenchOK: TLabel
             Left = 19
-            Height = 20
+            Height = 21
             Top = 10
-            Width = 255
+            Width = 256
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 9
             Caption = 'Path to opsi-work-bench is reachable'
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
             Visible = False
           end
           object LabelWorkbenchNotOK: TLabel
-            Left = 301
-            Height = 20
+            Left = 302
+            Height = 21
             Top = 10
-            Width = 510
+            Width = 513
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 9
             Caption = 'Path to opsi-work-bench not is reachable - Check Network Mounts or Path'
             Font.Color = clRed
             Font.Height = -16
-            ParentColor = False
             ParentFont = False
             Visible = False
           end
           object BitBtnRecheckWorkbench: TBitBtn
-            Left = 827
-            Height = 36
+            Left = 831
+            Height = 30
             Top = 5
-            Width = 173
+            Width = 172
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -9368,8 +9308,8 @@ object resultForm1: TresultForm1
         object FlowPanel16: TFlowPanel
           Left = 0
           Height = 190
-          Top = 116
-          Width = 1029
+          Top = 122
+          Width = 1088
           Align = alTop
           ControlList = <          
             item
@@ -9398,7 +9338,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
             object RadioGroup1: TRadioGroup
               Left = 0
-              Height = 111
+              Height = 100
               Top = 0
               Width = 427
               Align = alLeft
@@ -9413,15 +9353,15 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 91
+              ClientHeight = 80
               ClientWidth = 423
               ParentFont = False
               TabOrder = 0
               object RadioButtonCreateOnly: TRadioButton
                 Left = 6
-                Height = 21
+                Height = 19
                 Top = 0
-                Width = 391
+                Width = 411
                 Align = alTop
                 Anchors = [akLeft]
                 BorderSpacing.Left = 5
@@ -9434,9 +9374,9 @@ object resultForm1: TresultForm1
               end
               object RadioButtonPackageBuilder: TRadioButton
                 Left = 6
-                Height = 21
-                Top = 42
-                Width = 391
+                Height = 19
+                Top = 38
+                Width = 411
                 Align = alTop
                 Anchors = [akTop]
                 Caption = 'create opsi product files and start interactive PackageBuilder'
@@ -9446,9 +9386,9 @@ object resultForm1: TresultForm1
               end
               object RadioButtonBuildPackage: TRadioButton
                 Left = 6
-                Height = 21
-                Top = 21
-                Width = 391
+                Height = 19
+                Top = 19
+                Width = 411
                 Align = alTop
                 Anchors = []
                 Caption = 'create opsi product files and  build package'
@@ -9458,8 +9398,8 @@ object resultForm1: TresultForm1
               end
             end
             object CheckGroupBuildMode: TCheckGroup
-              Left = 419
-              Height = 108
+              Left = 441
+              Height = 97
               Top = 5
               Width = 158
               Align = alLeft
@@ -9476,15 +9416,15 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 88
+              ClientHeight = 77
               ClientWidth = 154
               ParentFont = False
               TabOrder = 1
               object radioBuildModebuildOnly: TRadioButton
                 Left = 7
-                Height = 27
+                Height = 25
                 Top = 6
-                Width = 135
+                Width = 141
                 Align = alTop
                 Anchors = [akLeft]
                 BorderSpacing.Left = 7
@@ -9497,9 +9437,9 @@ object resultForm1: TresultForm1
               end
               object radioBuildModebuildInstall: TRadioButton
                 Left = 7
-                Height = 27
-                Top = 33
-                Width = 135
+                Height = 25
+                Top = 31
+                Width = 141
                 Align = alTop
                 Anchors = [akLeft]
                 BorderSpacing.Left = 7
@@ -9511,7 +9451,7 @@ object resultForm1: TresultForm1
             end
           end
           object PanelProcess: TPanel
-            Left = 612
+            Left = 646
             Height = 64
             Top = 1
             Width = 358
@@ -9526,9 +9466,9 @@ object resultForm1: TresultForm1
             Visible = False
             object processing: TLabel
               Left = 24
-              Height = 19
+              Height = 22
               Top = 8
-              Width = 102
+              Width = 109
               Caption = 'processing...'
               Font.CharSet = ANSI_CHARSET
               Font.Color = clBlack
@@ -9536,16 +9476,14 @@ object resultForm1: TresultForm1
               Font.Name = 'Arial'
               Font.Pitch = fpVariable
               Font.Quality = fqDraft
-              ParentColor = False
               ParentFont = False
             end
             object processStatement: TLabel
               Left = 24
-              Height = 16
+              Height = 15
               Top = 40
-              Width = 66
+              Width = 58
               Caption = 'please wait'
-              ParentColor = False
               ParentFont = False
             end
             object ProgressBar1: TProgressBar
@@ -9562,8 +9500,8 @@ object resultForm1: TresultForm1
         object FlowPanel19: TFlowPanel
           Left = 0
           Height = 127
-          Top = 296
-          Width = 1029
+          Top = 312
+          Width = 1088
           Align = alTop
           ControlList = <          
             item
@@ -9576,11 +9514,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 774
-            Height = 88
+            Left = 817
+            Height = 84
             Hint = 'Create a opsi Product'
             Top = 10
-            Width = 245
+            Width = 261
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 9
@@ -10308,167 +10246,29 @@ object resultForm1: TresultForm1
     Left = 1136
     Top = 8
     Bitmap = {
-      4C69050000001000000010000000000000000000000000000000000000000000
-      0000000000000000000A000000A0000000A00000000A00000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000002B000000D5000000FF000000FF000000D50000002B000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0060000000F5000000FF000000FF000000FF000000FF000000F5000000620000
-      000000000000000000000000000000000000000000000000000A000000A00000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00A10000000B0000000000000000000000000000002B000000D5000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000D60000002C0000000000000060000000F5000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000E90000005D0000000000000000000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF00000000000000000000000000000000000000FF000000FF0000
-      00FF000000FF0000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000001B0000
-      0088000000D4000000F8000000FC000000D80000008C0000001D000000000000
-      000000000000000000000000000000000000000000000000005B000000F40000
-      00FF000000FF000000FF000000FF000000FF000000FF000000F5000000600000
-      0000000000000000000000000000000000000000005B000000FE000000FF0000
-      00AA0000003D0000000C000000080000003C000000AD000000FF000000FF0000
-      00600000000000000000000000000000001B000000F4000000FF0000006C0000
-      0000000000000000000000000000000000000000000000000073000000FF0000
-      00F50000001C000000000000000000000088000000FF000000A5000000000000
-      0000000000000000000000000000000000000000000000000000000000AF0000
-      00FF0000008C0000000000000000000000D4000000FF00000035000000000000
-      00000000000000000000000000000000000000000000000000000000003E0000
-      00FF000000D70000000000000000000000F8000000FD00000003000000000000
-      00000000000000000000000000000000000000000000000000000000000A0000
-      00FF000000FB0000000000000000000000F8000000FD00000003000000000000
-      0000000000000000000000000000000000000000000000000000000000080000
-      00FF000000FA0000000000000000000000D3000000FF00000033000000000000
-      00000000000000000000000000000000000000000000000000000000003B0000
-      00FF000000D1000000000000000000000087000000FF000000A2000000000000
-      0000000000000000000000000000000000000000000000000000000000A90000
-      00FF0000007E00000000000000000000001A000000F3000000FF000000650000
-      000000000000000000000000000000000000000000000000006B000000FF0000
-      00FF0000007100000000000000000000000000000058000000FE000000FF0000
-      00A500000037000000050000000600000039000000A8000000FF000000FF0000
-      00FF000000FE0000006900000000000000000000000000000058000000F20000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FE00000066000000000000000000000000000000180000
-      0085000000D1000000F7000000F8000000D4000000880000006F000000FD0000
-      00FF000000FF000000FF000000F9000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000005E0000
-      00FD000000FF000000FF000000FD000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      005C000000F5000000FD0000007E000000000000000000000000000000000000
-      00000000000000000036000000FF000000FF0000003500000000000000000000
-      000000000000000000000000000000000000000000000000000D0000002F0000
-      000000000000000000A2000000FF000000FF000000A100000000000000000000
-      00300000000C0000000000000000000000000000000C000000C5000000FF0000
-      00C40000007E000000F8000000FF000000FF000000F80000007D000000C60000
-      00FF000000C10000000B000000000000000000000035000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000031000000000000000000000000000000CA000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000C60000000000000000000000000000000000000081000000FF0000
-      00FF000000F80000006B000000100000000E0000006B000000F8000000FF0000
-      00FF0000007D000000000000000000000033000000A0000000F7000000FF0000
-      00FF0000006B000000000000000000000000000000000000006C000000FF0000
-      00FF000000F60000009E00000033000000FF000000FF000000FF000000FF0000
-      00FF00000010000000000000000000000000000000000000000F000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF0000000E0000000000000000000000000000000000000010000000FF0000
-      00FF000000FF000000FF000000FF0000003B000000A7000000FA000000FF0000
-      00FF0000006B000000000000000000000000000000000000006F000000FF0000
-      00FF000000F9000000A50000003A000000000000000000000081000000FF0000
-      00FF000000F80000006C0000000F000000100000006F000000F9000000FF0000
-      00FF0000007B00000000000000000000000000000000000000C8000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000C300000000000000000000000000000033000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF0000002E00000000000000000000000F000000C8000000FF0000
-      00C700000081000000F9000000FF000000FF000000F900000081000000CA0000
-      00FF000000C60000000D0000000000000000000000000000000F000000330000
-      000000000000000000A5000000FF000000FF000000A400000000000000000000
-      00340000000D0000000000000000000000000000000000000000000000000000
-      0000000000000000003A000000FF000000FF0000003900000000000000000000
-      0000000000000000000000000000000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000FF000000FF000000FF000000FF0000
-      00FF000000F800000000000000000000000000000000000000F8000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000F800000000000000000000000000000000000000F8000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000F4000000F4000000F4000000F4000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F8000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F800000000000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000F5000000000000000000000000000000000000
-      003100000098000000DA000000F9000000F9000000D9000000970000002F0000
-      00000000000000000000000000000000000000000000000000090000009C0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FE0000
-      00980000000800000000000000000000000000000009000000C2000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000C00000000800000000000000000000009C000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000E50000
-      00E6000000FF000000970000000000000031000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000E4000000250000
-      0027000000E7000000FE0000002F00000098000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000E400000025000000000000
-      0029000000E7000000FF00000095000000DA000000FF000000FF000000FF0000
-      00E4000000E7000000FF000000FF000000E40000002400000000000000290000
-      00E8000000FF000000FF000000D7000000F9000000FF000000FF000000E50000
-      002400000028000000E7000000E3000000240000000000000029000000E80000
-      00FF000000FF000000FF000000F8000000F9000000FF000000FF000000E50000
-      0026000000000000002800000024000000000000002A000000E8000000FF0000
-      00FF000000FF000000FF000000F8000000D9000000FF000000FF000000FF0000
-      00E50000002600000000000000000000002A000000E9000000FF000000FF0000
-      00FF000000FF000000FF000000D600000097000000FF000000FF000000FF0000
-      00FF000000E5000000260000002A000000E9000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000930000002F000000FE000000FF000000FF0000
-      00FF000000FF000000E5000000E9000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FE0000002D0000000000000098000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF00000094000000000000000000000008000000C0000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000BE0000000700000000000000000000000000000008000000980000
-      00FE000000FF000000FF000000FF000000FF000000FF000000FF000000FE0000
-      0094000000070000000000000000000000000000000000000000000000000000
-      002F00000095000000D7000000F8000000F8000000D6000000930000002D0000
-      0000000000000000000000000000
+      4C7A050000001000000010000000C80200000000000078DAED98CB6B144110C6
+      17448DABC63D8A8F9BAE313E5659A3243EFE0EC1074150902C04F128117208E6
+      905B22BB87201A0C3E40FC0F24BE56F1266E5CE35563CC555D33AB6EC6AFE11B
+      298A9E999E1189AF821FCC54D7D753DD5D3D3DBB994CA865C15592CD24B31D60
+      1AF8649A3E17EB050DA10D30BE5399F87CFD18AE81D531F9C6F112EC8CC9378E
+      797042E49054AFED6FD3FF6BEDBF836D04C3A0063CF00DBC022360738CF618F8
+      14B1DE0DEE9530ED22E36E83C3600D680387C01DD14FAF25E7E0B9A588FCCE8B
+      3C3609FF30FD930EF37397B123C257A3AFCB417F84B175E133F3DC02CB1CF459
+      EABFA6D4B751FF45F85ED05774D01F64EC73E1BB44DF8483FE16632F0ADF06F0
+      91FED311DA3E5103E754DB51513F661D0F80E56005E80637552D9AD8B3963E3E
+      24787F993ECEA83ED68321CECF02D7A6C61AEBE73AC93E9A09F7E749D5472BC5
+      1E3FCE3DD052EBA06DBF788E4B6DAF0505713FA1CEDCC0F6706F4B33F78F19FB
+      887979426FAE074095F7F7D519DE95E2FCD9AB727896405BB58C7F50E56BEA35
+      07DA792DC7332074457EB72C88F63E4BFF25D1FE195CA1D6965FCEA25F97607C
+      ED167D2E24D6BC136EF09D12957FBFAA7BB34F7B22E6AFC49C73D43645FB054B
+      FF4F138CEFA1D21653D4CF6E35B7C1F39F702C4D35DE41516355EE17BD3EF21D
+      3C29F4D7857F9F456BB31EA1EF8E88F39798A5365B4E9E25CE0B89FB157A9FDF
+      34123FA1DE85FFFA3F5FFF337BB861A953732E56C06BBEB70C33A0ACCE776DAB
+      C0B8C3375385DFA15AFB2041DE53AA8F7147DD2C78C7EBB218AF8BF62DD80AB6
+      81398EA5C0F1B86A8D6DA7DEF82F739E75EC9CBADF22B4EF455B5D9D33B38CED
+      601F6F22B441FD687D9EF11D42DB69D106FA19CB1CE7C5DA74F2BF8EB0FF51CA
+      21EB948FD11A46B9068B217DCCC7D4E22EE65849B177C6D4EFAAA904DA7B60A5
+      E5B75925642C32E7318B565A817555E7FA789CE75131DE1FF61D87E9E797
     }
   end
   object TimerFirstconfig: TTimer

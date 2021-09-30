@@ -1,13 +1,16 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
 [Actions]
-requiredWinstVersion >= "4.12.0.28"
-ScriptErrorMessages = false
+requiredOpsiscriptVersion >= "4.12.3.6"
+
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
 
 DefVar $ProductId$
 DefVar $InstallDir$
@@ -17,22 +20,16 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar %opsiLogDir%
 DefVar $OS$
-DefVar $oldProgFound$
 DefVar $MsiId$
 DefVar $UninstallProgram$
-
 #@stringVars*#
 
-; import complete file !
-importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
-#@importLibs*#
-
+; ----------------------------------------------------------------
+; Please edit the following values:
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "opsi-template"
+Set $ProductId$		 = "#@productId*#"
 Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 ;Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
@@ -77,7 +74,14 @@ ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
 Winbatch_install
 ;----------------------------------------------
-Sub_check_exitcode
+set $ExitCode$ = getlastexitcode
+if "true" = isMsiExitcodeFatal_short($exitcode$, "true", $ErrorString$ )
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
 #@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
@@ -164,37 +168,6 @@ LinkFolder_install
 ; 	icon_file: <path to icon file>
 ; 	icon_index: 2
 ; end_link
-
-
-[Sub_check_exitcode]
-comment "Test for installation success via exit code"
-set $ExitCode$ = getLastExitCode
-; informations to exit codes see
-; http://msdn.microsoft.com/en-us/library/aa372835(VS.85).aspx
-; http://msdn.microsoft.com/en-us/library/aa368542.aspx
-Switch $ExitCode$
-	Case "0"
-		comment "Looks good: setup program gives exitcode zero"
-	EndCase
-	Case "1605"
-		comment "ERROR_UNKNOWN_PRODUCT	1605	This action is only valid for products that are currently installed."
-		comment "Uninstall of a not installed product failed - no problem"
-	EndCase
-	Case "1641"
-		comment "looks good: setup program gives exitcode 1641"
-		comment "ERROR_SUCCESS_REBOOT_INITIATED	1641	The installer has initiated a restart. This message is indicative of a success."
-		ExitWindows /Reboot
-	EndCase
-	Case "3010"
-		comment "looks good: setup program gives exitcode 3010"
-		comment "ERROR_SUCCESS_REBOOT_REQUIRED	3010	A restart is required to complete the install. This message is indicative of a success."
-		ExitWindows /Reboot
-	EndCase
-	DefaultCase
-		logError "Fatal: Setup program gives an unknown exitcode unequal zero: " + $ExitCode$
-		isFatalError "Exit Code: "+ $ExitCode$
-	EndCase
-EndSwitch
 
 #@SetupDesktopiconSectionLines*#
 

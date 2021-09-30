@@ -331,6 +331,21 @@ begin
   EnableFontSmoothing(LabelCommand);
   EnableFontSmoothing(LabelProgress);
   //EnableFontSmoothing(LabelProgress1);
+  (*
+  //LogDatei.log('Scaling for screen DPI: '+inttostr(screen.PixelsPerInch),LLessential);
+  self.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelVersion.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelProduct.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelInfo.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelDetail.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelCommand.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  LabelProgress.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  ImageProduct.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  ImageLogo1.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  ImageLogo2.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  ProgressBar.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  ActivityBar.AutoAdjustLayout(lapAutoAdjustForDPI,DesignTimePPI,screen.PixelsPerInch, 0, 0);
+  *)
   {$ENDIF WINDOWS}
   {$IFDEF DARWIN}
   ForceStayOnTop(true);
@@ -414,6 +429,8 @@ var
   end;
 
 begin
+  //FBatchOberflaeche.AutoAdjustLayout(lapAutoAdjustForDPI,FBatchOberflaeche.DesignTimePPI,
+  //         screen.PixelsPerInch, 0, 0);
   skinDir := GetSkinDirectory(SkinDirectory);
   startupmessages.Append('Loading skin from: '+skinDir);
   skinFile := skinDir + PathDelim + 'skin.ini';
@@ -458,6 +475,7 @@ begin
         if ('true' = skinIni.ReadString('LabelVersion', 'FontUnderline', 'false'))
         then
           LabelVersion.Font.Style := LabelVersion.Font.Style + [fsUnderline];
+
       except
       end;
 
