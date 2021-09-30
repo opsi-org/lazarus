@@ -160,7 +160,7 @@ run opsi-script-test on windows:
     #- opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
     #- git clone opsi-script-test
 
-opsi-script (Windows) to binaryindex:
+opsi-script Windows to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
