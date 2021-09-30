@@ -141,7 +141,7 @@ codesign ops-script macos:
       - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
-run opsi-script-test on windows:
+opsi-script-test windows:
   stage: test_windows
   tags:
     - laz-windows
@@ -152,7 +152,6 @@ run opsi-script-test on windows:
       when: never # change to always if job script/rules are their
   script:
     - echo "opsi-script-test on windows"
-    - 
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\winst32.exe
     # - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe Documents\opsiscripts\test_servicecall.opsiscript /opsiservice bonifax.uib.gmbh /clientid $FQDN /username $USER  /password $PASSWORD  /silent
