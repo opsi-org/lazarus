@@ -1,0 +1,29 @@
+[Actions]
+DefVar $OCA_ServiceAddress$
+DefVar $OCA_ServiceUsername$
+DefVar $OCA_ServicePassword$
+Set $OCA_ServiceAddress$ = "%opsiserviceURL%"
+Set $OCA_ServiceUsername$ = "%opsiserviceUser%"
+Set $OCA_ServicePassword$ = "%opsiservicePassword%"
+
+Message "Testing..."
+OpsiServiceCall_authenticated /serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+OpsiServiceCall_disable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+OpsiServiceCall_run_opsi_script_test ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+OpsiServiceCall_enable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+
+[OpsiServiceCall_authenticated]
+"method": "authenticated"
+"params": []
+
+[OpsiServiceCall_disable_autoupdate_action_processor]
+"method": "authenticated"
+"params": []
+
+[OpsiServiceCall_run_opsi_script_test]
+"method": "fire_Event"
+"params": ["on_demand"]
+
+[OpsiServiceCall_enable_autoupdate_action_processor]
+"method": "authenticated"
+"params": []
