@@ -6,11 +6,14 @@ Set $OCA_ServiceAddress$ = "%opsiserviceURL%"
 Set $OCA_ServiceUsername$ = "%opsiserviceUser%"
 Set $OCA_ServicePassword$ = "%opsiservicePassword%"
 
-Message "Testing..."
+Message "Authenticate..."
 OpsiServiceCall_authenticated /serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
-OpsiServiceCall_disable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
-OpsiServiceCall_run_opsi_script_test ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
-OpsiServiceCall_enable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+;;Message "Disable autoupdate..."
+;;OpsiServiceCall_disable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+;;Message "Running opsi-script-test..."
+;;OpsiServiceCall_run_opsi_script_test ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+;;Message "Enable autoupdate..."
+;;OpsiServiceCall_enable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
 
 [OpsiServiceCall_authenticated]
 "method": "authenticated"
