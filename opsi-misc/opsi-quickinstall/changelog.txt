@@ -1,12 +1,13 @@
 
 opsi-quickinstall (4.2.0.1-2) experimental; urgency=low
+  * new default l-opsi-server 4.2.0.5-2
   * openSUSE 15.3 added as supported distribution
   * Debian 11 added as supported distribution
   * default admin name in NOGUI-version changed from 'Alexandra' to 'adminuser'
   * error with adding release key fixed
   * bug fixed in closing Opsi-QuickInstall
     
--- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  31 Aug 2021 17:30:00 +0200
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Sep 2021 18:30:00 +0200
 
 
 opsi-quickinstall (4.2.0.1) experimental; urgency=low
