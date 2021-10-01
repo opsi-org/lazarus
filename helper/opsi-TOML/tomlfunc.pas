@@ -90,13 +90,15 @@ function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; de
 var
   myFile : String;
   myTOML : TTOMLDocument;
+  myValue: TTOMLData;
 begin
   result := defaultValue;
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
-  //result := String(myTOML.GetItem(key));
-  result := String(myTOML[section][key]);
+  //myValue := myTOML.GetItem(key));
+  myValue := myTOML[section][key];
+  result := String(myValue);
   if result='' then
      result := defaultValue;
 end;
@@ -117,11 +119,8 @@ begin
   for i := 0 to (Length(myTOML.Keys[i])-1) do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         begin
-        //writeln('   [', myTOML.Keys[i], ']') ;
         sectionNamesList.Add(myTOML.Keys[i]);
-        end
-    else
-        //writeln(' Not a section : ', myTOML.Keys[i] );
+        end;
   result := sectionNamesList;
   //writeln(sectionNamesList.Text);
 end;
