@@ -40,23 +40,24 @@ begin
 
   path := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLexample.toml';
 
+  writeln('--- Testing ReadTOMLFile :');
   //myFile := TStringList.Create;
   myTOMLString := ReadTOMLFile(path);
 
-  writeln('--- File read');
+  writeln('--- Testing GetTOML :');
 
   myTOML := GetTOML(myTOMLString);
 
-  writeln('--- GetTOML done');
-
+  //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
-  //writeln('--- Writeln asJSON done');
 
   filePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
   //myFile := TStringList.Create;
   //myFile[0] := myTOMLString;
   //myFile.Add(['aaaa', 'bbbb', 'ccccc']);
   //myFile.SaveToFile(filePath);
+
+  writeln('--- Testing SaveToTOMLFile') ;
 
   if ( SaveToTOMLFile(myTOMLString, filePath) ) then
      writeln('--- SaveToTOMLFile done')
@@ -68,6 +69,27 @@ begin
      writeln('--- ConvertTOMLtoJSON done')
   else
       writeln('--- ConvertTOMLtoJSON not done');
+
+
+  writeln('--- Testing GetTOMLFile :  ');
+
+  myTOMLStringList := TStringList.Create;
+  myTOMLStringList.AddStrings(GetTOMLFile(path));
+  //writeln(myTOMLStringList.Text);
+
+
+  writeln('--- Testing GetTOMLSectionNames :  ');
+
+  sectionNamesList := GetTOMLSectionNames(path);
+  writeln(sectionNamesList.Text);
+
+
+  writeln('--- Testing GetTOMLSection :  ');
+
+  myTOMLStringList.Free;
+  myTOMLStringList.AddStrings(GetTOMLSection(path,'database'));
+  writeln(myTOMLStringList.Text);
+
 
 
   writeln('--- Finding key "title" ');
@@ -100,14 +122,7 @@ begin
 
   writeln('myKey title : ' + String(myTOML.Find('title')) );
 
-  writeln('--- Getting TOML sections ');
 
-  writeln('Testing GetTOMLSectionNames :');
-
-  sectionNamesList := GetTOMLSectionNames(path);
-  writeln(sectionNamesList.Text);
-
-  writeln('GetTOMLSectionNames done');
 
   writeln('--- Getting values from keys');
 
@@ -129,18 +144,6 @@ begin
   //myValue := GetValueFromInifile(path,'','servers.alpha.ip','default') ;
 
 
-  writeln('--- Getting TOML as StringList  ');
-
-  myTOMLStringList := TStringList.Create;
-  myTOMLStringList.AddStrings(GetTOMLFile(path));
-  //writeln(myTOMLStringList.Text);
-
-
-  writeln('--- Getting TOML section  ');
-
-  myTOMLStringList.Free;
-  myTOMLStringList.AddStrings(GetTOMLSection(path,'database'));
-  writeln(myTOMLStringList.Text);
 
   writeln('--- Accessing TOML data  ');
 
@@ -150,8 +153,6 @@ begin
 
   //myData := myTOML['']['title'];
   myData := myTOML['title'];
-  myData := myData.Items[0];
-  writeln('myTOML["title"] : ', myData.ToString);
   writeln('myTOML["title"] : ', String(myData));
 
   myData := myTOML['owner']['name'];
