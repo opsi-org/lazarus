@@ -96,8 +96,12 @@ begin
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
-  //myValue := myTOML.GetItem(key));
-  myValue := myTOML[section][key];
+  if section='' then
+     myValue := myTOML.GetItem(key)
+     //myValue := myTOML[key]
+  else
+    //myValue := myTOML.GetItem(key));
+    myValue := myTOML[section][key];
   result := String(myValue);
   if result='' then
      result := defaultValue;
