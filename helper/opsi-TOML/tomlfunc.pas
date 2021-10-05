@@ -91,17 +91,32 @@ var
   myFile : String;
   myTOML : TTOMLDocument;
   myValue: TTOMLData;
+  myTOMLTable : TTOMLTable;
+  i, j, k : integer;
 begin
   result := defaultValue;
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
   if section='' then
-     myValue := myTOML.GetItem(key)
+     myValue := myTOML.Find(key)
      //myValue := myTOML[key]
   else
-    //myValue := myTOML.GetItem(key));
-    myValue := myTOML[section][key];
+    begin
+    //myValue := myTOML.Find(key));
+    //myValue := myTOML[section][key];
+    j := 0;
+    repeat
+      if (String(myTOML.Values[j]) = 'TTOMLTable') then
+          if myTOML.Keys[j] = section then
+            begin
+            myTOMLTable := TTOMLTable(myTOML.Items[j]) ;
+            myValue := myTOMLTable.Find(key);
+            break;
+            end;
+      j := j + 1 ;
+    until j = Length(myTOML.Keys[i])-1;
+    end;
   result := String(myValue);
   if result='' then
      result := defaultValue;
@@ -160,6 +175,7 @@ begin
   myTOMLfile := GetTOMLFile(TOMLfile);
 
   sectionIndex := myTOMLfile.IndexOf('['+section+']');
+  //writeln('sectionIndex :', sectionIndex);
   sectionNameString := '['+section+'.';
 
   repeat
