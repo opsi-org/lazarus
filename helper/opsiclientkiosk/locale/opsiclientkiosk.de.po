@@ -38,6 +38,7 @@ msgid "Copy process finished. Closing window..."
 msgstr "Kopiervorgang beendet. Schließe Fenster..."
 
 #: ockimagestodepot.rsimagesnotsaved
+#, object-pascal-format
 msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr "Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
 
@@ -46,6 +47,7 @@ msgid "Images saved on"
 msgstr "Bilder gespeichert auf"
 
 #: ockimagestodepot.rsisaninvaliddir
+#, object-pascal-format
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
 msgstr "\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein gültigen Verzeichnis."
 
@@ -120,6 +122,7 @@ msgid "Connected to"
 msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
+#, object-pascal-format
 msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Aktueller Nutzer hat keine Adminrechte. Adminmodus deaktiviert. %sLösung: Starten Sie den opsi Client Kiosk (als Nutzer) mit Adminrechten."
 
@@ -308,6 +311,7 @@ msgid "Could not get data from server."
 msgstr "Es konnten keine Daten vom Server geholt werden."
 
 #: opsiconnection.rsnovaluefound
+#, object-pascal-format
 msgctxt "opsiconnection.rsnovaluefound"
 msgid "No value found! Set%sto"
 msgstr "Kein Wert gefunden! %s gesetzt auf"
@@ -318,6 +322,7 @@ msgid "Error while initializing opsiconnection"
 msgstr "Fehler bei der Initialisierung der opsi Verbindung."
 
 #: oswebservice.rsnovaluefound
+#, object-pascal-format
 msgctxt "oswebservice.rsnovaluefound"
 msgid "No value found! Set%sto"
 msgstr "Kein Wert gefunden! %s gesetzt auf"
