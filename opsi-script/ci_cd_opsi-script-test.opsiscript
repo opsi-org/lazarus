@@ -10,8 +10,12 @@ Message "Authenticate..."
 OpsiServiceCall_authenticated /serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
 ;;Message "Disable autoupdate..."
 ;;OpsiServiceCall_disable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
-;;Message "Running opsi-script-test..."
-;;OpsiServiceCall_run_opsi_script_test ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+Message "Set opsi-script-test to setup..."
+OpsiServiceCall_set_action_request_opsi_script_test 
+;;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
+Message "Run opsi-script-test..."
+OpsiServiceCall_run_opsi_script_test 
+;;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
 ;;Message "Enable autoupdate..."
 ;;OpsiServiceCall_enable_autoupdate_action_processor ;/serviceurl $OCA_ServiceAddress$ /username $OCA_ServiceUsername$ /password $OCA_ServicePassword$
 
@@ -23,8 +27,15 @@ OpsiServiceCall_authenticated /serviceurl $OCA_ServiceAddress$ /username $OCA_Se
 "method": "authenticated"
 "params": []
 
+[OpsiServiceCall_set_action_request_opsi_script_test]
+"method": "setProductActionRequestWithDependencies"
+"params": [
+	'[]',
+	'{"productId":"opsi-script-test","clientId":"$OCA_ServiceUsername$", "actionRequest":"setup" }',
+]
+
 [OpsiServiceCall_run_opsi_script_test]
-"method": "fire_Event"
+"method": "hostControl_fireEvent"
 "params": ["on_demand"]
 
 [OpsiServiceCall_enable_autoupdate_action_processor]

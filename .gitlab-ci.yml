@@ -154,8 +154,8 @@ opsi-script-test windows:
     - echo "opsi-script-test on windows"
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe
     - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\winst32.exe
-    - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /silent
-    #- C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /opsiservice $OPSISERVICEURL /clientid $LAZ_WINDOWS /username $LAZ_WINDOWS /password $PASSWORD_LAZ_WINDOWS /silent
+    #- C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /silent
+    - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /batch /opsiservice $OPSISERVICEURL /clientid $LAZ_WINDOWS /username $LAZ_WINDOWS /password $PASSWORD_LAZ_WINDOWS
     #- ssh $USERNAME@bonifax.uib.gmbh #work this out
     #- opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
     #- git clone opsi-script-test
