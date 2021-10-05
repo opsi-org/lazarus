@@ -165,7 +165,7 @@ type
     private
       map: TTOMLDataMap;
       m_name: string;
-      //function GetItem(key: TTOMLKeyType): TTOMLData; override;
+      function GetItem(key: TTOMLKeyType): TTOMLData; override;
       function GetItem(index: integer): TTOMLData; override;
       function GetKey(index: integer): TTOMLKeyType;
     public
@@ -186,9 +186,6 @@ type
       property Name: string read m_name;
       property Keys[Index: Integer]: TTOMLKeyType read GetKey;
       property Values[Index: Integer]: TTOMLData read GetItem;
-
-      function GetItem(key: TTOMLKeyType): TTOMLData;
-
   end;
 
   { TTOMLDocument }
