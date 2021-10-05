@@ -35,6 +35,8 @@ var
   sectionNamesList : TStringList;
   myTOMLStringList : TStringList;
 
+  myTOMLTable : TTOMLTable;
+
 begin
   writeln('--- Begin');
 
@@ -87,7 +89,7 @@ begin
   writeln('--- Testing GetTOMLSection :  ');
 
   myTOMLStringList.Free;
-  myTOMLStringList.AddStrings(GetTOMLSection(path,'database'));
+  myTOMLStringList.AddStrings(GetTOMLSection(path,'servers'));
   writeln(myTOMLStringList.Text);
 
 
@@ -126,22 +128,22 @@ begin
 
   writeln('--- Getting values from keys');
 
-  writeln('- Searching for value of key : title  ');
+  writeln('- Searching for value of key title :');
   myValue := GetValueFromTOMLfile(path,'','title','default') ;
   writeln( 'myValue :' + myValue);
 
   writeln('- Searching for key name :');
   //writeln( String(myTOML.Find('name')));
-  //writeln( GetValueFromTOMLfile(path,'','name','default')  );
+  writeln( GetValueFromTOMLfile(path,'owner','name','default')  );
 
-  writeln('- Searching for value of key ip :');
-  //writeln( GetValueFromTOMLfile(path,'','ip','default')  );
+  writeln('- Searching for value of key connection_max :');
+  writeln( GetValueFromTOMLfile(path,'database','connection_max','default')  );
 
   writeln('- Searching for value of key servers.alpha :');
-  //writeln( GetValueFromTOMLfile(path,'','servers.alpha','default')  );
+  //writeln( GetValueFromTOMLfile(path,'servers','servers.alpha','default')  );
 
   writeln('- Searching for value of key servers.alpha.ip :');
-  //myValue := GetValueFromInifile(path,'','servers.alpha.ip','default') ;
+  //writeln( GetValueFromTOMLfile(path,'servers','servers.alpha.ip','default') );
 
 
 
@@ -153,10 +155,32 @@ begin
 
   //myData := myTOML['']['title'];
   myData := myTOML['title'];
-  writeln('myTOML["title"] : ', String(myData));
+  //writeln('myTOML["title"] : ', String(myData));
 
-  myData := myTOML['owner']['name'];
-  writeln('myTOML["owner"]["name"] : ', string(myData));
+
+  myTOMLTable := TTOMLTable(myTOML.Items[3]) ;
+  myData := myTOMLTable.Items[0];
+  myData := TTOMLTable(myData).Items[0] ;
+
+  writeln('myTOML[servers][servers.alpha][ip] : ', String(myData));
+
+
+
+
+
+  (*
+  if map.TryGetData('title', myData) then
+    writeln('myTOML["title"] : ', String(myData))
+  else
+    writeln('myTOML["title"] : NIL');
+  *)
+
+  //myData := myTOML['owner']['name'];
+  //myData := myData.Items[0];
+  //writeln('myTOML["owner"]["Items"][0] : ', string(myData));
+
+  //myData := myTOML['servers']['servers.alpha']['ip'][0];
+  //writeln('myTOML["servers.alpha.ip"][0] : ', string(myData));
 
   //myData := myTOML['database']['ports'][0];
   //writeln('Port #0: ', string(myData));
