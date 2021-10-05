@@ -1597,7 +1597,7 @@ begin
      SetActionRequestTilesView('setup', rsWillInstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
    end;
-  PanelToolbar.Visible:=True;
+  {$IFDEF DARWIN} PanelToolbar.Visible:=True; {$ENDIF DARWIN}
   //PanelToolbar.Repaint;
   //Application.ProcessMessages;
   //FormOpsiClientKiosk.Repaint;
@@ -1657,7 +1657,7 @@ begin
      SetActionRequestTilesView('uninstall', rsWillUninstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: uninstall';
    end;
-  PanelToolbar.Visible:=True;
+  {$IFDEF DARWIN} PanelToolbar.Visible:=True; {$ENDIF DARWIN}
 end;//procedure ButtonSoftwareUninstallClick
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareUpdateClick(Sender: TObject);
@@ -1682,7 +1682,7 @@ begin
    begin
      SetActionRequestTilesView('setup', rsWillUpdateNextEvent, False);
    end;
-  PanelToolbar.Visible:=True;
+  {$IFDEF DARWIN} PanelToolbar.Visible:=True; {$ENDIF DARWIN}
 end;
 
 
