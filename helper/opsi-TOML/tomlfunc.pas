@@ -7,13 +7,14 @@ interface
 uses
   Classes, SysUtils,
   TOML, TOMLParser, TOMLTypes,
-  FGL, FPJSON, fpJSONrtti;
+  FPJSON;
 
 
 function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
-function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
+function HasSubTables(myTOML : TTOMLDocument): integer;
+function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
 function GetTOMLSectionNames(TOMLfile: String): TStringList;
 function GetTOMLFile(filePath: String): TStringList;
 function GetTOMLSection(TOMLfile: String; section : String): TStringList;
@@ -86,37 +87,79 @@ begin
   myFile.Free;
 end;
 
-function GetValueFromTOMLfile(TOMLfile: String; section: String; key: String; defaultValue: String): String;
+function HasSubTables(myTOML : TTOMLDocument): integer;
 var
-  myFile : String;
+  i, nb : integer;
+begin
+  result := 0;
+  nb := 0;
+  for i := 0 to myTOML.Count -1 do
+    if (String(myTOML.Values[i]) = 'TTOMLTable') then
+      nb := nb+1 ;
+  result := nb;
+end;
+
+function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
+var
+  myFile, tablePath : String;
   myTOML : TTOMLDocument;
+  keysArray : TStringList;
   myValue: TTOMLData;
   myTOMLTable : TTOMLTable;
-  i, j, k : integer;
+  i, j : integer;
 begin
   result := defaultValue;
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
-  if section='' then
-     myValue := myTOML.Find(key)
-     //myValue := myTOML[key]
-  else
+
+  keysArray := TStringList.Create;
+  keysArray.Delimiter := '.';
+  keysArray.StrictDelimiter := True;
+  keysArray.DelimitedText := keyPath;
+
+  if keysArray.Count=1 then
+    //myValue := myTOML[key]
+    myValue := myTOML.Find(keyPath);
+
+  (*
+  if keysArray.Count=2 then
+    //myValue := myTOML[table][key];
     begin
-    //myValue := myTOML.Find(key));
-    //myValue := myTOML[section][key];
-    j := 0;
-    repeat
-      if (String(myTOML.Values[j]) = 'TTOMLTable') then
-          if myTOML.Keys[j] = section then
-            begin
-            myTOMLTable := TTOMLTable(myTOML.Items[j]) ;
-            myValue := myTOMLTable.Find(key);
-            break;
-            end;
-      j := j + 1 ;
-    until j = Length(myTOML.Keys[i])-1;
+      j := 0;
+      repeat
+        if (String(myTOML.Values[j]) = 'TTOMLTable') then
+            if myTOML.Keys[j] = keysArray[0] then
+              begin
+              myTOMLTable := TTOMLTable(myTOML.Items[j]) ;
+              myValue := myTOMLTable.Find(keysArray[1]);
+              break;
+              end;
+        j := j + 1 ;
+      until j = myTOML.Count;
     end;
+   *)
+
+   if keysArray.Count>=2 then
+   begin
+      myTOMLTable := TTOMLTable(myTOML);
+      for i := 0 to keysArray.Count -2 do
+        begin
+        tablePath := keysArray[i];
+        j := myTOMLTable.Count - HasSubTables(TTOMLDocument(myTOMLTable)); //or j := 0;
+        repeat
+          if (myTOMLTable.Keys[j]=tablePath) then
+             begin
+             myTOMLTable := TTOMLTable(myTOMLTable.Items[j]);
+             break;
+             end
+          else
+            j:= j+1;
+        until j = myTOMLTable.Count;
+        end;
+    myValue := myTOMLTable.Find(keysArray[keysArray.Count-1]);
+  end;
+
   result := String(myValue);
   if result='' then
      result := defaultValue;
@@ -135,7 +178,7 @@ begin
   myTOMLfile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myTOMLfile);
 
-  for i := 0 to (Length(myTOML.Keys[i])-1) do
+  for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         begin
         sectionNamesList.Add(myTOML.Keys[i]);
