@@ -1976,7 +1976,7 @@ begin
       logActNodeSet;
       if length(actnodeset) > 1 then
       begin
-        logdatei.log('There is more than one mathing node here - just taking the first',
+        logdatei.log('There is more than one matching node here - just taking the first',
           oslog.LLWarning);
         for j := 1 to length(actnodeset) - 1 do
           actnodeset[j] := nil;
