@@ -20,6 +20,7 @@ function HasSubTables(myTOML : TTOMLDocument): integer;
 function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
 function GetTOMLTableNames(TOMLfile: String): TStringList;
 
+function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 
 implementation
@@ -219,6 +220,25 @@ begin
         end;
   result := tableNamesList;
   //writeln(tableNamesList.Text);
+end;
+
+function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
+var
+  myTOMLTable : TTOMLTable;
+  j : integer;
+
+begin
+  j := 0;
+  repeat
+    if (String(myTOML.Values[j]) = 'TTOMLTable') then
+        if myTOML.Keys[j] = table then
+          begin
+          myTOMLTable := TTOMLTable(myTOML.Items[j]);
+          break;
+          end;
+    j := j + 1 ;
+  until j = myTOML.Count;
+  result := myTOMLTable;
 end;
 
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
