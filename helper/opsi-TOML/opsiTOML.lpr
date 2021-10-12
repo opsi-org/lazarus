@@ -32,10 +32,12 @@ var
   myData : TTOMLData;
 
   i : integer = 0;
-  sectionNamesList : TStringList;
+  tableNamesList : TStringList;
   myTOMLStringList : TStringList;
 
   myTOMLTable : TTOMLTable;
+
+  nb : integer;
 
 begin
   writeln('--- Begin');
@@ -50,14 +52,13 @@ begin
 
   myTOML := GetTOML(myTOMLString);
 
+  writeln('--- Testing HasSubTables : ');
+  nb := HasSubTables(myTOML);
+
   //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
 
   filePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
-  //myFile := TStringList.Create;
-  //myFile[0] := myTOMLString;
-  //myFile.Add(['aaaa', 'bbbb', 'ccccc']);
-  //myFile.SaveToFile(filePath);
 
   writeln('--- Testing SaveToTOMLFile') ;
 
@@ -80,18 +81,22 @@ begin
   //writeln(myTOMLStringList.Text);
 
 
-  writeln('--- Testing GetTOMLSectionNames :  ');
+  writeln('--- Testing GetTOMLTableNames :  ');
 
-  sectionNamesList := GetTOMLSectionNames(path);
-  writeln(sectionNamesList.Text);
+  tableNamesList := GetTOMLTableNames(path);
+  writeln(tableNamesList.Text);
 
 
-  writeln('--- Testing GetTOMLSection :  ');
+  writeln('--- Testing GetTOMLTable :  ');
 
   myTOMLStringList.Free;
-  myTOMLStringList.AddStrings(GetTOMLSection(path,'servers'));
+  myTOMLStringList.AddStrings(GetTOMLTable(path,'servers'));
   writeln(myTOMLStringList.Text);
 
+  writeln('--- Testing GetTOMLTable :  ');
+
+  myTOMLTable:= GetTOMLTable(myTOML,'servers');
+  writeln(myTOMLTable.AsJSON.FormatJSON);
 
 
   writeln('--- Finding key "title" ');
@@ -129,22 +134,18 @@ begin
   writeln('--- Getting values from keys');
 
   writeln('- Searching for value of key title :');
-  myValue := GetValueFromTOMLfile(path,'','title','default') ;
+  myValue := GetValueFromTOMLfile(path,'title','default') ;
   writeln( 'myValue :' + myValue);
 
   writeln('- Searching for key name :');
   //writeln( String(myTOML.Find('name')));
-  writeln( GetValueFromTOMLfile(path,'owner','name','default')  );
+  writeln( GetValueFromTOMLfile(path,'owner.name','default')  );
 
   writeln('- Searching for value of key connection_max :');
-  writeln( GetValueFromTOMLfile(path,'database','connection_max','default')  );
-
-  writeln('- Searching for value of key servers.alpha :');
-  //writeln( GetValueFromTOMLfile(path,'servers','servers.alpha','default')  );
+  writeln( GetValueFromTOMLfile(path,'database.connection_max','default')  );
 
   writeln('- Searching for value of key servers.alpha.ip :');
-  //writeln( GetValueFromTOMLfile(path,'servers','servers.alpha.ip','default') );
-
+  writeln( GetValueFromTOMLfile(path,'servers.alpha.ip','default') );
 
 
   writeln('--- Accessing TOML data  ');
@@ -162,9 +163,13 @@ begin
   myData := myTOMLTable.Items[0];
   myData := TTOMLTable(myData).Items[0] ;
 
+  writeln('servers.Keys[0] :' + myTOMLTable.Keys[0]);
+  writeln('servers.Values[0]:' + String(myTOMLTable.Values[0]));
+
+  writeln('servers.Keys[1] :' + myTOMLTable.Keys[1]);
+  writeln('servers.Values[1]:' + String(myTOMLTable.Values[1]));
+
   writeln('myTOML[servers][servers.alpha][ip] : ', String(myData));
-
-
 
 
 
