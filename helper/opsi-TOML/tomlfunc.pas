@@ -12,12 +12,14 @@ uses
 
 function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+function GetTOMLFile(filePath: String): TStringList;
 function GetTOMLDocument(filePath: String): TTOMLDocument;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+
 function HasSubTables(myTOML : TTOMLDocument): integer;
 function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
 function GetTOMLTableNames(TOMLfile: String): TStringList;
-function GetTOMLFile(filePath: String): TStringList;
+
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 
 implementation
@@ -56,6 +58,23 @@ begin
       writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
   end;
   myFile.Free;
+end;
+
+function GetTOMLFile(filePath: String): TStringList;
+var
+  myTOMLStringList: TStringList;
+begin
+  result := TStringList.Create;
+  myTOMLStringList := TStringList.Create;
+  filePath := ExpandFileName(filePath);
+  try
+  myTOMLStringList.LoadFromFile(filePath);
+  result.AddStrings(myTOMLStringList);
+  except
+    on E:Exception do
+      writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
+  end;
+  myTOMLStringList.Free;
 end;
 
 function GetTOMLDocument(filePath: String): TTOMLDocument;
@@ -200,23 +219,6 @@ begin
         end;
   result := tableNamesList;
   //writeln(tableNamesList.Text);
-end;
-
-function GetTOMLFile(filePath: String): TStringList;
-var
-  myTOMLStringList: TStringList;
-begin
-  result := TStringList.Create;
-  myTOMLStringList := TStringList.Create;
-  filePath := ExpandFileName(filePath);
-  try
-  myTOMLStringList.LoadFromFile(filePath);
-  result.AddStrings(myTOMLStringList);
-  except
-    on E:Exception do
-      writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
-  end;
-  myTOMLStringList.Free;
 end;
 
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
