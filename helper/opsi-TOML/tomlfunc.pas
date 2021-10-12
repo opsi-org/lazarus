@@ -12,6 +12,7 @@ uses
 
 function ReadTOMLFile(filePath: String): String;
 function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+function GetTOMLDocument(filePath: String): TTOMLDocument;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 function HasSubTables(myTOML : TTOMLDocument): integer;
 function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
@@ -55,6 +56,20 @@ begin
       writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
   end;
   myFile.Free;
+end;
+
+function GetTOMLDocument(filePath: String): TTOMLDocument;
+var
+  myFile: String;
+begin
+  filePath := ExpandFileName(filePath);
+  try
+  myFile := ReadTOMLFile(filePath);
+  result := GetTOML(myFile);
+  except
+    on E:Exception do
+      writeln('Exception in ReadTOMLFile '+ filePath +': ', E.Message);
+  end;
 end;
 
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
