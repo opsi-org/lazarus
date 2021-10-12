@@ -16,9 +16,9 @@ function GetTOMLDocument(filePath: String): TTOMLDocument;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 function HasSubTables(myTOML : TTOMLDocument): integer;
 function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
-function GetTOMLSectionNames(TOMLfile: String): TStringList;
+function GetTOMLTableNames(TOMLfile: String): TStringList;
 function GetTOMLFile(filePath: String): TStringList;
-function GetTOMLSection(TOMLfile: String; section : String): TStringList;
+function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 
 implementation
 
@@ -180,15 +180,15 @@ begin
      result := defaultValue;
 end;
 
-function GetTOMLSectionNames(TOMLfile: String): TStringList;
+function GetTOMLTableNames(TOMLfile: String): TStringList;
 var
   myTOMLfile : String;
   myTOML : TTOMLDocument;
-  sectionNamesList : TStringList;
+  tableNamesList : TStringList;
   i : integer;
 
 begin
-  sectionNamesList := TStringList.Create;
+  tableNamesList := TStringList.Create;
   TOMLfile := ExpandFileName(TOMLfile);
   myTOMLfile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myTOMLfile);
@@ -196,10 +196,10 @@ begin
   for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         begin
-        sectionNamesList.Add(myTOML.Keys[i]);
+        tableNamesList.Add(myTOML.Keys[i]);
         end;
-  result := sectionNamesList;
-  //writeln(sectionNamesList.Text);
+  result := tableNamesList;
+  //writeln(tableNamesList.Text);
 end;
 
 function GetTOMLFile(filePath: String): TStringList;
@@ -219,33 +219,33 @@ begin
   myTOMLStringList.Free;
 end;
 
-function GetTOMLSection(TOMLfile: String; section : String): TStringList;
+function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 var
   myTOMLfile : TStringList;
-  mySectionList : TStringList;
-  sectionIndex : integer;
-  sectionNameString, line : String;
+  myTableList : TStringList;
+  tableIndex : integer;
+  tableNameString, line : String;
 
 begin
   result := TStringList.Create;
-  mySectionList := TStringList.Create;
+  myTableList := TStringList.Create;
   TOMLfile := ExpandFileName(TOMLfile);
   myTOMLfile := GetTOMLFile(TOMLfile);
 
-  sectionIndex := myTOMLfile.IndexOf('['+section+']');
-  //writeln('sectionIndex :', sectionIndex);
-  sectionNameString := '['+section+'.';
+  tableIndex := myTOMLfile.IndexOf('['+table+']');
+  //writeln('tableIndex :', tableIndex);
+  tableNameString := '['+table+'.';
 
   repeat
-  sectionIndex := sectionIndex + 1 ;
-  line := myTOMLfile[sectionIndex] ;
+  tableIndex := tableIndex + 1 ;
+  line := myTOMLfile[tableIndex] ;
   if LeftStr(line,1)='[' then
-    if Pos(sectionNameString, line) = 0 then
+    if Pos(tableNameString, line) = 0 then
       break;
-  mySectionList.Add(line);
-  until sectionIndex = myTOMLfile.Count -1;
+  myTableList.Add(line);
+  until tableIndex = myTOMLfile.Count -1;
 
-  result := mySectionList;
+  result := myTableList;
 end;
 
 
