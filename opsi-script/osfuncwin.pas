@@ -48,10 +48,9 @@ type
   end;
 *)
 type
-  { types used in Windows API function GetFirmwareType }
+  { type used in Windows API function GetFirmwareType }
   TFirmwareType = (tFirmwareTypeUnknown, tFirmwareTypeBios, tFirmwareTypeUefi,
   tFirmwareTypeMax);
-  PTFirmwareType = ^TFirmwareType;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
@@ -442,17 +441,15 @@ function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
   external kernel32 Name 'GetFirmwareEnvironmentVariableA';
 
 
-function GetFirmwareType (aPFirmwareType: PTFirmwareType): cbool; stdcall;
+function GetFirmwareType (var aPFirmwareType: TFirmwareType): cbool; stdcall;
   external 'kernel32.dll' name 'GetFirmwareType';
 
 
 function GetBiosMode: string;
 var
   FirmwareType: TFirmwareType = tFirmwareTypeUnknown;
-  PFirmwareType: PTFirmwareType = nil;
 begin
-  PFirmwareType := Addr(FirmwareType);
-  if GetFirmwareType(PFirmwareType) then
+  if GetFirmwareType(FirmwareType) then
   begin
     case FirmwareType of
       tFirmwareTypeUnknown: Result := 'Unknown';
