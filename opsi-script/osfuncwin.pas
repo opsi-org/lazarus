@@ -37,7 +37,8 @@ uses
   LAZUTF8,
   osregistry,
   osfuncwin3,
-  strutils;
+  strutils,
+  cTypes;
 
 (*
 type
@@ -46,6 +47,11 @@ type
     procedure execute; override;
   end;
 *)
+type
+  { types used in Windows API function GetFirmwareType }
+  TFirmwareType = (tFirmwareTypeUnknown, tFirmwareTypeBios, tFirmwareTypeUefi,
+  tFirmwareTypeMax);
+  PTFirmwareType = ^TFirmwareType;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
@@ -71,7 +77,7 @@ function IsDriveReady(Drive: string): boolean;
 function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
 function getW10Release: string;
 function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
-
+function GetBiosMode: string;
 
 
 implementation
@@ -434,6 +440,30 @@ end;
 function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
   pBuffer: Pointer; nSize: DWORD): DWORD; stdcall;
   external kernel32 Name 'GetFirmwareEnvironmentVariableA';
+
+
+function GetFirmwareType (aPFirmwareType: PTFirmwareType): cbool; stdcall;
+  external 'kernel32.dll' name 'GetFirmwareType';
+
+
+function GetBiosMode: string;
+var
+  FirmwareType: TFirmwareType = tFirmwareTypeUnknown;
+  PFirmwareType: PTFirmwareType = nil;
+begin
+  PFirmwareType := Addr(FirmwareType);
+  if GetFirmwareType(PFirmwareType) then
+  begin
+    case FirmwareType of
+      tFirmwareTypeUnknown: Result := 'Unknown';
+      tFirmwareTypeBios: Result := 'Legacy';
+      tFirmwareTypeUefi: Result := 'UEFI';
+      tFirmwareTypeMax: Result := 'Not implemented';
+    end;
+  end
+  else Result := 'ErrorCode: ' + IntToStr(GetLastError)
+    + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+end;
 
 function WinIsUefi: boolean;
 var
