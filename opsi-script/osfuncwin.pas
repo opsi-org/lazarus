@@ -441,7 +441,7 @@ function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
   external kernel32 Name 'GetFirmwareEnvironmentVariableA';
 
 
-function GetFirmwareType (var aPFirmwareType: TFirmwareType): cbool; stdcall;
+function GetFirmwareType (var aFirmwareType: TFirmwareType): cbool; stdcall;
   external 'kernel32.dll' name 'GetFirmwareType';
 
 
