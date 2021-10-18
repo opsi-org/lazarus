@@ -531,6 +531,7 @@ var
   {$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
   {$ENDIF}
+  maxbaks : integer = 8;
 begin
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
@@ -542,6 +543,10 @@ begin
   except
   end;
   files.Free;
+  // get maxbaks from osconf:
+  maxbaks := log_rotation_count;
+  if maxbaks > 99 then maxbaks := 99;
+  if maxbaks < 0 then maxbaks := 0;
   {$ENDIF}
   {$IFNDEF OPSISCRIPT}
   if not DirectoryExistsUTF8(FStandardPartLogPath) then
@@ -569,7 +574,7 @@ begin
     // just create the log
     // create new Log File
     LogDatei.Appendmode := False;
-    MakeBakFiles(LogDateiName, 8);
+    MakeBakFiles(LogDateiName, maxbaks);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
   end
@@ -592,7 +597,7 @@ begin
       if assigned(startupmessages) then
         startupmessages.Add('Backup old log files at ' + DateTimeToStr(Now));
       {$ENDIF OPSISCRIPT}
-      MakeBakFiles(LogDateiName, 8);
+      MakeBakFiles(LogDateiName, maxbaks);
       {$IFDEF OPSISCRIPT}
       if assigned(startupmessages) then
         startupmessages.Add('Initiate new log file at ' + DateTimeToStr(Now));

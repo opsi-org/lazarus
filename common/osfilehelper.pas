@@ -27,6 +27,7 @@ var
   basename: string;
   path: string;
   newfilename, newbakname: string;
+  fmtstr : string;
 
 begin
   path := ExtractFilePath(FName);
@@ -49,21 +50,25 @@ begin
     end;
     *)
   // this is new style (name_num.ext)
+  fmtstr := '%.1d';
+  if maxbaks > 9 then fmtstr := '%.2d';
   for bakcounter := maxbaks - 1 downto 0 do
   begin
     newfilename := path + PathDelim + basename + '_' +
-      IntToStr(bakcounter) + extension;
+    Format(fmtstr, [bakcounter]) + extension;
+   //   IntToStr(bakcounter) + extension;
     if FileExists(newfilename) then
     begin
       newbakname := path + PathDelim + basename + '_' +
-        IntToStr(bakcounter + 1) + extension;
+        Format(fmtstr, [bakcounter +1]) + extension;
+      //  IntToStr(bakcounter + 1) + extension;
       if FileExists(newbakname) then
         DeleteFileUTF8(newbakname);
       RenameFileUTF8(newfilename, newbakname);
       //FileCopy(newfilename, newbakname, problem, False, rebootWanted);
     end;
   end;
-  newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
+  newfilename := path + PathDelim + basename + '_' + Format(fmtstr, [0]) + extension;
   if FileExists(newfilename) then
     DeleteFileUTF8(newfilename);
   if FileExists(FName) then
