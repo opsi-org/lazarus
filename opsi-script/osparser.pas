@@ -4098,7 +4098,7 @@ var
   var
     ldap: TLDAPsend;
     goOn: boolean;
-    l: integer;
+    l, port: integer;
   begin
     ldap := TLDAPsend.Create;
 
@@ -4116,6 +4116,8 @@ var
         ldap.TargetHost := targethost;
         if targetPort <> '' then
           ldap.TargetPort := targetPort;
+        if TryStrToInt(targetPort,port) then
+          if port = 636 Then ldap.FullSSL:=true;
 
         ldap.UserName := ldapsearch_user;
         ldap.Password := ldapsearch_credentials;
@@ -4123,7 +4125,7 @@ var
         if not ldap.Login then
         begin
           goOn := False;
-          logdatei.log('Error in LDAP login: ' + ldap.ResultString, LLError);
+          logdatei.log('Error in LDAP login: ' + ldap.ResultString + ' ' + IntToStr(ldap.ResultCode), LLError);
         end;
 
         if goOn and not ldap.Bind then
