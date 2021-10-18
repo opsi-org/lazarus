@@ -50,7 +50,7 @@ type
     procedure SetActionRequest(pid: string; request: string);
     procedure SetRights(Path:String);
     function GetActionRequests: TStringList;
-    procedure DoActionsOnDemand;
+    function DoActionsOnDemand: string;
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
     procedure SelectProduct(Index:integer);
@@ -388,11 +388,17 @@ begin
 end;
 
 
-procedure TOpsiConnection.DoActionsOnDemand;
+function TOpsiConnection.DoActionsOnDemand: string;
 var
   resultstring:String;
+  Response: TJSONData;
+  Error: TJSONData;
+
 begin
    resultstring := MyOpsiMethodCall('processActionRequests', []);  //former 'fireEvent_software_on_demand'
+   Response := GetJSON(resultstring); //GetJSON(StringJSON).FindPath('result')
+   Error := Response.FindPath('error');
+   Result := Error.AsString;
 end;
 
 
