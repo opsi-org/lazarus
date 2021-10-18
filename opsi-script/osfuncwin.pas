@@ -449,23 +449,29 @@ function GetBiosMode: string;
 var
   FirmwareType: TFirmwareType = tFirmwareTypeUnknown;
 begin
-  if GetFirmwareType(FirmwareType) then
-  begin
-    case FirmwareType of
-      tFirmwareTypeUnknown: Result := 'Unknown';
-      tFirmwareTypeBios: Result := 'Legacy';
-      tFirmwareTypeUefi: Result := 'UEFI';
-      tFirmwareTypeMax: Result := 'Not implemented';
-    end;
-  end
-  else Result := 'ErrorCode: ' + IntToStr(GetLastError)
-    + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+  try
+    if GetFirmwareType(FirmwareType) then
+    begin
+      case FirmwareType of
+        tFirmwareTypeUnknown: Result := 'Unknown';
+        tFirmwareTypeBios: Result := 'Legacy';
+        tFirmwareTypeUefi: Result := 'UEFI';
+        tFirmwareTypeMax: Result := 'Not implemented';
+      end;
+    end
+    else Result := 'ErrorCode: ' + IntToStr(GetLastError)
+      + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+  except
+    on E: Exception do
+      Logdatei.log('Exception in GetBiosMode: ' + E.ClassName +
+        ': ' + E.Message, LLError);
+  end;
 end;
 
 function WinIsUefi: boolean;
 var
   lastError: DWORD;
-  tmpstr, outstr, stringResult: string;
+  tmpstr, outstr, stringResult, BiosMode: string;
   releaseint, i: integer;
   outlines: TXStringlist;
   exitcode: longint;
@@ -509,6 +515,24 @@ begin
     end
     else
     begin
+      BiosMode := lowercase(GetBiosMode);
+      if BiosMode = 'uefi' then
+      begin
+        Logdatei.log('WinIsUefi detect by GetFirmwareType: UEFI Boot Mode',
+            LLNotice);
+        Result := true;
+      end
+      else
+      if BiosMode = 'legacy' then
+      begin
+        Logdatei.log('WinIsUefi detect by GetFirmwareType: Legacy BIOS',
+            LLNotice);
+        Result := false;
+      end
+      else Logdatei.log('Error in UEFI detection: ' + BiosMode, LLNotice);
+
+      (* old code not deleted, might be useful in the future:
+
       { release >= 2004 : winapi call changed - so we try to find it by bcdedit output }
       outlines := TXStringlist.Create;
       {$IFDEF WIN32}
@@ -558,8 +582,13 @@ begin
       Logdatei.log('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
       if AnsiContainsText(stringResult, '{fwbootmgr}') then
         Result := True;
+
+      End of old code using bcdedit *)
+
     end;
-  end;
+  end
+  else Logdatei.log('Could not convert ' + tmpstr +
+         ' to integer using function TryStrToInt.', LLDebug);
 end;
 
 function WinIsPE: boolean;
