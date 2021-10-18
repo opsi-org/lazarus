@@ -5,6 +5,8 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.29) stable; urgency=low
 
+ * osfuncwin: WinIsUefi uses new function GetBiosMode if Windows Verison >= Windows10 2004. 
+    This function calls the Windows API function GetFirmwareType to detect Bios mode
  * osparser: doLDAPSearch: callLDAP: if port 636 then use ssl
  * remove ldapsend.pas from opsi-script dir (use from synapse)
 
