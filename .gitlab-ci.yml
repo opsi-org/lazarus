@@ -1,11 +1,11 @@
 # Variable definitions
 variables:
   RUN_PIPLINE:
-    value: "false"  # run pipline NOT by default
+    value: "true"  # run pipline NOT by default
     description: "Run the pipline if set to true."
 
   PROJECT_NAME:
-    value: "opsiscript"
+    value: "opsi_quick_install_project"
     description: "Project name of the project the pipline should run on."
 
   BINARY_VERSION:
@@ -13,7 +13,7 @@ variables:
     description: "Version of the binary"
 
   PLATFORM:
-    value: "all"
+    value: "Linux"
     description: "For which build modes should the lazarus project be compiled?  
     all: build project for all platforms (Win32, Win64, Linux, MacOS)
     Windows (Linux, MacOS):  build project for the specified platform only"
@@ -39,9 +39,9 @@ compile opsi-quickinstall linux:
     - laz-linux
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-misc/opsi-quickinstall"
-#  rules:
-#    - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux") 
-#      when: always
+  rules:
+    - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux") 
+      when: always
   script: 
     - LAZ_PROJECT_FILE_GUI=${PROJECT_REPOSITORY_PATH}/gui/${PROJECT_NAME}.lpi
     - LAZ_PROJECT_FILE_NOGUI=${PROJECT_REPOSITORY_PATH}/nogui/${PROJECT_NAME}.lpi
