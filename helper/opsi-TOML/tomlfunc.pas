@@ -23,6 +23,8 @@ function GetTOMLTableNames(TOMLfile: String): TStringList;
 function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
+
 implementation
 
  
@@ -181,7 +183,8 @@ begin
       for i := 0 to keysArray.Count -2 do
         begin
         tablePath := keysArray[i];
-        j := myTOMLTable.Count - HasSubTables(TTOMLDocument(myTOMLTable)); //or j := 0;
+        //j := myTOMLTable.Count - HasSubTables(TTOMLDocument(myTOMLTable));
+        j := 0;
         repeat
           if (myTOMLTable.Keys[j]=tablePath) then
              begin
@@ -270,6 +273,44 @@ begin
   result := myTableList;
 end;
 
+
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
+var
+  tablePath : String;
+  keysArray : TStringList;
+  myTOMLTable : TTOMLTable;
+  i, j : integer;
+begin
+
+  keysArray := TStringList.Create;
+  keysArray.Delimiter := '.';
+  keysArray.StrictDelimiter := True;
+  keysArray.DelimitedText := keyPath;
+
+  if keysArray.Count=1 then
+    myTOML.Add(keyPath, value);;
+
+  if keysArray.Count>=2 then
+  begin
+    myTOMLTable := TTOMLTable(myTOML);
+    for i := 0 to keysArray.Count -2 do
+      begin
+      tablePath := keysArray[i];
+      //j := myTOMLTable.Count - HasSubTables(TTOMLDocument(myTOMLTable));
+      j := 0;
+      repeat
+        if (myTOMLTable.Keys[j]=tablePath) then
+           begin
+           myTOMLTable := TTOMLTable(myTOMLTable.Items[j]);
+           break;
+           end
+        else
+          j:= j+1;
+      until j = myTOMLTable.Count;
+      end;
+    myTOMLTable.Add(keysArray[keysArray.Count-1],value);
+  end;
+end;
 
 end.
 
