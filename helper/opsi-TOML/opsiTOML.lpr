@@ -57,8 +57,8 @@ begin
 
   myTOML := GetTOML(myTOMLString);
 
-  writeln('--- Testing HasSubTables : ');
-  nb := HasSubTables(myTOML);
+  writeln('--- Testing HasTables : ');
+  nb := HasTables(myTOML);
 
   //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
@@ -79,10 +79,10 @@ begin
       writeln('--- ConvertTOMLtoJSON not done');
 
 
-  writeln('--- Testing GetTOMLFile :  ');
+  writeln('--- Testing LoadTOMLFile :  ');
 
   myTOMLStringList := TStringList.Create;
-  myTOMLStringList.AddStrings(GetTOMLFile(path));
+  myTOMLStringList.AddStrings(LoadTOMLFile(path));
   //writeln(myTOMLStringList.Text);
 
 
