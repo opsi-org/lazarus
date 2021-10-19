@@ -27,216 +27,32 @@ workflow:
 
 stages:
   - build
-  - codesign
-  - test_windows
-  # - test_linux
-  # - test_macos
   - binaryindex
 
 #***************************************#
 #  opsi-script pipline                  #
 #***************************************#
-compile opsi-script windows:
-  stage: build
-  tags:
-    - laz-win10
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
-      when: always
-  script: 
-    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
-    - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
-    - echo "Compiling $PROJECT_NAME for Win64"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
-    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-  artifacts:
-    name: "opsi-script $BINARY_VERSION windows"
-    paths:
-      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
-      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
-
-compile opsi-script linux:
+compile opsi-quickinstall linux:
   stage: build
   tags:
     - laz-linux
   variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
+    PROJECT_REPOSITORY_PATH: "opsi-misc/opsi-quickinstall"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+    - if: ($PROJECT_NAME == "opsi_quick_install_project") && $PLATFORM == "Linux") 
       when: always
   script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
+    - LAZ_PROJECT_FILE_GUI=${PROJECT_REPOSITORY_PATH}/gui/${PROJECT_NAME}.lpi
+    - LAZ_PROJECT_FILE_NOGUI=${PROJECT_REPOSITORY_PATH}/nogui/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI --build-mode=Release_Lin_64_nogui
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI --build-mode=Release_Lin_64_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
-    name: "opsi-script $BINARY_VERSION linux"
+    name: "opsi-quickinstall $BINARY_VERSION linux"
     paths:
-      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
-      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
-
-
-compile opsi-script macos:
-  stage: build
-  tags:
-    - laz-macos
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always # change to always if lazbuild works on masos
-  script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
-    - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
-    - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
-    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-  artifacts:
-    name: "opsi-script $BINARY_VERSION macos"
-    paths:
-      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
-
-codesign ops-script macos:
-  stage: codesign
-  tags:
-    - laz-macos
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-    ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always
-  script:
-    #Code signing opsi-script 
-    - echo "Code signing opsi-script"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-    #Code signing opsi-script-gui 
-    - echo "Code signing opsi-script-gui"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/opsi-script-gui
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-  artifacts:
-    name: "opsi-script $BINARY_VERSION macos codesigned"
-    paths:
-      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
-
-opsi-script-test windows:
-  stage: test_windows
-  tags:
-    - laz-windows
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
-      when: never # change to always if job script/rules are their
-  script:
-    - echo "opsi-script-test on windows"
-    - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe
-    - cp $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe %SystemDrive%\%ProgramFiles(x86)%\opsi.org\opsi-client-agent\opsi-script\winst32.exe
-    #- C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /silent
-    - C:\"Program Files (x86)"\opsi.org\opsi-client-agent\opsi-script\opsi-script.exe $PROJECT_REPOSITORY_PATH\ci_cd_opsi-script-test.opsiscript /batch /opsiservice $OPSISERVICEURL /clientid $LAZ_WINDOWS /username $LAZ_WINDOWS /password $PASSWORD_LAZ_WINDOWS
-    #- ssh $USERNAME@bonifax.uib.gmbh #work this out
-    #- opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
-    #- git clone opsi-script-test
-
-opsi-script Windows to binaryindex:
-  stage: binaryindex
-  tags:
-    - laz-linux
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
-      when: never # change to always if job script/rules are their
-  script:
-    - echo "deploy to binaryindex" 
-  
-#***************************************#
-#  opsi-client-systray pipline                  #
-#***************************************#
-compile opsi-client-systray windows:
-  stage: build
-  tags:
-    - laz-win10
-  variables:
-    PROJECT_REPOSITORY_PATH: "helper\\opsi-client-systray"
-    BINARY_NAME: "opsi-client-systray"
-  rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
-      when: always
-  script: 
-    - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
-    - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
-    - echo "Compiling $PROJECT_NAME for Win64"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
-  artifacts:
-    name: "$BINARY_NAME $BINARY_VERSION windows"
-    paths:
-      - $PROJECT_REPOSITORY_PATH\$BINARY_NAME
-
-
-compile opsi-client-systray linux:
-  stage: build
-  tags:
-    - laz-linux
-  variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
-    BINARY_NAME: "opsi-client-systray"
-  rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
-      when: always
-  script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
-    - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
-    - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
-  artifacts:
-    name: "$BINARY_NAME $BINARY_VERSION linux"
-    paths:
-      - $PROJECT_REPOSITORY_PATH/$BINARY_NAME
-
-compile opsi-client-systray macos:
-  stage: build
-  tags:
-    - laz-macos
-  variables:
-    PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray/"
-    BINARY_NAME: "opsi-client-systray"
-  rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
-      when: always # change to always if lazbuild works on masos
-  script: 
-    - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
-    - echo "$LAZ_PROJECT_FILE"
-    - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
-    - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Applications/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
-    # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-  artifacts:
-    name: "$BINARY_NAME $BINARY_VERSION macos"
-    paths:
-      - $PROJECT_REPOSITORY_PATH/$BINARY_NAME
+      - $PROJECT_REPOSITORY_PATH/gui/opsi_quick_install_project #i386-win32\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/nogui/opsi_quick_install_project
