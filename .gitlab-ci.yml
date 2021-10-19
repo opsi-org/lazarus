@@ -47,9 +47,9 @@ compile opsi-quickinstall linux:
     - LAZ_PROJECT_FILE_NOGUI=${PROJECT_REPOSITORY_PATH}/nogui/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI --build-mode=Release_Lin_64_nogui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI --build-mode=Release_Lin_64_gui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-quickinstall $BINARY_VERSION linux"
