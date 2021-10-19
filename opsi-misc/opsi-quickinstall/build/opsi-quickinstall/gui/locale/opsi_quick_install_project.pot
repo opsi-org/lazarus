@@ -1,0 +1,466 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: opsi_quick_install_resourcestrings.rsadminname
+msgid "What is the name of the opsi admin user to create? (empty = nothing created)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsadminnameo
+msgid "Opsi admin user name: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsadminpassword
+msgid "What is the password of the opsi admin user to create? (empty = nothing created)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsadminpasswordo
+msgid "Opsi admin user password: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsback
+msgctxt "opsi_quick_install_resourcestrings.rsback"
+msgid " < back "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsbackend
+msgid "Which backend should be installed? (mysql needs a valid activation file)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsbackendo
+msgid "Backend: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsbackendop
+msgid " [Options: \"f\" for file, \"m\" for mysql]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapdistr
+msgctxt "opsi_quick_install_resourcestrings.rscapdistr"
+msgid "Distribution"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapquery
+msgid "Query"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapquery2
+msgid "Query (part 2)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapquery3
+msgid "Query (part 3)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapquerydhcp
+msgid "Query (dhcp)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscapqueryuserinfo
+msgid "Query (user info)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscarryout
+msgid "To carry out the remaining installation automatically, we need some information first."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscontinue
+msgid ""
+"To continue and start the installation, please press enter.\n"
+"If you like to jump back to a question, please press the number key of the respective number in the overview."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscopymodules
+msgctxt "opsi_quick_install_resourcestrings.rscopymodules"
+msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscopymoduleso
+msgid "Copy modules: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscorrect
+msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscreaterepo
+msgid "Creating repository..."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rscustom
+msgctxt "opsi_quick_install_resourcestrings.rscustom"
+msgid "Custom"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdhcp
+msgid "Should we run the opsi dhcp-server on this machine?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdhcpo
+msgid "Run opsi dhcp-server: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdistr
+msgctxt "opsi_quick_install_resourcestrings.rsdistr"
+msgid "We recognized the following distribution on this computer:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdomain
+msgid "DNS domain (for dhcp):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdomaino
+msgid "DNS domain: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsdomainother
+msgctxt "opsi_quick_install_resourcestrings.rsdomainother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsfinish
+msgctxt "opsi_quick_install_resourcestrings.rsfinish"
+msgid " finish "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsgateway
+msgid "Gateway (option routers for dhcp):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsgatewayo
+msgid "Gateway: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsgatewayother
+msgctxt "opsi_quick_install_resourcestrings.rsgatewayother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfoadmin
+msgid ""
+"User to create for the operation of opsi.\n"
+"This user can not manage system settings."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfobackend
+msgid "Should the data of opsi be stored in a file or a mysql database?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfodhcp
+msgid ""
+"Select \"No\" if you already have a dhcp-server.\n"
+"Select \"Yes\" if you want to install the dhcp-server on the opsi-server."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfodistribution
+msgid "The following distributions are supported:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfomodules
+msgid "For mysql you need active modules. For further information and prices please write an e-mail to info@uib.de"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfonetwork
+msgid "Information on the network in which the opsi-server will be installed."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfoopsiversion
+msgid "It's recommended to install opsi 4.2 since it is the latest version; the support for opsi 4.1 will end soon."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforeboot
+msgid "If yes, shortly after the opsi-server is installed, your computer will reboot."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepo
+msgid "Source from which opsi will be installed."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinforepokind
+msgid ""
+"Select the stability of the installation:\n"
+"Stable is reliable, testing is the beta version, experimental may cause some errors."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinfotftproot
+msgid "Choose \"default.menu\" if you want to show a small menu when no netboot product is on setup (bios only)."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsinstall
+msgid "Installing "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsipname
+msgid "Set a different IP name (\"auto\" = use automatically determined FQDN of this computer)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsipnameo
+msgid "IP name: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsipnumber
+msgid "Set a different IP number (\"auto\" = use automatically determined IP address of this computer)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsipnumbero
+msgid "IP number: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsiscorrect
+msgid "Is this correct?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rslangop
+msgid " [Options: \"de\" for Deutsch, \"en\" for English, \"fr\" for Français, \"es\" for Español]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rslinkop
+msgid " [Options: \"m\" for default.menu, \"nom\" for default.nomenu]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rslog
+msgid "You can find the log files here:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnameserver
+msgid "Primary nameserver (for dhcp):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnameservero
+msgid "Primary nameserver: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnameserverother
+msgctxt "opsi_quick_install_resourcestrings.rsnameserverother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetmask
+msgid "Netmask (for dhcp):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetmasko
+msgid "Netmask: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetmaskother
+msgctxt "opsi_quick_install_resourcestrings.rsnetmaskother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddress
+msgid "Network address (for dhcp):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetworkaddressother
+msgctxt "opsi_quick_install_resourcestrings.rsnetworkaddressother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnetworko
+msgid "Network address: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnext
+msgctxt "opsi_quick_install_resourcestrings.rsnext"
+msgid " next > "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsno
+msgctxt "opsi_quick_install_resourcestrings.rsno"
+msgid "No"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnosupport
+msgid "Unfortunately, opsi does not support your distribution. Only the following distributions are supported:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsnotvalid
+msgid " is not a valid input."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsopsi41
+msgctxt "opsi_quick_install_resourcestrings.rsopsi41"
+msgid "Opsi 4.1"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsopsi42
+msgctxt "opsi_quick_install_resourcestrings.rsopsi42"
+msgid "Opsi 4.2"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsopsiversion
+msgctxt "opsi_quick_install_resourcestrings.rsopsiversion"
+msgid "Which opsi version would you like to install?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsopsiversiono
+msgid "Opsi version to install: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsopsiversionop
+msgid " [Options: \"1\" for Opsi 4.1, \"2\" for Opsi 4.2]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsotherdistr
+msgid "Please type in the correct distribution:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsoverview
+msgctxt "opsi_quick_install_resourcestrings.rsoverview"
+msgid "Overview"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsoverviewbtn
+msgctxt "opsi_quick_install_resourcestrings.rsoverviewbtn"
+msgid " overview "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rspassword
+msgctxt "opsi_quick_install_resourcestrings.rspassword"
+msgid "Password"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsproxy
+msgid "Proxy to use (http://myproxy.dom.org:8080):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsproxynone
+msgctxt "opsi_quick_install_resourcestrings.rsproxynone"
+msgid "None"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsproxyo
+msgid "Proxy: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsproxyother
+msgctxt "opsi_quick_install_resourcestrings.rsproxyother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsreboot
+msgid "May the server reboot if this script is finished?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrebooto
+msgid "Reboot after script is finished: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepo
+msgid "(Base-) Repository for the opsi-server installation:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepokind
+msgctxt "opsi_quick_install_resourcestrings.rsrepokind"
+msgid "From which repo kind should be installed?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepokindo
+msgid "Repo kind: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepokindop
+msgid " [Options: \"s\" for stable, \"t\" for testing, \"e\" for experimental]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsreponocache
+msgid "(Base-) Repository for the opsi-server installation (without any cache proxy):"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsreponocacheo
+msgid "Repository (without cache proxy): "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepoo
+msgid "Repository: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrepoother
+msgctxt "opsi_quick_install_resourcestrings.rsrepoother"
+msgid "Other:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsrights
+msgctxt "opsi_quick_install_resourcestrings.rsrights"
+msgid "Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rssellanguage
+msgctxt "opsi_quick_install_resourcestrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rssetup
+msgctxt "opsi_quick_install_resourcestrings.rssetup"
+msgid "Please select a setup type:"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rssetupop
+msgid " [Options: \"s\" for standard, \"c\" for custom]"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsshowpassword
+msgctxt "opsi_quick_install_resourcestrings.rsshowpassword"
+msgid "Show password"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rssomemin
+msgid "(This may take some minutes)"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsstandard
+msgctxt "opsi_quick_install_resourcestrings.rsstandard"
+msgid "Standard"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsstartinstallation
+msgid "Finally click \"finish\" to start the installation of opsi-server."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rssuggestion
+msgid "[Suggestions: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rstftproot
+msgctxt "opsi_quick_install_resourcestrings.rstftproot"
+msgid "Which file should the TFTPROOT default symlink point to?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rstftprooto
+msgid "TFTPROOT symlink points to: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsucs
+msgid "What is the password of the administrator of the UCS domain controller (needed for other roles to join)?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsucso
+msgid "Password of administrator of UCS domain controller: "
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsuseproxy
+msgid "Would you like to use a proxy?"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rswait
+msgid "Please wait for the installation to start..."
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rswelcome
+msgctxt "opsi_quick_install_resourcestrings.rswelcome"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rswrongpassword
+msgid "Authentication failed. Please check your password!"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsyes
+msgctxt "opsi_quick_install_resourcestrings.rsyes"
+msgid "Yes"
+msgstr ""
+
+#: opsi_quick_install_resourcestrings.rsyesnoop
+msgid " [Options: \"y\" for yes, \"n\" for no]"
+msgstr ""
+

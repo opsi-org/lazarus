@@ -24,7 +24,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 begin
   RequireDerivedFormResource := True;
   Application.Title:='OpsiQuickInstallGui';
-  Application.Scaled := True;
+  Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TQuickInstall, QuickInstall);
   Application.CreateForm(TQuery, Query);
