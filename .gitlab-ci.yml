@@ -40,7 +40,7 @@ compile opsi-quickinstall linux:
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-misc/opsi-quickinstall"
   rules:
-    - if: ($PROJECT_NAME == "opsi_quick_install_project") && $PLATFORM == "Linux") 
+    - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux") 
       when: always
   script: 
     - LAZ_PROJECT_FILE_GUI=${PROJECT_REPOSITORY_PATH}/gui/${PROJECT_NAME}.lpi
