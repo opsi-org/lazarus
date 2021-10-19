@@ -50,7 +50,7 @@ type
 type
   { type used in Windows API function GetFirmwareType }
   TFirmwareType = (tFirmwareTypeUnknown, tFirmwareTypeBios, tFirmwareTypeUefi,
-  tFirmwareTypeMax);
+    tFirmwareTypeMax);
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
@@ -207,8 +207,8 @@ begin
   {$IFDEF GUI}
   if showoutput then
   begin
-    FBatchOberflaeche.SetElementLeft(5,eMainForm); //Left := 5;
-    FBatchOberflaeche.SetElementTop(5,eMainForm);  //Top := 5;
+    FBatchOberflaeche.SetElementLeft(5, eMainForm); //Left := 5;
+    FBatchOberflaeche.SetElementTop(5, eMainForm);  //Top := 5;
     CreateSystemInfo;
     SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
@@ -423,13 +423,21 @@ begin
   {$ENDIF WIN64}
 end;
 
+
 function getW10Release: string;
 begin
   if GetNTVersionMajor >= 10 then
     if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
       'ReleaseID', True) then
+    begin
       Result := GetRegistrystringvalue(
-        'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True)
+        'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True);
+      if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+        'Displayversion', True) then
+        Result := GetRegistrystringvalue(
+          'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+          'Displayversion', True);
+    end
     else
       Result := '1507'
   else
@@ -441,8 +449,8 @@ function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
   external kernel32 Name 'GetFirmwareEnvironmentVariableA';
 
 
-function GetFirmwareType (var aFirmwareType: TFirmwareType): cbool; stdcall;
-  external 'kernel32.dll' name 'GetFirmwareType';
+function GetFirmwareType(var aFirmwareType: TFirmwareType): cbool; stdcall;
+  external 'kernel32.dll' Name 'GetFirmwareType';
 
 
 function GetBiosMode: string;
@@ -459,8 +467,9 @@ begin
         tFirmwareTypeMax: Result := 'Not implemented';
       end;
     end
-    else Result := 'ErrorCode: ' + IntToStr(GetLastError)
-      + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+    else
+      Result := 'ErrorCode: ' + IntToStr(GetLastError) +
+        'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
   except
     on E: Exception do
       Logdatei.log('Exception in GetBiosMode: ' + E.ClassName +
@@ -472,7 +481,7 @@ function WinIsUefi: boolean;
 var
   lastError: DWORD;
   tmpstr, outstr, stringResult, BiosMode: string;
-  releaseint, i: integer;
+  releaseint, i, versionint: integer;
   outlines: TXStringlist;
   exitcode: longint;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
@@ -480,12 +489,13 @@ var
   { http://theroadtodelphi.wordpress.com/2013/02/19/how-distinguish-when-windows-was-installed-in-legacy-bios-or-uefi-mode-using-delphi/ }
 begin
   Result := False;
-  tmpstr := getW10Release;
-  if TryStrToInt(tmpstr, releaseint) then
-  begin
-    Logdatei.log('WinIsUefi releaseint: ' + IntToStr(releaseint), LLNotice);
-    if releaseint < 2004 then
+  //tmpstr := getW10Release;
+  //if TryStrToInt(tmpstr, releaseint) then
+  versionint := GetNTVersionMajor;
+    Logdatei.log('WinIsUefi versionint: ' + IntToStr(versionint), LLNotice);
+    if versionint < 10 then
     begin
+      // we are in win 6.x
       try
         GetFirmwareEnvironmentVariableA('',
           '{00000000-0000-0000-0000-000000000000}', nil, 0);
@@ -515,21 +525,23 @@ begin
     end
     else
     begin
+      // we are in win 10+
       BiosMode := lowercase(GetBiosMode);
       if BiosMode = 'uefi' then
       begin
         Logdatei.log('WinIsUefi detect by GetFirmwareType: UEFI Boot Mode',
-            LLNotice);
-        Result := true;
+          LLNotice);
+        Result := True;
       end
       else
       if BiosMode = 'legacy' then
       begin
         Logdatei.log('WinIsUefi detect by GetFirmwareType: Legacy BIOS',
-            LLNotice);
-        Result := false;
+          LLNotice);
+        Result := False;
       end
-      else Logdatei.log('Error in UEFI detection: ' + BiosMode, LLNotice);
+      else
+        Logdatei.log('Error in UEFI detection: ' + BiosMode, LLNotice);
 
       (* old code not deleted, might be useful in the future:
 
@@ -585,10 +597,7 @@ begin
 
       End of old code using bcdedit *)
 
-    end;
-  end
-  else Logdatei.log('Could not convert ' + tmpstr +
-         ' to integer using function TryStrToInt.', LLDebug);
+  end;
 end;
 
 function WinIsPE: boolean;

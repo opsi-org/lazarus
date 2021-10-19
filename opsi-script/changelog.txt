@@ -5,13 +5,15 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.29) stable; urgency=low
 
- * osfuncwin: WinIsUefi uses new function GetBiosMode if Windows Verison >= Windows10 2004. 
+ * osfuncwin: WinIsUefi uses new function GetBiosMode if Windows Verison >= Windows10.
     This function calls the Windows API function GetFirmwareType to detect Bios mode
  * osparser: doLDAPSearch: callLDAP: if port 636 then use ssl
  * remove ldapsend.pas from opsi-script dir (use from synapse)
  * osfilehelper: MakeBakFiles: use two digit rotation numbers if log_rotation_count > 9
  * osconf: configuration: log_rotation_count (default = 8)
    will need new config: opsi-script.global.log_rotation_count to change (allowed 0 - 99)
+ * osfuncwin: getW10Release: Fixes detection of w10 release > 2009 (21h1) ; fixes #4665
+   getW10Release is now also called from osparser
 
 -- d.oertel <d.oertel@uib.de> Mon, 18 Oct 2021 15:00
 

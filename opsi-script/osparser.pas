@@ -1765,9 +1765,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -4116,8 +4115,8 @@ var
         ldap.TargetHost := targethost;
         if targetPort <> '' then
           ldap.TargetPort := targetPort;
-        if TryStrToInt(targetPort,port) then
-          if port = 636 Then ldap.FullSSL:=true;
+        if TryStrToInt(targetPort, port) then
+          if port = 636 then ldap.FullSSL := True;
 
         ldap.UserName := ldapsearch_user;
         ldap.Password := ldapsearch_credentials;
@@ -4125,7 +4124,8 @@ var
         if not ldap.Login then
         begin
           goOn := False;
-          logdatei.log('Error in LDAP login: ' + ldap.ResultString + ' ' + IntToStr(ldap.ResultCode), LLError);
+          logdatei.log('Error in LDAP login: ' + ldap.ResultString +
+            ' ' + IntToStr(ldap.ResultCode), LLError);
         end;
 
         if goOn and not ldap.Bind then
@@ -10697,8 +10697,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12268,10 +12268,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14042,6 +14042,10 @@ begin
         else
         begin
           if GetNTVersionMajor >= 10 then
+          begin
+            list.add('ReleaseID=' + getW10Release);
+            list.add('ReleaseID=' + getW10Release);
+          (* moved to funcwin: getW10Release
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
             begin
@@ -14055,6 +14059,8 @@ begin
             end
             else
               list.add('ReleaseID=1507')
+              *)
+          end
           else
             list.add('ReleaseID=');
           tmpint := OSGetProductInfoNum;
@@ -24898,12 +24904,13 @@ begin
     else
       tmpstr := tmpstr + ' 32 Bit';
     { we have no ReleaseId before Win10  }
-    if (StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10) and
-      RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-      'ReleaseID', True) then
+    if (StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10) then
     begin
-      tmpstr := tmpstr + ', Release: ' + GetRegistrystringvalue(
+      tmpstr := tmpstr + ', Release: ' + getW10Release;
+      (* moved to funcwin: getW10Release
+      GetRegistrystringvalue(
         'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True);
+        *)
     end;
     tmpstr := tmpstr + ', Edition: ' + getProductInfoStrByNum(OSGetProductInfoNum);
     LogDatei.log(tmpstr, LLessential);
