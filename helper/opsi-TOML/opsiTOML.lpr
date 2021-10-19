@@ -11,6 +11,10 @@ uses
   TOML, TOMLParser, TOMLfunc,
   FGL, FPJSON, fpJSONrtti;
 
+
+Type
+  TA = Array[0..9] of Integer;
+
 var
   path : String;
   myFile: TStringList;
@@ -30,6 +34,7 @@ var
   myKey : String = '';
   myValue : String;
   myData : TTOMLData;
+  myTValue : Double;
 
   i : integer = 0;
   tableNamesList : TStringList;
@@ -171,7 +176,28 @@ begin
 
   writeln('myTOML[servers][servers.alpha][ip] : ', String(myData));
 
+  writeln('--- Testing adding data to TOML  ');
 
+  myTOML.Add('newKey','newValue');
+  writeln(myTOML.AsJSON.FormatJSON);
+  writeln('myTOML.Keys[0] :' + myTOML.Keys[0]);
+  writeln('myTOML.Values[0]:' + String(myTOML.Values[0]));
+
+  writeln('myTOML.Keys[1] :' + myTOML.Keys[1]);
+  writeln('myTOML.Values[1]:' + String(myTOML.Values[1]));
+
+  writeln('myTOML.Keys[5] :' + myTOML.Keys[5]);
+  writeln('myTOML.Values[5]:' + String(myTOML.Values[5]));
+
+
+  writeln('--- Testing adding data to TOML sub Table ');
+
+  myTValue := 2.5 ;
+  AddKeyValueToTOML(myTOML,'owner.newKeyInOwner',myTValue);
+  writeln(myTOML.AsJSON.FormatJSON);
+
+  myTOMLTable:= GetTOMLTable(myTOML,'owner');
+  writeln(myTOMLTable.AsJSON.FormatJSON);
 
   (*
   if map.TryGetData('title', myData) then
