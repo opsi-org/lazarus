@@ -90,7 +90,7 @@ begin
   //writeln(myTOMLStringList.Text);
 
 
-  writeln('--- Testing GetTOMLTableNames :  ');
+  writeln('--- Testing GetTOMLTableNames with a file parameter:  ');
 
   tableNamesList := GetTOMLTableNames(path);
   writeln(tableNamesList.Text);
@@ -179,6 +179,12 @@ begin
   writeln('servers.Values[1]:' + String(myTOMLTable.Values[1]));
 
   writeln('myTOML[servers][servers.alpha][ip] : ', String(myData));
+
+  writeln('--- Testing GetTOMLTableNames with a TTOMLTable parameter:  ');
+
+  tableNamesList := GetTOMLTableNames(myTOMLTable);
+  writeln('The TOMLTable [servers] has sub-tables :');
+  writeln(tableNamesList.Text);
 
   writeln('--- Testing adding data to TOML  ');
 
