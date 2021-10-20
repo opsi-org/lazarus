@@ -1743,7 +1743,7 @@ end;
 procedure TResultform1.CheckBoxDefaultIconChange(Sender: TObject);
 var
   DefaultIcon: TImage;
-  defaultIconFullFileName: string;
+  //defaultIconFullFileName: string;
 begin
   if CheckBoxDefaultIcon.Checked = True then
   begin
@@ -1767,6 +1767,7 @@ begin
       defaultIconFullFileName;
       *)
 
+    osdbasedata.aktProduct.productdata.productImageFullFileName := defaultIconFullFileName;
     CheckBoxNoIcon.Checked := False;
     TIImageIconPreview.Visible := True;
     // paint icon preview
