@@ -1561,7 +1561,10 @@ begin
     {$ENDIF LINUX}
     RectBackgr := Rect(0, 0, picturesize, picturesize);
     // paint icon on chess board
-    StretchDraw(RectBackgr, Image.Picture.Bitmap);
+    // stretched:
+    //StretchDraw(RectBackgr, Image.Picture.Bitmap);
+    // original size:
+    Draw(round((picturesize-Image.Picture.Width)/2),round((picturesize-Image.Picture.Height)/2), Image.Picture.Bitmap);
   end;
 end;
 
