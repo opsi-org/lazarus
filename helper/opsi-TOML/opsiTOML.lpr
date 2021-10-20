@@ -63,15 +63,19 @@ begin
   //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
 
+  writeln('--- Testing SaveToTOMLFile') ;
   filePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
 
-  writeln('--- Testing SaveToTOMLFile') ;
-
   if ( SaveToTOMLFile(myTOMLString, filePath) ) then
-     writeln('--- SaveToTOMLFile done')
+     writeln('--- SaveToTOMLFile with String parameter done')
   else
-      writeln('--- SaveToTOMLFile not done');
-
+      writeln('--- SaveToTOMLFile with String parameter not done');
+  (*
+  if ( SaveToTOMLFile(myTOML, filePath) ) then
+     writeln('--- SaveToTOMLFile with TTOMLDocument parameter done')
+  else
+      writeln('--- SaveToTOMLFile with TTOMLDocument parameter not done');
+  *)
   JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
   if ( ConvertTOMLtoJSON(path, JSONpath)) then
      writeln('--- ConvertTOMLtoJSON done')
