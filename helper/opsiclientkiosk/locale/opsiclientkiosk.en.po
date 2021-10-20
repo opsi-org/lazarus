@@ -11,6 +11,11 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: installdlg.rserrorondemand
+msgctxt "installdlg.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
+
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
 msgstr ""
@@ -139,6 +144,11 @@ msgstr "Do you want to uninstall "
 #: opsiclientkioskgui.rsdoyouwantupdate
 msgid "Do you want to update "
 msgstr "Do you want to update "
+
+#: opsiclientkioskgui.rserrorondemand
+msgctxt "opsiclientkioskgui.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
 
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
