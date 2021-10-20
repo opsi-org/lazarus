@@ -25,6 +25,7 @@ function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
 
 function HasTables(myTOML : TTOMLDocument): integer;
+function GetTOMLTableNames(myTOML: TTOMLDocument): TStringList;
 function GetTOMLTableNames(TOMLfile: String): TStringList;
 function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
 function GetTOMLTable(TOMLfile: String; table : String): TStringList;
@@ -163,6 +164,22 @@ begin
     if (String(myTOML.Values[i]) = 'TTOMLTable') then
       nb := nb+1 ;
   result := nb;
+end;
+
+function GetTOMLTableNames(myTOML: TTOMLDocument): TStringList;
+var
+  tableNamesList : TStringList;
+  i : integer;
+
+begin
+  tableNamesList := TStringList.Create;
+  for i := 0 to myTOML.Count -1 do
+    if  (String(myTOML.Values[i]) = 'TTOMLTable') then
+        begin
+        tableNamesList.Add(myTOML.Keys[i]);
+        end;
+  result := tableNamesList;
+  //writeln(tableNamesList.Text);
 end;
 
 function GetTOMLTableNames(TOMLfile: String): TStringList;
