@@ -1535,6 +1535,7 @@ procedure TResultform1.PaintPreview(Image: TImage);
 var
   RectBackgr: TRect;
   row, col: integer;
+  squaresize: integer;
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
   picturesize: integer;
@@ -1542,13 +1543,14 @@ begin
   with TIImageIconPreview.Canvas do
   begin
     // paint chess background
+    squaresize := 22;
     for row := 0 to 9 do
     begin
       for col := 0 to 9 do
       begin
         // paint chess squares
         Brush.Color := ChessColors[(row + col) mod 2];
-        FillRect(Rect(22 * row, 22 * col, 22 * row + 22, 22 * col + 22));
+        FillRect(Rect(squaresize * row, squaresize * col, squaresize * row + squaresize, squaresize * col + squaresize));
       end;
     end;
     // paint chess board
