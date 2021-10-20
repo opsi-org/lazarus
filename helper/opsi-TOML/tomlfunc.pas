@@ -33,7 +33,7 @@ function GetTOMLTable(TOMLfile: String; table : String): TStringList;
 function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
 
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
-
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
 
 implementation
 
@@ -365,5 +365,43 @@ begin
   end;
 end;
 
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
+var
+  tablePath : String;
+  keysArray : TStringList;
+  myTOMLTable : TTOMLTable;
+  i, j : integer;
+begin
+
+  keysArray := TStringList.Create;
+  keysArray.Delimiter := '.';
+  keysArray.StrictDelimiter := True;
+  keysArray.DelimitedText := keyPath;
+
+  myTOMLTable := TTOMLTable(myTOML);
+  for i := 0 to keysArray.Count -2 do
+    begin
+    try
+      tablePath := keysArray[i];
+      //j := myTOMLTable.Count - HasTables(TTOMLDocument(myTOMLTable));
+      j := 0;
+      repeat
+        if (myTOMLTable.Keys[j]=tablePath) then
+           begin
+           myTOMLTable := TTOMLTable(myTOMLTable.Items[j]);
+           break;
+           end
+        else
+          j:= j+1;
+      until j = myTOMLTable.Count;
+      myTOMLTable.Add(keysArray[keysArray.Count-1],value);
+    except
+    on E:Exception do
+      writeln('Exception in AddKeyValueToTOML : ', E.Message);
+    end;
+    end;
+end;
+
 end.
+
 
