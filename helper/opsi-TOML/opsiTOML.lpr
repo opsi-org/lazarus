@@ -28,13 +28,19 @@ var
   myJSONStreamer: TJSONStreamer;
   myStream : TMemoryStream;
   myJSONString : String;
-
   myStrings : TStringList;
 
   myKey : String = '';
   myValue : String;
   myData : TTOMLData;
-  myTValue : Double;
+  myArray : TTOMLArray;
+  (*
+  myOctal : Number = 0o01234567;
+  myHexadecimal : Hexadecimal = 0xDEADBEEF;
+  myBinary : Binary = 0b11010110  ;
+  *)
+  myDateTime : TDateTime =  1979-05-27 ;
+  myNewTOML : TTOMLDocument;
 
   i : integer = 0;
   tableNamesList : TStringList;
@@ -189,7 +195,6 @@ begin
   writeln('--- Testing adding data to TOML  ');
 
   myTOML.Add('newKey','newValue');
-  writeln(myTOML.AsJSON.FormatJSON);
   writeln('myTOML.Keys[0] :' + myTOML.Keys[0]);
   writeln('myTOML.Values[0]:' + String(myTOML.Values[0]));
 
@@ -200,11 +205,40 @@ begin
   writeln('myTOML.Values[5]:' + String(myTOML.Values[5]));
 
 
-  writeln('--- Testing adding data to TOML sub Table ');
+  writeln('--- Testing adding String data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newKeyInOwner','owner.newValueInOwner');
 
-  myTValue := 2.5 ;
-  AddKeyValueToTOML(myTOML,'owner.newKeyInOwner',myTValue);
-  writeln(myTOML.AsJSON.FormatJSON);
+  writeln('--- Testing adding Integer data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newIntegerValue',2020);
+
+  writeln('--- Testing adding Float data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newFloatValue',20.20);
+
+  writeln('--- Testing adding Boolean data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newBooleanValue', true);
+  (*
+  writeln('--- Testing adding Octal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
+
+  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newHexadecimalValue',myHexadecimal);
+
+  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newBinaryValue',myBinary);
+  *)
+  writeln('--- Testing adding DateTime data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newDateTimeValue',myDatetime);
+
+  writeln('--- Testing adding Array data to TOML sub Table ');
+  myArray := TTOMLArray.Create;
+  myArray.Add('First element');
+  myArray.Add('Second element');
+  myArray.Add('Third element');
+
+  //myValue:='[''First element'',''Second element'',''Third element'']' ;
+  //myNewTOML:= GetTOML(myValue);
+
+  AddKeyValueToTOML(myTOML,'owner.newArrayValue',myArray);
 
   myTOMLTable:= GetTOMLTable(myTOML,'owner');
   writeln(myTOMLTable.AsJSON.FormatJSON);
