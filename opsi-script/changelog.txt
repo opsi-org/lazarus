@@ -10,7 +10,8 @@ opsi-script (4.12.4.29) stable; urgency=low
  * osparser: doLDAPSearch: callLDAP: if port 636 then use ssl
  * remove ldapsend.pas from opsi-script dir (use from synapse)
  * osfilehelper: MakeBakFiles: use two digit rotation numbers if log_rotation_count > 9
- * osconf: configuration: log_rotation_count (default = 8)
+                               use three digit rotation numbers if log_rotation_count > 99
+ * osconf: configuration: log_rotation_count (default = 8)  (max=999
    will need new config: opsi-script.global.log_rotation_count to change (allowed 0 - 99)
  * osfuncwin: getW10Release: Fixes detection of w10 release > 2009 (21h1) ; fixes #4665
    getW10Release is now also called from osparser

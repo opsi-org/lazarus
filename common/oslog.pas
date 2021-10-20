@@ -545,7 +545,7 @@ begin
   files.Free;
   // get maxbaks from osconf:
   maxbaks := log_rotation_count;
-  if maxbaks > 99 then maxbaks := 99;
+  if maxbaks > 999 then maxbaks := 999;
   if maxbaks < 0 then maxbaks := 0;
   {$ENDIF}
   {$IFNDEF OPSISCRIPT}

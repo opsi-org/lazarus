@@ -51,6 +51,7 @@ begin
     *)
   // this is new style (name_num.ext)
   fmtstr := '%.1d';
+  if maxbaks > 99 then fmtstr := '%.3d';
   if maxbaks > 9 then fmtstr := '%.2d';
   for bakcounter := maxbaks - 1 downto 0 do
   begin
