@@ -533,6 +533,7 @@ var
   {$ENDIF}
   maxbaks : integer = 8;
 begin
+  if FStandardPartLogFilename = '' then FStandardPartLogFilename := LogDateiname + '-part';
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
   startupmessages.Add('Cleanup old part files at ' + DateTimeToStr(Now));
