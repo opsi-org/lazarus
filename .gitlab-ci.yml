@@ -27,7 +27,7 @@ workflow:
 
 stages:
   - build
-#  - binaryindex
+  - binaryindex
 
 #***************************************#
 #  opsi-script pipline                  #
@@ -50,9 +50,21 @@ compile opsi-quickinstall linux:
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI
+    #- cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ &&
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-quickinstall $BINARY_VERSION linux"
     paths:
-      - $PROJECT_REPOSITORY_PATH/gui/opsi_quick_install_project #i386-win32\opsi-script.exe
-      - $PROJECT_REPOSITORY_PATH/nogui/opsi_quick_install_project
+      - opsi-misc/opsi-quickinstall/build/*
+
+publish opsi-quick-install:
+  stage: binaryindex
+  tags:
+    - laz-linux
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-misc/opsi-quickinstall"
+  rules:
+    - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux")
+      when: always
+  script:
+    - cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 4.2.0.0-0
