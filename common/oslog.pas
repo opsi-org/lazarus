@@ -533,7 +533,8 @@ var
   {$ENDIF}
   maxbaks : integer = 8;
 begin
-  if FStandardPartLogFilename = '' then FStandardPartLogFilename := LogDateiname + '-part';
+  if (FStandardPartLogFilename = 'noname-part-') and (LogDateiname <> '') then
+    FStandardPartLogFilename := LogDateiname + '-part-';
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
   startupmessages.Add('Cleanup old part files at ' + DateTimeToStr(Now));
@@ -629,6 +630,7 @@ begin
   FLogProduktId := False;
   FStandardLogFileext := '.log';
   FWritePartLog := True;
+  FStandardPartLogFilename := 'noname-part-';
   {$IFDEF OPSISCRIPT}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
@@ -972,7 +974,8 @@ begin
     //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
     myrandomstr := IntToStr(Random(MAXLONGINT));
     {$ENDIF}
-
+    if (FStandardPartLogFilename = 'noname-part-') and (Fname <> '') then
+      FStandardPartLogFilename := Fname + '-part-';
     PartFileName := FStandardPartLogPath + PathDelim + FStandardPartLogFilename +
       myrandomstr + StandardPartLogFileext;
     //assignfile(LogPartFile, PartFileName);
