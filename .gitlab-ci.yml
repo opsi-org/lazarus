@@ -67,4 +67,4 @@ publish opsi-quick-install:
     - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux")
       when: always
   script:
-    - cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 4.2.0.0-0
+    - cd opsi-misc/opsi-quickinstall/build/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 4.2.0.0-0
