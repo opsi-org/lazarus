@@ -38,7 +38,8 @@ uses
   osregistry,
   osfuncwin3,
   strutils,
-  cTypes;
+  cTypes,
+  DynLibs;
 
 (*
 type
@@ -51,6 +52,7 @@ type
   { type used in Windows API function GetFirmwareType }
   TFirmwareType = (tFirmwareTypeUnknown, tFirmwareTypeBios, tFirmwareTypeUefi,
     tFirmwareTypeMax);
+  TPGetFirmwareType = function(var aFirmwareType:TFirmwareType):cbool; stdcall; //function pointer
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
@@ -449,27 +451,38 @@ function GetFirmwareEnvironmentVariableA(lpName, lpGuid: LPCSTR;
   external kernel32 Name 'GetFirmwareEnvironmentVariableA';
 
 
-function GetFirmwareType(var aFirmwareType: TFirmwareType): cbool; stdcall;
-  external 'kernel32.dll' Name 'GetFirmwareType';
-
+//function GetFirmwareType(var aFirmwareType: TFirmwareType): cbool; stdcall;
+//  external 'kernel32.dll' Name 'GetFirmwareType';
 
 function GetBiosMode: string;
 var
+  LibHandle: TLibHandle = NilHandle;
   FirmwareType: TFirmwareType = tFirmwareTypeUnknown;
+  GetFirmwareType: TPGetFirmwareType = nil;
 begin
   try
-    if GetFirmwareType(FirmwareType) then
+    LibHandle := LoadLibrary('kernel32.dll');
+    if LibHandle <> NilHandle then
     begin
-      case FirmwareType of
-        tFirmwareTypeUnknown: Result := 'Unknown';
-        tFirmwareTypeBios: Result := 'Legacy';
-        tFirmwareTypeUefi: Result := 'UEFI';
-        tFirmwareTypeMax: Result := 'Not implemented';
-      end;
+      GetFirmwareType := GetProcAddress(LibHandle,'GetFirmwareType');
+      if Assigned(GetFirmwareType) then
+      begin
+        if GetFirmwareType(FirmwareType) then
+        begin
+          case FirmwareType of
+            tFirmwareTypeUnknown: Result := 'Unknown';
+            tFirmwareTypeBios: Result := 'Legacy';
+            tFirmwareTypeUefi: Result := 'UEFI';
+            tFirmwareTypeMax: Result := 'Not implemented';
+          end;
+        end
+        else Result := 'ErrorCode: ' + IntToStr(GetLastError)
+          + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+      end
+      else Result := 'Did not find function GetFirmwareType in kernel32.dll';
     end
-    else
-      Result := 'ErrorCode: ' + IntToStr(GetLastError) +
-        'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+    else Result := 'Could not load library kernel32.dll';
+    if LibHandle <> NilHandle then FreeLibrary(LibHandle);
   except
     on E: Exception do
       Logdatei.log('Exception in GetBiosMode: ' + E.ClassName +
