@@ -37,6 +37,7 @@ stages:
 
 compile opsi-quickinstall linux:
   stage: build
+  extends: .git:push
   tags:
     - laz-linux
   variables:
@@ -44,9 +45,12 @@ compile opsi-quickinstall linux:
   rules:
     - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux") 
       when: always
+    - if: $UPDATE_SUBMODULE == "true"
   before_script:
     - git submodule update --init
-  script: 
+  script:
+    - git submodule update --init --recursive 
+    - git submodule update --remote
     - LAZ_PROJECT_FILE_GUI=${PROJECT_REPOSITORY_PATH}/gui/${PROJECT_NAME}.lpi
     - LAZ_PROJECT_FILE_NOGUI=${PROJECT_REPOSITORY_PATH}/nogui/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
