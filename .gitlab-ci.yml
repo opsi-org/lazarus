@@ -37,7 +37,6 @@ stages:
 
 compile opsi-quickinstall linux:
   stage: build
-  extends: .git:push
   tags:
     - laz-linux
   variables:
