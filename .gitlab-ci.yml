@@ -54,6 +54,7 @@ compile opsi-quickinstall linux:
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI
+    - cp -r opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server opsi-misc/opsi-quickinstall/build/opsiquickinstall/
     #- cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ &&
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
