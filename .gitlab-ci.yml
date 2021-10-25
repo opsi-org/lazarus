@@ -72,4 +72,7 @@ publish opsi-quick-install:
     - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux")
       when: always
   script:
-    - cd opsi-misc/opsi-quickinstall/build/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 4.2.0.0-0
+    - MAINVERSION=$(cat opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server/OPSI/control | grep -m2 version | sed -n 2p | awk '{ print $2 }')
+    - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
+    - echo $MAINVERSION $SUBVERSION
+    - cd opsi-misc/opsi-quickinstall/build/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION
