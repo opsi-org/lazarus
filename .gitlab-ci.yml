@@ -1,5 +1,7 @@
 # Variable definitions
 variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
   RUN_PIPLINE:
     value: "true"  # run pipline NOT by default
     description: "Run the pipline if set to true."
