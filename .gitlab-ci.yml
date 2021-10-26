@@ -139,8 +139,9 @@ codesign ops-script macos:
   artifacts:
     name: "opsi-script $BINARY_VERSION macos codesigned"
     paths:
-      - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      - $PROJECT_REPOSITORY_PATH/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/
+      # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
+      # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
 opsi-script-test windows:
   stage: test_windows
