@@ -29,7 +29,7 @@ workflow:
 
 stages:
   - build
-  - binaryindex
+  - publish
 
 #***************************************#
 #  opsi-script pipline                  #
@@ -57,7 +57,10 @@ compile opsi-quickinstall linux:
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_NOGUI
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE_GUI
-    - cp -r opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server opsi-misc/opsi-quickinstall/build/opsi-quickinstall/
+    - MAINVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 2p | awk '{ print $2 }')
+    - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
+    - mkdir opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server_$MAINVERSION-$SUBVERSION
+    - cp -r opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/* opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server_$MAINVERSION-$SUBVERSION
     #- cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ &&
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
@@ -66,7 +69,7 @@ compile opsi-quickinstall linux:
       - opsi-misc/opsi-quickinstall/build/*
 
 publish opsi-quick-install:
-  stage: binaryindex
+  stage: publish
   tags:
     - laz-linux
   variables:
@@ -75,7 +78,14 @@ publish opsi-quick-install:
     - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux")
       when: always
   script:
-    - MAINVERSION=$(cat opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server/OPSI/control | grep -m2 version | sed -n 2p | awk '{ print $2 }')
-    - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
+    - MAINVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 2p | awk '{ print $2 }')
+    - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
     - echo $MAINVERSION $SUBVERSION
-    - cd opsi-misc/opsi-quickinstall/build/ && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION
+    - cd opsi-misc/opsi-quickinstall/build/
+    - rm -rf opsi-quickinstall/l-opsi-server
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION "$CI_JOB_ID"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION'
+    - '[ "$CI_COMMIT_TAG" = "" ] || zip -r opsi-quick-install_$MAINVERSION-$SUBVERSION.zip opsi-quickinstall'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ssh opsi@download.uib.de "rm -rf ~/htdocs/opsi4.2/experimental/quickinstall/opsi-quick-install_*"'
+    - '[ "$CI_COMMIT_TAG" = "" ] || scp opsi-quickinstall_$MAINVERSION-$SUBVERSION.zip opsidownload.uib.de:~/htdocs/opsi4.2/experimental/quickinstall/'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ssh opsi@download.uib.de "cd ~/htdocs/opsi4.2/experimental/quickinstall/ && ln -sf opsi-quickinstall_$MAINVERSION-$SUBVERSION.zip opsi-quick-install.zip"'
