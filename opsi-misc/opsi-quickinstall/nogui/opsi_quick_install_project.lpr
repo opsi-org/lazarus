@@ -39,6 +39,8 @@ type
     QuickInstallCommand: TRunCommandElevated;
     DirClientData, url, shellCommand, Output: string;
     two_los_to_test: boolean;
+    name_los_default, name_los_downloaded: string;
+    version_los_default, version_los_downloaded: string;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
@@ -216,25 +218,23 @@ type
 
   procedure TQuickInstall.DefineDirClientData;
   var
-    version_los_default, version_los_downloaded: string;
     los_default_search, los_downloaded_search: TSearchRec;
   begin
+    DirClientData := ExtractFilePath(ParamStr(0));
+    Delete(DirClientData, Length(DirClientData), 1);
+    //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
+    DirClientData := ExtractFilePath(DirClientData);
     if not two_los_to_test then
     begin
       // if the latest l-opsi-server version failed to install, switch between
-      // DirClientData = []/downloaded_l-opsi-server_4.*/CLIENT_DATA/ and
-      // []/l-opsi-server_4.*/CLIENT_DATA/ to get the dir of the older version
-      if Pos('downloaded_', DirClientData) > 0 then
-        Delete(DirClientData, Pos('downloaded_', DirClientData), 'downloaded_'.Length)
+      // name_los_default and name_los_downloaded to get the dir of the older version
+      if version_los_downloaded > version_los_default then
+        DirClientData += name_los_default
       else
-        Insert('downloaded_', DirClientData, Pos('/l-opsi-server_4.', DirClientData) + 1);
+        DirClientData += name_los_downloaded;
     end
     else
     begin
-      DirClientData := ExtractFilePath(ParamStr(0));
-      Delete(DirClientData, Length(DirClientData), 1);
-      //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
-      DirClientData := ExtractFilePath(DirClientData);
       // try downloading latest l-opsi-server and set DirClientData
       writeln(rsWait);
       if getLOpsiServer(QuickInstallCommand, distroName) then
@@ -245,6 +245,8 @@ type
           (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
           faDirectory, los_downloaded_search) = 0) then
         begin
+          name_los_default := los_default_search.Name;
+          name_los_downloaded := los_downloaded_search.Name;
           // extract version numbers
           version_los_default := los_default_search.Name;
           Delete(version_los_default, 1, Pos('_', version_los_default));
@@ -253,15 +255,21 @@ type
           Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
           // compare and use latest l-opsi-server version
           if version_los_downloaded > version_los_default then
-            DirClientData += 'downloaded_'
-          else if version_los_downloaded = version_los_default then
-            two_los_to_test := False;
+            DirClientData += name_los_downloaded
+          else
+          begin
+            DirClientData += name_los_default;
+            if version_los_downloaded = version_los_default then
+              two_los_to_test := False;
+          end;
         end
         else
           two_los_to_test := False;
-      end;
-      DirClientData += 'l-opsi-server_4.*/CLIENT_DATA/';
+      end
+      else
+        DirClientData += name_los_default;
     end;
+    DirClientData += '/CLIENT_DATA/';
   end;
 
   // write properties in properties.conf file
@@ -376,7 +384,14 @@ type
 
     // install opsi-server
     two_los_to_test := True;
-    WritePropsToFile;
+    if HasOption('f', 'file') then
+    begin
+      DefineDirClientData;
+      // take text of PropsFile as text for properties.conf
+      PropsFile.SaveToFile(DirClientData + 'properties.conf');
+    end
+    else
+      WritePropsToFile;
     ExecuteLOS;
 
     // get result from result file and print it
@@ -386,13 +401,22 @@ type
     if (FileText[0] = 'failed') and two_los_to_test then
     begin
       // if installation of latest l-opsi-server failed, try the older version:
+      writeln('Installation failed');
       LogDatei.log('l-opsi-server installation failed', 6);
       two_los_to_test := False;
-      WritePropsToFile;
+      FileText.Free;
+      if HasOption('f', 'file') then
+      begin
+        DefineDirClientData;
+        // take text of PropsFile as text for properties.conf
+        PropsFile.SaveToFile(DirClientData + 'properties.conf');
+      end
+      else
+        WritePropsToFile;
       ExecuteLOS;
+      FileText := TStringList.Create;
       FileText.LoadFromFile(DirClientData + 'result.conf');
-    end
-    else
+    end;
     if FileText[0] = 'failed' then
     begin
       LogDatei.log('l-opsi-server installation failed', 1);
@@ -1305,9 +1329,9 @@ type
       end;
     end;
 
-    DefineDirClientData;
+    //DefineDirClientData;
     // take text of PropsFile as text for properties.conf
-    PropsFile.SaveToFile(DirClientData + 'properties.conf');
+    //PropsFile.SaveToFile(DirClientData + 'properties.conf');
 
     InstallOpsi;
   end;
