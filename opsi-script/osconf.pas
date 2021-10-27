@@ -166,6 +166,7 @@ var
   w10BitlockerSuspendOnReboot: boolean = False;
   configReverseProductOrderByUninstall: boolean = False;
   configSupressSystemEncodingWarning : boolean = False;
+  log_rotation_count  : integer = 8;
 
 
 implementation
@@ -201,6 +202,7 @@ begin
       BoolToStr(configReverseProductOrderByUninstall, False));
     myconf.WriteString('global', 'ReverseProductOrderByUninstall',
       BoolToStr(configSupressSystemEncodingWarning, False));
+    myconf.WriteString('global', 'log_rotation_count', IntToStr(log_rotation_count));
     myconf.Free;
   except
     Result := False;
@@ -245,6 +247,8 @@ begin
     configSupressSystemEncodingWarning :=
       strToBool(myconf.ReadString('global', 'supressSystemEncodingWarning',
       boolToStr(configSupressSystemEncodingWarning, False)));
+    log_rotation_count := myconf.ReadInteger('global', 'log_rotation_count',
+      log_rotation_count);
     myconf.Free;
 
 
@@ -524,6 +528,24 @@ begin
                                 'Error: Not a Boolean:  supressSystemEncodingWarning: '
                                 +
                                 tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        'opsi-script.global.log_rotation_count' then
+                      begin
+                        osmain.startupmessages.Add(
+                          'got config: opsi-script.global.log_rotation_count');
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got log_rotation_count: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, log_rotation_count) then
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  log_rotation_count: ' + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;

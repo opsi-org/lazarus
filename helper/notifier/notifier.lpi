@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="opsi-notifier"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -27,7 +29,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="opsi-notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="5">

@@ -22,10 +22,13 @@ type
       #10 + 'openSUSE 15.1, openSUSE 42.3,' + #10 +
       'RedHatEnterprise 7,' + 'RedHatEnterprise 8,' + #10 + 'Univention 4.3, Univention 4.4,' +
       #10 + 'Ubuntu 16.04, Ubuntu 18.04, Ubuntu 20.04';}
-    Distribs = 'Debian 9, Debian 10, Debian 11,' + #10 +
+    Distribs = 'AlmaLinux 8,' + #10 +
+      'Debian 9, Debian 10, Debian 11,' + #10 +
       'openSUSE 15.1, openSUSE 15.2, openSUSE 15.3,' + #10 +
-      'SLES 15 SP1, SLES 15 SP2,' + #10 + 'Ubuntu 18.04, Ubuntu 20.04,' +
-      #10 + 'Univention 4.4';
+      'RockyLinux 8,' + #10 +
+      'SLES 15 SP1, SLES 15 SP2,' + #10 +
+      'Ubuntu 18.04, Ubuntu 20.04,' + #10 +
+      'Univention 4.4';
     property MyDistr: TDistribution read FMyDistr;
     property DistrUrlPart: string read FDistrUrlPart;
 
@@ -47,6 +50,16 @@ begin
   // ...not the enum default CentOS_7
   FMyDistr := other;
   FDistrUrlPart := '';
+  // AlmaLinux has releases with names like 8.x
+  if distroName = 'AlmaLinux' then
+  begin
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := AlmaLinux_8;
+      FDistrUrlPart := 'AlmaLinux_8/';
+    end;
+  end
+  else
   // CentOS has releases with names like 7.x-xxxx
   if distroName = 'CentOS' then
   begin
@@ -121,6 +134,15 @@ begin
     begin
       FMyDistr := RHEL_8;
       FDistrUrlPart := 'RHEL_8/';
+    end;
+  end
+  else
+  if distroName = 'Rocky' then
+  begin
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := RockyLinux_8;
+      FDistrUrlPart := 'RockyLinux_8/';
     end;
   end
   else

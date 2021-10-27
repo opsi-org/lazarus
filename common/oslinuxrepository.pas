@@ -11,7 +11,8 @@ uses
 type
 
   {TDistribution: distributions which opsi-server supports, add any new supported distribution here }
-  TDistribution = (CentOS_7,
+  TDistribution = (AlmaLinux_8,
+    CentOS_7,
     CentOS_8,
     Debian_8,
     Debian_9,
@@ -23,6 +24,7 @@ type
     openSUSE_Leap_42_3,
     RHEL_7,
     RHEL_8,
+    RockyLinux_8,
     SLE_12,
     SLE12_SP1,
     SLE12_SP2,
@@ -127,6 +129,7 @@ begin
     stable: Result := Result + 'stable/';
   end;
   case FDistribution of
+    AlmaLinux_8: Result := Result + 'AlmaLinux_8/';
     CentOS_7: Result := Result + 'CentOS_7/';
     CentOS_8: Result := Result + 'CentOS_8/';
     Debian_8: Result := Result + 'Debian_8/';
@@ -139,6 +142,7 @@ begin
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
     RHEL_8: Result := Result + 'RHEL_8/';
+    RockyLinux_8: Result := Result + 'RockyLinux_8/';
     SLE_12: Result := Result + 'SLE_12/';
     SLE12_SP1: Result := Result + 'SLE12_SP1/';
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
@@ -243,7 +247,7 @@ begin
       AddDebianUbuntu;
     end;
     {CentOS and RedHat}
-    CentOS_7, CentOS_8, RHEL_7, RHEL_8:
+    AlmaLinux_8, CentOS_7, CentOS_8, RHEL_7, RHEL_8, RockyLinux_8:
     begin
       AddCentOSRedHat;
     end;

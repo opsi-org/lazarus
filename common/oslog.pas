@@ -531,7 +531,10 @@ var
   {$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
   {$ENDIF}
+  maxbaks : integer = 8;
 begin
+  if (FStandardPartLogFilename = 'noname-part-') and (LogDateiname <> '') then
+    FStandardPartLogFilename := LogDateiname + '-part-';
   {$IFDEF OPSISCRIPT}
   // remove old partlog files
   startupmessages.Add('Cleanup old part files at ' + DateTimeToStr(Now));
@@ -542,6 +545,10 @@ begin
   except
   end;
   files.Free;
+  // get maxbaks from osconf:
+  maxbaks := log_rotation_count;
+  if maxbaks > 999 then maxbaks := 999;
+  if maxbaks < 0 then maxbaks := 0;
   {$ENDIF}
   {$IFNDEF OPSISCRIPT}
   if not DirectoryExistsUTF8(FStandardPartLogPath) then
@@ -569,7 +576,7 @@ begin
     // just create the log
     // create new Log File
     LogDatei.Appendmode := False;
-    MakeBakFiles(LogDateiName, 8);
+    MakeBakFiles(LogDateiName, maxbaks);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
   end
@@ -592,7 +599,7 @@ begin
       if assigned(startupmessages) then
         startupmessages.Add('Backup old log files at ' + DateTimeToStr(Now));
       {$ENDIF OPSISCRIPT}
-      MakeBakFiles(LogDateiName, 8);
+      MakeBakFiles(LogDateiName, maxbaks);
       {$IFDEF OPSISCRIPT}
       if assigned(startupmessages) then
         startupmessages.Add('Initiate new log file at ' + DateTimeToStr(Now));
@@ -623,6 +630,7 @@ begin
   FLogProduktId := False;
   FStandardLogFileext := '.log';
   FWritePartLog := True;
+  FStandardPartLogFilename := 'noname-part-';
   {$IFDEF OPSISCRIPT}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
@@ -966,7 +974,8 @@ begin
     //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
     myrandomstr := IntToStr(Random(MAXLONGINT));
     {$ENDIF}
-
+    if (FStandardPartLogFilename = 'noname-part-') and (Fname <> '') then
+      FStandardPartLogFilename := Fname + '-part-';
     PartFileName := FStandardPartLogPath + PathDelim + FStandardPartLogFilename +
       myrandomstr + StandardPartLogFileext;
     //assignfile(LogPartFile, PartFileName);
