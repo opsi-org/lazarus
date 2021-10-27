@@ -76,8 +76,10 @@ begin
     Result := False;
 
   // create l-opsi-server directory for the downloaded version
-  if DirectoryExists('../downloaded_l-opsi-server_*') then
+  if FindFirst('../downloaded_l-opsi-server_*', faAnyFile and
+    faDirectory, los_search) = 0 then
     LOpsiServerCommand.Run('rm -rf ../downloaded_l-opsi-server_*', Output);
+
   downloaded_los_folder := 'downloaded_l-opsi-server_' + los_version;
   LOpsiServerCommand.Run(
     'mkdir ../' + downloaded_los_folder +

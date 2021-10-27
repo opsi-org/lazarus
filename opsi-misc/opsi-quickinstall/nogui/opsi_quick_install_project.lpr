@@ -38,6 +38,7 @@ type
     MyRepo: TLinuxRepository;
     QuickInstallCommand: TRunCommandElevated;
     DirClientData, url, shellCommand, Output: string;
+    two_los_to_test: boolean;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
@@ -47,7 +48,9 @@ type
     procedure DefineDirClientData;
     // write properties in properties.conf file
     procedure WritePropsToFile;
-    // install opsi-script, l-opsi-server
+    // install opsi-script and execute l-opsi-server script
+    procedure ExecuteLOS;
+    // install opsi-server
     procedure InstallOpsi;
     // query:
     procedure NoGuiQuery;
@@ -212,16 +215,53 @@ type
   end;
 
   procedure TQuickInstall.DefineDirClientData;
+  var
+    version_los_default, version_los_downloaded: string;
+    los_default_search, los_downloaded_search: TSearchRec;
   begin
-    DirClientData := ExtractFilePath(ParamStr(0));
-    Delete(DirClientData, Length(DirClientData), 1);
-    DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
-    // try downloading latest l-opsi-server and use respective DirClientData
-    writeln(rsWait);
-    if getLOpsiServer(QuickInstallCommand, distroName) then
-      DirClientData += '_downloaded/CLIENT_DATA/'
+    if not two_los_to_test then
+    begin
+      // if the latest l-opsi-server version failed to install, switch between
+      // DirClientData = []/downloaded_l-opsi-server_4.*/CLIENT_DATA/ and
+      // []/l-opsi-server_4.*/CLIENT_DATA/ to get the dir of the older version
+      if Pos('downloaded_', DirClientData) > 0 then
+        Delete(DirClientData, Pos('downloaded_', DirClientData), 'downloaded_'.Length)
+      else
+        Insert('downloaded_', DirClientData, Pos('/l-opsi-server_4.', DirClientData) + 1);
+    end
     else
-      DirClientData += '/CLIENT_DATA/';
+    begin
+      DirClientData := ExtractFilePath(ParamStr(0));
+      Delete(DirClientData, Length(DirClientData), 1);
+      //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
+      DirClientData := ExtractFilePath(DirClientData);
+      // try downloading latest l-opsi-server and set DirClientData
+      writeln(rsWait);
+      if getLOpsiServer(QuickInstallCommand, distroName) then
+      begin
+        // extract and compare version numbers of default and downloaded los
+        if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
+          los_default_search) = 0) and
+          (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
+          faDirectory, los_downloaded_search) = 0) then
+        begin
+          // extract version numbers
+          version_los_default := los_default_search.Name;
+          Delete(version_los_default, 1, Pos('_', version_los_default));
+          version_los_downloaded := los_downloaded_search.Name;
+          Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+          Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+          // compare and use latest l-opsi-server version
+          if version_los_downloaded > version_los_default then
+            DirClientData += 'downloaded_'
+          else if version_los_downloaded = version_los_default then
+            two_los_to_test := False;
+        end
+        else
+          two_los_to_test := False;
+      end;
+      DirClientData += 'l-opsi-server_4.*/CLIENT_DATA/';
+    end;
   end;
 
   // write properties in properties.conf file
@@ -262,7 +302,7 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
-    defineDirClientData;
+    DefineDirClientData;
 
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
@@ -274,13 +314,9 @@ type
     FileText.Free;
   end;
 
-  // install opsi-server
-  // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
-  procedure TQuickInstall.InstallOpsi;
+  // install opsi-script and execute l-opsi-server script
+  procedure TQuickInstall.ExecuteLOS;
   begin
-    LogDatei.log('Entered InstallOpsi', 0);
-    writeln(rsInstall + opsiVersion + ':');
-
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
@@ -288,6 +324,32 @@ type
       QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf', Output);
     QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
     FileText.SaveToFile(DirClientData + 'result.conf');
+    FileText.Free;
+
+    shellCommand := GetPackageManagementShellCommand(distroName);
+    // !following lines need an existing LogDatei
+    QuickInstallCommand.Run(shellCommand + 'update', Output);
+    writeln(rsInstall + 'opsi-script...');
+    QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
+    //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
+    //writeln(Output);
+    // remove the QuickInstall repo entry because it was only for installing opsi-script
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+    writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
+    // "opsi-script -batch" for installation with gui window,
+    // "opsi-script-nogui -batch" for without?
+    // new: opsi-script -silent for nogui
+    QuickInstallCommand.Run('opsi-script -silent -batch ' + DirClientData +
+      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log', Output);
+  end;
+
+  // install opsi-server
+  // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
+  procedure TQuickInstall.InstallOpsi;
+  begin
+    LogDatei.log('Entered InstallOpsi', 0);
+    writeln(rsInstall + opsiVersion + ':');
 
     writeln(rsCreateRepo);
     // first remove opsi.list to have a cleared opsi repository list
@@ -312,31 +374,29 @@ type
     else
       MyRepo.Add(url);
 
-    // install opsi:
-    shellCommand := GetPackageManagementShellCommand(distroName);
-    // !following lines need an existing LogDatei
-    QuickInstallCommand.Run(shellCommand + 'update', Output);
-    writeln(rsInstall + 'opsi-script...');
-    QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
-    //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
-    //writeln(Output);
-    // remove the QuickInstall repo entry because it was only for installing opsi-script
-    if FileExists('/etc/apt/sources.list.d/opsi.list') then
-      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
-    writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
-    // "opsi-script -batch" for installation with gui window,
-    // "opsi-script-nogui -batch" for without?
-    // new: opsi-script -silent for nogui
-    QuickInstallCommand.Run('opsi-script -silent -batch ' + DirClientData +
-      'setup.opsiscript /var/log/opsi-quick-install-l-opsi-server.log', Output);
+    // install opsi-server
+    two_los_to_test := True;
+    WritePropsToFile;
+    ExecuteLOS;
 
     // get result from result file and print it
+    FileText := TStringList.Create;
     FileText.LoadFromFile(DirClientData + 'result.conf');
     // adjust quick-install ExitCode
+    if (FileText[0] = 'failed') and two_los_to_test then
+    begin
+      // if installation of latest l-opsi-server failed, try the older version:
+      LogDatei.log('l-opsi-server installation failed', 6);
+      two_los_to_test := False;
+      WritePropsToFile;
+      ExecuteLOS;
+      FileText.LoadFromFile(DirClientData + 'result.conf');
+    end
+    else
     if FileText[0] = 'failed' then
     begin
-      ExitCode := 1;
       LogDatei.log('l-opsi-server installation failed', 1);
+      ExitCode := 1;
     end
     else
       LogDatei.log('l-opsi-server installation success', 6);
@@ -1141,7 +1201,7 @@ type
     // install opsi
     if input = '' then
     begin
-      WritePropsToFile;
+      //WritePropsToFile;
       InstallOpsi;
     end
     else
@@ -1215,7 +1275,7 @@ type
   begin
     LogDatei.log('Entered ExecuteWithDefaultValues', 0);
     SetDefaultValues;
-    WritePropsToFile;
+    //WritePropsToFile;
     InstallOpsi;
   end;
   // no query, read in values from a file
