@@ -310,7 +310,10 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
-    DefineDirClientData;
+    //DefineDirClientData;
+    LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
+      version_los_default, name_los_downloaded, name_los_default,
+      QuickInstallCommand, distroName);
 
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
@@ -386,12 +389,16 @@ type
     two_los_to_test := True;
     if HasOption('f', 'file') then
     begin
-      DefineDirClientData;
+      //DefineDirClientData;
+      LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
+        version_los_default, name_los_downloaded, name_los_default,
+        QuickInstallCommand, distroName);
       // take text of PropsFile as text for properties.conf
       PropsFile.SaveToFile(DirClientData + 'properties.conf');
     end
     else
       WritePropsToFile;
+
     ExecuteLOS;
 
     // get result from result file and print it
@@ -407,16 +414,22 @@ type
       FileText.Free;
       if HasOption('f', 'file') then
       begin
-        DefineDirClientData;
+        //DefineDirClientData;
+        LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
+          version_los_default, name_los_downloaded, name_los_default,
+          QuickInstallCommand, distroName);
         // take text of PropsFile as text for properties.conf
         PropsFile.SaveToFile(DirClientData + 'properties.conf');
       end
       else
         WritePropsToFile;
+
       ExecuteLOS;
+
       FileText := TStringList.Create;
       FileText.LoadFromFile(DirClientData + 'result.conf');
     end;
+
     if FileText[0] = 'failed' then
     begin
       LogDatei.log('l-opsi-server installation failed', 1);
