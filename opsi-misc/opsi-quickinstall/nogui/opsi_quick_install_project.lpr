@@ -310,10 +310,7 @@ type
     // update_test shall always be false
     FileText.Add('update_test=false');
 
-    //DefineDirClientData;
-    LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
-      version_los_default, name_los_downloaded, name_los_default,
-      QuickInstallCommand, distroName);
+    DefineDirClientData;
 
     // write in properties.conf file:
     if not FileExists(DirClientData + 'properties.conf') then
@@ -389,10 +386,7 @@ type
     two_los_to_test := True;
     if HasOption('f', 'file') then
     begin
-      //DefineDirClientData;
-      LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
-        version_los_default, name_los_downloaded, name_los_default,
-        QuickInstallCommand, distroName);
+      DefineDirClientData;
       // take text of PropsFile as text for properties.conf
       PropsFile.SaveToFile(DirClientData + 'properties.conf');
     end
@@ -414,10 +408,7 @@ type
       FileText.Free;
       if HasOption('f', 'file') then
       begin
-        //DefineDirClientData;
-        LOSDefineDirClientData(DirClientData, two_los_to_test, version_los_downloaded,
-          version_los_default, name_los_downloaded, name_los_default,
-          QuickInstallCommand, distroName);
+        DefineDirClientData;
         // take text of PropsFile as text for properties.conf
         PropsFile.SaveToFile(DirClientData + 'properties.conf');
       end

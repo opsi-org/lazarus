@@ -13,10 +13,6 @@ const
 function extractFile(fileName: string): boolean;
 function getLOpsiServer(LOpsiServerCommand: TRunCommandElevated;
   distroName: string): boolean;
-procedure LOSDefineDirClientData(DirClientData: string; two_los_to_test: boolean;
-  version_los_downloaded: string; version_los_default: string;
-  name_los_downloaded: string; name_los_default: string;
-  QuickInstallCommand: TRunCommandElevated; distroName: string);
 
 implementation
 
@@ -140,65 +136,6 @@ begin
 
   // try l-opsi-server from master that is not on download.uib
   //Result := False;
-end;
-
-procedure LOSDefineDirClientData(DirClientData: string; two_los_to_test: boolean;
-  version_los_downloaded: string; version_los_default: string;
-  name_los_downloaded: string; name_los_default: string;
-  QuickInstallCommand: TRunCommandElevated; distroName: string);
-var
-  los_default_search, los_downloaded_search: TSearchRec;
-begin
-  DirClientData := ExtractFilePath(ParamStr(0));
-  Delete(DirClientData, Length(DirClientData), 1);
-  //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
-  DirClientData := ExtractFilePath(DirClientData);
-  if not two_los_to_test then
-  begin
-    // if the latest l-opsi-server version failed to install, switch between
-    // name_los_default and name_los_downloaded to get the dir of the older version
-    if version_los_downloaded > version_los_default then
-      DirClientData += name_los_default
-    else
-      DirClientData += name_los_downloaded;
-  end
-  else
-  begin
-    // try downloading latest l-opsi-server and set DirClientData
-    //writeln(rsWait);
-    if getLOpsiServer(QuickInstallCommand, distroName) then
-    begin
-      // extract and compare version numbers of default and downloaded los
-      if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
-        los_default_search) = 0) and
-        (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
-        faDirectory, los_downloaded_search) = 0) then
-      begin
-        name_los_default := los_default_search.Name;
-        name_los_downloaded := los_downloaded_search.Name;
-        // extract version numbers
-        version_los_default := los_default_search.Name;
-        Delete(version_los_default, 1, Pos('_', version_los_default));
-        version_los_downloaded := los_downloaded_search.Name;
-        Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
-        Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
-        // compare and use latest l-opsi-server version
-        if version_los_downloaded > version_los_default then
-          DirClientData += name_los_downloaded
-        else
-        begin
-          DirClientData += name_los_default;
-          if version_los_downloaded = version_los_default then
-            two_los_to_test := False;
-        end;
-      end
-      else
-        two_los_to_test := False;
-    end
-    else
-      DirClientData += name_los_default;
-  end;
-  DirClientData += '/CLIENT_DATA/';
 end;
 
 end.

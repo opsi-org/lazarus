@@ -129,9 +129,7 @@ begin
     FClientDataDir += '_downloaded/CLIENT_DATA/'
   else
     FClientDataDir += '/CLIENT_DATA/';}
-  LOSDefineDirClientData(FClientDataDir, two_los_to_test, version_los_downloaded,
-      version_los_default, name_los_downloaded, name_los_default,
-      TouchCommand, Data.distroName);
+
   Password.clientDataDir := FClientDataDir;
 
   // following equals no-gui WritePropsToFile
