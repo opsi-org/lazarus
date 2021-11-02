@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog, get_latest_lopsiserver;
+  MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog,
+  get_latest_lopsiserver, Process;
 
 type
 
@@ -48,11 +49,12 @@ type
   TMyThread = class(TThread)
   private
     FInstallRunCommand: TRunCommandElevated;
-    FShellCommand, FClientDataDir, Output: string;
-    two_los_to_test: boolean;
+    FShellCommand, DirClientData, Output: string;
+    two_los_to_test, one_installation_failed: boolean;
     name_los_default, name_los_downloaded: string;
     version_los_default, version_los_downloaded: string;
     FileText: TStringList;
+    procedure DefineDirClientData;
     procedure prepareInstallation;
     procedure addRepo;
     procedure installOpsi;
@@ -90,16 +92,75 @@ begin
   inherited Create(True);
 end;
 
+procedure TMyThread.DefineDirClientData;
+var
+  los_default_search, los_downloaded_search: TSearchRec;
+begin
+  DirClientData := ExtractFilePath(ParamStr(0));
+  Delete(DirClientData, Length(DirClientData), 1);
+  //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
+  DirClientData := ExtractFilePath(DirClientData);
+
+  // try downloading latest l-opsi-server and set DirClientData for the latest version
+  if two_los_to_test and getLOpsiServer(FInstallRunCommand, Data.distroName) then
+  begin
+    // extract and compare version numbers of default and downloaded los
+    if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
+      los_default_search) = 0) and
+      (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
+      faDirectory, los_downloaded_search) = 0) then
+    begin
+      name_los_default := los_default_search.Name;
+      name_los_downloaded := los_downloaded_search.Name;
+      // extract version numbers
+      version_los_default := los_default_search.Name;
+      Delete(version_los_default, 1, Pos('_', version_los_default));
+      version_los_downloaded := los_downloaded_search.Name;
+      Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+      Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+      // compare and use latest l-opsi-server version
+      if version_los_downloaded > version_los_default then
+        DirClientData += name_los_downloaded
+      else
+      begin
+        DirClientData += name_los_default;
+        if version_los_downloaded = version_los_default then
+          two_los_to_test := False;
+      end;
+    end;
+  end
+  else
+  if one_installation_failed then
+  begin
+    // if there is a downloaded los but the latest los version failed to install,
+    // switch between name_los_default and name_los_downloaded to get the dir of
+    // the older version
+    if version_los_downloaded > version_los_default then
+      DirClientData += name_los_default
+    else
+      DirClientData += name_los_downloaded;
+  end
+  else
+  // otherwise, in the case that downloading the latest l-opsi-server failed,
+  // use the default one
+  if FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
+    los_default_search) = 0 then
+  begin
+    name_los_default := los_default_search.Name;
+    // extract version numbers
+    version_los_default := los_default_search.Name;
+    Delete(version_los_default, 1, Pos('_', version_los_default));
+    DirClientData += name_los_default;
+    two_los_to_test := False;
+  end;
+  DirClientData += '/CLIENT_DATA/';
+end;
+
 // get properties from query and write them to file properties.conf
 procedure TMyThread.prepareInstallation;
-var
-  TouchCommand: TRunCommandElevated;
 begin
   // Write user input in properties.conf file:
-  FileText := TStringList.Create;
-  TouchCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
-    Password.RadioBtnSudo.Checked);
-
+  FileText.Clear;
   FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
   FileText.Add('backend=' + Data.backend);
   FileText.Add('dnsdomain=' + Data.domain);
@@ -121,37 +182,34 @@ begin
   // update_test shall always be false
   FileText.Add('update_test=false');
 
-  {FClientDataDir := ExtractFilePath(ParamStr(0));
-  Delete(FClientDataDir, Length(FClientDataDir), 1);
-  FClientDataDir := ExtractFilePath(FClientDataDir) + 'l-opsi-server';
+  {DirClientData := ExtractFilePath(ParamStr(0));
+  Delete(DirClientData, Length(DirClientData), 1);
+  DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
   // try downloading latest l-opsi-server and use respective DirClientData
   if getLOpsiServer(TouchCommand, Data.distroName) then
-    FClientDataDir += '_downloaded/CLIENT_DATA/'
+    DirClientData += '_downloaded/CLIENT_DATA/'
   else
-    FClientDataDir += '/CLIENT_DATA/';}
-
-  Password.clientDataDir := FClientDataDir;
+    DirClientData += '/CLIENT_DATA/';}
+  DefineDirClientData;
+  Password.clientDataDir := DirClientData;
 
   // following equals no-gui WritePropsToFile
   // write in properties.conf file:
   // navigate to CLIENT_DATA in l-opsi-server
-  if not FileExists(FClientDataDir + 'properties.conf') then
-    TouchCommand.Run('touch ' + FClientDataDir + 'properties.conf', Output);
-  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'properties.conf', Output);
-  FileText.SaveToFile(FClientDataDir + 'properties.conf');
+  if not FileExists(DirClientData + 'properties.conf') then
+    FInstallRunCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
+  FInstallRunCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf', Output);
+  FileText.SaveToFile(DirClientData + 'properties.conf');
 
   // Important for getting the result 'failed' in case of a wrong password
   // because in this case the RunCommands below aren't executed and therefore
   // setup.opsiscript, that usually does it, isn't too:
   FileText.Clear;
   FileText.Add('failed');
-  if not FileExists(FClientDataDir + 'result.conf') then
-    TouchCommand.Run('touch ' + FClientDataDir + 'result.conf', Output);
-  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'result.conf', Output);
-  FileText.SaveToFile(FClientDataDir + 'result.conf');
-
-  FileText.Free;
-  TouchCommand.Free;
+  if not FileExists(DirClientData + 'result.conf') then
+    FInstallRunCommand.Run('touch ' + DirClientData + 'result.conf', Output);
+  FInstallRunCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
+  FileText.SaveToFile(DirClientData + 'result.conf');
 end;
 
 procedure TMyThread.addRepo;
@@ -191,7 +249,7 @@ begin
   // remove the QuickInstall repo entry because it was only for installing opsi-script
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
-  FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
+  FInstallRunCommand.Run('opsi-script-gui -batch ' + DirClientData +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
 end;
 
@@ -199,23 +257,24 @@ procedure TMyThread.Execute;
 begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
+  FileText := TStringList.Create;
+  one_installation_failed := False;
   two_los_to_test := True;
   Synchronize(@prepareInstallation);
   Synchronize(@addRepo);
   installOpsi;
 
-  FileText := TStringList.Create;
-  FileText.LoadFromFile(FClientDataDir + 'result.conf');
+  FileText.Clear;
+  FileText.LoadFromFile(DirClientData + 'result.conf');
   if (FileText[0] = 'failed') and two_los_to_test then
-    begin
-      // if installation of latest l-opsi-server failed, try the older version:
-      LogDatei.log('l-opsi-server installation failed', 6);
-      two_los_to_test := False;
-      FileText.Free;
-
-      Synchronize(@prepareInstallation);
-      installOpsi;
-    end;
+  begin
+    // if installation of latest l-opsi-server failed, try the older version:
+    LogDatei.log('l-opsi-server installation failed', 6);
+    two_los_to_test := False;
+    one_installation_failed := True;
+    Synchronize(@prepareInstallation);
+    installOpsi;
+  end;
 
   FileText.Free;
   FInstallRunCommand.Free;
