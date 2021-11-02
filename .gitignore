@@ -81,5 +81,3 @@ opsi-misc/opsi-quickinstall/properties.conf
 
 /opsi-script/locale/opsi-script-gui.pot
 /opsi-script/locale/opsi-script.pot
-opsi-misc/opsi-quickinstall/build/opsi-quickinstall/nogui/properties.conf
-opsi-misc/opsi-quickinstall/build/opsi-quickinstall/nogui/result.conf
