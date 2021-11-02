@@ -1535,6 +1535,7 @@ procedure TResultform1.PaintPreview(Image: TImage);
 var
   RectBackgr: TRect;
   row, col: integer;
+  squaresize: integer;
   // chess background as no background
   ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
   picturesize: integer;
@@ -1542,13 +1543,14 @@ begin
   with TIImageIconPreview.Canvas do
   begin
     // paint chess background
+    squaresize := 22;
     for row := 0 to 9 do
     begin
       for col := 0 to 9 do
       begin
         // paint chess squares
         Brush.Color := ChessColors[(row + col) mod 2];
-        FillRect(Rect(22 * row, 22 * col, 22 * row + 22, 22 * col + 22));
+        FillRect(Rect(squaresize * row, squaresize * col, squaresize * row + squaresize, squaresize * col + squaresize));
       end;
     end;
     // paint chess board
@@ -1561,7 +1563,10 @@ begin
     {$ENDIF LINUX}
     RectBackgr := Rect(0, 0, picturesize, picturesize);
     // paint icon on chess board
-    StretchDraw(RectBackgr, Image.Picture.Bitmap);
+    // stretched:
+    //StretchDraw(RectBackgr, Image.Picture.Bitmap);
+    // original size:
+    Draw(round((picturesize-Image.Picture.Width)/2),round((picturesize-Image.Picture.Height)/2), Image.Picture.Bitmap);
   end;
 end;
 
@@ -1738,7 +1743,7 @@ end;
 procedure TResultform1.CheckBoxDefaultIconChange(Sender: TObject);
 var
   DefaultIcon: TImage;
-  defaultIconFullFileName: string;
+  //defaultIconFullFileName: string;
 begin
   if CheckBoxDefaultIcon.Checked = True then
   begin
@@ -1762,6 +1767,7 @@ begin
       defaultIconFullFileName;
       *)
 
+    osdbasedata.aktProduct.productdata.productImageFullFileName := defaultIconFullFileName;
     CheckBoxNoIcon.Checked := False;
     TIImageIconPreview.Visible := True;
     // paint icon preview

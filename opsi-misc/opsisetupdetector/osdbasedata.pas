@@ -469,6 +469,7 @@ var
   forceProductId : string = ''; // by cli parameter
   forceTargetOS : TTargetOS = osWin; // by cli parameter
   globimportMode : boolean = false;
+  defaultIconFullFileName :string;
 
 resourcestring
 
@@ -1669,7 +1670,7 @@ procedure initaktproduct;
 var
   i: integer;
   //newdep: TPDependency;
-  defaultIconFullFileName :string;
+  //defaultIconFullFileName :string;
 begin
   LogDatei.log('Start initaktproduct ... ', LLInfo);
   i := 0;
