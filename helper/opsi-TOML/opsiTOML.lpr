@@ -145,7 +145,6 @@ begin
   writeln('myKey title : ' + String(myTOML.Find('title')) );
 
 
-
   writeln('--- Getting values from keys');
 
   writeln('- Searching for value of key title :');
@@ -239,9 +238,16 @@ begin
   //myNewTOML:= GetTOML(myValue);
 
   AddKeyValueToTOML(myTOML,'owner.newArrayValue',myArray);
+  
+  //myTOMLTable:= GetTOMLTable(myTOML,'owner');
+  myTOMLTable:= TTOMLTable(myTOML.Items[1]);
+  //writeln(myTOMLTable.AsJSON.FormatJSON);
 
-  myTOMLTable:= GetTOMLTable(myTOML,'owner');
-  writeln(myTOMLTable.AsJSON.FormatJSON);
+  writeln('owner.Keys[6] :' + myTOMLTable.Keys[6]);
+  writeln('owner.Values[6]:' + String(myTOMLTable.Values[6]));
+
+  writeln('owner.Keys[7] :' + myTOMLTable.Keys[7]);
+  writeln('owner.Values[7]:' + String(myTOMLTable.Values[7]));
 
   (*
   if map.TryGetData('title', myData) then
