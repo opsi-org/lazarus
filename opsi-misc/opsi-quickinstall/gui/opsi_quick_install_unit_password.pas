@@ -49,6 +49,10 @@ type
   private
     FInstallRunCommand: TRunCommandElevated;
     FShellCommand, FClientDataDir, Output: string;
+    two_los_to_test: boolean;
+    name_los_default, name_los_downloaded: string;
+    version_los_default, version_los_downloaded: string;
+    FileText: TStringList;
     procedure prepareInstallation;
     procedure addRepo;
     procedure installOpsi;
@@ -89,7 +93,6 @@ end;
 // get properties from query and write them to file properties.conf
 procedure TMyThread.prepareInstallation;
 var
-  FileText: TStringList;
   TouchCommand: TRunCommandElevated;
 begin
   // Write user input in properties.conf file:
@@ -118,14 +121,17 @@ begin
   // update_test shall always be false
   FileText.Add('update_test=false');
 
-  FClientDataDir := ExtractFilePath(ParamStr(0));
+  {FClientDataDir := ExtractFilePath(ParamStr(0));
   Delete(FClientDataDir, Length(FClientDataDir), 1);
   FClientDataDir := ExtractFilePath(FClientDataDir) + 'l-opsi-server';
   // try downloading latest l-opsi-server and use respective DirClientData
   if getLOpsiServer(TouchCommand, Data.distroName) then
     FClientDataDir += '_downloaded/CLIENT_DATA/'
   else
-    FClientDataDir += '/CLIENT_DATA/';
+    FClientDataDir += '/CLIENT_DATA/';}
+  LOSDefineDirClientData(FClientDataDir, two_los_to_test, version_los_downloaded,
+      version_los_default, name_los_downloaded, name_los_default,
+      TouchCommand, Data.distroName);
   Password.clientDataDir := FClientDataDir;
 
   // following equals no-gui WritePropsToFile
@@ -189,16 +195,32 @@ begin
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
-  FInstallRunCommand.Free;
 end;
 
 procedure TMyThread.Execute;
 begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
+  two_los_to_test := True;
   Synchronize(@prepareInstallation);
   Synchronize(@addRepo);
   installOpsi;
+
+  FileText := TStringList.Create;
+  FileText.LoadFromFile(FClientDataDir + 'result.conf');
+  if (FileText[0] = 'failed') and two_los_to_test then
+    begin
+      // if installation of latest l-opsi-server failed, try the older version:
+      LogDatei.log('l-opsi-server installation failed', 6);
+      two_los_to_test := False;
+      FileText.Free;
+
+      Synchronize(@prepareInstallation);
+      installOpsi;
+    end;
+
+  FileText.Free;
+  FInstallRunCommand.Free;
 end;
 
 { TPassword }
@@ -215,11 +237,12 @@ begin
   // adjust quick-install ExitCode
   if FileText[0] = 'failed' then
   begin
-    ExitCode := 1;
     LogDatei.log('l-opsi-server installation failed', 1);
+    ExitCode := 1;
   end
   else
     LogDatei.log('l-opsi-server installation success', 6);
+
   //ShowMessage(ExitCode.ToString);
   ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
     #10 + QuickInstall.logFileName);
