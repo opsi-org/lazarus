@@ -15024,8 +15024,6 @@ begin
           if EvaluateString(r, r, s2, InfoSyntaxError) then
             if Skip(',', r, r, InfoSyntaxError) then
               if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(',', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, r, s4, InfoSyntaxError) then
                     if Skip(')', r, r, InfoSyntaxError) then
                     begin
                       syntaxCheck := True;
@@ -15033,22 +15031,18 @@ begin
                         s1 := ExpandFileName(s1);
                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                         LogDatei.log
-                        ('    Reading the value of the key "' + s3 +
-                          '" in section "' + s2 + '"  from TOML file  "' +
-                          s1 + '", with default value : "' + s4 + '"',
+                        ('    Reading the value of the key "' + s2
+                           + '"  from TOML file  "' +  s1
+                           + '", with default value : "' + s3 + '"',
                           LevelComplete);
-                        s2enc := UTF8ToWinCP(s2);
-                        s3enc := UTF8ToWinCP(s3);
-                        s4enc := UTF8ToWinCP(s4);
-                        StringResult := GetValueFromTOMLFile(s2enc, s3enc, s4enc);
-                        StringResult := WinCPToUTF8(StringResult);
+                        StringResult := GetValueFromTOMLFile(s1, s2, s3);
                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                       except
                         on e: Exception do
                         begin
                           LogDatei.log('Error in GetValueFromTOMLFile "' +
                             s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                          StringResult := s4;
+                          StringResult := s3;
                         end;
                       end;
 
