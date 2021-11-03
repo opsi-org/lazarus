@@ -19300,6 +19300,33 @@ begin
         end;
   end
 
+  //function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+  else if Skip('SaveToTOMLFile', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Saving to TOML file  "' +  s2 , LevelComplete);
+                BooleanResult := SaveToTOMLFile(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in SaveToTOMLFile "' +
+                    s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                end;
+              end;
+            end;
+  end
+
   (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
