@@ -1,0 +1,8 @@
+
+opsi-configed (4.2.1.2.0)  EXPERIMENTAL; urgency=medium
+ * warning and action options if user registratin has vanished
+ 
+opsi-configed (4.2.1.1.0)  EXPERIMENTAL; urgency=medium
+ * defining a hierarchy of user roles
+ * defining a set of dash configs
+ 

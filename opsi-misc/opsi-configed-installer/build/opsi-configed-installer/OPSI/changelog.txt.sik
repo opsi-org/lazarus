@@ -1,0 +1,1036 @@
+[Changelog]
+opsi-configed (4.2.0.2.ß-1) TESTING; urgency=medium
+ * improvements for dash
+ * new button for save and execute now
+
+-- r.roeder <r.roeder@uib.de> Fri, 14 May 2020 17:10:40 +0100
+
+opsi-configed (4.2.0.1.3-1) EXPERIMENTAL; urgency=medium
+ * showing a first experimental dash pane with some data on licenses 
+
+-- r.roeder <r.roeder@uib.de> Thu, 01 Apr 2020 17:10:40 +0100
+
+opsi-configed (4.2.0.1.2-1) EXPERIMENTAL; urgency=medium
+ * hopefully avoiding a thread problem on start  
+
+-- r.roeder <r.roeder@uib.de> Mon, 29 Mar 2020 17:10:40 +0100
+
+opsi-configed (4.2.0.1.1-2) EXPERIMENTAL; urgency=medium
+ * removed experimental post-script  
+
+-- r.roeder <r.roeder@uib.de> Wed, 24 Mar 2020 17:10:40 +0100
+
+opsi-configed (4.2.0.1.1-1) EXPERIMENTAL; urgency=medium
+ * improvements for editing dates and notes
+
+-- r.roeder <r.roeder@uib.de> Wed, 24 Mar 2020 17:10:40 +0100
+
+opsi-configed (4.2.0.1-1) EXPERIMENTAL; urgency=medium
+ * notes for license contracts offer file links 
+
+-- r.roeder <r.roeder@uib.de> Fri, 03 Mar 2020 17:10:40 +0100
+
+opsi-configed (4.1.9.8.7-1) TESTING; urgency=medium
+ * trimming the name in a client sw entry in order to find the global sw info
+ * repairing a wrong key name for the client name in case of file backend
+
+-- r.roeder <r.roeder@uib.de> Tue, 08 Apr 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.8.6-1) TESTING; urgency=medium
+ * more logging for a missing software entry
+
+-- r.roeder <r.roeder@uib.de> Tue, 27 Apr 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.8.5-1) STABLE; urgency=medium
+ * fixed NPE if no product is in privilege group
+
+-- r.roeder <r.roeder@uib.de> Mon, 12 Apr 2020 14:10:40 +0100
+
+opsi-configed (4.1.9.8.4-1) STABLE; urgency=medium
+ * include current jsch lib 1.55
+
+-- r.roeder <r.roeder@uib.de> Fri, 19 Mar 2020 17:10:40 +0100
+
+opsi-configed (4.1.9.8.3-4) TESTING; urgency=medium
+ * script bugfixes
+
+-- r.roeder <r.roeder@uib.de> Tue, 05 Jan 2020 17:10:40 +0100
+
+opsi-configed (4.1.9.8.3-3) TESTING; urgency=medium
+ * script bugfixes
+
+-- r.roeder <r.roeder@uib.de> Tue, 01 Dec 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.8.3-2) TESTING; urgency=medium
+ * integrating macos variant
+
+-- r.roeder <r.roeder@uib.de> Tue, 01 Dec 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.8.3-1) TESTING; urgency=medium
+ * icon and text editing
+
+-- r.roeder <r.roeder@uib.de> Tue, 01 Dec 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.8.1-1) TESTING; urgency=medium
+ * invert selection function for host table 
+
+-- r.roeder <r.roeder@uib.de> Tue, 01 Dec 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.7.2-1) TESTING; urgency=medium
+ * improving logging for inconsistent swaudit entries 
+
+-- r.roeder <r.roeder@uib.de> Tue, 24 Nov 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.7.1-1) TESTING; urgency=medium
+ * suppressing underscores at the end of group names in client tree
+
+-- r.roeder <r.roeder@uib.de> Tue, 24 Nov 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.6.1-ff) EXPERIMENTAL; urgency=medium
+ * new construction of windows/linux/macos cases
+
+-- r.roeder <r.roeder@uib.de> Fr, 20 Nov 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.6.1-2) EXPERIMENTAL; urgency=medium
+ * custom java for linux
+
+-- r.roeder <r.roeder@uib.de> Mon, 02 Nov 2020 16:10:40 +0100
+t
+opsi-configed (4.1.9.6.1-1) EXPERIMENTAL; urgency=medium
+ * Search, reload and group functions for netboot products introduced
+
+-- r.roeder <r.roeder@uib.de> Mon, 02 Nov 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.5.5-1) TESTING; urgency=medium
+opsi-configed (4.1.9.5.5-2) EXPERIMENTAL; urgency=medium
+ * old version of setup32.ins restored
+
+-- r.roeder <r.roeder@uib.de> Thu, 15 Oct 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.5.5-1) TESTING; urgency=medium
+ * bugs in GlobalSoftwareInfo layout repaired 
+
+-- r.roeder <r.roeder@uib.de> Thu, 15 Oct 2020 16:10:40 +0100
+
+opsi-configed (4.1.9.5.4-2) TESTING; urgency=medium
+ * updated translation files for French and English
+
+opsi-configed (4.1.9.5.3-2) TESTING; urgency=medium
+ * removing old fallback_tlsv and replacing it by fallback__tlsv as well in the setup script
+
+-- r.roeder <r.roeder@uib.de> Mon, 28 Sep 2020 12:10:40 +0100
+
+
+opsi-configed (4.1.9.5.3) TESTING; urgency=medium
+ * internal updating of the new tables
+
+-- r.roeder <r.roeder@uib.de> Tue, 22 Sep 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.5.1) EXPERIMENTAL; urgency=medium
+ * licence management: special tables for collective assignment of similar
+ sw-ids to a licencepool
+
+-- r.roeder <r.roeder@uib.de> Wed, 26 Aug 2020 12:10:40 +0100
+
+opsi-configed (4.1.9.4.0-1) EXPERIMENTAL; urgency=medium
+ * trying to fix a NPE which seems to be caused by a thread problem
+ * starting with a bundle of new features for software audit table in license
+management
+
+opsi-configed (4.1.9.3.3-2) TESTING; urgency=medium
+
+ * bundled jre amazon-corretto-8.262.10.1
+ * and sapmachine-jre-11.0.8_windows-x64_bin
+ * fixes #4495 installation opsi-configed auf win32: potentieller reboot loop
+ * on linux make a check if java is installed before installation of openjdk
+
+-- b.wolf <b.wolf@uib.de> Mon, 27 Jul 2020 11:40:46 +0100
+
+opsi-configed (4.1.9.3.3-1) TESTING; urgency=medium
+
+ * add some localizations
+
+-- r.roeder <r.roeder@uib.de> Mon, 27 Apr 2020 15:01:40 +0100
+
+opsi-configed (4.1.9.3.2-2) TESTING; urgency=medium
+
+ * graphical work
+
+-- r.roeder <r.roeder@uib.de> Fri, 24 Apr 2020 15:01:40 +0100
+
+opsi-configed (4.1.9.3.1-1) TESTING; urgency=medium
+
+ * switch to flist implemenative of collective action choice
+
+-- r.roeder <r.roeder@uib.de> Thu, 09 Apr 2020 15:01:40 +0100
+
+opsi-configed (4.1.9.3.0-1) TESTING; urgency=medium
+
+ * changing location of fEditList objects 
+
+-- r.roeder <r.roeder@uib.de> Fri, 03 Apr 2020 19:01:40 +0100
+
+
+opsi-configed (4.1.9.2.0-1) TESTING; urgency=medium
+ * reverting former efi entry but as well recognizing  shim bootloader entry as uefi boot value
+
+-- r.roeder <r.roeder@uib.de> Thu, 02 Apr 2020 19:01:40 +0100
+
+
+opsi-configed (4.1.9.1.0-1) TESTING; urgency=medium
+
+ * setting shim bootloader entry as uefi boot value
+
+-- r.roeder <r.roeder@uib.de> Wed, 01 Apr 2020 09:01:40 +0100
+
+opsi-configed (4.1.8.1.0-1) TESTING; urgency=medium
+
+ * reallow again dependency request for uninstall
+ * show the dependency options more clearly in the product page
+ * give an error message if a request for uninstall as well as for setup are called in one action
+
+-- r.roeder <r.roeder@uib.de> Wed, 25 Mar 2020 21:01:40 +0100
+
+opsi-configed (4.1.7.1.2-1) TESTING; urgency=medium
+
+* more threading for sshexec
+* remove column "on deinstall" in product dependency table
+
+-- r.roeder <r.roeder@uib.de> Fri, 28 Feb 2020 14:01:40 +0100
+
+opsi-configed (4.1.7.1.1-1) TESTING; urgency=medium
+
+* in mode CLIQuerySearch produce as output only the result list
+
+-- r.roeder <r.roeder@uib.de> Thu, 27 Feb 2020 16:01:40 +0100
+
+opsi-configed (4.1.7.1.0-1) EXPERIMENTAL; urgency=medium
+
+* repair checking modul limits for client number
+
+-- r.roeder <r.roeder@uib.de> Wed, 26 Feb 2020 16:01:40 +0100
+
+opsi-configed (4.1.6.1.13-1) STABLE; urgency=medium
+
+* fix NPE in GenTableModel from not existing filter
+
+-- r.roeder <r.roeder@uib.de> Thu, 06 Feb 2020 13:01:40 +0100
+
+opsi-configed (4.1.6.1.12-4) EXPERIMENTAL; urgency=medium
+
+* remove check for adminuser context
+
+-- r.roeder <r.roeder@uib.de> Thu, 22 Jan 2020 13:01:40 +0100
+
+opsi-configed (4.1.6.1.12-2) STABLE; urgency=medium
+
+* script correction
+
+-- r.roeder <r.roeder@uib.de> Thu, 19 Dec 2019 13:11:46 +0100
+
+opsi-configed (4.1.6.1.12-1) STABLE; urgency=medium
+
+*  added a second startmenu entry with scaled java
+*  a minor changed GUI for collective product action
+
+-- r.roeder <r.roeder@uib.de> Wed, 18 Dec 2019 15:11:46 +0100
+
+opsi-configed (4.1.6.1.11-2) STABLE; urgency=medium
+
+* fixed failed install with jre11 on Debian  10
+* changed bundled Windows java-runtimes sapmachine-jre-11.0.5 amazon-corretto-8.232.09.1-windows-x86-jre amazon-corretto-8.232.09.1-windows-x64-jre
+
+-- b.wolf <b.wolf@uib.de> Tue, 17 Dec 2019 08:40:46 +0100
+
+opsi-configed (4.1.6.1.11) STABLE; urgency=medium
+
+* avoiding multiple showing of missing products 
+* ctrl-s for save triggering added
+
+-- r.roeder <r.roeder@uib.de> Mon, 16 Dec 2019 15:11:46 +0100
+
+opsi-configed (4.1.6.1.10) STABLE; urgency=medium
+
+* enlarged width of ID column in panelRegisteredSoftware 
+
+-- r.roeder <r.roeder@uib.de> Thu, 12 Dec 2019 16:11:46 +0100
+
+opsi-configed (4.1.6.1.9) STABLE; urgency=medium
+
+* marking of installed product version unequal with server vision in a way that is sortable 
+
+-- r.roeder <r.roeder@uib.de> Wed, 19 Dec 2019 16:11:46 +0100
+
+opsi-configed (4.1.6.1.8) EXPERIMENTAL; urgency=medium
+
+* saving and resetting selection when changing a value in the producttable
+
+-- r.roeder <r.roeder@uib.de> Wed, 11 Dec 2019 14:11:46 +0100
+
+opsi-configed (4.1.6.1.7) EXPERIMENTAL; urgency=medium
+
+*  use action listener in combo, reselection fixed
+
+-- r.roeder <r.roeder@uib.de> Mon, 09 Dec 2019 14:11:46 +0100
+
+opsi-configed (4.1.6.1.6) EXPERIMENTAL; urgency=medium
+
+*  implemented collective uninstall
+
+-- r.roeder <r.roeder@uib.de> Wed, 05 Dec 2019 08:11:46 +0100
+
+opsi-configed (4.1.6.1.5) EXPERIMENTAL; urgency=medium
+
+*  bugfix in stream construction 
+
+-- r.roeder <r.roeder@uib.de> Wed, 05 Dec 2019 08:11:46 +0100
+
+opsi-configed (4.1.6.1.4) EXPERIMENTAL; urgency=medium
+
+*  restore selection after collective setting 
+
+-- r.roeder <r.roeder@uib.de> Wed, 04 Dec 2019 15:11:46 +0100
+
+opsi-configed (4.1.6.1.3) EXPERIMENTAL; urgency=medium
+
+*  SSHConnectExec in PanelDriverUpload set threaded (so that a reaction does not wait for samba mount) 
+
+-- r.roeder <r.roeder@uib.de> Wed, 04 Dec 2019 13:11:46 +0100
+
+opsi-configed (4.1.6.1.2) EXPERIMENTAL; urgency=medium
+
+*  bugfix, there was a NPE if no clients were selected
+*  added info if no clients selected and therefore no action can be set
+*  preventing setting an action which is not supported
+
+-- r.roeder <r.roeder@uib.de> Mon, 02 Dec 2019 16:11:46 +0100
+
+opsi-configed (4.1.6.1.1) EXPERIMENTAL; urgency=medium
+
+*  clearing collection of products
+
+-- r.roeder <r.roeder@uib.de> Wed, 29 Nov 2019 16:11:46 +0100
+
+opsi-configed (4.1.6.1.0) EXPERIMENTAL; urgency=medium
+
+*  collective action for all selected local products
+
+-- r.roeder <r.roeder@uib.de> Wed, 27 Nov 2019 16:11:46 +0100
+
+opsi-configed (4.1.5.0-2) EXPERIMENTAL; urgency=medium
+*  if no javapath is found "javaw.exe" is used as a try
+-- r.roeder <r.roeder@uib.de> Fri, 25 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.5.0-1) EXPERIMENTAL; urgency=medium
+*  display of locked state of products
+-- r.roeder <r.roeder@uib.de> Wed, 22 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.3.3-1) STABLE; urgency=medium
+*  using configured default for workbench
+-- r.roeder <r.roeder@uib.de> Tue, 15 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.3.2-1) STABLE; urgency=medium
+*  yet a thread problem handled
+*  logging connection header
+-- r.roeder <r.roeder@uib.de> Mon, 14 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.3.1-1) STABLE; urgency=medium
+*  handled some problems with threading in ssh functions
+-- r.roeder <r.roeder@uib.de> Fri, 11 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.2.2-1) STABLE; urgency=medium
+* When starting or reloading, the possible values for user host groups, product groups, ... are supplemented not only for the loggedin user, but for all users  
+-- r.roeder <r.roeder@uib.de> Tue, 02 Oct 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.2.1-1) STABLE; urgency=medium
+* ssh connection to loginserver is offered if ssh is allowed (the allowed depotservers only add to this offer)
+-- r.roeder <r.roeder@uib.de> Fri, 27 Sep 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.1.1-1) STABLE; urgency=medium
+*  running action icon implemented
+-- r.roeder <r.roeder@uib.de> Tue, 23 Sep 2019 12:11:46 +0100
+
+opsi-configed (4.1.4.1.0-1) STABLE; urgency=medium
+* compatibility with opsi 4.2 
+-- r.roeder <r.roeder@uib.de> Tue, 23 Sep 2019 12:11:46 +0100
+
+opsi-configed (4.1.3.3.2-1) STABLE; urgency=medium
+* bugfix in building path for driver upload
+-- r.roeder <r.roeder@uib.de> Tue, 03 Sep 2019 12:11:46 +0100
+
+opsi-configed (4.1.3.3.1-1) STABLE; urgency=medium
+* info if products are required but do not exist on the depot
+-- r.roeder <r.roeder@uib.de> Wed, 29 Aug 2019 12:11:46 +0100
+
+opsi-configed (4.1.3.2.1-1) STABLE; urgency=medium
+* bugfix if addressed group has null parentgroup
+-- r.roeder <r.roeder@uib.de> Wed, 28 Aug 2019 16:11:46 +0100
+
+opsi-configed (4.1.3.2.0-1) STABLE; urgency=medium
+* new command line option --definegroupbysearch
+-- r.roeder <r.roeder@uib.de> Wed, 28 Aug 2019 16:11:46 +0100
+
+opsi-configed (4.1.3.1.1-1) STABLE; urgency=medium
+* background update of session data, bugfix: working-icon war running only once
+-- r.roeder <r.roeder@uib.de> Wed, 21 Aug 2019 12:11:46 +0100
+
+opsi-configed (4.1.3.1.0-1) STABLE; urgency=medium
+* background update of session data
+-- r.roeder <r.roeder@uib.de> Fri, 16 Aug 2019 12:11:46 +0100
+
+opsi-configed (4.1.2.1.0-4) STABLE; urgency=medium
+* bug fix in Linux part
+-- r.roeder <r.roeder@uib.de> Thu, 15 Aug 2019 12:11:46 +0100
+
+opsi-configed (4.1.2.1.0-1) STABLE; urgency=medium
+* if the opsi server is addressed via cli host parameter, even if not connected, 
+the server name is included in the log file name  (for distinguishing several log file contexts) 
+-- r.roeder <r.roeder@uib.de> Fri, 09 Aug 2019 12:11:46 +0100
+
+opsi-configed (4.1.2.0.9-2) STABLE; urgency=medium
+* new product property for creating additional start menu links for several opsi servers
+-- r.roeder <r.roeder@uib.de> Thu, 08 Aug 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.9-1) EXPERIMENTAL; urgency=medium
+* button for transfer the client selection in hardware overview to the client list
+-- r.roeder <r.roeder@uib.de> Tue , 30 Jul 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.8-1) EXPERIMENTAL; urgency=medium
+* display of opsi host key
+-- r.roeder <r.roeder@uib.de> Wed , 26 Jul 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.7-2) EXPERIMENTAL; urgency=medium
+* changed linkfolder entry name for Linux (now simply opsi-configed)
+-- r.roeder <r.roeder@uib.de> Wed , 24 Jul 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.7-1) EXPERIMENTAL; urgency=medium
+* for green/red unawareness : supplement (≠) to product version if versions are not equal.
+-- r.roeder <r.roeder@uib.de> Fri , 12 Jul 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.6-1) STABLE; urgency=medium
+* fixed hard coded "/home/opsiproducts" in product installation special call
+-- r.roeder <r.roeder@@uib.de>  Mon, 08 Jun 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.5-1) STABLE; urgency=medium
+
+* changed implementation of display of connection state, is now
+  showing infos only for selected clients if selection exists
+
+-- r.roeder <r.roeder@@uib.de>  Mon, 27 May 2019 13:11:46 +0100
+
+opsi-configed (4.1.2.0.4-2) STABLE; urgency=medium
+
+* experiments with check for admin privilege by powershell, bugfix 
+
+-- r.roeder <r.roeder@@uib.de>  Mon, 27 May 2019 13:11:46 +0100
+
+
+opsi-configed (4.1.2.0.4-1) STABLE; urgency=medium
+
+* bugfix in UserRoles, (not) allowed clients did not reappear
+
+* new option "ignore ping answer" for opsi-deploy-client-agent call
+
+* new option "use sudo" for opsi-deploy-client-agent call
+
+* removed opsi 3 value for installation_status in the search function
+
+-- r.roeder <r.roeder@@uib.de>  Thu, 23 May 2019 13:11:46 +0100
+
+
+opsi-configed (4.1.1.0.9-3) STABLE; urgency=medium
+
+  * FatalError, with hint for user, if not called with running with admin (checked with powershell)
+
+-- r.roeder <r.roeder@@uib.de>  Fri, 03 May 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.9-2) STABLE; urgency=medium
+  * added FatalError and Stop inCase f running as non-admin
+-- b.wolf <b.wolf@uib.de>  Thu, 18 Apr 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.9-1) STABLE; urgency=medium
+
+  * show default values for WAN config and UEFI config in create client dialog
+
+-- Rupert <r.roeder@uib.de>  Mon, 08 Apr 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.7-1) STABLE; urgency=medium
+
+  * subversion field included in search
+
+-- Rupert <r.roeder@uib.de>  Fri, 05 Apr 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.5-3) STABLE; urgency=medium
+
+  * default java set to bundled
+
+-- Rupert <r.roeder@uib.de>  Fri, 20 Mar 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.5-1) STABLE; urgency=medium
+
+  * option to extend product groups so that they include all dependent products
+
+-- Rupert <r.roeder@uib.de>  Fri, 13 Feb 2019 13:11:46 +0100
+
+opsi-configed (4.1.1.0.4-1) STABLE; urgency=medium
+
+  * permission options added for host group permission, create client permission, product group permission
+
+-- Rupert <r.roeder@uib.de>  Fri, 01 Feb 2019 13:11:46 +0100
+
+opsi-configed (4.0.7.8.7-1) STABLE; urgency=medium
+
+  * info window if the opsiconfd version is not more supported
+  * on login page info about the java environemnet
+
+ -- Rupert <r.roeder@uib.de>  Tue, 22 Jan 2019 13:11:46 +0100
+
+opsi-configed (4.0.7.8.6-1) STABLE; urgency=medium
+
+  * now it is possible to use a value for uefi (and it is shown)
+
+ -- Rupert <r.roeder@uib.de>  Tue, 30 Oct 2018 16:11:46 +0100
+
+opsi-configed (4.0.7.8.5-1) STABLE ; urgency=medium
+
+   * Working code for multi host editing of WAN and UEFI was commented out
+   * default values for UEFI were not taken into account
+
+ -- roeder <r.roeder@uib.de>  Wed, 24 Oct 2018 13:14:20 +0200
+
+opsi-configed (4.0.7.8.4-1) STABLE ; urgency=medium
+
+  * changed name of an exception class taken into account when filtering exceptions to ignore
+  * more java version info
+
+ -- roeder <r.roeder@uib.de>  Thu, 11 Oct 2018 13:14:20 +0200
+
+opsi-configed (4.0.7.8.3-1) stable; urgency=medium
+
+  * avoiding a NPW in the search modul if a SW entry is not found, improved logging
+
+ -- roeder <r.roeder@uib.de>  Thu, 11 Oct 2018 13:14:20 +0200
+
+opsi-configed (4.0.7.8.2-1) STABLE; urgency=medium
+
+  * default path of opsi-set-rights changed to empty
+  * fixed comparing opsi version method
+  * deleting product properties by wildcard when resetting a client
+
+ -- roeder <roeder@asusvivo01.uib.local>  Tue, 04 Sept 2018 16:44:52 +0200
+
+opsi-configed (4.0.7.8.1-2) STABLE; urgency=medium
+  * fixed that default value for memory requirement had gone empty
+
+ -- roeder <roeder@uib.de>  Fri, 31 Aug 2018 16:44:52 +0200
+
+opsi-configed (4.0.7.8.1-1) EXPERIMENTAL; urgency=medium
+
+  * strg-c in host data fields is not interpreted as data change
+  * corrected labelling of host field in selection dialog
+  * new parameter %hostname% for remote control calls (first part of fqdn)
+
+ -- roeder <roeder@uib.de>  Fri, 10 Aug 2018 16:44:52 +0200
+
+opsi-configed (4.0.7.7.6-9) stable; urgency=medium
+
+  * script default for select_java_runtime property changed to "" (to make bundled java runtime the default)
+
+-- roeder <r.roeder@uib.de>  Wed, 07 August 2018 14:51:45 +0200
+
+opsi-configed (4.0.7.7.6-8) stable; urgency=medium
+
+  * typo in variable name corrected
+
+-- roeder <r.roeder@uib.de>  Wed, 07 June 2018 14:51:45 +0200
+
+opsi-configed (4.0.7.7.6-7) stable; urgency=medium
+
+  * if tlsv1 fallback is activated ignore cipher choice
+
+-- roeder <r.roeder@uib.de>  Tue, 05 June 2018 14:51:45 +0200
+
+opsi-configed (4.0.7.7.6-6) stable; urgency=medium
+
+  * install 64 Bit jre on 64 Bit systems
+
+-- roeder <r.roeder@uib.de>  Mon, 04 June 2018 14:51:45 +0200
+
+opsi-configed (4.0.7.7.6-4) stable; urgency=medium
+  * some fixes on installation on linux:
+    * remove old wait for package lock routines
+    * use Files_uninstall_lin
+    * do not use copy -c at linux
+  * fix init of $lastusedserver$
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  30 May 2018:15:00:00 +0200
+
+opsi-configed (4.0.7.7.6-3) stable; urgency=medium
+
+  * new packaging: included bundled oracle jre version 8.x (longterm, 32 bit) and 10.x (has high dpi support)
+  * can be installed with opsi java package or with bundled java runtime
+
+ -- roeder <r.roeder@uib.de>  Tue, 29 May 2018 14:45:43 +0200
+
+opsi-configed (4.0.7.7.6-1) stable; urgency=medium
+
+  * added a selection menu option
+
+ -- roeder <r.roeder@uib.de>  Tue, 22 May 2018 14:51:45 +0200
+
+opsi-configed (4.0.7.7.5-1) stable; urgency=medium
+
+  * added font sizing buttons and Ctrl-+, Ctrl-- in logpanes
+  * local saving and setting again of last selected shown log level
+
+ -- roeder <r.roeder@uib.de>  Wed, 16 May 2018 16:16:00 +0200
+
+opsi-configed (4.0.7.7.4-x)
+
+  * hardware table for a selection of clients
+  * configurable columns for it
+  * switch for correct resource UTF8 encoding in java version <= 1.8 and >= 9
+
+-- roeder <roeder@uib.de>  Mon, 23 Apr 2018 15:46:02 +0100
+
+opsi-configed (4.0.7.6.28-x) TESTING,urgency=medium
+
+  * property for configuring opsiserver
+
+-- roeder <roeder@uib.de>  Thu, 30 Nov 2017 15:46:02 +0100
+
+
+opsi-configed (4.0.7.6.26-1) TESTING,urgency=medium
+  * activating search panels for licence management
+
+-- roeder <roeder@uib.de>  Thu, 09 Nov 2017 15:46:02 +0100
+
+opsi-configed (4.0.7.6.23-1) TESTING,urgency=medium
+
+  * improved working on assignments licencepool - windowsSoftware
+
+-- roeder <roeder@uib.de>  Thu, 09 Nov 2017 15:46:02 +0100
+
+opsi-configed (4.0.7.6.22-1) TESTING,urgency=medium
+
+  * new client action reset products but keep product properties
+
+-- roeder <roeder@uib.de>  Thu, 09 Nov 2017 12:46:02 +0100
+
+opsi-configed (4.0.7.6.21-1) TESTING,urgency=medium
+
+  * property tls_alternative_cipher
+  * property start_with_ssh_connection
+  * filtering in license reconciliation
+  * preselecting by char in defining search combo boxes
+  * ssh interactive disconnection option
+  * bugfix for ssh console test command
+
+opsi-configed (4.0.7.6.17-1) TESTING,urgency=medium
+
+  * saved states for instances (there was the issue that all tables behaved like it was wanted for one)
+  * fixed missing "." in ".pdf" files for opening
+  * fixed "clear selection" where we have single selection mode (and there should be one item selected)
+  * fixed in License managemant, assignments to windows software: restricting the display to the assigned software is working again
+  * (real) boolean properties/configs cannot any more set to null
+
+opsi-configed (4.0.7.6.17-1) TESTING,urgency=medium
+
+-- roeder <roeder@uib.de>
+
+  * corrections for filtering
+
+-- roeder <roeder@uib.de>
+
+
+opsi-configed (4.0.7.6.16-1) TESTING,urgency=medium
+
+  * search panel with new selection & mark function
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.15-1) TESTING,urgency=medium
+
+  * new visual options for search panel (esp. depots)
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.14-2) TESTING,urgency=medium
+
+  * using the opsi default log directory eliminated (since not working for non-admins)
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.14-x) TESTING,urgency=medium
+
+ * search function for depots
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.13-x) TESTING,urgency=medium
+
+ * new location functions
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.13-1) TESTING,urgency=medium
+
+ * search fields enlarged
+ + try to center windows on default screen in multiscreen environments
+ * new location for log files
+ * show acknowledgements for used libraries
+ * show, open, or copy  current log file path
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.11-1) TESTING,urgency=medium
+
+ * editable ordered list of domains for new clients
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.10-1) TESTING,urgency=medium
+
+ * tree handling via keys
+ * CLI call for swaudit pdf export
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.9-1) TESTING,urgency=medium
+
+ * setting back logview to old working version
+ * repairing client field editing
+ * commenting out languages da pl tr
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.8-1) TESTING,urgency=medium
+
+ * activating clients by selection via cursor up and down keys
+ * activation a group of clients via double click or enter key
+ * improvements for hosts status display
+ + fixing an error in logpane cursor position by reverting to older version
+
+-- roeder <roeder@uib.de>
+
+opsi-configed (4.0.7.6.7-1) TESTING,urgency=medium
+
+ * multiclient batch mode for swaudit export
+ * new hostparameter branch opsi-script
+
+-- roeder <roeder@uib.de>  Thu, 29 Jun 2017 15:46:02 +0100
+
+
+opsi-configed (4.0.7.6.6-1) TESTING; urgency=medium
+
+ * multiediting of more than one host regarding uefi and wan
+
+-- roeder <roeder@uib.de>  Thu, 29 Jun 2017 15:46:02 +0100
+
+opsi-configed (4.0.7.6.5-1) TESTING; urgency=medium
+
+  * new commandline options for an easier editing of localization files
+  * new section "meta_config" for configed (server) host parameters, used for setting default wan_mode_off properties
+
+-- roeder <roeder@uib.de>  Wed, 14 Jun 2017 13:46:02 +0100
+
+opsi-configed (4.0.7.6.4-1) TESTING; urgency=medium
+
+  * handling of missing swaudit entry repaired
+
+-- roeder <roeder@uib.de>  Fri, 02 Jun 2017 13:46:02 +0100
+
+opsi-configed (4.0.7.6.2-1) TESTING; urgency=medium
+
+  * discriminate search for membership in a group including memberships in its subgroup or not
+
+-- roeder <roeder@uib.de>  Wed, 31 May 2017 13:46:02 +0100
+
+opsi-configed (4.0.7.6.1-1) TESTING; urgency=medium
+
+  * new context menu options for setting client host properties/ client product property values to server defaults
+
+-- roeder <roeder@uib.de>  Wed, 24 May 2017 13:46:02 +0100
+
+
+opsi-configed (4.0.7.5.22-3) STABLE; urgency=medium
+
+  * adaptions of script for running without service
+
+-- roeder <roeder@uib.de>  Wed, 18 May 2017 13:46:02 +0100
+
+
+opsi-configed (4.0.7.5.22-2) STABLE; urgency=medium
+
+  * check if script run by service for avoiding link to empty webservice
+  * fallback tlsv1 parameter, script default, set to true
+
+-- roeder <roeder@uib.de>  Mon, 16 May 2017 13:46:02 +0100
+
+opsi-configed (4.0.7.5.11-1) STABLE; urgency=medium
+
+  * version with SSH console in final state
+  * several bugfixes
+
+-- roeder <roeder@uib.de>  Mon, 06 Mar 2017 13:46:02 +0100
+
+
+opsi-configed (4.0.7.5.7-1) STABLE; urgency=medium
+
+  * bugfix NPE on change WAN or UEFI when columns are not presen
+
+-- roeder <roeder@uib.de>  Sat, 17 Dec 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.6-1) STABLE; urgency=medium
+
+  * don't allow entering the same licensepool id two times
+  * clear product property listeditors on changing product or tabview
+  * removing option to install old java version in package
+
+-- roeder <roeder@uib.de>  Fri, 09 Dec 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.5-2) STABLE; urgency=medium
+
+  * jar was made with java 1.8
+
+-- roeder <roeder@uib.de>  Wed, 28 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.5-1) STABLE; urgency=medium
+
+  * bugfix when calling modules without user roles
+
+-- roeder <roeder@uib.de>  Mon, 28 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.4-1) STABLE; urgency=medium
+
+  * controlling user roles features by modules file
+
+-- roeder <roeder@uib.de>  Thu, 24 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.3-1) STABLE; urgency=medium
+
+  * fixed: search in PanelGenEditTable is now working independently from case
+
+-- roeder <roeder@uib.de>  Mon, 14 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.1-3) STABLE; urgency=medium
+
+  * hopefully, the manifest and the delivered jar files fit now
+
+-- roeder <roeder@uib.de>  Mon, 14 Nov 2016 12:46:02 +0100
+
+opsi-configed (4.0.7.5.1-2) STABLE; urgency=medium
+
+  * jsch classes were not included
+
+-- roeder <roeder@uib.de>  Fri, 10 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.5.1-1) STABLE; urgency=medium
+
+  * SSH feature integrated
+  * extended columns in host table
+  * preparation for a refined module expires and maxsize description
+
+-- roeder <roeder@uib.de>  Thu, 10 Nov 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.3.5-1) STABLE; urgency=medium
+
+  * for Java 1.7 use TLSv1 by default
+
+-- roeder <roeder@uib.de>  Fri, 28 Oct 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.3.4-2) STABLE; urgency=medium
+
+  * script formally corrected
+
+-- roeder <roeder@uib.de>  Wed, 26 Oct 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.3.4-1) STABLE; urgency=medium
+
+  * additional request property connection close
+  * logging of SSL protocol
+  * in package additional property fallback_tlsv1
+
+-- roeder <roeder@uib.de>  Tue, 25 Oct 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.3.3-1) STABLE; urgency=medium
+
+  * fixed missing call for WoL in scheduler
+  * fixed missing identification of configserver connection if its hostname differs from its opsi id
+  * fixed line endings of logfiles when exported as archive
+  * host_read method reimplemented for mysql present
+
+-- roeder <roeder@uib.de>  Thu, 20 Oct 2016 13:46:02 +0100
+
+opsi-configed (4.0.7.3.2-2) STABLE; urgency=medium
+
+  * new property: java1.7 static in product folder
+
+-- k.koepke <k.koepke@uib.de> Tue, 18 Oct 2016 15:00:00 + 0100
+
+opsi-configed (4.0.7.1.3-3) STABLE; urgency=medium
+
+  * fix linux java installation: try java 8 first
+  * use waitForPackageLock if possible
+
+-- d.oertel <d.oertel@uib.de> Wed, 27 Jul 2016 15:00:00 + 0100
+
+opsi-configed (4.0.7.1.3-2 STABLE
+
+   * Abprüfung auch ob 32-Bit Java installiert ist
+
+-- roeder <roeder@uib.de>  Thu, 17 Mar 2016 13:46:02 +0100
+
+opsi-configed (4.0.6.7.4-1) EXPERIMENTAL; urgency=medium
+
+  * multiselection switched on in swaudit page
+  * labelling of pdf open or save dialog
+
+ -- roeder <roeder@uib.de>  Thu, 17 Mar 2016 13:46:02 +0100
+
+opsi-configed (4.0.6.7.3-1) EXPERIMENTAL; urgency=medium
+
+  * fixed lost view of filtered clients
+
+ -- roeder <roeder@uib.de>  Tue, 16 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.2-1) EXPERIMENTAL; urgency=medium
+
+  * moving and child removal for groups in treeview
+
+ -- roeder <roeder@uib.de>  Tue, 15 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.1-1) EXPERIMENTAL; urgency=medium
+
+ -- roeder <roeder@uib.de>  Wed, 09 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.0-1) EXPERIMENTAL; urgency=medium
+
+  * fixed re-selection of clients after reload
+
+ -- roeder <roeder@uib.de>  Mon, 07 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.6.2-1) TESTING; urgency=medium
+
+  * fixed two problems in licence management
+
+ -- roeder <roeder@uib.de>  Thu, 03 Mar 2016 16:23:06 +0100
+
+opsi-configed (4.0.6.6.1-1) TESTING; urgency=medium
+
+  * multi-word search implemented for client page
+  * context menu option for saving log files
+
+opsi-configed (4.0.6.5.5-1) ; experimental; urgency=low
+
+  * arranging visible dialogs for FEditObject
+
+-- r.roeder <r.roeder@uib.de> Thu, 19 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.4-1) ; experimental; urgency=low
+
+  * Windows menu improved
+  * context menu option for saving log files
+
+-- r.roeder <r.roeder@uib.de> Wed, 18 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.3-1) ; experimental; urgency=low
+
+  * improved dialog for wake on lan
+  * Windows menu introduced
+  * option to get arrange all running dialogs in the foreground
+
+-- r.roeder <r.roeder@uib.de> Wed, 14 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.1-1) ; experimental; urgency=low
+
+  * multi-word search implemented for client page
+
+-- r.roeder <r.roeder@uib.de> Wed, 06 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.4.1-2) ; stable; urgency=low
+
+  * added Linux wait for package lock
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Dec 2015 15:00:00 + 0100
+
+opsi-configed (4.0.6.4.1-1)
+
+  * ??
+
+-- rupert ??
+
+opsi-configed (4.0.6.4.0)
+  * delayed wake on lan on several depots
+
+-- rupert ??
+
+opsi-configed (4.0.6.3.10-2)
+  * experiment with startjava.exe
+
+-- rupert ??
+
+opsi-configed (4.0.5.8-2) ; testing; urgency=low
+
+  * script changes for win10
+
+-- d.oertel <d.oertel@uib.de> Tue, 30 Jun 2015 15:00:00 + 0100
+
+opsi-configed (4.0.5.8-1) testing; urgency=medium
+  * replace terminating '.' or ' ' in path string for byAudit path
+    by '_' (requires bootimage 4.0.6)
+  * extended create client dialog
+  * reload function for client table
+  * load productPropertyState by getRawData
+  * removed exception of ReachableUpdate when updating the model
+  * fix: on host refresh, a host configs refresh is necessary
+  * configed default logdir for windows move to localappdata dir
+  * hostparameter editor leaked and reached window handle maximum,
+    fixed by multiton pattern
+  * on authentication password corection was not observed
+  * in case of querysavedsearch we omit any console output
+  * with depot properties editing, a depot selection is kept when
+    changing product
+  * fixed that the connection state was not correctly identified which
+    led to errors in file backend
+  * WAN config by checkbox
+  * option for case sensitive search
+  * wan config is internally handled like other configs
+
+-- Rupert Roeder <r.roeder@uib.de> Fri, 17 Apr 2015 13:58:44 +0200
+
+opsi-configed_4.0.5.4.4-2 ; testing; urgency=low
+
+  * add Support for Installing on Linux
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Mar 2015 15:00:00 + 0100
+
+opsi-configed_4.0.5.0.8_5; testing; urgency=low
+
+   * log file in c:\opsi.org\log
+   * set status to failed on copy error
+
+-- r.roeder <r.roeder@uib.de> Thu, 24 Jul 2014 15:33:43 + 0100
+
+opsi-configed_4.0.4.2.4; testing; urgency=low
+
+   * test version
+
+ -- r.roeder <r.roeder@uib.de> Wed, 26 Mar 2014 14:33:43 + 0100
+
+opsi-configed_4.0.3.3.4-1 ; stable; urgency=low
+
+  * Downgrade to Stable Version of opsi-configed: For local installation of configed to workarround the issue from Oracle Java Security Update with not signed jar-Files.
+
+ -- d.oertel <d.oertel@uib.de> Tue, 17 Dec 2013 21:33:43 + 0100
+
+opsi-configed_4.0.4.0.13-1 ; stable; urgency=low
+
+  * Initial copy
+
+ -- d.oertel <d.oertel@uib.de> Tue, 17 Dec 2013 21:33:43 + 0100
+
+
+
+   * memory request and check reachable interval as properties
+-- r.roeder <r.roeder@uib.de> Tue, 15 Jul 2014 11:33:43 + 0100

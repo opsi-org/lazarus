@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# postinst script
+# This script executes after unpacking files from that archive and registering the product at the depot.
+#
+# The following environment variables can be used to obtain information about the current installation:
+#   PRODUCT_ID: id of the current product
+#   CLIENT_DATA_DIR: directory which contains the installed client data
+#
+	
+# echo install $PRODUCT_ID > /var/lib/opsi/depot/tmp.txt
+#if [ -f /usr/share/opsi-configed/configed.jar ]  
+#	then
+#	echo configed exists as app on the server and will be updated >> /var/lib/opsi/depot/tmp.txt
+#	ls -l >> /var/lib/opsi/depot/tmp.txt
+#
+#	else
+#	echo configed not existing as app on the server >> /var/lib/opsi/depot/tmp.txt
+#	ls -l >> /var/lib/opsi/depot/tmp.txt
+#fi

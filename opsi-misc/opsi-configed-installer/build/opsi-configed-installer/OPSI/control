@@ -1,0 +1,130 @@
+[Package]
+version: 1
+depends: 
+
+[Product]
+type: localboot
+id: opsi-configed
+name: opsi configed
+description: opsi Graphical Management Interface (Windows / Linux/ macOS)
+advice: macOS requires m-javavm installed. Caution: if an installation starts "on demand" then all instances of javaw.exe will be stopped.
+version: 4.2.11.4.1
+priority: -10
+licenseRequired: False
+productClasses: 
+setupScript: setup.opsiscript
+uninstallScript: uninstall.opsiscript
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductProperty]
+type: unicode
+name: opsiadmin
+multivalue: False
+editable: True
+description: user for opsi-configed
+values: [""]
+default: [""]
+
+[ProductProperty]
+type: unicode
+name: opsiserver
+multivalue: False
+editable: True
+description: default opsi server which should be addressed
+values: ["(installing server)", "(last called server)"]
+default: ["(installing server)"]
+
+[ProductProperty]
+type: unicode
+name: opsiservers_extra
+multivalue: True
+editable: True
+description: a list of opsi servers which get a special instance as start menu link
+values: []
+default: []
+
+[ProductProperty]
+type: unicode
+name: client_language
+multivalue: False
+editable: False
+description: client_language
+values: ["auto", "de", "en", "fr"]
+default: ["auto"]
+
+[ProductProperty]
+type: unicode
+name: memory_requirement
+multivalue: False
+editable: True
+description: MBs requested for executing
+values: ["1024", "1536", "2048", "3000", "512"]
+default: ["1536"]
+
+[ProductProperty]
+type: unicode
+name: scaling_factor
+multivalue: False
+editable: True
+description: Java Swing App scaling factor for alternative start link in Linux (working with java version >= 10)
+values: ["0.5", "1.0", "1.5", "2.0"]
+default: ["2.0"]
+
+[ProductProperty]
+type: unicode
+name: tls_alternative_cipher
+multivalue: False
+editable: True
+description: Use this cipher suite for TLSv1.2 (RFC/java name) to get a stable communication to opsiconfd
+values: ["TLS_RSA_WITH_AES_128_GCM_SHA256"]
+default: ["TLS_RSA_WITH_AES_128_GCM_SHA256"]
+
+[ProductProperty]
+type: bool
+name: fallback__tlsv1
+description: Use older SSL implementation to eliminate sporadic problems in communication with opsiconfd
+default: False
+
+[ProductProperty]
+type: bool
+name: start_with_ssh_connection
+description: On start, try to establish a SSH connection to the opsi server (using the opsi user credentials)
+default: True
+
+[ProductProperty]
+type: bool
+name: sqldata_force
+description: Activate direct data transfer from database on start (only with active mysql backend)
+default: False
+
+[ProductProperty]
+type: unicode
+name: check_reachable_interval
+multivalue: False
+editable: True
+description: Interval [min] for repeating the background reachable check for all clients ("0" = turned off)
+values: ["0", "10", "15", "5"]
+default: ["0"]
+
+[ProductProperty]
+type: unicode
+name: java_productname_if_required
+multivalue: False
+editable: True
+description: check if this java product is installed if we do not use a bundled java runtime.
+values: ["", "javavm"]
+default: ["javavm"]
+
+[ProductProperty]
+type: unicode
+name: select__java_runtime
+multivalue: False
+editable: False
+description: Only for windows: Use this bundled Java runtime or look in opsi/in system. Since java version 10 (only 64Bit), scaling on high dpi monitors is supported.
+values: ["Bundled Java 8 (32 or 64 Bit)", "Bundled Java current version (64 Bit)", "opsi_java_product", "opsi_java_product_if_no_system_java_exists", "system_java_runtime"]
+default: ["Bundled Java current version (64 Bit)"]
+

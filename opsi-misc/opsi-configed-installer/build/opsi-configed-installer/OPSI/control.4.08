@@ -1,0 +1,458 @@
+[Package]
+version: 1demo
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: opsi-configed
+name: opsi configed
+description: opsi Graphical Management Interface (Windows / Linux)
+advice: Caution: if a local opsi-configed is running all instances of javaw.exe are stopped
+version: 4.0.8
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup32.ins
+uninstallScript: uninstall32.ins
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductDependency]
+action: setup
+requiredProduct: javavm
+requiredStatus: installed
+requirementType: before
+
+[ProductProperty]
+type: unicode
+name: opsiadmin
+multivalue: False
+editable: True
+description: user for opsi-configed
+
+[ProductProperty]
+type: unicode
+name: client_language
+multivalue: False
+editable: False
+description: client_language
+values: ["auto", "da", "de", "en", "es", "fr", "pl", "tr"]
+default: ["auto"]
+
+[ProductProperty]
+type: unicode
+name: memory_requirement
+multivalue: False
+editable: True
+description: MBs requested configed execution
+values: ["1024", "1536", "2048", "512"]
+default: ["1024"]
+
+[ProductProperty]
+type: bool
+name: sqldata_force
+description: Activate direct data transfer from database on start (only with active mysql backend)
+default: False
+
+[ProductProperty]
+type: unicode
+name: check_reachable_interval
+multivalue: False
+editable: True
+description: Interval [min] for repeating the background reachable check for all clients ("0" = turned off)
+values: ["0", "10", "15", "5"]
+default: ["0"]
+
+[Changelog]
+opsi-configed (4.0.6.7.4-1) EXPERIMENTAL; urgency=medium
+
+  * multiselection switched on in swaudit page
+  * labelling of pdf open or save dialog
+
+ -- roeder <roeder@uib.de>  Thu, 17 Mar 2016 13:46:02 +0100
+
+opsi-configed (4.0.6.7.3-1) EXPERIMENTAL; urgency=medium
+
+  * fixed lost view of filtered clients
+
+ -- roeder <roeder@uib.de>  Tue, 16 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.2-1) EXPERIMENTAL; urgency=medium
+
+  * moving and child removal for groups in treeview
+
+ -- roeder <roeder@uib.de>  Tue, 15 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.1-1) EXPERIMENTAL; urgency=medium
+
+ -- roeder <roeder@uib.de>  Wed, 09 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.7.0-1) EXPERIMENTAL; urgency=medium
+
+  * fixed re-selection of clients after reload
+
+ -- roeder <roeder@uib.de>  Mon, 07 Mar 2016 12:30:43 +0100
+
+opsi-configed (4.0.6.6.2-1) TESTING; urgency=medium
+
+  * fixed two problems in licence management
+
+ -- roeder <roeder@uib.de>  Thu, 03 Mar 2016 16:23:06 +0100
+
+opsi-configed (4.0.6.6.1-1) TESTING; urgency=medium
+
+  * multi-word search implemented for client page
+  * context menu option for saving log files
+
+opsi-configed (4.0.6.5.5-1) ; experimental; urgency=low
+
+  * arranging visible dialogs for FEditObject
+
+-- r.roeder <r.roeder@uib.de> Thu, 19 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.4-1) ; experimental; urgency=low
+
+  * Windows menu improved
+  * context menu option for saving log files
+
+-- r.roeder <r.roeder@uib.de> Wed, 18 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.3-1) ; experimental; urgency=low
+
+  * improved dialog for wake on lan
+  * Windows menu introduced
+  * option to get arrange all running dialogs in the foreground
+
+-- r.roeder <r.roeder@uib.de> Wed, 14 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.5.1-1) ; experimental; urgency=low
+
+  * multi-word search implemented for client page
+
+-- r.roeder <r.roeder@uib.de> Wed, 06 Jan 2016 14:00:00 + 0100
+
+opsi-configed (4.0.6.4.1-2) ; stable; urgency=low
+
+  * added Linux wait for package lock
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Dec 2015 15:00:00 + 0100
+
+opsi-configed (4.0.6.4.1-1)
+
+  * ??
+
+-- rupert ??
+
+opsi-configed (4.0.6.4.0)
+  * delayed wake on lan on several depots
+
+-- rupert ??
+
+opsi-configed (4.0.6.3.10-2)
+  * experiment with startjava.exe
+
+-- rupert ??
+
+opsi-configed (4.0.5.8-2) ; testing; urgency=low
+
+  * script changes for win10
+
+-- d.oertel <d.oertel@uib.de> Tue, 30 Jun 2015 15:00:00 + 0100
+
+opsi-configed (4.0.5.8-1) testing; urgency=medium
+  * replace terminating '.' or ' ' in path string for byAudit path
+    by '_' (requires bootimage 4.0.6)
+  * extended create client dialog
+  * reload function for client table
+  * load productPropertyState by getRawData
+  * removed exception of ReachableUpdate when updating the model
+  * fix: on host refresh, a host configs refresh is necessary
+  * configed default logdir for windows move to localappdata dir
+  * hostparameter editor leaked and reached window handle maximum,
+    fixed by multiton pattern
+  * on authentication password corection was not observed
+  * in case of querysavedsearch we omit any console output
+  * with depot properties editing, a depot selection is kept when
+    changing product
+  * fixed that the connection state was not correctly identified which
+    led to errors in file backend
+  * WAN config by checkbox
+  * option for case sensitive search
+  * wan config is internally handled like other configs
+
+-- Rupert Roeder <r.roeder@uib.de> Fri, 17 Apr 2015 13:58:44 +0200
+
+opsi-configed_4.0.5.4.4-2 ; testing; urgency=low
+
+  * add Support for Installing on Linux
+
+-- d.oertel <d.oertel@uib.de> Wed, 04 Mar 2015 15:00:00 + 0100
+
+opsi-configed_4.0.5.0.8_5; testing; urgency=low
+
+   * log file in c:\opsi.org\log
+   * set status to failed on copy error
+
+-- r.roeder <r.roeder@uib.de> Thu, 24 Jul 2014 15:33:43 + 0100
+
+opsi-configed_4.0.4.2.4; testing; urgency=low
+
+   * test version
+
+ -- r.roeder <r.roeder@uib.de> Wed, 26 Mar 2014 14:33:43 + 0100
+
+opsi-configed_4.0.3.3.4-1 ; stable; urgency=low
+
+  * Downgrade to Stable Version of opsi-configed: For local installation of configed to workarround the issue from Oracle Java Security Update with not signed jar-Files.
+
+ -- d.oertel <d.oertel@uib.de> Tue, 17 Dec 2013 21:33:43 + 0100
+
+opsi-configed_4.0.4.0.13-1 ; stable; urgency=low
+
+  * Initial copy
+
+ -- d.oertel <d.oertel@uib.de> Tue, 17 Dec 2013 21:33:43 + 0100
+
+
+
+   * memory request and check reachable interval as properties
+-- r.roeder <r.roeder@uib.de> Tue, 15 Jul 2014 11:33:43 + 0100
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
