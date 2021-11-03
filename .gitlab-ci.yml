@@ -109,6 +109,7 @@ compile opsi-script macos:
       # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+
 codesign opsi-script windows:
   stage: codesign
   tags:
@@ -122,7 +123,7 @@ codesign opsi-script windows:
     - echo "Code signing opsi-script for windows"
     - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\*.exe
     - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\*.exe
-    artifacts:
+  artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
       - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
@@ -163,6 +164,7 @@ codesign opsi-script macos:
       # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
+
 opsi-script-test windows:
   stage: test_windows
   tags:
@@ -181,6 +183,7 @@ opsi-script-test windows:
     #- ssh $USERNAME@bonifax.uib.gmbh #work this out
     #- opsi-admin -d fire_Event OnDemand opsi-script-test setup # work this out
     #- git clone opsi-script-test
+
 
 opsi-script Windows to binaryindex:
   stage: binaryindex
