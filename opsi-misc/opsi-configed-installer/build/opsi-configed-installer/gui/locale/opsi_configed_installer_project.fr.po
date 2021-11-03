@@ -1,0 +1,260 @@
+# Translators:
+# Benoit Mortier <benoit.mortier@fusiondirectory.org>, 2021
+# Niko Wenselowski, 2021
+# Jinene Laajili <j.laajili@uib.de>, 2021
+msgid ""
+msgstr ""
+"Last-Translator: Jinene Laajili <j.laajili@uib.de>, 2021\n"
+"Language-Team: French (https://www.transifex.com/opsi-org/teams/35141/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: opsi_configed_installer_resourcestrings.rsback
+msgctxt "opsi_configed_installer_resourcestrings.rsback"
+msgid " < back "
+msgstr " < Retour "
+
+#: opsi_configed_installer_resourcestrings.rscapdistr
+msgctxt "opsi_configed_installer_resourcestrings.rscapdistr"
+msgid "Distribution"
+msgstr "Distribution"
+
+#: opsi_configed_installer_resourcestrings.rscapquery
+msgctxt "opsi_configed_installer_resourcestrings.rscapquery"
+msgid "Query"
+msgstr "Requête"
+
+#: opsi_configed_installer_resourcestrings.rscapquery2
+msgctxt "opsi_configed_installer_resourcestrings.rscapquery2"
+msgid "Query (part 2)"
+msgstr "Requête (partie 2)"
+
+#: opsi_configed_installer_resourcestrings.rscapquery3
+msgctxt "opsi_configed_installer_resourcestrings.rscapquery3"
+msgid "Query (part 3)"
+msgstr "Requête (partie 3)"
+
+#: opsi_configed_installer_resourcestrings.rscapquerydhcp
+msgctxt "opsi_configed_installer_resourcestrings.rscapquerydhcp"
+msgid "Query (dhcp)"
+msgstr "Requête (DHCP)"
+
+#: opsi_configed_installer_resourcestrings.rscapqueryuserinfo
+msgctxt "opsi_configed_installer_resourcestrings.rscapqueryuserinfo"
+msgid "Query (user info)"
+msgstr "Requête (info. utilisateur)"
+
+#: opsi_configed_installer_resourcestrings.rscarryout
+msgctxt "opsi_configed_installer_resourcestrings.rscarryout"
+msgid ""
+"To carry out the remaining installation automatically, we need some "
+"information first."
+msgstr ""
+"Pour effectuer automatiquement le restant de l'installation, nous avons "
+"d'abord besoin de quelques informations."
+
+#: opsi_configed_installer_resourcestrings.rscorrect
+msgctxt "opsi_configed_installer_resourcestrings.rscorrect"
+msgid ""
+"If this is correct, please click \"next >\" to continue. If not, please edit "
+"the distribution and then continue with \"next >\"."
+msgstr ""
+"Si cela est correct, veuillez cliquer sur \"Suivant>\" pour continuer. "
+"Sinon, veuillez modifier la distribution et continuer avec \"Suivant>\"."
+
+#: opsi_configed_installer_resourcestrings.rscreaterepo
+msgctxt "opsi_configed_installer_resourcestrings.rscreaterepo"
+msgid "Creating repository..."
+msgstr "Création du référentiel ..."
+
+#: opsi_configed_installer_resourcestrings.rscustom
+msgctxt "opsi_configed_installer_resourcestrings.rscustom"
+msgid "Custom"
+msgstr "Personnaliser"
+
+#: opsi_configed_installer_resourcestrings.rsdistr
+msgctxt "opsi_configed_installer_resourcestrings.rsdistr"
+msgid "We recognized the following distribution on this computer:"
+msgstr "On a reconnu la distribution suivante sur cet ordinateur:"
+
+#: opsi_configed_installer_resourcestrings.rsfinish
+msgctxt "opsi_configed_installer_resourcestrings.rsfinish"
+msgid " finish "
+msgstr " Terminer "
+
+#: opsi_configed_installer_resourcestrings.rsinfodistribution
+msgctxt "opsi_configed_installer_resourcestrings.rsinfodistribution"
+msgid "The following distributions are supported:"
+msgstr "Les distributions suivantes sont prises en charge:"
+
+#: opsi_configed_installer_resourcestrings.rslog
+msgctxt "opsi_configed_installer_resourcestrings.rslog"
+msgid "You can find the log files here:"
+msgstr "Vous pouvez trouver les fichiers journaux ici:"
+
+#: opsi_configed_installer_resourcestrings.rsnext
+msgctxt "opsi_configed_installer_resourcestrings.rsnext"
+msgid " next > "
+msgstr " Suivant > "
+
+#: opsi_configed_installer_resourcestrings.rsno
+msgctxt "opsi_configed_installer_resourcestrings.rsno"
+msgid "No"
+msgstr "No"
+
+#: opsi_configed_installer_resourcestrings.rsnosupport
+msgctxt "opsi_configed_installer_resourcestrings.rsnosupport"
+msgid ""
+"Unfortunately, opsi does not support your distribution. Only the following "
+"distributions are supported:"
+msgstr ""
+"Malheureusement, opsi ne prend pas en charge votre distribution. Seules les "
+"distributions suivantes sont prises en charge:"
+
+#: opsi_configed_installer_resourcestrings.rsoverview
+msgctxt "opsi_configed_installer_resourcestrings.rsoverview"
+msgid "Overview"
+msgstr "Aperçu"
+
+#: opsi_configed_installer_resourcestrings.rspassword
+msgctxt "opsi_configed_installer_resourcestrings.rspassword"
+msgid "Password"
+msgstr "Mot de passe"
+
+#: opsi_configed_installer_resourcestrings.rsrights
+msgctxt "opsi_configed_installer_resourcestrings.rsrights"
+msgid ""
+"Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr ""
+"L'authentification est requise pour installer le serveur opsi. Qui êtes-vous "
+"connecté en tant?"
+
+#: opsi_configed_installer_resourcestrings.rssellanguage
+msgctxt "opsi_configed_installer_resourcestrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
+
+#: opsi_configed_installer_resourcestrings.rssetup
+msgctxt "opsi_configed_installer_resourcestrings.rssetup"
+msgid "Please select a setup type:"
+msgstr "Veuillez sélectionner un type de configuration:"
+
+#: opsi_configed_installer_resourcestrings.rsshowpassword
+msgctxt "opsi_configed_installer_resourcestrings.rsshowpassword"
+msgid "Show password"
+msgstr "Montrer le mot de passe"
+
+#: opsi_configed_installer_resourcestrings.rsstandard
+msgctxt "opsi_configed_installer_resourcestrings.rsstandard"
+msgid "Standard"
+msgstr "Standard"
+
+#: opsi_configed_installer_resourcestrings.rsstartinstallation
+msgctxt "opsi_configed_installer_resourcestrings.rsstartinstallation"
+msgid "Finally click \"finish\" to start the installation of opsi-server."
+msgstr ""
+"Enfin, cliquez sur \"Terminer\" pour démarrer l'installation du serveur opsi."
+
+#: opsi_configed_installer_resourcestrings.rswait
+msgctxt "opsi_configed_installer_resourcestrings.rswait"
+msgid "Please wait for the installation to start..."
+msgstr "Veuillez attendre que l'installation commence..."
+
+#: opsi_configed_installer_resourcestrings.rswelcome
+msgid "Welcome to the installation of the opsi-configed on this computer!"
+msgstr "Bienvenue à l'installation de opsi-configed sur cet ordinateur!"
+
+#: opsi_configed_installer_resourcestrings.rswrongpassword
+msgctxt "opsi_configed_installer_resourcestrings.rswrongpassword"
+msgid ""
+"Authentication failed.\n"
+"Please check your password!"
+msgstr ""
+"Authentification échouée.\n"
+"Veuillez vérifier votre mot de passe!\n"
+
+#: opsi_configed_installer_resourcestrings.rsyes
+msgctxt "opsi_configed_installer_resourcestrings.rsyes"
+msgid "Yes"
+msgstr "Oui"
+
+#: tconfigedinstaller.btnback.caption
+msgctxt "tconfigedinstaller.btnback.caption"
+msgid " < back "
+msgstr " < Retour "
+
+#: tconfigedinstaller.btnfinish.caption
+msgctxt "tconfigedinstaller.btnfinish.caption"
+msgid "BtnFinish"
+msgstr ""
+
+#: tconfigedinstaller.btnnext.caption
+msgctxt "tconfigedinstaller.btnnext.caption"
+msgid " next > "
+msgstr " Suivant > "
+
+#: tconfigedinstaller.caption
+msgid "Opsi Configed Installer"
+msgstr ""
+
+#: tconfigedinstaller.labelcarryout.caption
+msgctxt "tconfigedinstaller.labelcarryout.caption"
+msgid ""
+"To carry out the remaing installation automatically, we need some "
+"information first."
+msgstr ""
+
+#: tconfigedinstaller.labelsellanguage.caption
+msgctxt "tconfigedinstaller.labelsellanguage.caption"
+msgid "Please choose a language for this setup program:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
+
+#: tconfigedinstaller.labelwelcome.caption
+msgctxt "tconfigedinstaller.labelwelcome.caption"
+msgid "Welcome to the installation of opsi-configed on this computer!"
+msgstr "Bienvenu à l'installation du serveur opsi sur cet ordinateur !"
+
+#: tpassword.btnback.caption
+msgctxt "tpassword.btnback.caption"
+msgid " < back "
+msgstr " < Retour "
+
+#: tpassword.btnfinish.caption
+msgctxt "tpassword.btnfinish.caption"
+msgid " finish "
+msgstr " Terminer "
+
+#: tpassword.caption
+msgid "Authentication required"
+msgstr ""
+
+#: tpassword.checkboxshowpassword.caption
+msgctxt "tpassword.checkboxshowpassword.caption"
+msgid "Show password"
+msgstr "Montrer le mot de passe"
+
+#: tpassword.labelpassword.caption
+msgctxt "tpassword.labelpassword.caption"
+msgid "Password"
+msgstr "Mot de passe"
+
+#: tpassword.labelrights.caption
+msgctxt "tpassword.labelrights.caption"
+msgid ""
+"Authentication is required to install opsi-server. Who are you logged in as?"
+msgstr ""
+"L'authentification est requise pour installer le serveur opsi. Qui êtes-vous "
+"connecté en tant?"
+
+#: tpassword.radiobtnroot.caption
+msgid "Root"
+msgstr ""
+
+#: tpassword.radiobtnsudo.caption
+msgid "Sudo"
+msgstr ""
+
+#: twait.labelwait.caption
+msgid "LabelWait"
+msgstr ""

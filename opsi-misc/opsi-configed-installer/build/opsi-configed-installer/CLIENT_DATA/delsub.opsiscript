@@ -1,0 +1,18 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+encoding=utf8
+
+
+include_append "%scriptpath%\delsub_" + $OS$ + ".opsiscript"
+
+sub_delete_files
+
+
+comment "Delete program shortcuts for OS " + $OS$
+;DefVar $OpsiSoftwareLinkfolder$
+;Set $OpsiSoftwareLinkfolder$ = "opsi.org"
+sub_delete_links
+

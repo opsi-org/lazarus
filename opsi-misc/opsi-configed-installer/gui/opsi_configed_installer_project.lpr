@@ -16,7 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 begin
   RequireDerivedFormResource := True;
   Application.Title:='OpsiConfigedInstallerGui';
-  Application.Scaled := True;
+  Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TConfigedInstaller, ConfigedInstaller);
   Application.CreateForm(TPassword, Password);

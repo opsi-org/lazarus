@@ -1,0 +1,37 @@
+#!/bin/bash
+
+srcDir="opsi-configed-installer"
+dstFile="opsi_configed_installer_archive.sh"
+version=""
+
+[ $# -gt 0 ] && srcDir="$1"
+[ $# -gt 1 ] && dstFile="$2"
+[ $# -gt 2 ] && version="$3"
+
+echo "Create self extracting archive..."
+
+workDir="$(mktemp -d)"
+cp -R "${srcDir}" "${workDir}/opsi-configed-installer"
+# echo "${srcDir}" "${workDir}/opsi-configed-installer"
+cd "${workDir}"
+data=$(tar cjv opsi-configed-installer | base64 -w 0)
+# echo "${data}"
+cd - >/dev/null
+rm -r "${workDir}"
+
+cat <<EOF > "${dstFile}"
+#!/bin/sh
+echo "Starting opsi configed installer${version}, please wait ..."
+cwd="\$(pwd)"
+tmpDir="/tmp/opsi-configed-installer-\$\$"
+mkdir -p "\${tmpDir}"
+cd "\${tmpDir}"
+echo "$data" | base64 -d | tar xj
+cd opsi-configed-installer/gui/
+./opsi_configed_installer_project
+cd "\$(pwd)"
+rm -r "\${tmpDir}"
+EOF
+
+chmod +x ${dstFile}
+
