@@ -15016,6 +15016,31 @@ begin
   end
   *)
 
+  else if LowerCase(s) = LowerCase('ReadTOMLFile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            s1 := ExpandFileName(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+            LogDatei.log
+            ('    Reading TOML file  "' +  s1 , LevelComplete);
+            StringResult := ReadTOMLFile(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error in ReadTOMLFile "' +
+                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+            end;
+          end;
+
+        end;
+  end
+
   else if LowerCase(s) = LowerCase('GetValueFromTOMLFile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
