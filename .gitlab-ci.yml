@@ -14,13 +14,13 @@ variables:
 
   PLATFORM:
     value: "all"
-    description: "For which build modes should the lazarus project be compiled?  
+    description: "For which build modes should the lazarus project be compiled?
     all: build project for all platforms (Win32, Win64, Linux, MacOS)
     Windows (Linux, MacOS):  build project for the specified platform only"
-  
-# Control of the Pipline  
+
+# Control of the Pipline
 workflow:
-  rules: 
+  rules:
     - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
     # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
       when: always
@@ -43,9 +43,9 @@ compile opsi-script windows:
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
       when: always
-  script: 
+  script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
@@ -67,9 +67,9 @@ compile opsi-script linux:
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Linux")
       when: always
-  script: 
+  script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
@@ -92,9 +92,9 @@ compile opsi-script macos:
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
       when: always # change to always if lazbuild works on masos
-  script: 
+  script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
@@ -109,7 +109,27 @@ compile opsi-script macos:
       # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
       # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
 
-codesign ops-script macos:
+codesign opsi-script windows:
+  stage: codesign
+  tags:
+    - laz-win10
+  variables:
+    PROJECT_REPOSITORY_PATH: "opsi-script"
+  rules:
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
+      when: always
+  script:
+    - echo "Code signing opsi-script for windows"
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\*.exe
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\*.exe
+    artifacts:
+    name: "opsi-script $BINARY_VERSION windows"
+    paths:
+      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+
+
+codesign opsi-script macos:
   stage: codesign
   tags:
     - laz-macos
@@ -117,18 +137,18 @@ codesign ops-script macos:
     PROJECT_REPOSITORY_PATH: "opsi-script"
     ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
       when: always
   script:
-    #Code signing opsi-script 
-    - echo "Code signing opsi-script"
+    #Code signing opsi-script
+    - echo "Code signing opsi-script for macos"
     - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
     - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
     - codesign --verify --verbose --strict $PATH_TO_BINARY
     - codesign -dv -r- $PATH_TO_BINARY
     - codesign -vvv --deep --strict $PATH_TO_BINARY
-    #Code signing opsi-script-gui 
+    #Code signing opsi-script-gui
     - echo "Code signing opsi-script-gui"
     - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
@@ -150,7 +170,7 @@ opsi-script-test windows:
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
       when: never # change to always if job script/rules are their
   script:
     - echo "opsi-script-test on windows"
@@ -167,11 +187,11 @@ opsi-script Windows to binaryindex:
   tags:
     - laz-linux
   rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
       when: never # change to always if job script/rules are their
   script:
-    - echo "deploy to binaryindex" 
-  
+    - echo "deploy to binaryindex"
+
 #***************************************#
 #  opsi-client-systray pipline                  #
 #***************************************#
@@ -183,9 +203,9 @@ compile opsi-client-systray windows:
     PROJECT_REPOSITORY_PATH: "helper\\opsi-client-systray"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows") 
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Windows")
       when: always
-  script: 
+  script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Win32"
@@ -206,9 +226,9 @@ compile opsi-client-systray linux:
     PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Linux") 
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "Linux")
       when: always
-  script: 
+  script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
@@ -228,9 +248,9 @@ compile opsi-client-systray macos:
     PROJECT_REPOSITORY_PATH: "helper/opsi-client-systray/"
     BINARY_NAME: "opsi-client-systray"
   rules:
-    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "MacOS") 
+    - if: ($PROJECT_NAME == "opsi_client_systray") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
       when: always # change to always if lazbuild works on masos
-  script: 
+  script:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
