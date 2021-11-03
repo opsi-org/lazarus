@@ -19327,6 +19327,34 @@ begin
             end;
   end
 
+  //function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+  else if Skip('ConvertTOMLtoJSON', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s1 := ExpandFileName(s1);
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML file  "' +  s1 + '" to JSON file "' + s2, LevelComplete);
+                BooleanResult := ConvertTOMLtoJSON(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLtoJSON from "' +
+                    s1 + '" to "'+ s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                end;
+              end;
+            end;
+  end
+
   (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
