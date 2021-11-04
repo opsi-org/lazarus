@@ -21,7 +21,7 @@ variables:
 # Control of the Pipline
 workflow:
   rules:
-    - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
+    # - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
     # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
       when: always
 
@@ -204,10 +204,10 @@ opsi-script to binaryindex:
     - ls -lah upload/*/opsi-script
     - VERSION="$(opsi-dev-tool --binary-version upload/win32/opsi-script/opsi-script.exe)"
     #- VERSION="$(grep MajorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep MinorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep RevisionNr opsiscript.lpi | tr -d -c [0-9]).$(grep BuildNr opsiscript.lpi | tr -d -c [0-9])"
-    - opsi-dev-tool -l info --binary-push upload/win32/opsi-script opsi-script-bin windows x86 "${VERSION}~0"
-    - opsi-dev-tool -l info --binary-push upload/win64/opsi-script opsi-script-bin windows x64 "${VERSION}~0"
-    - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${VERSION}~0"
-    - opsi-dev-tool -l info --binary-push upload/mac64/opsi-script opsi-script-bin darwin x64 "${VERSION}~0"
+    - opsi-dev-tool -l info --binary-push upload/win32/opsi-script opsi-script-bin windows x86 "${VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/win64/opsi-script opsi-script-bin windows x64 "${VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${VERSION}"
+    - opsi-dev-tool -l info --binary-push upload/mac64/opsi-script opsi-script-bin darwin x64 "${VERSION}"
 
 
 #***************************************#
