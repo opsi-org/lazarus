@@ -21,9 +21,9 @@ variables:
 # Control of the Pipline
 workflow:
   rules:
-    # - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
     # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
-      when: manual
+      when: always
 
 stages:
   - build
