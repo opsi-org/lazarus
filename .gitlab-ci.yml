@@ -77,6 +77,9 @@ compile opsi-script linux:
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+    - echo "Code signing opsi-script for windows"
+    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.ex
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"
     paths:
@@ -102,6 +105,22 @@ compile opsi-script macos:
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
     - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+    #Code signing opsi-script
+    - echo "Code signing opsi-script for macos"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
+    #Code signing opsi-script-gui
+    - echo "Code signing opsi-script-gui"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
     paths:
@@ -116,7 +135,7 @@ codesign opsi-script windows:
     - laz-win10
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
-      when: always
+      when: never #disabled for the moment due to problems with similar pathes of different jobs
   script:
     - echo "Code signing opsi-script for windows"
     - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe
@@ -137,7 +156,7 @@ codesign opsi-script macos:
     ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: always
+      when: never #disabled for the moment due to problems with similar pathes of difefrent jobs
   script:
     #Code signing opsi-script
     - echo "Code signing opsi-script for macos"
