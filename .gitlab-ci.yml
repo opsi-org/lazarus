@@ -202,7 +202,8 @@ opsi-script to binaryindex:
     - cp compiler_out/binarys/x86_64-darwin/opsi-script upload/mac64/opsi-script
     - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
     - ls -lah upload/*/opsi-script
-    - VERSION="$(grep MajorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep MinorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep RevisionNr opsiscript.lpi | tr -d -c [0-9]).$(grep BuildNr opsiscript.lpi | tr -d -c [0-9])"
+    - VERSION="$(opsi-dev-tool --binary-version upload/win32/opsi-script/opsi-script.exe)"
+    #- VERSION="$(grep MajorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep MinorVersionNr opsiscript.lpi | tr -d -c [0-9]).$(grep RevisionNr opsiscript.lpi | tr -d -c [0-9]).$(grep BuildNr opsiscript.lpi | tr -d -c [0-9])"
     - opsi-dev-tool -l info --binary-push upload/win32/opsi-script opsi-script-bin windows x86 "${VERSION}~0"
     - opsi-dev-tool -l info --binary-push upload/win64/opsi-script opsi-script-bin windows x64 "${VERSION}~0"
     - opsi-dev-tool -l info --binary-push upload/lin64/opsi-script opsi-script-bin linux x64 "${VERSION}~0"
