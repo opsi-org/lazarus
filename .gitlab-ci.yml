@@ -121,8 +121,8 @@ codesign opsi-script windows:
       when: always
   script:
     - echo "Code signing opsi-script for windows"
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\*.exe
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\*.exe
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\opsi-script.exe
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
