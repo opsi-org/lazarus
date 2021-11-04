@@ -114,19 +114,17 @@ codesign opsi-script windows:
   stage: codesign
   tags:
     - laz-win10
-  variables:
-    PROJECT_REPOSITORY_PATH: "opsi-script"
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
       when: always
   script:
     - echo "Code signing opsi-script for windows"
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
-      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
@@ -185,15 +183,25 @@ opsi-script-test windows:
     #- git clone opsi-script-test
 
 
-opsi-script Windows to binaryindex:
+opsi-script to binaryindex:
   stage: binaryindex
   tags:
     - laz-linux
-  rules:
-    - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "Windows")
-      when: never # change to always if job script/rules are their
+  when: manual
   script:
     - echo "deploy to binaryindex"
+    - rm -rf upload
+    - opsi-dev-tool -l info --binary-pull
+    - cp compiler_out/binarys/i386-win32/opsi-script.exe upload/win32/opsi-script
+    - cp upload/win32/opsi-script/opsi-script.exe upload/win32/opsi-script/winst32.exe
+    - cp compiler_out/binarys/x86_64-win64/opsi-script.exe upload/win64/opsi-script
+    - cp upload/win64/opsi-script/opsi-script.exe upload/win64/opsi-script/winst64.exe
+    - cp compiler_out/binarys/x86_64-linux/opsi-script upload/lin64/opsi-script
+    - cp compiler_out/binarys/x86_64-linux/opsi-script-gui upload/lin64/opsi-script
+    - cp compiler_out/binarys/x86_64-darwin/opsi-script upload/mac64/opsi-script
+    - cp compiler_out/binarys/x86_64-darwin/opsi-script-gui upload/mac64/opsi-script
+    - ls -lah upload/*/opsi-script
+
 
 #***************************************#
 #  opsi-client-systray pipline                  #
