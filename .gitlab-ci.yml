@@ -138,12 +138,17 @@ codesign opsi-script windows:
       when: never #disabled for the moment due to problems with similar pathes of different jobs
   script:
     - echo "Code signing opsi-script for windows"
-    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+    - if (Test-Path -Path 'opsi-script\codesigned') { Remove-Item -Path 'opsi-script\codesigned' -Recurs }
+    - New-Item -Path 'opsi-script\codesigned\i386-win32' -ItemType Directory
+    - New-Item -Path 'opsi-script\codesigned\x86_64-win64' -ItemType Directory
+    - cp opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe opsi-script\codesigned\i386-win32\opsi-script.exe
+    - cp opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe opsi-script\codesigned\x86_64-win64\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign opsi-script\codesigned\i386-win32\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign opsi-script\codesigned\x86_64-win64\opsi-script.exe
   artifacts:
-    name: "opsi-script $BINARY_VERSION windows"
+    name: "opsi-script $BINARY_VERSION windows codesigned"
     paths:
-      - opsi-script\compiler_out\binarys\ #i386-win32\opsi-script.exe
+      - opsi-script\codesigned\ #i386-win32\opsi-script.exe
       # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
 
 
