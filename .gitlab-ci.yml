@@ -23,7 +23,7 @@ workflow:
   rules:
     # - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
     # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
-      when: always
+      when: manual
 
 stages:
   - build
