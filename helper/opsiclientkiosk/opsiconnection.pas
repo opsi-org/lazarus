@@ -38,6 +38,7 @@ type
     procedure SetClientdMode(ClientID:string); //clientd mode
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     //procedure closeConnection;
+
   public
     MyClientID,
     MyHostkey,
@@ -53,6 +54,7 @@ type
     procedure DoActionsOnDemand(var aErrorMessage: string);
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
+    function GetDepotID:string;
     procedure SelectProduct(Index:integer);
     function GetProductValueAsString(key:string):string;
     function GetProductValueAsInteger(key:string):integer;
@@ -254,6 +256,15 @@ begin
   end;
 end;
 
+function TOpsiConnection.GetDepotID: string;
+var
+  JSONResponse: string;
+begin
+  JSONResponse := MyOpsiMethodCall('getDepotId', [myclientid]);
+  //JSONResponse := MyOpsiMethodCall('getConfigDataFromOpsiclientd', ['get_depot_id']);
+  Result := GetJSON(JSONResponse).FindPath('result').AsString;
+end;
+
 procedure TOpsiConnection.GetProductInfosFromServer;
 begin
   try
@@ -307,7 +318,8 @@ begin
   Result := JSONObjectProducts.Count;
 end;
 
-constructor TOpsiConnection.Create(fClientdMode:boolean; const ClientID:string = ''; fagent:string = '');overload;
+constructor TOpsiConnection.Create(fClientdMode: boolean;
+  const ClientID: string; fagent: String);
 begin
   inherited Create;
   ClientdMode := fClientdMode;

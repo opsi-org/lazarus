@@ -1061,7 +1061,8 @@ begin
     FormProgressWindow.LabelDataLoad.Caption := rsConnectedTo + ' ' +
     OCKOpsiConnection.myservice_url + ' ' + rsAS + ' ' + OCKOpsiConnection.myclientid;
     StatusBar1.Panels[0].Text := rsConnectedTo + ' ' +
-      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid;
+      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid
+      + '; ' + 'depot: ' + OCKOpsiConnection.GetDepotID;
     FormProgressWindow.ProgressBar1.StepIt;
     Application.ProcessMessages; //FormProgressWindow.ProcessMess;
 end;
