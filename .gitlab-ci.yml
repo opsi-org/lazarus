@@ -9,7 +9,7 @@ variables:
     description: "Project name of the project the pipline should run on."
 
   BINARY_VERSION:
-    value: "4.12.4.22"
+    value: "4.12.4.30"
     description: "Version of the binary"
 
   PLATFORM:
@@ -33,6 +33,10 @@ stages:
   # - test_macos
   - binaryindex
 
+default:
+  before_script:
+    - echo "Execute this command before any 'script:' commands."
+
 #***************************************#
 #  opsi-script pipline                  #
 #***************************************#
@@ -53,11 +57,15 @@ compile opsi-script windows:
     - echo "Compiling $PROJECT_NAME for Win64"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+    - echo "Code signing opsi-script for windows"
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
+    - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\opsi-script.exe
   artifacts:
     name: "opsi-script $BINARY_VERSION windows"
     paths:
-      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\ #i386-win32\opsi-script.exe
-      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\
+      - $PROJECT_REPOSITORY_PATH\compiler_out\binarys\x86_64-win64\
+   
 
 
 compile opsi-script linux:
@@ -77,15 +85,11 @@ compile opsi-script linux:
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
     - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-    - echo "Code signing opsi-script for windows"
-    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\i386-win32\opsi-script.exe
-    - opsi-dev-tool -l info --signserver-sign opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.ex
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"
     paths:
-      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/
-      # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
-      # - \opsi-script\compiler_out\binarys\x86_64-win64\opsi-script.exe
+      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-linux/
+
 
 
 compile opsi-script macos:
@@ -94,10 +98,12 @@ compile opsi-script macos:
     - laz-macos
   variables:
     PROJECT_REPOSITORY_PATH: "opsi-script"
+    ENTITLEMENTS: "--entitlements $PROJECT_REPOSITORY_PATH/opsi-script.entitlements" #maybe needed later
   rules:
     - if: ($PROJECT_NAME == "opsiscript") && ($PLATFORM == "all" || $PLATFORM == "MacOS")
-      when: always # change to always if lazbuild works on masos
+      when: always
   script:
+    #---BUILD BINARIES---
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
@@ -105,7 +111,8 @@ compile opsi-script macos:
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
     - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
-    #Code signing opsi-script
+   
+    #---CODE SIGNING OPSI-SCRIPT---
     - echo "Code signing opsi-script for macos"
     - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
@@ -113,7 +120,8 @@ compile opsi-script macos:
     - codesign --verify --verbose --strict $PATH_TO_BINARY
     - codesign -dv -r- $PATH_TO_BINARY
     - codesign -vvv --deep --strict $PATH_TO_BINARY
-    #Code signing opsi-script-gui
+    
+    #---CODE SIGNING OPSI-SCRIPT-GUI---
     - echo "Code signing opsi-script-gui"
     - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
     # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
@@ -124,9 +132,7 @@ compile opsi-script macos:
   artifacts:
     name: "opsi-script $BINARY_VERSION macos"
     paths:
-      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/
-      # - $PROJECT_REPOSITORY_PATH/opsi-script #i386-win32\opsi-script.exe
-      # - $PROJECT_REPOSITORY_PATH/opsi-script-gui
+      - $PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/
 
 
 codesign opsi-script windows:
