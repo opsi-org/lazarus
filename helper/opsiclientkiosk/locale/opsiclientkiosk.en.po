@@ -129,6 +129,10 @@ msgstr "Connected to"
 msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 
+#: opsiclientkioskgui.rsdepot
+msgid "depot"
+msgstr ""
+
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
 msgstr "disabled"
@@ -225,6 +229,10 @@ msgstr "No updates found."
 #: opsiclientkioskgui.rsnow
 msgid "Now"
 msgstr "Now"
+
+#: opsiclientkioskgui.rson
+msgid "on"
+msgstr ""
 
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
@@ -368,6 +376,10 @@ msgstr "Help"
 msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Expert mode"
+
+#: tformhelpinfo.checkboxshowdepot.caption
+msgid "Show Depot"
+msgstr ""
 
 #: tformhelpinfo.labelcopy.caption
 msgid "CopyRight:"

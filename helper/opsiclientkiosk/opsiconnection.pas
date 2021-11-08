@@ -26,6 +26,7 @@ type
   private
     //opsiProducts:ISuperObject;
     JSONDataForClient : TJSONData;
+    JSONConfigDataFromOpsiclientd: TJSONData;
     JSONObjectProducts:TJSONObject;
     JSONObjectProduct:TJSONObject;
     JSONObjectConfigStates:TJSONObject;
@@ -34,6 +35,7 @@ type
     //opsiProduct:ISuperObject;
     function GetDataFromNewDataStructure:boolean;
     function GetDataFromOldDataStructure:boolean;
+    procedure GetConfigDataFromOPsiclientd;
     procedure SetConfigdMode; //configd mode
     procedure SetClientdMode(ClientID:string); //clientd mode
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -43,6 +45,7 @@ type
     MyClientID,
     MyHostkey,
     MyError,
+    MyDepotID,
     MyService_URL: string;
     MyExitcode,
     MyLoglevel: integer;
@@ -54,7 +57,6 @@ type
     procedure DoActionsOnDemand(var aErrorMessage: string);
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
-    function GetDepotID:string;
     procedure SelectProduct(Index:integer);
     function GetProductValueAsString(key:string):string;
     function GetProductValueAsInteger(key:string):integer;
@@ -118,6 +120,7 @@ begin
   MyService_URL := 'https://localhost:4441/kiosk';
   MyHostkey := '';
   MyLoglevel := 7;
+  MyDepotID := '';
 end;
 
 
@@ -256,14 +259,24 @@ begin
   end;
 end;
 
-function TOpsiConnection.GetDepotID: string;
+procedure TOpsiConnection.GetConfigDataFromOPsiclientd;
 var
   JSONResponse: string;
 begin
-  JSONResponse := MyOpsiMethodCall('getDepotId', [myclientid]);
-  //JSONResponse := MyOpsiMethodCall('getConfigDataFromOpsiclientd', ['get_depot_id']);
-  Result := GetJSON(JSONResponse).FindPath('result').AsString;
+  //JSONResponse := MyOpsiMethodCall('getDepotId', [myclientid]);
+  JSONResponse := '';
+  JSONResponse := MyOpsiMethodCall('getConfigDataFromOpsiclientd', []);
+  if JSONResponse <> '' then
+  begin
+    JSONConfigDataFromOpsiclientd := GetJSON(JSONResponse);
+    if JSONConfigDataFromOpsiclientd.FindPath('error').IsNull then
+    begin
+      MyDepotID := JSONConfigDataFromOpsiclientd.FindPath('result').FindPath('depot_id').AsString;
+      {parse here further config data from opsiclientd}
+    end;
+  end;
 end;
+
 
 procedure TOpsiConnection.GetProductInfosFromServer;
 begin
@@ -336,10 +349,11 @@ begin
     LogDatei.log('host_key=' + myhostkey, LLdebug3);
     OpsiData := TOpsi4Data.Create;
     LogDatei.log('opsidata created', LLInfo);
-    OpsiData.SetActualClient(myclientid);
+    //OpsiData.SetActualClient(myclientid);
     OpsiData.InitOpsiConf(myservice_url, myclientid,
       myhostkey, '', '', '', fagent);
     LogDatei.log('opsidata initialized', LLNotice);
+    GetConfigDataFromOpsiclientd;
   except
     LogDatei.log('Error while initializing opsiconnection', LLError);
     ShowMessage(rsErrorIntConnection);
@@ -349,6 +363,7 @@ end;
 destructor TOpsiConnection.Destroy;
 begin
   JSONDataForClient.Free;
+  JSONConfigDataFromOpsiclientd.Free;
   if OpsiData <> nil then FreeAndNil(OpsiData);
   inherited Destroy;
 end;

@@ -3,6 +3,7 @@
 {"hash":121774796,"name":"tformhelpinfo.speedbuttonmanual.caption","sourcebytes":[111,112,115,105,32,109,97,110,117,97,108],"value":"opsi manual"},
 {"hash":1371,"name":"tformhelpinfo.buttonclose.caption","sourcebytes":[79,107],"value":"Ok"},
 {"hash":153867109,"name":"tformhelpinfo.checkboxexpertmode.caption","sourcebytes":[69,120,112,101,114,116,32,109,111,100,101],"value":"Expert mode"},
+{"hash":156195332,"name":"tformhelpinfo.checkboxshowdepot.caption","sourcebytes":[83,104,111,119,32,68,101,112,111,116],"value":"Show Depot"},
 {"hash":262945971,"name":"tformhelpinfo.labelcredits.caption","sourcebytes":[76,97,98,101,108,67,114,101,100,105,116,115],"value":"LabelCredits"},
 {"hash":185597727,"name":"tformhelpinfo.labelcreditsto.caption","sourcebytes":[67,114,101,100,105,116,115,32,116,111],"value":"Credits to"},
 {"hash":10847611,"name":"tformhelpinfo.labelname.caption","sourcebytes":[111,112,115,105,32,99,108,105,101,110,116,32,107,105,111,115,107],"value":"opsi client kiosk"},

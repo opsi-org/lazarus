@@ -15,6 +15,7 @@ type
   TFormHelpInfo = class(TForm)
     ButtonClose: TButton;
     CheckBoxExpertMode: TCheckBox;
+    CheckBoxShowDepot: TCheckBox;
     ImageLogo: TImage;
     LabelModeInfo: TLabel;
     LabelMode: TLabel;

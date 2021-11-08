@@ -10,7 +10,7 @@ object FormHelpInfo: TFormHelpInfo
   Color = clForm
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.2'
   object SpeedButtonManual: TSpeedButton
     Left = 0
     Height = 52
@@ -342,11 +342,21 @@ object FormHelpInfo: TFormHelpInfo
       Left = 5
       Height = 25
       Top = 5
-      Width = 109
+      Width = 87
       Align = alLeft
       BorderSpacing.Around = 5
       Caption = 'Expert mode'
       TabOrder = 1
+    end
+    object CheckBoxShowDepot: TCheckBox
+      Left = 97
+      Height = 25
+      Top = 5
+      Width = 84
+      Align = alLeft
+      BorderSpacing.Around = 5
+      Caption = 'Show Depot'
+      TabOrder = 2
     end
   end
   object PanelCredits: TPanel
@@ -362,19 +372,18 @@ object FormHelpInfo: TFormHelpInfo
     TabOrder = 1
     object LabelCredits: TLabel
       Left = 5
-      Height = 19
-      Top = 29
+      Height = 15
+      Top = 25
       Width = 537
       Align = alTop
       BorderSpacing.Around = 5
       Caption = 'LabelCredits'
       Font.Height = 15
-      ParentColor = False
       ParentFont = False
     end
     object LabelCreditsTo: TLabel
       Left = 5
-      Height = 19
+      Height = 15
       Top = 5
       Width = 537
       Align = alTop
@@ -382,7 +391,6 @@ object FormHelpInfo: TFormHelpInfo
       Caption = 'Credits to'
       Font.Height = 15
       Font.Style = [fsBold]
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -632,37 +640,35 @@ object FormHelpInfo: TFormHelpInfo
       TabOrder = 0
       object LabelName: TLabel
         Left = 0
-        Height = 33
+        Height = 25
         Top = 0
         Width = 414
         Align = alTop
         Caption = 'opsi client kiosk'
         Font.Height = 27
         Font.Style = [fsBold]
-        ParentColor = False
         ParentFont = False
       end
       object PanelDescriptions: TPanel
         Left = 0
-        Height = 111
-        Top = 49
+        Height = 119
+        Top = 41
         Width = 112
         Align = alLeft
         BevelOuter = bvNone
-        ClientHeight = 111
+        ClientHeight = 119
         ClientWidth = 112
         TabOrder = 0
         object LabelUibWeb: TLabel
           Left = 0
-          Height = 18
-          Top = 93
+          Height = 13
+          Top = 106
           Width = 112
           Align = alBottom
           BorderSpacing.Top = 10
           Caption = 'LabelUibWeb'
           Font.Color = clHighlight
           Font.Height = 14
-          ParentColor = False
           ParentFont = False
           OnClick = LabelUibWebClick
           OnMouseEnter = LabelUibWebMouseEnter
@@ -670,63 +676,59 @@ object FormHelpInfo: TFormHelpInfo
         end
         object LabelLang: TLabel
           Left = 0
-          Height = 19
-          Top = 39
+          Height = 15
+          Top = 35
           Width = 112
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'Display language:'
           Font.Style = [fsBold]
-          ParentColor = False
           ParentFont = False
         end
         object LabelCopy: TLabel
           Left = 0
-          Height = 19
-          Top = 68
+          Height = 15
+          Top = 60
           Width = 112
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'CopyRight:'
           Font.Style = [fsBold]
-          ParentColor = False
           ParentFont = False
         end
         object LabelMode: TLabel
           Left = 0
-          Height = 19
+          Height = 15
           Top = 10
           Width = 112
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'Mode:'
           Font.Style = [fsBold]
-          ParentColor = False
           ParentFont = False
         end
       end
       object PanelInfoContent: TPanel
         Left = 117
-        Height = 111
-        Top = 49
+        Height = 119
+        Top = 41
         Width = 297
         Align = alLeft
         BorderSpacing.Left = 5
         BevelOuter = bvNone
-        ClientHeight = 111
+        ClientHeight = 119
         ClientWidth = 297
         TabOrder = 1
         object LabelOpsiWeb: TLabel
           Left = 0
-          Height = 18
-          Top = 93
+          Height = 13
+          Top = 106
           Width = 297
           Align = alBottom
           BorderSpacing.Top = 10
           Caption = 'LabelOpsiWeb'
           Font.Color = clHighlight
           Font.Height = 14
-          ParentColor = False
           ParentFont = False
           OnClick = LabelOpsiWebClick
           OnMouseEnter = LabelOpsiWebMouseEnter
@@ -734,26 +736,24 @@ object FormHelpInfo: TFormHelpInfo
         end
         object LabelLanguage: TLabel
           Left = 0
-          Height = 19
+          Height = 15
           Top = 21
           Width = 297
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelLanguage'
           Font.Height = 15
-          ParentColor = False
           ParentFont = False
         end
         object LabelCopyRight: TLabel
           Left = 0
-          Height = 19
-          Top = 50
+          Height = 15
+          Top = 46
           Width = 297
           Align = alTop
           BorderSpacing.Top = 10
           Caption = 'LabelCopyRight'
           Font.Height = 15
-          ParentColor = False
           ParentFont = False
         end
         object LabelModeInfo: TLabel
@@ -763,13 +763,12 @@ object FormHelpInfo: TFormHelpInfo
           Width = 297
           Align = alTop
           BorderSpacing.Top = 10
-          ParentColor = False
         end
       end
       object PanelVersion: TPanel
         Left = 0
         Height = 16
-        Top = 33
+        Top = 25
         Width = 414
         Align = alTop
         BevelOuter = bvNone
@@ -777,27 +776,25 @@ object FormHelpInfo: TFormHelpInfo
         ClientWidth = 414
         TabOrder = 2
         object LabelVersion: TLabel
-          Left = 56
+          Left = 46
           Height = 16
           Top = 0
-          Width = 87
+          Width = 70
           Align = alLeft
           BorderSpacing.Left = 5
           Caption = 'LabelVersion'
           Font.Style = [fsBold]
-          ParentColor = False
           ParentFont = False
         end
         object LabelVers: TLabel
           Left = 0
           Height = 16
           Top = 0
-          Width = 51
+          Width = 41
           Align = alLeft
           Alignment = taRightJustify
           Caption = 'Version'
           Font.Style = [fsBold]
-          ParentColor = False
           ParentFont = False
         end
       end

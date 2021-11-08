@@ -352,6 +352,8 @@ resourcestring
   rsViewTiles = 'Tiles';
   rsConnectedTo = 'Connected to';
   rsAs = 'as';
+  rsON = 'on';
+  rsDepot = 'depot';
   rsStoreActions = 'Store actions';
   rsBack = '<-- Back';
   rsAll = 'All';
@@ -1061,8 +1063,8 @@ begin
     FormProgressWindow.LabelDataLoad.Caption := rsConnectedTo + ' ' +
     OCKOpsiConnection.myservice_url + ' ' + rsAS + ' ' + OCKOpsiConnection.myclientid;
     StatusBar1.Panels[0].Text := rsConnectedTo + ' ' +
-      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid
-      + '; ' + 'depot: ' + OCKOpsiConnection.GetDepotID;
+      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid + ' ' +
+      rsON + ' ' + rsDepot + ' ' + OCKOpsiConnection.MyDepotID;
     FormProgressWindow.ProgressBar1.StepIt;
     Application.ProcessMessages; //FormProgressWindow.ProcessMess;
 end;
