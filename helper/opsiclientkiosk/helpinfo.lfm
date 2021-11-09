@@ -1,7 +1,7 @@
 object FormHelpInfo: TFormHelpInfo
-  Left = 717
+  Left = 1145
   Height = 353
-  Top = 280
+  Top = 218
   Width = 547
   BorderStyle = bsDialog
   Caption = 'Help'
@@ -347,16 +347,6 @@ object FormHelpInfo: TFormHelpInfo
       BorderSpacing.Around = 5
       Caption = 'Expert mode'
       TabOrder = 1
-    end
-    object CheckBoxShowDepot: TCheckBox
-      Left = 97
-      Height = 25
-      Top = 5
-      Width = 84
-      Align = alLeft
-      BorderSpacing.Around = 5
-      Caption = 'Show Depot'
-      TabOrder = 2
     end
   end
   object PanelCredits: TPanel

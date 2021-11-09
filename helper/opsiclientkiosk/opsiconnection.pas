@@ -54,7 +54,7 @@ type
     procedure SetActionRequest(pid: string; request: string);
     procedure SetRights(Path:String);
     function GetActionRequests: TStringList;
-    procedure DoActionsOnDemand(var aErrorMessage: string);
+    function DoActionsOnDemand(var aErrorMessage: string):boolean;
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
     procedure SelectProduct(Index:integer);
@@ -415,16 +415,33 @@ begin
 end;
 
 
-procedure TOpsiConnection.DoActionsOnDemand(var aErrorMessage:string);
+function TOpsiConnection.DoActionsOnDemand(var aErrorMessage:string):boolean;
 var
   resultstring:String;
   JSONResponse: TJSONData;
   JSONError: TJSONData;
 begin
-   resultstring := MyOpsiMethodCall('processActionRequests', []);  //former 'fireEvent_software_on_demand'
-   JSONResponse := GetJSON(resultstring); //GetJSON(StringJSON).FindPath('result')
-   JSONError := JSONResponse.FindPath('error');
-   if JSONError.IsNull then aErrorMessage := '' else aErrorMessage := JSONError.AsString;
+  Result := False;
+  resultstring := MyOpsiMethodCall('processActionRequests', []);  //former 'fireEvent_software_on_demand'
+  JSONResponse := GetJSON(resultstring); //GetJSON(StringJSON).FindPath('result')
+  try
+    if Assigned(JSONResponse) then
+    begin
+      JSONError := JSONResponse.FindPath('error');
+      if JSONError.IsNull then
+      begin
+        aErrorMessage := '';
+        Result := True;
+      end
+      else
+      begin
+        aErrorMessage := JSONError.AsString;
+        Result := False;
+      end;
+    end;
+  finally
+    if Assigned(JSONResponse) then FreeAndNil(JSONResponse);
+  end;
 end;
 
 

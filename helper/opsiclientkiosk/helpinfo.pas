@@ -15,7 +15,6 @@ type
   TFormHelpInfo = class(TForm)
     ButtonClose: TButton;
     CheckBoxExpertMode: TCheckBox;
-    CheckBoxShowDepot: TCheckBox;
     ImageLogo: TImage;
     LabelModeInfo: TLabel;
     LabelMode: TLabel;
@@ -76,7 +75,7 @@ begin
   LabelVersion.Caption := ProgramInfo.Version;
   LabelLanguage.Caption := GetDefaultLang;
   LabelCopyRight.Caption:= 'uib gmbh under AGPLv3';
-  LabelUibWeb.Caption := 'http://uib.de';
+  LabelUibWeb.Caption := 'https://uib.de';
   LabelOpsiWeb.Caption:= 'https://opsi.org';
   LabelCredits.Caption:= 'Lazarus/FPC, synapse, sqllite';
   //Refresh;
@@ -87,7 +86,7 @@ begin
   LabelVersion.Caption := ProgramInfo.Version;
   LabelLanguage.Caption := GetDefaultLang;
   LabelCopyRight.Caption:= 'uib gmbh under AGPLv3';
-  LabelUibWeb.Caption := 'http://uib.de';
+  LabelUibWeb.Caption := 'https://uib.de';
   LabelOpsiWeb.Caption:= 'https://opsi.org';
   LabelCredits.Caption:= 'Lazarus/FPC, synapse, sqllite';
 end;

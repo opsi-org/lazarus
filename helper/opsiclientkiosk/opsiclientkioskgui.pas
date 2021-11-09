@@ -1063,8 +1063,13 @@ begin
     FormProgressWindow.LabelDataLoad.Caption := rsConnectedTo + ' ' +
     OCKOpsiConnection.myservice_url + ' ' + rsAS + ' ' + OCKOpsiConnection.myclientid;
     StatusBar1.Panels[0].Text := rsConnectedTo + ' ' +
-      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid + ' ' +
-      rsON + ' ' + rsDepot + ' ' + OCKOpsiConnection.MyDepotID;
+        OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid
+        + ' ' + rsON + ' ' + OCKOpsiConnection.MyDepotID;
+    //if FormHelpInfo.CheckBoxShowDepot.Checked then
+    //begin
+    //   StatusBar1.Panels[0].Text := StatusBar1.Panels[0].Text + ' ' +
+    //    rsON + ' ' + rsDepot + ' ' + OCKOpsiConnection.MyDepotID;
+    //end;
     FormProgressWindow.ProgressBar1.StepIt;
     Application.ProcessMessages; //FormProgressWindow.ProcessMess;
 end;
@@ -1286,8 +1291,9 @@ begin
     ButtonSoftwareReinstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
-    if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
-     else ButtonSoftwareUpdate.Visible := False;
+    //if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
+    // else ButtonSoftwareUpdate.Visible := False;
+    ButtonSoftwareUpdate.Visible := False;
   end
   else
   begin
@@ -2551,8 +2557,15 @@ begin
 end;
 
 function TFormOpsiClientKiosk.InstallNow(var aErrorMessage:string ): boolean;
+var
+  i : integer;
 begin
-  //OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
+  //Test loop to generate error message
+  //for i:= 0 to 6 do
+  //begin
+  //  OCKOpsiConnection.DoActionsOnDemand(aErrorMessage);
+  //  sleep(100);
+  //end;
   OCKOpsiConnection.DoActionsOnDemand(aErrorMessage);
   if aErrorMessage  = '' then
   begin

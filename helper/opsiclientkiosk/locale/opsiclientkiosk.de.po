@@ -379,10 +379,6 @@ msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Expertenmodus"
 
-#: tformhelpinfo.checkboxshowdepot.caption
-msgid "Show Depot"
-msgstr ""
-
 #: tformhelpinfo.labelcopy.caption
 msgid "CopyRight:"
 msgstr "CopyRight:"
