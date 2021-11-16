@@ -216,10 +216,8 @@ if not ($tls_alternative_cipher$ ="")
 	set  $add_calloptions$ = $add_calloptions$ + " --use_tls_cipher  " + $tls_alternative_cipher$
 endif
 
-
-; TODO (for configed installer): extend command line ($add_calloptions$) with
-; properties.conf file (if existing) where the requested properties memory_requirement and
-; scaling_factor are saved
+; TODO: extend command line with properties.conf file where the requested
+; properties memory_requirement and scaling_factor are saved
 
 
 include_insert "%scriptpath%\paramhelping.opsiscript"
