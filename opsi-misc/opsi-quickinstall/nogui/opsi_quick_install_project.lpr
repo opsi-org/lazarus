@@ -39,7 +39,7 @@ type
     QuickInstallCommand: TRunCommandElevated;
     DirClientData, url, shellCommand, Output: string;
     two_los_to_test, one_installation_failed: boolean;
-    name_los_default, name_los_downloaded: string;
+    name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
   const
     baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -225,66 +225,66 @@ type
     //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
     DirClientData := ExtractFilePath(DirClientData);
 
-    writeln(rsWait);
+    if two_los_to_test then writeln(rsWait);
     // try downloading latest l-opsi-server and set DirClientData for the latest version
-  if two_los_to_test and getLOpsiServer(QuickInstallCommand, distroName) then
-  begin
-    // extract and compare version numbers of default and downloaded los
-    if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
-      los_default_search) = 0) and
-      (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
-      faDirectory, los_downloaded_search) = 0) then
+    if two_los_to_test and getLOpsiServer(QuickInstallCommand, distroName) then
+    begin
+      // extract and compare version numbers of default and downloaded los
+      if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
+        los_default_search) = 0) and
+        (FindFirst('../downloaded_l-opsi-server_4.*', faAnyFile and
+        faDirectory, los_downloaded_search) = 0) then
+      begin
+        name_los_default := los_default_search.Name;
+        name_los_downloaded := los_downloaded_search.Name;
+        // extract version numbers
+        version_los_default := los_default_search.Name;
+        Delete(version_los_default, 1, Pos('_', version_los_default));
+        version_los_downloaded := los_downloaded_search.Name;
+        Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+        Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
+        // compare and use latest l-opsi-server version
+        if version_los_downloaded > version_los_default then
+          name_current_los := name_los_downloaded
+        else
+        begin
+          name_current_los := name_los_default;
+          if version_los_downloaded = version_los_default then
+            two_los_to_test := False;
+        end;
+      end;
+    end
+    else
+    if one_installation_failed then
+    begin
+      // if there is a downloaded los but the latest los version failed to install,
+      // switch between name_los_default and name_los_downloaded to get the dir of
+      // the older version
+      if version_los_downloaded > version_los_default then
+        name_current_los := name_los_default
+      else
+        name_current_los := name_los_downloaded;
+    end
+    else
+    // otherwise, in the case that downloading the latest l-opsi-server failed,
+    // use the default one
+    if FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
+      los_default_search) = 0 then
     begin
       name_los_default := los_default_search.Name;
-      name_los_downloaded := los_downloaded_search.Name;
       // extract version numbers
       version_los_default := los_default_search.Name;
       Delete(version_los_default, 1, Pos('_', version_los_default));
-      version_los_downloaded := los_downloaded_search.Name;
-      Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
-      Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
-      // compare and use latest l-opsi-server version
-      if version_los_downloaded > version_los_default then
-        DirClientData += name_los_downloaded
-      else
-      begin
-        DirClientData += name_los_default;
-        if version_los_downloaded = version_los_default then
-          two_los_to_test := False;
-      end;
+      name_current_los := name_los_default;
+      two_los_to_test := False;
     end;
-  end
-  else
-  if one_installation_failed then
-  begin
-    // if there is a downloaded los but the latest los version failed to install,
-    // switch between name_los_default and name_los_downloaded to get the dir of
-    // the older version
-    if version_los_downloaded > version_los_default then
-      DirClientData += name_los_default
-    else
-      DirClientData += name_los_downloaded;
-  end
-  else
-  // otherwise, in the case that downloading the latest l-opsi-server failed,
-  // use the default one
-  if FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
-    los_default_search) = 0 then
-  begin
-    name_los_default := los_default_search.Name;
-    // extract version numbers
-    version_los_default := los_default_search.Name;
-    Delete(version_los_default, 1, Pos('_', version_los_default));
-    DirClientData += name_los_default;
-    two_los_to_test := False;
-  end;
-    DirClientData += '/CLIENT_DATA/';
+    DirClientData += name_current_los + '/CLIENT_DATA/';
   end;
 
   // write properties in properties.conf file
   procedure TQuickInstall.WritePropsToFile;
   begin
-    LogDatei.log('Entered WritePropsToFile', 0);
+    LogDatei.log('Entered WritePropsToFile', LLdebug);
     // write file text
     FileText := TStringList.Create;
 
