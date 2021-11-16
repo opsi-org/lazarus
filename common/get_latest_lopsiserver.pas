@@ -36,7 +36,7 @@ begin
   end
   else
   begin
-    LogDatei.log(fileName + ' extraction failed', LLNotice);
+    LogDatei.log(fileName + ' extraction failed', LLessential);
     Result := False;
   end;
 end;
@@ -47,7 +47,7 @@ var
   shellCommand, Output, los_version, downloaded_los_folder: string;
   los_search: TSearchRec;
 begin
-  LogDatei.log('Try downloading latest l-opsi-server:', LLInfo);
+  LogDatei.log('Try downloading latest l-opsi-server:', LLnotice);
   Result := True;
 
   // installing required packages:
@@ -127,11 +127,11 @@ begin
   //if not DirectoryExists('../l-opsi-server_downloaded') then  Result := False;
 
   if Result then
-    LogDatei.log('Latest l-opsi-server successfully downloaded (version ' +
-      los_version + ')', LLInfo)
+    LogDatei.log('l-opsi-server successfully downloaded (version ' +
+      los_version + ')', LLessential)
   else
     LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
-      LLnotice);
+      LLessential);
   FindClose(los_search);
 
   // try l-opsi-server from master that is not on download.uib

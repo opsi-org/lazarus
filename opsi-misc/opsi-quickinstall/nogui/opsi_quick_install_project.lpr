@@ -188,7 +188,7 @@ type
   // set default values for all variables that are required for the installation
   procedure TQuickInstall.SetDefaultValues;
   begin
-    LogDatei.log('Entered SetDefaultValues', 0);
+    LogDatei.log('Entered SetDefaultValues', LLdebug);
     // set default values:
     opsiVersion := 'Opsi 4.2';
     // repo depending on opsi version
@@ -365,7 +365,7 @@ type
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.InstallOpsi;
   begin
-    LogDatei.log('Entered InstallOpsi', 0);
+    LogDatei.log('Entered InstallOpsi', LLdebug);
     writeln(rsInstall + opsiVersion + ':');
 
     writeln(rsCreateRepo);
@@ -1380,9 +1380,9 @@ begin
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
-  LogDatei.log('Log file created', LLnothing);
+  LogDatei.log('Log file created', LLdebug);
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
-  LogDatei.log('Working directory: ' + GetCurrentDir, LLinfo);
+  LogDatei.log('Working directory: ' + GetCurrentDir, LLessential);
 
   //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
@@ -1434,7 +1434,7 @@ begin
     distroName := getLinuxDistroName;
     distroRelease := getLinuxDistroRelease;
     //writeln(distroName, ' ', distroRelease);
-    LogDatei.log(distroName + ' ' + distroRelease, LLInfo);
+    LogDatei.log(distroName + ' ' + distroRelease, LLessential);
     DistrInfo := TDistributionInfo.Create;
     DistrInfo.SetInfo(distroName, distroRelease);
     // In the nogui query the checking of the distribution will be done later,
