@@ -451,6 +451,7 @@ type
   end;
 
   /////////////////////////////////////////////////////////////////////////////
+  {$REGION 'query' fold}
   procedure TQuickInstall.NoGuiQuery;
   begin
     SetDefaultValues;
@@ -1308,11 +1309,13 @@ type
     end;
   end;
 
+  {$ENDREGION}
   /////////////////////////////////////////////////////////////////////////////
+
   // no query, directly use all default values for installation
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
-    LogDatei.log('Entered ExecuteWithDefaultValues', 0);
+    LogDatei.log('Entered ExecuteWithDefaultValues', LLdebug);
     SetDefaultValues;
     //WritePropsToFile;
     InstallOpsi;
