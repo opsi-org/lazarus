@@ -345,15 +345,20 @@ type
 
     shellCommand := GetPackageManagementShellCommand(distroName);
     // !following lines need an existing LogDatei
-    QuickInstallCommand.Run(shellCommand + 'update', Output);
-    writeln(rsInstall + 'opsi-script...');
-    QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
+    // if one installation failed, then opsi-script was already installed
+    if not one_installation_failed then
+    begin
+      QuickInstallCommand.Run(shellCommand + 'update', Output);
+      writeln(rsInstall + 'opsi-script...');
+      QuickInstallCommand.Run(shellCommand + 'install opsi-script', Output);
+    end;
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
     // remove the QuickInstall repo entry because it was only for installing opsi-script
     if FileExists('/etc/apt/sources.list.d/opsi.list') then
       QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
-    writeln(rsInstall + 'l-opsi-server... ' + rsSomeMin);
+
+    writeln(rsInstall + name_current_los + '... ' + rsSomeMin);
     // "opsi-script -batch" for installation with gui window,
     // "opsi-script-nogui -batch" for without?
     // new: opsi-script -silent for nogui
@@ -412,8 +417,10 @@ type
     if (FileText[0] = 'failed') and two_los_to_test then
     begin
       // if installation of latest l-opsi-server failed, try the older version:
-      writeln('Installation failed');
-      LogDatei.log('l-opsi-server installation failed', 6);
+      writeln('Installation failed. Try older version of l-opsi-server.');
+      Sleep(1000);
+      LogDatei.log('Installation failed: ' + name_current_los, LLessential);
+      LogDatei.log('Try older version of l-opsi-server:', LLnotice);
       two_los_to_test := False;
       one_installation_failed := True;
       FileText.Free;
@@ -434,14 +441,21 @@ type
 
     if FileText[0] = 'failed' then
     begin
-      LogDatei.log('l-opsi-server installation failed', 1);
+      writeln('Installation failed.');
+      LogDatei.log('Installation failed: ' + name_current_los, LLessential);
+      LogDatei.log(opsiVersion + ' installation failed', LLessential);
       ExitCode := 1;
     end
     else
-      LogDatei.log('l-opsi-server installation success', 6);
+    begin
+      LogDatei.log('Installation success: ' + name_current_los, LLessential);
+      LogDatei.log(opsiVersion + ' installation success', LLessential);
+    end;
     // print result of installation
+    Sleep(1000);
     writeln();
-    writeln(FileText.Text);
+    writeln('Installation of ' + opsiVersion + ': ' + FileText.Text);
+    Sleep(1000);
     writeln(rsLog);
     writeln(LogOpsiServer);
 
