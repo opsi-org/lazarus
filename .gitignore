@@ -68,8 +68,9 @@ opsi-misc/opsi-quickinstall/gui/control
 opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/l-opsi-server_downloaded/
-opsi-misc/opsi-quickinstall/build/opsi-quickinstall/gui/opsi_quick_install_project
-opsi-misc/opsi-quickinstall/build/opsi-quickinstall/nogui/opsi_quick_install_project
+/opsi-misc/opsi-quickinstall/build/opsi-quickinstall/gui/opsi_quick_install_project
+/opsi-misc/opsi-quickinstall/build/opsi-quickinstall/nogui/opsi_quick_install_project
+/opsi-misc/opsi-quickinstall/build/opsi-quickinstall/downloaded_l-opsi-server_*
 
 # opsi-client-kiosk:
 helper/opsiclientkiosk/ock_custom/product_icons
