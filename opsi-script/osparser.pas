@@ -9144,7 +9144,7 @@ var
           LogDatei.log('source: ' + Expressionstr + ' - target: ' + Remaining, LLDebug3);
           Source := Expressionstr;
           Source := ExpandFileNameUTF8(Source);
-          if not (isAbsoluteFileName(Source) and FileExists(Source)) then
+          if not (isAbsoluteFileName(Source) and (FileExists(Source) or DirectoryExists(Source))) then
           begin
             //syntaxcheck := false;
             //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
@@ -11610,6 +11610,10 @@ begin
 
       { backport from 4.12.3  }
       //if threaded then
+
+      // new in 4.12.4.12.31 enable runasloggedonuser
+      if runas = traLoggedOnUser then
+        use_sp := True;
 
       if use_sp then
       begin

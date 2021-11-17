@@ -26,6 +26,7 @@ uses
   SysUtils, Classes, Variants,
   oslog,
   superobject,
+  osjson,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
@@ -1209,21 +1210,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -3303,14 +3304,16 @@ begin
       exit;
     end;
     // we have something like
-    // {"reslut":[{subkey:["a","r","r","a","y"]}]}
+    // {"result":[{subkey:["a","r","r","a","y"]}]}
     // get value of path 'result' as Array (which contains one object)
-    jA := jO.A['result'];
-    testresult := jA.S[0];
-    // get this single object
-    jO1 := jA.O[0];
-    // get from this object the value for the key: subkey as array
-    jA1 := jO1.A[subkey];
+    if jsonAsObjectHasKey(jO.AsString, 'result') then
+    begin
+      jA := jO.A['result'];
+      testresult := jA.S[0];
+      // get this single object
+      jO1 := jA.O[0];
+      // get from this object the value for the key: subkey as array
+      jA1 := jO1.A[subkey];
     (*
     if jA1.Length > 0 then
     begin
@@ -3318,20 +3321,27 @@ begin
       LogDatei.log('ja1 as json: '+testresult, LLDebug2);
     end;
      *)
-    if jA1 <> nil then
-    begin
-      //testresult := jA.
-      for i := 0 to jA1.Length - 1 do
+      if jA1 <> nil then
       begin
-        testresult := jA1.S[i];
-        Result.append(jA1.S[i]);
+        //testresult := jA.
+        for i := 0 to jA1.Length - 1 do
+        begin
+          testresult := jA1.S[i];
+          Result.append(jA1.S[i]);
+        end;
       end;
+    end
+    else
+    begin
+      Logdatei.log('Error in getSubListResult: received object: ' +
+        jO.AsString + ' has no key "result"', LLError);
+      Result := nil;
     end;
   except
     on E: Exception do
     begin
       Logdatei.log_prog('Exception in getSubListResult, system message: "' +
-        E.Message + '"', LLwarning);
+        E.Message + ' with received object: ' + jO.AsString + '"', LLError);
       Result := nil;
     end
   end;
@@ -4370,18 +4380,19 @@ begin
       //Logdatei.log('line2: '+t, LLDebug2);
       try
         t2 := t;
-        if t2<>'' then
+        if t2 <> '' then
         begin
-          if FindInvalidUTF8Codepoint(PChar(t2),length(t2)) > -1 then
+          if FindInvalidUTF8Codepoint(PChar(t2), length(t2)) > -1 then
           begin
             { utf8fixbroken may freeze do 06.10.2020 }
             //UTF8FixBroken(t2);
             t := 'log line contains non UTF8 chars';
           end
-          else t := t2;
+          else
+            t := t2;
         end;
         { Utf8EscapeControlChars calls utf8fixbroken see above }
-       // t := Utf8EscapeControlChars(t2);
+        // t := Utf8EscapeControlChars(t2);
         //Logdatei.log('line3: '+t, LLDebug2);
       except
         on E: Exception do
@@ -4400,7 +4411,7 @@ begin
       //{$ENDIF WINDOWS}
       //utf8str := lconvencoding.ConvertEncoding(t,lconvencoding.GetDefaultTextEncoding,'utf8');
 
-      Logdatei.log('wrote line: '+t, LLDebug2);
+      Logdatei.log('wrote line: ' + t, LLDebug2);
       //logstream.write(t[1],length(t));
       found := Logdatei.getPartLine(t);
     end;
