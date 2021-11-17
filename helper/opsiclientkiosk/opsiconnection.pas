@@ -36,6 +36,7 @@ type
     function GetDataFromNewDataStructure:boolean;
     function GetDataFromOldDataStructure:boolean;
     procedure GetConfigDataFromOPsiclientd;
+    procedure GetDepotID; deprecated;
     procedure SetConfigdMode; //configd mode
     procedure SetClientdMode(ClientID:string); //clientd mode
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -259,7 +260,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.GetConfigDataFromOPsiclientd;
+procedure TOpsiConnection.GetConfigDataFromOpsiclientd;
 var
   JSONResponse: string;
 begin
@@ -274,6 +275,18 @@ begin
       MyDepotID := JSONConfigDataFromOpsiclientd.FindPath('result').FindPath('depot_id').AsString;
       {parse here further config data from opsiclientd}
     end;
+  end;
+end;
+
+procedure TOpsiConnection.GetDepotID; deprecated;
+var
+  JSONResponse: string;
+begin
+  JSONResponse := MyOpsiMethodCall('getDepotId', [MyClientID]);
+  if JSONResponse <> '' then
+  begin
+    if GetJSON(JSONResponse).FindPath('error').IsNull then
+      MyDepotID := GetJSON(JSONResponse).FindPath('result').AsString;
   end;
 end;
 
@@ -353,7 +366,9 @@ begin
     OpsiData.InitOpsiConf(myservice_url, myclientid,
       myhostkey, '', '', '', fagent);
     LogDatei.log('opsidata initialized', LLNotice);
-    GetConfigDataFromOpsiclientd;
+    //TODO: change GetDepotID to GetConfigDataFromOpsiclientd if webservice can handle error cases
+    //GetConfigDataFromOpsiclientd;
+    GetDepotID; //deprecated
   except
     LogDatei.log('Error while initializing opsiconnection', LLError);
     ShowMessage(rsErrorIntConnection);
