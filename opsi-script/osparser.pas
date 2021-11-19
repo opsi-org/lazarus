@@ -1765,8 +1765,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -8835,29 +8836,32 @@ var
 
             target := ExpandFileNameUTF8(target);
 
-            if not (isDirectory(target)) then
+            if Install.MakePath(Target) then
             begin
-              //syntaxcheck := false;
-              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
-              go_on := False;
-              logDatei.log('Error: unzip: target: ' + target +
-                ' is not a valid file directory', LLError);
-            end;
+              if not (isDirectory(target)) then
+              begin
+                //syntaxcheck := false;
+                //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+                go_on := False;
+                logDatei.log('Error: unzip: target: ' + target +
+                  ' is not a valid file directory', LLError);
+              end;
 
 
-            if SyntaxCheck and go_on then
-            begin
-              LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
-              try
-                if UnzipWithDirStruct(Source, target) then
-                  LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
-                else
-                  LogDatei.log('Failed to unzip: ' + Source + ' to ' + target, LLError)
-              except
-                on E: Exception do
-                begin
-                  LogDatei.log('Exception: Failed to unzip: ' + Source +
-                    ' to ' + target + ' : ' + e.message, LLError);
+              if SyntaxCheck and go_on then
+              begin
+                LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
+                try
+                  if UnzipWithDirStruct(Source, target) then
+                    LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
+                  else
+                    LogDatei.log('Failed to unzip: ' + Source + ' to ' + target, LLError)
+                except
+                  on E: Exception do
+                  begin
+                    LogDatei.log('Exception: Failed to unzip: ' + Source +
+                      ' to ' + target + ' : ' + e.message, LLError);
+                  end;
                 end;
               end;
             end;
@@ -9144,7 +9148,8 @@ var
           LogDatei.log('source: ' + Expressionstr + ' - target: ' + Remaining, LLDebug3);
           Source := Expressionstr;
           Source := ExpandFileNameUTF8(Source);
-          if not (isAbsoluteFileName(Source) and (FileExists(Source) or DirectoryExists(Source))) then
+          if not (isAbsoluteFileName(Source) and
+            (FileExists(Source) or DirectoryExists(Source))) then
           begin
             //syntaxcheck := false;
             //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
@@ -10697,8 +10702,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12272,10 +12277,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -19734,6 +19739,8 @@ begin
   end
   else
     Result := False;
+  LogDatei.log_prog('RunAsForParameter: runas is: ' + GetEnumName(
+    TypeInfo(TRunAs), Ord(runAs)), LLDebug);
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
