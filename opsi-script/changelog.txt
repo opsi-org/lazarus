@@ -14,7 +14,7 @@ opsi-script (4.12.4.31) stable; urgency=low
 
   * osfunc: AllCopyRecursive: for better performance:
         doNotChangeAccessRights: boolean = True;
-  * osparser: executeWith: enable runasloggedonuser
+  * osparser: executeWith + powershellcall: enable runasloggedonuser
   * osfilehelper: MakeBakFiles: correct format mask for log backups
   * osparser: files section: move / rename: allow also for directories
 
