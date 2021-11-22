@@ -42,6 +42,7 @@ uses
   wispecfolder,
   shlobj,
   VersionInfoX,
+  oscertificates,
 {$IFNDEF WIN64}
   oslocaladmin,
 {$ENDIF WIN64}
@@ -190,6 +191,7 @@ type
     tsShellcall,
     tsPowershellcall,
     tsExecuteSection,
+    tsImportCertToSystem,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -24414,6 +24416,39 @@ begin
               end;
 
 
+              tsImportCertToSystem:
+              begin
+                {$IFDEF WINDOWS}
+                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+                  if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
+                  then
+                    if Skip(')', Remaining, Remaining, InfoSyntaxError)
+                    then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                        if not pemfileToSystemStore(s1) then
+                          logdatei.log('ImportCertToSystem: failed to import: ' + s1,LLError);
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('ImportCertToSystem: failed to import: ' + s1 + ' : ' + e.message,
+                            LLError);
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        end;
+                      end;
+                    end;
+                {$ELSE WINDOWS}
+                LogDatei.log('ImportCertToSystem ignored - implemented only for Windows.',
+                            LLError);
+                {$ENDIF WINDOWS}
+              end;
+
+
+
               tsSetVar:
               begin
                 LogDatei.log_prog('Start tsSetVar with expr: ' + Remaining, LLdebug);
@@ -25609,8 +25644,6 @@ begin
   PStatNames^ [tsSetUsercontext] := 'SetUserContext';
   PStatNames^ [tsSaveVersionToProfile] := 'saveVersionToProfile';
 
-
-
   PStatNames^ [tsDefineVar] := 'DefVar';
   PStatNames^ [tsDefineStringList] := 'DefStringList';
   PStatNames^ [tsSetVar] := 'Set';
@@ -25620,6 +25653,7 @@ begin
   PStatNames^ [tsDefineFunction] := 'DefFunc';
   PStatNames^ [tsEndFunction] := 'EndFunc';
 
+  PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
 
   runProfileActions := False;
   runLoginScripts := False;

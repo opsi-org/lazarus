@@ -6,6 +6,8 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.4.32) stable; urgency=low
 
   * osparser: files section: unzip create target dir
+  * added unit oscertificates
+  * new void function ImportCertToSystem(<cert file name>)
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
 
