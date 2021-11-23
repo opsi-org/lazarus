@@ -35,9 +35,8 @@ type
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
     FileText, PropsFile: TStringList;
-    MyRepo: TLinuxRepository;
     QuickInstallCommand: TRunCommandElevated;
-    DirClientData, url, shellCommand, Output: string;
+    DirClientData, shellCommand, Output: string;
     two_los_to_test, one_installation_failed: boolean;
     name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
@@ -47,13 +46,14 @@ type
     // set default values for all required variables
     procedure SetDefaultValues;
     // try getting latest l-opsi-server and then define the DirClientData to use
-    procedure DefineDirClientData;
+    procedure defineDirClientData;
     // write properties in properties.conf file
-    procedure WritePropsToFile;
+    procedure writePropsToFile;
+    procedure addRepo;
     // install opsi-script and execute l-opsi-server script
-    procedure ExecuteLOS;
+    procedure executeLOSscript;
     // install opsi-server
-    procedure InstallOpsi;
+    procedure installOpsi;
     // query:
     procedure NoGuiQuery;
     procedure QuerySetupType;
@@ -186,7 +186,7 @@ type
   end;
 
   // set default values for all variables that are required for the installation
-  procedure TQuickInstall.SetDefaultValues;
+  procedure TQuickInstall.setDefaultValues;
   begin
     LogDatei.log('Entered SetDefaultValues', LLdebug);
     // set default values:
@@ -216,7 +216,7 @@ type
     ipNumber := 'auto';
   end;
 
-  procedure TQuickInstall.DefineDirClientData;
+  procedure TQuickInstall.defineDirClientData;
   var
     los_default_search, los_downloaded_search: TSearchRec;
   begin
@@ -282,7 +282,7 @@ type
   end;
 
   // write properties in properties.conf file
-  procedure TQuickInstall.WritePropsToFile;
+  procedure TQuickInstall.writePropsToFile;
   begin
     LogDatei.log('Entered WritePropsToFile', LLdebug);
     // write file text
@@ -331,14 +331,46 @@ type
     FileText.Free;
   end;
 
+  procedure TQuickInstall.addRepo;
+  var
+    url: string;
+    MyRepo: TLinuxRepository;
+  begin
+    writeln(rsCreateRepo);
+    // first remove opsi.list to have a cleared opsi repository list
+    if FileExists('/etc/apt/sources.list.d/opsi.list') then
+      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+    // create repository (no password, user is root):
+    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
+    // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+    if opsiVersion = 'Opsi 4.1' then
+      MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
+    else
+      MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+    // define repo url
+    url := repo + repoKind + '/' + DistrInfo.DistrUrlPart;
+
+    // !following lines need an existing LogDatei
+    if (distroName = 'openSUSE') or (distroName = 'SUSE') then
+    begin
+      writeln('OpenSUSE/SUSE: Add Repo');
+      MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
+    end
+    else
+      MyRepo.Add(url);
+
+    MyRepo.Free;
+  end;
+
   // install opsi-script and execute l-opsi-server script
-  procedure TQuickInstall.ExecuteLOS;
+  procedure TQuickInstall.executeLOSscript;
   begin
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
     FileText.Add('failed');
     if not FileExists(DirClientData + 'result.conf') then
       QuickInstallCommand.Run('touch ' + DirClientData + 'result.conf', Output);
+
     QuickInstallCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
     FileText.SaveToFile(DirClientData + 'result.conf');
     FileText.Free;
@@ -368,47 +400,25 @@ type
 
   // install opsi-server
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
-  procedure TQuickInstall.InstallOpsi;
+  procedure TQuickInstall.installOpsi;
   begin
     LogDatei.log('Entered InstallOpsi', LLdebug);
     writeln(rsInstall + opsiVersion + ':');
-
-    writeln(rsCreateRepo);
-    // first remove opsi.list to have a cleared opsi repository list
-    if FileExists('/etc/apt/sources.list.d/opsi.list') then
-      QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
-    // create repository (no password, user is root):
-    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
-    // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-    if opsiVersion = 'Opsi 4.1' then
-      MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
-    else
-      MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
-    // define repo url
-    url := repo + repoKind + '/' + DistrInfo.DistrUrlPart;
-
-    // !following lines need an existing LogDatei
-    if (distroName = 'openSUSE') or (distroName = 'SUSE') then
-    begin
-      writeln('OpenSUSE/SUSE: Add Repo');
-      MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
-    end
-    else
-      MyRepo.Add(url);
+    addRepo;
 
     // install opsi-server
     two_los_to_test := True;
     one_installation_failed := False;
     if HasOption('f', 'file') then
     begin
-      DefineDirClientData;
+      defineDirClientData;
       // take text of PropsFile as text for properties.conf
       PropsFile.SaveToFile(DirClientData + 'properties.conf');
     end
     else
-      WritePropsToFile;
+      writePropsToFile;
 
-    ExecuteLOS;
+    executeLOSscript;
 
     // get result from result file and print it
     FileText := TStringList.Create;
@@ -433,8 +443,7 @@ type
       else
         WritePropsToFile;
 
-      ExecuteLOS;
-
+      executeLOSscript;
       FileText := TStringList.Create;
       FileText.LoadFromFile(DirClientData + 'result.conf');
     end;
@@ -460,7 +469,6 @@ type
     writeln(LogOpsiServer);
 
     QuickInstallCommand.Free;
-    MyRepo.Free;
     FileText.Free;
   end;
 
@@ -1330,9 +1338,8 @@ type
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     LogDatei.log('Entered ExecuteWithDefaultValues', LLdebug);
-    SetDefaultValues;
-    //WritePropsToFile;
-    InstallOpsi;
+    setDefaultValues;
+    installOpsi;
   end;
   // no query, read in values from a file
   procedure TQuickInstall.ReadProps;
@@ -1361,11 +1368,7 @@ type
       end;
     end;
 
-    //DefineDirClientData;
-    // take text of PropsFile as text for properties.conf
-    //PropsFile.SaveToFile(DirClientData + 'properties.conf');
-
-    InstallOpsi;
+    installOpsi;
   end;
 
 var

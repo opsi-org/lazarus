@@ -37,26 +37,28 @@ type
     // full directory l-opsi-server/CLIENT_DATA/
     clientDataDir, Output: string;
     btnFinishClicked: boolean;
-  public
   end;
 
 type
 
-  {TMyThread}
+  {TInstallOpsiThread}
 
   // Thread for showing 'please wait' on a form while 'apt/zypper/.. update'
   // runs in the background.
-  TMyThread = class(TThread)
+  TInstallOpsiThread = class(TThread)
   private
     FInstallRunCommand: TRunCommandElevated;
     FShellCommand, DirClientData, Output: string;
     two_los_to_test, one_installation_failed: boolean;
-    name_los_default, name_los_downloaded: string;
+    name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
     FileText: TStringList;
-    procedure DefineDirClientData;
-    procedure prepareInstallation;
+    message: string;
+    procedure ShowMessageOnForm;
+    procedure defineDirClientData;
+    procedure writePropsToFile;
     procedure addRepo;
+    procedure executeLOSscript;
     procedure installOpsi;
   protected
     procedure Execute; override;
@@ -66,7 +68,7 @@ type
 
 var
   Password: TPassword;
-  MyThread: TMyThread;
+  InstallOpsiThread: TInstallOpsiThread;
 
 implementation
 
@@ -77,13 +79,13 @@ uses
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_wait,
   osLinuxRepository,
-  osDistributionInfo;
+  DistributionInfo;
 
 {$R *.lfm}
 
-{MyThread}
+{InstallOpsiThread}
 
-constructor TMyThread.Create(password: string; sudo: boolean; shellCommand: string);
+constructor TInstallOpsiThread.Create(password: string; sudo: boolean; shellCommand: string);
 begin
   FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
   FShellCommand := shellCommand;
@@ -92,7 +94,12 @@ begin
   inherited Create(True);
 end;
 
-procedure TMyThread.DefineDirClientData;
+procedure TInstallOpsiThread.ShowMessageOnForm;
+begin
+   Wait.LabelWait.Caption := message;
+end;
+
+procedure TInstallOpsiThread.defineDirClientData;
 var
   los_default_search, los_downloaded_search: TSearchRec;
 begin
@@ -101,6 +108,11 @@ begin
   //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
   DirClientData := ExtractFilePath(DirClientData);
 
+  if two_los_to_test then
+  begin
+    message := rsWait;
+    Synchronize(@ShowMessageOnForm);
+  end;
   // try downloading latest l-opsi-server and set DirClientData for the latest version
   if two_los_to_test and getLOpsiServer(FInstallRunCommand, Data.distroName) then
   begin
@@ -120,10 +132,10 @@ begin
       Delete(version_los_downloaded, 1, Pos('_', version_los_downloaded));
       // compare and use latest l-opsi-server version
       if version_los_downloaded > version_los_default then
-        DirClientData += name_los_downloaded
+        name_current_los := name_los_downloaded
       else
       begin
-        DirClientData += name_los_default;
+        name_current_los := name_los_default;
         if version_los_downloaded = version_los_default then
           two_los_to_test := False;
       end;
@@ -136,9 +148,9 @@ begin
     // switch between name_los_default and name_los_downloaded to get the dir of
     // the older version
     if version_los_downloaded > version_los_default then
-      DirClientData += name_los_default
+      name_current_los := name_los_default
     else
-      DirClientData += name_los_downloaded;
+      name_current_los := name_los_downloaded;
   end
   else
   // otherwise, in the case that downloading the latest l-opsi-server failed,
@@ -150,14 +162,14 @@ begin
     // extract version numbers
     version_los_default := los_default_search.Name;
     Delete(version_los_default, 1, Pos('_', version_los_default));
-    DirClientData += name_los_default;
+    name_current_los := name_los_default;
     two_los_to_test := False;
   end;
-  DirClientData += '/CLIENT_DATA/';
+  DirClientData += name_current_los + '/CLIENT_DATA/';
 end;
 
 // get properties from query and write them to file properties.conf
-procedure TMyThread.prepareInstallation;
+procedure TInstallOpsiThread.writePropsToFile;
 begin
   // Write user input in properties.conf file:
   FileText.Clear;
@@ -182,14 +194,6 @@ begin
   // update_test shall always be false
   FileText.Add('update_test=false');
 
-  {DirClientData := ExtractFilePath(ParamStr(0));
-  Delete(DirClientData, Length(DirClientData), 1);
-  DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
-  // try downloading latest l-opsi-server and use respective DirClientData
-  if getLOpsiServer(TouchCommand, Data.distroName) then
-    DirClientData += '_downloaded/CLIENT_DATA/'
-  else
-    DirClientData += '/CLIENT_DATA/';}
   DefineDirClientData;
   Password.clientDataDir := DirClientData;
 
@@ -200,24 +204,15 @@ begin
     FInstallRunCommand.Run('touch ' + DirClientData + 'properties.conf', Output);
   FInstallRunCommand.Run('chown -c $USER ' + DirClientData + 'properties.conf', Output);
   FileText.SaveToFile(DirClientData + 'properties.conf');
-
-  // Important for getting the result 'failed' in case of a wrong password
-  // because in this case the RunCommands below aren't executed and therefore
-  // setup.opsiscript, that usually does it, isn't too:
-  FileText.Clear;
-  FileText.Add('failed');
-  if not FileExists(DirClientData + 'result.conf') then
-    FInstallRunCommand.Run('touch ' + DirClientData + 'result.conf', Output);
-  FInstallRunCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
-  FileText.SaveToFile(DirClientData + 'result.conf');
 end;
 
-procedure TMyThread.addRepo;
+procedure TInstallOpsiThread.addRepo;
 var
   url: string;
   MyRepo: TLinuxRepository;
 begin
-  Wait.LabelWait.Caption := rsCreateRepo;
+  message := rsCreateRepo;
+  Synchronize(@ShowMessageOnForm);
   // first remove opsi.list to have a cleared opsi repository list
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
@@ -241,40 +236,91 @@ begin
   MyRepo.Free;
 end;
 
-// install opsi server with thread (only the time consuming parts of the installation)
-procedure TMyThread.installOpsi;
+procedure TInstallOpsiThread.executeLOSscript;
 begin
-  FInstallRunCommand.Run(FShellCommand + 'update', Output);
-  FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
+  // Important for getting the result 'failed' in case of a wrong password
+  // because in this case the RunCommands below aren't executed and therefore
+  // setup.opsiscript, that usually does it, isn't too:
+  FileText.Clear;
+  FileText.Add('failed');
+  if not FileExists(DirClientData + 'result.conf') then
+    FInstallRunCommand.Run('touch ' + DirClientData + 'result.conf', Output);
+
+  FInstallRunCommand.Run('chown -c $USER ' + DirClientData + 'result.conf', Output);
+  FileText.SaveToFile(DirClientData + 'result.conf');
+
+  // if one installation failed, then opsi-script was already installed
+  if not one_installation_failed then
+  begin
+    FInstallRunCommand.Run(FShellCommand + 'update', Output);
+    message := rsInstall + 'opsi-script...';
+    Synchronize(@ShowMessageOnForm);
+    FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
+  end;
   // remove the QuickInstall repo entry because it was only for installing opsi-script
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
+
+  message := rsInstall + name_current_los + '... ' + rsSomeMin;
+  Synchronize(@ShowMessageOnForm);
   FInstallRunCommand.Run('opsi-script-gui -batch ' + DirClientData +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
 end;
 
-procedure TMyThread.Execute;
+// install opsi server with thread (only the time consuming parts of the installation)
+procedure TInstallOpsiThread.installOpsi;
+begin
+  message := rsInstall + Data.opsiVersion + ':';
+  Synchronize(@ShowMessageOnForm);
+  Synchronize(@addRepo);
+
+  // install opsi-server
+  two_los_to_test := True;
+  one_installation_failed := False;
+  writePropsToFile;
+  executeLOSscript;
+
+  // get result from result file
+  FileText.Clear;
+  FileText.LoadFromFile(DirClientData + 'result.conf');
+  if (FileText[0] = 'failed') and two_los_to_test then
+  begin
+    // if installation of latest l-opsi-server failed, try the older version:
+    message := 'Installation failed. Try older version of l-opsi-server.';
+    Synchronize(@ShowMessageOnForm);
+    Sleep(1000);
+    LogDatei.log('Installation failed: ' + name_current_los, LLessential);
+    LogDatei.log('Try older version of l-opsi-server:', LLnotice);
+    two_los_to_test := False;
+    one_installation_failed := True;
+    writePropsToFile;
+
+    executeLOSscript;
+    FileText.LoadFromFile(DirClientData + 'result.conf');
+  end;
+
+  if FileText[0] = 'failed' then
+  begin
+    message := 'Installation failed.';
+    Synchronize(@ShowMessageOnForm);
+    LogDatei.log('Installation failed: ' + name_current_los, LLessential);
+    LogDatei.log(Data.opsiVersion + ' installation failed', LLessential);
+  end
+  else
+  begin
+    LogDatei.log('Installation success: ' + name_current_los, LLessential);
+    LogDatei.log(Data.opsiVersion + ' installation success', LLessential);
+  end;
+end;
+
+procedure TInstallOpsiThread.Execute;
 begin
   // sleep to ensure that TWait is shown before addRepo is executed and blocks TWait
   Sleep(100);
   FileText := TStringList.Create;
   one_installation_failed := False;
   two_los_to_test := True;
-  Synchronize(@prepareInstallation);
-  Synchronize(@addRepo);
   installOpsi;
-
-  FileText.Clear;
-  FileText.LoadFromFile(DirClientData + 'result.conf');
-  if (FileText[0] = 'failed') and two_los_to_test then
-  begin
-    // if installation of latest l-opsi-server failed, try the older version:
-    LogDatei.log('l-opsi-server installation failed', 6);
-    two_los_to_test := False;
-    one_installation_failed := True;
-    Synchronize(@prepareInstallation);
-    installOpsi;
-  end;
 
   FileText.Free;
   FInstallRunCommand.Free;
@@ -292,17 +338,11 @@ begin
   FileText := TStringList.Create;
   FileText.LoadFromFile(clientDataDir + 'result.conf');
   // adjust quick-install ExitCode
-  if FileText[0] = 'failed' then
-  begin
-    LogDatei.log('l-opsi-server installation failed', 1);
-    ExitCode := 1;
-  end
-  else
-    LogDatei.log('l-opsi-server installation success', 6);
+  if FileText[0] = 'failed' then ExitCode := 1;
 
   //ShowMessage(ExitCode.ToString);
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + LogOpsiServer +
-    #10 + QuickInstall.logFileName);
+  ShowMessage('Installation of ' + Data.opsiVersion + ': ' + FileText.Text +
+    #10 + rsLog + #10 + LogOpsiServer + #10 + QuickInstall.logFileName);
   FileText.Free;
 end;
 
@@ -348,9 +388,9 @@ begin
 
   btnFinishClicked := True;
   // start thread for opsi server installation while showing TWait
-  MyThread := TMyThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
+  InstallOpsiThread := TInstallOpsiThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
     GetPackageManagementShellCommand(Data.distroName));
-  with MyThread do
+  with InstallOpsiThread do
   begin
     // FormClose automatically executed on termination of thread
     OnTerminate := @FormClose;
