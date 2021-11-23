@@ -5,7 +5,7 @@ unit opsi_quick_install_data;
 interface
 
 uses
-  Classes, SysUtils, osDistributionInfo;
+  Classes, SysUtils, DistributionInfo;
 
 type
 

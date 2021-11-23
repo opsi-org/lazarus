@@ -5,7 +5,7 @@ unit get_latest_lopsiserver;
 interface
 
 uses
-  Classes, SysUtils, osRunCommandElevated, osLog, Process, osDistributionInfo;
+  Classes, SysUtils, osRunCommandElevated, osLog, Process, DistributionInfo;
 
 const
   downloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';

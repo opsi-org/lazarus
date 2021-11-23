@@ -1,4 +1,4 @@
-unit osDistributionInfo;
+unit DistributionInfo;
 
 {$mode objfpc}{$H+}
 

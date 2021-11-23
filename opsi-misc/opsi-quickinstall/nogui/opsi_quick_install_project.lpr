@@ -10,7 +10,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Process,
   GetText,
   Translations,
-  osDistributionInfo,
+  DistributionInfo,
   osRunCommandElevated,
   osfunclin,
   osLinuxRepository,
