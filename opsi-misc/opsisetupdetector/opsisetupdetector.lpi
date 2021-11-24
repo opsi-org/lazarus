@@ -26,7 +26,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -167,6 +167,7 @@
         <CursorPos X="5" Y="19"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="osdform.pas"/>
@@ -187,6 +188,7 @@
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="manifest.xml"/>
@@ -236,7 +238,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="76"/>
-        <CursorPos Y="89"/>
+        <CursorPos Y="96"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -275,6 +277,7 @@
         <CursorPos X="44" Y="385"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="osdbasedata.pas"/>
@@ -291,6 +294,7 @@
         </ExtraEditor1>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="osdconfigdlg.pas"/>
@@ -319,6 +323,7 @@
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="template-files\setupsingle.opsiscript"/>
@@ -384,6 +389,7 @@
         <TopLine Value="5"/>
         <CursorPos X="3" Y="28"/>
         <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="template-files\setupdouble.opsiscript"/>
@@ -466,6 +472,7 @@
         <TopLine Value="33"/>
         <CursorPos Y="56"/>
         <UsageCount Value="3"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
         <Filename Value="C:\usr\share\lazarus\2.0.6\lcl\interfaces\gtk2\gtk2callback.inc"/>
@@ -486,6 +493,7 @@
         <CursorPos X="9" Y="55"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
         <Filename Value="C:\usr\share\fpcsrc\3.2.0\rtl\objpas\sysutils\sysstrh.inc"/>
@@ -529,6 +537,7 @@
         <TopLine Value="25"/>
         <CursorPos X="3" Y="44"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="osdanalyzemac.pas"/>
@@ -548,6 +557,7 @@
         <CursorPos X="4" Y="166"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
         <Filename Value="template-files\mac\setupsingle.opsiscript"/>
@@ -626,6 +636,7 @@
         <CursorPos X="21" Y="364"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="C:\usr\share\lazarus\2.0.10\components\lazutils\masks.pas"/>
@@ -771,6 +782,7 @@
         <CursorPos Y="678"/>
         <UsageCount Value="109"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
         <Filename Value="C:\usr\share\lazarus\2.0.10\lcl\include\customform.inc"/>
@@ -805,6 +817,7 @@
         <CursorPos Y="80"/>
         <UsageCount Value="45"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
         <Filename Value="C:\usr\share\lazarus\2.0.12\lcl\lcltranslator.pas"/>
@@ -838,6 +851,7 @@
         <TopLine Value="107"/>
         <CursorPos X="83" Y="116"/>
         <UsageCount Value="14"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
     </Units>
     <OtherDefines Count="3">
