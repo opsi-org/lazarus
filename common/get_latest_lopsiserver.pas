@@ -64,7 +64,7 @@ begin
     downloadDir + ' -P ../', Output);
 
   // read in version of downloaded l-opsi-server to write it in the quickinstall log
-  if FindFirst('../' + downloadDir + 'l-opsi-server_*.opsi', faAnyFile and
+  if FindFirst('../' + downloadDir + 'l-opsi-server_4*.opsi', faAnyFile and
     faDirectory, los_search) = 0 then
   begin
     los_version := los_search.Name;
