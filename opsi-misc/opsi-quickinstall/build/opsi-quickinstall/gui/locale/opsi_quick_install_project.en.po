@@ -141,7 +141,7 @@ msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsfailed
 msgid "failed"
-msgstr ""
+msgstr "failed"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
@@ -239,11 +239,11 @@ msgstr "Installing "
 
 #: opsi_quick_install_resourcestrings.rsinstallation
 msgid "Installation "
-msgstr ""
+msgstr "Installation "
 
 #: opsi_quick_install_resourcestrings.rsinstallationof
 msgid "Installation of "
-msgstr ""
+msgstr "Installation of "
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
@@ -496,7 +496,7 @@ msgstr "Finally click \"finish\" to start the installation of opsi-server."
 
 #: opsi_quick_install_resourcestrings.rssuccess
 msgid "successful"
-msgstr ""
+msgstr "successful"
 
 #: opsi_quick_install_resourcestrings.rssuggestion
 msgid "[Suggestions: "
@@ -514,7 +514,7 @@ msgstr "TFTPROOT symlink points to: "
 
 #: opsi_quick_install_resourcestrings.rstryolderlos
 msgid "Try older version of l-opsi-server"
-msgstr ""
+msgstr "Try older version of l-opsi-server"
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"

@@ -149,7 +149,7 @@ msgstr "Otro:"
 
 #: opsi_quick_install_resourcestrings.rsfailed
 msgid "failed"
-msgstr ""
+msgstr "fallida"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
@@ -247,11 +247,11 @@ msgstr "Instalando"
 
 #: opsi_quick_install_resourcestrings.rsinstallation
 msgid "Installation "
-msgstr ""
+msgstr "Instalación "
 
 #: opsi_quick_install_resourcestrings.rsinstallationof
 msgid "Installation of "
-msgstr ""
+msgstr "Instalación de "
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
@@ -504,7 +504,7 @@ msgstr "Finalmente presione \"finalizar\" para comenzar la instalación del serv
 
 #: opsi_quick_install_resourcestrings.rssuccess
 msgid "successful"
-msgstr ""
+msgstr "exitosa"
 
 #: opsi_quick_install_resourcestrings.rssuggestion
 msgid "[Suggestions: "
@@ -522,7 +522,7 @@ msgstr "TFTROOT symlink hace referencia a:"
 
 #: opsi_quick_install_resourcestrings.rstryolderlos
 msgid "Try older version of l-opsi-server"
-msgstr ""
+msgstr "Prueba la versión anterior de l-opsi-server"
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"

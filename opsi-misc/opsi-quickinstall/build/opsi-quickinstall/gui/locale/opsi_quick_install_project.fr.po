@@ -150,7 +150,7 @@ msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsfailed
 msgid "failed"
-msgstr ""
+msgstr "a échoué"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
@@ -248,11 +248,11 @@ msgstr "En cours d'installation"
 
 #: opsi_quick_install_resourcestrings.rsinstallation
 msgid "Installation "
-msgstr ""
+msgstr "Installation "
 
 #: opsi_quick_install_resourcestrings.rsinstallationof
 msgid "Installation of "
-msgstr ""
+msgstr "Installation de "
 
 #: opsi_quick_install_resourcestrings.rsipname
 msgctxt "opsi_quick_install_resourcestrings.rsipname"
@@ -505,7 +505,7 @@ msgstr "Enfin, cliquez sur \"Terminer\" pour démarrer l'installation du serveur
 
 #: opsi_quick_install_resourcestrings.rssuccess
 msgid "successful"
-msgstr ""
+msgstr "à succès "
 
 #: opsi_quick_install_resourcestrings.rssuggestion
 msgid "[Suggestions: "
@@ -523,7 +523,7 @@ msgstr "Lien symbolique de TFTPROOT pointe vers:"
 
 #: opsi_quick_install_resourcestrings.rstryolderlos
 msgid "Try older version of l-opsi-server"
-msgstr ""
+msgstr "Essayez l'ancienne version de l-opsi-server"
 
 #: opsi_quick_install_resourcestrings.rsucs
 msgctxt "opsi_quick_install_resourcestrings.rsucs"

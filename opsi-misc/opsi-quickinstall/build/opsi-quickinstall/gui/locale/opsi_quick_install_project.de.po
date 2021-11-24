@@ -135,7 +135,7 @@ msgstr "Andere:"
 
 #: opsi_quick_install_resourcestrings.rsfailed
 msgid "failed"
-msgstr ""
+msgstr "fehlgeschlagen"
 
 #: opsi_quick_install_resourcestrings.rsfinish
 msgctxt "opsi_quick_install_resourcestrings.rsfinish"
@@ -490,7 +490,7 @@ msgstr "Klicken Sie auf \"fertigstellen\", um die Installation von Opsi-Server z
 
 #: opsi_quick_install_resourcestrings.rssuccess
 msgid "successful"
-msgstr ""
+msgstr "erfolgreich"
 
 #: opsi_quick_install_resourcestrings.rssuggestion
 msgid "[Suggestions: "
