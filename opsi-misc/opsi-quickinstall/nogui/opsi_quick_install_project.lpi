@@ -17,7 +17,7 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="../gui/locale"/>
+      <OutDir Value="../build/opsi-quickinstall/gui/locale"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
