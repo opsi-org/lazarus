@@ -8,6 +8,7 @@ uses
   Classes, SysUtils,
   Windows,
   jwawincrypt,
+  oslog,
   strutils;
 
 function open_cert_system_store(var mystore: HCERTSTORE): boolean;
@@ -213,35 +214,36 @@ begin
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    writeln('failed: pemfileToBinarybuf: ' + message);
+    logdatei.log('pemfileToSystemStore: failed: pemfileToBinarybuf: ' + message,LLError);
     exit;
   end;
-  writeln('done: pemfileToBinarybuf');
+  logdatei.log_prog('done: pemfileToBinarybuf',LLdebug);
   mybool := open_cert_system_store(mystore);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    writeln('failed: open_cert_system_store: ' + message);
+    logdatei.log('pemfileToSystemStore: failed: open_cert_system_store: ' + message,LLError);
     exit;
   end;
-  writeln('done: open_cert_system_store');
+  logdatei.log_prog('done: open_cert_system_store',LLdebug);
   mybool := install_ca(mystore, binaryBuffer, bufsize);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    writeln('failed: install_ca: ' + message);
+    logdatei.log('pemfileToSystemStore: failed: install_ca: ' + message,LLError);
     exit;
   end;
-  writeln('done: install_ca');
+  logdatei.log_prog('done: install_ca',LLdebug);
   mybool := close_cert_store(mystore);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    writeln('failed: close_cert_store: ' + message);
+    logdatei.log('pemfileToSystemStore: failed: close_cert_store: ' + message,LLError);
     exit;
   end;
-  writeln('done: close_cert_store');
-  writeln('done: pemfileToSystemStore');
+  logdatei.log_prog('done: close_cert_store',LLdebug);
+  logdatei.log_prog('done: pemfileToSystemStore',LLdebug);
+  logdatei.log('Successful imported to system store: ' + filename,LLinfo);
   Result := mybool;
 end;
 
