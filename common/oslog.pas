@@ -528,6 +528,7 @@ procedure TLogInfo.CreateTheLogfile(LogDateiname: string; check4append: boolean)
 var
   i: integer;
   filelist: TStringList;
+  filename : string;
   {$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
   {$ENDIF}
@@ -561,7 +562,10 @@ begin
     begin
       // only delete files older than a week
       if FileAge(filelist.Strings[i]) < DateTimeToFileDate(now - 7) then
-        DeleteFile(filelist.Strings[i]);
+      begin
+        filename := filelist.Strings[i];
+        DeleteFile(filename);
+      end;
     end;
   except
   end;

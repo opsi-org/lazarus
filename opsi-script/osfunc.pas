@@ -9140,6 +9140,86 @@ begin
   //StrDispose(new);
 end;
 
+(*
+function TuibFileInstall.RenameDir(existingdirname, newdirname: string;
+  var RebootWanted: boolean): boolean;
+var
+  exitcode: integer;
+  {$IFDEF WINDOWS}
+  exist, new: PWchar;
+  {$ELSE WINDOWS}
+  exist, new: PChar;
+  {$ENDIF WINDOWS}
+  moveflags: DWORD;
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+{$ENDIF WINDOWS}
+begin
+  Result := False;
+  //exist:=StrAlloc (length(existingfilename)+1);
+  //new:=StrAlloc (length(newfilename)+1);
+      function RenameDir(OldName, NewName: string): boolean;
+    begin
+      // DirectorySeparator at the end of directories avoids some troubles
+      OldName:= IncludeTrailingPathDelimiter(OldName);
+      NewName:= IncludeTrailingPathDelimiter(NewName);
+      // Let's go
+      Result := RenameFile(OldName, NewName);
+    end;
+
+  {$IFDEF UNIX}
+  exist := PChar(existingfilename);
+  new := PChar(newfilename);
+  exitcode := fprename(exist, new);
+  if 0 = exitcode then
+    Result := True
+  else
+  begin
+    Result := False;
+    LogDatei.log('Could not move / rename from ' + exist + ' to ' +
+      new + ' Error: ' + SysErrorMessage(fpgeterrno), LLerror);
+  end;
+  {$ENDIF LINUX}
+  {$IFDEF WINDOWS}
+  exist := PWChar(unicodestring(existingfilename));
+  new := PWChar(unicodestring(newfilename));
+  // perhaps also MOVEFILE_WRITE_THROUGH
+  moveflags := MOVEFILE_COPY_ALLOWED or MOVEFILE_REPLACE_EXISTING;
+  exitbool := MoveFileExW(exist, new, moveflags);
+  if exitbool then
+    Result := True
+  else
+  begin
+    if GetLastError = 32 then
+    begin
+      LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.', LLDebug2);
+      moveflags := MOVEFILE_DELAY_UNTIL_REBOOT or MOVEFILE_REPLACE_EXISTING;
+      exitbool := MoveFileExW(exist, new, moveflags);
+      if exitbool then
+      begin
+        Result := True;
+        RebootWanted := True;
+        LogDatei.log(
+          'Target file was in use, move / rename should be completed after reboot.',
+          LLInfo);
+      end
+      else
+        LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+          LLError);
+    end;
+    if not Result then
+    begin
+      LogDatei.log('Could not rename / move from ' + exist + ' to ' +
+        new + ' Error: ' + IntToStr(GetLastError) + ' (' +
+        removeLineBreaks(SysErrorMessage(GetLastError)) + ')', LLerror);
+    end;
+  end;
+  {$ENDIF WINDOWS}
+  //StrDispose(exist);
+  //StrDispose(new);
+end;
+*)
+
 {$IFDEF UNIX}
 function TuibFileInstall.chmod(mode: string; const FileName: string): boolean;
 begin
@@ -9859,7 +9939,8 @@ var
     FName: string = '';
     SaveLogLevel: integer = 0;
     followsymlinks: boolean = False;
-    doNotChangeAccessRights: boolean = False;
+    //doNotChangeAccessRights: boolean = False;
+    doNotChangeAccessRights: boolean = True;
 
     procedure ToCopyOrNotToCopy(const SourceName, TargetName: string);
     var
