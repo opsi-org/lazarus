@@ -334,19 +334,19 @@ type
   procedure TQuickInstall.addRepo;
   var
     url: string;
-    MyRepo: TLinuxRepository;
+    ReleaseKeyRepo: TLinuxRepository;
   begin
     writeln(rsCreateRepo);
     // first remove opsi.list to have a cleared opsi repository list
     if FileExists('/etc/apt/sources.list.d/opsi.list') then
       QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     // create repository (no password, user is root):
-    MyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
+    ReleaseKeyRepo := TLinuxRepository.Create(DistrInfo.MyDistr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'Opsi 4.1' then
-      MyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
+      ReleaseKeyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
     else
-      MyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+      ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
     // define repo url
     url := repo + repoKind + '/' + DistrInfo.DistrUrlPart;
 
@@ -354,12 +354,12 @@ type
     if (distroName = 'openSUSE') or (distroName = 'SUSE') then
     begin
       writeln('OpenSUSE/SUSE: Add Repo');
-      MyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
+      ReleaseKeyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
     end
     else
-      MyRepo.Add(url);
+      ReleaseKeyRepo.Add(url);
 
-    MyRepo.Free;
+    ReleaseKeyRepo.Free;
   end;
 
   // install opsi-script and execute l-opsi-server script
