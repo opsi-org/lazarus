@@ -108,11 +108,11 @@ begin
   //DirClientData := ExtractFilePath(DirClientData) + 'l-opsi-server';
   DirClientData := ExtractFilePath(DirClientData);
 
-  if two_los_to_test then
+  {if two_los_to_test then
   begin
     message := rsWait;
     Synchronize(@ShowMessageOnForm);
-  end;
+  end;}
   // try downloading latest l-opsi-server and set DirClientData for the latest version
   if two_los_to_test and getLOpsiServer(FInstallRunCommand, Data.distroName) then
   begin
