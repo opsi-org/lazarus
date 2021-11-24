@@ -37,6 +37,11 @@ resourcestring
   rsBack = ' < back ';
   rsOverview = 'Overview';
   rsFinish = ' finish ';
+  rsInstallation = 'Installation ';
+  rsTryOlderLOS = 'Try older version of l-opsi-server';
+  rsInstallationOf = 'Installation of ';
+  rsFailed = 'failed';
+  rsSuccess = 'successful';
 
   // QuickInstall:
   rsCapDistr = 'Distribution';

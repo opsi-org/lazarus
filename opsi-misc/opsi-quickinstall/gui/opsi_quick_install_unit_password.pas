@@ -85,7 +85,8 @@ uses
 
 {InstallOpsiThread}
 
-constructor TInstallOpsiThread.Create(password: string; sudo: boolean; shellCommand: string);
+constructor TInstallOpsiThread.Create(password: string; sudo: boolean;
+  shellCommand: string);
 begin
   FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
   FShellCommand := shellCommand;
@@ -96,7 +97,7 @@ end;
 
 procedure TInstallOpsiThread.ShowMessageOnForm;
 begin
-   Wait.LabelWait.Caption := message;
+  Wait.LabelWait.Caption := message;
 end;
 
 procedure TInstallOpsiThread.defineDirClientData;
@@ -286,7 +287,7 @@ begin
   if (FileText[0] = 'failed') and two_los_to_test then
   begin
     // if installation of latest l-opsi-server failed, try the older version:
-    message := 'Installation failed. Try older version of l-opsi-server.';
+    message := rsInstallation+rsFailed + '. ' + rsTryOlderLOS + '.';
     Synchronize(@ShowMessageOnForm);
     Sleep(1000);
     LogDatei.log('Installation failed: ' + name_current_los, LLessential);
@@ -301,15 +302,15 @@ begin
 
   if FileText[0] = 'failed' then
   begin
-    message := 'Installation failed.';
+    message := rsInstallation+rsFailed;
     Synchronize(@ShowMessageOnForm);
     LogDatei.log('Installation failed: ' + name_current_los, LLessential);
     LogDatei.log(Data.opsiVersion + ' installation failed', LLessential);
   end
   else
   begin
-    LogDatei.log('Installation success: ' + name_current_los, LLessential);
-    LogDatei.log(Data.opsiVersion + ' installation success', LLessential);
+    LogDatei.log('Installation successful: ' + name_current_los, LLessential);
+    LogDatei.log(Data.opsiVersion + ' installation successful', LLessential);
   end;
 end;
 
@@ -333,15 +334,22 @@ end;
 procedure TPassword.showResult;
 var
   FileText: TStringList;
+  installationResult: string;
 begin
   //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
   FileText.LoadFromFile(clientDataDir + 'result.conf');
   // adjust quick-install ExitCode
-  if FileText[0] = 'failed' then ExitCode := 1;
+  if FileText[0] = 'failed' then
+  begin
+    installationResult := rsFailed;
+    ExitCode := 1;
+  end
+  else
+    installationResult := rsSuccess;
 
   //ShowMessage(ExitCode.ToString);
-  ShowMessage('Installation of ' + Data.opsiVersion + ': ' + FileText.Text +
+  ShowMessage(rsInstallationOf + Data.opsiVersion + ': ' + installationResult +
     #10 + rsLog + #10 + LogOpsiServer + #10 + QuickInstall.logFileName);
   FileText.Free;
 end;
@@ -388,8 +396,8 @@ begin
 
   btnFinishClicked := True;
   // start thread for opsi server installation while showing TWait
-  InstallOpsiThread := TInstallOpsiThread.Create(EditPassword.Text, RadioBtnSudo.Checked,
-    GetPackageManagementShellCommand(Data.distroName));
+  InstallOpsiThread := TInstallOpsiThread.Create(EditPassword.Text,
+    RadioBtnSudo.Checked, GetPackageManagementShellCommand(Data.distroName));
   with InstallOpsiThread do
   begin
     // FormClose automatically executed on termination of thread

@@ -401,6 +401,8 @@ type
   // install opsi-server
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
   procedure TQuickInstall.installOpsi;
+  var
+    installationResult: string;
   begin
     LogDatei.log('Entered InstallOpsi', LLdebug);
     writeln(rsInstall + opsiVersion + ':');
@@ -427,7 +429,7 @@ type
     if (FileText[0] = 'failed') and two_los_to_test then
     begin
       // if installation of latest l-opsi-server failed, try the older version:
-      writeln('Installation failed. Try older version of l-opsi-server.');
+      writeln(rsInstallation+rsFailed+'. ' + rsTryOlderLOS + '.');
       Sleep(1000);
       LogDatei.log('Installation failed: ' + name_current_los, LLessential);
       LogDatei.log('Try older version of l-opsi-server:', LLnotice);
@@ -450,20 +452,22 @@ type
 
     if FileText[0] = 'failed' then
     begin
-      writeln('Installation failed.');
+      installationResult := rsFailed;
+      writeln(rsInstallation+rsFailed);
       LogDatei.log('Installation failed: ' + name_current_los, LLessential);
       LogDatei.log(opsiVersion + ' installation failed', LLessential);
       ExitCode := 1;
     end
     else
     begin
-      LogDatei.log('Installation success: ' + name_current_los, LLessential);
-      LogDatei.log(opsiVersion + ' installation success', LLessential);
+      installationResult := rsSuccess;
+      LogDatei.log('Installation successful: ' + name_current_los, LLessential);
+      LogDatei.log(opsiVersion + ' installation successful', LLessential);
     end;
     // print result of installation
     Sleep(1000);
     writeln();
-    writeln('Installation of ' + opsiVersion + ': ' + FileText.Text);
+    writeln(rsInstallationOf + opsiVersion + ': ' + installationResult);
     Sleep(1000);
     writeln(rsLog);
     writeln(LogOpsiServer);
