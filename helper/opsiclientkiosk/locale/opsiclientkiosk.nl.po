@@ -14,6 +14,11 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: installdlg.rserrorondemand
+msgctxt "installdlg.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
+
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
 msgstr ""
@@ -127,6 +132,10 @@ msgstr "Verbonden met"
 msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr ""
 
+#: opsiclientkioskgui.rsdepot
+msgid "depot"
+msgstr ""
+
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
 msgstr ""
@@ -141,6 +150,11 @@ msgstr ""
 
 #: opsiclientkioskgui.rsdoyouwantupdate
 msgid "Do you want to update "
+msgstr ""
+
+#: opsiclientkioskgui.rserrorondemand
+msgctxt "opsiclientkioskgui.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
 msgstr ""
 
 #: opsiclientkioskgui.rsinstall
@@ -217,6 +231,10 @@ msgstr ""
 
 #: opsiclientkioskgui.rsnow
 msgid "Now"
+msgstr ""
+
+#: opsiclientkioskgui.rson
+msgid "on"
 msgstr ""
 
 #: opsiclientkioskgui.rsreload

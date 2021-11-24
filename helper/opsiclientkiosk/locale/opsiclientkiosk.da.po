@@ -13,6 +13,11 @@ msgstr ""
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: installdlg.rserrorondemand
+msgctxt "installdlg.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
+
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
 msgstr ""
@@ -126,6 +131,10 @@ msgstr "Forbundet til"
 msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Nuværende bruger har ikke admin-rettigheder. Admin-tilstand er deaktiveret.%sLøsning: start opsi Client Kiosk (som bruger) med admin-rettigheder."
 
+#: opsiclientkioskgui.rsdepot
+msgid "depot"
+msgstr ""
+
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
 msgstr "deaktiveret"
@@ -141,6 +150,11 @@ msgstr "Ønsker du at afinstallere"
 #: opsiclientkioskgui.rsdoyouwantupdate
 msgid "Do you want to update "
 msgstr "Ønsker du at opdatere"
+
+#: opsiclientkioskgui.rserrorondemand
+msgctxt "opsiclientkioskgui.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
 
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
@@ -217,6 +231,10 @@ msgstr "Ingen opdateringer fundet."
 #: opsiclientkioskgui.rsnow
 msgid "Now"
 msgstr "Nu"
+
+#: opsiclientkioskgui.rson
+msgid "on"
+msgstr ""
 
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
