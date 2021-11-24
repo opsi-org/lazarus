@@ -6,11 +6,17 @@ interface
 
 uses
   Classes, SysUtils,
+  {$IFDEF WINDOWS}
   Windows,
   jwawincrypt,
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  OSProcessux,
+  {$ENDIF UNIX}
   oslog,
   strutils;
 
+{$IFDEF WINDOWS}
 function open_cert_system_store(var mystore: HCERTSTORE): boolean;
 function close_cert_store(hstore: HCERTSTORE): boolean;
 //function read_cert() : CERT_CONTEXT;
@@ -21,10 +27,56 @@ function pemfileToBinarybuf(filename: string; var binaryBuffer: pbyte;
 function pemBinarybufToCert_context(binaryBuffer: pbyte; bufsize: dword;
   var ca_cert: CERT_CONTEXT): boolean;
 function pemfileToEncodedline(filename: string; var myPemString: string): boolean;
+{$ENDIF WINDOWS}
 function pemfileToSystemStore(filename: string): boolean;
 
 implementation
 
+{$IFDEF UNIX}
+// Ubuntu
+// https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
+// https://wiki.ubuntuusers.de/CA/
+
+// macos
+// https://apple.stackexchange.com/questions/80623/import-certificates-into-the-system-keychain-via-the-command-line
+// https://derflounder.wordpress.com/2011/03/13/adding-new-trusted-root-certificates-to-system-keychain/
+
+
+function pemfileToSystemStore(filename: string): boolean;
+var
+  command : string;
+  outlines: TStringList;
+  report: string;
+  showcmd: integer;
+  ExitCode: longint;
+begin
+  result := false;
+  {$IFDEF DARWIN}
+  // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
+  command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
+  command := command +'"'+filename+'"'
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  // convert pem to crt
+  command := 'openssl x509 -outform der -in '+filename+' -out /usr/local/share/ca-certificates/your-cert.crt';
+  //cp file.crt /usr/local/share/ca-certificates/
+  // update-ca-certificates
+  command := command +'"'+filename+'"'
+  {$ENDIF LINUX}
+  outlines:= TStringList.create;
+  if not RunCommandAndCaptureOut
+         (command, true,outlines, report, SW_HIDE, ExitCode, false, 1) then
+         begin
+           // Error
+         end
+  else
+  begin
+    // success
+  end;
+end;
+{$ENDIF UNIX}
+
+{$IFDEF WINDOWS}
 // https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptstringtobinarya
 // https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptdecodeobjectex
 // https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certaddencodedcertificatetostore
@@ -246,5 +298,7 @@ begin
   logdatei.log('Successful imported to system store: ' + filename,LLinfo);
   Result := mybool;
 end;
+{$ENDIF WINDOWS}
+
 
 end.
