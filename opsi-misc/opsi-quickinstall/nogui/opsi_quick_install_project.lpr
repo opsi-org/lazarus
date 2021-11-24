@@ -429,7 +429,7 @@ type
     if (FileText[0] = 'failed') and two_los_to_test then
     begin
       // if installation of latest l-opsi-server failed, try the older version:
-      writeln(rsInstallation+rsFailed+'. ' + rsTryOlderLOS + '.');
+      writeln(rsInstallation + rsFailed + '. ' + rsTryOlderLOS + '.');
       Sleep(1000);
       LogDatei.log('Installation failed: ' + name_current_los, LLessential);
       LogDatei.log('Try older version of l-opsi-server:', LLnotice);
@@ -453,7 +453,7 @@ type
     if FileText[0] = 'failed' then
     begin
       installationResult := rsFailed;
-      writeln(rsInstallation+rsFailed);
+      writeln(rsInstallation + rsFailed + '.');
       LogDatei.log('Installation failed: ' + name_current_los, LLessential);
       LogDatei.log(opsiVersion + ' installation failed', LLessential);
       ExitCode := 1;
@@ -467,8 +467,9 @@ type
     // print result of installation
     Sleep(1000);
     writeln();
-    writeln(rsInstallationOf + opsiVersion + ': ' + installationResult);
+    writeln(rsInstallationOf + opsiVersion + ' ' + installationResult+'!');
     Sleep(1000);
+    writeln();
     writeln(rsLog);
     writeln(LogOpsiServer);
 

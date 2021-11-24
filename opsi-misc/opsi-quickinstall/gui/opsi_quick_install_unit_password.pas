@@ -262,8 +262,8 @@ begin
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
 
-  message := rsInstall + name_current_los + '... ' + rsSomeMin;
-  Synchronize(@ShowMessageOnForm);
+  {message := rsInstall + name_current_los + '... ' + rsSomeMin;
+  Synchronize(@ShowMessageOnForm);}
   FInstallRunCommand.Run('opsi-script-gui -batch ' + DirClientData +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
 end;
@@ -271,8 +271,6 @@ end;
 // install opsi server with thread (only the time consuming parts of the installation)
 procedure TInstallOpsiThread.installOpsi;
 begin
-  message := rsInstall + Data.opsiVersion + ':';
-  Synchronize(@ShowMessageOnForm);
   Synchronize(@addRepo);
 
   // install opsi-server
@@ -287,7 +285,7 @@ begin
   if (FileText[0] = 'failed') and two_los_to_test then
   begin
     // if installation of latest l-opsi-server failed, try the older version:
-    message := rsInstallation+rsFailed + '. ' + rsTryOlderLOS + '.';
+    message := rsInstallation + rsFailed + '. ' + rsTryOlderLOS + '.';
     Synchronize(@ShowMessageOnForm);
     Sleep(1000);
     LogDatei.log('Installation failed: ' + name_current_los, LLessential);
@@ -302,7 +300,7 @@ begin
 
   if FileText[0] = 'failed' then
   begin
-    message := rsInstallation+rsFailed;
+    message := rsInstallation + rsFailed + '.';
     Synchronize(@ShowMessageOnForm);
     LogDatei.log('Installation failed: ' + name_current_los, LLessential);
     LogDatei.log(Data.opsiVersion + ' installation failed', LLessential);
@@ -349,8 +347,8 @@ begin
     installationResult := rsSuccess;
 
   //ShowMessage(ExitCode.ToString);
-  ShowMessage(rsInstallationOf + Data.opsiVersion + ': ' + installationResult +
-    #10 + rsLog + #10 + LogOpsiServer + #10 + QuickInstall.logFileName);
+  ShowMessage(rsInstallationOf + Data.opsiVersion + ' ' + installationResult + '!' +
+    #10 + #10 + rsLog + #10 + LogOpsiServer + #10 + QuickInstall.logFileName);
   FileText.Free;
 end;
 
