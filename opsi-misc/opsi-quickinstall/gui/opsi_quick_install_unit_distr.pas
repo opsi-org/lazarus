@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls;
+  ExtCtrls, oslog;
 
 type
 
@@ -92,6 +92,7 @@ begin
   // set Data.DistrInfo
   with Data do
   begin
+    LogDatei.Log(Data.distroName + ' ' + Data.distroRelease, LLessential);
     DistrInfo.SetInfo(distroName, distroRelease);
     //ShowMessage(DistrInfo.DistrUrlPart);
     // If the distribution is not supported, show an information and close QuickInstall:
