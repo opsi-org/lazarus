@@ -17,12 +17,12 @@ ENTITLEMENTS="--entitlements kiosk.entitlements"
 # that, and then copy the app there.
 #
 # Note we use `-R`, not `-r`, to preserve symlinks.
-WORKDIR="QShare-`date '+%Y-%m-%d_%H.%M.%S'`"
-DMGROOT="${WORKDIR}/QShare"
-APP="${WORKDIR}/QShare/QShare.app"
-DMG="${WORKDIR}/QShare.dmg"
+WORKDIR="OpsiClientKiosk-`date '+%Y-%m-%d_%H.%M.%S'`"
+DMGROOT="${WORKDIR}/OpsiClientKiosk"
+APP="${WORKDIR}/OpsiClientKiosk/OpsiClientKiosk.app"
+DMG="${WORKDIR}/OpsiClientKiosk.dmg"
 mkdir -p "${DMGROOT}"
-cp -R "${ARCHIVE}/Products/Applications/QShare.app" "${DMGROOT}/"
+cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/OpsiClientKiosk.app" "${DMGROOT}/"
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
 # existing signature`.  There's no option to suppress that.  The message 
 # goes to `stderr` so you don't want to redirect it to `/dev/null` because 
@@ -30,13 +30,15 @@ cp -R "${ARCHIVE}/Products/Applications/QShare.app" "${DMGROOT}/"
 # prevent it is to remove the signature beforehand, as shown by the 
 # following lines.  It does slow things down a bunch though, so I've made 
 # it easy to disable them.
-if true
+
+# disabled due to bug in codesigning tool set to true for enabling this
+if false
 then
     codesign --remove-signature "${APP}"
-    codesign --remove-signature "${APP}/Contents/PlugIns/QShareExtension.appex"
-    codesign --remove-signature "${APP}/Contents/Frameworks/QCore.framework"
-    codesign --remove-signature "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
+    codesign --remove-signature "${APP}/Contents/Frameworks/libssl.dylib"
+    codesign --remove-signature "${APP}/Contents/Frameworks/libcrypto.dylib"
 fi
+
 # Create various entitlement files from 'here' documents.
 cat > "${WORKDIR}/app.entitlements" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -47,35 +49,10 @@ cat > "${WORKDIR}/app.entitlements" <<EOF
     <true/>
     <key>com.apple.security.network.client</key>
     <true/>
-    <key>com.apple.security.network.server</key>
-    <true/>
 </dict>
 </plist>
 EOF
-cat > "${WORKDIR}/appex.entitlements" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>com.apple.security.app-sandbox</key>
-    <true/>
-    <key>com.apple.security.network.client</key>
-    <true/>
-</dict>
-</plist>
-EOF
-cat > "${WORKDIR}/tool.entitlements" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>com.apple.security.app-sandbox</key>
-    <true/>
-    <key>com.apple.security.inherit</key>
-    <true/>
-</dict>
-</plist>
-EOF
+
 # Sign the app from the inside out.
 #
 # Notes:
