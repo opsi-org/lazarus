@@ -84,7 +84,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -207,7 +207,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -276,7 +276,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/OpsiClientKiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
