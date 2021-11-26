@@ -72,7 +72,7 @@ begin
   begin
     myMessage := myJsonAnswer;
     myMessage2 := myJsonAnswer2;
-    logdatei.log('messageFromMainThread: ' + myMessage, LLDebug2);
+    logdatei.log('messageFromMainThread: ' + myMessage, LLinfo);
     myJsonAnswer := '';
     myJsonAnswer2 := '';
   end

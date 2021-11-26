@@ -1,6 +1,15 @@
 [changelog]
+opsi-notifier  4.2.0.3
+
+  * combobutton: cbox read only // modify the input only from drop down
+  * loglevel default is now 6
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 26 Nov 2021:15:00:00 +0200
+
 opsi-notifier  4.2.0.2
+
  * oslog: FStandardPartLogFilename is now initialized, thus log files will not more be deleted because of an empty FStandardPartLogFilename
+
 -- Jan Werner <j.werner@uib.de>  Mon, 25 Oct 2021:12:45:00 +0200
 
 opsi-notifier  4.2.0.1
