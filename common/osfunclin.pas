@@ -835,6 +835,8 @@ var
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
   lineparts: TStringList;
+  outstring : string;
+  exitcode : longint;
 
   function getPackageLockPid(lockfile: string): string;
   var
@@ -974,6 +976,7 @@ var
   end;
 
 begin
+  LogDatei.log_prog('getPackageLock called with: '+inttostr(timeoutsec)+' - '+booltostr(kill,true),LLinfo);
   try
     Result := False;
     lockfile1 := '';
@@ -983,7 +986,13 @@ begin
     //distname := getLinuxVersionMap.Values['Distributor ID'];
     distname := getLinuxDistroName;
     if disttype = 'suse' then
+    begin
+      // we need to call zypper to fill zypper.pid
+      // exitcode: 7 - ZYPPER_EXIT_ZYPP_LOCKED
+      outstring := getCommandResult('zypper refresh',exitcode);
+      if exitcode = 7 then LogDatei.log('zypper is locked', LLinfo);
       lockfile := '/run/zypp.pid'
+    end
     else if disttype = 'redhat' then
       lockfile := '/var/run/yum.pid'
     else if disttype = 'debian' then
@@ -1001,7 +1010,7 @@ begin
     if lockfile1 <> '' then
       Result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
     if lockfile <> '' then
-      Result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+      Result := getPackageLockbyFile(lockfile, timeoutsec, kill);
   except
     on ex: Exception do
     begin

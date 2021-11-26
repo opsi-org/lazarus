@@ -9,6 +9,7 @@ opsi-script (4.12.4.32) stable; urgency=low
   * added unit oscertificates
   * new void function ImportCertToSystem(<cert file name>)
   * oscertificates: add functions for linux /mac
+  * osfunclin: getPackageLock: fix for zypper, general fix
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
 

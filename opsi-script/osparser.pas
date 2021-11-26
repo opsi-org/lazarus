@@ -23119,6 +23119,7 @@ begin
               tsSetDebug_Prog:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
+                  Remaining := opsiunquotestr2(remaining,'""');
                   if UpperCase(Remaining) = 'TRUE' then
                   begin
                     LogDatei.log('debug_prog was ' + BoolToStr(
