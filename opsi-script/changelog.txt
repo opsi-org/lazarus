@@ -14,6 +14,7 @@ opsi-script (4.12.4.32) stable; urgency=low
   * GetProductProperty: if no service context, tries to find property in %scriptpah%/properties.conf
   * GetProductPropertyList: if no service context, tries to find property in %scriptpath%/properties.conf
   * new: stringlist literals in json style are allowed now (set $list$ = '["he","ho"]')
+  * fix overwrite GUI messages by standard skinreload from  doAktionen
 
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00

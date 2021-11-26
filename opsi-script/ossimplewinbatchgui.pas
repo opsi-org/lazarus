@@ -28,7 +28,7 @@ type
   private
 
   public
-    procedure LoadSkin(const SkinDirectory: string); override;
+    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true); override;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
     procedure SetForceStayOnTop(ForceStayOnTop: boolean); override;
     procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); override;
@@ -80,7 +80,7 @@ begin
   Application.ProcessMessages;*)
 end;
 
-procedure TSimpleWinBatchGUI.LoadSkin(const SkinDirectory: string);
+procedure TSimpleWinBatchGUI.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
 var
   SkinFile: TIniFile;
   FilePath: string;

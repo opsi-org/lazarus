@@ -54,7 +54,7 @@ type
   public
     { These are the procedures to control the behaviour of the GUI.
       Override them in the subclass to get the desired functionality. }
-    procedure LoadSkin(const SkinDirectory: string);virtual;
+    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);virtual;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
     procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual;
     procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual;
@@ -159,7 +159,7 @@ begin
   Result:= skinDir;
 end;
 
-procedure TGUIControl.LoadSkin(const SkinDirectory: string);
+procedure TGUIControl.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
 begin
 
 end;

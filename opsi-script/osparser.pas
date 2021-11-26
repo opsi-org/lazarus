@@ -20596,7 +20596,8 @@ begin
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
-  FBatchOberflaeche.LoadSkin('');
+  // do not overwrite messages in in LabelInfo
+  FBatchOberflaeche.LoadSkin('',false);
   Application.ProcessMessages;
   //setWindowState(batchWindowMode);
   {$ENDIF GUI}
