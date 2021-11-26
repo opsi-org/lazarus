@@ -1767,8 +1767,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10703,8 +10704,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12292,10 +12293,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -20597,7 +20598,7 @@ begin
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
   // do not overwrite messages in in LabelInfo
-  FBatchOberflaeche.LoadSkin('',false);
+  FBatchOberflaeche.LoadSkin('', False);
   Application.ProcessMessages;
   //setWindowState(batchWindowMode);
   {$ENDIF GUI}
@@ -24238,12 +24239,24 @@ begin
 
               tsDefineVar:
               begin
+                s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 if Remaining <> '' then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'not allowed char following variable name')
-                else if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
+                begin
+                  // setting inital value ?
+                  if skip('=', remaining, remaining, InfoSyntaxError) then
+                  begin
+                    if not EvaluateString(remaining, remaining, s1, InfoSyntaxError) then
+                      reportError(Sektion, linecounter, call,
+                        'not a stringexpression after "="');
+                  end
+                  else
+                    reportError(Sektion, linecounter, Expressionstr,
+                      'not allowed char following variable name');
+                end;
+                // given var name reseved ?
+                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
                     'Reserved name, must not be used in a variable definition')
@@ -24254,34 +24267,56 @@ begin
                   funcindex :=
                     StrToInt(definedFunctionsCallStack.Strings[
                     definedFunctionsCallStack.Count - 1]);
+                  // try to do it
                   if definedFunctionArray[funcindex].addLocalVar(
                     lowercase(Expressionstr), dfpString, False) then
+                  begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2)
+                      definedFunctionArray[funcindex].Name + ' with value: ' + s1, LLDebug2);
+                    definedFunctionArray[funcindex].setLocalVarValueString(
+                      lowercase(Expressionstr), s1);
+                  end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
+                // already existing ?
                 else if VarList.IndexOf(lowercase(Expressionstr)) >= 0 then
                   reportError(Sektion, linecounter, Expressionstr,
                     'name is already in use')
                 else
                 begin
+                  // do it
                   VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add('');
+                  ValuesList.Add(s1);
+                  LogDatei.log('Defined global local string var: ' +
+                    lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
                 end;
               end;
 
               tsDefineStringList:
               begin
+                if Assigned(tmplist) then FreeAndNil(tmplist);
+                    tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 if Remaining <> '' then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'char not allowed following variable name')
-                else if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
+                begin
+                  // setting inital value ?
+                  if skip('=', remaining, remaining, InfoSyntaxError) then
+                  begin
+                    if not produceStringList(Sektion,remaining, remaining, tmplist, InfoSyntaxError) then
+                      reportError(Sektion, linecounter, call,
+                        'not a stringlist expression after "="');
+                  end
+                  else
+                    reportError(Sektion, linecounter, Expressionstr,
+                      'not allowed char following variable name');
+                end;
+                // given var name reseved ?
+                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
                     'Reserved name, must not be used in a variable definition')
@@ -24296,7 +24331,8 @@ begin
                     lowercase(Expressionstr), dfpStringlist, False) then
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2)
+                      definedFunctionArray[funcindex].Name+
+                      ' with value: '+tmplist.Text, LLDebug2)
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
@@ -24311,11 +24347,12 @@ begin
 
                 begin
                   listOfStringLists.Add(lowercase(Expressionstr));
-                  ContentOfStringLists.Add(TStringList.Create);
+                  ContentOfStringLists.Add(tmplist);
                   LogDatei.log('', leveldebug);
-                  LogDatei.log('(created string list ' + Expressionstr +
-                    ')', leveldebug);
+                  LogDatei.log('defined global string list ' + Expressionstr +
+                    ' with value: '+tmplist.Text, LLDebug2);
                 end;
+                if Assigned(tmplist) then FreeAndNil(tmplist);
               end;
 
               tsDefineFunction:
