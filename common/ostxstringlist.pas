@@ -11,7 +11,7 @@ uses
   osencoding,
   osparserhelper;
 
-Type
+type
 
   TXStringList = class(TStringList)
   public
@@ -29,11 +29,14 @@ Type
     function FuncSaveToFile(const FileName: string): boolean; overload;
     procedure loadFromFileWithEncoding(const FileName: string; encodingtype: string);
     procedure loadFromFile(const FileName: string);
-    procedure loadFromUnicodeFile(const FileName: string; var hasBOM : boolean; var foundEncoding : string);
+    procedure loadFromUnicodeFile(const FileName: string; var hasBOM: boolean;
+      var foundEncoding: string);
     //procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
     // we return values[keyname], until further notice
+    function getStringValueWithDefault(const keyname: string;
+      const default: string; var defaultused: boolean): string;
   end;
 
 
@@ -146,8 +149,8 @@ end;
 
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
 begin
-  if encodingtype='' then
-     encodingtype := 'system';
+  if encodingtype = '' then
+    encodingtype := 'system';
   SaveToFile(Filename, encodingtype, False);
 end;
 
@@ -160,8 +163,8 @@ var
   usedenc: string;
   *)
   myfilename: string;
-  LogS : string;
-  usedenc : string;
+  LogS: string;
+  usedenc: string;
 begin
   LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
@@ -247,12 +250,12 @@ function TXStringList.FuncSaveToFile(const FileName: string;
 var
   myfilename: string;
   i: integer;
-  LogS : string;
+  LogS: string;
 begin
   Result := False;
   try
-    if encodingtype='' then
-     encodingtype := 'system';
+    if encodingtype = '' then
+      encodingtype := 'system';
     myfilename := ExpandFileName(FileName);
     SaveToFile(myfilename, encodingtype, True);
     LogS := myfilename + ' saved back with encoding: ' + encodingtype;
@@ -352,31 +355,66 @@ begin
   end;
 end;
 
+function TXStringList.getStringValueWithDefault(const keyname: string;
+  const default: string; var defaultused: boolean): string;
+var
+  i: integer;
+  found: boolean = False;
+begin
+  Result := NULL_STRING_VALUE;
+  defaultused := False;
+  if indexOfName(keyname) <> -1 then
+    // the fast way:
+    Result := trim(values[keyname])
+  else
+  begin
+    // let us retry with trimed keys
+    for i := 0 to Count - 1 do
+    begin
+      if Names[i] <> '' then
+        if lowerCase(trim(Names[i])) = lowerCase(trim(keyname)) then
+        begin
+          Result := trim(values[Names[i]]);
+          found := True;
+        end;
+    end;
+    if not found then
+    begin
+      Result := default;
+      defaultused := True;
+    end;
+  end;
+end;
+
+
 procedure TXStringlist.loadFromFile(const FileName: string);
 begin
   //loadFromFileWithEncoding(FileName,GetDefaultTextEncoding);
-  loadFromFileWithEncoding(FileName,'system');
+  loadFromFileWithEncoding(FileName, 'system');
 end;
 
-procedure TXStringlist.loadFromFileWithEncoding(const FileName: string; encodingtype: string);
+procedure TXStringlist.loadFromFileWithEncoding(const FileName: string;
+  encodingtype: string);
 var
-  encfilename, usedenc : string;
+  encfilename, usedenc: string;
 begin
   // call fuction of osencoding here
   self.Clear;
-  if encodingtype='' then
-     encodingtype := 'system';
+  if encodingtype = '' then
+    encodingtype := 'system';
   //encfilename := reencode(ExpandFileName(FileName),'utf8', usedenc, 'system');
   encfilename := ExpandFileName(FileName);
   LogDatei.log('Load from file with encoding: ' + encodingtype, LLDebug);
-  self.AddStrings(osencoding.loadTextFileWithEncoding(encfilename,encodingtype));
+  self.AddStrings(osencoding.loadTextFileWithEncoding(encfilename, encodingtype));
 end;
 
-procedure TXStringlist.loadFromUnicodeFile(const FileName: string; var hasBOM : boolean; var foundEncoding : string);
+procedure TXStringlist.loadFromUnicodeFile(const FileName: string;
+  var hasBOM: boolean; var foundEncoding: string);
 begin
   self.Clear;
   LogDatei.log('Load from Unicode file ', LLDebug);
-  self.AddStrings(osencoding.loadUnicodeTextFile(ExpandFileName(Filename), hasBOM, foundEncoding));
+  self.AddStrings(osencoding.loadUnicodeTextFile(ExpandFileName(Filename),
+    hasBOM, foundEncoding));
 end;
 
 (*
@@ -388,4 +426,3 @@ end;
 *)
 
 end.
-

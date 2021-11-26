@@ -1767,9 +1767,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -8861,8 +8860,8 @@ var
                 except
                   on E: Exception do
                   begin
-                    LogDatei.log('Exception: Failed to unzip: ' + Source +
-                      ' to ' + target + ' : ' + e.message, LLError);
+                    LogDatei.log('Exception: Failed to unzip: ' +
+                      Source + ' to ' + target + ' : ' + e.message, LLError);
                   end;
                 end;
               end;
@@ -10704,8 +10703,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11815,6 +11814,20 @@ begin
     VarIndex := listOfStringLists.IndexOf(LowerCase(s));
     logstring := s;
 
+    // is json style array literal
+    tmpstr := opsiunquotestr2(s0, '""');
+    tmpstr := opsiunquotestr2(tmpstr, '''''');
+    if jsonIsArray(tmpstr) then
+    begin
+      if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
+      begin
+        syntaxCheck := True;
+        r := ''; // nothing remaining
+      end;
+    end;
+
+
+
     // local variable
     if isVisibleLocalVar(s, funcindexvar) then
     begin
@@ -12279,10 +12292,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -12560,10 +12573,44 @@ begin
                 end
                 else
                 begin
-                  LogDatei.log(
-                    'No service connection in GetProductPropertyList - using default',
-                    LLDebug);
-                  list.Text := list1.Text;
+                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                  if FileExists(tmpstr) then
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductPropertyList - trying properties.conf',
+                      LLWarning);
+                    if list2 <> nil then FreeAndNil(list1);
+                    list2 := TXStringlist.Create;
+                    list2.loadFromFile(tmpstr);
+                    tmpbool := False; // default used
+                    tmpstr1 := list2.getStringValueWithDefault(s1, s2, tmpbool);
+                    FreeAndNil(list2);
+                    if jsonIsArray(tmpstr1) then
+                    begin
+                      if jsonAsArrayToStringList(tmpstr1, TStringList(list1)) then
+                        list.Text := list1.Text
+                      else
+                        tmpbool := True; // use default
+                    end
+                    else
+                      tmpbool := True; // use default
+
+                    if tmpbool then
+                    begin
+                      LogDatei.log(
+                        'Property not existing in GetProductProperty in file: '
+                        + tmpstr + '- using default',
+                        LLWarning);
+                      list.Text := list1.Text;
+                    end;
+                  end
+                  else
+                  begin
+                    LogDatei.log(
+                      'No service connection in GetProductPropertyList - using default',
+                      LLDebug);
+                    list.Text := list1.Text;
+                  end;
                 end;
               end
               else
@@ -12591,10 +12638,47 @@ begin
                           end
                           else
                           begin
-                            LogDatei.log(
-                              'No service connection in GetProductPropertyList - using default',
-                              LLDebug);
-                            list.Text := list1.Text;
+                            tmpstr :=
+                              ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                            if FileExists(tmpstr) then
+                            begin
+                              LogDatei.log(
+                                'Property not existing in GetProductPropertyList - trying properties.conf',
+                                LLWarning);
+                              if list2 <> nil then FreeAndNil(list1);
+                              list2 := TXStringlist.Create;
+                              list2.loadFromFile(tmpstr);
+                              tmpbool := False; // default used
+                              tmpstr1 :=
+                                list2.getStringValueWithDefault(s1, s2, tmpbool);
+                              FreeAndNil(list2);
+                              if jsonIsArray(tmpstr1) then
+                              begin
+                                if jsonAsArrayToStringList(tmpstr1,
+                                  TStringList(list1)) then
+                                  list.Text := list1.Text
+                                else
+                                  tmpbool := True; // use default
+                              end
+                              else
+                                tmpbool := True; // use default
+
+                              if tmpbool then
+                              begin
+                                LogDatei.log(
+                                  'Property not existing in GetProductProperty in file: '
+                                  + tmpstr + '- using default',
+                                  LLWarning);
+                                list.Text := list1.Text;
+                              end;
+                            end
+                            else
+                            begin
+                              LogDatei.log(
+                                'No service connection in GetProductPropertyList - using default',
+                                LLDebug);
+                              list.Text := list1.Text;
+                            end;
                           end;
                         end
                         else
@@ -15033,16 +15117,37 @@ begin
                 // try to get from lookup table
                 if ProductvarsForPC.indexOfName(s1) = -1 then
                 begin
-                  LogDatei.log(
-                    'Property not existing in GetProductProperty - using default',
-                    LLWarning);
-                  StringResult := s2;
-                end
-                else
-                begin
-                  // get the property value from the looup table
-                  StringResult := ProductvarsForPC.Values[s1];
+                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                  if FileExists(tmpstr) then
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductProperty - trying properties.conf',
+                      LLWarning);
+                    if list1 <> nil then FreeAndNil(list1);
+                    list1 := TXStringlist.Create;
+                    list1.loadFromFile(tmpstr);
+                    tmpbool := False; // default used
+                    StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
+                    FreeAndNil(list1);
+                    if tmpbool then
+                      LogDatei.log(
+                        'Property not existing in GetProductProperty in file: '
+                        + tmpstr + '- using default',
+                        LLWarning);
+                  end
+                  else
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductProperty - using default',
+                      LLWarning);
+                    StringResult := s2;
+                  end;
                 end;
+              end
+              else
+              begin
+                // get the property value from the looup table
+                StringResult := ProductvarsForPC.Values[s1];
               end;
       if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
         LogDatei.AddToConfidentials(StringResult);
@@ -23119,7 +23224,7 @@ begin
               tsSetDebug_Prog:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  Remaining := opsiunquotestr2(remaining,'""');
+                  Remaining := opsiunquotestr2(remaining, '""');
                   if UpperCase(Remaining) = 'TRUE' then
                   begin
                     LogDatei.log('debug_prog was ' + BoolToStr(
@@ -24430,12 +24535,14 @@ begin
                       try
                         //LogDatei.log ('Executing0 ' + s1, LLInfo);
                         if not pemfileToSystemStore(s1) then
-                          logdatei.log('ImportCertToSystem: failed to import: ' + s1,LLError);
+                          logdatei.log('ImportCertToSystem: failed to import: ' +
+                            s1, LLError);
                       except
                         on e: Exception do
                         begin
                           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('ImportCertToSystem: failed to import: ' + s1 + ' : ' + e.message,
+                          LogDatei.log('ImportCertToSystem: failed to import: ' +
+                            s1 + ' : ' + e.message,
                             LLError);
                           FNumberOfErrors := FNumberOfErrors + 1;
                           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
@@ -24443,8 +24550,9 @@ begin
                       end;
                     end;
                 {$ELSE WINDOWS}
-                LogDatei.log('ImportCertToSystem ignored - implemented only for Windows.',
-                            LLError);
+                LogDatei.log(
+                  'ImportCertToSystem ignored - implemented only for Windows.',
+                  LLError);
                 {$ENDIF WINDOWS}
               end;
 

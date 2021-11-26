@@ -10,6 +10,11 @@ opsi-script (4.12.4.32) stable; urgency=low
   * new void function ImportCertToSystem(<cert file name>)
   * oscertificates: add functions for linux /mac
   * osfunclin: getPackageLock: fix for zypper, general fix
+  * ostxstinglist: new method: getStringValueWithDefault
+  * GetProductProperty: if no service context, tries to find property in %scriptpah%/properties.conf
+  * GetProductPropertyList: if no service context, tries to find property in %scriptpath%/properties.conf
+  * new: stringlist literals in json style are allowed now (set $list$ = '["he","ho"]')
+
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
 
