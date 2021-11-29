@@ -1767,9 +1767,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10704,8 +10703,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11755,6 +11754,8 @@ var
   s3: string = '';
   s4: string = '';
   r1: string = '';
+  r2: string = '';
+  r3: string = '';
   ///sx,
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpint: integer;
@@ -11815,22 +11816,53 @@ begin
     VarIndex := listOfStringLists.IndexOf(LowerCase(s));
     logstring := s;
 
-    // is json style array literal
-    tmpstr := opsiunquotestr2(s0, '""');
-    tmpstr := opsiunquotestr2(tmpstr, '''''');
-    if jsonIsArray(tmpstr) then
-    begin
-      if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
-      begin
-        syntaxCheck := True;
-        r := ''; // nothing remaining
-      end;
-    end;
 
+    // is json style array literal type 1
+    // expected something like '["ho","hu"]' or special '[]'
+    // json style array literal is normaly quoted with '
+    // string constant delimited by "'" ?
+    if (length(s0) > 0) and (pos('''[', s0) = 1) then
+    begin
+      r1 := copy(s0, pos(']''', s0) + 2, length(s0));
+      r2 := copy(s0, 2, pos(']''', s0));
+      GetWord(r2, tmpstr, r2, ['''']);
+      if skip('''', r2, r2, InfoSyntaxError) then
+        syntaxCheck := True;
+      if jsonIsArray(tmpstr) then
+      begin
+        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
+        begin
+          syntaxCheck := True;
+          r := r1;
+        end;
+      end;
+    end
+
+
+    // is json style array literal type 2
+    // expected only special "[]"
+    // json style array literal is can only be quoted with " in the case "[]"
+    // string constant delimited by '"' ?
+    else if (length(s0) > 0) and (pos('"[', s0) = 1) then
+    begin
+      r1 := copy(s0, pos(']"', s0) + 2, length(s0));
+      r2 := copy(s0, 2, pos(']"', s0));
+      GetWord(r2, tmpstr, r2, ['"']);
+      if skip('"', r2, r2, InfoSyntaxError) then
+        syntaxCheck := True;
+      if jsonIsArray(tmpstr) then
+      begin
+        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
+        begin
+          syntaxCheck := True;
+          r := r1;
+        end;
+      end;
+    end
 
 
     // local variable
-    if isVisibleLocalVar(s, funcindexvar) then
+    else if isVisibleLocalVar(s, funcindexvar) then
     begin
       if not (definedFunctionArray[funcindexvar].getLocalVarDatatype(s) =
         dfpStringlist) then
@@ -12293,10 +12325,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -20391,6 +20423,7 @@ var
   hasBom: boolean;
   insertindex: integer;
   isPlainAscii: boolean;
+  varIndex: integer;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -24273,7 +24306,8 @@ begin
                   begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name + ' with value: ' + s1, LLDebug2);
+                      definedFunctionArray[funcindex].Name + ' with value: ' +
+                      s1, LLDebug2);
                     definedFunctionArray[funcindex].setLocalVarValueString(
                       lowercase(Expressionstr), s1);
                   end
@@ -24298,16 +24332,21 @@ begin
 
               tsDefineStringList:
               begin
-                if Assigned(tmplist) then FreeAndNil(tmplist);
-                    tmplist := TXStringlist.Create;
+                LogDatei.log_prog('Start definestringlist',LLdebug2);
+                //if tmplist <> nil then
+                //if Assigned(tmplist) then FreeAndNil(tmplist);
+                LogDatei.log_prog('definestringlist: init tmplist',LLdebug2);
+                tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
+                LogDatei.log_prog('definestringlist: '+Expressionstr+' -> '+Remaining,LLdebug2);
                 if Remaining <> '' then
                 begin
                   // setting inital value ?
                   if skip('=', remaining, remaining, InfoSyntaxError) then
                   begin
-                    if not produceStringList(Sektion,remaining, remaining, tmplist, InfoSyntaxError) then
+                    if not produceStringList(Sektion, remaining,
+                      remaining, tmplist, InfoSyntaxError) then
                       reportError(Sektion, linecounter, call,
                         'not a stringlist expression after "="');
                   end
@@ -24331,8 +24370,8 @@ begin
                     lowercase(Expressionstr), dfpStringlist, False) then
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name+
-                      ' with value: '+tmplist.Text, LLDebug2)
+                      definedFunctionArray[funcindex].Name +
+                      ' with value: ' + tmplist.Text, LLDebug2)
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
@@ -24347,10 +24386,17 @@ begin
 
                 begin
                   listOfStringLists.Add(lowercase(Expressionstr));
-                  ContentOfStringLists.Add(tmplist);
+                  // create the list object needed to store list items
+                  ContentOfStringLists.Add(TStringList.Create);
+                  // if there is content then store it
+                  if tmplist.Count > 0 then
+                  begin
+                    VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
+                    TStringList(ContentOfStringLists.Items[VarIndex]).Text := tmplist.Text;
+                  end;
                   LogDatei.log('', leveldebug);
-                  LogDatei.log('defined global string list ' + Expressionstr +
-                    ' with value: '+tmplist.Text, LLDebug2);
+                  LogDatei.log('defined global string list ' +
+                    Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
                 end;
                 if Assigned(tmplist) then FreeAndNil(tmplist);
               end;
