@@ -13580,6 +13580,27 @@ begin
 
     // #########  end xml2 list functions ###############################
 
+    //function LoadTOMLFile(filePath: String): TStringList;
+    else if LowerCase(s) = LowerCase('LoadTOMLFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  LoadTOMLFile(s1);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in LoadTOMLFile "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
 
     // todo: 2nd parameter focus row for editmap
     else if LowerCase(s) = LowerCase('editMap') then
