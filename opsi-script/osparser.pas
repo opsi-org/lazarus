@@ -15156,7 +15156,7 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductProperty - trying properties.conf',
                       LLWarning);
-                    if list1 <> nil then FreeAndNil(list1);
+                    //if list1 <> nil then FreeAndNil(list1);
                     list1 := TXStringlist.Create;
                     list1.loadFromFile(tmpstr);
                     tmpbool := False; // default used
