@@ -1210,21 +1210,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -3309,11 +3309,13 @@ begin
     if jsonAsObjectHasKey(jO.AsString, 'result') then
     begin
       jA := jO.A['result'];
-      testresult := jA.S[0];
-      // get this single object
-      jO1 := jA.O[0];
-      // get from this object the value for the key: subkey as array
-      jA1 := jO1.A[subkey];
+      if jA.Length > 0 then
+      begin
+        testresult := jA.S[0];
+        // get this single object
+        jO1 := jA.O[0];
+        // get from this object the value for the key: subkey as array
+        jA1 := jO1.A[subkey];
     (*
     if jA1.Length > 0 then
     begin
@@ -3321,14 +3323,21 @@ begin
       LogDatei.log('ja1 as json: '+testresult, LLDebug2);
     end;
      *)
-      if jA1 <> nil then
-      begin
-        //testresult := jA.
-        for i := 0 to jA1.Length - 1 do
+        if jA1 <> nil then
         begin
-          testresult := jA1.S[i];
-          Result.append(jA1.S[i]);
+          //testresult := jA.
+          for i := 0 to jA1.Length - 1 do
+          begin
+            testresult := jA1.S[i];
+            Result.append(jA1.S[i]);
+          end;
         end;
+      end
+      else
+      begin
+        Logdatei.log('Error in getSubListResult: received object: ' +
+          jO.AsString + ' has empty "result"', LLWarning);
+        Result := nil;
       end;
     end
     else

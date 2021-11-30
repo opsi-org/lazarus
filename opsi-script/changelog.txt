@@ -17,6 +17,8 @@ opsi-script (4.12.4.32) stable; urgency=low
   * fix overwrite GUI messages by standard skinreload from  doAktionen
   * new: allow after DefVar inital value: defvar $str$ = "huhu"
   * new: allow after DefStringlist inital value: defstringlist $list$ = '["he","ho"]'
+  * oswebservice: getSubListResult: fix for access violation in getproductpropertylist
+  * osjson: jsonAsArrayToStringList: fix '[]' is empty array
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
 

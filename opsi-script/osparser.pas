@@ -15175,15 +15175,16 @@ begin
                       LLWarning);
                     StringResult := s2;
                   end;
+                end
+                else
+                begin
+                  // get the property value from the looup table
+                  StringResult := ProductvarsForPC.Values[s1];
                 end;
-              end
-              else
-              begin
-                // get the property value from the looup table
-                StringResult := ProductvarsForPC.Values[s1];
+
+                if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
+                  LogDatei.AddToConfidentials(StringResult);
               end;
-      if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
-        LogDatei.AddToConfidentials(StringResult);
     except
       on E: Exception do
       begin
@@ -24332,14 +24333,15 @@ begin
 
               tsDefineStringList:
               begin
-                LogDatei.log_prog('Start definestringlist',LLdebug2);
+                LogDatei.log_prog('Start definestringlist', LLdebug2);
                 //if tmplist <> nil then
                 //if Assigned(tmplist) then FreeAndNil(tmplist);
-                LogDatei.log_prog('definestringlist: init tmplist',LLdebug2);
+                LogDatei.log_prog('definestringlist: init tmplist', LLdebug2);
                 tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                LogDatei.log_prog('definestringlist: '+Expressionstr+' -> '+Remaining,LLdebug2);
+                LogDatei.log_prog('definestringlist: ' + Expressionstr +
+                  ' -> ' + Remaining, LLdebug2);
                 if Remaining <> '' then
                 begin
                   // setting inital value ?
@@ -24392,7 +24394,8 @@ begin
                   if tmplist.Count > 0 then
                   begin
                     VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
-                    TStringList(ContentOfStringLists.Items[VarIndex]).Text := tmplist.Text;
+                    TStringList(ContentOfStringLists.Items[VarIndex]).Text :=
+                      tmplist.Text;
                   end;
                   LogDatei.log('', leveldebug);
                   LogDatei.log('defined global string list ' +
