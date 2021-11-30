@@ -9,7 +9,7 @@ opsi-quickinstall (4.2.0.5-2) experimental; urgency=low
       2b) If 2a) failed then try to install the older l-opsi-server.
   * logging improved
     
--- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Sep 2021 12:00
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Nov 2021 13:10
 
 
 opsi-quickinstall (4.2.0.1-2) experimental; urgency=low
