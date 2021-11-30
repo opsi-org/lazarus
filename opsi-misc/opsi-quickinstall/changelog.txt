@@ -1,4 +1,17 @@
 
+opsi-quickinstall (4.2.0.5-2) experimental; urgency=low
+  * opsi-quickinstall version from now on synchronized with latest released l-opsi-server
+  * default l-opsi-server of quickinstall from now on synchronized with latest released l-opsi-server
+  * improved l-opsi-server installation process:
+    1) Try downloading latest released l-opsi-server.
+    2) If 1) worked then compare versions of downloaded and default l-opsi-server.
+      2a) Try to install the newer l-opsi-server.
+      2b) If 2a) failed then try to install the older l-opsi-server.
+  * logging improved
+    
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Sep 2021 12:00
+
+
 opsi-quickinstall (4.2.0.1-2) experimental; urgency=low
   * new default l-opsi-server 4.2.0.5-2
   * openSUSE 15.3 added as supported distribution
