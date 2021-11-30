@@ -84,10 +84,6 @@ msgid "To carry out the remaining installation automatically, we need some infor
 msgstr "Pour effectuer automatiquement le restant de l'installation, nous avons d'abord besoin de quelques informations."
 
 #: opsi_quick_install_resourcestrings.rscontinue
-#, fuzzy
-#| msgid ""
-#| "To continue and start the installation, please press enter.\n"
-#| "If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
 msgid ""
 "To continue and start the installation, please press enter.\n"
 "If you like to jump back to a question, please press the number key of the respective number in the overview."
@@ -173,10 +169,6 @@ msgid "Other:"
 msgstr "Autre :"
 
 #: opsi_quick_install_resourcestrings.rsinfoadmin
-#, fuzzy
-#| msgid ""
-#| "User to create for the operation of opsi.\n"
-#| "This user can not manage system settings.\n"
 msgctxt "opsi_quick_install_resourcestrings.rsinfoadmin"
 msgid ""
 "User to create for the operation of opsi.\n"
@@ -190,10 +182,6 @@ msgid "Should the data of opsi be stored in a file or a mysql database?"
 msgstr "Doivent les données d'opsi être stockées dans un fichier ou une base de données MySQL?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
-#, fuzzy
-#| msgid ""
-#| "Select \"No\" if you already have a dhcp-server.\n"
-#| "Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgid ""
 "Select \"No\" if you already have a dhcp-server.\n"
 "Select \"Yes\" if you want to install the dhcp-server on the opsi-server."
@@ -227,10 +215,6 @@ msgid "Source from which opsi will be installed."
 msgstr "Source à partir de laquelle opsi sera installé."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
-#, fuzzy
-#| msgid ""
-#| "Select the stability of the installation:\n"
-#| "Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgid ""
 "Select the stability of the installation:\n"
 "Stable is reliable, testing is the beta version, experimental may cause some errors."

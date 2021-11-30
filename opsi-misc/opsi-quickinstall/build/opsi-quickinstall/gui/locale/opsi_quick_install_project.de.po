@@ -158,10 +158,6 @@ msgid "Other:"
 msgstr "Anderes:"
 
 #: opsi_quick_install_resourcestrings.rsinfoadmin
-#, fuzzy
-#| msgid ""
-#| "User to create for the operation of opsi.\n"
-#| "This user can not manage system settings.\n"
 msgctxt "opsi_quick_install_resourcestrings.rsinfoadmin"
 msgid ""
 "User to create for the operation of opsi.\n"
@@ -175,10 +171,6 @@ msgid "Should the data of opsi be stored in a file or a mysql database?"
 msgstr "Sollen die Daten von Opsi in einer Datei oder einer MySQL-Datenbank gespeichert werden?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
-#, fuzzy
-#| msgid ""
-#| "Select \"No\" if you already have a dhcp-server.\n"
-#| "Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgid ""
 "Select \"No\" if you already have a dhcp-server.\n"
 "Select \"Yes\" if you want to install the dhcp-server on the opsi-server."
@@ -212,10 +204,6 @@ msgid "Source from which opsi will be installed."
 msgstr "Quelle, von der Opsi installiert wird."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
-#, fuzzy
-#| msgid ""
-#| "Select the stability of the installation:\n"
-#| "Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgid ""
 "Select the stability of the installation:\n"
 "Stable is reliable, testing is the beta version, experimental may cause some errors."
