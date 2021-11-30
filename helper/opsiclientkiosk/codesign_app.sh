@@ -2,7 +2,7 @@
 set -e
 
 # Set these values:
-CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
+DEVELOPER_ID="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
 
@@ -72,10 +72,10 @@ EOF
 #   hardened runtime flag.
 # 
 # * The tool, appex and app all need unique entitlements.
-codesign -s "Developer ID Application" -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
-codesign -s "Developer ID Application" -f --timestamp                                                                                                            "${APP}/Contents/Frameworks/QCore.framework"
-codesign -s "Developer ID Application" -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
-codesign -s "Developer ID Application" -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/app.entitlements"   "${APP}"
+codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
+codesign -s $DEVELOPER_ID -f --timestamp                                                                                                            "${APP}/Contents/Frameworks/QCore.framework"
+codesign -s $DEVELOPER_ID -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
+codesign -s $DEVELOPER_ID -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/app.entitlements"   "${APP}"
 # Create a disk image from our disk image root directory.
 hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
 # Sign that.
