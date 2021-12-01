@@ -8,11 +8,10 @@ APP_SPECIFIC_PASSWORD=
 
 BUNDLE_ID=org.opsi.opsi-client-kiosk
 EXECUTABLE_NAME=OpsiClientKiosk
-EXECUTABLE_SOURCE=`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}
-EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
-FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
+EXECUTABLE_SOURCE="`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}"
+APP_SOURCE="`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}.app"
 #ENTITLEMENTS="--entitlements kiosk.entitlements"
-GIT_LAZARUS=/home/Projekte/lazarus
+
 # Establish a work directory, create a disk image root directory within 
 # that, and then copy the app there.
 #
@@ -22,9 +21,11 @@ DMGROOT="${WORKDIR}/${EXECUTABLE_NAME}"
 APP="${WORKDIR}/${EXECUTABLE_NAME}/${EXECUTABLE_NAME}.app"
 DMG="${WORKDIR}/${EXECUTABLE_NAME}.dmg"
 mkdir -p "${DMGROOT}"
-cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/${EXECUTABLE_NAME}.app" "${DMGROOT}/"
-rm "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
-cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/${EXECUTABLE_NAME} "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
+cp -R "${APP_SOURCE}" "${DMGROOT}/"
+rm "${APP}/Content/MacOS/${EXECUTABLE_NAME}"
+cp -R "${EXECUTABLE_SOURCE}" "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
+opsi-dev-tool --binary-pull development macos-ssl-libs darwin x64 latest "${DMGROOT}/"
+
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
 # existing signature`.  There's no option to suppress that.  The message 
 # goes to `stderr` so you don't want to redirect it to `/dev/null` because 
@@ -76,12 +77,13 @@ EOF
 # * The tool, appex and app all need unique entitlements.
 #codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
 #codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
-codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
-codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
-codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}"
 
-# Create a disk image from our disk image root directory.
-hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
-# Sign that.
-codesign -s $DEVELOPER_ID --timestamp -i "${BUNDLE_ID}.DiskImage "${DMG}"
-echo "${DMG}"
+#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
+#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
+#codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}"
+
+## Create a disk image from our disk image root directory.
+#hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
+## Sign that.
+#codesign -s $DEVELOPER_ID --timestamp -i "${BUNDLE_ID}.DiskImage "${DMG}"
+#echo "${DMG}"
