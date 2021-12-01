@@ -8,8 +8,8 @@ APP_SPECIFIC_PASSWORD=
 
 BUNDLE_ID=org.opsi.opsi-client-kiosk
 EXECUTABLE_NAME=OpsiClientKiosk
-EXECUTABLE_SOURCE="`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}"
-APP_SOURCE="`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}.app"
+EXECUTABLE_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}"
+APP_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}.app"
 #ENTITLEMENTS="--entitlements kiosk.entitlements"
 
 # Establish a work directory, create a disk image root directory within 
@@ -22,8 +22,8 @@ APP="${WORKDIR}/${EXECUTABLE_NAME}/${EXECUTABLE_NAME}.app"
 DMG="${WORKDIR}/${EXECUTABLE_NAME}.dmg"
 mkdir -p "${DMGROOT}"
 cp -R "${APP_SOURCE}" "${DMGROOT}/"
-rm "${APP}/Content/MacOS/${EXECUTABLE_NAME}"
-cp -R "${EXECUTABLE_SOURCE}" "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
+rm "${APP}/Contents/MacOS/${EXECUTABLE_NAME}"
+cp -R "${EXECUTABLE_SOURCE}" "${APP}/Contents/MacOS/${EXECUTABLE_NAME}"
 opsi-dev-tool --binary-pull development macos-ssl-libs darwin x64 latest "${DMGROOT}/"
 
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
