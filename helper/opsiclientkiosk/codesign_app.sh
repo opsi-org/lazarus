@@ -7,22 +7,24 @@ APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
 
 BUNDLE_ID=org.opsi.opsi-client-kiosk
-EXECUTABLE_NAME=opsiclientkiosk
+EXECUTABLE_NAME=OpsiClientKiosk
 EXECUTABLE_SOURCE=`pwd`builds/x86_64-darwin/${EXECUTABLE_NAME}
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
-ENTITLEMENTS="--entitlements kiosk.entitlements"
-
+#ENTITLEMENTS="--entitlements kiosk.entitlements"
+GIT_LAZARUS=/home/Projekte/lazarus
 # Establish a work directory, create a disk image root directory within 
 # that, and then copy the app there.
 #
 # Note we use `-R`, not `-r`, to preserve symlinks.
-WORKDIR="OpsiClientKiosk-`date '+%Y-%m-%d_%H.%M.%S'`"
-DMGROOT="${WORKDIR}/OpsiClientKiosk"
-APP="${WORKDIR}/OpsiClientKiosk/OpsiClientKiosk.app"
-DMG="${WORKDIR}/OpsiClientKiosk.dmg"
+WORKDIR="${EXECUTABLE_NAME}-`date '+%Y-%m-%d_%H.%M.%S'`"
+DMGROOT="${WORKDIR}/${EXECUTABLE_NAME}"
+APP="${WORKDIR}/${EXECUTABLE_NAME}/${EXECUTABLE_NAME}.app"
+DMG="${WORKDIR}/${EXECUTABLE_NAME}.dmg"
 mkdir -p "${DMGROOT}"
-cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/OpsiClientKiosk.app" "${DMGROOT}/"
+cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/${EXECUTABLE_NAME}.app" "${DMGROOT}/"
+rm "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
+cp -R "${GIT_LAZARUS}/helper/opsiclientkiosk/${EXECUTABLE_NAME} "${APP}/Content/MasOS/${EXECUTABLE_NAME}"
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
 # existing signature`.  There's no option to suppress that.  The message 
 # goes to `stderr` so you don't want to redirect it to `/dev/null` because 
@@ -40,7 +42,7 @@ then
 fi
 
 # Create various entitlement files from 'here' documents.
-cat > "${WORKDIR}/app.entitlements" <<EOF
+cat > "${WORKDIR}/kiosk.entitlements" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -72,12 +74,14 @@ EOF
 #   hardened runtime flag.
 # 
 # * The tool, appex and app all need unique entitlements.
-codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
-codesign -s $DEVELOPER_ID -f --timestamp                                                                                                            "${APP}/Contents/Frameworks/QCore.framework"
-codesign -s $DEVELOPER_ID -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
-codesign -s $DEVELOPER_ID -f --timestamp                                                  -o runtime --entitlements "${WORKDIR}/app.entitlements"   "${APP}"
+#codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
+#codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
+codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
+codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
+codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}"
+
 # Create a disk image from our disk image root directory.
 hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
 # Sign that.
-codesign -s "Developer ID Application" --timestamp -i com.example.apple-samplecode.QShare.DiskImage "${DMG}"
+codesign -s $DEVELOPER_ID --timestamp -i "${BUNDLE_ID}.DiskImage "${DMG}"
 echo "${DMG}"
