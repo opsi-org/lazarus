@@ -273,6 +273,7 @@ type
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
     procedure InitSkin;
+    function GetClientID(PathToConfigFile:string): string;
     //function RunAsAdmin(const Handle: DWord; const Path, Params: string
     //  ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
@@ -2274,6 +2275,14 @@ begin
     begin
       ClientID := Application.GetOptionValue('fqdn');
       LogDatei.log('ClientID (option = fqdn): ' + ClientID, LLDebug);
+    end
+    else
+    begin
+      {$IFDEF DARWIN}
+       ClientID := GetClientID('.../Resources/opsiclientkiosk.conf');
+      {$ELSE}
+       ClientID := GetClientID('.../Resources/opsiclientkiosk.conf');
+      {$ENDIF DARWIN}
     end;
     if Application.HasOption('lang') then
     begin
@@ -2499,6 +2508,15 @@ begin
     begin
       LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
     end;
+end;
+
+function TFormOpsiClientKiosk.GetClientID(PathToConfigFile:string): string;
+var
+  KioskConfig:TIniFile;
+begin
+  KioskConfig :=  TIniFile.Create(PathToConfigFile);
+  ClientID := KioskConfig.ReadString('config-service','ClientID','');
+  FreeAndNil(KioskConfig);
 end;
 
 
