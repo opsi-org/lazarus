@@ -2279,9 +2279,9 @@ begin
     else
     begin
       {$IFDEF DARWIN}
-       ClientID := GetClientID('.../Resources/opsiclientkiosk.conf');
+       ClientID := GetClientID(Application.Location + '../Resources/opsiclientkiosk.conf');
       {$ELSE}
-       ClientID := GetClientID('.../Resources/opsiclientkiosk.conf');
+       ClientID := GetClientID(Application.Location +'opsiclientkiosk.conf');
       {$ENDIF DARWIN}
     end;
     if Application.HasOption('lang') then
@@ -2513,9 +2513,11 @@ end;
 function TFormOpsiClientKiosk.GetClientID(PathToConfigFile:string): string;
 var
   KioskConfig:TIniFile;
+  TestString:String;
 begin
   KioskConfig :=  TIniFile.Create(PathToConfigFile);
-  ClientID := KioskConfig.ReadString('config-service','ClientID','');
+  Teststring  := KioskConfig.ReadString('config-service','ClientID','');
+  Result := Teststring;
   FreeAndNil(KioskConfig);
 end;
 

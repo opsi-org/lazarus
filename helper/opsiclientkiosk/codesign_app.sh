@@ -27,6 +27,7 @@ cp -R "${EXECUTABLE_SOURCE}" "${APP}/Contents/MacOS/${EXECUTABLE_NAME}"
 opsi-dev-tool --binary-pull development macos-ssl-libs darwin x64 latest "${DMGROOT}/"
 #mkdir "${APP}/Contents/Frameworks"
 mv "${DMGROOT}/macos-ssl-libs" "${APP}/Contents/Frameworks"
+cp "`pwd`/opsiclientkiosk.conf" "${APP}/Contents/Resources"
 
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
 # existing signature`.  There's no option to suppress that.  The message 
