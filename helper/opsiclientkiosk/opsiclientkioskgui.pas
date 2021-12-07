@@ -2229,12 +2229,21 @@ begin
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   //detail_visible := False;
+   {$IFDEF DARWIN}
+  PathDefaultIcons := Application.Location + '../Resources/' + 'default' + PathDelim +
+    'product_icons' + PathDelim;
+  PathCustomIcons := Application.Location + '../Resources/' + 'ock_custom' + PathDelim +
+    'product_icons' + PathDelim;
+  PathScreenshots := Application.Location + '../Resources/' + 'ock_custom' + PathDelim +
+   'screenshots' + PathDelim;
+   {$ELSE}
   PathDefaultIcons := Application.Location+ 'default' + PathDelim +
     'product_icons' + PathDelim;
   PathCustomIcons := Application.Location+ 'ock_custom' + PathDelim +
     'product_icons' + PathDelim;
   PathScreenshots := Application.Location+ 'ock_custom' + PathDelim +
    'screenshots' + PathDelim;
+   {$ENDIF DARWIN}
   LogDatei.log('Default icon path: ' + PathDefaultIcons, LLinfo);
   LogDatei.log('Custom icon path: ' + PathCustomIcons, LLinfo);
   LogDatei.log('Screenshot path: ' + PathScreenshots, LLinfo);

@@ -6,6 +6,7 @@ DEVELOPER_ID="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
 
+SCRIPT_DIR=`pwd`
 BUNDLE_ID=org.opsi.opsi-client-kiosk
 EXECUTABLE_NAME=OpsiClientKiosk
 EXECUTABLE_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}"
@@ -27,8 +28,14 @@ cp -R "${EXECUTABLE_SOURCE}" "${APP}/Contents/MacOS/${EXECUTABLE_NAME}"
 opsi-dev-tool --binary-pull development macos-ssl-libs darwin x64 latest "${DMGROOT}/"
 #mkdir "${APP}/Contents/Frameworks"
 mv "${DMGROOT}/macos-ssl-libs" "${APP}/Contents/Frameworks"
+cp "`pwd`/libsqlite3.dylib" "${APP}/Contents/Frameworks"
 cp "`pwd`/opsiclientkiosk.conf" "${APP}/Contents/Resources"
-
+cp -R "`pwd`/default" "${APP}/Contents/Resources"
+cp -R "`pwd`/ock_custom" "${APP}/Contents/Resources"
+cp -R "`pwd`/locale" "${APP}/Contents/Resources"
+cd "${APP}/Contents/MacOS"
+install_name_tool -add_rpath "@executable_path/../Frameworks/." ${EXECUTABLE_NAME}
+cd ${SCRIPT_DIR}
 # When you use `-f` to replace a signature, `codesign` prints `replacing 
 # existing signature`.  There's no option to suppress that.  The message 
 # goes to `stderr` so you don't want to redirect it to `/dev/null` because 
