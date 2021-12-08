@@ -14244,21 +14244,40 @@ begin
 
             for i := 0 to versionInfo.TranslationCount - 1 do
             begin
-              list.add('Language name ' + IntToStr(i) + '=' +
-                versionInfo.LanguageNames[i]);
-              list.add('Language ID ' + IntToStr(i) + '=' +
-                IntToStr(versionInfo.LanguageID[i]));
+              tmpstr:= 'Language name ' + IntToStr(i) + '=' +
+                versionInfo.LanguageNames[i];
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              tmpstr:= 'Language ID ' + IntToStr(i) + '=' +
+                IntToStr(versionInfo.LanguageID[i]);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
             end;
 
-            list.add('file version=' + IntToStr(versionInfo.FileVersion));
-            list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-            list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            //list.add('file version=' + IntToStr(versionInfo.FileVersion));
+            //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+            //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            tmpstr:= 'file version=' + IntToStr(versionInfo.FileVersion);
+            list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              tmpstr:= 'file version with dots=' + versionInfo.GetFileVersionWithDots;
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              tmpstr:= 'product version=' + IntToStr(versionInfo.ProductVersion);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
 
 
-            for i := Low(versionInfoX.PredefinedStrings)
-              to High(versionInfoX.PredefinedStrings) do
-              list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                versionInfo.getString(PredefinedStrings[i]));
+            for i := Low(versionInfox.PredefinedStrings)
+              to High(versionInfox.PredefinedStrings) do
+              begin
+              (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                versionInfo.getString(PredefinedStrings[i])); *)
+              tmpstr:= versionInfox.PredefinedStrings[i] + '=' +
+                versionInfo.getString(versionInfox.PredefinedStrings[i]);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              end;
 
 
             versionInfo.Free;

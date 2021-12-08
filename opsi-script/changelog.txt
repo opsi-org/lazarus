@@ -5,7 +5,8 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.33) stable; urgency=low
 
-  *
+  * osparser: more debug logs in getFileInfoMap
+  * osparser: getFileInfoMap: a fix at PredefinedStrings
 
 -- d.oertel <d.oertel@uib.de> Fri, 03 Dec 2021 15:00
 
