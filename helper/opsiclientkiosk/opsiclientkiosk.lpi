@@ -308,6 +308,10 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-rpath @executable_path/../Frameworks -sectcreate __TEXT __info_plist Info.plist"/>
+            </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSICLIENTKIOSK

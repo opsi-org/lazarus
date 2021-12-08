@@ -2287,11 +2287,11 @@ begin
     end
     else
     begin
-      {$IFDEF DARWIN}
-       ClientID := GetClientID(Application.Location + '../Resources/opsiclientkiosk.conf');
+      {$IFDEF UNIX}
+       ClientID := GetClientID('/usr/share/opsi-client-kiosk/opsiclientkiosk.conf');
       {$ELSE}
        ClientID := GetClientID(Application.Location +'opsiclientkiosk.conf');
-      {$ENDIF DARWIN}
+      {$ENDIF UNIX}
     end;
     if Application.HasOption('lang') then
     begin
