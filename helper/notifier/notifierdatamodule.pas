@@ -342,9 +342,15 @@ begin
   //else sleep(5000);
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLnotice);
-  logdatei.Close;
-  Application.Terminate;
-  halt;
+  try
+  //logdatei.Close;
+  finally
+    Application.Terminate;
+    logdatei.log('Program halted', LLnotice);
+    halt;
+  end;
+  //Application.Terminate;
+  //halt;
 end;
 
 procedure TDataModule1.TimerCloseTimer(Sender: TObject);
@@ -354,6 +360,7 @@ begin
     IntToStr(TimerClose.Interval div 1000) + ' seconds: terminate', LLInfo);
   notifierguicontrol.hideNForm;
   DataModule1.DataModuleDestroy(nil);
+  Application.Terminate;
   Halt;
 end;
 
