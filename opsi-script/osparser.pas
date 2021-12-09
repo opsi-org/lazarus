@@ -14267,14 +14267,23 @@ begin
               list.add(tmpstr);
               LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
 
-
-            for i := Low(versionInfox.PredefinedStrings)
-              to High(versionInfox.PredefinedStrings) do
+              Try
+            (*for i := Low(versionInfox.PredefinedStrings)
+              to High(versionInfox.PredefinedStrings) do *)
+              tmpint:= length(versionInfox.PredefinedStrings) -1;
+              LogDatei.log_prog('getFileInfoMap: value num: '+inttostr(tmpint),LLdebug2);
+              for i := 0 to tmpint do
               begin
               (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
                 versionInfo.getString(PredefinedStrings[i])); *)
               tmpstr:= versionInfox.PredefinedStrings[i] + '=' +
                 versionInfo.getString(versionInfox.PredefinedStrings[i]);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              end;
+              except
+                LogDatei.log_prog('getFileInfoMap: exception - try to fix',LLdebug2);
+                tmpstr:= 'FileVersion=' + versionInfo.GetFileVersionWithDots;
               list.add(tmpstr);
               LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
               end;
