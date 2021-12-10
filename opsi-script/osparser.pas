@@ -1767,8 +1767,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10703,8 +10704,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12325,10 +12326,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -14244,49 +14245,60 @@ begin
 
             for i := 0 to versionInfo.TranslationCount - 1 do
             begin
-              tmpstr:= 'Language name ' + IntToStr(i) + '=' +
+              tmpstr := 'Language name ' + IntToStr(i) + '=' +
                 versionInfo.LanguageNames[i];
               list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
-              tmpstr:= 'Language ID ' + IntToStr(i) + '=' +
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+              tmpstr := 'Language ID ' + IntToStr(i) + '=' +
                 IntToStr(versionInfo.LanguageID[i]);
               list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
             end;
 
             //list.add('file version=' + IntToStr(versionInfo.FileVersion));
             //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
             //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
-            tmpstr:= 'file version=' + IntToStr(versionInfo.FileVersion);
+            tmpstr := 'file version=' + IntToStr(versionInfo.FileVersion);
             list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
-              tmpstr:= 'file version with dots=' + versionInfo.GetFileVersionWithDots;
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
-              tmpstr:= 'product version=' + IntToStr(versionInfo.ProductVersion);
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'file version with dots=' + versionInfo.GetFileVersionWithDots;
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'product version=' + IntToStr(versionInfo.ProductVersion);
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
 
-              Try
+            try
             (*for i := Low(versionInfox.PredefinedStrings)
               to High(versionInfox.PredefinedStrings) do *)
-              tmpint:= length(versionInfox.PredefinedStrings) -1;
-              LogDatei.log_prog('getFileInfoMap: value num: '+inttostr(tmpint),LLdebug2);
+              tmpint := length(versionInfox.PredefinedStrings) - 1;
+              LogDatei.log_prog('getFileInfoMap: value num: ' + IntToStr(tmpint), LLdebug2);
               for i := 0 to tmpint do
               begin
+                try
               (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
                 versionInfo.getString(PredefinedStrings[i])); *)
-              tmpstr:= versionInfox.PredefinedStrings[i] + '=' +
-                versionInfo.getString(versionInfox.PredefinedStrings[i]);
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
+                  tmpstr := versionInfox.PredefinedStrings[i] + '=' +
+                    versionInfo.getString(versionInfox.PredefinedStrings[i]);
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                except
+                  LogDatei.log_prog('getFileInfoMap: exception at: ' +
+                    versionInfox.PredefinedStrings[i], LLdebug2);
+                  if versionInfox.PredefinedStrings[i] = 'FileVersion=' then
+                  begin
+                    tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+                    list.add(tmpstr);
+                    LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                  end;
+                end;
               end;
-              except
-                LogDatei.log_prog('getFileInfoMap: exception - try to fix',LLdebug2);
-                tmpstr:= 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+            except
+              LogDatei.log_prog('getFileInfoMap: exception - try to fix', LLdebug2);
+              tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
               list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: '+tmpstr,LLdebug2);
-              end;
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            end;
 
 
             versionInfo.Free;
