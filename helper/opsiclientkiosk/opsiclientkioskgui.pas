@@ -421,6 +421,9 @@ var
   PathCustomIcons: String;
   PathDefaultIcons :String;
   PathScreenshots: String;
+  {$IFDEF DARWIN}
+  PathToApplicationSupport: string =  '/Library/Application Support';
+  {$ENDIF DARWIN}
 
 
 function ActionRequestToLocale(actionRequest: string): string;
@@ -2288,7 +2291,7 @@ begin
     else
     begin
       {$IFDEF UNIX}
-       ClientID := GetClientID('/usr/share/opsi-client-kiosk/opsiclientkiosk.conf');
+       ClientID := GetClientID('/Library/Application Support/org.opsi.OpsiClientKiosk/opsiclientkiosk.conf');
       {$ELSE}
        ClientID := GetClientID(Application.Location +'opsiclientkiosk.conf');
       {$ENDIF UNIX}
