@@ -19365,6 +19365,38 @@ begin
         end;
   end
 
+  //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType/TTOMLData);
+  else if Skip('AddKeyValueToTOML', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then 
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(')', r, r, InfoSyntaxError) then
+                begin
+                  syntaxCheck := True;
+                  try
+                    s1 := ExpandFileName(s1);
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log
+                    ('    Adding Value "' +  s3 + '" to key "' +  s2 +
+                          '" in TOML file :' +  s1 , LevelComplete);
+                    AddKeyValueToTOML(s1,s2,s3);
+                    BooleanResult := True;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Error in SaveToTOMLFile "' +
+                        s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                      BooleanResult := False;
+                    end;
+                  end;
+                end;
+  end
+
   //function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
   else if Skip('SaveToTOMLFile', Input, r, sx) then
   begin
