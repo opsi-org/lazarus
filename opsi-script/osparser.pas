@@ -19408,6 +19408,7 @@ begin
             begin
               syntaxCheck := True;
               try
+                s1 := ExpandFileName(s1);
                 s2 := ExpandFileName(s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                 LogDatei.log
