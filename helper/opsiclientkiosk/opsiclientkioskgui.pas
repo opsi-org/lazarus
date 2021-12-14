@@ -422,7 +422,7 @@ var
   PathDefaultIcons :String;
   PathScreenshots: String;
   {$IFDEF DARWIN}
-  PathToApplicationSupport: string =  '/Library/Application Support';
+  PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
   {$ENDIF DARWIN}
 
 
@@ -2233,12 +2233,9 @@ begin
   PanelProductDetail.Height := 0;
   //detail_visible := False;
    {$IFDEF DARWIN}
-  PathDefaultIcons := Application.Location + '../Resources/' + 'default' + PathDelim +
-    'product_icons' + PathDelim;
-  PathCustomIcons := Application.Location + '../Resources/' + 'ock_custom' + PathDelim +
-    'product_icons' + PathDelim;
-  PathScreenshots := Application.Location + '../Resources/' + 'ock_custom' + PathDelim +
-   'screenshots' + PathDelim;
+  PathDefaultIcons := Application.Location + '../Resources/default/product_icons/';
+  PathCustomIcons := PathToCustomSettings + 'ock_custom/product_icons/';
+  PathScreenshots := PathToCustomSettings + 'ock_custom/screenshots/';
    {$ELSE}
   PathDefaultIcons := Application.Location+ 'default' + PathDelim +
     'product_icons' + PathDelim;
@@ -2291,7 +2288,7 @@ begin
     else
     begin
       {$IFDEF UNIX}
-       ClientID := GetClientID('/Library/Application Support/org.opsi.OpsiClientKiosk/opsiclientkiosk.conf');
+       ClientID := GetClientID(PathToCustomSettings + 'opsiclientkiosk.conf');
       {$ELSE}
        ClientID := GetClientID(Application.Location +'opsiclientkiosk.conf');
       {$ENDIF UNIX}
@@ -2486,10 +2483,15 @@ end;
 procedure TFormOpsiClientKiosk.InitSkin;
 begin
   { SkinPaths }
+  {$IFDEF DARWIN}
+  CustomSkinPath := PathToCustomSettings + 'ock_custom/skin/';
+  DefaultSkinPath := Application.Location + '../Resources/default/skin/';
+  {$ELSE}
   CustomSkinPath := Application.Location +
     'ock_custom' + PathDelim + 'skin' + PathDelim;
   DefaultSkinPath := Application.Location +
     'default' + PathDelim + 'skin' + PathDelim;
+  {$ENDIF DARWIN}
     {Loading header image}
   if FileExists(CustomSkinPath + 'header.png') then
   begin
