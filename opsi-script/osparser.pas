@@ -106,6 +106,7 @@ uses
   //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
+  tomlfunc,
   oscrypt,
   DOM,
   osxmlsections,
@@ -13589,7 +13590,7 @@ begin
               begin
                 syntaxCheck := True;
                 try
-                  LoadTOMLFile(s1);
+                  list.AddStrings(LoadTOMLFile(s1));
                 except
                   on e: Exception do
                   begin
@@ -13600,7 +13601,6 @@ begin
                 end;
               end;
     end
-
 
     // todo: 2nd parameter focus row for editmap
     else if LowerCase(s) = LowerCase('editMap') then
