@@ -13602,6 +13602,27 @@ begin
               end;
     end
 
+     //function GetTOMLTableNames(TOMLfile: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLTableNames') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.AddStrings(GetTOMLTableNames(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTableNames "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
     // todo: 2nd parameter focus row for editmap
     else if LowerCase(s) = LowerCase('editMap') then
     begin
