@@ -106,7 +106,7 @@ uses
   //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
-  tomlfunc,
+  tomlfunc, TOMLTypes,
   oscrypt,
   DOM,
   osxmlsections,
@@ -15081,6 +15081,7 @@ begin
   end
   *)
 
+  //function ReadTOMLFile (filePath: String): String;
   else if LowerCase(s) = LowerCase('ReadTOMLFile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -15106,6 +15107,7 @@ begin
         end;
   end
 
+  //function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
   else if LowerCase(s) = LowerCase('GetValueFromTOMLFile') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -19381,9 +19383,9 @@ begin
                     s1 := ExpandFileName(s1);
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                     LogDatei.log
-                    (' AddKeyValueToTOML :  Adding Value "' +  s3 + '" to key "' +  s2 +
-                          '" in TOML file :' +  s1 , LevelComplete);
-                    AddKeyValueToTOML(s1,s2,s3);
+                    (' AddKeyValueToTOML :  Adding Value "' +  s3 + '" to key "'
+                       +  s2 + '" in TOML file :' +  s1 , LevelComplete);
+                    AddKeyValueToTOML(GetTOMLDocument(s1),s2,TTOMLData(s3));
                     BooleanResult := True;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   except
@@ -19409,7 +19411,6 @@ begin
             begin
               syntaxCheck := True;
               try
-                s1 := ExpandFileName(s1);
                 s2 := ExpandFileName(s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                 LogDatei.log
