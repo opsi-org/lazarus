@@ -19381,7 +19381,7 @@ begin
                     s1 := ExpandFileName(s1);
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                     LogDatei.log
-                    ('    Adding Value "' +  s3 + '" to key "' +  s2 +
+                    (' AddKeyValueToTOML :  Adding Value "' +  s3 + '" to key "' +  s2 +
                           '" in TOML file :' +  s1 , LevelComplete);
                     AddKeyValueToTOML(s1,s2,s3);
                     BooleanResult := True;
@@ -19389,8 +19389,9 @@ begin
                   except
                     on e: Exception do
                     begin
-                      LogDatei.log('Error in SaveToTOMLFile "' +
-                        s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                      LogDatei.log('Error in AddKeyValueToTOML : Adding Value "'
+                          +  s3 + '" to key "' +  s2 + '" in TOML file :' + s1
+                          + '", message: "' + e.Message + '"', LevelWarnings);
                       BooleanResult := False;
                     end;
                   end;
