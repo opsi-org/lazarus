@@ -316,7 +316,8 @@
           <Other>
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dAPP_BUNDLE"/>
             <OtherDefines Count="4">
               <Define0 Value="OPSICLIENTKIOSK"/>
               <Define1 Value="OPSI"/>

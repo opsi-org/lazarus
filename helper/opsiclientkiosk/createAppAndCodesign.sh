@@ -7,7 +7,7 @@ APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
 
 SCRIPT_DIR=`pwd`
-BUNDLE_ID=org.opsi.opsi-client-kiosk
+BUNDLE_ID=org.opsi.OpsiClientKiosk
 EXECUTABLE_NAME=OpsiClientKiosk
 EXECUTABLE_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}"
 APP_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}.app"
@@ -28,11 +28,14 @@ cp -R "${EXECUTABLE_SOURCE}" "${APP}/Contents/MacOS/${EXECUTABLE_NAME}"
 opsi-dev-tool --binary-pull development macos-ssl-libs darwin x64 latest "${DMGROOT}/"
 #mkdir "${APP}/Contents/Frameworks"
 mv "${DMGROOT}/macos-ssl-libs" "${APP}/Contents/Frameworks"
+mv "${APP}/Contents/Frameworks/libssl.1.1.dylib" "${APP}/Contents/Frameworks/libssl.dylib"
+mv "${APP}/Contents/Frameworks/libcrypto.1.1.dylib" "${APP}/Contents/Frameworks/libcrypto.dylib"
 cp "`pwd`/libsqlite3.dylib" "${APP}/Contents/Frameworks"
 # cp "`pwd`/opsiclientkiosk.conf" "${APP}/Contents/Resources" put into Application Support folder
 cp -R "`pwd`/default" "${APP}/Contents/Resources"
 # cp -R "`pwd`/ock_custom" "${APP}/Contents/Resources" put into Application Support folder
 cp -R "`pwd`/locale" "${APP}/Contents/Resources"
+cp "`pwd`/Info.plist" "${APP}/Contents"
 # cd "${APP}/Contents/MacOS"
 # install_name_tool -add_rpath "@executable_path/../Frameworks/." ${EXECUTABLE_NAME}
 # cd ${SCRIPT_DIR}
@@ -59,7 +62,9 @@ cat > "${WORKDIR}/kiosk.entitlements" <<EOF
 <plist version="1.0">
 <dict>
     <key>com.apple.security.app-sandbox</key>
-    <true/>
+    <false/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <false/>
     <key>com.apple.security.network.client</key>
     <true/>
 </dict>
@@ -88,11 +93,11 @@ EOF
 #codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
 #codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
 
-#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libssl1.1.dylib"
-#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libcrypto1.1.dylib"
-#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/Frameworks/libsqlite3.dylib"
-#codesign -s $DEVELOPER_ID -f --timestamp "${APP}/Contents/MacOS/opsiclientkiosk"
-#codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}"
+codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
+codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
+codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libsqlite3.dylib"
+#codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/MacOS/OpsiClientKiosk"
+codesign -s "${DEVELOPER_ID}" -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}/Contents/MacOS/OpsiClientKiosk"
 
 ## Create a disk image from our disk image root directory.
 #hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
