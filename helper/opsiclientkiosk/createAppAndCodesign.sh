@@ -63,10 +63,10 @@ cat > "${WORKDIR}/kiosk.entitlements" <<EOF
 <dict>
     <key>com.apple.security.app-sandbox</key>
     <false/>
-    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
-    <false/>
-    <key>com.apple.security.network.client</key>
-    <true/>
+   <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+   <true/>
+   <key>com.apple.security.cs.disable-library-validation</key>
+   <true/>
 </dict>
 </plist>
 EOF
@@ -85,13 +85,17 @@ EOF
 #
 # * The tool is not bundled, thus doesn't have an `Info.plist`, and thus 
 #   you have to explicitly set a code signing identifier.
-# 
 # * The tool, appex and app are all executables, and thus need to the 
 #   hardened runtime flag.
 # 
 # * The tool, appex and app all need unique entitlements.
 #codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
 #codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
+
+# Change rights
+chown -R root "${WORKDIR}"
+chgrp -R wheel "${WORKDIR}"
+chmod -R 755 "${WORKDIR}"
 
 codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
 codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
