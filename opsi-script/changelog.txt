@@ -6,6 +6,8 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.4.34) stable; urgency=low
 
   * oszip: catch exceptions
+  * osparser: fix callingsection parameter in call of SearchForSectionLines
+    from producestringlist:getOutstreamFromSection / getReturnlistFromSection
 
 -- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
 

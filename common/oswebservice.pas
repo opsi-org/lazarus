@@ -1258,6 +1258,8 @@ end;
 procedure TJsonThroughHTTPS.createSocket(const agent, ip, port: string);
 begin
   {$IFDEF SYNAPSE}
+  // Timeout
+  // https://forum.lazarus.freepascal.org/index.php?topic=40167.0
   try
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
