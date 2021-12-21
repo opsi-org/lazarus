@@ -8,6 +8,9 @@ opsi-script (4.12.4.34) stable; urgency=low
   * oszip: catch exceptions
   * osparser: fix callingsection parameter in call of SearchForSectionLines
     from producestringlist:getOutstreamFromSection / getReturnlistFromSection
+  * powershell AllSigned Hack: type tmpfile | powershell -command -
+    will be switched on automatically if AllSigned is detected.
+    Additional parameters (to script or powershell) will be ignored in this case.
 
 -- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
 

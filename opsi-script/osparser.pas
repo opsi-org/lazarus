@@ -1767,9 +1767,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10378,9 +10377,13 @@ begin
       commandline := 'powershell.exe get-executionpolicy';
       tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
-      // set (open)
-      commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      LogDatei.log('Powershell excution policy = '+org_execution_policy,LLinfo);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (open)
+        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      end;
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10392,6 +10395,7 @@ begin
     fulloptionstring := parameters + ' ' + optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
+    // execwith will check for allsigned again
     ActionResult := executeWith(mySektion, fulloptionstring, True,
       logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
@@ -10412,9 +10416,12 @@ begin
 
     if handle_policy then // restore execution policy
     begin
-      // set (close)
-      commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (close)
+        commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      end;
     end;
   finally
     {$IFDEF GUI}
@@ -10704,8 +10711,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11364,6 +11371,10 @@ var
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
+  catcommand: string = 'cat ';
+  useStdIn: boolean = False;
+  tmplist: TStringList;
+  org_execution_policy: string = '';
 
 begin
   try
@@ -11513,6 +11524,29 @@ begin
       powershellpara := ' -file ';
       useext := '.ps1';
     end;
+    if useext = '.ps1' then  // we are on powershell
+    begin
+      commandline := 'powershell.exe get-executionpolicy';
+      tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
+        False, True);
+      org_execution_policy := trim(tmplist[0]);
+      if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
+      begin
+        useStdIn := True;
+        LogDatei.log('Powershell with AllSigned detected - switching to StdIn Mode',
+          LLinfo);
+        if trim(programparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
+            programparas, LLinfo);
+        if trim(passparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
+            passparas, LLinfo);
+      end;
+    end;
+    if useStdIn then
+    begin
+      powershellpara := ' -command - ';
+    end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11564,17 +11598,27 @@ begin
         end;
       end;
 
-
-      // if parameters end with '=' we concat tempfile without space
-      if copy(programparas, length(programparas), 1) = '=' then
-        commandline :=
-          '"' + programfilename + '" ' + programparas + '"' +
-          powershellpara + tempfilename + '"  ' + passparas
+      if useStdIn then
+      begin
+        {$IFDEF WINDOWS}
+        catcommand := 'type ';
+        {$ENDIF WINDOWS}
+        commandline := 'cmd.exe /C '+
+          catcommand + tempfilename + ' | ' + '"' + programfilename +
+          '" ' + powershellpara;
+      end
       else
-        commandline :=
-          '"' + programfilename + '" ' + programparas + ' ' +
-          powershellpara + tempfilename + '  ' + passparas;
-
+      begin
+        // if parameters end with '=' we concat tempfile without space
+        if copy(programparas, length(programparas), 1) = '=' then
+          commandline :=
+            '"' + programfilename + '" ' + programparas + '"' +
+            powershellpara + tempfilename + '"  ' + passparas
+        else
+          commandline :=
+            '"' + programfilename + '" ' + programparas + ' ' +
+            powershellpara + tempfilename + '  ' + passparas;
+      end;
 
 
       {$IFNDEF WINDOWS}
@@ -11585,6 +11629,7 @@ begin
       {$ENDIF WINDOWS}
 
       {$IFDEF WIN32}
+
       // allow the executing user access to the tmp file
       sysError := NO_ERROR;
       if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
@@ -12326,18 +12371,18 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
             if not SearchForSectionLines(self, TWorkSection(section),
-              localSection.ParentSection, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -12407,8 +12452,8 @@ begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
             if not SearchForSectionLines(self, TWorkSection(section),
-              localSection.ParentSection, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -14272,7 +14317,8 @@ begin
             (*for i := Low(versionInfox.PredefinedStrings)
               to High(versionInfox.PredefinedStrings) do *)
               tmpint := length(versionInfox.PredefinedStrings) - 1;
-              LogDatei.log_prog('getFileInfoMap: value num: ' + IntToStr(tmpint), LLdebug2);
+              LogDatei.log_prog('getFileInfoMap: value num: ' +
+                IntToStr(tmpint), LLdebug2);
               for i := 0 to tmpint do
               begin
                 try
