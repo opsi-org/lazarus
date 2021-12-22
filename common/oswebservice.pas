@@ -165,6 +165,7 @@ type
     FOpsiMethodName: string;
     FParameterlist: TStringList;
     Fhashlist: TStringList;
+    FTimeout : integer;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -180,6 +181,7 @@ type
     property parameterlist: TStringList read FParameterlist write FParameterlist;
     property hashlist: TStringList read Fhashlist write Fhashlist;
     property jsonUrlString: string read getJsonUrlString;
+    property timeout: integer read FTimeout write FTimeout;
 
   end;
 
@@ -1615,6 +1617,11 @@ begin
             //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+        if omc.Timeout > 0 then
+        begin
+          HTTPSender.Timeout:= omc.Timeout * 1000;
+          HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
+        end;
 
 
         if methodGet then

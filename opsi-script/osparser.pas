@@ -6416,6 +6416,8 @@ var
   methodname: string = '';
   paramList: TStringList;
   parameters: array of string;
+  timeout: string = '';
+  timeoutint : integer = 0;
 
   omc: TOpsiMethodCall;
   //local_opsidata : TOpsiDataJSONService;
@@ -6564,6 +6566,20 @@ begin
           begin
             if GetString(r, methodname, r, errorInfo, True) then
               syntaxcheck := True;
+            logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
+              Expressionstr, LLDebug3);
+          end
+
+          else if LowerCase(trim(Expressionstr)) = LowerCase('"timeout"') then
+          begin
+            LogDatei.log('Got timeout in exprstr: ',LLdebug);
+              timeout := trim(r);
+              LogDatei.log('Got timeout: '+timeout,LLdebug);
+            if TryStrToInt(timeout,timeoutint) then
+              syntaxcheck := True
+            else
+              LogDatei.log('Given timeout: '+timeout+' is no integer',LLerror);
+
             logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
               Expressionstr, LLDebug3);
           end
@@ -6917,6 +6933,7 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        if timeoutint > 0 then omc.timeout:= timeoutint;
         testresult := '';
 
         if copy(methodname, length(methodname) - length('_hash') +
@@ -6979,7 +6996,8 @@ begin
           output.add(testresult);
         end;
 
-        omc.Free;
+        if Assigned(omc) then
+        FreeAndNil(omc);
 
         if errorOccured then
         begin
@@ -11537,9 +11555,10 @@ begin
         useStdIn := True;
         LogDatei.log('Powershell with AllSigned detected - switching to StdIn Mode',
           LLinfo);
-        if trim(programparas) <> '' then
+        (*if trim(programparas) <> '' then
           LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
             programparas, LLinfo);
+            *)
         if trim(passparas) <> '' then
           LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
             passparas, LLinfo);
@@ -11606,7 +11625,7 @@ begin
         catcommand := 'type ';
         {$ENDIF WINDOWS}
         commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-          ' | ' + '"' + programfilename + '" ' + powershellpara;
+          ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
       end
       else
       begin

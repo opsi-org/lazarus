@@ -16,6 +16,8 @@ opsi-script (4.12.4.34) stable; urgency=low
   * osconf: new config: opsi-script.global.writeProductLogFile (default=false)
   * oslog: changed histrory line to:
     'handled: <productid> Version: <versiion> Request: <request> Result: <result>
+  * osparser: opsiservicecall: new line allowed: "timeout" : <int>
+  * oswebservice: TOpsiMethodCall has now property timeout
 
 -- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
 
