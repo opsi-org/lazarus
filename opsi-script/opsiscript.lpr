@@ -122,6 +122,7 @@ type
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
+    LogDatei.WriteComponentFile := False;;
     logdatei.CreateTheLogfile(logfilename, False);
     logdatei.LogLevel := 8;
     //LogDatei.debug_prog:=true;

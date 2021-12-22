@@ -11,6 +11,11 @@ opsi-script (4.12.4.34) stable; urgency=low
   * powershell AllSigned Hack: type tmpfile | powershell -command -
     will be switched on automatically if AllSigned is detected.
     Additional parameters (to script or powershell) will be ignored in this case.
+  * oslog: new property WriteComponentFile. if true a logfile for every component (product)
+    is (re)written.
+  * osconf: new config: opsi-script.global.writeProductLogFile (default=false)
+  * oslog: changed histrory line to:
+    'handled: <productid> Version: <versiion> Request: <request> Result: <result>
 
 -- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
 

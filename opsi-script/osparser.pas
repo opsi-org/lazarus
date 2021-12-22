@@ -10377,12 +10377,13 @@ begin
       commandline := 'powershell.exe get-executionpolicy';
       tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
-      LogDatei.log('Powershell excution policy = '+org_execution_policy,LLinfo);
+      LogDatei.log('Powershell excution policy = ' + org_execution_policy, LLinfo);
       if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
       begin
         // set (open)
         commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
       end;
     end;
 
@@ -10420,7 +10421,8 @@ begin
       begin
         // set (close)
         commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
       end;
     end;
   finally
@@ -11603,9 +11605,8 @@ begin
         {$IFDEF WINDOWS}
         catcommand := 'type ';
         {$ENDIF WINDOWS}
-        commandline := 'cmd.exe /C '+
-          catcommand + tempfilename + ' | ' + '"' + programfilename +
-          '" ' + powershellpara;
+        commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+          ' | ' + '"' + programfilename + '" ' + powershellpara;
       end
       else
       begin
@@ -25731,10 +25732,15 @@ begin
           LLessential)
       else
       begin
-        LogDatei.log('installed product: ' + Topsi4data(opsidata).getActualProductId +
+        LogDatei.log('handled product: ' + Topsi4data(opsidata).getActualProductId +
           ' Version: ' + opsidata.getActualProductVersion, LLessential);
-        LogDatei.log2history('installed : ' + Topsi4data(opsidata).getActualProductId +
-          ' Version: ' + opsidata.getActualProductVersion);
+        tmpstr := ' Request: ' + opsidata.getActualProductActionRequest;
+        if extremeErrorLevel = LevelFatal then
+          tmpstr := tmpstr + ' Result: ' + 'failed'
+        else
+          tmpstr := tmpstr + ' Result: ' + 'success';
+        LogDatei.log2history('handled : ' + Topsi4data(opsidata).getActualProductId +
+          ' Version: ' + opsidata.getActualProductVersion + tmpstr);
       end;
 
       //LogDatei.log ('opsi service version: '+opsidata.getOpsiServiceVersion, LLessential);
