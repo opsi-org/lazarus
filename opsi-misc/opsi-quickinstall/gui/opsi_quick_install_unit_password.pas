@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   MaskEdit, osRunCommandElevated, LCLType, cthreads, osLog,
-  get_latest_lopsiserver, Process;
+  lopsiserverdownloader, Process;
 
 type
 
@@ -115,7 +115,7 @@ begin
     Synchronize(@ShowMessageOnForm);
   end;}
   // try downloading latest l-opsi-server and set DirClientData for the latest version
-  if two_los_to_test and getLOpsiServer(FInstallRunCommand, Data.distroName) then
+  if two_los_to_test and DownloadLOS(FInstallRunCommand, Data.distroName) then
   begin
     // extract and compare version numbers of default and downloaded los
     if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,

@@ -16,7 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osLinuxRepository,
   oslog,
   osnetworkcalculator,
-  get_latest_lopsiserver,
+  LOpsiServerDownloader,
   opsi_quick_install_resourcestrings;
 
 type
@@ -227,7 +227,7 @@ type
 
     if two_los_to_test then writeln(rsWait);
     // try downloading latest l-opsi-server and set DirClientData for the latest version
-    if two_los_to_test and getLOpsiServer(QuickInstallCommand, distroName) then
+    if two_los_to_test and DownloadLOS(QuickInstallCommand, distroName) then
     begin
       // extract and compare version numbers of default and downloaded los
       if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
