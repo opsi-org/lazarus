@@ -337,7 +337,7 @@ type
     else
       ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
     // define repo url
-    url := repo + repoKind + '/' + DistrInfo.DistrUrlPart;
+    url := repo + repoKind + '/' + DistrInfo.DistrRepoUrlPart;
 
     // !following lines need an existing LogDatei
     if (DistrInfo.DistroName = 'openSUSE') or (DistrInfo.DistroName = 'SUSE') then
