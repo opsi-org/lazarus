@@ -31,7 +31,7 @@ type
     property DistroName: string read FDistroName;
     property DistroRelease: string read FDistroRelease;
     property Distr: TDistribution read FDistr;
-    property DistrUrlPart: string read FDistrRepoUrlPart;
+    property DistrRepoUrlPart: string read FDistrRepoUrlPart;
     property PackageManagementShellCommand: string read FPackageManagementShellCommand;
   end;
 
@@ -54,8 +54,6 @@ end;
 
 procedure TDistributionInfo.SetDistrAndUrlPart;
 begin
-  // Change from distroName and -Release to TDistribution and respective URL part
-
   FDistr := other;
   FDistrRepoUrlPart := '';
 
