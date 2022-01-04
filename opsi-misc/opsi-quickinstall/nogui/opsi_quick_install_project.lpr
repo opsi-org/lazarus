@@ -36,25 +36,19 @@ type
     adminName, adminPassword, ipName, ipNumber: string;
     FileText, PropsFile: TStringList;
     QuickInstallCommand: TRunCommandElevated;
-    DirClientData, shellCommand, Output: string;
+    DirClientData, Output: string;
     two_los_to_test, one_installation_failed: boolean;
     name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
   const
-    baseUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
-    baseUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
-    // set default values for all required variables
+    baseRepoUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
+    baseRepoUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     procedure SetDefaultValues;
-    // try getting latest l-opsi-server and then define the DirClientData to use
     procedure defineDirClientData;
-    // write properties in properties.conf file
     procedure writePropsToFile;
     procedure addRepo;
-    // install opsi-script and execute l-opsi-server script
     procedure executeLOSscript;
-    // install opsi-server
     procedure installOpsi;
-    // query:
     procedure NoGuiQuery;
     procedure QuerySetupType;
     //procedure QueryOpsiVersion;
@@ -78,10 +72,8 @@ type
     procedure QueryIPName;
     procedure QueryIPNumber;
     procedure QueryOverview;
-    // no query, directly use all default values for installation
     procedure ExecuteWithDefaultValues;
-    // no query, read in values from a file
-    procedure ReadProps;
+    procedure ReadPropsFromFile;
   protected
     procedure DoRun; override;
   public
@@ -141,7 +133,6 @@ type
     // no query, read in values from a file
     if HasOption('f', 'file') then
     begin
-      //writeln(getOptionValue('f', 'file'));
       // read properties from file
       PropsFile := TStringList.Create;
       try
@@ -149,7 +140,7 @@ type
           //writeln(getOptionValue('f', 'file'));
           //writeln(FileExists(getOptionValue('f', 'file')).ToString(TUseBoolStrs.true));
           PropsFile.LoadFromFile(getOptionValue('f', 'file'));
-          ReadProps;
+          ReadPropsFromFile;
         end;
       except
         writeln('Executing Opsi Quick-Install with properties file didn''t work!');
@@ -186,16 +177,14 @@ type
   end;
 
   // set default values for all variables that are required for the installation
-  procedure TQuickInstall.setDefaultValues;
+  procedure TQuickInstall.SetDefaultValues;
   begin
     LogDatei.log('Entered SetDefaultValues', LLdebug);
-    // set default values:
     opsiVersion := 'Opsi 4.2';
-    // repo depending on opsi version
     if opsiVersion = 'Opsi 4.1' then
-      repo := baseUrlOpsi41
+      repo := baseRepoUrlOpsi41
     else
-      repo := baseUrlOpsi42;
+      repo := baseRepoUrlOpsi42;
     proxy := '';
     repoNoCache := repo;
     backend := 'file';
@@ -581,9 +570,9 @@ type
   begin
     // repo:
     if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi41, ']', '*')
+      writeln(rsRepo, ' [Example: ', baseRepoUrlOpsi41, ']', '*')
     else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepo, ' [Example: ', baseUrlOpsi42, ']', '*');
+      writeln(rsRepo, ' [Example: ', baseRepoUrlOpsi42, ']', '*');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
@@ -600,10 +589,10 @@ type
     begin
       repo := input;
       if (input = '') and (opsiVersion = 'Opsi 4.1') then
-        repo := baseUrlOpsi41
+        repo := baseRepoUrlOpsi41
       else
       if (input = '') and (opsiVersion = 'Opsi 4.2') then
-        repo := baseUrlOpsi42;
+        repo := baseRepoUrlOpsi42;
       QueryProxy;
     end;
   end;
@@ -638,9 +627,9 @@ type
   begin
     // repo without cache proxy:
     if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi41, ']')
+      writeln(rsRepoNoCache, ' [Example: ', baseRepoUrlOpsi41, ']')
     else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepoNoCache, ' [Example: ', baseUrlOpsi42, ']');
+      writeln(rsRepoNoCache, ' [Example: ', baseRepoUrlOpsi42, ']');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
@@ -1349,7 +1338,7 @@ type
     installOpsi;
   end;
   // no query, read in values from a file
-  procedure TQuickInstall.ReadProps;
+  procedure TQuickInstall.ReadPropsFromFile;
   var
     i: integer;
   begin
