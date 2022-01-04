@@ -25,12 +25,14 @@ uses
   osfuncmac,
   {$ENDIF DARWIN}
   fileutil,
+  strutils,
   lazfileutils,
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
 function which(target: string; var pathToTarget: string): boolean;
+function isProcessChildOf(searchproc,parentproc: string): boolean;
 
 implementation
 
@@ -70,7 +72,8 @@ begin
     domain := '';
 
     resultstring := FProcessEntry32.szExeFile + ';' + IntToStr(
-      FProcessEntry32.th32ProcessID) + ';';
+      FProcessEntry32.th32ProcessID) + ';' + IntToStr(
+      FProcessEntry32.th32ParentProcessID) + ';';
     //  if GetProcessUserBypid(FProcessEntry32.th32ProcessID, UserName, Domain) then
     //    resultstring := resultstring + Domain + '\' + UserName;
     //if FProcessEntry32.th32ProcessID > 0 then
@@ -277,5 +280,118 @@ begin
   end;
 end;
 
+
+function isProcessChildOf(searchproc,parentproc: string): boolean;
+var
+  proclist: TStringList;
+  pid2parent: TStringList;
+  proc2pid: TStringList;
+  i: integer;
+  searchpid, parentpid : dword;
+  tmpstr : string;
+  basestr : string;
+  copystart1, copylength1, copystart2, copylength2 : integer;
+
+function getPidOfProc(searchproc: string) : dword;
+var
+  mypidstr : string;
+begin
+  (*
+  result := 0;
+  for i := 0 to proclist.Count - 1 do
+    begin
+      if pos(searchproc, proclist.Strings[i]) > 0 then
+      begin
+        mypidstr := copy(proclist.Strings[i], pos(';',proclist.Strings[i]),rpos(';',proclist.Strings[i]))
+        if TryStrToDWord(result,mypidstr) then
+        begin
+          logdatei.log('getPidOfProc: valid pid for: ' + searchproc+ ' is: '+mypidstr, LLinfo);
+        end
+        else
+        begin
+        result := 0;
+        logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
+        end;
+      end;
+    end;
+    *)
+  result := 0;
+  mypidstr := proc2pid.Values[searchproc];
+  if TryStrToDWord(mypidstr,result) then
+        begin
+          logdatei.log('getPidOfProc: valid pid for: ' + searchproc+ ' is: '+mypidstr, LLinfo);
+        end
+        else
+        begin
+        result := 0;
+        logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
+        end;
+   if Result = 0 then
+   logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
+end;
+
+function getParentPid(basepid: dword) : dword;
+begin
+  if not TryStrToDWord(pid2parent.Values[IntToStr(basepid)],result) then
+  result := 0;
+end;
+
+function isParentByPid(basepid, parentpid: dword) : boolean;
+var
+  aktpid : dword;
+begin
+  result := false;
+  aktpid := basepid;
+  repeat
+    aktpid := getParentPid(aktpid);
+  until (aktpid <= 4) or (aktpid = parentpid);
+  if aktpid = parentpid then result := true;
+end;
+
+begin
+  try
+  Result := false;
+  proclist := TStringList.Create;
+  pid2parent := TStringList.Create;
+  proc2pid := TStringList.Create;
+  try
+    proclist.Text := getProcesslist.Text;
+    for i := 0 to proclist.Count - 1 do
+    begin
+    basestr := proclist.Strings[i];
+    logdatei.log('proclist:  ' + basestr, LLdebug2);
+    copystart1 := pos(';',basestr)+1;
+    copylength1 := npos(';',basestr,2) - copystart1;
+    copystart2 := npos(';',basestr,2)+1;
+    copylength2 := npos(';',basestr,3) - copystart2;
+    tmpstr := copy(basestr,copystart1,copylength1)
+                   + '=' + copy(basestr,copystart2,copylength2);
+    pid2parent.Add(tmpstr);
+    logdatei.log('pid2parent:  ' + tmpstr, LLdebug2);
+    //tmpstr := copy(proclist.Strings[i], 0,pos(';',proclist.Strings[i])-1)
+    //               + '=' + copy(proclist.Strings[i], pos(';',proclist.Strings[i])+1,length(proclist.Strings[i])-(pos(';',proclist.Strings[i])+1);
+    copystart1 := 0;
+    copylength1 := npos(';',basestr,1) -1 - copystart1;
+    copystart2 := npos(';',basestr,1)+1;
+    copylength2 := npos(';',basestr,2) - copystart2;
+    tmpstr := copy(basestr,copystart1,copylength1)
+                   + '=' + copy(basestr,copystart2,copylength2);
+    proc2pid.Add(tmpstr);
+    logdatei.log('proc2pid:  ' + tmpstr, LLdebug2);
+    end;
+    searchpid := getPidOfProc(searchproc);
+    parentpid := getPidOfProc(parentproc);
+    if (searchpid > 0) and (parentpid > 0) then
+    result := isParentByPid(searchpid,parentpid);
+  except
+    logdatei.log('Error: Exception in isProcessChildOf:  ' + searchproc, LLError);
+    Result := false;
+  end;
+  finally
+    FreeAndNil(proclist);
+    FreeAndNil(pid2parent);
+    FreeAndNil(proc2pid);
+  end;
+end;
 
 end.

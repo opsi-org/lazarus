@@ -19295,6 +19295,25 @@ begin
             end;
   end
 
+  else if Skip('isProcessChildOf', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              try
+                syntaxCheck := True;
+                BooleanResult := isProcessChildOf(s1, s2);
+              except
+                BooleanResult := False;
+                logdatei.log('Error: Exception at isProcessChildOf with : "' +
+                  s1 + '","' + s2 + '"', LLError);
+              end;
+            end;
+  end
+
   else if Skip('stringToBool', Input, r, InfoSyntaxError) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then

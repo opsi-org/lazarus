@@ -370,7 +370,7 @@ begin
           serviceresult) then
           if jsonIsArray(serviceresult) then
           begin
-            //osmain.startupmessages.Add('got jason Array from result');
+            //osmain.startupmessages.Add('got json Array from result');
             if jsonAsArrayToStringList(serviceresult, configlist) then
             begin
               for i := 0 to configlist.Count - 1 do
