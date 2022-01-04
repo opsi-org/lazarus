@@ -48,9 +48,7 @@ opsi-misc/opsi-quickinstall/build/opsi-quickinstall/gui/opsi_quick_install_proje
 opsi-misc/opsi-quickinstall/build/opsi-quickinstall/nogui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/build/opsi-quickinstall/downloaded_l-opsi-server_*
 opsi-misc/opsi-quickinstall/gui/l-opsi-server.conf
-opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/nogui/l-opsi-server.conf
-opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server_4.2.0.5-1/CLIENT_DATA/properties.conf
 opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server_4.2.0.5-1/CLIENT_DATA/result.conf
 
