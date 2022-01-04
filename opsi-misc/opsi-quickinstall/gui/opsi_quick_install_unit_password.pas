@@ -48,7 +48,7 @@ type
   TInstallOpsiThread = class(TThread)
   private
     FInstallRunCommand: TRunCommandElevated;
-    FShellCommand, DirClientData, Output: string;
+    FPackageManagementShellCommand, DirClientData, Output: string;
     two_los_to_test, one_installation_failed: boolean;
     name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
@@ -63,7 +63,7 @@ type
   protected
     procedure Execute; override;
   public
-    constructor Create(password: string; sudo: boolean; shellCommand: string);
+    constructor Create(password: string; sudo: boolean; PackageManagementShellCommand: string);
   end;
 
 var
@@ -86,10 +86,10 @@ uses
 {InstallOpsiThread}
 
 constructor TInstallOpsiThread.Create(password: string; sudo: boolean;
-  shellCommand: string);
+  PackageManagementShellCommand: string);
 begin
   FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
-  FShellCommand := shellCommand;
+  FPackageManagementShellCommand := PackageManagementShellCommand;
 
   FreeOnTerminate := True;
   inherited Create(True);
@@ -115,7 +115,7 @@ begin
     Synchronize(@ShowMessageOnForm);
   end;}
   // try downloading latest l-opsi-server and set DirClientData for the latest version
-  if two_los_to_test and DownloadLOS(FInstallRunCommand, Data.distroName) then
+  if two_los_to_test and DownloadLOS(FInstallRunCommand, Data.DistrInfo) then
   begin
     // extract and compare version numbers of default and downloaded los
     if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
@@ -218,7 +218,7 @@ begin
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
     FInstallRunCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
   // create repository:
-  ReleaseKeyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
+  ReleaseKeyRepo := TLinuxRepository.Create(Data.DistrInfo.Distr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
   if Data.opsiVersion = 'Opsi 4.1' then
@@ -227,7 +227,7 @@ begin
     url := ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
 
   // !following lines need an existing LogDatei
-  if (Data.distroName = 'openSUSE') or (Data.distroName = 'SUSE') then
+  if (Data.DistrInfo.DistroName = 'openSUSE') or (Data.DistrInfo.DistroName = 'SUSE') then
   begin
     ReleaseKeyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
   end
@@ -253,10 +253,10 @@ begin
   // if one installation failed, then opsi-script was already installed
   if not one_installation_failed then
   begin
-    FInstallRunCommand.Run(FShellCommand + 'update', Output);
+    FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
     message := rsInstall + 'opsi-script...';
     Synchronize(@ShowMessageOnForm);
-    FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
+    FInstallRunCommand.Run(FPackageManagementShellCommand + 'install opsi-script', Output);
   end;
   // remove the QuickInstall repo entry because it was only for installing opsi-script
   if FileExists('/etc/apt/sources.list.d/opsi.list') then
@@ -394,8 +394,9 @@ begin
 
   btnFinishClicked := True;
   // start thread for opsi server installation while showing TWait
+  Data.DistrInfo.SetPackageManagementShellCommand;
   InstallOpsiThread := TInstallOpsiThread.Create(EditPassword.Text,
-    RadioBtnSudo.Checked, GetPackageManagementShellCommand(Data.distroName));
+    RadioBtnSudo.Checked, Data.DistrInfo.PackageManagementShellCommand);
   with InstallOpsiThread do
   begin
     // FormClose automatically executed on termination of thread

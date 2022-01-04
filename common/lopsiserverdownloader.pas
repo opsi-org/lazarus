@@ -14,7 +14,7 @@ type
   private
     FDownloadResult: boolean;
     FLOSSearch: TSearchRec;
-    FdistroName: string;
+    FDistrInfo: TDistributionInfo;
     FLOSVersion: string;
     FDownloadedLOSFolder: string;
     FLOSCommand: TRunCommandElevated;
@@ -23,11 +23,11 @@ type
   const
     DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     LOSPackageName = 'l-opsi-server_4*.opsi';
-    constructor Create(LOSCommand: TRunCommandElevated; distroName: string);overload;
+    constructor Create(LOSCommand: TRunCommandElevated; DistrInfo: TDistributionInfo);overload;
     procedure ExtractFile(fileName: string);
     procedure CheckOutputForError;
     procedure InstallRequiredPackages;
-    procedure downloadLOSFromUib;
+    procedure DownloadLOSFromUib;
     procedure ReadDownloadedLOSVersion;
     procedure RemoveOldDownloadedLOS;
     procedure CreateNewLOSFolderDir;
@@ -44,16 +44,16 @@ type
 
 
 function DownloadLOS(LOpsiServerCommand: TRunCommandElevated;
-  distroName: string): boolean;
+  DistrInfo: TDistributionInfo): boolean;
 
 implementation
 
-constructor TLOSDownloader.Create(LOSCommand: TRunCommandElevated; distroName: string);overload;
+constructor TLOSDownloader.Create(LOSCommand: TRunCommandElevated; DistrInfo: TDistributionInfo);overload;
 begin
   inherited Create;
   FDownloadResult := True;
   FLOSCommand := LOSCommand;
-  FdistroName := distroName;
+  FDistrInfo := DistrInfo;
 end;
 
 procedure TLOSDownloader.ExtractFile(fileName: string);
@@ -83,11 +83,11 @@ procedure TLOSDownloader.InstallRequiredPackages;
 var
   shellCommand: string;
 begin
-  shellCommand := GetPackageManagementShellCommand(FdistroName);
-  FLOSCommand.Run(shellCommand + 'update', Output);
-  FLOSCommand.Run(shellCommand + 'install wget', Output);
-  FLOSCommand.Run(shellCommand + 'install cpio', Output);
-  FLOSCommand.Run(shellCommand + 'install gzip', Output);
+  FDistrInfo.SetPackageManagementShellCommand;
+  FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'update', Output);
+  FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install wget', Output);
+  FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install cpio', Output);
+  FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install gzip', Output);
 end;
 
 procedure TLOSDownloader.downloadLOSFromUib;
@@ -190,7 +190,7 @@ begin
 end;
 
 function DownloadLOS(LOpsiServerCommand: TRunCommandElevated;
-  distroName: string): boolean;
+  DistrInfo: TDistributionInfo): boolean;
 var
   LOSDownloader: TLOSDownloader;
 begin
@@ -198,7 +198,7 @@ begin
   Result := True;
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
 
-  LOSDownloader := TLOSDownloader.Create(LOpsiServerCommand, distroName);
+  LOSDownloader := TLOSDownloader.Create(LOpsiServerCommand, DistrInfo);
   LOSDownloader.InstallRequiredPackages;
   LOSDownloader.DownloadLOSFromUib; // download latest released los from download.uib
   LOSDownloader.ReadDownloadedLOSVersion; // sets FLOSVersion and FDownloadedLOSFolder

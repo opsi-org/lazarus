@@ -84,7 +84,7 @@ begin
 
     MemoOverview.Lines.Add('');
     // UCS password
-    if Data.distroName = 'Univention' then
+    if Data.DistrInfo.DistroName = 'Univention' then
       MemoOverview.Lines.Add(rsUCSO + Data.ucsPassword);
     // Reboot
     MemoOverview.Lines.Add(rsRebootO + Data.reboot.OverviewEntry);

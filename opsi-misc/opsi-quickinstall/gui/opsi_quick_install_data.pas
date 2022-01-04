@@ -27,7 +27,6 @@ type
   TQuickInstallData = class(TObject)
   public
     custom: boolean;
-    distroName, distroRelease: string;
     DistrInfo: TDistributionInfo;
 
     opsiVersion, repo: string;
@@ -66,7 +65,6 @@ end;
 constructor TQuickInstallData.Create;
 begin
   // set default values
-  DistrInfo := TDistributionInfo.Create;
   opsiVersion := 'Opsi 4.2';
   repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
   proxy := TSplitData.Create;

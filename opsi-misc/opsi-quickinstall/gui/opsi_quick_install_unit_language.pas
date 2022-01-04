@@ -264,8 +264,7 @@ begin
   Data := TQuickInstallData.Create;
   // Following two lines take time and are therefore executed only once at the
   // beginning of this program.
-  Data.distroName := getLinuxDistroName;
-  Data.distroRelease := getLinuxDistroRelease;
+  Data.DistrInfo.Create(getLinuxDistroName, getLinuxDistroRelease);
 
   // text by resourcestrings
   LabelWelcome.Caption := rsWelcome;

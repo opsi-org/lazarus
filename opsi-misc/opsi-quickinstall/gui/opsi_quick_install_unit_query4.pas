@@ -111,7 +111,7 @@ begin
   SetBasics(self);
   PanelFilePointer.AutoSize:=True;
   // ask for UCS password only if distribution is Univention
-  if Data.distroName = 'Univention' then
+  if Data.DistrInfo.DistroName = 'Univention' then
     PanelPasswordMasterAdmin.Visible := True
   else
   begin

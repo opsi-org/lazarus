@@ -62,7 +62,7 @@ begin
   // we have one InfoImage
   setInfoBasics(InfoDistribution);
   // show distribution suggestion
-  EditDistr.Text := Data.distroName + ' ' + Data.distroRelease;
+  EditDistr.Text := Data.DistrInfo.DistroName + ' ' + Data.DistrInfo.DistroRelease;
 
   // text by resourcestrings
   Caption := rsCapDistr;
@@ -74,29 +74,32 @@ begin
 end;
 
 procedure TDistribution.BtnNextClick(Sender: TObject);
+var
+  UserEditedDistroName, UserEditedDistroRelease: string;
 begin
   GoOn := True;
   Distribution.Close;
 
   // If the distribution was edited:
-  if EditDistr.Text <> Data.distroName + ' ' + Data.distroRelease then
+  if EditDistr.Text <> Data.DistrInfo.DistroName + ' ' + Data.DistrInfo.DistroRelease then
   begin
     // set new distribution name and release
     // function Copy is 1-based like Pos
-    Data.distroName := Copy(EditDistr.Text, 1, Pos(' ', EditDistr.Text) - 1);
-    Data.distroRelease :=
+    UserEditedDistroName := Copy(EditDistr.Text, 1, Pos(' ', EditDistr.Text) - 1);
+    UserEditedDistroRelease :=
       Copy(EditDistr.Text, Pos(' ', EditDistr.Text) + 1, Length(EditDistr.Text) -
       Pos(' ', EditDistr.Text));
+    Data.DistrInfo.CorrectDistributionNameAndRelease(UserEditedDistroName, UserEditedDistroRelease);
   end;
 
   // set Data.DistrInfo
   with Data do
   begin
-    LogDatei.Log(Data.distroName + ' ' + Data.distroRelease, LLessential);
-    DistrInfo.SetInfo(distroName, distroRelease);
+    LogDatei.Log(Data.DistrInfo.DistroName + ' ' + Data.DistrInfo.DistroRelease, LLessential);
+    DistrInfo.SetDistrAndUrlPart;
     //ShowMessage(DistrInfo.DistrUrlPart);
     // If the distribution is not supported, show an information and close QuickInstall:
-    if DistrInfo.MyDistr = other then
+    if DistrInfo.Distr = other then
     begin
       ShowMessage(rsNoSupport + #10 + #10 + DistrInfo.Distribs);
       Close;

@@ -1,4 +1,4 @@
-unit distributionInfo;
+unit DistributionInfo;
 
 {$mode objfpc}{$H+}
 
@@ -12,163 +12,184 @@ type
   {DistributionInfo}
   TDistributionInfo = class(TObject)
   private
-    FMyDistr: TDistribution;
-    FDistrUrlPart: string;
+    FDistroName: string;
+    FDistroRelease: string;
+    FDistr: TDistribution;
+    FDistrRepoUrlPart: string;
+    FPackageManagementShellCommand: string;
   public
   const
     Distribs = 'AlmaLinux 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
       #10 + 'openSUSE 15.1, openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
       'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'Univention 4.4';
-    property MyDistr: TDistribution read FMyDistr;
-    property DistrUrlPart: string read FDistrUrlPart;
+    constructor Create(DistroName: string; DistroRelease: string);overload;
+    procedure CorrectDistributionNameAndRelease(DistroName: string; DistroRelease: string);
+    procedure SetDistrAndUrlPart;
+    function SetPackageManagementShellCommand: string;
 
-    procedure SetInfo(distroName: string; distroRelease: string);
+    property DistroName: string read FDistroName;
+    property DistroRelease: string read FDistroRelease;
+    property Distr: TDistribution read FDistr;
+    property DistrUrlPart: string read FDistrRepoUrlPart;
+    property PackageManagementShellCommand: string read FPackageManagementShellCommand;
   end;
 
-function GetPackageManagementShellCommand(distroName: string): string;
+
 
 implementation
 
-procedure TDistributionInfo.SetInfo(distroName: string; distroRelease: string);
+constructor TDistributionInfo.Create(DistroName: string; DistroRelease: string);overload;
+begin
+  inherited Create;
+  FDistroName := DistroName;
+  FDistroRelease := DistroRelease;
+end;
+
+procedure TDistributionInfo.CorrectDistributionNameAndRelease(DistroName: string; DistroRelease: string);
+begin
+  FDistroName := DistroName;
+  FDistroRelease := DistroRelease;
+end;
+
+procedure TDistributionInfo.SetDistrAndUrlPart;
 begin
   // Change from distroName and -Release to TDistribution and respective URL part
 
-  FMyDistr := other;
-  FDistrUrlPart := '';
+  FDistr := other;
+  FDistrRepoUrlPart := '';
 
   // AlmaLinux has releases with names like 8.x
-  if distroName = 'AlmaLinux' then
+  if FDistroName = 'AlmaLinux' then
   begin
-    if Pos('8', distroRelease) = 1 then
+    if Pos('8', FDistroRelease) = 1 then
     begin
-      FMyDistr := AlmaLinux_8;
-      FDistrUrlPart := 'AlmaLinux_8/';
+      FDistr := AlmaLinux_8;
+      FDistrRepoUrlPart := 'AlmaLinux_8/';
     end;
   end
   else
   // CentOS has releases with names like 7.x-xxxx
-  if distroName = 'CentOS' then
+  if FDistroName = 'CentOS' then
   begin
-    if Pos('8', distroRelease) = 1 then
+    if Pos('8', FDistroRelease) = 1 then
     begin
-      FMyDistr := CentOS_8;
-      FDistrUrlPart := 'CentOS_8/';
+      FDistr := CentOS_8;
+      FDistrRepoUrlPart := 'CentOS_8/';
     end;
   end
   else
-  if distroName = 'Debian' then
+  if FDistroName = 'Debian' then
   begin
-    if Pos('9', distroRelease) = 1 then
+    if Pos('9', FDistroRelease) = 1 then
     begin
-      FMyDistr := Debian_9;
-      FDistrUrlPart := 'Debian_9/';
+      FDistr := Debian_9;
+      FDistrRepoUrlPart := 'Debian_9/';
     end
     else
-    if Pos('10', distroRelease) = 1 then
+    if Pos('10', FDistroRelease) = 1 then
     begin
-      FMyDistr := Debian_10;
-      FDistrUrlPart := 'Debian_10/';
+      FDistr := Debian_10;
+      FDistrRepoUrlPart := 'Debian_10/';
     end
     else
-    if Pos('11', distroRelease) = 1 then
+    if Pos('11', FDistroRelease) = 1 then
     begin
-      FMyDistr := Debian_10;
-      FDistrUrlPart := 'Debian_11/';
+      FDistr := Debian_10;
+      FDistrRepoUrlPart := 'Debian_11/';
     end;
   end
   else
-  if distroName = 'openSUSE' then
+  if FDistroName = 'openSUSE' then
   begin
-    if distroRelease = '15.1' then
+    if FDistroRelease = '15.1' then
     begin
-      FMyDistr := openSUSE_Leap_15_1;
-      FDistrUrlPart := 'openSUSE_Leap_15.1/';
+      FDistr := openSUSE_Leap_15_1;
+      FDistrRepoUrlPart := 'openSUSE_Leap_15.1/';
     end
-    else if distroRelease = '15.2' then
+    else if FDistroRelease = '15.2' then
     begin
-      FMyDistr := openSUSE_Leap_15_2;
-      FDistrUrlPart := 'openSUSE_Leap_15.2/';
+      FDistr := openSUSE_Leap_15_2;
+      FDistrRepoUrlPart := 'openSUSE_Leap_15.2/';
     end
-    else if distroRelease = '15.3' then
+    else if FDistroRelease = '15.3' then
     begin
-      FMyDistr := openSUSE_Leap_15_3;
-      FDistrUrlPart := 'openSUSE_Leap_15.3/';
+      FDistr := openSUSE_Leap_15_3;
+      FDistrRepoUrlPart := 'openSUSE_Leap_15.3/';
     end;
   end
   else
   // RHEL has releases like 7.x
-  if distroName = 'RedHatEnterprise' then
+  if FDistroName = 'RedHatEnterprise' then
   begin
-    if Pos('8', distroRelease) = 1 then
+    if Pos('8', FDistroRelease) = 1 then
     begin
-      FMyDistr := RHEL_8;
-      FDistrUrlPart := 'RHEL_8/';
+      FDistr := RHEL_8;
+      FDistrRepoUrlPart := 'RHEL_8/';
     end;
   end
   else
-  if distroName = 'Rocky' then
+  if FDistroName = 'Rocky' then
   begin
-    if Pos('8', distroRelease) = 1 then
+    if Pos('8', FDistroRelease) = 1 then
     begin
-      FMyDistr := RockyLinux_8;
-      FDistrUrlPart := 'RockyLinux_8/';
+      FDistr := RockyLinux_8;
+      FDistrRepoUrlPart := 'RockyLinux_8/';
     end;
   end
   else
-  if distroName = 'Univention' then
+  if FDistroName = 'Univention' then
   begin
-    if Pos('4.4', distroRelease) = 1 then
+    if Pos('4.4', FDistroRelease) = 1 then
     begin
-      FMyDistr := Univention_4_4;
-      FDistrUrlPart := 'Univention_4.4/';
+      FDistr := Univention_4_4;
+      FDistrRepoUrlPart := 'Univention_4.4/';
     end;
   end
   else
-  if distroName = 'SUSE' then
+  if FDistroName = 'SUSE' then
   begin
-    if distroRelease = '15.1' then
+    if FDistroRelease = '15.1' then
     begin
-      FMyDistr := SLE15_SP1;
-      FDistrUrlPart := 'SLE_15_SP1/';
+      FDistr := SLE15_SP1;
+      FDistrRepoUrlPart := 'SLE_15_SP1/';
     end
     else
-    if distroRelease = '15.2' then
+    if FDistroRelease = '15.2' then
     begin
-      FMyDistr := SLE15_SP2;
-      FDistrUrlPart := 'SLE_15_SP1/';
+      FDistr := SLE15_SP2;
+      FDistrRepoUrlPart := 'SLE_15_SP1/';
     end;
   end
   else
-  if distroName = 'Ubuntu' then
+  if FDistroName = 'Ubuntu' then
   begin
-    if distroRelease = '18.04' then
+    if FDistroRelease = '18.04' then
     begin
-      FMyDistr := xUbuntu_18_04;
-      FDistrUrlPart := 'xUbuntu_18.04/';
+      FDistr := xUbuntu_18_04;
+      FDistrRepoUrlPart := 'xUbuntu_18.04/';
     end
     else
-    if distroRelease = '20.04' then
+    if FDistroRelease = '20.04' then
     begin
-      FMyDistr := xUbuntu_20_04;
-      FDistrUrlPart := 'xUbuntu_20.04/';
+      FDistr := xUbuntu_20_04;
+      FDistrRepoUrlPart := 'xUbuntu_20.04/';
     end;
   end;
 end;
 
-
-function GetPackageManagementShellCommand(distroName: string): string;
+function TDistributionInfo.SetPackageManagementShellCommand: string;
 begin
   {CentOS and RedHat}
-  if (distroName = 'CentOS') or (distroName = 'RedHatEnterprise') then
+  if (FDistroName = 'CentOS') or (FDistroName = 'RedHatEnterprise') then
     Result := 'yum -y '
   {Debian, Ubuntu, Univention}
   // univention is based on debian
-  else if (distroName = 'Debian') or (distroName = 'Ubuntu') or
-    (distroName = 'Univention') then
+  else if (FDistroName = 'Debian') or (FDistroName = 'Ubuntu') or
+    (FDistroName = 'Univention') then
     Result := 'apt --assume-yes '
   {OpenSuse and SLES}
-  else if (distroName = 'openSUSE') or (distroName = 'SUSE') then
+  else if (FDistroName = 'openSUSE') or (FDistroName = 'SUSE') then
     Result := 'zypper --non-interactive ';
 end;
 
