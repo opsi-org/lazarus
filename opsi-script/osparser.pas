@@ -11392,7 +11392,8 @@ var
   myoutput: TXStringlist;
   powershellpara: string;
   catcommand: string = 'cat ';
-  useStdIn: boolean = False;
+  //useStdIn: boolean = False;
+  allSignedHack: boolean = False;
   tmplist: TStringList;
   org_execution_policy: string = '';
 
@@ -11552,8 +11553,9 @@ begin
       org_execution_policy := trim(tmplist[0]);
       if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
       begin
-        useStdIn := True;
-        LogDatei.log('Powershell with AllSigned detected - switching to StdIn Mode',
+        allSignedHack := True;
+        //useStdIn := True;
+        LogDatei.log('Powershell with AllSigned detected - switching to Get-Content Mode',
           LLinfo);
         (*if trim(programparas) <> '' then
           LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
@@ -11564,9 +11566,11 @@ begin
             passparas, LLinfo);
       end;
     end;
-    if useStdIn then
+    //if useStdIn then
+    if allSignedHack then
     begin
-      powershellpara := ' -command - ';
+      //powershellpara := ' -command - ';
+      powershellpara := ' -Command ';
     end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
@@ -11619,13 +11623,15 @@ begin
         end;
       end;
 
-      if useStdIn then
+      if allSignedHack then
       begin
         {$IFDEF WINDOWS}
         catcommand := 'type ';
         {$ENDIF WINDOWS}
-        commandline := 'cmd.exe /C ' + catcommand + tempfilename +
-          ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+        commandline := '"' + programfilename + '" ' + programparas + ' ' + powershellpara +
+        '"Get-Content -Raw -Path '+ tempfilename +' | Out-String | Invoke-Expression" ';
       end
       else
       begin
@@ -14238,7 +14244,7 @@ begin
           if GetNTVersionMajor >= 10 then
           begin
             list.add('ReleaseID=' + getW10Release);
-            list.add('ReleaseID=' + getW10Release);
+            //list.add('ReleaseID=' + getW10Release);
           (* moved to funcwin: getW10Release
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
