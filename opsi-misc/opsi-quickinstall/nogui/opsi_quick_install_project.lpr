@@ -41,8 +41,10 @@ type
     name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
   const
-    baseRepoUrlOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
-    baseRepoUrlOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
+    baseRepoUrlOpsi41 =
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
+    baseRepoUrlOpsi42 =
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     procedure SetDefaultValues;
     procedure defineDirClientData;
     procedure writePropsToFile;
@@ -369,9 +371,11 @@ type
     // if one installation failed, then opsi-script was already installed
     if not one_installation_failed then
     begin
-      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand + 'update', Output);
+      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand +
+        'update', Output);
       writeln(rsInstall + 'opsi-script...');
-      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand + 'install opsi-script', Output);
+      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand +
+        'install opsi-script', Output);
     end;
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
     //writeln(Output);
@@ -456,7 +460,7 @@ type
     // print result of installation
     Sleep(1000);
     writeln();
-    writeln(rsInstallationOf + opsiVersion + ' ' + installationResult+'!');
+    writeln(rsInstallationOf + opsiVersion + ' ' + installationResult + '!');
     Sleep(1000);
     writeln();
     writeln(rsLog);
@@ -494,8 +498,10 @@ type
       writeln(rsOtherDistr);
       readln(input);
       UserEditedDistroName := Copy(input, 1, Pos(' ', input) - 1);
-      UserEditedDistroRelease := Copy(input, Pos(' ', input) + 1, Length(input) - Pos(' ', input));
-      DistrInfo.CorrectDistributionNameAndRelease(UserEditedDistroName, UserEditedDistroRelease);
+      UserEditedDistroRelease :=
+        Copy(input, Pos(' ', input) + 1, Length(input) - Pos(' ', input));
+      DistrInfo.CorrectDistributionNameAndRelease(UserEditedDistroName,
+        UserEditedDistroRelease);
     end;
     DistrInfo.SetDistrAndUrlPart;
     if DistrInfo.Distr = other then
@@ -1367,9 +1373,28 @@ type
     installOpsi;
   end;
 
+  procedure CheckThatUserIsRoot;
+  var
+    user, userID: string;
+  begin
+    // get user and as safeguard also the user id
+    if (RunCommand('/bin/sh', ['-c', 'echo | id -nu'], user) and
+      RunCommand('/bin/sh', ['-c', 'echo | id -u'], userID)) then
+    begin
+      Delete(user, user.Length, 1);
+      Delete(userID, userID.Length, 1);
+    end;
+
+    if not ((user = 'root') and (userID = '0')) then
+    begin
+      writeln('Please execute Opsi Quick-Install as root!');
+      exit;
+    end;
+  end;
+
 var
   QuickInstall: TQuickInstall;
-  user, userID, customLanguage, Lang, DefLang: string;
+  customLanguage, Lang, DefLang: string;
   //r: TTranslateUnitResult;
 const
   logFileName = 'opsi_quickinstall_nogui.log';
@@ -1377,30 +1402,15 @@ const
 {$R *.res}
 
 begin
-  // only execute QuickInstall if user is root:
-  if (RunCommand('/bin/sh', ['-c', 'echo | id -nu'], user) and
-    RunCommand('/bin/sh', ['-c', 'echo | id -u'], userID)) then
-  begin
-    Delete(user, user.Length, 1);
-    Delete(userID, userID.Length, 1);
-  end;
-  // exit if user is not root
-  if not ((user = 'root') and (userID = '0')) then
-  begin
-    writeln('Please execute Opsi Quick-Install as root!');
-    exit;
-  end;
-  //writeln(user, userID);
+  // Only execute Opsi-QuickInstall(oqi) if user is root
+  CheckThatUserIsRoot;
 
-  // initialize log file:
   // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile(logFileName);
   LogDatei.log('Log file created', LLdebug);
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   LogDatei.log('Working directory: ' + GetCurrentDir, LLessential);
-
-  //writeln(LowerCase((user = 'sudo').ToString(TUseBoolStrs.True)));
 
   QuickInstall := TQuickInstall.Create(nil);
   QuickInstall.QuickInstallCommand := TRunCommandElevated.Create('', False);
