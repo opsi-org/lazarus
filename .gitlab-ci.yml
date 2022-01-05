@@ -52,6 +52,9 @@ compile opsi-script windows:
   script:
     - $LAZ_PROJECT_FILE=Join-Path ${PROJECT_REPOSITORY_PATH}\  "${PROJECT_NAME}.lpi"
     - echo "$LAZ_PROJECT_FILE"
+    - $doc = [XML] (Get-Content -Path $LAZ_PROJECT_FILE)
+    - $BINARY_VERSION = $doc.SelectSingleNode("//MajorVersionNr").Value + "." + $doc.SelectSingleNode("//MinorVersionNr").Value + "." + $doc.SelectSingleNode("//RevisionNr").Value + "." + $doc.SelectSingleNode("//BuildNr").Value
+    - echo "$BINARY_VERSION"
     - echo "Compiling $PROJECT_NAME for Win32"
     - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
