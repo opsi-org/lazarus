@@ -15,6 +15,7 @@ opsi-script (4.12.4.35) stable; urgency=low
   * new opsi-script constant %opsiscriptprocname% represents the name of the
     just running opsi-script process (opsi-script.exe, opsi-script, opsi-script-gui)
     changes in opsiconf, osparser, opsiscript.lpr
+  * write now component logs to subdir 'lastprodlogs'
 
 -- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
 
