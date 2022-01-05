@@ -1767,8 +1767,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -4118,7 +4119,8 @@ var
         if targetPort <> '' then
           ldap.TargetPort := targetPort;
         if TryStrToInt(targetPort, port) then
-          if port = 636 then ldap.FullSSL := True;
+          if port = 636 then
+            ldap.FullSSL := True;
 
         ldap.UserName := ldapsearch_user;
         ldap.Password := ldapsearch_credentials;
@@ -6417,7 +6419,7 @@ var
   paramList: TStringList;
   parameters: array of string;
   timeout: string = '';
-  timeoutint : integer = 0;
+  timeoutint: integer = 0;
 
   omc: TOpsiMethodCall;
   //local_opsidata : TOpsiDataJSONService;
@@ -6572,13 +6574,13 @@ begin
 
           else if LowerCase(trim(Expressionstr)) = LowerCase('"timeout"') then
           begin
-            LogDatei.log('Got timeout in exprstr: ',LLdebug);
-              timeout := trim(r);
-              LogDatei.log('Got timeout: '+timeout,LLdebug);
-            if TryStrToInt(timeout,timeoutint) then
+            LogDatei.log('Got timeout in exprstr: ', LLdebug);
+            timeout := trim(r);
+            LogDatei.log('Got timeout: ' + timeout, LLdebug);
+            if TryStrToInt(timeout, timeoutint) then
               syntaxcheck := True
             else
-              LogDatei.log('Given timeout: '+timeout+' is no integer',LLerror);
+              LogDatei.log('Given timeout: ' + timeout + ' is no integer', LLerror);
 
             logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
               Expressionstr, LLDebug3);
@@ -6933,7 +6935,8 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
-        if timeoutint > 0 then omc.timeout:= timeoutint;
+        if timeoutint > 0 then
+          omc.timeout := timeoutint;
         testresult := '';
 
         if copy(methodname, length(methodname) - length('_hash') +
@@ -6997,7 +7000,7 @@ begin
         end;
 
         if Assigned(omc) then
-        FreeAndNil(omc);
+          FreeAndNil(omc);
 
         if errorOccured then
         begin
@@ -10731,8 +10734,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11630,8 +11633,9 @@ begin
         {$ENDIF WINDOWS}
         //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
         //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
-        commandline := '"' + programfilename + '" ' + programparas + ' ' + powershellpara +
-        '"Get-Content -Raw -Path '+ tempfilename +' | Out-String | Invoke-Expression" ';
+        commandline := '"' + programfilename + '" ' + programparas +
+          ' ' + powershellpara + '"Get-Content -Raw -Path ' +
+          tempfilename + ' | Out-String | Invoke-Expression" ';
       end
       else
       begin
@@ -12397,10 +12401,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -12684,7 +12688,8 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductPropertyList - trying properties.conf',
                       LLWarning);
-                    if list2 <> nil then FreeAndNil(list1);
+                    if list2 <> nil then
+                      FreeAndNil(list1);
                     list2 := TXStringlist.Create;
                     list2.loadFromFile(tmpstr);
                     tmpbool := False; // default used
@@ -12750,7 +12755,8 @@ begin
                               LogDatei.log(
                                 'Property not existing in GetProductPropertyList - trying properties.conf',
                                 LLWarning);
-                              if list2 <> nil then FreeAndNil(list1);
+                              if list2 <> nil then
+                                FreeAndNil(list1);
                               list2 := TXStringlist.Create;
                               list2.loadFromFile(tmpstr);
                               tmpbool := False; // default used
@@ -24581,7 +24587,8 @@ begin
                   LogDatei.log('defined global string list ' +
                     Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
                 end;
-                if Assigned(tmplist) then FreeAndNil(tmplist);
+                if Assigned(tmplist) then
+                  FreeAndNil(tmplist);
               end;
 
               tsDefineFunction:
