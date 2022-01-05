@@ -10,12 +10,14 @@ uses
   {$IFDEF OPSISCRIPT}
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
-  {$IFDEF WIN32}
+  {$IFDEF WINDOWS}
   Windows,
-  DSiWin32,
+  JwaWindows,
   //  JwaWinnt,
   //  jwawinbase,
-  JwaWindows,
+  {$ENDIF WINDOWS}
+  {$IFDEF WIN32}
+  DSiWin32,
   {$ENDIF WIN32}
   {$IFDEF UNIX}
   OSProcessux,
@@ -45,7 +47,7 @@ uses
 
 // Process list
 
-{$IFDEF WIN32}
+{$IFDEF WINDOWS}
 //http://www.lazarus.freepascal.org/index.php?topic=3543.0
 
 //http://www.delphigeist.com/2010/03/process-list.html
@@ -85,7 +87,7 @@ begin
   CloseHandle(FSnapshotHandle);
 end;
 
-{$ENDIF WIN32}
+{$ENDIF WINDOWS}
 {$IFDEF UNIX}
 function getUnixProcessList: TStringList;
 var
@@ -209,9 +211,9 @@ end;
 function getProcessList: TStringList;
 begin
   {$IFDEF WINDOWS}
-  {$IFDEF WIN32}
+  //{$IFDEF WIN32}
   Result := getWinProcessList;
-  {$ENDIF WIN32}
+  //{$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   Result := getUnixProcessList;

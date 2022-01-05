@@ -1626,7 +1626,7 @@ begin
             end;
 
 
-        if FWriteComponentFile then
+        if FWriteComponentFile and FLogProduktId then
           if trim(FAktProduktId) <> '' then
             logComponent(trim(FAktProduktId), PasS);
 
