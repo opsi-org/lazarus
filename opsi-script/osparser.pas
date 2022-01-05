@@ -418,6 +418,8 @@ type
       (const s0: string; var Remaining: string; var StringResult: string;
       var InfoSyntaxError: string): boolean; overload;
 
+    function GetMSVersionName: string;
+
     function EvaluateString
       (const s0: string; var Remaining: string; var StringResult: string;
       var InfoSyntaxError: string; var NestLevel: integer;
@@ -14857,6 +14859,42 @@ begin
     Ifelseendiflevel, inDefFuncIndex);
 end;
 
+function TuibInstScript.GetMSVersionName: string;
+var
+  Major, Minor, BuildNumber: integer;
+  MSVersionName: string;
+begin
+  Major := GetNTVersionMajor;
+  Minor := GetNTVersionMinor;
+  BuildNumber := StrToInt(GetSystemOSVersionInfoEx('build_number'));
+  // ms version number -> ms version name
+  // 6.1 -> windows 7
+  // 6.2, 6.3 -> windows 8
+  // 10.0 -> windows 10 and 11
+  // differentiate windows 10 and 11 by build number
+  // for all other version numbers use the ms version number also as version name
+  if Major = 6 then
+  begin
+    if Minor = 1 then
+      MSVersionName := '7'
+    else
+    if (Minor = 2) or (Minor = 3) then
+      MSVersionName := '8';
+  end
+  else
+  if Major = 10 then
+  begin
+    if BuildNumber >= 22000 then
+      MSVersionName := '11'
+    else
+      MSVersionName := '10';
+  end
+  else
+    MSVersionName := IntToStr(Major) + '.' + IntToStr(Minor);
+
+  Result := MSVersionName;
+end;
+
 function TuibInstScript.EvaluateString
   (const s0: string; var Remaining: string; var StringResult: string;
   var InfoSyntaxError: string; var NestLevel: integer;
@@ -15245,26 +15283,7 @@ begin
         StringResult := ErrorInfo;
       end
       else
-      begin
-        if GetNTVersionMajor = 6 then
-        begin
-          if GetNTVersionMinor = 1 then
-            StringResult := '7'
-          else
-          if (GetNTVersionMinor = 2) or (GetNTVersionMinor = 3) then
-            StringResult := '8';
-        end
-        else
-        if GetNTVersionMajor = 10 then
-        begin
-          if StrToInt(GetSystemOSVersionInfoEx('build_number')) > 22000 then
-            StringResult := '11';
-          else
-            StringResult := '10';
-        end
-        else
-          StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
-      end;
+        StringResult := GetMSVersionName;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
       FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
