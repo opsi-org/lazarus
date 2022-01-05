@@ -117,6 +117,7 @@ var
   opsiservicePassword: string;
   opsiserviceSessionId: string;
   opsiserviceClientId: string;
+  opsiscriptProcName: string;
   depoturl: string;
   depotshare, depotdir: string;
   depotdrive, depotdrive_old: string;
@@ -619,5 +620,6 @@ initialization
   end;
 
   OpsiscriptVersionName := 'Version ' + OpsiscriptVersion;
+  opsiscriptProcName := ExtractFileName(reencode(ParamStr(0), 'system'));
 
 end.

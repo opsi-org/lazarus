@@ -23,6 +23,7 @@ uses
   oslog,
   oswebservice,
   osprocessux,
+  osjson,
   superobject;
 
 const
@@ -334,8 +335,9 @@ procedure mount_depotshare(mymountpoint: string; myhostkey: string; myclientId: 
 var
   resultstring, mydepotuser, mydomain, mydepot: string;
   myuser, myencryptedpass, myshare, mypass, mountoption: string;
-  mounttry: integer;
+  mounttry, i: integer;
   configlist: TStringList;
+  parastr , configid, values: string;
 begin
   try
     configlist := TStringList.Create;
@@ -343,7 +345,7 @@ begin
     myuser := 'pcpatch';
     mydomain := '';
     //writeln('depotId=',mydepot);
-    if setAddConfigStateDefaults(True) then
+    if opsidata.setAddConfigStateDefaults(True) then
     begin
       parastr := '{"objectId": "' + myclientid + '","configId":"clientconfig.depot.user"}';
       resultstring := MyOpsiMethodCall('configState_getObjects', ['', parastr]);
@@ -389,7 +391,7 @@ begin
             end;
           end;
       end;
-      setAddConfigStateDefaults(False);
+      opsidata.setAddConfigStateDefaults(False);
     end;
     (*
       depricated: getGeneralConfigValue    (do 04.01.2022)

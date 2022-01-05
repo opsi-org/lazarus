@@ -89,7 +89,7 @@ end;
 {$IFDEF LINUX}
 function getLinProcessList: TStringList;
 var
-  resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
+  resultstring, pidstr, ppidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
@@ -109,7 +109,7 @@ begin
       outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
       lineparts := TStringList.Create;
-      pscmd := 'ps -eo pid,user,comm:30,cmd:110';
+      pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then
       begin
@@ -129,6 +129,7 @@ begin
             resultstring := '';
             userstr := '';
             pidstr := '';
+            ppidstr := '';
             cmdstr := '';
             fullcmdstr := '';
             stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
@@ -137,13 +138,15 @@ begin
               if k = 0 then
                 pidstr := lineparts.Strings[k]
               else if k = 1 then
-                userstr := lineparts.Strings[k]
+                ppidstr := lineparts.Strings[k]
               else if k = 2 then
+                userstr := lineparts.Strings[k]
+              else if k = 3 then
                 cmdstr := lineparts.Strings[k]
               else
                 fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
             end;
-            resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
+            resultstring := cmdstr + ';' + pidstr + ';' + ppidstr + ';' + userstr + ';' + fullcmdstr;
             LogDatei.log(resultstring, LLDebug3);
             //resultstring := lineparts.Strings[0] + ';';
             //resultstring := resultstring + lineparts.Strings[1] + ';';
@@ -360,8 +363,11 @@ begin
     begin
     basestr := proclist.Strings[i];
     logdatei.log('proclist:  ' + basestr, LLdebug2);
+    // create  pid2parent entry
+    // get the pid
     copystart1 := pos(';',basestr)+1;
     copylength1 := npos(';',basestr,2) - copystart1;
+    // get the parent pid
     copystart2 := npos(';',basestr,2)+1;
     copylength2 := npos(';',basestr,3) - copystart2;
     tmpstr := copy(basestr,copystart1,copylength1)
@@ -370,8 +376,11 @@ begin
     logdatei.log('pid2parent:  ' + tmpstr, LLdebug2);
     //tmpstr := copy(proclist.Strings[i], 0,pos(';',proclist.Strings[i])-1)
     //               + '=' + copy(proclist.Strings[i], pos(';',proclist.Strings[i])+1,length(proclist.Strings[i])-(pos(';',proclist.Strings[i])+1);
+    // create  proc2pid entry
+    // get the proc name
     copystart1 := 0;
     copylength1 := npos(';',basestr,1) -1 - copystart1;
+    // get the pid
     copystart2 := npos(';',basestr,1)+1;
     copylength2 := npos(';',basestr,2) - copystart2;
     tmpstr := copy(basestr,copystart1,copylength1)
