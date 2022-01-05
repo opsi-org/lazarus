@@ -15218,6 +15218,55 @@ begin
     end;
   end
 
+
+  else if LowerCase(s) = LowerCase('GetMSVersionName') then
+  begin
+    syntaxCheck := True;
+
+    OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+    if GetUibOsType(errorinfo) <> tovWinNT then
+      StringResult := 'Not an OS of type Windows NT'
+    else
+    begin
+      {$IFDEF WINDOWS}
+      OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+      majorVer := GetuibNTversion(ErrorInfo);
+      if majorVer = tntverNONE then
+      begin
+        LogDatei.log(ErrorInfo, LLError);
+        StringResult := ErrorInfo;
+      end
+      else
+      begin
+        if GetNTVersionMajor = 6 then
+        begin
+          if GetNTVersionMinor = 1 then
+            StringResult := '7'
+          else
+          if (GetNTVersionMinor = 2) or (GetNTVersionMinor = 3) then
+            StringResult := '8';
+        end
+        else
+        if GetNTVersionMajor = 10 then
+        begin
+          if StrToInt(GetSystemOSVersionInfoEx('build_number')) > 22000 then
+            StringResult := '11';
+          else
+            StringResult := '10';
+        end
+        else
+          StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+      end;
+
+      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+      {$ENDIF WINDOWS}
+    end;
+  end
+
+
   else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
   begin
     syntaxCheck := True;
