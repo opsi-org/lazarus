@@ -20,7 +20,7 @@ opsi-quickinstall (4.2.0.1-2) experimental; urgency=low
   * error with adding release key fixed
   * bug fixed in closing Opsi-QuickInstall
     
--- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Sep 2021 18:30:00 +0200
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Thu,  30 Sep 2021 18:30:00 +0200
 
 
 opsi-quickinstall (4.2.0.1) experimental; urgency=low
@@ -34,7 +34,7 @@ opsi-quickinstall (4.2.0.1) experimental; urgency=low
   * gui:
     * layout improved
     
--- Anja-Melanie Schmitz <a.schmitz@uib.de>  Wed,  01 Jun 2021 17:30:00 +0200
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  01 Jun 2021 17:30:00 +0200
 
 
 opsi-quickinstall (4.2.0.0) experimental; urgency=low
