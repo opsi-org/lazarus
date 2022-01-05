@@ -86,16 +86,19 @@ begin
 end;
 
 {$ENDIF WIN32}
-{$IFDEF LINUX}
-function getLinProcessList: TStringList;
+{$IFDEF UNIX}
+function getUnixProcessList: TStringList;
 var
   resultstring, pidstr, ppidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
+  (*
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
+  *)
+  outlines: TStringList;
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
@@ -103,15 +106,26 @@ begin
   try
     try
       Result := TStringList.Create;
+      (*
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ELSE OPSISCRIPT}
       outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
+      *)
+      outlines := TStringList.Create;
       lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
-      if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-        SW_HIDE, ExitCode) then
+      {$IFDEF DARWIN}
+       pscmd := 'ps -eco pid,pppid,user,comm';
+      {$ENDIF DARWIN}
+      {$IFDEF OPSISCRIPT}
+      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
+        report, SW_HIDE, ExitCode) then
+      {$ELSE OPSISCRIPT}
+        if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+          SW_HIDE, ExitCode) then
+      {$ENDIF OPSISCRIPT}
       begin
         LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
       end
@@ -133,6 +147,7 @@ begin
             cmdstr := '';
             fullcmdstr := '';
             stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            {$IFDEF LINUX}
             for k := 0 to lineparts.Count - 1 do
             begin
               if k = 0 then
@@ -146,6 +161,21 @@ begin
               else
                 fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
             end;
+            {$ENDIF LINUX}
+            {$IFDEF DARWIN}
+            for k := 0 to lineparts.Count - 1 do
+            begin
+              if k = 0 then
+                pidstr := lineparts.Strings[k]
+              else if k = 1 then
+                ppidstr := lineparts.Strings[k]
+              else if k = 2 then
+                userstr := lineparts.Strings[k]
+              else
+                cmdstr := cmdstr + lineparts.Strings[k] + ' ';
+            end;
+            fullcmdstr := cmdstr;
+            {$ENDIF DARWIN}
             resultstring := cmdstr + ';' + pidstr + ';' + ppidstr + ';' + userstr + ';' + fullcmdstr;
             LogDatei.log(resultstring, LLDebug3);
             //resultstring := lineparts.Strings[0] + ';';
@@ -159,7 +189,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        LogDatei.DependentAdd('Exception in getUnixProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -170,7 +200,9 @@ begin
   end;
 end;
 
-{$ENDIF LINUX}
+{$ENDIF UNIX}
+
+
 
 
 
@@ -181,12 +213,14 @@ begin
   Result := getWinProcessList;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  Result := getLinProcessList;
-  {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  Result := getUnixProcessList;
+  {$ENDIF UNIX}
+  (*
   {$IFDEF DARWIN}
   Result := getMacOSProcessList;
   {$ENDIF DARWIN}
+  *)
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;

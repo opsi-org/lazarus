@@ -11,7 +11,7 @@ opsi-script (4.12.4.35) stable; urgency=low
   * oslinmount: replace getGeneralConfigValue by configState_getObjects
   * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
   * new boolean opsi-script function: isProcessChildOf(<searchprocstr>, <parentprocstr>): bool;
-    implemented for WL
+    implemented for WLM
   * new opsi-script constant %opsiscriptprocname% represents the name of the
     just running opsi-script process (opsi-script.exe, opsi-script, opsi-script-gui)
     changes in opsiconf, osparser, opsiscript.lpr
