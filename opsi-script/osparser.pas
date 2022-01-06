@@ -15195,7 +15195,7 @@ begin
   end
 
 
-  else if LowerCase(s) = LowerCase('GetMSVersionInfo') then
+  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or (LowerCase(s) = LowerCase('GetMSVersionName')) then
   begin
     syntaxCheck := True;
 
@@ -15216,37 +15216,12 @@ begin
       end
       else
       begin
-        StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+        if LowerCase(s) = LowerCase('GetMSVersionName') then
+          StringResult := GetMSVersionName
+        else
+          // GetMSVersionInfo
+          StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
       end;
-
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-      {$ENDIF WINDOWS}
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('GetMSVersionName') then
-  begin
-    syntaxCheck := True;
-
-    OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-    if GetUibOsType(errorinfo) <> tovWinNT then
-      StringResult := 'Not an OS of type Windows NT'
-    else
-    begin
-      {$IFDEF WINDOWS}
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-      majorVer := GetuibNTversion(ErrorInfo);
-      if majorVer = tntverNONE then
-      begin
-        LogDatei.log(ErrorInfo, LLError);
-        StringResult := ErrorInfo;
-      end
-      else
-        StringResult := GetMSVersionName;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
       FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
