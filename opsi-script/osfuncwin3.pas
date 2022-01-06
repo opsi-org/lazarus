@@ -221,6 +221,7 @@ begin
   Minor := GetNTVersionMinor;
   BuildNumber := StrToInt(GetSystemOSVersionInfoEx('build_number'));
   // ms version number -> ms version name
+  // compare https://docs.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
   // 6.1 -> windows 7
   // 6.2, 6.3 -> windows 8
   // 10.0 -> windows 10 and 11
