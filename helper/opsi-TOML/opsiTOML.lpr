@@ -147,20 +147,29 @@ begin
 
   writeln('--- Getting values from keys');
 
+  writeln('- Searching for unexisting key in root table:');
+  writeln( GetValueFromTOMLfile(path,'key','default') );
+
+  writeln('- Searching for unexisting key in sub-table:');
+  writeln( GetValueFromTOMLfile(path,'servers.beta.key','default') );
+
   writeln('- Searching for value of key title :');
   myValue := GetValueFromTOMLfile(path,'title','default') ;
   writeln( 'myValue :' + myValue);
+  writeln(String(myTOML['title']));
 
   writeln('- Searching for key name :');
-  //writeln( String(myTOML.Find('name')));
+  //writeln( String(myTOML.Find('owner.name')));
   writeln( GetValueFromTOMLfile(path,'owner.name','default')  );
+  writeln(String(myTOML['owner']['name']));
 
-  writeln('- Searching for value of key connection_max :');
+  writeln('- Searching for value of key database.connection_max :');
   writeln( GetValueFromTOMLfile(path,'database.connection_max','default')  );
+  writeln(String(myTOML['database']['connection_max']));
 
   writeln('- Searching for value of key servers.alpha.ip :');
   writeln( GetValueFromTOMLfile(path,'servers.alpha.ip','default') );
-
+  writeln(String(myTOML['servers']['alpha']['ip']));
 
   writeln('--- Accessing TOML data  ');
 
@@ -170,7 +179,7 @@ begin
 
   //myData := myTOML['']['title'];
   myData := myTOML['title'];
-  //writeln('myTOML["title"] : ', String(myData));
+  writeln('myTOML["title"] : ', String(myData));
 
 
   myTOMLTable := TTOMLTable(myTOML.Items[3]) ;
@@ -203,7 +212,6 @@ begin
   writeln('myTOML.Keys[5] :' + myTOML.Keys[5]);
   writeln('myTOML.Values[5]:' + String(myTOML.Values[5]));
 
-
   writeln('--- Testing adding String data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newKeyInOwner','owner.newValueInOwner');
 
@@ -215,6 +223,7 @@ begin
 
   writeln('--- Testing adding Boolean data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newBooleanValue', true);
+
   (*
   writeln('--- Testing adding Octal data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
@@ -228,6 +237,8 @@ begin
   writeln('--- Testing adding DateTime data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newDateTimeValue',myDatetime);
 
+  //writeln(myTOML.AsJSON.FormatJSON);
+
   writeln('--- Testing adding Array data to TOML sub Table ');
   myArray := TTOMLArray.Create;
   myArray.Add('First element');
@@ -238,7 +249,7 @@ begin
   //myNewTOML:= GetTOML(myValue);
 
   AddKeyValueToTOML(myTOML,'owner.newArrayValue',myArray);
-  
+
   //myTOMLTable:= GetTOMLTable(myTOML,'owner');
   myTOMLTable:= TTOMLTable(myTOML.Items[1]);
   //writeln(myTOMLTable.AsJSON.FormatJSON);
@@ -248,6 +259,16 @@ begin
 
   writeln('owner.Keys[7] :' + myTOMLTable.Keys[7]);
   writeln('owner.Values[7]:' + String(myTOMLTable.Values[7]));
+
+
+  writeln('--- Getting final TOMLTable :  ');
+
+  myTOMLStringList.Free;
+  myTOMLStringList.AddStrings(GetTOMLTable(path,'owner'));
+  writeln(myTOMLStringList.Text);
+
+  writeln('--- Testing TOML.AsJSON :');
+  //writeln(myTOML.AsJSON.FormatJSON);
 
   (*
   if map.TryGetData('title', myData) then
