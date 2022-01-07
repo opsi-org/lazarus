@@ -15220,10 +15220,9 @@ begin
         // Since version number (and therefore GetMSVersionInfo) is the same '10.0' for Windows 10 and 11,
         // GetMSVersionName should differentiate this by returning '11.0' for Windows 11
         // Windows 11 is detected by build version >= 22000
-        if (LowerCase(s) = LowerCase('GetMSVersionName')) and (StrToInt(GetSystemOSVersionInfoEx('build_number')) >= 22000) then
+        StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+        if (StringResult = '10.0') and (LowerCase(s) = LowerCase('GetMSVersionName')) and (StrToInt(GetSystemOSVersionInfoEx('build_number')) >= 22000) then
           StringResult := '11.0'
-        else
-          StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
       end;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
