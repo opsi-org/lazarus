@@ -25500,6 +25500,10 @@ begin
       ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
       FConstValuesList.add(ValueToTake);
 
+      FConstList.add('%OpsiscriptProcName%');
+      ValueToTake := opsiscriptProcName;
+      FConstValuesList.add(ValueToTake);
+
       FConstList.add('%WinstVersion%');
       ValueToTake := osconf.OpsiscriptVersion;
       FConstValuesList.add(ValueToTake);

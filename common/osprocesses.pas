@@ -10,12 +10,14 @@ uses
   {$IFDEF OPSISCRIPT}
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
-  {$IFDEF WIN32}
+  {$IFDEF WINDOWS}
   Windows,
-  DSiWin32,
+  JwaWindows,
   //  JwaWinnt,
   //  jwawinbase,
-  JwaWindows,
+  {$ENDIF WINDOWS}
+  {$IFDEF WIN32}
+  DSiWin32,
   {$ENDIF WIN32}
   {$IFDEF UNIX}
   OSProcessux,
@@ -32,7 +34,7 @@ uses
 function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
 function which(target: string; var pathToTarget: string): boolean;
-function isProcessChildOf(searchproc,parentproc: string): boolean;
+function isProcessChildOf(searchproc, parentproc: string): boolean;
 
 implementation
 
@@ -45,7 +47,7 @@ uses
 
 // Process list
 
-{$IFDEF WIN32}
+{$IFDEF WINDOWS}
 //http://www.lazarus.freepascal.org/index.php?topic=3543.0
 
 //http://www.delphigeist.com/2010/03/process-list.html
@@ -85,17 +87,20 @@ begin
   CloseHandle(FSnapshotHandle);
 end;
 
-{$ENDIF WIN32}
-{$IFDEF LINUX}
-function getLinProcessList: TStringList;
+{$ENDIF WINDOWS}
+{$IFDEF UNIX}
+function getUnixProcessList: TStringList;
 var
-  resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
+  resultstring, pidstr, ppidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
+  (*
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
+  *)
+  outlines: TStringList;
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
@@ -103,60 +108,91 @@ begin
   try
     try
       Result := TStringList.Create;
+      (*
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ELSE OPSISCRIPT}
       outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
+      *)
+      outlines := TStringList.Create;
       lineparts := TStringList.Create;
-      pscmd := 'ps -eo pid,user,comm:30,cmd:110';
-      if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-        SW_HIDE, ExitCode) then
-      begin
-        LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-      end
-      else
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log('', LLDebug3);
-        LogDatei.log('output:', LLDebug3);
-        LogDatei.log('--------------', LLDebug3);
-        if outlines.Count > 0 then
-          for i := 0 to outlines.Count - 1 do
-          begin
-            LogDatei.log(outlines.strings[i], LLDebug2);
-            lineparts.Clear;
-            resultstring := '';
-            userstr := '';
-            pidstr := '';
-            cmdstr := '';
-            fullcmdstr := '';
-            stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-            for k := 0 to lineparts.Count - 1 do
+      pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
+      {$IFDEF DARWIN}
+      pscmd := 'ps -eco pid,pppid,user,comm';
+      {$ENDIF DARWIN}
+      {$IFDEF OPSISCRIPT}
+      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
+        report, SW_HIDE, ExitCode) then
+      {$ELSE OPSISCRIPT}
+        if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+          SW_HIDE, ExitCode) then
+      {$ENDIF OPSISCRIPT}
+        begin
+          LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+        end
+        else
+        begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+          LogDatei.log('', LLDebug3);
+          LogDatei.log('output:', LLDebug3);
+          LogDatei.log('--------------', LLDebug3);
+          if outlines.Count > 0 then
+            for i := 0 to outlines.Count - 1 do
             begin
-              if k = 0 then
-                pidstr := lineparts.Strings[k]
-              else if k = 1 then
-                userstr := lineparts.Strings[k]
-              else if k = 2 then
-                cmdstr := lineparts.Strings[k]
-              else
-                fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+              LogDatei.log(outlines.strings[i], LLDebug2);
+              lineparts.Clear;
+              resultstring := '';
+              userstr := '';
+              pidstr := '';
+              ppidstr := '';
+              cmdstr := '';
+              fullcmdstr := '';
+              stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            {$IFDEF LINUX}
+              for k := 0 to lineparts.Count - 1 do
+              begin
+                if k = 0 then
+                  pidstr := lineparts.Strings[k]
+                else if k = 1 then
+                  ppidstr := lineparts.Strings[k]
+                else if k = 2 then
+                  userstr := lineparts.Strings[k]
+                else if k = 3 then
+                  cmdstr := lineparts.Strings[k]
+                else
+                  fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+              end;
+            {$ENDIF LINUX}
+            {$IFDEF DARWIN}
+              for k := 0 to lineparts.Count - 1 do
+              begin
+                if k = 0 then
+                  pidstr := lineparts.Strings[k]
+                else if k = 1 then
+                  ppidstr := lineparts.Strings[k]
+                else if k = 2 then
+                  userstr := lineparts.Strings[k]
+                else
+                  cmdstr := cmdstr + lineparts.Strings[k] + ' ';
+              end;
+              fullcmdstr := cmdstr;
+            {$ENDIF DARWIN}
+              resultstring := cmdstr + ';' + pidstr + ';' + ppidstr +
+                ';' + userstr + ';' + fullcmdstr;
+              LogDatei.log(resultstring, LLDebug3);
+              //resultstring := lineparts.Strings[0] + ';';
+              //resultstring := resultstring + lineparts.Strings[1] + ';';
+              //resultstring := resultstring + lineparts.Strings[2] + ';';
+              Result.Add(resultstring);
             end;
-            resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
-            LogDatei.log(resultstring, LLDebug3);
-            //resultstring := lineparts.Strings[0] + ';';
-            //resultstring := resultstring + lineparts.Strings[1] + ';';
-            //resultstring := resultstring + lineparts.Strings[2] + ';';
-            Result.Add(resultstring);
-          end;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log('', LLDebug3);
-      end;
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+          LogDatei.log('', LLDebug3);
+        end;
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+        LogDatei.DependentAdd('Exception in getUnixProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -167,23 +203,26 @@ begin
   end;
 end;
 
-{$ENDIF LINUX}
+{$ENDIF UNIX}
+
 
 
 
 function getProcessList: TStringList;
 begin
   {$IFDEF WINDOWS}
-  {$IFDEF WIN32}
+  //{$IFDEF WIN32}
   Result := getWinProcessList;
-  {$ENDIF WIN32}
+  //{$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  Result := getLinProcessList;
-  {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  Result := getUnixProcessList;
+  {$ENDIF UNIX}
+  (*
   {$IFDEF DARWIN}
   Result := getMacOSProcessList;
   {$ENDIF DARWIN}
+  *)
 end;
 
 function ProcessIsRunning(searchproc: string): boolean;
@@ -207,7 +246,8 @@ begin
         searchstr := trim(copy(searchproc, 1, 15));
         logdatei.log(
           'Process name to find (' + searchproc +
-          ') is wider then 14 chars. Searching for: (' + searchstr + '). The result may not be exact',
+          ') is wider then 14 chars. Searching for: (' + searchstr +
+          '). The result may not be exact',
           LLwarning);
       end;
       {$ENDIF LINUX}
@@ -234,7 +274,8 @@ begin
       end;
     {$ENDIF WINDOWS}
     except
-      logdatei.log('Error: Exception in processIsRunning:  ' + searchproc+' / '+searchstr, LLError);
+      logdatei.log('Error: Exception in processIsRunning:  ' +
+        searchproc + ' / ' + searchstr, LLError);
       Result := False;
     end;
   finally
@@ -281,21 +322,21 @@ begin
 end;
 
 
-function isProcessChildOf(searchproc,parentproc: string): boolean;
+function isProcessChildOf(searchproc, parentproc: string): boolean;
 var
   proclist: TStringList;
   pid2parent: TStringList;
   proc2pid: TStringList;
   i: integer;
-  searchpid, parentpid : dword;
-  tmpstr : string;
-  basestr : string;
-  copystart1, copylength1, copystart2, copylength2 : integer;
+  searchpid, parentpid: dword;
+  tmpstr: string;
+  basestr: string;
+  copystart1, copylength1, copystart2, copylength2: integer;
 
-function getPidOfProc(searchproc: string) : dword;
-var
-  mypidstr : string;
-begin
+  function getPidOfProc(searchproc: string): dword;
+  var
+    mypidstr: string;
+  begin
   (*
   result := 0;
   for i := 0 to proclist.Count - 1 do
@@ -315,78 +356,85 @@ begin
       end;
     end;
     *)
-  result := 0;
-  mypidstr := proc2pid.Values[searchproc];
-  if TryStrToDWord(mypidstr,result) then
-        begin
-          logdatei.log('getPidOfProc: valid pid for: ' + searchproc+ ' is: '+mypidstr, LLinfo);
-        end
-        else
-        begin
-        result := 0;
-        logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
-        end;
-   if Result = 0 then
-   logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
-end;
-
-function getParentPid(basepid: dword) : dword;
-begin
-  if not TryStrToDWord(pid2parent.Values[IntToStr(basepid)],result) then
-  result := 0;
-end;
-
-function isParentByPid(basepid, parentpid: dword) : boolean;
-var
-  aktpid : dword;
-begin
-  result := false;
-  aktpid := basepid;
-  repeat
-    aktpid := getParentPid(aktpid);
-  until (aktpid <= 4) or (aktpid = parentpid);
-  if aktpid = parentpid then result := true;
-end;
-
-begin
-  try
-  Result := false;
-  proclist := TStringList.Create;
-  pid2parent := TStringList.Create;
-  proc2pid := TStringList.Create;
-  try
-    proclist.Text := getProcesslist.Text;
-    for i := 0 to proclist.Count - 1 do
+    Result := 0;
+    mypidstr := proc2pid.Values[searchproc];
+    if TryStrToDWord(mypidstr, Result) then
     begin
-    basestr := proclist.Strings[i];
-    logdatei.log('proclist:  ' + basestr, LLdebug2);
-    copystart1 := pos(';',basestr)+1;
-    copylength1 := npos(';',basestr,2) - copystart1;
-    copystart2 := npos(';',basestr,2)+1;
-    copylength2 := npos(';',basestr,3) - copystart2;
-    tmpstr := copy(basestr,copystart1,copylength1)
-                   + '=' + copy(basestr,copystart2,copylength2);
-    pid2parent.Add(tmpstr);
-    logdatei.log('pid2parent:  ' + tmpstr, LLdebug2);
-    //tmpstr := copy(proclist.Strings[i], 0,pos(';',proclist.Strings[i])-1)
-    //               + '=' + copy(proclist.Strings[i], pos(';',proclist.Strings[i])+1,length(proclist.Strings[i])-(pos(';',proclist.Strings[i])+1);
-    copystart1 := 0;
-    copylength1 := npos(';',basestr,1) -1 - copystart1;
-    copystart2 := npos(';',basestr,1)+1;
-    copylength2 := npos(';',basestr,2) - copystart2;
-    tmpstr := copy(basestr,copystart1,copylength1)
-                   + '=' + copy(basestr,copystart2,copylength2);
-    proc2pid.Add(tmpstr);
-    logdatei.log('proc2pid:  ' + tmpstr, LLdebug2);
+      logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
+        ' is: ' + mypidstr, LLinfo);
+    end
+    else
+    begin
+      Result := 0;
+      logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
     end;
-    searchpid := getPidOfProc(searchproc);
-    parentpid := getPidOfProc(parentproc);
-    if (searchpid > 0) and (parentpid > 0) then
-    result := isParentByPid(searchpid,parentpid);
-  except
-    logdatei.log('Error: Exception in isProcessChildOf:  ' + searchproc, LLError);
-    Result := false;
+    if Result = 0 then
+      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
   end;
+
+  function getParentPid(basepid: dword): dword;
+  begin
+    if not TryStrToDWord(pid2parent.Values[IntToStr(basepid)], Result) then
+      Result := 0;
+  end;
+
+  function isParentByPid(basepid, parentpid: dword): boolean;
+  var
+    aktpid: dword;
+  begin
+    Result := False;
+    aktpid := basepid;
+    repeat
+      aktpid := getParentPid(aktpid);
+    until (aktpid <= 4) or (aktpid = parentpid);
+    if aktpid = parentpid then Result := True;
+  end;
+
+begin
+  try
+    Result := False;
+    proclist := TStringList.Create;
+    pid2parent := TStringList.Create;
+    proc2pid := TStringList.Create;
+    try
+      proclist.Text := getProcesslist.Text;
+      for i := 0 to proclist.Count - 1 do
+      begin
+        basestr := proclist.Strings[i];
+        logdatei.log('proclist:  ' + basestr, LLdebug2);
+        // create  pid2parent entry
+        // get the pid
+        copystart1 := pos(';', basestr) + 1;
+        copylength1 := npos(';', basestr, 2) - copystart1;
+        // get the parent pid
+        copystart2 := npos(';', basestr, 2) + 1;
+        copylength2 := npos(';', basestr, 3) - copystart2;
+        tmpstr := copy(basestr, copystart1, copylength1) + '=' +
+          copy(basestr, copystart2, copylength2);
+        pid2parent.Add(tmpstr);
+        logdatei.log('pid2parent:  ' + tmpstr, LLdebug2);
+        //tmpstr := copy(proclist.Strings[i], 0,pos(';',proclist.Strings[i])-1)
+        //               + '=' + copy(proclist.Strings[i], pos(';',proclist.Strings[i])+1,length(proclist.Strings[i])-(pos(';',proclist.Strings[i])+1);
+        // create  proc2pid entry
+        // get the proc name
+        copystart1 := 0;
+        copylength1 := npos(';', basestr, 1) - 1 - copystart1;
+        // get the pid
+        copystart2 := npos(';', basestr, 1) + 1;
+        copylength2 := npos(';', basestr, 2) - copystart2;
+        tmpstr := copy(basestr, copystart1, copylength1) + '=' +
+          copy(basestr, copystart2, copylength2);
+        proc2pid.Add(tmpstr);
+        logdatei.log('proc2pid:  ' + tmpstr, LLdebug2);
+      end;
+      searchpid := getPidOfProc(searchproc);
+      parentpid := getPidOfProc(parentproc);
+      if (searchpid > 0) and (parentpid > 0) then
+        Result := isParentByPid(searchpid, parentpid);
+    except
+      logdatei.log('Error: Exception in isProcessChildOf:  ' + searchproc, LLError);
+      Result := False;
+    end;
   finally
     FreeAndNil(proclist);
     FreeAndNil(pid2parent);

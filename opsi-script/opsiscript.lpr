@@ -187,7 +187,10 @@ type
           else logdatei.log('No opsi-script-gui: '+filePath + 'opsi-script-gui'+'  -  continue with nogui... ', LLnotice);
           logdatei.Close;
           if FileExists(filePath + 'opsi-script-gui') then
+          begin
             fpExecV(filePath + 'opsi-script-gui', argv);
+            opsiscriptProcName := 'opsi-script-gui';
+          end;
         end;
       end
       else

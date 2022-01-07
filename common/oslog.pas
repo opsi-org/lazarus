@@ -233,6 +233,7 @@ type
 const
   StandardPartLogFileext = '.log';
   StandardPartReadFileext = '.read';
+  ComponentLogSubDir = 'lastprodlogs';
   //FStandardLogFileext = '.log';
   //  FStandardLogFilename =  'opsi-winst';
   //  FStandardLogFileext =   '.log';
@@ -1228,8 +1229,11 @@ end;
 procedure TLogInfo.logComponent(comp: string; line: string);
 var
   mycompfilename: string;
+  mylogdir : string;
 begin
-  mycompfilename := FStandardPartLogPath + PathDelim + comp + '.log';
+  mylogdir := FStandardPartLogPath + PathDelim + ComponentLogSubDir ;
+  mycompfilename := mylogdir + PathDelim + comp + '.log';
+  ForceDirectory(mylogdir);
   if FComponentFilename = mycompfilename then
   begin
     // we work on an existing log
@@ -1622,7 +1626,7 @@ begin
             end;
 
 
-        if FWriteComponentFile then
+        if FWriteComponentFile and FLogProduktId then
           if trim(FAktProduktId) <> '' then
             logComponent(trim(FAktProduktId), PasS);
 
