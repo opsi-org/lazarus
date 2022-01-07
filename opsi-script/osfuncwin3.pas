@@ -179,7 +179,6 @@ function GetNTVersionMajor: Dword;
 function GetNTVersionMinor: Dword;
 
 
-
 implementation
 
 function GetNTVersionMajor: Dword;
@@ -196,6 +195,7 @@ begin
     Result := vi.dwMajorVersion;
 end;
 
+
 function GetNTVersionMinor: Dword;
 var
   vi: TOSVersionInfo;
@@ -209,7 +209,6 @@ begin
   else
     Result := vi.dwMinorVersion;
 end;
-
 
 
 function GetWinDirectory: string;
