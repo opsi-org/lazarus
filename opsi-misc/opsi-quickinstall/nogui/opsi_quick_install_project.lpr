@@ -1415,9 +1415,34 @@ type
       '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
   end;
 
+  procedure WelcomeUser;
+  begin
+    writeln('');
+    writeln(rsWelcome);
+  end;
+
+  procedure UseUserDefinedLanguage;
+  var
+    UserDefinedLang: string;
+  begin
+    writeln(rsSelLanguage, rsLangOp);
+    readln(UserDefinedLang);
+    // check for right input
+    while not ((UserDefinedLang = 'de') or (UserDefinedLang = 'en') or
+        (UserDefinedLang = 'fr') or (UserDefinedLang = 'es')) do
+    begin
+      writeln('"', UserDefinedLang, '"', rsNotValid);
+      readln(UserDefinedLang);
+    end;
+    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
+      '../gui/locale/opsi_quick_install_project.' + UserDefinedLang + '.po');
+
+    writeln(rsCarryOut);
+    sleep(50);
+  end;
+
 var
   QuickInstall: TQuickInstall;
-  customLanguage: string;
   //r: TTranslateUnitResult;
 const
   LogfileName = 'opsi_quickinstall_nogui.log';
@@ -1437,23 +1462,8 @@ begin
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
   begin
-    writeln('');
-    writeln(rsWelcome);
-    // language:
-    writeln(rsSelLanguage, rsLangOp);
-    readln(customLanguage);
-    // check for right input
-    while not ((customLanguage = 'de') or (customLanguage = 'en') or
-        (customLanguage = 'fr') or (customLanguage = 'es')) do
-    begin
-      writeln('"', customLanguage, '"', rsNotValid);
-      readln(customLanguage);
-    end;
-    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
-      '../gui/locale/opsi_quick_install_project.' + customLanguage + '.po');
-
-    writeln(rsCarryOut);
-    sleep(50);
+    WelcomeUser;
+    UseUserDefinedLanguage;
   end;
 
   // For default installation to indicate the start of the program (also nice
