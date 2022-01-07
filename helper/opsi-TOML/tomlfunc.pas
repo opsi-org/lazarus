@@ -259,7 +259,7 @@ var
   myTOMLTable : TTOMLTable;
   i, j : integer;
 begin
-  result := defaultValue;
+  //result := defaultValue;
   TOMLfile := ExpandFileName(TOMLfile);
   myFile := ReadTOMLFile(TOMLfile);
   myTOML := GetTOML(myFile);
@@ -271,7 +271,18 @@ begin
 
   if keysArray.Count=1 then
     //myValue := myTOML[key]
-    myValue := myTOML.Find(keyPath);
+    try
+       if (myTOML.Find(keyPath) = nil)  then
+          result := defaultValue
+      else
+        begin
+          myValue := myTOML.Find(keyPath);
+          result := String(myValue);
+      end;
+    except
+    on E:Exception do
+          writeln('Exception in GetValueFromTOMLfile in Find(keyPath) = Key does not exist : ', E.Message);
+    end;
 
   (*
   if keysArray.Count=2 then
@@ -314,10 +325,16 @@ begin
           writeln('Exception in GetValueFromTOMLfile : ', E.Message);
         end;
         end;
-    myValue := myTOMLTable.Find(keysArray[keysArray.Count-1]);
+
+      if (myTOMLTable.Find(keysArray[keysArray.Count-1]) = nil ) then
+        result := defaultValue
+      else
+        begin
+          myValue := myTOMLTable.Find(keysArray[keysArray.Count-1]);
+          result := String(myValue);
+        end;
   end;
 
-  result := String(myValue);
   if result='' then
      result := defaultValue;
 end;
