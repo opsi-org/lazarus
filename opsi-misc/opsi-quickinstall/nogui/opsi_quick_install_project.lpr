@@ -1392,37 +1392,47 @@ type
     end;
   end;
 
+  procedure InitializeLogfile(LogfileName: string);
+  begin
+    // log file will be created in /tmp/opsi_quickinstall.log
+    LogDatei := TLogInfo.Create;
+    LogDatei.CreateTheLogfile(LogfileName);
+    LogDatei.log('Log file created', LLdebug);
+    SetCurrentDir(ExtractFilePath(ParamStr(0)));
+    LogDatei.log('Working directory: ' + GetCurrentDir, LLessential);
+  end;
+
+  procedure UseSystemLanguageForResourcestrings;
+  var
+    Lang, DefLang: string;
+  begin
+    // get default language (system language)
+    GetLanguageIDs(Lang, DefLang);
+    // use po-files of gui version (because LCL (from the gui version) does not
+    // seem to be able to use po-files from other directories while the nogui
+    // version is flexible)
+    TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
+      '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
+  end;
+
 var
   QuickInstall: TQuickInstall;
-  customLanguage, Lang, DefLang: string;
+  customLanguage: string;
   //r: TTranslateUnitResult;
 const
-  logFileName = 'opsi_quickinstall_nogui.log';
+  LogfileName = 'opsi_quickinstall_nogui.log';
 
 {$R *.res}
 
 begin
   // Only execute Opsi-QuickInstall(oqi) if user is root
   CheckThatUserIsRoot;
-
-  // log file in /tmp/opsi_quickinstall.log
-  LogDatei := TLogInfo.Create;
-  LogDatei.CreateTheLogfile(logFileName);
-  LogDatei.log('Log file created', LLdebug);
-  SetCurrentDir(ExtractFilePath(ParamStr(0)));
-  LogDatei.log('Working directory: ' + GetCurrentDir, LLessential);
+  InitializeLogfile(LogfileName);
 
   QuickInstall := TQuickInstall.Create(nil);
   QuickInstall.QuickInstallCommand := TRunCommandElevated.Create('', False);
 
-  // get default language (system language)
-  GetLanguageIDs(Lang, DefLang);
-  // use default language for resourcestrings
-  // Use po-files of gui version (because LCL (from the gui version) does not
-  // seem to be able to use po-files from other directories while the nogui
-  // version is flexible).
-  TranslateUnitResourceStrings('opsi_quick_install_resourcestrings',
-    '../gui/locale/opsi_quick_install_project.%s.po', Lang, DefLang);
+  UseSystemLanguageForResourcestrings;
 
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
