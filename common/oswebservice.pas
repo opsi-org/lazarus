@@ -4435,11 +4435,11 @@ begin
     end;
     if appendmode then
     begin
-      s := '", "' + actualClient + '", "true"], "id": 1}';
+      s := '", "' + actualClient + '", true], "id": 1}';
     end
     else
     begin
-      s := '", "' + actualClient + '", "false"], "id": 1}';
+      s := '", "' + actualClient + '", false], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
     //UTF8FixBroken(s);
