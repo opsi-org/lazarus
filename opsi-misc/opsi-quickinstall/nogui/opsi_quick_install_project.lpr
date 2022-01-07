@@ -1373,6 +1373,8 @@ type
     installOpsi;
   end;
 
+  {Program}
+
   procedure CheckThatUserIsRoot;
   var
     user, userID: string;
@@ -1441,6 +1443,30 @@ type
     sleep(50);
   end;
 
+  procedure CheckThatOqiSupportsDistribution(QuickInstall: TQuickInstall);
+  begin
+    // In the nogui query the checking of the distribution will be done later to
+    // give the user the option to edit a wrongly detected distribution.
+    if QuickInstall.HasOption('d', 'default') or QuickInstall.HasOption('f', 'file') then
+    begin
+      if QuickInstall.DistrInfo.Distr = other then
+      begin
+        writeln(rsNoSupport + #10 + QuickInstall.DistrInfo.Distribs);
+        Exit;
+      end;
+    end;
+  end;
+
+  procedure InitializeDistributionInfo(QuickInstall: TQuickInstall);
+  begin
+    QuickInstall.DistrInfo := TDistributionInfo.Create(getLinuxDistroName,
+      getLinuxDistroRelease);
+    LogDatei.log(QuickInstall.DistrInfo.DistroName + ' ' +
+      QuickInstall.DistrInfo.DistroRelease, LLessential);
+    QuickInstall.DistrInfo.SetDistrAndUrlPart;
+    CheckThatOqiSupportsDistribution(QuickInstall);
+  end;
+
 var
   QuickInstall: TQuickInstall;
   //r: TTranslateUnitResult;
@@ -1458,7 +1484,6 @@ begin
   QuickInstall.QuickInstallCommand := TRunCommandElevated.Create('', False);
 
   UseSystemLanguageForResourcestrings;
-
   // do language selection here only for nogui installation
   if QuickInstall.HasOption('n', 'nogui') then
   begin
@@ -1466,37 +1491,19 @@ begin
     UseUserDefinedLanguage;
   end;
 
-  // For default installation to indicate the start of the program (also nice
-  // nice for the test environment log to identify the start of QuickInstall).
+  // Indicate start of program for default installation (also good
+  // for test environment log to identify start of QuickInstall).
   if QuickInstall.HasOption('d', 'default') then
   begin
     writeln('');
     writeln('Start opsi-quickinstall');
   end;
 
-  with QuickInstall do
-  begin
-    DistrInfo := TDistributionInfo.Create(getLinuxDistroName, getLinuxDistroRelease);
-    LogDatei.log(DistrInfo.DistroName + ' ' + DistrInfo.DistroRelease, LLessential);
+  InitializeDistributionInfo(QuickInstall);
+  QuickInstall.Run;
 
-    DistrInfo.SetDistrAndUrlPart;
-    // In the nogui query the checking of the distribution will be done later,
-    // for the options -d and -f do it here (for the other options like -h we
-    // don't need the correct distribution):
-    if HasOption('d', 'default') or HasOption('f', 'file') then
-    begin
-      if DistrInfo.Distr = other then
-      begin
-        writeln(rsNoSupport + #10 + DistrInfo.Distribs);
-        Exit;
-      end;
-    end;
-
-    QuickInstall.Run;
-
-    DistrInfo.Free;
-    QuickInstall.Free;
-  end;
+  QuickInstall.DistrInfo.Free;
+  QuickInstall.Free;
 
   writeln(LogDatei.StandardMainLogPath + logFileName);
   writeln();
