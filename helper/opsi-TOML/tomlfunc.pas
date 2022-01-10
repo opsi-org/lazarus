@@ -13,24 +13,25 @@ interface
 uses
   Classes, SysUtils,
   TOML, TOMLParser, TOMLTypes,
-  FPJSON;
+  FPJSON,
+  osencoding;
 
-function LoadTOMLFile(filePath: String): TStringList;
-function ReadTOMLFile(filePath: String): String;
-function GetTOMLDocument(filePath: String): TTOMLDocument;
+function LoadTOMLFile(tomlFilePath: String): TStringList;
+function ReadTOMLFile(tomlFilePath: String): String;
+function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
 
-function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
-//function SaveToTOMLFile(myTOML : TTOMLDocument; filePath: String): boolean;
+function SaveToTOMLFile(TOMLcontents : String; tomlFilePath: String): boolean;
+//function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
 
-function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
 
-function HasTables(myTOML : TTOMLDocument): integer;
+function HasTables(myTOML: TTOMLDocument): integer;
 function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
-function GetTOMLTableNames(TOMLfile: String): TStringList;
+function GetTOMLTableNames(tomlFilePath: String): TStringList;
 function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
-function GetTOMLTable(TOMLfile: String; table : String): TStringList;
+function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 
-function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
+function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
 
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
@@ -38,93 +39,95 @@ procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value
 implementation
 
 
-function LoadTOMLFile(filePath: String): TStringList;
+function LoadTOMLFile(tomlFilePath: String): TStringList;
 var
   myTOMLStringList: TStringList;
 begin
   result := TStringList.Create;
   myTOMLStringList := TStringList.Create;
-  filePath := ExpandFileName(filePath);
+  tomlFilePath := ExpandFileName(tomlFilePath);
   try
-  myTOMLStringList.LoadFromFile(filePath);
+  myTOMLStringList.LoadFromFile(tomlFilePath);
+  //myTOMLStringList:= loadTextFileWithEncoding(tomlFilePath,'utf8');
   result.AddStrings(myTOMLStringList);
   except
     on E:Exception do
-      writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
+      writeln('Exception in LoadFromFile '+ tomlFilePath +': ', E.Message);
   end;
   myTOMLStringList.Free;
 end;
 
-function ReadTOMLFile(filePath: String): String;
+function ReadTOMLFile(tomlFilePath: String): String;
 var
   myFile: TStringList;
 begin
   myFile := TStringList.Create;
-  filePath := ExpandFileName(filePath);
+  tomlFilePath := ExpandFileName(tomlFilePath);
   try
-  myFile.LoadFromFile(filePath);
+  //myFile.LoadFromFile(tomlFilePath);
+  myFile:= loadTextFileWithEncoding(tomlFilePath,'utf8');
   result := myFile.Text;
   except
     on E:Exception do
-      writeln('Exception in LoadFromFile '+ filePath +': ', E.Message);
+      writeln('Exception in ReadTOMLFile '+ tomlFilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 
-function GetTOMLDocument(filePath: String): TTOMLDocument;
+function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
 var
   myFile: String;
 begin
-  filePath := ExpandFileName(filePath);
+  tomlFilePath := ExpandFileName(tomlFilePath);
   try
-  myFile := ReadTOMLFile(filePath);
+  myFile := ReadTOMLFile(tomlFilePath);
   result := GetTOML(myFile);
   except
     on E:Exception do
-      writeln('Exception in ReadTOMLFile '+ filePath +': ', E.Message);
+      writeln('Exception in GetTOMLDocument '+ tomlFilePath +': ', E.Message);
   end;
 end;
 
-function SaveToTOMLFile(TOMLcontents : String; filePath: String): boolean;
+function SaveToTOMLFile(TOMLcontents : String; tomlFilePath: String): boolean;
 var
   myFile: TStringList;
 begin
   result := False;
   myFile := TStringList.Create;
-  filePath := ExpandFileName(filePath);
+  tomlFilePath := ExpandFileName(tomlFilePath);
   myFile.Add(TOMLcontents);
   //writeln('' + myFile.Text);
   try
-  myFile.SaveToFile(filePath);
+  myFile.SaveToFile(tomlFilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
+      writeln('Exception in SaveToTOMLFile '+ tomlFilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 
 (*       // Once TTOMLData.AsTOML.FormatTOML exists
-function SaveToTOMLFile(myTOML : TTOMLDocument; filePath: String): boolean;
+function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
 var
   myFile: TStringList;
 begin
   result := False;
   myFile := TStringList.Create;
-  filePath := ExpandFileName(filePath);
+  tomlFilePath := ExpandFileName(tomlFilePath);
   myFile.Add(myTOML.AsTOML.FormatTOML);
   try
-  myFile.SaveToFile(filePath);
+  myFile.SaveToFile(tomlFilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in SaveToFile '+ filePath +': ', E.Message);
+      writeln('Exception in SaveToFile '+ tomlFilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 *)
 
-function ConvertTOMLtoJSON(TOMLfile: String; JSONfile: String): boolean;
+function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
 var
   myFile: TStringList;
   myTOML : TTOMLDocument;
@@ -132,24 +135,24 @@ var
 begin
   result := False;
   myFile := TStringList.Create;
-  TOMLfile := ExpandFileName(TOMLfile);
-  JSONfile := ExpandFileName(JSONfile);
+  tomlFilePath := ExpandFileName(tomlFilePath);
+  jsonFilePath := ExpandFileName(jsonFilePath);
   try
-  myFile.LoadFromFile(TOMLfile);
+  myFile.LoadFromFile(tomlFilePath);
   except
     on E:Exception do
-      writeln('Exception in LoadFromFile '+ TOMLfile +': ', E.Message);
+      writeln('Exception in ConvertTOMLtoJSON in LoadFromFile '+ tomlFilePath +': ', E.Message);
   end;
   myTOML := GetTOML(myFile.Text);
   myJSON := myTOML.AsJSON;
   myFile.Clear;
   myFile.Add(myJSON.FormatJSON);
   try
-  myFile.SaveToFile(JSONfile);
+  myFile.SaveToFile(jsonFilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in SaveToFile'+ JSONfile +': ', E.Message);
+      writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ jsonFilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
@@ -181,7 +184,7 @@ begin
   //writeln(tableNamesList.Text);
 end;
 
-function GetTOMLTableNames(TOMLfile: String): TStringList;
+function GetTOMLTableNames(tomlFilePath: String): TStringList;
 var
   myTOMLfile : String;
   myTOML : TTOMLDocument;
@@ -190,8 +193,8 @@ var
 
 begin
   tableNamesList := TStringList.Create;
-  TOMLfile := ExpandFileName(TOMLfile);
-  myTOMLfile := ReadTOMLFile(TOMLfile);
+  tomlFilePath := ExpandFileName(tomlFilePath);
+  myTOMLfile := ReadTOMLFile(tomlFilePath);
   myTOML := GetTOML(myTOMLfile);
 
   for i := 0 to myTOML.Count -1 do
@@ -200,7 +203,6 @@ begin
         tableNamesList.Add(myTOML.Keys[i]);
         end;
   result := tableNamesList;
-  //writeln(tableNamesList.Text);
 end;
 
 function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
@@ -222,7 +224,7 @@ begin
   result := myTOMLTable;
 end;
 
-function GetTOMLTable(TOMLfile: String; table : String): TStringList;
+function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 var
   myTOMLfile : TStringList;
   myTableList : TStringList;
@@ -232,8 +234,8 @@ var
 begin
   result := TStringList.Create;
   myTableList := TStringList.Create;
-  TOMLfile := ExpandFileName(TOMLfile);
-  myTOMLfile := LoadTOMLFile(TOMLfile);
+  tomlFilePath := ExpandFileName(tomlFilePath);
+  myTOMLfile := LoadTOMLFile(tomlFilePath);
 
   tableIndex := myTOMLfile.IndexOf('['+table+']');
   tableNameString := '['+table+'.';
@@ -250,7 +252,7 @@ begin
   result := myTableList;
 end;
 
-function GetValueFromTOMLfile(TOMLfile: String; keyPath: String; defaultValue: String): String;
+function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
 var
   myFile, tablePath : String;
   myTOML : TTOMLDocument;
@@ -260,8 +262,8 @@ var
   i, j : integer;
 begin
   //result := defaultValue;
-  TOMLfile := ExpandFileName(TOMLfile);
-  myFile := ReadTOMLFile(TOMLfile);
+  tomlFilePath := ExpandFileName(tomlFilePath);
+  myFile := ReadTOMLFile(tomlFilePath);
   myTOML := GetTOML(myFile);
 
   keysArray := TStringList.Create;
