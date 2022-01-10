@@ -17,7 +17,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   oslog,
   osnetworkcalculator,
   LOpsiServerDownloader,
-  opsi_quick_install_resourcestrings;
+  opsi_quick_install_resourcestrings,
+  opsiquickinstall_data;
 
 type
 
@@ -26,8 +27,7 @@ type
   TQuickInstall = class(TCustomApplication)
   private
   var
-    input, CustomSetup: string;
-    DistrInfo: TDistributionInfo;
+    input: string;
     opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
     ucsPassword, reboot, dhcp, symlink: string;
@@ -41,10 +41,6 @@ type
     name_los_default, name_los_downloaded, name_current_los: string;
     version_los_default, version_los_downloaded: string;
   const
-    baseRepoUrlOpsi41 =
-      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
-    baseRepoUrlOpsi42 =
-      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     procedure SetDefaultValues;
     procedure defineDirClientData;
     procedure writePropsToFile;
@@ -184,9 +180,9 @@ type
     LogDatei.log('Set default values', LLdebug);
     opsiVersion := 'Opsi 4.2';
     if opsiVersion = 'Opsi 4.1' then
-      repo := baseRepoUrlOpsi41
+      repo := Data.baseRepoUrlOpsi41
     else
-      repo := baseRepoUrlOpsi42;
+      repo := Data.baseRepoUrlOpsi42;
     proxy := '';
     repoNoCache := repo;
     backend := 'file';
@@ -218,7 +214,7 @@ type
 
     if two_los_to_test then writeln(rsWait);
     // try downloading latest l-opsi-server and set DirClientData for the latest version
-    if two_los_to_test and DownloadLOS(QuickInstallCommand, DistrInfo) then
+    if two_los_to_test and DownloadLOS(QuickInstallCommand, Data.DistrInfo) then
     begin
       // extract and compare version numbers of default and downloaded los
       if (FindFirst('../l-opsi-server_4.*', faAnyFile and faDirectory,
@@ -332,17 +328,17 @@ type
     if FileExists('/etc/apt/sources.list.d/opsi.list') then
       QuickInstallCommand.Run('rm /etc/apt/sources.list.d/opsi.list', Output);
     // create repository (no password, user is root):
-    ReleaseKeyRepo := TLinuxRepository.Create(DistrInfo.Distr, '', False);
+    ReleaseKeyRepo := TLinuxRepository.Create(Data.DistrInfo.Distr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if opsiVersion = 'Opsi 4.1' then
       ReleaseKeyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
     else
       ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
     // define repo url
-    url := repo + repoKind + '/' + DistrInfo.DistrRepoUrlPart;
+    url := repo + repoKind + '/' + Data.DistrInfo.DistrRepoUrlPart;
 
     // !following lines need an existing LogDatei
-    if (DistrInfo.DistroName = 'openSUSE') or (DistrInfo.DistroName = 'SUSE') then
+    if (Data.DistrInfo.DistroName = 'openSUSE') or (Data.DistrInfo.DistroName = 'SUSE') then
     begin
       writeln('OpenSUSE/SUSE: Add Repo');
       ReleaseKeyRepo.Add(url, 'OpsiQuickInstallRepositoryNew');
@@ -366,15 +362,15 @@ type
     FileText.SaveToFile(DirClientData + 'result.conf');
     FileText.Free;
 
-    DistrInfo.SetPackageManagementShellCommand;
+    Data.DistrInfo.SetPackageManagementShellCommand;
     // !following lines need an existing LogDatei
     // if one installation failed, then opsi-script was already installed
     if not one_installation_failed then
     begin
-      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand +
+      QuickInstallCommand.Run(Data.DistrInfo.PackageManagementShellCommand +
         'update', Output);
       writeln(rsInstall + 'opsi-script...');
-      QuickInstallCommand.Run(DistrInfo.PackageManagementShellCommand +
+      QuickInstallCommand.Run(Data.DistrInfo.PackageManagementShellCommand +
         'install opsi-script', Output);
     end;
     //Output := InstallOpsiCommand.Run('opsi-script -silent -version');
@@ -481,13 +477,13 @@ type
     // Input variables not set by resourcestrings but by characters for no
     // requirement of a mouse.
     // distribution:
-    writeln(rsDistr, ' ', DistrInfo.DistroName, ' ', DistrInfo.DistroRelease);
+    writeln(rsDistr, ' ', Data.DistrInfo.DistroName, ' ', Data.DistrInfo.DistroRelease);
     writeln(rsIsCorrect, rsYesNoOp, '*');
     readln(input);
     while not ((input = 'y') or (input = 'n') or (input = '')) do
     begin
       if input = '-h' then
-        writeln(rsInfoDistribution + #10 + DistrInfo.Distribs)
+        writeln(rsInfoDistribution + #10 + Data.DistrInfo.Distribs)
       else
         writeln('"', input, '"', rsNotValid);
       readln(input);
@@ -500,14 +496,14 @@ type
       UserEditedDistroName := Copy(input, 1, Pos(' ', input) - 1);
       UserEditedDistroRelease :=
         Copy(input, Pos(' ', input) + 1, Length(input) - Pos(' ', input));
-      DistrInfo.CorrectDistributionNameAndRelease(UserEditedDistroName,
+      Data.DistrInfo.CorrectDistributionNameAndRelease(UserEditedDistroName,
         UserEditedDistroRelease);
     end;
-    DistrInfo.SetDistrAndUrlPart;
-    if DistrInfo.Distr = other then
+    Data.DistrInfo.SetDistrAndUrlPart;
+    if Data.DistrInfo.Distr = other then
     begin
       writeln('');
-      writeln(rsNoSupport + #10 + DistrInfo.Distribs);
+      writeln(rsNoSupport + #10 + Data.DistrInfo.Distribs);
       Exit;
     end;
     QuerySetupType;
@@ -529,18 +525,18 @@ type
       NoGuiQuery
     else
     begin
-      CustomSetup := input;
       if input = '' then
-        CustomSetup := 's';
+        Data.CustomSetup := false
+        else Data.CustomSetup := true;
       writeln('');
       writeln(rsCarryOut);
       writeln('');
-      if CustomSetup = 'c' then
+      if Data.CustomSetup then
         // following queries only for custom setup
         //QueryOpsiVersion
         QueryRepo
       else
-      if DistrInfo.DistroName = 'Univention' then
+      if Data.DistrInfo.DistroName = 'Univention' then
         QueryUCS
       else
         QueryDhcp;
@@ -576,9 +572,9 @@ type
   begin
     // repo:
     if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepo, ' [Example: ', baseRepoUrlOpsi41, ']', '*')
+      writeln(rsRepo, ' [Example: ', Data.baseRepoUrlOpsi41, ']', '*')
     else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepo, ' [Example: ', baseRepoUrlOpsi42, ']', '*');
+      writeln(rsRepo, ' [Example: ', Data.baseRepoUrlOpsi42, ']', '*');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
@@ -595,10 +591,10 @@ type
     begin
       repo := input;
       if (input = '') and (opsiVersion = 'Opsi 4.1') then
-        repo := baseRepoUrlOpsi41
+        repo := Data.baseRepoUrlOpsi41
       else
       if (input = '') and (opsiVersion = 'Opsi 4.2') then
-        repo := baseRepoUrlOpsi42;
+        repo := Data.baseRepoUrlOpsi42;
       QueryProxy;
     end;
   end;
@@ -633,9 +629,9 @@ type
   begin
     // repo without cache proxy:
     if opsiVersion = 'Opsi 4.1' then
-      writeln(rsRepoNoCache, ' [Example: ', baseRepoUrlOpsi41, ']')
+      writeln(rsRepoNoCache, ' [Example: ', Data.baseRepoUrlOpsi41, ']')
     else if opsiVersion = 'Opsi 4.2' then
-      writeln(rsRepoNoCache, ' [Example: ', baseRepoUrlOpsi42, ']');
+      writeln(rsRepoNoCache, ' [Example: ', Data.baseRepoUrlOpsi42, ']');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
     begin
@@ -736,7 +732,7 @@ type
         repoKind := 'testing'
       else
         repoKind := 'stable'; // cases input = 's', input = ''
-      if DistrInfo.DistroName = 'Univention' then
+      if Data.DistrInfo.DistroName = 'Univention' then
         QueryUCS
       else
         QueryReboot;
@@ -750,7 +746,7 @@ type
     readln(input);
     if input = '-b' then // go back
     begin
-      if CustomSetup = 's' then
+      if not Data.CustomSetup then
         QuerySetupType
       else
         QueryRepoKind;
@@ -758,7 +754,7 @@ type
     else // go forward
     begin
       ucsPassword := input;
-      if CustomSetup = 'c' then
+      if Data.CustomSetup then
         QueryReboot
       else
         QueryDhcp;
@@ -780,7 +776,7 @@ type
     end;
     if input = '-b' then
     begin
-      if DistrInfo.DistroName = 'Univention' then
+      if Data.DistrInfo.DistroName = 'Univention' then
         QueryUCS
       else
         QueryRepoKind;
@@ -810,11 +806,11 @@ type
     end;
     if input = '-b' then
     begin
-      if CustomSetup = 'c' then
+      if Data.CustomSetup then
         QueryReboot
       else
       begin
-        if DistrInfo.DistroName = 'Univention' then
+        if Data.DistrInfo.DistroName = 'Univention' then
           QueryUCS
         else
           QuerySetupType;
@@ -1163,8 +1159,7 @@ type
     // (depending on setup type and distribution=Univention) by their number:
     writeln('');
     writeln(rsOverview);
-    if CustomSetup = 's' then
-
+    if not Data.CustomSetup then
       writeln(rsOpsiVersionO, opsiVersion)
     else
     begin
@@ -1173,7 +1168,7 @@ type
       Inc(Counter);
     end;
     {Custom installation}
-    if CustomSetup = 'c' then
+    if Data.CustomSetup then
     begin
       writeln(Counter, ' ', rsRepoO, repo);
       queries.Add('2');
@@ -1198,14 +1193,14 @@ type
       Inc(Counter);
     end;
     {Both}
-    if DistrInfo.DistroName = 'Univention' then
+    if Data.DistrInfo.DistroName = 'Univention' then
     begin
       writeln(Counter, ' ', rsUCSO, ucsPassword);
       queries.Add('8');
       Inc(Counter);
     end;
     {Custom installation}
-    if CustomSetup = 'c' then
+    if Data.CustomSetup then
     begin
       writeln(Counter, ' ', rsRebootO, reboot);
       queries.Add('9');
@@ -1437,9 +1432,9 @@ type
     // give the user the option to edit a wrongly detected distribution.
     if QuickInstall.HasOption('d', 'default') or QuickInstall.HasOption('f', 'file') then
     begin
-      if QuickInstall.DistrInfo.Distr = other then
+      if Data.DistrInfo.Distr = other then
       begin
-        writeln(rsNoSupport + #10 + QuickInstall.DistrInfo.Distribs);
+        writeln(rsNoSupport + #10 + Data.DistrInfo.Distribs);
         Exit;
       end;
     end;
@@ -1447,11 +1442,11 @@ type
 
   procedure InitializeDistributionInfo(QuickInstall: TQuickInstall);
   begin
-    QuickInstall.DistrInfo := TDistributionInfo.Create(getLinuxDistroName,
+    Data.DistrInfo := TDistributionInfo.Create(getLinuxDistroName,
       getLinuxDistroRelease);
-    LogDatei.log(QuickInstall.DistrInfo.DistroName + ' ' +
-      QuickInstall.DistrInfo.DistroRelease, LLessential);
-    QuickInstall.DistrInfo.SetDistrAndUrlPart;
+    LogDatei.log(Data.DistrInfo.DistroName + ' ' +
+      Data.DistrInfo.DistroRelease, LLessential);
+    Data.DistrInfo.SetDistrAndUrlPart;
     CheckThatOqiSupportsDistribution(QuickInstall);
   end;
 
@@ -1490,7 +1485,7 @@ begin
   InitializeDistributionInfo(QuickInstall);
   QuickInstall.Run;
 
-  QuickInstall.DistrInfo.Free;
+  Data := TQuickInstallData.Create;
   QuickInstall.Free;
 
   writeln(LogDatei.StandardMainLogPath + logFileName);

@@ -44,6 +44,12 @@ type
     netmask, networkAddress, domain, nameserver, gateway: string;
     adminName, adminPassword, ipName, ipNumber: string;
 
+  const
+    baseRepoUrlOpsi41 =
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
+    baseRepoUrlOpsi42 =
+      'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
+
     constructor Create;
   end;
 
