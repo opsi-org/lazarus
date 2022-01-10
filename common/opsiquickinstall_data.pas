@@ -1,4 +1,4 @@
-unit opsi_quick_install_data;
+unit opsiquickinstall_data;
 
 {$mode objfpc}{$H+}
 
@@ -26,7 +26,7 @@ type
 
   TQuickInstallData = class(TObject)
   public
-    custom: boolean;
+    CustomSetup: boolean;
     DistrInfo: TDistributionInfo;
 
     opsiVersion, repo: string;
@@ -64,6 +64,7 @@ end;
 
 constructor TQuickInstallData.Create;
 begin
+  DistrInfo := TDistributionInfo.Create;
   // set default values
   opsiVersion := 'Opsi 4.2';
   repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';

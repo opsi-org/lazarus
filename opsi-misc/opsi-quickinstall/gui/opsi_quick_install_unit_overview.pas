@@ -36,7 +36,7 @@ implementation
 
 uses
   opsi_quick_install_resourcestrings,
-  opsi_quick_install_data,
+  opsiquickinstall_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_password;
@@ -63,7 +63,7 @@ begin
   MemoOverview.Lines.Add(rsOpsiVersionO + Data.opsiVersion);
 
   {Custom installation}
-  if Data.custom then
+  if Data.CustomSetup then
   begin
     MemoOverview.Lines.Add('');
     // Repository

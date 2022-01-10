@@ -79,7 +79,7 @@ implementation
 
 uses
   opsi_quick_install_resourcestrings,
-  opsi_quick_install_data,
+  opsiquickinstall_data,
   opsi_quick_install_unit_distr,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query4,
@@ -280,9 +280,9 @@ procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
   // store in Data whether we are in custom installation or not
   if RadioBtnCustom.Checked then
-    Data.custom := True
+    Data.CustomSetup := True
   else
-    Data.custom := False;
+    Data.CustomSetup := False;
 
   // before going on, let the user check the distribution
   Distribution.ShowModal;
@@ -310,7 +310,7 @@ begin
   if Distribution.GoOn then
   begin
     // in standard setup go on to TQuery4
-    if not Data.custom then
+    if not Data.CustomSetup then
     begin
       // 'self' is current form
       showForm(Query4, self);

@@ -56,7 +56,7 @@ implementation
 
 uses
   opsi_quick_install_resourcestrings,
-  opsi_quick_install_data,
+  opsiquickinstall_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
   oslog;

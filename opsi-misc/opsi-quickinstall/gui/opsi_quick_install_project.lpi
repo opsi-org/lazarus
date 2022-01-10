@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="12">
       <Unit0>
         <Filename Value="opsi_quick_install_project.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -117,13 +117,9 @@
         <ResourceBaseClass Value="Form"/>
       </Unit10>
       <Unit11>
-        <Filename Value="opsi_quick_install_data.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit11>
-      <Unit12>
         <Filename Value="../opsi_quick_install_resourcestrings.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit12>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -16,8 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   opsi_quick_install_unit_overview,
   opsi_quick_install_unit_password,
   opsi_quick_install_unit_distr,
-  opsi_quick_install_unit_wait,
-  opsi_quick_install_data;
+  opsi_quick_install_unit_wait;
 
 {$R *.res}
 

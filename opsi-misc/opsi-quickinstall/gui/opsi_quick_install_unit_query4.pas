@@ -54,7 +54,7 @@ implementation
 
 uses
   opsi_quick_install_resourcestrings,
-  opsi_quick_install_data,
+  opsiquickinstall_data,
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query5_dhcp,
@@ -119,7 +119,7 @@ begin
   end;
 
   // ask for reboot only in custom setup
-  if not Data.custom then
+  if not Data.CustomSetup then
   begin
     PanelReboot.Visible := False;
     InfoReboot.Visible := False;
@@ -132,7 +132,7 @@ begin
 
   // text by resourcestrings
   // adjust form caption depending on setup type
-  if not Data.custom then
+  if not Data.CustomSetup then
     Caption := 'Opsi Quick Install - ' + rsCapQuery
   else
     Caption := 'Opsi Quick Install - ' + rsCapQuery3;
@@ -174,7 +174,7 @@ end;
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
   // show form depending on setup type
-  if not Data.custom then
+  if not Data.CustomSetup then
     showForm(QuickInstall, self)
   else
   begin
