@@ -18,7 +18,7 @@ opsi-script (4.12.4.35) stable; urgency=low
     changes in opsiconf, osparser, opsiscript.lpr
   * write now component logs to subdir 'lastprodlogs'
   * osprocesses: isProcessChildOf also for win64
-  * oswebservice: sebdlog: fix boolean values for append at log_write
+  * oswebservice: sendlog: fix boolean values for append at log_write
 
 -- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
 
