@@ -8,7 +8,7 @@ object Distribution: TDistribution
   ClientWidth = 345
   FormStyle = fsStayOnTop
   OnActivate = FormActivate
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.1'
   object BtnBack: TButton
     Left = 16
     Height = 25
@@ -55,7 +55,6 @@ object Distribution: TDistribution
       Width = 272
       Align = alTop
       Caption = 'We recognized the following distribution on this computer:'
-      ParentColor = False
       WordWrap = True
     end
     object LabelCorrect: TLabel
@@ -66,7 +65,6 @@ object Distribution: TDistribution
       Align = alTop
       BorderSpacing.Top = 20
       Caption = 'If this is correct, please click ''next >'' to continue.'#10'If not, please edit the distribution and then continue with ''next >''.'
-      ParentColor = False
       WordWrap = True
     end
   end

@@ -8,7 +8,7 @@ object Query: TQuery
   ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.1'
   object BackgrImage: TImage
     Left = 0
     Height = 450
@@ -85,7 +85,6 @@ object Query: TQuery
       Width = 304
       Align = alTop
       Caption = 'Which opsi version would you like to install?'
-      ParentColor = False
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
@@ -140,7 +139,6 @@ object Query: TQuery
       Width = 384
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -213,7 +211,6 @@ object Query: TQuery
       Width = 384
       Align = alTop
       Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -285,7 +282,6 @@ object Query: TQuery
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
       Font.Height = 13
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
