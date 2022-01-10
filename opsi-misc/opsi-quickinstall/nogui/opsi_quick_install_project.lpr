@@ -26,7 +26,7 @@ type
   TQuickInstall = class(TCustomApplication)
   private
   var
-    input, setupType: string;
+    input, CustomSetup: string;
     DistrInfo: TDistributionInfo;
     opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
@@ -181,7 +181,7 @@ type
   // set default values for all variables that are required for the installation
   procedure TQuickInstall.SetDefaultValues;
   begin
-    LogDatei.log('Entered SetDefaultValues', LLdebug);
+    LogDatei.log('Set default values', LLdebug);
     opsiVersion := 'Opsi 4.2';
     if opsiVersion = 'Opsi 4.1' then
       repo := baseRepoUrlOpsi41
@@ -207,7 +207,7 @@ type
     ipNumber := 'auto';
   end;
 
-  procedure TQuickInstall.defineDirClientData;
+  procedure TQuickInstall.DefineDirClientData;
   var
     los_default_search, los_downloaded_search: TSearchRec;
   begin
@@ -273,7 +273,7 @@ type
   end;
 
   // write properties in properties.conf file
-  procedure TQuickInstall.writePropsToFile;
+  procedure TQuickInstall.WritePropsToFile;
   begin
     LogDatei.log('Entered WritePropsToFile', LLdebug);
     // write file text
@@ -322,7 +322,7 @@ type
     FileText.Free;
   end;
 
-  procedure TQuickInstall.addRepo;
+  procedure TQuickInstall.AddRepo;
   var
     url: string;
     ReleaseKeyRepo: TLinuxRepository;
@@ -354,7 +354,7 @@ type
   end;
 
   // install opsi-script and execute l-opsi-server script
-  procedure TQuickInstall.executeLOSscript;
+  procedure TQuickInstall.ExecuteLOSscript;
   begin
     // Set text of result.conf to 'failed' first (for safety)
     FileText := TStringList.Create;
@@ -393,7 +393,7 @@ type
 
   // install opsi-server
   // requires: opsiVersion, repoKind, distroName, DistrInfo, existing LogDatei
-  procedure TQuickInstall.installOpsi;
+  procedure TQuickInstall.InstallOpsi;
   var
     installationResult: string;
   begin
@@ -529,13 +529,13 @@ type
       NoGuiQuery
     else
     begin
-      setupType := input;
+      CustomSetup := input;
       if input = '' then
-        setupType := 's';
+        CustomSetup := 's';
       writeln('');
       writeln(rsCarryOut);
       writeln('');
-      if setupType = 'c' then
+      if CustomSetup = 'c' then
         // following queries only for custom setup
         //QueryOpsiVersion
         QueryRepo
@@ -750,7 +750,7 @@ type
     readln(input);
     if input = '-b' then // go back
     begin
-      if setupType = 's' then
+      if CustomSetup = 's' then
         QuerySetupType
       else
         QueryRepoKind;
@@ -758,7 +758,7 @@ type
     else // go forward
     begin
       ucsPassword := input;
-      if setupType = 'c' then
+      if CustomSetup = 'c' then
         QueryReboot
       else
         QueryDhcp;
@@ -810,7 +810,7 @@ type
     end;
     if input = '-b' then
     begin
-      if setupType = 'c' then
+      if CustomSetup = 'c' then
         QueryReboot
       else
       begin
@@ -1163,7 +1163,7 @@ type
     // (depending on setup type and distribution=Univention) by their number:
     writeln('');
     writeln(rsOverview);
-    if setupType = 's' then
+    if CustomSetup = 's' then
 
       writeln(rsOpsiVersionO, opsiVersion)
     else
@@ -1173,7 +1173,7 @@ type
       Inc(Counter);
     end;
     {Custom installation}
-    if setupType = 'c' then
+    if CustomSetup = 'c' then
     begin
       writeln(Counter, ' ', rsRepoO, repo);
       queries.Add('2');
@@ -1205,7 +1205,7 @@ type
       Inc(Counter);
     end;
     {Custom installation}
-    if setupType = 'c' then
+    if CustomSetup = 'c' then
     begin
       writeln(Counter, ' ', rsRebootO, reboot);
       queries.Add('9');
@@ -1340,13 +1340,14 @@ type
 
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
-    LogDatei.log('Entered ExecuteWithDefaultValues', LLdebug);
+    LogDatei.log('Execute with default values:', LLdebug);
     SetDefaultValues;
     InstallOpsi;
   end;
 
   procedure TQuickInstall.ReadPropsFromFile;
   begin
+    LogDatei.log('Read properties from file:', LLdebug);
     // Read from file what is required for adding the repo
     repoKind := PropsFile.Values['repo_kind'];
     repo := PropsFile.Values['opsi_online_repository'];
