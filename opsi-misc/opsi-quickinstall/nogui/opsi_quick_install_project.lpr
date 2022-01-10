@@ -110,11 +110,11 @@ type
     if HasOption('g', 'gui') then
     begin
       // don't call gui version
-      {project := ExtractFilePath(ParamStr(0));
+      (*project := ExtractFilePath(ParamStr(0));
       Delete(project, Length(project), 1);
       project := ExtractFilePath(project) + 'gui/opsi_quick_install_project';
       writeln(project);
-      ExecuteProcess(project, '', []);}
+      ExecuteProcess(project, '', []);*)
       Terminate;
       Exit;
     end;
@@ -1336,41 +1336,28 @@ type
   {$ENDREGION}
   /////////////////////////////////////////////////////////////////////////////
 
-  // no query, directly use all default values for installation
+  // no query options:
+
   procedure TQuickInstall.ExecuteWithDefaultValues;
   begin
     LogDatei.log('Entered ExecuteWithDefaultValues', LLdebug);
-    setDefaultValues;
-    installOpsi;
+    SetDefaultValues;
+    InstallOpsi;
   end;
-  // no query, read in values from a file
+
   procedure TQuickInstall.ReadPropsFromFile;
-  var
-    i: integer;
   begin
     // Read from file what is required for adding the repo
-    for i := 0 to PropsFile.Count - 1 do
-    begin
-      // Read repo_kind
-      if Pos('repo_kind', PropsFile[i]) = 1 then
-      begin
-        // IndexOf(...) is 0-based
-        repoKind := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
-          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
-      end;
-      // Read opsi version from repo url
-      if Pos('opsi_online_repository', PropsFile[i]) = 1 then
-      begin
-        if Pos('4.1', PropsFile[i]) > 0 then
-          opsiVersion := 'Opsi 4.1'
-        else
-          opsiVersion := 'Opsi 4.2';
-        repo := Copy(PropsFile[i], PropsFile[i].IndexOf('=') +
-          2, PropsFile[i].Length - PropsFile[i].IndexOf('=') + 1);
-      end;
-    end;
+    repoKind := PropsFile.Values['repo_kind'];
+    repo := PropsFile.Values['opsi_online_repository'];
 
-    installOpsi;
+    // Read opsi version from repo url
+    if Pos('4.1', repo) > 0 then
+      opsiVersion := 'Opsi 4.1'
+    else
+      opsiVersion := 'Opsi 4.2';
+
+    InstallOpsi;
   end;
 
   {Program}
