@@ -24,6 +24,7 @@ type
       'RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
       'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'Univention 4.4';
     constructor Create(DistroName: string; DistroRelease: string);overload;
+    procedure SetNameAndRelease(DistroName: string; DistroRelease: string);
     procedure CorrectDistributionNameAndRelease(DistroName: string; DistroRelease: string);
     procedure SetDistrAndUrlPart;
     function SetPackageManagementShellCommand: string;
@@ -42,6 +43,12 @@ implementation
 constructor TDistributionInfo.Create(DistroName: string; DistroRelease: string);overload;
 begin
   inherited Create;
+  FDistroName := DistroName;
+  FDistroRelease := DistroRelease;
+end;
+
+procedure TDistributionInfo.SetNameAndRelease(DistroName: string; DistroRelease: string);
+begin
   FDistroName := DistroName;
   FDistroRelease := DistroRelease;
 end;
