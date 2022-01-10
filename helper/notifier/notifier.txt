@@ -1,10 +1,10 @@
 [changelog]
-opsi-notifier  4.2.0.3
 
-  * combobutton: cbox read only // modify the input only from drop down
-  * loglevel default is now 6
+opsi-notifier  4.2.0.4
 
--- Detlef Oertel <d.oertel@uib.de>  Fri, 26 Nov 2021:15:00:00 +0200
+  * shutdownnotifier: call DataModuleDestroy instead of terminate
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 09 Dec 2021:15:00:00 +0200
 
 opsi-notifier  4.2.0.2
 

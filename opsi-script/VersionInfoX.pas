@@ -17,16 +17,16 @@ The RX version had to many dependencies on some of its own units for me to conve
 *)
 
 // -----------------------------------------------------------------------------
-// Project:	VersionInfo
-// Module:	VersionInfo
+// Project:  VersionInfo
+// Module:  VersionInfo
 // Description: GetFileVersionInfo Win32 API wrapper.
-// Version:	1.1
-// Release:	1
-// Date:	2-MAR-2008
-// Target:	Delphi 2007, Win32.
-// Author(s):	Anders Melander, anders@melander.dk
-// Copyright:	(c) 2007-2008 Anders Melander.
-//		All rights reserved.
+// Version:  1.1
+// Release:  1
+// Date:  2-MAR-2008
+// Target:  Delphi 2007, Win32.
+// Author(s):  Anders Melander, anders@melander.dk
+// Copyright:  (c) 2007-2008 Anders Melander.
+//    All rights reserved.
 // -----------------------------------------------------------------------------
 // This work is licensed under the
 //   "Creative Commons Attribution-Share Alike 3.0 Unported" license.
@@ -41,7 +41,7 @@ The RX version had to many dependencies on some of its own units for me to conve
 
 
 {$IFDEF FPC}
-	{$MODE Delphi}
+  {$MODE Delphi}
 {$RANGECHECKS ON}
 {$OVERFLOWCHECKS ON}
 {$IOCHECKS ON}
@@ -55,8 +55,8 @@ interface
 
 uses
 {$IFDEF FPC}
-LCLIntf,
-lconvencoding,
+  LCLIntf,
+  lconvencoding,
 {$ELSE}
 {$ENDIF}
   Classes,
@@ -64,12 +64,12 @@ lconvencoding,
 
 type
   TTranslationRec = packed record
-    case Integer of
-    0: (
-      LanguageID: WORD;
-      CharsetID: WORD);
-    1: (
-      TranslationID: DWORD);
+    case integer of
+      0: (
+        LanguageID: word;
+        CharsetID: word);
+      1: (
+        TranslationID: DWORD);
   end;
   PTranslationRec = ^TTranslationRec;
   TTranslationTable = array[0..0] of TTranslationRec;
@@ -85,9 +85,9 @@ type
     FTranslationCount: integer;
   private
     function DoGetString(const Key: string): string;
-    function GetCharset(Index: integer): WORD;
-    function GetLanguage(Index: integer): WORD;
-    function GetLanguageName(Index: integer): AnsiString;
+    function GetCharset(Index: integer): word;
+    function GetLanguage(Index: integer): word;
+    function GetLanguageName(Index: integer): ansistring;
     function GetFileVersion: int64;
     function GetProductVersion: int64;
     function GetFileFlags: DWORD;
@@ -104,10 +104,11 @@ type
     destructor Destroy; override;
     class function VersionToString(Version: int64): string;
     class function StringToVersion(const Value: string): int64;
-    function GetString(const Key: string; LanguageID: integer; CharsetID: integer): string; overload;
+    function GetString(const Key: string; LanguageID: integer;
+      CharsetID: integer): string; overload;
     function GetString(const Key, TranslationID: string): string; overload;
-	function GetString(const Key: string; Index: integer = 0): string; overload;
-	function GetFileVersionWithDots : string;
+    function GetString(const Key: string; Index: integer = 0): string; overload;
+    function GetFileVersionWithDots: string;
     property Valid: boolean read FValid;
     property Strings[const Key: string]: string read DoGetString; default;
     property FileVersion: int64 read GetFileVersion;
@@ -117,15 +118,15 @@ type
     property FileType: DWORD read GetFileType;
     property FileSubType: DWORD read GetFileSubType;
     property FileDate: int64 read GetFileDate;
-    property LanguageID[Index: integer]: WORD read GetLanguage;
-    property CharsetID[Index: integer]: WORD read GetCharset;
+    property LanguageID[Index: integer]: word read GetLanguage;
+    property CharsetID[Index: integer]: word read GetCharset;
     //property LanguageID[Index: integer]: WORD read GetLanguage;
     //property CharsetID[Index: integer]: WORD read GetCharset;
     property LanguageNames[Index: integer]: string read GetLanguageName;
     property TranslationCount: integer read FTranslationCount;
   end;
 
-  const
+const
   PredefinedStrings: array[0..11] of string =
     ('Comments', 'CompanyName', 'FileDescription', 'FileVersion',
     'InternalName', 'LegalCopyright', 'LegalTrademarks', 'OriginalFilename',
@@ -137,15 +138,15 @@ implementation
 uses
 {$IFDEF FPC}
 {$ELSE}
-RTLConsts,
+  RTLConsts,
 {$ENDIF}
-SysUtils;
+  SysUtils;
 
 { TVersionInfoX }
 
 constructor TVersionInfo.Create(const Filename: string);
 var
-  OrgFileName: AnsiString;
+  OrgFileName: ansistring;
   InfoSize, Dummy: DWORD;
   Size: DWORD;
 begin
@@ -166,7 +167,8 @@ begin
         if (not VerQueryValue(FVersionBuffer, '\', Pointer(FFileInfo), Size)) then
           FFileInfo := nil;
 
-        if (VerQueryValue(VersionBuffer, '\VarFileInfo\Translation', pointer(FTranslationTable), Size)) then
+        if (VerQueryValue(VersionBuffer, '\VarFileInfo\Translation',
+          pointer(FTranslationTable), Size)) then
           FTranslationCount := Size div SizeOf(TTranslationRec)
         else
           FTranslationCount := 0;
@@ -189,7 +191,7 @@ begin
   inherited Destroy;
 end;
 
-function TVersionInfo.GetCharset(Index: integer): WORD;
+function TVersionInfo.GetCharset(Index: integer): word;
 begin
 {$IFDEF FPC}
   Result := TranslationTable[Index]^.CharsetID;
@@ -212,19 +214,21 @@ begin
     LargeInteger.HighPart := FFileInfo.dwFileDateMS;
 {$ENDIF}
     Result := LargeInteger.QuadPart;
-  end else
+  end
+  else
     Result := 0;
 end;
 
 function TVersionInfo.GetFileFlags: DWORD;
 begin
   if (Valid) and (FFileInfo <> nil) then
+  begin
 {$IFDEF FPC}
-    Result := FFileInfo^.dwFileFlags and FFileInfo^.dwFileFlagsMask
+    Result := FFileInfo^.dwFileFlags and FFileInfo^.dwFileFlagsMask;
 {$ELSE}
-    Result := FFileInfo.dwFileFlags and FFileInfo.dwFileFlagsMask
-{$ENDIF}     
-
+    Result := FFileInfo.dwFileFlags and FFileInfo.dwFileFlagsMask;
+{$ENDIF}
+  end
   else
     Result := 0;
 end;
@@ -232,11 +236,13 @@ end;
 function TVersionInfo.GetFileSubType: DWORD;
 begin
   if (Valid) and (FFileInfo <> nil) then
+  begin
 {$IFDEF FPC}
-    Result := FFileInfo^.dwFileSubtype
+    Result := FFileInfo^.dwFileSubtype;
 {$ELSE}
-    Result := FFileInfo.dwFileSubtype
-{$ENDIF}      
+    Result := FFileInfo.dwFileSubtype;
+{$ENDIF}
+  end
   else
     Result := 0;
 end;
@@ -244,11 +250,13 @@ end;
 function TVersionInfo.GetFileType: DWORD;
 begin
   if (Valid) and (FFileInfo <> nil) then
+  begin
 {$IFDEF FPC}
-    Result := FFileInfo^.dwFileType
+    Result := FFileInfo^.dwFileType;
 {$ELSE}
-    Result := FFileInfo.dwFileType
-{$ENDIF}      
+    Result := FFileInfo.dwFileType;
+{$ENDIF}
+  end
   else
     Result := 0;
 end;
@@ -263,33 +271,36 @@ begin
     LargeInteger.LowPart := FFileInfo^.dwFileVersionLS;
     LargeInteger.HighPart := FFileInfo^.dwFileVersionMS;
 {$ELSE}
-		LargeInteger.LowPart := FFileInfo.dwFileVersionLS;
-		LargeInteger.HighPart := FFileInfo.dwFileVersionMS;
-{$ENDIF}      
+    LargeInteger.LowPart := FFileInfo.dwFileVersionLS;
+    LargeInteger.HighPart := FFileInfo.dwFileVersionMS;
+{$ENDIF}
     Result := LargeInteger.QuadPart;
-  end else
+  end
+  else
     Result := 0;
 end;
 
-function TVersionInfo.GetLanguage(Index: integer): WORD;
+function TVersionInfo.GetLanguage(Index: integer): word;
 begin
 {$IFDEF FPC}
   Result := TranslationTable[Index]^.LanguageID;
 {$ELSE}
   Result := TranslationTable[Index].LanguageID;
-{$ENDIF}      
+{$ENDIF}
 end;
 
-function TVersionInfo.GetLanguageName(Index: integer): AnsiString;
+function TVersionInfo.GetLanguageName(Index: integer): ansistring;
 var
   Size: DWORD;
 begin
   SetLength(Result, 255);
 {$IFDEF FPC}
-  Size := VerLanguageName(TranslationTable[Index]^.TranslationID, PChar(Result), Length(Result));
+  Size := VerLanguageName(TranslationTable[Index]^.TranslationID,
+    PChar(Result), Length(Result));
 {$ELSE}
-  Size := VerLanguageName(TranslationTable[Index].TranslationID, PChar(Result), Length(Result));
-{$ENDIF}      
+  Size := VerLanguageName(TranslationTable[Index].TranslationID,
+    PChar(Result), Length(Result));
+{$ENDIF}
   SetLength(Result, Size);
 end;
 
@@ -300,11 +311,12 @@ end;
 function TVersionInfo.GetTranslationRec(Index: integer): PTranslationRec;
 begin
   if (not Valid) or (Index < 0) or (Index >= FTranslationCount) then
-    result := nil
-    //raise Exception.CreateFmt(SListIndexError, [Index]);
+    Result := nil
+  //raise Exception.CreateFmt(SListIndexError, [Index]);
   else
-  Result := @(FTranslationTable[Index]);
+    Result := @(FTranslationTable[Index]);
 end;
+
 {$IFDEF R_PLUS}
   {$RANGECHECKS ON}
   {$UNDEF R_PLUS}
@@ -313,11 +325,13 @@ end;
 function TVersionInfo.GetOS: DWORD;
 begin
   if (Valid) and (FFileInfo <> nil) then
+  begin
 {$IFDEF FPC}
-    Result := FFileInfo^.dwFileOS
+    Result := FFileInfo^.dwFileOS;
 {$ELSE}
-    Result := FFileInfo.dwFileOS
-{$ENDIF}      
+    Result := FFileInfo.dwFileOS;
+{$ENDIF}
+  end
   else
     Result := 0;
 end;
@@ -334,9 +348,10 @@ begin
 {$ELSE}
     LargeInteger.LowPart := FFileInfo.dwProductVersionLS;
     LargeInteger.HighPart := FFileInfo.dwProductVersionMS;
-{$ENDIF}      
+{$ENDIF}
     Result := LargeInteger.QuadPart;
-  end else
+  end
+  else
     Result := 0;
 end;
 
@@ -345,15 +360,14 @@ var
   TranslationRec: PTranslationRec;
 begin
   TranslationRec := TranslationTable[Index];
-  if TranslationRec = nil
-  then
-    result := ''
+  if TranslationRec = nil then
+    Result := ''
   else
 {$IFDEF FPC}
     Result := GetString(Key, TranslationRec^.LanguageID, TranslationRec^.CharsetID);
 {$ELSE}
-    Result := GetString(Key, TranslationRec.LanguageID, TranslationRec.CharsetID);
-{$ENDIF}      
+  Result := GetString(Key, TranslationRec.LanguageID, TranslationRec.CharsetID);
+{$ENDIF}
 end;
 
 function TVersionInfo.DoGetString(const Key: string): string;
@@ -361,13 +375,14 @@ begin
   Result := GetString(Key, 0);
 end;
 
-function TVersionInfo.GetString(const Key: string; LanguageID, CharsetID: integer): string;
+function TVersionInfo.GetString(const Key: string;
+  LanguageID, CharsetID: integer): string;
 const
   MAXCODEPAGE = 18;
 var
   TranslationID: string;
-  codepagelist : array [1..MAXCODEPAGE] of integer;
-  cpage : integer = 1;
+  codepagelist: array [1..MAXCODEPAGE] of integer;
+  cpage: integer = 1;
 begin
   TranslationID := Format('%.4x%.4x', [LanguageID, CharsetID]);
   Result := GetString(Key, TranslationID);
@@ -375,7 +390,8 @@ begin
   if Result = '' then
   begin
     //guess the code page
-    TranslationID := Format('%.4x%.4x', [LanguageID, StrToInt(copy(GetDefaultTextEncoding,3,4))]);
+    TranslationID := Format('%.4x%.4x',
+      [LanguageID, StrToInt(copy(GetDefaultTextEncoding, 3, 4))]);
     Result := GetString(Key, TranslationID);
   end;
 
@@ -406,7 +422,7 @@ begin
     // check for all well known code pages
     TranslationID := Format('%.4x%.4x', [LanguageID, codepagelist[cpage]]);
     Result := GetString(Key, TranslationID);
-    inc(cpage);
+    Inc(cpage);
   end;
 end;
 
@@ -418,24 +434,27 @@ var
 begin
   if (Valid) then
   begin
-    s := Format('\StringFileInfo\%s\%s', [TranslationID, Key]);
-    if (VerQueryValue(VersionBuffer, PChar(s), pointer(Value), Size)) then
-      Result := PChar(Value)
-    else
+    try
+      s := Format('\StringFileInfo\%s\%s', [TranslationID, Key]);
+      if (VerQueryValue(VersionBuffer, PChar(s), pointer(Value), Size)) then
+        Result := PChar(Value)
+      else
+        Result := '';
+    except
       Result := '';
-  end else
+    end;
+  end
+  else
     Result := '';
 end;
 
 class function TVersionInfo.StringToVersion(const Value: string): int64;
 var
   Version: record
-    case Integer of
-    0: (
-      Words: array[0..3] of WORD);
-    1: (
-      QuadPart: int64);
-  end;
+    case integer of
+      0: (Words: array[0..3] of word);
+      1: (QuadPart: int64);
+    end;
   s, n: string;
   w: integer;
   i: integer;
@@ -446,11 +465,11 @@ begin
   begin
     i := pos('.', s);
     if (i <= 0) then
-      i := Length(s)+1;
-    n := Copy(s, 1, i-1);
-    s := Copy(s, i+1, MaxInt);
+      i := Length(s) + 1;
+    n := Copy(s, 1, i - 1);
+    s := Copy(s, i + 1, MaxInt);
     Version.Words[w] := StrToInt(n);
-    inc(w);
+    Inc(w);
   end;
   Result := Version.QuadPart;
 end;
@@ -460,13 +479,13 @@ var
   v: Large_Integer;
 begin
   v.QuadPart := Version;
-  Result := Format('%d.%d.%d.%d',
-    [v.HighPart shr 16, v.HighPart and $FFFF, v.LowPart shr 16, v.LowPart and $FFFF]);
+  Result := Format('%d.%d.%d.%d', [v.HighPart shr 16, v.HighPart and
+    $FFFF, v.LowPart shr 16, v.LowPart and $FFFF]);
 end;
 
-function TVersionInfo.GetFileVersionWithDots : string;
+function TVersionInfo.GetFileVersionWithDots: string;
 begin
-	result := VersionToString(GetFileVersion);
+  Result := VersionToString(GetFileVersion);
 end;
 
 
@@ -474,7 +493,7 @@ begin
 
 {
 
-	EditFileVersion.Text := TVersionInfo.VersionToString(Application.Version.FileVersion);
+  EditFileVersion.Text := TVersionInfo.VersionToString(Application.Version.FileVersion);
   EditProductVersion.Text := TVersionInfo.VersionToString(Application.Version.ProductVersion);
 
   for i := Low(PredefinedStrings) to High(PredefinedStrings) do
@@ -484,4 +503,3 @@ begin
     ListViewLanguages.Items.Add.Caption := Application.Version.LanguageNames[i];
 }
 end.
-

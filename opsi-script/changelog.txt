@@ -3,9 +3,50 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.4.35) stable; urgency=low
+
+  * osparser: getMSVersionMap: remove double ReleaseID=
+  * osparser: executeWith: AllSigned Hack: use:
+        "Get-Content -Raw -Path '+ tempfilename +' | Out-String | Invoke-Expression"
+  * osparser: new function getMSVersionName: string
+  * oslinmount: replace getGeneralConfigValue by configState_getObjects
+  * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
+  * new boolean opsi-script function: isProcessChildOf(<searchprocstr>, <parentprocstr>): bool;
+    implemented for WLM
+  * new opsi-script constant %opsiscriptprocname% represents the name of the
+    just running opsi-script process (opsi-script.exe, opsi-script, opsi-script-gui)
+    changes in opsiconf, osparser, opsiscript.lpr
+  * write now component logs to subdir 'lastprodlogs'
+  * osprocesses: isProcessChildOf also for win64
+  * oswebservice: sebdlog: fix boolean values for append at log_write
+
+-- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
+
+
+opsi-script (4.12.4.34) stable; urgency=low
+
+  * oszip: catch exceptions
+  * osparser: fix callingsection parameter in call of SearchForSectionLines
+    from producestringlist:getOutstreamFromSection / getReturnlistFromSection
+  * powershell AllSigned Hack: type tmpfile | powershell -command -
+    will be switched on automatically if AllSigned is detected.
+    Additional parameters (to script or powershell) will be ignored in this case.
+  * oslog: new property WriteComponentFile. if true a logfile for every component (product)
+    is (re)written.
+  * osconf: new config: opsi-script.global.writeProductLogFile (default=false)
+  * oslog: changed histrory line to:
+    'handled: <productid> Version: <versiion> Request: <request> Result: <result>
+  * osparser: opsiservicecall: new line allowed: "timeout" : <int>
+  * oswebservice: TOpsiMethodCall has now property timeout
+
+-- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
+
+
 opsi-script (4.12.4.33) stable; urgency=low
 
-  *
+  * osparser: more debug logs in getFileInfoMap
+  * osparser: getFileInfoMap: catch exceptions
+  * versionx: catch exceptions in GetString
 
 -- d.oertel <d.oertel@uib.de> Fri, 03 Dec 2021 15:00
 

@@ -122,6 +122,7 @@ type
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
+    LogDatei.WriteComponentFile := False;;
     logdatei.CreateTheLogfile(logfilename, False);
     logdatei.LogLevel := 8;
     //LogDatei.debug_prog:=true;
@@ -186,7 +187,10 @@ type
           else logdatei.log('No opsi-script-gui: '+filePath + 'opsi-script-gui'+'  -  continue with nogui... ', LLnotice);
           logdatei.Close;
           if FileExists(filePath + 'opsi-script-gui') then
+          begin
             fpExecV(filePath + 'opsi-script-gui', argv);
+            opsiscriptProcName := 'opsi-script-gui';
+          end;
         end;
       end
       else

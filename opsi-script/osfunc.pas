@@ -3562,8 +3562,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -4010,8 +4010,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -9827,9 +9827,10 @@ begin
       //LogDatei.log('FileCheckDate 2', LLInfo);
       filetime2 := fRecordTarget.FindData.ftLastWriteTime;
       //LogDatei.log('FileCheckDate 3', LLInfo);
-      LogDatei.log_prog('FileCheckDate Source:'+UIntToStr(filetime1.dwHighDateTime)
-             +' / '+UIntToStr(filetime1.dwHighDateTime)+' Target: '
-             +UIntToStr(filetime2.dwHighDateTime)+' / '+UIntToStr(filetime2.dwHighDateTime), LLInfo);
+      LogDatei.log_prog('FileCheckDate Source:' + UIntToStr(
+        filetime1.dwHighDateTime) + ' / ' + UIntToStr(filetime1.dwHighDateTime) +
+        ' Target: ' + UIntToStr(filetime2.dwHighDateTime) + ' / ' +
+        UIntToStr(filetime2.dwHighDateTime), LLInfo);
 
       diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
       //LogDatei.log('FileCheckDate 4', LLInfo);
@@ -9894,10 +9895,10 @@ begin
     begin
       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
         LLerror);
-      LogDatei.log(' Source:'+UIntToStr(filetime1.dwHighDateTime)
-             +' / '+UIntToStr(filetime1.dwHighDateTime)+' Target: '
-             +UIntToStr(filetime2.dwHighDateTime)+' / '+UIntToStr(filetime2.dwHighDateTime)
-             +' Diff: '+ inttostr(diffresult),LLerror);
+      LogDatei.log(' Source:' + UIntToStr(filetime1.dwHighDateTime) +
+        ' / ' + UIntToStr(filetime1.dwHighDateTime) + ' Target: ' +
+        UIntToStr(filetime2.dwHighDateTime) + ' / ' + UIntToStr(
+        filetime2.dwHighDateTime) + ' Diff: ' + IntToStr(diffresult), LLerror);
       Result := False;
     end
   end;

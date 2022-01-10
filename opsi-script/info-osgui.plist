@@ -5,15 +5,15 @@
   <key>CFBundleExecutable</key>
   <string>opsi-script-gui</string>
   <key>CFBundleIdentifier</key>
-  <string>org.opsi.opsi-script-gui</string>
+  <string>org.opsi.opsi-script</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleName</key>
-  <string>opsi-script-gui</string>
+  <string>opsi-script</string>
   <key>CFBundleShortVersionString</key>
-  <string>4.12.4.32</string>
+  <string>4.12.4.35</string>
   <key>CFBundleIconFile</key>
   <string>opsi.icns</string>
   <key>CFBundleVersion</key>

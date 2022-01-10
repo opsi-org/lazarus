@@ -165,6 +165,7 @@ type
     FOpsiMethodName: string;
     FParameterlist: TStringList;
     Fhashlist: TStringList;
+    FTimeout : integer;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -180,6 +181,7 @@ type
     property parameterlist: TStringList read FParameterlist write FParameterlist;
     property hashlist: TStringList read Fhashlist write Fhashlist;
     property jsonUrlString: string read getJsonUrlString;
+    property timeout: integer read FTimeout write FTimeout;
 
   end;
 
@@ -1258,6 +1260,8 @@ end;
 procedure TJsonThroughHTTPS.createSocket(const agent, ip, port: string);
 begin
   {$IFDEF SYNAPSE}
+  // Timeout
+  // https://forum.lazarus.freepascal.org/index.php?topic=40167.0
   try
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
@@ -1613,6 +1617,11 @@ begin
             //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+        if omc.Timeout > 0 then
+        begin
+          HTTPSender.Timeout:= omc.Timeout * 1000;
+          HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
+        end;
 
 
         if methodGet then
@@ -4426,11 +4435,11 @@ begin
     end;
     if appendmode then
     begin
-      s := '", "' + actualClient + '", "true"], "id": 1}';
+      s := '", "' + actualClient + '", true], "id": 1}';
     end
     else
     begin
-      s := '", "' + actualClient + '", "false"], "id": 1}';
+      s := '", "' + actualClient + '", false], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
     //UTF8FixBroken(s);

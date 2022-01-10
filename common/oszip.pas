@@ -5,12 +5,18 @@ unit OsZip;
 
 interface
 
+// about zip progress:
+// https://forum.lazarus.freepascal.org/index.php?topic=52499.15
+
 uses
-  Classes, SysUtils, Zipper, FileUtil, strutils,
-  {$IFDEF OSLOG}
+  Classes, SysUtils, Zipper,
+  fileutil,
+  lazFileUtils, strutils,
+  //{$IFDEF OSLOG}
   oslog,
-  {$ENDIF OSLOG}
-  LConvEncoding;
+  //{$ENDIF OSLOG}
+  LConvEncoding,
+  lazutf8;
 
 // Zip a folder which contains subfolders and files.
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
@@ -55,6 +61,7 @@ var
   DiskFileName, ArchiveFileName: string;
   TargetDir: string;
   //searchmask : string;
+  errorfound : boolean = false;
 begin
   Result := False;
   TargetDir := ExtractFilePath(TargetFile);
@@ -72,15 +79,40 @@ begin
         for filecounter := 0 to FileList.Count - 1 do
         begin
           DiskFileName := FileList.Strings[filecounter];
-          ArchiveFileName := StringReplace(FileList.Strings[filecounter],
-            sourcepath, '', [rfReplaceall]);
-          ZipperObj.Entries.AddFileEntry(DiskFileName, ArchiveFileName);
-          //{$IFDEF OSLOG}
-          //   LogDatei.log('zipped: '+ArchiveFileName+' to: '+TargetFile,LLDebug);
-          //{$ENDIF OSLOG}
+          ArchiveFileName := StringReplace(DiskFileName, sourcepath,
+            '', [rfReplaceall]);
+          if FileExistsUTF8(DiskFileName) then
+          begin
+            try
+              ZipperObj.Entries.AddFileEntry((DiskFileName), (ArchiveFileName));
+              LogDatei.log('ZipWithDirStruct adding entry: ' + DiskFileName +
+                ' to: ' + TargetFile, LLDebug2);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in ZipWithDirStruct while adding entry: ' +
+                  DiskFileName, LLError);
+                LogDatei.log('Exception in ZipWithDirStruct: ' + e.message, LLError);
+              end;
+            end;
+            LogDatei.log('zip: ' + ArchiveFileName + ' to: ' + TargetFile, LLDebug);
+          end
+          else
+          begin
+            LogDatei.log('ZipWithDirStruct file not found: ' + DiskFileName, LLError);
+            errorfound := true;
+          end;
         end;
-        ZipperObj.ZipAllFiles;
-        Result := True;
+        try
+          ZipperObj.ZipAllFiles;
+          if not errorfound then Result := True;
+        except
+          on e: Exception do
+          begin
+            LogDatei.log('Exception in ZipWithDirStruct while ZipAllFiles', LLError);
+            LogDatei.log('Exception in ZipWithDirStruct: ' + e.message, LLError);
+          end;
+        end;
       end;
     finally
       ZipperObj.Free;

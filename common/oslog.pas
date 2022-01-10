@@ -79,6 +79,9 @@ type
     FErrorsFileExists: boolean;
     FHistoryFilename: string;
     FHistoryFileExists: boolean;
+    FWriteComponentFile: boolean;
+    FComponentFileExists: boolean;
+    FComponentFilename: string;
     FRemoteErrorsPath: string;
     FRemoteErrorsFilename: string;
     FRemoteErrorsFileExists: boolean;
@@ -124,6 +127,8 @@ type
     RemoteErrorFileF: THandle;
     HistroyFile: Text;
     HistroryFileF: THandle;
+    ComponentFile: Text;
+    ComponentFileF: THandle;
 
 
   public
@@ -158,6 +163,7 @@ type
     procedure AddToConfidentials(newsecret: string);
     function isConfidential(teststring: string): boolean;
     procedure log2history(line: string);
+    procedure logComponent(comp: string; line: string);
     procedure CreateTheLogfile(LogDateiname: string); overload;
     procedure CreateTheLogfile(LogDateiname: string; check4append: boolean); overload;
 
@@ -203,6 +209,8 @@ type
     property WritePartLog: boolean read FWritePartLog write FWritePartLog;
     property WriteHistFile: boolean read FWriteHistFile write FWriteHistFile;
     property WriteErrFile: boolean read FWriteErrFile write FWriteErrFile;
+    property WriteComponentFile: boolean read FWriteComponentFile
+      write FWriteComponentFile;
     property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
     property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
     property force_min_loglevel: integer read Fforce_min_loglevel
@@ -225,6 +233,7 @@ type
 const
   StandardPartLogFileext = '.log';
   StandardPartReadFileext = '.read';
+  ComponentLogSubDir = 'lastprodlogs';
   //FStandardLogFileext = '.log';
   //  FStandardLogFilename =  'opsi-winst';
   //  FStandardLogFileext =   '.log';
@@ -467,7 +476,7 @@ function GetContinueLogFile(var LogFilename: string): boolean;
 var
   ContinueFilename: string;
 
-  {$if defined(WINDOWS) and defined(OPSIWINST)}
+  {$if defined(WINDOWS) and defined(OPSISCRIPT)}
   procedure readValues(const RegHive: string);
   var
     rkey: HKEY;
@@ -501,7 +510,7 @@ var
 
 begin
   try
-    {$if defined(WINDOWS) and defined(OPSIWINST)}
+    {$if defined(WINDOWS) and defined(OPSISCRIPT)}
     readValues(WinstRegHive);
     {$ELSE}
     Result := False;
@@ -528,11 +537,11 @@ procedure TLogInfo.CreateTheLogfile(LogDateiname: string; check4append: boolean)
 var
   i: integer;
   filelist: TStringList;
-  filename : string;
+  filename: string;
   {$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
   {$ENDIF}
-  maxbaks : integer = 8;
+  maxbaks: integer = 8;
 begin
   if (FStandardPartLogFilename = 'noname-part-') and (LogDateiname <> '') then
     FStandardPartLogFilename := LogDateiname + '-part-';
@@ -665,6 +674,7 @@ begin
   { we want no duplicates in this list - so we have not to check at add }
   FNoLogFiles.Sorted := True;
   FNoLogFiles.Duplicates := dupIgnore;
+  FWriteComponentFile := False;
 end;
 
 
@@ -736,6 +746,10 @@ begin
   FRemoteErrorsFileExists := False;
   LogFileExists := False;
   FHistoryFileExists := False;
+  FComponentFileExists := False;
+  FComponentFilename := '';
+  ComponentFileF := 0;
+
 
   YetATrial := True;
   maxTrials := 10;
@@ -1192,6 +1206,10 @@ begin
   if PartLogFileExists then
     if isOpen(LogPartFileF) then
       FileClose(LogPartFileF);
+
+  if FComponentFileExists then
+    if isOpen(ComponentFileF) then
+      FileClose(ComponentFileF);
 end;
 
 
@@ -1208,6 +1226,36 @@ begin
   end;
 end;
 
+procedure TLogInfo.logComponent(comp: string; line: string);
+var
+  mycompfilename: string;
+  mylogdir : string;
+begin
+  mylogdir := FStandardPartLogPath + PathDelim + ComponentLogSubDir ;
+  mycompfilename := mylogdir + PathDelim + comp + '.log';
+  ForceDirectory(mylogdir);
+  if FComponentFilename = mycompfilename then
+  begin
+    // we work on an existing log
+    if not isOpen(ComponentFileF) then
+    begin
+      // open new
+      ComponentFileF := FileCreate(FComponentFilename);
+    end;
+  end
+  else
+  begin
+    // we work on an new log
+    FComponentFilename := mycompfilename;
+    if isOpen(ComponentFileF) then // close old
+    begin
+      // close old
+      FileClose(ComponentFileF);
+    end;
+    ComponentFileF := FileCreate(FComponentFilename);
+  end;
+  WriteLogLine(ComponentFileF, line);
+end;
 
 function TLogInfo.LogSIndentPlus(const n: integer): string;
 var
@@ -1576,6 +1624,11 @@ begin
             except
               FErrorsFileExists := False
             end;
+
+
+        if FWriteComponentFile and FLogProduktId then
+          if trim(FAktProduktId) <> '' then
+            logComponent(trim(FAktProduktId), PasS);
 
         Result := True;
       except

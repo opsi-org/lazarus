@@ -1767,8 +1767,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -4118,7 +4119,8 @@ var
         if targetPort <> '' then
           ldap.TargetPort := targetPort;
         if TryStrToInt(targetPort, port) then
-          if port = 636 then ldap.FullSSL := True;
+          if port = 636 then
+            ldap.FullSSL := True;
 
         ldap.UserName := ldapsearch_user;
         ldap.Password := ldapsearch_credentials;
@@ -6416,6 +6418,8 @@ var
   methodname: string = '';
   paramList: TStringList;
   parameters: array of string;
+  timeout: string = '';
+  timeoutint: integer = 0;
 
   omc: TOpsiMethodCall;
   //local_opsidata : TOpsiDataJSONService;
@@ -6564,6 +6568,20 @@ begin
           begin
             if GetString(r, methodname, r, errorInfo, True) then
               syntaxcheck := True;
+            logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
+              Expressionstr, LLDebug3);
+          end
+
+          else if LowerCase(trim(Expressionstr)) = LowerCase('"timeout"') then
+          begin
+            LogDatei.log('Got timeout in exprstr: ', LLdebug);
+            timeout := trim(r);
+            LogDatei.log('Got timeout: ' + timeout, LLdebug);
+            if TryStrToInt(timeout, timeoutint) then
+              syntaxcheck := True
+            else
+              LogDatei.log('Given timeout: ' + timeout + ' is no integer', LLerror);
+
             logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
               Expressionstr, LLDebug3);
           end
@@ -6917,6 +6935,8 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        if timeoutint > 0 then
+          omc.timeout := timeoutint;
         testresult := '';
 
         if copy(methodname, length(methodname) - length('_hash') +
@@ -6979,7 +6999,8 @@ begin
           output.add(testresult);
         end;
 
-        omc.Free;
+        if Assigned(omc) then
+          FreeAndNil(omc);
 
         if errorOccured then
         begin
@@ -10377,9 +10398,14 @@ begin
       commandline := 'powershell.exe get-executionpolicy';
       tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
-      // set (open)
-      commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      LogDatei.log('Powershell excution policy = ' + org_execution_policy, LLinfo);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (open)
+        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
+      end;
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10391,6 +10417,7 @@ begin
     fulloptionstring := parameters + ' ' + optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
+    // execwith will check for allsigned again
     ActionResult := executeWith(mySektion, fulloptionstring, True,
       logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
@@ -10411,9 +10438,13 @@ begin
 
     if handle_policy then // restore execution policy
     begin
-      // set (close)
-      commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (close)
+        commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
+      end;
     end;
   finally
     {$IFDEF GUI}
@@ -10703,8 +10734,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11363,6 +11394,11 @@ var
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
+  catcommand: string = 'cat ';
+  //useStdIn: boolean = False;
+  allSignedHack: boolean = False;
+  tmplist: TStringList;
+  org_execution_policy: string = '';
 
 begin
   try
@@ -11512,6 +11548,33 @@ begin
       powershellpara := ' -file ';
       useext := '.ps1';
     end;
+    if useext = '.ps1' then  // we are on powershell
+    begin
+      commandline := 'powershell.exe get-executionpolicy';
+      tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
+        False, True);
+      org_execution_policy := trim(tmplist[0]);
+      if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
+      begin
+        allSignedHack := True;
+        //useStdIn := True;
+        LogDatei.log('Powershell with AllSigned detected - switching to Get-Content Mode',
+          LLinfo);
+        (*if trim(programparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
+            programparas, LLinfo);
+            *)
+        if trim(passparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
+            passparas, LLinfo);
+      end;
+    end;
+    //if useStdIn then
+    if allSignedHack then
+    begin
+      //powershellpara := ' -command - ';
+      powershellpara := ' -Command ';
+    end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
     if not Sektion.FuncSaveToFile(tempfilename, encodingString) then
@@ -11563,17 +11626,29 @@ begin
         end;
       end;
 
-
-      // if parameters end with '=' we concat tempfile without space
-      if copy(programparas, length(programparas), 1) = '=' then
-        commandline :=
-          '"' + programfilename + '" ' + programparas + '"' +
-          powershellpara + tempfilename + '"  ' + passparas
+      if allSignedHack then
+      begin
+        {$IFDEF WINDOWS}
+        catcommand := 'type ';
+        {$ENDIF WINDOWS}
+        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+        commandline := '"' + programfilename + '" ' + programparas +
+          ' ' + powershellpara + '"Get-Content -Raw -Path ' +
+          tempfilename + ' | Out-String | Invoke-Expression" ';
+      end
       else
-        commandline :=
-          '"' + programfilename + '" ' + programparas + ' ' +
-          powershellpara + tempfilename + '  ' + passparas;
-
+      begin
+        // if parameters end with '=' we concat tempfile without space
+        if copy(programparas, length(programparas), 1) = '=' then
+          commandline :=
+            '"' + programfilename + '" ' + programparas + '"' +
+            powershellpara + tempfilename + '"  ' + passparas
+        else
+          commandline :=
+            '"' + programfilename + '" ' + programparas + ' ' +
+            powershellpara + tempfilename + '  ' + passparas;
+      end;
 
 
       {$IFNDEF WINDOWS}
@@ -11584,6 +11659,7 @@ begin
       {$ENDIF WINDOWS}
 
       {$IFDEF WIN32}
+
       // allow the executing user access to the tmp file
       sysError := NO_ERROR;
       if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
@@ -12325,18 +12401,18 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
             if not SearchForSectionLines(self, TWorkSection(section),
-              nil, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -12406,8 +12482,8 @@ begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
             if not SearchForSectionLines(self, TWorkSection(section),
-              nil, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -12612,7 +12688,8 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductPropertyList - trying properties.conf',
                       LLWarning);
-                    if list2 <> nil then FreeAndNil(list1);
+                    if list2 <> nil then
+                      FreeAndNil(list1);
                     list2 := TXStringlist.Create;
                     list2.loadFromFile(tmpstr);
                     tmpbool := False; // default used
@@ -12678,7 +12755,8 @@ begin
                               LogDatei.log(
                                 'Property not existing in GetProductPropertyList - trying properties.conf',
                                 LLWarning);
-                              if list2 <> nil then FreeAndNil(list1);
+                              if list2 <> nil then
+                                FreeAndNil(list1);
                               list2 := TXStringlist.Create;
                               list2.loadFromFile(tmpstr);
                               tmpbool := False; // default used
@@ -14172,7 +14250,7 @@ begin
           if GetNTVersionMajor >= 10 then
           begin
             list.add('ReleaseID=' + getW10Release);
-            list.add('ReleaseID=' + getW10Release);
+            //list.add('ReleaseID=' + getW10Release);
           (* moved to funcwin: getW10Release
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
@@ -14244,21 +14322,61 @@ begin
 
             for i := 0 to versionInfo.TranslationCount - 1 do
             begin
-              list.add('Language name ' + IntToStr(i) + '=' +
-                versionInfo.LanguageNames[i]);
-              list.add('Language ID ' + IntToStr(i) + '=' +
-                IntToStr(versionInfo.LanguageID[i]));
+              tmpstr := 'Language name ' + IntToStr(i) + '=' +
+                versionInfo.LanguageNames[i];
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+              tmpstr := 'Language ID ' + IntToStr(i) + '=' +
+                IntToStr(versionInfo.LanguageID[i]);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
             end;
 
-            list.add('file version=' + IntToStr(versionInfo.FileVersion));
-            list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-            list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            //list.add('file version=' + IntToStr(versionInfo.FileVersion));
+            //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+            //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            tmpstr := 'file version=' + IntToStr(versionInfo.FileVersion);
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'file version with dots=' + versionInfo.GetFileVersionWithDots;
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'product version=' + IntToStr(versionInfo.ProductVersion);
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
 
-
-            for i := Low(versionInfoX.PredefinedStrings)
-              to High(versionInfoX.PredefinedStrings) do
-              list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                versionInfo.getString(PredefinedStrings[i]));
+            try
+            (*for i := Low(versionInfox.PredefinedStrings)
+              to High(versionInfox.PredefinedStrings) do *)
+              tmpint := length(versionInfox.PredefinedStrings) - 1;
+              LogDatei.log_prog('getFileInfoMap: value num: ' +
+                IntToStr(tmpint), LLdebug2);
+              for i := 0 to tmpint do
+              begin
+                try
+              (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                versionInfo.getString(PredefinedStrings[i])); *)
+                  tmpstr := versionInfox.PredefinedStrings[i] + '=' +
+                    versionInfo.getString(versionInfox.PredefinedStrings[i]);
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                except
+                  LogDatei.log_prog('getFileInfoMap: exception at: ' +
+                    versionInfox.PredefinedStrings[i], LLdebug2);
+                  if versionInfox.PredefinedStrings[i] = 'FileVersion=' then
+                  begin
+                    tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+                    list.add(tmpstr);
+                    LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                  end;
+                end;
+              end;
+            except
+              LogDatei.log_prog('getFileInfoMap: exception - try to fix', LLdebug2);
+              tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            end;
 
 
             versionInfo.Free;
@@ -14739,6 +14857,7 @@ begin
     Ifelseendiflevel, inDefFuncIndex);
 end;
 
+
 function TuibInstScript.EvaluateString
   (const s0: string; var Remaining: string; var StringResult: string;
   var InfoSyntaxError: string; var NestLevel: integer;
@@ -15076,7 +15195,7 @@ begin
   end
 
 
-  else if LowerCase(s) = LowerCase('GetMSVersionInfo') then
+  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or (LowerCase(s) = LowerCase('GetMSVersionName')) then
   begin
     syntaxCheck := True;
 
@@ -15097,7 +15216,13 @@ begin
       end
       else
       begin
+        // GetMSVersionInfo and GetMSVersionName should have the same output except for Windows 11
+        // Since version number (and therefore GetMSVersionInfo) is the same '10.0' for Windows 10 and 11,
+        // GetMSVersionName should differentiate this by returning '11.0' for Windows 11
+        // Windows 11 is detected by build version >= 22000
         StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+        if (StringResult = '10.0') and (LowerCase(s) = LowerCase('GetMSVersionName')) and (StrToInt(GetSystemOSVersionInfoEx('build_number')) >= 22000) then
+          StringResult := '11.0'
       end;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
@@ -15105,6 +15230,7 @@ begin
       {$ENDIF WINDOWS}
     end;
   end
+
 
   else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
   begin
@@ -19178,6 +19304,25 @@ begin
               except
                 BooleanResult := False;
                 logdatei.log('Error: Exception at jsonAsObjectHasKey with : "' +
+                  s1 + '","' + s2 + '"', LLError);
+              end;
+            end;
+  end
+
+  else if Skip('isProcessChildOf', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              try
+                syntaxCheck := True;
+                BooleanResult := isProcessChildOf(s1, s2);
+              except
+                BooleanResult := False;
+                logdatei.log('Error: Exception at isProcessChildOf with : "' +
                   s1 + '","' + s2 + '"', LLError);
               end;
             end;
@@ -24401,7 +24546,8 @@ begin
                   LogDatei.log('defined global string list ' +
                     Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
                 end;
-                if Assigned(tmplist) then FreeAndNil(tmplist);
+                if Assigned(tmplist) then
+                  FreeAndNil(tmplist);
               end;
 
               tsDefineFunction:
@@ -25356,6 +25502,10 @@ begin
       ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
       FConstValuesList.add(ValueToTake);
 
+      FConstList.add('%OpsiscriptProcName%');
+      ValueToTake := opsiscriptProcName;
+      FConstValuesList.add(ValueToTake);
+
       FConstList.add('%WinstVersion%');
       ValueToTake := osconf.OpsiscriptVersion;
       FConstValuesList.add(ValueToTake);
@@ -25645,10 +25795,15 @@ begin
           LLessential)
       else
       begin
-        LogDatei.log('installed product: ' + Topsi4data(opsidata).getActualProductId +
+        LogDatei.log('handled product: ' + Topsi4data(opsidata).getActualProductId +
           ' Version: ' + opsidata.getActualProductVersion, LLessential);
-        LogDatei.log2history('installed : ' + Topsi4data(opsidata).getActualProductId +
-          ' Version: ' + opsidata.getActualProductVersion);
+        tmpstr := ' Request: ' + opsidata.getActualProductActionRequest;
+        if extremeErrorLevel = LevelFatal then
+          tmpstr := tmpstr + ' Result: ' + 'failed'
+        else
+          tmpstr := tmpstr + ' Result: ' + 'success';
+        LogDatei.log2history('handled : ' + Topsi4data(opsidata).getActualProductId +
+          ' Version: ' + opsidata.getActualProductVersion + tmpstr);
       end;
 
       //LogDatei.log ('opsi service version: '+opsidata.getOpsiServiceVersion, LLessential);
