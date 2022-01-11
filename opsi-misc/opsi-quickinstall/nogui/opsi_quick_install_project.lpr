@@ -28,8 +28,6 @@ type
   private
   var
     input: string;
-    copyMod: string;
-    reboot, dhcp: string;
     NetworkDetails: array of string;
     FileText, PropsFile: TStringList;
     QuickInstallCommand: TRunCommandElevated;
@@ -183,11 +181,11 @@ type
     Data.proxy := '';
     Data.repoNoCache := Data.repo;
     Data.backend := 'file';
-    copyMod := rsNo;
+    Data.copyMod.SetEntries(rsNo, 'false');
     Data.repoKind := 'stable';
     Data.ucsPassword := '';
-    reboot := rsNo;
-    dhcp := rsNo;
+    Data.reboot.SetEntries(rsNo, 'false');
+    Data.dhcp.SetEntries(rsNo, 'false');
     Data.symlink := 'default.nomenu';
     Data.netmask := '255.255.0.0';
     Data.networkAddress := '192.168.0.0';
@@ -272,21 +270,12 @@ type
     // write file text
     FileText := TStringList.Create;
 
-    if reboot = rsYes then
-      FileText.Add('allow_reboot=true')
-    else
-      FileText.Add('allow_reboot=false');
+    FileText.Add('allow_reboot=' + Data.reboot.PropertyEntry);
     FileText.Add('backend=' + Data.backend);
     FileText.Add('dnsdomain=' + Data.domain);
-    if copyMod = rsYes then
-      FileText.Add('force_copy_modules=true')
-    else
-      FileText.Add('force_copy_modules=false');
+    FileText.Add('force_copy_modules=' + Data.copyMod.PropertyEntry);
     FileText.Add('gateway=' + Data.gateway);
-    if dhcp = rsYes then
-      FileText.Add('install_and_configure_dhcp=true')
-    else
-      FileText.Add('install_and_configure_dhcp=false');
+    FileText.Add('install_and_configure_dhcp=' + Data.dhcp.PropertyEntry);
     FileText.Add('myipname=' + Data.ipName);
     FileText.Add('myipnumber=' + Data.ipNumber);
     FileText.Add('nameserver=' + Data.nameserver);
@@ -693,9 +682,9 @@ type
     else
     begin
       if input = 'y' then
-        copyMod := rsYes
+        Data.copyMod.SetEntries(rsYes, 'true')
       else
-        copyMod := rsNo; // cases input = 'n', input = ''
+        Data.copyMod.SetEntries(rsNo, 'false'); // cases input = 'n', input = ''
       QueryRepoKind;
     end;
   end;
@@ -781,9 +770,9 @@ type
     else
     begin
       if input = 'y' then
-        reboot := rsYes
+        Data.reboot.SetEntries(rsYes, 'true')
       else
-        reboot := rsNo; // cases input = 'n', input = ''
+        Data.reboot.SetEntries(rsNo, 'false'); // cases input = 'n', input = ''
       QueryDhcp;
     end;
   end;
@@ -816,10 +805,10 @@ type
     else
     begin
       if input = 'y' then
-        dhcp := rsYes
+        Data.dhcp.SetEntries(rsYes, 'true')
       else
-        dhcp := rsNo; // cases input = 'n', input = ''
-      if dhcp = rsYes then
+        Data.dhcp.SetEntries(rsNo, 'false'); // cases input = 'n', input = ''
+      if Data.dhcp.PropertyEntry = 'true' then
       begin
         // read in network details for dhcp queries (requires unit "osnetworkcalculator")
         NetworkDetails := getNetworkDetails(['IP4.ADDRESS[1]',
@@ -1079,7 +1068,7 @@ type
     end;
     if input = '-b' then
     begin
-      if dhcp = rsYes then
+      if Data.dhcp.PropertyEntry = 'true' then
         QueryGateway
       else
         QueryDhcp;
@@ -1181,7 +1170,7 @@ type
       Inc(Counter);
       if Data.backend = 'mysql' then
       begin
-        writeln(Counter, ' ', rsCopyModulesO, copyMod);
+        writeln(Counter, ' ', rsCopyModulesO, Data.copyMod.OverviewEntry);
         queries.Add('6');
         Inc(Counter);
       end;
@@ -1199,15 +1188,15 @@ type
     {Custom installation}
     if Data.CustomSetup then
     begin
-      writeln(Counter, ' ', rsRebootO, reboot);
+      writeln(Counter, ' ', rsRebootO, Data.reboot.OverviewEntry);
       queries.Add('9');
       Inc(Counter);
     end;
     {Both}
-    writeln(Counter, ' ', rsDhcpO, dhcp);
+    writeln(Counter, ' ', rsDhcpO, Data.dhcp.OverviewEntry);
     queries.Add('10');
     Inc(Counter);
-    if dhcp = rsYes then
+    if Data.dhcp.PropertyEntry = 'true' then
     begin
       writeln(Counter, ' ', rsTFTPROOTO, Data.symlink);
       queries.Add('11');
