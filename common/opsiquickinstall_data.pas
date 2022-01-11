@@ -14,10 +14,13 @@ type
   // For data that appears in the overview and the file properties.conf in different ways,
   // e.g. OverviewEntry = 'Yes' or 'Ja' or 'Oui' or ... and PropertyEntry = 'true'
   TSplitData = class(TObject)
+  private
+    FOverviewEntry: string;
+    FPropertyEntry: string; // mostly gets boolean value
   public
-    OverviewEntry: string;
-    PropertyEntry: string; // mostly gets boolean value
     procedure SetEntries(SetOverviewEntry: string; SetPropertyEntry: string);
+    property OverviewEntry: string read FOverviewEntry;
+    property PropertyEntry: string read FPropertyEntry;
   end;
 
 type
@@ -26,6 +29,7 @@ type
 
   TQuickInstallData = class(TObject)
   public
+  var
     CustomSetup: boolean;
     DistrInfo: TDistributionInfo;
 
@@ -36,7 +40,8 @@ type
     repoKind: string;
 
     ucsPassword: string;
-    reboot, dhcp: TSplitData;
+    reboot: TSplitData;
+    dhcp: TSplitData;
     symlink: string;
 
     netmask, networkAddress, domain, nameserver, gateway: string;
@@ -60,8 +65,8 @@ implementation
 
 procedure TSplitData.SetEntries(SetOverviewEntry: string; SetPropertyEntry: string);
 begin
-  OverviewEntry := SetOverviewEntry;
-  PropertyEntry := SetPropertyEntry;
+  FOverviewEntry := SetOverviewEntry;
+  FPropertyEntry := SetPropertyEntry;
 end;
 
 {TQuickInstallData}
