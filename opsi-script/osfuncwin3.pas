@@ -24,7 +24,7 @@ uses
   JwaWinnt,
   jwawinbase,
   JwaWindows,
-    Windows;
+  Windows;
 //,  DSiWin32;
 
 var
@@ -271,7 +271,7 @@ begin
   // size 144 did not work after changed to laz1.6/FPC3
   // changed to 500 and mixed with DSiGetSystemDirectory
   Result := '';
-  FillByte (path,SizeOf(path),0);
+  FillByte(path, SizeOf(path), 0);
   Size := GetSystemDirectory(@path, length(path));
   Result := StrPas(PChar(@path));
   if Result[length(Result)] <> PathDelim then
@@ -502,8 +502,7 @@ end;
 
 
 initialization
-  @GetProductInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'),
-    'GetProductInfo');
+  @GetProductInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'), 'GetProductInfo');
   @GetNativeSystemInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'),
     'GetNativeSystemInfo');
 
