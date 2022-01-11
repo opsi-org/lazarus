@@ -189,7 +189,7 @@ begin
   FileText.Add('opsi_online_repository=' + Data.repo);
   FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
   FileText.Add('patch_default_link_for_bootimage=' + Data.symlink);
-  FileText.Add('proxy=' + Data.proxy.PropertyEntry);
+  FileText.Add('proxy=' + Data.proxy);
   FileText.Add('repo_kind=' + Data.repoKind);
   FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
   // update_test shall always be false

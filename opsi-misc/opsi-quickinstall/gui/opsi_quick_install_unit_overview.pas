@@ -68,9 +68,8 @@ begin
     MemoOverview.Lines.Add('');
     // Repository
     MemoOverview.Lines.Add(rsRepoO + Data.repo);
-    MemoOverview.Lines.Add(rsProxyO + Data.proxy.OverviewEntry);
     // Proxy
-    MemoOverview.Lines.Add(rsProxyO + Data.proxy.OverviewEntry);
+    MemoOverview.Lines.Add(rsProxyO + Data.proxy);
     // Repository (no cache)
     MemoOverview.Lines.Add(rsRepoNoCacheO + Data.repoNoCache);
 

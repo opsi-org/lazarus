@@ -29,9 +29,7 @@ type
     CustomSetup: boolean;
     DistrInfo: TDistributionInfo;
 
-    opsiVersion, repo: string;
-    proxy: TSplitData;
-    repoNoCache: string;
+    opsiVersion, repo, proxy, repoNoCache: string;
 
     backend: string;
     copyMod: TSplitData;
@@ -79,8 +77,7 @@ begin
     repo := baseRepoUrlOpsi42
   else
     repo := baseRepoUrlOpsi41;
-  proxy := TSplitData.Create;
-  proxy.SetEntries('', '');
+  proxy := '';
   repoNoCache := repo;
 
   backend := 'file';

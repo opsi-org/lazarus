@@ -80,11 +80,11 @@ begin
     Data.repo := EditRepo.Text;
   // Proxy
   if RadioBtnNone.Checked then
-    Data.proxy.SetEntries(RadioBtnNone.Caption, '')
+    Data.proxy := ''
   else if RadioBtnMyProxy.Checked then
-    Data.proxy.SetEntries(RadioBtnMyProxy.Caption, RadioBtnMyProxy.Caption)
+    Data.proxy := RadioBtnMyProxy.Caption
   else
-    Data.proxy.SetEntries(EditProxy.Text, EditProxy.Text);
+    Data.proxy := EditProxy.Text;
   // Repository (no cache)
   if RadioBtnRepoNoCache.Checked then
     Data.repoNoCache := EditDefaultRepoNoCache.Text
