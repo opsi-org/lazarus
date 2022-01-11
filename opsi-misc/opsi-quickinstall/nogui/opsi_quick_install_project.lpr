@@ -28,8 +28,8 @@ type
   private
   var
     input: string;
-    backend, copyMod, repoKind: string;
-    ucsPassword, reboot, dhcp, symlink: string;
+    copyMod: string;
+    reboot, dhcp: string;
     NetworkDetails: array of string;
     FileText, PropsFile: TStringList;
     QuickInstallCommand: TRunCommandElevated;
@@ -182,13 +182,13 @@ type
       Data.repo := Data.baseRepoUrlOpsi42;
     Data.proxy := '';
     Data.repoNoCache := Data.repo;
-    backend := 'file';
+    Data.backend := 'file';
     copyMod := rsNo;
-    repoKind := 'stable';
-    ucsPassword := '';
+    Data.repoKind := 'stable';
+    Data.ucsPassword := '';
     reboot := rsNo;
     dhcp := rsNo;
-    symlink := 'default.nomenu';
+    Data.symlink := 'default.nomenu';
     Data.netmask := '255.255.0.0';
     Data.networkAddress := '192.168.0.0';
     Data.domain := 'uib.local';
@@ -276,7 +276,7 @@ type
       FileText.Add('allow_reboot=true')
     else
       FileText.Add('allow_reboot=false');
-    FileText.Add('backend=' + backend);
+    FileText.Add('backend=' + Data.backend);
     FileText.Add('dnsdomain=' + Data.domain);
     if copyMod = rsYes then
       FileText.Add('force_copy_modules=true')
@@ -296,10 +296,10 @@ type
     FileText.Add('opsi_admin_user_password=' + Data.adminPassword);
     FileText.Add('opsi_online_repository=' + Data.repo);
     FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
-    FileText.Add('patch_default_link_for_bootimage=' + symlink);
+    FileText.Add('patch_default_link_for_bootimage=' + Data.symlink);
     FileText.Add('proxy=' + Data.proxy);
-    FileText.Add('repo_kind=' + repoKind);
-    FileText.Add('ucs_master_admin_password=' + ucsPassword);
+    FileText.Add('repo_kind=' + Data.repoKind);
+    FileText.Add('ucs_master_admin_password=' + Data.ucsPassword);
     // update_test shall always be false
     FileText.Add('update_test=false');
 
@@ -328,11 +328,11 @@ type
     ReleaseKeyRepo := TLinuxRepository.Create(Data.DistrInfo.Distr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
     if Data.opsiVersion = 'Opsi 4.1' then
-      ReleaseKeyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
+      ReleaseKeyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(Data.repoKind))
     else
-      ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
+      ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(Data.repoKind));
     // define repo url
-    url := Data.repo + repoKind + '/' + Data.DistrInfo.DistrRepoUrlPart;
+    url := Data.repo + Data.repoKind + '/' + Data.DistrInfo.DistrRepoUrlPart;
 
     // !following lines need an existing LogDatei
     if (Data.DistrInfo.DistroName = 'openSUSE') or (Data.DistrInfo.DistroName = 'SUSE') then
@@ -665,10 +665,10 @@ type
     else
     begin
       if input = 'm' then
-        backend := 'mysql'
+        Data.backend := 'mysql'
       else
-        backend := 'file'; // cases input = 'f', input = ''
-      if backend = 'mysql' then
+        Data.backend := 'file'; // cases input = 'f', input = ''
+      if Data.backend = 'mysql' then
         QueryModules
       else
         QueryRepoKind;
@@ -716,7 +716,7 @@ type
     end;
     if input = '-b' then
     begin
-      if backend = 'mysql' then
+      if Data.backend = 'mysql' then
         QueryModules
       else
         QueryBackend;
@@ -724,11 +724,11 @@ type
     else
     begin
       if input = 'e' then
-        repoKind := 'experimental'
+        Data.repoKind := 'experimental'
       else if input = 't' then
-        repoKind := 'testing'
+        Data.repoKind := 'testing'
       else
-        repoKind := 'stable'; // cases input = 's', input = ''
+        Data.repoKind := 'stable'; // cases input = 's', input = ''
       if Data.DistrInfo.DistroName = 'Univention' then
         QueryUCS
       else
@@ -750,7 +750,7 @@ type
     end
     else // go forward
     begin
-      ucsPassword := input;
+      Data.ucsPassword := input;
       if Data.CustomSetup then
         QueryReboot
       else
@@ -852,9 +852,9 @@ type
     else
     begin
       if input = 'm' then
-        symlink := 'default.menu'
+        Data.symlink := 'default.menu'
       else
-        symlink := 'default.nomenu'; // cases input = 'nom', input = ''
+        Data.symlink := 'default.nomenu'; // cases input = 'nom', input = ''
       QueryNetmask;
     end;
   end;
@@ -1176,23 +1176,23 @@ type
       writeln(Counter, ' ', rsRepoNoCacheO, Data.repoNoCache);
       queries.Add('4');
       Inc(Counter);
-      writeln(Counter, ' ', rsBackendO, backend);
+      writeln(Counter, ' ', rsBackendO, Data.backend);
       queries.Add('5');
       Inc(Counter);
-      if backend = 'mysql' then
+      if Data.backend = 'mysql' then
       begin
         writeln(Counter, ' ', rsCopyModulesO, copyMod);
         queries.Add('6');
         Inc(Counter);
       end;
-      writeln(Counter, ' ', rsRepoKindO, repoKind);
+      writeln(Counter, ' ', rsRepoKindO, Data.repoKind);
       queries.Add('7');
       Inc(Counter);
     end;
     {Both}
     if Data.DistrInfo.DistroName = 'Univention' then
     begin
-      writeln(Counter, ' ', rsUCSO, ucsPassword);
+      writeln(Counter, ' ', rsUCSO, Data.ucsPassword);
       queries.Add('8');
       Inc(Counter);
     end;
@@ -1209,7 +1209,7 @@ type
     Inc(Counter);
     if dhcp = rsYes then
     begin
-      writeln(Counter, ' ', rsTFTPROOTO, symlink);
+      writeln(Counter, ' ', rsTFTPROOTO, Data.symlink);
       queries.Add('11');
       Inc(Counter);
       writeln(Counter, ' ', rsNetmaskO, Data.netmask);
@@ -1341,7 +1341,7 @@ type
   begin
     LogDatei.log('Read properties from file:', LLdebug);
     // Read from file what is required for adding the repo
-    repoKind := PropsFile.Values['repo_kind'];
+    Data.repoKind := PropsFile.Values['repo_kind'];
     Data.repo := PropsFile.Values['opsi_online_repository'];
 
     // Read opsi version from repo url
