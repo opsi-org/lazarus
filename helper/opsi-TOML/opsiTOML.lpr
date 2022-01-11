@@ -76,14 +76,14 @@ begin
   if ( SaveToTOMLFile(myTOMLString, newFilePath) ) then
      writeln('- SaveToTOMLFile with String parameter done')
   else
-      writeln('- SaveToTOMLFile with String parameter not done');
+      writeln('- SaveToTOMLFile with String parameter failed');
 
   (*
   writeln('--- Testing SaveToTOMLFile (from TTOMLDocument to File)') ;
   if ( SaveToTOMLFile(myTOML, newFilePath) ) then
      writeln('- SaveToTOMLFile with TTOMLDocument parameter done')
   else
-      writeln('- SaveToTOMLFile with TTOMLDocument parameter not done');
+      writeln('- SaveToTOMLFile with TTOMLDocument parameter failed');
   *)
 
 
@@ -92,7 +92,7 @@ begin
   if ( ConvertTOMLtoJSON(filePath, JSONpath)) then
      writeln('--- ConvertTOMLtoJSON done')
   else
-      writeln('--- ConvertTOMLtoJSON not done');
+      writeln('--- ConvertTOMLtoJSON failed');
 
 
   writeln('--- Testing LoadTOMLFile :  ');
@@ -199,7 +199,7 @@ begin
 
   writeln('--- Testing adding data to TOML  ');
 
-  myTOML.Add('newKey','newValue');
+  //myTOML.Add('newKey','newValue');
 
   writeln('myTOML.Keys[0] :' + myTOML.Keys[0]);
   writeln('myTOML.Values[0]:' + String(myTOML.Values[0]));
@@ -207,9 +207,48 @@ begin
   writeln('myTOML.Keys[1] :' + myTOML.Keys[1]);
   writeln('myTOML.Values[1]:' + String(myTOML.Values[1]));
 
-  writeln('myTOML.Keys[5] :' + myTOML.Keys[5]);
-  writeln('myTOML.Values[5]:' + String(myTOML.Values[5]));
+  writeln('--- Testing AddKeyValueToTOMLFile in root Table ');
+  if AddKeyValueToTOMLFile(filePath,'newNeeeeewKey', '"newNeeewValue"') = true then
+     writeln('- AddKeyValueToTOMLFile in root Table done')
+  else
+      writeln('- AddKeyValueToTOMLFile in root Table failed');
 
+  writeln('--- Testing AddKeyValueToTOMLFile in sub-Table ');
+  if AddKeyValueToTOMLFile(filePath,'servers.alpha.newKey', '1') = true then
+     writeln('- AddKeyValueToTOMLFile in sub-Table done')
+  else
+      writeln('- AddKeyValueToTOMLFile in sub-Table failed');
+
+ myTOML := GetTOMLDocument(filePath) ;
+ writeln(myTOML.AsJSON.FormatJSON);
+
+  writeln('--- Testing AddKeyValueToTOMLFile with a new table ');
+  if AddKeyValueToTOMLFile(filePath,'newTable.newTableKey', '"newValue in newTable"') = true then
+     writeln('- AddKeyValueToTOMLFile with a new table done')
+  else
+      writeln('- AddKeyValueToTOMLFile with a new table failed');
+
+    writeln('--- Testing AddKeyValueToTOMLFile with a new sub-table ');
+
+  if AddKeyValueToTOMLFile(filePath,'newSubTable.newSubTableKey', '"newValue in newSubTable"') = true then
+     writeln('- AddKeyValueToTOMLFile with a new sub-table done')
+  else
+      writeln('- AddKeyValueToTOMLFile with a new sub-table failed');
+
+
+  writeln('--- Getting final TOMLTable :  ');
+
+  myTOMLTable:= GetTOMLTable(myTOML,'newTable');
+  writeln(myTOMLTable.AsJSON.FormatJSON);
+
+  writeln('--- Testing GetTOMLDocument ');
+  myTOML := GetTOMLDocument(filePath) ;
+
+  writeln('--- Testing TOML.AsJSON :');
+  writeln(myTOML.AsJSON.FormatJSON);
+
+  (*
+  // These data types are supported
   writeln('--- Testing adding String data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newKeyInOwner','newValueInOwner');
 
@@ -221,17 +260,6 @@ begin
 
   writeln('--- Testing adding Boolean data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newBooleanValue', true);
-
-  (*
-  writeln('--- Testing adding Octal data to TOML sub Table ');
-  AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
-
-  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
-  AddKeyValueToTOML(myTOML,'owner.newHexadecimalValue',myHexadecimal);
-
-  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
-  AddKeyValueToTOML(myTOML,'owner.newBinaryValue',myBinary);
-  *)
 
   writeln('--- Testing adding DateTime data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newDateTimeValue','1979-05-27');
@@ -246,39 +274,20 @@ begin
   //myNewTOML:= GetTOML(myValue);
 
   AddKeyValueToTOML(myTOML,'owner.newArrayValue',myArray);
+  *)
 
-  myTOMLTable:= GetTOMLTable(myTOML,'owner');
-  //myTOMLTable:= TTOMLTable(myTOML.Items[1]);
-  writeln(myTOMLTable.AsJSON.FormatJSON);
+  (*
+  // These data types are not supported
+  writeln('--- Testing adding Octal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
 
-  writeln('owner.Keys[6] :' + myTOMLTable.Keys[6]);
-  writeln('owner.Values[6]:' + String(myTOMLTable.Values[6]));
+  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newHexadecimalValue',myHexadecimal);
 
-  writeln('owner.Keys[7] :' + myTOMLTable.Keys[7]);
-  writeln('owner.Values[7]:' + String(myTOMLTable.Values[7]));
+  writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
+  AddKeyValueToTOML(myTOML,'owner.newBinaryValue',myBinary);
+  *)
 
-  writeln(myTOML.AsJSON.FormatJSON);
-
-  writeln('--- Testing adding new Table to TOML file ');
-  AddKeyValueToTOML(myTOML,'newTable.newTableKey','newValue in newTable');
-
-  tableNamesList := GetTOMLTableNames(myTOML);
-  writeln('myTOML has tables :');
-  writeln(tableNamesList.Text);
-
-  writeln('--- Testing adding new sub-table to TOML sub Table ');
-  AddKeyValueToTOML(myTOML,'owner.newSubTable.newSubTableKey','newValue in newSubTable');
-
-  writeln('--- Getting final TOMLTable :  ');
-
-  myTOMLTable:= GetTOMLTable(myTOML,'owner');
-  writeln(myTOMLTable.AsJSON.FormatJSON);
-
-  myTOMLTable:= GetTOMLTable(myTOML,'newTable');
-  writeln(myTOMLTable.AsJSON.FormatJSON);
-
-  writeln('--- Testing TOML.AsJSON :');
-  //writeln(myTOML.AsJSON.FormatJSON);
 
   (*
   if map.TryGetData('title', myData) then
@@ -304,8 +313,6 @@ begin
   //writeln('ports:');
   //for myData in myTOML['database']['ports'] do
   //  writeln('  - ', string(myData));
-
-
 
 
   {*
