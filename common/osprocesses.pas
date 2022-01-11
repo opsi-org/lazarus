@@ -119,7 +119,7 @@ begin
       lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
       {$IFDEF DARWIN}
-      pscmd := 'ps -eco pid,pppid,user,comm';
+      pscmd := 'ps -eco pid,ppid,user,comm';
       {$ENDIF DARWIN}
       {$IFDEF OPSISCRIPT}
       if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
@@ -176,9 +176,10 @@ begin
                 else
                   cmdstr := cmdstr + lineparts.Strings[k] + ' ';
               end;
+              cmdstr := trim(cmdstr);
               fullcmdstr := cmdstr;
             {$ENDIF DARWIN}
-              resultstring := cmdstr + ';' + pidstr + ';' + ppidstr +
+              resultstring := cmdstr + ';' + trim(pidstr) + ';' + trim(ppidstr) +
                 ';' + userstr + ';' + fullcmdstr;
               LogDatei.log(resultstring, LLDebug3);
               //resultstring := lineparts.Strings[0] + ';';
