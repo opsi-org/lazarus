@@ -28,7 +28,6 @@ type
   private
   var
     input: string;
-    opsiVersion, repo, proxy, repoNoCache: string;
     backend, copyMod, repoKind: string;
     ucsPassword, reboot, dhcp, symlink: string;
     NetworkDetails: array of string;
@@ -178,13 +177,13 @@ type
   procedure TQuickInstall.SetDefaultValues;
   begin
     LogDatei.log('Set default values', LLdebug);
-    opsiVersion := 'Opsi 4.2';
-    if opsiVersion = 'Opsi 4.1' then
-      repo := Data.baseRepoUrlOpsi41
+    Data.opsiVersion := 'Opsi 4.2';
+    if Data.opsiVersion = 'Opsi 4.1' then
+      Data.repo := Data.baseRepoUrlOpsi41
     else
-      repo := Data.baseRepoUrlOpsi42;
-    proxy := '';
-    repoNoCache := repo;
+      Data.repo := Data.baseRepoUrlOpsi42;
+    Data.proxy := '';
+    Data.repoNoCache := Data.repo;
     backend := 'file';
     copyMod := rsNo;
     repoKind := 'stable';
@@ -297,10 +296,10 @@ type
     FileText.Add('network=' + networkAddress);
     FileText.Add('opsi_admin_user_name=' + adminName);
     FileText.Add('opsi_admin_user_password=' + adminPassword);
-    FileText.Add('opsi_online_repository=' + repo);
-    FileText.Add('opsi_noproxy_online_repository=' + repoNoCache);
+    FileText.Add('opsi_online_repository=' + Data.repo);
+    FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
     FileText.Add('patch_default_link_for_bootimage=' + symlink);
-    FileText.Add('proxy=' + proxy);
+    FileText.Add('proxy=' + Data.proxy);
     FileText.Add('repo_kind=' + repoKind);
     FileText.Add('ucs_master_admin_password=' + ucsPassword);
     // update_test shall always be false
@@ -330,12 +329,12 @@ type
     // create repository (no password, user is root):
     ReleaseKeyRepo := TLinuxRepository.Create(Data.DistrInfo.Distr, '', False);
     // set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-    if opsiVersion = 'Opsi 4.1' then
+    if Data.opsiVersion = 'Opsi 4.1' then
       ReleaseKeyRepo.GetDefaultURL(Opsi41, stringToOpsiBranch(repoKind))
     else
       ReleaseKeyRepo.GetDefaultURL(Opsi42, stringToOpsiBranch(repoKind));
     // define repo url
-    url := repo + repoKind + '/' + Data.DistrInfo.DistrRepoUrlPart;
+    url := Data.repo + repoKind + '/' + Data.DistrInfo.DistrRepoUrlPart;
 
     // !following lines need an existing LogDatei
     if (Data.DistrInfo.DistroName = 'openSUSE') or (Data.DistrInfo.DistroName = 'SUSE') then
@@ -394,7 +393,7 @@ type
     installationResult: string;
   begin
     LogDatei.log('Entered InstallOpsi', LLdebug);
-    writeln(rsInstall + opsiVersion + ':');
+    writeln(rsInstall + Data.opsiVersion + ':');
     addRepo;
 
     // install opsi-server
@@ -444,19 +443,19 @@ type
       installationResult := rsFailed;
       writeln(rsInstallation + rsFailed + '.');
       LogDatei.log('Installation failed: ' + name_current_los, LLessential);
-      LogDatei.log(opsiVersion + ' installation failed', LLessential);
+      LogDatei.log(Data.opsiVersion + ' installation failed', LLessential);
       ExitCode := 1;
     end
     else
     begin
       installationResult := rsSuccess;
       LogDatei.log('Installation successful: ' + name_current_los, LLessential);
-      LogDatei.log(opsiVersion + ' installation successful', LLessential);
+      LogDatei.log(Data.opsiVersion + ' installation successful', LLessential);
     end;
     // print result of installation
     Sleep(1000);
     writeln();
-    writeln(rsInstallationOf + opsiVersion + ' ' + installationResult + '!');
+    writeln(rsInstallationOf + Data.opsiVersion + ' ' + installationResult + '!');
     Sleep(1000);
     writeln();
     writeln(rsLog);
@@ -571,9 +570,9 @@ type
   procedure TQuickInstall.QueryRepo;
   begin
     // repo:
-    if opsiVersion = 'Opsi 4.1' then
+    if Data.opsiVersion = 'Opsi 4.1' then
       writeln(rsRepo, ' [Example: ', Data.baseRepoUrlOpsi41, ']', '*')
-    else if opsiVersion = 'Opsi 4.2' then
+    else if Data.opsiVersion = 'Opsi 4.2' then
       writeln(rsRepo, ' [Example: ', Data.baseRepoUrlOpsi42, ']', '*');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
@@ -589,12 +588,12 @@ type
       QuerySetupType
     else
     begin
-      repo := input;
-      if (input = '') and (opsiVersion = 'Opsi 4.1') then
-        repo := Data.baseRepoUrlOpsi41
+      Data.repo := input;
+      if (input = '') and (Data.opsiVersion = 'Opsi 4.1') then
+        Data.repo := Data.baseRepoUrlOpsi41
       else
-      if (input = '') and (opsiVersion = 'Opsi 4.2') then
-        repo := Data.baseRepoUrlOpsi42;
+      if (input = '') and (Data.opsiVersion = 'Opsi 4.2') then
+        Data.repo := Data.baseRepoUrlOpsi42;
       QueryProxy;
     end;
   end;
@@ -617,10 +616,10 @@ type
       begin
         writeln('Which Proxy would you like to use? [Example: "http://myproxy.dom.org:8080"]');
         readln(input);
-        proxy := input;
+        Data.proxy := input;
       end
       else
-        proxy := '';
+        Data.proxy := '';
       QueryRepoNoCache;
     end;
   end;
@@ -628,9 +627,9 @@ type
   procedure TQuickInstall.QueryRepoNoCache;
   begin
     // repo without cache proxy:
-    if opsiVersion = 'Opsi 4.1' then
+    if Data.opsiVersion = 'Opsi 4.1' then
       writeln(rsRepoNoCache, ' [Example: ', Data.baseRepoUrlOpsi41, ']')
-    else if opsiVersion = 'Opsi 4.2' then
+    else if Data.opsiVersion = 'Opsi 4.2' then
       writeln(rsRepoNoCache, ' [Example: ', Data.baseRepoUrlOpsi42, ']');
     readln(input);
     while ((Pos('http', input) <> 1) and (input <> '-b') and (input <> '')) do
@@ -642,9 +641,9 @@ type
       QueryProxy
     else
     begin
-      repoNoCache := input;
+      Data.repoNoCache := input;
       if input = '' then
-        repoNoCache := repo;
+        Data.repoNoCache := Data.repo;
       QueryBackend;
     end;
   end;
@@ -1160,23 +1159,23 @@ type
     writeln('');
     writeln(rsOverview);
     if not Data.CustomSetup then
-      writeln(rsOpsiVersionO, opsiVersion)
+      writeln(rsOpsiVersionO, Data.opsiVersion)
     else
     begin
-      writeln(Counter, ' ', rsOpsiVersionO, opsiVersion);
+      writeln(Counter, ' ', rsOpsiVersionO, Data.opsiVersion);
       queries.Add('1');
       Inc(Counter);
     end;
     {Custom installation}
     if Data.CustomSetup then
     begin
-      writeln(Counter, ' ', rsRepoO, repo);
+      writeln(Counter, ' ', rsRepoO, Data.repo);
       queries.Add('2');
       Inc(Counter);
-      writeln(Counter, ' ', rsProxyO, proxy);
+      writeln(Counter, ' ', rsProxyO, Data.proxy);
       queries.Add('3');
       Inc(Counter);
-      writeln(Counter, ' ', rsRepoNoCacheO, repoNoCache);
+      writeln(Counter, ' ', rsRepoNoCacheO, Data.repoNoCache);
       queries.Add('4');
       Inc(Counter);
       writeln(Counter, ' ', rsBackendO, backend);
@@ -1345,13 +1344,13 @@ type
     LogDatei.log('Read properties from file:', LLdebug);
     // Read from file what is required for adding the repo
     repoKind := PropsFile.Values['repo_kind'];
-    repo := PropsFile.Values['opsi_online_repository'];
+    Data.repo := PropsFile.Values['opsi_online_repository'];
 
     // Read opsi version from repo url
-    if Pos('4.1', repo) > 0 then
-      opsiVersion := 'Opsi 4.1'
+    if Pos('4.1', Data.repo) > 0 then
+      Data.opsiVersion := 'Opsi 4.1'
     else
-      opsiVersion := 'Opsi 4.2';
+      Data.opsiVersion := 'Opsi 4.2';
 
     InstallOpsi;
   end;
