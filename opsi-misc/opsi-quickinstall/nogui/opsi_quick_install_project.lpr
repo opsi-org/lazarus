@@ -31,8 +31,6 @@ type
     backend, copyMod, repoKind: string;
     ucsPassword, reboot, dhcp, symlink: string;
     NetworkDetails: array of string;
-    netmask, networkAddress, domain, nameserver, gateway: string;
-    adminName, adminPassword, ipName, ipNumber: string;
     FileText, PropsFile: TStringList;
     QuickInstallCommand: TRunCommandElevated;
     DirClientData, Output: string;
@@ -191,15 +189,15 @@ type
     reboot := rsNo;
     dhcp := rsNo;
     symlink := 'default.nomenu';
-    netmask := '255.255.0.0';
-    networkAddress := '192.168.0.0';
-    domain := 'uib.local';
-    nameserver := '192.168.1.245';
-    gateway := '192.168.1.245';
-    adminName := 'adminuser';
-    adminPassword := 'linux123';
-    ipName := 'auto';
-    ipNumber := 'auto';
+    Data.netmask := '255.255.0.0';
+    Data.networkAddress := '192.168.0.0';
+    Data.domain := 'uib.local';
+    Data.nameserver := '192.168.1.245';
+    Data.gateway := '192.168.1.245';
+    Data.adminName := 'adminuser';
+    Data.adminPassword := 'linux123';
+    Data.ipName := 'auto';
+    Data.ipNumber := 'auto';
   end;
 
   procedure TQuickInstall.DefineDirClientData;
@@ -279,23 +277,23 @@ type
     else
       FileText.Add('allow_reboot=false');
     FileText.Add('backend=' + backend);
-    FileText.Add('dnsdomain=' + domain);
+    FileText.Add('dnsdomain=' + Data.domain);
     if copyMod = rsYes then
       FileText.Add('force_copy_modules=true')
     else
       FileText.Add('force_copy_modules=false');
-    FileText.Add('gateway=' + gateway);
+    FileText.Add('gateway=' + Data.gateway);
     if dhcp = rsYes then
       FileText.Add('install_and_configure_dhcp=true')
     else
       FileText.Add('install_and_configure_dhcp=false');
-    FileText.Add('myipname=' + ipName);
-    FileText.Add('myipnumber=' + ipNumber);
-    FileText.Add('nameserver=' + nameserver);
-    FileText.Add('netmask=' + netmask);
-    FileText.Add('network=' + networkAddress);
-    FileText.Add('opsi_admin_user_name=' + adminName);
-    FileText.Add('opsi_admin_user_password=' + adminPassword);
+    FileText.Add('myipname=' + Data.ipName);
+    FileText.Add('myipnumber=' + Data.ipNumber);
+    FileText.Add('nameserver=' + Data.nameserver);
+    FileText.Add('netmask=' + Data.netmask);
+    FileText.Add('network=' + Data.networkAddress);
+    FileText.Add('opsi_admin_user_name=' + Data.adminName);
+    FileText.Add('opsi_admin_user_password=' + Data.adminPassword);
     FileText.Add('opsi_online_repository=' + Data.repo);
     FileText.Add('opsi_noproxy_online_repository=' + Data.repoNoCache);
     FileText.Add('patch_default_link_for_bootimage=' + symlink);
@@ -904,7 +902,7 @@ type
         QueryLink
       else
       begin
-        netmask := input;
+        Data.netmask := input;
         QueryNetworkAddress;
       end;
     end;
@@ -953,7 +951,7 @@ type
       QueryNetmask
     else
     begin
-      networkAddress := input;
+      Data.networkAddress := input;
       QueryDomain;
     end;
   end;
@@ -995,7 +993,7 @@ type
       QueryNetworkAddress
     else
     begin
-      domain := input;
+      Data.domain := input;
       QueryNameserver;
     end;
   end;
@@ -1036,7 +1034,7 @@ type
         QueryDomain
       else
       begin
-        nameserver := input;
+        Data.nameserver := input;
         QueryGateway;
       end;
     end;
@@ -1064,7 +1062,7 @@ type
       QueryNameserver
     else
     begin
-      gateway := input;
+      Data.gateway := input;
       QueryAdminName;
     end;
   end;
@@ -1088,7 +1086,7 @@ type
     end
     else
     begin
-      adminName := input;
+      Data.adminName := input;
       if input = '' then
         QueryIPName
       else
@@ -1105,7 +1103,7 @@ type
       QueryAdminName
     else
     begin
-      adminPassword := input;
+      Data.adminPassword := input;
       QueryIPName;
     end;
   end;
@@ -1117,14 +1115,14 @@ type
     readln(input);
     if input = '-b' then
     begin
-      if adminName = '' then
+      if Data.adminName = '' then
         QueryAdminName
       else
         QueryAdminPass;
     end
     else
     begin
-      ipName := input;
+      Data.ipName := input;
       QueryIPNumber;
     end;
   end;
@@ -1138,7 +1136,7 @@ type
       QueryIPName
     else
     begin
-      ipNumber := input;
+      Data.ipNumber := input;
       QueryOverview;
     end;
   end;
@@ -1214,35 +1212,35 @@ type
       writeln(Counter, ' ', rsTFTPROOTO, symlink);
       queries.Add('11');
       Inc(Counter);
-      writeln(Counter, ' ', rsNetmaskO, netmask);
+      writeln(Counter, ' ', rsNetmaskO, Data.netmask);
       queries.Add('12');
       Inc(Counter);
-      writeln(Counter, ' ', rsNetworkO, networkAddress);
+      writeln(Counter, ' ', rsNetworkO, Data.networkAddress);
       queries.Add('13');
       Inc(Counter);
-      writeln(Counter, ' ', rsDomainO, domain);
+      writeln(Counter, ' ', rsDomainO, Data.domain);
       queries.Add('14');
       Inc(Counter);
-      writeln(Counter, ' ', rsNameserverO, nameserver);
+      writeln(Counter, ' ', rsNameserverO, Data.nameserver);
       queries.Add('15');
       Inc(Counter);
-      writeln(Counter, ' ', rsGatewayO, gateway);
+      writeln(Counter, ' ', rsGatewayO, Data.gateway);
       queries.Add('16');
       Inc(Counter);
     end;
-    writeln(Counter, ' ', rsAdminNameO, adminName);
+    writeln(Counter, ' ', rsAdminNameO, Data.adminName);
     queries.Add('17');
     Inc(Counter);
-    if adminName <> '' then
+    if Data.adminName <> '' then
     begin
-      writeln(Counter, ' ', rsAdminPasswordO, adminPassword);
+      writeln(Counter, ' ', rsAdminPasswordO, Data.adminPassword);
       queries.Add('18');
       Inc(Counter);
     end;
-    writeln(Counter, ' ', rsIPNameO, ipName);
+    writeln(Counter, ' ', rsIPNameO, Data.ipName);
     queries.Add('19');
     Inc(Counter);
-    writeln(Counter, ' ', rsIPNumberO, ipNumber);
+    writeln(Counter, ' ', rsIPNumberO, Data.ipNumber);
     queries.Add('20');
     //writeln(queries.Text);
 
