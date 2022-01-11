@@ -330,7 +330,7 @@ var
   i: integer;
   searchpid, parentpid: dword;
   tmpstr: string;
-  basestr: string;
+  basestr, searchstr: string;
   copystart1, copylength1, copystart2, copylength2: integer;
 
   function getPidOfProc(searchproc: string): dword;
@@ -356,6 +356,21 @@ var
       end;
     end;
     *)
+    {$IFDEF LINUX}
+    {in processlist we get " shortcmd ; ....." }
+    {shortcmd has max length 15 and the rest does not help really }
+    {so we try find an exact match in shortcmd }
+    if length(searchproc) > 15 then
+    begin
+      searchstr := searchproc;
+      searchproc := trim(copy(searchstr, 1, 15));
+      logdatei.log(
+        'Process name to find (' + searchstr +
+        ') is wider then 15 chars. Searching for: (' + searchproc +
+        '). The result may not be exact',
+        LLwarning);
+    end;
+    {$ENDIF LINUX}
     Result := 0;
     mypidstr := proc2pid.Values[searchproc];
     if TryStrToDWord(mypidstr, Result) then
