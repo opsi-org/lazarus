@@ -12,6 +12,7 @@ type
   {DistributionInfo}
   TDistributionInfo = class(TObject)
   private
+  var
     FDistroName: string;
     FDistroRelease: string;
     FDistr: TDistribution;
@@ -23,6 +24,7 @@ type
       #10 + 'openSUSE 15.1, openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
       'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'Univention 4.4';
+
     constructor Create(DistroName: string; DistroRelease: string);overload;
     procedure SetNameAndRelease(DistroName: string; DistroRelease: string);
     procedure CorrectDistributionNameAndRelease(DistroName: string; DistroRelease: string);
