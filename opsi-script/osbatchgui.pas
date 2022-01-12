@@ -104,6 +104,7 @@ type
     procedure showActivityBar(show : boolean);
     procedure showProgressBar(b: boolean);
     procedure setActivityLabel(s: string);
+    procedure UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -1251,7 +1252,12 @@ begin
   MoveToDefaultPosition;
 end;
 
-
+procedure TFBatchOberflaeche.UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
+begin
+  SetProgress(round(Pct), pPercent);
+  ShowMessage(Pct.ToString);
+  Application.ProcessMessages;
+end;
 
 initialization
 

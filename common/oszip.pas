@@ -16,7 +16,8 @@ uses
   oslog,
   //{$ENDIF OSLOG}
   LConvEncoding,
-  lazutf8;
+  lazutf8,
+  osGUIControl;
 
 // Zip a folder which contains subfolders and files.
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
@@ -121,6 +122,7 @@ begin
   end;
 end;
 
+
 // unzip to the target directory or to the zip file directory(if target Directory is not mentioned),
 // while preserving its directory structure.
 function UnzipWithDirStruct(File2Unzip, TargetDir: string): boolean;
@@ -129,6 +131,13 @@ var
 begin
   Result := False;
   UnzipperObj := TUnZipper.Create;
+  {$IFDEF GUI}
+  {$IFDEF OPSISCRIPT}
+  FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
+  FBatchOberflaeche.SetProgress(0,pPercent);
+  UnzipperObj.OnProgress := @FBatchOberflaeche.UnzipFileProgressBarHandler;
+  {$ENDIF OPSISCRIPT}
+  {$ENDIF GUI}
   if FileExists(File2Unzip) then
   begin
     if (DirectoryExists(TargetDir)) or (TargetDir = '') then
@@ -143,6 +152,11 @@ begin
         UnzipperObj.UnZipAllFiles;
         Result := True;
       finally
+        {$IFDEF GUI}
+        {$IFDEF OPSISCRIPT}
+        FBatchOberflaeche.SetElementVisible(False, eProgressBar);
+        {$ENDIF OPSISCRIPT}
+        {$ENDIF GUI}
         UnzipperObj.Free;
       end;
     end;
