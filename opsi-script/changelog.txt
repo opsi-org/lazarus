@@ -7,7 +7,7 @@ opsi-script (4.12.4.35) stable; urgency=low
 
   * osparser: getMSVersionMap: remove double ReleaseID=
   * osparser: executeWith: AllSigned Hack: use:
-        "Get-Content -Raw -Path '+ tempfilename +' | Out-String | Invoke-Expression"
+        "Get-Content -Path '+ tempfilename +' | Out-String | Invoke-Expression"
   * osparser: new function getMSVersionName: string
   * oslinmount: replace getGeneralConfigValue by configState_getObjects
   * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
