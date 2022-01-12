@@ -20,6 +20,7 @@ opsi-script (4.12.4.35) stable; urgency=low
   * osprocesses: isProcessChildOf also for win64
   * oswebservice: sendlog: fix boolean values for append at log_write
   * osfunclin: getProfilesDirListLin fix non standard lines from getent passwd
+  * osparser: executewith: powershell: remove a trailing '-file' from programparas
 
 -- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
 

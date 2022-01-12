@@ -11545,7 +11545,11 @@ begin
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
+      // we add '-file ' as last param for powershell
       powershellpara := ' -file ';
+      // It may be that the customer did this before and '- file ' is the end of programparas
+      // so we shoud remove this (even for AllSigned hack)
+      programparas := copy(programparas,1,length(programparas) - rpos(' -file',LowerCase(programparas)));
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
