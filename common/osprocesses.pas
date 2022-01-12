@@ -378,15 +378,16 @@ var
         'Process name to find (' + searchstr +
         ') is wider then 15 chars. Searching for: (' + searchproc +
         '). The result may not be exact',
-        LLwarning);
+        LLInfo);
     end;
     {$ENDIF LINUX}
     Result := 0;
     mypidstr := proc2pid.Values[searchproc];
+    if mypidstr <> '' then
     if TryStrToDWord(mypidstr, Result) then
     begin
       logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
-        ' is: ' + mypidstr, LLinfo);
+        ' is: ' + mypidstr, LLDebug);
     end
     else
     begin
@@ -394,7 +395,7 @@ var
       logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
     end;
     if Result = 0 then
-      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
+      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLDebug);
   end;
 
   function getParentPid(basepid: dword): dword;
