@@ -11634,7 +11634,7 @@ begin
         //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
         //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
         commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Raw -Path ' +
+          ' ' + powershellpara + '"Get-Content -Path ' +
           tempfilename + ' | Out-String | Invoke-Expression" ';
       end
       else
