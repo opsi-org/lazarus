@@ -7,7 +7,7 @@ opsi-script (4.12.4.35) stable; urgency=low
 
   * osparser: getMSVersionMap: remove double ReleaseID=
   * osparser: executeWith: AllSigned Hack: use:
-        "Get-Content -Raw -Path '+ tempfilename +' | Out-String | Invoke-Expression"
+        "Get-Content -Path '+ tempfilename +' | Out-String | Invoke-Expression"
   * osparser: new function getMSVersionName: string
   * oslinmount: replace getGeneralConfigValue by configState_getObjects
   * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
@@ -19,6 +19,10 @@ opsi-script (4.12.4.35) stable; urgency=low
   * write now component logs to subdir 'lastprodlogs'
   * osprocesses: isProcessChildOf also for win64
   * oswebservice: sendlog: fix boolean values for append at log_write
+  * osfunclin: getProfilesDirListLin fix non standard lines from getent passwd
+  * osparser: executewith: powershell: remove a trailing '-file' from programparas
+  * osGUIcontrol: skindirectoryDevelopment = '../../../skin';
+  * osGUIcontrol: Linux: skindirectoryCompatibility = '/opt/opsi-script/skin';
 
 -- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
 
