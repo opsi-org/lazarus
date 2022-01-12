@@ -72,19 +72,20 @@ type
 
 const
   {$IFDEF WINDOWS}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = 'skin';
   skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'customskin';
   skindirectoryCustomWinOld = '..'+PathDelim+'custom'+PathDelim+'winstskin';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = 'skin';
-  skindirectoryCompatibility = '/usr/share/opsi-script/skin';
+  //skindirectoryCompatibility = '/usr/share/opsi-script/skin';
+  skindirectoryCompatibility = '/opt/opsi-script/skin';
   skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = '../Resources/skin';
   skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
   {$ENDIF DARWIN}
