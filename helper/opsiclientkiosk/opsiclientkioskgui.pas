@@ -372,6 +372,11 @@ resourcestring
   rsInstallNowHint = 'Start the installation/update (uninstallation) of the selected products';
   rsStoreActionsHint =
     'Send the action requests to the server, show the resulting installations and ask for installation start.';
+  {DBGrid}
+  rsRequest = 'Request';
+  rsStatus = 'Status';
+  rsProductID = 'ID';
+  rsProductName = 'Software';
 
   {Dialogs }
   rsNoActionsFound = 'No action requests found.';
@@ -2569,17 +2574,18 @@ end;
 procedure TFormOpsiClientKiosk.InitDBGrids;
 begin
   { DBGrid1 }
-  DBGrid1.Columns.Add.FieldName := 'ProductId';
-  DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
-  DBGrid1.Columns.Items[0].Width := 150;
+  //DBGrid1.Columns.Add.FieldName := 'ProductId';
+  //DBGrid1.Columns.Items[0].Title.Caption := rsProductID;//'ProductId';
+  //DBGrid1.Columns.Items[0].Width := 150;
   DBGrid1.Columns.Add.FieldName := 'ProductName';
-  DBGrid1.Columns.Items[1].Width := 300;
+  DBGrid1.Columns.Items[0].Title.Caption := rsProductName;
+  DBGrid1.Columns.Items[0].Width := 300;
   DBGrid1.Columns.Add.FieldName := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Title.Caption := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Width := 100;
+  DBGrid1.Columns.Items[1].Title.Caption := rsStatus;//'InstallationStatus';
+  DBGrid1.Columns.Items[1].Width := 100;
   DBGrid1.Columns.Add.FieldName := 'actionrequest';
-  DBGrid1.Columns.Items[3].Title.Caption := 'ActionRequest';
-  DBGrid1.Columns.Items[3].Width := 100;
+  DBGrid1.Columns.Items[2].Title.Caption := rsRequest;//'ActionRequest';
+  DBGrid1.Columns.Items[2].Width := 100;
   //DBGrid1.Columns.Add.FieldName := 'updatePossible';
   //DBGrid1.Columns.Items[4].Title.Caption := 'updatePossible';
   //DBGrid1.Columns.Items[4].Width := 100;
