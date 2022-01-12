@@ -256,6 +256,7 @@ type
     DefaultSkinPath: string;
     SoftwareOnDemand : boolean;
     AdminMode : boolean;
+    DisableTilesView: boolean;
     ShowingFirstTime : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
@@ -970,6 +971,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
+    ConfigState.Free;
     if not SoftwareOnDemand then
     begin
       if FormHelpInfo.LabelModeInfo.Caption = '' then
@@ -989,6 +991,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
+    ConfigState.Free;
     if AdminMode and IsAdmin then
     begin
       if FormHelpInfo.LabelModeInfo.Caption = '' then
@@ -1006,9 +1009,12 @@ begin
         AdminMode := false;
       end;
     end;
-     //FormProgressWindow.ProgressBarDetail.Position := 100;
-    //Application.ProcessMessages;
+    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.disable-tilesview');
+    //ShowMessage(ConfigState.Text);
+    DisableTilesView := StrToBool(ConfigState.Strings[0]);
     ConfigState.Free;
+    //FormProgressWindow.ProgressBarDetail.Position := 100;
+    //Application.ProcessMessages;
 end;
 
 procedure TFormOpsiClientKiosk.InitDatabase;
@@ -1159,14 +1165,14 @@ begin
   if Request = 'none' then
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+    if not DisableTilesView then ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   end
   else
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
+    if not DisableTilesView then ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
   end;
-  ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
+  if not DisableTilesView then ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1200,8 +1206,8 @@ end;
 procedure TFormOpsiClientKiosk.SetView;
 begin
   DataModuleOCK.SQLQueryProductData.Open;
-  if FormHelpInfo.CheckBoxExpertMode.Checked
-    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
+  if (FormHelpInfo.CheckBoxExpertMode.Checked
+    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))) or DisableTilesView
   then SetListView
   else SetTilesView;
   FormOpsiClientKiosk.Repaint;
@@ -1728,7 +1734,9 @@ begin
   if (DBComboBox1.Text <> '') and not (DataModuleOCK.SQLQueryProductData.EOF and
     DataModuleOCK.SQLQueryProductData.BOF) then
   begin
-    Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
+    if not DisableTilesView then Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString)
+    else SelectedProduct := DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString;
+
     if DBComboBox1.Text = 'setup' then SetActionRequestListView('setup', rsWillInstallNextEvent, False);
     //if DBComboBox1.Text = 'update' then SetActionRequest('setup', rsWillUpdateNextEvent, False);
     if DBComboBox1.Text = 'uninstall' then SetActionRequestListView('uninstall', rsWillUninstallNextEvent, False);
@@ -2039,7 +2047,7 @@ begin
         { InitDatabase }
         InitDatabase;
         { Initialize GUI }
-        BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
+        if not DisableTilesView then BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
       except
         LogDatei.log('Error during startup.',LLError);
       end;
@@ -2048,7 +2056,7 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-  if FormHelpInfo.CheckBoxExpertMode.Checked then
+  if FormHelpInfo.CheckBoxExpertMode.Checked or DisableTilesView then
   begin
     { Expert mode }
     PanelExpertMode.Visible := True;
@@ -2060,6 +2068,7 @@ begin
       Constraints.MinWidth := MinWidthExpertMode;
       if Width < MinWidthExpertMode then Width := MinWidthExpertMode;
     end;
+    if DisableTilesView then RadioGroupView.Visible := false;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
@@ -2125,7 +2134,7 @@ begin
       LoadDataFromServer;
       InitDatabase;
       { Initialize GUI }
-      BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
+      if not DisableTilesView then BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
     except
       LogDatei.log('Error reloading data.',LLInfo);
     end;

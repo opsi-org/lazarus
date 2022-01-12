@@ -471,7 +471,7 @@ begin
   else
   begin
     Result.Add('False');
-    LogDatei.log('No ConfigState set for installation-now-button and/or admin-mode)!',LLInfo);
+    LogDatei.log('No ConfigState set for ' + ConfigProperty + ' !',LLInfo);
   end;
 end;
 

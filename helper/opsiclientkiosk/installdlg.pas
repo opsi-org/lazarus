@@ -28,6 +28,7 @@ type
   public
     { public declarations }
     SoftwareOnDemand : boolean;
+    UpdateData: boolean;
   end;
 
 var
@@ -57,6 +58,7 @@ begin
     screen.Cursor := crDefault;
   end;
   visible := false;
+  UpdateData:= true;
 end;
 
 procedure TFInstalldlg.FormActivate(Sender: TObject);
