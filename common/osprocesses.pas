@@ -104,6 +104,7 @@ var
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
+  defunct : boolean;
 begin
   try
     try
@@ -148,6 +149,9 @@ begin
               ppidstr := '';
               cmdstr := '';
               fullcmdstr := '';
+              defunct := false;
+              if pos('<defunct>',outlines.strings[i]) > 0 then
+                defunct := true;
               stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
             {$IFDEF LINUX}
               for k := 0 to lineparts.Count - 1 do
@@ -162,6 +166,11 @@ begin
                   cmdstr := lineparts.Strings[k]
                 else
                   fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+                if defunct then
+                begin
+                  // mark with brackets as defunct
+                  cmdstr := '['+cmdstr+']';
+                end;
               end;
             {$ENDIF LINUX}
             {$IFDEF DARWIN}
@@ -193,7 +202,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getUnixProcessList, system message: "' +
+        LogDatei.log('Exception in getUnixProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
