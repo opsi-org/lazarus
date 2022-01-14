@@ -34,8 +34,8 @@ function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
 
 function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
-//procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
-//procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
+procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
 
 implementation
 
@@ -342,153 +342,6 @@ begin
      result := defaultValue;
 end;
 
-function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
-var
-  myTOMLfile : TStringList;
-  keysArray : TStringList;
-  myTOML : TTOMLDocument;
-  myTOMLTable : TTOMLTable;
-  lineToAdd, line, tablePath, key, table, tableSection: String;
-  i, j, k : integer;
-begin
-  result := false;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  myTOMLfile := LoadTOMLFile(tomlFilePath);
-  myTOML:= GetTOML(myTOMLfile.Text);
-
-  keysArray := TStringList.Create;
-  keysArray.Delimiter := '.';
-  keysArray.StrictDelimiter := True;
-  keysArray.DelimitedText := keyPath;
-
-  if keysArray.Count=1 then
-    begin
-    if (keyPath='') or (value='') then
-      begin
-      result := false;
-      writeln('Error in AddKeyValueToTOMLFile : Key or value or both is/are empty');
-      end
-    else
-      begin
-      lineToAdd := keyPath +' = '+value;
-      try
-        if (myTOML.Find(keyPath) <> nil) then
-          writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
-        else
-          begin
-          i := 0;
-          j := 0;
-          repeat
-            line := myTOMLfile[i];
-            if LeftStr(trim(line),1)='[' then
-              begin
-              j := i -1;
-              myTOMLfile.Insert(j, lineToAdd);
-              writeln('Key-value inserted in line : ',j);
-              break;
-              end;
-            i := i + 1;
-          until i = myTOMLfile.Count -1;
-          if i = myTOMLfile.Count -1 then
-            begin
-            myTOMLfile.Add(lineToAdd);
-            writeln('Key-value added in line : ',i) ;
-            end;
-          myTOMLfile.SaveToFile(tomlFilePath);
-          result := True;
-          myTOMLfile.Free;
-          end;
-      except
-        on E:Exception do
-          writeln('Exception in AddKeyValueToTOMLFile '+ tomlFilePath +': ', E.Message);
-      end;
-      end;
-    end;
-
-
-  if keysArray.Count>=2 then
-  begin
-    key := keysArray[keysArray.Count-1];
-    tablePath := LeftStr(keyPath, length(keyPath)- length(keysArray[keysArray.Count-1]) - keysArray.Count +2);
-    if ((String(key)='') or (value='')) then
-      begin
-      result := false;
-      writeln('Error in AddKeyValueToTOMLFile : Key or value or both is/are empty');
-      end
-    else
-      begin
-
-      lineToAdd := key+' = '+value;
-      myTOMLTable := TTOMLTable(myTOML);
-      for i:=0 to keysArray.Count-2 do
-      begin
-        table := keysArray[i];
-        j := 0;
-        repeat
-          if (myTOMLTable.Keys[j]=table) then
-             begin
-             myTOMLTable := TTOMLTable(myTOMLTable.Items[j]);
-             lineToAdd := ' '+lineToAdd;
-             break;
-             end
-          else
-            j:= j+1;
-        until j = myTOMLTable.Count;
-      end;
-      if (myTOMLTable.Find(key) <> nil) then
-        writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
-      else
-        begin
-          try
-            tableSection := '['+tablePath+']' ;
-            i:=0;
-            repeat
-              line := myTOMLfile[i];
-              if trim(line) = tableSection then
-                begin
-                j:= i+1;
-                break;
-                end;
-              i := i + 1;
-            until i = myTOMLfile.Count -1;
-            if i = myTOMLfile.Count -1 then
-              begin
-              writeln('KeyPath : "'+ tablePath + '" does not exist in :' +tomlFilePath)
-              end;
-
-            repeat
-              line := myTOMLfile[j];
-              if LeftStr(trim(line),1)='[' then
-                begin
-                k := j -1;
-                myTOMLfile.Insert(k, lineToAdd);
-                writeln('Key-value inserted in line : ',k);
-                break;
-                end;
-              j := j + 1;
-            until j = myTOMLfile.Count -1;
-            if j = myTOMLfile.Count -1 then
-              begin
-              myTOMLfile.Add(lineToAdd);
-              writeln('Key-value added in line : ',j) ;
-              end;
-            myTOMLfile.SaveToFile(tomlFilePath);
-            result := True;
-            myTOMLfile.Free;
-          except
-          on E:Exception do
-            writeln('Exception in AddKeyValueToTOML : ', E.Message);
-          end;
-
-
-        end;
-
-      end;
-  end;
-
-end;
-
-(*
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 var
   tablePath : String;
@@ -568,7 +421,154 @@ begin
     end;
     end;
 end;
-*)
+
+// WORKING BUT NOT COMPLETE
+function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
+var
+  myTOMLfile : TStringList;
+  keysArray : TStringList;
+  myTOML : TTOMLDocument;
+  myTOMLTable : TTOMLTable;
+  lineToAdd, line, tablePath, key, table, tableSection: String;
+  i, j, k : integer;
+begin
+  result := false;
+  tomlFilePath := ExpandFileName(tomlFilePath);
+  myTOMLfile := LoadTOMLFile(tomlFilePath);
+  myTOML:= GetTOML(myTOMLfile.Text);
+
+  keysArray := TStringList.Create;
+  keysArray.Delimiter := '.';
+  keysArray.StrictDelimiter := True;
+  keysArray.DelimitedText := keyPath;
+
+  if keysArray.Count=1 then
+    begin
+    if (keyPath='') or (value='') then
+      begin
+      result := false;
+      writeln('Error in AddKeyValueToTOMLFile : Key or value or both is/are empty');
+      end
+    else
+      begin
+      lineToAdd := keyPath +' = '+value;
+      try
+        if (myTOML.Find(keyPath) <> nil) then
+          writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
+        else
+          begin
+          i := 0;
+          j := 0;
+          repeat
+            line := myTOMLfile[i];
+            if LeftStr(trim(line),1)='[' then
+              begin
+              j := i -1;
+              myTOMLfile.Insert(j, lineToAdd);
+              writeln('Key-value inserted in line : ',j);
+              break;
+              end;
+            i := i + 1;
+          until i = myTOMLfile.Count -1;
+          if i = myTOMLfile.Count -1 then
+            begin
+            myTOMLfile.Add(lineToAdd);
+            writeln('Key-value added in line : ',i) ;
+            end;
+          myTOMLfile.SaveToFile(tomlFilePath);
+          result := True;
+          myTOMLfile.Free;
+          end;
+      except
+        on E:Exception do
+          writeln('Exception in AddKeyValueToTOMLFile '+ tomlFilePath +': ', E.Message);
+      end;
+      end;
+    end;
+
+
+  if keysArray.Count>=2 then
+  begin
+    key := keysArray[keysArray.Count-1];
+    tablePath := LeftStr(keyPath, length(keyPath)- length(keysArray[keysArray.Count-1]) - 1);
+    if ((String(key)='') or (value='')) then
+      begin
+      result := false;
+      writeln('Error in AddKeyValueToTOMLFile : Key or value or both is/are empty');
+      end
+    else
+      begin
+      lineToAdd := key+' = '+value;
+      if keysArray.Count>2 then
+        for i:=3 to keysArray.Count do
+            lineToAdd := '  '+lineToAdd;
+      myTOMLTable := TTOMLTable(myTOML);
+      for i:=0 to keysArray.Count-2 do
+      begin
+        table := keysArray[i];
+        j := 0;
+        repeat
+          if (myTOMLTable.Keys[j]=table) then
+             begin
+             myTOMLTable := TTOMLTable(myTOMLTable.Items[j]);
+             break;
+             end
+          else
+            j:= j+1;
+        until j = myTOMLTable.Count;
+      end;
+      if (myTOMLTable.Find(key) <> nil) then
+        writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
+      else
+        begin
+          try
+            tableSection := '['+tablePath+']' ;
+            i:=0;
+            repeat
+              line := myTOMLfile[i];
+              if trim(line) = tableSection then
+                begin
+                j:= i+1;
+                break;
+                end;
+              i := i + 1;
+            until i = myTOMLfile.Count -1;
+            if i = myTOMLfile.Count -1 then
+              begin
+              writeln('KeyPath : "'+ tablePath + '" does not exist in :' +tomlFilePath)
+              end;
+
+            repeat
+              line := myTOMLfile[j];
+              if LeftStr(trim(line),1)='[' then
+                begin
+                k := j -1;
+                myTOMLfile.Insert(k, lineToAdd);
+                writeln('Key-value inserted in line : ',k);
+                break;
+                end;
+              j := j + 1;
+            until j = myTOMLfile.Count -1;
+            if j = myTOMLfile.Count -1 then
+              begin
+              myTOMLfile.Add(lineToAdd);
+              writeln('Key-value added in line : ',j) ;
+              end;
+            myTOMLfile.SaveToFile(tomlFilePath);
+            result := True;
+            myTOMLfile.Free;
+          except
+          on E:Exception do
+            writeln('Exception in AddKeyValueToTOML : ', E.Message);
+          end;
+
+
+        end;
+
+      end;
+  end;
+
+end;
 
 end.
 
