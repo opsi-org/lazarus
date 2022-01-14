@@ -104,7 +104,6 @@ type
     procedure showActivityBar(show : boolean);
     procedure showProgressBar(b: boolean);
     procedure setActivityLabel(s: string);
-    procedure ProgressBarHandler(Sender: TObject; Const Pct: Double);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -1253,14 +1252,6 @@ begin
   MoveToDefaultPosition;
 end;
 
-procedure TFBatchOberflaeche.ProgressBarHandler(Sender: TObject; Const Pct: Double);
-begin
-  ShowMessage('Entered');
-  if Pct > 50.0 then
-     SetProgress(round(Pct), pPercent);
-
-  //Application.ProcessMessages;
-end;
 
 initialization
 

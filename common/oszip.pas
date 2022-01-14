@@ -19,6 +19,25 @@ uses
   lazutf8,
   osGUIControl;
 
+type
+  {TUnzipperWithProgressHandler}
+  TUnzipperWithProgressHandler = class(TUnZipper)
+  private
+    FProgress: Integer;
+  public
+    constructor Create;
+    procedure HandleProgressBar(Sender: TObject; Const ATotPos, ATotSize: Int64);
+  end;
+
+  {TZipperWithProgressHandler}
+  TZipperWithProgressHandler = class(TZipper)
+  private
+  public
+    //constructor Create;
+    procedure HandleProgressBar(Sender: TObject; Const Pct: Double);
+  end;
+
+
 // Zip a folder which contains subfolders and files.
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
 
@@ -56,7 +75,7 @@ end;
 // zip a folder which contains subfolders and files to the target directory, while preserving its directory structure.
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile: string): boolean;
 var
-  ZipperObj: TZipper;
+  ZipperObj: TZipperWithProgressHandler;
   filecounter: integer;
   FileList: TStringList;
   DiskFileName, ArchiveFileName: string;
@@ -69,12 +88,12 @@ begin
   TargetDir := includeTrailingPathDelimiter(TargetDir);
   if DirectoryExists(sourcepath) and DirectoryExists(TargetDir) then
   begin
-    ZipperObj := TZipper.Create;
+    ZipperObj := TZipperWithProgressHandler.Create;
     {$IFDEF GUI}
     {$IFDEF OPSISCRIPT}
     FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
     FBatchOberflaeche.SetProgress(0, pPercent);
-    ZipperObj.OnProgress := @FBatchOberflaeche.ProgressBarHandler;
+    ZipperObj.OnProgress := @ZipperObj.HandleProgressBar;
     {$ENDIF OPSISCRIPT}
     {$ENDIF GUI}
     FileList := TStringList.Create;
@@ -139,15 +158,15 @@ end;
 // while preserving its directory structure.
 function UnzipWithDirStruct(File2Unzip, TargetDir: string): boolean;
 var
-  UnzipperObj: TUnZipper;
+  UnzipperObj: TUnzipperWithProgressHandler;
 begin
   Result := False;
-  UnzipperObj := TUnZipper.Create;
+  UnzipperObj := TUnzipperWithProgressHandler.Create;
   {$IFDEF GUI}
   {$IFDEF OPSISCRIPT}
   FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
   FBatchOberflaeche.SetProgress(0, pPercent);
-  UnzipperObj.OnProgress := @FBatchOberflaeche.ProgressBarHandler;
+  UnzipperObj.OnProgressEx := @UnzipperObj.HandleProgressBar;
   {$ENDIF OPSISCRIPT}
   {$ENDIF GUI}
   if FileExists(File2Unzip) then

@@ -68,8 +68,6 @@ type
     procedure SetPicture(const BitmapFile: string; const theLabel: string); virtual;
     procedure SetTracingLevel(const Level: integer);virtual;
     //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
-
-    procedure ProgressBarHandler(Sender: TObject; Const Pct: Double);
   end;
 
 const
@@ -227,11 +225,6 @@ begin
 end;
 
 procedure TGUIControl.SetTracingLevel(const Level: integer);
-begin
-
-end;
-
-procedure TGUIControl.ProgressBarHandler(Sender: TObject; Const Pct: Double);
 begin
 
 end;
