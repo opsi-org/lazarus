@@ -62,7 +62,7 @@ var
   DiskFileName, ArchiveFileName: string;
   TargetDir: string;
   //searchmask : string;
-  errorfound : boolean = false;
+  errorfound: boolean = False;
 begin
   Result := False;
   TargetDir := ExtractFilePath(TargetFile);
@@ -86,8 +86,8 @@ begin
           begin
             try
               ZipperObj.Entries.AddFileEntry((DiskFileName), (ArchiveFileName));
-              LogDatei.log('ZipWithDirStruct adding entry: ' + DiskFileName +
-                ' to: ' + TargetFile, LLDebug2);
+              LogDatei.log('ZipWithDirStruct adding entry: ' +
+                DiskFileName + ' to: ' + TargetFile, LLDebug2);
             except
               on e: Exception do
               begin
@@ -101,7 +101,7 @@ begin
           else
           begin
             LogDatei.log('ZipWithDirStruct file not found: ' + DiskFileName, LLError);
-            errorfound := true;
+            errorfound := True;
           end;
         end;
         try
