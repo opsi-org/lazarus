@@ -177,10 +177,11 @@ begin
       end;
     finally
       {$IFDEF GUI}
-        {$IFDEF OPSISCRIPT}
+      {$IFDEF OPSISCRIPT}
       FBatchOberflaeche.SetElementVisible(False, eProgressBar);
-        {$ENDIF OPSISCRIPT}
-        {$ENDIF GUI}
+      Sleep(500);
+      {$ENDIF OPSISCRIPT}
+      {$ENDIF GUI}
       ZipperObj.Free;
       FileList.Free;
     end;
@@ -220,7 +221,7 @@ begin
         {$IFDEF GUI}
         {$IFDEF OPSISCRIPT}
         FBatchOberflaeche.SetElementVisible(False, eProgressBar);
-        Sleep(1000);
+        Sleep(500);
         {$ENDIF OPSISCRIPT}
         {$ENDIF GUI}
         UnzipperObj.Free;
