@@ -48,6 +48,40 @@ function getFileListFromZip(zipfilename: string): TStringList;
 
 implementation
 
+{TUnzipperWithProgressHandler}
+constructor TUnzipperWithProgressHandler.Create;
+begin
+  inherited Create;
+  FProgress := 0;
+end;
+
+procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject; Const ATotPos, ATotSize: Int64);
+var
+  PercentDone: Integer;
+begin
+  // ATotSize is total size of the zip file in bytes
+  // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
+  PercentDone := round(100*(ATotPos/ATotSize));
+  // Remember current progress with FProgress
+  // and only call FBatchOberflaeche.SetProgress when the next round percent is reached (PercentDone <> FProgress)
+  // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
+  // because calling too often can slow down the whole process enormously
+  if PercentDone <> FProgress then
+  begin
+    FProgress := PercentDone;
+    FBatchOberflaeche.SetProgress(PercentDone - (PercentDone mod 10), pPercent);
+  end;
+end;
+
+{TZipperWithProgressHandler}
+procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject; Const Pct: Double);
+begin
+  // TZipper.Entries.Count is number of files in the directory to zip
+  LogDatei.log('Number entries: ' + Entries.Count.ToString, LLInfo);
+  FBatchOberflaeche.SetProgress(round(Pct), pPercent);
+end;
+
+
 function getFileListFromZip(zipfilename: string): TStringList;
   // inspired by http://lazplanet.blogspot.com/2013/05/how-to-get-filesfolders-inside-zip-file.html
 var
