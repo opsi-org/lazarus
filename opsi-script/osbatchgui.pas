@@ -104,7 +104,7 @@ type
     procedure showActivityBar(show : boolean);
     procedure showProgressBar(b: boolean);
     procedure setActivityLabel(s: string);
-    procedure UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
+    procedure ProgressBarHandler(Sender: TObject; Const Pct: Double);
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -1016,6 +1016,7 @@ begin
   case ProgressValueID of
     pPercent: ShowProgress(Progress);
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
@@ -1252,11 +1253,13 @@ begin
   MoveToDefaultPosition;
 end;
 
-procedure TFBatchOberflaeche.UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
+procedure TFBatchOberflaeche.ProgressBarHandler(Sender: TObject; Const Pct: Double);
 begin
-  SetProgress(round(Pct), pPercent);
-  ShowMessage(Pct.ToString);
-  Application.ProcessMessages;
+  ShowMessage('Entered');
+  if Pct > 50.0 then
+     SetProgress(round(Pct), pPercent);
+
+  //Application.ProcessMessages;
 end;
 
 initialization

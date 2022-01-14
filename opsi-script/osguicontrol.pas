@@ -69,7 +69,7 @@ type
     procedure SetTracingLevel(const Level: integer);virtual;
     //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
 
-    procedure UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
+    procedure ProgressBarHandler(Sender: TObject; Const Pct: Double);
   end;
 
 const
@@ -231,7 +231,7 @@ begin
 
 end;
 
-procedure TGUIControl.UnzipFileProgressBarHandler(Sender: TObject; Const Pct: Double);
+procedure TGUIControl.ProgressBarHandler(Sender: TObject; Const Pct: Double);
 begin
 
 end;

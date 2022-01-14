@@ -70,6 +70,13 @@ begin
   if DirectoryExists(sourcepath) and DirectoryExists(TargetDir) then
   begin
     ZipperObj := TZipper.Create;
+    {$IFDEF GUI}
+    {$IFDEF OPSISCRIPT}
+    FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
+    FBatchOberflaeche.SetProgress(0, pPercent);
+    ZipperObj.OnProgress := @FBatchOberflaeche.ProgressBarHandler;
+    {$ENDIF OPSISCRIPT}
+    {$ENDIF GUI}
     FileList := TStringList.Create;
     try
       //ZipperObj.FileName := TargetDir + ExtractFileName(File2Zip) + '.zip';
@@ -116,6 +123,11 @@ begin
         end;
       end;
     finally
+      {$IFDEF GUI}
+        {$IFDEF OPSISCRIPT}
+      FBatchOberflaeche.SetElementVisible(False, eProgressBar);
+        {$ENDIF OPSISCRIPT}
+        {$ENDIF GUI}
       ZipperObj.Free;
       FileList.Free;
     end;
@@ -134,8 +146,8 @@ begin
   {$IFDEF GUI}
   {$IFDEF OPSISCRIPT}
   FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
-  FBatchOberflaeche.SetProgress(0,pPercent);
-  UnzipperObj.OnProgress := @FBatchOberflaeche.UnzipFileProgressBarHandler;
+  FBatchOberflaeche.SetProgress(0, pPercent);
+  UnzipperObj.OnProgress := @FBatchOberflaeche.ProgressBarHandler;
   {$ENDIF OPSISCRIPT}
   {$ENDIF GUI}
   if FileExists(File2Unzip) then
@@ -155,6 +167,7 @@ begin
         {$IFDEF GUI}
         {$IFDEF OPSISCRIPT}
         FBatchOberflaeche.SetElementVisible(False, eProgressBar);
+        Sleep(1000);
         {$ENDIF OPSISCRIPT}
         {$ENDIF GUI}
         UnzipperObj.Free;
