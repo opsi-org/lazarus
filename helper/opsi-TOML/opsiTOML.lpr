@@ -47,6 +47,7 @@ var
   myTOMLStringList : TStringList;
 
   myTOMLTable : TTOMLTable;
+  newTOMLTable : TTOMLTable;
 
   nb : integer;
 
@@ -184,7 +185,7 @@ begin
   writeln( 'myValue :' + myValue);
   writeln('myTOML["title"] : ' + String(myTOML['title']));
 
-  writeln('- Searching for key owner.name :');
+  //writeln('- Searching for key owner.name :');
   //writeln( String(myTOML.Find('owner.name')));
   writeln( GetValueFromTOMLfile(filePath,'owner.name','default')  );
   writeln('myTOML["owner"]["name"]: ' + String(myTOML['owner']['name']));
@@ -199,7 +200,16 @@ begin
 
   writeln('--- Testing adding data to TOML  ');
 
-  //myTOML.Add('newKey','newValue');
+  myTOML.Add('newKey','newValue');
+
+  myTOMLTable.Create('newTable');
+  myTOMLTable.Add('newKey', 'newValue');
+
+  myTOML.Add('newTable',myTOMLTable);
+
+  newTOMLTable:= TTOMLTable(myTOML['database']);
+  newTOMLTable.Add('newTable',myTOMLTable);
+  writeln(myTOML.AsJSON.FormatJSON);
 
   writeln('myTOML.Keys[0] :' + myTOML.Keys[0]);
   writeln('myTOML.Values[0]:' + String(myTOML.Values[0]));
@@ -214,13 +224,10 @@ begin
       writeln('- AddKeyValueToTOMLFile in root Table failed');
 
   writeln('--- Testing AddKeyValueToTOMLFile in sub-Table ');
-  if AddKeyValueToTOMLFile(filePath,'servers.alpha.newKey', '1') = true then
+  if AddKeyValueToTOMLFile(filePath,'servers.alpha.a.newKey', '111') = true then
      writeln('- AddKeyValueToTOMLFile in sub-Table done')
   else
       writeln('- AddKeyValueToTOMLFile in sub-Table failed');
-
- myTOML := GetTOMLDocument(filePath) ;
- writeln(myTOML.AsJSON.FormatJSON);
 
   writeln('--- Testing AddKeyValueToTOMLFile with a new table ');
   if AddKeyValueToTOMLFile(filePath,'newTable.newTableKey', '"newValue in newTable"') = true then
@@ -228,7 +235,7 @@ begin
   else
       writeln('- AddKeyValueToTOMLFile with a new table failed');
 
-    writeln('--- Testing AddKeyValueToTOMLFile with a new sub-table ');
+  writeln('--- Testing AddKeyValueToTOMLFile with a new sub-table ');
 
   if AddKeyValueToTOMLFile(filePath,'newSubTable.newSubTableKey', '"newValue in newSubTable"') = true then
      writeln('- AddKeyValueToTOMLFile with a new sub-table done')
