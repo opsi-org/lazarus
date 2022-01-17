@@ -23,12 +23,12 @@ type
   {TProgressDisplayer}
   TProgressDisplayer = class(TObject)
   private
-    FProgress: Integer;
-    FPercentDone: Integer;
+    FDisplayedProgress: Integer;
+    FNewProgress: Integer;
   public
     constructor Create;
     procedure DisplayProgress;
-    property PercentDone: Integer read FPercentDone write FPercentDone;
+    property NewProgress: Integer write FNewProgress;
   end;
 
   {TUnzipperWithProgressHandler}
@@ -76,15 +76,18 @@ implementation
 constructor TProgressDisplayer.Create;
 begin
   inherited Create;
-  FProgress:=0;
+  FDisplayedProgress:=0;
 end;
 
 procedure TProgressDisplayer.DisplayProgress;
 begin
-  if PercentDone <> FProgress then
+  // Only call FBatchOberflaeche.SetProgress when a next round percent is reached (FNewProgress > FDisplayedProgress).
+  // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
+  // because calling too often can slow down the whole process enormously
+  if FNewProgress > FDisplayedProgress then
   begin
-    FProgress := PercentDone;
-    FBatchOberflaeche.SetProgress(PercentDone, pPercent);
+    FDisplayedProgress := FNewProgress;
+    FBatchOberflaeche.SetProgress(FNewProgress, pPercent);
   end;
 end;
 
@@ -101,11 +104,8 @@ procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject;
 begin
   // ATotSize is total size of the zip file in bytes
   // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
-  FProgressDisplayer.PercentDone := round(100 * (ATotPos / ATotSize));
-  // Remember current progress with FProgress
-  // and only call FBatchOberflaeche.SetProgress when the next round percent is reached (PercentDone <> FProgress)
-  // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
-  // because calling too often can slow down the whole process enormously
+  FProgressDisplayer.NewProgress := round(100 * (ATotPos / ATotSize));
+
   FProgressDisplayer.DisplayProgress;
 end;
 
@@ -124,7 +124,7 @@ begin
   FTotalSizeOfCurrentFile := FileSize(FSourcePath +
     Entries.Entries[FFileNumber].ArchiveFileName);
   FTotalPosInFile := round(Pct * FTotalSizeOfCurrentFile / 100);
-  FProgressDisplayer.PercentDone := round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
+  FProgressDisplayer.NewProgress := round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
 end;
 
 procedure TZipperWithProgressHandler.CheckEndOfFile(const Pct: double);
