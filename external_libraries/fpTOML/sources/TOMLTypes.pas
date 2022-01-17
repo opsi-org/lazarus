@@ -155,6 +155,7 @@ type
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
       function AsStrings: TStringList;
+      function AsString: String;
       function AsArray: TStringArray;
       function Count: integer; override;
   end;
@@ -181,6 +182,7 @@ type
       function Find(const key: TTOMLKeyType): TTOMLData;
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
+      function AsString: String;
       function Count: integer; override;
 
       property Name: string read m_name;
@@ -427,7 +429,28 @@ var
 begin
   result := TStringList.Create;
   for data in list do
-    result.Add(AnsiString(data));
+    result.Add(TTOMLValue(data).ToString);
+end;
+
+function TTOMLArray.AsString: String;
+var
+  tomlArray : TTOMLArray;
+  i: integer;
+begin
+  result := '[ ';
+  for i := 0 to Count-1 do
+    begin
+      if TTOMLValue(list[i]).ToString='TTOMLArray' then
+         begin
+           tomlArray:= TTOMLArray(list[i]);
+           result:= result + tomlArray.AsString;
+         end
+      else
+          result:= result + (TTOMLValue(list[i]).ToString);
+    if i<>Count-1 then
+      result:= result + ', ';
+    end;
+    result:= result + ' ]'
 end;
 
 function TTOMLArray.AsArray: TStringArray;
@@ -519,6 +542,45 @@ begin
   for i := 0 to map.Count - 1 do
     obj.Add(map.Keys[i], map.Data[i].AsJSON);
   result := obj;
+end;
+
+function TTOMLTable.AsString: String;
+var
+  i: integer;
+  tomlArray : TTOMLArray;
+  tomlTable : TTOMLTable;
+  tablePath, tableName,line : String;
+  tomlStringList : TStringList;
+begin
+  tomlStringList := TStringList.Create;
+  tablePath := Name;
+  for i := 0 to map.Count-1 do
+    begin
+      case map.Data[i].ToString of
+        'TTOMLTable':
+          begin
+            tomlTable := TTOMLTable(map.Data[i]);
+            if tablePath <> TTOMLTable(tomlTable.parent).Name then
+             tablePath:= '';
+            if (tablePath='document') or (tablePath='') then
+               tablePath := tomlTable.Name
+            else
+               tablePath := tablePath + '.' + tomlTable.Name;
+            tableName := '[' + tablePath +  ']';
+            tomlStringList.Add(tableName);
+            line := tomlTable.AsString;
+          end;
+        'TTOMLArray':
+          begin
+            tomlArray := TTOMLArray(map.Data[i]);
+            line := String(map.Keys[i])+' = '+tomlArray.AsString;
+          end;
+        otherwise
+          line := String(map.Keys[i])+' = '+map.Data[i].ToString;
+      end;
+    tomlStringList.Add(line);
+    end;
+  result := tomlStringList.Text;
 end;
 
 procedure TTOMLTable.Add(const key: String; const data: TTOMLData);
