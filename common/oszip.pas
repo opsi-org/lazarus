@@ -20,10 +20,21 @@ uses
   osGUIControl;
 
 type
+  {TProgressDisplayer}
+  TProgressDisplayer = class(TObject)
+  private
+    FProgress: Integer;
+    FPercentDone: Integer;
+  public
+    constructor Create;
+    procedure DisplayProgress;
+    property PercentDone: Integer read FPercentDone write FPercentDone;
+  end;
+
   {TUnzipperWithProgressHandler}
   TUnzipperWithProgressHandler = class(TUnZipper)
-  private
-    FProgress: integer;
+    private
+      FProgressDisplayer: TProgressDisplayer;
   public
     constructor Create;
     procedure HandleProgressBar(Sender: TObject; const ATotPos, ATotSize: int64);
@@ -32,16 +43,21 @@ type
   {TZipperWithProgressHandler}
   TZipperWithProgressHandler = class(TZipper)
   private
-    FATotSize: integer;
+    FProgressDisplayer: TProgressDisplayer;
+    FTotalPosInFile: Integer;
+    FTotalSizeOfCurrentFile: Integer;
+    FFileNumber: Integer;
     FSourcePath: string;
-    FATotPos: integer;
-    FFileNumber: integer;
-    FProgress: integer;
+    // FATotSize, FATotPos as in TUnzipperWithProgressHandler.HandleProgressBar:
+    FATotSize: Integer;
+    FATotPos: Integer;
   public
     constructor Create;
+    procedure CalculateOverallProgress(const Pct: double);
+    procedure CheckEndOfFile(const Pct: double);
     procedure HandleProgressBar(Sender: TObject; const Pct: double);
-    property ATotSize: integer read FATotSize write FATotSize;
-    property SourcePath: string read FSourcePath write FSourcePath;
+    property SourcePath: string write FSourcePath;
+    property ATotSize: Integer write FATotSize;
   end;
 
 
@@ -55,31 +71,42 @@ function getFileListFromZip(zipfilename: string): TStringList;
 
 implementation
 
-{TUnzipperWithProgressHandler}
+{TProgressDisplayer}
 
-constructor TUnzipperWithProgressHandler.Create;
+constructor TProgressDisplayer.Create;
 begin
   inherited Create;
-  FProgress := 0;
+  FProgress:=0;
 end;
 
-procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject;
-  const ATotPos, ATotSize: int64);
-var
-  PercentDone: integer;
+procedure TProgressDisplayer.DisplayProgress;
 begin
-  // ATotSize is total size of the zip file in bytes
-  // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
-  PercentDone := round(100 * (ATotPos / ATotSize));
-  // Remember current progress with FProgress
-  // and only call FBatchOberflaeche.SetProgress when the next round percent is reached (PercentDone <> FProgress)
-  // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
-  // because calling too often can slow down the whole process enormously
   if PercentDone <> FProgress then
   begin
     FProgress := PercentDone;
     FBatchOberflaeche.SetProgress(PercentDone, pPercent);
   end;
+end;
+
+{TUnzipperWithProgressHandler}
+
+constructor TUnzipperWithProgressHandler.Create;
+begin
+  inherited Create;
+  FProgressDisplayer := TProgressDisplayer.Create;
+end;
+
+procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject;
+  const ATotPos, ATotSize: int64);
+begin
+  // ATotSize is total size of the zip file in bytes
+  // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
+  FProgressDisplayer.PercentDone := round(100 * (ATotPos / ATotSize));
+  // Remember current progress with FProgress
+  // and only call FBatchOberflaeche.SetProgress when the next round percent is reached (PercentDone <> FProgress)
+  // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
+  // because calling too often can slow down the whole process enormously
+  FProgressDisplayer.DisplayProgress;
 end;
 
 {TZipperWithProgressHandler}
@@ -87,33 +114,43 @@ end;
 constructor TZipperWithProgressHandler.Create;
 begin
   inherited Create;
+  FProgressDisplayer := TProgressDisplayer.Create;
   FATotPos := 0;
   FFileNumber := 0;
 end;
 
-procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject;
-  const Pct: double);
-var
-  PercentDone: integer;
-  TotalPosInFile: integer;
-  TotalSizeOfCurrentFile: integer;
+procedure TZipperWithProgressHandler.CalculateOverallProgress(const Pct: double);
 begin
-  if FFileNumber = Entries.Count then exit;
-  TotalSizeOfCurrentFile := FileSize(SourcePath +
+  FTotalSizeOfCurrentFile := FileSize(FSourcePath +
     Entries.Entries[FFileNumber].ArchiveFileName);
-  TotalPosInFile := round(Pct * TotalSizeOfCurrentFile / 100);
-  PercentDone := round(100 * ((FATotPos + TotalPosInFile) / FATotSize));
-  if PercentDone <> FProgress then
-  begin
-    FProgress := PercentDone;
-    FBatchOberflaeche.SetProgress(PercentDone, pPercent);
-  end;
-  if (Pct = 100) and (FATotPos <> FATotPos + TotalSizeOfCurrentFile) then
+  FTotalPosInFile := round(Pct * FTotalSizeOfCurrentFile / 100);
+  FProgressDisplayer.PercentDone := round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
+end;
+
+procedure TZipperWithProgressHandler.CheckEndOfFile(const Pct: double);
+begin
+  if (Pct = 100) and (FATotPos <> FATotPos + FTotalSizeOfCurrentFile) then
   begin
     Inc(FFileNumber);
-    FATotPos += TotalSizeOfCurrentFile;
+    FATotPos += FTotalSizeOfCurrentFile;
   end;
 end;
+
+procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject;
+  const Pct: double);
+begin
+  // For TZipper there is no OnProgressEx and therefore we have to use OnProgress,
+  // which works with the percentage (Pct) of progress for each single file.
+  // Note that for small files, Pct becomes only 0 and 100.
+
+  // At end of all files OnProgress is executed but there are no files left
+  if FFileNumber = Entries.Count then exit;
+
+  CalculateOverallProgress(Pct);
+  FProgressDisplayer.DisplayProgress;
+  CheckEndOfFile(Pct);
+end;
+
 
 
 function getFileListFromZip(zipfilename: string): TStringList;
@@ -177,6 +214,7 @@ begin
         for filecounter := 0 to FileList.Count - 1 do
           ATotSize += FileSize(FileList[filecounter]);
         ZipperObj.ATotSize := ATotSize;
+        // ZipperObj needs sourcepath to calculate the size of each single file to zip
         ZipperObj.SourcePath := sourcepath;
 
         for filecounter := 0 to FileList.Count - 1 do
