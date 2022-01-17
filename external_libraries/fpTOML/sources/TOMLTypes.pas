@@ -176,13 +176,15 @@ type
     public
       constructor Create(name: string = '');
       destructor Destroy; override;
-      
+
+      function AsString: String;
+      procedure Insert(const key: String; const data: TTOMLData);
+      procedure Insert(const key: String; const value: TTOMLValueType);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
       function Find(const key: TTOMLKeyType): TTOMLData;
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
-      function AsString: String;
       function Count: integer; override;
 
       property Name: string read m_name;
@@ -581,6 +583,27 @@ begin
     tomlStringList.Add(line);
     end;
   result := tomlStringList.Text;
+end;
+
+procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
+var
+  i : integer;
+begin
+  if Contains(key) then
+    raise ETOMLData.Create('Key "'+key+'" already exists in table "'+name+'"');
+  data.parent := self;
+  i := 0;
+  repeat
+    if map.Data[i].ToString ='TTOMLTable' then
+      break;
+    i:= i + 1;
+  until i = Count -1;
+  map.InsertKeyData(i, key, data);
+end;
+
+procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType);
+begin
+  Insert(key, TTOMLValue.Create(value));
 end;
 
 procedure TTOMLTable.Add(const key: String; const data: TTOMLData);
