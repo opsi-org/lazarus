@@ -29,6 +29,7 @@ function HasTables(myTOML: TTOMLDocument): integer;
 function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
 function GetTOMLTableNames(tomlFilePath: String): TStringList;
 function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
+function GetTOMLTableAsString(myTOML: TTOMLDocument; table : String): String;
 function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 
 function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
@@ -221,6 +222,14 @@ begin
     j := j + 1 ;
   until j = myTOML.Count;
   result := myTOMLTable;
+end;
+
+function GetTOMLTableAsString(myTOML: TTOMLDocument; table : String): String;
+var
+  myTOMLTable : TTOMLTable;
+begin
+  myTOMLTable:= GetTOMLTable(myTOML, table);
+  result := myTOMLTable.AsString;
 end;
 
 function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
