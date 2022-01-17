@@ -38,8 +38,9 @@ var
   myOctal : Number = 0o01234567;
   myHexadecimal : Hexadecimal = 0xDEADBEEF;
   myBinary : Binary = 0b11010110  ;
-  *)
   myDateTime : TDateTime =  1979-05-27 ;
+  *)
+
   myNewTOML : TTOMLDocument;
 
   i : integer = 0;
@@ -80,14 +81,12 @@ begin
       writeln('- SaveToTOMLFile with String parameter failed');
 
 
-  TTOMLTable(myTOML.Values[1]).Add('newKey','newValue');
+  TTOMLTable(myTOML.Values[1]).Add('newKeyInOwnerTable','newValueInOwnerTable');
   writeln('--- Testing SaveToTOMLFile (from TTOMLDocument to File)') ;
   if ( SaveToTOMLFile(myTOML, newFilePath) ) then
      writeln('- SaveToTOMLFile with TTOMLDocument parameter done')
   else
       writeln('- SaveToTOMLFile with TTOMLDocument parameter failed');
-
-
 
   writeln('--- Testing ConvertTOMLtoJSON ') ;
   JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
@@ -109,18 +108,23 @@ begin
   writeln(tableNamesList.Text);
 
 
-  writeln('--- Testing GetTOMLTable :  ');
+  writeln('--- Testing GetTOMLTable from file :  ');
 
   myTOMLStringList.Free;
   myTOMLStringList.AddStrings(GetTOMLTable(filePath,'servers'));
   writeln('TOML Table "servers" : ');
   writeln(myTOMLStringList.Text);
 
-  writeln('--- Testing GetTOMLTable :  ');
+  writeln('--- Testing GetTOMLTable from TTOMLDocument: TTOMLTable ');
 
   myTOMLTable:= GetTOMLTable(myTOML,'servers');
   writeln('TOML Table "servers" : ');
   writeln(myTOMLTable.AsJSON.FormatJSON);
+
+  writeln('--- Testing GetTOMLTableAsString from TTOMLDocument: String ');
+
+  writeln('TOML Table "clients" : ');
+  writeln(GetTOMLTableAsString(myTOML,'clients'));
 
 
   writeln('--- Finding (root Table) keys : ');
@@ -282,7 +286,7 @@ begin
   *)
 
   (*
-  // These data types are not supported
+  // These data types are not supported in TTOMLValueType
   writeln('--- Testing adding Octal data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
 
@@ -292,6 +296,7 @@ begin
   writeln('--- Testing adding Hexadecimal data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newBinaryValue',myBinary);
   *)
+
 
 
   (*
