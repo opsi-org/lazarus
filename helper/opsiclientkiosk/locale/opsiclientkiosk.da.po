@@ -1,13 +1,15 @@
 # 
 # Translators:
-# Lars Juul <lju@eucl.dk>, 2016
+# d42e96145afc2eb538de811a7f0b26f0_acddca4 <bd5df7bd5a9668d80532fea34f3966af_331058>, 2016
 # Soren Birk <soer9648@eucl.dk>, 2016,2018,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2020-01-29 12:28+0000\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2021-12-20 10:41+0000\n"
 "Last-Translator: Soren Birk <soer9648@eucl.dk>\n"
 "Language-Team: Danish (http://www.transifex.com/opsi-org/opsiorg/language/da/)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: da\n"
@@ -20,49 +22,51 @@ msgstr ""
 
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
-msgstr ""
+msgstr "Kopiér ikoner og skærmbilleder..."
 
 #: ockimagestodepot.rscouldnotsaveicons
 msgid "Could not save icons on depot."
-msgstr ""
+msgstr "Kunne ikke gemme ikoner på depot."
 
 #: ockimagestodepot.rscouldnotsavescreenshots
 msgid "Could not save screenshots on depot."
-msgstr ""
+msgstr "Kunne ikke gemme skærmbilleder på depot."
 
 #: ockimagestodepot.rscouldnotunmount
 msgid "Could not unmount depot."
-msgstr ""
+msgstr "Kunne ikke afmontere depot."
 
 #: ockimagestodepot.rsdone
 msgid "done"
-msgstr ""
+msgstr "udført"
 
 #: ockimagestodepot.rsfinished
 msgid "Copy process finished. Closing window..."
-msgstr ""
+msgstr "Kopieringsproces udført. Lukker vindue..."
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
-msgstr ""
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr "Billeder kunne ikke gemmes på opsi-depot. %sKontrollér venligst om depot er monteret med skriverettigheder."
 
 #: ockimagestodepot.rsimagessaved
 msgid "Images saved on"
-msgstr ""
+msgstr "Billeder gemt på"
 
 #: ockimagestodepot.rsisaninvaliddir
 #, object-pascal-format
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
+msgstr "\"%s\" er en ugyldig mappe.%sAngiv venligst \"%s\" som en gyldig mappe."
 
 #: ockimagestodepot.rsmounting
 msgid "Mounting"
-msgstr ""
+msgstr "Monterer"
 
 #: ockimagestodepot.rssettingrights
 msgid "Setting rights..."
-msgstr ""
+msgstr "Sætter rettigheder..."
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -128,7 +132,9 @@ msgstr "Forbundet til"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
 msgstr "Nuværende bruger har ikke admin-rettigheder. Admin-tilstand er deaktiveret.%sLøsning: start opsi Client Kiosk (som bruger) med admin-rettigheder."
 
 #: opsiclientkioskgui.rsdepot
@@ -176,7 +182,8 @@ msgstr "Installér nu"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -236,37 +243,23 @@ msgstr "Nu"
 msgid "on"
 msgstr ""
 
-#: opsiclientkioskgui.rsproductid
-msgid "ID"
-msgstr ""
-
-#: opsiclientkioskgui.rsproductname
-msgid "Software"
-msgstr ""
-
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Genindlæs"
 
-#: opsiclientkioskgui.rsrequest
-msgid "Request"
-msgstr ""
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Ukendt"
-
-#: opsiclientkioskgui.rsstatus
-msgid "Status"
-msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr "Gem handlinger"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Send anmodninger om handling til serveren, vis resultatet af installationerne og spørg efter installation."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -337,7 +330,9 @@ msgid "Error while initializing opsiconnection"
 msgstr "Fejl under initialisering af opsi-forbindelse"
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
 msgstr "Kiosk-tilstand: gammel. Opdatér til nyere opsi-version for at få fuld funktionalitet (f.eks. deaktivering af software-on-demand) af Opsi-Kiosk."
 
 #: opsiconnection.rsnodatafromserver
@@ -391,7 +386,6 @@ msgid "Help"
 msgstr "Hjælp"
 
 #: tformhelpinfo.checkboxexpertmode.caption
-msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Eskperttilstand"
 
@@ -444,7 +438,6 @@ msgid "LabelVersion"
 msgstr "Label Version"
 
 #: tformhelpinfo.speedbuttonmanual.caption
-msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
 msgstr "opsi-manual"
 
@@ -460,7 +453,8 @@ msgstr "Installér nu"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -501,7 +495,8 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-klient-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Klik i kolonnen for handlinger, for at sætte en anmodning (installation/afinstallation)"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -639,14 +634,13 @@ msgid "Dependencies / Priority"
 msgstr "Afhængigheder / Prioritet"
 
 #: tformpasswordquery.buttoncancel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Afbryd"
 
 #: tformpasswordquery.buttonok.caption
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: tformpasswordquery.caption
 msgid "FormPasswordQuery"
@@ -655,7 +649,7 @@ msgstr ""
 #: tformpasswordquery.editpassword.editlabel.caption
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
+msgstr "Kodeord"
 
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
@@ -664,7 +658,7 @@ msgstr ""
 #: tformpasswordquery.sudoorroot.caption
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
-msgstr ""
+msgstr "Bruger"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
@@ -684,16 +678,14 @@ msgstr "Vent venligst i mens"
 
 #: tformsaveimagesondepot.buttonclose.caption
 msgid "Close"
-msgstr ""
+msgstr "Luk"
 
 #: tformsaveimagesondepot.buttoncopy.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save images on depot"
 msgstr "Gem billeder på depot"
 
 #: tformsaveimagesondepot.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.caption"
 msgid "Save images on depot"
 msgstr "Gem billeder på depot"
@@ -701,28 +693,27 @@ msgstr "Gem billeder på depot"
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Montér depot"
 
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Montér depot"
 
 #: tformsaveimagesondepot.groupboxpath.caption
 msgid "Path to depot"
-msgstr ""
+msgstr "Sti til depot"
 
 #: tformsaveimagesondepot.groupboxprogress.caption
 msgid "Progress"
-msgstr ""
+msgstr "Fremskridt"
 
 #: tformsaveimagesondepot.labelpassword.caption
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Kodeord"
 
 #: tformsaveimagesondepot.labeluser.caption
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
-msgstr ""
-
+msgstr "Bruger"

@@ -1,13 +1,16 @@
 # 
 # Translators:
+# Alexey Tarasov <valmont2k@yandex.ru>, 2020
 # asucher, 2017
 # Вячеслав, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-20 08:33+0000\n"
-"Last-Translator: Jan Werner <j.werner@uib.de>\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2021-12-20 10:41+0000\n"
+"Last-Translator: Alexander Savchenko\n"
 "Language-Team: Russian (http://www.transifex.com/opsi-org/opsiorg/language/ru/)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
@@ -32,7 +35,7 @@ msgstr ""
 
 #: ockimagestodepot.rscouldnotunmount
 msgid "Could not unmount depot."
-msgstr ""
+msgstr "Невозможно отмонтировать депот"
 
 #: ockimagestodepot.rsdone
 msgid "done"
@@ -44,7 +47,9 @@ msgstr ""
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
 msgstr ""
 
 #: ockimagestodepot.rsimagessaved
@@ -76,7 +81,7 @@ msgstr ""
 #: opsiclientkioskgui.rsactions
 msgctxt "opsiclientkioskgui.rsactions"
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 #: opsiclientkioskgui.rsactnone
 msgid "None"
@@ -97,7 +102,7 @@ msgstr "Удалить"
 
 #: opsiclientkioskgui.rsadminmode
 msgid "Admin mode"
-msgstr ""
+msgstr "Режим администратора"
 
 #: opsiclientkioskgui.rsall
 msgctxt "opsiclientkioskgui.rsall"
@@ -106,16 +111,16 @@ msgstr ""
 
 #: opsiclientkioskgui.rsallproductsinstalled
 msgid "All available products installed!"
-msgstr ""
+msgstr "Все доступные продукты установлены"
 
 #: opsiclientkioskgui.rsas
 msgid "as"
-msgstr ""
+msgstr "как"
 
 #: opsiclientkioskgui.rsback
 msgctxt "opsiclientkioskgui.rsback"
 msgid "<-- Back"
-msgstr ""
+msgstr "Назад"
 
 #: opsiclientkioskgui.rscancel
 msgctxt "opsiclientkioskgui.rscancel"
@@ -128,8 +133,10 @@ msgstr "Подключено к"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
-msgstr ""
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
+msgstr "Текущий пользователь не имеет административных привилегий. Режим администратора отключен. Решение: запустите  opsi Client Kiosk (от пользователя) с административными привелегиями"
 
 #: opsiclientkioskgui.rsdepot
 msgid "depot"
@@ -176,7 +183,8 @@ msgstr "Установить сейчас"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -236,37 +244,23 @@ msgstr ""
 msgid "on"
 msgstr ""
 
-#: opsiclientkioskgui.rsproductid
-msgid "ID"
-msgstr ""
-
-#: opsiclientkioskgui.rsproductname
-msgid "Software"
-msgstr ""
-
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Перезагрузить"
 
-#: opsiclientkioskgui.rsrequest
-msgid "Request"
-msgstr ""
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Неизвестно"
-
-#: opsiclientkioskgui.rsstatus
-msgid "Status"
-msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Отправлять запросы действий на сервер, показать результирующие установки и cросить для начала установки."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -337,7 +331,9 @@ msgid "Error while initializing opsiconnection"
 msgstr ""
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
 msgstr ""
 
 #: opsiconnection.rsnodatafromserver
@@ -391,7 +387,6 @@ msgid "Help"
 msgstr "Справка"
 
 #: tformhelpinfo.checkboxexpertmode.caption
-msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Режим эксперта"
 
@@ -444,7 +439,6 @@ msgid "LabelVersion"
 msgstr "LabelVersion"
 
 #: tformhelpinfo.speedbuttonmanual.caption
-msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
 msgstr ""
 
@@ -460,7 +454,8 @@ msgstr "Установить сейчас"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -471,7 +466,7 @@ msgstr ""
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- Back"
-msgstr ""
+msgstr "Назад"
 
 #: tformopsiclientkiosk.buttonsoftwareinstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
@@ -501,7 +496,8 @@ msgid "opsi-client-kiosk"
 msgstr "OPSI Client Kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Кликните по столбцу ActionRequest, чтобы установить действие (setup/uninstall)"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -584,7 +580,7 @@ msgstr "Вид"
 #: tformopsiclientkiosk.speedbuttonactions.caption
 msgctxt "tformopsiclientkiosk.speedbuttonactions.caption"
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 #: tformopsiclientkiosk.speedbuttonall.caption
 msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
@@ -639,14 +635,13 @@ msgid "Dependencies / Priority"
 msgstr "Зависимости / Приоритет"
 
 #: tformpasswordquery.buttoncancel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Отменить"
 
 #: tformpasswordquery.buttonok.caption
 msgid "OK"
-msgstr ""
+msgstr "ОК"
 
 #: tformpasswordquery.caption
 msgid "FormPasswordQuery"
@@ -655,7 +650,7 @@ msgstr ""
 #: tformpasswordquery.editpassword.editlabel.caption
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
@@ -664,7 +659,7 @@ msgstr ""
 #: tformpasswordquery.sudoorroot.caption
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
@@ -684,7 +679,7 @@ msgstr ""
 
 #: tformsaveimagesondepot.buttonclose.caption
 msgid "Close"
-msgstr ""
+msgstr "Закрыть"
 
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
@@ -712,15 +707,14 @@ msgstr ""
 
 #: tformsaveimagesondepot.groupboxprogress.caption
 msgid "Progress"
-msgstr ""
+msgstr "Выполняется"
 
 #: tformsaveimagesondepot.labelpassword.caption
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: tformsaveimagesondepot.labeluser.caption
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
-msgstr ""
-
+msgstr "Пользователь"

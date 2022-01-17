@@ -5,9 +5,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-20 08:38+0000\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2021-12-20 10:41+0000\n"
 "Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
@@ -40,11 +42,13 @@ msgstr "erledigt"
 
 #: ockimagestodepot.rsfinished
 msgid "Copy process finished. Closing window..."
-msgstr "Kopiervorgang beendet. Schließe Fenster..."
+msgstr "Kopiervorgang beendet. Schließe Fenster."
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
 msgstr "Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
 
 #: ockimagestodepot.rsimagessaved
@@ -128,12 +132,14 @@ msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
 msgstr "Aktueller Nutzer hat keine Adminrechte. Adminmodus deaktiviert. %sLösung: Starten Sie den opsi Client Kiosk (als Nutzer) mit Adminrechten."
 
 #: opsiclientkioskgui.rsdepot
 msgid "depot"
-msgstr "Depot"
+msgstr ""
 
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
@@ -176,7 +182,8 @@ msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -234,14 +241,6 @@ msgstr "Jetzt"
 
 #: opsiclientkioskgui.rson
 msgid "on"
-msgstr "an"
-
-#: opsiclientkioskgui.rsproductid
-msgid "ID"
-msgstr ""
-
-#: opsiclientkioskgui.rsproductname
-msgid "Software"
 msgstr ""
 
 #: opsiclientkioskgui.rsreload
@@ -249,24 +248,18 @@ msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Neu laden"
 
-#: opsiclientkioskgui.rsrequest
-msgid "Request"
-msgstr ""
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unbekannt"
-
-#: opsiclientkioskgui.rsstatus
-msgid "Status"
-msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -337,7 +330,9 @@ msgid "Error while initializing opsiconnection"
 msgstr "Fehler bei der Initialisierung der opsi Verbindung."
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
 msgstr "Alter Kioskmodus. Aktualiseren Sie auf neuere opsi Verson um volle Funktionalität zu erhalten (z.B. deaktiveiren der Möglichkeit der sofortigen Installation von Produkten.)"
 
 #: opsiconnection.rsnodatafromserver
@@ -391,9 +386,8 @@ msgid "Help"
 msgstr "Hilfe"
 
 #: tformhelpinfo.checkboxexpertmode.caption
-msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
-msgstr "Expertenmodus"
+msgstr "Experten Modus"
 
 #: tformhelpinfo.labelcopy.caption
 msgid "CopyRight:"
@@ -444,7 +438,6 @@ msgid "LabelVersion"
 msgstr "-"
 
 #: tformhelpinfo.speedbuttonmanual.caption
-msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
 msgstr "Opsi Manual"
 
@@ -460,7 +453,8 @@ msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -480,7 +474,7 @@ msgstr "Installieren"
 
 #: tformopsiclientkiosk.buttonsoftwarereinstall.caption
 msgid "Reinstall"
-msgstr "Neu installieren"
+msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
 msgid "Remove action"
@@ -501,7 +495,8 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -639,21 +634,19 @@ msgid "Dependencies / Priority"
 msgstr "Abhängigkeiten / Prioritäten"
 
 #: tformpasswordquery.buttoncancel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.buttoncancel.caption"
 msgid "Cancel"
-msgstr "Verwerfen"
+msgstr "Abbrechen"
 
 #: tformpasswordquery.buttonok.caption
 msgid "OK"
-msgstr ""
+msgstr "o.k."
 
 #: tformpasswordquery.caption
 msgid "FormPasswordQuery"
 msgstr ""
 
 #: tformpasswordquery.editpassword.editlabel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
 msgstr "Passwort"
@@ -663,7 +656,6 @@ msgid "Please authorize you with a sudo or root account:  "
 msgstr ""
 
 #: tformpasswordquery.sudoorroot.caption
-#, fuzzy
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
 msgstr "Benutzer"
@@ -691,25 +683,24 @@ msgstr "Schließen"
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save images on depot"
-msgstr "Bilder auf dem Depot speichern"
+msgstr "Speicher Bilder auf Depot"
 
 #: tformsaveimagesondepot.caption
 msgctxt "tformsaveimagesondepot.caption"
 msgid "Save images on depot"
-msgstr "Bilder auf dem Depot speichern"
+msgstr "Speicher Bilder auf Depot"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
-msgstr "Depot einbinden"
+msgstr "Verbinde Depot"
 
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
-msgstr "Depot einbinden"
+msgstr "Verbinde Depot"
 
 #: tformsaveimagesondepot.groupboxpath.caption
-msgctxt "tformsaveimagesondepot.groupboxpath.caption"
 msgid "Path to depot"
 msgstr "Pfad zum Depot"
 
@@ -726,4 +717,3 @@ msgstr "Passwort"
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Benutzer"
-

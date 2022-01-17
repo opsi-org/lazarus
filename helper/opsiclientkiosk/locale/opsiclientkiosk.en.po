@@ -3,9 +3,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-20 08:33+0000\n"
-"Last-Translator: Jan Werner <j.werner@uib.de>\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2021-12-20 10:41+0000\n"
+"Last-Translator: d.oertel <d.oertel@uib.de>\n"
 "Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
@@ -14,53 +16,55 @@ msgstr ""
 #: installdlg.rserrorondemand
 msgctxt "installdlg.rserrorondemand"
 msgid "opsi is bussy please try it again later. Detailed error message: "
-msgstr ""
+msgstr "opsi is bussy please try it again later. Detailed error message: "
 
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
-msgstr ""
+msgstr "Copy icons and screenshots..."
 
 #: ockimagestodepot.rscouldnotsaveicons
 msgid "Could not save icons on depot."
-msgstr ""
+msgstr "Could not save icons on depot."
 
 #: ockimagestodepot.rscouldnotsavescreenshots
 msgid "Could not save screenshots on depot."
-msgstr ""
+msgstr "Could not save screenshots on depot."
 
 #: ockimagestodepot.rscouldnotunmount
 msgid "Could not unmount depot."
-msgstr ""
+msgstr "Could not unmount depot."
 
 #: ockimagestodepot.rsdone
 msgid "done"
-msgstr ""
+msgstr "done"
 
 #: ockimagestodepot.rsfinished
 msgid "Copy process finished. Closing window..."
-msgstr ""
+msgstr "Copy process finished. Closing window..."
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
-msgstr ""
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 
 #: ockimagestodepot.rsimagessaved
 msgid "Images saved on"
-msgstr ""
+msgstr "Images saved on"
 
 #: ockimagestodepot.rsisaninvaliddir
 #, object-pascal-format
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
+msgstr "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
 
 #: ockimagestodepot.rsmounting
 msgid "Mounting"
-msgstr ""
+msgstr "Mounting"
 
 #: ockimagestodepot.rssettingrights
 msgid "Setting rights..."
-msgstr ""
+msgstr "Setting rights..."
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -126,12 +130,14 @@ msgstr "Connected to"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
 msgstr "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 
 #: opsiclientkioskgui.rsdepot
 msgid "depot"
-msgstr ""
+msgstr "depot"
 
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
@@ -152,7 +158,7 @@ msgstr "Do you want to update "
 #: opsiclientkioskgui.rserrorondemand
 msgctxt "opsiclientkioskgui.rserrorondemand"
 msgid "opsi is bussy please try it again later. Detailed error message: "
-msgstr ""
+msgstr "opsi is bussy please try it again later. Detailed error message: "
 
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
@@ -174,7 +180,8 @@ msgstr "Install now"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start the installation/update (uninstallation) of the selected products"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -232,39 +239,25 @@ msgstr "Now"
 
 #: opsiclientkioskgui.rson
 msgid "on"
-msgstr ""
-
-#: opsiclientkioskgui.rsproductid
-msgid "ID"
-msgstr ""
-
-#: opsiclientkioskgui.rsproductname
-msgid "Software"
-msgstr ""
+msgstr "on"
 
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Reload"
 
-#: opsiclientkioskgui.rsrequest
-msgid "Request"
-msgstr ""
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unknown"
-
-#: opsiclientkioskgui.rsstatus
-msgid "Status"
-msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr "Store actions"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Send the action requests to the server, show the resulting installations and ask for installation start."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -335,7 +328,9 @@ msgid "Error while initializing opsiconnection"
 msgstr "Error while initializing opsiconnection"
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
 msgstr "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 
 #: opsiconnection.rsnodatafromserver
@@ -389,7 +384,6 @@ msgid "Help"
 msgstr "Help"
 
 #: tformhelpinfo.checkboxexpertmode.caption
-msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Expert mode"
 
@@ -419,7 +413,7 @@ msgstr "LabelLanguage"
 
 #: tformhelpinfo.labelmode.caption
 msgid "Mode:"
-msgstr ""
+msgstr "Mode:"
 
 #: tformhelpinfo.labelname.caption
 msgid "opsi client kiosk"
@@ -442,7 +436,6 @@ msgid "LabelVersion"
 msgstr "LabelVersion"
 
 #: tformhelpinfo.speedbuttonmanual.caption
-msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
 msgstr "opsi manual"
 
@@ -458,7 +451,8 @@ msgstr "Install now"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start the installation/update (uninstallation) of the selected products"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -499,7 +493,8 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -637,32 +632,31 @@ msgid "Dependencies / Priority"
 msgstr "Dependencies / Priority"
 
 #: tformpasswordquery.buttoncancel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Cancel"
 
 #: tformpasswordquery.buttonok.caption
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: tformpasswordquery.caption
 msgid "FormPasswordQuery"
-msgstr ""
+msgstr "FormPasswordQuery"
 
 #: tformpasswordquery.editpassword.editlabel.caption
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
-msgstr ""
+msgstr "Please authorize you with a sudo or root account:  "
 
 #: tformpasswordquery.sudoorroot.caption
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
-msgstr ""
+msgstr "User"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
@@ -682,16 +676,14 @@ msgstr "Please wait while "
 
 #: tformsaveimagesondepot.buttonclose.caption
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 #: tformsaveimagesondepot.buttoncopy.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save images on depot"
 msgstr "Save images on depot"
 
 #: tformsaveimagesondepot.caption
-#, fuzzy
 msgctxt "tformsaveimagesondepot.caption"
 msgid "Save images on depot"
 msgstr "Save images on depot"
@@ -699,28 +691,27 @@ msgstr "Save images on depot"
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Mount depot"
 
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
-msgstr ""
+msgstr "Mount depot"
 
 #: tformsaveimagesondepot.groupboxpath.caption
 msgid "Path to depot"
-msgstr ""
+msgstr "Path to depot"
 
 #: tformsaveimagesondepot.groupboxprogress.caption
 msgid "Progress"
-msgstr ""
+msgstr "Progress"
 
 #: tformsaveimagesondepot.labelpassword.caption
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: tformsaveimagesondepot.labeluser.caption
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
-msgstr ""
-
+msgstr "User"
