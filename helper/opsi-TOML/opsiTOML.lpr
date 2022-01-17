@@ -198,6 +198,9 @@ begin
   writeln( GetValueFromTOMLfile(filePath,'servers.alpha.ip','default') );
   writeln('myTOML["servers"]["alpha"]["ip"] : ' + String(myTOML['servers']['alpha']['ip']));
 
+  writeln('--- Testing TTOMLTable.AsString : ');
+  writeln(myTOML.AsString);
+
   writeln('--- Testing adding data to TOML  ');
 
   myTOML.Add('newKey','newValue');
@@ -208,14 +211,9 @@ begin
   myTOML.Add('newTable',myTOMLTable);
 
   newTOMLTable:= TTOMLTable(myTOML['database']);
-  newTOMLTable.Add('newTable',myTOMLTable);
-  writeln(myTOML.AsJSON.FormatJSON);
+  newTOMLTable.Add('newSubTable',myTOMLTable);
 
-  writeln('myTOML.Keys[0] :' + myTOML.Keys[0]);
-  writeln('myTOML.Values[0]:' + String(myTOML.Values[0]));
-
-  writeln('myTOML.Keys[1] :' + myTOML.Keys[1]);
-  writeln('myTOML.Values[1]:' + String(myTOML.Values[1]));
+  //writeln(myTOML.AsJSON.FormatJSON);
 
   writeln('--- Testing AddKeyValueToTOMLFile in root Table ');
   if AddKeyValueToTOMLFile(filePath,'newNeeeeewKey', '"newNeeewValue"') = true then
@@ -229,6 +227,7 @@ begin
   else
       writeln('- AddKeyValueToTOMLFile in sub-Table failed');
 
+  (*
   writeln('--- Testing AddKeyValueToTOMLFile with a new table ');
   if AddKeyValueToTOMLFile(filePath,'newTable.newTableKey', '"newValue in newTable"') = true then
      writeln('- AddKeyValueToTOMLFile with a new table done')
@@ -242,12 +241,11 @@ begin
   else
       writeln('- AddKeyValueToTOMLFile with a new sub-table failed');
 
-
   writeln('--- Getting final TOMLTable :  ');
 
   myTOMLTable:= GetTOMLTable(myTOML,'newTable');
   writeln(myTOMLTable.AsJSON.FormatJSON);
-
+  *)
   writeln('--- Testing GetTOMLDocument ');
   myTOML := GetTOMLDocument(filePath) ;
 
