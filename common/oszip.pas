@@ -23,18 +23,25 @@ type
   {TUnzipperWithProgressHandler}
   TUnzipperWithProgressHandler = class(TUnZipper)
   private
-    FProgress: Integer;
+    FProgress: integer;
   public
     constructor Create;
-    procedure HandleProgressBar(Sender: TObject; Const ATotPos, ATotSize: Int64);
+    procedure HandleProgressBar(Sender: TObject; const ATotPos, ATotSize: int64);
   end;
 
   {TZipperWithProgressHandler}
   TZipperWithProgressHandler = class(TZipper)
   private
+    FATotSize: integer;
+    FSourcePath: string;
+    FATotPos: integer;
+    FFileNumber: integer;
+    FProgress: integer;
   public
-    //constructor Create;
-    procedure HandleProgressBar(Sender: TObject; Const Pct: Double);
+    constructor Create;
+    procedure HandleProgressBar(Sender: TObject; const Pct: double);
+    property ATotSize: integer read FATotSize write FATotSize;
+    property SourcePath: string read FSourcePath write FSourcePath;
   end;
 
 
@@ -49,19 +56,21 @@ function getFileListFromZip(zipfilename: string): TStringList;
 implementation
 
 {TUnzipperWithProgressHandler}
+
 constructor TUnzipperWithProgressHandler.Create;
 begin
   inherited Create;
   FProgress := 0;
 end;
 
-procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject; Const ATotPos, ATotSize: Int64);
+procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject;
+  const ATotPos, ATotSize: int64);
 var
-  PercentDone: Integer;
+  PercentDone: integer;
 begin
   // ATotSize is total size of the zip file in bytes
   // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
-  PercentDone := round(100*(ATotPos/ATotSize));
+  PercentDone := round(100 * (ATotPos / ATotSize));
   // Remember current progress with FProgress
   // and only call FBatchOberflaeche.SetProgress when the next round percent is reached (PercentDone <> FProgress)
   // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
@@ -69,16 +78,41 @@ begin
   if PercentDone <> FProgress then
   begin
     FProgress := PercentDone;
-    FBatchOberflaeche.SetProgress(PercentDone - (PercentDone mod 10), pPercent);
+    FBatchOberflaeche.SetProgress(PercentDone, pPercent);
   end;
 end;
 
 {TZipperWithProgressHandler}
-procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject; Const Pct: Double);
+
+constructor TZipperWithProgressHandler.Create;
 begin
-  // TZipper.Entries.Count is number of files in the directory to zip
-  LogDatei.log('Number entries: ' + Entries.Count.ToString, LLInfo);
-  FBatchOberflaeche.SetProgress(round(Pct), pPercent);
+  inherited Create;
+  FATotPos := 0;
+  FFileNumber := 0;
+end;
+
+procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject;
+  const Pct: double);
+var
+  PercentDone: integer;
+  TotalPosInFile: integer;
+  TotalSizeOfCurrentFile: integer;
+begin
+  if FFileNumber = Entries.Count then exit;
+  TotalSizeOfCurrentFile := FileSize(SourcePath +
+    Entries.Entries[FFileNumber].ArchiveFileName);
+  TotalPosInFile := round(Pct * TotalSizeOfCurrentFile / 100);
+  PercentDone := round(100 * ((FATotPos + TotalPosInFile) / FATotSize));
+  if PercentDone <> FProgress then
+  begin
+    FProgress := PercentDone;
+    FBatchOberflaeche.SetProgress(PercentDone, pPercent);
+  end;
+  if (Pct = 100) and (FATotPos <> FATotPos + TotalSizeOfCurrentFile) then
+  begin
+    Inc(FFileNumber);
+    FATotPos += TotalSizeOfCurrentFile;
+  end;
 end;
 
 
@@ -116,6 +150,7 @@ var
   TargetDir: string;
   //searchmask : string;
   errorfound: boolean = False;
+  ATotSize: integer = 0;
 begin
   Result := False;
   TargetDir := ExtractFilePath(TargetFile);
@@ -137,6 +172,13 @@ begin
       if not FileExists(ZipperObj.FileName) then
       begin
         FileList := FindAllFiles(sourcepath, searchmask);
+
+        // count total number of bytes to zip (for showing a meaningful progressbar)
+        for filecounter := 0 to FileList.Count - 1 do
+          ATotSize += FileSize(FileList[filecounter]);
+        ZipperObj.ATotSize := ATotSize;
+        ZipperObj.SourcePath := sourcepath;
+
         for filecounter := 0 to FileList.Count - 1 do
         begin
           DiskFileName := FileList.Strings[filecounter];
