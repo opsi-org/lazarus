@@ -1767,9 +1767,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10734,8 +10733,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11547,13 +11546,18 @@ begin
     begin
       // we add '-file ' as last param for powershell
       powershellpara := ' -file ';
-      // It may be that the customer did this before and '- file ' is the end of programparas
-      // so we shoud remove this (even for AllSigned hack)
-      programparas := copy(programparas,1,length(programparas) - rpos(' -file',LowerCase(programparas)));
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
     begin
+      if pos(' -file', LowerCase(programparas)) > 0 then
+      begin
+        // It may be that the customer did this before and '- file ' is the end of programparas
+        // so we shoud remove this (even for AllSigned hack)
+        programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
+      end;
+      LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
+
       commandline := 'powershell.exe get-executionpolicy';
       tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
         False, True);
@@ -11638,8 +11642,8 @@ begin
         //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
         //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
         commandline := '"' + programfilename + '" ' + programparas +
-          ' ' + powershellpara + '"Get-Content -Path ' +
-          tempfilename + ' | Out-String | Invoke-Expression" ';
+          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+          ' | Out-String | Invoke-Expression" ';
       end
       else
       begin
@@ -12405,10 +12409,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -15199,7 +15203,8 @@ begin
   end
 
 
-  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or (LowerCase(s) = LowerCase('GetMSVersionName')) then
+  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or
+    (LowerCase(s) = LowerCase('GetMSVersionName')) then
   begin
     syntaxCheck := True;
 
@@ -15224,7 +15229,8 @@ begin
           StringResult := GetMSVersionName
         else
           // case LowerCase(s) = GetMSVersionInfo
-          StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+          StringResult := IntToStr(GetNTVersionMajor) + '.' +
+            IntToStr(GetNTVersionMinor);
       end;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;

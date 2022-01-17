@@ -104,6 +104,7 @@ var
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
+  defunct : boolean;
 begin
   try
     try
@@ -148,6 +149,9 @@ begin
               ppidstr := '';
               cmdstr := '';
               fullcmdstr := '';
+              defunct := false;
+              if pos('<defunct>',outlines.strings[i]) > 0 then
+                defunct := true;
               stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
             {$IFDEF LINUX}
               for k := 0 to lineparts.Count - 1 do
@@ -162,6 +166,11 @@ begin
                   cmdstr := lineparts.Strings[k]
                 else
                   fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+                if defunct then
+                begin
+                  // mark with brackets as defunct
+                  cmdstr := '['+cmdstr+']';
+                end;
               end;
             {$ENDIF LINUX}
             {$IFDEF DARWIN}
@@ -193,7 +202,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getUnixProcessList, system message: "' +
+        LogDatei.log('Exception in getUnixProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -369,15 +378,16 @@ var
         'Process name to find (' + searchstr +
         ') is wider then 15 chars. Searching for: (' + searchproc +
         '). The result may not be exact',
-        LLwarning);
+        LLInfo);
     end;
     {$ENDIF LINUX}
     Result := 0;
     mypidstr := proc2pid.Values[searchproc];
+    if mypidstr <> '' then
     if TryStrToDWord(mypidstr, Result) then
     begin
       logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
-        ' is: ' + mypidstr, LLinfo);
+        ' is: ' + mypidstr, LLDebug);
     end
     else
     begin
@@ -385,7 +395,7 @@ var
       logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
     end;
     if Result = 0 then
-      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
+      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLDebug);
   end;
 
   function getParentPid(basepid: dword): dword;
