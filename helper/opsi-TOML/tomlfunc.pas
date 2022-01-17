@@ -21,7 +21,7 @@ function ReadTOMLFile(tomlFilePath: String): String;
 function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
 
 function SaveToTOMLFile(TOMLcontents : String; tomlFilePath: String): boolean;
-//function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
+function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
 
 function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
 
@@ -108,7 +108,6 @@ begin
   myFile.Free;
 end;
 
-(*       // Once TTOMLData.AsTOML.FormatTOML exists
 function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
 var
   myFile: TStringList;
@@ -116,7 +115,7 @@ begin
   result := False;
   myFile := TStringList.Create;
   tomlFilePath := ExpandFileName(tomlFilePath);
-  myFile.Add(myTOML.AsTOML.FormatTOML);
+  myFile.Add(myTOML.AsString);
   try
   myFile.SaveToFile(tomlFilePath);
   result := True;
@@ -126,7 +125,6 @@ begin
   end;
   myFile.Free;
 end;
-*)
 
 function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
 var
