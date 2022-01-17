@@ -79,13 +79,14 @@ begin
   else
       writeln('- SaveToTOMLFile with String parameter failed');
 
-  (*
+
+  TTOMLTable(myTOML.Values[1]).Add('newKey','newValue');
   writeln('--- Testing SaveToTOMLFile (from TTOMLDocument to File)') ;
   if ( SaveToTOMLFile(myTOML, newFilePath) ) then
      writeln('- SaveToTOMLFile with TTOMLDocument parameter done')
   else
       writeln('- SaveToTOMLFile with TTOMLDocument parameter failed');
-  *)
+
 
 
   writeln('--- Testing ConvertTOMLtoJSON ') ;
@@ -170,7 +171,6 @@ begin
   tableNamesList := GetTOMLTableNames(myTOMLTable);
   writeln('The TOMLTable [servers] has sub-tables :');
   writeln(tableNamesList.Text);
-
 
   writeln('--- Getting values from keys');
 
