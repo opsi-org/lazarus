@@ -23,18 +23,18 @@ type
   {TProgressDisplayer}
   TProgressDisplayer = class(TObject)
   private
-    FDisplayedProgress: Integer;
-    FNewProgress: Integer;
+    FDisplayedProgress: integer;
+    FNewProgress: integer;
   public
     constructor Create;
     procedure DisplayProgress;
-    property NewProgress: Integer write FNewProgress;
+    property NewProgress: integer write FNewProgress;
   end;
 
   {TUnzipperWithProgressHandler}
   TUnzipperWithProgressHandler = class(TUnZipper)
-    private
-      FProgressDisplayer: TProgressDisplayer;
+  private
+    FProgressDisplayer: TProgressDisplayer;
   public
     constructor Create;
     procedure HandleProgressBar(Sender: TObject; const ATotPos, ATotSize: int64);
@@ -44,20 +44,20 @@ type
   TZipperWithProgressHandler = class(TZipper)
   private
     FProgressDisplayer: TProgressDisplayer;
-    FTotalPosInFile: Integer;
-    FTotalSizeOfCurrentFile: Integer;
-    FFileNumber: Integer;
+    FTotalPosInFile: integer;
+    FTotalSizeOfCurrentFile: integer;
+    FFileNumber: integer;
     FSourcePath: string;
     // FATotSize, FATotPos as in TUnzipperWithProgressHandler.HandleProgressBar:
-    FATotSize: Integer;
-    FATotPos: Integer;
+    FATotSize: integer;
+    FATotPos: integer;
   public
     constructor Create;
     procedure CalculateOverallProgress(const Pct: double);
     procedure CheckEndOfFile(const Pct: double);
     procedure HandleProgressBar(Sender: TObject; const Pct: double);
     property SourcePath: string write FSourcePath;
-    property ATotSize: Integer write FATotSize;
+    property ATotSize: integer write FATotSize;
   end;
 
 
@@ -76,7 +76,7 @@ implementation
 constructor TProgressDisplayer.Create;
 begin
   inherited Create;
-  FDisplayedProgress:=0;
+  FDisplayedProgress := 0;
 end;
 
 procedure TProgressDisplayer.DisplayProgress;
