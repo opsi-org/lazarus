@@ -145,11 +145,12 @@ begin
   // Note that for small files, Pct becomes only 0 and 100.
 
   // At end of all files OnProgress is executed but there are no files left
-  if FFileNumber = Entries.Count then exit;
-
-  CalculateOverallProgress(Pct);
-  FProgressDisplayer.DisplayProgress;
-  CheckEndOfFile(Pct);
+  if FFileNumber < Entries.Count then
+  begin
+    CalculateOverallProgress(Pct);
+    FProgressDisplayer.DisplayProgress;
+    CheckEndOfFile(Pct);
+  end;
 end;
 
 
