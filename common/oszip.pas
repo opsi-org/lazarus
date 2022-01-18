@@ -124,12 +124,13 @@ begin
   FTotalSizeOfCurrentFile := FileSize(FSourcePath +
     Entries.Entries[FFileNumber].ArchiveFileName);
   FTotalPosInFile := round(Pct * FTotalSizeOfCurrentFile / 100);
-  FProgressDisplayer.NewProgress := round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
+  FProgressDisplayer.NewProgress :=
+    round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
 end;
 
 procedure TZipperWithProgressHandler.CheckEndOfFile(const Pct: double);
 begin
-  if (Pct = 100) and (FATotPos <> FATotPos + FTotalSizeOfCurrentFile) then
+  if Pct = 100 then
   begin
     Inc(FFileNumber);
     FATotPos += FTotalSizeOfCurrentFile;
