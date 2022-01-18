@@ -46,9 +46,7 @@ msgstr "Kopieringsproces udført. Lukker vindue..."
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid ""
-"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
-"with write privileges."
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr "Billeder kunne ikke gemmes på opsi-depot. %sKontrollér venligst om depot er monteret med skriverettigheder."
 
 #: ockimagestodepot.rsimagessaved
@@ -132,9 +130,7 @@ msgstr "Forbundet til"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid ""
-"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
-"opsi Client Kiosk (as user) with admin privileges."
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Nuværende bruger har ikke admin-rettigheder. Admin-tilstand er deaktiveret.%sLøsning: start opsi Client Kiosk (som bruger) med admin-rettigheder."
 
 #: opsiclientkioskgui.rsdepot
@@ -182,8 +178,7 @@ msgstr "Installér nu"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -243,23 +238,37 @@ msgstr "Nu"
 msgid "on"
 msgstr ""
 
+#: opsiclientkioskgui.rsproductid
+msgid "ID"
+msgstr ""
+
+#: opsiclientkioskgui.rsproductname
+msgid "Software"
+msgstr ""
+
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Genindlæs"
 
+#: opsiclientkioskgui.rsrequest
+msgid "Request"
+msgstr ""
+
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Ukendt"
+
+#: opsiclientkioskgui.rsstatus
+msgid "Status"
+msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr "Gem handlinger"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid ""
-"Send the action requests to the server, show the resulting installations and"
-" ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr "Send anmodninger om handling til serveren, vis resultatet af installationerne og spørg efter installation."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -330,9 +339,7 @@ msgid "Error while initializing opsiconnection"
 msgstr "Fejl under initialisering af opsi-forbindelse"
 
 #: opsiconnection.rskioskmodeold
-msgid ""
-"Kiosk mode: old. Update to newer opsi version to get full functionality "
-"(e.g. disable software on demand) of Opsi Kiosk."
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 msgstr "Kiosk-tilstand: gammel. Opdatér til nyere opsi-version for at få fuld funktionalitet (f.eks. deaktivering af software-on-demand) af Opsi-Kiosk."
 
 #: opsiconnection.rsnodatafromserver
@@ -453,8 +460,7 @@ msgstr "Installér nu"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -495,8 +501,7 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-klient-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid ""
-"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Klik i kolonnen for handlinger, for at sætte en anmodning (installation/afinstallation)"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -717,3 +722,4 @@ msgstr "Kodeord"
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Bruger"
+

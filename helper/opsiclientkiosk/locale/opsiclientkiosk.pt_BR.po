@@ -45,9 +45,7 @@ msgstr ""
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid ""
-"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
-"with write privileges."
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr ""
 
 #: ockimagestodepot.rsimagessaved
@@ -131,9 +129,7 @@ msgstr ""
 
 #: opsiclientkioskgui.rscurrentusernoadmin
 #, object-pascal-format
-msgid ""
-"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
-"opsi Client Kiosk (as user) with admin privileges."
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr ""
 
 #: opsiclientkioskgui.rsdepot
@@ -181,8 +177,7 @@ msgstr "Instalar agora"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -242,23 +237,37 @@ msgstr ""
 msgid "on"
 msgstr ""
 
+#: opsiclientkioskgui.rsproductid
+msgid "ID"
+msgstr ""
+
+#: opsiclientkioskgui.rsproductname
+msgid "Software"
+msgstr ""
+
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
+msgstr ""
+
+#: opsiclientkioskgui.rsrequest
+msgid "Request"
 msgstr ""
 
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Desconhecido"
 
+#: opsiclientkioskgui.rsstatus
+msgid "Status"
+msgstr ""
+
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid ""
-"Send the action requests to the server, show the resulting installations and"
-" ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr ""
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -329,9 +338,7 @@ msgid "Error while initializing opsiconnection"
 msgstr ""
 
 #: opsiconnection.rskioskmodeold
-msgid ""
-"Kiosk mode: old. Update to newer opsi version to get full functionality "
-"(e.g. disable software on demand) of Opsi Kiosk."
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 msgstr ""
 
 #: opsiconnection.rsnodatafromserver
@@ -452,8 +459,7 @@ msgstr "Instalar agora"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -494,8 +500,7 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid ""
-"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr ""
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -716,3 +721,4 @@ msgstr ""
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr ""
+

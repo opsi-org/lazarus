@@ -47,9 +47,7 @@ msgstr ""
 
 #: ockimagestodepot.rsimagesnotsaved
 #, object-pascal-format
-msgid ""
-"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
-"with write privileges."
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr ""
 
 #: ockimagestodepot.rsimagessaved
@@ -132,10 +130,8 @@ msgid "Connected to"
 msgstr "Подключено к"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
-#, object-pascal-format
-msgid ""
-"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
-"opsi Client Kiosk (as user) with admin privileges."
+#, object-pascal-format, fuzzy, badformat
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Текущий пользователь не имеет административных привилегий. Режим администратора отключен. Решение: запустите  opsi Client Kiosk (от пользователя) с административными привелегиями"
 
 #: opsiclientkioskgui.rsdepot
@@ -183,8 +179,7 @@ msgstr "Установить сейчас"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -244,23 +239,37 @@ msgstr ""
 msgid "on"
 msgstr ""
 
+#: opsiclientkioskgui.rsproductid
+msgid "ID"
+msgstr ""
+
+#: opsiclientkioskgui.rsproductname
+msgid "Software"
+msgstr ""
+
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Перезагрузить"
 
+#: opsiclientkioskgui.rsrequest
+msgid "Request"
+msgstr ""
+
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#: opsiclientkioskgui.rsstatus
+msgid "Status"
+msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid ""
-"Send the action requests to the server, show the resulting installations and"
-" ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr "Отправлять запросы действий на сервер, показать результирующие установки и cросить для начала установки."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -331,9 +340,7 @@ msgid "Error while initializing opsiconnection"
 msgstr ""
 
 #: opsiconnection.rskioskmodeold
-msgid ""
-"Kiosk mode: old. Update to newer opsi version to get full functionality "
-"(e.g. disable software on demand) of Opsi Kiosk."
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 msgstr ""
 
 #: opsiconnection.rsnodatafromserver
@@ -454,8 +461,7 @@ msgstr "Установить сейчас"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -496,8 +502,7 @@ msgid "opsi-client-kiosk"
 msgstr "OPSI Client Kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid ""
-"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Кликните по столбцу ActionRequest, чтобы установить действие (setup/uninstall)"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -718,3 +723,4 @@ msgstr "Пароль"
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Пользователь"
+
