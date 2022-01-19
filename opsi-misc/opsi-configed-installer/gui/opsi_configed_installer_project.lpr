@@ -7,8 +7,10 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads,
   Interfaces, // this includes the LCL widgetset
   Forms, opsi_configed_installer_unit_language,
-  opsi_configed_installer_unit_distr, opsi_configed_installer_unit_wait,
+  opsi_configed_installer_unit_distr,
+  opsi_configed_installer_unit_query,
   opsi_configed_installer_unit_password,
+  opsi_configed_installer_unit_wait,
   opsi_configed_installer_resourcestrings;
 
 {$R *.res}

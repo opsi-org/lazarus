@@ -78,7 +78,7 @@ uses
   opsi_configed_installer_resourcestrings,
   opsi_configed_installer_data,
   opsi_configed_installer_unit_distr,
-  opsi_configed_installer_unit_password,
+  opsi_configed_installer_unit_query,
   oslog, osfunclin;
 
 {$R *.lfm}
@@ -313,8 +313,11 @@ begin
   // stay on TConfigedInstaller after TDistribution closed.
   if Distribution.GoOn then
   begin
-    Enabled := False;
-    Password.Visible := True;
+    showForm(Query, self);
+    Query.BtnBack.Left := BtnBack.Left;
+    Query.BtnBack.Top := BtnBack.Top;
+    Query.BtnNext.Left := BtnNext.Left;
+    Query.BtnNext.Top := BtnNext.Top;
   end;
 end;
 

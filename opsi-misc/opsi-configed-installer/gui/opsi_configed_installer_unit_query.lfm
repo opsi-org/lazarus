@@ -1,0 +1,290 @@
+object Query: TQuery
+  Left = 410
+  Height = 450
+  Top = 201
+  Width = 730
+  Caption = 'Opsi Quick Install - Query (part 1)'
+  ClientHeight = 450
+  ClientWidth = 730
+  OnActivate = FormActivate
+  OnClose = FormClose
+  LCLVersion = '2.2.0.2'
+  object BackgrImage: TImage
+    Left = 0
+    Height = 450
+    Top = 0
+    Width = 730
+    Align = alClient
+    AutoSize = True
+    Enabled = False
+  end
+  object BtnNext: TButton
+    Left = 664
+    Height = 25
+    Top = 416
+    Width = 51
+    AutoSize = True
+    Caption = ' next > '
+    OnClick = BtnNextClick
+    ParentFont = False
+    TabOrder = 0
+  end
+  object BtnBack: TButton
+    Left = 16
+    Height = 25
+    Top = 416
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    OnClick = BtnBackClick
+    ParentFont = False
+    TabOrder = 1
+  end
+  object InfoRepo: TImage
+    AnchorSideLeft.Control = PanelMem
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelMem
+    Left = 560
+    Height = 16
+    Top = 50
+    Width = 14
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+  end
+  object InfoOpsiVersion: TImage
+    AnchorSideLeft.Control = PanelOpsiVersion
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = PanelOpsiVersion
+    Left = 480
+    Height = 16
+    Top = 50
+    Width = 14
+    ParentShowHint = False
+    ShowHint = True
+    Stretch = True
+    Visible = False
+  end
+  object PanelOpsiVersion: TPanel
+    AnchorSideTop.Control = Owner
+    Left = 176
+    Height = 46
+    Top = 50
+    Width = 304
+    BorderSpacing.Top = 50
+    BevelOuter = bvNone
+    ClientHeight = 46
+    ClientWidth = 304
+    ParentFont = False
+    TabOrder = 2
+    Visible = False
+    object LabelOpsiVersion: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 304
+      Align = alTop
+      Caption = 'Which opsi version would you like to install?'
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      WordWrap = True
+    end
+    object RadioBtnOpsi41: TRadioButton
+      AnchorSideTop.Control = LabelOpsiVersion
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 74
+      Caption = 'Opsi 4.1'
+      OnChange = RadioBtnOpsi41Change
+      ParentFont = False
+      TabOrder = 0
+    end
+    object RadioBtnOpsi42: TRadioButton
+      AnchorSideLeft.Control = RadioBtnOpsi41
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelOpsiVersion
+      AnchorSideTop.Side = asrBottom
+      Left = 124
+      Height = 21
+      Top = 19
+      Width = 74
+      BorderSpacing.Left = 50
+      Caption = 'Opsi 4.2'
+      Checked = True
+      ParentFont = False
+      TabOrder = 1
+      TabStop = True
+    end
+  end
+  object PanelMem: TPanel
+    AnchorSideTop.Control = Owner
+    Left = 176
+    Height = 78
+    Top = 50
+    Width = 384
+    BorderSpacing.Top = 50
+    BevelOuter = bvNone
+    ClientHeight = 78
+    ClientWidth = 384
+    ParentFont = False
+    TabOrder = 3
+    object LabelMem: TLabel
+      Left = 0
+      Height = 19
+      Hint = 'Repository from which opsi shall be installed.'
+      Top = 0
+      Width = 384
+      Align = alTop
+      Caption = 'Memory requirement'
+      ParentFont = False
+      WordWrap = True
+    end
+    object RadioBtnMem512: TRadioButton
+      AnchorSideTop.Control = LabelMem
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 48
+      Caption = '512'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object RadioBtnMem1024: TRadioButton
+      AnchorSideLeft.Control = RadioBtnMem512
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelMem
+      AnchorSideTop.Side = asrBottom
+      Left = 68
+      Height = 21
+      Top = 19
+      Width = 56
+      BorderSpacing.Left = 20
+      Caption = '1024'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object RadioBtnMem1536: TRadioButton
+      AnchorSideLeft.Control = RadioBtnMem1024
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelMem
+      AnchorSideTop.Side = asrBottom
+      Left = 144
+      Height = 21
+      Top = 19
+      Width = 56
+      BorderSpacing.Left = 20
+      Caption = '1536'
+      Checked = True
+      TabOrder = 2
+      TabStop = True
+    end
+    object RadioBtnMem2048: TRadioButton
+      AnchorSideLeft.Control = RadioBtnMem1536
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelMem
+      AnchorSideTop.Side = asrBottom
+      Left = 220
+      Height = 21
+      Top = 19
+      Width = 56
+      BorderSpacing.Left = 20
+      Caption = '2048'
+      TabOrder = 3
+    end
+    object RadioBtnMem3000: TRadioButton
+      AnchorSideLeft.Control = RadioBtnMem2048
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelMem
+      AnchorSideTop.Side = asrBottom
+      Left = 296
+      Height = 21
+      Top = 19
+      Width = 56
+      BorderSpacing.Left = 20
+      Caption = '3000'
+      TabOrder = 4
+    end
+  end
+  object PanelScalingFactor: TPanel
+    AnchorSideTop.Control = PanelMem
+    AnchorSideTop.Side = asrBottom
+    Left = 176
+    Height = 92
+    Top = 143
+    Width = 384
+    BorderSpacing.Top = 15
+    BevelOuter = bvNone
+    ClientHeight = 92
+    ClientWidth = 384
+    ParentFont = False
+    TabOrder = 4
+    object LabelScalingFactor: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 384
+      Align = alTop
+      Caption = 'Scaling factor'
+      ParentFont = False
+      WordWrap = True
+    end
+    object RadioBtn05: TRadioButton
+      AnchorSideTop.Control = LabelScalingFactor
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 44
+      Caption = '0.5'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object RadioBtn10: TRadioButton
+      AnchorSideLeft.Control = RadioBtn05
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelScalingFactor
+      AnchorSideTop.Side = asrBottom
+      Left = 64
+      Height = 21
+      Top = 19
+      Width = 44
+      BorderSpacing.Left = 20
+      Caption = '1.0'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object RadioBtn15: TRadioButton
+      AnchorSideLeft.Control = RadioBtn10
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelScalingFactor
+      AnchorSideTop.Side = asrBottom
+      Left = 128
+      Height = 21
+      Top = 19
+      Width = 44
+      BorderSpacing.Left = 20
+      Caption = '1.5'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object RadioBtn20: TRadioButton
+      AnchorSideLeft.Control = RadioBtn15
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelScalingFactor
+      AnchorSideTop.Side = asrBottom
+      Left = 192
+      Height = 21
+      Top = 19
+      Width = 44
+      BorderSpacing.Left = 20
+      Caption = '2.0'
+      Checked = True
+      TabOrder = 3
+      TabStop = True
+    end
+  end
+end

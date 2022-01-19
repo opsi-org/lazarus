@@ -76,6 +76,7 @@ uses
   opsi_configed_installer_data,
   opsi_configed_installer_unit_language,
   opsi_configed_installer_unit_wait,
+  opsi_configed_installer_unit_query,
   osLinuxRepository,
   osDistributionInfo;
 
@@ -229,7 +230,7 @@ procedure TPassword.BtnBackClick(Sender: TObject);
 begin
   btnFinishClicked := False;
   Password.Visible := False;
-  ConfigedInstaller.Enabled := True;
+  Query.Enabled := True;
 end;
 
 procedure TPassword.BtnFinishClick(Sender: TObject);
