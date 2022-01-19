@@ -217,11 +217,6 @@ if not ($tls_alternative_cipher$ ="")
 endif
 
 
-; TODO (for configed installer): extend command line ($add_calloptions$) with
-; properties.conf file (if existing) where the requested properties memory_requirement and
-; scaling_factor are saved
-
-
 include_insert "%scriptpath%\paramhelping.opsiscript"
 set $targetstring$ = produceLinkTarget( $opsiserver$ )
 
