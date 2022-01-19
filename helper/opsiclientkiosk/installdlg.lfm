@@ -9,7 +9,7 @@ object FInstalldlg: TFInstalldlg
   FormStyle = fsSystemStayOnTop
   OnActivate = FormActivate
   Position = poMainFormCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.2.0.2'
   object ToolBar1: TToolBar
     Left = 0
     Height = 65
@@ -24,7 +24,7 @@ object FInstalldlg: TFInstalldlg
       Width = 548
       Align = alTop
       BorderSpacing.Around = 5
-      Caption = 'Install now (Close all Applications)'
+      Caption = 'Install now (Close all Applications, Kiosk is closed automatically)'
       Font.CharSet = ANSI_CHARSET
       Font.Height = -13
       Font.Name = 'Arial'
@@ -76,7 +76,6 @@ object FInstalldlg: TFInstalldlg
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
       Font.Style = [fsBold]
-      ParentColor = False
       ParentFont = False
     end
   end

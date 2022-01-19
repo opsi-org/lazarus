@@ -375,7 +375,9 @@ msgid "Install at next Standard Event (e.g. Reboot)"
 msgstr "Installer à la prochaine occasion (ex. : Redémarrage)"
 
 #: tfinstalldlg.bitbtnnow.caption
-msgid "Install now (Close all Applications)"
+#, fuzzy
+#| msgid "Install now (Close all Applications)"
+msgid "Install now (Close all Applications, Kiosk is closed automatically)"
 msgstr "Installer maintenant (Ferme toutes les applications)"
 
 #: tfinstalldlg.caption

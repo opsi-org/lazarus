@@ -41,6 +41,9 @@ implementation
 
 {$R *.lfm}
 
+uses
+  opsiclientkioskgui;
+
 { TFInstalldlg }
 
 procedure TFInstalldlg.BitBtnNowClick(Sender: TObject);
@@ -56,9 +59,10 @@ begin
     if ErrorMessage <> '' then ShowMessage(rsErrorOnDemand + ErrorMessage);
   finally
     screen.Cursor := crDefault;
+    visible := false;
+    UpdateData:= true;
+    FormOpsiClientKiosk.Close;
   end;
-  visible := false;
-  UpdateData:= true;
 end;
 
 procedure TFInstalldlg.FormActivate(Sender: TObject);
