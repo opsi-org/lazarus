@@ -372,10 +372,8 @@ msgid "Install at next Standard Event (e.g. Reboot)"
 msgstr "Installiere bei nächster Standard-Gelegenheit (z.B. Neustart)"
 
 #: tfinstalldlg.bitbtnnow.caption
-#, fuzzy
-#| msgid "Install now (Close all Applications)"
 msgid "Install now (Close all Applications, Kiosk is closed automatically)"
-msgstr "Installiere jetzt. (Alle Anwendungen schließen)"
+msgstr "Installiere jetzt. (Alle Anwendungen schließen, Kiosk schließt automatisch)"
 
 #: tfinstalldlg.caption
 msgid "opsi-kiosk-client"
