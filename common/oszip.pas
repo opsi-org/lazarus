@@ -16,10 +16,14 @@ uses
   oslog,
   //{$ENDIF OSLOG}
   LConvEncoding,
-  lazutf8,
-  osGUIControl;
+  {$IFDEF GUI}
+  osGUIControl,
+  {$ENDIF GUI}
+  lazutf8;
+
 
 type
+
   {TProgressDisplayer}
   TProgressDisplayer = class(TObject)
   private
@@ -87,7 +91,11 @@ begin
   if FNewProgress > FDisplayedProgress then
   begin
     FDisplayedProgress := FNewProgress;
+    {$IFDEF GUI}
+    {$IFDEF OPSISCRIPT}
     FBatchOberflaeche.SetProgress(FNewProgress, pPercent);
+    {$ENDIF OPSISCRIPT}
+    {$ENDIF GUI}
   end;
 end;
 
