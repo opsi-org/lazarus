@@ -26,10 +26,12 @@ type
 
   TConfigedInstallerData = class(TObject)
   public
-    distroName, distroRelease: string;
+    distroName: string;
+    distroRelease: string;
     DistrInfo: TDistributionInfo;
 
-    opsiVersion, repo: string;
+    opsiVersion: string;
+    repo: string;
     repoNoCache: string;
 
     constructor Create;
@@ -52,11 +54,10 @@ end;
 
 constructor TConfigedInstallerData.Create;
 begin
-  // set default values
   DistrInfo := TDistributionInfo.Create;
   opsiVersion := 'Opsi 4.2';
   repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
-  repoNoCache := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
+  repoNoCache := repo;
 end;
 
 end.
