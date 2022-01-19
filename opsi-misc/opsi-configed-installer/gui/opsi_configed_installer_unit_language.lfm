@@ -7,7 +7,7 @@ object ConfigedInstaller: TConfigedInstaller
   ClientHeight = 450
   ClientWidth = 730
   OnCreate = FormCreate
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   object BackgrImage: TImage
     Left = 0
     Height = 450
@@ -50,7 +50,6 @@ object ConfigedInstaller: TConfigedInstaller
       Width = 364
       Align = alBottom
       Caption = 'To carry out the remaing installation automatically, we need some information first.'
-      ParentColor = False
       ParentFont = False
       ParentShowHint = False
       WordWrap = True
@@ -77,7 +76,6 @@ object ConfigedInstaller: TConfigedInstaller
       Caption = 'Welcome to the installation of opsi-configed on this computer!'
       Font.Height = -19
       Font.Name = 'Sans'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -91,7 +89,6 @@ object ConfigedInstaller: TConfigedInstaller
       Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Top = 50
       Caption = 'Please choose a language for this setup program:'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
