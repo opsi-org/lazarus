@@ -104,6 +104,7 @@ var
   lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
+  defunct : boolean;
 begin
   try
     try
@@ -119,7 +120,7 @@ begin
       lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,ppid,user,comm:40,cmd:110';
       {$IFDEF DARWIN}
-      pscmd := 'ps -eco pid,pppid,user,comm';
+      pscmd := 'ps -eco pid,ppid,user,comm';
       {$ENDIF DARWIN}
       {$IFDEF OPSISCRIPT}
       if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
@@ -148,6 +149,9 @@ begin
               ppidstr := '';
               cmdstr := '';
               fullcmdstr := '';
+              defunct := false;
+              if pos('<defunct>',outlines.strings[i]) > 0 then
+                defunct := true;
               stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
             {$IFDEF LINUX}
               for k := 0 to lineparts.Count - 1 do
@@ -162,6 +166,11 @@ begin
                   cmdstr := lineparts.Strings[k]
                 else
                   fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+                if defunct then
+                begin
+                  // mark with brackets as defunct
+                  cmdstr := '['+cmdstr+']';
+                end;
               end;
             {$ENDIF LINUX}
             {$IFDEF DARWIN}
@@ -176,9 +185,10 @@ begin
                 else
                   cmdstr := cmdstr + lineparts.Strings[k] + ' ';
               end;
+              cmdstr := trim(cmdstr);
               fullcmdstr := cmdstr;
             {$ENDIF DARWIN}
-              resultstring := cmdstr + ';' + pidstr + ';' + ppidstr +
+              resultstring := cmdstr + ';' + trim(pidstr) + ';' + trim(ppidstr) +
                 ';' + userstr + ';' + fullcmdstr;
               LogDatei.log(resultstring, LLDebug3);
               //resultstring := lineparts.Strings[0] + ';';
@@ -192,7 +202,7 @@ begin
     except
       on E: Exception do
       begin
-        LogDatei.DependentAdd('Exception in getUnixProcessList, system message: "' +
+        LogDatei.log('Exception in getUnixProcessList, system message: "' +
           E.Message + '"',
           LLError);
       end
@@ -330,7 +340,7 @@ var
   i: integer;
   searchpid, parentpid: dword;
   tmpstr: string;
-  basestr: string;
+  basestr, searchstr: string;
   copystart1, copylength1, copystart2, copylength2: integer;
 
   function getPidOfProc(searchproc: string): dword;
@@ -356,12 +366,28 @@ var
       end;
     end;
     *)
+    {$IFDEF LINUX}
+    {in processlist we get " shortcmd ; ....." }
+    {shortcmd has max length 15 and the rest does not help really }
+    {so we try find an exact match in shortcmd }
+    if length(searchproc) > 15 then
+    begin
+      searchstr := searchproc;
+      searchproc := trim(copy(searchstr, 1, 15));
+      logdatei.log(
+        'Process name to find (' + searchstr +
+        ') is wider then 15 chars. Searching for: (' + searchproc +
+        '). The result may not be exact',
+        LLInfo);
+    end;
+    {$ENDIF LINUX}
     Result := 0;
     mypidstr := proc2pid.Values[searchproc];
+    if mypidstr <> '' then
     if TryStrToDWord(mypidstr, Result) then
     begin
       logdatei.log('getPidOfProc: valid pid for: ' + searchproc +
-        ' is: ' + mypidstr, LLinfo);
+        ' is: ' + mypidstr, LLDebug);
     end
     else
     begin
@@ -369,7 +395,7 @@ var
       logdatei.log('Error: getPidOfProc: found pid not valid: ' + mypidstr, LLerror);
     end;
     if Result = 0 then
-      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLinfo);
+      logdatei.log('getPidOfProc: No pid found for: ' + searchproc, LLDebug);
   end;
 
   function getParentPid(basepid: dword): dword;

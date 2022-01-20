@@ -27,10 +27,10 @@ uses
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
   {$IFDEF GUI}
-   Graphics,
-   LResources,
+  Graphics,
+  LResources,
   // dialogs e.g. for ShowMessage
-  dialogs,
+  Dialogs,
   {$ENDIF GUI}
   unix,
   fileutil,
@@ -45,7 +45,6 @@ uses
   OSProcessux,
   IniFiles,
   osprocesses;
-
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
@@ -94,6 +93,7 @@ uses
   osshowsysinfo,
 {$ENDIF GUI}
   osparser;
+
 {$ENDIF OPSISCRIPT}
 //{$ENDIF QUICKINSTALLGUI}
 
@@ -168,7 +168,7 @@ begin
     end;
     //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     if found > 0 then
-      LogDatei.log('Found after kill :' + Inttostr(found) + ' instances of ' +
+      LogDatei.log('Found after kill :' + IntToStr(found) + ' instances of ' +
         exename, LLError);
   end;
   outlines.Free;
@@ -379,6 +379,7 @@ var
   lineparts: TStringList;
   ExitCode: longint;
   i: integer;
+  uid: integer;
 begin
   Result := TStringList.Create;
   {$IFDEF OPSISCRIPT}
@@ -406,19 +407,24 @@ begin
       LogDatei.log(outlines.strings[i], LLDebug);
       stringsplit(outlines.strings[i], ':', lineparts);
       //LogDatei.log(lineparts.Strings[2], LLDebug);
-      { use only users with a pid >= 1000 }
-      if StrToInt(lineparts.Strings[2]) >= 1000 then
+      // the line may something like: S daemon,,,:/var/run/avahi-daemon:/usr/sbin/nologin
+      // so we have to test if we really have a uid:
+      if tryStrtoint(lineparts.Strings[2], uid) then
       begin
-        resultstring := lineparts.Strings[5];
-        { no empty strings  }
-        if resultstring <> '' then
-          { no fs root  }
-          if resultstring <> '/' then
-            { no /home  }
-            if resultstring <> '/home' then
-            { use only existing direcories as profile }
-            if DirectoryExists(ExpandFileName(resultstring)) then
-              Result.Add(ExpandFileName(resultstring));
+        { use only users with a uid >= 1000 }
+        if uid >= 1000 then
+        begin
+          resultstring := lineparts.Strings[5];
+          { no empty strings  }
+          if resultstring <> '' then
+            { no fs root  }
+            if resultstring <> '/' then
+              { no /home  }
+              if resultstring <> '/home' then
+                { use only existing direcories as profile }
+                if DirectoryExists(ExpandFileName(resultstring)) then
+                  Result.Add(ExpandFileName(resultstring));
+        end;
       end;
     end;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
@@ -611,11 +617,9 @@ function getMyHostEnt: netdb.THostEntry;
 begin
   try
     if not netdb.gethostbyname(synsock.GetHostName, Result) then
-      Logdatei.log('gethostbyname error ' +
-        IntToStr(wsagetlasterror), LLError);
+      Logdatei.log('gethostbyname error ' + IntToStr(wsagetlasterror), LLError);
   except
-    Logdatei.log('gethostname error ' +
-      IntToStr(wsagetlasterror), LLError);
+    Logdatei.log('gethostname error ' + IntToStr(wsagetlasterror), LLError);
   end;
 end;
 
@@ -747,9 +751,10 @@ begin
   {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get ' + target + ' || exit $?"');
+  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get ' +
+    target + ' || exit $?"');
   {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  LogDatei.log('ip out: ' + str, LLInfo);
   stringsplitByWhiteSpace(str, TStringList(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
@@ -776,9 +781,10 @@ begin
   {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
+  str := getCommandResult(
+    '/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
   {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  LogDatei.log('ip out: ' + str, LLInfo);
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('src');
@@ -806,9 +812,10 @@ begin
   {$IFDEF DARWIN}
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
+  str := getCommandResult(
+    '/bin/bash -c "/usr/local/bin/ip -4 route get 255.255.255.255 || exit $?"');
   {$ENDIF DARWIN}
-  LogDatei.log('ip out: ' + str , LLInfo);
+  LogDatei.log('ip out: ' + str, LLInfo);
   stringsplitByWhiteSpace(str, list);
   LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('dev');
@@ -835,8 +842,8 @@ var
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
   lineparts: TStringList;
-  outstring : string;
-  exitcode : longint;
+  outstring: string;
+  exitcode: longint;
 
   function getPackageLockPid(lockfile: string): string;
   var
@@ -976,7 +983,8 @@ var
   end;
 
 begin
-  LogDatei.log_prog('getPackageLock called with: '+inttostr(timeoutsec)+' - '+booltostr(kill,true),LLinfo);
+  LogDatei.log_prog('getPackageLock called with: ' + IntToStr(timeoutsec) +
+    ' - ' + booltostr(kill, True), LLinfo);
   try
     Result := False;
     lockfile1 := '';
@@ -989,9 +997,9 @@ begin
     begin
       // we need to call zypper to fill zypper.pid
       // exitcode: 7 - ZYPPER_EXIT_ZYPP_LOCKED
-      outstring := getCommandResult('zypper refresh',exitcode);
+      outstring := getCommandResult('zypper refresh', exitcode);
       if exitcode = 7 then LogDatei.log('zypper is locked', LLinfo);
-      lockfile := '/run/zypp.pid'
+      lockfile := '/run/zypp.pid';
     end
     else if disttype = 'redhat' then
       lockfile := '/var/run/yum.pid'
@@ -1029,9 +1037,9 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0))
-       + ' shutdown regularly and direct. Time ' +
-      FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+      ' shutdown regularly and direct. Time ' + FormatDateTime(
+      'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
     sleep(1000);
     //LogDatei.Free;
@@ -1092,4 +1100,3 @@ begin
 end;
 
 end.
-

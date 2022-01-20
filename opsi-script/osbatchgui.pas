@@ -1015,6 +1015,7 @@ begin
   case ProgressValueID of
     pPercent: ShowProgress(Progress);
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
@@ -1250,7 +1251,6 @@ begin
   Position:=poScreenCenter;
   MoveToDefaultPosition;
 end;
-
 
 
 initialization
