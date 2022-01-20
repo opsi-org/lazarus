@@ -1,9 +1,9 @@
 object Query: TQuery
-  Left = 410
+  Left = 620
   Height = 450
-  Top = 201
+  Top = 253
   Width = 730
-  Caption = 'Opsi Quick Install - Query (part 1)'
+  Caption = 'Opsi Quick Install - Query'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -20,9 +20,9 @@ object Query: TQuery
   end
   object BtnNext: TButton
     Left = 664
-    Height = 25
+    Height = 33
     Top = 416
-    Width = 51
+    Width = 56
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
@@ -31,9 +31,9 @@ object Query: TQuery
   end
   object BtnBack: TButton
     Left = 16
-    Height = 25
+    Height = 33
     Top = 416
-    Width = 51
+    Width = 57
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -53,9 +53,7 @@ object Query: TQuery
     Stretch = True
   end
   object InfoOpsiVersion: TImage
-    AnchorSideLeft.Control = PanelOpsiVersion
     AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = PanelOpsiVersion
     Left = 480
     Height = 16
     Top = 50
@@ -64,60 +62,6 @@ object Query: TQuery
     ShowHint = True
     Stretch = True
     Visible = False
-  end
-  object PanelOpsiVersion: TPanel
-    AnchorSideTop.Control = Owner
-    Left = 176
-    Height = 46
-    Top = 50
-    Width = 304
-    BorderSpacing.Top = 50
-    BevelOuter = bvNone
-    ClientHeight = 46
-    ClientWidth = 304
-    ParentFont = False
-    TabOrder = 2
-    Visible = False
-    object LabelOpsiVersion: TLabel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 304
-      Align = alTop
-      Caption = 'Which opsi version would you like to install?'
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      WordWrap = True
-    end
-    object RadioBtnOpsi41: TRadioButton
-      AnchorSideTop.Control = LabelOpsiVersion
-      AnchorSideTop.Side = asrBottom
-      Left = 0
-      Height = 21
-      Top = 19
-      Width = 74
-      Caption = 'Opsi 4.1'
-      OnChange = RadioBtnOpsi41Change
-      ParentFont = False
-      TabOrder = 0
-    end
-    object RadioBtnOpsi42: TRadioButton
-      AnchorSideLeft.Control = RadioBtnOpsi41
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = LabelOpsiVersion
-      AnchorSideTop.Side = asrBottom
-      Left = 124
-      Height = 21
-      Top = 19
-      Width = 74
-      BorderSpacing.Left = 50
-      Caption = 'Opsi 4.2'
-      Checked = True
-      ParentFont = False
-      TabOrder = 1
-      TabStop = True
-    end
   end
   object PanelMem: TPanel
     AnchorSideTop.Control = Owner
@@ -130,7 +74,7 @@ object Query: TQuery
     ClientHeight = 78
     ClientWidth = 384
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 2
     object LabelMem: TLabel
       Left = 0
       Height = 19
@@ -221,7 +165,7 @@ object Query: TQuery
     ClientHeight = 92
     ClientWidth = 384
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 3
     object LabelScalingFactor: TLabel
       Left = 0
       Height = 19

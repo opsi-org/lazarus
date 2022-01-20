@@ -24,10 +24,6 @@ resourcestring
   // ConfigedInstaller:
   rsCapDistr = 'Distribution';
   rsCapQuery = 'Query';
-  rsCapQuery2 = 'Query (part 2)';
-  rsCapQuery3 = 'Query (part 3)';
-  rsCapQueryDhcp = 'Query (dhcp)';
-  rsCapQueryUserInfo = 'Query (user info)';
 
   {Language}
   rsWelcome = 'Welcome to the installation of the opsi-configed on this computer!';
@@ -48,6 +44,10 @@ resourcestring
 
   rsStartInstallation =
     'Finally click "finish" to start the installation of opsi-server.';
+
+  {Query}
+  rsMemReq = '';
+  rsScalingF = '';
 
   {Password}
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';

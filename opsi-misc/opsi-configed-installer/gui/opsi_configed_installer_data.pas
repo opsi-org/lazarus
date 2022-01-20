@@ -7,34 +7,29 @@ interface
 uses
   Classes, SysUtils, osDistributionInfo;
 
-type
-
-  {TSplitData}
-
-  // For data that appears in the overview and the file properties.conf in different ways,
-  // e.g. OverviewEntry = 'Yes' or 'Ja' or 'Oui' or ... and PropertyEntry = 'true'
-  TSplitData = class(TObject)
-  public
-    OverviewEntry: string;
-    PropertyEntry: string; // mostly gets boolean value
-    procedure SetEntries(SetOverviewEntry: string; SetPropertyEntry: string);
-  end;
 
 type
 
   {TConfigedInstallerData}
 
   TConfigedInstallerData = class(TObject)
+  private
+    FDistroName: string;
+    FDistroRelease: string;
+    FDistrInfo: TDistributionInfo;
+    FMemoryRequirement: string;
+    FScalingFactor: string;
   public
-    distroName: string;
-    distroRelease: string;
-    DistrInfo: TDistributionInfo;
-
-    opsiVersion: string;
-    repo: string;
-    repoNoCache: string;
+  const
+    OpsiVersion = 'Opsi 4.2';
+    Repo = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
 
     constructor Create;
+    property DistroName: string read FDistroName write FDistroName;
+    property DistroRelease: string read FDistroRelease write FDistroRelease;
+    property DistrInfo: TDistributionInfo read FDistrInfo write FDistrInfo;
+    property MemoryRequirement: string read FMemoryRequirement write FMemoryRequirement;
+    property ScalingFactor: string read FScalingFactor write FScalingFactor;
   end;
 
 var
@@ -42,23 +37,13 @@ var
 
 implementation
 
-{TSplitData}
-
-procedure TSplitData.SetEntries(SetOverviewEntry: string; SetPropertyEntry: string);
-begin
-  OverviewEntry := SetOverviewEntry;
-  PropertyEntry := SetPropertyEntry;
-end;
-
 {TQuickInstallData}
 
 constructor TConfigedInstallerData.Create;
 begin
-  DistrInfo := TDistributionInfo.Create;
-  opsiVersion := 'Opsi 4.2';
-  repo := 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
-  repoNoCache := repo;
+  FDistrInfo := TDistributionInfo.Create;
+  FMemoryRequirement := '1536';
+  FScalingFactor := '2.0';
 end;
 
 end.
-
