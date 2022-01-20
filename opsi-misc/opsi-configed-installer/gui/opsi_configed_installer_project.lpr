@@ -21,6 +21,7 @@ begin
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TConfigedInstaller, ConfigedInstaller);
+  Application.CreateForm(TQuery, Query);
   Application.CreateForm(TPassword, Password);
   Application.CreateForm(TDistribution, Distribution);
   Application.CreateForm(TWait, Wait);
