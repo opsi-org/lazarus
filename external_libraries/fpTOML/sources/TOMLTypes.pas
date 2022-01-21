@@ -155,7 +155,7 @@ type
       function Last: TTOMLData;
       function AsJSON: TJSONData; override;
       function AsStrings: TStringList;
-      function AsString: String;
+      function AsTOMLString: String;
       function AsArray: TStringArray;
       function Count: integer; override;
   end;
@@ -169,6 +169,7 @@ type
       function GetItem(key: TTOMLKeyType): TTOMLData; override;
       function GetItem(index: integer): TTOMLData; override;
       function GetKey(index: integer): TTOMLKeyType;
+      function GetHeader : string;
     public
       defined: boolean;
       terminated: boolean;
@@ -177,7 +178,7 @@ type
       constructor Create(name: string = '');
       destructor Destroy; override;
 
-      function AsString: String;
+      function AsTOMLString: String;
       procedure Insert(const key: String; const data: TTOMLData);
       procedure Insert(const key: String; const value: TTOMLValueType);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
@@ -187,6 +188,7 @@ type
       function AsJSON: TJSONData; override;
       function Count: integer; override;
 
+      property Header : string read GetHeader;
       property Name: string read m_name;
       property Keys[Index: Integer]: TTOMLKeyType read GetKey;
       property Values[Index: Integer]: TTOMLData read GetItem;
@@ -434,7 +436,7 @@ begin
     result.Add(TTOMLValue(data).ToString);
 end;
 
-function TTOMLArray.AsString: String;
+function TTOMLArray.AsTOMLString: String;
 var
   tomlArray : TTOMLArray;
   i: integer;
@@ -442,10 +444,11 @@ begin
   result := '[ ';
   for i := 0 to Count-1 do
     begin
-      if TTOMLValue(list[i]).ToString='TTOMLArray' then
+      //if TTOMLValue(list[i]).ToString='TTOMLArray' then
+      if list[i] is TTOMLArray then
          begin
            tomlArray:= TTOMLArray(list[i]);
-           result:= result + tomlArray.AsString;
+           result:= result + tomlArray.AsTOMLString;
          end
       else
           result:= result + (TTOMLValue(list[i]).ToString);
@@ -457,7 +460,6 @@ end;
 
 function TTOMLArray.AsArray: TStringArray;
 var
-  data: TTOMLData;
   i: integer;
 begin
   SetLength(result, Count);
@@ -546,39 +548,58 @@ begin
   result := obj;
 end;
 
-function TTOMLTable.AsString: String;
+function TTOMLTable.GetHeader : String;
+var
+  tablePath : String;
+  tomlTable : TTOMLTable;
+begin
+  tablePath := Name;
+  if parent<> nil then
+    begin
+    tomlTable := TTOMLTable(parent);
+    while tomlTable.parent<> nil do
+      begin
+        if (tomlTable.Name<>'document') then
+        begin
+         tablePath := tomlTable.Name+'.'+tablePath;
+         tomlTable := TTOMLTable(tomlTable.parent);
+        end;
+      end;
+    end;
+  result := tablePath;
+end;
+
+function TTOMLTable.AsTOMLString: String;
 var
   i: integer;
   tomlArray : TTOMLArray;
   tomlTable : TTOMLTable;
-  tablePath, tableName,line : String;
+  tableHeader, line : String;
   tomlStringList : TStringList;
 begin
   tomlStringList := TStringList.Create;
-  tablePath := Name;
   for i := 0 to map.Count-1 do
     begin
       case map.Data[i].ToString of
         'TTOMLTable':
           begin
             tomlTable := TTOMLTable(map.Data[i]);
-            if tablePath <> TTOMLTable(tomlTable.parent).Name then
-             tablePath:= '';
-            if (tablePath='document') or (tablePath='') then
-               tablePath := tomlTable.Name
-            else
-               tablePath := tablePath + '.' + tomlTable.Name;
-            tableName := '[' + tablePath +  ']';
+            tableHeader := '[' + tomlTable.Header +  ']';
             tomlStringList.Add(tableName);
-            line := tomlTable.AsString;
+            line := tomlTable.AsTOMLString;
           end;
         'TTOMLArray':
           begin
             tomlArray := TTOMLArray(map.Data[i]);
-            line := String(map.Keys[i])+' = '+tomlArray.AsString;
+            line := String(map.Keys[i])+' = '+tomlArray.AsTOMLString;
           end;
         otherwise
-          line := String(map.Keys[i])+' = '+map.Data[i].ToString;
+          //if varType(TTOMLValue(map.Data[i]).value) in [varOleStr, varStrArg, varString] then
+          if (TTOMLValue(map.Data[i]).TypeString = 'Dynamic string')
+             or (TTOMLValue(map.Data[i]).TypeString = 'UnicodeString') then
+               line := String(map.Keys[i])+' = "'+map.Data[i].ToString +'"'
+          else
+            line := String(map.Keys[i])+' = '+map.Data[i].ToString;
       end;
     tomlStringList.Add(line);
     end;
