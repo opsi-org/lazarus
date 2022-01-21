@@ -6,6 +6,10 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.4.36) stable; urgency=low
 
   * oswebservice: getOpsiModules: integrate new backend_getLicensingInfo method with fallback to old backend_info
+  * oswebservice: retrieveJSONObject: retry on other communication mode only on 400- bad request result
+  * oswebservice: retrieveJSONObjectByHttpPost: retry on other communication mode only on 400- bad request result
+  * oswebservice: getOpsiModules: Legal notice to our license protection
+
 
 -- d.oertel <d.oertel@uib.de> Wed, 19 Jan 2022 15:00
 

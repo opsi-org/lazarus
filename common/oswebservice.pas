@@ -1814,14 +1814,21 @@ begin
               if e.message = 'HTTP/1.1 401 Unauthorized' then
                 FValidCredentials := False;
               t := s;
-              FCommunicationMode := -1;
-              Inc(CommunicationMode);
-              if (CommunicationMode <= 2) then
+              if HTTPSender.ResultCode = 400 then
               begin
-                LogDatei.log('Retry with communicationmode: ' +
-                  IntToStr(communicationmode), LLinfo);
-                Result := retrieveJSONObject(omc, logging, retry,
-                  readOmcMap, CommunicationMode);
+                // we have a 400 Bad Request - perhaps opsi server with other communication mode
+                LogDatei.log(
+                  'We had a 400 (bad request) result - so we retry with other parameters / communication compatibility modes',
+                  LLInfo);
+                FCommunicationMode := -1;
+                Inc(CommunicationMode);
+                if (CommunicationMode <= 2) then
+                begin
+                  LogDatei.log('Retry with communicationmode: ' +
+                    IntToStr(communicationmode), LLinfo);
+                  Result := retrieveJSONObject(omc, logging, retry,
+                    readOmcMap, CommunicationMode);
+                end;
               end;
               finished := True;
             end;
@@ -3004,15 +3011,22 @@ begin
           LogDatei.log_prog(
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
-          FCommunicationMode := -1;
-          //-1 means CommunicationMode is not set e.g. it is unknown
-          // retry with other parameters
-          Inc(CommunicationMode);
-          if (CommunicationMode <= 2) then
+          if HTTPSender.ResultCode = 400 then
           begin
-            LogDatei.log('Retry with communicationmode: ' + IntToStr(
-              communicationmode), LLinfo);
-            Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+            // we have a 400 Bad Request - perhaps opsi server with other communication mode
+            LogDatei.log(
+              'We had a 400 (bad request) result - so we retry with other parameters / communication compatibility modes',
+              LLInfo);
+            FCommunicationMode := -1;
+            //-1 means CommunicationMode is not set e.g. it is unknown
+            // retry with other parameters
+            Inc(CommunicationMode);
+            if (CommunicationMode <= 2) then
+            begin
+              LogDatei.log('Retry with communicationmode: ' + IntToStr(
+                communicationmode), LLinfo);
+              Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+            end;
           end;
         end;
           (*
@@ -3561,6 +3575,27 @@ end;
 
 
 function TOpsi4Data.getOpsiModules: TStringList;
+{
+Juristischer Hinweis:
+Dies ist Code zum Schutz der Begrenzung der Nutzung kostenpflichtiger opsi Erweiterungen.
+Auch wenn dies Opensource Code (AGPLv3) ist, kann die Nutzung oder Verbreitung
+von Veränderungen dieses Codes Illegal sein, insbesondere wenn diese
+Veränderungen das Schutzziel schwächen oder sonst wie verletzen.
+Es kann eine Verletzung der AGB's der Firma uib gmbh sein.
+Darüberhinaus kann es eine strafbare Verletzung des Urheberrechts sein z.B.  des
+"§ 95a Schutz technischer Maßnahmen" des deutschen
+"Gesetz über Urheberrecht und verwandte Schutzrechte (Urheberrechtsgesetz)"
+
+Legal Notice:
+This code to protect the limits of using of opsi extensions with costs.
+Even if this is open source code (AGPLv3), it may be illegal to use or
+distribute modifications this code,
+especially if these modifications compromise the protection goals.
+It may be a violation of the General Terms and Conditions of the uib gmbh.
+It may be also a punishable violation of the Copyright, so for example of the
+"§ 95a Schutz technischer Maßnahmen"  of the german law:
+"Gesetz über Urheberrecht und verwandte Schutzrechte (Urheberrechtsgesetz)"
+}
 var
   omc: TOpsiMethodCall;
   //teststring : string;
