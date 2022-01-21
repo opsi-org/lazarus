@@ -19703,6 +19703,7 @@ begin
     errorOccured := False;
     if opsidata = nil then
     begin
+      if local_opsidata = nil then
       errorOccured := True;
     end
     else

@@ -165,7 +165,7 @@ type
     FOpsiMethodName: string;
     FParameterlist: TStringList;
     Fhashlist: TStringList;
-    FTimeout : integer;
+    FTimeout: integer;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -354,7 +354,7 @@ type
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
-    function getOpsiModules: ISuperObject;
+    function getOpsiModules: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
@@ -1212,21 +1212,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1619,7 +1619,7 @@ begin
               omc.FOpsiMethodName, LLinfo);
         if omc.Timeout > 0 then
         begin
-          HTTPSender.Timeout:= omc.Timeout * 1000;
+          HTTPSender.Timeout := omc.Timeout * 1000;
           HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
         end;
 
@@ -3560,13 +3560,93 @@ begin
 end;
 
 
-function TOpsi4Data.getOpsiModules: ISuperObject;
-  //  lazily initalizes FOpsiModules
+function TOpsi4Data.getOpsiModules: TStringList;
 var
   omc: TOpsiMethodCall;
   //teststring : string;
   //testbool : boolean;
+  myModulesList: TStringList;
+  myJsonModulesArray: ISuperObject;
+  i: integer;
+  str: string;
 begin
+  myModulesList := TStringList.Create;
+  FOpsiInformation := nil;
+  if FOpsiInformation = nil then
+  begin
+    omc := TOpsiMethodCall.Create('backend_getLicensingInfo', []);
+    if omc <> nil then
+    begin
+      try
+        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+        if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+          nil) and (FopsiInformation.O['result'].O['available_modules'] <> nil) then
+        begin
+          myJsonModulesArray := FopsiInformation.O['result'].O['available_modules'];
+          for i := 0 to myJsonModulesArray.AsArray.Length - 1 do
+          begin
+            str := myJsonModulesArray.AsArray.S[i];
+            myModulesList.Add(str);
+          end;
+          Result := myModulesList;
+        end
+        else
+        begin
+          //  backend_getLicensingInfo failed - retry with backend_info
+          LogDatei.log(
+            'Problem getting backend_getLicensingInfo from service - perhaps old server, we fallback to backend_info',
+            LLwarning);
+          FOpsiInformation := nil;
+          if FOpsiInformation = nil then
+          begin
+            omc := TOpsiMethodCall.Create('backend_info', []);
+            if omc <> nil then
+            begin
+              try
+                FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+                if (FOpsiInformation <> nil) and
+                  (FOpsiInformation.O['result'] <> nil) and
+                  (FopsiInformation.O['result'].O['modules'] <> nil) then
+                begin
+                  FOpsiModules := FopsiInformation.O['result'].O['modules'];
+                  if FOpsiModules <> nil then
+                    if FOpsiModules.AsObject.GetNames.IsType(stArray) then
+                    begin
+
+                      for i := 0 to FOpsiModules.AsObject.GetNames.AsArray.Length - 1 do
+                      begin
+                        if FOpsiModules.AsObject.GetNames.AsArray.B[i] then
+                        begin
+                          str := FOpsiModules.AsObject.GetNames.AsArray.S[i];
+                          myModulesList.Add(str);
+                        end;
+                        Result := myModulesList;
+                      end;
+                    end;
+                end
+                else
+                  LogDatei.log('Problem getting backend_info from service', LLerror);
+              except
+                LogDatei.log_prog('Exeception getting backend_info from service',
+                  LLerror);
+              end;
+            end
+            else
+              LogDatei.log_prog('Problem creating OpsiMethodCall backend_info', LLerror);
+          end;
+        end;
+      except
+        LogDatei.log_prog('Exeception backend_getLicensingInfocalling ', LLerror);
+      end;
+    end
+    else
+      LogDatei.log_prog('Problem creating OpsiMethodCall backend_getLicensingInfo',
+        LLerror);
+  end;
+
+
+
+(*
   FOpsiModules := nil;
   FOpsiInformation := nil;
   if FOpsiInformation = nil then
@@ -3595,25 +3675,25 @@ begin
   //teststring := FOpsiModules.S['license_management'];
   //testbool := FOpsiModules.B['license_management'];
   Result := FOpsiModules;
+  *)
   omc.Free;
 end;
 
 
 function TOpsi4Data.withLicenceManagement: boolean;
 var
-  mymodules: ISuperObject;
+  index: integer;
+  mylist: TStringList;
 begin
   try
-    mymodules := getOpsiModules;
-    LogDatei.log('modules found', LLDebug);
-    if mymodules <> nil then
-      Result := mymodules.B['license_management']
-    else
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
     begin
-      LogDatei.log('licence management info not found (modules = nil)',
-        LLWarning);
-      Result := False;
+      index := mylist.IndexOf('license_management');
+      FreeAndNil(mylist);
     end;
+    if index >= 0 then Result := True;
   except
     LogDatei.log(
       'licence management info not found (exception in withLicenceManagement)',
@@ -3623,6 +3703,27 @@ begin
 end;
 
 function TOpsi4Data.withRoamingProfiles: boolean;
+var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('roaming_profiles');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'roaming_profiles info not found (exception in withRoamingProfiles)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
 var
   mymodules: ISuperObject;
 begin
@@ -3643,6 +3744,7 @@ begin
     Result := False;
   end;
 end;
+*)
 
 function TOpsi4Data.isConnected: boolean;
 var
@@ -3717,6 +3819,27 @@ end;
 
 function TOpsi4Data.linuxAgentActivated: boolean;
 var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('linux_agent');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'linux_agent info not found (exception in linuxAgentActivated)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
+var
   mymodules: ISuperObject;
 begin
   try
@@ -3736,8 +3859,30 @@ begin
     Result := False;
   end;
 end;
+*)
 
 function TOpsi4Data.macosAgentActivated: boolean;
+var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('macos_agent');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'macos_agent info not found (exception in macosAgentActivated)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
 var
   mymodules: ISuperObject;
 begin
@@ -3758,6 +3903,7 @@ begin
     Result := False;
   end;
 end;
+*)
 
 procedure TOpsi4Data.saveOpsiConf;
 begin
