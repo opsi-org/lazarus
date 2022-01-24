@@ -76,4 +76,4 @@ helper/opsiclientkiosk/opsiclientkiosk
 opsi-misc/opsi-quickinstall/properties.conf
 
 # opsi-configed-installer
-opsi-misc/opsi-configed-installer/gui/opsi_configed_installer_project
+opsi-misc/opsi-configed-installer/build/opsi-configed-installer/gui/opsi_configed_installer_project
