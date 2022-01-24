@@ -20,23 +20,28 @@ function LoadTOMLFile(tomlFilePath: String): TStringList;
 function ReadTOMLFile(tomlFilePath: String): String;
 function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
 
-function SaveToTOMLFile(TOMLcontents : String; tomlFilePath: String): boolean;
-function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
+function SaveToTOMLFile(TOMLcontents: String; tomlFilePath: String): boolean;
+function SaveToTOMLFile(myTOML: TTOMLDocument; tomlFilePath: String): boolean;
 
-function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
+function ConvertTOMLfileToJSONfile(tomlFilePath: String; jsonFilePath: String): boolean;
+function ConvertTOMLtoJSON(TOMLcontents: String): String;
 
-function HasTables(myTOML: TTOMLDocument): integer;
+function HasTables(myTOML: TTOMLTable): integer;
+
 function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
-function GetTOMLTableNames(tomlFilePath: String): TStringList;
-function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
-function GetTOMLTableAsString(myTOML: TTOMLDocument; table : String): String;
+function GetTOMLTableNames(TOMLcontents: String): TStringList;
+
+function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
+function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
+function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
 function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 
-function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
+function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 
 function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
+
 
 implementation
 
@@ -98,7 +103,6 @@ begin
   myFile := TStringList.Create;
   tomlFilePath := ExpandFileName(tomlFilePath);
   myFile.Add(TOMLcontents);
-  //writeln('' + myFile.Text);
   try
   myFile.SaveToFile(tomlFilePath);
   result := True;
@@ -116,7 +120,7 @@ begin
   result := False;
   myFile := TStringList.Create;
   tomlFilePath := ExpandFileName(tomlFilePath);
-  myFile.Add(myTOML.AsString);
+  myFile.Add(myTOML.AsTOMLString);
   try
   myFile.SaveToFile(tomlFilePath);
   result := True;
@@ -127,7 +131,7 @@ begin
   myFile.Free;
 end;
 
-function ConvertTOMLtoJSON(tomlFilePath: String; jsonFilePath: String): boolean;
+function ConvertTOMLfileToJSONfile(tomlFilePath: String; jsonFilePath: String): boolean;
 var
   myFile: TStringList;
   myTOML : TTOMLDocument;
@@ -157,7 +161,15 @@ begin
   myFile.Free;
 end;
 
-function HasTables(myTOML: TTOMLDocument): integer;
+function ConvertTOMLtoJSON(TOMLcontents: String): String;
+var
+  myTOML : TTOMLDocument;
+begin
+  myTOML := GetTOML(TOMLcontents);
+  result := myTOML.AsJSON.FormatJSON;
+end;
+
+function HasTables(myTOML: TTOMLTable): integer;
 var
   i, nb : integer;
 begin
@@ -184,32 +196,24 @@ begin
   //writeln(tableNamesList.Text);
 end;
 
-function GetTOMLTableNames(tomlFilePath: String): TStringList;
+function GetTOMLTableNames(TOMLcontents: String): TStringList;
 var
-  myTOMLfile : String;
   myTOML : TTOMLDocument;
   tableNamesList : TStringList;
   i : integer;
-
 begin
   tableNamesList := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  myTOMLfile := ReadTOMLFile(tomlFilePath);
-  myTOML := GetTOML(myTOMLfile);
-
+  myTOML := GetTOML(TOMLcontents);
   for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
-        begin
         tableNamesList.Add(myTOML.Keys[i]);
-        end;
   result := tableNamesList;
 end;
 
-function GetTOMLTable(myTOML: TTOMLDocument; table : String): TTOMLTable;
+function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
 var
   myTOMLTable : TTOMLTable;
   j : integer;
-
 begin
   j := 0;
   repeat
@@ -224,12 +228,20 @@ begin
   result := myTOMLTable;
 end;
 
-function GetTOMLTableAsString(myTOML: TTOMLDocument; table : String): String;
+function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 var
   myTOMLTable : TTOMLTable;
 begin
   myTOMLTable:= GetTOMLTable(myTOML, table);
-  result := myTOMLTable.AsString;
+  result := myTOMLTable.AsTOMLString;
+end;
+
+function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
+var
+  myTOML : TTOMLDocument;
+begin
+  myTOML := GetTOML(TOMLcontents);
+  result := GetTOMLTableAsString(myTOML, table);
 end;
 
 function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
@@ -238,7 +250,6 @@ var
   myTableList : TStringList;
   tableIndex : integer;
   tableNameString, line : String;
-
 begin
   result := TStringList.Create;
   myTableList := TStringList.Create;
@@ -260,9 +271,9 @@ begin
   result := myTableList;
 end;
 
-function GetValueFromTOMLfile(tomlFilePath: String; keyPath: String; defaultValue: String): String;
+function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 var
-  myFile, tablePath : String;
+  tablePath : String;
   myTOML : TTOMLDocument;
   keysArray : TStringList;
   myValue: TTOMLData;
@@ -270,9 +281,7 @@ var
   i, j : integer;
 begin
   //result := defaultValue;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  myFile := ReadTOMLFile(tomlFilePath);
-  myTOML := GetTOML(myFile);
+  myTOML := GetTOML(TOMLcontents);
 
   keysArray := TStringList.Create;
   keysArray.Delimiter := '.';
@@ -471,7 +480,7 @@ begin
             if LeftStr(trim(line),1)='[' then
               begin
               j := i -1;
-              myTOMLfile.Insert(j, lineToAdd);
+              myTOMLfile.Add(j, lineToAdd);
               writeln('Key-value inserted in line : ',j);
               break;
               end;
@@ -550,7 +559,7 @@ begin
               if LeftStr(trim(line),1)='[' then
                 begin
                 k := j -1;
-                myTOMLfile.Insert(k, lineToAdd);
+                myTOMLfile.Add(k, lineToAdd);
                 writeln('Key-value inserted in line : ',k);
                 break;
                 end;
