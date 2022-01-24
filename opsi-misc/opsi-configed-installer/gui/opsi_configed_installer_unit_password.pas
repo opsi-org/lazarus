@@ -302,11 +302,11 @@ begin
     // show result of the whole installation (from result.conf)
     showResult;
     // close project
-    ConfigedInstaller.Close;
+    Query.Close;
     Wait.Close;
   end
   else
-    ConfigedInstaller.Enabled := True;
+    Query.Enabled := True;
 end;
 
 end.
