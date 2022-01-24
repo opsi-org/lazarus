@@ -39,10 +39,8 @@ type
   public
   end;
 
-type
 
   {TMyThread}
-
   // Thread for showing 'please wait' on a form while 'apt/zypper/.. update'
   // runs in the background.
   TMyThread = class(TThread)
@@ -186,10 +184,7 @@ end;
 procedure TPassword.showResult;
 var
   FileText: TStringList;
-  //configedResult: boolean;
-  //i: integer;
 begin
-  //ShowMessage(clientDataDir);
   FileText := TStringList.Create;
   {$IFDEF DARWIN}
   FileText.LoadFromFile('../../../../..' + logPath);
@@ -219,8 +214,8 @@ begin
     FileText.Add('success');
   end;
   //ShowMessage(ExitCode.ToString);
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + logPath +
-    #10 + ConfigedInstaller.logFileName);
+  ShowMessage(FileText.Text + #10 + rsLog + #10 + logPath + #10 +
+    ConfigedInstaller.logFileName);
   FileText.Free;
 end;
 
