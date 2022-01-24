@@ -480,7 +480,7 @@ begin
             if LeftStr(trim(line),1)='[' then
               begin
               j := i -1;
-              myTOMLfile.Add(j, lineToAdd);
+              myTOMLfile.Insert(j, lineToAdd);
               writeln('Key-value inserted in line : ',j);
               break;
               end;
@@ -559,7 +559,7 @@ begin
               if LeftStr(trim(line),1)='[' then
                 begin
                 k := j -1;
-                myTOMLfile.Add(k, lineToAdd);
+                myTOMLfile.Insert(k, lineToAdd);
                 writeln('Key-value inserted in line : ',k);
                 break;
                 end;
