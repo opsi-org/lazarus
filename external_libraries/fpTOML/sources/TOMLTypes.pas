@@ -580,14 +580,8 @@ begin
   tomlStringList := TStringList.Create;
   for i := 0 to map.Count-1 do
     begin
-      case map.Data[i].ToString of
-        'TTOMLTable':
-          begin
-            tomlTable := TTOMLTable(map.Data[i]);
-            tableHeader := '[' + tomlTable.Header +  ']';
-            tomlStringList.Add(tableName);
-            line := tomlTable.AsTOMLString;
-          end;
+      while map.Data[i].ToString <> 'TTOMLTable'  do
+        case map.Data[i].ToString of
         'TTOMLArray':
           begin
             tomlArray := TTOMLArray(map.Data[i]);
@@ -600,7 +594,18 @@ begin
                line := String(map.Keys[i])+' = "'+map.Data[i].ToString +'"'
           else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
-      end;
+        end;
+      tomlStringList.Add(line);
+    end;
+  for i := 0 to map.Count-1 do
+    begin
+      while map.Data[i].ToString = 'TTOMLTable'  do
+          begin
+            tomlTable := TTOMLTable(map.Data[i]);
+            tableHeader := '[' + tomlTable.Header +  ']';
+            tomlStringList.Add(tableHeader);
+            line := tomlTable.AsTOMLString;
+          end;
     tomlStringList.Add(line);
     end;
   result := tomlStringList.Text;
