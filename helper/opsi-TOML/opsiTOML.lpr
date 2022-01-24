@@ -73,9 +73,8 @@ begin
   //writeln('--- Testing GetTOML :');
   //myTOML := GetTOML(myTOMLString);
 
-  writeln('--- Testing HasTables : ');
-  nb := HasTables(myTOML);
-  writeln('myTOML has :', nb, ' tables');
+  writeln('--- Testing TTOMLTable.AsString : ');
+  writeln(myTOML.AsTOMLString);
 
   //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
@@ -85,19 +84,22 @@ begin
      writeln('- SaveToTOMLFile with String parameter done')
   else
       writeln('- SaveToTOMLFile with String parameter failed');
-  (*
+
   writeln('--- Testing SaveToTOMLFile (from TTOMLDocument to File)') ;
   if ( SaveToTOMLFile(myTOML, newFilePath) ) then
      writeln('- SaveToTOMLFile with TTOMLDocument parameter done')
   else
       writeln('- SaveToTOMLFile with TTOMLDocument parameter failed');
-  *)
+
   writeln('--- Testing ConvertTOMLfiletoJSONfile ') ;
   if ( ConvertTOMLfiletoJSONfile(filePath, JSONpath)) then
      writeln('--- ConvertTOMLfiletoJSONfile done')
   else
       writeln('--- ConvertTOMLfiletoJSONfile failed');
-
+  
+  writeln('--- Testing HasTables : ');
+  nb := HasTables(myTOML);
+  writeln('myTOML has :', nb, ' tables');
 
   writeln('--- Testing GetTOMLTableNames with a myTOMLString parameter:  ');
   tableNamesList := GetTOMLTableNames(myTOMLString);
@@ -198,8 +200,6 @@ begin
   writeln( GetValueFromTOML(myTOMLString,'servers.alpha.ip','default') );
   writeln('myTOML["servers"]["alpha"]["ip"] : ' + String(myTOML['servers']['alpha']['ip']));
 
-  writeln('--- Testing TTOMLTable.AsString : ');
-  writeln(myTOML.AsTOMLString);
 
   (* // Testing new TTOMLTable.Insert
   writeln('--- Testing inserting data to TOML  ');
