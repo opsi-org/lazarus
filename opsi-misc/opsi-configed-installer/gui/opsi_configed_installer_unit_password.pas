@@ -128,10 +128,7 @@ begin
   MyRepo := TLinuxRepository.Create(Data.DistrInfo.MyDistr,
     Password.EditPassword.Text, Password.RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-  if Data.opsiVersion = 'Opsi 4.1' then
-    url := MyRepo.GetDefaultURL(Opsi41, stable)
-  else
-    url := MyRepo.GetDefaultURL(Opsi42, stable);
+  url := MyRepo.GetDefaultURL(Opsi42, stable);
 
   // !following lines need an existing LogDatei
   if (Data.distroName = 'openSUSE') or (Data.distroName = 'SUSE') then
