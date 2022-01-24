@@ -451,7 +451,11 @@ begin
            result:= result + tomlArray.AsTOMLString;
          end
       else
-          result:= result + (TTOMLValue(list[i]).ToString);
+          if (TTOMLValue(list[i]).TypeString = 'Dynamic string')
+             or (TTOMLValue(list[i]).TypeString = 'UnicodeString') then
+               result:= result +'"'+TTOMLValue(list[i]).ToString +'"'
+          else
+            result:= result + (TTOMLValue(list[i]).ToString);
     if i<>Count-1 then
       result:= result + ', ';
     end;
@@ -580,7 +584,8 @@ begin
   tomlStringList := TStringList.Create;
   for i := 0 to map.Count-1 do
     begin
-      while map.Data[i].ToString <> 'TTOMLTable'  do
+      if (map.Data[i].ToString <> 'TTOMLTable')  then
+        begin
         case map.Data[i].ToString of
         'TTOMLArray':
           begin
@@ -595,18 +600,19 @@ begin
           else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
         end;
-      tomlStringList.Add(line);
+        tomlStringList.Add(line);
+        end;
     end;
   for i := 0 to map.Count-1 do
     begin
-      while map.Data[i].ToString = 'TTOMLTable'  do
+      if (map.Data[i].ToString = 'TTOMLTable')  then
           begin
             tomlTable := TTOMLTable(map.Data[i]);
             tableHeader := '[' + tomlTable.Header +  ']';
             tomlStringList.Add(tableHeader);
             line := tomlTable.AsTOMLString;
+            tomlStringList.Add(line);
           end;
-    tomlStringList.Add(line);
     end;
   result := tomlStringList.Text;
 end;
