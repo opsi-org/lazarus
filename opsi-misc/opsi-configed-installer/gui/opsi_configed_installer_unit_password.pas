@@ -97,15 +97,26 @@ end;
 procedure TMyThread.prepareInstallation;
 var
   TouchCommand: TRunCommandElevated;
+  FileText: TStringList;
 begin
   TouchCommand := TRunCommandElevated.Create(Password.EditPassword.Text,
     Password.RadioBtnSudo.Checked);
 
   FClientDataDir := ExtractFilePath(ParamStr(0));
   Delete(FClientDataDir, Length(FClientDataDir), 1);
-  FClientDataDir := ExtractFilePath(FClientDataDir);
+  FClientDataDir := ExtractFilePath(FClientDataDir) + 'CLIENT_DATA/';
   Password.clientDataDir := FClientDataDir;
 
+  FileText := TStringList.Create;
+  FileText.Add('memory_requirement=' + Data.MemoryRequirement);
+  FileText.Add('scaling_factor=' + Data.ScalingFactor);
+
+  if not FileExists(FClientDataDir + 'properties.conf') then
+    TouchCommand.Run('touch ' + FClientDataDir + 'properties.conf', Output);
+  TouchCommand.Run('chown -c $USER ' + FClientDataDir + 'properties.conf', Output);
+  FileText.SaveToFile(FClientDataDir + 'properties.conf');
+
+  FileText.Free;
   TouchCommand.Free;
 end;
 
