@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   MaskEdit, osRunCommandElevated, LCLType, cthreads,
-  osLog, osTextFileUtils;
+  osLog;
 
 type
 
@@ -137,10 +137,6 @@ begin
   end
   else
     MyRepo.Add(url);
-
-  // if ConfigedInstaller repo was already in opsi.list, delete the duplicate entry
-  if FileExists('/etc/apt/sources.list.d/opsi.list') then
-    DeleteDuplicateLinesFromTextFile('/etc/apt/sources.list.d/opsi.list');
 
   MyRepo.Free;
 end;
