@@ -56,14 +56,22 @@ begin
   writeln('--- Begin');
 
   filePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLexample.toml';
+  newFilePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
+  JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
+
+  writeln('--- Testing LoadTOMLFile :  ');
+  myTOMLStringList := TStringList.Create;
+  myTOMLStringList.AddStrings(LoadTOMLFile(filePath));
+  //writeln(myTOMLStringList.Text);
 
   writeln('--- Testing ReadTOMLFile :');
-  //myFile := TStringList.Create;
   myTOMLString := ReadTOMLFile(filePath);
 
-  writeln('--- Testing GetTOML :');
+  writeln('--- Testing GetTOMLDocument ');
+  myTOML := GetTOMLDocument(filePath) ;
 
-  myTOML := GetTOML(myTOMLString);
+  //writeln('--- Testing GetTOML :');
+  //myTOML := GetTOML(myTOMLString);
 
   writeln('--- Testing HasTables : ');
   nb := HasTables(myTOML);
@@ -73,58 +81,52 @@ begin
   //writeln(myTOML.AsJSON.FormatJSON);
 
   writeln('--- Testing SaveToTOMLFile (from String to File)') ;
-  newFilePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
-
   if ( SaveToTOMLFile(myTOMLString, newFilePath) ) then
      writeln('- SaveToTOMLFile with String parameter done')
   else
       writeln('- SaveToTOMLFile with String parameter failed');
-
-
-  TTOMLTable(myTOML.Values[1]).Add('newKeyInOwnerTable','newValueInOwnerTable');
+  (*
   writeln('--- Testing SaveToTOMLFile (from TTOMLDocument to File)') ;
   if ( SaveToTOMLFile(myTOML, newFilePath) ) then
      writeln('- SaveToTOMLFile with TTOMLDocument parameter done')
   else
       writeln('- SaveToTOMLFile with TTOMLDocument parameter failed');
-
-  writeln('--- Testing ConvertTOMLtoJSON ') ;
-  JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
-  if ( ConvertTOMLtoJSON(filePath, JSONpath)) then
-     writeln('--- ConvertTOMLtoJSON done')
+  *)
+  writeln('--- Testing ConvertTOMLfiletoJSONfile ') ;
+  if ( ConvertTOMLfiletoJSONfile(filePath, JSONpath)) then
+     writeln('--- ConvertTOMLfiletoJSONfile done')
   else
-      writeln('--- ConvertTOMLtoJSON failed');
+      writeln('--- ConvertTOMLfiletoJSONfile failed');
 
 
-  writeln('--- Testing LoadTOMLFile :  ');
-  myTOMLStringList := TStringList.Create;
-  myTOMLStringList.AddStrings(LoadTOMLFile(filePath));
-  //writeln(myTOMLStringList.Text);
-
+  writeln('--- Testing GetTOMLTableNames with a myTOMLString parameter:  ');
+  tableNamesList := GetTOMLTableNames(myTOMLString);
+  writeln('The TOMLTable [servers] has sub-tables :');
+  writeln(tableNamesList.Text);
 
   writeln('--- Testing GetTOMLTableNames with a file parameter:  ');
-
-  tableNamesList := GetTOMLTableNames(filePath);
+  tableNamesList := GetTOMLTableNames(myTOMLString);
   writeln(tableNamesList.Text);
 
 
-  writeln('--- Testing GetTOMLTable from file :  ');
-
-  myTOMLStringList.Free;
-  myTOMLStringList.AddStrings(GetTOMLTable(filePath,'servers'));
-  writeln('TOML Table "servers" : ');
-  writeln(myTOMLStringList.Text);
-
   writeln('--- Testing GetTOMLTable from TTOMLDocument: TTOMLTable ');
-
   myTOMLTable:= GetTOMLTable(myTOML,'servers');
   writeln('TOML Table "servers" : ');
   writeln(myTOMLTable.AsJSON.FormatJSON);
 
   writeln('--- Testing GetTOMLTableAsString from TTOMLDocument: String ');
-
   writeln('TOML Table "clients" : ');
   writeln(GetTOMLTableAsString(myTOML,'clients'));
+
+  writeln('--- Testing GetTOMLTableAsString from myTOMLString: String ');
+  writeln('TOML Table "clients" : ');
+  writeln(GetTOMLTableAsString(myTOMLString,'clients'));
+
+  writeln('--- Testing GetTOMLTable from file :  ');
+  myTOMLStringList.Free;
+  myTOMLStringList.AddStrings(GetTOMLTable(filePath,'servers'));
+  writeln('TOML Table "servers" : ');
+  writeln(myTOMLStringList.Text);
 
 
   writeln('--- Finding (root Table) keys : ');
@@ -170,41 +172,46 @@ begin
   writeln('myTOML[servers][alpha][ip] : ', String(myData));
 
 
-  writeln('--- Testing GetTOMLTableNames with a TTOMLTable parameter:  ');
-
-  tableNamesList := GetTOMLTableNames(myTOMLTable);
-  writeln('The TOMLTable [servers] has sub-tables :');
-  writeln(tableNamesList.Text);
-
   writeln('--- Getting values from keys');
 
   writeln('- Searching for unexisting key in root table:');
-  writeln( GetValueFromTOMLfile(filePath,'key','default') );
+  writeln( GetValueFromTOML(myTOMLString,'key','default') );
 
   writeln('- Searching for unexisting key in sub-table:');
-  writeln( GetValueFromTOMLfile(filePath,'servers.beta.key','default') );
+  writeln( GetValueFromTOML(myTOMLString,'servers.beta.key','default') );
 
   writeln('- Searching for value of key title :');
-  myValue := GetValueFromTOMLfile(filePath,'title','default') ;
+  myValue := GetValueFromTOML(myTOMLString,'title','default') ;
   writeln( 'myValue :' + myValue);
   writeln('myTOML["title"] : ' + String(myTOML['title']));
 
   //writeln('- Searching for key owner.name :');
   //writeln( String(myTOML.Find('owner.name')));
-  writeln( GetValueFromTOMLfile(filePath,'owner.name','default')  );
+  writeln( GetValueFromTOML(myTOMLString,'owner.name','default')  );
   writeln('myTOML["owner"]["name"]: ' + String(myTOML['owner']['name']));
 
   writeln('- Searching for value of key database.connection_max :');
-  writeln( GetValueFromTOMLfile(filePath,'database.connection_max','default')  );
+  writeln( GetValueFromTOML(myTOMLString,'database.connection_max','default')  );
   writeln('myTOML["database"]["connection_max"] : ' + String(myTOML['database']['connection_max']));
 
   writeln('- Searching for value of key servers.alpha.ip :');
-  writeln( GetValueFromTOMLfile(filePath,'servers.alpha.ip','default') );
+  writeln( GetValueFromTOML(myTOMLString,'servers.alpha.ip','default') );
   writeln('myTOML["servers"]["alpha"]["ip"] : ' + String(myTOML['servers']['alpha']['ip']));
 
   writeln('--- Testing TTOMLTable.AsString : ');
-  writeln(myTOML.AsString);
+  writeln(myTOML.AsTOMLString);
 
+  (* // Testing new TTOMLTable.Insert
+  writeln('--- Testing inserting data to TOML  ');
+  myTOMLTable := TTOMLTable(myTOML.Items[3]) ;
+  myTOMLTable.Insert('newInsertedKeyInServers','"newInsertedValueInServers"');
+
+  myTOML.Insert('newInsertedKeyInRootTable','"newInsertedValueInRootTable"');
+  *)
+
+  AddKeyValueToTOML(myTOML,'newKeyInRootTable', '"newValueInRootTable"');
+
+  (* // Testing TTOMLTable.Add
   writeln('--- Testing adding data to TOML  ');
 
   myTOML.Add('newKey','newValue');
@@ -216,22 +223,41 @@ begin
 
   newTOMLTable:= TTOMLTable(myTOML['database']);
   newTOMLTable.Add('newSubTable',myTOMLTable);
+  *)
 
-  //writeln(myTOML.AsJSON.FormatJSON);
-
-  writeln('--- Testing AddKeyValueToTOMLFile in root Table ');
-  if AddKeyValueToTOMLFile(filePath,'newNeeeeewKey', '"newNeeewValue"') = true then
-     writeln('- AddKeyValueToTOMLFile in root Table done')
+  (*
+  writeln('--- Testing AddKeyValueToTOML in root Table ');
+  if AddKeyValueToTOML(myTOML,'newKeyInRootTable', '"newValueInRootTable"') = true then
+     writeln('- AddKeyValueToTOML in root Table done')
   else
-      writeln('- AddKeyValueToTOMLFile in root Table failed');
+      writeln('- AddKeyValueToTOML in root Table failed');
 
-  writeln('--- Testing AddKeyValueToTOMLFile in sub-Table ');
-  if AddKeyValueToTOMLFile(filePath,'servers.alpha.a.newKey', '111') = true then
+  writeln('--- Testing AddKeyValueToTOML in sub-Table ');
+  if AddKeyValueToTOML(myTOML,'servers.alpha.newKeyInAlpha', '"newValueInAlpha"') = true then
+     writeln('- AddKeyValueToTOML in sub-Table done')
+  else
+      writeln('- AddKeyValueToTOML in sub-Table failed');
+
+    writeln('--- Testing AddKeyValueToTOML in new Table ');
+  if AddKeyValueToTOML(myTOML,'newTable.newNewKey', '"newNewValue"') = true then
+     writeln('- AddKeyValueToTOML in new Table done')
+  else
+      writeln('- AddKeyValueToTOML in new Table failed');
+  *)
+
+  (* // Testing ADDING directly to the TOML file
+    writeln('--- Testing AddKeyValueToTOMLFile in sub-Table ');
+  if AddKeyValueToTOMLFile(filePath,'servers.alpha.newKeyInAlpha', '"newValueInAlpha"') = true then
      writeln('- AddKeyValueToTOMLFile in sub-Table done')
   else
       writeln('- AddKeyValueToTOMLFile in sub-Table failed');
 
-  (*
+    writeln('--- Testing AddKeyValueToTOMLFile in new Table ');
+  if AddKeyValueToTOMLFile(filePath,'newTable.newNewKey', '"newNewValue"') = true then
+     writeln('- AddKeyValueToTOMLFile in new Table done')
+  else
+      writeln('- AddKeyValueToTOMLFile in new Table failed');
+
   writeln('--- Testing AddKeyValueToTOMLFile with a new table ');
   if AddKeyValueToTOMLFile(filePath,'newTable.newTableKey', '"newValue in newTable"') = true then
      writeln('- AddKeyValueToTOMLFile with a new table done')
@@ -250,11 +276,9 @@ begin
   myTOMLTable:= GetTOMLTable(myTOML,'newTable');
   writeln(myTOMLTable.AsJSON.FormatJSON);
   *)
-  writeln('--- Testing GetTOMLDocument ');
-  myTOML := GetTOMLDocument(filePath) ;
 
-  writeln('--- Testing TOML.AsJSON :');
-  writeln(myTOML.AsJSON.FormatJSON);
+  writeln('--- Testing ConvertTOMLtoJSON :');
+  writeln(ConvertTOMLtoJSON(myTOMLString));
 
   (*
   // These data types are supported
