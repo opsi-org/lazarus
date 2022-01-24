@@ -155,7 +155,8 @@ begin
   FInstallRunCommand.Run(FShellCommand + 'update', Output);
   FInstallRunCommand.Run(FShellCommand + 'install opsi-script', Output);
   //FInstallRunCommand.Run('opsi-script-gui -batch ../CLIENT_DATA/setup.opsiscript ' + logPath, Output);
-  FInstallRunCommand.Run('opsi-script -batch ../CLIENT_DATA/setup.opsiscript ' +
+
+  FInstallRunCommand.Run('opsi-script-gui -batch ' + FClientDataDir + 'setup.opsiscript ' +
     logPath, Output);
   {$ENDIF}
 
