@@ -92,7 +92,7 @@ begin
   // Only call FBatchOberflaeche.SetProgress when a next round percent is reached (FNewProgress > FDisplayedProgress).
   // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
   // because calling too often can slow down the whole process enormously
-  if FNewProgress > FDisplayedProgress then
+  if FNewProgress <> FDisplayedProgress then
   begin
     FDisplayedProgress := FNewProgress;
     {$IFDEF GUI}
