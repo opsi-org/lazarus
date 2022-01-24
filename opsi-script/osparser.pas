@@ -12735,6 +12735,8 @@ begin
               begin
                 syntaxCheck := False;
                 // is it the 4 argument call ?
+                // since 4.11.6.2 (undocumented) :
+                // getProductPropertyList(myproperty, defaultlist, myClientId, myProductId)
                 if Skip(',', tmpstr, r, InfoSyntaxError) then
                   if EvaluateString(r, r, s3, InfoSyntaxError) then
                     if Skip(',', r, r, InfoSyntaxError) then
