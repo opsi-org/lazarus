@@ -57,8 +57,12 @@ type
     FATotPos: integer;
   public
     constructor Create;
-    procedure CalculateOverallProgress(const Pct: double);
+    procedure CalculateOverallProgress(const FileToZip: string; const Pct: double);
+    procedure CalculateOverallProgressWhileZipping(const Pct: double);
+    procedure ResetTotalPosition;
+    procedure IncreaseTotalPosition;
     procedure CheckEndOfFile(const Pct: double);
+    procedure DisplayProgress;
     procedure HandleProgressBar(Sender: TObject; const Pct: double);
     property SourcePath: string write FSourcePath;
     property ATotSize: integer write FATotSize;
@@ -88,7 +92,7 @@ begin
   // Only call FBatchOberflaeche.SetProgress when a next round percent is reached (FNewProgress > FDisplayedProgress).
   // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
   // because calling too often can slow down the whole process enormously
-  if FNewProgress > FDisplayedProgress then
+  if FNewProgress <> FDisplayedProgress then
   begin
     FDisplayedProgress := FNewProgress;
     {$IFDEF GUI}
@@ -127,13 +131,28 @@ begin
   FFileNumber := 0;
 end;
 
-procedure TZipperWithProgressHandler.CalculateOverallProgress(const Pct: double);
+procedure TZipperWithProgressHandler.CalculateOverallProgress(const FileToZip: string; const Pct: double);
 begin
-  FTotalSizeOfCurrentFile := FileSize(FSourcePath +
-    Entries.Entries[FFileNumber].ArchiveFileName);
+  FTotalSizeOfCurrentFile := FileSize(FileToZip);
   FTotalPosInFile := round(Pct * FTotalSizeOfCurrentFile / 100);
   FProgressDisplayer.NewProgress :=
     round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
+end;
+
+procedure TZipperWithProgressHandler.CalculateOverallProgressWhileZipping(const Pct: double);
+begin
+  CalculateOverallProgress(FSourcePath +
+    Entries.Entries[FFileNumber].ArchiveFileName, Pct);
+end;
+
+procedure TZipperWithProgressHandler.ResetTotalPosition;
+begin
+    FATotPos := 0;
+end;
+
+procedure TZipperWithProgressHandler.IncreaseTotalPosition;
+begin
+    FATotPos += FTotalSizeOfCurrentFile;
 end;
 
 procedure TZipperWithProgressHandler.CheckEndOfFile(const Pct: double);
@@ -141,8 +160,13 @@ begin
   if Pct = 100 then
   begin
     Inc(FFileNumber);
-    FATotPos += FTotalSizeOfCurrentFile;
+    IncreaseTotalPosition;
   end;
+end;
+
+procedure TZipperWithProgressHandler.DisplayProgress;
+begin
+  FProgressDisplayer.DisplayProgress;
 end;
 
 procedure TZipperWithProgressHandler.HandleProgressBar(Sender: TObject;
@@ -155,8 +179,8 @@ begin
   // At end of all files OnProgress is executed but there are no files left
   if FFileNumber < Entries.Count then
   begin
-    CalculateOverallProgress(Pct);
-    FProgressDisplayer.DisplayProgress;
+    CalculateOverallProgressWhileZipping(Pct);
+    DisplayProgress;
     CheckEndOfFile(Pct);
   end;
 end;
@@ -209,6 +233,7 @@ begin
     {$IFDEF OPSISCRIPT}
     FBatchOberflaeche.SetElementVisible(True, eProgressBar); //showProgressBar(True);
     FBatchOberflaeche.SetProgress(0, pPercent);
+    FBatchOberflaeche.SetMessageText('Prepare zipping', mInfo);
     ZipperObj.OnProgress := @ZipperObj.HandleProgressBar;
     {$ENDIF OPSISCRIPT}
     {$ENDIF GUI}
@@ -220,12 +245,16 @@ begin
       begin
         FileList := FindAllFiles(sourcepath, searchmask);
 
+        {$IFDEF GUI}
+        {$IFDEF OPSISCRIPT}
         // count total number of bytes to zip (for showing a meaningful progressbar)
         for filecounter := 0 to FileList.Count - 1 do
           ATotSize += FileSize(FileList[filecounter]);
         ZipperObj.ATotSize := ATotSize;
         // ZipperObj needs sourcepath to calculate the size of each single file to zip
         ZipperObj.SourcePath := sourcepath;
+        {$ENDIF OPSISCRIPT}
+        {$ENDIF GUI}
 
         for filecounter := 0 to FileList.Count - 1 do
         begin
@@ -247,6 +276,13 @@ begin
               end;
             end;
             LogDatei.log('zip: ' + ArchiveFileName + ' to: ' + TargetFile, LLDebug);
+            {$IFDEF GUI}
+            {$IFDEF OPSISCRIPT}
+            ZipperObj.CalculateOverallProgress(FileList[filecounter], 100);
+            ZipperObj.DisplayProgress;
+            ZipperObj.IncreaseTotalPosition;
+            {$ENDIF OPSISCRIPT}
+            {$ENDIF GUI}
           end
           else
           begin
@@ -255,6 +291,12 @@ begin
           end;
         end;
         try
+          {$IFDEF GUI}
+          {$IFDEF OPSISCRIPT}
+          ZipperObj.ResetTotalPosition;
+          FBatchOberflaeche.SetMessageText('Zipping files', mInfo);
+          {$ENDIF OPSISCRIPT}
+          {$ENDIF GUI}
           ZipperObj.ZipAllFiles;
           if not errorfound then Result := True;
         except
