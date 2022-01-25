@@ -2,15 +2,16 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   OldCreateOrder = False
-  Height = 178
-  HorizontalOffset = 404
-  VerticalOffset = 414
-  Width = 188
+  Height = 169
+  HorizontalOffset = 383
+  VerticalOffset = 392
+  Width = 178
+  PPI = 91
   object TimerClose: TTimer
     Enabled = False
     Interval = 5000
     OnTimer = TimerCloseTimer
-    Left = 42
-    Top = 24
+    Left = 40
+    Top = 23
   end
 end

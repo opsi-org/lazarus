@@ -228,8 +228,6 @@ end;
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
-  btnFinishClicked := False;
-
   Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
   Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
   BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
@@ -247,6 +245,7 @@ end;
 
 procedure TPassword.BtnBackClick(Sender: TObject);
 begin
+  btnFinishClicked := False;
   Password.Visible := False;
   Overview.Enabled := True;
 end;

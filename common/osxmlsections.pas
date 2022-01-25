@@ -48,6 +48,8 @@ type
     fDerivedNodeSet: TNodeSet;
     fDebugLevel: integer;
 
+    dictionary: TList;
+
     function getCountNotNil: integer;
     // length actNodeSet without NIL-Elements
 
@@ -71,7 +73,6 @@ type
       attributePath: string; var errormessage: string): boolean;
 
     procedure ErrorHandler(E: EXMLReadError);
-
 
   public
     destructor Destroy; override;
@@ -159,6 +160,11 @@ type
     // open the node, analog nodeExists
     // afterwards this node is actNode
 
+
+    function getNodeByNameAndTextContent(var newNode: TDOMNode;
+      myparentNode: TDOMNode; mynodeName: string; mynodeTextContent: string): boolean;
+    // nodename and text has to fit
+
     // overload
     function makeNode(mynodeName: string): boolean; overload;
     // create new node, append to actNode, set newnode as actNode
@@ -217,8 +223,12 @@ type
     function getNodeNameActNode(): string;
     // get name from the actual node
 
+    //*************  Node-Operations on dicts *****************************
+    function setNodePair(keyNodeName: string; keyNodeTextContent: string;
+      valueNodeName: string; valueNodeTextContent: string): boolean;
+    // set value node for key node
 
-    //*************  Attributes ************************************
+    //*************  Attributes *******************************************
     function countAttributes(myxmlnode: TDOMNode): integer;
     // count attributes of this node
 
@@ -439,8 +449,13 @@ begin
       LogDatei.log('XMLDoc created from Stringlist', LLinfo);
       createXmlDocFromStringlist := True;
     except
-      LogDatei.log('createXmlDocFromStringlist failed: XMLDoc create from Stringlist',
-        LLerror);
+      on e: Exception do
+      begin
+        LogDatei.log('createXmlDocFromStringlist failed: XMLDoc create from Stringlist',
+          LLerror);
+        LogDatei.log('Exception in createXmlDocFromStringlist: ' +
+          E.ClassName + ': ' + E.Message, LLerror);
+      end;
     end;
   finally
     if Assigned(mystream) then
@@ -508,8 +523,6 @@ begin
       LogDatei.log('getXmlStrings failed', LLerror);
     end;
 end;
-
-
 
 //*************  Operations NodeSet  ***********************************
 procedure TuibXMLDocument.makeTopAsActNodeSet;
@@ -1126,8 +1139,7 @@ begin
               found := False;
               LogDatei.log('opennode: node with attributes_strict not found ' +
                 IntToStr(i) + ': nodename: ' + thisnodeName +
-                ', check nodename and attributes - exit function', LLwarning
-                );
+                ', check nodename and attributes - exit function', LLInfo);
               // failed - make all final settings
               Result := False;
               attributeList.Free;
@@ -1198,8 +1210,8 @@ begin
   attributesSL := TStringList.Create;
   try
     try
-      for i := 0 to length(nodesInPath) -1 do
-         nodesInPath[i] := nil;
+      for i := 0 to length(nodesInPath) - 1 do
+        nodesInPath[i] := nil;
       // the root node
       nodesInPath[0] := XML.DocumentElement;
       stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
@@ -1283,8 +1295,7 @@ begin
             found := False;
             LogDatei.log('opennode: node with attributes_strict not found ' +
               IntToStr(i) + ': nodename: ' + thisnodeName +
-              ', check nodename and attributes - exit function', LLwarning
-              );
+              ', check nodename and attributes - exit function', LLInfo);
             // failed - make all final settings
             Result := False;
             attributeList.Free;
@@ -1674,7 +1685,7 @@ begin
   end;
 end;
 
-// überladen!!!
+// overload!!!
 procedure TuibXMLDocument.delNode(nodePath: string; attributes_strict: boolean;
   var errorinfo: string);
 var
@@ -1700,7 +1711,7 @@ begin
 end;
 
 procedure TuibXMLDocument.delNode;
-// aktnode (and all childs) will be deleted, afterwards aktnode will be parent
+// aktnode (and all childs) will be deleted, afterwards parentnode will be aktnode
 // before del node check node with nodeExists
 var
   removeNode: TDOMNode;
@@ -1952,7 +1963,7 @@ begin
         begin
           logdatei.log('Attribute count mismatch: given by path: ' +
             IntToStr(attributecount1) + ' but node has: ' +
-            IntToStr(attributecount2), oslog.LLwarning);
+            IntToStr(attributecount2), oslog.LLDebug);
           actnodeset[j] := nil;
           j := j - 1;
         end;
@@ -1965,7 +1976,7 @@ begin
       logActNodeSet;
       if length(actnodeset) > 1 then
       begin
-        logdatei.log('There is more than one mathing node here - just taking the first',
+        logdatei.log('There is more than one matching node here - just taking the first',
           oslog.LLWarning);
         for j := 1 to length(actnodeset) - 1 do
           actnodeset[j] := nil;
@@ -2115,6 +2126,179 @@ begin
   end;
 end;
 
+function TuibXMLDocument.getNodeByNameAndTextContent(var newNode: TDOMNode;
+  myparentNode: TDOMNode; mynodeName: string; mynodeTextContent: string): boolean;
+  // nodename and text has to fit
+
+var
+  j, i: integer;
+  haschilds: boolean;
+  childcount: integer;
+begin
+  getNodeByNameAndTextContent := False;
+  logdatei.log('begin to get node nodename: ' + mynodename + ' with text: ' +
+    mynodeTextContent, LLinfo);
+
+  try
+    if Assigned(myparentNode) then
+    begin
+      j := 0;
+      haschilds := myparentNode.hasChildNodes;
+      childcount := myparentNode.ChildNodes.Count;
+      while (haschilds) and (j < childcount) and
+        (getNodeByNameAndTextContent = False) do
+      begin
+        // compare text if given
+        if (myparentNode.ChildNodes.Item[j].NodeName = mynodeName) then
+          if (myparentNode.ChildNodes.Item[j].TextContent = mynodeTextContent) and
+            (mynodeTextContent <> '') then
+          begin
+            newNode := myparentNode.ChildNodes.Item[j];
+            actNode := myparentNode.ChildNodes.Item[j];
+            getNodeByNameAndTextContent := True;
+          end;
+        Inc(j);
+      end;
+    end
+    else
+      logdatei.log('parentnode not valid', oslog.LLerror);
+  except
+    logdatei.log('getNodeByNameAndTextContent failed', oslog.LLerror);
+  end;
+end;
+
+//*************  Node-Operations on dicts *****************************
+// TODO
+function TuibXMLDocument.setNodePair(keyNodeName: string;
+  keyNodeTextContent: string; valueNodeName: string;
+  valueNodeTextContent: string): boolean;
+var
+  myparentNode, newNode, oldNode: TDOMNode;
+begin
+  setNodePair := False;
+  logdatei.log('starting setNodePair', oslog.LLinfo);
+  if (actNode <> nil) then
+  begin
+    if (actNode.NodeName = 'dict') then
+    begin
+      // testing string
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'CFBundleShortVersionString';
+      //valueNodeName := 'string';
+      //valueNodeTextContent := '4.12.4.11';
+
+      // testing boolean
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'NSAppleScriptEnabled';
+      //valueNodeName := 'false';
+
+      // testing create node with key string
+      //keyNodeName := 'key';
+      //keyNodeTextContent := 'testCFBundleShortVersionString';
+      //valueNodeName := 'string';
+      //valueNodeTextContent := 'test4.12.4.11';
+
+      // testing create node boolean
+      // keyNodeName := 'key';
+      // keyNodeTextContent := 'testNSAppleScriptEnabled';
+      // valueNodeName := 'false';
+
+      if getNodeByNameAndTextContent(newNode, actNode, keyNodeName,
+        keyNodeTextContent) then
+      begin
+        LogDatei.log('setNodePair: key ' + keyNodeName + ' with TextContent ' +
+          keyNodeTextContent + ' found', LLinfo);
+        // nächsten Knoten prüfen, ob er als key den ValueNodeName hat
+        if (UpperCase(valueNodeName) = UpperCase('string')) then
+        begin
+          actNode := actNode.NextSibling;
+          LogDatei.log('setNodePair: valueNodeName ' + valueNodeName +
+            ' actNode.NodeName: ' + actNode.NodeName, LLinfo);
+          setNodeTextActNode(valueNodeTextContent);
+          LogDatei.log('setNodePair - string: valueNodeTextContent set, now ' +
+            actNode.TextContent, LLinfo);
+        end
+        else if (UpperCase(valueNodeName) = UpperCase('true')) or
+          (UpperCase(valueNodeName) = UpperCase('false')) then
+        begin
+          // create new node with value and replace old node
+          if (UpperCase(valueNodeName) = UpperCase('string')) then
+          begin
+            LogDatei.log('boolean setNodePair: make valueNodeName ' +
+              valueNodeName, LLinfo);
+            LogDatei.log('boolean setNodePair: actNode NodeName is ' +
+              actNode.NodeName, LLinfo);
+            myparentNode := actNode.ParentNode;
+            oldNode := actNode.NextSibling;
+            LogDatei.log('boolean setNodePair: oldNode NodeName is ' +
+              oldNode.NodeName, LLinfo);
+            makeNode(valueNodeName); // new node is actNode
+            myparentNode.ReplaceChild(actNode, oldNode);
+            LogDatei.log('setNodePair - true/false: valueNodeName set, now ' +
+              actNode.NodeName, LLinfo);
+          end;
+        end
+        else if (UpperCase(valueNodeName) = UpperCase('array')) then
+        begin
+          // TODO ???
+        end
+        else
+          LogDatei.log('setNodePair: valueNode NOT set ' + valueNodeName, LLinfo);
+      end
+      else
+      begin
+        LogDatei.log('setNodePair: key ' + keyNodeName + ' with TextContent ' +
+          keyNodeTextContent + ' NOT found', LLinfo);
+        if (UpperCase(valueNodeName) = UpperCase('string')) then
+        begin
+          LogDatei.log('setNodePair: creating node ' +
+            keyNodeName + ' with TextContent ' + keyNodeTextContent, LLinfo);
+          makeNode(keyNodeName);     // new node ist actNode and was added as last node
+          setNodeTextActNode(keyNodeTextContent);
+          // make valueNode as next node and next sibling, before actNode has to be dict
+          setParentNodeAsActNode();
+          makeNode(valueNodeName);  // new node ist actNode and was added as last node
+          setNodeTextActNode(valueNodeTextContent);
+        end
+        else if (UpperCase(valueNodeName) = UpperCase('true')) or
+          (UpperCase(valueNodeName) = UpperCase('false')) then
+        begin
+          LogDatei.log('setNodePair: key ' + keyNodeName + ' with TextContent ' +
+            keyNodeTextContent + ' NOT found', LLinfo);
+          LogDatei.log('setNodePair: creating node ' +
+            keyNodeName + ' with TextContent ' + keyNodeTextContent, LLinfo);
+          makeNode(keyNodeName);     // new node ist actNode and was added as last node
+          setNodeTextActNode(keyNodeTextContent);
+          // make valueNode as next node and next sibling, before actNode has to be dict
+          setParentNodeAsActNode();
+          makeNode(valueNodeName);  // new node ist actNode and was added as last node
+        end
+        else if (UpperCase(valueNodeName) = UpperCase('array')) then
+        begin
+          // TODO ???
+          LogDatei.log('setNodePair is not implemented for valueNodeName: ' +
+            valueNodeName, LLwarning);
+          LogDatei.log('setNodePair: node NOT created, valueNodeName: ' +
+            valueNodeName, LLinfo);
+        end
+        else
+        begin
+          LogDatei.log('setNodePair is not implemented for valueNodeName: ' +
+            valueNodeName, LLwarning);
+          LogDatei.log('setNodePair: node NOT created, valueNodeName: ' +
+            valueNodeName, LLinfo);
+        end;
+      end;
+      setParentNodeAsActNode();
+    end
+    else
+      LogDatei.log('setNodePair only for dicts. node is not dict ' +
+        actNode.NodeName, LLWarning);
+  end
+  else
+    LogDatei.log('setNodePair failed, actNode is nil, tried to get keyNodeName: ' +
+      keyNodeName, LLerror);
+end;
 
 //*************  XML Attribute-Handling ***********************************
 function TuibXMLDocument.countAttributes(myxmlnode: TDOMNode): integer;
@@ -2240,12 +2424,15 @@ var
   leavingpath: string;
   error: boolean;
   localAttributeList: TStringList;
-  localAtrribute, value1, value2: string;
+  localAtrribute, value0, value1, value2: string;
+  localAtrributeIndex: integer;
+  tmpstr: string;
 begin
   Result := True;
   try
     localAttributeList := TStringList.Create;
-    logdatei.log_prog('attribute path element : ' + attributePath, LLinfo);
+    logdatei.log_prog('makeAttributesSL: attribute path element : ' +
+      attributePath, LLinfo);
     //attributeStringList := TStringList.Create;
     // has to be created outside
     if not Assigned(attributeStringList) then
@@ -2260,10 +2447,14 @@ begin
       attributeStringList.Clear;
       i := 1;
       error := False;
+      // this will fail with some thing like 'name="Update Check"'
+      // so we have to look for the second part
       stringsplitByWhiteSpace(attributePath, localAttributeList);
-      for i := 0 to localAttributeList.Count - 1 do
+      //for i := 0 to localAttributeList.Count - 1 do
+      localAtrributeIndex := 0;
+      while localAtrributeIndex <= localAttributeList.Count - 1 do
       begin
-        localAtrribute := trim(localAttributeList[i]);
+        localAtrribute := trim(localAttributeList[localAtrributeIndex]);
         if (localAtrribute <> '') then
         begin
           // check syntax:
@@ -2272,33 +2463,56 @@ begin
             if pos('"', localAtrribute) > 0 then
             begin
               // we expect that the value is quoted
-              value1 := trim(copy(localAtrribute, pos('=', localAtrribute) + 1,
-                length(localAtrribute)));
+              // the attribute name with trailing '='
+              value0 := trim(copy(localAtrribute, 1, pos('=', localAtrribute)));
+              // the attribute value with leading '"'
+              value1 := trim(copy(localAtrribute, pos('=', localAtrribute) +
+                1, length(localAtrribute)));
               value2 := opsiunquotestr2(value1, '"');
+              while (value1 <> '"' + value2 + '"') and
+                (localAtrributeIndex <= localAttributeList.Count - 1) do
+              begin
+                // may be we have a whitespce in the attribute value - let us try to fix
+                Inc(localAtrributeIndex);
+                tmpstr := trim(localAttributeList[localAtrributeIndex]);
+                // do not use the next attribute name
+                if pos('=', tmpstr) = 0 then
+                begin
+                  value1 := value1 + ' ' + tmpstr;
+                  value2 := opsiunquotestr2(value1, '"');
+                  // we hope the fix is:
+                  localAtrribute := value0 + value1;
+                  logdatei.log_prog('makeAttributesSL: Test attribute: ' +
+                    localAtrribute, LLdebug);
+                end;
+              end;
               if value1 <> '"' + value2 + '"' then
               begin
                 errormessage :=
-                  'Error: makeAttributesSL: attributePath syntax Error: quoting error in: ' +
-                  attributePath + ' value is. ' + value1;
+                  'Error: makeAttributesSL: attributePath syntax Error: quoting error in: '
+                  + attributePath + ' value is. ' + value1;
                 logdatei.log(errormessage, LLERROR);
                 Result := False;
                 exit;
               end;
             end;
-          end
-          else
-          begin
-            errormessage :=
-              'Error: makeAttributesSL: attributePath syntax Error: missing equal sign error in: ' +
-              attributePath +
-              ' value is. ' + value1;
-            logdatei.log(errormessage, LLERROR);
-            Result := False;
-            exit;
           end;
-          if Result then
-            AttributeStringList.Add(localAtrribute);
+        end
+        else
+        begin
+          errormessage :=
+            'Error: makeAttributesSL: attributePath syntax Error: missing equal sign error in: '
+            + attributePath + ' value is. ' + value1;
+          logdatei.log(errormessage, LLERROR);
+          Result := False;
+          exit;
         end;
+        if Result then
+        begin
+          logdatei.log('makeAttributesSL: Found attribute: ' + localAtrribute, LLdebug);
+          AttributeStringList.Add(localAtrribute);
+        end;
+        Inc(localAtrributeIndex);
       end;
     end;
   finally

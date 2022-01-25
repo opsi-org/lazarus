@@ -75,9 +75,13 @@ msgid "To carry out the remaining installation automatically, we need some infor
 msgstr "To carry out the remaining installation automatically, we need some information first."
 
 #: opsi_quick_install_resourcestrings.rscontinue
+#, fuzzy
+#| msgid ""
+#| "To continue and start the installation, please press enter.\n"
+#| "If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
 msgid ""
 "To continue and start the installation, please press enter.\n"
-"If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
+"If you like to jump back to a question, please press the number key of the respective number in the overview."
 msgstr ""
 "To continue and start the installation, please press enter.\n"
 "If you like to jump back to a question, please press the number key of the respective number in the overview.\n"
@@ -156,10 +160,14 @@ msgid "Other:"
 msgstr "Other:"
 
 #: opsi_quick_install_resourcestrings.rsinfoadmin
+#, fuzzy
+#| msgid ""
+#| "User to create for the operation of opsi.\n"
+#| "This user can not manage system settings.\n"
 msgctxt "opsi_quick_install_resourcestrings.rsinfoadmin"
 msgid ""
 "User to create for the operation of opsi.\n"
-"This user can not manage system settings.\n"
+"This user can not manage system settings."
 msgstr ""
 "User to create for the operation of opsi.\n"
 "This user can not manage system settings.\n"
@@ -169,9 +177,13 @@ msgid "Should the data of opsi be stored in a file or a mysql database?"
 msgstr "Should the data of opsi be stored in a file or a mysql database?"
 
 #: opsi_quick_install_resourcestrings.rsinfodhcp
+#, fuzzy
+#| msgid ""
+#| "Select \"No\" if you already have a dhcp-server.\n"
+#| "Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
 msgid ""
 "Select \"No\" if you already have a dhcp-server.\n"
-"Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
+"Select \"Yes\" if you want to install the dhcp-server on the opsi-server."
 msgstr ""
 "Select \"No\" if you already have a dhcp-server.\n"
 "Select \"Yes\" if you want to install the dhcp-server on the opsi-server.\n"
@@ -202,9 +214,13 @@ msgid "Source from which opsi will be installed."
 msgstr "Source from which opsi will be installed."
 
 #: opsi_quick_install_resourcestrings.rsinforepokind
+#, fuzzy
+#| msgid ""
+#| "Select the stability of the installation:\n"
+#| "Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
 msgid ""
 "Select the stability of the installation:\n"
-"Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
+"Stable is reliable, testing is the beta version, experimental may cause some errors."
 msgstr ""
 "Select the stability of the installation:\n"
 "Stable is reliable, testing is the beta version, experimental may cause some errors.\n"
@@ -537,7 +553,7 @@ msgstr "Distribution"
 #: tdistribution.labelcorrect.caption
 msgid ""
 "If this is correct, please click 'next >' to continue.\n"
-"If not, please edit the distribution and then continue with 'next >'.\n"
+"If not, please edit the distribution and then continue with 'next >'."
 msgstr ""
 
 #: tdistribution.labeldistr.caption
@@ -637,7 +653,7 @@ msgstr ""
 #: tquery.labelnocache.caption
 msgid ""
 "(Base-) Repository for opsi-server installation\n"
-"(without any cache proxy)\n"
+"(without any cache proxy)"
 msgstr ""
 
 #: tquery.labelopsiversion.caption
@@ -717,7 +733,7 @@ msgstr ""
 #: tquery2.labelbackend.caption
 msgid ""
 "Which backend should be installed?\n"
-"(mysql needs valid activation file)\n"
+"(mysql needs valid activation file)"
 msgstr ""
 
 #: tquery2.labelcopymodules.caption

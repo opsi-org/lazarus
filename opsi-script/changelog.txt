@@ -3,18 +3,195 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.4.36) stable; urgency=low
+
+  * oswebservice: getOpsiModules: integrate new backend_getLicensingInfo method with fallback to old backend_info
+  * oswebservice: retrieveJSONObject: retry on other communication mode only on 400- bad request result
+  * oswebservice: retrieveJSONObjectByHttpPost: retry on other communication mode only on 400- bad request result
+  * oswebservice: getOpsiModules: Legal notice to our license protection
+
+
+-- d.oertel <d.oertel@uib.de> Wed, 19 Jan 2022 15:00
+
+opsi-script (4.12.4.35) stable; urgency=low
+
+  * osparser: getMSVersionMap: remove double ReleaseID=
+  * osparser: executeWith: AllSigned Hack: use:
+        "Get-Content -Path '+ tempfilename +' | Out-String | Invoke-Expression"
+  * osparser: new function getMSVersionName: string
+  * oslinmount: replace getGeneralConfigValue by configState_getObjects
+  * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
+  * new boolean opsi-script function: isProcessChildOf(<searchprocstr>, <parentprocstr>): bool;
+    implemented for WLM
+  * new opsi-script constant %opsiscriptprocname% represents the name of the
+    just running opsi-script process (opsi-script.exe, opsi-script, opsi-script-gui)
+    changes in opsiconf, osparser, opsiscript.lpr
+  * write now component logs to subdir 'lastprodlogs'
+  * osprocesses: isProcessChildOf also for win64
+  * oswebservice: sendlog: fix boolean values for append at log_write
+  * osfunclin: getProfilesDirListLin fix non standard lines from getent passwd
+  * osparser: executewith: powershell: remove a trailing '-file' from programparas
+  * osGUIcontrol: skindirectoryDevelopment = '../../../skin';
+  * osGUIcontrol: Linux: skindirectoryCompatibility = '/opt/opsi-script/skin';
+
+-- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
+
+
+opsi-script (4.12.4.34) stable; urgency=low
+
+  * oszip: catch exceptions
+  * osparser: fix callingsection parameter in call of SearchForSectionLines
+    from producestringlist:getOutstreamFromSection / getReturnlistFromSection
+  * powershell AllSigned Hack: type tmpfile | powershell -command -
+    will be switched on automatically if AllSigned is detected.
+    Additional parameters (to script or powershell) will be ignored in this case.
+  * oslog: new property WriteComponentFile. if true a logfile for every component (product)
+    is (re)written.
+  * osconf: new config: opsi-script.global.writeProductLogFile (default=false)
+  * oslog: changed histrory line to:
+    'handled: <productid> Version: <versiion> Request: <request> Result: <result>
+  * osparser: opsiservicecall: new line allowed: "timeout" : <int>
+  * oswebservice: TOpsiMethodCall has now property timeout
+
+-- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
+
+
+opsi-script (4.12.4.33) stable; urgency=low
+
+  * osparser: more debug logs in getFileInfoMap
+  * osparser: getFileInfoMap: catch exceptions
+  * versionx: catch exceptions in GetString
+
+-- d.oertel <d.oertel@uib.de> Fri, 03 Dec 2021 15:00
+
+
+opsi-script (4.12.4.32) stable; urgency=low
+
+  * osparser: files section: unzip create target dir
+  * added unit oscertificates
+  * new void function ImportCertToSystem(<cert file name>)
+  * oscertificates: add functions for linux /mac
+  * osfunclin: getPackageLock: fix for zypper, general fix
+  * ostxstinglist: new method: getStringValueWithDefault
+  * GetProductProperty: if no service context, tries to find property in %scriptpah%/properties.conf
+  * GetProductPropertyList: if no service context, tries to find property in %scriptpath%/properties.conf
+  * new: stringlist literals in json style are allowed now (set $list$ = '["he","ho"]')
+  * fix overwrite GUI messages by standard skinreload from  doAktionen
+  * new: allow after DefVar inital value: defvar $str$ = "huhu"
+  * new: allow after DefStringlist inital value: defstringlist $list$ = '["he","ho"]'
+  * oswebservice: getSubListResult: fix for access violation in getproductpropertylist
+  * osjson: jsonAsArrayToStringList: fix '[]' is empty array
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
+
+
+opsi-script (4.12.4.31) stable; urgency=low
+
+  * osfunc: AllCopyRecursive: for better performance:
+        doNotChangeAccessRights: boolean = True;
+  * osparser: executeWith + powershellcall: enable runasloggedonuser
+  * osfilehelper: MakeBakFiles: correct format mask for log backups
+  * osparser: files section: move / rename: allow also for directories
+
+-- d.oertel <d.oertel@uib.de> Tue, 16 Nov 2021 15:00
+
+opsi-script (4.12.4.30) stable; urgency=low
+
+ * osfuncwin: fixed that opsi-script crashed if Windows API function GetFirmwareType is not available in kernel32.dll 
+   (for example on Windows 7/ Windows Server 2008)
+
+-- j.werner <j.werner@uib.de> Wed, 27 Oct 2021 12:22
+
+opsi-script (4.12.4.29) stable; urgency=low
+
+ * osfuncwin: WinIsUefi uses new function GetBiosMode if Windows Verison >= Windows10.
+    This function calls the Windows API function GetFirmwareType to detect Bios mode
+ * osparser: doLDAPSearch: callLDAP: if port 636 then use ssl
+ * remove ldapsend.pas from opsi-script dir (use from synapse)
+ * osfilehelper: MakeBakFiles: use two digit rotation numbers if log_rotation_count > 9
+                               use three digit rotation numbers if log_rotation_count > 99
+ * osconf: configuration: log_rotation_count (default = 8)  (max=999
+   will need new config: opsi-script.global.log_rotation_count to change (allowed 0 - 999)
+ * osfuncwin: getW10Release: Fixes detection of w10 release > 2009 (21h1) ; fixes #4665
+   getW10Release is now also called from osparser
+
+-- d.oertel <d.oertel@uib.de> Mon, 18 Oct 2021 15:00
+
+
+opsi-script (4.12.4.28) stable; urgency=low
+
+ * osparser: do XMLPatch2Main: new xml2-section commands:
+    * setNodePair <keyNodeName> <keyNodeTextContent> <valueNodeName> <valueNodeTextContent>
+      used for Apple info.plist
+ * osxmlsections: TuibXMLDocument: new:
+    setNodePair(keyNodeName: string; keyNodeTextContent: string;
+      valueNodeName: string; valueNodeTextContent: string): boolean;
+ * Execwith: if there is a parameter '/HookScript <path to script file>',
+   then the existing 'script file' will be called with the temporary file
+   as parameter before passing it to the interpreter.
+   The call of the hookscript has a 40 sec Timeout
+ * osfunc: additional log at FileCheckDate
+ * DPI awareness True/PM_V2
+ * osparser: doAktionen: FBatchOberflaeche.LoadSkin(''); and Processmess to reload DPI scaling
+ * osparser: execPowershellCall has now additionl parameter optionstr that may hold additional
+    execwith parameters
+ * osparser: getDecimalCompareSign (used by compareDotSeperatedNumbers):
+     now support leading zeros (then it will handled as float starting with 0.)
+     now support a letter as last part of the number (1.0.23b like is used at openssl versions)
+ * osparser: executewith: call powershell scripts with -file parameter in order to get the correct exitcode
+ * osparser: fix Access Violation in CreateAndProcessScript on empty scriptfiles.
+
+-- d.oertel <d.oertel@uib.de> Tue, 31 Aug 2021 15:00
+
+opsi-script (4.12.4.27) stable; urgency=low
+
+ * new generic section parameter /AllUserProfiles (as alias for /AllNTUserProfiles)
+ * osxmlsections: fixes for creating not existing file
+ * osparser: doXMLPatcg2Main: check acces rights and for successful savetofile
+ * osparser: handleFileExists32: fileexists for win also via shlwapi.PathFileExistsW
+ * new unit oswinacl with function AddAccessRightsToACL
+ * osfunc: FileGetWriteAccess calls at windows also AddAccessRightsToACL
+ * osencoding: saveTextFileWithEncoding: ForceDirectories for output
+ * osfunc: toCopyOrNotToCopy: fix for copy -r
+
+-- d.oertel <d.oertel@uib.de> Thu, 12 Aug 2021 15:00
+
+opsi-script (4.12.4.26) stable; urgency=low
+
+ * Parameter 'pcprofil' not supported any more
+ * osencoding: new function  isPlainAsciiString(const searchText: string): boolean;
+ * osencoding: func searchEncoding now detectd also isPlainAscii
+ * osparser: supress any encoding Warnings if isPlainAscii
+ * osencoding: getFileBom: added fmShareDenyNone to open mode
+ * osencoding: getFileBom: 3 retries
+ * osparser: tsImportLib: do not reload the file at 'Imported all functions from file'
+ * osparser: tsecExpected: (external sub sections): try-exept getFileBom +  LoadValidLinesFromFile
+
+-- d.oertel <d.oertel@uib.de> Tue, 27 Jul 2021 15:00
+
+opsi-script (4.12.4.25) stable; urgency=low
+
+ * switch to Lazarus 2.2 / FPC 3.2.2
+ * osparser: include_append:  comment out 'encoding=' lines from include_append because
+              this line can become a part of a secondary section
+
+-- d.oertel <d.oertel@uib.de> Tue, 20 Jul 2021 15:00
+
+
 opsi-script (4.12.4.24) stable; urgency=low
 
  * new: xml2 sections: /encoding Parameter
  * new: xml2 sections: /AllNTUserProfiles Parameter
  * osfunc: file functions use findfirstUTF8 instead of findfirst
- * xml2 sections: many log warnings lowerd ti LLInfo
+ * xml2 sections: many log warnings lowered to LLInfo
  * xml2 sections: new command: rootNodeOnCreate = <node>
  * xml2 sections: not existing files will be created
     using the value of rootNodeOnCreate, fallback to 'rootnode' if not existing
  * osparser: include (append / insert) statements fixes on read file with encoding
  * osparser: importlib statements fixes on read file with encoding
  * osparser: less encoding reload in LoadValidLinesFromFile
+ * osencoding: more logging and retries at loadTextFileWithEncoding in order to fix
+   'file in use' error.
 
 -- d.oertel <d.oertel@uib.de> Mon, 05 Jul 2021 15:00
 
@@ -208,7 +385,7 @@ opsi-winst/opsi-script (4.12.4.6) experimental; urgency=low
 opsi-winst/opsi-script (4.12.4.5) experimental; urgency=low
 
  * the one and only project file is now opsi-script.lpi
-   you hav to switch zhe build mode for differen archtictures (win / mac / lin) (gui)
+   you have to switch the build mode for different archtictures (win / mac / lin) (gui)
  * the opsi-script nogui version is now opsi-script
  * the opsi-script gui version is now opsi-script-gui
  * opsi-script tests via opsi-laz-gui-test if a gui can be used

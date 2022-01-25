@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -9,8 +9,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -18,8 +18,8 @@ importlib "%scriptpath%/uib_macosinstalllib.opsiscript"
 Set $InstallDir$	= "/Applications/<productid>.app"
 ; ----------------------------------------------------------------
 
-; switch to "true" if this product supports MacOS
-if not(stringToBool("false"))
+; switch to "true" ="true" if this product supports MacOS
+if not("true" = "false")
 	logError "No installation for MacOS in this opsi product"
 	isFatalError "wrong OS"
 endif

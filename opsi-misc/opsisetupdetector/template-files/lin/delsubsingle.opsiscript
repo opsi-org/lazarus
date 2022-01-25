@@ -1,6 +1,7 @@
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib gmbh
-; and published under the Terms of the Affero General Public License v3.
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -18,16 +19,15 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	#@uninstallCommandLine1*#
 	;----------------------------------------------
-	Sub_check_exitcode_del
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
+	
 	#@postUninstallLines*#
-endif
-
-[Sub_check_exitcode_del]
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
 endif
 
 #@DelsubSectionLines1*#

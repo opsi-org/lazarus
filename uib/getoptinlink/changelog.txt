@@ -1,3 +1,0 @@
-getoptinlink.exe 1.1
- * trim all link components
--- detlef oertel Fr 13.12.2019

@@ -1,7 +1,7 @@
 object FBatchOberflaeche: TFBatchOberflaeche
-  Left = 1179
+  Left = 439
   Height = 493
-  Top = 240
+  Top = 336
   Width = 741
   Caption = 'opsi-script'
   ClientHeight = 493
@@ -20,7 +20,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnResize = FormResize
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 493
@@ -88,13 +88,12 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Quality = fqDraft
-        ParentColor = False
         ParentFont = False
         WordWrap = True
       end
       object LabelVersion: TLabel
         Left = 72
-        Height = 12
+        Height = 14
         Top = 15
         Width = 65
         Alignment = taRightJustify
@@ -104,7 +103,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'System'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
-        ParentColor = False
         ParentFont = False
       end
       object ImageProduct: TImage
@@ -127,7 +125,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'Arial'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
-        ParentColor = False
         ParentFont = False
         OptimalFill = True
       end
@@ -143,7 +140,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Height = 16
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
-        ParentColor = False
         ParentFont = False
       end
       object LabelCommand: TLabel
@@ -159,7 +155,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
-        ParentColor = False
         ParentFont = False
       end
       object LabelDetail: TLabel
@@ -175,7 +170,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Style = [fsItalic]
-        ParentColor = False
         ParentFont = False
       end
       object ImageLogo1: TImage

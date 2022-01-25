@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -9,29 +9,14 @@ encoding=utf8
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $InstallDir1$
-DefVar $InstallDir2$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-DefVar $arch$
-DefVar $mode$
-
-#@stringVars*#
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
 
 Set $arch$ = GetSystemType
-set $mode$ = GetProductProperty("install_architecture","system specific")
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 #@GetProductProperty*#
@@ -44,13 +29,13 @@ Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
-if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
+if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
 	Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 else
-	if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "64 only"))
+	if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "64 only"))
 		Set $MinimumSpace$	 = "#@MinimumSpace2*#"
 	endif
-	if ($arch$ = "64 Bit System") and ($mode$ = "both")
+	if ($arch$ = "64 Bit System") and ($install_architecture$ = "both")
 		Set $MinimumSpace$	 = "#@MinimumSpace3*#"
 	endif
 endif
@@ -86,7 +71,7 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
-if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
+if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
 
 	#@preInstallLines*#
 	comment "Start setup program"
@@ -94,18 +79,30 @@ if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both
 	;----------------------------------------------
 	Winbatch_install_1  #@installWaitForProc1*#
 	;----------------------------------------------
-	sub_check_exitcode_1
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
 	#@postInstallLines*#
 endif
 
-if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
+if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "both") or ($install_architecture$ = "64 only"))
 	#@preInstallLines*#
 	comment "Start setup program"
 	ChangeDirectory "%SCRIPTPATH%\files2"
 	;----------------------------------------------
 	Winbatch_install_2  #@installWaitForProc2*#
 	;----------------------------------------------
-	sub_check_exitcode_2
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ )
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
 	#@postInstallLines*#
 endif
 
@@ -117,23 +114,6 @@ endif
 [Winbatch_install_2]
 #@installCommandLine2*#
 
-[sub_check_exitcode_1]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
-
-[sub_check_exitcode_2]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 #@SetupDesktopiconSectionLines*#
 

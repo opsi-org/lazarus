@@ -2167,6 +2167,7 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
+          LogDatei.WriteComponentFile:= osconf.configWriteProductLogFile;
           logDatei.log('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
             LLessential);
           logDatei.log('default_loglevel: ' + IntToStr(osconf.default_loglevel),
@@ -3146,7 +3147,7 @@ begin
           end;
         end
 
-
+        (* not supported anymore (4.12.4.16 do 27.7.21)
         else if Lowercase(Parameter) = 'pcprofil' then
         begin
           if ProgramMode <> pmNotSet then
@@ -3155,7 +3156,7 @@ begin
             exit;
           end
           else if NumberOfTrueParameters >= 1 then
-            (* pmBuildPC geht nicht mehr *)
+            // pmBuildPC geht nicht mehr
           begin
             ProgramMode := pmInfo;
             exit;
@@ -3166,6 +3167,7 @@ begin
             exit;
           end;
         end
+        *)
 
         else if Lowercase(Parameter) = 'logfile' then
         begin
@@ -3378,8 +3380,10 @@ var
 begin
   starttimestr := DateTimeToStr(Now);
   if not Assigned(startupmessages) then
+  begin
     startupmessages := TStringList.Create;
-  startupmessages.Clear;
+    startupmessages.Clear;
+  end;
   startupmessages.Append('startmessage opsi-script created at main: ' +
     DateTimeToStr(Now));
   toggle := True;

@@ -1,4 +1,42 @@
 [Changelog]
+l-opsi-server (4.2.0.5-1); testing; urgency=low
+
+  * added Rocky Linux 8 support
+  * added Alma Linux 8 support
+
+ -- Mathias Radtke <m.radtke@uib.de> Mon, 13 Sep 2021 16:40:00 +0200
+
+l-opsi-server (4.2.0.4-1); testing; urgency=low
+
+  * added Debian 11 support
+
+ -- Mathias Radtke <m.radtke@uib.de> Thu, 15 Jul 2021 14:24:00 +0200
+ 
+l-opsi-server (4.2.0.3-5); testing; urgency=low
+
+  * mysql backend initialization changed on openSUSE Leap
+
+ -- Mathias Radtke <m.radtke@uib.de> Mon, 21 Jun 2021 14:24:00 +0200
+ 
+l-opsi-server (4.2.0.3-4); testing; urgency=low
+
+  * corrected grafana server handling
+
+ -- Mathias Radtke <m.radtke@uib.de> Tue, 18 May 2021 12:32:00 +0200
+
+l-opsi-server (4.2.0.3-3); tetsing; urgency=low
+
+  * opsi 4.1: removed check for pcpatch group
+
+-- Mathias Radtke <m.radtke@uib.de> Tue, 11 May 2021 09:20:00 +0200
+
+l-opsi-server (4.2.0.3-2); testing; urgency=low
+
+  * opsi 4.2: Aborting if group pcpatch or opsifileadmins already exists
+  * opsi 4.1: aborting if group pcpatch already exists
+
+-- Mathias Radtke <m.radtke@uib.de> Mon, 10 May 2021 14:20:00 +0200
+
 l-opsi-server (4.2.0.3-1); testing; urgency=low
 
   * opsi 4.2: UCS: installing univention-samba if not running on memberserver

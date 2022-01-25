@@ -1,7 +1,7 @@
 ; ----------------------------------------------------------------
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib
-; and published under the Terms of the Affero General Public License v3.
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -9,24 +9,12 @@ encoding=utf8
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $oldProgFound$
-DefVar $MsiId$
-DefVar $UninstallProgram$
-
-#@stringVars*#
+; All variables are defined here:
+include_insert "define_vars_multi.opsiscript"
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -75,7 +63,13 @@ ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
-Sub_check_exitcode
+set $ExitCode$ = getlastexitcode
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
 #@postInstallLines*#
 
 #@SetupHandleDesktopIcon*#
@@ -83,14 +77,6 @@ Sub_check_exitcode
 [Winbatch_install]
 #@installCommandLine1*#
 
-[sub_check_exitcode]
-set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
 
 #@SetupDesktopiconSectionLines*#
 

@@ -60,6 +60,7 @@ begin
   panel.BevelOuter:= bvNone;
   btn.Parent := panel;
   cbox.Parent := panel;
+  cbox.ReadOnly:= true; // modify the input only from drop down
   if button_only then
   begin
     cbox.Align:= alLeft;

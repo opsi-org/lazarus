@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+        <CompatibilityMode Value="True"/>
       </Flags>
-      <MainUnit Value="0"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <ExecutionLevel Value="highestAvailable"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -18,11 +22,179 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <RevisionNr Value="2"/>
-      <StringTable CompanyName="uib.de / opsi.org" FileDescription="opsi net mounter" OriginalFilename="opsinetmount" ProductName="opsi" ProductVersion="4.0.2"/>
+      <MinorVersionNr Value="2"/>
+      <StringTable CompanyName="uib.de / opsi.org" FileDescription="opsi net mounter" OriginalFilename="opsinetmount" ProductName="opsi" ProductVersion="4.2.0.0"/>
     </VersionInfo>
-    <BuildModes Count="1" Active="Default">
+    <BuildModes Count="6" Active="Release_win64">
       <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="opsinetmount"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+              <UseLineInfoUnit Value="False"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="opsinetmount"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="Release_win32">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="compiler_out\binary\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+            <OtherDefines Count="1">
+              <Define0 Value="OPSI"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Release_win64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="compiler_out\binary\$(TargetCPU)-$(TargetOS)\opsinetmount"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+            <OtherDefines Count="1">
+              <Define0 Value="OPSI"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item5>
+      <Item6 Name="Release_lin64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="opsinetmount"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI"/>
+          </Other>
+        </CompilerOptions>
+      </Item6>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -33,150 +205,214 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+      <Item2>
         <PackageName Value="dcpcrypt"/>
         <MinVersion Major="2" Release="4" Build="1" Valid="True"/>
-      </Item1>
+      </Item2>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="9">
       <Unit0>
         <Filename Value="opsinetmount.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="614"/>
-        <CursorPos X="31" Y="640"/>
-        <UsageCount Value="48"/>
+        <TopLine Value="197"/>
+        <CursorPos X="56" Y="199"/>
+        <UsageCount Value="83"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\..\..\..\..\usr\share\lazarus\1.2.2\components\dcpcrypt\Ciphers\dcpblowfish.pas"/>
+        <Filename Value="C:\usr\share\lazarus\1.2.2\components\dcpcrypt\Ciphers\dcpblowfish.pas"/>
         <UnitName Value="DCPblowfish"/>
         <TopLine Value="7"/>
         <CursorPos X="22" Y="31"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="63" Y="12"/>
+        <UsageCount Value="55"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-registry\src\registry.pp"/>
+        <UnitName Value="Registry"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="73"/>
+        <CursorPos X="17" Y="68"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\common\osurlparser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="10"/>
+        <CursorPos X="19" Y="31"/>
+        <UsageCount Value="50"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="117"/>
+        <CursorPos X="103" Y="129"/>
+        <UsageCount Value="47"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <UnitName Value="JwaWinCrypt"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="2941"/>
+        <CursorPos X="70" Y="2965"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="291"/>
+        <UsageCount Value="19"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\..\common\osencoding.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="8"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="8"/>
+      </Unit8>
     </Units>
+    <OtherDefines Count="1">
+      <Define0 Value="OPSI"/>
+    </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="124" Column="29" TopLine="113"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9595" Column="79" TopLine="9564"/>
       </Position1>
       <Position2>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="139" Column="20" TopLine="128"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9602" Column="48" TopLine="9571"/>
       </Position2>
       <Position3>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="149" Column="21" TopLine="138"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9610" Column="52" TopLine="9579"/>
       </Position3>
       <Position4>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="9" Column="49" TopLine="5"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9920" Column="79" TopLine="9889"/>
       </Position4>
       <Position5>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="32" Column="23" TopLine="22"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9935" Column="50" TopLine="9904"/>
       </Position5>
       <Position6>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="126" Column="27" TopLine="112"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9964" Column="77" TopLine="9933"/>
       </Position6>
       <Position7>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="122" Column="22" TopLine="111"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9969" Column="92" TopLine="9938"/>
       </Position7>
       <Position8>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="148" Column="38" TopLine="134"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9983" Column="70" TopLine="9952"/>
       </Position8>
       <Position9>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="139" Column="29" TopLine="121"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9984" Column="26" TopLine="9953"/>
       </Position9>
       <Position10>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="217" TopLine="208"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="9991" Column="87" TopLine="9960"/>
       </Position10>
       <Position11>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="195" Column="37" TopLine="185"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="10001" Column="53" TopLine="9970"/>
       </Position11>
       <Position12>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="191" Column="11" TopLine="180"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="10002" Column="17" TopLine="9971"/>
       </Position12>
       <Position13>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="206" Column="86" TopLine="197"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="8031" Column="50" TopLine="8025"/>
       </Position13>
       <Position14>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="190" Column="35" TopLine="186"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\winunits-jedi\src\jwawincrypt.pas"/>
+        <Caret Line="16007" Column="36" TopLine="15975"/>
       </Position14>
       <Position15>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="120" Column="26" TopLine="96"/>
+        <Caret Line="765" Column="52" TopLine="726"/>
       </Position15>
       <Position16>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="9" Column="71" TopLine="6"/>
+        <Caret Line="767" Column="7" TopLine="757"/>
       </Position16>
       <Position17>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="96" Column="13" TopLine="90"/>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <Caret Line="21" Column="30" TopLine="4"/>
       </Position17>
       <Position18>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="111" Column="12" TopLine="100"/>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <Caret Line="128" Column="7" TopLine="114"/>
       </Position18>
       <Position19>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="297" Column="99" TopLine="283"/>
+        <Caret Line="829" Column="27" TopLine="824"/>
       </Position19>
       <Position20>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="22" Column="79" TopLine="11"/>
+        <Caret Line="837" Column="73" TopLine="824"/>
       </Position20>
       <Position21>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="441" Column="9" TopLine="421"/>
+        <Caret Line="840" Column="80" TopLine="824"/>
       </Position21>
       <Position22>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="437" Column="13" TopLine="405"/>
+        <Caret Line="842" Column="81" TopLine="824"/>
       </Position22>
       <Position23>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="572" Column="58" TopLine="555"/>
+        <Caret Line="843" Column="90" TopLine="824"/>
       </Position23>
       <Position24>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="18" Column="59"/>
+        <Caret Column="21"/>
       </Position24>
       <Position25>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="15" Column="51"/>
+        <Caret Line="45" Column="92" TopLine="25"/>
       </Position25>
       <Position26>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="584" Column="31" TopLine="577"/>
+        <Caret Line="47" Column="8" TopLine="27"/>
       </Position26>
       <Position27>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="18" Column="42"/>
+        <Caret Line="224" Column="23" TopLine="222"/>
       </Position27>
       <Position28>
-        <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="234" Column="67" TopLine="210"/>
+        <Filename Value="..\..\common\oscertificates.pas"/>
+        <Caret Line="129" Column="5" TopLine="122"/>
       </Position28>
       <Position29>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="306" Column="67" TopLine="282"/>
+        <Caret Line="783" Column="32" TopLine="777"/>
       </Position29>
       <Position30>
         <Filename Value="opsinetmount.lpr"/>
-        <Caret Line="646" Column="14" TopLine="639"/>
+        <Caret Line="831" Column="70" TopLine="270"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -188,7 +424,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers"/>
+      <OtherUnitFiles Value="..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

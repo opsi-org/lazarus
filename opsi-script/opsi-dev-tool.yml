@@ -1,18 +1,75 @@
 project:
   name: opsi-script
-  version: 4.12.4.12
+  version: 0
   summary: opsi-script
   description: opsi-script
   homepage: https://www.opsi.org
   maintainer: uib GmbH info@uib.de
   licenses: AGPL-3.0
 
-project:
-  name: opsi-script-gui
-  version: 4.12.4.12
-  summary: opsi-script-gui
-  description: opsi-script-gui
-  homepage: https://www.opsi.org
-  maintainer: uib GmbH info@uib.de
-  licenses: AGPL-3.0
-
+pull-binaries:
+  - name: ssl-libs
+    server-type: binaryindex
+    destination: upload/win32/opsi-script
+    extract: true
+    post-script:
+      - cp upload/win32/opsi-script/ssl-libs/*.dll upload/win32/opsi-script/
+      - rm -r upload/win32/opsi-script/ssl-libs
+    os: windows
+    architecture: x86
+    version: 0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh
+  - name: ssl-libs
+    server-type: binaryindex
+    destination: upload/win64/opsi-script
+    extract: true
+    post-script:
+      - cp upload/win64/opsi-script/ssl-libs/*.dll upload/win64/opsi-script/
+      - rm -r upload/win64/opsi-script/ssl-libs
+    os: windows
+    architecture: x64
+    version: 0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh
+  - name: shutdownexe
+    server-type: binaryindex
+    destination: upload/win32/opsi-script
+    extract: true
+    post-script:
+      - cp upload/win32/opsi-script/shutdown.exe upload/win64/opsi-script/
+    os: windows
+    architecture: x86
+    version: 4.1.0.0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh
+  - name: opsiwinstxmlplugin
+    server-type: binaryindex
+    destination: upload/win32/opsi-script
+    extract: true
+    post-script: []
+    os: windows
+    architecture: x86
+    version: 4.1.0.0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh
+  - name: opsi-laz-gui-test
+    server-type: binaryindex
+    destination: upload/lin64/opsi-script
+    extract: true
+    post-script: []
+    os: linux
+    architecture: x64
+    version: 4.1.0.0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh
+  - name: opsi-laz-gui-test
+    server-type: binaryindex
+    destination: upload/mac64/opsi-script
+    extract: true
+    post-script: []
+    os: darwin
+    architecture: x64
+    version: 4.1.0.0
+    branch: development
+    server-url: http://binaryindex.uib.gmbh

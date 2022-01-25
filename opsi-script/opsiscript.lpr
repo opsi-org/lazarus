@@ -36,7 +36,6 @@ uses //lcltranslator,
   ///indylaz,
   osfunc,
   osparser,
-  ldapsend in 'ldapsend.pas',
   osmain in 'osmain.pas',
   oslocale,
   oscalc,
@@ -78,7 +77,7 @@ uses //lcltranslator,
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-  osfuncwin2, {$ENDIF}
+  osfuncwin2, osregistry, {$ENDIF}
   lazutf8, osfilehelper, osSSLPaths;
 
 
@@ -123,6 +122,7 @@ type
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
+    LogDatei.WriteComponentFile := False;;
     logdatei.CreateTheLogfile(logfilename, False);
     logdatei.LogLevel := 8;
     //LogDatei.debug_prog:=true;
@@ -187,7 +187,10 @@ type
           else logdatei.log('No opsi-script-gui: '+filePath + 'opsi-script-gui'+'  -  continue with nogui... ', LLnotice);
           logdatei.Close;
           if FileExists(filePath + 'opsi-script-gui') then
+          begin
             fpExecV(filePath + 'opsi-script-gui', argv);
+            opsiscriptProcName := 'opsi-script-gui';
+          end;
         end;
       end
       else

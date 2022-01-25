@@ -8,6 +8,7 @@ APP_SPECIFIC_PASSWORD=nbnl-odur-ylfp-wyns
 
 BUNDLE_ID=org.opsi.opsi-script
 EXECUTABLE_NAME=opsi-script
+EXECUTABLE_SOURCE=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
 ENTITLEMENTS="--entitlements opsi-script.entitlements"
@@ -32,7 +33,7 @@ rm -f log_file.txt
 mkdir -p ${EXECUTABLE_DIR}
 rm -f ${EXECUTABLE_DIR}/*
 rm -f ${FULLPATHTOEXE}
-cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
+cp $EXECUTABLE_SOURCE ${EXECUTABLE_DIR}
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
 #cp info-os.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 

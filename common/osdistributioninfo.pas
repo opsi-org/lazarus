@@ -46,6 +46,16 @@ begin
   // ...not the enum default CentOS_7
   FMyDistr := other;
   FDistrUrlPart := '';
+  // AlmaLinux has releases with names like 8.x
+  if distroName = 'AlmaLinux' then
+  begin
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := AlmaLinux_8;
+      FDistrUrlPart := 'AlmaLinux_8/';
+    end;
+  end
+  else
   // CentOS has releases with names like 7.x-xxxx
   if distroName = 'CentOS' then
   begin
@@ -74,6 +84,12 @@ begin
     begin
       FMyDistr := Debian_10;
       FDistrUrlPart := 'Debian_10/';
+    end
+    else
+    if Pos('11', distroRelease) = 1 then
+    begin
+      FMyDistr := Debian_10;
+      FDistrUrlPart := 'Debian_11/';
     end;
   end
   else
@@ -88,6 +104,11 @@ begin
     begin
       FMyDistr := openSUSE_Leap_15_2;
       FDistrUrlPart := 'openSUSE_Leap_15.2/';
+    end
+    else if distroRelease = '15.3' then
+    begin
+      FMyDistr := openSUSE_Leap_15_3;
+      FDistrUrlPart := 'openSUSE_Leap_15.3/';
     {end
     else if distroRelease = '42.3' then
     begin
@@ -109,6 +130,15 @@ begin
     begin
       FMyDistr := RHEL_8;
       FDistrUrlPart := 'RHEL_8/';
+    end;
+  end
+  else
+  if distroName = 'Rocky' then
+  begin
+    if Pos('8', distroRelease) = 1 then
+    begin
+      FMyDistr := RockyLinux_8;
+      FDistrUrlPart := 'RockyLinux_8/';
     end;
   end
   else

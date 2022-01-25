@@ -25,6 +25,8 @@ interface
 
 uses
 {$IFDEF WINDOWS}
+  oswinacl,
+  JwaWindows,
   JwaWinType,
   jwatlhelp32,
   jwawinbase,
@@ -282,7 +284,8 @@ type
     constructor Create(inifilename: string);
     destructor Destroy; override;
     procedure ReadSection(const Sectionname: string; var SectionVars: TStringList);
-    procedure ReadSectionValues(const Sectionname: string; var SectionValues: TStringList);
+    procedure ReadSectionValues(const Sectionname: string;
+      var SectionValues: TStringList);
     procedure ReadRawSection(const SectionName: string; var RawSection: TXStringList);
     function ReadString(const Section, Ident, defaultvalue: string): string;
     procedure WriteString(const Section, Ident, Value: string);
@@ -371,18 +374,18 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; logleveloffset : integer = 0): boolean; overload;
+      daysback: integer; logleveloffset: integer = 0): boolean; overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
       daysback: integer; search4file: boolean; var RebootWanted: boolean;
-      logleveloffset : integer = 0): boolean;
+      logleveloffset: integer = 0): boolean;
       overload;
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysBack: integer;  search4file: boolean; var RebootWanted: boolean;
-      retryOnReboot: boolean; logleveloffset : integer = 0): boolean; overload;
+      daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+      retryOnReboot: boolean; logleveloffset: integer = 0): boolean; overload;
 
     function HardLink(existingfilename, newfilename: string): boolean;
     function SymLink(existingfilename, newfilename: string): boolean;
@@ -547,6 +550,10 @@ function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean; overload;
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink: boolean; doNotChangeAccessRights: boolean): boolean; overload;
 
 
 function Is64BitSystem: boolean;
@@ -639,8 +646,8 @@ function cmdLineInputDialog(var inputstr: string; const message, default: string
 //function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr: string; const s: string): integer;
-function isSymLink(filepath : string) : boolean;
-function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+function isSymLink(filepath: string): boolean;
+function resolveSymlink(const filepath: string; recursive: boolean = True): string;
 
 
 
@@ -3324,7 +3331,7 @@ begin
         'we will work with the logged on user with profile', LLInfo);
       FillChar(lpProfileInfo, SizeOf(lpProfileInfo), 0);
       lpProfileInfo.dwSize := SizeOf(lpProfileInfo);
-      lpProfileInfo.lpUserName := PWideChar(usercontext);
+      lpProfileInfo.lpUserName := pwidechar(usercontext);
       lpProfileInfo.dwFlags := 0;
       if not LoadUserProfileW(opsiSetupAdmin_logonHandle, lpProfileInfo) then
       begin
@@ -3364,7 +3371,7 @@ begin
       end;
 
       if not jwawinbase.CreateProcessAsUserW(opsiSetupAdmin_logonHandle,
-        nil, PWideChar(wstr), nil, nil,
+        nil, pwidechar(wstr), nil, nil,
         //opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
         catchout,  // inherit handles if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
@@ -3555,8 +3562,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3830,7 +3837,8 @@ begin
           {$IFDEF GUI}
           if waitsecsAsTimeout and (WaitSecs > 5) then
           begin
-            FBatchOberflaeche.SetElementVisible(True, eProgressBar);//showProgressBar(True);
+            FBatchOberflaeche.SetElementVisible(True, eProgressBar);
+            //showProgressBar(True);
             //FBatchOberflaeche.setProgress(0);
           end;
           {$ENDIF GUI}
@@ -4002,8 +4010,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -5366,7 +5374,7 @@ function opsiunquotestr(s1, s2: string): string;
 var
   tempchar: char;
   tempansistr: ansistring;
-  tempansistrp: Pansichar;
+  tempansistrp: pansichar;
 begin
   Result := '';
   if (length(s1) >= 1) and (length(s2) >= 1) then
@@ -5452,7 +5460,8 @@ begin
   Result := 'unknown';
   {$IFDEF WIN32}
   if DSiIsWow64 then Result := 'x86_64'
-  else Result := 'x86_32';
+  else
+    Result := 'x86_32';
   {$ENDIF WIN32}
   {$IFDEF WIN64}
   Result := 'x86_64';
@@ -5463,29 +5472,28 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   Result := trim(getCommandResult('uname -m'));
-  if result = 'arm64' then Result := 'arm_64';
-  if result = 'x86_64' then
+  if Result = 'arm64' then Result := 'arm_64';
+  if Result = 'x86_64' then
   begin
     if '1' = trim(getCommandResult('sysctl -in sysctl.proc_translated')) then
-     Result := 'arm_64';
+      Result := 'arm_64';
   end;
   {$ENDIF DARWIN}
 end;
 
 function runningInWAnMode: boolean;
 var
-  mylist : TStringlist;
-  myserver : string;
+  mylist: TStringList;
+  myserver: string;
 begin
-  result := false;
+  Result := False;
   mylist := parseUrl(opsiserviceURL);
   myserver := trim(LowerCase(mylist.Values['Host']));
-  if myserver = 'localhost' then result := true;
-  if myserver = '127.0.0.1' then result := true;
-  if myserver = '::1' then result := true;
+  if myserver = 'localhost' then Result := True;
+  if myserver = '127.0.0.1' then Result := True;
+  if myserver = '::1' then Result := True;
   FreeAndNil(mylist);
 end;
-
 
 
 
@@ -5638,12 +5646,50 @@ function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boo
 var
   Attr: integer = 0;
   ErrorNo: integer = 0;
+  userPos: integer;
+  user: ansistring;
+  runninguser: string;
 begin
+  LogDatei.log_prog('start FileGetWriteAccess', LLInfo);
   Result := True;
   ActionInfo := '';
   if not FileExists(Filename) then
     exit;
   {$IFDEF WINDOWS}
+  // Adding file access rights to running user (e.g. system)
+  GetNetUser('', runninguser, ActionInfo);
+  LogDatei.log_prog('FileGetWriteAccess is calling AddAccessRightsToACL for :' +
+    runninguser, LLInfo);
+  if AddAccessRightsToACL(Filename, runninguser, JwaWindows.GENERIC_ALL,
+    JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+    LogDatei.log('Access Rights (file) modified and granted to :' +
+      runninguser, LLDebug);
+  if AddAccessRightsToACL(ExtractFileDir(Filename), runninguser,
+    JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+    JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+    LogDatei.log('Access Rights (dir) modified and granted to :' + runninguser, LLDebug);
+
+  // does the file path points to a user profile ?
+  userPos := Pos(':\Users\', Filename) + 8;
+  if userPos > 8 then
+  begin
+    // we are do it for a user profile - so we give the access rights also for this user
+    user := copy(Filename, userPos,
+      Pos('\', copy(Filename, userPos, Length(Filename) - 9)) - 1);
+    // Adding file access rights to <user>
+    LogDatei.log_prog('FileGetWriteAccess is calling AddAccessRightsToACL for :' +
+      user, LLInfo);
+    if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL,
+      JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) =
+      True then
+      LogDatei.log_prog('Access Rights modified and granted to ' + user, LLInfo);
+  end;
+  // else: we assume that the file is not in a user profile
+  //else
+  //   LogDatei.log_prog('FileGetWriteAccess: Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+
+  // manipulating file attributes
+  LogDatei.log_prog('FileGetWriteAccess is calling FileGetAttr', LLDebug);
   Attr := SysUtils.FileGetAttr(Filename);
   if Attr and faReadOnly = faReadOnly then
   begin
@@ -5660,6 +5706,24 @@ begin
         ' (' + SysErrorMessage(ErrorNo) + ')';
     end;
   end;
+  (* I think we do not need this anymore (do 13.8.21)
+  if Result = False then
+     begin
+       LogDatei.log('---FileGetWriteAccess is calling AddAccessRightsToACL for user after FileSetAttr', LLInfo);
+       userPos := Pos(':\Users\',Filename)+8;
+       if userPos > 8 then
+       begin
+         user := copy(Filename, userPos, Pos('\',
+                               copy(Filename, userPos, Length(Filename)- 9))-1);
+         if AddAccessRightsToACL(Filename, user, JwaWindows.GENERIC_ALL, JwaWindows.SET_ACCESS,
+                                 JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT) = True then
+         LogDatei.log('---Access Rights granted for user '+ user, LLInfo);
+         Result := True;
+       end
+       else
+         LogDatei.log('---Retrieving userProfile from filePath for modifying Access Rights failed', LLError);
+     end;
+     *)
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   if fpAccess(Filename, W_OK) <> 0 then
@@ -5678,9 +5742,8 @@ end;
 {$IFDEF WINDOWS}
 function FileCopyWin
   (const sourcefilename, targetfilename: string; var problem: string;
-  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-  { RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen }
-
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  doNotChangeAccessRights: boolean): boolean;
 var
   //Date: longint;
   //fileresult: integer;
@@ -5705,11 +5768,10 @@ var
   begin
     Result := True;
 
-    // ggfs. Datei schreibbar machen
-    Attr := SysUtils.FileGetAttr(ptargetfilename);
-    if Attr and faReadOnly = faReadOnly then
+    if not doNotChangeAccessRights then
     begin
-      Result := FileGetWriteAccess(ptargetfilename, problem);
+      // make file writable
+      Result := FileGetWriteAccess(UTF16ToUTF8(ptargetfilename), problem);
       problem1 := problem;
     end;
 
@@ -5729,8 +5791,8 @@ var
          and not the target, therefore give the host some time to manage things} do
     begin
       Inc(retries);
-      CentralForm.TimerWaitSet(100); // Zehntel-Sekunden-Intervalle
-      while not CentralForm.TimerWaitReady(10) // 10 Zehntelsekunden verstrichen?
+      CentralForm.TimerWaitSet(100); // interval of 1/10 seconds
+      while not CentralForm.TimerWaitReady(10) // 10 intervals over ?
         do
         ProcessMess;
 
@@ -5766,7 +5828,7 @@ var
         SysUtils.FilesetAttr(ptargetfilename, attr);
         if problem = problem1 then
           problem := '';
-        // Schreibattribute zur�cksetzen;
+        // reset write attributes
       end;
 
     end;
@@ -5813,11 +5875,24 @@ begin
       if not Result then
         exit;
 
-      //pSourceFilename := PointerAufString(UTF8ToWinCP(sourcefilename));
-      //pTargetFilename := PointerAufString(UTF8ToWinCP(targetfilename));
-
-
       //logdatei.DependentAdd('Before copy: '+SourceFilename, LLDebug);
+
+      (* I think we do not need this anymore (do 13.8.21)
+      if AddAccessRightsToACL(pTargetFilename,'SYSTEM', JwaWindows.GENERIC_ALL,
+        JwaWindows.SET_ACCESS, JwaWindows.SUB_CONTAINERS_AND_OBJECTS_INHERIT ) = True then
+      logdatei.log('---AccessRights of '+ pTargetFilename+' granted to SYSTEM' ,LLInfo)
+      else
+      logdatei.log('---AccessRights of '+ pTargetFilename+' not modified for SYSTEM',LLInfo);
+      *)
+      if fileExists(pTargetFilename) and (not doNotChangeAccessRights) then
+      begin
+        //logdatei.log_prog('---TargetFile exists, calling FileGetWriteAcces', LLInfo);
+        Result := FileGetWriteAccess(pTargetFilename, problem);
+      end
+      else
+        //logdatei.log('---TargetFile does not exist',LLInfo)
+      ;
+
       Result := Windows.copyFileW(pSourceFilename, pTargetFilename, False);
       LastError := GetLastError;
       logdatei.log('After copy: ' + SourceFilename + ' LastError: ' +
@@ -5826,13 +5901,12 @@ begin
 
       if Result then
       begin
-        // setze Zeitstempel des targetfile auf den Wert der source
+        // set timestamp of target to the value of source
         Result := setTimeForFile(pTargetFilename, plastwritetime);
       end;
 
       if (not Result) and (LastError = 32)
         { file is being used by another process } and DelayUntilRebootIfNeeded then
-        { Bei NT kann man was machen (bei Win 9x auch, ist aber nicht implementiert }
       begin
         if GetOSId = VER_PLATFORM_WIN32_NT then
         begin
@@ -5863,9 +5937,9 @@ begin
                  and not the target, therefore give the host some time to manage things} do
             begin
               Inc(retries);
-              CentralForm.TimerWaitSet(100); // Zehntel-Sekunden-Intervalle
+              CentralForm.TimerWaitSet(100); // interval of 1/10 seconds
               while not CentralForm.TimerWaitReady(10)
-                // 10 Zehntelsekunden verstrichen?
+                // 10 intervals over ?
                 do
                 ProcessMess;
 
@@ -5887,7 +5961,7 @@ begin
             logdatei.log('copy of: ' + SourceFilename + ' to ' +
               NewTargetFilename + ' done.',
               LLDebug2);
-            // setze Zeitstempel des targetfile auf den Wert der source
+            // set timestamp of target to the value of source
 
             Result := setTimeForFile(pNewTargetFilename, plastwritetime);
 
@@ -5989,13 +6063,22 @@ function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
   followSymlink: boolean): boolean;
+begin
+  Result := FileCopy(sourcefilename, targetfilename, problem,
+    DelayUntilRebootIfNeeded, RebootWanted, False, False);
+end;
+
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink: boolean; doNotChangeAccessRights: boolean): boolean; overload;
 var
   myerrorcode: integer;
   linktarget: string;
 begin
   {$IFDEF WINDOWS}
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
-    DelayUntilRebootIfNeeded, RebootWanted);
+    DelayUntilRebootIfNeeded, RebootWanted, doNotChangeAccessRights);
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   problem := '';
@@ -9057,6 +9140,86 @@ begin
   //StrDispose(new);
 end;
 
+(*
+function TuibFileInstall.RenameDir(existingdirname, newdirname: string;
+  var RebootWanted: boolean): boolean;
+var
+  exitcode: integer;
+  {$IFDEF WINDOWS}
+  exist, new: PWchar;
+  {$ELSE WINDOWS}
+  exist, new: PChar;
+  {$ENDIF WINDOWS}
+  moveflags: DWORD;
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+{$ENDIF WINDOWS}
+begin
+  Result := False;
+  //exist:=StrAlloc (length(existingfilename)+1);
+  //new:=StrAlloc (length(newfilename)+1);
+      function RenameDir(OldName, NewName: string): boolean;
+    begin
+      // DirectorySeparator at the end of directories avoids some troubles
+      OldName:= IncludeTrailingPathDelimiter(OldName);
+      NewName:= IncludeTrailingPathDelimiter(NewName);
+      // Let's go
+      Result := RenameFile(OldName, NewName);
+    end;
+
+  {$IFDEF UNIX}
+  exist := PChar(existingfilename);
+  new := PChar(newfilename);
+  exitcode := fprename(exist, new);
+  if 0 = exitcode then
+    Result := True
+  else
+  begin
+    Result := False;
+    LogDatei.log('Could not move / rename from ' + exist + ' to ' +
+      new + ' Error: ' + SysErrorMessage(fpgeterrno), LLerror);
+  end;
+  {$ENDIF LINUX}
+  {$IFDEF WINDOWS}
+  exist := PWChar(unicodestring(existingfilename));
+  new := PWChar(unicodestring(newfilename));
+  // perhaps also MOVEFILE_WRITE_THROUGH
+  moveflags := MOVEFILE_COPY_ALLOWED or MOVEFILE_REPLACE_EXISTING;
+  exitbool := MoveFileExW(exist, new, moveflags);
+  if exitbool then
+    Result := True
+  else
+  begin
+    if GetLastError = 32 then
+    begin
+      LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.', LLDebug2);
+      moveflags := MOVEFILE_DELAY_UNTIL_REBOOT or MOVEFILE_REPLACE_EXISTING;
+      exitbool := MoveFileExW(exist, new, moveflags);
+      if exitbool then
+      begin
+        Result := True;
+        RebootWanted := True;
+        LogDatei.log(
+          'Target file was in use, move / rename should be completed after reboot.',
+          LLInfo);
+      end
+      else
+        LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+          LLError);
+    end;
+    if not Result then
+    begin
+      LogDatei.log('Could not rename / move from ' + exist + ' to ' +
+        new + ' Error: ' + IntToStr(GetLastError) + ' (' +
+        removeLineBreaks(SysErrorMessage(GetLastError)) + ')', LLerror);
+    end;
+  end;
+  {$ENDIF WINDOWS}
+  //StrDispose(exist);
+  //StrDispose(new);
+end;
+*)
+
 {$IFDEF UNIX}
 function TuibFileInstall.chmod(mode: string; const FileName: string): boolean;
 begin
@@ -9086,7 +9249,7 @@ begin
     if not eliminate then
     begin
       LogS := 'Warning: "' + FileName + '" is readonly';
-      LogDatei.DependentAddWarning(LogS, LevelInfo);
+      LogDatei.log(LogS, LLinfo);
     end
     else
     begin
@@ -9664,6 +9827,10 @@ begin
       //LogDatei.log('FileCheckDate 2', LLInfo);
       filetime2 := fRecordTarget.FindData.ftLastWriteTime;
       //LogDatei.log('FileCheckDate 3', LLInfo);
+      LogDatei.log_prog('FileCheckDate Source:' + UIntToStr(
+        filetime1.dwHighDateTime) + ' / ' + UIntToStr(filetime1.dwHighDateTime) +
+        ' Target: ' + UIntToStr(filetime2.dwHighDateTime) + ' / ' +
+        UIntToStr(filetime2.dwHighDateTime), LLInfo);
 
       diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
       //LogDatei.log('FileCheckDate 4', LLInfo);
@@ -9728,6 +9895,10 @@ begin
     begin
       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
         LLerror);
+      LogDatei.log(' Source:' + UIntToStr(filetime1.dwHighDateTime) +
+        ' / ' + UIntToStr(filetime1.dwHighDateTime) + ' Target: ' +
+        UIntToStr(filetime2.dwHighDateTime) + ' / ' + UIntToStr(
+        filetime2.dwHighDateTime) + ' Diff: ' + IntToStr(diffresult), LLerror);
       Result := False;
     end
   end;
@@ -9769,6 +9940,8 @@ var
     FName: string = '';
     SaveLogLevel: integer = 0;
     followsymlinks: boolean = False;
+    //doNotChangeAccessRights: boolean = False;
+    doNotChangeAccessRights: boolean = True;
 
     procedure ToCopyOrNotToCopy(const SourceName, TargetName: string);
     var
@@ -9864,14 +10037,18 @@ var
           end
           else
             GetReadOnlyAttribute(TargetName, True);
+
       end;
 
       if CopyShallTakePlace then
       begin
-        if FileCopy(SourceName, TargetName, problem, True,
-          rebootWanted, followsymlinks) then
+        if cpLeaveReadonly = cpSpecify and cpLeaveReadonly then
+          doNotChangeAccessRights := True;
+
+        if FileCopy(SourceName, TargetName, problem, True, rebootWanted,
+          followsymlinks, doNotChangeAccessRights) then
         begin
-          LogS := 'copy: '+SourceName + ' copied to ' + TargetPath;
+          LogS := 'copy: ' + SourceName + ' copied to ' + TargetPath;
           LogDatei.log(LogS, LLInfo);
           if problem <> '' then
           begin
@@ -10149,7 +10326,8 @@ var
         begin
           {$IFDEF GUI}
           if CountModus <> tccmNoCounter then
-            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent); //SetProgress(round(CopyCount.Ratio * 100));
+            FBatchOberflaeche.SetProgress(round(CopyCount.Ratio * 100), pPercent);
+          //SetProgress(round(CopyCount.Ratio * 100));
           {$ENDIF GUI}
           LogS := 'Source ' + SourceName;
           LogDatei.log(LogS, LLDebug);
@@ -10163,12 +10341,13 @@ var
               if UnzipWithDirStruct(SourceName, TargetPath) then
                 LogDatei.log('unzipped: ' + SourceName + ' to ' + TargetPath, LLInfo)
               else
-                LogDatei.log('Failed to unzip: ' + SourceName + ' to ' + TargetPath, LLError)
+                LogDatei.log('Failed to unzip: ' + SourceName + ' to ' +
+                  TargetPath, LLError)
             except
               on E: Exception do
               begin
-                LogDatei.log('Exception: Failed to unzip: ' + SourceName +
-                  ' to ' + TargetPath + ' : ' + e.message, LLError);
+                LogDatei.log('Exception: Failed to unzip: ' +
+                  SourceName + ' to ' + TargetPath + ' : ' + e.message, LLError);
               end;
             end;
             (*
@@ -10187,7 +10366,7 @@ var
             *)
           end
           else
-          //{$ENDIF WIN32}
+            //{$ENDIF WIN32}
             LogDatei.log_prog('copy candidate: ' + SourceName +
               ' to: ' + TargetName, LLDebug2);
           ToCopyOrNotToCopy(SourceName, TargetName);
@@ -10322,7 +10501,7 @@ begin
     LogS := 'Copying  ' + SourceMask + ' -----> ' + Target;
     LogDatei.log(LogS, LLInfo);
     {$IFDEF GUI}
-    FBatchOberflaeche.SetMessageText(LogS,mCommand);//setCommandLabel(LogS);
+    FBatchOberflaeche.SetMessageText(LogS, mCommand);//setCommandLabel(LogS);
     ProcessMess;
     {$ENDIF GUI}
   end;
@@ -10409,27 +10588,29 @@ end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer; logleveloffset : integer = 0): boolean;
+  daysBack: integer; logleveloffset: integer = 0): boolean;
 var
   RebootWanted: boolean;
 begin
-  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted,logleveloffset);
-end;
-
-function TuibFileInstall.AllDelete
-  (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer; search4file: boolean; var RebootWanted: boolean; logleveloffset : integer = 0): boolean;
-var
-  retryOnReboot: boolean = False;
-begin
   Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
-    True, RebootWanted, retryOnReboot,logleveloffset);
+    True, RebootWanted, logleveloffset);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer; search4file: boolean; var RebootWanted: boolean;
-  retryOnReboot: boolean; logleveloffset : integer = 0): boolean;
+  logleveloffset: integer = 0): boolean;
+var
+  retryOnReboot: boolean = False;
+begin
+  Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack,
+    True, RebootWanted, retryOnReboot, logleveloffset);
+end;
+
+function TuibFileInstall.AllDelete
+  (const Filename: string; recursive, ignoreReadOnly: boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean;
+  retryOnReboot: boolean; logleveloffset: integer = 0): boolean;
 
 var
   CompleteName: string = '';
@@ -10483,7 +10664,8 @@ var
       {$IFDEF WINDOWS}
       FindResultcode := FindFirstUTF8(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirstUTF8(OrigPath + '*', faAnyfile or faSymlink, SearchResult);
+      FindResultcode := FindFirstUTF8(OrigPath + '*', faAnyfile or
+        faSymlink, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
@@ -10683,13 +10865,9 @@ begin
   //CompleteName := ExpandFileName (Filename);
   { changed because it is dangerous }
   testname := IncludeTrailingPathDelimiter(lowercase(Filename));
-  if  (testname = 'c:\') or
-     (testname = 'c:\windows\') or
-     (testname = 'c:\windows\system32\') or
-     (testname = '/Applications/') or
-     (Filename = PathDelim) or
-     (Filename = '\\') or
-     (1 = pos('\', Filename)) then
+  if (testname = 'c:\') or (testname = 'c:\windows\') or
+    (testname = 'c:\windows\system32\') or (testname = '/Applications/') or
+    (Filename = PathDelim) or (Filename = '\\') or (1 = pos('\', Filename)) then
   begin
     LogDatei.log('By policy we will not delete: ' + Filename, LLError);
     CompleteName := '';
@@ -10898,8 +11076,8 @@ var
 
 
 
-    FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask, faAnyfile -
-      faDirectory - faVolumeId, SearchResult);
+    FindResultcode := FindFirstUTF8(SourcePath + SourceFilemask,
+      faAnyfile - faDirectory - faVolumeId, SearchResult);
 
     if FindResultcode = 0 then
       FileFoundOnThisLevel := True;
@@ -10972,7 +11150,8 @@ var
         Inc(NoOfFiles);
         if compressModus <> tcmCount then
         begin
-          FBatchOberflaeche.SetProgress(round(NoOfFiles / TotalNoOfFiles * 100), pPercent);
+          FBatchOberflaeche.SetProgress(round(NoOfFiles / TotalNoOfFiles * 100),
+            pPercent);
           ProcessMess;
         end;
       end;
@@ -11269,8 +11448,8 @@ begin
   begin
     // Umformung: pidl -> FolderPath:
     SetLength(MyFolderPath, max_path);
-    SHGetPathFromIDListW(pidl, PWideChar(MyFolderPath));
-    SetLength(myFolderPath, strlen(PWideChar(MyFolderPath)));
+    SHGetPathFromIDListW(pidl, pwidechar(MyFolderPath));
+    SetLength(myFolderPath, strlen(pwidechar(MyFolderPath)));
 
     // Eventuell einen neuen Ordner erzeugen:
 
@@ -11337,7 +11516,7 @@ const
 var
   ShellLink: IShellLinkW;
   LinkFile: IPersistFile;
-  widestr: PWideChar;
+  widestr: pwidechar;
   widefilename: WideString;
   unicodefilename: unicodestring;
   Filename: string = '';
@@ -11536,8 +11715,8 @@ begin
   begin
     // Umformung: pidl -> FolderPath:
     SetLength(FolderPath0, max_path);
-    SHGetPathFromIDListW(pidl, PWideChar(FolderPath0));
-    SetLength(FolderPath0, strlen(PWideChar(FolderPath0)));
+    SHGetPathFromIDListW(pidl, pwidechar(FolderPath0));
+    SetLength(FolderPath0, strlen(pwidechar(FolderPath0)));
 
     FolderPath := FolderPath0 + '\' + foldername;
     if not DirectoryExists(FolderPath) then
@@ -11568,35 +11747,35 @@ end;
 
 {$ENDIF WINDOWS}
 
-function isSymLink(filepath : string) : boolean;
+function isSymLink(filepath: string): boolean;
 var
-  fileinfo : TSearchRec;
-  errorinfo : string;
+  fileinfo: TSearchRec;
+  errorinfo: string;
 begin
-  result  := false;
+  Result := False;
   filepath := GetForcedPathDelims(filepath);
-  LogDatei.log('resolving symlink: '+filepath,LLinfo);
-  if GetFileInfo(filepath, fileinfo,errorinfo) then
+  LogDatei.log('resolving symlink: ' + filepath, LLinfo);
+  if GetFileInfo(filepath, fileinfo, errorinfo) then
   begin
     if (fileinfo.Attr and fasymlink) = fasymlink then
-     result  := true;
+      Result := True;
   end;
   //result := FileIsSymlink(filepath) ;
 end;
 
 
-function resolveSymlink(const filepath : string; recursive : boolean = true) : string;
+function resolveSymlink(const filepath: string; recursive: boolean = True): string;
 var
-  fileinfo : TSearchRec;
-  outpath : string;
+  fileinfo: TSearchRec;
+  outpath: string;
 begin
-  result := filepath;
+  Result := filepath;
   {$IFDEF WINDOWS}
-  result := resolveWinSymlink(filepath);
+  Result := resolveWinSymlink(filepath);
   //result := execPowershellCall(filepath, '', 1, True, False, tmpbool1).Text;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  result := resolveUnixSymlink(filepath);
+  Result := resolveUnixSymlink(filepath);
   {$ENDIF UNIX}
 end;
 
@@ -11606,4 +11785,5 @@ end;
   var ErrorInfo: string): boolean;
   GetFinalPathNameByHandle()
 *)
+
 end.

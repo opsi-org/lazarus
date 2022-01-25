@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InIDEConfig"/>
-      <MainUnit Value="0"/>
       <Title Value="opsi-client-kiosk"/>
-      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -23,8 +24,8 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="10"/>
-      <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
+      <BuildNr Value="13"/>
+      <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.2.0"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="Default_Windows" Default="True"/>
@@ -82,7 +83,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -96,6 +97,8 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -203,7 +206,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -217,6 +220,8 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -227,11 +232,6 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSICLIENTKIOSK
@@ -256,6 +256,9 @@
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -268,6 +271,12 @@
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
 -dOPSI_AS_USER"/>
+            <OtherDefines Count="4">
+              <Define0 Value="OPSICLIENTKIOSK"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+              <Define3 Value="APP_BUNDLE"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item7>
@@ -275,11 +284,11 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
+            <Filename Value="builds/$(TargetCPU)-$(TargetOS)/OpsiClientKiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc;../../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -289,26 +298,32 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <Optimizations>
-              <OptimizationLevel Value="3"/>
-            </Optimizations>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="darwin"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-rpath @executable_path/../Frameworks -sectcreate __TEXT __info_plist Info.plist"/>
             </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
--dOPSI_AS_USER"/>
+-dOPSI_AS_USER
+-dAPP_BUNDLE"/>
+            <OtherDefines Count="4">
+              <Define0 Value="OPSICLIENTKIOSK"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+              <Define3 Value="APP_BUNDLE"/>
+            </OtherDefines>
             <ExecuteAfter>
               <CompileReasons Run="False"/>
             </ExecuteAfter>
@@ -326,19 +341,7 @@
       <OpenInFileMan Value="True"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="--fqdn=desktop-83kni74.uib.local  --lang=de"/>
-        <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-      </local>
       <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="--fqdn=desktop-83kni74.uib.local  --lang=de"/>
-            <LaunchingApplication PathPlusParams="C:/Windows/system32/cmd.exe /C ${TargetCmdLine}"/>
-          </local>
-        </Mode0>
-      </Modes>
     </RunParams>
     <RequiredPackages Count="6">
       <Item1>
@@ -535,6 +538,11 @@
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
     <Other>
       <CustomOptions Value="-dOPSICLIENTKIOSK

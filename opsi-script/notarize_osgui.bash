@@ -12,6 +12,7 @@ APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=bues-hpoq-pors-iymh
 BUNDLE_ID=org.opsi.opsi-script-gui
 EXECUTABLE_NAME=opsi-script-gui
+EXECUTABLE_SOURCE=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.app
 FULLPATHTOEXE=${EXECUTABLE_DIR}/Contents/MacOS/${EXECUTABLE_NAME}
 ENTITLEMENTS="--entitlements opsi-script.entitlements"
@@ -32,7 +33,7 @@ rm -f log_file.txt
 mkdir -p ${EXECUTABLE_DIR}/Contents/MacOS
 rm -f ${EXECUTABLE_DIR}/Contents/MacOS/*
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
-cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}/Contents/MacOS/
+cp $EXECUTABLE_SOURCE ${EXECUTABLE_DIR}/Contents/MacOS/
 cp info-osgui.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 EXECUTABLE_VER=`opsi-getlazbinaryversion --file="${FULLPATHTOEXE}"  | tr -d 'fileversion='`
