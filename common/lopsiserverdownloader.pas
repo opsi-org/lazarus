@@ -23,7 +23,8 @@ type
   const
     DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     LOSPackageName = 'l-opsi-server_4*.opsi';
-    constructor Create(LOSCommand: TRunCommandElevated; DistrInfo: TDistributionInfo);overload;
+    constructor Create(LOSCommand: TRunCommandElevated;
+      DistrInfo: TDistributionInfo); overload;
     procedure ExtractFile(fileName: string);
     procedure CheckOutputForError;
     procedure InstallRequiredPackages;
@@ -48,7 +49,8 @@ function DownloadLOS(LOpsiServerCommand: TRunCommandElevated;
 
 implementation
 
-constructor TLOSDownloader.Create(LOSCommand: TRunCommandElevated; DistrInfo: TDistributionInfo);overload;
+constructor TLOSDownloader.Create(LOSCommand: TRunCommandElevated;
+  DistrInfo: TDistributionInfo); overload;
 begin
   inherited Create;
   FDownloadResult := True;
@@ -92,7 +94,7 @@ end;
 
 procedure TLOSDownloader.downloadLOSFromUib;
 begin
-   FLOSCommand.Run('wget -A ' + LOSPackageName + ' -r -l 1 https://' +
+  FLOSCommand.Run('wget -A ' + LOSPackageName + ' -r -l 1 https://' +
     downloadDir + ' -P ../', Output);
 end;
 
@@ -120,9 +122,9 @@ end;
 
 procedure TLOSDownloader.CreateNewLOSFolderDir;
 begin
-   FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder, Output);
-   FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder + '/CLIENT_DATA', Output);
-   FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder + '/OPSI', Output);
+  FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder, Output);
+  FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder + '/CLIENT_DATA', Output);
+  FLOSCommand.Run('mkdir ../' + FDownloadedLOSFolder + '/OPSI', Output);
 end;
 
 procedure TLOSDownloader.MoveLOSOpsiPackageToCurrentDir;
