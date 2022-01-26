@@ -25352,7 +25352,7 @@ begin
       FConstList.add('%Systemroot%');
     // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
       ValueToTake := extractfiledrive(GetWinSystemDirectory)
-        + copy(GetWinSystemDirectory, 2, length(GetWinSystemDirectory));
+        + copy(GetWinDirectory, 3, length(GetWinDirectory));
       { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
