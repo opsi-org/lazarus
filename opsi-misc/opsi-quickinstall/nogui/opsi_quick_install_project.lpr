@@ -1450,6 +1450,7 @@ begin
   InitializeLogfile(LogfileName);
 
   QuickInstall := TQuickInstall.Create(nil);
+  Data := TQuickInstallData.Create;
   QuickInstall.QuickInstallCommand := TRunCommandElevated.Create('', False);
 
   UseSystemLanguageForResourcestrings;
@@ -1471,7 +1472,6 @@ begin
   InitializeDistributionInfo(QuickInstall);
   QuickInstall.Run;
 
-  Data := TQuickInstallData.Create;
   QuickInstall.Free;
 
   writeln(LogDatei.StandardMainLogPath + logFileName);
