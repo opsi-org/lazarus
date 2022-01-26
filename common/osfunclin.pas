@@ -699,9 +699,47 @@ begin
 end;
 
 function linIsUefi: boolean;
+var
+  exitcode : integer;
+  exitstr : string;
 begin
-  //not implemented yet
+  { from opsisetuplib.py:
+  def inUefiMode():
+    # use 'os.system' to do not break on exitcode != 0
+    #useGptOnUefi = False
+    logger.notice(u"try to load efivars module: modprobe efivars")
+    try:
+        execute('/sbin/modprobe efivars')
+    except:
+        logger.notice(u"we are not running in uefi mode")
+        scriptMessageSubject.setMessage(u"we are not running in uefi mode")
+        return False
+    logger.notice(u"check if we run in uefi mode")
+    # use 'os.system' to do not break on exitcode != 0
+    efiexitcode = os.system("efibootmgr >> /dev/null 2>&1")
+    if (0 == int(efiexitcode)):
+        #useGptOnUefi = True
+        logger.notice(u"we are running in uefi mode")
+        scriptMessageSubject.setMessage(u"we are running in uefi mode")
+        return True
+    else:
+        logger.notice(u"we are not running in uefi mode")
+        scriptMessageSubject.setMessage(u"we are not running in uefi mode")
+        return False
+}
   Result := False;
+  try
+     exitstr := getCommandResult('/sbin/modprobe efivars',exitcode);
+     if exitcode <> 0 then  Result := False
+     else
+     begin
+       exitstr := getCommandResult('efibootmgr >> /dev/null 2>&1',exitcode);
+       if exitcode <> 0 then  Result := False
+       else Result := True;
+     end;
+  except
+
+  end;
 end;
 
 // moved to osprocesses
