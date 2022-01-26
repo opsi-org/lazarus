@@ -178,6 +178,7 @@ end;
 procedure TPassword.showResult;
 var
   FileText: TStringList;
+  InstallationResult: string;
 begin
   FileText := TStringList.Create;
   {$IFDEF DARWIN}
@@ -186,29 +187,18 @@ begin
   FileText.LoadFromFile(logPath);
   {$ENDIF}
 
-  //configedResult := False;
-  // adjust configed-installer ExitCode
-  //for i := 0 to FileText.Count - 1 do
-  //begin
-  //  if Pos('script finished: success', FileText[i]) > 0 then
-  //    configedResult := True;
-  //end;
-  if not Pos('script finished: success', FileText[FileText.Count - 6]) > 0 then
+  if Pos('script finished: success', FileText[FileText.Count - 6]) = 0 then
   begin
-    ExitCode := 1;
     LogDatei.log('configed installation failed', 1);
-    FileText.Clear;
-    FileText.Add('failed');
+    InstallationResult := 'failed';
+    ExitCode := 1;
   end
   else
   begin
-    ExitCode := 0;
     LogDatei.log('configed installation success', 6);
-    FileText.Clear;
-    FileText.Add('success');
+    InstallationResult := 'success';
   end;
-  //ShowMessage(ExitCode.ToString);
-  ShowMessage(FileText.Text + #10 + rsLog + #10 + logPath + #10 +
+  ShowMessage(InstallationResult + #10 + rsLog + #10 + logPath + #10 +
     ConfigedInstaller.logFileName);
   FileText.Free;
 end;
