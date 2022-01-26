@@ -5,10 +5,16 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.36) stable; urgency=low
 
+  * oszip: show progressbar while zipping or unzipping files
   * oswebservice: getOpsiModules: integrate new backend_getLicensingInfo method with fallback to old backend_info
   * oswebservice: retrieveJSONObject: retry on other communication mode only on 400- bad request result
   * oswebservice: retrieveJSONObjectByHttpPost: retry on other communication mode only on 400- bad request result
   * oswebservice: getOpsiModules: Legal notice to our license protection
+  * osfunclin: linIsUefi: implemented uefi test for linux
+  * boolean function runningOnUefi now also supports linux
+  * updated unit uSMBIOS (TSMBIOS) (https://code.google.com/p/tsmbios/)
+  * uSMBIOS: with fix https://github.com/RRUZ/tsmbios/issues/15
+  * osparser: fix %Systemroot% and %SystemDrive% for terminal servers ; references #4711
 
 
 -- d.oertel <d.oertel@uib.de> Wed, 19 Jan 2022 15:00
