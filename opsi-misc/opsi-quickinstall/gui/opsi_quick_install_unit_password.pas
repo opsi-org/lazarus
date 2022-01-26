@@ -264,7 +264,7 @@ begin
 
   {message := rsInstall + name_current_los + '... ' + rsSomeMin;
   Synchronize(@ShowMessageOnForm);}
-  FInstallRunCommand.Run('opsi-script-gui -batch ' + DirClientData +
+  FInstallRunCommand.Run('opsi-script -batch ' + DirClientData +
     'setup.opsiscript  /var/log/opsi-quick-install-l-opsi-server.log', Output);
 end;
 
