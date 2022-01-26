@@ -82,8 +82,6 @@ begin
 end;
 
 procedure TLOSDownloader.InstallRequiredPackages;
-var
-  shellCommand: string;
 begin
   FDistrInfo.SetPackageManagementShellCommand;
   FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'update', Output);
