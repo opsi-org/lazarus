@@ -178,7 +178,8 @@ type
       constructor Create(name: string = '');
       destructor Destroy; override;
 
-      function AsTOMLString: String;
+      function AsTOMLString: ansistring;
+      function AsTOMLStringList: TStringList;
       procedure Insert(const key: String; const data: TTOMLData);
       procedure Insert(const key: String; const value: TTOMLValueType);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
@@ -573,9 +574,14 @@ begin
   result := tablePath;
 end;
 
-function TTOMLTable.AsTOMLString: String;
+function TTOMLTable.AsTOMLString: ansiString;
+begin
+  result := AsTOMLStringList.Text;
+end;
+
+function TTOMLTable.AsTOMLStringList: TStringList;
 var
-  i: integer;
+  i, k: integer;
   tomlArray : TTOMLArray;
   tomlTable : TTOMLTable;
   tableHeader, line : String;
@@ -586,20 +592,18 @@ begin
     begin
       if (map.Data[i].ToString <> 'TTOMLTable')  then
         begin
-        case map.Data[i].ToString of
-        'TTOMLArray':
+        if map.Data[i].ToString = 'TTOMLArray' then
           begin
             tomlArray := TTOMLArray(map.Data[i]);
             line := String(map.Keys[i])+' = '+tomlArray.AsTOMLString;
-          end;
-        otherwise
+          end
+        else
           //if varType(TTOMLValue(map.Data[i]).value) in [varOleStr, varStrArg, varString] then
           if (TTOMLValue(map.Data[i]).TypeString = 'Dynamic string')
              or (TTOMLValue(map.Data[i]).TypeString = 'UnicodeString') then
                line := String(map.Keys[i])+' = "'+map.Data[i].ToString +'"'
           else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
-        end;
         tomlStringList.Add(line);
         end;
     end;
@@ -614,7 +618,7 @@ begin
             tomlStringList.Add(line);
           end;
     end;
-  result := tomlStringList.Text;
+  result := tomlStringList;
 end;
 
 procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
