@@ -428,8 +428,11 @@ var
   PathDefaultIcons :String;
   PathScreenshots: String;
   {$IFDEF DARWIN}
-  PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
+    PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
   {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+    PathToCustomSettings: string =  '/etc/opsi.org/opsi-client-kiosk/';
+  {$ENDIF LINUX}
 
 
 function ActionRequestToLocale(actionRequest: string): string;
@@ -2541,11 +2544,9 @@ end;
 function TFormOpsiClientKiosk.GetClientID(PathToConfigFile:string): string;
 var
   KioskConfig:TIniFile;
-  TestString:String;
 begin
   KioskConfig :=  TIniFile.Create(PathToConfigFile);
-  Teststring  := KioskConfig.ReadString('config-service','ClientID','');
-  Result := Teststring;
+  Result := KioskConfig.ReadString('webservice','ClientID','');
   FreeAndNil(KioskConfig);
 end;
 
