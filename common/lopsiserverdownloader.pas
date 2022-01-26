@@ -176,7 +176,7 @@ begin
   ExtractCpioFilesFromLOSPackage;
   MoveCpioFilesToLOSFolder;
   ExtractFoldersFromCpioFiles;
-  RemoveDownloadLeftovers
+  RemoveDownloadLeftovers;
 end;
 
 procedure TLOSDownloader.LogDownloadResult;
