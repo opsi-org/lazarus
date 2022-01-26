@@ -14,6 +14,7 @@ opsi-script (4.12.4.36) stable; urgency=low
   * boolean function runningOnUefi now also supports linux
   * updated unit uSMBIOS (TSMBIOS) (https://code.google.com/p/tsmbios/)
   * uSMBIOS: with fix https://github.com/RRUZ/tsmbios/issues/15
+  * osparser: fix %Systemroot% and %SystemDrive% for terminal servers ; references #4711
 
 
 -- d.oertel <d.oertel@uib.de> Wed, 19 Jan 2022 15:00

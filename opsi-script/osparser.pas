@@ -25350,7 +25350,9 @@ begin
       {  System directories:  }
     {$IFDEF WINDOWS}
       FConstList.add('%Systemroot%');
-      ValueToTake := GetWinDirectory;
+    // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+      ValueToTake := extractfiledrive(GetWinSystemDirectory)
+        + copy(GetWinSystemDirectory, 2, length(GetWinSystemDirectory));
       { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
@@ -25362,7 +25364,8 @@ begin
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%SystemDrive%');
-      ValueToTake := extractfiledrive(GetWinDirectory);
+      // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+      ValueToTake := extractfiledrive(GetWinSystemDirectory);
       FConstValuesList.add(ValueToTake);
     {$ENDIF WINDOWS}
       FConstList.add('%ProfileDir%');
