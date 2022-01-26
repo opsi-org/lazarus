@@ -11,17 +11,14 @@ uses
   TOML, TOMLParser, TOMLfunc, osencoding,
   FGL, FPJSON, fpJSONrtti;
 
-
 Type
   TA = Array[0..9] of Integer;
 
 var
-  filePath : String;
-  myFile: TStringList;
-  newFilePath: String;
-  JSONpath : String;
+  filePath, newFilePath, txtFile, JSONpath: String;
 
-  myTOMLString: String;
+  myTOMLString : String;
+  myNewTOMLString : ansistring;
 
   myTOML : TTOMLDocument;
   myJSON : TJSONData;
@@ -58,6 +55,7 @@ begin
   filePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLexample.toml';
   newFilePath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TOMLempty.toml';
   JSONpath := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/myJSONfromTOMLdata.json' ;
+  txtFile := '/home/jinene/gitwork/lazarus/helper/opsi-TOML/tests/TXTempty.txt' ;
 
   writeln('--- Testing LoadTOMLFile :  ');
   myTOMLStringList := TStringList.Create;
@@ -73,14 +71,19 @@ begin
   //writeln('--- Testing GetTOML :');
   //myTOML := GetTOML(myTOMLString);
 
-  writeln('--- Testing TTOMLTable.AsString : ');
-  writeln(myTOML.AsTOMLString);
+  writeln('--- Testing TTOMLTable.AsTOMLStringList : ');
+  myTOMLStringList := myTOML.AsTOMLStringList;
+  writeln(myTOMLStringList.Text);
+
+  writeln('--- Testing TTOMLTable.AsTOMLString : ');
+  myNewTOMLString := myTOML.AsTOMLString;
+  writeln(myNewTOMLString);
 
   //writeln('--- Testing TOML.AsJSON :');
   //writeln(myTOML.AsJSON.FormatJSON);
 
   writeln('--- Testing SaveToTOMLFile (from String to File)') ;
-  if ( SaveToTOMLFile(myTOMLString, newFilePath) ) then
+  if ( SaveToTOMLFile(myNewTOMLString, txtFile) ) then
      writeln('- SaveToTOMLFile with String parameter done')
   else
       writeln('- SaveToTOMLFile with String parameter failed');
@@ -187,7 +190,7 @@ begin
   writeln( 'myValue :' + myValue);
   writeln('myTOML["title"] : ' + String(myTOML['title']));
 
-  //writeln('- Searching for key owner.name :');
+  writeln('- Searching for key owner.name :');
   //writeln( String(myTOML.Find('owner.name')));
   writeln( GetValueFromTOML(myTOMLString,'owner.name','default')  );
   writeln('myTOML["owner"]["name"]: ' + String(myTOML['owner']['name']));
