@@ -217,11 +217,14 @@ if not ($tls_alternative_cipher$ ="")
 endif
 
 
+
+
 include_insert "%scriptpath%\paramhelping.opsiscript"
 set $targetstring$ = produceLinkTarget( $opsiserver$ )
 
 DefStringList TargetserverList
-set TargetserverList = GetProductPropertyList("opsiservers_extra", "")
+;set TargetserverList = GetProductPropertyList("opsiservers_extra", "")
+set TargetserverList = createStringList('')
 
 Set $LogDir$ = "%opsiLogDir%"
 set $OS$ = lower( GetOS )
