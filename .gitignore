@@ -68,12 +68,12 @@ opsi-misc/opsi-quickinstall/gui/control
 opsi-misc/opsi-quickinstall/gui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/nogui/opsi_quick_install_project
 opsi-misc/opsi-quickinstall/l-opsi-server_downloaded/
+opsi-misc/opsi-quickinstall/properties.conf
 
 # opsi-client-kiosk:
 helper/opsiclientkiosk/ock_custom/product_icons
 helper/opsiclientkiosk/ock_custom/screenshots
 helper/opsiclientkiosk/opsiclientkiosk
-opsi-misc/opsi-quickinstall/properties.conf
 *.lps
 *.lps
 
