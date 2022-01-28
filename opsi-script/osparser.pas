@@ -12409,10 +12409,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -12652,6 +12652,7 @@ begin
         begin
           if Skip(',', r, r1, InfoSyntaxError) then
           begin
+            if list1 <> nil then FreeAndNil(list1);
             list1 := TXStringList.Create;
             // is the second argument a valid string list ?
             if not produceStringList(section, r1, r, list1, InfoSyntaxError) then
@@ -12696,8 +12697,7 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductPropertyList - trying properties.conf',
                       LLWarning);
-                    if list2 <> nil then
-                      FreeAndNil(list1);
+                    if list2 <> nil then FreeAndNil(list2);
                     list2 := TXStringlist.Create;
                     list2.loadFromFile(tmpstr);
                     tmpbool := False; // default used
@@ -12765,8 +12765,7 @@ begin
                               LogDatei.log(
                                 'Property not existing in GetProductPropertyList - trying properties.conf',
                                 LLWarning);
-                              if list2 <> nil then
-                                FreeAndNil(list1);
+                              if list2 <> nil then FreeAndNil(list2);
                               list2 := TXStringlist.Create;
                               list2.loadFromFile(tmpstr);
                               tmpbool := False; // default used
@@ -15292,7 +15291,7 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductProperty - trying properties.conf',
                       LLWarning);
-                    //if list1 <> nil then FreeAndNil(list1);
+                    if list1 <> nil then FreeAndNil(list1);
                     list1 := TXStringlist.Create;
                     list1.loadFromFile(tmpstr);
                     tmpbool := False; // default used
@@ -19706,7 +19705,7 @@ begin
     if opsidata = nil then
     begin
       if local_opsidata = nil then
-      errorOccured := True;
+        errorOccured := True;
     end
     else
     begin
@@ -20757,6 +20756,7 @@ var
   end;
 
 {$ELSE WINDOWS}
+
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
     Remaining: string): TSectionResult;
   begin
