@@ -404,10 +404,10 @@ type
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
     function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
-      defaultlist: TStringList): TStringList; overload;
+      defaultlist: TStringList; var usedefault : boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; myClientId: string;
-      myProductId: string): TStringList; overload;
+      myProductId: string; var usedefault : boolean): TStringList; overload;
     // getInstallableLocalBootProductIds_list
     function getProductState: TProductState; override;
     function getProductAction: TAction; override;
@@ -4891,23 +4891,25 @@ begin
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList): TStringList;
+  defaultlist: TStringList; var usedefault : boolean): TStringList;
 var
   clientId, values: string;
 begin
   try
+    usedefault := false;
     Result := TStringList.Create;
     if Productvars <> nil then
     begin
       clientid := actualclient;
       values := Productvars.Values['productId'];
       Result.AddStrings(TStrings(getProductPropertyList(myproperty,
-        defaultlist, clientid, values)));
+        defaultlist, clientid, values,usedefault)));
     end
     else
     begin
       LogDatei.log('opsi.data.productvars=nil - using defaults.', LLWarning);
       Result.AddStrings(TStrings(defaultlist));
+      usedefault := true;
     end;
 
   except
@@ -4917,12 +4919,13 @@ begin
         E.Message + '"', LLwarning);
       LogDatei.log(' - using defaults.', LLWarning);
       Result.AddStrings(defaultlist);
+      usedefault := true;
     end
   end;
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList; myClientId: string; myProductId: string): TStringList;
+  defaultlist: TStringList; myClientId: string; myProductId: string; var usedefault : boolean): TStringList;
 var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
@@ -4930,6 +4933,7 @@ var
   propertyEntry: ISuperObject;
 begin
   Result := TStringList.Create;
+  usedefault := false;
   try
     try
       if setAddProductPropertyStateDefaults(True) then
@@ -4960,6 +4964,7 @@ begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
           Result.AddStrings(TStrings(defaultlist));
+          usedefault := true;
         end;
       end
       else
@@ -4967,6 +4972,7 @@ begin
         LogDatei.log('Could not set backend properties - using defaults.',
           LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end;
     except
       on E: Exception do
@@ -4975,6 +4981,7 @@ begin
           E.Message + '"', LLwarning);
         LogDatei.log(' - using defaults.', LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end
     end;
   finally

@@ -11848,10 +11848,10 @@ var
   a2: integer = 0;
   int64_1: int64;
   int64_2: int64;
-  list1: TXStringList;
-  list2: TXStringList;
-  list3: TXStringList;
-  slist: TStringList;
+  list1: TXStringList = nil;
+  list2: TXStringList = nil;
+  list3: TXStringList = nil;
+  slist: TStringList = nil;
   inifile: TuibIniScript;
   uibInifile: TuibIniFile;
   localSection: TWorkSection;
@@ -12647,13 +12647,14 @@ begin
 
     else if LowerCase(s) = LowerCase('GetProductPropertyList') then
     begin
+      if Assigned(list1) then FreeAndNil(list1);
+            list1 := TXStringList.Create;
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
           if Skip(',', r, r1, InfoSyntaxError) then
           begin
-            if list1 <> nil then FreeAndNil(list1);
-            list1 := TXStringList.Create;
+
             // is the second argument a valid string list ?
             if not produceStringList(section, r1, r, list1, InfoSyntaxError) then
             begin
@@ -12676,6 +12677,7 @@ begin
               syntaxcheck := True;   // it was a string list
             if syntaxcheck then
             begin
+               tmpbool := False; // default used
               tmpstr := r;
               // is it the 2 argument call ?
               if Skip(')', r, r, InfoSyntaxError) then
@@ -12683,13 +12685,14 @@ begin
                 syntaxCheck := True;
                 if opsidata <> nil then
                 begin
-                  list.AddStrings(opsidata.getProductPropertyList(s1, list1));
+                  list.AddStrings(opsidata.getProductPropertyList(s1, list1,tmpbool));
                 end
                 else if local_opsidata <> nil then
                 begin
-                  list.AddStrings(local_opsidata.getProductPropertyList(s1, list1));
+                  list.AddStrings(local_opsidata.getProductPropertyList(s1, list1,tmpbool));
                 end
-                else
+                else  tmpbool := true;  // getting the value from the service not possible or default
+                if tmpbool then
                 begin
                   tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
                   if FileExists(tmpstr) then
@@ -12697,7 +12700,7 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductPropertyList - trying properties.conf',
                       LLWarning);
-                    if list2 <> nil then FreeAndNil(list2);
+                    //if Assigned(list2) then FreeAndNil(list2);
                     list2 := TXStringlist.Create;
                     list2.loadFromFile(tmpstr);
                     tmpbool := False; // default used
@@ -12749,14 +12752,15 @@ begin
                           if opsidata <> nil then
                           begin
                             list.AddStrings(opsidata.getProductPropertyList(
-                              s1, list1, s3, s4));
+                              s1, list1, s3, s4,tmpbool));
                           end
                           else if local_opsidata <> nil then
                           begin
                             list.AddStrings(
-                              local_opsidata.getProductPropertyList(s1, list1, s3, s4));
+                              local_opsidata.getProductPropertyList(s1, list1, s3, s4,tmpbool));
                           end
-                          else
+                          else  tmpbool := true;  // getting the value from the service not possible or default
+                          if tmpbool then
                           begin
                             tmpstr :=
                               ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
@@ -12765,7 +12769,7 @@ begin
                               LogDatei.log(
                                 'Property not existing in GetProductPropertyList - trying properties.conf',
                                 LLWarning);
-                              if list2 <> nil then FreeAndNil(list2);
+                              //if Assigned(list2) then FreeAndNil(list2);
                               list2 := TXStringlist.Create;
                               list2.loadFromFile(tmpstr);
                               tmpbool := False; // default used
@@ -12807,6 +12811,7 @@ begin
             end;
           end;
         end;
+      FreeAndNil(list1);
     end
 
 
@@ -14898,7 +14903,7 @@ var
   randomInt: integer = 0;
   errorinfo: string = '';
   intresult: integer = 0;
-  list1: TXStringlist;
+  list1: TXStringlist = nil;
   slist: TStringList; // if we need a real one
   HostsImage: TuibPatchHostsFile;
   HostsLocation: string = '';
@@ -15291,7 +15296,7 @@ begin
                     LogDatei.log(
                       'Property not existing in GetProductProperty - trying properties.conf',
                       LLWarning);
-                    if list1 <> nil then FreeAndNil(list1);
+                    if Assigned(list1) then FreeAndNil(list1);
                     list1 := TXStringlist.Create;
                     list1.loadFromFile(tmpstr);
                     tmpbool := False; // default used
