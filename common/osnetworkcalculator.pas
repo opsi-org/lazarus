@@ -16,6 +16,10 @@ type
 
 function isValidIP4(ip4adr: string): boolean;
 //return true if the IPv4 address is valid.
+function isValidIP6(ip6adr: string): boolean;
+//return true if the IPv6 address is valid. ToDo: testing
+function isValidIP(ipadr: string):boolean;
+//return true if the IP address (ipv4 or ipv6) is valid.
 function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
 // return network address for the IP address and netmask.
 function isValidIP4Network(ip4adr, netmask: string): boolean;
@@ -50,6 +54,35 @@ begin
       regexobj.Free;
     end;
   end;
+end;
+
+function isValidIP6(ip6adr: string): boolean;
+  //return true if the IPv6 address is valid.
+  //doto: had to be tested
+var
+  regexobj: TRegExpr;
+begin
+  Result := False;
+  if ip6adr <> '' then
+  begin
+    regexobj := TRegExpr.Create;
+    try
+      //https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+      regexobj.Expression :=
+        '(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))';
+      if regexobj.Exec(trim(ip6adr)) then
+        Result := True;
+    finally
+      regexobj.Free;
+    end;
+  end;
+end;
+
+function isValidIP(ipadr: string):boolean;
+begin
+  if isValidIP4(ipadr) or isValidIP6(ipadr) then
+    Result := True
+  else Result := False;
 end;
 
 function binToDec(binary: string): integer;

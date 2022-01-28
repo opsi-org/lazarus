@@ -19192,6 +19192,35 @@ begin
         end;
   end
 
+  else if Skip('isValidIP6', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            BooleanResult := isValidIP6(s1);
+          except
+            BooleanResult := False;
+          end;
+        end;
+  end
+
+  else if Skip('isValidIP', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            BooleanResult := isValidIP(s1);
+          except
+            BooleanResult := False;
+          end;
+        end;
+  end
 
   else if Skip('isConfidential', Input, r, InfoSyntaxError) then
   begin
