@@ -102,7 +102,7 @@ msgstr "Copiar módulos:"
 
 #: opsi_quick_install_resourcestrings.rscorrect
 msgid "If this is correct, please click \"next >\" to continue. If not, please edit the distribution and then continue with \"next >\"."
-msgstr "Si esto es correcto, por favor haga click en \"next>\" para continuar. Caso contrario, por favor edite la distro elegida y continue con \"next>\"."
+msgstr "Si esto es correcto, por favor haga click en \"siguiente>\" para continuar. Caso contrario, por favor edite la distro elegida y continue con \"siguiente>\"."
 
 #: opsi_quick_install_resourcestrings.rscreaterepo
 msgid "Creating repository..."
