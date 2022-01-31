@@ -39,8 +39,9 @@ msgid ""
 "If this is correct, please click \"next >\" to continue. If not, please edit "
 "the distribution and then continue with \"next >\"."
 msgstr ""
-"Si esto es correcto, por favor haga click en \"next>\" para continuar. Caso "
-"contrario, por favor edite la distro elegida y continue con \"next>\"."
+"Si esto es correcto, por favor haga click en \"siguiente>\" para continuar. "
+"Caso contrario, por favor edite la distro elegida y continue con \"siguiente>"
+"\"."
 
 #: opsi_configed_installer_resourcestrings.rscreaterepo
 msgctxt "opsi_configed_installer_resourcestrings.rscreaterepo"
@@ -77,6 +78,8 @@ msgid ""
 "Memory requirement for the installation of the opsi-configed\n"
 "(in megabytes)"
 msgstr ""
+"Requerimientos de memoria para la instalación del opsi configed\n"
+"(en Megabytes)"
 
 #: opsi_configed_installer_resourcestrings.rsnext
 msgctxt "opsi_configed_installer_resourcestrings.rsnext"
@@ -120,6 +123,8 @@ msgid ""
 "Scaling factor for Java Swing App\n"
 "(working with Java version >= 10)"
 msgstr ""
+"Factor escala para Java Swing App\n"
+"(para versiones de Java >= 10)"
 
 #: opsi_configed_installer_resourcestrings.rssellanguage
 msgctxt "opsi_configed_installer_resourcestrings.rssellanguage"
