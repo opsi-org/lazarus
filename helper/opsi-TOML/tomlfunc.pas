@@ -411,7 +411,33 @@ begin
       end;
   'SET' :
       begin
-         writeln('SET');
+         if keysArray.Count=1 then
+            myTOML.Put(keyPath, value);
+
+         if keysArray.Count>=2 then
+          begin
+            myTOMLTable := TTOMLTable(myTOML);
+            try
+             for i := 0 to keysArray.Count -2 do
+              begin
+                  tableName := keysArray[i];
+                  if myTOMLTable.Find(tableName) = nil then
+                     begin
+                     newTable := TTOMLTable.Create(tableName);
+                     myTOMLTable.Add(tableName,newTable);
+                     myTOMLTable := TTOMLTable(newTable);
+                     end
+                  else
+                    myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
+              end;
+
+             myTOMLTable.Put(keysArray[keysArray.Count-1],value)
+
+            except
+            on E:Exception do
+              writeln('Exception in AddKeyValueToTOML : ', E.Message);
+            end;
+         end;
       end;
   'CHANGE' :
       begin
