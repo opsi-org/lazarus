@@ -226,15 +226,39 @@ begin
   newTOMLTable.Add('newSubTable',myTOMLTable);
   *)
 
-  // Testing ModifyTOML
-  writeln('--- Testing ModifyTOML with "ADD" in root Table ');
-  writeln(ModifyTOML(myTOMLString,'ADD','newKeyInRootTable', '"newValueInRootTable"'));
+  // Testing ModifyTOML "ADD"
+  writeln('--- Testing ModifyTOML with "ADD" existing key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','title', 'newADDvalueInRootTable');
+  //writeln(myTOMLString);
 
-  writeln('--- Testing ModifyTOML with "ADD" in sub-Table ');
-  writeln(ModifyTOML(myTOMLString,'ADD','servers.alpha.newKeyInAlpha', '"newValueInAlpha"'));
+  writeln('--- Testing ModifyTOML with "ADD" new key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newADDkeyInRootTable', 'newADDvalueInRootTable');
+  //writeln(myTOMLString);
 
-  writeln('--- Testing ModifyTOML with "ADD" in new Table ');
-  writeln(ModifyTOML(myTOMLString,'ADD','newTable.newTableKey', '"newTableValue"'));
+  writeln('--- Testing ModifyTOML with "ADD" new key in sub-Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.newADDkeyInAlpha', 'newADDvalueInAlpha');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "ADD" new key in new Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newADDtableKey', 'newADDtableValue');
+  //writeln(myTOMLString);
+
+  // Testing ModifyTOML "SET"
+  writeln('--- Testing ModifyTOML with "SET" existing key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newADDkeyInRootTable', 'newSETValueInRootTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "SET" new key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newSETkeyInRootTable', 'newSETValueInRootTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "SET" in sub-Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.newADDkeyInAlpha', 'newSETValueInAlpha');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "SET" in new Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newTable.newADDtableKey', 'newSETtableValue');
+  writeln(myTOMLString);
 
   (* // Testing AddKeyValueToTOML
   writeln('--- Testing AddKeyValueToTOML in root Table ');
