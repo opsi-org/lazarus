@@ -38,6 +38,8 @@ function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 
+function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
+
 function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
@@ -193,7 +195,6 @@ begin
         tableNamesList.Add(myTOML.Keys[i]);
         end;
   result := tableNamesList;
-  //writeln(tableNamesList.Text);
 end;
 
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
@@ -356,6 +357,74 @@ begin
 
   if result='' then
      result := defaultValue;
+end;
+
+function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
+var
+  tableName : String;
+  myTOML : TTOMLDocument;
+  keysArray : TStringList;
+  myTOMLTable, newTable : TTOMLTable;
+  i : integer;
+begin
+  myTOML := GetTOML(tomlContents);
+  keysArray := TStringList.Create;
+  keysArray.Delimiter := '.';
+  keysArray.StrictDelimiter := True;
+  keysArray.DelimitedText := keyPath;
+
+  case uppercase(command) of
+  'ADD':
+      begin
+         if keysArray.Count=1 then
+            if myTOML.Find(keyPath) = nil then
+              myTOML.Add(keyPath, value)
+            else
+              writeln('Key already exists in root table, nothing to be done with command ADD ');
+
+         if keysArray.Count>=2 then
+          begin
+            myTOMLTable := TTOMLTable(myTOML);
+            try
+             for i := 0 to keysArray.Count -2 do
+              begin
+                  tableName := keysArray[i];
+                  if myTOMLTable.Find(tableName) = nil then
+                     begin
+                     newTable := TTOMLTable.Create(tableName);
+                     myTOMLTable.Add(tableName,newTable);
+                     myTOMLTable := TTOMLTable(newTable);
+                     end
+                  else
+                    myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
+              end;
+
+             if myTOMLTable.Find(keysArray[keysArray.Count -1]) = nil then
+                myTOMLTable.Add(keysArray[keysArray.Count-1],value)
+             else
+                writeln('Key already exists, nothing to be done with command ADD ');
+            except
+            on E:Exception do
+              writeln('Exception in AddKeyValueToTOML : ', E.Message);
+            end;
+         end;
+      end;
+  'SET' :
+      begin
+         writeln('SET');
+      end;
+  'CHANGE' :
+      begin
+          writeln('CHANGE');
+      end;
+  'DEL' :
+      begin
+         writeln('DEL');
+      end;
+  otherwise
+      writeln('ModifyTOML command unkown ');
+  end;
+  result := myTOML.AsTOMLString ;
 end;
 
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
