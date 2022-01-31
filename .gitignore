@@ -82,4 +82,5 @@ helper/opsiclientkiosk/opsiclientkiosk
 
 # opsi-configed-installer
 opsi-misc/opsi-configed-installer/build/opsi-configed-installer/gui/opsi_configed_installer_project
+opsi-misc/opsi-configed-installer/build/opsi_configed_installer_archive.sh
 opsi-misc/opsi-configed-installer/build/opsi-configed-installer/CLIENT_DATA/properties.conf
