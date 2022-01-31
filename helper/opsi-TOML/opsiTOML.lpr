@@ -212,23 +212,31 @@ begin
   myTOML.Insert('newInsertedKeyInRootTable','"newInsertedValueInRootTable"');
   *)
 
-  AddKeyValueToTOML(myTOML,'newKeyInRootTable', '"newValueInRootTable"');
-
   (* // Testing TTOMLTable.Add
   writeln('--- Testing adding data to TOML  ');
 
   myTOML.Add('newKey','newValue');
 
   myTOMLTable.Create('newTable');
-  myTOMLTable.Add('newKey', 'newValue');
+  myTOMLTable.Add('newTableKey', 'newTableValue');
 
   myTOML.Add('newTable',myTOMLTable);
 
-  newTOMLTable:= TTOMLTable(myTOML['database']);
+  newTOMLTable:= TTOMLTable(myTOML['owner']);
   newTOMLTable.Add('newSubTable',myTOMLTable);
   *)
 
-  (*
+  // Testing ModifyTOML
+  writeln('--- Testing ModifyTOML with "ADD" in root Table ');
+  writeln(ModifyTOML(myTOMLString,'ADD','newKeyInRootTable', '"newValueInRootTable"'));
+
+  writeln('--- Testing ModifyTOML with "ADD" in sub-Table ');
+  writeln(ModifyTOML(myTOMLString,'ADD','servers.alpha.newKeyInAlpha', '"newValueInAlpha"'));
+
+  writeln('--- Testing ModifyTOML with "ADD" in new Table ');
+  writeln(ModifyTOML(myTOMLString,'ADD','newTable.newTableKey', '"newTableValue"'));
+
+  (* // Testing AddKeyValueToTOML
   writeln('--- Testing AddKeyValueToTOML in root Table ');
   if AddKeyValueToTOML(myTOML,'newKeyInRootTable', '"newValueInRootTable"') = true then
      writeln('- AddKeyValueToTOML in root Table done')
