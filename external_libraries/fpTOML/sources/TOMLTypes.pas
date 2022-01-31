@@ -182,6 +182,8 @@ type
       function AsTOMLStringList: TStringList;
       procedure Insert(const key: String; const data: TTOMLData);
       procedure Insert(const key: String; const value: TTOMLValueType);
+      procedure Put(const key: String; const data: TTOMLData);
+      procedure Put(const key: String; const value: TTOMLValueType);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
       function Find(const key: TTOMLKeyType): TTOMLData;
@@ -581,7 +583,7 @@ end;
 
 function TTOMLTable.AsTOMLStringList: TStringList;
 var
-  i, k: integer;
+  i : integer;
   tomlArray : TTOMLArray;
   tomlTable : TTOMLTable;
   tableHeader, line : String;
@@ -640,6 +642,16 @@ end;
 procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType);
 begin
   Insert(key, TTOMLValue.Create(value));
+end;
+
+procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
+begin
+  map.PutKeyData(key, data);
+end;
+
+procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
+begin
+  Put(key, TTOMLValue.Create(value));
 end;
 
 procedure TTOMLTable.Add(const key: String; const data: TTOMLData);
