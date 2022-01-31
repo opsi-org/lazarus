@@ -700,8 +700,8 @@ end;
 
 function linIsUefi: boolean;
 var
-  exitcode : integer;
-  exitstr : string;
+  exitcode: integer;
+  exitstr, efibootmgrpath: string;
 begin
   { from opsisetuplib.py:
   def inUefiMode():
@@ -729,14 +729,20 @@ begin
 }
   Result := False;
   try
-     exitstr := getCommandResult('/sbin/modprobe efivars',exitcode);
-     if exitcode <> 0 then  Result := False
-     else
-     begin
-       exitstr := getCommandResult('efibootmgr >> /dev/null 2>&1',exitcode);
-       if exitcode <> 0 then  Result := False
-       else Result := True;
-     end;
+    exitstr := getCommandResult('/sbin/modprobe efivars', exitcode);
+    if exitcode <> 0 then  Result := False
+    else
+    begin
+      if which('efibootmgr', efibootmgrpath) then
+      begin
+        exitstr := getCommandResult(efibootmgrpath+' >> /dev/null 2>&1', exitcode);
+        if exitcode <> 0 then  Result := False
+        else
+          Result := True;
+      end
+      else
+        Result := False;
+    end;
   except
 
   end;
