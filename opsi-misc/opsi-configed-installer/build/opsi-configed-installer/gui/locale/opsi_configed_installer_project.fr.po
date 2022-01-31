@@ -25,26 +25,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rscapquery"
 msgid "Query"
 msgstr "Requête"
 
-#: opsi_configed_installer_resourcestrings.rscapquery2
-msgctxt "opsi_configed_installer_resourcestrings.rscapquery2"
-msgid "Query (part 2)"
-msgstr "Requête (partie 2)"
-
-#: opsi_configed_installer_resourcestrings.rscapquery3
-msgctxt "opsi_configed_installer_resourcestrings.rscapquery3"
-msgid "Query (part 3)"
-msgstr "Requête (partie 3)"
-
-#: opsi_configed_installer_resourcestrings.rscapquerydhcp
-msgctxt "opsi_configed_installer_resourcestrings.rscapquerydhcp"
-msgid "Query (dhcp)"
-msgstr "Requête (DHCP)"
-
-#: opsi_configed_installer_resourcestrings.rscapqueryuserinfo
-msgctxt "opsi_configed_installer_resourcestrings.rscapqueryuserinfo"
-msgid "Query (user info)"
-msgstr "Requête (info. utilisateur)"
-
 #: opsi_configed_installer_resourcestrings.rscarryout
 msgctxt "opsi_configed_installer_resourcestrings.rscarryout"
 msgid ""
@@ -93,6 +73,14 @@ msgctxt "opsi_configed_installer_resourcestrings.rslog"
 msgid "You can find the log files here:"
 msgstr "Vous pouvez trouver les fichiers journaux ici:"
 
+#: opsi_configed_installer_resourcestrings.rsmem
+msgid ""
+"Memory requirement for the installation of the opsi-configed\n"
+"(in megabytes)"
+msgstr ""
+"Mémoire requise pour l'installation de opsi-configed\n"
+"(en méga octets)"
+
 #: opsi_configed_installer_resourcestrings.rsnext
 msgctxt "opsi_configed_installer_resourcestrings.rsnext"
 msgid " next > "
@@ -129,6 +117,14 @@ msgid ""
 msgstr ""
 "L'authentification est requise pour installer le serveur opsi. Qui êtes-vous "
 "connecté en tant?"
+
+#: opsi_configed_installer_resourcestrings.rsscalingfactor
+msgid ""
+"Scaling factor for Java Swing App\n"
+"(working with Java version >= 10)"
+msgstr ""
+"Facteur d'échelle pour Java Swing App\n"
+"(fonctionnant avec une version Java >= 10)"
 
 #: opsi_configed_installer_resourcestrings.rssellanguage
 msgctxt "opsi_configed_installer_resourcestrings.rssellanguage"
@@ -253,6 +249,64 @@ msgstr ""
 
 #: tpassword.radiobtnsudo.caption
 msgid "Sudo"
+msgstr ""
+
+#: tquery.btnback.caption
+msgctxt "tquery.btnback.caption"
+msgid " < back "
+msgstr " < Retour "
+
+#: tquery.btnnext.caption
+msgctxt "tquery.btnnext.caption"
+msgid " next > "
+msgstr " Suivant > "
+
+#: tquery.caption
+msgid "Opsi Quick Install - Query"
+msgstr ""
+
+#: tquery.labelmem.caption
+msgid "Memory requirement"
+msgstr ""
+
+#: tquery.labelscalingfactor.caption
+msgid "Scaling factor"
+msgstr ""
+
+#: tquery.radiobtn05.caption
+msgid "0.5"
+msgstr ""
+
+#: tquery.radiobtn10.caption
+msgid "1.0"
+msgstr ""
+
+#: tquery.radiobtn15.caption
+msgid "1.5"
+msgstr ""
+
+#: tquery.radiobtn20.caption
+msgid "2.0"
+msgstr ""
+
+#: tquery.radiobtnmem1024.caption
+msgid "1024"
+msgstr ""
+
+#: tquery.radiobtnmem1536.caption
+msgid "1536"
+msgstr ""
+
+#: tquery.radiobtnmem2048.caption
+msgid "2048"
+msgstr ""
+
+#: tquery.radiobtnmem3000.caption
+msgid "3000"
+msgstr ""
+
+#: tquery.radiobtnmem512.caption
+msgid "512"
 msgstr ""
 
 #: twait.labelwait.caption

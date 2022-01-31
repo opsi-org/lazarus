@@ -16,7 +16,6 @@ type
     BackgrImage: TImage;
     BtnNext: TButton;
     BtnBack: TButton;
-    InfoRepo: TImage;
     InfoOpsiVersion: TImage;
     LabelScalingFactor: TLabel;
     LabelMem: TLabel;
@@ -88,6 +87,8 @@ begin
   SetBasics(self);
 
   // text by resourcestrings
+  LabelMem.Caption := rsMem;
+  LabelScalingFactor.Caption:=rsScalingFactor;
   BtnBack.Caption := rsBack;
   BtnNext.Caption := rsNext;
 end;

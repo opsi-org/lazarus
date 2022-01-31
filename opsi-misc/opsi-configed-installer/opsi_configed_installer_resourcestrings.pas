@@ -41,13 +41,12 @@ resourcestring
     'If this is correct, please click "next >" to continue. If not, please edit the distribution and then continue with "next >".';
   rsNoSupport =
     'Unfortunately, opsi does not support your distribution. Only the following distributions are supported:';
-
   rsStartInstallation =
     'Finally click "finish" to start the installation of opsi-server.';
 
   {Query}
-  rsMemReq = '';
-  rsScalingF = '';
+  rsMem = 'Memory requirement for the installation of the opsi-configed' + #10 + '(in megabytes)';
+  rsScalingFactor = 'Scaling factor for Java Swing App' + #10 + '(working with Java version >= 10)';
 
   {Password}
   rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';

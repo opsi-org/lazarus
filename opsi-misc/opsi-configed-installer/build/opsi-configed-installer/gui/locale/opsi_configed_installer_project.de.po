@@ -16,26 +16,6 @@ msgctxt "opsi_configed_installer_resourcestrings.rscapquery"
 msgid "Query"
 msgstr "Abfrage"
 
-#: opsi_configed_installer_resourcestrings.rscapquery2
-msgctxt "opsi_configed_installer_resourcestrings.rscapquery2"
-msgid "Query (part 2)"
-msgstr "Abfrage (Teil 2)"
-
-#: opsi_configed_installer_resourcestrings.rscapquery3
-msgctxt "opsi_configed_installer_resourcestrings.rscapquery3"
-msgid "Query (part 3)"
-msgstr "Abfrage (Teil 3)"
-
-#: opsi_configed_installer_resourcestrings.rscapquerydhcp
-msgctxt "opsi_configed_installer_resourcestrings.rscapquerydhcp"
-msgid "Query (dhcp)"
-msgstr "Abfrage (DHCP)"
-
-#: opsi_configed_installer_resourcestrings.rscapqueryuserinfo
-msgctxt "opsi_configed_installer_resourcestrings.rscapqueryuserinfo"
-msgid "Query (user info)"
-msgstr "Abfrage (User-Info)"
-
 #: opsi_configed_installer_resourcestrings.rscarryout
 msgctxt "opsi_configed_installer_resourcestrings.rscarryout"
 msgid ""
@@ -85,6 +65,14 @@ msgctxt "opsi_configed_installer_resourcestrings.rslog"
 msgid "You can find the log files here:"
 msgstr "Sie finden die Log-Dateien hier:"
 
+#: opsi_configed_installer_resourcestrings.rsmem
+msgid ""
+"Memory requirement for the installation of the opsi-configed\n"
+"(in megabytes)"
+msgstr ""
+"Speicherbedarf für die Installation des opsi-configed\n"
+"(in Megabytes)"
+
 #: opsi_configed_installer_resourcestrings.rsnext
 msgctxt "opsi_configed_installer_resourcestrings.rsnext"
 msgid " next > "
@@ -121,6 +109,17 @@ msgid ""
 msgstr ""
 "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. "
 "Als was sind Sie angemeldet?"
+
+#: opsi_configed_installer_resourcestrings.rsscalingfactor
+#| msgid ""
+#| "Scaling factor for Java Swing App\n"
+#| "(working with Java version <= 10)"
+msgid ""
+"Scaling factor for Java Swing App\n"
+"(working with Java version >= 10)"
+msgstr ""
+"Skalierungsfaktor für die Java Swing Anwendung\n"
+"(funktioniert mit Java-Version >= 10)"
 
 #: opsi_configed_installer_resourcestrings.rssellanguage
 msgctxt "opsi_configed_installer_resourcestrings.rssellanguage"
@@ -246,6 +245,64 @@ msgstr ""
 
 #: tpassword.radiobtnsudo.caption
 msgid "Sudo"
+msgstr ""
+
+#: tquery.btnback.caption
+msgctxt "tquery.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tquery.btnnext.caption
+msgctxt "tquery.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tquery.caption
+msgid "Opsi Quick Install - Query"
+msgstr ""
+
+#: tquery.labelmem.caption
+msgid "Memory requirement"
+msgstr ""
+
+#: tquery.labelscalingfactor.caption
+msgid "Scaling factor"
+msgstr ""
+
+#: tquery.radiobtn05.caption
+msgid "0.5"
+msgstr ""
+
+#: tquery.radiobtn10.caption
+msgid "1.0"
+msgstr ""
+
+#: tquery.radiobtn15.caption
+msgid "1.5"
+msgstr ""
+
+#: tquery.radiobtn20.caption
+msgid "2.0"
+msgstr ""
+
+#: tquery.radiobtnmem1024.caption
+msgid "1024"
+msgstr ""
+
+#: tquery.radiobtnmem1536.caption
+msgid "1536"
+msgstr ""
+
+#: tquery.radiobtnmem2048.caption
+msgid "2048"
+msgstr ""
+
+#: tquery.radiobtnmem3000.caption
+msgid "3000"
+msgstr ""
+
+#: tquery.radiobtnmem512.caption
+msgid "512"
 msgstr ""
 
 #: twait.labelwait.caption

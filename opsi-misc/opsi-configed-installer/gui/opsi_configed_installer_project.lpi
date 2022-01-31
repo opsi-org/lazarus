@@ -18,7 +18,7 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="locale"/>
+      <OutDir Value="../build/opsi-configed-installer/gui/locale"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>

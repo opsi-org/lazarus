@@ -40,18 +40,6 @@ object Query: TQuery
     ParentFont = False
     TabOrder = 1
   end
-  object InfoRepo: TImage
-    AnchorSideLeft.Control = PanelMem
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = PanelMem
-    Left = 560
-    Height = 16
-    Top = 50
-    Width = 14
-    ParentShowHint = False
-    ShowHint = True
-    Stretch = True
-  end
   object InfoOpsiVersion: TImage
     AnchorSideLeft.Side = asrBottom
     Left = 480
