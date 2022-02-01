@@ -42,7 +42,6 @@ uses
   wispecfolder,
   shlobj,
   VersionInfoX,
-  oscertificates,
 {$IFNDEF WIN64}
   oslocaladmin,
 {$ENDIF WIN64}
@@ -118,7 +117,8 @@ uses
   ostxstringlist,
   LAZUTF8,
   osnetutil,
-  osstrlistutils;
+  osstrlistutils,
+  oscertificates;
 
 type
   TStatement = (tsNotDefined,

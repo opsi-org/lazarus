@@ -3,6 +3,12 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.4.37) stable; urgency=low
+
+  * oscertificates: finalize function for linux /mac
+
+-- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
+
 opsi-script (4.12.4.36) stable; urgency=low
 
   * oszip: show progressbar while zipping or unzipping files

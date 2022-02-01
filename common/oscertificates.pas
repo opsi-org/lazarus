@@ -2,10 +2,98 @@ unit oscertificates;
 
 {$mode ObjFPC}{$H+}
 
+(*   macos
+# Install
+security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <pem-file>
+# Load
+security find-certificate -p -c <subject_name> /Library/Keychains/System.keychain
+# Uninstall (pseudo code)
+cert = find-certificate(<subject_name>)
+while cert:
+   security delete-certificate -Z <cert.sha1_hash> /Library/Keychains/System.keychain -t
+   cert = find-certificate(<subject_name>)
+#####################################
+   Linux:
+   def _get_cert_path_and_cmd():
+       dist = {distro.id()}
+       for name in (distro.like() or "").split(" "):
+           if name:
+               dist.add(name)
+       if "centos" in dist or "rhel" in dist:
+           # /usr/share/pki/ca-trust-source/anchors/
+           return ("/etc/pki/ca-trust/source/anchors", "update-ca-trust")
+       if "debian" in dist or "ubuntu" in dist:
+           return ("/usr/local/share/ca-certificates", "update-ca-certificates")
+       if "sles" in dist or "suse" in dist:
+           return ("/usr/share/pki/trust/anchors", "update-ca-certificates")
+
+       logger.error("Failed to set system cert path on distro '%s', like: %s", distro.id(), distro.like())
+       raise RuntimeError(f"Failed to set system cert path on distro '{distro.id()}', like: {distro.like()}")
+
+
+   def install_ca(ca_cert: crypto.X509):
+       system_cert_path, cmd = _get_cert_path_and_cmd()
+
+       logger.info("Installing CA '%s' into system store", ca_cert.get_subject().CN)
+
+       cert_file = os.path.join(
+           system_cert_path,
+           f"{ca_cert.get_subject().CN.replace(' ', '_')}.crt"
+       )
+       with open(cert_file, "wb") as file:
+           file.write(crypto.dump_certificate(crypto.FILETYPE_PEM, ca_cert))
+
+       output = subprocess.check_output([cmd], shell=False)
+       logger.debug("Output of '%s': %s", cmd, output)
+
+
+   def load_ca(subject_name: str) -> crypto.X509:
+       system_cert_path, _cmd = _get_cert_path_and_cmd()
+       if os.path.exists(system_cert_path):
+           for root, _dirs, files in os.walk(system_cert_path):
+               for entry in files:
+                   with open(os.path.join(root, entry), "rb") as file:
+                       try:
+                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
+                           if ca_cert.get_subject().CN == subject_name:
+                               return ca_cert
+                       except crypto.Error:
+                           continue
+       return None
+
+
+   def remove_ca(subject_name: str) -> bool:
+       system_cert_path, cmd = _get_cert_path_and_cmd()
+       removed = 0
+       if os.path.exists(system_cert_path):
+           for root, _dirs, files in os.walk(system_cert_path):
+               for entry in files:
+                   filename = os.path.join(root, entry)
+                   with open(filename, "rb") as file:
+                       try:
+                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
+                           if ca_cert.get_subject().CN == subject_name:
+                               logger.info("Removing CA '%s' (%s)", subject_name, filename)
+                               os.remove(filename)
+                               removed += 1
+                       except crypto.Error:
+                           continue
+
+       if removed:
+           output = subprocess.check_output([cmd], shell=False)
+           logger.debug("Output of '%s': %s", cmd, output)
+       else:
+           logger.info(
+               "CA '%s' not found in '%s', nothing to remove",
+               subject_name, system_cert_path
+           )
+   *)
+
 interface
 
 uses
   Classes, SysUtils,
+  fileutil,
   {$IFDEF WINDOWS}
   Windows,
   jwawincrypt,
@@ -13,6 +101,12 @@ uses
   {$IFDEF UNIX}
   OSProcessux,
   {$ENDIF UNIX}
+  {$IFDEF LINUX}
+  osfunclin,
+  {$ENDIF LINUX}
+  {$IFDEF OPSISCRIPT}
+  ostxstringlist,
+  {$ENDIF OPSISCRIPT}
   oslog,
   strutils;
 
@@ -32,7 +126,33 @@ function pemfileToSystemStore(filename: string): boolean;
 
 implementation
 
-{$IFDEF UNIX}
+{$IFDEF DARWIN}
+function pemfileToSystemStore(filename: string): boolean;
+begin
+  // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
+  command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
+  command := command + '"' + filename + '"';
+  if not RunCommandAndCaptureOut(command, True, outlines, report,
+    SW_HIDE, ExitCode, False, 1) then
+  begin
+    // Error
+    logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+      + IntToStr(exitcode), LLError);
+  end
+  else
+  begin
+    // success
+    if exitcode = 0 then
+      logdatei.log('Successful imported to system store: ' + filename, LLinfo)
+    else
+      logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+        + IntToStr(exitcode), LLError);
+  end;
+end;
+
+{$ENDIF DARWIN}
+
+{$IFDEF LINUX}
 // Ubuntu
 // https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
 // https://wiki.ubuntuusers.de/CA/
@@ -44,37 +164,107 @@ implementation
 
 function pemfileToSystemStore(filename: string): boolean;
 var
-  command : string;
-  outlines: TStringList;
+  command: string;
+
   report: string;
   showcmd: integer;
   ExitCode: longint;
+  distrotype, pathToStore, storeCommand: string;
+  targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
 begin
-  result := false;
-  {$IFDEF DARWIN}
-  // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
-  command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
-  command := command +'"'+filename+'"'
-  {$ENDIF DARWIN}
-  {$IFDEF LINUX}
-  // convert pem to crt
-  command := 'openssl x509 -outform der -in '+filename+' -out /usr/local/share/ca-certificates/your-cert.crt';
-  //cp file.crt /usr/local/share/ca-certificates/
-  // update-ca-certificates
-  command := command +'"'+filename+'"'
-  {$ENDIF LINUX}
-  outlines:= TStringList.create;
-  if not RunCommandAndCaptureOut
-         (command, true,outlines, report, SW_HIDE, ExitCode, false, 1) then
-         begin
-           // Error
-         end
-  else
-  begin
-    // success
+  Result := False;
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    distrotype := getLinuxDistroType;
+    if distrotype = 'debian' then
+    begin
+      pathToStore := '/usr/local/share/ca-certificates/';
+      storeCommand := 'update-ca-certificates';
+    end
+    else if distrotype = 'suse' then
+    begin
+      pathToStore := '/usr/share/pki/trust/anchors/';
+      storeCommand := 'update-ca-certificates';
+    end
+    else if distrotype = 'redhat' then
+    begin
+      pathToStore := '/etc/pki/ca-trust/source/anchors/';
+      storeCommand := 'update-ca-trust';
+    end;
+    targetfile := pathToStore + ExtractFileName(filename) + '.crt';
+    certExt := LowerCase(ExtractFileExt(filename));
+
+    command := '';
+    if certExt = '.pem' then
+    begin
+      // convert pem to crt
+      command := 'openssl x509 -inform PEM -in ' + filename + ' -out ' + targetfile;
+    end;
+    if certExt = '.cer' then
+    begin
+      // convert cer to crt
+      command := 'openssl x509 -inform DER -in ' + filename + ' -out ' + targetfile;
+    end;
+    if certExt = '.crt' then
+    begin
+      // just copy
+      CopyFile(filename, targetfile);
+    end;
+
+    if command <> '' then
+    begin
+      if not RunCommandAndCaptureOut(command, True, outlines,
+        report, SW_HIDE, ExitCode, False, 1) then
+      begin
+        // Error
+        logdatei.log('pemfileToSystemStore: failed: convert&copy with exitcode: ' +
+          IntToStr(exitcode), LLError);
+      end
+      else
+      begin
+        // success
+        if exitcode = 0 then
+          logdatei.log_prog('pemfileToSystemStore: Successful convert&copy : ' +
+            filename, LLinfo)
+        else
+          logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+            + IntToStr(exitcode), LLError);
+      end;
+    end;
+
+    command := storeCommand;
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+        logdatei.log('Successful imported to system store: ' + filename, LLinfo)
+      else
+        logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+          + IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
   end;
 end;
-{$ENDIF UNIX}
+
+{$ENDIF LINUX}
 
 {$IFDEF WINDOWS}
 // https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptstringtobinarya
@@ -179,7 +369,8 @@ begin
   try
     Result := False;
     //mystore := CertOpenSystemStore(0, 'Root');
-    mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM,0,0,CERT_SYSTEM_STORE_LOCAL_MACHINE,PWchar('Root'));
+    mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM, 0, 0,
+      CERT_SYSTEM_STORE_LOCAL_MACHINE, PWchar('Root'));
     //mystore := CertOpenStore(CERT_STORE_PROV_SYSTEM,0,0,
     //                         CERT_SYSTEM_STORE_LOCAL_MACHINE or CERT_STORE_OPEN_EXISTING_FLAG,pchar('Root'));
     if mystore = nil then
@@ -266,38 +457,41 @@ begin
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    logdatei.log('pemfileToSystemStore: failed: pemfileToBinarybuf: ' + message,LLError);
+    logdatei.log('pemfileToSystemStore: failed: pemfileToBinarybuf: ' +
+      message, LLError);
     exit;
   end;
-  logdatei.log_prog('done: pemfileToBinarybuf',LLdebug);
+  logdatei.log_prog('done: pemfileToBinarybuf', LLdebug);
   mybool := open_cert_system_store(mystore);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    logdatei.log('pemfileToSystemStore: failed: open_cert_system_store: ' + message,LLError);
+    logdatei.log('pemfileToSystemStore: failed: open_cert_system_store: ' +
+      message, LLError);
     exit;
   end;
-  logdatei.log_prog('done: open_cert_system_store',LLdebug);
+  logdatei.log_prog('done: open_cert_system_store', LLdebug);
   mybool := install_ca(mystore, binaryBuffer, bufsize);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    logdatei.log('pemfileToSystemStore: failed: install_ca: ' + message,LLError);
+    logdatei.log('pemfileToSystemStore: failed: install_ca: ' + message, LLError);
     exit;
   end;
-  logdatei.log_prog('done: install_ca',LLdebug);
+  logdatei.log_prog('done: install_ca', LLdebug);
   mybool := close_cert_store(mystore);
   if not mybool then
   begin
     message := SysErrorMessage(GetLastOSError);
-    logdatei.log('pemfileToSystemStore: failed: close_cert_store: ' + message,LLError);
+    logdatei.log('pemfileToSystemStore: failed: close_cert_store: ' + message, LLError);
     exit;
   end;
-  logdatei.log_prog('done: close_cert_store',LLdebug);
-  logdatei.log_prog('done: pemfileToSystemStore',LLdebug);
-  logdatei.log('Successful imported to system store: ' + filename,LLinfo);
+  logdatei.log_prog('done: close_cert_store', LLdebug);
+  logdatei.log_prog('done: pemfileToSystemStore', LLdebug);
+  logdatei.log('Successful imported to system store: ' + filename, LLinfo);
   Result := mybool;
 end;
+
 {$ENDIF WINDOWS}
 
 
