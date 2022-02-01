@@ -131,8 +131,8 @@ function unzipfiletomemory(in_name:pchar;out_buf:pchar;var buf_size:longint;
   offset:longint;hFileAction:word;cm_index:integer):integer;{$ifdef win32}stdcall;{$endif}
 {usage:
  in_name:      name of zip file with full path
- out_buf:      buffer to recieve unpacked file
- buf_size:     size of buffer to recieve unpacked file
+ out_buf:      buffer to receive unpacked file
+ buf_size:     size of buffer to receive unpacked file
  offset:       header position of desired file in zipfile
  hFileAction:  handle to dialog box showing advance of decompression (optional)
  cm_index:     notification code sent in a wm_command message to the dialog

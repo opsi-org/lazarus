@@ -117,6 +117,7 @@ var
   opsiservicePassword: string;
   opsiserviceSessionId: string;
   opsiserviceClientId: string;
+  opsiscriptProcName: string;
   depoturl: string;
   depotshare, depotdir: string;
   depotdrive, depotdrive_old: string;
@@ -165,8 +166,9 @@ var
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
   configReverseProductOrderByUninstall: boolean = False;
-  configSupressSystemEncodingWarning : boolean = False;
-  log_rotation_count  : integer = 8;
+  configSupressSystemEncodingWarning: boolean = False;
+  log_rotation_count: integer = 8;
+  configWriteProductLogFile: boolean = False;
 
 
 implementation
@@ -203,6 +205,8 @@ begin
     myconf.WriteString('global', 'ReverseProductOrderByUninstall',
       BoolToStr(configSupressSystemEncodingWarning, False));
     myconf.WriteString('global', 'log_rotation_count', IntToStr(log_rotation_count));
+    myconf.WriteString('global', 'writeProductLogFile',
+      BoolToStr(configWriteProductLogFile, False));
     myconf.Free;
   except
     Result := False;
@@ -249,6 +253,9 @@ begin
       boolToStr(configSupressSystemEncodingWarning, False)));
     log_rotation_count := myconf.ReadInteger('global', 'log_rotation_count',
       log_rotation_count);
+    configWriteProductLogFile :=
+      strToBool(myconf.ReadString('global', 'writeProductLogFile',
+      boolToStr(configWriteProductLogFile, False)));
     myconf.Free;
 
 
@@ -364,7 +371,7 @@ begin
           serviceresult) then
           if jsonIsArray(serviceresult) then
           begin
-            //osmain.startupmessages.Add('got jason Array from result');
+            //osmain.startupmessages.Add('got json Array from result');
             if jsonAsArrayToStringList(serviceresult, configlist) then
             begin
               for i := 0 to configlist.Count - 1 do
@@ -492,8 +499,7 @@ begin
                           end;
                       end;
 
-                      if LowerCase(configid) =
-                        LowerCase(
+                      if LowerCase(configid) = LowerCase(
                         'opsi-script.global.ReverseProductOrderByUninstall') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
@@ -506,14 +512,12 @@ begin
                               configReverseProductOrderByUninstall) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  ReverseProductOrderByUninstall: '
-                                +
-                                tmpstr);
+                                + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
 
-                      if LowerCase(configid) =
-                        LowerCase(
+                      if LowerCase(configid) = LowerCase(
                         'opsi-script.global.supressSystemEncodingWarning') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
@@ -526,8 +530,7 @@ begin
                               configSupressSystemEncodingWarning) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  supressSystemEncodingWarning: '
-                                +
-                                tmpstr);
+                                + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
@@ -546,6 +549,24 @@ begin
                             if not TryStrToInt(tmpstr, log_rotation_count) then
                               osmain.startupmessages.Add(
                                 'Error: Not an Integer:  log_rotation_count: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.writeProductLogFile') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got writeProductLogFile: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configWriteProductLogFile) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  writeProductLogFile: '
+                                + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
@@ -599,5 +620,6 @@ initialization
   end;
 
   OpsiscriptVersionName := 'Version ' + OpsiscriptVersion;
+  opsiscriptProcName := ExtractFileName(reencode(ParamStr(0), 'system'));
 
 end.

@@ -54,7 +54,7 @@ type
   public
     { These are the procedures to control the behaviour of the GUI.
       Override them in the subclass to get the desired functionality. }
-    procedure LoadSkin(const SkinDirectory: string);virtual;
+    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);virtual;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
     procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual;
     procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual;
@@ -72,19 +72,20 @@ type
 
 const
   {$IFDEF WINDOWS}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = 'skin';
   skindirectoryCustomWin = '..'+PathDelim+'custom'+PathDelim+'customskin';
   skindirectoryCustomWinOld = '..'+PathDelim+'custom'+PathDelim+'winstskin';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = 'skin';
-  skindirectoryCompatibility = '/usr/share/opsi-script/skin';
+  //skindirectoryCompatibility = '/usr/share/opsi-script/skin';
+  skindirectoryCompatibility = '/opt/opsi-script/skin';
   skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-  skindirectoryDevelopment = 'skin';
+  skindirectoryDevelopment = '../../../skin';
   skindirectoryDefault = '../Resources/skin';
   skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
   {$ENDIF DARWIN}
@@ -159,7 +160,7 @@ begin
   Result:= skinDir;
 end;
 
-procedure TGUIControl.LoadSkin(const SkinDirectory: string);
+procedure TGUIControl.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
 begin
 
 end;

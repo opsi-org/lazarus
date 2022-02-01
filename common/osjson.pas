@@ -386,9 +386,10 @@ begin
   new_obj := SO(str);
   if new_obj <> nil then
     if new_obj.IsType(stArray) then
+    begin
+      Result := True;
       for i := 0 to new_obj.AsArray.Length - 1 do
       begin
-        Result := True;
         objstr := new_obj.AsArray.S[i];
         //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
@@ -396,6 +397,7 @@ begin
           TryStrToBool(objstr, testbool) then
           strListResult.Append(objstr);
       end;
+    end;
 end;
 
 function jsonIsObject(str: string): boolean;

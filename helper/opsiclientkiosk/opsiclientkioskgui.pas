@@ -256,6 +256,7 @@ type
     DefaultSkinPath: string;
     SoftwareOnDemand : boolean;
     AdminMode : boolean;
+    DisableTilesView: boolean;
     ShowingFirstTime : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
@@ -273,6 +274,7 @@ type
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
     procedure InitSkin;
+    function GetClientID(PathToConfigFile:string): string;
     //function RunAsAdmin(const Handle: DWord; const Path, Params: string
     //  ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
@@ -281,7 +283,7 @@ type
     { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure InitDBGrids;
-    procedure InstallNow;
+    function InstallNow(var aErrorMessage: string):boolean;
     procedure LoadSkinForTitle(SkinPath: string);
     procedure BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
     procedure LoadDataFromServer;
@@ -352,6 +354,8 @@ resourcestring
   rsViewTiles = 'Tiles';
   rsConnectedTo = 'Connected to';
   rsAs = 'as';
+  rsON = 'on';
+  rsDepot = 'depot';
   rsStoreActions = 'Store actions';
   rsBack = '<-- Back';
   rsAll = 'All';
@@ -368,6 +372,11 @@ resourcestring
   rsInstallNowHint = 'Start the installation/update (uninstallation) of the selected products';
   rsStoreActionsHint =
     'Send the action requests to the server, show the resulting installations and ask for installation start.';
+  {DBGrid}
+  rsRequest = 'Request';
+  rsStatus = 'Status';
+  rsProductID = 'ID';
+  rsProductName = 'Software';
 
   {Dialogs }
   rsNoActionsFound = 'No action requests found.';
@@ -399,6 +408,7 @@ resourcestring
  rsCurrentUserNoAdmin = 'Current user has no admin privileges. Admin mode '
    +'disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges.';
  rsAdminMode = 'Admin mode';
+ rsErrorOnDemand = 'opsi is bussy please try it again later. Detailed error message: ';
 
 
 implementation
@@ -417,6 +427,12 @@ var
   PathCustomIcons: String;
   PathDefaultIcons :String;
   PathScreenshots: String;
+  {$IFDEF DARWIN}
+    PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+    PathToCustomSettings: string =  '/etc/opsi.org/opsi-client-kiosk/';
+  {$ENDIF LINUX}
 
 
 function ActionRequestToLocale(actionRequest: string): string;
@@ -870,7 +886,7 @@ begin
 
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    while not DataModuleOCK.SQLQueryProductData.EOF do
+    while not (DataModuleOCK.SQLQueryProductData.EOF) and (counter < 30) do
     begin
       ProductID := DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString;
       { Progressbar progress}
@@ -963,6 +979,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
+    ConfigState.Free;
     if not SoftwareOnDemand then
     begin
       if FormHelpInfo.LabelModeInfo.Caption = '' then
@@ -982,6 +999,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
+    ConfigState.Free;
     if AdminMode and IsAdmin then
     begin
       if FormHelpInfo.LabelModeInfo.Caption = '' then
@@ -999,9 +1017,12 @@ begin
         AdminMode := false;
       end;
     end;
-     //FormProgressWindow.ProgressBarDetail.Position := 100;
-    //Application.ProcessMessages;
+    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.disable-tilesview');
+    //ShowMessage(ConfigState.Text);
+    DisableTilesView := StrToBool(ConfigState.Strings[0]);
     ConfigState.Free;
+    //FormProgressWindow.ProgressBarDetail.Position := 100;
+    //Application.ProcessMessages;
 end;
 
 procedure TFormOpsiClientKiosk.InitDatabase;
@@ -1060,56 +1081,72 @@ begin
     FormProgressWindow.LabelDataLoad.Caption := rsConnectedTo + ' ' +
     OCKOpsiConnection.myservice_url + ' ' + rsAS + ' ' + OCKOpsiConnection.myclientid;
     StatusBar1.Panels[0].Text := rsConnectedTo + ' ' +
-      OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid;
+        OCKOpsiConnection.myservice_url + ' '+ rsAS+ ' ' + OCKOpsiConnection.myclientid
+        + ' ' + rsON + ' ' + OCKOpsiConnection.MyDepotID;
+    //if FormHelpInfo.CheckBoxShowDepot.Checked then
+    //begin
+    //   StatusBar1.Panels[0].Text := StatusBar1.Panels[0].Text + ' ' +
+    //    rsON + ' ' + rsDepot + ' ' + OCKOpsiConnection.MyDepotID;
+    //end;
     FormProgressWindow.ProgressBar1.StepIt;
     Application.ProcessMessages; //FormProgressWindow.ProcessMess;
 end;
 
 procedure TFormOpsiClientKiosk.SetActionRequestTilesView(Request:String; Message:String; OnDemand:boolean);
+var
+    ErrorMessage: string;
 begin
   Screen.Cursor := crHourGlass;
   OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
   DataModuleOCK.SQLQueryProductData.Locate('ProductID',VarArrayOf([SelectedProduct]),[loCaseInsensitive]);
   //DataModuleOCK.SQLQueryProductData.Edit;
   DataSourceProductData.Edit;
-  { On Demand }
   if OnDemand then
   begin
+    { On Demand }
     ShowPagePleaseWait;
-    InstallNow;
-    DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';
-    { install or update }
-    if Request = 'setup' then
+    if InstallNow(ErrorMessage) then
     begin
-      ButtonSoftwareInstall.Visible:= False;
-      ButtonSoftwareReinstall.Visible:= True;
-      ButtonSoftwareUninstall.Visible:= True;
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
-      DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := 'installed';
-      DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString :=
-        DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString;
-       ShowMessage(rsInstallationFinished);
-      //SQLProductData[] =
-    end;
-    { uninstall }
-    if Request = 'uninstall' then
+      DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';
+      { install or update }
+      if Request = 'setup' then
+      begin
+        ButtonSoftwareInstall.Visible:= False;
+        ButtonSoftwareReinstall.Visible:= True;
+        ButtonSoftwareUninstall.Visible:= True;
+        ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
+        ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
+        DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := 'installed';
+        DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString :=
+          DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString;
+         ShowMessage(rsInstallationFinished);
+        //SQLProductData[] =
+      end;
+      { uninstall }
+      if Request = 'uninstall' then
+      begin
+        ButtonSoftwareUninstall.Visible:= False;
+        ButtonSoftwareReinstall.Visible:= False;
+        ButtonSoftwareInstall.Visible:= True;
+        DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := '';
+        DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString := '';
+        ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsNotInstalled;
+        ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clNotInstalled;
+        ShowMessage(rsUninstallationFinished);
+      end;
+      ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+      NotebookProducts.PageIndex := 2;
+    end
+    else
     begin
-      ButtonSoftwareUninstall.Visible:= False;
-      ButtonSoftwareReinstall.Visible:= False;
-      ButtonSoftwareInstall.Visible:= True;
-      DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := '';
-      DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString := '';
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsNotInstalled;
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clNotInstalled;
-      ShowMessage(rsUninstallationFinished);
+     { error occured in onDemand }
+     //DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';
+      ShowMessage(rsErrorOnDemand + ErrorMessage);
     end;
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
-    NotebookProducts.PageIndex := 2;
-  end
-  { next standard event }
+  end //onDemand = True
   else
   begin
+    { next standard event }
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
     {$IFDEF DARWIN}
@@ -1136,14 +1173,14 @@ begin
   if Request = 'none' then
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+    if not DisableTilesView then ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   end
   else
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
+    if not DisableTilesView then ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
   end;
-  ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
+  if not DisableTilesView then ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1177,8 +1214,8 @@ end;
 procedure TFormOpsiClientKiosk.SetView;
 begin
   DataModuleOCK.SQLQueryProductData.Open;
-  if FormHelpInfo.CheckBoxExpertMode.Checked
-    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
+  if (FormHelpInfo.CheckBoxExpertMode.Checked
+    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))) or DisableTilesView
   then SetListView
   else SetTilesView;
   FormOpsiClientKiosk.Repaint;
@@ -1272,8 +1309,9 @@ begin
     ButtonSoftwareReinstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
-    if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
-     else ButtonSoftwareUpdate.Visible := False;
+    //if SoftwareOnDemand then ButtonSoftwareUpdate.Visible := True
+    // else ButtonSoftwareUpdate.Visible := False;
+    ButtonSoftwareUpdate.Visible := False;
   end
   else
   begin
@@ -1704,7 +1742,9 @@ begin
   if (DBComboBox1.Text <> '') and not (DataModuleOCK.SQLQueryProductData.EOF and
     DataModuleOCK.SQLQueryProductData.BOF) then
   begin
-    Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
+    if not DisableTilesView then Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString)
+    else SelectedProduct := DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString;
+
     if DBComboBox1.Text = 'setup' then SetActionRequestListView('setup', rsWillInstallNextEvent, False);
     //if DBComboBox1.Text = 'update' then SetActionRequest('setup', rsWillUpdateNextEvent, False);
     if DBComboBox1.Text = 'uninstall' then SetActionRequestListView('uninstall', rsWillUninstallNextEvent, False);
@@ -2015,7 +2055,7 @@ begin
         { InitDatabase }
         InitDatabase;
         { Initialize GUI }
-        BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
+        if not DisableTilesView then BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
       except
         LogDatei.log('Error during startup.',LLError);
       end;
@@ -2024,7 +2064,7 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-  if FormHelpInfo.CheckBoxExpertMode.Checked then
+  if FormHelpInfo.CheckBoxExpertMode.Checked or DisableTilesView then
   begin
     { Expert mode }
     PanelExpertMode.Visible := True;
@@ -2036,6 +2076,7 @@ begin
       Constraints.MinWidth := MinWidthExpertMode;
       if Width < MinWidthExpertMode then Width := MinWidthExpertMode;
     end;
+    if DisableTilesView then RadioGroupView.Visible := false;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
@@ -2101,7 +2142,7 @@ begin
       LoadDataFromServer;
       InitDatabase;
       { Initialize GUI }
-      BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
+      if not DisableTilesView then BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
     except
       LogDatei.log('Error reloading data.',LLInfo);
     end;
@@ -2208,12 +2249,18 @@ begin
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   //detail_visible := False;
+   {$IFDEF DARWIN}
+  PathDefaultIcons := Application.Location + '../Resources/default/product_icons/';
+  PathCustomIcons := PathToCustomSettings + 'ock_custom/product_icons/';
+  PathScreenshots := PathToCustomSettings + 'ock_custom/screenshots/';
+   {$ELSE}
   PathDefaultIcons := Application.Location+ 'default' + PathDelim +
     'product_icons' + PathDelim;
   PathCustomIcons := Application.Location+ 'ock_custom' + PathDelim +
     'product_icons' + PathDelim;
   PathScreenshots := Application.Location+ 'ock_custom' + PathDelim +
    'screenshots' + PathDelim;
+   {$ENDIF DARWIN}
   LogDatei.log('Default icon path: ' + PathDefaultIcons, LLinfo);
   LogDatei.log('Custom icon path: ' + PathCustomIcons, LLinfo);
   LogDatei.log('Screenshot path: ' + PathScreenshots, LLinfo);
@@ -2254,6 +2301,14 @@ begin
     begin
       ClientID := Application.GetOptionValue('fqdn');
       LogDatei.log('ClientID (option = fqdn): ' + ClientID, LLDebug);
+    end
+    else
+    begin
+      {$IFDEF UNIX}
+       ClientID := GetClientID(PathToCustomSettings + 'opsiclientkiosk.conf');
+      {$ELSE}
+       ClientID := GetClientID(Application.Location +'opsiclientkiosk.conf');
+      {$ENDIF UNIX}
     end;
     if Application.HasOption('lang') then
     begin
@@ -2445,10 +2500,15 @@ end;
 procedure TFormOpsiClientKiosk.InitSkin;
 begin
   { SkinPaths }
+  {$IFDEF DARWIN}
+  CustomSkinPath := PathToCustomSettings + 'ock_custom/skin/';
+  DefaultSkinPath := Application.Location + '../Resources/default/skin/';
+  {$ELSE}
   CustomSkinPath := Application.Location +
     'ock_custom' + PathDelim + 'skin' + PathDelim;
   DefaultSkinPath := Application.Location +
     'default' + PathDelim + 'skin' + PathDelim;
+  {$ENDIF DARWIN}
     {Loading header image}
   if FileExists(CustomSkinPath + 'header.png') then
   begin
@@ -2481,6 +2541,15 @@ begin
     end;
 end;
 
+function TFormOpsiClientKiosk.GetClientID(PathToConfigFile:string): string;
+var
+  KioskConfig:TIniFile;
+begin
+  KioskConfig :=  TIniFile.Create(PathToConfigFile);
+  Result := KioskConfig.ReadString('webservice','ClientID','');
+  FreeAndNil(KioskConfig);
+end;
+
 
 function TFormOpsiClientKiosk.InitLogging(const LogFileName, CallingMethod: string;
   MyLogLevel:integer): boolean;
@@ -2506,17 +2575,18 @@ end;
 procedure TFormOpsiClientKiosk.InitDBGrids;
 begin
   { DBGrid1 }
-  DBGrid1.Columns.Add.FieldName := 'ProductId';
-  DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
-  DBGrid1.Columns.Items[0].Width := 150;
+  //DBGrid1.Columns.Add.FieldName := 'ProductId';
+  //DBGrid1.Columns.Items[0].Title.Caption := rsProductID;//'ProductId';
+  //DBGrid1.Columns.Items[0].Width := 150;
   DBGrid1.Columns.Add.FieldName := 'ProductName';
-  DBGrid1.Columns.Items[1].Width := 300;
+  DBGrid1.Columns.Items[0].Title.Caption := rsProductName;
+  DBGrid1.Columns.Items[0].Width := 300;
   DBGrid1.Columns.Add.FieldName := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Title.Caption := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Width := 100;
+  DBGrid1.Columns.Items[1].Title.Caption := rsStatus;//'InstallationStatus';
+  DBGrid1.Columns.Items[1].Width := 100;
   DBGrid1.Columns.Add.FieldName := 'actionrequest';
-  DBGrid1.Columns.Items[3].Title.Caption := 'ActionRequest';
-  DBGrid1.Columns.Items[3].Width := 100;
+  DBGrid1.Columns.Items[2].Title.Caption := rsRequest;//'ActionRequest';
+  DBGrid1.Columns.Items[2].Width := 100;
   //DBGrid1.Columns.Add.FieldName := 'updatePossible';
   //DBGrid1.Columns.Items[4].Title.Caption := 'updatePossible';
   //DBGrid1.Columns.Items[4].Width := 100;
@@ -2536,18 +2606,29 @@ begin
   DBGrid2.Columns.Items[3].Width := 100;
 end;
 
-procedure TFormOpsiClientKiosk.InstallNow;
+function TFormOpsiClientKiosk.InstallNow(var aErrorMessage:string ): boolean;
+var
+  i : integer;
 begin
-  //OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
-  OCKOpsiConnection.DoActionsOnDemand;
-  sleep(10000);
-  while osprocesses.numberOfProcessInstances('notifier') > 0 do
+  //Test loop to generate error message
+  //for i:= 0 to 6 do
+  //begin
+  //  OCKOpsiConnection.DoActionsOnDemand(aErrorMessage);
+  //  sleep(100);
+  //end;
+  OCKOpsiConnection.DoActionsOnDemand(aErrorMessage);
+  if aErrorMessage  = '' then
   begin
-    Application.ProcessMessages;
-    //Instances := ockunique.numberOfProcessInstances('notifier');
-    sleep(100);
-    //Instances := ockunique.numberOfProcessInstances('notifier');
-  end;
+    sleep(10000);
+    while osprocesses.numberOfProcessInstances('notifier') > 0 do
+    begin
+      Application.ProcessMessages;
+      //Instances := ockunique.numberOfProcessInstances('notifier');
+      sleep(100);
+      //Instances := ockunique.numberOfProcessInstances('notifier');
+    end;
+    Result := True;
+  end else Result:= False;
 end;
 
 

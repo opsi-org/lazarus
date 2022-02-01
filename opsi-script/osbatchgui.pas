@@ -112,7 +112,7 @@ type
     { Public-Deklarationen }
 
     //GUIControl interface
-    procedure LoadSkin(const SkinDirectory: string); override;
+    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true); override;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
     procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); override;
     procedure SetForceStayOnTop(StayOnTop: boolean);override;
@@ -409,7 +409,7 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string);
+procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
 var
   skindir : String='';
   skinFile : String='';
@@ -436,7 +436,8 @@ begin
   skinFile := skinDir + PathDelim + 'skin.ini';
   if FileExists(skinFile) then
   begin
-    LabelInfo.Caption := rsLoadingSkin;
+    if setLabelInfo then
+      LabelInfo.Caption := rsLoadingSkin;
     try
       skinIni := TIniFile.Create(skinFile);
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
@@ -1014,6 +1015,7 @@ begin
   case ProgressValueID of
     pPercent: ShowProgress(Progress);
   end;
+  Application.ProcessMessages;
 end;
 
 procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
@@ -1249,7 +1251,6 @@ begin
   Position:=poScreenCenter;
   MoveToDefaultPosition;
 end;
-
 
 
 initialization

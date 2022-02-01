@@ -256,7 +256,9 @@ begin
   //free_runtime_objects;
   //DataModule1.DataModuleDestroy(nil);
   logdatei.log('terminate', LLnotice);
-  Application.Terminate;
+  //Application.Terminate;
+  DataModule1.DataModuleDestroy(nil);
+  logdatei.log('Program halted (2)', LLnotice);
   Halt(0);
 end;
 

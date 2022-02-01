@@ -24,7 +24,7 @@ uses
   JwaWinnt,
   jwawinbase,
   JwaWindows,
-    Windows;
+  Windows;
 //,  DSiWin32;
 
 var
@@ -177,7 +177,7 @@ function GetOSVersionEx(var lpVersionInformation: TOSVersionInfoEx): LPBOOL;
 function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
 function GetNTVersionMajor: Dword;
 function GetNTVersionMinor: Dword;
-
+function GetMSVersionName: string;
 
 
 implementation
@@ -196,6 +196,7 @@ begin
     Result := vi.dwMajorVersion;
 end;
 
+
 function GetNTVersionMinor: Dword;
 var
   vi: TOSVersionInfo;
@@ -210,6 +211,42 @@ begin
     Result := vi.dwMinorVersion;
 end;
 
+
+function GetMSVersionName: string;
+var
+  Major, Minor, BuildNumber: integer;
+  MSVersionNumber, MSVersionName: string;
+begin
+  Major := GetNTVersionMajor;
+  Minor := GetNTVersionMinor;
+  MSVersionNumber := IntToStr(Major) + '.' + IntToStr(Minor);
+  // ms version number -> ms version name
+  // compare https://docs.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
+  if MSVersionNumber = '6.1' then
+    // windows 7
+    MSVersionName := '7.0'
+  else if MSVersionNumber = '6.2' then
+    // windows 8
+    MSVersionName := '8.0'
+  else if MSVersionNumber = '6.3' then
+    // windows 8.1
+    MSVersionName := '8.1'
+  else if MSVersionNumber = '10.0' then
+  begin
+    // windows 10 and 11
+    // differentiate by build number
+    BuildNumber := StrToInt(GetSystemOSVersionInfoEx('build_number'));
+    if BuildNumber >= 22000 then
+      MSVersionName := '11.0'
+    else
+      MSVersionName := '10.0';
+  end
+  else
+    // versions 5.0(windows 2000), 5.1(windows XP), 6.0(windows vista) stay the same
+    MSVersionName := MSVersionNumber;
+
+  Result := MSVersionName;
+end;
 
 
 function GetWinDirectory: string;
@@ -234,7 +271,7 @@ begin
   // size 144 did not work after changed to laz1.6/FPC3
   // changed to 500 and mixed with DSiGetSystemDirectory
   Result := '';
-  FillByte (path,SizeOf(path),0);
+  FillByte(path, SizeOf(path), 0);
   Size := GetSystemDirectory(@path, length(path));
   Result := StrPas(PChar(@path));
   if Result[length(Result)] <> PathDelim then
@@ -465,8 +502,7 @@ end;
 
 
 initialization
-  @GetProductInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'),
-    'GetProductInfo');
+  @GetProductInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'), 'GetProductInfo');
   @GetNativeSystemInfo := GetProcAddress(GetModuleHandle('KERNEL32.DLL'),
     'GetNativeSystemInfo');
 

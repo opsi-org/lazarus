@@ -26,6 +26,8 @@ uses
   SysUtils, Classes, Variants,
   oslog,
   superobject,
+  osjson,
+  strutils,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
@@ -164,6 +166,7 @@ type
     FOpsiMethodName: string;
     FParameterlist: TStringList;
     Fhashlist: TStringList;
+    FTimeout: integer;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -179,6 +182,7 @@ type
     property parameterlist: TStringList read FParameterlist write FParameterlist;
     property hashlist: TStringList read Fhashlist write Fhashlist;
     property jsonUrlString: string read getJsonUrlString;
+    property timeout: integer read FTimeout write FTimeout;
 
   end;
 
@@ -351,7 +355,7 @@ type
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
-    function getOpsiModules: ISuperObject;
+    function getOpsiModules: TStringList;
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
@@ -400,10 +404,10 @@ type
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
     function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
-      defaultlist: TStringList): TStringList; overload;
+      defaultlist: TStringList; var usedefault : boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; myClientId: string;
-      myProductId: string): TStringList; overload;
+      myProductId: string; var usedefault : boolean): TStringList; overload;
     // getInstallableLocalBootProductIds_list
     function getProductState: TProductState; override;
     function getProductAction: TAction; override;
@@ -1209,21 +1213,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1257,6 +1261,8 @@ end;
 procedure TJsonThroughHTTPS.createSocket(const agent, ip, port: string);
 begin
   {$IFDEF SYNAPSE}
+  // Timeout
+  // https://forum.lazarus.freepascal.org/index.php?topic=40167.0
   try
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
@@ -1503,6 +1509,10 @@ var
   //sendresultstring: string;
   finished: boolean;
   {$ENDIF SYNAPSE}
+   oldTwistedServer  : string;
+   oldTwistedServerVer : integer = 0;
+   opsi40 : boolean = false;
+
 
 begin
   try
@@ -1612,6 +1622,11 @@ begin
             //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+        if omc.Timeout > 0 then
+        begin
+          HTTPSender.Timeout := omc.Timeout * 1000;
+          HTTPSender.Sock.SetRecvTimeout(omc.Timeout * 1000);
+        end;
 
 
         if methodGet then
@@ -1740,15 +1755,35 @@ begin
                   LogDatei.log_prog(
                     'No Content-Encoding header. Guess identity', llDebug);
                 end;
+                LogDatei.log_prog('Content-Type: ' +
+                    trim(HTTPSender.Headers.Values['Content-Type']), llDebug);
+                oldTwistedServer :=  trim(HTTPSender.Headers.Values['Server']);
+                if StartsText('Twisted/', oldTwistedServer) then
+                begin
+                   oldTwistedServer := copy(oldTwistedServer, 9,2);
+                   LogDatei.log_prog('Server: ' +
+                    oldTwistedServer, llDebug);
+                   if TryStrToInt(oldTwistedServer,oldTwistedServerVer) then
+                     if (oldTwistedServerVer < 17) and (oldTwistedServerVer > 0) then
+                     begin
+                     opsi40:= true;
+                     LogDatei.log_prog('opsi 4.0 Server detected: Twisted/ < 17: ' +
+                    oldTwistedServer, llDebug);
+                     end;
+                end;
+                LogDatei.log_prog('Server: ' +
+                    trim(HTTPSender.Headers.Values['Server']), llDebug);
 
                 { identity = uncompressed}
                 if (ContentEncoding = 'identity') then
                 begin
                   ReceiveStream.LoadFromStream(HTTPSender.Document);
+                  LogDatei.log_prog('identity : loaded uncompressed to ReceiveStream', llDebug);
                 end
                 else
                 { deflate = zlib format}
-                if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
+                if (ContentEncoding = 'deflate') or (ContentEncoding = '')
+                  or opsi40 then
                 begin
                   //DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
                   //ReceiveStream.Seek(0, 0);
@@ -1768,12 +1803,14 @@ begin
                   until readcount < 655360;
                   DeCompressionReceiveStream.Free;
                   FreeMem(buffer);
+                  LogDatei.log_prog('deflate : loaded zlib compressed to ReceiveStream', llDebug);
                 end
                 else
                 { gzip = gzip format}
                 if ContentEncoding = 'gzip' then
                 begin
                   unzipStream(HTTPSender.Document, ReceiveStream);
+                  LogDatei.log_prog('gzip : loaded gzip compressed to ReceiveStream', llDebug);
                 end
                 else
                   LogDatei.log('Unknown Content-Encoding: ' +
@@ -1804,14 +1841,37 @@ begin
               if e.message = 'HTTP/1.1 401 Unauthorized' then
                 FValidCredentials := False;
               t := s;
-              FCommunicationMode := -1;
-              Inc(CommunicationMode);
-              if (CommunicationMode <= 2) then
+              if HTTPSender.ResultCode = 400 then
               begin
-                LogDatei.log('Retry with communicationmode: ' +
-                  IntToStr(communicationmode), LLinfo);
-                Result := retrieveJSONObject(omc, logging, retry,
-                  readOmcMap, CommunicationMode);
+                // we have a 400 Bad Request - perhaps opsi server with other communication mode
+                LogDatei.log(
+                  'We had a 400 (bad request) result - so we retry with other parameters / communication compatibility modes',
+                  LLInfo);
+                FCommunicationMode := -1;
+                Inc(CommunicationMode);
+                if (CommunicationMode <= 2) then
+                begin
+                  LogDatei.log('Retry with communicationmode: ' +
+                    IntToStr(communicationmode), LLinfo);
+                  Result := retrieveJSONObject(omc, logging, retry,
+                    readOmcMap, CommunicationMode);
+                end;
+              end;
+              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
+              begin
+                // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
+                LogDatei.log(
+                  'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
+                  LLInfo);
+                FCommunicationMode := -1;
+                Inc(CommunicationMode);
+                if (CommunicationMode <= 2) then
+                begin
+                  LogDatei.log('Retry with communicationmode: ' +
+                    IntToStr(communicationmode), LLinfo);
+                  Result := retrieveJSONObject(omc, logging, retry,
+                    readOmcMap, CommunicationMode);
+                end;
               end;
               finished := True;
             end;
@@ -2176,6 +2236,22 @@ begin
         errorOccured := True;
         FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
         LogDatei.log('Exception in retrieveJSONObject:1: ' + e.message, LLdebug2);
+        if (E.Message = 'Stream read error') then
+                      begin
+                        // we have a Stream read error - perhaps opsi server with other communication mode
+                        LogDatei.log(
+                          'We had a Stream read error result - so we retry with other parameters / communication compatibility modes',
+                          LLInfo);
+                        FCommunicationMode := -1;
+                        Inc(CommunicationMode);
+                        if (CommunicationMode <= 2) then
+                        begin
+                          LogDatei.log('Retry with communicationmode: ' +
+                            IntToStr(communicationmode), LLinfo);
+                          Result := retrieveJSONObject(omc, logging, retry,
+                            readOmcMap, CommunicationMode);
+                        end;
+                      end;
       end;
     end;
     if not finished then
@@ -2994,15 +3070,22 @@ begin
           LogDatei.log_prog(
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
-          FCommunicationMode := -1;
-          //-1 means CommunicationMode is not set e.g. it is unknown
-          // retry with other parameters
-          Inc(CommunicationMode);
-          if (CommunicationMode <= 2) then
+          if HTTPSender.ResultCode = 400 then
           begin
-            LogDatei.log('Retry with communicationmode: ' + IntToStr(
-              communicationmode), LLinfo);
-            Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+            // we have a 400 Bad Request - perhaps opsi server with other communication mode
+            LogDatei.log(
+              'We had a 400 (bad request) result - so we retry with other parameters / communication compatibility modes',
+              LLInfo);
+            FCommunicationMode := -1;
+            //-1 means CommunicationMode is not set e.g. it is unknown
+            // retry with other parameters
+            Inc(CommunicationMode);
+            if (CommunicationMode <= 2) then
+            begin
+              LogDatei.log('Retry with communicationmode: ' + IntToStr(
+                communicationmode), LLinfo);
+              Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+            end;
           end;
         end;
           (*
@@ -3303,14 +3386,18 @@ begin
       exit;
     end;
     // we have something like
-    // {"reslut":[{subkey:["a","r","r","a","y"]}]}
+    // {"result":[{subkey:["a","r","r","a","y"]}]}
     // get value of path 'result' as Array (which contains one object)
-    jA := jO.A['result'];
-    testresult := jA.S[0];
-    // get this single object
-    jO1 := jA.O[0];
-    // get from this object the value for the key: subkey as array
-    jA1 := jO1.A[subkey];
+    if jsonAsObjectHasKey(jO.AsString, 'result') then
+    begin
+      jA := jO.A['result'];
+      if jA.Length > 0 then
+      begin
+        testresult := jA.S[0];
+        // get this single object
+        jO1 := jA.O[0];
+        // get from this object the value for the key: subkey as array
+        jA1 := jO1.A[subkey];
     (*
     if jA1.Length > 0 then
     begin
@@ -3318,20 +3405,34 @@ begin
       LogDatei.log('ja1 as json: '+testresult, LLDebug2);
     end;
      *)
-    if jA1 <> nil then
-    begin
-      //testresult := jA.
-      for i := 0 to jA1.Length - 1 do
+        if jA1 <> nil then
+        begin
+          //testresult := jA.
+          for i := 0 to jA1.Length - 1 do
+          begin
+            testresult := jA1.S[i];
+            Result.append(jA1.S[i]);
+          end;
+        end;
+      end
+      else
       begin
-        testresult := jA1.S[i];
-        Result.append(jA1.S[i]);
+        Logdatei.log('Error in getSubListResult: received object: ' +
+          jO.AsString + ' has empty "result"', LLWarning);
+        Result := nil;
       end;
+    end
+    else
+    begin
+      Logdatei.log('Error in getSubListResult: received object: ' +
+        jO.AsString + ' has no key "result"', LLError);
+      Result := nil;
     end;
   except
     on E: Exception do
     begin
       Logdatei.log_prog('Exception in getSubListResult, system message: "' +
-        E.Message + '"', LLwarning);
+        E.Message + ' with received object: ' + jO.AsString + '"', LLError);
       Result := nil;
     end
   end;
@@ -3532,13 +3633,114 @@ begin
 end;
 
 
-function TOpsi4Data.getOpsiModules: ISuperObject;
-  //  lazily initalizes FOpsiModules
+function TOpsi4Data.getOpsiModules: TStringList;
+{
+Juristischer Hinweis:
+Dies ist Code zum Schutz der Begrenzung der Nutzung kostenpflichtiger opsi Erweiterungen.
+Auch wenn dies Opensource Code (AGPLv3) ist, kann die Nutzung oder Verbreitung
+von Veränderungen dieses Codes Illegal sein, insbesondere wenn diese
+Veränderungen das Schutzziel schwächen oder sonst wie verletzen.
+Es kann eine Verletzung der AGB's der Firma uib gmbh sein.
+Darüberhinaus kann es eine strafbare Verletzung des Urheberrechts sein z.B.  des
+"§ 95a Schutz technischer Maßnahmen" des deutschen
+"Gesetz über Urheberrecht und verwandte Schutzrechte (Urheberrechtsgesetz)"
+
+Legal Notice:
+This code to protect the limits of using of opsi extensions with costs.
+Even if this is open source code (AGPLv3), it may be illegal to use or
+distribute modifications this code,
+especially if these modifications compromise the protection goals.
+It may be a violation of the General Terms and Conditions of the uib gmbh.
+It may be also a punishable violation of the Copyright, so for example of the
+"§ 95a Schutz technischer Maßnahmen"  of the german law:
+"Gesetz über Urheberrecht und verwandte Schutzrechte (Urheberrechtsgesetz)"
+}
 var
   omc: TOpsiMethodCall;
   //teststring : string;
   //testbool : boolean;
+  myModulesList: TStringList;
+  myJsonModulesArray: ISuperObject;
+  i: integer;
+  str: string;
 begin
+  myModulesList := TStringList.Create;
+  FOpsiInformation := nil;
+  if FOpsiInformation = nil then
+  begin
+    omc := TOpsiMethodCall.Create('backend_getLicensingInfo', []);
+    if omc <> nil then
+    begin
+      try
+        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+        if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+          nil) and (FopsiInformation.O['result'].O['available_modules'] <> nil) then
+        begin
+          myJsonModulesArray := FopsiInformation.O['result'].O['available_modules'];
+          for i := 0 to myJsonModulesArray.AsArray.Length - 1 do
+          begin
+            str := myJsonModulesArray.AsArray.S[i];
+            myModulesList.Add(str);
+          end;
+          Result := myModulesList;
+        end
+        else
+        begin
+          //  backend_getLicensingInfo failed - retry with backend_info
+          LogDatei.log(
+            'Problem getting backend_getLicensingInfo from service - perhaps old server, we fallback to backend_info',
+            LLwarning);
+          FOpsiInformation := nil;
+          if FOpsiInformation = nil then
+          begin
+            omc := TOpsiMethodCall.Create('backend_info', []);
+            if omc <> nil then
+            begin
+              try
+                FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+                if (FOpsiInformation <> nil) and
+                  (FOpsiInformation.O['result'] <> nil) and
+                  (FopsiInformation.O['result'].O['modules'] <> nil) then
+                begin
+                  FOpsiModules := FopsiInformation.O['result'].O['modules'];
+                  if FOpsiModules <> nil then
+                    if FOpsiModules.AsObject.GetNames.IsType(stArray) then
+                    begin
+
+                      for i := 0 to FOpsiModules.AsObject.GetNames.AsArray.Length - 1 do
+                      begin
+                        if FOpsiModules.AsObject.GetNames.AsArray.B[i] then
+                        begin
+                          str := FOpsiModules.AsObject.GetNames.AsArray.S[i];
+                          myModulesList.Add(str);
+                        end;
+                        Result := myModulesList;
+                      end;
+                    end;
+                end
+                else
+                  LogDatei.log('Problem getting backend_info from service', LLerror);
+              except
+                LogDatei.log_prog('Exeception getting backend_info from service',
+                  LLerror);
+              end;
+            end
+            else
+              LogDatei.log_prog('Problem creating OpsiMethodCall backend_info', LLerror);
+          end;
+        end;
+      except
+        LogDatei.log_prog('Exeception backend_getLicensingInfocalling ', LLerror);
+      end;
+    end
+    else
+      LogDatei.log_prog('Problem creating OpsiMethodCall backend_getLicensingInfo',
+        LLerror);
+  end;
+
+
+
+(*
   FOpsiModules := nil;
   FOpsiInformation := nil;
   if FOpsiInformation = nil then
@@ -3567,25 +3769,25 @@ begin
   //teststring := FOpsiModules.S['license_management'];
   //testbool := FOpsiModules.B['license_management'];
   Result := FOpsiModules;
+  *)
   omc.Free;
 end;
 
 
 function TOpsi4Data.withLicenceManagement: boolean;
 var
-  mymodules: ISuperObject;
+  index: integer;
+  mylist: TStringList;
 begin
   try
-    mymodules := getOpsiModules;
-    LogDatei.log('modules found', LLDebug);
-    if mymodules <> nil then
-      Result := mymodules.B['license_management']
-    else
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
     begin
-      LogDatei.log('licence management info not found (modules = nil)',
-        LLWarning);
-      Result := False;
+      index := mylist.IndexOf('license_management');
+      FreeAndNil(mylist);
     end;
+    if index >= 0 then Result := True;
   except
     LogDatei.log(
       'licence management info not found (exception in withLicenceManagement)',
@@ -3595,6 +3797,27 @@ begin
 end;
 
 function TOpsi4Data.withRoamingProfiles: boolean;
+var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('roaming_profiles');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'roaming_profiles info not found (exception in withRoamingProfiles)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
 var
   mymodules: ISuperObject;
 begin
@@ -3615,6 +3838,7 @@ begin
     Result := False;
   end;
 end;
+*)
 
 function TOpsi4Data.isConnected: boolean;
 var
@@ -3689,6 +3913,27 @@ end;
 
 function TOpsi4Data.linuxAgentActivated: boolean;
 var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('linux_agent');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'linux_agent info not found (exception in linuxAgentActivated)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
+var
   mymodules: ISuperObject;
 begin
   try
@@ -3708,8 +3953,30 @@ begin
     Result := False;
   end;
 end;
+*)
 
 function TOpsi4Data.macosAgentActivated: boolean;
+var
+  index: integer;
+begin
+  try
+    Result := False;
+    mylist := getOpsiModules;
+    if Assigned(mylist) then
+    begin
+      index := mylist.IndexOf('macos_agent');
+      FreeAndNil(mylist);
+    end;
+    if index >= 0 then Result := True;
+  except
+    LogDatei.log(
+      'macos_agent info not found (exception in macosAgentActivated)',
+      LLWarning);
+    Result := False;
+  end;
+end;
+
+(*
 var
   mymodules: ISuperObject;
 begin
@@ -3730,6 +3997,7 @@ begin
     Result := False;
   end;
 end;
+*)
 
 procedure TOpsi4Data.saveOpsiConf;
 begin
@@ -4370,18 +4638,19 @@ begin
       //Logdatei.log('line2: '+t, LLDebug2);
       try
         t2 := t;
-        if t2<>'' then
+        if t2 <> '' then
         begin
-          if FindInvalidUTF8Codepoint(PChar(t2),length(t2)) > -1 then
+          if FindInvalidUTF8Codepoint(PChar(t2), length(t2)) > -1 then
           begin
             { utf8fixbroken may freeze do 06.10.2020 }
             //UTF8FixBroken(t2);
             t := 'log line contains non UTF8 chars';
           end
-          else t := t2;
+          else
+            t := t2;
         end;
         { Utf8EscapeControlChars calls utf8fixbroken see above }
-       // t := Utf8EscapeControlChars(t2);
+        // t := Utf8EscapeControlChars(t2);
         //Logdatei.log('line3: '+t, LLDebug2);
       except
         on E: Exception do
@@ -4400,17 +4669,17 @@ begin
       //{$ENDIF WINDOWS}
       //utf8str := lconvencoding.ConvertEncoding(t,lconvencoding.GetDefaultTextEncoding,'utf8');
 
-      Logdatei.log('wrote line: '+t, LLDebug2);
+      Logdatei.log('wrote line: ' + t, LLDebug2);
       //logstream.write(t[1],length(t));
       found := Logdatei.getPartLine(t);
     end;
     if appendmode then
     begin
-      s := '", "' + actualClient + '", "true"], "id": 1}';
+      s := '", "' + actualClient + '", true], "id": 1}';
     end
     else
     begin
-      s := '", "' + actualClient + '", "false"], "id": 1}';
+      s := '", "' + actualClient + '", false], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
     //UTF8FixBroken(s);
@@ -4622,23 +4891,25 @@ begin
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList): TStringList;
+  defaultlist: TStringList; var usedefault : boolean): TStringList;
 var
   clientId, values: string;
 begin
   try
+    usedefault := false;
     Result := TStringList.Create;
     if Productvars <> nil then
     begin
       clientid := actualclient;
       values := Productvars.Values['productId'];
       Result.AddStrings(TStrings(getProductPropertyList(myproperty,
-        defaultlist, clientid, values)));
+        defaultlist, clientid, values,usedefault)));
     end
     else
     begin
       LogDatei.log('opsi.data.productvars=nil - using defaults.', LLWarning);
       Result.AddStrings(TStrings(defaultlist));
+      usedefault := true;
     end;
 
   except
@@ -4648,12 +4919,13 @@ begin
         E.Message + '"', LLwarning);
       LogDatei.log(' - using defaults.', LLWarning);
       Result.AddStrings(defaultlist);
+      usedefault := true;
     end
   end;
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList; myClientId: string; myProductId: string): TStringList;
+  defaultlist: TStringList; myClientId: string; myProductId: string; var usedefault : boolean): TStringList;
 var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
@@ -4661,6 +4933,7 @@ var
   propertyEntry: ISuperObject;
 begin
   Result := TStringList.Create;
+  usedefault := false;
   try
     try
       if setAddProductPropertyStateDefaults(True) then
@@ -4691,6 +4964,7 @@ begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
           Result.AddStrings(TStrings(defaultlist));
+          usedefault := true;
         end;
       end
       else
@@ -4698,6 +4972,7 @@ begin
         LogDatei.log('Could not set backend properties - using defaults.',
           LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end;
     except
       on E: Exception do
@@ -4706,6 +4981,7 @@ begin
           E.Message + '"', LLwarning);
         LogDatei.log(' - using defaults.', LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end
     end;
   finally

@@ -11,7 +11,7 @@ variables:
     description: "Project name of the project the pipline should run on."
 
   BINARY_VERSION:
-    value: "4.12.4.22"
+    value: "4.12.4.30"
     description: "Version of the binary"
 
   PLATFORM:
@@ -19,10 +19,10 @@ variables:
     description: "For which build modes should the lazarus project be compiled?  
     all: build project for all platforms (Win32, Win64, Linux, MacOS)
     Windows (Linux, MacOS):  build project for the specified platform only"
-  
-# Control of the Pipline  
+
+# Control of the Pipline
 workflow:
-  rules: 
+  rules:
     - if: '$RUN_PIPLINE == "true"' # && $CI_PIPELINE_SOURCE == "push"'
     # - if: '$CI_COMMIT_MESSAGE =~ /-compile$/ && $CI_PIPELINE_SOURCE == "push"'
       when: always
@@ -30,6 +30,10 @@ workflow:
 stages:
   - build
   - publish
+
+default:
+  before_script:
+    - echo "Execute this command before any 'script:' commands."
 
 #***************************************#
 #  opsi-script pipline                  #
@@ -63,6 +67,24 @@ compile opsi-quickinstall linux:
     - cp -r opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/* opsi-misc/opsi-quickinstall/build/opsi-quickinstall/l-opsi-server_$MAINVERSION-$SUBVERSION
     #- cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ &&
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
+   
+    #---CODE SIGNING OPSI-SCRIPT---
+    - echo "Code signing opsi-script for macos"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
+    
+    #---CODE SIGNING OPSI-SCRIPT-GUI---
+    - echo "Code signing opsi-script-gui"
+    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
+    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
+    - codesign --verify --verbose --strict $PATH_TO_BINARY
+    - codesign -dv -r- $PATH_TO_BINARY
+    - codesign -vvv --deep --strict $PATH_TO_BINARY
   artifacts:
     name: "opsi-quickinstall $BINARY_VERSION linux"
     paths:

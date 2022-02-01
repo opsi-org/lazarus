@@ -6,13 +6,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-20 08:33+0000\n"
-"Last-Translator: Jan Werner <j.werner@uib.de>\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2021-12-20 10:41+0000\n"
+"Last-Translator: Peter De Ridder <peter.deridder@digipolis.be>\n"
 "Language-Team: Dutch (http://www.transifex.com/opsi-org/opsiorg/language/nl/)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: installdlg.rserrorondemand
+msgctxt "installdlg.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
+msgstr ""
 
 #: ockimagestodepot.rscopyicons
 msgid "Copy icons and screenshots..."
@@ -127,6 +134,10 @@ msgstr "Verbonden met"
 msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr ""
 
+#: opsiclientkioskgui.rsdepot
+msgid "depot"
+msgstr ""
+
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
 msgstr ""
@@ -141,6 +152,11 @@ msgstr ""
 
 #: opsiclientkioskgui.rsdoyouwantupdate
 msgid "Do you want to update "
+msgstr ""
+
+#: opsiclientkioskgui.rserrorondemand
+msgctxt "opsiclientkioskgui.rserrorondemand"
+msgid "opsi is bussy please try it again later. Detailed error message: "
 msgstr ""
 
 #: opsiclientkioskgui.rsinstall
@@ -219,14 +235,34 @@ msgstr ""
 msgid "Now"
 msgstr ""
 
+#: opsiclientkioskgui.rson
+msgid "on"
+msgstr ""
+
+#: opsiclientkioskgui.rsproductid
+msgid "ID"
+msgstr ""
+
+#: opsiclientkioskgui.rsproductname
+msgid "Software"
+msgstr ""
+
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Herladen"
 
+#: opsiclientkioskgui.rsrequest
+msgid "Request"
+msgstr ""
+
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Onbekend"
+
+#: opsiclientkioskgui.rsstatus
+msgid "Status"
+msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgid "Store actions"
@@ -337,7 +373,9 @@ msgid "Install at next Standard Event (e.g. Reboot)"
 msgstr "Installeer bij de volgende standaardgebeurtenis (bvb herstart) "
 
 #: tfinstalldlg.bitbtnnow.caption
-msgid "Install now (Close all Applications)"
+#, fuzzy
+#| msgid "Install now (Close all Applications)"
+msgid "Install now (Close all Applications, Kiosk is closed automatically)"
 msgstr "Installeer nu (sluit alle applicaties) "
 
 #: tfinstalldlg.caption
@@ -358,7 +396,6 @@ msgid "Help"
 msgstr "Help"
 
 #: tformhelpinfo.checkboxexpertmode.caption
-msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Expert modus"
 
@@ -411,7 +448,6 @@ msgid "LabelVersion"
 msgstr "LabelVersie"
 
 #: tformhelpinfo.speedbuttonmanual.caption
-msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
 msgstr ""
 
@@ -606,14 +642,13 @@ msgid "Dependencies / Priority"
 msgstr "Afhankelijkheid / Prioriteit"
 
 #: tformpasswordquery.buttoncancel.caption
-#, fuzzy
 msgctxt "tformpasswordquery.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Annuleren"
 
 #: tformpasswordquery.buttonok.caption
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: tformpasswordquery.caption
 msgid "FormPasswordQuery"
@@ -622,7 +657,7 @@ msgstr ""
 #: tformpasswordquery.editpassword.editlabel.caption
 msgctxt "tformpasswordquery.editpassword.editlabel.caption"
 msgid "Password"
-msgstr ""
+msgstr "Wachtwoord"
 
 #: tformpasswordquery.labeldescription.caption
 msgid "Please authorize you with a sudo or root account:  "
@@ -631,7 +666,7 @@ msgstr ""
 #: tformpasswordquery.sudoorroot.caption
 msgctxt "tformpasswordquery.sudoorroot.caption"
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
@@ -651,7 +686,7 @@ msgstr ""
 
 #: tformsaveimagesondepot.buttonclose.caption
 msgid "Close"
-msgstr ""
+msgstr "Sluiten"
 
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
@@ -679,15 +714,15 @@ msgstr ""
 
 #: tformsaveimagesondepot.groupboxprogress.caption
 msgid "Progress"
-msgstr ""
+msgstr "Voortgang"
 
 #: tformsaveimagesondepot.labelpassword.caption
 msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Wachtwoord"
 
 #: tformsaveimagesondepot.labeluser.caption
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 

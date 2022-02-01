@@ -54,6 +54,9 @@ function createUrl(urlcomponents : TStringList) : string;
 var
   uriobj : TUri;
 begin
+  // initialize uriobj.HasAuthority to true
+  // it is not done in URIParser and results so to random results
+  uriobj.HasAuthority:=true;
   uriobj.Protocol := urlcomponents.Values['protocol'];
   uriobj.Username := urlcomponents.Values['username'];
   uriobj.Password := urlcomponents.Values['password'];

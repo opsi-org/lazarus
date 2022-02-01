@@ -2167,6 +2167,7 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
+          LogDatei.WriteComponentFile:= osconf.configWriteProductLogFile;
           logDatei.log('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
             LLessential);
           logDatei.log('default_loglevel: ' + IntToStr(osconf.default_loglevel),

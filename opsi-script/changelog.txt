@@ -3,6 +3,112 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.4.36) stable; urgency=low
+
+  * oszip: show progressbar while zipping or unzipping files
+  * oswebservice: getOpsiModules: integrate new backend_getLicensingInfo method with fallback to old backend_info
+  * oswebservice: retrieveJSONObject: retry on other communication mode only on 400- bad request result
+  * oswebservice: retrieveJSONObjectByHttpPost: retry on other communication mode only on 400- bad request result
+  * oswebservice: getOpsiModules: Legal notice to our license protection
+  * osfunclin: linIsUefi: implemented uefi test for linux
+  * boolean function runningOnUefi now also supports linux
+  * updated unit uSMBIOS (TSMBIOS) (https://code.google.com/p/tsmbios/)
+  * uSMBIOS: with fix https://github.com/RRUZ/tsmbios/issues/15
+  * osparser: fix %Systemroot% and %SystemDrive% for terminal servers ; references #4711
+  * oswebservice: better opsi 4.0 compatibility by investigating the server response
+  * osurlparser: createUrl: initialize uriobj.HasAuthority
+
+-- d.oertel <d.oertel@uib.de> Wed, 19 Jan 2022 15:00
+
+opsi-script (4.12.4.35) stable; urgency=low
+
+  * osparser: getMSVersionMap: remove double ReleaseID=
+  * osparser: executeWith: AllSigned Hack: use:
+        "Get-Content -Path '+ tempfilename +' | Out-String | Invoke-Expression"
+  * osparser: new function getMSVersionName: string
+  * oslinmount: replace getGeneralConfigValue by configState_getObjects
+  * osprocesses: new isProcessChildOf(searchproc,parentproc: string): boolean;
+  * new boolean opsi-script function: isProcessChildOf(<searchprocstr>, <parentprocstr>): bool;
+    implemented for WLM
+  * new opsi-script constant %opsiscriptprocname% represents the name of the
+    just running opsi-script process (opsi-script.exe, opsi-script, opsi-script-gui)
+    changes in opsiconf, osparser, opsiscript.lpr
+  * write now component logs to subdir 'lastprodlogs'
+  * osprocesses: isProcessChildOf also for win64
+  * oswebservice: sendlog: fix boolean values for append at log_write
+  * osfunclin: getProfilesDirListLin fix non standard lines from getent passwd
+  * osparser: executewith: powershell: remove a trailing '-file' from programparas
+  * osGUIcontrol: skindirectoryDevelopment = '../../../skin';
+  * osGUIcontrol: Linux: skindirectoryCompatibility = '/opt/opsi-script/skin';
+
+-- d.oertel <d.oertel@uib.de> Tue, 04 Jan 2022 15:00
+
+
+opsi-script (4.12.4.34) stable; urgency=low
+
+  * oszip: catch exceptions
+  * osparser: fix callingsection parameter in call of SearchForSectionLines
+    from producestringlist:getOutstreamFromSection / getReturnlistFromSection
+  * powershell AllSigned Hack: type tmpfile | powershell -command -
+    will be switched on automatically if AllSigned is detected.
+    Additional parameters (to script or powershell) will be ignored in this case.
+  * oslog: new property WriteComponentFile. if true a logfile for every component (product)
+    is (re)written.
+  * osconf: new config: opsi-script.global.writeProductLogFile (default=false)
+  * oslog: changed histrory line to:
+    'handled: <productid> Version: <versiion> Request: <request> Result: <result>
+  * osparser: opsiservicecall: new line allowed: "timeout" : <int>
+  * oswebservice: TOpsiMethodCall has now property timeout
+
+-- d.oertel <d.oertel@uib.de> Wed, 15 Dec 2021 15:00
+
+
+opsi-script (4.12.4.33) stable; urgency=low
+
+  * osparser: more debug logs in getFileInfoMap
+  * osparser: getFileInfoMap: catch exceptions
+  * versionx: catch exceptions in GetString
+
+-- d.oertel <d.oertel@uib.de> Fri, 03 Dec 2021 15:00
+
+
+opsi-script (4.12.4.32) stable; urgency=low
+
+  * osparser: files section: unzip create target dir
+  * added unit oscertificates
+  * new void function ImportCertToSystem(<cert file name>)
+  * oscertificates: add functions for linux /mac
+  * osfunclin: getPackageLock: fix for zypper, general fix
+  * ostxstinglist: new method: getStringValueWithDefault
+  * GetProductProperty: if no service context, tries to find property in %scriptpah%/properties.conf
+  * GetProductPropertyList: if no service context, tries to find property in %scriptpath%/properties.conf
+  * new: stringlist literals in json style are allowed now (set $list$ = '["he","ho"]')
+  * fix overwrite GUI messages by standard skinreload from  doAktionen
+  * new: allow after DefVar inital value: defvar $str$ = "huhu"
+  * new: allow after DefStringlist inital value: defstringlist $list$ = '["he","ho"]'
+  * oswebservice: getSubListResult: fix for access violation in getproductpropertylist
+  * osjson: jsonAsArrayToStringList: fix '[]' is empty array
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Nov 2021 15:00
+
+
+opsi-script (4.12.4.31) stable; urgency=low
+
+  * osfunc: AllCopyRecursive: for better performance:
+        doNotChangeAccessRights: boolean = True;
+  * osparser: executeWith + powershellcall: enable runasloggedonuser
+  * osfilehelper: MakeBakFiles: correct format mask for log backups
+  * osparser: files section: move / rename: allow also for directories
+
+-- d.oertel <d.oertel@uib.de> Tue, 16 Nov 2021 15:00
+
+opsi-script (4.12.4.30) stable; urgency=low
+
+ * osfuncwin: fixed that opsi-script crashed if Windows API function GetFirmwareType is not available in kernel32.dll 
+   (for example on Windows 7/ Windows Server 2008)
+
+-- j.werner <j.werner@uib.de> Wed, 27 Oct 2021 12:22
+
 opsi-script (4.12.4.29) stable; urgency=low
 
  * osfuncwin: WinIsUefi uses new function GetBiosMode if Windows Verison >= Windows10.

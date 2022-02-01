@@ -42,6 +42,7 @@ uses
   wispecfolder,
   shlobj,
   VersionInfoX,
+  oscertificates,
 {$IFNDEF WIN64}
   oslocaladmin,
 {$ENDIF WIN64}
@@ -190,6 +191,7 @@ type
     tsShellcall,
     tsPowershellcall,
     tsExecuteSection,
+    tsImportCertToSystem,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -4116,7 +4118,8 @@ var
         if targetPort <> '' then
           ldap.TargetPort := targetPort;
         if TryStrToInt(targetPort, port) then
-          if port = 636 then ldap.FullSSL := True;
+          if port = 636 then
+            ldap.FullSSL := True;
 
         ldap.UserName := ldapsearch_user;
         ldap.Password := ldapsearch_credentials;
@@ -6414,6 +6417,8 @@ var
   methodname: string = '';
   paramList: TStringList;
   parameters: array of string;
+  timeout: string = '';
+  timeoutint: integer = 0;
 
   omc: TOpsiMethodCall;
   //local_opsidata : TOpsiDataJSONService;
@@ -6562,6 +6567,20 @@ begin
           begin
             if GetString(r, methodname, r, errorInfo, True) then
               syntaxcheck := True;
+            logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
+              Expressionstr, LLDebug3);
+          end
+
+          else if LowerCase(trim(Expressionstr)) = LowerCase('"timeout"') then
+          begin
+            LogDatei.log('Got timeout in exprstr: ', LLdebug);
+            timeout := trim(r);
+            LogDatei.log('Got timeout: ' + timeout, LLdebug);
+            if TryStrToInt(timeout, timeoutint) then
+              syntaxcheck := True
+            else
+              LogDatei.log('Given timeout: ' + timeout + ' is no integer', LLerror);
+
             logdatei.log_prog('Parsingprogress: r: ' + r + ' exp: ' +
               Expressionstr, LLDebug3);
           end
@@ -6915,6 +6934,8 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        if timeoutint > 0 then
+          omc.timeout := timeoutint;
         testresult := '';
 
         if copy(methodname, length(methodname) - length('_hash') +
@@ -6977,7 +6998,8 @@ begin
           output.add(testresult);
         end;
 
-        omc.Free;
+        if Assigned(omc) then
+          FreeAndNil(omc);
 
         if errorOccured then
         begin
@@ -8835,29 +8857,32 @@ var
 
             target := ExpandFileNameUTF8(target);
 
-            if not (isDirectory(target)) then
+            if Install.MakePath(Target) then
             begin
-              //syntaxcheck := false;
-              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
-              go_on := False;
-              logDatei.log('Error: unzip: target: ' + target +
-                ' is not a valid file directory', LLError);
-            end;
+              if not (isDirectory(target)) then
+              begin
+                //syntaxcheck := false;
+                //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+                go_on := False;
+                logDatei.log('Error: unzip: target: ' + target +
+                  ' is not a valid file directory', LLError);
+              end;
 
 
-            if SyntaxCheck and go_on then
-            begin
-              LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
-              try
-                if UnzipWithDirStruct(Source, target) then
-                  LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
-                else
-                  LogDatei.log('Failed to unzip: ' + Source + ' to ' + target, LLError)
-              except
-                on E: Exception do
-                begin
-                  LogDatei.log('Exception: Failed to unzip: ' + Source +
-                    ' to ' + target + ' : ' + e.message, LLError);
+              if SyntaxCheck and go_on then
+              begin
+                LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
+                try
+                  if UnzipWithDirStruct(Source, target) then
+                    LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
+                  else
+                    LogDatei.log('Failed to unzip: ' + Source + ' to ' + target, LLError)
+                except
+                  on E: Exception do
+                  begin
+                    LogDatei.log('Exception: Failed to unzip: ' +
+                      Source + ' to ' + target + ' : ' + e.message, LLError);
+                  end;
                 end;
               end;
             end;
@@ -9144,7 +9169,8 @@ var
           LogDatei.log('source: ' + Expressionstr + ' - target: ' + Remaining, LLDebug3);
           Source := Expressionstr;
           Source := ExpandFileNameUTF8(Source);
-          if not (isAbsoluteFileName(Source) and FileExists(Source)) then
+          if not (isAbsoluteFileName(Source) and
+            (FileExists(Source) or DirectoryExists(Source))) then
           begin
             //syntaxcheck := false;
             //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
@@ -10371,9 +10397,14 @@ begin
       commandline := 'powershell.exe get-executionpolicy';
       tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
       org_execution_policy := trim(tmplist[0]);
-      // set (open)
-      commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      LogDatei.log('Powershell excution policy = ' + org_execution_policy, LLinfo);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (open)
+        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
+      end;
     end;
 
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
@@ -10385,6 +10416,7 @@ begin
     fulloptionstring := parameters + ' ' + optionstr;
     if not FetchExitCodePublic then // backup last extcode
       localExitCode := FLastExitCodeOfExe;
+    // execwith will check for allsigned again
     ActionResult := executeWith(mySektion, fulloptionstring, True,
       logleveloffset + 1, output);
     if not FetchExitCodePublic then  // restore last extcode
@@ -10405,9 +10437,13 @@ begin
 
     if handle_policy then // restore execution policy
     begin
-      // set (close)
-      commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
-      tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset, False, True);
+      if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
+      begin
+        // set (close)
+        commandline := 'powershell.exe set-executionpolicy ' + org_execution_policy;
+        tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
+          False, True);
+      end;
     end;
   finally
     {$IFDEF GUI}
@@ -11357,6 +11393,11 @@ var
   exitcode: integer;
   myoutput: TXStringlist;
   powershellpara: string;
+  catcommand: string = 'cat ';
+  //useStdIn: boolean = False;
+  allSignedHack: boolean = False;
+  tmplist: TStringList;
+  org_execution_policy: string = '';
 
 begin
   try
@@ -11503,8 +11544,44 @@ begin
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
+      // we add '-file ' as last param for powershell
       powershellpara := ' -file ';
       useext := '.ps1';
+    end;
+    if useext = '.ps1' then  // we are on powershell
+    begin
+      if pos(' -file', LowerCase(programparas)) > 0 then
+      begin
+        // It may be that the customer did this before and '- file ' is the end of programparas
+        // so we shoud remove this (even for AllSigned hack)
+        programparas := copy(programparas, 1, rpos(' -file', LowerCase(programparas)));
+      end;
+      LogDatei.log('powershell programparas are now: ' + programparas, LLDebug2);
+
+      commandline := 'powershell.exe get-executionpolicy';
+      tmplist := execShellCall(commandline, 'sysnative', 1 + logleveloffset,
+        False, True);
+      org_execution_policy := trim(tmplist[0]);
+      if LowerCase(org_execution_policy) = LowerCase('AllSigned') then
+      begin
+        allSignedHack := True;
+        //useStdIn := True;
+        LogDatei.log('Powershell with AllSigned detected - switching to Get-Content Mode',
+          LLinfo);
+        (*if trim(programparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored programparas: ' +
+            programparas, LLinfo);
+            *)
+        if trim(passparas) <> '' then
+          LogDatei.log('Powershell with AllSigned: ignored passparas: ' +
+            passparas, LLinfo);
+      end;
+    end;
+    //if useStdIn then
+    if allSignedHack then
+    begin
+      //powershellpara := ' -command - ';
+      powershellpara := ' -Command ';
     end;
     tempfilename := winstGetTempFileNameWithExt(useext);
 
@@ -11557,17 +11634,29 @@ begin
         end;
       end;
 
-
-      // if parameters end with '=' we concat tempfile without space
-      if copy(programparas, length(programparas), 1) = '=' then
-        commandline :=
-          '"' + programfilename + '" ' + programparas + '"' +
-          powershellpara + tempfilename + '"  ' + passparas
+      if allSignedHack then
+      begin
+        {$IFDEF WINDOWS}
+        catcommand := 'type ';
+        {$ENDIF WINDOWS}
+        //commandline := 'cmd.exe /C ' + catcommand + tempfilename +
+        //  ' | ' + '"' + programfilename + '" ' + programparas + ' ' + powershellpara;
+        commandline := '"' + programfilename + '" ' + programparas +
+          ' ' + powershellpara + '"Get-Content -Path ' + tempfilename +
+          ' | Out-String | Invoke-Expression" ';
+      end
       else
-        commandline :=
-          '"' + programfilename + '" ' + programparas + ' ' +
-          powershellpara + tempfilename + '  ' + passparas;
-
+      begin
+        // if parameters end with '=' we concat tempfile without space
+        if copy(programparas, length(programparas), 1) = '=' then
+          commandline :=
+            '"' + programfilename + '" ' + programparas + '"' +
+            powershellpara + tempfilename + '"  ' + passparas
+        else
+          commandline :=
+            '"' + programfilename + '" ' + programparas + ' ' +
+            powershellpara + tempfilename + '  ' + passparas;
+      end;
 
 
       {$IFNDEF WINDOWS}
@@ -11578,6 +11667,7 @@ begin
       {$ENDIF WINDOWS}
 
       {$IFDEF WIN32}
+
       // allow the executing user access to the tmp file
       sysError := NO_ERROR;
       if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
@@ -11610,6 +11700,10 @@ begin
 
       { backport from 4.12.3  }
       //if threaded then
+
+      // new in 4.12.4.12.31 enable runasloggedonuser
+      if runas = traLoggedOnUser then
+        use_sp := True;
 
       if use_sp then
       begin
@@ -11744,6 +11838,8 @@ var
   s3: string = '';
   s4: string = '';
   r1: string = '';
+  r2: string = '';
+  r3: string = '';
   ///sx,
   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
   tmpint: integer;
@@ -11752,10 +11848,10 @@ var
   a2: integer = 0;
   int64_1: int64;
   int64_2: int64;
-  list1: TXStringList;
-  list2: TXStringList;
-  list3: TXStringList;
-  slist: TStringList;
+  list1: TXStringList = nil;
+  list2: TXStringList = nil;
+  list3: TXStringList = nil;
+  slist: TStringList = nil;
   inifile: TuibIniScript;
   uibInifile: TuibIniFile;
   localSection: TWorkSection;
@@ -11804,8 +11900,53 @@ begin
     VarIndex := listOfStringLists.IndexOf(LowerCase(s));
     logstring := s;
 
+
+    // is json style array literal type 1
+    // expected something like '["ho","hu"]' or special '[]'
+    // json style array literal is normaly quoted with '
+    // string constant delimited by "'" ?
+    if (length(s0) > 0) and (pos('''[', s0) = 1) then
+    begin
+      r1 := copy(s0, pos(']''', s0) + 2, length(s0));
+      r2 := copy(s0, 2, pos(']''', s0));
+      GetWord(r2, tmpstr, r2, ['''']);
+      if skip('''', r2, r2, InfoSyntaxError) then
+        syntaxCheck := True;
+      if jsonIsArray(tmpstr) then
+      begin
+        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
+        begin
+          syntaxCheck := True;
+          r := r1;
+        end;
+      end;
+    end
+
+
+    // is json style array literal type 2
+    // expected only special "[]"
+    // json style array literal is can only be quoted with " in the case "[]"
+    // string constant delimited by '"' ?
+    else if (length(s0) > 0) and (pos('"[', s0) = 1) then
+    begin
+      r1 := copy(s0, pos(']"', s0) + 2, length(s0));
+      r2 := copy(s0, 2, pos(']"', s0));
+      GetWord(r2, tmpstr, r2, ['"']);
+      if skip('"', r2, r2, InfoSyntaxError) then
+        syntaxCheck := True;
+      if jsonIsArray(tmpstr) then
+      begin
+        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
+        begin
+          syntaxCheck := True;
+          r := r1;
+        end;
+      end;
+    end
+
+
     // local variable
-    if isVisibleLocalVar(s, funcindexvar) then
+    else if isVisibleLocalVar(s, funcindexvar) then
     begin
       if not (definedFunctionArray[funcindexvar].getLocalVarDatatype(s) =
         dfpStringlist) then
@@ -12268,18 +12409,18 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
             if not SearchForSectionLines(self, TWorkSection(section),
-              nil, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -12349,8 +12490,8 @@ begin
             //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
             //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
             if not SearchForSectionLines(self, TWorkSection(section),
-              nil, s2, TXStringList(localSection), startlineofsection, True, True, False)
-            then
+              localSection.ParentSection, s2, TXStringList(localSection),
+              startlineofsection, True, True, False) then
               InfoSyntaxError := 'Section "' + s2 + '" not found'
             else
             begin
@@ -12506,12 +12647,14 @@ begin
 
     else if LowerCase(s) = LowerCase('GetProductPropertyList') then
     begin
+      if Assigned(list1) then FreeAndNil(list1);
+            list1 := TXStringList.Create;
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
           if Skip(',', r, r1, InfoSyntaxError) then
           begin
-            list1 := TXStringList.Create;
+
             // is the second argument a valid string list ?
             if not produceStringList(section, r1, r, list1, InfoSyntaxError) then
             begin
@@ -12534,6 +12677,7 @@ begin
               syntaxcheck := True;   // it was a string list
             if syntaxcheck then
             begin
+               tmpbool := False; // default used
               tmpstr := r;
               // is it the 2 argument call ?
               if Skip(')', r, r, InfoSyntaxError) then
@@ -12541,24 +12685,61 @@ begin
                 syntaxCheck := True;
                 if opsidata <> nil then
                 begin
-                  list.AddStrings(opsidata.getProductPropertyList(s1, list1));
+                  list.AddStrings(opsidata.getProductPropertyList(s1, list1,tmpbool));
                 end
                 else if local_opsidata <> nil then
                 begin
-                  list.AddStrings(local_opsidata.getProductPropertyList(s1, list1));
+                  list.AddStrings(local_opsidata.getProductPropertyList(s1, list1,tmpbool));
                 end
-                else
+                else  tmpbool := true;  // getting the value from the service not possible or default
+                if tmpbool then
                 begin
-                  LogDatei.log(
-                    'No service connection in GetProductPropertyList - using default',
-                    LLDebug);
-                  list.Text := list1.Text;
+                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                  if FileExists(tmpstr) then
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductPropertyList - trying properties.conf',
+                      LLWarning);
+                    //if Assigned(list2) then FreeAndNil(list2);
+                    list2 := TXStringlist.Create;
+                    list2.loadFromFile(tmpstr);
+                    tmpbool := False; // default used
+                    tmpstr1 := list2.getStringValueWithDefault(s1, s2, tmpbool);
+                    FreeAndNil(list2);
+                    if jsonIsArray(tmpstr1) then
+                    begin
+                      if jsonAsArrayToStringList(tmpstr1, TStringList(list1)) then
+                        list.Text := list1.Text
+                      else
+                        tmpbool := True; // use default
+                    end
+                    else
+                      tmpbool := True; // use default
+
+                    if tmpbool then
+                    begin
+                      LogDatei.log(
+                        'Property not existing in GetProductProperty in file: '
+                        + tmpstr + '- using default',
+                        LLWarning);
+                      list.Text := list1.Text;
+                    end;
+                  end
+                  else
+                  begin
+                    LogDatei.log(
+                      'No service connection in GetProductPropertyList - using default',
+                      LLDebug);
+                    list.Text := list1.Text;
+                  end;
                 end;
               end
               else
               begin
                 syntaxCheck := False;
                 // is it the 4 argument call ?
+                // since 4.11.6.2 (undocumented) :
+                // getProductPropertyList(myproperty, defaultlist, myClientId, myProductId)
                 if Skip(',', tmpstr, r, InfoSyntaxError) then
                   if EvaluateString(r, r, s3, InfoSyntaxError) then
                     if Skip(',', r, r, InfoSyntaxError) then
@@ -12571,19 +12752,57 @@ begin
                           if opsidata <> nil then
                           begin
                             list.AddStrings(opsidata.getProductPropertyList(
-                              s1, list1, s3, s4));
+                              s1, list1, s3, s4,tmpbool));
                           end
                           else if local_opsidata <> nil then
                           begin
                             list.AddStrings(
-                              local_opsidata.getProductPropertyList(s1, list1, s3, s4));
+                              local_opsidata.getProductPropertyList(s1, list1, s3, s4,tmpbool));
                           end
-                          else
+                          else  tmpbool := true;  // getting the value from the service not possible or default
+                          if tmpbool then
                           begin
-                            LogDatei.log(
-                              'No service connection in GetProductPropertyList - using default',
-                              LLDebug);
-                            list.Text := list1.Text;
+                            tmpstr :=
+                              ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                            if FileExists(tmpstr) then
+                            begin
+                              LogDatei.log(
+                                'Property not existing in GetProductPropertyList - trying properties.conf',
+                                LLWarning);
+                              //if Assigned(list2) then FreeAndNil(list2);
+                              list2 := TXStringlist.Create;
+                              list2.loadFromFile(tmpstr);
+                              tmpbool := False; // default used
+                              tmpstr1 :=
+                                list2.getStringValueWithDefault(s1, s2, tmpbool);
+                              FreeAndNil(list2);
+                              if jsonIsArray(tmpstr1) then
+                              begin
+                                if jsonAsArrayToStringList(tmpstr1,
+                                  TStringList(list1)) then
+                                  list.Text := list1.Text
+                                else
+                                  tmpbool := True; // use default
+                              end
+                              else
+                                tmpbool := True; // use default
+
+                              if tmpbool then
+                              begin
+                                LogDatei.log(
+                                  'Property not existing in GetProductProperty in file: '
+                                  + tmpstr + '- using default',
+                                  LLWarning);
+                                list.Text := list1.Text;
+                              end;
+                            end
+                            else
+                            begin
+                              LogDatei.log(
+                                'No service connection in GetProductPropertyList - using default',
+                                LLDebug);
+                              list.Text := list1.Text;
+                            end;
                           end;
                         end
                         else
@@ -12592,6 +12811,7 @@ begin
             end;
           end;
         end;
+      FreeAndNil(list1);
     end
 
 
@@ -14044,7 +14264,7 @@ begin
           if GetNTVersionMajor >= 10 then
           begin
             list.add('ReleaseID=' + getW10Release);
-            list.add('ReleaseID=' + getW10Release);
+            //list.add('ReleaseID=' + getW10Release);
           (* moved to funcwin: getW10Release
             if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
               'ReleaseID', True) then
@@ -14116,21 +14336,61 @@ begin
 
             for i := 0 to versionInfo.TranslationCount - 1 do
             begin
-              list.add('Language name ' + IntToStr(i) + '=' +
-                versionInfo.LanguageNames[i]);
-              list.add('Language ID ' + IntToStr(i) + '=' +
-                IntToStr(versionInfo.LanguageID[i]));
+              tmpstr := 'Language name ' + IntToStr(i) + '=' +
+                versionInfo.LanguageNames[i];
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+              tmpstr := 'Language ID ' + IntToStr(i) + '=' +
+                IntToStr(versionInfo.LanguageID[i]);
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
             end;
 
-            list.add('file version=' + IntToStr(versionInfo.FileVersion));
-            list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-            list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            //list.add('file version=' + IntToStr(versionInfo.FileVersion));
+            //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+            //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+            tmpstr := 'file version=' + IntToStr(versionInfo.FileVersion);
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'file version with dots=' + versionInfo.GetFileVersionWithDots;
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            tmpstr := 'product version=' + IntToStr(versionInfo.ProductVersion);
+            list.add(tmpstr);
+            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
 
-
-            for i := Low(versionInfoX.PredefinedStrings)
-              to High(versionInfoX.PredefinedStrings) do
-              list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                versionInfo.getString(PredefinedStrings[i]));
+            try
+            (*for i := Low(versionInfox.PredefinedStrings)
+              to High(versionInfox.PredefinedStrings) do *)
+              tmpint := length(versionInfox.PredefinedStrings) - 1;
+              LogDatei.log_prog('getFileInfoMap: value num: ' +
+                IntToStr(tmpint), LLdebug2);
+              for i := 0 to tmpint do
+              begin
+                try
+              (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                versionInfo.getString(PredefinedStrings[i])); *)
+                  tmpstr := versionInfox.PredefinedStrings[i] + '=' +
+                    versionInfo.getString(versionInfox.PredefinedStrings[i]);
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                except
+                  LogDatei.log_prog('getFileInfoMap: exception at: ' +
+                    versionInfox.PredefinedStrings[i], LLdebug2);
+                  if versionInfox.PredefinedStrings[i] = 'FileVersion=' then
+                  begin
+                    tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+                    list.add(tmpstr);
+                    LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                  end;
+                end;
+              end;
+            except
+              LogDatei.log_prog('getFileInfoMap: exception - try to fix', LLdebug2);
+              tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+              list.add(tmpstr);
+              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+            end;
 
 
             versionInfo.Free;
@@ -14611,6 +14871,7 @@ begin
     Ifelseendiflevel, inDefFuncIndex);
 end;
 
+
 function TuibInstScript.EvaluateString
   (const s0: string; var Remaining: string; var StringResult: string;
   var InfoSyntaxError: string; var NestLevel: integer;
@@ -14642,7 +14903,7 @@ var
   randomInt: integer = 0;
   errorinfo: string = '';
   intresult: integer = 0;
-  list1: TXStringlist;
+  list1: TXStringlist = nil;
   slist: TStringList; // if we need a real one
   HostsImage: TuibPatchHostsFile;
   HostsLocation: string = '';
@@ -14948,7 +15209,8 @@ begin
   end
 
 
-  else if LowerCase(s) = LowerCase('GetMSVersionInfo') then
+  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or
+    (LowerCase(s) = LowerCase('GetMSVersionName')) then
   begin
     syntaxCheck := True;
 
@@ -14969,7 +15231,12 @@ begin
       end
       else
       begin
-        StringResult := IntToStr(GetNTVersionMajor) + '.' + IntToStr(GetNTVersionMinor);
+        if LowerCase(s) = LowerCase('GetMSVersionName') then
+          StringResult := GetMSVersionName
+        else
+          // case LowerCase(s) = GetMSVersionInfo
+          StringResult := IntToStr(GetNTVersionMajor) + '.' +
+            IntToStr(GetNTVersionMinor);
       end;
 
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
@@ -14977,6 +15244,7 @@ begin
       {$ENDIF WINDOWS}
     end;
   end
+
 
   else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
   begin
@@ -15022,19 +15290,41 @@ begin
                 // try to get from lookup table
                 if ProductvarsForPC.indexOfName(s1) = -1 then
                 begin
-                  LogDatei.log(
-                    'Property not existing in GetProductProperty - using default',
-                    LLWarning);
-                  StringResult := s2;
+                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                  if FileExists(tmpstr) then
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductProperty - trying properties.conf',
+                      LLWarning);
+                    if Assigned(list1) then FreeAndNil(list1);
+                    list1 := TXStringlist.Create;
+                    list1.loadFromFile(tmpstr);
+                    tmpbool := False; // default used
+                    StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
+                    FreeAndNil(list1);
+                    if tmpbool then
+                      LogDatei.log(
+                        'Property not existing in GetProductProperty in file: '
+                        + tmpstr + '- using default',
+                        LLWarning);
+                  end
+                  else
+                  begin
+                    LogDatei.log(
+                      'Property not existing in GetProductProperty - using default',
+                      LLWarning);
+                    StringResult := s2;
+                  end;
                 end
                 else
                 begin
                   // get the property value from the looup table
                   StringResult := ProductvarsForPC.Values[s1];
                 end;
+
+                if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
+                  LogDatei.AddToConfidentials(StringResult);
               end;
-      if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
-        LogDatei.AddToConfidentials(StringResult);
     except
       on E: Exception do
       begin
@@ -19033,6 +19323,25 @@ begin
             end;
   end
 
+  else if Skip('isProcessChildOf', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              try
+                syntaxCheck := True;
+                BooleanResult := isProcessChildOf(s1, s2);
+              except
+                BooleanResult := False;
+                logdatei.log('Error: Exception at isProcessChildOf with : "' +
+                  s1 + '","' + s2 + '"', LLError);
+              end;
+            end;
+  end
+
   else if Skip('stringToBool', Input, r, InfoSyntaxError) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -19400,7 +19709,8 @@ begin
     errorOccured := False;
     if opsidata = nil then
     begin
-      errorOccured := True;
+      if local_opsidata = nil then
+        errorOccured := True;
     end
     else
     begin
@@ -19730,6 +20040,8 @@ begin
   end
   else
     Result := False;
+  LogDatei.log_prog('RunAsForParameter: runas is: ' + GetEnumName(
+    TypeInfo(TRunAs), Ord(runAs)), LLDebug);
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
@@ -20272,6 +20584,7 @@ var
   hasBom: boolean;
   insertindex: integer;
   isPlainAscii: boolean;
+  varIndex: integer;
 
 {$IFDEF WINDOWS}
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
@@ -20448,6 +20761,7 @@ var
   end;
 
 {$ELSE WINDOWS}
+
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
     Remaining: string): TSectionResult;
   begin
@@ -20478,7 +20792,8 @@ begin
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
-  FBatchOberflaeche.LoadSkin('');
+  // do not overwrite messages in in LabelInfo
+  FBatchOberflaeche.LoadSkin('', False);
   Application.ProcessMessages;
   //setWindowState(batchWindowMode);
   {$ENDIF GUI}
@@ -23106,6 +23421,7 @@ begin
               tsSetDebug_Prog:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
+                  Remaining := opsiunquotestr2(remaining, '""');
                   if UpperCase(Remaining) = 'TRUE' then
                   begin
                     LogDatei.log('debug_prog was ' + BoolToStr(
@@ -24118,12 +24434,24 @@ begin
 
               tsDefineVar:
               begin
+                s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 if Remaining <> '' then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'not allowed char following variable name')
-                else if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
+                begin
+                  // setting inital value ?
+                  if skip('=', remaining, remaining, InfoSyntaxError) then
+                  begin
+                    if not EvaluateString(remaining, remaining, s1, InfoSyntaxError) then
+                      reportError(Sektion, linecounter, call,
+                        'not a stringexpression after "="');
+                  end
+                  else
+                    reportError(Sektion, linecounter, Expressionstr,
+                      'not allowed char following variable name');
+                end;
+                // given var name reseved ?
+                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
                     'Reserved name, must not be used in a variable definition')
@@ -24134,34 +24462,63 @@ begin
                   funcindex :=
                     StrToInt(definedFunctionsCallStack.Strings[
                     definedFunctionsCallStack.Count - 1]);
+                  // try to do it
                   if definedFunctionArray[funcindex].addLocalVar(
                     lowercase(Expressionstr), dfpString, False) then
+                  begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2)
+                      definedFunctionArray[funcindex].Name + ' with value: ' +
+                      s1, LLDebug2);
+                    definedFunctionArray[funcindex].setLocalVarValueString(
+                      lowercase(Expressionstr), s1);
+                  end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
+                // already existing ?
                 else if VarList.IndexOf(lowercase(Expressionstr)) >= 0 then
                   reportError(Sektion, linecounter, Expressionstr,
                     'name is already in use')
                 else
                 begin
+                  // do it
                   VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add('');
+                  ValuesList.Add(s1);
+                  LogDatei.log('Defined global local string var: ' +
+                    lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
                 end;
               end;
 
               tsDefineStringList:
               begin
+                LogDatei.log_prog('Start definestringlist', LLdebug2);
+                //if tmplist <> nil then
+                //if Assigned(tmplist) then FreeAndNil(tmplist);
+                LogDatei.log_prog('definestringlist: init tmplist', LLdebug2);
+                tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
+                LogDatei.log_prog('definestringlist: ' + Expressionstr +
+                  ' -> ' + Remaining, LLdebug2);
                 if Remaining <> '' then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'char not allowed following variable name')
-                else if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
+                begin
+                  // setting inital value ?
+                  if skip('=', remaining, remaining, InfoSyntaxError) then
+                  begin
+                    if not produceStringList(Sektion, remaining,
+                      remaining, tmplist, InfoSyntaxError) then
+                      reportError(Sektion, linecounter, call,
+                        'not a stringlist expression after "="');
+                  end
+                  else
+                    reportError(Sektion, linecounter, Expressionstr,
+                      'not allowed char following variable name');
+                end;
+                // given var name reseved ?
+                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
                     'Reserved name, must not be used in a variable definition')
@@ -24176,7 +24533,8 @@ begin
                     lowercase(Expressionstr), dfpStringlist, False) then
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2)
+                      definedFunctionArray[funcindex].Name +
+                      ' with value: ' + tmplist.Text, LLDebug2)
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
@@ -24191,11 +24549,21 @@ begin
 
                 begin
                   listOfStringLists.Add(lowercase(Expressionstr));
+                  // create the list object needed to store list items
                   ContentOfStringLists.Add(TStringList.Create);
+                  // if there is content then store it
+                  if tmplist.Count > 0 then
+                  begin
+                    VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
+                    TStringList(ContentOfStringLists.Items[VarIndex]).Text :=
+                      tmplist.Text;
+                  end;
                   LogDatei.log('', leveldebug);
-                  LogDatei.log('(created string list ' + Expressionstr +
-                    ')', leveldebug);
+                  LogDatei.log('defined global string list ' +
+                    Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
                 end;
+                if Assigned(tmplist) then
+                  FreeAndNil(tmplist);
               end;
 
               tsDefineFunction:
@@ -24401,6 +24769,42 @@ begin
               begin
                 // nothing to do
               end;
+
+
+              tsImportCertToSystem:
+              begin
+                {$IFDEF WINDOWS}
+                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+                  if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
+                  then
+                    if Skip(')', Remaining, Remaining, InfoSyntaxError)
+                    then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                        if not pemfileToSystemStore(s1) then
+                          logdatei.log('ImportCertToSystem: failed to import: ' +
+                            s1, LLError);
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('ImportCertToSystem: failed to import: ' +
+                            s1 + ' : ' + e.message,
+                            LLError);
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        end;
+                      end;
+                    end;
+                {$ELSE WINDOWS}
+                LogDatei.log(
+                  'ImportCertToSystem ignored - implemented only for Windows.',
+                  LLError);
+                {$ENDIF WINDOWS}
+              end;
+
 
 
               tsSetVar:
@@ -24951,7 +25355,9 @@ begin
       {  System directories:  }
     {$IFDEF WINDOWS}
       FConstList.add('%Systemroot%');
-      ValueToTake := GetWinDirectory;
+    // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+      ValueToTake := extractfiledrive(GetWinSystemDirectory)
+        + copy(GetWinDirectory, 3, length(GetWinDirectory));
       { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
@@ -24963,7 +25369,8 @@ begin
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%SystemDrive%');
-      ValueToTake := extractfiledrive(GetWinDirectory);
+      // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+      ValueToTake := extractfiledrive(GetWinSystemDirectory);
       FConstValuesList.add(ValueToTake);
     {$ENDIF WINDOWS}
       FConstList.add('%ProfileDir%');
@@ -25112,6 +25519,10 @@ begin
       FConstValuesList.add(ValueToTake);
       FConstList.add('%OpsiscriptDir%');
       ValueToTake := ExtractFileDir(reencode(ParamStr(0), 'system'));
+      FConstValuesList.add(ValueToTake);
+
+      FConstList.add('%OpsiscriptProcName%');
+      ValueToTake := opsiscriptProcName;
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%WinstVersion%');
@@ -25403,10 +25814,15 @@ begin
           LLessential)
       else
       begin
-        LogDatei.log('installed product: ' + Topsi4data(opsidata).getActualProductId +
+        LogDatei.log('handled product: ' + Topsi4data(opsidata).getActualProductId +
           ' Version: ' + opsidata.getActualProductVersion, LLessential);
-        LogDatei.log2history('installed : ' + Topsi4data(opsidata).getActualProductId +
-          ' Version: ' + opsidata.getActualProductVersion);
+        tmpstr := ' Request: ' + opsidata.getActualProductActionRequest;
+        if extremeErrorLevel = LevelFatal then
+          tmpstr := tmpstr + ' Result: ' + 'failed'
+        else
+          tmpstr := tmpstr + ' Result: ' + 'success';
+        LogDatei.log2history('handled : ' + Topsi4data(opsidata).getActualProductId +
+          ' Version: ' + opsidata.getActualProductVersion + tmpstr);
       end;
 
       //LogDatei.log ('opsi service version: '+opsidata.getOpsiServiceVersion, LLessential);
@@ -25598,8 +26014,6 @@ begin
   PStatNames^ [tsSetUsercontext] := 'SetUserContext';
   PStatNames^ [tsSaveVersionToProfile] := 'saveVersionToProfile';
 
-
-
   PStatNames^ [tsDefineVar] := 'DefVar';
   PStatNames^ [tsDefineStringList] := 'DefStringList';
   PStatNames^ [tsSetVar] := 'Set';
@@ -25609,6 +26023,7 @@ begin
   PStatNames^ [tsDefineFunction] := 'DefFunc';
   PStatNames^ [tsEndFunction] := 'EndFunc';
 
+  PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
 
   runProfileActions := False;
   runLoginScripts := False;
