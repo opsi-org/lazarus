@@ -27,6 +27,7 @@ uses
   oslog,
   superobject,
   osjson,
+  strutils,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
@@ -403,10 +404,10 @@ type
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
     function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
-      defaultlist: TStringList): TStringList; overload;
+      defaultlist: TStringList; var usedefault : boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; myClientId: string;
-      myProductId: string): TStringList; overload;
+      myProductId: string; var usedefault : boolean): TStringList; overload;
     // getInstallableLocalBootProductIds_list
     function getProductState: TProductState; override;
     function getProductAction: TAction; override;
@@ -1508,6 +1509,10 @@ var
   //sendresultstring: string;
   finished: boolean;
   {$ENDIF SYNAPSE}
+   oldTwistedServer  : string;
+   oldTwistedServerVer : integer = 0;
+   opsi40 : boolean = false;
+
 
 begin
   try
@@ -1750,15 +1755,35 @@ begin
                   LogDatei.log_prog(
                     'No Content-Encoding header. Guess identity', llDebug);
                 end;
+                LogDatei.log_prog('Content-Type: ' +
+                    trim(HTTPSender.Headers.Values['Content-Type']), llDebug);
+                oldTwistedServer :=  trim(HTTPSender.Headers.Values['Server']);
+                if StartsText('Twisted/', oldTwistedServer) then
+                begin
+                   oldTwistedServer := copy(oldTwistedServer, 9,2);
+                   LogDatei.log_prog('Server: ' +
+                    oldTwistedServer, llDebug);
+                   if TryStrToInt(oldTwistedServer,oldTwistedServerVer) then
+                     if (oldTwistedServerVer < 17) and (oldTwistedServerVer > 0) then
+                     begin
+                     opsi40:= true;
+                     LogDatei.log_prog('opsi 4.0 Server detected: Twisted/ < 17: ' +
+                    oldTwistedServer, llDebug);
+                     end;
+                end;
+                LogDatei.log_prog('Server: ' +
+                    trim(HTTPSender.Headers.Values['Server']), llDebug);
 
                 { identity = uncompressed}
                 if (ContentEncoding = 'identity') then
                 begin
                   ReceiveStream.LoadFromStream(HTTPSender.Document);
+                  LogDatei.log_prog('identity : loaded uncompressed to ReceiveStream', llDebug);
                 end
                 else
                 { deflate = zlib format}
-                if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
+                if (ContentEncoding = 'deflate') or (ContentEncoding = '')
+                  or opsi40 then
                 begin
                   //DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
                   //ReceiveStream.Seek(0, 0);
@@ -1778,12 +1803,14 @@ begin
                   until readcount < 655360;
                   DeCompressionReceiveStream.Free;
                   FreeMem(buffer);
+                  LogDatei.log_prog('deflate : loaded zlib compressed to ReceiveStream', llDebug);
                 end
                 else
                 { gzip = gzip format}
                 if ContentEncoding = 'gzip' then
                 begin
                   unzipStream(HTTPSender.Document, ReceiveStream);
+                  LogDatei.log_prog('gzip : loaded gzip compressed to ReceiveStream', llDebug);
                 end
                 else
                   LogDatei.log('Unknown Content-Encoding: ' +
@@ -1819,6 +1846,22 @@ begin
                 // we have a 400 Bad Request - perhaps opsi server with other communication mode
                 LogDatei.log(
                   'We had a 400 (bad request) result - so we retry with other parameters / communication compatibility modes',
+                  LLInfo);
+                FCommunicationMode := -1;
+                Inc(CommunicationMode);
+                if (CommunicationMode <= 2) then
+                begin
+                  LogDatei.log('Retry with communicationmode: ' +
+                    IntToStr(communicationmode), LLinfo);
+                  Result := retrieveJSONObject(omc, logging, retry,
+                    readOmcMap, CommunicationMode);
+                end;
+              end;
+              if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
+              begin
+                // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
+                LogDatei.log(
+                  'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
                   LLInfo);
                 FCommunicationMode := -1;
                 Inc(CommunicationMode);
@@ -2193,6 +2236,22 @@ begin
         errorOccured := True;
         FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
         LogDatei.log('Exception in retrieveJSONObject:1: ' + e.message, LLdebug2);
+        if (E.Message = 'Stream read error') then
+                      begin
+                        // we have a Stream read error - perhaps opsi server with other communication mode
+                        LogDatei.log(
+                          'We had a Stream read error result - so we retry with other parameters / communication compatibility modes',
+                          LLInfo);
+                        FCommunicationMode := -1;
+                        Inc(CommunicationMode);
+                        if (CommunicationMode <= 2) then
+                        begin
+                          LogDatei.log('Retry with communicationmode: ' +
+                            IntToStr(communicationmode), LLinfo);
+                          Result := retrieveJSONObject(omc, logging, retry,
+                            readOmcMap, CommunicationMode);
+                        end;
+                      end;
       end;
     end;
     if not finished then
@@ -4832,23 +4891,25 @@ begin
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList): TStringList;
+  defaultlist: TStringList; var usedefault : boolean): TStringList;
 var
   clientId, values: string;
 begin
   try
+    usedefault := false;
     Result := TStringList.Create;
     if Productvars <> nil then
     begin
       clientid := actualclient;
       values := Productvars.Values['productId'];
       Result.AddStrings(TStrings(getProductPropertyList(myproperty,
-        defaultlist, clientid, values)));
+        defaultlist, clientid, values,usedefault)));
     end
     else
     begin
       LogDatei.log('opsi.data.productvars=nil - using defaults.', LLWarning);
       Result.AddStrings(TStrings(defaultlist));
+      usedefault := true;
     end;
 
   except
@@ -4858,12 +4919,13 @@ begin
         E.Message + '"', LLwarning);
       LogDatei.log(' - using defaults.', LLWarning);
       Result.AddStrings(defaultlist);
+      usedefault := true;
     end
   end;
 end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
-  defaultlist: TStringList; myClientId: string; myProductId: string): TStringList;
+  defaultlist: TStringList; myClientId: string; myProductId: string; var usedefault : boolean): TStringList;
 var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
@@ -4871,6 +4933,7 @@ var
   propertyEntry: ISuperObject;
 begin
   Result := TStringList.Create;
+  usedefault := false;
   try
     try
       if setAddProductPropertyStateDefaults(True) then
@@ -4901,6 +4964,7 @@ begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
           Result.AddStrings(TStrings(defaultlist));
+          usedefault := true;
         end;
       end
       else
@@ -4908,6 +4972,7 @@ begin
         LogDatei.log('Could not set backend properties - using defaults.',
           LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end;
     except
       on E: Exception do
@@ -4916,6 +4981,7 @@ begin
           E.Message + '"', LLwarning);
         LogDatei.log(' - using defaults.', LLWarning);
         Result.AddStrings(TStrings(defaultlist));
+        usedefault := true;
       end
     end;
   finally
