@@ -68,23 +68,6 @@ compile opsi-quickinstall linux:
     #- cd opsi-misc/opsi-quickinstall/build/opsi-quickinstall/ &&
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
    
-    #---CODE SIGNING OPSI-SCRIPT---
-    - echo "Code signing opsi-script for macos"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
-    
-    #---CODE SIGNING OPSI-SCRIPT-GUI---
-    - echo "Code signing opsi-script-gui"
-    - PATH_TO_BINARY=$PROJECT_REPOSITORY_PATH/compiler_out/binarys/x86_64-darwin/opsi-script-gui
-    # - codesign -vvv --force --strict --options=runtime $ENTITLEMENTS --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
-    - codesign -vvv --force --strict  --timestamp -s "$CODE_SIGN_SIGNATURE" $PATH_TO_BINARY
-    - codesign --verify --verbose --strict $PATH_TO_BINARY
-    - codesign -dv -r- $PATH_TO_BINARY
-    - codesign -vvv --deep --strict $PATH_TO_BINARY
   artifacts:
     name: "opsi-quickinstall $BINARY_VERSION linux"
     paths:
