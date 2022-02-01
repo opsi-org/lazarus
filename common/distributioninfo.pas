@@ -21,7 +21,7 @@ type
   public
   const
     Distribs = 'AlmaLinux 8, CentOS 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
-      #10 + 'openSUSE 15.1, openSUSE 15.2, openSUSE 15.3,' + #10 +
+      #10 + 'openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RHEL 8, RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
       'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'Univention 4.4';
 
@@ -109,12 +109,7 @@ begin
   else
   if FDistroName = 'openSUSE' then
   begin
-    if FDistroRelease = '15.1' then
-    begin
-      FDistr := openSUSE_Leap_15_1;
-      FDistrRepoUrlPart := 'openSUSE_Leap_15.1/';
-    end
-    else if FDistroRelease = '15.2' then
+    if FDistroRelease = '15.2' then
     begin
       FDistr := openSUSE_Leap_15_2;
       FDistrRepoUrlPart := 'openSUSE_Leap_15.2/';
