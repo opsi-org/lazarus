@@ -1,5 +1,7 @@
 
 opsi-quickinstall (4.2.0.5-2) experimental; urgency=low
+  * CentOS8, RHEL8 added to supported distributions
+  * openSUSE 15.1 removed from supported distributions (discontinued)
   * opsi-quickinstall version from now on synchronized with latest released l-opsi-server
   * default l-opsi-server of quickinstall from now on synchronized with latest released l-opsi-server
   * improved l-opsi-server installation process:
@@ -9,7 +11,7 @@ opsi-quickinstall (4.2.0.5-2) experimental; urgency=low
       2b) If 2a) failed then try to install the older l-opsi-server.
   * logging improved
     
--- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  30 Nov 2021 13:10
+-- Anja-Melanie Schmitz <a.schmitz@uib.de>  Tue,  01 Feb 2022 10:40
 
 
 opsi-quickinstall (4.2.0.1-2) experimental; urgency=low
