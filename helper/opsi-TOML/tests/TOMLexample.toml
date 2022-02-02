@@ -18,6 +18,9 @@ enabled = true
   [servers.alpha]
   ip = "10.0.0.1"
   dc = "eqdc10"
+  
+    [servers.alpha.a]
+    key = "value"
 
   [servers.beta]
   ip = "10.0.0.2"
