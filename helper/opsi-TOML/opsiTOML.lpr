@@ -236,7 +236,7 @@ begin
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.newADDkeyInAlpha', 'newADDvalueInAlpha');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.a.newADDkeyInAlpha', 'newADDvalueInAlpha');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in new Table ');
@@ -253,11 +253,28 @@ begin
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.newADDkeyInAlpha', 'newSETValueInAlpha');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.a.newADDkeyInAlpha', 'newSETValueInAlpha');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in new Table ');
   myTOMLString := ModifyTOML(myTOMLString,'SET','newTable.newADDtableKey', 'newSETtableValue');
+  writeln(myTOMLString);
+
+  // Testing ModifyTOML "CHANGE"
+  writeln('--- Testing ModifyTOML with "CHANGE" existing key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newSETkeyInRootTable', 'newCHANGEValueInRootTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "CHANGE" unexisting key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGEkeyInRootTable', 'newCHANGEValueInRootTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "CHANGE" in sub-Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','servers.alpha.a.newADDkeyInAlpha', 'newCHANGEValueInAlpha');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "CHANGE" in unexisting Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newTable.newCHANGEtableKey', 'newCHANGEtableValue');
   writeln(myTOMLString);
 
   (* // Testing AddKeyValueToTOML
