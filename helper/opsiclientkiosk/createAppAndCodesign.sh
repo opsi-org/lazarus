@@ -100,8 +100,8 @@ chmod -R 755 "${WORKDIR}"
 codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
 codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
 codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libsqlite3.dylib"
-#codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/MacOS/OpsiClientKiosk"
-codesign -s "${DEVELOPER_ID}" -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}/Contents/MacOS/OpsiClientKiosk"
+codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/MacOS/OpsiClientKiosk"
+#codesign -s "${DEVELOPER_ID}" -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}/Contents/MacOS/OpsiClientKiosk"
 
 ## Create a disk image from our disk image root directory.
 #hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"

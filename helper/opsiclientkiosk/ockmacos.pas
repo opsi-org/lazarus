@@ -15,6 +15,9 @@ procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot: string):boolean;
 function Copy(Source:string; Destination:string):boolean;
 function PasswordCorrect:boolean;
+procedure InitPaths;
+
+
 
 var
   RunCommandElevated: TRunCommandElevated;
@@ -151,6 +154,11 @@ begin
     Result := ContainsStr(Output, 'Passwort korrekt');
   end
   else Result := False;
+end;
+
+procedure InitPaths;
+begin
+
 end;
 
 initialization

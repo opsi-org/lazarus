@@ -279,6 +279,8 @@ begin
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
+  PathToIconsOnClient := SwitchPathDelims(TrimFilename('/Users/' + GetUserName_ + '/Library/Application Support/org.opsi.OpsiClientKiosk/' + CustomFolder + '/'), pdsSystem);
+  Copy('/Library/Application Support/org.opsi.OpsiClientKiosk/' + CustomFolder + '/', PathToIconsOnClient);
   {$ENDIF DARWIN}
   LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then

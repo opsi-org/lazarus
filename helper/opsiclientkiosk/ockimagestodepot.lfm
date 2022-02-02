@@ -10,12 +10,12 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.4'
   object ButtonCopy: TButton
     Left = 9
-    Height = 30
+    Height = 20
     Top = 256
-    Width = 158
+    Width = 153
     AutoSize = True
     Caption = 'Save images on depot'
     Constraints.MaxHeight = 30
@@ -24,7 +24,7 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   end
   object ButtonClose: TButton
     Left = 388
-    Height = 30
+    Height = 20
     Top = 256
     Width = 150
     AutoSize = True
@@ -40,23 +40,22 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     Top = 89
     Width = 530
     Caption = 'Mount depot'
-    ClientHeight = 60
-    ClientWidth = 528
+    ClientHeight = 61
+    ClientWidth = 520
     Enabled = False
     ParentFont = False
     TabOrder = 2
     object LabelUser: TLabel
       Left = 6
-      Height = 19
+      Height = 16
       Top = 2
-      Width = 31
+      Width = 28
       Caption = 'User'
-      ParentColor = False
       ParentFont = False
     end
     object EditUser: TEdit
       Left = 6
-      Height = 36
+      Height = 22
       Top = 19
       Width = 194
       ParentFont = False
@@ -64,16 +63,15 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     end
     object LabelPassword: TLabel
       Left = 216
-      Height = 19
+      Height = 16
       Top = 2
-      Width = 65
+      Width = 58
       Caption = 'Password'
-      ParentColor = False
       ParentFont = False
     end
     object EditPassword: TEdit
       Left = 215
-      Height = 36
+      Height = 22
       Top = 19
       Width = 305
       EchoMode = emPassword
@@ -88,12 +86,12 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     Top = 7
     Width = 529
     Caption = 'Path to depot'
-    ClientHeight = 61
-    ClientWidth = 527
+    ClientHeight = 62
+    ClientWidth = 519
     TabOrder = 3
     object DirectoryEditPathToDepot: TDirectoryEdit
       Left = 6
-      Height = 36
+      Height = 22
       Top = 0
       Width = 515
       ShowHidden = False
@@ -105,9 +103,9 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     end
     object CheckBoxMountDepot: TCheckBox
       Left = 7
-      Height = 23
+      Height = 18
       Top = 36
-      Width = 108
+      Width = 95
       Caption = 'Mount depot'
       OnChange = CheckBoxMountDepotChange
       TabOrder = 1
@@ -119,8 +117,8 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     Top = 176
     Width = 529
     Caption = 'Progress'
-    ClientHeight = 52
-    ClientWidth = 527
+    ClientHeight = 53
+    ClientWidth = 519
     TabOrder = 4
     object PanelInfo: TPanel
       Left = 0
@@ -139,7 +137,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 5
-        ParentColor = False
       end
       object ProgressBar: TProgressBar
         Left = 5
