@@ -24802,7 +24802,6 @@ begin
 
               tsImportCertToSystem:
               begin
-                {$IFDEF WINDOWS}
                 if Skip('(', Remaining, Remaining, InfoSyntaxError) then
                   if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
                   then
@@ -24827,11 +24826,6 @@ begin
                         end;
                       end;
                     end;
-                {$ELSE WINDOWS}
-                LogDatei.log(
-                  'ImportCertToSystem ignored - implemented only for Windows.',
-                  LLError);
-                {$ENDIF WINDOWS}
               end;
 
 

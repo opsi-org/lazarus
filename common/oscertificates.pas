@@ -217,7 +217,17 @@ begin
     if certExt = '.crt' then
     begin
       // just copy
-      CopyFile(filename, targetfile);
+      if not CopyFile(filename, targetfile) then
+      begin
+        // Error
+        logdatei.log('pemfileToSystemStore: failed: copy  ', LLError);
+      end
+      else
+      begin
+        // success
+        logdatei.log_prog('pemfileToSystemStore: Successful copy to : ' +
+          targetfile, LLinfo);
+      end;
     end;
 
     if command <> '' then
@@ -254,7 +264,10 @@ begin
     begin
       // success
       if exitcode = 0 then
-        logdatei.log('Successful imported to system store: ' + filename, LLinfo)
+      begin
+        logdatei.log('Successful imported to system store: ' + filename, LLinfo);
+        Result := True;
+      end
       else
         logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
           + IntToStr(exitcode), LLError);
