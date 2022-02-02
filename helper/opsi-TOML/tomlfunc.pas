@@ -405,7 +405,7 @@ begin
                 writeln('Key already exists, nothing to be done with command ADD ');
             except
             on E:Exception do
-              writeln('Exception in AddKeyValueToTOML : ', E.Message);
+              writeln('Exception in ModifyTOML : ', E.Message);
             end;
          end;
       end;
@@ -435,13 +435,38 @@ begin
 
             except
             on E:Exception do
-              writeln('Exception in AddKeyValueToTOML : ', E.Message);
+              writeln('Exception in ModifyTOML : ', E.Message);
             end;
          end;
       end;
   'CHANGE' :
       begin
-          writeln('CHANGE');
+          myTOMLTable := TTOMLTable(myTOML);
+         if keysArray.Count>=2 then
+          begin
+             for i := 0 to keysArray.Count -2 do
+              begin
+                try
+                 tableName := keysArray[i];
+                 myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
+                except
+                on E:Exception do
+                  writeln('KeyPath does not exist, nothing to be done with command CHANGE ');
+                end;
+              end;
+          end;
+         i:= 0;
+         repeat
+            if (myTOMLTable.Keys[i]=keysArray[keysArray.Count-1]) then
+               begin
+               myTOMLTable.PutValue(i,value);
+               break;
+               end
+            else
+              i:= i+1;
+         until i = myTOMLTable.Count;
+         if i = myTOMLTable.Count then
+            writeln('Key does not exist, nothing to be done with command CHANGE ');
       end;
   'DEL' :
       begin
