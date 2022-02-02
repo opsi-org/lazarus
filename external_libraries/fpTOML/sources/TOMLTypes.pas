@@ -184,6 +184,8 @@ type
       procedure Insert(const key: String; const value: TTOMLValueType);
       procedure Put(const key: String; const data: TTOMLData);
       procedure Put(const key: String; const value: TTOMLValueType);
+      procedure PutValue(const keyIndex: integer; const data: TTOMLData);
+      procedure PutValue(const keyIndex: integer; const value: TTOMLValueType);
       procedure Add(const key: TTOMLKeyType; const value: TTOMLValueType); overload;
       procedure Add(const key: TTOMLKeyType; const data: TTOMLData); overload;
       function Find(const key: TTOMLKeyType): TTOMLData;
@@ -652,6 +654,16 @@ end;
 procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
 begin
   Put(key, TTOMLValue.Create(value));
+end;
+
+procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
+begin
+  map.PutData(keyIndex, data);
+end;
+
+procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType);
+begin
+  PutValue(keyIndex, TTOMLValue.Create(value));
 end;
 
 procedure TTOMLTable.Add(const key: String; const data: TTOMLData);
