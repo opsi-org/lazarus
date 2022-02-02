@@ -236,7 +236,7 @@ begin
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.a.newADDkeyInAlpha', 'newADDvalueInAlpha');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.a.newADDkeyInAlphaA', 'newADDvalueInAlphaA');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in new Table ');
@@ -253,7 +253,7 @@ begin
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.a.newADDkeyInAlpha', 'newSETValueInAlpha');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.a.newADDkeyInAlphaA', 'newSETValueInAlphaA');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in new Table ');
@@ -270,11 +270,28 @@ begin
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "CHANGE" in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','servers.alpha.a.newADDkeyInAlpha', 'newCHANGEValueInAlpha');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','servers.alpha.a.newADDkeyInAlphaA', 'newCHANGEValueInAlphaA');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "CHANGE" in unexisting Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newTable.newCHANGEtableKey', 'newCHANGEtableValue');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGETable.newCHANGEtableKey', 'newCHANGEtableValue');
+  writeln(myTOMLString);
+
+  // Testing ModifyTOML "DEL"
+  writeln('--- Testing ModifyTOML with "DEL" existing key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'DEL','newSETkeyInRootTable', '');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "DEL" unexisting key in root Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'DEL','DELkeyInRootTable', '');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "DEL" in sub-Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'DEL','servers.alpha.a.newADDkeyInAlphaA', '');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing ModifyTOML with "DEL" in unexisting Table ');
+  myTOMLString := ModifyTOML(myTOMLString,'DEL','DELTable.DELtableKey', '');
   writeln(myTOMLString);
 
   (* // Testing AddKeyValueToTOML
