@@ -10626,6 +10626,7 @@ var
   exist, new: PChar;
   {$ENDIF WINDOWS}
   moveflags: DWORD;
+
   {$IFDEF WINDOWS}
   exitbool: winbool;
   errorNo: integer;
@@ -10962,7 +10963,7 @@ begin
           end
           else
           {$ENDIF WINDOWS}
-            LogS := 'Warning: The file could not be deleted';
+          LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
         end;
       end;
