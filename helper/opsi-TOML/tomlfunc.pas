@@ -441,18 +441,16 @@ begin
       end;
   'CHANGE' :
       begin
-          myTOMLTable := TTOMLTable(myTOML);
+         myTOMLTable := TTOMLTable(myTOML);
          if keysArray.Count>=2 then
           begin
              for i := 0 to keysArray.Count -2 do
               begin
-                try
                  tableName := keysArray[i];
-                 myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
-                except
-                on E:Exception do
-                  writeln('KeyPath does not exist, nothing to be done with command CHANGE ');
-                end;
+                 if myTOMLTable.Find(tableName) <> nil then
+                    myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName))
+                 else
+                    writeln('KeyPath does not exist, nothing to be done with command CHANGE ');
               end;
           end;
          i:= 0;
@@ -470,7 +468,22 @@ begin
       end;
   'DEL' :
       begin
-         writeln('DEL');
+         myTOMLTable := TTOMLTable(myTOML);
+         if keysArray.Count>=2 then
+          begin
+             for i := 0 to keysArray.Count -2 do
+              begin
+                 tableName := keysArray[i];
+                 if myTOMLTable.Find(tableName) <> nil then
+                    myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName))
+                 else
+                    writeln('KeyPath does not exist, nothing to be done with command DEL ');
+              end;
+          end;
+         if myTOMLTable.Find(keysArray[keysArray.Count-1]) <> nil then
+             myTOMLTable.Remove(keysArray[keysArray.Count-1])
+         else
+            writeln('Key does not exist, nothing to be done with command DEL ');
       end;
   otherwise
       writeln('ModifyTOML command unkown ');
