@@ -6642,7 +6642,17 @@ begin
                           paramList.Add(param);
                         end
                         else
-                          syntaxcheck := False;
+                        begin
+                          if isNumeric(r) or isBoolean(r) then
+                          begin
+                            param := r;
+                            LogDatei.log_prog('Parsing: getparam: numeric or bool',
+                              LLdebug2);
+                            paramList.Add(param);
+                          end
+                          else
+                            syntaxcheck := False;
+                        end;
                       end;
                     end;
                     Inc(i);
