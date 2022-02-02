@@ -294,6 +294,23 @@ begin
   myTOMLString := ModifyTOML(myTOMLString,'DEL','DELTable.DELtableKey', '');
   writeln(myTOMLString);
 
+  // Testing DeleteTableFromTOML
+  writeln('--- Testing DeleteTableFromTOML existing table in root Table ');
+  myTOMLString := DeleteTableFromTOML(myTOMLString,'newTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing DeleteTableFromTOML unexisting table in root Table ');
+  myTOMLString := DeleteTableFromTOML(myTOMLString,'unexTable');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing DeleteTableFromTOML sub-Table ');
+  myTOMLString := DeleteTableFromTOML(myTOMLString,'servers.alpha.a');
+  //writeln(myTOMLString);
+
+  writeln('--- Testing DeleteTableFromTOML unexisting sub-Table ');
+  myTOMLString := DeleteTableFromTOML(myTOMLString,'servers.alpha.b');
+  writeln(myTOMLString);
+
   (* // Testing AddKeyValueToTOML
   writeln('--- Testing AddKeyValueToTOML in root Table ');
   if AddKeyValueToTOML(myTOML,'newKeyInRootTable', '"newValueInRootTable"') = true then
