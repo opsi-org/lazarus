@@ -39,6 +39,7 @@ function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 
 function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
+function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
 
 function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
@@ -489,6 +490,39 @@ begin
       writeln('ModifyTOML command unkown ');
   end;
   result := myTOML.AsTOMLString ;
+end;
+
+function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
+var
+  tableName : String;
+  myTOML : TTOMLDocument;
+  tablesArray : TStringList;
+  myTOMLTable : TTOMLTable;
+  i : integer;
+begin
+  myTOML := GetTOML(tomlContents);
+  tablesArray := TStringList.Create;
+  tablesArray.Delimiter := '.';
+  tablesArray.StrictDelimiter := True;
+  tablesArray.DelimitedText := tablePath;
+
+  myTOMLTable := TTOMLTable(myTOML);
+   if tablesArray.Count>=2 then
+    begin
+       for i := 0 to tablesArray.Count -2 do
+        begin
+           tableName := tablesArray[i];
+           if myTOMLTable.Find(tableName) <> nil then
+              myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName))
+           else
+              writeln('TablePath does not exist, nothing to be done ');
+        end;
+    end;
+   if myTOMLTable.Find(tablesArray[tablesArray.Count-1]) <> nil then
+       myTOMLTable.Remove(tablesArray[tablesArray.Count-1])
+   else
+      writeln('Table does not exist, nothing to be done ');
+   result := myTOML.AsTOMLString ;
 end;
 
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
