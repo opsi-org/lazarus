@@ -11,9 +11,6 @@ uses
   TOML, TOMLParser, TOMLfunc, osencoding,
   FGL, FPJSON, fpJSONrtti;
 
-Type
-  TA = Array[0..9] of Integer;
-
 var
   filePath, newFilePath, txtFile, JSONpath: String;
 
@@ -27,7 +24,6 @@ var
   myJSONString : String;
   myStrings : TStringList;
 
-  myKey : String = '';
   myValue : String;
   myData : TTOMLData;
   myArray : TTOMLArray;
@@ -41,13 +37,12 @@ var
   myNewTOML : TTOMLDocument;
 
   i : integer = 0;
+  nb : integer;
   tableNamesList : TStringList;
   myTOMLStringList : TStringList;
 
   myTOMLTable : TTOMLTable;
   newTOMLTable : TTOMLTable;
-
-  nb : integer;
 
 begin
   writeln('--- Begin');
@@ -228,58 +223,65 @@ begin
 
   // Testing ModifyTOML "ADD"
   writeln('--- Testing ModifyTOML with "ADD" existing key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','title', 'newADDvalueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','title', ' "newADDvalueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','newADDkeyInRootTable', 'newADDvalueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newADDkeyInRootTable', ' "newADDvalueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.a.newADDkeyInAlphaA', 'newADDvalueInAlphaA');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','servers.alpha.a.newADDkeyInAlphaA', ' "newADDvalueInAlphaA" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "ADD" new key in new Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newADDtableKey', 'newADDtableValue');
-  //writeln(myTOMLString);
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newADDtableKey', ' "newADDtableValue" ');
+
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newStringKey', ' "newStringValue" ');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newIntegerKey', '1');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newFloatKey', '10.1');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newDateKey', '2022-02-02T16:16:00Z-07:32');
+  myTOMLString := ModifyTOML(myTOMLString,'ADD','newTable.newArray', '[ "a", "b", "c" ]');
+
+  writeln(myTOMLString);
 
   // Testing ModifyTOML "SET"
   writeln('--- Testing ModifyTOML with "SET" existing key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','newADDkeyInRootTable', 'newSETValueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newADDkeyInRootTable', ' "newSETValueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" new key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','newSETkeyInRootTable', 'newSETValueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newSETkeyInRootTable', ' "newSETValueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.a.newADDkeyInAlphaA', 'newSETValueInAlphaA');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','servers.alpha.a.newADDkeyInAlphaA', ' "newSETValueInAlphaA" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "SET" in new Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'SET','newTable.newADDtableKey', 'newSETtableValue');
+  myTOMLString := ModifyTOML(myTOMLString,'SET','newTable.newADDtableKey', ' "newSETtableValue" ');
   writeln(myTOMLString);
 
   // Testing ModifyTOML "CHANGE"
   writeln('--- Testing ModifyTOML with "CHANGE" existing key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newSETkeyInRootTable', 'newCHANGEValueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newSETkeyInRootTable', ' "newCHANGEValueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "CHANGE" unexisting key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGEkeyInRootTable', 'newCHANGEValueInRootTable');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGEkeyInRootTable', ' "newCHANGEValueInRootTable" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "CHANGE" in sub-Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','servers.alpha.a.newADDkeyInAlphaA', 'newCHANGEValueInAlphaA');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','servers.alpha.a.newADDkeyInAlphaA', ' "newCHANGEValueInAlphaA" ');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "CHANGE" in unexisting Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGETable.newCHANGEtableKey', 'newCHANGEtableValue');
+  myTOMLString := ModifyTOML(myTOMLString,'CHANGE','newCHANGETable.newCHANGEtableKey', ' "newCHANGEtableValue" ');
   writeln(myTOMLString);
 
   // Testing ModifyTOML "DEL"
   writeln('--- Testing ModifyTOML with "DEL" existing key in root Table ');
-  myTOMLString := ModifyTOML(myTOMLString,'DEL','newSETkeyInRootTable', '');
+  myTOMLString := ModifyTOML(myTOMLString,'DEL',' newSETkeyInRootTable', '');
   //writeln(myTOMLString);
 
   writeln('--- Testing ModifyTOML with "DEL" unexisting key in root Table ');
@@ -310,6 +312,11 @@ begin
   writeln('--- Testing DeleteTableFromTOML unexisting sub-Table ');
   myTOMLString := DeleteTableFromTOML(myTOMLString,'servers.alpha.b');
   writeln(myTOMLString);
+
+
+  writeln('--- Testing ConvertTOMLtoJSON :');
+  writeln(ConvertTOMLtoJSON(myTOMLString));
+
 
   (* // Testing AddKeyValueToTOML
   writeln('--- Testing AddKeyValueToTOML in root Table ');
@@ -356,18 +363,10 @@ begin
      writeln('- AddKeyValueToTOMLFile with a new sub-table done')
   else
       writeln('- AddKeyValueToTOMLFile with a new sub-table failed');
-
-  writeln('--- Getting final TOMLTable :  ');
-
-  myTOMLTable:= GetTOMLTable(myTOML,'newTable');
-  writeln(myTOMLTable.AsJSON.FormatJSON);
   *)
 
-  writeln('--- Testing ConvertTOMLtoJSON :');
-  writeln(ConvertTOMLtoJSON(myTOMLString));
-
   (*
-  // These data types are supported
+  // Testing diff data types
   writeln('--- Testing adding String data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newKeyInOwner','newValueInOwner');
 
@@ -393,10 +392,8 @@ begin
   //myNewTOML:= GetTOML(myValue);
 
   AddKeyValueToTOML(myTOML,'owner.newArrayValue',myArray);
-  *)
 
-  (*
-  // These data types are not supported in TTOMLValueType
+
   writeln('--- Testing adding Octal data to TOML sub Table ');
   AddKeyValueToTOML(myTOML,'owner.newOctalValue',myOctal);
 
