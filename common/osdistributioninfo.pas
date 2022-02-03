@@ -51,22 +51,6 @@ begin
     end;
   end
   else
-  // CentOS has releases with names like 7.x-xxxx
-  if distroName = 'CentOS' then
-  begin
-    {if Pos('7', distroRelease) = 1 then
-    begin
-      FMyDistr := CentOS_7;
-      FDistrUrlPart := 'CentOS_7/';
-    end
-    else}
-    if Pos('8', distroRelease) = 1 then
-    begin
-      FMyDistr := CentOS_8;
-      FDistrUrlPart := 'CentOS_8/';
-    end;
-  end
-  else
   if distroName = 'Debian' then
   begin
     if Pos('9', distroRelease) = 1 then
@@ -90,12 +74,7 @@ begin
   else
   if distroName = 'openSUSE' then
   begin
-    if distroRelease = '15.1' then
-    begin
-      FMyDistr := openSUSE_Leap_15_1;
-      FDistrUrlPart := 'openSUSE_Leap_15.1/';
-    end
-    else if distroRelease = '15.2' then
+    if distroRelease = '15.2' then
     begin
       FMyDistr := openSUSE_Leap_15_2;
       FDistrUrlPart := 'openSUSE_Leap_15.2/';
@@ -104,23 +83,12 @@ begin
     begin
       FMyDistr := openSUSE_Leap_15_3;
       FDistrUrlPart := 'openSUSE_Leap_15.3/';
-    {end
-    else if distroRelease = '42.3' then
-    begin
-      FMyDistr := openSUSE_Leap_42_3;
-      FDistrUrlPart := 'openSUSE_Leap_42.3/';}
     end;
   end
   else
   // RHEL has releases like 7.x
   if distroName = 'RedHatEnterprise' then
   begin
-    {if Pos('7', distroRelease) = 1 then
-    begin
-      FMyDistr := RHEL_7;
-      FDistrUrlPart := 'RHEL_7/';
-    end
-    else}
     if Pos('8', distroRelease) = 1 then
     begin
       FMyDistr := RHEL_8;
@@ -139,12 +107,6 @@ begin
   else
   if distroName = 'Univention' then
   begin
-    {if Pos('4.3', distroRelease) = 1 then
-    begin
-      FMyDistr := Univention_4_3;
-      FDistrUrlPart := 'Univention_4_3/';
-    end
-    else}
     if Pos('4.4', distroRelease) = 1 then
     begin
       FMyDistr := Univention_4_4;
@@ -169,12 +131,6 @@ begin
   else
   if distroName = 'Ubuntu' then
   begin
-    {if distroRelease = '16.04' then
-    begin
-      FMyDistr := xUbuntu_16_04;
-      FDistrUrlPart := 'xUbuntu_16.04/';
-    end
-    else}
     if distroRelease = '18.04' then
     begin
       FMyDistr := xUbuntu_18_04;
