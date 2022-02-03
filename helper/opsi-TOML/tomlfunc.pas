@@ -362,24 +362,32 @@ end;
 
 function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
 var
-  tableName : String;
   myTOML : TTOMLDocument;
   keysArray : TStringList;
+  myValue : TTOMLData;
   myTOMLTable, newTable : TTOMLTable;
+  tableName : String;
   i : integer;
 begin
-  myTOML := GetTOML(tomlContents);
   keysArray := TStringList.Create;
   keysArray.Delimiter := '.';
   keysArray.StrictDelimiter := True;
   keysArray.DelimitedText := keyPath;
+
+  if uppercase(command) <> 'DEL' then
+    begin
+        myTOML := GetTOML('key = '+ value);
+        myValue := myTOML['key'];
+    end;
+
+  myTOML := GetTOML(tomlContents);
 
   case uppercase(command) of
   'ADD':
       begin
          if keysArray.Count=1 then
             if myTOML.Find(keyPath) = nil then
-              myTOML.Add(keyPath, value)
+              myTOML.Add(keyPath, myValue)
             else
               writeln('Key already exists in root table, nothing to be done with command ADD ');
 
@@ -401,7 +409,7 @@ begin
               end;
 
              if myTOMLTable.Find(keysArray[keysArray.Count -1]) = nil then
-                myTOMLTable.Add(keysArray[keysArray.Count-1],value)
+                myTOMLTable.Add(keysArray[keysArray.Count-1],myValue)
              else
                 writeln('Key already exists, nothing to be done with command ADD ');
             except
@@ -413,7 +421,7 @@ begin
   'SET' :
       begin
          if keysArray.Count=1 then
-            myTOML.Put(keyPath, value);
+            myTOML.Put(keyPath, myValue);
 
          if keysArray.Count>=2 then
           begin
@@ -432,7 +440,7 @@ begin
                     myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
               end;
 
-             myTOMLTable.Put(keysArray[keysArray.Count-1],value)
+             myTOMLTable.Put(keysArray[keysArray.Count-1],myValue)
 
             except
             on E:Exception do
@@ -458,7 +466,7 @@ begin
          repeat
             if (myTOMLTable.Keys[i]=keysArray[keysArray.Count-1]) then
                begin
-               myTOMLTable.PutValue(i,value);
+               myTOMLTable.PutValue(i,myValue);
                break;
                end
             else
