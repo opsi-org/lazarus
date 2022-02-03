@@ -20,7 +20,7 @@ type
     FPackageManagementShellCommand: string;
   public
   const
-    Distribs = 'AlmaLinux 8, CentOS 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
+    Distribs = 'AlmaLinux 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
       #10 + 'openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RHEL 8, RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
       'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'Univention 4.4';
@@ -73,16 +73,6 @@ begin
     begin
       FDistr := AlmaLinux_8;
       FDistrRepoUrlPart := 'AlmaLinux_8/';
-    end;
-  end
-  else
-  // CentOS has releases with names like 7.x-xxxx
-  if FDistroName = 'CentOS' then
-  begin
-    if Pos('8', FDistroRelease) = 1 then
-    begin
-      FDistr := CentOS_8;
-      FDistrRepoUrlPart := 'CentOS_8/';
     end;
   end
   else
