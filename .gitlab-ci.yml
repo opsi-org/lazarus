@@ -82,7 +82,11 @@ publish opsi-quick-install:
   rules:
     - if: ($PROJECT_NAME == "opsi_quick_install_project" && $PLATFORM == "Linux")
       when: always
+  before_script:
+    - git submodule update --init
   script:
+    - git submodule update --init --recursive 
+    - git submodule update --remote
     - MAINVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 2p | awk '{ print $2 }')
     - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
     - echo $MAINVERSION $SUBVERSION
