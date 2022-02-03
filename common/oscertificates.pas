@@ -129,6 +129,7 @@ implementation
 {$IFDEF DARWIN}
 function pemfileToSystemStore(filename: string): boolean;
 begin
+  Result := False;
   // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
   command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
   command := command + '"' + filename + '"';
@@ -143,7 +144,10 @@ begin
   begin
     // success
     if exitcode = 0 then
-      logdatei.log('Successful imported to system store: ' + filename, LLinfo)
+      begin
+        logdatei.log('Successful imported to system store: ' + filename, LLinfo);
+        Result := True;
+      end
     else
       logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
         + IntToStr(exitcode), LLError);
