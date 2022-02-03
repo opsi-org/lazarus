@@ -91,7 +91,7 @@ publish opsi-quick-install:
     - SUBVERSION=$(cat opsi-misc/opsi-quickinstall/l-opsi-server-products/l-opsi-server/OPSI/control | grep -m2 version | sed -n 1p | awk '{ print $2 }')
     - echo $MAINVERSION $SUBVERSION
     - cd opsi-misc/opsi-quickinstall/build/
-    - rm -rf opsi-quickinstall/*l-opsi-server*
+    - rm -rf opsi-quickinstall/l-opsi-server
     - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION "$CI_JOB_ID"'
     - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool --log-level info --uib-binaryindex-password=ahx9taePhu --binary-push opsi-quickinstall opsi-quick-install linux x64 $MAINVERSION-$SUBVERSION'
     - '[ "$CI_COMMIT_TAG" = "" ] || zip -r opsi-quickinstall_$MAINVERSION-$SUBVERSION.zip opsi-quickinstall'
