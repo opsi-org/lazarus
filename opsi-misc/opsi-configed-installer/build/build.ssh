@@ -27,11 +27,11 @@ tmpDir="/tmp/opsi-configed-installer-\$\$"
 mkdir -p "\${tmpDir}"
 cd "\${tmpDir}"
 echo "$data" | base64 -d | tar xj
-cd opsi-configed-installer/gui/
+cd "opsi-configed-installer/gui/"
 ./opsi_configed_installer_project
 cd "\$(pwd)"
 rm -r "\${tmpDir}"
 EOF
 
-chmod +x ${dstFile}
+chmod +x "${dstFile}"
 
