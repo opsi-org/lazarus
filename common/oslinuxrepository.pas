@@ -43,9 +43,10 @@ type
   {TOpsiVersion: add any new opsi Version here}
   TOpsiVersion = (Opsi41, Opsi42);
 
-  {TOpsiBranch: The branches of Opsi. Are you adventurous and interested in new functionalities use the experimental branch,
-  if you are not sure what to choose or you make your first steps in Opsi then use the stable branch}
-  TOpsiBranch = (experimental, testing, stable);
+  (*TOpsiBranch: The branches of Opsi. Are you adventurous and interested in new functionalities use the experimental branch,
+  if you are not sure what to choose or you make your first steps in Opsi then use the stable branch,
+  for testing new stuff use the development branch.*)
+  TOpsiBranch = (development, experimental, testing, stable);
 
   { TLinuxRepository }
 
@@ -88,7 +89,8 @@ implementation
 
 function stringToOpsiBranch(branch: string): TOpsiBranch;
 begin
-   if branch = 'experimental' then Result := experimental
+   if branch = 'development' then Result := development
+   else if branch = 'experimental' then Result := experimental
    else if branch = 'testing' then Result := testing
    else if branch = 'stable' then Result := stable
 end;
@@ -124,6 +126,7 @@ begin
     Opsi42: Result := FBaseURLOpsi42;
   end;
   case FOpsiBranch of
+    development: Result := Result + 'development/';
     experimental: Result := Result + 'experimental/';
     testing: Result := Result + 'testing/';
     stable: Result := Result + 'stable/';
