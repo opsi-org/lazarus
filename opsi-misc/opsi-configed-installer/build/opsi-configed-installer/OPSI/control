@@ -8,7 +8,7 @@ id: opsi-configed
 name: opsi configed
 description: opsi Graphical Management Interface (Windows / Linux/ macOS)
 advice: macOS requires m-javavm installed. Caution: if an installation starts "on demand" then all instances of javaw.exe will be stopped.
-version: 4.2.11.4.1
+version: 4.2.12.2.1
 priority: -10
 licenseRequired: False
 productClasses: 

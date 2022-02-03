@@ -1,5 +1,21 @@
  [Changelog]
 
+opsi-configed (4.2.12.2.1-1)  TESTING; urgency=medium 
+ * patch for depley client agent configuration
+ * patch for connection header X-opsi-session-lifetime
+
+-- r.roeder <r.roeder@uib.de> Mon, 17 Jan 2022 15:10:40 +0100
+
+opsi-configed (4.2.11.4.4)  TESTING; urgency=medium 
+opsi-configed (4.2.12.1.2-1)  TESTING; urgency=medium 
+ * user role prototypes implemented
+
+-- r.roeder <r.roeder@uib.de> Fri, 14 Jan 2022 15:10:40 +0100
+
+opsi-configed (4.2.11.4.4)  TESTING; urgency=medium 
+ * install by shutdown working on the different pages and menus
+
+-- r.roeder <r.roeder@uib.de> Fri, 29 Oct 2021 13:10:40 +0100
 opsi-configed (4.2.11.4.1)  TESTING; urgency=medium 
  * install by shutdown config got correct id
  * global install by shutdown config used as default for clients 
@@ -92,7 +108,7 @@ opsi-configed (4.2.1.1.0)  EXPERIMENTAL; urgency=medium
 
 -- r.roeder <r.roeder@uib.de> Fri, 14 May 2021 17:10:40 +0100
 
-opsi-configed (4.2.0.2.ß-1) TESTING; urgency=medium
+opsi-configed (4.2.0.2.0-1) TESTING; urgency=medium
  * improvements for dash
  * new button for save and execute now
 

@@ -223,8 +223,7 @@ include_insert "%scriptpath%\paramhelping.opsiscript"
 set $targetstring$ = produceLinkTarget( $opsiserver$ )
 
 DefStringList TargetserverList
-;set TargetserverList = GetProductPropertyList("opsiservers_extra", "")
-set TargetserverList = createStringList('')
+set TargetserverList = GetProductPropertyList("opsiservers_extra", "")
 
 Set $LogDir$ = "%opsiLogDir%"
 set $OS$ = lower( GetOS )
