@@ -38,7 +38,7 @@ var
 
   i : integer = 0;
   nb : integer;
-  tableNamesList : TStringList;
+  keysList, tableNamesList : TStringList;
   myTOMLStringList : TStringList;
 
   myTOMLTable : TTOMLTable;
@@ -94,7 +94,22 @@ begin
      writeln('--- ConvertTOMLfiletoJSONfile done')
   else
       writeln('--- ConvertTOMLfiletoJSONfile failed');
-  
+
+  writeln('--- Testing GetTOMLKeys from TTOMLDocument');
+  keysList:= GetTOMLKeys(myTOML);
+  writeln('myTOML keys : ');
+  writeln(keysList.Text);
+
+  writeln('--- Testing GetTOMLKeys from TTOMLTable  ');
+  keysList:= GetTOMLKeys(TTOMLTable(myTOML.Items[2]));
+  writeln('TTOML.Items[2] keys : ');
+  writeln(keysList.Text);
+
+  writeln('--- Testing GetTOMLKeys with a myTOMLString parameter:  ');
+  keysList:= GetTOMLKeys(myTOMLString);
+  writeln('myTOMLString keys : ');
+  writeln(keysList.Text);
+
   writeln('--- Testing HasTables : ');
   nb := HasTables(myTOML);
   writeln('myTOML has :', nb, ' tables');
