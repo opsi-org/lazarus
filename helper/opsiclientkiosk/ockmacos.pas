@@ -5,8 +5,19 @@ unit OckMacOS;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, osRunCommandElevated, osLog;
+  Classes, SysUtils, Process, StrUtils, osRunCommandElevated, osLog, OckPaths;
 
+
+type
+
+  { TOckPathsMacOS }
+
+  TOckPathsMacOS = class(TOckPaths)
+    procedure SetAdminModePaths; override;
+    procedure SetNormalPaths; override;
+    constructor Create; virtual;
+    destructor Destroy; override;
+  end;
 
 function isAdmin: boolean;
 function GetUserName_: string;
@@ -15,12 +26,13 @@ procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot: string):boolean;
 function Copy(Source:string; Destination:string):boolean;
 function PasswordCorrect:boolean;
-procedure InitPaths;
+
 
 
 
 var
   RunCommandElevated: TRunCommandElevated;
+  Paths: TOckPathsMacOS;
 
 const
   MountPoint = '/mnt/opsi_depot_rw';
@@ -156,16 +168,39 @@ begin
   else Result := False;
 end;
 
-procedure InitPaths;
+
+{ TOckPathsMacOS }
+
+procedure TOckPathsMacOS.SetAdminModePaths;
 begin
 
 end;
 
+procedure TOckPathsMacOS.SetNormalPaths;
+begin
+  FOnClient.FKioskApp := ;
+  FOnClient.FDefaultIcons :=;
+  FonClient.FCustomIcons:=;
+  FOnClient.FCustomSettings := '/Library/Application Support/org.opsi.OpsiClientKiosk/';
+end;
+
+constructor TOckPathsMacOS.Create;
+begin
+  InitPaths;
+end;
+
+destructor TOckPathsMacOS.Destroy;
+begin
+  inherited Destroy;
+end;
+
 initialization
 RunCommandElevated := TRunCommandElevated.Create('',True);
+OckPaths := TOckPathsMacOS.Create;
 
 finalization
 FreeAndNil(RunCommandElevated);
+FreeAndNil(OckPaths);
 
 end.
 

@@ -16,7 +16,7 @@ uses
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
   lazproginfo, osRunCommandElevated, OSProcessux, opsiconnection, helpinfo,
-  OckImagestoDepot
+  OckImagestoDepot, unit1
 
   {add more units if nedded};
 

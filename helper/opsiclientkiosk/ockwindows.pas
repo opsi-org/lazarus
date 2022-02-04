@@ -8,12 +8,28 @@ uses
   Classes, SysUtils, Process, DSiWin32, jwawinbase, FileUtil,
   osLog;
 
+
+type
+  TOCKPathsWindows = class
+   //Paths On Client
+   FPathDefaultIconsOnClient: string;
+   FPathCustomIconsOnClient: string;
+   FPathScreenShotsOnClient: string;
+   FPathKioskOnClient:string;
+   //PathsOnDepot
+   FPathKioskOnDepot:string
+   constructor Create;
+  end;
+
+
+
 function isAdmin:boolean;
 function GetUserName_: string;
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot:string): boolean;
 function Copy(Source:string; Destination:string):boolean;
+
 
 
 implementation

@@ -363,7 +363,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -517,6 +517,11 @@
         <Filename Value="../../common/osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="ockpaths.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckPaths"/>
+      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

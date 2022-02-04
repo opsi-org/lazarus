@@ -260,21 +260,22 @@ end;
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
 var
-  PathToKioskOnDepot: String;
-  PathToIconsOnDepot: String;
-  PathToKioskOnClient : String;
-  PathToIconsOnClient: String;
+  PathKioskOnDepot: String;
+  PathCustomIconsOnDepot: String;
+  PathKioskOnClient : String;
+  PathCustomIconsOnClient: String;
 begin
   Result := False;
   { Set the right directories }
-  PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
-  PathToKioskOnClient := ExcludeTrailingPathDelimiter(ExtractFilePath(Application.Location));
+  PathKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
+  PathKioskOnClient := ExcludeTrailingPathDelimiter(ExtractFilePath(Application.Location));
   //Set path delims dependend on system (e.g. Windows, Unix)
-  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
   {$IFDEF WINDOWS}
+  PathCustomIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder + '\'), pdsSystem);
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
+  PathCustomIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
   PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
