@@ -26,6 +26,9 @@ function SaveToTOMLFile(myTOML: TTOMLDocument; TOMLfilePath: String): boolean;
 function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLcontents: String): String;
 
+function GetTOMLAsString(TOMLcontents: String): String;
+function GetTOMLAsStringList(TOMLcontents: String): TStringList;
+
 function HasTables(myTOML: TTOMLTable): integer;
 
 function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
@@ -171,6 +174,22 @@ var
 begin
   myTOML := GetTOML(TOMLcontents);
   result := myTOML.AsJSON.FormatJSON;
+end;
+
+function GetTOMLAsString(TOMLcontents: String): String;
+var
+  myTOML : TTOMLDocument;
+begin
+  myTOML := GetTOML(TOMLcontents);
+  result := myTOML.AsTOMLString;
+end;
+
+function GetTOMLAsStringList(TOMLcontents: String): TStringList;
+var
+  myTOML : TTOMLDocument;
+begin
+  myTOML := GetTOML(TOMLcontents);
+  result := myTOML.AsTOMLStringList;
 end;
 
 function HasTables(myTOML: TTOMLTable): integer;
