@@ -16,14 +16,14 @@ uses
   FPJSON,
   osencoding;
 
-function LoadTOMLFile(tomlFilePath: String): TStringList;
-function ReadTOMLFile(tomlFilePath: String): String;
-function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
+function LoadTOMLFile(TOMLfilePath: String): TStringList;
+function ReadTOMLFile(TOMLfilePath: String): String;
+function GetTOMLDocument(TOMLfilePath: String): TTOMLDocument;
 
-function SaveToTOMLFile(TOMLcontents: String; tomlFilePath: String): boolean;
-function SaveToTOMLFile(myTOML: TTOMLDocument; tomlFilePath: String): boolean;
+function SaveToTOMLFile(TOMLcontents: String; TOMLfilePath: String): boolean;
+function SaveToTOMLFile(myTOML: TTOMLDocument; TOMLfilePath: String): boolean;
 
-function ConvertTOMLfileToJSONfile(tomlFilePath: String; jsonFilePath: String): boolean;
+function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLcontents: String): String;
 
 function HasTables(myTOML: TTOMLTable): integer;
@@ -35,14 +35,14 @@ function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
 function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
 function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-//function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
+//function GetTOMLTable(TOMLfilePath: String; table : String): TStringList;
 
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 
-function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
-function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
+function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
+function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
 
-//function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
+//function AddKeyValueToTOMLFile(TOMLfilePath: String; keyPath : String; value : String): boolean;
 //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
 
@@ -50,92 +50,92 @@ function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
 implementation
 
 
-function LoadTOMLFile(tomlFilePath: String): TStringList;
+function LoadTOMLFile(TOMLfilePath: String): TStringList;
 var
   myTOMLStringList: TStringList;
 begin
   result := TStringList.Create;
   myTOMLStringList := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
   try
-  myTOMLStringList.LoadFromFile(tomlFilePath);
+  myTOMLStringList.LoadFromFile(TOMLfilePath);
   //myTOMLStringList:= loadTextFileWithEncoding(tomlFilePath,'utf8');
   result.AddStrings(myTOMLStringList);
   except
     on E:Exception do
-      writeln('Exception in LoadFromFile '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in LoadFromFile '+ TOMLfilePath +': ', E.Message);
   end;
   myTOMLStringList.Free;
 end;
 
-function ReadTOMLFile(tomlFilePath: String): String;
+function ReadTOMLFile(TOMLfilePath: String): String;
 var
   myFile: TStringList;
 begin
   myFile := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
   try
   //myFile.LoadFromFile(tomlFilePath);
-  myFile:= loadTextFileWithEncoding(tomlFilePath,'utf8');
+  myFile:= loadTextFileWithEncoding(TOMLfilePath,'utf8');
   result := myFile.Text;
   except
     on E:Exception do
-      writeln('Exception in ReadTOMLFile '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in ReadTOMLFile '+ TOMLfilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 
-function GetTOMLDocument(tomlFilePath: String): TTOMLDocument;
+function GetTOMLDocument(TOMLfilePath: String): TTOMLDocument;
 var
   myFile: String;
 begin
-  tomlFilePath := ExpandFileName(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
   try
-  myFile := ReadTOMLFile(tomlFilePath);
+  myFile := ReadTOMLFile(TOMLfilePath);
   result := GetTOML(myFile);
   except
     on E:Exception do
-      writeln('Exception in GetTOMLDocument '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in GetTOMLDocument '+ TOMLfilePath +': ', E.Message);
   end;
 end;
 
-function SaveToTOMLFile(TOMLcontents : String; tomlFilePath: String): boolean;
+function SaveToTOMLFile(TOMLcontents : String; TOMLfilePath: String): boolean;
 var
   myFile: TStringList;
 begin
   result := False;
   myFile := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
   myFile.Add(TOMLcontents);
   try
-  myFile.SaveToFile(tomlFilePath);
+  myFile.SaveToFile(TOMLfilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in SaveToTOMLFile '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in SaveToTOMLFile '+ TOMLfilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 
-function SaveToTOMLFile(myTOML : TTOMLDocument; tomlFilePath: String): boolean;
+function SaveToTOMLFile(myTOML : TTOMLDocument; TOMLfilePath: String): boolean;
 var
   myFile: TStringList;
 begin
   result := False;
   myFile := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
+  tomlFilePath := ExpandFileName(TOMLfilePath);
   myFile.Add(myTOML.AsTOMLString);
   try
-  myFile.SaveToFile(tomlFilePath);
+  myFile.SaveToFile(TOMLfilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in SaveToFile '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in SaveToFile '+ TOMLfilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
 
-function ConvertTOMLfileToJSONfile(tomlFilePath: String; jsonFilePath: String): boolean;
+function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
 var
   myFile: TStringList;
   myTOML : TTOMLDocument;
@@ -143,24 +143,24 @@ var
 begin
   result := False;
   myFile := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  jsonFilePath := ExpandFileName(jsonFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
+  JSONfilePath := ExpandFileName(JSONfilePath);
   try
-  myFile.LoadFromFile(tomlFilePath);
+  myFile.LoadFromFile(TOMLfilePath);
   except
     on E:Exception do
-      writeln('Exception in ConvertTOMLtoJSON in LoadFromFile '+ tomlFilePath +': ', E.Message);
+      writeln('Exception in ConvertTOMLtoJSON in LoadFromFile '+ TOMLfilePath +': ', E.Message);
   end;
   myTOML := GetTOML(myFile.Text);
   myJSON := myTOML.AsJSON;
   myFile.Clear;
   myFile.Add(myJSON.FormatJSON);
   try
-  myFile.SaveToFile(jsonFilePath);
+  myFile.SaveToFile(JSONfilePath);
   result := True;
   except
     on E:Exception do
-      writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ jsonFilePath +': ', E.Message);
+      writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ JSONfilePath +': ', E.Message);
   end;
   myFile.Free;
 end;
@@ -258,7 +258,7 @@ begin
 end;
 
 (*
-function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
+function GetTOMLTable(TOMLfilePath: String; table : String): TStringList;
 var
   myTOMLfile : TStringList;
   myTableList : TStringList;
@@ -267,8 +267,8 @@ var
 begin
   result := TStringList.Create;
   myTableList := TStringList.Create;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  myTOMLfile := LoadTOMLFile(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
+  myTOMLfile := LoadTOMLFile(TOMLfilePath);
 
   tableIndex := myTOMLfile.IndexOf('['+table+']');
   tableNameString := '['+table+'.';
@@ -373,7 +373,7 @@ begin
      result := defaultValue;
 end;
 
-function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
+function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
 var
   myTOML : TTOMLDocument;
   keysArray : TStringList;
@@ -393,7 +393,7 @@ begin
         myValue := myTOML['key'];
     end;
 
-  myTOML := GetTOML(tomlContents);
+  myTOML := GetTOML(TOMLcontents);
 
   case uppercase(command) of
   'ADD':
@@ -513,7 +513,7 @@ begin
   result := myTOML.AsTOMLString ;
 end;
 
-function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
+function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
 var
   tableName : String;
   myTOML : TTOMLDocument;
@@ -521,7 +521,7 @@ var
   myTOMLTable : TTOMLTable;
   i : integer;
 begin
-  myTOML := GetTOML(tomlContents);
+  myTOML := GetTOML(TOMLcontents);
   tablesArray := TStringList.Create;
   tablesArray.Delimiter := '.';
   tablesArray.StrictDelimiter := True;
@@ -630,7 +630,7 @@ end;
 *)
 (*
 // WORKING BUT NOT COMPLETE
-function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
+function AddKeyValueToTOMLFile(TOMLfilePath: String; keyPath : String; value : String): boolean;
 var
   myTOMLfile : TStringList;
   keysArray : TStringList;
@@ -640,8 +640,8 @@ var
   i, j, k : integer;
 begin
   result := false;
-  tomlFilePath := ExpandFileName(tomlFilePath);
-  myTOMLfile := LoadTOMLFile(tomlFilePath);
+  TOMLfilePath := ExpandFileName(TOMLfilePath);
+  myTOMLfile := LoadTOMLFile(TOMLfilePath);
   myTOML:= GetTOML(myTOMLfile.Text);
 
   keysArray := TStringList.Create;
@@ -661,7 +661,7 @@ begin
       lineToAdd := keyPath +' = '+value;
       try
         if (myTOML.Find(keyPath) <> nil) then
-          writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
+          writeln('Key : "'+ keyPath + '" already exists in :' +TOMLfilePath)
         else
           begin
           i := 0;
@@ -682,13 +682,13 @@ begin
             myTOMLfile.Add(lineToAdd);
             writeln('Key-value added in line : ',i) ;
             end;
-          myTOMLfile.SaveToFile(tomlFilePath);
+          myTOMLfile.SaveToFile(TOMLfilePath);
           result := True;
           myTOMLfile.Free;
           end;
       except
         on E:Exception do
-          writeln('Exception in AddKeyValueToTOMLFile '+ tomlFilePath +': ', E.Message);
+          writeln('Exception in AddKeyValueToTOMLFile '+ TOMLfilePath +': ', E.Message);
       end;
       end;
     end;
@@ -725,7 +725,7 @@ begin
         until j = myTOMLTable.Count;
       end;
       if (myTOMLTable.Find(key) <> nil) then
-        writeln('Key : "'+ keyPath + '" already exists in :' +tomlFilePath)
+        writeln('Key : "'+ keyPath + '" already exists in :' +TOMLfilePath)
       else
         begin
           try
@@ -742,7 +742,7 @@ begin
             until i = myTOMLfile.Count -1;
             if i = myTOMLfile.Count -1 then
               begin
-              writeln('KeyPath : "'+ tablePath + '" does not exist in :' +tomlFilePath)
+              writeln('KeyPath : "'+ tablePath + '" does not exist in :' +TOMLfilePath)
               end;
 
             repeat
@@ -761,7 +761,7 @@ begin
               myTOMLfile.Add(lineToAdd);
               writeln('Key-value added in line : ',j) ;
               end;
-            myTOMLfile.SaveToFile(tomlFilePath);
+            myTOMLfile.SaveToFile(TOMLfilePath);
             result := True;
             myTOMLfile.Free;
           except
