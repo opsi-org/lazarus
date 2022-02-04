@@ -25572,6 +25572,14 @@ begin
       FConstValuesList.add('/tmp');
     {$ENDIF UNIX}
 
+      FConstList.add('%opsiUsertmpDir%');
+    {$IFDEF WINDOWS}
+      FConstValuesList.add('c:\opsi.org\usertmp');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+      FConstValuesList.add('/tmp');
+    {$ENDIF UNIX}
+
       FConstList.add('%opsiLogDir%');
       FConstValuesList.add(copy(oslog.defaultStandardMainLogPath, 1,
         Length(oslog.defaultStandardMainLogPath) - 1));
