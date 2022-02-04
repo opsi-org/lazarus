@@ -108,11 +108,15 @@ begin
   tableNamesList := GetTOMLTableNames(myTOMLString);
   writeln(tableNamesList.Text);
 
-
   writeln('--- Testing GetTOMLTable from TTOMLDocument: TTOMLTable ');
   myTOMLTable:= GetTOMLTable(myTOML,'servers');
   writeln('TOML Table "servers" : ');
   writeln(myTOMLTable.AsJSON.FormatJSON);
+
+  writeln('--- Testing GetTOMLTable from myTOMLString: String :  ');
+  myTOMLStringList := GetTOMLTable(myTOMLString,'servers');
+  writeln('TOML Table "servers" : ');
+  writeln(myTOMLStringList.Text);
 
   writeln('--- Testing GetTOMLTableAsString from TTOMLDocument: String ');
   writeln('TOML Table "clients" : ');
@@ -122,12 +126,13 @@ begin
   writeln('TOML Table "clients" : ');
   writeln(GetTOMLTableAsString(myTOMLString,'clients'));
 
+  (*
   writeln('--- Testing GetTOMLTable from file :  ');
   myTOMLStringList.Free;
   myTOMLStringList.AddStrings(GetTOMLTable(filePath,'servers'));
   writeln('TOML Table "servers" : ');
   writeln(myTOMLStringList.Text);
-
+  *)
 
   writeln('--- Finding (root Table) keys : ');
   writeln('myTOML.Find("title"): ' + String(myTOML.Find('title'))  );
