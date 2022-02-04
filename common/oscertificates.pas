@@ -128,8 +128,26 @@ implementation
 
 {$IFDEF DARWIN}
 function pemfileToSystemStore(filename: string): boolean;
+var
+  command: string;
+  report: string;
+  showcmd: integer;
+  ExitCode: longint;
+  distrotype, pathToStore, storeCommand: string;
+  targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
 begin
   Result := False;
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
   // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
   command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
   command := command + '"' + filename + '"';
@@ -152,6 +170,10 @@ begin
       logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
         + IntToStr(exitcode), LLError);
   end;
+  finally
+      logdatei.log_list(outlines,LLInfo);
+      FreeAndNil(outlines);
+    end;
 end;
 
 {$ENDIF DARWIN}
