@@ -7,8 +7,9 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.4.37) stable; urgency=low
 
   * osparser: new global constant %opsiUsertmpDir%
+  * osparser: allow integer and boolean params in opsiServiceCall, not only strings
 
--- a.schmitz <a.schmitz@uib.de> Fri, 04 Feb 2022 11:30
+-- a.schmitz <a.schmitz@uib.de> Fri, 04 Feb 2022 13:00
 
 
 opsi-script (4.12.4.36) stable; urgency=low
