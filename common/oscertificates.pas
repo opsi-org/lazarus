@@ -2,16 +2,8 @@ unit oscertificates;
 
 {$mode ObjFPC}{$H+}
 
-(*   macos
-# Install
-security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <pem-file>
-# Load
-security find-certificate -p -c <subject_name> /Library/Keychains/System.keychain
-# Uninstall (pseudo code)
-cert = find-certificate(<subject_name>)
-while cert:
-   security delete-certificate -Z <cert.sha1_hash> /Library/Keychains/System.keychain -t
-   cert = find-certificate(<subject_name>)
+(*
+https://unix.stackexchange.com/questions/97244/list-all-available-ssl-ca-certificates
 #####################################
    Linux:
    def _get_cert_path_and_cmd():
@@ -89,6 +81,7 @@ while cert:
            )
    *)
 
+
 interface
 
 uses
@@ -110,6 +103,13 @@ uses
   oslog,
   strutils;
 
+type
+  TlinCertRec = record
+    pathToStore, storeCommand: string;
+    masterCrt: string; // where we find all known certs
+  end;
+
+
 {$IFDEF WINDOWS}
 function open_cert_system_store(var mystore: HCERTSTORE): boolean;
 function close_cert_store(hstore: HCERTSTORE): boolean;
@@ -123,10 +123,33 @@ function pemBinarybufToCert_context(binaryBuffer: pbyte; bufsize: dword;
 function pemfileToEncodedline(filename: string; var myPemString: string): boolean;
 {$ENDIF WINDOWS}
 function pemfileToSystemStore(filename: string): boolean;
+function removeCertFromSystemStore(labelstr: string): boolean;
+function listCertificatesFromSystemStore(): TStringList;
+function isCertInstalledInSystemStore(labelstr: string): boolean;
 
 implementation
 
 {$IFDEF DARWIN}
+(*   macos
+# Install
+security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <pem-file>
+# Load
+security find-certificate -p -c <subject_name> /Library/Keychains/System.keychain
+# Uninstall (pseudo code)
+cert = find-certificate(<subject_name>)
+while cert:
+   security delete-certificate -Z <cert.sha1_hash> /Library/Keychains/System.keychain -t
+   cert = find-certificate(<subject_name>)
+#######   #######
+// macos
+// https://apple.stackexchange.com/questions/80623/import-certificates-into-the-system-keychain-via-the-command-line
+// https://derflounder.wordpress.com/2011/03/13/adding-new-trusted-root-certificates-to-system-keychain/
+https://ss64.com/osx/security.html
+https://ss64.com/osx/security-find-cert.html
+https://ss64.com/osx/security-delete-cert.html
+https://ss64.com/osx/security-cert.html
+*)
+
 function pemfileToSystemStore(filename: string): boolean;
 var
   command: string;
@@ -148,33 +171,50 @@ begin
   {$ELSE OPSISCRIPT}
     outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
-  // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
-  command := 'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
-  command := command + '"' + filename + '"';
-  if not RunCommandAndCaptureOut(command, True, outlines, report,
-    SW_HIDE, ExitCode, False, 1) then
-  begin
-    // Error
-    logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
-      + IntToStr(exitcode), LLError);
-  end
-  else
-  begin
-    // success
-    if exitcode = 0 then
+    // sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <new-root-certificate>
+    command :=
+      'security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ';
+    command := command + '"' + filename + '"';
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
       begin
         logdatei.log('Successful imported to system store: ' + filename, LLinfo);
         Result := True;
       end
-    else
-      logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
-        + IntToStr(exitcode), LLError);
-  end;
-  finally
-      logdatei.log_list(outlines,LLInfo);
-      FreeAndNil(outlines);
+      else
+        logdatei.log('pemfileToSystemStore: failed: update store command with exitcode: '
+          + IntToStr(exitcode), LLError);
     end;
+  finally
+    logdatei.log_list(outlines, LLInfo);
+    FreeAndNil(outlines);
+  end;
 end;
+
+function listCertificatesFromSystemStore(): TStringList;
+begin
+  Result := TStringList.Create;
+end;
+
+function removeCertFromSystemStore(labelstr: string): boolean;
+begin
+  Result := False;
+end;
+
+function isCertInstalledInSystemStore(labelstr: string): boolean;
+begin
+  Result := False;
+end;
+
 
 {$ENDIF DARWIN}
 
@@ -183,9 +223,34 @@ end;
 // https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
 // https://wiki.ubuntuusers.de/CA/
 
-// macos
-// https://apple.stackexchange.com/questions/80623/import-certificates-into-the-system-keychain-via-the-command-line
-// https://derflounder.wordpress.com/2011/03/13/adding-new-trusted-root-certificates-to-system-keychain/
+
+function getLinuxCertInfos(): TlinCertRec;
+var
+  distrotype: string;
+begin
+  Result.pathToStore := '';
+  Result.storeCommand := '';
+  Result.masterCrt := '';
+  distrotype := getLinuxDistroType;
+  if distrotype = 'debian' then
+  begin
+    Result.pathToStore := '/usr/local/share/ca-certificates/';
+    Result.storeCommand := 'update-ca-certificates';
+    Result.masterCrt := '/etc/ssl/certs/ca-certificates.crt';
+  end
+  else if distrotype = 'suse' then
+  begin
+    Result.pathToStore := '/usr/share/pki/trust/anchors/';
+    Result.storeCommand := 'update-ca-certificates';
+    Result.masterCrt := '/etc/ssl/certs/ca-certificates.crt';
+  end
+  else if distrotype = 'redhat' then
+  begin
+    Result.pathToStore := '/etc/pki/ca-trust/source/anchors/';
+    Result.storeCommand := 'update-ca-trust';
+    Result.masterCrt := '/etc/ssl/certs/ca-bundle.crt';
+  end;
+end;
 
 
 function pemfileToSystemStore(filename: string): boolean;
@@ -193,15 +258,14 @@ var
   command: string;
 
   report: string;
-  showcmd: integer;
   ExitCode: longint;
-  distrotype, pathToStore, storeCommand: string;
   targetfile, certExt: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringList;
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
+  linCertRec: TlinCertRec;
 begin
   Result := False;
   try
@@ -210,23 +274,8 @@ begin
   {$ELSE OPSISCRIPT}
     outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
-    distrotype := getLinuxDistroType;
-    if distrotype = 'debian' then
-    begin
-      pathToStore := '/usr/local/share/ca-certificates/';
-      storeCommand := 'update-ca-certificates';
-    end
-    else if distrotype = 'suse' then
-    begin
-      pathToStore := '/usr/share/pki/trust/anchors/';
-      storeCommand := 'update-ca-certificates';
-    end
-    else if distrotype = 'redhat' then
-    begin
-      pathToStore := '/etc/pki/ca-trust/source/anchors/';
-      storeCommand := 'update-ca-trust';
-    end;
-    targetfile := pathToStore + ExtractFileName(filename) + '.crt';
+    linCertRec := getLinuxCertInfos();
+    targetfile := linCertRec.pathToStore + ExtractFileName(filename) + '.crt';
     certExt := LowerCase(ExtractFileExt(filename));
 
     command := '';
@@ -277,7 +326,7 @@ begin
       end;
     end;
 
-    command := storeCommand;
+    command := linCertRec.storeCommand;
 
     if not RunCommandAndCaptureOut(command, True, outlines, report,
       SW_HIDE, ExitCode, False, 1) then
@@ -301,6 +350,177 @@ begin
   finally
     FreeAndNil(outlines);
   end;
+end;
+
+function listCertificatesFromSystemStore(): TStringList;
+var
+  command: string;
+
+  report: string;
+  showcmd: integer;
+  ExitCode: longint;
+  distrotype, pathToStore, storeCommand: string;
+  targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  tmplines: TStringArray;
+  linCertRec: TlinCertRec;
+  i, k: integer;
+  tmpstr: string;
+begin
+  linCertRec := getLinuxCertInfos();
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    Result := TStringList.Create;
+    //tmplines:= TStringList.Create;
+    command := 'awk -v cmd="openssl x509 -noout -subject" "/BEGIN/{close(cmd)};{print | cmd}"';
+    command := command + ' < ' + linCertRec.masterCrt;
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        for i := 0 to outlines.Count - 1 do
+        begin
+          tmplines := SplitString(outlines.Strings[i], ',');
+          for k := 0 to length(tmplines) - 1 do
+          begin
+            tmpstr := trim(tmplines[k]);
+            if AnsiStartsStr('CN =', tmpstr) then
+            begin
+              tmpstr := trim(tmpstr.Split('=')[1]);
+              Result.Add(tmpstr);
+            end;
+          end;
+        end;
+      end
+      else
+        logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+  end;
+end;
+
+function removeCertFromSystemStore(labelstr: string): boolean;
+var
+  command: string;
+
+  report: string;
+  showcmd: integer;
+  ExitCode: longint;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  linCertRec: TlinCertRec;
+  certfilelist: TStringList;
+  i, k: integer;
+  tmpstr: string;
+  tmplines: TStringArray;
+begin
+  Result := False;
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    certfilelist := TStringList.Create;
+    linCertRec := getLinuxCertInfos();
+
+    command := '';
+    certfilelist := FindAllFiles(linCertRec.pathToStore, '*.crt', False);
+    for i := 0 to certfilelist.Count - 1 do
+    begin
+      command := 'openssl x509 -subject -noout -in ';
+      command := command + certfilelist.Strings[i];
+      if not RunCommandAndCaptureOut(command, True, outlines,
+        report, SW_HIDE, ExitCode, False, 1) then
+      begin
+        // Error
+        logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+      end
+      else
+      begin
+        // success
+        if exitcode = 0 then
+        begin
+          tmplines := SplitString(outlines.Strings[i], ',');
+          for k := 0 to length(tmplines) - 1 do
+          begin
+            tmpstr := trim(tmplines[k]);
+            if AnsiStartsStr('CN =', tmpstr) then
+            begin
+              tmpstr := trim(tmpstr.Split('=')[1]);
+              if tmpstr = labelstr then  // we found it
+              begin
+                //delete the file
+                if DeleteFile(certfilelist.Strings[i]) then
+                begin
+                  logdatei.log('cert removed: ' + certfilelist.Strings[i], LLinfo);
+                  Result := True;
+                end
+                else
+                  logdatei.log('could nor remove: ' + certfilelist.Strings[i], LLError);
+              end;
+            end;
+          end;
+        end
+        else
+          logdatei.log('removeCertFromSystemStore: failed: list certs with exitcode: ' +
+            IntToStr(exitcode), LLError);
+      end;
+    end;
+
+    command := linCertRec.storeCommand;
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('removeCertFromSystemStore: failed: update store command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        logdatei.log('Successful updated system store: ', LLinfo);
+        //Result := True;
+      end
+      else
+        logdatei.log('removeCertFromSystemStore: failed: update store command with exitcode: '
+          + IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+    FreeAndNil(certfilelist);
+  end;
+end;
+
+function isCertInstalledInSystemStore(labelstr: string): boolean;
+begin
+  Result := False;
 end;
 
 {$ENDIF LINUX}
@@ -530,6 +750,22 @@ begin
   logdatei.log('Successful imported to system store: ' + filename, LLinfo);
   Result := mybool;
 end;
+
+function listCertificatesFromSystemStore(): TStringList;
+begin
+  Result := TStringList.Create;
+end;
+
+function removeCertFromSystemStore(labelstr: string): boolean;
+begin
+  Result := False;
+end;
+
+function isCertInstalledInSystemStore(labelstr: string): boolean;
+begin
+  Result := False;
+end;
+
 
 {$ENDIF WINDOWS}
 
