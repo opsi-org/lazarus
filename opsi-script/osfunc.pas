@@ -649,6 +649,8 @@ function posFromEnd(const substr: string; const s: string): integer;
 function isSymLink(filepath: string): boolean;
 function resolveSymlink(const filepath: string; recursive: boolean = True): string;
 
+function isNumeric(s: string): boolean;
+function isBoolean(s: string): boolean;
 
 
 const
@@ -10624,6 +10626,7 @@ var
   exist, new: PChar;
   {$ENDIF WINDOWS}
   moveflags: DWORD;
+
   {$IFDEF WINDOWS}
   exitbool: winbool;
   errorNo: integer;
@@ -10960,7 +10963,7 @@ begin
           end
           else
           {$ENDIF WINDOWS}
-            LogS := 'Warning: The file could not be deleted';
+          LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
         end;
       end;
@@ -11777,6 +11780,20 @@ begin
   {$IFDEF UNIX}
   Result := resolveUnixSymlink(filepath);
   {$ENDIF UNIX}
+end;
+
+function isNumeric(s: string): boolean;
+var
+  i: real;
+begin
+  Result := TryStrToFloat(s, i);
+end;
+
+function isBoolean(s: string): boolean;
+var
+  i: boolean;
+begin
+  Result := TryStrToBool(s, i);
 end;
 
 

@@ -280,6 +280,7 @@ type
 
 {$IFDEF FPC}
 {$ELSE}
+
   TuibXMLNodeDescription = class(TObject)
   private
     Fxmldoc: TuibXMLDocument;
@@ -6642,7 +6643,17 @@ begin
                           paramList.Add(param);
                         end
                         else
-                          syntaxcheck := False;
+                        begin
+                          if isNumeric(r) or isBoolean(r) then
+                          begin
+                            param := r;
+                            LogDatei.log_prog('Parsing: getparam: numeric or bool',
+                              LLdebug2);
+                            paramList.Add(param);
+                          end
+                          else
+                            syntaxcheck := False;
+                        end;
                       end;
                     end;
                     Inc(i);
@@ -7523,6 +7534,7 @@ begin
 end;
 
 {$ELSE WINDOWS}
+
 function TuibInstScript.doXMLPatch(const Sektion: TWorkSection;
   const XMLFilename: string; var output: TXStringList): TSectionResult;
 begin
@@ -10733,8 +10745,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12409,10 +12421,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in [tsDOSBatchFile,
-            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
-            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-            tsWinBatch]) then
+          if not (localKindOfStatement in
+            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -12648,7 +12660,7 @@ begin
     else if LowerCase(s) = LowerCase('GetProductPropertyList') then
     begin
       if Assigned(list1) then FreeAndNil(list1);
-            list1 := TXStringList.Create;
+      list1 := TXStringList.Create;
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
@@ -12677,7 +12689,7 @@ begin
               syntaxcheck := True;   // it was a string list
             if syntaxcheck then
             begin
-               tmpbool := False; // default used
+              tmpbool := False; // default used
               tmpstr := r;
               // is it the 2 argument call ?
               if Skip(')', r, r, InfoSyntaxError) then
@@ -12685,13 +12697,15 @@ begin
                 syntaxCheck := True;
                 if opsidata <> nil then
                 begin
-                  list.AddStrings(opsidata.getProductPropertyList(s1, list1,tmpbool));
+                  list.AddStrings(opsidata.getProductPropertyList(s1, list1, tmpbool));
                 end
                 else if local_opsidata <> nil then
                 begin
-                  list.AddStrings(local_opsidata.getProductPropertyList(s1, list1,tmpbool));
+                  list.AddStrings(local_opsidata.getProductPropertyList(s1,
+                    list1, tmpbool));
                 end
-                else  tmpbool := true;  // getting the value from the service not possible or default
+                else
+                  tmpbool := True;  // getting the value from the service not possible or default
                 if tmpbool then
                 begin
                   tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
@@ -12752,14 +12766,16 @@ begin
                           if opsidata <> nil then
                           begin
                             list.AddStrings(opsidata.getProductPropertyList(
-                              s1, list1, s3, s4,tmpbool));
+                              s1, list1, s3, s4, tmpbool));
                           end
                           else if local_opsidata <> nil then
                           begin
                             list.AddStrings(
-                              local_opsidata.getProductPropertyList(s1, list1, s3, s4,tmpbool));
+                              local_opsidata.getProductPropertyList(s1,
+                              list1, s3, s4, tmpbool));
                           end
-                          else  tmpbool := true;  // getting the value from the service not possible or default
+                          else
+                            tmpbool := True;  // getting the value from the service not possible or default
                           if tmpbool then
                           begin
                             tmpstr :=
@@ -22543,7 +22559,7 @@ begin
                         'after "/", a number between 1 and 9 is expected';
                     end;
                   end
-                  else
+                  else;
                        {$IFDEF GUI}
                     imageNo := centralImageNo;
                        {$ENDIF GUI}
@@ -25781,7 +25797,7 @@ begin
           MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
             e.Message, [mrOk]);
      {$ELSE GUI}
-        writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
+          writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
      {$ENDIF GUI}
       end;
     except
@@ -25905,7 +25921,7 @@ begin
         MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
           e.Message, [mrOk]);
    {$ELSE GUI}
-      writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
+        writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
    {$ENDIF GUI}
     end;
     LogDatei.log('End of CreateAndProcessScript', LLDebug2);
