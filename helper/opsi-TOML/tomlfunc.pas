@@ -32,18 +32,19 @@ function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
 
 function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
+function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
 function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
+//function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 
 function ModifyTOML(tomlContents: String; command : String; keyPath: String; value: String): String;
 function DeleteTableFromTOML(tomlContents: String; tablePath: String): String;
 
-function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
-procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
-procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
+//function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
+//procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
+//procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
 
 
 implementation
@@ -230,6 +231,16 @@ begin
   result := myTOMLTable;
 end;
 
+function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
+var
+  myTOML : TTOMLDocument;
+  myTOMLTable : TTOMLTable;
+begin
+  myTOML := GetTOML(TOMLcontents);
+  myTOMLTable := GetTOMLTable(myTOML, table);
+  result := myTOMLTable.AsTOMLStringList;
+end;
+
 function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 var
   myTOMLTable : TTOMLTable;
@@ -246,6 +257,7 @@ begin
   result := GetTOMLTableAsString(myTOML, table);
 end;
 
+(*
 function GetTOMLTable(tomlFilePath: String; table : String): TStringList;
 var
   myTOMLfile : TStringList;
@@ -272,6 +284,7 @@ begin
 
   result := myTableList;
 end;
+*)
 
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 var
@@ -533,6 +546,7 @@ begin
    result := myTOML.AsTOMLString ;
 end;
 
+(*
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
 var
   tablePath : String;
@@ -575,7 +589,8 @@ begin
       end;
   end;
 end;
-
+*)
+(*
 procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
 var
   tablePath : String;
@@ -612,7 +627,8 @@ begin
     end;
     end;
 end;
-
+*)
+(*
 // WORKING BUT NOT COMPLETE
 function AddKeyValueToTOMLFile(tomlFilePath: String; keyPath : String; value : String): boolean;
 var
@@ -760,7 +776,7 @@ begin
   end;
 
 end;
-
+*)
 end.
 
 
