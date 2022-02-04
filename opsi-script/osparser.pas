@@ -25588,7 +25588,7 @@ begin
       FConstValuesList.add('/tmp');
     {$ENDIF UNIX}
 
-      FConstList.add('%opsiUsertmpDir%');
+      FConstList.add('%opsiUserTmpDir%');
     {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\usertmp');
     {$ENDIF WINDOWS}
