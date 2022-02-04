@@ -29,8 +29,10 @@ function ConvertTOMLtoJSON(TOMLcontents: String): String;
 function GetTOMLAsString(TOMLcontents: String): String;
 function GetTOMLAsStringList(TOMLcontents: String): TStringList;
 
-function HasTables(myTOML: TTOMLTable): integer;
+function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
+function GetTOMLKeys(TOMLcontents: String): TStringList;
 
+function HasTables(myTOML: TTOMLTable): integer;
 function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
 
@@ -190,6 +192,29 @@ var
 begin
   myTOML := GetTOML(TOMLcontents);
   result := myTOML.AsTOMLStringList;
+end;
+
+function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
+var
+  keysList : TStringList;
+  i : integer;
+begin
+  keysList := TStringList.Create;
+  for i := 0 to myTOML.Count -1 do
+      keysList.Add(myTOML.Keys[i]);
+  result := keysList;
+end;
+
+function GetTOMLKeys(TOMLcontents: String): TStringList;
+var
+  myTOML : TTOMLDocument;
+  keysList : TStringList;
+  i : integer;
+begin
+  keysList := TStringList.Create;
+  myTOML := GetTOML(TOMLcontents);
+  keysList := GetTOMLKeys(myTOML);
+  result := keysList;
 end;
 
 function HasTables(myTOML: TTOMLTable): integer;
