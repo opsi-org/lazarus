@@ -3,82 +3,6 @@ unit oscertificates;
 {$mode ObjFPC}{$H+}
 
 (*
-https://unix.stackexchange.com/questions/97244/list-all-available-ssl-ca-certificates
-#####################################
-   Linux:
-   def _get_cert_path_and_cmd():
-       dist = {distro.id()}
-       for name in (distro.like() or "").split(" "):
-           if name:
-               dist.add(name)
-       if "centos" in dist or "rhel" in dist:
-           # /usr/share/pki/ca-trust-source/anchors/
-           return ("/etc/pki/ca-trust/source/anchors", "update-ca-trust")
-       if "debian" in dist or "ubuntu" in dist:
-           return ("/usr/local/share/ca-certificates", "update-ca-certificates")
-       if "sles" in dist or "suse" in dist:
-           return ("/usr/share/pki/trust/anchors", "update-ca-certificates")
-
-       logger.error("Failed to set system cert path on distro '%s', like: %s", distro.id(), distro.like())
-       raise RuntimeError(f"Failed to set system cert path on distro '{distro.id()}', like: {distro.like()}")
-
-
-   def install_ca(ca_cert: crypto.X509):
-       system_cert_path, cmd = _get_cert_path_and_cmd()
-
-       logger.info("Installing CA '%s' into system store", ca_cert.get_subject().CN)
-
-       cert_file = os.path.join(
-           system_cert_path,
-           f"{ca_cert.get_subject().CN.replace(' ', '_')}.crt"
-       )
-       with open(cert_file, "wb") as file:
-           file.write(crypto.dump_certificate(crypto.FILETYPE_PEM, ca_cert))
-
-       output = subprocess.check_output([cmd], shell=False)
-       logger.debug("Output of '%s': %s", cmd, output)
-
-
-   def load_ca(subject_name: str) -> crypto.X509:
-       system_cert_path, _cmd = _get_cert_path_and_cmd()
-       if os.path.exists(system_cert_path):
-           for root, _dirs, files in os.walk(system_cert_path):
-               for entry in files:
-                   with open(os.path.join(root, entry), "rb") as file:
-                       try:
-                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
-                           if ca_cert.get_subject().CN == subject_name:
-                               return ca_cert
-                       except crypto.Error:
-                           continue
-       return None
-
-
-   def remove_ca(subject_name: str) -> bool:
-       system_cert_path, cmd = _get_cert_path_and_cmd()
-       removed = 0
-       if os.path.exists(system_cert_path):
-           for root, _dirs, files in os.walk(system_cert_path):
-               for entry in files:
-                   filename = os.path.join(root, entry)
-                   with open(filename, "rb") as file:
-                       try:
-                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
-                           if ca_cert.get_subject().CN == subject_name:
-                               logger.info("Removing CA '%s' (%s)", subject_name, filename)
-                               os.remove(filename)
-                               removed += 1
-                       except crypto.Error:
-                           continue
-
-       if removed:
-           output = subprocess.check_output([cmd], shell=False)
-           logger.debug("Output of '%s': %s", cmd, output)
-       else:
-           logger.info(
-               "CA '%s' not found in '%s', nothing to remove",
-               subject_name, system_cert_path
-           )
    *)
 
 
@@ -91,6 +15,7 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   jwawincrypt,
+  osfuncwin,
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   OSProcessux,
@@ -223,6 +148,84 @@ end;
 // Ubuntu
 // https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
 // https://wiki.ubuntuusers.de/CA/
+(*
+https://unix.stackexchange.com/questions/97244/list-all-available-ssl-ca-certificates
+#####################################
+   Linux:
+   def _get_cert_path_and_cmd():
+       dist = {distro.id()}
+       for name in (distro.like() or "").split(" "):
+           if name:
+               dist.add(name)
+       if "centos" in dist or "rhel" in dist:
+           # /usr/share/pki/ca-trust-source/anchors/
+           return ("/etc/pki/ca-trust/source/anchors", "update-ca-trust")
+       if "debian" in dist or "ubuntu" in dist:
+           return ("/usr/local/share/ca-certificates", "update-ca-certificates")
+       if "sles" in dist or "suse" in dist:
+           return ("/usr/share/pki/trust/anchors", "update-ca-certificates")
+
+       logger.error("Failed to set system cert path on distro '%s', like: %s", distro.id(), distro.like())
+       raise RuntimeError(f"Failed to set system cert path on distro '{distro.id()}', like: {distro.like()}")
+
+
+   def install_ca(ca_cert: crypto.X509):
+       system_cert_path, cmd = _get_cert_path_and_cmd()
+
+       logger.info("Installing CA '%s' into system store", ca_cert.get_subject().CN)
+
+       cert_file = os.path.join(
+           system_cert_path,
+           f"{ca_cert.get_subject().CN.replace(' ', '_')}.crt"
+       )
+       with open(cert_file, "wb") as file:
+           file.write(crypto.dump_certificate(crypto.FILETYPE_PEM, ca_cert))
+
+       output = subprocess.check_output([cmd], shell=False)
+       logger.debug("Output of '%s': %s", cmd, output)
+
+
+   def load_ca(subject_name: str) -> crypto.X509:
+       system_cert_path, _cmd = _get_cert_path_and_cmd()
+       if os.path.exists(system_cert_path):
+           for root, _dirs, files in os.walk(system_cert_path):
+               for entry in files:
+                   with open(os.path.join(root, entry), "rb") as file:
+                       try:
+                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
+                           if ca_cert.get_subject().CN == subject_name:
+                               return ca_cert
+                       except crypto.Error:
+                           continue
+       return None
+
+
+   def remove_ca(subject_name: str) -> bool:
+       system_cert_path, cmd = _get_cert_path_and_cmd()
+       removed = 0
+       if os.path.exists(system_cert_path):
+           for root, _dirs, files in os.walk(system_cert_path):
+               for entry in files:
+                   filename = os.path.join(root, entry)
+                   with open(filename, "rb") as file:
+                       try:
+                           ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, file.read())
+                           if ca_cert.get_subject().CN == subject_name:
+                               logger.info("Removing CA '%s' (%s)", subject_name, filename)
+                               os.remove(filename)
+                               removed += 1
+                       except crypto.Error:
+                           continue
+
+       if removed:
+           output = subprocess.check_output([cmd], shell=False)
+           logger.debug("Output of '%s': %s", cmd, output)
+       else:
+           logger.info(
+               "CA '%s' not found in '%s', nothing to remove",
+               subject_name, system_cert_path
+           )
+*)
 
 
 function getLinuxCertInfos(): TlinCertRec;
@@ -435,7 +438,7 @@ var
   {$ENDIF OPSISCRIPT}
   linCertRec: TlinCertRec;
   certfilelist: TStringList;
-  i, k : integer;
+  i, k: integer;
   tmpstr: string;
   tmplines: TStringArray;
 begin
@@ -455,7 +458,7 @@ begin
     begin
       command := 'openssl x509 -subject -noout -in ';
       command := command + certfilelist.Strings[i];
-      logdatei.log_prog('starting: '+command,LLInfo);
+      logdatei.log_prog('starting: ' + command, LLInfo);
       if not RunCommandAndCaptureOut(command, True, outlines,
         report, SW_HIDE, ExitCode, False, 1) then
       begin
@@ -469,28 +472,28 @@ begin
         if exitcode = 0 then
         begin
           if outlines.Count >= 1 then
-        begin
-          tmplines := SplitString(outlines.Strings[0], ',');
-          for k := 0 to length(tmplines) - 1 do
           begin
-            tmpstr := trim(tmplines[k]);
-            if AnsiStartsStr('CN =', tmpstr) then
+            tmplines := SplitString(outlines.Strings[0], ',');
+            for k := 0 to length(tmplines) - 1 do
             begin
-              tmpstr := trim(tmpstr.Split('=')[1]);
-              if tmpstr = labelstr then  // we found it
+              tmpstr := trim(tmplines[k]);
+              if AnsiStartsStr('CN =', tmpstr) then
               begin
-                //delete the file
-                if DeleteFile(certfilelist.Strings[i]) then
+                tmpstr := trim(tmpstr.Split('=')[1]);
+                if tmpstr = labelstr then  // we found it
                 begin
-                  logdatei.log('cert removed: ' + certfilelist.Strings[i], LLinfo);
-                  Result := True;
-                end
-                else
-                  logdatei.log('could nor remove: ' + certfilelist.Strings[i], LLError);
+                  //delete the file
+                  if DeleteFile(certfilelist.Strings[i]) then
+                  begin
+                    logdatei.log('cert removed: ' + certfilelist.Strings[i], LLinfo);
+                    Result := True;
+                  end
+                  else
+                    logdatei.log('could nor remove: ' + certfilelist.Strings[i], LLError);
+                end;
               end;
             end;
           end;
-        end;
         end
         else
           logdatei.log('removeCertFromSystemStore: failed: list certs with exitcode: ' +
@@ -747,9 +750,10 @@ var
   cbsize: dword;
 begin
   Result := False;
-  Pca_cert := @ca_cert;
-  Pca_cert := CertFindCertificateInStore(hstore, X509_ASN_ENCODING,
-    0, CERT_FIND_SUBJECT_STR, PChar(ca_cert_name), Pca_cert);
+  //Pca_cert := @ca_cert;
+  Pca_cert := nil;
+  Pca_cert := CertFindCertificateInStore(hstore, X509_ASN_ENCODING or
+    PKCS_7_ASN_ENCODING, 0, CERT_FIND_SUBJECT_STR, PChar(ca_cert_name), Pca_cert);
   if Pca_cert = nil then
   begin
     // failed
@@ -762,7 +766,8 @@ begin
       0, nil, nil, 0);
     if CertDeleteCertificateFromStore(Pca_cert) then
     begin
-      // failed
+      // success
+      Result := True;
     end;
     CertFreeCertificateContext(Pca_cert);
     Result := True;
@@ -774,12 +779,12 @@ var
   mystore: HCERTSTORE;
   binaryBuffer: pbyte;
   bufsize: dword;
-  ca_cert: CERT_CONTEXT;
+  //ca_cert: CERT_CONTEXT;
   mybool: boolean;
-  mypem: string;
+  //mypem: string;
   message: string;
   i: integer;
-  myPemFile: textfile;
+  //myPemFile: textfile;
 begin
   Result := False;
   bufsize := 4096;
@@ -825,18 +830,254 @@ begin
 end;
 
 function listCertificatesFromSystemStore(): TStringList;
+var
+  command: string;
+
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  tmplines: TStringArray;
+  //linCertRec: TlinCertRec;
+  i, k: integer;
+  tmpstr: string;
+
 begin
-  Result := TStringList.Create;
+  // powershell -command  "get-childitem -path cert:\currentuser\root\ | select subject
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    Result := TStringList.Create;
+    //tmplines:= TStringList.Create;
+    command :=
+      'powershell -command  "get-childitem -path cert:\localmachine\root\ | select subject';
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        for i := 0 to outlines.Count - 1 do
+        begin
+          tmplines := SplitString(outlines.Strings[i], ',');
+          for k := 0 to length(tmplines) - 1 do
+          begin
+            tmpstr := trim(tmplines[k]);
+            if AnsiStartsStr('CN=', tmpstr) then
+            begin
+              tmpstr := trim(tmpstr.Split('=')[1]);
+              Result.Add(tmpstr);
+            end;
+          end;
+        end;
+      end
+      else
+        logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+  end;
 end;
+
+(*
+function removeCertFromSystemStore(labelstr: string): boolean;
+var
+  mystore: HCERTSTORE;
+  //binaryBuffer: pbyte;
+  //bufsize: dword;
+  //ca_cert: CERT_CONTEXT;
+  mybool: boolean;
+  //mypem: string;
+  message: string;
+//  i: integer;
+  //myPemFile: textfile;
+begin
+  Result := False;
+  //bufsize := 4096;
+  //binaryBuffer := GetMem(bufsize);
+  mybool := open_cert_system_store(mystore);
+  if not mybool then
+  begin
+    message := SysErrorMessage(GetLastOSError);
+    logdatei.log('removeCertFromSystemStore: failed: open_cert_system_store: ' +
+      message, LLError);
+    exit;
+  end;
+  logdatei.log_prog('done: open_cert_system_store', LLdebug);
+  mybool := remove_ca(mystore, labelstr);
+  if not mybool then
+  begin
+    message := SysErrorMessage(GetLastOSError);
+    logdatei.log('removeCertFromSystemStore: failed: remove_ca: ' + message, LLError);
+    exit;
+  end;
+  logdatei.log_prog('done: remove_ca', LLdebug);
+  mybool := close_cert_store(mystore);
+  if not mybool then
+  begin
+    message := SysErrorMessage(GetLastOSError);
+    logdatei.log('pemfileToSystemStore: failed: close_cert_store: ' + message, LLError);
+    exit;
+  end;
+  logdatei.log_prog('done: close_cert_store', LLdebug);
+  logdatei.log_prog('done: removeCertFromSystemStore', LLdebug);
+  logdatei.log('Successful removed from system store: ' + labelstr, LLinfo);
+  Result := mybool;
+end;
+*)
 
 function removeCertFromSystemStore(labelstr: string): boolean;
+var
+  command: string;
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  //tmplines: TStringArray;
+  //linCertRec: TlinCertRec;
+  i, k: integer;
+  // tmpstr: string;
+
 begin
-  Result := False;
+  // powershell -command  "get-childitem -path cert:\currentuser\root\ | where DNSNameList -eq
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    Result := False;
+    //tmplines:= TStringList.Create;
+    command := 'powershell -command  "get-childitem -path cert:\localmachine\root\';
+    command := command + ' | where DNSNameList -eq ''' + labelstr +
+      ''' | select   -expandProperty thumbprint';
+    logdatei.log_prog('starting: ' + command, LLInfo);
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('removeCertFromSystemStore: failed: list certs with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        if outlines.Count > 0 then
+        begin
+          for i := 0 to outlines.Count - 1 do
+          begin
+            command := 'powershell -command  "remove-item -path cert:\localmachine\root\';
+            command := command + outlines[i] + ' -verbose"';
+            logdatei.log_prog('starting: ' + command, LLInfo);
+
+            if not RunCommandAndCaptureOut(command, True, outlines, report,
+              SW_HIDE, ExitCode, False, 1) then
+            begin
+              // Error
+              logdatei.log('removeCertFromSystemStore: failed: remove cert with exitcode: ' +
+                IntToStr(exitcode), LLError);
+            end
+            else
+            begin
+              // success
+              logdatei.log('removed cert with thumbprint: ' + outlines[i], LLInfo);
+            end;
+          end;
+          Result := True;
+
+        end;
+      end
+      else
+        logdatei.log('removeCertFromSystemStore: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+  end;
 end;
 
+
+//  | where DNSNameList -eq
 function isCertInstalledInSystemStore(labelstr: string): boolean;
+var
+  command: string;
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  //tmplines: TStringArray;
+  //linCertRec: TlinCertRec;
+  // i, k: integer;
+  // tmpstr: string;
+
 begin
-  Result := False;
+  // powershell -command  "get-childitem -path cert:\currentuser\root\ | where DNSNameList -eq
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    Result := False;
+    //tmplines:= TStringList.Create;
+    command := 'powershell -command  "get-childitem -path cert:\localmachine\root\';
+    command := command + ' | where DNSNameList -eq ''' + labelstr +
+      ''' | select   -expandProperty subject';
+    logdatei.log_prog('starting: ' + command, LLInfo);
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        if outlines.Count > 0 then Result := True;
+      end
+      else
+        logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+  end;
 end;
 
 
