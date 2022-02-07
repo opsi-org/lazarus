@@ -1030,10 +1030,10 @@ begin
     PathOpsiLogViewer := 'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-    PathOpsiLogViewer := '"/usr/share/opsi-logviewer/logviewer'; // /usr/bin/logviewer
+    PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-    PathOpsiLogViewer := '/Applications/opsi-logviewer.app';
+    PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
   {$ENDIF DARWIN}
   if FileExists(PathOpsiLogViewer) then
   begin
