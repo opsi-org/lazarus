@@ -5,7 +5,15 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.4.37) stable; urgency=low
 
-  * oscertificates: finalize function for linux /mac
+  * oscertificates: finalize function for linux /mac:
+    function pemfileToSystemStore(filename: string): boolean;
+    function removeCertFromSystemStore(labelstr: string): boolean;
+    function listCertificatesFromSystemStore(): TStringList;
+    function isCertInstalledInSystemStore(labelstr: string): boolean;
+  * new function isCertInstalledInSystem(<label>): boolean; [WLM]
+  * new function importCertToSystem(<filename>): noresult;  [WLM]
+  * new function removeCertFromSystem(<label>): noresult;  [WLM]
+  * new function listCertificatesFromSystem: stringlist;  [WLM]
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 

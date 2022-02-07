@@ -87,6 +87,7 @@ interface
 uses
   Classes, SysUtils,
   fileutil,
+  lazfileutils,
   {$IFDEF WINDOWS}
   Windows,
   jwawincrypt,
@@ -275,7 +276,7 @@ begin
     outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
     linCertRec := getLinuxCertInfos();
-    targetfile := linCertRec.pathToStore + ExtractFileName(filename) + '.crt';
+    targetfile := linCertRec.pathToStore + ExtractFileNameOnly(filename) + '.crt';
     certExt := LowerCase(ExtractFileExt(filename));
 
     command := '';
@@ -370,6 +371,7 @@ var
   linCertRec: TlinCertRec;
   i, k: integer;
   tmpstr: string;
+
 begin
   linCertRec := getLinuxCertInfos();
   try
@@ -382,6 +384,7 @@ begin
     //tmplines:= TStringList.Create;
     command := 'awk -v cmd="openssl x509 -noout -subject" "/BEGIN/{close(cmd)};{print | cmd}"';
     command := command + ' < ' + linCertRec.masterCrt;
+    command := '/bin/bash -c ''' + command + '''';
 
     if not RunCommandAndCaptureOut(command, True, outlines, report,
       SW_HIDE, ExitCode, False, 1) then
@@ -432,7 +435,7 @@ var
   {$ENDIF OPSISCRIPT}
   linCertRec: TlinCertRec;
   certfilelist: TStringList;
-  i, k: integer;
+  i, k : integer;
   tmpstr: string;
   tmplines: TStringArray;
 begin
@@ -452,6 +455,7 @@ begin
     begin
       command := 'openssl x509 -subject -noout -in ';
       command := command + certfilelist.Strings[i];
+      logdatei.log_prog('starting: '+command,LLInfo);
       if not RunCommandAndCaptureOut(command, True, outlines,
         report, SW_HIDE, ExitCode, False, 1) then
       begin
@@ -464,7 +468,9 @@ begin
         // success
         if exitcode = 0 then
         begin
-          tmplines := SplitString(outlines.Strings[i], ',');
+          if outlines.Count >= 1 then
+        begin
+          tmplines := SplitString(outlines.Strings[0], ',');
           for k := 0 to length(tmplines) - 1 do
           begin
             tmpstr := trim(tmplines[k]);
@@ -484,6 +490,7 @@ begin
               end;
             end;
           end;
+        end;
         end
         else
           logdatei.log('removeCertFromSystemStore: failed: list certs with exitcode: ' +
@@ -519,8 +526,74 @@ begin
 end;
 
 function isCertInstalledInSystemStore(labelstr: string): boolean;
+var
+  command: string;
+
+  report: string;
+  showcmd: integer;
+  ExitCode: longint;
+  distrotype, pathToStore, storeCommand: string;
+  targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  tmplines: TStringArray;
+  linCertRec: TlinCertRec;
+  i, k: integer;
+  tmpstr: string;
 begin
-  Result := False;
+  linCertRec := getLinuxCertInfos();
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    Result := False;
+    //tmplines:= TStringList.Create;
+    command := 'awk -v cmd="openssl x509 -noout -subject" "/BEGIN/{close(cmd)};{print | cmd}"';
+    command := command + ' < ' + linCertRec.masterCrt;
+    command := '/bin/bash -c ''' + command + '''';
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('listCertificates: failed: list certs with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        for i := 0 to outlines.Count - 1 do
+        begin
+          tmplines := SplitString(outlines.Strings[i], ',');
+          for k := 0 to length(tmplines) - 1 do
+          begin
+            tmpstr := trim(tmplines[k]);
+            if AnsiStartsStr('CN =', tmpstr) then
+            begin
+              tmpstr := trim(tmpstr.Split('=')[1]);
+              if tmpstr = labelstr then
+              begin
+                Result := True;
+                break;
+              end;
+            end;
+          end;
+        end;
+      end
+      else
+        logdatei.log('isCertInstalledInSystemStore: failed: list certs with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    FreeAndNil(outlines);
+  end;
 end;
 
 {$ENDIF LINUX}

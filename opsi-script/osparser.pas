@@ -192,6 +192,8 @@ type
     tsPowershellcall,
     tsExecuteSection,
     tsImportCertToSystem,
+    tsRemoveCertFromSystem,
+    tsisCertInstalledInSystem,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -14822,6 +14824,14 @@ begin
       end;
     end
 
+    else if LowerCase(s) = LowerCase('listCertificatesFromSystem') then
+    begin
+      begin
+        syntaxcheck := True;
+        list.AddStrings(listCertificatesFromSystemStore());
+      end;
+    end
+
     else if LowerCase(s) = LowerCase('getHWBiosInfoMap') then
     begin
       syntaxcheck := True;
@@ -19923,6 +19933,24 @@ begin
         end;
   end
 
+  else if Skip('isCertInstalledInSystem', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          BooleanResult := False;
+          try
+                BooleanResult := isCertInstalledInSystemStore(s1);
+          except
+            logdatei.log('Error: Exception in isCertInstalledInSystem:  ' + s1, LLError);
+            BooleanResult := False;
+          end;
+        end;
+  end
+
+
   (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
@@ -24828,6 +24856,34 @@ begin
                     end;
               end;
 
+              tsRemoveCertFromSystem:
+              begin
+                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+                  if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
+                  then
+                    if Skip(')', Remaining, Remaining, InfoSyntaxError)
+                    then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                        if not removeCertFromSystemStore(s1) then
+                          logdatei.log('RemoveCertFromSystem: failed to remove: ' +
+                            s1, LLError);
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('RemoveCertFromSystem: failed to remove: ' +
+                            s1 + ' : ' + e.message,
+                            LLError);
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        end;
+                      end;
+                    end;
+              end;
+
 
 
               tsSetVar:
@@ -26047,6 +26103,8 @@ begin
   PStatNames^ [tsEndFunction] := 'EndFunc';
 
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
+  PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
+
 
   runProfileActions := False;
   runLoginScripts := False;
