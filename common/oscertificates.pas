@@ -27,6 +27,7 @@ uses
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
   oslog,
+  osparserhelper,
   strutils;
 
 type
@@ -80,10 +81,10 @@ function pemfileToSystemStore(filename: string): boolean;
 var
   command: string;
   report: string;
-  showcmd: integer;
+  //showcmd: integer;
   ExitCode: longint;
-  distrotype, pathToStore, storeCommand: string;
-  targetfile, certExt: string;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringList;
   {$ELSE OPSISCRIPT}
@@ -127,18 +128,226 @@ begin
 end;
 
 function listCertificatesFromSystemStore(): TStringList;
+var
+  command: string;
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  i: integer;
+  tmpstr: string;
+  //tmplines: TStringArray;
+  //labellines : TStringlist;
 begin
   Result := TStringList.Create;
+  //labellines := TStringList.Create;
+  try
+     {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+     {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+     {$ENDIF OPSISCRIPT}
+
+    // security find-certificate  -a /Library/Keychains/System.keychain
+    command :=
+      'security find-certificate -a /Library/Keychains/System.keychain';
+    logdatei.log_prog('starting: ' + command, LLInfo);
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log(
+        'listCertificatesFromSystemStore: failed: find command with exitcode: ' +
+        IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        logdatei.log('Successful called find', LLinfo);
+        for i := 0 to outlines.Count - 1 do
+        begin
+          tmpstr := trim(outlines[i]);
+          logdatei.log_prog('found1: '+tmpstr, LLinfo);
+          if AnsiStartsStr('"labl"<blob>=', tmpstr) then
+          begin
+            //logdatei.log_prog('found2: '+tmpstr, LLinfo);
+            tmpstr := trim(tmpstr.Split('=')[1]);
+            //logdatei.log_prog('found2: '+tmpstr, LLinfo);
+            tmpstr := opsiunquotestr2(tmpstr, '""');
+            //logdatei.log_prog('found3: '+tmpstr, LLinfo);
+            Result.Add(tmpstr);
+          end;
+        end;
+      end
+      else
+        logdatei.log(
+          'listCertificatesFromSystemStore: failed: find command with exitcode: '
+          + IntToStr(exitcode), LLError);
+    end;
+  finally
+    //logdatei.log_list(outlines, LLInfo);
+    FreeAndNil(outlines);
+    //FreeAndNil(labellines);
+  end;
 end;
 
+
 function removeCertFromSystemStore(labelstr: string): boolean;
+var
+  command: string;
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  i: integer;
+  tmpstr: string;
+  //tmplines: TStringArray;
+  sha1lines: TStringList;
 begin
   Result := False;
+  try
+    {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+    {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+    {$ENDIF OPSISCRIPT}
+    sha1lines := TStringList.Create;
+    // security find-certificate  -Z -c 'Opsi CA' /Library/Keychains/System.keychain
+    command :=
+      'security find-certificate  -Z -c ''';
+    command := command + labelstr + ''' -a /Library/Keychains/System.keychain';
+    logdatei.log_prog('starting: ' + command, LLInfo);
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('removeCertFromSystemStore: failed: find command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        logdatei.log('Successful found in system store: ' + labelstr, LLinfo);
+        for i := 0 to outlines.Count - 1 do
+        begin
+          tmpstr := outlines[i];
+          if AnsiStartsStr('SHA-1 hash:', tmpstr) then
+          begin
+            tmpstr := trim(tmpstr.Split(':')[1]);
+            sha1lines.Add(tmpstr);
+          end;
+        end;
+        for i := 0 to sha1lines.Count - 1 do
+        begin
+          command :=
+            'security delete-certificate  -Z ';
+          command := command + sha1lines[i] + '  /Library/Keychains/System.keychain';
+          logdatei.log_prog('starting: ' + command, LLInfo);
+
+          if not RunCommandAndCaptureOut(command, True, outlines,
+            report, SW_HIDE, ExitCode, False, 1) then
+          begin
+            // Error
+            logdatei.log('removeCertFromSystemStore: failed: delete command with exitcode: '
+              + IntToStr(exitcode), LLError);
+          end
+          else
+          begin
+            // success
+            if exitcode = 0  then
+            begin
+              logdatei.log('Successful delete from system store: ' +
+                sha1lines[i], LLinfo);
+              Result := True;
+            end
+            else
+              logdatei.log(
+                'removeCertFromSystemStore: failed: delete command with exitcode: ' +
+                IntToStr(exitcode), LLError);
+          end;
+        end;
+      end
+      else
+        logdatei.log(
+          'removeCertFromSystemStore: failed: find command with exitcode: ' +
+          IntToStr(exitcode), LLError);
+    end;
+  finally
+    //logdatei.log_list(outlines, LLInfo);
+    FreeAndNil(outlines);
+    FreeAndNil(sha1lines);
+  end;
 end;
 
 function isCertInstalledInSystemStore(labelstr: string): boolean;
+var
+  command: string;
+  report: string;
+  //showcmd: integer;
+  ExitCode: longint;
+  //distrotype, pathToStore, storeCommand: string;
+  //targetfile, certExt: string;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringList;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
 begin
   Result := False;
+  try
+  {$IFDEF OPSISCRIPT}
+    outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+    outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+    // security find-certificate  -Z -c 'Opsi CA' /Library/Keychains/System.keychain
+    command :=
+      'security find-certificate  -Z -c ''';
+    command := command + labelstr + ''' /Library/Keychains/System.keychain';
+    logdatei.log_prog('starting: ' + command, LLInfo);
+
+    if not RunCommandAndCaptureOut(command, True, outlines, report,
+      SW_HIDE, ExitCode, False, 1) then
+    begin
+      // Error
+      logdatei.log('isCertInstalledInSystemStore: failed: find command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end
+    else
+    begin
+      // success
+      if exitcode = 0 then
+      begin
+        logdatei.log('Successful found in system store: ' + labelstr, LLinfo);
+        Result := True;
+      end
+      else if exitcode = 44 then
+        logdatei.log('isCertInstalledInSystemStore: no certificate found ', LLInfo)
+      else
+        logdatei.log('isCertInstalledInSystemStore: failed: find command with exitcode: '
+        + IntToStr(exitcode), LLError);
+    end;
+  finally
+    logdatei.log_list(outlines, LLInfo);
+    FreeAndNil(outlines);
+  end;
 end;
 
 
@@ -489,7 +698,8 @@ begin
                     Result := True;
                   end
                   else
-                    logdatei.log('could nor remove: ' + certfilelist.Strings[i], LLError);
+                    logdatei.log('could nor remove: ' +
+                      certfilelist.Strings[i], LLError);
                 end;
               end;
             end;
@@ -996,12 +1206,12 @@ begin
             command := command + outlines[i] + ' -verbose"';
             logdatei.log_prog('starting: ' + command, LLInfo);
 
-            if not RunCommandAndCaptureOut(command, True, outlines, report,
-              SW_HIDE, ExitCode, False, 1) then
+            if not RunCommandAndCaptureOut(command, True, outlines,
+              report, SW_HIDE, ExitCode, False, 1) then
             begin
               // Error
-              logdatei.log('removeCertFromSystemStore: failed: remove cert with exitcode: ' +
-                IntToStr(exitcode), LLError);
+              logdatei.log('removeCertFromSystemStore: failed: remove cert with exitcode: '
+                + IntToStr(exitcode), LLError);
             end
             else
             begin
