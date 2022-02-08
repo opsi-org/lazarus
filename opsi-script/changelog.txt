@@ -19,8 +19,13 @@ opsi-script (4.12.4.37) stable; urgency=low
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 
+opsi-script (4.12.4.36-2) stable; urgency=low
 
-opsi-script (4.12.4.36) stable; urgency=low
+  * library uib_lin_install: remove "--no-install-recommends" from debinstall
+
+-- d.oertel <d.oertel@uib.de> Tue, 08 Feb 2022 15:00
+
+opsi-script (4.12.4.36-1) stable; urgency=low
 
   * oszip: show progressbar while zipping or unzipping files
   * oswebservice: getOpsiModules: integrate new backend_getLicensingInfo method with fallback to old backend_info
