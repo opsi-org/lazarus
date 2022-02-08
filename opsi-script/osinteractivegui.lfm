@@ -1,13 +1,13 @@
 object CentralForm: TCentralForm
-  Left = 938
+  Left = 353
   Height = 541
-  Top = 208
+  Top = 196
   Width = 966
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   Caption = '  opsi - script'
-  ClientHeight = 521
+  ClientHeight = 541
   ClientWidth = 966
   Font.CharSet = ANSI_CHARSET
   Font.Color = clBlack
@@ -20,38 +20,36 @@ object CentralForm: TCentralForm
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.4'
   object LabelWinstVersion: TLabel
     Left = 177
-    Height = 9
+    Height = 10
     Top = 2
-    Width = 62
+    Width = 75
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
     Font.Height = 9
     Font.Name = 'Arial'
     Font.Pitch = fpVariable
-    ParentColor = False
     ParentFont = False
   end
   object Label6: TLabel
     Left = 185
-    Height = 9
+    Height = 10
     Top = 10
-    Width = 62
+    Width = 75
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
     Font.Height = 9
     Font.Name = 'Arial'
     Font.Pitch = fpVariable
-    ParentColor = False
     ParentFont = False
   end
   object Memo1: TMemo
     Left = 0
-    Height = 268
+    Height = 288
     Top = 253
     Width = 966
     Align = alClient
@@ -89,7 +87,6 @@ object CentralForm: TCentralForm
       Alignment = taCenter
       AutoSize = False
       Caption = 'Label1'
-      ParentColor = False
     end
     object Label2: TLabel
       Left = 1
@@ -105,7 +102,6 @@ object CentralForm: TCentralForm
       Font.Name = 'Times New Roman'
       Font.Pitch = fpVariable
       Font.Style = [fsItalic]
-      ParentColor = False
       ParentFont = False
     end
     object Label3: TLabel
@@ -114,7 +110,6 @@ object CentralForm: TCentralForm
       Top = 1
       Width = 964
       Align = alTop
-      ParentColor = False
       OnClick = Label3Click
     end
   end
@@ -128,16 +123,15 @@ object CentralForm: TCentralForm
     BorderWidth = 1
     BorderStyle = bsSingle
     Caption = 'Log-View:'
-    ClientHeight = 38
-    ClientWidth = 962
+    ClientHeight = 40
+    ClientWidth = 964
     TabOrder = 2
     object LabelActivity: TLabel
       Left = 752
-      Height = 18
+      Height = 17
       Top = 16
       Width = 5
       Caption = '-'
-      ParentColor = False
     end
     object zipfiles: TListBox
       Left = 543
@@ -317,7 +311,6 @@ object CentralForm: TCentralForm
       Width = 63
       AutoSize = False
       Caption = 'Script:'
-      ParentColor = False
     end
     object Edit1: TEdit
       Left = 92
@@ -357,12 +350,12 @@ object CentralForm: TCentralForm
     end
     object ComboBox1: TComboBox
       Left = 92
-      Height = 26
+      Height = 20
       Top = 23
       Width = 577
       Color = clNone
       Enabled = False
-      ItemHeight = 18
+      ItemHeight = 23
       TabOrder = 3
       Text = 'ComboBox1'
       Visible = False
@@ -384,7 +377,6 @@ object CentralForm: TCentralForm
       Width = 75
       AutoSize = False
       Caption = 'Logfile:'
-      ParentColor = False
     end
     object Edit2: TEdit
       Left = 93
@@ -408,22 +400,23 @@ object CentralForm: TCentralForm
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 37
-      ClientWidth = 260
+      ClientHeight = 34
+      ClientWidth = 254
       Color = clMedGray
       Columns = 2
       Font.Color = clBlack
       Font.Height = -12
       Font.Name = 'Arial'
       Font.Pitch = fpVariable
+      ParentBackground = False
       ParentFont = False
       ParentColor = False
       TabOrder = 1
       object RadioButtonNewLogfile: TRadioButton
         Left = 6
-        Height = 25
+        Height = 22
         Top = 6
-        Width = 115
+        Width = 111
         Caption = 'New'
         Checked = True
         Enabled = False
@@ -437,10 +430,10 @@ object CentralForm: TCentralForm
         TabStop = True
       end
       object RadioButtonAppendLogfile: TRadioButton
-        Left = 121
-        Height = 25
+        Left = 117
+        Height = 22
         Top = 6
-        Width = 133
+        Width = 131
         Caption = 'Append'
         Enabled = False
         Font.Color = clBlack
