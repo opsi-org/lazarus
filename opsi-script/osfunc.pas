@@ -103,7 +103,9 @@ uses
   osstartproc_cp,
   pipes,
   oszip,
-  osfilehelper;
+  osfilehelper,
+  oswmi,
+  osnetutil;
 
 const
   BytesarrayLength = 5000;
@@ -652,6 +654,7 @@ function resolveSymlink(const filepath: string; recursive: boolean = True): stri
 function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
+function getFQDN: string;
 
 const
 
@@ -11796,6 +11799,42 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
+function getFQDN: string;
+var
+  WMIProperties, WMIResults: TStringList;
+  ErrorMsg, FQDN: string;
+begin
+  {$IFDEF WINDOWS}
+  WMIProperties := TStringList.Create;
+  WMIProperties.Add('Name');
+  WMIProperties.Add('Domain');
+  WMIResults := TStringList.Create;
+  ErrorMsg := '';
+  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties, '', WMIResults, ErrorMsg) then
+  begin
+    FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
+    LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
+    if isValidFQDN(FQDN) then
+    begin
+      Result := FQDN;
+      LogDatei.log('FQDN: '+FQDN, LLInfo);
+    end
+    else
+    begin
+      Result := '';
+      LogDatei.log('No valid FQDN found!', LLWarning);
+    end;
+  end
+  else
+  begin
+    Result := '';
+    LogDatei.log('Searching FQDN with WMI failed!', LLWarning);
+  end;
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  //TODO: use cmd hostname in bash
+  {$ENDIF UNIX}
+end;
 
 (*
  function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
