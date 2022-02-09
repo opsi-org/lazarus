@@ -1012,7 +1012,6 @@ var
   ErrorMessage: String;
   PathOpsiLogViewer: String;
 begin
-  //ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
   {$IFDEF WIN32}
   (*
   ShowTextFile.lzRichEdit1.Clear;
@@ -1033,8 +1032,9 @@ begin
     PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-    PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
-  {$ENDIF DARWIN}
+    //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+    ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ELSE}
   if FileExists(PathOpsiLogViewer) then
   begin
     if ExecuteProcess(PathOpsiLogViewer,Edit2.Text) <> 0 then
@@ -1050,6 +1050,7 @@ begin
     LogDatei.log(ErrorMessage,LLInfo);
     ShowMessage(ErrorMessage);
   end;
+  {$ENDIF DARWIN}
 end;
 
 
