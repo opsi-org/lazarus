@@ -25684,6 +25684,9 @@ begin
       else
         FConstValuesList.add(computernaming);
 
+      FConstList.add('%FQDN%');
+      FConstValuesList.add(getFQDN);
+
       FConstList.add('%opsiServer%');
 
       valuetotake := copy(opsiserviceUrl, pos('//', opsiserviceUrl) +
