@@ -11814,12 +11814,12 @@ begin
   begin
     FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
     LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
-    Result := GetFQDNResult;
+    Result := GetFQDNResult(FQDN);
   end
   else
   begin
     Result := '';
-    LogDatei.log('Searching FQDN with WMI failed!', LLWarning);
+    LogDatei.log('Searching FQDN with WMI failed!', LLnotice);
   end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
@@ -11827,12 +11827,12 @@ begin
   if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
   begin
     LogDatei.log('Command line result for FQDN: '+FQDN, LLInfo);
-    Result := GetFQDNResult;
+    Result := GetFQDNResult(FQDN);
   end
   else
   begin
     Result := '';
-    LogDatei.log('Getting FQDN from command line failed!', LLWarning);
+    LogDatei.log('Getting FQDN from command line failed!', LLnotice);
   end;
   {$ENDIF UNIX}
 end;
