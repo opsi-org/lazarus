@@ -19,6 +19,8 @@ opsi-script (4.12.4.37) stable; urgency=low
   * new command ELSEIF <condition>  [WLM]
   * opsparser: implement elseif
   * opsparser: A more detailed description how the If / ELSE / ELSEIF / ENDIF parser works
+  * interacticve GUI: Button "View Log" now shows the log in the opsi-logviewer [W/L]
+  * killtask (fix): a process of another user can be killed if opsi-script is running as SYSTEM [W]
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 
