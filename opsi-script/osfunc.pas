@@ -11814,16 +11814,7 @@ begin
   begin
     FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
     LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
-    if isValidFQDN(FQDN) then
-    begin
-      Result := FQDN;
-      LogDatei.log('FQDN: '+FQDN, LLInfo);
-    end
-    else
-    begin
-      Result := '';
-      LogDatei.log('No valid FQDN found!', LLWarning);
-    end;
+    Result := GetFQDNResult;
   end
   else
   begin
