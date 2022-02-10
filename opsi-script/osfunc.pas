@@ -11823,7 +11823,17 @@ begin
   end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  //TODO: use cmd hostname in bash
+  // get fqdn with console command 'hostname -f' (requires unit "process")
+  if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
+  begin
+    LogDatei.log('Command line result for FQDN: '+FQDN, LLInfo);
+    Result := GetFQDNResult;
+  end
+  else
+  begin
+    Result := '';
+    LogDatei.log('Getting FQDN from command line failed!', LLWarning);
+  end;
   {$ENDIF UNIX}
 end;
 
