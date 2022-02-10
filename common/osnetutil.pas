@@ -20,6 +20,7 @@ uses
   RegExpr;
 
 function isValidFQDN(expr : string) : boolean;
+function GetFQDNResult(FQDNCandidate : string) : string;
 function isIPNumber(expr : string) : boolean;
 function IsValidEmail(const Value: string): Boolean;
 
@@ -40,6 +41,19 @@ begin
   RegExprObj.Free;
 end;
 
+function GetFQDNResult(FQDNCandidate : string) : string;
+begin
+  if isValidFQDN(FQDNCandidate) then
+    begin
+      Result := FQDNCandidate;
+      LogDatei.log('FQDN: '+FQDNCandidate, LLInfo);
+    end
+    else
+    begin
+      Result := '';
+      LogDatei.log('No valid FQDN found!', LLWarning);
+    end;
+end;
 
 function isIPNumber(expr : string) : boolean;
 begin
