@@ -173,19 +173,33 @@ end;
 
 procedure TOckPathsMacOS.SetAdminModePaths;
 begin
-
+  FOnClient.FKioskApp := Application.Location;
+  FOnClient.FDefaultIcons := FKioskApp + '../Resources/default/product_icons/';
+  FOnClient.FCustomSettings := '/tmp/org.opsi.OpsiClientKiosk/';
+  FOnClient.FCustomIcons := FCustomSettings + 'ock_custom/product_icons/';
+  FOnClient.FCustomScreenShots := FCustomSettings + 'ock_custom/screenshots/';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+    FOnDepot.FKioskApp := '\opsi-client-agentfiles\opsi\opsiclientkiosk\app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+    FOnDepot.FKioskApp := '\opsi-client-kiosk\files\app';
+  {$ENDIF KIOSK_IN_AGENT}
+  FOnDepot.FCustomSettings := FOnDepot.FKioskApp';
+  FOnDepot.FCustomIcons := FCustomSettings + 'ock_custom/product_icons/';
+  FOnDepot.FCustomScreenShots := FCustomSettings + 'ock_custom/screenshots/';
 end;
 
 procedure TOckPathsMacOS.SetNormalPaths;
 begin
-  FOnClient.FKioskApp := ;
-  FOnClient.FDefaultIcons :=;
-  FonClient.FCustomIcons:=;
+  FOnClient.FKioskApp := Application.Location;
+  FOnClient.FDefaultIcons := FKioskApp + '../Resources/default/product_icons/';
   FOnClient.FCustomSettings := '/Library/Application Support/org.opsi.OpsiClientKiosk/';
+  FOnClient.FCustomIcons := FCustomSettings + 'ock_custom/product_icons/';
+  FOnClient.FCustomScreenShots := FCustomSettings + 'ock_custom/screenshots/';
 end;
 
 constructor TOckPathsMacOS.Create;
 begin
+  inherited;
   InitPaths;
 end;
 

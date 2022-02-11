@@ -49,9 +49,13 @@ implementation
 procedure TOckPaths.InitPaths;
 begin
   if FAdminMode then
-    SetAdminModePaths
+  begin
+    SetAdminModePaths;
+  end
   else
+  begin
     SetNormalPaths;
+  end;
 end;
 
 procedure TOckPaths.SetAdminMode(theAdminMode: boolean);
