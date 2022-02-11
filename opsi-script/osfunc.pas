@@ -47,6 +47,7 @@ uses
   //unitImpersonator,
   osfuncwin2,
   osfuncwin3,
+  oswmi,
 {$IFDEF WIN32}
   osregistry,
   DSiWin32,
@@ -104,7 +105,6 @@ uses
   pipes,
   oszip,
   osfilehelper,
-  oswmi,
   osnetutil;
 
 const
