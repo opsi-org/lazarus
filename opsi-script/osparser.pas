@@ -345,6 +345,7 @@ type
     // holds for each section file and startline infos
     FActiveSection: TWorkSection;
     FLastSection: TWorkSection;
+    FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
 
@@ -390,6 +391,7 @@ type
     property ActiveSection: TWorkSection read FActiveSection write FActiveSection;
     property LastSection: TWorkSection read FLastSection write FLastSection;
     property LastExitCodeOfExe: longint read FLastExitCodeOfExe;
+    property testSyntax: boolean read FtestSyntax write FtestSyntax;
 
 
     (* Infofunktionen *)
@@ -766,8 +768,8 @@ var
   Conditions: TConditions;   // used for if else endif
   ThenBranch: TConditions;   // used for if else endif
   elseifConditions: TConditions;   // used for elseif:
-                                   // becomes true if we had found a true condition
-                                   // it is the marker that we do not go into any other elseif / else
+// becomes true if we had found a true condition
+// it is the marker that we do not go into any other elseif / else
 
 //const
 //zaehler  : Integer = 0;
@@ -1773,8 +1775,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -2084,6 +2087,7 @@ begin
   //FSectionInfoArray := Length(0);
   FActiveSection := nil;
   FLastSection := nil;
+  FtestSyntax := False;
 end;
 
 destructor TuibInstScript.Destroy;
@@ -10750,8 +10754,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12426,10 +12430,10 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+            tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -12710,7 +12714,8 @@ begin
                     list1, tmpbool));
                 end
                 else
-                  tmpbool := True;  // getting the value from the service not possible or default
+                  tmpbool := True;
+                // getting the value from the service not possible or default
                 if tmpbool then
                 begin
                   tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
@@ -12780,7 +12785,8 @@ begin
                               list1, s3, s4, tmpbool));
                           end
                           else
-                            tmpbool := True;  // getting the value from the service not possible or default
+                            tmpbool := True;
+                          // getting the value from the service not possible or default
                           if tmpbool then
                           begin
                             tmpstr :=
@@ -19961,7 +19967,7 @@ begin
           syntaxCheck := True;
           BooleanResult := False;
           try
-                BooleanResult := isCertInstalledInSystemStore(s1);
+            BooleanResult := isCertInstalledInSystemStore(s1);
           except
             logdatei.log('Error: Exception in isCertInstalledInSystem:  ' + s1, LLError);
             BooleanResult := False;
@@ -21274,7 +21280,7 @@ begin
             logdatei.log_prog('IF: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
             doLogEntries(PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High(TConditions) then
@@ -21299,12 +21305,13 @@ begin
               begin
                 Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
-                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
-                logdatei.log_prog('IF condition: Actlevel: ' + IntToStr(Actlevel) +
-              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                elseifConditions[NestLevel] := BooleanResult;
+                // have we found a valid condition
+                logdatei.log_prog('IF condition: Actlevel: ' +
+                  IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
               end
               else
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -21327,7 +21334,7 @@ begin
             logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
             if NestLevel <= Sektion.NestingLevel then
               reportError(Sektion, linecounter, '', PStatNames^
@@ -21339,8 +21346,8 @@ begin
                 logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
                   ' NestLevel: ' + IntToStr(NestLevel) +
                   ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
-                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLWarning);
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLWarning);
                 reportError(Sektion, linecounter, '', 'double ' +
                   PStatNames^ [tsCondElse]);
               end
@@ -21354,14 +21361,14 @@ begin
                 LogDatei.LogSIndentLevel := NestLevel;
 
                 if (NestLevel = ActLevel) then
-                // the else branch is valid, if we did not found any valid condition yet
+                  // the else branch is valid, if we did not found any valid condition yet
                   Conditions[ActLevel] := not elseifConditions[NestLevel];
               end;
             end;
           end;
         end
 
-         else if (StatKind = tsCondElseIf) and (not (InSwitch) or ValidCase) then
+        else if (StatKind = tsCondElseIf) and (not (InSwitch) or ValidCase) then
         begin
           { this is nearly the same then (if "tsCondOpen").
           The difference is that we do not increase the NestLevel
@@ -21376,7 +21383,7 @@ begin
             logdatei.log_prog('ElseIF: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
 
             LogDatei.LogSIndentLevel := NestLevel - 1;
@@ -21388,23 +21395,23 @@ begin
               reportError(Sektion, linecounter, '', 'Too many nested conditions');
               exit;
             end;
-             if NestLevel <= Sektion.NestingLevel then
-             begin
+            if NestLevel <= Sektion.NestingLevel then
+            begin
               reportError(Sektion, linecounter, '', PStatNames^
                 [tsCondElseIf] + '  without  ' + PStatNames^ [tsCondOpen]);
-                exit;
-             end;
+              exit;
+            end;
 
             LogDatei.LogSIndentLevel := NestLevel;
 
             // this is a else (if), so the if has to be evalutated
             // if the else is true
-             // have we found a valid condition yet ?
-             BooleanResult := elseifConditions[NestLevel];
+            // have we found a valid condition yet ?
+            BooleanResult := elseifConditions[NestLevel];
 
 
             // elseif: we evaluate the condition if NestLevel = ActLevel
-            if (NestLevel = ActLevel) and (not BooleanResult)  then
+            if (NestLevel = ActLevel) and (not BooleanResult) then
             begin
               { a new active level is created if the if statement
                 is in a active Level AND inside of a positive branch.
@@ -21419,24 +21426,24 @@ begin
                 // elseif: we do not increase the actlevel
                 //Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
-                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
-                logdatei.log_prog('ElseIF condition: Actlevel: ' + IntToStr(Actlevel) +
-              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                elseifConditions[NestLevel] := BooleanResult;
+                // have we found a valid condition
+                logdatei.log_prog('ElseIF condition: Actlevel: ' +
+                  IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
               end
               else
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> '' then
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondThen], LLInfo);
-            LogDatei.LogSIndentLevel := NestLevel;
+              LogDatei.LogSIndentLevel := NestLevel - 1;
+              doLogEntries(PStatNames^ [tsCondThen], LLInfo);
+              LogDatei.LogSIndentLevel := NestLevel;
             end
             else
-             Conditions[NestLevel] := not elseifConditions[NestLevel];
-
+              Conditions[NestLevel] := not elseifConditions[NestLevel];
 
           end;
           //ArbeitsSektion.NestingLevel:=Nestlevel;
@@ -21459,8 +21466,8 @@ begin
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
                 IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
+                BoolToStr(Conditions[NestLevel], True), LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
@@ -21484,19 +21491,19 @@ begin
         // Ausfuehrung alles folgenden nur falls in einem aktuellen true-Zweig
         // further line execution only if:
         // we are in a valid if or else branch
-        if ((NestLevel = ActLevel) and conditions[ActLevel])
+        if ((NestLevel = ActLevel) and (conditions[ActLevel] or testSyntax))
           // and if we are inside a Switch and a valid Case
           // in other words: and ( not(InSwitch) or ValidCase)
-          and (not (InSwitch) or ValidCase)
+          and (not (InSwitch) or (ValidCase or testSyntax))
           // sowie falls weitere Bearbeitung gewuenscht
           // and line processing not stoped now
           and (ActionResult > 0) then
         begin
-          logdatei.log_prog('processline=true: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+          logdatei.log_prog('processline=true: Actlevel: ' +
+            IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+            ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+            ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+            ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
           processline := True;
           case SectionSpecifier of
             tsecIncluded:
@@ -22777,18 +22784,19 @@ begin
                     InfoSyntaxError);
                 if syntaxCheck then
                 begin
-                  try
-                    logtailLinecount := StrToInt(logtailLinecountstr);
-                    shrinkFileToMB(fname, logtailLinecount);
-                  except
-                    on E: Exception do
-                    begin
-                      Logdatei.log('shrinkFileToMB "' + Fname + '"', LLwarning);
-                      Logdatei.log(' Failed to shrink file, system message: "' +
-                        E.Message + '"',
-                        LLwarning);
-                    end
-                  end;
+                  if not testSyntax then
+                    try
+                      logtailLinecount := StrToInt(logtailLinecountstr);
+                      shrinkFileToMB(fname, logtailLinecount);
+                    except
+                      on E: Exception do
+                      begin
+                        Logdatei.log('shrinkFileToMB "' + Fname + '"', LLwarning);
+                        Logdatei.log(' Failed to shrink file, system message: "' +
+                          E.Message + '"',
+                          LLwarning);
+                      end
+                    end;
                 end
                 else
                   ActionResult :=
@@ -22830,7 +22838,7 @@ begin
                   end
                   else;
                        {$IFDEF GUI}
-                    imageNo := centralImageNo;
+                  imageNo := centralImageNo;
                        {$ENDIF GUI}
                 end
                 else
@@ -22897,10 +22905,11 @@ begin
                 begin
                   Parameter := ExpandFileName(Parameter);
                   if DirectoryExists(Parameter) then
-                    ChangeDirectory(parameter)
-                  else
-                    LogDatei.log('Error at ChangeDirectory: ' + Parameter +
-                      ' is not a directory', LLError);
+                    if not testSyntax then
+                      ChangeDirectory(parameter)
+                    else
+                      LogDatei.log('Error at ChangeDirectory: ' + Parameter +
+                        ' is not a directory', LLError);
                 end;
               end;
 
@@ -22917,9 +22926,10 @@ begin
                 if syntaxCheck then
                 begin
                     {$IFDEF GUI}
-                  if messagedlg(Parameter + LineEnding + rsReadyToContinue,
-                    mtConfirmation, [mbYes], 0) = mrNo then
-                    ActionResult := tsrExitProcess;
+                  if not testSyntax then
+                    if messagedlg(Parameter + LineEnding + rsReadyToContinue,
+                      mtConfirmation, [mbYes], 0) = mrNo then
+                      ActionResult := tsrExitProcess;
                     {$ENDIF GUI}
                 end
                 else
@@ -22946,7 +22956,8 @@ begin
                     // which should contain a number
                     try
                       if syntaxCheck then
-                        sleepSecs := StrToInt(Parameter);
+                        if not testSyntax then
+                          sleepSecs := StrToInt(Parameter);
                     except;
                       syntaxCheck := False;
                       InfoSyntaxError :=
@@ -22984,10 +22995,11 @@ begin
 
                 if syntaxCheck then
                 begin
+                  if not testSyntax then
                     {$IFDEF GUI}
-                  if messagedlg(Parameter + LineEnding + rsAbortProgram,
-                    mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-                    ActionResult := tsrExitProcess;
+                    if messagedlg(Parameter + LineEnding + rsAbortProgram,
+                      mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+                      ActionResult := tsrExitProcess;
                     {$ELSE GUI}
                   ActionResult := tsrExitProcess;
                     {$ENDIF GUI}
@@ -23022,7 +23034,8 @@ begin
                   syntaxCheck := True;
                 if syntaxCheck then
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                opsidata.setActionProgress(Parameter);
+                if not testSyntax then
+                  opsidata.setActionProgress(Parameter);
               end;
 
 
@@ -23104,15 +23117,16 @@ begin
                 begin
                   syntaxCheck := True;
                      {$IFNDEF WIN64}
-                  if KillTask(Fname, Info) then
-                  begin
-                    LogDatei.Log(info, LLInfo);
-                  end
-                  else
-                  begin
-                    LogDatei.log('"' + Fname + '" could not be killed, ' +
-                      info, LLWarning);
-                  end;
+                  if not testSyntax then
+                    if KillTask(Fname, Info) then
+                    begin
+                      LogDatei.Log(info, LLInfo);
+                    end
+                    else
+                    begin
+                      LogDatei.log('"' + Fname + '" could not be killed, ' +
+                        info, LLWarning);
+                    end;
                      {$ELSE WIN64}
                   LogDatei.Log('Not implemnted on win64', LLWarning);
                      {$ENDIF WIN64}
@@ -23131,19 +23145,20 @@ begin
                     then
                     begin
                       syntaxCheck := True;
-                      try
-                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                        dummylist := execShellCall(s1, 'sysnative', 0, True);
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                            LLError);
-                          FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      if not testSyntax then
+                        try
+                          //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                          dummylist := execShellCall(s1, 'sysnative', 0, True);
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                              LLError);
+                            FNumberOfErrors := FNumberOfErrors + 1;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          end;
                         end;
-                      end;
                     end;
               end;
 
@@ -23238,16 +23253,17 @@ begin
                 end;
                 if syntaxCheck then
                 begin
-                  try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
-                  except
-                    on e: Exception do
-                    begin
-                      LogDatei.log('Error executing :' + s1 +
-                        ' : with powershell: ' + e.message,
-                        LLError);
-                    end
-                  end;
+                  if not testSyntax then
+                    try
+                      execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                    except
+                      on e: Exception do
+                      begin
+                        LogDatei.log('Error executing :' + s1 +
+                          ' : with powershell: ' + e.message,
+                          LLError);
+                      end
+                    end;
                 end;
                 {$ENDIF WINDOWS}
               end;
@@ -23318,6 +23334,7 @@ begin
                               Sektion.strings[linecounter - 1], InfoSyntaxError);
                           end
                           else
+                          if not testSyntax then
                             case localKindOfStatement of
 
                               tsExecutePython:
@@ -23385,20 +23402,22 @@ begin
                   begin
                     syntaxCheck := True;
                     ActionResult := tsrPositive;
-                    if winBlockInput(True) then
-                      LogDatei.log('Blocking Input', LLInfo)
-                    else
-                      LogDatei.log('Failed Blocking Input ...', LLWarning);
+                    if not testSyntax then
+                      if winBlockInput(True) then
+                        LogDatei.log('Blocking Input', LLInfo)
+                      else
+                        LogDatei.log('Failed Blocking Input ...', LLWarning);
                   end
 
                   else if UpperCase(Parameter) = UpperCase('False') then
                   begin
                     syntaxCheck := True;
                     ActionResult := tsrPositive;
-                    if winBlockInput(False) then
-                      LogDatei.log('Unblocking Input', LLInfo)
-                    else
-                      LogDatei.log('Failed Unblocking Input ...', LLWarning);
+                    if not testSyntax then
+                      if winBlockInput(False) then
+                        LogDatei.log('Unblocking Input', LLInfo)
+                      else
+                        LogDatei.log('Failed Unblocking Input ...', LLWarning);
                   end;
                 end;
                 if not syntaxCheck then
@@ -23607,99 +23626,101 @@ begin
 
               tsExitWindows:
               begin
-                if runLoginScripts then
-                begin
-                  LogDatei.log(
-                    'ExitWindows is ignored while running in login script mode',
-                    LLError);
-                end
-                else
-                begin
-                  if UpperCase(Remaining) = UpperCase('/ImmediateReboot')
-                  then
+                if not testSyntax then
+                  if runLoginScripts then
                   begin
-                    PerformExitWindows := txrImmediateReboot;
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := True;
-                    LogDatei.log('ExitWindows set to Immediate Reboot', BaseLevel);
+                    LogDatei.log(
+                      'ExitWindows is ignored while running in login script mode',
+                      LLError);
                   end
-                  else if UpperCase(Remaining) = UpperCase('/ImmediateLogout')
-                  then
-                  begin
-                    PerformExitWindows := txrImmediateLogout;
-                    LogDatei.log('', BaseLevel);
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := True;
-                    LogDatei.log('ExitWindows set to Immediate Logout', BaseLevel);
-                  end
-                  else if UpperCase(Remaining) = UpperCase('/Reboot')
-                  then
-                  begin
-                    PerformExitWindows := txrReboot;
-                    LogDatei.log('', BaseLevel);
-                    LogDatei.log('ExitWindows set to Reboot', BaseLevel);
-                  end
-                  else if UpperCase(Remaining) = UpperCase('/RebootWanted')
-                  then
-                  begin
-                    if PerformExitWindows < txrRegisterForReboot then
-                    begin
-                      PerformExitWindows := txrRegisterForReboot;
-                      LogDatei.log('', BaseLevel);
-                      LogDatei.log('ExitWindows set to RegisterReboot', BaseLevel);
-                    end
-                    else
-                      LogDatei.log('ExitWindows already set to Reboot', BaseLevel);
-                  end
-                  else if UpperCase(Remaining) = UpperCase('/LogoutWanted')
-                  then
-                  begin
-                    if PerformExitWindows < txrRegisterForLogout then
-                    begin
-                      PerformExitWindows := txrRegisterForLogout;
-                      LogDatei.log('', BaseLevel);
-                      LogDatei.log('ExitWindows set to RegisterForLogout', BaseLevel);
-                    end
-                    else
-                      LogDatei.log('ExitWindows already set to (Register)Reboot',
-                        BaseLevel);
-                  end
-
-                  else if UpperCase(Remaining) = UpperCase('/ShutdownWanted')
-                  then
-                  begin
-                    PerformShutdown := tsrRegisterForShutdown;
-                    LogDatei.log('', BaseLevel);
-                    LogDatei.log('PerformShutdown set to RegisterForShutdown',
-                      BaseLevel);
-                  end
-
-                  else if Remaining = '' then
-                    ActionResult :=
-                      reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1], 'Parameter needed')
                   else
-                    ActionResult :=
-                      reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1], 'not an allowed Parameter');
-                end; // not loginscripts
+                  begin
+                    if UpperCase(Remaining) = UpperCase('/ImmediateReboot')
+                    then
+                    begin
+                      PerformExitWindows := txrImmediateReboot;
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := True;
+                      LogDatei.log('ExitWindows set to Immediate Reboot', BaseLevel);
+                    end
+                    else if UpperCase(Remaining) = UpperCase('/ImmediateLogout')
+                    then
+                    begin
+                      PerformExitWindows := txrImmediateLogout;
+                      LogDatei.log('', BaseLevel);
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := True;
+                      LogDatei.log('ExitWindows set to Immediate Logout', BaseLevel);
+                    end
+                    else if UpperCase(Remaining) = UpperCase('/Reboot')
+                    then
+                    begin
+                      PerformExitWindows := txrReboot;
+                      LogDatei.log('', BaseLevel);
+                      LogDatei.log('ExitWindows set to Reboot', BaseLevel);
+                    end
+                    else if UpperCase(Remaining) = UpperCase('/RebootWanted')
+                    then
+                    begin
+                      if PerformExitWindows < txrRegisterForReboot then
+                      begin
+                        PerformExitWindows := txrRegisterForReboot;
+                        LogDatei.log('', BaseLevel);
+                        LogDatei.log('ExitWindows set to RegisterReboot', BaseLevel);
+                      end
+                      else
+                        LogDatei.log('ExitWindows already set to Reboot', BaseLevel);
+                    end
+                    else if UpperCase(Remaining) = UpperCase('/LogoutWanted')
+                    then
+                    begin
+                      if PerformExitWindows < txrRegisterForLogout then
+                      begin
+                        PerformExitWindows := txrRegisterForLogout;
+                        LogDatei.log('', BaseLevel);
+                        LogDatei.log('ExitWindows set to RegisterForLogout', BaseLevel);
+                      end
+                      else
+                        LogDatei.log('ExitWindows already set to (Register)Reboot',
+                          BaseLevel);
+                    end
+
+                    else if UpperCase(Remaining) = UpperCase('/ShutdownWanted')
+                    then
+                    begin
+                      PerformShutdown := tsrRegisterForShutdown;
+                      LogDatei.log('', BaseLevel);
+                      LogDatei.log('PerformShutdown set to RegisterForShutdown',
+                        BaseLevel);
+                    end
+
+                    else if Remaining = '' then
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], 'Parameter needed')
+                    else
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], 'not an allowed Parameter');
+                  end; // not loginscripts
               end;
 
               tsAutoActivityDisplay:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if UpperCase(Remaining) = 'TRUE' then
-                  begin
-                    LogDatei.log('AutoActivityDisplay was ' +
-                      BoolToStr(AutoActivityDisplay, True) + ' is set to true', LLInfo);
-                    AutoActivityDisplay := True;
-                  end
-                  else
-                  begin
-                    LogDatei.log('AutoActivityDisplay was ' +
-                      BoolToStr(AutoActivityDisplay, True) + ' is set to false', LLInfo);
-                    AutoActivityDisplay := False;
-                  end;
+                  if not testSyntax then
+                    if UpperCase(Remaining) = 'TRUE' then
+                    begin
+                      LogDatei.log('AutoActivityDisplay was ' +
+                        BoolToStr(AutoActivityDisplay, True) + ' is set to true', LLInfo);
+                      AutoActivityDisplay := True;
+                    end
+                    else
+                    begin
+                      LogDatei.log('AutoActivityDisplay was ' +
+                        BoolToStr(AutoActivityDisplay, True) + ' is set to false', LLInfo);
+                      AutoActivityDisplay := False;
+                    end;
                 end
                 else
                   ActionResult :=
@@ -23709,23 +23730,24 @@ begin
               tsforceLogInAppendMode:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if UpperCase(Remaining) = 'TRUE' then
-                  begin
-                    LogDatei.log('forceLogInAppendMode was ' +
-                      BoolToStr(forceLogInAppendMode, True) + ' is set to true', LLInfo);
-                    forceLogInAppendMode := True;
-                    if Assigned(LogDatei) then
-                      LogDatei.Appendmode := True;
-                  end
-                  else
-                  begin
-                    LogDatei.log('forceLogInAppendMode was ' +
-                      BoolToStr(forceLogInAppendMode, True) +
-                      ' is set to false', LLInfo);
-                    forceLogInAppendMode := False;
-                    if Assigned(LogDatei) then
-                      LogDatei.Appendmode := False;
-                  end;
+                  if not testSyntax then
+                    if UpperCase(Remaining) = 'TRUE' then
+                    begin
+                      LogDatei.log('forceLogInAppendMode was ' +
+                        BoolToStr(forceLogInAppendMode, True) + ' is set to true', LLInfo);
+                      forceLogInAppendMode := True;
+                      if Assigned(LogDatei) then
+                        LogDatei.Appendmode := True;
+                    end
+                    else
+                    begin
+                      LogDatei.log('forceLogInAppendMode was ' +
+                        BoolToStr(forceLogInAppendMode, True) +
+                        ' is set to false', LLInfo);
+                      forceLogInAppendMode := False;
+                      if Assigned(LogDatei) then
+                        LogDatei.Appendmode := False;
+                    end;
                 end
                 else
                   ActionResult :=
@@ -23735,7 +23757,8 @@ begin
               tsSetDebug_Prog:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  Remaining := opsiunquotestr2(remaining, '""');
+                  if not testSyntax then
+                    Remaining := opsiunquotestr2(remaining, '""');
                   if UpperCase(Remaining) = 'TRUE' then
                   begin
                     LogDatei.log('debug_prog was ' + BoolToStr(
@@ -23758,21 +23781,22 @@ begin
               tsFatalOnSyntaxError:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if UpperCase(Remaining) = 'TRUE' then
-                  begin
-                    LogDatei.log('FatalOnSyntaxError was ' + BoolToStr(
-                      FatalOnSyntaxError, True) + ' is set to true', LLInfo);
-                    FatalOnSyntaxError := True;
-                  end
-                  else
-                  begin
-                    LogDatei.log('FatalOnSyntaxError was ' + BoolToStr(
-                      FatalOnSyntaxError, True) + ' is set to false', LLInfo);
-                    FatalOnSyntaxError := False;
-                    if (FExtremeErrorLevel = LevelFatal) and
-                      (LogDatei.ActionProgress = 'Syntax Error') then
-                      FExtremeErrorLevel := Level_not_initialized;
-                  end;
+                  if not testSyntax then
+                    if UpperCase(Remaining) = 'TRUE' then
+                    begin
+                      LogDatei.log('FatalOnSyntaxError was ' + BoolToStr(
+                        FatalOnSyntaxError, True) + ' is set to true', LLInfo);
+                      FatalOnSyntaxError := True;
+                    end
+                    else
+                    begin
+                      LogDatei.log('FatalOnSyntaxError was ' + BoolToStr(
+                        FatalOnSyntaxError, True) + ' is set to false', LLInfo);
+                      FatalOnSyntaxError := False;
+                      if (FExtremeErrorLevel = LevelFatal) and
+                        (LogDatei.ActionProgress = 'Syntax Error') then
+                        FExtremeErrorLevel := Level_not_initialized;
+                    end;
                 end
                 else
                   ActionResult :=
@@ -23782,18 +23806,19 @@ begin
               tsFatalOnRuntimeError:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if UpperCase(Remaining) = 'TRUE' then
-                  begin
-                    LogDatei.log('FatalOnRuntimeError was ' + BoolToStr(
-                      FatalOnRuntimeError, True) + ' is set to true', LLInfo);
-                    FatalOnRuntimeError := True;
-                  end
-                  else
-                  begin
-                    LogDatei.log('FatalOnRuntimeError was ' + BoolToStr(
-                      FatalOnRuntimeError, True) + ' is set to false', LLInfo);
-                    FatalOnRuntimeError := False;
-                  end;
+                  if not testSyntax then
+                    if UpperCase(Remaining) = 'TRUE' then
+                    begin
+                      LogDatei.log('FatalOnRuntimeError was ' + BoolToStr(
+                        FatalOnRuntimeError, True) + ' is set to true', LLInfo);
+                      FatalOnRuntimeError := True;
+                    end
+                    else
+                    begin
+                      LogDatei.log('FatalOnRuntimeError was ' + BoolToStr(
+                        FatalOnRuntimeError, True) + ' is set to false', LLInfo);
+                      FatalOnRuntimeError := False;
+                    end;
                 end
                 else
                   ActionResult :=
@@ -23803,18 +23828,19 @@ begin
               tsSetExitOnError:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if UpperCase(Remaining) = 'TRUE' then
-                  begin
-                    LogDatei.log('ExitOnError was ' + BoolToStr(
-                      ExitOnError, True) + ' is set to true', LLInfo);
-                    ExitOnError := True;
-                  end
-                  else
-                  begin
-                    LogDatei.log('ExitOnError was ' + BoolToStr(
-                      ExitOnError, True) + ' is set to false', LLInfo);
-                    ExitOnError := False;
-                  end;
+                  if not testSyntax then
+                    if UpperCase(Remaining) = 'TRUE' then
+                    begin
+                      LogDatei.log('ExitOnError was ' + BoolToStr(
+                        ExitOnError, True) + ' is set to true', LLInfo);
+                      ExitOnError := True;
+                    end
+                    else
+                    begin
+                      LogDatei.log('ExitOnError was ' + BoolToStr(
+                        ExitOnError, True) + ' is set to false', LLInfo);
+                      ExitOnError := False;
+                    end;
                 end
                 else
                   ActionResult :=
@@ -23822,43 +23848,47 @@ begin
                     InfoSyntaxError);
 
               tsSetFatalError:
-                if remaining = '' then
-                begin
-                  FExtremeErrorLevel := LevelFatal;
-                  LogDatei.log('Error level set to fatal', LLCritical);
-                  ActionResult := tsrFatalError;
-                  scriptstopped := True;
-                  NestLevel := NestingLevel;
-                  ActLevel := NestLevel;
-                end
-                else
-                begin
-                  EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                if not testSyntax then
                   if remaining = '' then
                   begin
                     FExtremeErrorLevel := LevelFatal;
                     LogDatei.log('Error level set to fatal', LLCritical);
                     ActionResult := tsrFatalError;
-                    LogDatei.ActionProgress := Parameter;
                     scriptstopped := True;
-                    //NestLevel:= NestingLevel;
-                    //ActLevel:= NestLevel;
+                    NestLevel := NestingLevel;
+                    ActLevel := NestLevel;
                   end
                   else
-                    ActionResult :=
-                      reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1],
-                      ' none or one parameter expected');
-                end;
+                  begin
+                    EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                    if remaining = '' then
+                    begin
+                      FExtremeErrorLevel := LevelFatal;
+                      LogDatei.log('Error level set to fatal', LLCritical);
+                      ActionResult := tsrFatalError;
+                      LogDatei.ActionProgress := Parameter;
+                      scriptstopped := True;
+                      //NestLevel:= NestingLevel;
+                      //ActLevel:= NestLevel;
+                    end
+                    else
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1],
+                        ' none or one parameter expected');
+                  end;
 
               tsSetSuccess:
                 if remaining = '' then
                 begin
-                  LogDatei.log('Set: Exit Script as successful', LLnotice);
-                  ActionResult := tsrExitProcess;
-                  scriptstopped := True;
-                  //NestLevel:= NestingLevel;
-                  //ActLevel:= NestLevel;
+                  if not testSyntax then
+                  begin
+                    LogDatei.log('Set: Exit Script as successful', LLnotice);
+                    ActionResult := tsrExitProcess;
+                    scriptstopped := True;
+                    //NestLevel:= NestingLevel;
+                    //ActLevel:= NestLevel;
+                  end;
                 end
                 else
                 begin
@@ -23870,8 +23900,11 @@ begin
               tsSetNoUpdate:
                 if remaining = '' then
                 begin
-                  LogDatei.log('Set: Do not run Update script', LLnotice);
-                  runUpdate := False;
+                  if not testSyntax then
+                  begin
+                    LogDatei.log('Set: Do not run Update script', LLnotice);
+                    runUpdate := False;
+                  end;
                 end
                 else
                 begin
@@ -23883,14 +23916,17 @@ begin
               tsSetSuspended:
                 if remaining = '' then
                 begin
-                  LogDatei.log('Set: Stop script and leave switches unchanged',
-                    LLnotice);
-                  runUpdate := False;
-                  script.suspended := True;
-                  scriptstopped := True;
-                  ActionResult := tsrExitProcess;
-                  //NestLevel:= NestingLevel;
-                  //ActLevel:= NestLevel;
+                  if not testSyntax then
+                  begin
+                    LogDatei.log('Set: Stop script and leave switches unchanged',
+                      LLnotice);
+                    runUpdate := False;
+                    script.suspended := True;
+                    scriptstopped := True;
+                    ActionResult := tsrExitProcess;
+                    //NestLevel:= NestingLevel;
+                    //ActLevel:= NestLevel;
+                  end;
                 end
                 else
                 begin
@@ -25171,11 +25207,11 @@ begin
         else
         begin
           processline := False;
-          logdatei.log_prog('processline=false: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+          logdatei.log_prog('processline=false: Actlevel: ' +
+            IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+            ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+            ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+            ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
         end;
         ProcessMess;
       end;
@@ -25698,9 +25734,9 @@ begin
       {  System directories:  }
     {$IFDEF WINDOWS}
       FConstList.add('%Systemroot%');
-    // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
-      ValueToTake := extractfiledrive(GetWinSystemDirectory)
-        + copy(GetWinDirectory, 3, length(GetWinDirectory));
+      // on Win Terminalservers GetWinDirectory is redirected to %HOMEDRIVE%\Windows
+      ValueToTake := extractfiledrive(GetWinSystemDirectory) +
+        copy(GetWinDirectory, 3, length(GetWinDirectory));
       { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
@@ -26103,7 +26139,7 @@ begin
           MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
             e.Message, [mrOk]);
      {$ELSE GUI}
-          writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
+        writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
      {$ENDIF GUI}
       end;
     except
@@ -26227,7 +26263,7 @@ begin
         MyMessageDlg.wiMessage('CreateAndProcessScript : free Aktionsliste: ' +
           e.Message, [mrOk]);
    {$ELSE GUI}
-        writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
+      writeln('CreateAndProcessScript : free Aktionsliste: ' + e.Message);
    {$ENDIF GUI}
     end;
     LogDatei.log('End of CreateAndProcessScript', LLDebug2);
@@ -26286,11 +26322,11 @@ begin
   PStatNames^ [tsStayWhileWindowOpen] := 'StayWhileWindowOpen';
   (* fuer Testzwecke, nicht dokumentiert *)
 
-  PStatNames^ [tsCondOpen]   := 'If';
-  PStatNames^ [tsCondThen]   := 'Then';
-  PStatNames^ [tsCondElse]   := 'Else';
+  PStatNames^ [tsCondOpen] := 'If';
+  PStatNames^ [tsCondThen] := 'Then';
+  PStatNames^ [tsCondElse] := 'Else';
   PStatNames^ [tsCondElseIf] := 'ElseIf';
-  PStatNames^ [tsCondClose]  := 'EndIf';
+  PStatNames^ [tsCondClose] := 'EndIf';
 
   // switch
   PStatNames^ [tsSwitch] := 'Switch';
