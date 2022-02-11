@@ -765,6 +765,9 @@ type
 var
   Conditions: TConditions;   // used for if else endif
   ThenBranch: TConditions;   // used for if else endif
+  elseifConditions: TConditions;   // used for elseif:
+                                   // becomes true if we had found a true condition
+                                   // it is the marker that we do not go into any other elseif / else
 
 //const
 //zaehler  : Integer = 0;
@@ -21127,7 +21130,13 @@ begin
         At "IF" we increase the NestLevel (so we can have nested if / endif)
         and that we evaluate the condition if NestLevel = ActLevel +1
         and then we  increase the actlevel.
-        The result of the condition is stored in condition[Level]
+        The result of the condition is stored in conditions[Level]
+        conditions[Level] controls if the lines will be executed or not.
+
+        The result is also stored in elseifConditions for elseif:
+        if it becomes true if we had found a true condition
+        it is the marker that we do not go into any other elseif / else
+
 
         Example  condition = true
         ---------------- code:
@@ -21290,6 +21299,7 @@ begin
               begin
                 Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
+                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
                 logdatei.log_prog('IF condition: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
@@ -21343,8 +21353,9 @@ begin
                 doLogEntries(PStatNames^ [tsCondElse], LLinfo);
                 LogDatei.LogSIndentLevel := NestLevel;
 
-                if NestLevel = ActLevel then
-                  Conditions[ActLevel] := not Conditions[ActLevel];
+                if (NestLevel = ActLevel) then
+                // the else branch is valid, if we did not found any valid condition yet
+                  Conditions[ActLevel] := not elseifConditions[NestLevel];
               end;
             end;
           end;
@@ -21386,8 +21397,14 @@ begin
 
             LogDatei.LogSIndentLevel := NestLevel;
 
+            // this is a else (if), so the if has to be evalutated
+            // if the else is true
+             // have we found a valid condition yet ?
+             BooleanResult := elseifConditions[NestLevel];
+
+
             // elseif: we evaluate the condition if NestLevel = ActLevel
-            if (NestLevel = ActLevel) and Conditions[ActLevel] then
+            if (NestLevel = ActLevel) and (not BooleanResult)  then
             begin
               { a new active level is created if the if statement
                 is in a active Level AND inside of a positive branch.
@@ -21402,6 +21419,7 @@ begin
                 // elseif: we do not increase the actlevel
                 //Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
+                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
                 logdatei.log_prog('ElseIF condition: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
@@ -21412,11 +21430,14 @@ begin
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> '' then
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
-            end;
-
             LogDatei.LogSIndentLevel := NestLevel - 1;
             doLogEntries(PStatNames^ [tsCondThen], LLInfo);
             LogDatei.LogSIndentLevel := NestLevel;
+            end
+            else
+             Conditions[NestLevel] := not elseifConditions[NestLevel];
+
+
           end;
           //ArbeitsSektion.NestingLevel:=Nestlevel;
           //Sektion.NestingLevel:=Nestlevel;
