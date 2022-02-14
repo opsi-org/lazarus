@@ -11826,6 +11826,7 @@ begin
   // get fqdn with console command 'hostname -f' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
   begin
+    Delete(FQDN, FQDN.Length,2); // delete '\n' from end of command line result
     LogDatei.log('Command line result for FQDN: '+FQDN, LLDebug);
     Result := GetFQDNResult(FQDN);
   end
