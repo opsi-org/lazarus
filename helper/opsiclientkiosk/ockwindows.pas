@@ -6,19 +6,21 @@ interface
 
 uses
   Classes, SysUtils, Process, DSiWin32, jwawinbase, FileUtil,
-  osLog;
+  osLog, OckPathsUtils;
 
 
 type
-  TOCKPathsWindows = class
-   //Paths On Client
-   FPathDefaultIconsOnClient: string;
-   FPathCustomIconsOnClient: string;
-   FPathScreenShotsOnClient: string;
-   FPathKioskOnClient:string;
-   //PathsOnDepot
-   FPathKioskOnDepot:string
-   constructor Create;
+
+  { TOckPathsWindows }
+
+  TOckPathsWindows = class(TOckPaths)
+  private
+    //procedure CopyCustomSettingsToWriteableFolder;
+  public
+    procedure SetAdminModePaths; override;
+    procedure SetUserModePaths; override;
+    constructor Create; override;
+    destructor Destroy; override;
   end;
 
 
@@ -30,7 +32,18 @@ procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot:string): boolean;
 function Copy(Source:string; Destination:string):boolean;
 
-
+const
+  // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
+  AbsolutePathCustomSettingsAdminMode = ProgramDirectory; //'/opsi-client-kiosk';
+  AbsolutePathCustomSettingsUserMode = ProgramDirectory;  //'/opsi-client-kiosk';
+  RelativePathCustomProductIcons = '/ock_custom/product_icons';
+  RelativePathCustomScreenShots = '/ock_custom/screenshots';
+  RelativePathDefaultProductIcons ='/default/product_icons';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+  PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+  PathKioskAppOnDepot = '/opsi-client-kiosk/files/app';
+  {$ENDIF KIOSK_IN_AGENT}
 
 implementation
 
@@ -132,6 +145,48 @@ function Copy(Source: string; Destination: string): boolean;
 begin
   Result := CopyDirTree(Source, Destination,[cffOverwriteFile, cffCreateDestDirectory]);
 end;
+
+{ TOckPathsWindows }
+
+procedure TOckPathsWindows.SetAdminModePaths;
+begin
+  FOnClient.FKioskApp := ProgramDirectory;
+  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultProductIcons;
+  FOnClient.FCustomSettings := AbsolutePathCustomSettingsAdminMode;
+  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathCustomProductIcons;
+  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathCustomScreenShots;;
+
+  FOnDepot.FKioskApp := PathKioskAppOnDepot;
+  FOnDepot.FCustomSettings := FOnDepot.FKioskApp;
+  FOnDepot.FCustomIcons := FOnDepot.FCustomSettings + RelativePathCustomProductIcons;
+  FOnDepot.FCustomScreenShots := FOnDepot.FCustomSettings + RelativePathCustomScreenShots;
+end;
+
+procedure TOckPathsWindows.SetUserModePaths;
+begin
+  FOnClient.FKioskApp := ProgramDirectory;
+  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultProductIcons;
+  FOnClient.FCustomSettings := AbsolutePathCustomSettingsUserMode;
+  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathCustomProductIcons;
+  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathCustomScreenShots;
+end;
+
+constructor TOckPathsWindows.Create;
+begin
+  inherited Create;
+  InitPaths;
+end;
+
+destructor TOckPathsWindows.Destroy;
+begin
+  inherited Destroy;
+end;
+
+initialization
+OckPaths := TOckPathsWindows.Create;
+
+finalization
+FreeAndNil(OckPaths);
 
 end.
 

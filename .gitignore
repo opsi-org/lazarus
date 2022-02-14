@@ -31,8 +31,9 @@ i386-linux/
 x86_64-linux/
 
 
-# Application bundle for Mac OS
+# Mac OS
 *.app/
+*.DS_Store
 opsi-script/opsi-script
 /opsi-script/*.obj
 

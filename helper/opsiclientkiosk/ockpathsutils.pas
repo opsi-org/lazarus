@@ -1,4 +1,4 @@
-unit OckPaths;
+unit OckPathsUtils;
 
 {$mode Delphi}
 
@@ -34,7 +34,7 @@ type
     //Paths on depot
     FOnDepot: TPathsOnDepot;
     FAdminMode: boolean;
-    procedure SetNormalPaths; virtual; abstract;
+    procedure SetUserModePaths; virtual; abstract;
     procedure SetAdminModePaths; virtual; abstract;
     procedure InitPaths;
     constructor Create; virtual;
@@ -54,7 +54,7 @@ begin
   end
   else
   begin
-    SetNormalPaths;
+    SetUserModePaths;
   end;
 end;
 

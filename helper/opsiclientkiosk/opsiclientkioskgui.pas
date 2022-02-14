@@ -424,14 +424,14 @@ const
 
 var
   //Path to icons and screenshots
-  PathCustomIcons: String;
-  PathDefaultIcons :String;
-  PathScreenshots: String;
+  //PathCustomIcons: String;
+  //PathDefaultIcons :String;
+  //PathScreenshots: String;
   {$IFDEF DARWIN}
-    PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
+    //PathToCustomSettings: string =  '/Library/Application Support/org.opsi.OpsiClientKiosk/';
   {$ENDIF DARWIN}
   {$IFDEF LINUX}
-    PathToCustomSettings: string =  '/etc/opsi.org/opsi-client-kiosk/';
+    //PathToCustomSettings: string =  '/etc/opsi.org/opsi-client-kiosk/';
   {$ENDIF LINUX}
 
 
