@@ -518,9 +518,9 @@
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="ockpaths.pas"/>
+        <Filename Value="ockpathsutils.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="OckPaths"/>
+        <UnitName Value="OckPathsUtils"/>
       </Unit30>
     </Units>
   </ProjectOptions>
