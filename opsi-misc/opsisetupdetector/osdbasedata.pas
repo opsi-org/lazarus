@@ -22,7 +22,8 @@ uses
   RTTICtrls,
   osjson,
   osregex,
-  lcltranslator;
+  lcltranslator,
+  oscrypt;
 
 type
 
@@ -388,6 +389,10 @@ default: ["xenial_bionic"]
     FReadme_txt_templ: string;
     FShowCheckEntryWarning :boolean;
     FShow2StepMacSeletionWarn : boolean;
+    FService_URL: string;
+    FService_user: string;
+    FService_pass: string;
+    FUseService: boolean;
     //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
@@ -429,6 +434,10 @@ default: ["xenial_bionic"]
       write FShowCheckEntryWarning;
     property Show2StepMacSeletionWarn: boolean read FShow2StepMacSeletionWarn
       write FShow2StepMacSeletionWarn;
+    property Service_URL: string read FService_URL write FService_URL;
+    property Service_user: string read FService_user write FService_user;
+    property Service_pass: string read FService_pass write FService_pass;
+    property UseService: boolean read FUseService write FUseService;
 
     procedure writeconfig;
     procedure readconfig;
@@ -451,7 +460,7 @@ procedure deactivateImportMode;
 function cleanOpsiId(opsiid : string) : string; // clean up productId
 
 const
-  CONFVERSION = '4.1.0';
+  CONFVERSION = '4.2.0.9';
 
 var
   aktProduct: TopsiProduct;
@@ -1441,6 +1450,8 @@ begin
     else
       Fconfig_filled := True;
     Fconfig_version := CONFVERSION;
+
+    FService_pass:= encryptStringBlow('opsi-setup-detector',FService_pass);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
@@ -1462,6 +1473,7 @@ begin
     finally
       //CloseFile(myfile);
       Streamer.Destroy;
+      FService_pass:= decryptStringBlow('opsi-setup-detector',FService_pass);
     end;
     if Assigned(logdatei) then
       logdatei.log('Finished writeconfig', LLDebug2);
@@ -1556,6 +1568,7 @@ begin
       finally
         DeStreamer.Destroy;
         CloseFile(myfile);
+        FService_pass:= decryptStringBlow('opsi-setup-detector',FService_pass);
       end;
       if Assigned(logdatei) then
         logdatei.log('read config: ' + JSONString, LLDebug)

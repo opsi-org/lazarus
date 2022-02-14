@@ -15,7 +15,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
-  osjson,
+  osjson, oswebservice, oscrypt,
   osdanalyzegeneral;
 
 
@@ -30,9 +30,11 @@ begin
   // This avoids interference when running a production/default build without -gh
 
   // Set up -gh output for the Leakview package:
+  (*
   if FileExists('heap.trc') then
     DeleteFile('heap.trc');
   SetHeapTraceOutput('heap.trc');
+  *)
   {$ENDIF DEBUG}
   RequireDerivedFormResource:=True;
   Application.Initialize;

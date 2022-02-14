@@ -26,9 +26,9 @@ type
   TFNewDepDlg = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    ComboBoxproductIds: TComboBox;
     ComboBoxActState: TComboBox;
     ComboBoxReqType: TComboBox;
-    Editproductid: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;

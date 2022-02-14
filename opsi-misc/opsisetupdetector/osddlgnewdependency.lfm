@@ -9,7 +9,7 @@ object FNewDepDlg: TFNewDepDlg
   DesignTimePPI = 91
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 47
@@ -72,7 +72,6 @@ object FNewDepDlg: TFNewDepDlg
       Alignment = taCenter
       BorderSpacing.Around = 7
       Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -151,7 +150,7 @@ object FNewDepDlg: TFNewDepDlg
       BevelOuter = bvNone
       ControlList = <      
         item
-          Control = Editproductid
+          Control = ComboBoxproductIds
           WrapAfter = waAuto
           Index = 0
         end      
@@ -166,28 +165,24 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 1
       OnClick = FlowPanel2Click
       object Label2: TLabel
-        Left = 57
-        Height = 32
+        Left = 24
+        Height = 36
         Top = 5
         Width = 155
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'productid'#10'of the dependent product'
-        ParentColor = False
         ParentFont = False
       end
-      object Editproductid: TEdit
-        Left = 222
+      object ComboBoxproductIds: TComboBox
+        Left = 184
         Height = 29
-        Top = 5
-        Width = 181
+        Top = 0
+        Width = 231
         Anchors = []
-        BorderSpacing.Right = 7
-        BorderSpacing.Around = 5
-        OnChange = EditproductidChange
-        ParentFont = False
+        ItemHeight = 0
         TabOrder = 0
-        Text = 'productId'
+        Text = 'ComboBoxproductIds'
       end
     end
     object FlowPanel3: TFlowPanel
@@ -228,13 +223,12 @@ object FNewDepDlg: TFNewDepDlg
       end
       object Label3: TLabel
         Left = 92
-        Height = 16
+        Height = 18
         Top = 5
         Width = 88
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Action or State'
-        ParentColor = False
         ParentFont = False
       end
     end
@@ -280,13 +274,12 @@ object FNewDepDlg: TFNewDepDlg
       end
       object Label4: TLabel
         Left = 86
-        Height = 16
+        Height = 18
         Top = 5
         Width = 109
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Requirement Type'
-        ParentColor = False
         ParentFont = False
       end
     end

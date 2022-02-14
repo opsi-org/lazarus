@@ -9,7 +9,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: osdanalyzemac.swarnmultiplemsi
+msgctxt "osdanalyzemac.swarnmultiplemsi"
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdanalyzewin.swarnmultiplemsi
+msgctxt "osdanalyzewin.swarnmultiplemsi"
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
 msgstr ""
 
@@ -377,6 +383,19 @@ msgid ""
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script"
 msgstr ""
 
+#: oswebservice.rserrorintconnection
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+#, object-pascal-format
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr ""
@@ -385,8 +404,8 @@ msgstr ""
 msgid "ComboBoxActState"
 msgstr ""
 
-#: tfnewdepdlg.editproductid.text
-msgid "productId"
+#: tfnewdepdlg.comboboxproductids.text
+msgid "ComboBoxproductIds"
 msgstr ""
 
 #: tfnewdepdlg.groupbox1.caption
@@ -481,6 +500,18 @@ msgstr ""
 
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgid "Text"
+msgstr ""
+
+#: tfosdconfigdlg.bitbtn1.caption
+msgid "Finished"
+msgstr ""
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.panel1.caption
+msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption
@@ -605,6 +636,16 @@ msgctxt "tresultform1.btcreateemptytemplatewin.hint"
 msgid ""
 "Create a empty \n"
 "opsi Product Directory Structure"
+msgstr ""
+
+#: tresultform1.btcreatemeta.caption
+msgid "Create a Meta Product"
+msgstr ""
+
+#: tresultform1.btcreatemeta.hint
+msgid ""
+"A product that installs nothing \n"
+"but may have a lot of dependencies"
 msgstr ""
 
 #: tresultform1.btcreateproduct.caption

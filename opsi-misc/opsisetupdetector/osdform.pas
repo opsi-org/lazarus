@@ -47,7 +47,8 @@ uses
   osddlgnewproperty, osparserhelper,
   osddatamod,
   osdcheckentriesdlg,
-  Contnrs;
+  Contnrs,
+  oswebservice;
 //openfiledirdlg;
 
 type
@@ -65,6 +66,7 @@ type
     BitBtnOpenMst3: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
+    BtCreateMeta: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
     BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateLin: TBitBtn;
@@ -500,6 +502,8 @@ var
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
   mylocaledir: string;
+  localservicedata: TOpsi4Data = nil;
+  productIds : TStringlist;
 //myFont : string;
 
 
@@ -809,14 +813,46 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
+procedure startOpsiServiceConnection;
+var
+  serviceversion: string;
+begin
+  if localservicedata = nil then
+  begin
+    localservicedata := TOpsi4Data.Create;
+    if (myconfiguration.Service_URL <> '') and
+      (myconfiguration.Service_user <> '') then
+    begin
+      if myconfiguration.Service_pass = '' then
+        myconfiguration.Service_pass :=
+          PasswordBox('service: ' + myconfiguration.Service_URL +
+          ' user: ' + myconfiguration.Service_user, 'Password for opsi web service');
+      localservicedata.initOpsiConf(myconfiguration.Service_URL,
+        myconfiguration.Service_user,
+        myconfiguration.Service_pass);
+      serviceversion := localservicedata.getOpsiServiceVersion;
+      LogDatei.log('Service connection initialized to :' +
+        myconfiguration.Service_URL + ' version: ' + serviceversion, LLinfo);
+      // fetch produtIds from service
+      FNewDepDlg.ComboBoxproductIds.Items.Text :=
+          localservicedata.getProductIds.text;
+    end
+    else
+    begin
+      // service data missing
+      LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
+    end;
+  end;
+end;
+
 procedure TResultform1.updateGUI;
 begin
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-    TIGridDep.ReloadTIList;
-    TIGridDep.Update;
-    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
-    TIGridProp.ReloadTIList;
-    TIGridProp.Update;
+  TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+  TIGridDep.ReloadTIList;
+  TIGridDep.Update;
+  TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+  TIGridProp.ReloadTIList;
+  TIGridProp.Update;
 end;
 
 procedure TResultform1.FormDestroy(Sender: TObject);
@@ -1550,7 +1586,8 @@ begin
       begin
         // paint chess squares
         Brush.Color := ChessColors[(row + col) mod 2];
-        FillRect(Rect(squaresize * row, squaresize * col, squaresize * row + squaresize, squaresize * col + squaresize));
+        FillRect(Rect(squaresize * row, squaresize * col, squaresize *
+          row + squaresize, squaresize * col + squaresize));
       end;
     end;
     // paint chess board
@@ -1566,7 +1603,8 @@ begin
     // stretched:
     //StretchDraw(RectBackgr, Image.Picture.Bitmap);
     // original size:
-    Draw(round((picturesize-Image.Picture.Width)/2),round((picturesize-Image.Picture.Height)/2), Image.Picture.Bitmap);
+    Draw(round((picturesize - Image.Picture.Width) / 2), round(
+      (picturesize - Image.Picture.Height) / 2), Image.Picture.Bitmap);
   end;
 end;
 
@@ -1767,7 +1805,8 @@ begin
       defaultIconFullFileName;
       *)
 
-    osdbasedata.aktProduct.productdata.productImageFullFileName := defaultIconFullFileName;
+    osdbasedata.aktProduct.productdata.productImageFullFileName :=
+      defaultIconFullFileName;
     CheckBoxNoIcon.Checked := False;
     TIImageIconPreview.Visible := True;
     // paint icon preview
@@ -2003,6 +2042,7 @@ var
   mydep: TPDependency;
   index: integer;
 begin
+  startOpsiServiceConnection;
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
@@ -2013,7 +2053,7 @@ begin
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
     // required productId
-    mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
+    mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
     // required State & action
     if FNewDepDlg.RadioButtonAction.Checked then
     begin
@@ -2297,7 +2337,7 @@ begin
     if y > -1 then
     begin
       mydep := TPDependency(aktProduct.dependencies.Items[y]);
-      FNewDepDlg.Editproductid.Text := mydep.Required_ProductId;
+      FNewDepDlg.ComboBoxproductIds.Text := mydep.Required_ProductId;
       if mydep.Required_State = noState then
       begin
         FNewDepDlg.RadioButtonState.Checked := False;
@@ -2328,7 +2368,7 @@ begin
       if FNewDepDlg.ShowModal = mrOk then
       begin
         // required productId
-        mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
+        mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
         // required State & action
         if FNewDepDlg.RadioButtonAction.Checked then
         begin

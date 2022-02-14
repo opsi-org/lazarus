@@ -450,6 +450,7 @@ type
       var ListResult: TStringList): boolean;
     function getOpsiServiceConfigs: string;
     function getLogSize: int64;
+    function getProductIds: TStringList;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
@@ -5362,6 +5363,26 @@ begin
     Result.add(testresult);
   end;
 end;
+
+function TOpsi4Data.getProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+begin
+  omc := TOpsiMethodCall.Create('getProductIds_list',[]);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := SO(objectlist.Strings[i]).AsJSon(False, False);
+    Result.add(testresult);
+  end;
+end;
+
 
 function TOpsi4Data.getProductRequirements(productname: string;
   requirementType: string): TStringList;
