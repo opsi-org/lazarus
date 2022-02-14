@@ -259,33 +259,11 @@ end;
 
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
-var
-  PathKioskOnDepot: String;
-  PathCustomIconsOnDepot: String;
-  PathKioskOnClient : String;
-  PathCustomIconsOnClient: String;
 begin
   Result := False;
-  { Set the right directories }
-  PathKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
-  PathKioskOnClient := ExcludeTrailingPathDelimiter(ExtractFilePath(Application.Location));
-  //Set path delims dependend on system (e.g. Windows, Unix)
-  {$IFDEF WINDOWS}
-  PathCustomIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder + '\'), pdsSystem);
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  PathCustomIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
-  PathToIconsOnClient := SwitchPathDelims(TrimFilename('/Users/' + GetUserName_ + '/Library/Application Support/org.opsi.OpsiClientKiosk/' + CustomFolder + '/'), pdsSystem);
-  Copy('/Library/Application Support/org.opsi.OpsiClientKiosk/' + CustomFolder + '/', PathToIconsOnClient);
-  {$ENDIF DARWIN}
-  LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
+  LogDatei.log('Copy ' + OckPaths.FOnClient.FCustomSettings + ' to ' + OckPaths.FOnDepot.FCustomSettings, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
-  if Copy(PathToIconsOnClient, PathToIconsOnDepot) then
+  if Copy(OckPaths.FOnClient.FCustomSettings, OckPaths.FOnDepot.FCustomSettings) then
   begin
     LogDatei.log('Copy done', LLInfo);
     Result := True;

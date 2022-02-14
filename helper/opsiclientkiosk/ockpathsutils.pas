@@ -13,6 +13,7 @@ type
     FCustomIcons: string;
     FCustomScreenShots: string;
     FCustomSettings: string;
+    FCustomSkin: string;
   end;
 
   TPathsOnDepot = class(TPaths)
@@ -21,6 +22,7 @@ type
 
   TPathsOnClient = class(TPaths)
     FDefaultIcons: string;
+    FDefaultSkin: string;
   end;
 
   { TOckPaths }

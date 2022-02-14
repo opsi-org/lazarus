@@ -40,11 +40,14 @@ var
 const
   // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
   MountPoint = '/mnt/opsi_depot_rw';
-  AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk';
-  AbsolutePathCustomSettingsUserMode = '/Library/Application Support/org.opsi.OpsiClientKiosk';
-  RelativePathCustomProductIcons = '/ock_custom/product_icons';
-  RelativePathCustomScreenShots = '/ock_custom/screenshots';
-  RelativePathDefaultProductIcons ='/../Resources/default/product_icons';
+  DefaultFolder = '/default';
+  CustomFolder = '/ock_custom';
+  AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
+  AbsolutePathCustomSettingsUserMode = '/Library/Application Support/org.opsi.OpsiClientKiosk' + CustomFolder;
+  RelativePathDefaultSettings = '/../Resources' + DefaultFolder;
+  RelativePathProductIcons = '/product_icons';
+  RelativePathScreenShots = '/screenshots';
+  RelativePathSkin ='/skin';
   {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
   PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
   {$ELSE} //if the kiosk is a standalone opsi product
@@ -198,24 +201,33 @@ end;
 procedure TOckPathsMacOS.SetAdminModePaths;
 begin
   FOnClient.FKioskApp := ProgramDirectory;
-  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultProductIcons;
+  //Default
+  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
+  FOnClient.FDefaultSkin := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
+  //Custom
   FOnClient.FCustomSettings := AbsolutePathCustomSettingsAdminMode;
-  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathCustomProductIcons;
-  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathCustomScreenShots;;
+  FOnClient.FCustomSkin := FOnClient.FCustomSettings + RelativePathSkin;
+  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathProductIcons;
+  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathScreenShots;
+
 
   FOnDepot.FKioskApp := PathKioskAppOnDepot;
   FOnDepot.FCustomSettings := FOnDepot.FKioskApp;
-  FOnDepot.FCustomIcons := FOnDepot.FCustomSettings + RelativePathCustomProductIcons;
-  FOnDepot.FCustomScreenShots := FOnDepot.FCustomSettings + RelativePathCustomScreenShots;
+  FOnDepot.FCustomIcons := FOnDepot.FCustomSettings + RelativePathProductIcons;
+  FOnDepot.FCustomScreenShots := FOnDepot.FCustomSettings + RelativePathScreenShots;
 end;
 
 procedure TOckPathsMacOS.SetUserModePaths;
 begin
   FOnClient.FKioskApp := ProgramDirectory;
-  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultProductIcons;
+  //Dfault
+  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
+  FOnClient.FDefaultSkin := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
   FOnClient.FCustomSettings := AbsolutePathCustomSettingsUserMode;
-  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathCustomProductIcons;
-  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathCustomScreenShots;
+  //Custom
+  FOnClient.FCustomSkin := FOnClient.FCustomSettings + RelativePathSkin;
+  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathProductIcons;
+  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathScreenShots;
 end;
 
 constructor TOckPathsMacOS.Create;
