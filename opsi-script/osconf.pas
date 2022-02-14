@@ -169,6 +169,7 @@ var
   configSupressSystemEncodingWarning: boolean = False;
   log_rotation_count: integer = 8;
   configWriteProductLogFile: boolean = False;
+  configTestSyntax : boolean = False;
 
 
 implementation
@@ -566,6 +567,24 @@ begin
                               configWriteProductLogFile) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  writeProductLogFile: '
+                                + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.testSyntax') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got writeProductLogFile: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configTestSyntax) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  testSyntax: '
                                 + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;

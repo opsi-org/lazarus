@@ -2087,7 +2087,9 @@ begin
   //FSectionInfoArray := Length(0);
   FActiveSection := nil;
   FLastSection := nil;
-  FtestSyntax := False;
+  FtestSyntax := osconf.configTestSyntax;
+  if FtestSyntax then
+    FFatalOnSyntaxError := False;
 end;
 
 destructor TuibInstScript.Destroy;
@@ -23951,9 +23953,12 @@ begin
               tsSaveVersionToProfile:
                 if remaining = '' then
                 begin
+                  if not testSyntax then
+                  begin
                   saveVersionToProfile;
                   LogDatei.log(
                     'Saved productversion-packageversion to local profile', LLNotice);
+                  end;
                 end
                 else
                   ActionResult :=
@@ -24379,6 +24384,7 @@ begin
                     end;
                   end;
                 end;
+                if not testSyntax then
                 ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
