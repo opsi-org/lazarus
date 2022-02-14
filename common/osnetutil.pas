@@ -53,7 +53,7 @@ begin
   else
   begin
     Result := '';
-    LogDatei.log('No valid FQDN found!', LLnotice);
+    LogDatei.log('No valid FQDN found!', LLInfo);
   end;
 end;
 

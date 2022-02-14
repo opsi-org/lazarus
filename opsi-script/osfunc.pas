@@ -11813,26 +11813,26 @@ begin
   if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties, '', WMIResults, ErrorMsg) then
   begin
     FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
-    LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
+    LogDatei.log('WMI result for FQDN: '+FQDN, LLDebug);
     Result := GetFQDNResult(FQDN);
   end
   else
   begin
     Result := '';
-    LogDatei.log('Searching FQDN with WMI failed!', LLnotice);
+    LogDatei.log('Searching FQDN with WMI failed!', LLInfo);
   end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   // get fqdn with console command 'hostname -f' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
   begin
-    LogDatei.log('Command line result for FQDN: '+FQDN, LLInfo);
+    LogDatei.log('Command line result for FQDN: '+FQDN, LLDebug);
     Result := GetFQDNResult(FQDN);
   end
   else
   begin
     Result := '';
-    LogDatei.log('Getting FQDN from command line failed!', LLnotice);
+    LogDatei.log('Getting FQDN from command line failed!', LLInfo);
   end;
   {$ENDIF UNIX}
 end;
