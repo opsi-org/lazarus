@@ -562,7 +562,7 @@ begin
       Align:= alNone;
       Top:=35;
       Left:=38;
-      Picture.LoadFromFile(OckPaths.FOnClient.FDefaultIcons + 'opsi-logo.png');
+      Picture.LoadFromFile(PathsOnClient.FDefaultIcons + PathDelim + 'opsi-logo.png');
       //BorderSpacing.Around := 0;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseUp := ProductPanelMouseUp;
@@ -741,9 +741,9 @@ begin
       PanelToolbar.Visible := False;
       LabelSoftwareName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
       ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[SelectedProductIndex].ImageIcon.Picture;
-      if FileExists(OckPaths.FOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]) then
+      if FileExists(PathsOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]) then
        ImageScreenShot.Picture.LoadFromFile
-         (OckPaths.FOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]);
+         (PathsOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]);
        { View Buttons dependend on state}
       ShowSoftwareButtonsDependendOnState(ProductPanel);
     end;
@@ -769,11 +769,11 @@ begin
       { load and save current image }
       FilePath := OpenPictureDialogSetIcon.FileName;
       ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
-      ProductPanel.ImageIcon.Picture.SaveToFile(OckPaths.FOnClient.FCustomIcons+ExtractFileName(FilePath));
+      ProductPanel.ImageIcon.Picture.SaveToFile(PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath));
       StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
       { delete former image if not used for other products }
       if not ContainsStr(StringListCustomIcons.Text, FormerImageName) then
-        DeleteFormerImage(OckPaths.FOnClient.FCustomIcons+FormerImageName);
+        DeleteFormerImage(PathsOnClient.FCustomIcons+PathDelim+FormerImageName);
     end;
   end;
 end;
@@ -901,13 +901,13 @@ begin
       fArrayProductPanels[counter].Hint :=
         DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       {Set Product Icons}
-      if FileExists(OckPaths.FOnClient.FCustomIcons + StringListCustomIcons.Values[ProductID]) then
+      if FileExists(PathsOnClient.FCustomIcons + PathDelim + StringListCustomIcons.Values[ProductID]) then
         fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
-          OckPaths.FOnClient.FCustomIcons + StringListCustomIcons.Values[ProductID])
+          PathsOnClient.FCustomIcons + PathDelim + StringListCustomIcons.Values[ProductID])
       else
-        if FileExists(OckPaths.FOnClient.FDefaultIcons + StringListDefaultIcons.Values[ProductID]) then
+        if FileExists(PathsOnClient.FDefaultIcons + PathDelim + StringListDefaultIcons.Values[ProductID]) then
           fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
-            OckPaths.FOnClient.FDefaultIcons+ StringListDefaultIcons.Values[ProductID]);
+            PathsOnClient.FDefaultIcons + PathDelim + StringListDefaultIcons.Values[ProductID]);
        state := DataModuleOCK.SQLQueryProductData.FieldByName(
         'InstallationStatus').AsString;
       if state = 'installed' then
@@ -1503,13 +1503,13 @@ begin
       FormerImageName := StringListCustomIcons.Values[SelectedProduct];
       {load and save current image}
       FilePath := OpenPictureDialogSetIcon.FileName;
-      LogDatei.log('Save image ' + OckPaths.FOnClient.FCustomIcons + ExtractFileName(FilePath), LLDebug);
+      LogDatei.log('Save image ' + PathsOnClient.FCustomIcons + ExtractFileName(FilePath), LLDebug);
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
-      ImageIconSoftware.Picture.SaveToFile(OckPaths.FOnClient.FCustomIcons+ExtractFileName(FilePath));
+      ImageIconSoftware.Picture.SaveToFile(PathsOnClient.FCustomIcons+ExtractFileName(FilePath));
       StringListCustomIcons.Values[SelectedProduct] := ExtractFileName(FilePath);
       {delete former image if not in StringList hence is not used by another product}
       if not ContainsStr(StringListCustomIcons.Text, FormerImageName) then
-        DeleteFormerImage(OckPaths.FOnClient.FCustomIcons+FormerImageName);
+        DeleteFormerImage(PathsOnClient.FCustomIcons+FormerImageName);
     end;
   end;
 end;
@@ -1529,10 +1529,10 @@ begin
       {load and save image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
-      ImageScreenShot.Picture.SaveToFile(OckPaths.FOnClient.FCustomScreenShots+ExtractFileName(FilePath));
+      ImageScreenShot.Picture.SaveToFile(PathsOnClient.FCustomScreenShots+ExtractFileName(FilePath));
       StringListScreenShots.Values[SelectedProduct] := ExtractFileName(FilePath);
       if not ContainsStr(StringListScreenShots.Text, FormerImageName) then
-        DeleteFormerImage(OckPaths.FOnClient.FCustomScreenShots+FormerImageName);
+        DeleteFormerImage(PathsOnClient.FCustomScreenShots+FormerImageName);
     end;
 end;
 
@@ -2029,6 +2029,8 @@ begin
         InitConnectionToServer;
         { Load data from server }
         LoadDataFromServer;
+        { Set Paths for AdminMode}
+        PathsOnClient.AdminMode := AdminMode;
         { Set MinWidth and Width of Form}
         MinWidthStandardMode := SpeedButtonAll.Width + SpeedButtonUpdates.Width +
           SpeedButtonNotInstalled.Width + SpeedButtonActions.Width +
@@ -2234,17 +2236,17 @@ begin
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   //detail_visible := False;
-  LogDatei.log('Default icon path: ' + OckPaths.FOnClient.FDefaultIcons, LLinfo);
-  LogDatei.log('Custom icon path: ' + OckPaths.FOnClient.FCustomIcons, LLinfo);
-  LogDatei.log('Screenshot path: ' + OckPaths.FOnClient.FCustomScreenShots, LLinfo);
+  LogDatei.log('Default icon path: ' + PathsOnClient.FDefaultIcons, LLinfo);
+  LogDatei.log('Custom icon path: ' + PathsOnClient.FCustomIcons, LLinfo);
+  LogDatei.log('Screenshot path: ' + PathsOnClient.FCustomScreenShots, LLinfo);
   { Load assignment of image paths to product IDs }
   try
-    if FileExists(OckPaths.FOnClient.FDefaultIcons + 'IconsList.txt') then
-      LoadStringListFromFile(StringListDefaultIcons, OckPaths.FOnClient.FDefaultIcons + 'IconsList.txt');
-    if FileExists(OckPaths.FOnClient.FCustomIcons + 'IconsList.txt') then
-      LoadStringListFromFile(StringListCustomIcons, OckPaths.FOnClient.FCustomIcons + 'IconsList.txt');
-    if FileExists(OckPaths.FOnClient.FCustomScreenShots + 'ScreenshotsList.txt') then
-      LoadStringListFromFile(StringListScreenshots, OckPaths.FOnClient.FCustomScreenShots + 'ScreenshotsList.txt');
+    if FileExists(PathsOnClient.FDefaultIcons + PathDelim + 'IconsList.txt') then
+      LoadStringListFromFile(StringListDefaultIcons, PathsOnClient.FDefaultIcons + PathDelim + 'IconsList.txt');
+    if FileExists(PathsOnClient.FCustomIcons  + PathDelim + 'IconsList.txt') then
+      LoadStringListFromFile(StringListCustomIcons, PathsOnClient.FCustomIcons + PathDelim + 'IconsList.txt');
+    if FileExists(PathsOnClient.FCustomScreenShots + PathDelim + 'ScreenshotsList.txt') then
+      LoadStringListFromFile(StringListScreenshots, PathsOnClient.FCustomScreenShots + PathDelim + 'ScreenshotsList.txt');
   except
     LogDatei.log('Error while loading Images (Icons and/or Screenshots)',LLError);
   end;
@@ -2277,7 +2279,7 @@ begin
     end
     else
     begin
-      ClientID := GetClientID(OckPaths.FOnClient.FCustomSettings + 'opsiclientkiosk.conf');
+      ClientID := GetClientID(PathsOnClient.FCustomSettings + 'opsiclientkiosk.conf');
     end;
     if Application.HasOption('lang') then
     begin
@@ -2448,12 +2450,12 @@ procedure TFormOpsiClientKiosk.SaveIconsAndScreenshotsLists;
 begin
   { Save Custom changes on client }
   logDatei.log('Saving IconsList and ScreenshotsList' , LLNotice);
-  logDatei.log('Saving StringListCustomIcons to ' +  OckPaths.FOnClient.FCustomIcons +'IconsLis'
+  logDatei.log('Saving StringListCustomIcons to ' +  PathsOnClient.FCustomIcons + PathDelim +'IconsLis'
     +'t.txt', LLInfo);
-  SaveStringListToFile(StringListCustomIcons, OckPaths.FOnClient.FCustomIcons +'IconsList.txt');
-  logDatei.log('Saving StringListScreenshots to ' +  OckPaths.FOnClient.FCustomScreenShots +'Screensh'
+  SaveStringListToFile(StringListCustomIcons, PathsOnClient.FCustomIcons + PathDelim +'IconsList.txt');
+  logDatei.log('Saving StringListScreenshots to ' +  PathsOnClient.FCustomScreenShots + PathDelim +'Screensh'
     +'otsList.txt', LLInfo);
-  SaveStringListToFile(StringListScreenshots, OckPaths.FOnClient.FCustomScreenShots +'ScreenshotsList'
+  SaveStringListToFile(StringListScreenshots, PathsOnClient.FCustomScreenShots + PathDelim +'ScreenshotsList'
     +'.txt');
 end;
 
@@ -2468,45 +2470,35 @@ end;
 
 procedure TFormOpsiClientKiosk.InitSkin;
 begin
-  { SkinPaths }
-  {$IFDEF DARWIN}
-  CustomSkinPath := PathToCustomSettings + 'ock_custom/skin/';
-  DefaultSkinPath := Application.Location + '../Resources/default/skin/';
-  {$ELSE}
-  CustomSkinPath := Application.Location +
-    'ock_custom' + PathDelim + 'skin' + PathDelim;
-  DefaultSkinPath := Application.Location +
-    'default' + PathDelim + 'skin' + PathDelim;
-  {$ENDIF DARWIN}
-    {Loading header image}
-  if FileExists(CustomSkinPath + 'header.png') then
+  {Loading header image}
+  if FileExists(PathsOnClient.FCustomSkin + PathDelim +  'header.png') then
   begin
-    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
+    ImageHeader.Picture.LoadFromFile(PathsOnClient.FCustomSkin + PathDelim + 'header.png');
   end
   else
-    if FileExists(DefaultSkinPath + 'header.png') then
+    if FileExists(PathsOnClient.FDefaultSkin + PathDelim + 'header.png') then
     begin
-      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
+      ImageHeader.Picture.LoadFromFile(PathsOnClient.FDefaultSkin + PathDelim + 'header.png');
     end;
   {Loading logo}
-  if FileExists(CustomSkinPath + 'logo.png') then
+  if FileExists(PathsOnClient.FCustomSkin + PathDelim + 'logo.png') then
   begin
-    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
+    ImageLogo.Picture.LoadFromFile(PathsOnClient.FCustomSkin + PathDelim + 'logo.png');
   end
   else
-    if FileExists(DefaultSkinPath + 'logo.png') then
+    if FileExists(PathsOnClient.FDefaultSkin + PathDelim + 'logo.png') then
     begin
-      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
+      ImageLogo.Picture.LoadFromFile(PathsOnClient.FDefaultSkin + PathDelim + 'logo.png');
     end;
   {Loading label text and font style}
-  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
+  if FileExists(PathsOnClient.FCustomSkin + PathDelim + 'opsiclientkiosk.ini') then
   begin
-    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
+    LoadSkinForTitle(PathsOnClient.FCustomSkin + PathDelim + 'opsiclientkiosk.ini');
   end
   else
-    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
+    if FileExists(PathsOnClient.FDefaultSkin + PathDelim + 'opsiclientkiosk.ini') then
     begin
-      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
+      LoadSkinForTitle(PathsOnClient.FDefaultSkin + PathDelim + 'opsiclientkiosk.ini');
     end;
 end;
 

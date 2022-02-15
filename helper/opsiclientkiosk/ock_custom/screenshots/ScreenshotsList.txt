@@ -1,1 +1,0 @@
-firefox=screenshot1_firefox.png

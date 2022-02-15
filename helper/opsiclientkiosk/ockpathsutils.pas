@@ -16,39 +16,50 @@ type
     FCustomSkin: string;
   end;
 
-  TPathsOnDepot = class(TPaths)
+  { TPathsOnDepot }
 
+  TPathsOnDepot = class(TPaths)
+  private
+    FShare: string;
+    procedure SetShare(theShare: string);
+  public
+    procedure SetDepotPaths; virtual; abstract;
+    property Share: string read FShare write SetShare;
   end;
 
   TPathsOnClient = class(TPaths)
-    FDefaultIcons: string;
-    FDefaultSkin: string;
-  end;
-
-  { TOckPaths }
-
-  TOckPaths = class
   private
     procedure SetAdminMode(theAdminMode: boolean);
   public
-   //Paths On client
-    FOnClient: TPathsOnClient;
-    //Paths on depot
-    FOnDepot: TPathsOnDepot;
+    FDefaultIcons: string;
+    FDefaultSkin: string;
     FAdminMode: boolean;
     procedure SetUserModePaths; virtual; abstract;
     procedure SetAdminModePaths; virtual; abstract;
     procedure InitPaths;
     constructor Create; virtual;
-    destructor destroy; override;
+    destructor Destroy; override;
     property AdminMode: boolean read FAdminMode write SetAdminMode;
   end;
 
+
 implementation
 
-{ TOckPaths }
+{ TPathsOnDepot }
 
-procedure TOckPaths.InitPaths;
+procedure TPathsOnDepot.SetShare(theShare: string);
+begin
+  FShare := theShare;
+  SetDepotPaths;
+end;
+
+procedure TPathsOnClient.SetAdminMode(theAdminMode: boolean);
+begin
+  FAdminMode := theAdminMode;
+  InitPaths;
+end;
+
+procedure TPathsOnClient.InitPaths;
 begin
   if FAdminMode then
   begin
@@ -60,26 +71,17 @@ begin
   end;
 end;
 
-procedure TOckPaths.SetAdminMode(theAdminMode: boolean);
+constructor TPathsOnClient.Create;
 begin
-  FAdminMode := theAdminMode;
+  inherited Create;
   InitPaths;
 end;
 
-
-constructor TOckPaths.Create;
+destructor TPathsOnClient.Destroy;
 begin
-  inherited Create;
-  FOnClient := TPathsOnClient.Create;
-  FOnDepot := TPathsOnDepot.Create;
+  inherited Destroy;
 end;
 
-destructor TOckPaths.destroy;
-begin
-  inherited destroy;
-  FreeAndNil(FOnClient);
-  FreeAndNil(FOnDepot);
-end;
 
 end.
 

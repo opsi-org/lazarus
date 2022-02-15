@@ -50,7 +50,7 @@ type
     //procedure FormDestroy(Sender: TObject);
   private
     //function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
-    function SaveImagesOnDepot(const PathToDepot: String):boolean;
+    function SaveImagesOnDepot:boolean;
     //function SetRights(Path:String):boolean;
   public
 
@@ -100,10 +100,11 @@ var
 begin
   CopySuccess := False;
   PathToDepot :=  SwitchPathDelims(Trim(DirectoryEditPathToDepot.Text),pdsSystem);
+  PathsOnDepot.Share:= PathToDepot;
   {Mount opsi depot}
   if CheckBoxMountDepot.Checked then
   begin
-    if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+    if {$IFDEF WINDOWS} IsDepotMounted(PathsOnDepot.Share) {$ENDIF WINDOWS}
        {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
        {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
       then AlreadyMounted := True
@@ -111,13 +112,13 @@ begin
     begin
       AlreadyMounted := False;
       User := EditUser.Text;
-      MountDepot(User, EditPassword.Text, PathToDepot);
+      MountDepot(User, EditPassword.Text, PathsOnDepot.Share);
       LabelInfo.Caption := rsMounting + ' ' + rsDone;
       Application.ProcessMessages;
     end;
   end;
 
-  if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+  if {$IFDEF WINDOWS} IsDepotMounted(PathsOnDepot.Share) {$ENDIF WINDOWS}
      {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
      {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
   then
@@ -126,9 +127,9 @@ begin
     LabelInfo.Caption := rsCopyIcons;
     ProgressBar.Position:= 20;
     Application.ProcessMessages;
-    if {$IFDEF WINDOWS} SaveImagesOnDepot(PathToDepot) {$ENDIF WINDOWS}
-       {$IFDEF LINUX} SaveImagesOnDepot(MountPoint) {$ENDIF LINUX}
-       {$IFDEF DARWIN} SaveImagesOnDepot(MountPoint) {$ENDIF DARWIN}
+    if {$IFDEF WINDOWS} SaveImagesOnDepot {$ENDIF WINDOWS}
+       {$IFDEF LINUX} SaveImagesOnDepot {$ENDIF LINUX}
+       {$IFDEF DARWIN} SaveImagesOnDepot {$ENDIF DARWIN}
     then
     begin
       LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
@@ -152,7 +153,7 @@ begin
   if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
     {$IFDEF WINDOWS}
-    UmountDepot(PathToDepot);
+    UmountDepot(PathsOnDepot.Share);
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     UmountDepot(MountPoint);
@@ -258,12 +259,12 @@ end;
 *)
 
 
-function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
+function TFormSaveImagesOnDepot.SaveImagesOnDepot:boolean;
 begin
   Result := False;
-  LogDatei.log('Copy ' + OckPaths.FOnClient.FCustomSettings + ' to ' + OckPaths.FOnDepot.FCustomSettings, LLInfo);
+  LogDatei.log('Copying.. ' + PathsOnClient.FCustomSettings + ' to ' + PathsOnDepot.FCustomSettings, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
-  if Copy(OckPaths.FOnClient.FCustomSettings, OckPaths.FOnDepot.FCustomSettings) then
+  if Copy(PathsOnClient.FCustomSettings, PathsOnDepot.FCustomSettings) then
   begin
     LogDatei.log('Copy done', LLInfo);
     Result := True;
@@ -271,7 +272,7 @@ begin
   end
   else
   begin
-    LogDatei.log('Images could not be saved on opsi depot. ' + PathToDepot +
+    LogDatei.log('Images could not be saved on opsi depot. ' + PathsOnDepot.Share +
       ' Possible solution: mount depot with write privileges.' ,LLDebug);
     ShowMessage(Format(rsImagesNotSaved, [LineEnding]));
     Result := False;
