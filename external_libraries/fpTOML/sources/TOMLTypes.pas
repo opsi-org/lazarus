@@ -619,8 +619,7 @@ begin
             tomlTable := TTOMLTable(map.Data[i]);
             tableHeader := '[' + tomlTable.Header +  ']';
             tomlStringList.Add(tableHeader);
-            line := tomlTable.AsTOMLString;
-            tomlStringList.Add(line);
+            tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
           end;
     end;
   result := tomlStringList;

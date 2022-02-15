@@ -15216,7 +15216,7 @@ begin
           if EvaluateString(r, r, s2, InfoSyntaxError) then
             if Skip(',', r, r, InfoSyntaxError) then
               if EvaluateString(r, r, s3, InfoSyntaxError) then
-                    if Skip(')', r, r, InfoSyntaxError) then
+                 if Skip(')', r, r, InfoSyntaxError) then
                     begin
                       syntaxCheck := True;
                       try
