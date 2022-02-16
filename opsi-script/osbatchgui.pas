@@ -1025,10 +1025,10 @@ begin
       begin
         ShowProgress(NewProgress);
         FOldProgress := NewProgress;
+        Application.ProcessMessages;
       end;
     end;
   end;
-  Application.ProcessMessages;
 end;
 
 procedure TFBatchOberflaeche.SetForceStayOnTop(StayOnTop: boolean);
