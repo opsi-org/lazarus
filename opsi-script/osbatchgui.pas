@@ -93,7 +93,10 @@ type
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
-    procedure doInfo(aMessage:string);
+  var
+    FOldProgress: integer;
+
+    procedure doInfo(aMessage: string);
     procedure ForceStayOnTop(YesNo: boolean);
     procedure setInfoLabel(s: string);
     procedure setVersionLabel(s: string);
@@ -112,17 +115,19 @@ type
     { Public-Deklarationen }
 
     //GUIControl interface
-    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true); override;
+    procedure LoadSkin(const SkinDirectory: string; setLabelInfo: boolean = True);
+      override;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); override;
-    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); override;
-    procedure SetForceStayOnTop(StayOnTop: boolean);override;
+    procedure SetProgress(NewProgress: integer; ProgressValueID: TProgressValueID);
+      override;
+    procedure SetForceStayOnTop(StayOnTop: boolean); override;
     procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode); override;
-    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); override;
-    procedure SetElementEnabled(Enabled:boolean; ElementID:TElementID); override;
-    procedure BringElementToFront(ElementID:TElementID); override;
+    procedure SetElementVisible(Visible: boolean; ElementID: TElementID); override;
+    procedure SetElementEnabled(Enabled: boolean; ElementID: TElementID); override;
+    procedure BringElementToFront(ElementID: TElementID); override;
     procedure SetElementTop(Top: integer; ElementID: TElementID); override;
     procedure SetElementLeft(Left: integer; ElementID: TElementID); override;
-    procedure SetWindowPosition(Position:TPosition); override;
+    procedure SetWindowPosition(Position: TPosition); override;
     procedure SetTracingLevel(const Level: integer); override;
     procedure SetPicture(const BitmapFile: string; const theLabel: string); override;
 
@@ -850,6 +855,7 @@ end;
 procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
 begin
   ForceStayOnTop(BatchScreenOnTop);
+  FOldProgress := 0;
 end;
 
 
@@ -1009,11 +1015,18 @@ begin
   end;
 end;
 
-procedure TFBatchOberflaeche.SetProgress(Progress: integer; ProgressValueID: TProgressValueID
-  );
+procedure TFBatchOberflaeche.SetProgress(NewProgress: integer;
+  ProgressValueID: TProgressValueID);
 begin
   case ProgressValueID of
-    pPercent: ShowProgress(Progress);
+    pPercent:
+    begin
+      if FOldProgress <> NewProgress then
+      begin
+        ShowProgress(NewProgress);
+        FOldProgress := NewProgress;
+      end;
+    end;
   end;
   Application.ProcessMessages;
 end;
