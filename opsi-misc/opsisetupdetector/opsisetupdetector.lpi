@@ -161,7 +161,6 @@
         <CursorPos X="5" Y="37"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="osdform.pas"/>
@@ -169,7 +168,6 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="2353"/>
         <CursorPos X="66" Y="2371"/>
@@ -183,7 +181,6 @@
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="manifest.xml"/>
@@ -231,7 +228,8 @@
       <Unit8>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="76"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="79"/>
         <CursorPos Y="96"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
@@ -263,7 +261,6 @@
           <Item0 Y="51"/>
         </Bookmarks>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\..\common\oslog.pas"/>
@@ -273,7 +270,6 @@
         <CursorPos X="44" Y="385"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="osdbasedata.pas"/>
@@ -290,7 +286,6 @@
         </ExtraEditor1>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="osdconfigdlg.pas"/>
@@ -303,7 +298,6 @@
         <CursorPos X="73" Y="149"/>
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="osdcreate.pas"/>
@@ -320,7 +314,6 @@
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="template-files\setupsingle.opsiscript"/>
@@ -350,7 +343,6 @@
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\common\oscheckbinarybitness.pas"/>
@@ -492,7 +484,6 @@
         <CursorPos X="9" Y="55"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
         <Filename Value="C:\usr\share\fpcsrc\3.2.0\rtl\objpas\sysutils\sysstrh.inc"/>
@@ -556,7 +547,6 @@
         <CursorPos X="4" Y="166"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
         <Filename Value="template-files\mac\setupsingle.opsiscript"/>
@@ -635,7 +625,6 @@
         <CursorPos X="21" Y="364"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="C:\usr\share\lazarus\2.0.10\components\lazutils\masks.pas"/>
@@ -781,7 +770,6 @@
         <CursorPos Y="678"/>
         <UsageCount Value="112"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
         <Filename Value="C:\usr\share\lazarus\2.0.10\lcl\include\customform.inc"/>
@@ -816,7 +804,6 @@
         <CursorPos Y="80"/>
         <UsageCount Value="48"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
         <Filename Value="C:\usr\share\lazarus\2.0.12\lcl\lcltranslator.pas"/>
@@ -860,7 +847,6 @@
         <CursorPos X="27" Y="453"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit74>
       <Unit75>
         <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
@@ -879,7 +865,6 @@
         <CursorPos X="3" Y="21"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\..\external_libraries\dcpcrypt\Ciphers\dcpblowfish.pas"/>
