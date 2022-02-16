@@ -15528,6 +15528,44 @@ begin
         end;
   end
 
+  else if LowerCase(s) = LowerCase('cidrToNetmask') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if cidrToNetmask(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
+          end
+          else
+          begin
+            StringResult := cidrToNetmask(s1);
+          end;
+        end;
+  end
+
+  else if LowerCase(s) = LowerCase('netmaskToCidr') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if netmaskToCidr(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
+          end
+          else
+          begin
+            StringResult := netmaskToCidr(s1);
+          end;
+        end;
+  end
+
   else if LowerCase(s) = LowerCase('GetIni') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
