@@ -38,6 +38,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    LabelConnect: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;

@@ -816,6 +816,7 @@ end;
 procedure startOpsiServiceConnection;
 var
   serviceversion: string;
+  i : integer;
 begin
   if localservicedata = nil then
   begin
@@ -833,14 +834,20 @@ begin
       serviceversion := localservicedata.getOpsiServiceVersion;
       LogDatei.log('Service connection initialized to :' +
         myconfiguration.Service_URL + ' version: ' + serviceversion, LLinfo);
+      FNewDepDlg.LabelConnect.Caption:= 'Connected to opsi server';
+      FNewDepDlg.LabelConnect.Font.Color:= clGreen;
       // fetch produtIds from service
-      FNewDepDlg.ComboBoxproductIds.Items.Text :=
-          localservicedata.getProductIds.text;
+      for i := 0 to localservicedata.getProductIds.Count - 1 do
+        FNewDepDlg.ComboBoxproductIds.Items.Add(
+        opsiunquotestr2(localservicedata.getProductIds.strings[i],'""'));
+
     end
     else
     begin
       // service data missing
       LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
+      FNewDepDlg.LabelConnect.Caption:= 'Not connected to opsi server';
+      FNewDepDlg.LabelConnect.Font.Color:= clRed;
     end;
   end;
 end;

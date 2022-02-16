@@ -82,14 +82,15 @@ opsi-setup-detector (4.2.0.9) stable; urgency=low
 
    *
    * modified templates
+   * Verbindung zum opsi web service
+   * Auswahl dependency produkte per dropdown aus service
+   * Store connection data to service in configuration (pass encrypted)
    * todo:
       * #4701 manuelle Installerauswahl
       * #4700 include der msi-Logdatei bei fehlgeschlagenen msi-Installationen
       * #4698 Editieren des Feldes opsi Product ID mit Pfeil und Backspace Taste geht nicht wie erwartet.
       * #4699 Property_Name immer lowercase angeben
       * #4664 Linux: MSI-ID mit führenden Blanks
-      * Verbindung zum opsi web service
-      * auswahl dependency produkte per dropdown aus service
       * new main task create meta product
       * fix analyze only flag at other tasks
       * newmain task create product with logged in admin

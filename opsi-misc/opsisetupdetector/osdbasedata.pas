@@ -1451,7 +1451,7 @@ begin
       Fconfig_filled := True;
     Fconfig_version := CONFVERSION;
 
-    FService_pass:= encryptStringBlow('opsi-setup-detector',FService_pass);
+    FService_pass:= encryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
@@ -1473,7 +1473,7 @@ begin
     finally
       //CloseFile(myfile);
       Streamer.Destroy;
-      FService_pass:= decryptStringBlow('opsi-setup-detector',FService_pass);
+      FService_pass:= decryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
     end;
     if Assigned(logdatei) then
       logdatei.log('Finished writeconfig', LLDebug2);
@@ -1568,7 +1568,7 @@ begin
       finally
         DeStreamer.Destroy;
         CloseFile(myfile);
-        FService_pass:= decryptStringBlow('opsi-setup-detector',FService_pass);
+        FService_pass:= decryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
       end;
       if Assigned(logdatei) then
         logdatei.log('read config: ' + JSONString, LLDebug)
