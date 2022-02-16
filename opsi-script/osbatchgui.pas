@@ -1018,7 +1018,7 @@ begin
   case ProgressValueID of
     pPercent:
     begin
-      // Only call FBatchOberflaeche.ShowProgress when a next round percent is reached (FNewProgress > FDisplayedProgress).
+      // Only call FBatchOberflaeche.ShowProgress when a next round percent is reached (NewProgress > FOldProgress).
       // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
       // because calling too often can slow down the whole process by multiple seconds (e.g. if you handle many files)
       if FOldProgress <> NewProgress then
