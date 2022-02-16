@@ -31,7 +31,7 @@ uses
 {$ENDIF}
   osconf, LCLIntf, SysUtils, Classes, Graphics, Controls, IniFiles, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, LResources,
-//Sensors, indGnouMeter,
+  //Sensors, indGnouMeter,
   osencoding,
   typinfo,
   QProgBar,
@@ -104,7 +104,7 @@ type
     procedure setDetailLabel(s: string);
     procedure setCommandLabel(s: string);
     procedure centerWindow;
-    procedure showActivityBar(show : boolean);
+    procedure showActivityBar(Show: boolean);
     procedure showProgressBar(b: boolean);
     procedure setActivityLabel(s: string);
     //Bit: TBitmap32;
@@ -145,7 +145,7 @@ var
   //viewService : IViewService;
   //FBatchOberflaeche:  IViewService;   this seems to produce erratic null pointer exceptions when application terminates
   //FBatchOberflaeche: TosGUIControl;//TFBatchOberflaeche;
-  LableInfoDefaultFontSize : integer;
+  LableInfoDefaultFontSize: integer;
 
   BatchWindowMode, SavedBatchWindowMode: TBatchWindowMode;
   FormMoving: boolean;
@@ -185,15 +185,14 @@ implementation
 
 uses osmessagedialog, osfunc, osmain, oslog;
 
-
 procedure TFBatchOberflaeche.FormShow(Sender: TObject);
 var
-  MyFavoriteFont : String='';
-  SecondFont : String='';
+  MyFavoriteFont: string = '';
+  SecondFont: string = '';
   //Properties: TStringList;
-  labelcontent : String='';
-  i: integer=0;
-  strColor : String='';
+  labelcontent: string = '';
+  i: integer = 0;
+  strColor: string = '';
   //textcolor: TColor;
   //Alpha: boolean;
 
@@ -414,13 +413,14 @@ begin
 end;
 
 
-procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
+procedure TFBatchOberflaeche.LoadSkin(const SkinDirectory: string;
+  setLabelInfo: boolean = True);
 var
-  skindir : String='';
-  skinFile : String='';
+  skindir: string = '';
+  skinFile: string = '';
   skinIni: TIniFile;
-  filename : String='';
-  paramstr0enc : string;
+  filename: string = '';
+  paramstr0enc: string;
 
   procedure setAlignment(var theLabel: TLabel; const newAligment: string);
   begin
@@ -437,7 +437,7 @@ begin
   //FBatchOberflaeche.AutoAdjustLayout(lapAutoAdjustForDPI,FBatchOberflaeche.DesignTimePPI,
   //         screen.PixelsPerInch, 0, 0);
   skinDir := GetSkinDirectory(SkinDirectory);
-  startupmessages.Append('Loading skin from: '+skinDir);
+  startupmessages.Append('Loading skin from: ' + skinDir);
   skinFile := skinDir + PathDelim + 'skin.ini';
   if FileExists(skinFile) then
   begin
@@ -472,8 +472,7 @@ begin
         LabelVersion.Font.Color :=
           myStringToTColor(skinIni.ReadString('LabelVersion', 'FontColor', 'clBlack'));
         LabelVersion.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelVersion', 'FontBold', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelVersion', 'FontBold', 'false')) then
           LabelVersion.Font.Style := LabelVersion.Font.Style + [fsBold];
         if ('true' = skinIni.ReadString('LabelVersion', 'FontItalic', 'false'))
         then
@@ -497,8 +496,7 @@ begin
         LabelProduct.Font.Color :=
           myStringToTColor(skinIni.ReadString('LabelProduct', 'FontColor', 'clBlack'));
         LabelProduct.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProduct', 'FontBold', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelProduct', 'FontBold', 'false')) then
           LabelProduct.Font.Style := LabelProduct.Font.Style + [fsBold];
         if ('true' = skinIni.ReadString('LabelProduct', 'FontItalic', 'false'))
         then
@@ -523,8 +521,7 @@ begin
         LabelCommand.Font.Color :=
           myStringToTColor(skinIni.ReadString('LabelCommand', 'FontColor', 'clBlack'));
         LabelCommand.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelCommand', 'FontBold', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelCommand', 'FontBold', 'false')) then
           LabelCommand.Font.Style := LabelCommand.Font.Style + [fsBold];
         if ('true' = skinIni.ReadString('LabelCommand', 'FontItalic', 'false'))
         then
@@ -543,15 +540,13 @@ begin
         LabelInfo.Height := skinIni.ReadInteger('LabelInfo', 'Height', 20);
         LabelInfo.Font.Name := skinIni.ReadString('LabelInfo', 'FontName', 'Arial');
         LableInfoDefaultFontSize := skinIni.ReadInteger('LabelInfo', 'FontSize', 11);
-        LabelInfo.Font.Size :=  LableInfoDefaultFontSize;
+        LabelInfo.Font.Size := LableInfoDefaultFontSize;
         LabelInfo.Font.Color :=
           myStringToTColor(skinIni.ReadString('LabelInfo', 'FontColor', 'clBlack'));
         LabelInfo.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontBold', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelInfo', 'FontBold', 'false')) then
           LabelInfo.Font.Style := LabelInfo.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelInfo', 'FontItalic', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelInfo', 'FontItalic', 'false')) then
           LabelInfo.Font.Style := LabelInfo.Font.Style + [fsItalic];
         if ('true' = skinIni.ReadString('LabelInfo', 'FontUnderline', 'false'))
         then
@@ -571,8 +566,7 @@ begin
         LabelDetail.Font.Color :=
           myStringToTColor(skinIni.ReadString('LabelDetail', 'FontColor', 'clBlack'));
         LabelDetail.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelDetail', 'FontBold', 'false'))
-        then
+        if ('true' = skinIni.ReadString('LabelDetail', 'FontBold', 'false')) then
           LabelDetail.Font.Style := LabelDetail.Font.Style + [fsBold];
         if ('true' = skinIni.ReadString('LabelDetail', 'FontItalic', 'false'))
         then
@@ -648,7 +642,8 @@ begin
         ImageBackground.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
         Panel.Height := skinIni.ReadInteger('ImageBackground', 'Height', 430);
          *)
-        filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
+        filename := skinDir + PathDelim + skinIni.ReadString('ImageBackground',
+          'File', 'bg.png');
         if FileExists(filename) and not IsDirectory(filename) then
           ImageBackground.picture.loadFromFile(filename);
       except
@@ -660,8 +655,8 @@ begin
         ImageProduct.Top := skinIni.ReadInteger('ImageProduct', 'Top', 44);
         ImageProduct.Width := skinIni.ReadInteger('ImageProduct', 'Width', 144);
         ImageProduct.Height := skinIni.ReadInteger('ImageProduct', 'Height', 144);
-        filename := skinDir +PathDelim+
-          skinIni.ReadString('ImageProduct', 'File', 'product.png');
+        filename := skinDir + PathDelim + skinIni.ReadString(
+          'ImageProduct', 'File', 'product.png');
         FileName := ExpandFileName(FileName);
         if FileExists(filename) and not IsDirectory(filename) then
           ImageProduct.picture.loadFromFile(filename);
@@ -673,8 +668,8 @@ begin
         ImageLogo1.Top := skinIni.ReadInteger('ImageLogo1', 'Top', 80);
         ImageLogo1.Width := skinIni.ReadInteger('ImageLogo1', 'Width', 160);
         ImageLogo1.Height := skinIni.ReadInteger('ImageLogo1', 'Height', 160);
-        filename := skinDir +PathDelim+
-          skinIni.ReadString('ImageLogo1', 'File', 'logo1.png');
+        filename := skinDir + PathDelim + skinIni.ReadString(
+          'ImageLogo1', 'File', 'logo1.png');
         FileName := ExpandFileName(FileName);
         if FileExists(filename) and not IsDirectory(filename) then
           ImageLogo1.picture.loadFromFile(filename);
@@ -686,8 +681,8 @@ begin
         ImageLogo2.Top := skinIni.ReadInteger('ImageLogo2', 'Top', 80);
         ImageLogo2.Width := skinIni.ReadInteger('ImageLogo2', 'Width', 531);
         ImageLogo2.Height := skinIni.ReadInteger('ImageLogo2', 'Height', 91);
-        filename := skinDir +PathDelim+
-          skinIni.ReadString('ImageLogo2', 'File', 'logo2.png');
+        filename := skinDir + PathDelim + skinIni.ReadString(
+          'ImageLogo2', 'File', 'logo2.png');
         FileName := ExpandFileName(FileName);
         if FileExists(filename) and not IsDirectory(filename) then
           ImageLogo2.picture.loadFromFile(filename);
@@ -699,8 +694,8 @@ begin
         Image1Over.Top := skinIni.ReadInteger('Image1Over', 'Top', 36);
         Image1Over.Width := skinIni.ReadInteger('Image1Over', 'Width', 160);
         Image1Over.Height := skinIni.ReadInteger('Image1Over', 'Height', 160);
-        filename := skinDir +PathDelim+
-          skinIni.ReadString('Image1Over', 'File', 'over1.png');
+        filename := skinDir + PathDelim + skinIni.ReadString(
+          'Image1Over', 'File', 'over1.png');
         FileName := ExpandFileName(FileName);
         if FileExists(filename) and not IsDirectory(filename) then
           Image1Over.picture.loadFromFile(filename);
@@ -712,8 +707,8 @@ begin
         Image2Over.Top := skinIni.ReadInteger('Image2Over', 'Top', 267);
         Image2Over.Width := skinIni.ReadInteger('Image2Over', 'Width', 531);
         Image2Over.Height := skinIni.ReadInteger('Image2Over', 'Height', 91);
-        filename := skinDir +PathDelim+
-          skinIni.ReadString('Image2Over', 'File', 'over2.png');
+        filename := skinDir + PathDelim + skinIni.ReadString(
+          'Image2Over', 'File', 'over2.png');
         FileName := ExpandFileName(FileName);
         if FileExists(filename) and not IsDirectory(filename) then
           Image2Over.picture.loadFromFile(filename);
@@ -725,8 +720,8 @@ begin
         ProgressBar.Top := skinIni.ReadInteger('ProgressBar', 'Top', 235);
         ProgressBar.Width := skinIni.ReadInteger('ProgressBar', 'Width', 401);
         ProgressBar.Height := skinIni.ReadInteger('ProgressBar', 'Height', 17);
-        ProgressBar.BarColor := myStringToTColor(
-          skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
+        ProgressBar.BarColor :=
+          myStringToTColor(skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
         ProgressBar.StartColor :=
           myStringToTColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
         ProgressBar.FinalColor :=
@@ -734,7 +729,8 @@ begin
         ProgressBar.ShapeColor :=
           myStringToTColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
         ProgressBar.backgroundColor :=
-          myStringToTColor(skinIni.ReadString('ProgressBar', 'BackgroundColor', 'clWhite'));
+          myStringToTColor(skinIni.ReadString('ProgressBar',
+          'BackgroundColor', 'clWhite'));
         if ('true' = skinIni.ReadString('ProgressBar', 'Shaped', 'false')) then
           ProgressBar.Shaped := True
         else
@@ -772,8 +768,8 @@ begin
         //  StringToColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
         //ProgressBarActivity.Brush.Color:= clNone; // Set Background colour
         {$ENDIF WINDOWS}
-        ActivityBar.Enabled:=true;
-        ActivityBar.Position:=50;
+        ActivityBar.Enabled := True;
+        ActivityBar.Position := 50;
       except
       end;
 
@@ -864,7 +860,7 @@ procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if YesNo then
   begin
-    setWindowState (bwmMaximized);
+    setWindowState(bwmMaximized);
     { make to system wide top most window }
     FormStyle := fsSystemStayOnTop;
     BringToFront;
@@ -899,7 +895,8 @@ begin
   end;
   Application.ProcessMessages;
   if Assigned(LogDatei) then
-     LogDatei.log_prog('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
+    LogDatei.log_prog('Switch window state to: ' + GetEnumName(
+      TypeInfo(TBatchWindowMode), Ord(BatchWindowMode)), LLDebug);
   {$ENDIF}
 end;
 
@@ -933,8 +930,9 @@ end;
 
 procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
 begin
-    if Assigned(LogDatei) then
-     LogDatei.log('Window state was switched by : '+sender.ClassName+' to: '+GetEnumName(TypeInfo(TWindowState),ord(FBatchOberflaeche.WindowState)),LLDebug);
+  if Assigned(LogDatei) then
+    LogDatei.log('Window state was switched by : ' + Sender.ClassName +
+      ' to: ' + GetEnumName(TypeInfo(TWindowState), Ord(FBatchOberflaeche.WindowState)), LLDebug);
 end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);
@@ -943,9 +941,9 @@ begin
   //ProcessMess;
 end;
 
-procedure TFBatchOberflaeche.showActivityBar(show: boolean);
+procedure TFBatchOberflaeche.showActivityBar(Show: boolean);
 begin
-  ActivityBar.Visible:=show;
+  ActivityBar.Visible := Show;
   //ProcessMess;
 end;
 
@@ -956,9 +954,9 @@ var
   //bitmap, resizedBitmap: TBitmap;
   //newHeight, newWidth: integer;
   //stretchRect: TRect;
-  BitmapFilename : String='';
-  errorinfo : String='';
-  shorty : String='';
+  BitmapFilename: string = '';
+  errorinfo: string = '';
+  shorty: string = '';
 begin
 
   if BitmapFile = '' then
@@ -1003,8 +1001,7 @@ begin
 
 end;
 
-procedure TFBatchOberflaeche.SetMessageText(MessageText: string;
-  MessageID: TMessageID);
+procedure TFBatchOberflaeche.SetMessageText(MessageText: string; MessageID: TMessageID);
 begin
   case MessageID of
     mInfo: DoInfo(MessageText);
@@ -1021,6 +1018,9 @@ begin
   case ProgressValueID of
     pPercent:
     begin
+      // Only call FBatchOberflaeche.ShowProgress when a next round percent is reached (FNewProgress > FDisplayedProgress).
+      // This is important to ensures that FBatchOberflaeche.SetProgress isn't called too often
+      // because calling too often can slow down the whole process by multiple seconds (e.g. if you handle many files)
       if FOldProgress <> NewProgress then
       begin
         ShowProgress(NewProgress);
@@ -1036,8 +1036,7 @@ begin
   ForceStayOnTop(StayOnTop);
 end;
 
-procedure TFBatchOberflaeche.SetBatchWindowMode(
-  BatchWindowMode: TBatchWindowMode);
+procedure TFBatchOberflaeche.SetBatchWindowMode(BatchWindowMode: TBatchWindowMode);
 begin
   setWindowState(BatchWindowMode);
 end;
@@ -1109,21 +1108,19 @@ begin
 end;
 
 //interface
-procedure TFBatchOberflaeche.SetElementVisible(Visible: boolean;
-  ElementID: TElementID);
+procedure TFBatchOberflaeche.SetElementVisible(Visible: boolean; ElementID: TElementID);
 begin
   case ElementID of
-    eMainForm:  self.Visible := Visible;
+    eMainForm: self.Visible := Visible;
     eActivityBar: showActivityBar(Visible);
     eProgressBar: showProgressBar(Visible);
   end;
 end;
 
-procedure TFBatchOberflaeche.SetElementEnabled(Enabled: boolean;
-  ElementID: TElementID);
+procedure TFBatchOberflaeche.SetElementEnabled(Enabled: boolean; ElementID: TElementID);
 begin
   case ElementID of
-    eTimerProcessMess:  TimerProcessMess.Enabled:=Enabled;
+    eTimerProcessMess: TimerProcessMess.Enabled := Enabled;
   end;
 end;
 
@@ -1137,12 +1134,11 @@ end;
 procedure TFBatchOberflaeche.SetElementTop(Top: integer; ElementID: TElementID);
 begin
   case ElementID of
-    eMainForm: self.Top:= Top;
+    eMainForm: self.Top := Top;
   end;
 end;
 
-procedure TFBatchOberflaeche.SetElementLeft(Left: integer; ElementID: TElementID
-  );
+procedure TFBatchOberflaeche.SetElementLeft(Left: integer; ElementID: TElementID);
 begin
   case ElementID of
     eMainForm: self.Left := Left;
@@ -1165,8 +1161,8 @@ end;
 procedure TFBatchOberflaeche.doInfo(aMessage: string);
 begin
   LabelInfo.Font.Size := LableInfoDefaultFontSize;
-  if LabelInfo.Canvas.TextWidth(aMessage) >
-    (LabelInfo.Width - LabelInfo.Width div 5) then
+  if LabelInfo.Canvas.TextWidth(aMessage) > (LabelInfo.Width -
+    LabelInfo.Width div 5) then
     LabelInfo.OptimalFill := True
   else
   begin
@@ -1255,13 +1251,13 @@ end;
 
 procedure TFBatchOberflaeche.TimerProcessMessTimer(Sender: TObject);
 begin
-  TimerProcessMess.Enabled:= true;
+  TimerProcessMess.Enabled := True;
   ProcessMess;
 end;
 
 procedure TFBatchOberflaeche.centerWindow;
 begin
-  Position:=poScreenCenter;
+  Position := poScreenCenter;
   MoveToDefaultPosition;
 end;
 
@@ -1273,4 +1269,3 @@ initialization
 
 
 end.
-
