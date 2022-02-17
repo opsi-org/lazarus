@@ -81,6 +81,7 @@ if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines1*#
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else
@@ -98,6 +99,7 @@ if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") 
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines2*#
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else

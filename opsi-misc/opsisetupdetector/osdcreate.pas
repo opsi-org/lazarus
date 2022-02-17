@@ -315,6 +315,9 @@ begin
       str := '';
       patchlist.add('#@DelsubSectionLines' + IntToStr(i + 1) + '*#=' + str);
 
+      str := aktProduct.SetupFiles[i].installErrorHandlingLines.Text;
+      patchlist.add('#@installErrorHandlingLines' + IntToStr(i + 1) + '*#=' + str);
+
     end;
 
   finally

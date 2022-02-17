@@ -414,6 +414,12 @@ begin
   if myArch = 'unknown' then
     mysetup.architecture := aUnknown;
   {$ENDIF WINDOWS}
+  // check for installErrorHandlingLines and insert
+  if installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count > 0 then
+  begin
+    for i := 0 to installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count -1 do
+      mysetup.installErrorHandlingLines.Add(installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
+  end;
 end; //get_aktProduct_general_info_win
 
 procedure get_msi_info(myfilename: string; var mysetup: TSetupFile);

@@ -80,14 +80,15 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 opsi-setup-detector (4.2.0.9) stable; urgency=low
 
-   *
    * modified templates
    * Verbindung zum opsi web service
    * Auswahl dependency produkte per dropdown aus service
    * Store connection data to service in configuration (pass encrypted)
+   * include der install/uinstall-Logdatei bei fehlgeschlagenen Installationen mit log ; references: #4700
+     #@installErrorHandlingLines*#
+     installErrorHandlingLines.Add('includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
    * todo:
       * #4701 manuelle Installerauswahl
-      * #4700 include der msi-Logdatei bei fehlgeschlagenen msi-Installationen
       * #4698 Editieren des Feldes opsi Product ID mit Pfeil und Backspace Taste geht nicht wie erwartet.
       * #4699 Property_Name immer lowercase angeben
       * #4664 Linux: MSI-ID mit führenden Blanks

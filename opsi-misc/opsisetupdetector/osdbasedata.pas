@@ -29,7 +29,7 @@ type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
-    threeAnalyzeCreate_2,  threeAnalyzeCreate_3, createMultiTemplate, gmUnknown);
+    threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, gmUnknown);
 
   TArchitecture = (a32, a64, aUnknown);
 
@@ -37,7 +37,7 @@ type
   { stores runtime infos of OSD}
   TOSDSettings = class(TPersistent)
   private
-    FrunMode : TRunMode;
+    FrunMode: TRunMode;
   published
     property runmode: TRunMode read FrunMode write FrunMode;
   public
@@ -83,6 +83,7 @@ type
     Link: string;
     uib_exitcode_function: string;
     detected: TdetectInstaller;
+    installErrorHandlingLines: TStringList;
     { public declarations }
     constructor Create;
     destructor Destroy;
@@ -92,7 +93,7 @@ type
 
   TSetupFile = class(TPersistent)
   private
-    Factive : boolean;
+    Factive: boolean;
     FID: integer; // 1 = first setup file, 2 = second setup file
     FsetupFileNamePath: string;
     FsetupFileName: string;
@@ -120,12 +121,14 @@ type
     FisExitcodeFatalFunction: string;
     Funinstall_waitforprocess: string;
     Finstall_waitforprocess: string;
+    FinstallErrorHandlingLines: TStrings;
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
-    FtargetOS : TTargetOS;
+    FtargetOS: TTargetOS;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
+    procedure SetInstallErrorHandlingLines(const AValue: TStrings);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -167,6 +170,8 @@ type
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
     property install_waitforprocess: string
       read Finstall_waitforprocess write Finstall_waitforprocess;
+    property installErrorHandlingLines: TStrings
+      read FinstallErrorHandlingLines write SetInstallErrorHandlingLines;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     property targetOS: TTargetOS read FtargetOS write FtargetOS;
@@ -242,13 +247,13 @@ default: ["xenial_bionic"]
     Fdescription: string;
     //FStrvalues: TStrings;
     //FStrDefault: TStrings;
-    FStrvaluesStr : string;
-    FStrDefaultStr : string;
+    FStrvaluesStr: string;
+    FStrDefaultStr: string;
     FBoolDefault: boolean;
     //FimportMode : boolean;
-    dummystr : string;
+    dummystr: string;
   protected
-   // function GetDisplayName: string; override;
+    // function GetDisplayName: string; override;
     // public
     //     procedure Assign(Source: TPersistent); override;
   published
@@ -259,8 +264,8 @@ default: ["xenial_bionic"]
     procedure SetValueStr(const AValue: string);
     function GetValueLines: TStrings;
     function GetDefaultLines: TStrings;
-    function GetDefaultStr : string;
-    function GetValueStr : string;
+    function GetDefaultStr: string;
+    function GetValueStr: string;
     property Property_Type: TPPtype read Ftype write Ftype;
     property Property_Name: string read Fpname write Fpname;
     property Description: string read Fdescription write Fdescription;
@@ -291,7 +296,7 @@ default: ["xenial_bionic"]
     function Add: TPProperty;
     function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
-    function propExists(propname : string) : boolean;
+    function propExists(propname: string): boolean;
     //procedure activateImportMode;
   end;
 
@@ -356,9 +361,9 @@ default: ["xenial_bionic"]
 
     { public declarations }
     constructor Create;
-    procedure readProjectFile(filename : string);
-    procedure writeProjectFileToPath(path : string);
-    procedure writeProjectFileToFile(myfilename : string);
+    procedure readProjectFile(filename: string);
+    procedure writeProjectFileToPath(path: string);
+    procedure writeProjectFileToFile(myfilename: string);
   end;
 
   TConfiguration = class(TPersistent)
@@ -387,8 +392,8 @@ default: ["xenial_bionic"]
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
     FReadme_txt_templ: string;
-    FShowCheckEntryWarning :boolean;
-    FShow2StepMacSeletionWarn : boolean;
+    FShowCheckEntryWarning: boolean;
+    FShow2StepMacSeletionWarn: boolean;
     FService_URL: string;
     FService_user: string;
     FService_pass: string;
@@ -430,10 +435,10 @@ default: ["xenial_bionic"]
       write FUsePropLicenseOrPool;
     //property Properties: TPProperties read FProperties  write SetProperties;
     property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
-    property ShowCheckEntryWarning: boolean read FShowCheckEntryWarning
-      write FShowCheckEntryWarning;
-    property Show2StepMacSeletionWarn: boolean read FShow2StepMacSeletionWarn
-      write FShow2StepMacSeletionWarn;
+    property ShowCheckEntryWarning: boolean
+      read FShowCheckEntryWarning write FShowCheckEntryWarning;
+    property Show2StepMacSeletionWarn: boolean
+      read FShow2StepMacSeletionWarn write FShow2StepMacSeletionWarn;
     property Service_URL: string read FService_URL write FService_URL;
     property Service_user: string read FService_user write FService_user;
     property Service_pass: string read FService_pass write FService_pass;
@@ -457,7 +462,7 @@ procedure makeProperties;
 procedure freebasedata;
 procedure activateImportMode;
 procedure deactivateImportMode;
-function cleanOpsiId(opsiid : string) : string; // clean up productId
+function cleanOpsiId(opsiid: string): string; // clean up productId
 
 const
   CONFVERSION = '4.2.0.9';
@@ -474,11 +479,11 @@ var
   //useRunMode: TRunMode;
   myVersion: string;
   lfilename: string;
-  aktconfigfile : string;
-  forceProductId : string = ''; // by cli parameter
-  forceTargetOS : TTargetOS = osWin; // by cli parameter
-  globimportMode : boolean = false;
-  defaultIconFullFileName :string;
+  aktconfigfile: string;
+  forceProductId: string = ''; // by cli parameter
+  forceTargetOS: TTargetOS = osWin; // by cli parameter
+  globimportMode: boolean = False;
+  defaultIconFullFileName: string;
 
 resourcestring
 
@@ -515,9 +520,9 @@ resourcestring
     'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
   rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
-  rsCnfdTitle = 'Edit your configuration here.'  + LineEnding +
-                 'Click on a line to get help '  + LineEnding +
-                 'in the yellow field at the bottom.';
+  rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
+    'Click on a line to get help ' + LineEnding +
+    'in the yellow field at the bottom.';
 
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
@@ -537,13 +542,15 @@ constructor TInstallerData.Create;
 begin
   patterns := TStringList.Create;
   infopatterns := TStringList.Create;
+  installErrorHandlingLines := TStringList.Create;
   inherited;
 end;
 
 destructor TInstallerData.Destroy;
 begin
-  patterns.Free;
-  infopatterns.Free;
+  FreeAndNil(patterns);
+  FreeAndNil(infopatterns);
+  FreeAndNil(installErrorHandlingLines);
   inherited;
 end;
 
@@ -554,6 +561,7 @@ begin
   Fmarkerlist := TStringList.Create;
   Finfolist := TStringList.Create;
   FuninstallCheck := TStringList.Create;
+  FinstallErrorHandlingLines := TStringList.Create;
   inherited;
   //initValues;
 end;
@@ -563,6 +571,7 @@ begin
   FreeAndNil(Fmarkerlist);
   FreeAndNil(Finfolist);
   FreeAndNil(FuninstallCheck);
+  FreeAndNil(FinstallErrorHandlingLines);
   inherited;
 end;
 
@@ -609,9 +618,14 @@ begin
   Finfolist.Assign(AValue);
 end;
 
+procedure TSetupFile.SetInstallErrorHandlingLines(const AValue: TStrings);
+begin
+  FinstallErrorHandlingLines.Assign(AValue);
+end;
+
 procedure TSetupFile.initValues;
 begin
-  Factive := false;
+  Factive := False;
   FsetupFileNamePath := '';
   FsetupFileName := '';
   FsetupFullFileName := '';
@@ -639,7 +653,8 @@ begin
   FisExitcodeFatalFunction := 'isGenericExitcodeFatal';
   Funinstall_waitforprocess := '';
   Finstall_waitforprocess := '';
-  FcopyCompleteDir := false;
+  FcopyCompleteDir := False;
+
 end;
 
 // TPProperty **********************************
@@ -652,8 +667,8 @@ end;
 
 procedure TPProperty.init;
 begin
-  Fpname:= '';
-  Fdescription:='';
+  Fpname := '';
+  Fdescription := '';
   //FStrvalues := TStringList.Create;
   //FStrdefault := TStringList.Create;
   Ftype := bool;
@@ -717,9 +732,9 @@ end;
 
 
 // Defaults
-function TPProperty.GetDefaultLines : TStrings;
+function TPProperty.GetDefaultLines: TStrings;
 begin
-        result := TStringlist.Create;
+  Result := TStringList.Create;
         (*
   if globimportMode then
     begin
@@ -727,10 +742,10 @@ begin
     end
   else
   *)
-  result.DelimitedText :=  FStrDefaultStr;
+  Result.DelimitedText := FStrDefaultStr;
 end;
 
-procedure TPProperty.SetDefaultLines(const AValue : TStrings);
+procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
   (*
    if globimportMode then
@@ -749,16 +764,16 @@ begin
   //FStrDefault.DelimitedText := AValue;
 end;
 
-function TPProperty.GetDefaultStr : string;
+function TPProperty.GetDefaultStr: string;
 begin
-  result := FStrDefaultStr;
+  Result := FStrDefaultStr;
 end;
 
 //Values
 
-function TPProperty.GetValueLines : TStrings;
+function TPProperty.GetValueLines: TStrings;
 begin
-  result := TStringlist.Create;
+  Result := TStringList.Create;
   (*
   if globimportMode then
     begin
@@ -766,10 +781,10 @@ begin
     end
   else
   *)
-  result.DelimitedText :=  FStrvaluesStr;
+  Result.DelimitedText := FStrvaluesStr;
 end;
 
-procedure TPProperty.SetValueLines(const AValue : TStrings);
+procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
   (*
   if globimportMode then
@@ -789,21 +804,21 @@ begin
   //FStrvalues.DelimitedText := AValue;
 end;
 
-function TPProperty.GetValueStr : string;
+function TPProperty.GetValueStr: string;
 begin
-  result := FStrvaluesStr;
+  Result := FStrvaluesStr;
 end;
 
 
 
 procedure activateImportMode;
 begin
-  globimportMode := true;
+  globimportMode := True;
 end;
 
 procedure deactivateImportMode;
 begin
-  globimportMode := false;
+  globimportMode := False;
 end;
 
 (*
@@ -855,17 +870,17 @@ begin
   Result := inherited Add as TPProperty;
 end;
 
-function TPProperties.propExists(propname : string) : boolean;
+function TPProperties.propExists(propname: string): boolean;
 var
-  index ,i : integer;
-  tmpstr : string;
+  index, i: integer;
+  tmpstr: string;
 begin
-      index := Count;
-    tmpstr := lowercase(propname);
-    propExists := False;
-    for i := 0 to index - 1 do
-      if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
-        propExists := True;
+  index := Count;
+  tmpstr := lowercase(propname);
+  propExists := False;
+  for i := 0 to index - 1 do
+    if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
+      propExists := True;
 end;
 
 (*
@@ -1038,21 +1053,20 @@ begin
   //initaktproduct;
 end;
 
-procedure TopsiProduct.writeProjectFileToPath(path : string);
+procedure TopsiProduct.writeProjectFileToPath(path: string);
 begin
   path := IncludeTrailingPathDelimiter(path);
-  writeProjectFileToFile(path+'opsi-project.osd');
+  writeProjectFileToFile(path + 'opsi-project.osd');
 end;
 
-procedure TopsiProduct.writeProjectFileToFile(myfilename : string);
+procedure TopsiProduct.writeProjectFileToFile(myfilename: string);
 var
   Streamer: TJSONStreamer;
   JSONString: string;
   //myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: UTF8String;
+  configDirUtf8: utf8string;
   pfile: TextFile;
-
 
   (*
   // http://wiki.freepascal.org/File_Handling_In_Pascal
@@ -1099,7 +1113,7 @@ begin
         if Assigned(logdatei) then
           LogDatei.log('failed to create project file directory: ' +
             configDir, LLError);
-    AssignFile(pfile,myfilename);
+    AssignFile(pfile, myfilename);
     Rewrite(pfile);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
@@ -1108,24 +1122,24 @@ begin
       // Save strings as JSON array
       // JSON convert and output
       JSONString := Streamer.ObjectToJSONString(osdsettings);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[0]);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[1]);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.SetupFiles[2]);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       JSONString := Streamer.ObjectToJSONString(aktProduct.productdata);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       activateImportMode;
       // has to be fixed: JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
       //JSONString := Streamer.CollectionToJSON(aktProduct.properties);
       JSONString := Streamer.ObjectToJSONString(aktProduct.properties);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       deactivateImportMode;
       JSONString := Streamer.ObjectToJSONString(aktProduct.dependencies);
       //JSONString := Streamer.CollectionToJSON(aktProduct.dependencies);
-      writeln(pfile,JSONString);
+      writeln(pfile, JSONString);
       //writeln(pfile,aktProduct.FtargetOS);
       CloseFile(pfile);
       (*
@@ -1165,19 +1179,19 @@ begin
 end;
 *)
 
-procedure TopsiProduct.readProjectFile(filename : string);
+procedure TopsiProduct.readProjectFile(filename: string);
 var
   DeStreamer: TJSONDeStreamer;
   //Streamer: TJSONStreamer;
   JSONString, JSONObjString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: UTF8String;
+  configDirUtf8: utf8string;
   configDirstr: string;
   oldconfigDir, oldconfigFileName, tmpstr: string;
   pfile: TextFile;
-  aktproperty : TPProperty;
-  i : integer;
+  aktproperty: TPProperty;
+  i: integer;
 
   (*
   // http://wiki.freepascal.org/File_Handling_In_Pascal
@@ -1216,7 +1230,7 @@ begin
   try
     if Assigned(logdatei) then
       logdatei.log('Start readProjectFile', LLDebug);
-     // project file name
+    // project file name
     //configDir := IncludeTrailingPathDelimiter(path);
     //myfilename := configDir + 'opsi-project.osd';
     myfilename := filename;
@@ -1231,7 +1245,7 @@ begin
       // DeStreamer object create
       DeStreamer := TJSONDeStreamer.Create(nil);
       try
-        DeStreamer.Options:= [jdoIgnorePropertyErrors,jdoIgnoreNulls];
+        DeStreamer.Options := [jdoIgnorePropertyErrors, jdoIgnoreNulls];
         // Load JSON data in the object
         //DeStreamer.OnRestoreProperty:=SetupFiles[0].OnRestoreProperty;
         readln(pfile, JSONString);
@@ -1246,14 +1260,14 @@ begin
         DeStreamer.JSONToObject(JSONString, aktProduct.productdata);
         readln(pfile, JSONString);
         activateImportMode;
-        if pos('gdb unparsed remainder',JSONString) = 0 then
-          if jsonIsValid(JSONString)  then
+        if pos('gdb unparsed remainder', JSONString) = 0 then
+          if jsonIsValid(JSONString) then
           begin
-            jsonAsObjectGetValueByKey(JSONString,'Items',JSONString);
-            if jsonIsArray(JSONString)  then
+            jsonAsObjectGetValueByKey(JSONString, 'Items', JSONString);
+            if jsonIsArray(JSONString) then
             begin
-            aktproperty := TPProperty.Create;
-            for i := 0 to jsonAsArrayCountElements(JSONString) -1 do
+              aktproperty := TPProperty.Create;
+              for i := 0 to jsonAsArrayCountElements(JSONString) - 1 do
               begin
                 jsonAsArrayGetElementByIndex(JSONString, i, JSONObjString);
                 aktproperty := aktProduct.properties.Add;
@@ -1261,9 +1275,9 @@ begin
 
               end;
             end;
-        //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
-        //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
-        end;
+            //DeStreamer.JSONToObject(JSONString, aktProduct.properties);
+            //DeStreamer.JSONToCollection(JSONString, aktProduct.properties);
+          end;
         deactivateImportMode;
         readln(pfile, JSONString);
         DeStreamer.JSONToObject(JSONString, aktProduct.dependencies);
@@ -1280,8 +1294,8 @@ begin
     end
     else
     begin
-       if Assigned(logdatei) then
-      logdatei.log('Project file not found: '+myfilename, LLError);
+      if Assigned(logdatei) then
+        logdatei.log('Project file not found: ' + myfilename, LLError);
     end;
     if Assigned(logdatei) then
       logdatei.log('Finished readconfig', LLDebug2);
@@ -1291,13 +1305,13 @@ begin
       if Assigned(logdatei) then
       begin
         LogDatei.log('read project exception. Details: ' + E.ClassName +
-          ': ' + E.Message, LLError) ;
-        ShowMessage('Read project file exception. Details: ' + E.ClassName +
-          ': ' + E.Message);
+          ': ' + E.Message, LLError);
+        ShowMessage('Read project file exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
       end
-    else
-        ShowMessage('Read project file exception. Details: ' + E.ClassName +
-          ': ' + E.Message);
+      else
+        ShowMessage('Read project file exception. Details: ' +
+          E.ClassName + ': ' + E.Message);
   end;
 end;
 
@@ -1332,9 +1346,9 @@ begin
   Fconfig_version := myVersion;
   FReadme_txt_templ := ExtractFileDir(ParamStr(0)) + PathDelim +
     'template-files' + PathDelim + 'generic' + PathDelim + 'package_qa.txt';
-  FShowCheckEntryWarning := true;
-  FShow2StepMacSeletionWarn := true;
-  FUsePropDesktopicon := false;
+  FShowCheckEntryWarning := True;
+  FShow2StepMacSeletionWarn := True;
+  FUsePropDesktopicon := False;
   //readconfig;
 end;
 
@@ -1386,7 +1400,7 @@ var
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: UTF8String;
+  configDirUtf8: utf8string;
   //myfile: TextFile;
 
   // http://wiki.freepascal.org/File_Handling_In_Pascal
@@ -1451,7 +1465,7 @@ begin
       Fconfig_filled := True;
     Fconfig_version := CONFVERSION;
 
-    FService_pass:= encryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
+    FService_pass := encryptStringBlow('opsi-setup-detector' + FService_user, FService_pass);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
@@ -1473,7 +1487,8 @@ begin
     finally
       //CloseFile(myfile);
       Streamer.Destroy;
-      FService_pass:= decryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
+      FService_pass := decryptStringBlow('opsi-setup-detector' +
+        FService_user, FService_pass);
     end;
     if Assigned(logdatei) then
       logdatei.log('Finished writeconfig', LLDebug2);
@@ -1494,7 +1509,7 @@ var
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8: UTF8String;
+  configDirUtf8: utf8string;
   configDirstr: string;
   myfile: Text;
   oldconfigDir, oldconfigFileName, tmpstr: string;
@@ -1568,7 +1583,8 @@ begin
       finally
         DeStreamer.Destroy;
         CloseFile(myfile);
-        FService_pass:= decryptStringBlow('opsi-setup-detector'+FService_user,FService_pass);
+        FService_pass := decryptStringBlow('opsi-setup-detector' +
+          FService_user, FService_pass);
       end;
       if Assigned(logdatei) then
         logdatei.log('read config: ' + JSONString, LLDebug)
@@ -1713,20 +1729,21 @@ begin
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
     // Application.Params[0] is directory of application as string
-        { set productImageFullFileName to full file name of the default icon }
+    { set productImageFullFileName to full file name of the default icon }
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
-    defaultIconFullFileName := '/usr/share/opsi-setup-detector' +
-      PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+    defaultIconFullFileName :=
+      '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
+      PathDelim + 'images' + PathDelim + 'template.png';
     // in develop environment
     if not fileexists(defaultIconFullFileName) then
-       defaultIconFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'images' + PathDelim + 'template.png';
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+        PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
@@ -1764,7 +1781,7 @@ begin
   end;
 end;
 
-function cleanOpsiId(opsiId : string) : string; // clean up productId
+function cleanOpsiId(opsiId: string): string; // clean up productId
 begin
   opsiId := LowerCase(opsiId);
   (*
@@ -1773,7 +1790,7 @@ begin
                                   ['_','_','_','_','_', '_','_',],
                                   [frReplaceAll]);
                                   *)
-  result := stringReplaceRegex(opsiId,'[^a-z0-9_-]','_');
+  Result := stringReplaceRegex(opsiId, '[^a-z0-9_-]', '_');
 
   // [^A-Za-z0-9._-]
 end;
@@ -1942,6 +1959,8 @@ begin
     uninstallProg := '';
     //patterns.Add('nstallshield');
     //patterns.Add('installer,msi,database');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
@@ -1994,6 +2013,8 @@ begin
     uninstallProg := '';
     patterns.Add('InstallAware: http://www.installaware.com');
     infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50"');
     link := 'https://www.installaware.com/mhtml5/desktop/setupcommandlineparameters.htm';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
@@ -2004,7 +2025,8 @@ begin
   begin
     description := 'generic MS Installer';
     silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
       '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
@@ -2013,6 +2035,8 @@ begin
     uninstallProg := '';
     patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
     //infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2024,7 +2048,8 @@ begin
   begin
     description := 'Wix Toolset';
     silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
       '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
@@ -2034,6 +2059,8 @@ begin
     patterns.Add('WixBundle');
     patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2045,7 +2072,8 @@ begin
   begin
     description := 'MS Box Stup';
     silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
       '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
@@ -2055,6 +2083,8 @@ begin
     patterns.Add('boxstub.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2066,7 +2096,8 @@ begin
   begin
     description := 'MS SFX Cab ';
     silentsetup := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
-    unattendedsetup := '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
+    unattendedsetup :=
+      '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     silentuninstall := '/quiet /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
     unattendeduninstall :=
       '/passive /norestart /log "%opsiLogDir%\$ProductId$.install_log.txt"';
@@ -2076,6 +2107,8 @@ begin
     patterns.Add('sfxcab.exe');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2096,6 +2129,8 @@ begin
     patterns.Add('<description>BitRock Installer</description>');
     patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
+    installErrorHandlingLines.Add(
+      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
     link :=
       'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
