@@ -25684,7 +25684,7 @@ begin
       else
         FConstValuesList.add(computernaming);
 
-      FConstList.add('%FQDN%');
+      FConstList.add('%FQDN%'); // fqdn in network (not opsi service) context
       FConstValuesList.add(getFQDN);
 
       FConstList.add('%opsiServer%');
