@@ -24,7 +24,8 @@ uses
   oslog,
   osdbasedata,
   osdanalyzegeneral,
-  oscheckbinarybitness;
+  oscheckbinarybitness,
+  Controls;
 
 
 (*
@@ -78,7 +79,8 @@ resourcestring
 implementation
 
 uses
-  osdform;
+  osdform,
+  ChooseInstallerDlg;
 
 function getProductInfoFromResource(infokey: string; filename: string): string;
 { Allowed keys:
@@ -415,10 +417,12 @@ begin
     mysetup.architecture := aUnknown;
   {$ENDIF WINDOWS}
   // check for installErrorHandlingLines and insert
-  if installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count > 0 then
+  if installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count
+    > 0 then
   begin
-    for i := 0 to installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count -1 do
-      mysetup.installErrorHandlingLines.Add(installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
+    for i := 0 to installerArray[integer(mysetup.installerId)].installErrorHandlingLines.Count - 1 do
+      mysetup.installErrorHandlingLines.Add(
+        installerArray[integer(mysetup.installerId)].installErrorHandlingLines[i]);
   end;
 end; //get_aktProduct_general_info_win
 
@@ -568,7 +572,8 @@ begin
   begin
     mysetup.installCommandLine :=
       'msiexec /i "%scriptpath%\files' + IntToStr(mysetup.ID) + '\' +
-      mysetup.setupFileName + '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+      mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;
   end;
   mysetup.uninstallCheck.Clear;
@@ -613,8 +618,8 @@ var
   AppVerName: string = '';
   DefaultDirName: string = '';
   tmpint: integer;
-  ArchitecturesAllowed : string = '';
-  ArchitecturesInstallIn64BitMode : string = '';
+  ArchitecturesAllowed: string = '';
+  ArchitecturesInstallIn64BitMode: string = '';
 
 begin
   Mywrite('Analyzing Inno-Setup:');
@@ -724,8 +729,8 @@ begin
         else
           AppVerName := AppName + AppVersion;
       end;
-      if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode)))
-         and (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
+      if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
+        (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
         if pos('{pf}', DefaultDirName) > 0 then
         begin
@@ -742,7 +747,7 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
             '%ProgramFiles64Dir%', [rfReplaceAll, rfIgnoreCase]);
         end;
-         if pos('{code:installDir}', DefaultDirName) > 0 then
+        if pos('{code:installDir}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:installDir}',
             '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
@@ -1328,8 +1333,8 @@ end;
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
   setupType: TKnownInstaller;
-  tmpstr : string;
-
+  tmpstr: string;
+  i: integer;
 begin
   LogDatei.log('Start Analyze ... ', LLInfo);
   {$IFDEF OSDGUI}
@@ -1404,16 +1409,33 @@ begin
         Mywrite('Found installer= ' + tmpstr);
     end;
     { avoid hyphen char "-" and replace with dot "." in version }
-    aktproduct.productdata.productversion := StringReplace(aktproduct.productdata.productversion,'-','.',[rfReplaceAll]);
+    aktproduct.productdata.productversion :=
+      StringReplace(aktproduct.productdata.productversion, '-', '.', [rfReplaceAll]);
 
   end;
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
   {$ENDIF OSDGUI}
-  if not (setupType = stUnknown) then
+  sleep(2000);
+  if setupType = stUnknown then
   begin
-    sleep(2000);
+
+    {$IFDEF OSDGUI}
+    FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
+    for i := 0 to integer(stUnknown) - 1 do
+      FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
+        installerToInstallerstr(TKnownInstaller(i)));
+    if FChooseInstallerDlg.ShowModal = mrOk then
+    begin
+      setupType := installerstrToInstaller(
+        FChooseInstallerDlg.ComboBoxChooseInstaller.Text);
+      resultform1.BtAnalyzeNextStepClick(nil);
+    end;
+    {$ENDIF OSDGUI}
+  end
+  else
+  begin
     resultform1.BtAnalyzeNextStepClick(nil);
   end;
 end;

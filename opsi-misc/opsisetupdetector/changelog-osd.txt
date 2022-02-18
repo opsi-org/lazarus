@@ -88,10 +88,10 @@ opsi-setup-detector (4.2.0.9) stable; urgency=low
      #@installErrorHandlingLines*#
      installErrorHandlingLines.Add('includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
    * fix edit productId field with arrow and backspace, fixes: #4698
+   * fix edit propertyId always lowercase, fixes: #4699
+   * checked is fixed: msi-Id with leading spaces, fixes: #4664
    * todo:
       * #4701 manuelle Installerauswahl
-      * #4699 Property_Name immer lowercase angeben
-      * #4664 Linux: MSI-ID mit führenden Blanks
       * new main task create meta product
       * fix analyze only flag at other tasks
       * newmain task create product with logged in admin

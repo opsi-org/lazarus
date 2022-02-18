@@ -457,6 +457,7 @@ default: ["xenial_bionic"]
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
+function installerstrToInstaller(installerstr: string): TKnownInstaller;
 procedure initaktproduct;
 procedure makeProperties;
 procedure freebasedata;
@@ -1636,6 +1637,11 @@ end;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 begin
   Result := knownInstallerList.Strings[integer(installerId)];
+end;
+
+function installerstrToInstaller(installerstr: string): TKnownInstaller;
+begin
+  Result := TKnownInstaller(knownInstallerList.IndexOf(installerstr));
 end;
 
 function instIdToint(installerId: TKnownInstaller): integer;

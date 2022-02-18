@@ -16,7 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
   osjson, oswebservice, oscrypt,
-  osdanalyzegeneral;
+  osdanalyzegeneral, ChooseInstallerDlg;
 
 
 {$R *.res}
@@ -43,6 +43,7 @@ begin
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
+  Application.CreateForm(TFChooseInstallerDlg, FChooseInstallerDlg);
   Application.Run;
 end.
 

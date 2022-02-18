@@ -2144,6 +2144,7 @@ begin
   FNewPropDlg.initFields;
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
+  //FNewPropDlg.EditPropName.SetFocus;
   procmess;
   if FNewPropDlg.ShowModal = mrOk then
   begin
