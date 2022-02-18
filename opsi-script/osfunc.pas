@@ -11804,37 +11804,44 @@ var
   WMIProperties, WMIResults: TStringList;
   ErrorMsg, FQDN: string;
 begin
+  Result := '';
   {$IFDEF WINDOWS}
   WMIProperties := TStringList.Create;
+  WMIProperties.Add('DNSHostName');
   WMIProperties.Add('Name');
   WMIProperties.Add('Domain');
   WMIResults := TStringList.Create;
   ErrorMsg := '';
   if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties, '', WMIResults, ErrorMsg) then
   begin
-    FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
-    LogDatei.log('WMI result for FQDN: '+FQDN, LLDebug);
-    Result := GetFQDNResult(FQDN);
+    if (WMIResults.Values['Domain'] = 'WORKGROUP') then
+      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""', LLNotice)
+    else
+    begin
+    if not (WMIResults.Values['DNSHostName'] = '') then
+      FQDN := WMIResults.Values['DNSHostName']+'.'+WMIResults.Values['Domain']
+    else
+      FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
+
+    LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
+    CheckFQDN(FQDN);
+    Result := FQDN;
+    end;
   end
   else
-  begin
-    Result := '';
-    LogDatei.log('Searching FQDN with WMI failed!', LLInfo);
-  end;
+    LogDatei.log('Searching FQDN with WMI failed', LLNotice);
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   // get fqdn with console command 'hostname -f' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
   begin
     Delete(FQDN, FQDN.Length,2); // delete '\n' from end of command line result
-    LogDatei.log('Command line result for FQDN: '+FQDN, LLDebug);
-    Result := GetFQDNResult(FQDN);
+    LogDatei.log('Command line result for FQDN: '+FQDN, LLInfo);
+    CheckFQDN(FQDN);
+    Result := FQDN;
   end
   else
-  begin
-    Result := '';
-    LogDatei.log('Getting FQDN from command line failed!', LLInfo);
-  end;
+    LogDatei.log('Getting FQDN from command line failed', LLNotice);
   {$ENDIF UNIX}
 end;
 
