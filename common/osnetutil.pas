@@ -20,7 +20,7 @@ uses
   RegExpr;
 
 function isValidFQDN(expr: string): boolean;
-function GetFQDNResult(FQDNCandidate: string): string;
+function CheckFQDN(FQDNCandidate: string): string;
 function isIPNumber(expr: string): boolean;
 function IsValidEmail(const Value: string): boolean;
 
@@ -43,18 +43,10 @@ begin
   RegExprObj.Free;
 end;
 
-function GetFQDNResult(FQDNCandidate: string): string;
+function CheckFQDN(FQDNCandidate: string): string;
 begin
-  if isValidFQDN(FQDNCandidate) then
-  begin
-    Result := FQDNCandidate;
-    LogDatei.log('FQDN: ' + FQDNCandidate, LLInfo);
-  end
-  else
-  begin
-    Result := '';
-    LogDatei.log('No valid FQDN found!', LLInfo);
-  end;
+  if not isValidFQDN(FQDNCandidate) then
+    LogDatei.log('"' + FQDNCandidate + '"' + ' is no valid fqdn', LLNotice);
 end;
 
 function isIPNumber(expr: string): boolean;
@@ -74,9 +66,7 @@ function IsValidEmail(const Value: string): boolean;
   begin
     Result := False;
     for i := 1 to Length(s) do
-      if not (s[i] in ['a'..'z', 'A'..'Z',
-        '0'..'9', '_',
-        '-', '.']) then
+      if not (s[i] in ['a'..'z', 'A'..'Z', '0'..'9', '_', '-', '.']) then
       begin
         LogDatei.log('Warning: Not allowed chars in part: ' + s +
           ' in eMail: ' + Value, LLwarning);
@@ -102,7 +92,8 @@ begin
   LogDatei.log('Debug: ServerPart: ' + ServerPart + ' in  eMail: ' + Value, LLdebug2);
   if (Length(NamePart) = 0) then
   begin
-    LogDatei.log('Warning: Empty namePart: ' + NamePart + ' in  eMail: ' + Value, LLwarning);
+    LogDatei.log('Warning: Empty namePart: ' + NamePart + ' in  eMail: ' +
+      Value, LLwarning);
     Exit;
   end;
   if ((Length(ServerPart) < 5)) then
