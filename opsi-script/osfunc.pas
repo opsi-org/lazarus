@@ -654,7 +654,9 @@ function resolveSymlink(const filepath: string; recursive: boolean = True): stri
 function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
-function getFQDN: string;
+function GetFQDNfromWMI: string;
+function GetFQDNfromConsole: string;
+function GetFQDN: string;
 
 const
 
@@ -11799,49 +11801,67 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
-function getFQDN: string;
+function GetFQDNfromWMI: string;
 var
   WMIProperties, WMIResults: TStringList;
   ErrorMsg, FQDN: string;
+  hostname, domain: string;
 begin
   Result := '';
-  {$IFDEF WINDOWS}
   WMIProperties := TStringList.Create;
   WMIProperties.Add('DNSHostName');
   WMIProperties.Add('Name');
   WMIProperties.Add('Domain');
   WMIResults := TStringList.Create;
   ErrorMsg := '';
-  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties, '', WMIResults, ErrorMsg) then
+  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
+    '', WMIResults, ErrorMsg) then
   begin
-    if (WMIResults.Values['Domain'] = 'WORKGROUP') then
-      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""', LLNotice)
+    domain := WMIResults.Values['Domain'];
+    if (domain = 'WORKGROUP') then
+      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""',
+        LLNotice)
     else
     begin
-    if not (WMIResults.Values['DNSHostName'] = '') then
-      FQDN := WMIResults.Values['DNSHostName']+'.'+WMIResults.Values['Domain']
-    else
-      FQDN := WMIResults.Values['Name']+'.'+WMIResults.Values['Domain'];
+      hostname := WMIResults.Values['DNSHostName'];
+      if (hostname = '') then
+        hostname := WMIResults.Values['Name'];
 
-    LogDatei.log('WMI result for FQDN: '+FQDN, LLInfo);
-    CheckFQDN(FQDN);
-    Result := FQDN;
+      FQDN := hostname + '.' + domain;
+      Result := FQDN;
+      LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
+      CheckFQDN(FQDN);
     end;
   end
   else
     LogDatei.log('Searching FQDN with WMI failed', LLNotice);
-  {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
-  // get fqdn with console command 'hostname -f' (requires unit "process")
+end;
+
+function GetFQDNfromConsole: string;
+var
+  FQDN: string;
+begin
+  Result := '';
+  // use command 'hostname -f' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
   begin
-    Delete(FQDN, FQDN.Length,2); // delete '\n' from end of command line result
-    LogDatei.log('Command line result for FQDN: '+FQDN, LLInfo);
-    CheckFQDN(FQDN);
+    // delete '\n' from end of command line result
+    System.Delete(FQDN, FQDN.Length, 2); // needs "System." since other function "Delete" exists in this unit
     Result := FQDN;
+    LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
+    CheckFQDN(FQDN);
   end
   else
     LogDatei.log('Getting FQDN from command line failed', LLNotice);
+end;
+
+function GetFQDN: string;
+begin
+  {$IFDEF WINDOWS}
+  Result := GetFQDNfromWMI;
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  Result := GetFQDNfromConsole;
   {$ENDIF UNIX}
 end;
 
