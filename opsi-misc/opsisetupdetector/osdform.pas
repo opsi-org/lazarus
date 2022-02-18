@@ -3967,11 +3967,18 @@ end;
 
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
+var
+  aktCaretPos : TPoint;
+  col : longint;
 begin
+  aktCaretPos := TTIEdit(Sender).CaretPos;
+  col := aktCaretPos.X;
   if TTIEdit(Sender).Name = 'TIEditProdID' then
   begin
+    // lower case and replace special chars by _
     TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
-    TTIEdit(Sender).SelStart := Length(TTIEdit(Sender).Caption);
+    // restore the caret position
+    TTIEdit(Sender).SelStart := col;
   end;
   TControl(Sender).EditingDone;
 end;

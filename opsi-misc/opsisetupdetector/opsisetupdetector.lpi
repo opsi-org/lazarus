@@ -152,7 +152,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="78">
+    <Units Count="80">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -169,8 +169,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="816"/>
-        <CursorPos X="18" Y="822"/>
+        <TopLine Value="3957"/>
+        <CursorPos X="37" Y="3981"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -230,7 +230,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="79"/>
-        <CursorPos X="101" Y="87"/>
+        <CursorPos Y="90"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -238,7 +238,7 @@
       <Unit9>
         <Filename Value="osdanalyzewin.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="399"/>
         <CursorPos X="52" Y="417"/>
         <ExtraEditorCount Value="1"/>
@@ -249,7 +249,6 @@
         </ExtraEditor1>
         <UsageCount Value="212"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="osdhelper.pas"/>
@@ -265,7 +264,7 @@
       <Unit11>
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="371"/>
         <CursorPos X="44" Y="385"/>
         <UsageCount Value="235"/>
@@ -274,9 +273,9 @@
       <Unit12>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="605"/>
-        <CursorPos X="28" Y="606"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="1770"/>
+        <CursorPos X="21" Y="1784"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -293,7 +292,7 @@
         <ComponentName Value="FOSDConfigdlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="118"/>
         <CursorPos X="46" Y="126"/>
         <UsageCount Value="203"/>
@@ -302,7 +301,7 @@
       <Unit14>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="297"/>
         <CursorPos X="73" Y="306"/>
         <ExtraEditorCount Value="1"/>
@@ -337,7 +336,7 @@
         <ComponentName Value="FNewDepDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="87"/>
         <CursorPos X="16" Y="90"/>
         <UsageCount Value="200"/>
@@ -620,7 +619,7 @@
       <Unit48>
         <Filename Value="osdanalyzegeneral.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="15"/>
         <CursorPos X="17" Y="259"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -764,10 +763,10 @@
       <Unit65>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="12"/>
         <TopLine Value="659"/>
         <CursorPos Y="678"/>
-        <UsageCount Value="116"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
       </Unit65>
       <Unit66>
@@ -798,10 +797,10 @@
       <Unit69>
         <Filename Value="..\..\common\osfilehelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="16"/>
         <TopLine Value="45"/>
         <CursorPos Y="80"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="54"/>
         <Loaded Value="True"/>
       </Unit69>
       <Unit70>
@@ -844,15 +843,15 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="23"/>
         <CursorPos X="11" Y="41"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="29"/>
       </Unit74>
       <Unit75>
         <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="517"/>
         <CursorPos X="32" Y="538"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit75>
       <Unit76>
@@ -861,7 +860,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="3" Y="21"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\..\external_libraries\dcpcrypt\Ciphers\dcpblowfish.pas"/>
@@ -872,6 +871,21 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
+      <Unit78>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.2.2\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="23" Y="27"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit78>
+      <Unit79>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.2.2\rtl\inc\typshrdh.inc"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="50"/>
+        <CursorPos X="3" Y="62"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit79>
     </Units>
     <OtherDefines Count="3">
       <Define0 Value="OSDGUI"/>
@@ -881,123 +895,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osdform.pas"/>
-        <Caret Line="2047" Column="46" TopLine="2030"/>
+        <Caret Line="839" Column="5" TopLine="822"/>
       </Position1>
       <Position2>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="816" Column="11" TopLine="813"/>
-      </Position2>
-      <Position3>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2046" Column="42" TopLine="2027"/>
-      </Position3>
-      <Position4>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="839" Column="78" TopLine="813"/>
-      </Position4>
-      <Position5>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2045" Column="3" TopLine="2027"/>
-      </Position5>
-      <Position6>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="839" Column="5" TopLine="822"/>
-      </Position6>
-      <Position7>
         <Filename Value="osddlgnewdependency.pas"/>
         <Caret Line="98" Column="35" TopLine="86"/>
-      </Position7>
-      <Position8>
+      </Position2>
+      <Position3>
         <Filename Value="osddlgnewdependency.pas"/>
         <Caret Line="99" Column="35" TopLine="87"/>
+      </Position3>
+      <Position4>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1571" Column="22" TopLine="1554"/>
+      </Position4>
+      <Position5>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1454" Column="74" TopLine="1437"/>
+      </Position5>
+      <Position6>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1476" Column="76" TopLine="1459"/>
+      </Position6>
+      <Position7>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="88" Column="23" TopLine="67"/>
+      </Position7>
+      <Position8>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1817" Column="32" TopLine="1799"/>
       </Position8>
       <Position9>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1571" Column="22" TopLine="1554"/>
+        <Caret Line="86" Column="30" TopLine="67"/>
       </Position9>
       <Position10>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1454" Column="74" TopLine="1437"/>
+        <Caret Line="155" Column="65" TopLine="147"/>
       </Position10>
       <Position11>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1476" Column="76" TopLine="1459"/>
+        <Caret Line="128" Column="11" TopLine="113"/>
       </Position11>
       <Position12>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="88" Column="23" TopLine="67"/>
+        <Caret Line="129" Column="26" TopLine="113"/>
       </Position12>
       <Position13>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1817" Column="32" TopLine="1799"/>
+        <Caret Line="156" Column="65" TopLine="128"/>
       </Position13>
       <Position14>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="86" Column="30" TopLine="67"/>
+        <Caret Line="615" Column="12" TopLine="587"/>
       </Position14>
       <Position15>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="155" Column="65" TopLine="147"/>
+        <Caret Line="654" Column="3" TopLine="623"/>
       </Position15>
       <Position16>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="128" Column="11" TopLine="113"/>
+        <Caret Line="129" Column="18" TopLine="113"/>
       </Position16>
       <Position17>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="129" Column="26" TopLine="113"/>
+        <Caret Line="563" Column="4" TopLine="548"/>
       </Position17>
       <Position18>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="156" Column="65" TopLine="128"/>
+        <Filename Value="osdanalyzewin.pas"/>
+        <Caret Line="281" Column="17" TopLine="262"/>
       </Position18>
       <Position19>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="615" Column="12" TopLine="587"/>
+        <Filename Value="osdanalyzewin.pas"/>
+        <Caret Line="995" Column="25" TopLine="993"/>
       </Position19>
       <Position20>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="654" Column="3" TopLine="623"/>
+        <Filename Value="osdanalyzewin.pas"/>
+        <Caret Line="997" Column="21" TopLine="989"/>
       </Position20>
       <Position21>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="129" Column="18" TopLine="113"/>
+        <Caret Line="562" Column="18" TopLine="548"/>
       </Position21>
       <Position22>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="563" Column="4" TopLine="548"/>
+        <Filename Value="osdanalyzewin.pas"/>
+        <Caret Line="395" Column="13" TopLine="390"/>
       </Position22>
       <Position23>
         <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="281" Column="17" TopLine="262"/>
+        <Caret Line="568" Column="11" TopLine="560"/>
       </Position23>
       <Position24>
         <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="995" Column="25" TopLine="993"/>
+        <Caret Line="417" Column="52" TopLine="399"/>
       </Position24>
       <Position25>
-        <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="997" Column="21" TopLine="989"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="573" Column="15" TopLine="555"/>
       </Position25>
       <Position26>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="562" Column="18" TopLine="548"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="822" Column="18" TopLine="816"/>
       </Position26>
       <Position27>
-        <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="395" Column="13" TopLine="390"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="3971" Column="20" TopLine="3957"/>
       </Position27>
       <Position28>
-        <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="568" Column="11" TopLine="560"/>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.2.2\rtl\objpas\classes\classesh.inc"/>
+        <Caret Line="27" Column="23"/>
       </Position28>
       <Position29>
-        <Filename Value="osdanalyzewin.pas"/>
-        <Caret Line="417" Column="52" TopLine="399"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="3979" Column="43" TopLine="3957"/>
       </Position29>
       <Position30>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="573" Column="15" TopLine="555"/>
+        <Caret Line="465" Column="21" TopLine="447"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
