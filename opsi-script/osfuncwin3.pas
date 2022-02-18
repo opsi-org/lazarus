@@ -24,7 +24,10 @@ uses
   JwaWinnt,
   jwawinbase,
   JwaWindows,
-  Windows;
+  Windows,
+  oswmi,
+  oslog,
+  osnetutil;
 //,  DSiWin32;
 
 var
@@ -178,6 +181,8 @@ function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
 function GetNTVersionMajor: Dword;
 function GetNTVersionMinor: Dword;
 function GetMSVersionName: string;
+
+function GetFQDNfromWMI: string;
 
 
 implementation
@@ -499,6 +504,42 @@ begin
   Result := pdwReturnedProductType;
 end;
 
+
+function GetFQDNfromWMI: string;
+var
+  WMIProperties, WMIResults: TStringList;
+  ErrorMsg, FQDN: string;
+  hostname, domain: string;
+begin
+  Result := '';
+  WMIProperties := TStringList.Create;
+  WMIProperties.Add('DNSHostName');
+  WMIProperties.Add('Name');
+  WMIProperties.Add('Domain');
+  WMIResults := TStringList.Create;
+  ErrorMsg := '';
+  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
+    '', WMIResults, ErrorMsg) then
+  begin
+    domain := WMIResults.Values['Domain'];
+    if (domain = 'WORKGROUP') then
+      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""',
+        LLNotice)
+    else
+    begin
+      hostname := WMIResults.Values['DNSHostName'];
+      if (hostname = '') then
+        hostname := WMIResults.Values['Name'];
+
+      FQDN := hostname + '.' + domain;
+      Result := FQDN;
+      LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
+      CheckFQDN(FQDN);
+    end;
+  end
+  else
+    LogDatei.log('Searching FQDN with WMI failed', LLNotice);
+end;
 
 
 initialization

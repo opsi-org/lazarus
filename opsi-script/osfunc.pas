@@ -47,7 +47,6 @@ uses
   //unitImpersonator,
   osfuncwin2,
   osfuncwin3,
-  oswmi,
 {$IFDEF WIN32}
   osregistry,
   DSiWin32,
@@ -654,7 +653,6 @@ function resolveSymlink(const filepath: string; recursive: boolean = True): stri
 function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
-function GetFQDNfromWMI: string;
 function GetFQDNfromConsole: string;
 function GetFQDN: string;
 
@@ -11801,41 +11799,6 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
-function GetFQDNfromWMI: string;
-var
-  WMIProperties, WMIResults: TStringList;
-  ErrorMsg, FQDN: string;
-  hostname, domain: string;
-begin
-  Result := '';
-  WMIProperties := TStringList.Create;
-  WMIProperties.Add('DNSHostName');
-  WMIProperties.Add('Name');
-  WMIProperties.Add('Domain');
-  WMIResults := TStringList.Create;
-  ErrorMsg := '';
-  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
-    '', WMIResults, ErrorMsg) then
-  begin
-    domain := WMIResults.Values['Domain'];
-    if (domain = 'WORKGROUP') then
-      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""',
-        LLNotice)
-    else
-    begin
-      hostname := WMIResults.Values['DNSHostName'];
-      if (hostname = '') then
-        hostname := WMIResults.Values['Name'];
-
-      FQDN := hostname + '.' + domain;
-      Result := FQDN;
-      LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
-      CheckFQDN(FQDN);
-    end;
-  end
-  else
-    LogDatei.log('Searching FQDN with WMI failed', LLNotice);
-end;
 
 function GetFQDNfromConsole: string;
 var
