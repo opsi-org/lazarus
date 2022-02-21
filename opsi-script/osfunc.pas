@@ -103,8 +103,7 @@ uses
   osstartproc_cp,
   pipes,
   oszip,
-  osfilehelper,
-  osnetutil;
+  osfilehelper;
 
 const
   BytesarrayLength = 5000;
@@ -653,7 +652,6 @@ function resolveSymlink(const filepath: string; recursive: boolean = True): stri
 function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
-function GetFQDNfromConsole: string;
 function GetFQDN: string;
 
 const
@@ -11799,26 +11797,13 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
-
-function GetFQDNfromConsole: string;
-var
-  FQDN: string;
-begin
-  Result := '';
-  LogDatei.log('Try getting FQDN from command line:', LLInfo);
-  FQDN := getCommandResult('hostname -f');
-  Result := FQDN;
-  LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
-  CheckFQDN(FQDN);
-end;
-
 function GetFQDN: string;
 begin
   {$IFDEF WINDOWS}
   Result := GetFQDNfromWMI;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  Result := GetFQDNfromConsole;
+  Result := GetFQDNUnix;
   {$ENDIF UNIX}
 end;
 

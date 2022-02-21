@@ -9,12 +9,14 @@ uses
   SysUtils,
   oslog,
   lazfileutils,
-  osProcessUX;
+  osProcessUX,
+  osnetutil;
 
 function resolveUnixSymlink(filepath: string;
   recursive: boolean = True): string;
-
 function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
+function GetFQDNUnix: string;
+
 
 implementation
 
@@ -62,6 +64,18 @@ begin
   //###LINUX
   Result := True;
   Username := getCommandResult('/bin/bash -c whoami');
+end;
+
+function GetFQDNUnix: string;
+var
+  FQDN: string;
+begin
+  Result := '';
+  LogDatei.log('Try getting FQDN from command line:', LLInfo);
+  FQDN := getCommandResult('hostname -f');
+  Result := FQDN;
+  LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
+  CheckFQDN(FQDN);
 end;
 
 
