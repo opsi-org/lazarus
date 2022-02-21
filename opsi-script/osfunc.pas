@@ -11805,17 +11805,11 @@ var
   FQDN: string;
 begin
   Result := '';
-  // use command 'hostname -f' (requires unit "process")
-  if RunCommand('/bin/sh', ['-c', 'echo | hostname -f'], FQDN) then
-  begin
-    // delete '\n' from end of command line result
-    System.Delete(FQDN, FQDN.Length, 2); // needs "System." since other function "Delete" exists in this unit
-    Result := FQDN;
-    LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
-    CheckFQDN(FQDN);
-  end
-  else
-    LogDatei.log('Getting FQDN from command line failed', LLNotice);
+  LogDatei.log('Try getting FQDN from command line:', LLInfo);
+  FQDN := getCommandResult('hostname -f');
+  Result := FQDN;
+  LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
+  CheckFQDN(FQDN);
 end;
 
 function GetFQDN: string;
