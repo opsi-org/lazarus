@@ -90,9 +90,9 @@ opsi-setup-detector (4.2.0.9) stable; urgency=low
    * fix edit productId field with arrow and backspace, fixes: #4698
    * fix edit propertyId always lowercase, fixes: #4699
    * checked is fixed: msi-Id with leading spaces, fixes: #4664
+   * if no installer is detected new dialog to select well known installer type manually; fixes: #4701
+   * new main task create meta product (contains dependencies, install nothing)
    * todo:
-      * #4701 manuelle Installerauswahl
-      * new main task create meta product
       * fix analyze only flag at other tasks
       * newmain task create product with logged in admin
 

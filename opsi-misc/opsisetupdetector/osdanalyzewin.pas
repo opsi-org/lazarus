@@ -1358,6 +1358,25 @@ begin
     setupType := analyze_binary(FileName, verbose, False, mysetup);
     // filename, verbose, skipzero
 
+    sleep(2000);
+
+    {$IFDEF OSDGUI}
+    if setupType = stUnknown then
+    begin
+      FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
+      for i := 0 to integer(stUnknown) - 1 do
+        FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
+          installerToInstallerstr(TKnownInstaller(i)));
+      if FChooseInstallerDlg.ShowModal = mrOk then
+      begin
+        setupType := installerstrToInstaller(
+          FChooseInstallerDlg.ComboBoxChooseInstaller.Text);
+        mysetup.installerId := setupType;
+        //resultform1.BtAnalyzeNextStepClick(nil);
+      end;
+    end;
+     {$ENDIF OSDGUI}
+
     get_aktProduct_general_info_win(setupType, Filename, mysetup);
 
     // marker for add installers
@@ -1417,10 +1436,11 @@ begin
   resultForm1.ProgressBarAnalyze.Position := 100;
   procmess;
   {$ENDIF OSDGUI}
-  sleep(2000);
+  //sleep(2000);
+  mysetup.installerId := setupType;
   if setupType = stUnknown then
   begin
-
+    (*
     {$IFDEF OSDGUI}
     FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
     for i := 0 to integer(stUnknown) - 1 do
@@ -1430,9 +1450,11 @@ begin
     begin
       setupType := installerstrToInstaller(
         FChooseInstallerDlg.ComboBoxChooseInstaller.Text);
+      mysetup.installerId:=setupType;
       resultform1.BtAnalyzeNextStepClick(nil);
     end;
     {$ENDIF OSDGUI}
+    *)
   end
   else
   begin

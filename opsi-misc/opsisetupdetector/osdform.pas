@@ -354,6 +354,7 @@ type
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
+    procedure BtCreateMetaClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
     procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
@@ -1346,6 +1347,16 @@ begin
       TabSheetProduct2.Enabled := True;
       TabSheetCreate.Enabled := True;
     end;
+    createMeta:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := False;
+      TabSheetSetup1.Enabled := False;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
+    end;
     gmUnknown:
     begin
       TabSheetStart.Enabled := True;
@@ -2022,6 +2033,11 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
+    createMeta:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct;
+      Application.ProcessMessages;
+    end;
     gmUnknown:
     begin
       // we should never be here
@@ -2647,24 +2663,22 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
-  begin
-    osdsettings.runmode := createTemplate;
-    setRunMode;
-    MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    PageControl1.ActivePage := resultForm1.TabSheetProduct;
-    Application.ProcessMessages;
-    initaktproduct;
-    makeProperties;
-    resultform1.updateGUI;
-    aktProduct.productdata.targetOSset := [osWin];
-    aktProduct.productdata.productId := 'opsi-template';
-    aktProduct.productdata.productName := 'opsi template for Windows';
-    aktProduct.productdata.productversion := '1.0.0';
-    aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description := 'A template for opsi products for Windows';
-  end;
+  osdsettings.runmode := createTemplate;
+  setRunMode;
+  MemoAnalyze.Clear;
+  //StringGridDep.Clean([gzNormal, gzFixedRows]);
+  //StringGridDep.RowCount := 1;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osWin];
+  aktProduct.productdata.productId := 'opsi-template';
+  aktProduct.productdata.productName := 'opsi template for Windows';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'A template for opsi products for Windows';
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateMacClick(Sender: TObject);
@@ -2689,26 +2703,44 @@ begin
   end;
 end;
 
+procedure TResultform1.BtCreateMetaClick(Sender: TObject);
+begin
+  osdsettings.runmode := createMeta;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  // no properties at meta product
+  //makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osMulti];
+  aktProduct.productdata.productId := 'opsi-meta-template';
+  aktProduct.productdata.productName := 'opsi template for a Meta Product';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description :=
+    'A opsi product that contains dependencies but installs nothing';
+end;
+
 procedure TResultform1.BtCreateEmptyTemplateLinClick(Sender: TObject);
 begin
-  begin
-    osdsettings.runmode := createTemplate;
-    setRunMode;
-    MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    PageControl1.ActivePage := resultForm1.TabSheetProduct;
-    Application.ProcessMessages;
-    initaktproduct;
-    makeProperties;
-    resultform1.updateGUI;
-    aktProduct.productdata.targetOSset := [osLin];
-    aktProduct.productdata.productId := 'l-opsi-template';
-    aktProduct.productdata.productName := 'opsi template for Linux';
-    aktProduct.productdata.productversion := '1.0.0';
-    aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description := 'A template for opsi products for Linux';
-  end;
+  osdsettings.runmode := createTemplate;
+  setRunMode;
+  MemoAnalyze.Clear;
+  //StringGridDep.Clean([gzNormal, gzFixedRows]);
+  //StringGridDep.RowCount := 1;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osLin];
+  aktProduct.productdata.productId := 'l-opsi-template';
+  aktProduct.productdata.productName := 'opsi template for Linux';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'A template for opsi products for Linux';
 end;
 
 
@@ -2868,24 +2900,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    (*
-    singleAnalyzeCreate:
+    createMeta:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
+      // we should never be here
+      logdatei.log(
+        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
     end;
-    twoAnalyzeCreate_1,
-    twoAnalyzeCreate_2:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
-    end;
-    createTemplate:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
-    end;
-    *)
     gmUnknown:
     begin
       // we should never be here
@@ -2926,6 +2946,7 @@ begin
         Application.ProcessMessages;
       end;
       *)
+      createMeta,
       createTemplate,
       createMultiTemplate,
       singleAnalyzeCreate,
@@ -2976,23 +2997,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
-    (*
-    singleAnalyzeCreate:
+    // no icons for meta product
+    createMeta:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    twoAnalyzeCreate_1, twoAnalyzeCreate_2:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
-      Application.ProcessMessages;
-    end;
-    createTemplate:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
-      Application.ProcessMessages;
-    end;
-    *)
     gmUnknown:
     begin
       // we should never be here
@@ -3092,9 +3102,14 @@ begin
         // we should never be here
         logdatei.log(
           'Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3262,9 +3277,14 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3317,9 +3337,14 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3969,18 +3994,19 @@ end;
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
 var
-  aktCaretPos : TPoint;
-  col : longint;
+  aktCaretPos: TPoint;
+  col: longint;
 begin
-  aktCaretPos := TTIEdit(Sender).CaretPos;
-  col := aktCaretPos.X;
-  if TTIEdit(Sender).Name = 'TIEditProdID' then
-  begin
-    // lower case and replace special chars by _
-    TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
-    // restore the caret position
-    TTIEdit(Sender).SelStart := col;
-  end;
+  if Sender.ClassType = TTIEdit then
+    if TTIEdit(Sender).Name = 'TIEditProdID' then
+    begin
+      aktCaretPos := TTIEdit(Sender).CaretPos;
+      col := aktCaretPos.X;
+      // lower case and replace special chars by _
+      TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
+      // restore the caret position
+      TTIEdit(Sender).SelStart := col;
+    end;
   TControl(Sender).EditingDone;
 end;
 
