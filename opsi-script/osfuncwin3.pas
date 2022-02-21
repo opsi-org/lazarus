@@ -521,21 +521,21 @@ begin
   if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
     '', WMIResults, ErrorMsg) then
   begin
+    hostname := WMIResults.Values['DNSHostName'];
+    if (hostname = '') then
+      hostname := WMIResults.Values['Name'];
+
     domain := WMIResults.Values['Domain'];
     if (domain = 'WORKGROUP') then
-      LogDatei.log('No valid FQDN found: Domain is WORKGROUP -> FQDN set to ""',
-        LLNotice)
-    else
     begin
-      hostname := WMIResults.Values['DNSHostName'];
-      if (hostname = '') then
-        hostname := WMIResults.Values['Name'];
-
-      FQDN := hostname + '.' + domain;
-      Result := FQDN;
-      LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
-      CheckFQDN(FQDN);
+      domain := '';
+      LogDatei.log('No valid Domain found: Domain is WORKGROUP -> Domain set to empty',  LLNotice);
     end;
+
+    FQDN := hostname + '.' + domain;
+    Result := FQDN;
+    LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
+    CheckFQDN(FQDN);
   end
   else
     LogDatei.log('Searching FQDN with WMI failed', LLNotice);
