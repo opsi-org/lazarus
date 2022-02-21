@@ -75,7 +75,6 @@ begin
   FQDN := getCommandResult('hostname -f');
   Result := FQDN;
   LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
-  CheckFQDN(FQDN);
 end;
 
 

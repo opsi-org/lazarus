@@ -512,7 +512,7 @@ var
   hostname, domain: string;
 begin
   Result := '';
-  LogDatei.log('Try getting FQDN  with WMI:', LLInfo);
+  LogDatei.log('Try getting FQDN with WMI:', LLInfo);
   WMIProperties := TStringList.Create;
   WMIProperties.Add('DNSHostName');
   WMIProperties.Add('Name');
@@ -536,7 +536,6 @@ begin
     FQDN := hostname + '.' + domain;
     Result := FQDN;
     LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
-    CheckFQDN(FQDN);
   end
   else
     LogDatei.log('Searching FQDN with WMI failed', LLNotice);

@@ -103,7 +103,8 @@ uses
   osstartproc_cp,
   pipes,
   oszip,
-  osfilehelper;
+  osfilehelper,
+  osnetutil;
 
 const
   BytesarrayLength = 5000;
@@ -11805,6 +11806,8 @@ begin
   {$IFDEF UNIX}
   Result := GetFQDNUnix;
   {$ENDIF UNIX}
+  if not isValidFQDN(Result) then
+    LogDatei.log('"' + Result + '"' + ' is no valid fqdn', LLNotice);
 end;
 
 (*
