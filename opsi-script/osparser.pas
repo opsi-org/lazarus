@@ -106,7 +106,7 @@ uses
   //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
-  tomlfunc,
+  osTOML,
   oscrypt,
   DOM,
   osxmlsections,
