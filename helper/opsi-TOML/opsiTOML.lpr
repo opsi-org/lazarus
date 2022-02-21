@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Classes,
   SysUtils,
-  TOML, TOMLParser, TOMLfunc, osencoding,
+  TOML, TOMLParser, osTOML, osencoding,
   FGL, FPJSON, fpJSONrtti;
 
 var
