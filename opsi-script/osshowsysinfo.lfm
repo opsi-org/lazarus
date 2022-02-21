@@ -17,7 +17,7 @@ object SystemInfo: TSystemInfo
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 24
@@ -38,7 +38,6 @@ object SystemInfo: TSystemInfo
       Font.Name = 'Lucida Console'
       Font.Pitch = fpFixed
       Font.Quality = fqDraft
-      ParentColor = False
       ParentFont = False
     end
   end
@@ -83,7 +82,6 @@ object SystemInfo: TSystemInfo
       Top = 6
       Width = 170
       Caption = 'Do not localize: Window SystemInfo'
-      ParentColor = False
       Visible = False
     end
   end
