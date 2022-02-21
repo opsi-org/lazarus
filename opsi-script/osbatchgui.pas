@@ -93,7 +93,6 @@ type
     procedure TimerProcessMessTimer(Sender: TObject);
 
   private
-  var
     FOldProgress: integer;
 
     procedure doInfo(aMessage: string);
