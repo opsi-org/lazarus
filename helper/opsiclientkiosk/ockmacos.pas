@@ -10,16 +10,20 @@ uses
 
 type
 
-  { TOckPathsMacOS }
-
-  TOckPathsMacOS = class(TOckPaths)
+  TPathsOnClientMacOS = class(TPathsOnClient)
   private
     procedure CopyCustomSettingsToWriteableFolder;
   public
     procedure SetAdminModePaths; override;
     procedure SetUserModePaths; override;
-    constructor Create; override;
-    destructor Destroy; override;
+    //constructor Create; override;
+    //destructor Destroy; override;
+  end;
+
+  { TPathsOnDepotMacOS }
+
+  TPathsOnDepotMacOS = class(TPathsOnDepot)
+    procedure SetDepotPaths; override;
   end;
 
 function isAdmin: boolean;
@@ -185,10 +189,20 @@ begin
   else Result := False;
 end;
 
+{ TPathsOnDepotMacOS }
 
-{ TOckPathsMacOS }
+procedure TPathsOnDepotMacOS.SetDepotPaths;
+begin
+  FKioskApp := PathKioskAppOnDepot;
+  FCustomSettings := FKioskApp;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
 
-procedure TOckPathsMacOS.CopyCustomSettingsToWriteableFolder;
+
+{ TPathsOnClientMacOS}
+
+procedure TPathsOnClientMacOS.CopyCustomSettingsToWriteableFolder;
 var
   Output: string;
 begin
@@ -198,56 +212,42 @@ begin
   CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile]);
 end;
 
-procedure TOckPathsMacOS.SetAdminModePaths;
+procedure TPathsOnClientMacOS.SetAdminModePaths;
 begin
-  FOnClient.FKioskApp := ProgramDirectory;
+  FKioskApp := ChompPathDelim(ProgramDirectory);
   //Default
-  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
-  FOnClient.FDefaultSkin := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
+  FDefaultIcons := FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
   //Custom
-  FOnClient.FCustomSettings := AbsolutePathCustomSettingsAdminMode;
-  FOnClient.FCustomSkin := FOnClient.FCustomSettings + RelativePathSkin;
-  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathProductIcons;
-  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathScreenShots;
-
-
-  FOnDepot.FKioskApp := PathKioskAppOnDepot;
-  FOnDepot.FCustomSettings := FOnDepot.FKioskApp;
-  FOnDepot.FCustomIcons := FOnDepot.FCustomSettings + RelativePathProductIcons;
-  FOnDepot.FCustomScreenShots := FOnDepot.FCustomSettings + RelativePathScreenShots;
+  FCustomSettings := AbsolutePathCustomSettingsAdminMode;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
 end;
 
-procedure TOckPathsMacOS.SetUserModePaths;
+procedure TPathsOnClientMacOS.SetUserModePaths;
 begin
-  FOnClient.FKioskApp := ProgramDirectory;
+  FKioskApp := ChompPathDelim(ProgramDirectory);
   //Dfault
-  FOnClient.FDefaultIcons := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
-  FOnClient.FDefaultSkin := FOnClient.FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
-  FOnClient.FCustomSettings := AbsolutePathCustomSettingsUserMode;
+  FDefaultIcons := FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
   //Custom
-  FOnClient.FCustomSkin := FOnClient.FCustomSettings + RelativePathSkin;
-  FOnClient.FCustomIcons := FOnClient.FCustomSettings + RelativePathProductIcons;
-  FOnClient.FCustomScreenShots := FOnClient.FCustomSettings + RelativePathScreenShots;
+  FCustomSettings := AbsolutePathCustomSettingsUserMode;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
 end;
 
-constructor TOckPathsMacOS.Create;
-begin
-  inherited Create;
-  InitPaths;
-end;
-
-destructor TOckPathsMacOS.Destroy;
-begin
-  inherited Destroy;
-end;
 
 initialization
-RunCommandElevated := TRunCommandElevated.Create('',True);
-OckPaths := TOckPathsMacOS.Create;
+  RunCommandElevated := TRunCommandElevated.Create('',True);
+  PathsOnClient := TPathsOnClientMacOS.Create;
+  PathsOnDepot := TPathsOnDepotMacOS.Create;
 
 finalization
-FreeAndNil(RunCommandElevated);
-FreeAndNil(OckPaths);
+  FreeAndNil(RunCommandElevated);
+  FreeAndNil(PathsOnClient);
+  FreeAndNil(PathsOnDepot);
 
 end.
 
