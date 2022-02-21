@@ -26,8 +26,7 @@ uses
   JwaWindows,
   Windows,
   oswmi,
-  oslog,
-  osnetutil;
+  oslog;
 //,  DSiWin32;
 
 var

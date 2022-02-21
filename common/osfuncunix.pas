@@ -9,8 +9,7 @@ uses
   SysUtils,
   oslog,
   lazfileutils,
-  osProcessUX,
-  osnetutil;
+  osProcessUX;
 
 function resolveUnixSymlink(filepath: string;
   recursive: boolean = True): string;
