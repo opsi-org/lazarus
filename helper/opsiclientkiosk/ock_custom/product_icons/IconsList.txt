@@ -1,2 +1,3 @@
 7zip=guymager_guymager_128.png
 flashplayer=adobe.png
+audacity=audacity_audacity.png

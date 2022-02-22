@@ -174,8 +174,9 @@ procedure TPathsOnClientWindows.SetUserModePaths;
 begin
   FKioskApp := ChompPathDelim(ProgramDirectory);
   //Default
-  FDefaultIcons := FKioskApp + DefaultFolder + RelativePathProductIcons;
-  FDefaultSkin := FKioskApp + DefaultFolder + RelativePathSkin;
+  FDefaultSettings := FKioskApp + DefaultFolder;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
   //Custom
   FCustomSettings := FKioskApp + CustomFolder;
   FCustomSkin := FCustomSettings + RelativePathSkin;

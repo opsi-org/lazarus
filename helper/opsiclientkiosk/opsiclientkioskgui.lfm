@@ -1471,7 +1471,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 322
       Top = 0
       Width = 656
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1553,12 +1553,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Left = 0
           Height = 37
           Top = 0
-          Width = 620
+          Width = 656
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 620
+          ClientHeight = 33
+          ClientWidth = 652
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1585,13 +1585,13 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Left = 0
           Height = 285
           Top = 37
-          Width = 620
+          Width = 656
           HorzScrollBar.Page = 579
           VertScrollBar.Page = 285
           Align = alClient
           BorderStyle = bsNone
           ClientHeight = 285
-          ClientWidth = 620
+          ClientWidth = 639
           TabOrder = 1
           object ImageIconSoftware: TImage
             Left = 15
@@ -1773,7 +1773,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 16
             Height = 75
             Top = 355
-            Width = 558
+            Width = 577
             Anchors = [akTop, akLeft, akRight]
             Color = clForm
             DataField = 'Description'
@@ -1786,7 +1786,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 16
             Height = 75
             Top = 463
-            Width = 558
+            Width = 577
             Anchors = [akTop, akLeft, akRight]
             Color = clForm
             DataField = 'Advice'

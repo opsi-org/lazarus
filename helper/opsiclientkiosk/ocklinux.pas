@@ -5,7 +5,26 @@ unit OckLinux;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, osRunCommandElevated, osLog;
+  Classes, SysUtils, Process, StrUtils, FileUtil, osRunCommandElevated, osLog, OckPathsUtils;
+
+{ TPathsOnClientLinux }
+type
+  TPathsOnClientLinux = class(TPathsOnClient)
+  private
+    procedure CopyCustomSettingsToWriteableFolder;
+    procedure SetAdminMode(theAdminMode: boolean); override;
+  public
+    procedure SetAdminModePaths; override;
+    procedure SetUserModePaths; override;
+    //constructor Create; override;
+    //destructor Destroy; override;
+  end;
+
+  { TPathsOnDepotLinux }
+
+  TPathsOnDepotLinux = class(TPathsOnDepot)
+    procedure SetDepotPaths; override;
+  end;
 
 
 function isAdmin: boolean;
@@ -20,7 +39,20 @@ var
   RunCommandElevated: TRunCommandElevated;
 
 const
+    // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
   MountPoint = '/mnt/opsi_depot_rw';
+  DefaultFolder = '/default';
+  CustomFolder = '/ock_custom';
+  AbsolutePathCustomSettingsAdminMode =  '/tmp/opsi-client-kiosk' + CustomFolder;
+  //AbsolutePathCustomSettingsUserMode = '/opt/opsi-client-kiosk' + CustomFolder;
+  RelativePathProductIcons = '/product_icons';
+  RelativePathScreenShots = '/screenshots';
+  RelativePathSkin ='/skin';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+  PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+  PathKioskAppOnDepot = '/opsi-client-kiosk/files/app';
+  {$ENDIF KIOSK_IN_AGENT}
 
 implementation
 
@@ -153,11 +185,78 @@ begin
   else Result := False;
 end;
 
+{ TPathsOnDepotLinux }
+
+procedure TPathsOnDepotLinux.SetDepotPaths;
+begin
+  FKioskApp := PathKioskAppOnDepot;
+  FCustomSettings := FKioskApp;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+
+{ TPathsOnClientLinux }
+
+procedure TPathsOnClientLinux.CopyCustomSettingsToWriteableFolder;
+var
+  Output: string;
+begin
+  //RunCommand('/bin/sh',
+  //  ['-c','cp -R' + ' ' + AbsolutePathCustomSettingsUserMode + ' ' + AbsolutePathCustomSettingsAdminMode ],
+  //  Output, [poUsePipes, poWaitOnExit], swoHIDE);
+  LogDatei.log('Removing old settings from ' + AbsolutePathCustomSettingsAdminMode, LLInfo);
+  if DeleteDirectory(AbsolutePathCustomSettingsAdminMode, False) then
+  begin
+    LogDatei.log('Removing old settings done', LLInfo);
+  end;
+  CopyDirTree(FKioskApp + CustomFolder, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
+end;
+
+procedure TPathsOnClientLinux.SetAdminMode(theAdminMode: boolean);
+begin
+  inherited SetAdminMode(theAdminMode);
+  if FAdminMode then CopyCustomSettingsToWritableFolder;
+end;
+
+procedure TPathsOnClientLinux.SetAdminModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  //Default
+  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
+  //Custom
+  FCustomSettings := AbsolutePathCustomSettingsAdminMode;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+procedure TPathsOnClientLinux.SetUserModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  //Dfault
+  FDefaultSettings := FKioskApp + DefaultFolder;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
+  //Custom
+  FCustomSettings := FKioskApp + CustomFolder;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+
 initialization
-RunCommandElevated := TRunCommandElevated.Create('',True);
+  RunCommandElevated := TRunCommandElevated.Create('',True);
+  PathsOnClient := TPathsOnClientMacOS.Create;
+  PathsOnDepot := TPathsOnDepotMacOS.Create;
 
 finalization
-FreeAndNil(RunCommandElevated);
+  FreeAndNil(RunCommandElevated);
+  FreeAndNil(PathsOnClient);
+  FreeAndNil(PathsOnDepot);
 
 end.
 

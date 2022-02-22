@@ -741,9 +741,9 @@ begin
       PanelToolbar.Visible := False;
       LabelSoftwareName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
       ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[SelectedProductIndex].ImageIcon.Picture;
-      if FileExists(PathsOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]) then
+      if FileExists(PathsOnClient.FCustomScreenShots + PathDelim + StringListScreenshots.Values[ProductPanel.ProductID]) then
        ImageScreenShot.Picture.LoadFromFile
-         (PathsOnClient.FCustomScreenShots + StringListScreenshots.Values[ProductPanel.ProductID]);
+         (PathsOnClient.FCustomScreenShots + PathDelim + StringListScreenshots.Values[ProductPanel.ProductID]);
        { View Buttons dependend on state}
       ShowSoftwareButtonsDependendOnState(ProductPanel);
     end;
@@ -1503,13 +1503,13 @@ begin
       FormerImageName := StringListCustomIcons.Values[SelectedProduct];
       {load and save current image}
       FilePath := OpenPictureDialogSetIcon.FileName;
-      LogDatei.log('Save image ' + PathsOnClient.FCustomIcons + ExtractFileName(FilePath), LLDebug);
+      LogDatei.log('Save image ' + PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath), LLDebug);
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
-      ImageIconSoftware.Picture.SaveToFile(PathsOnClient.FCustomIcons+ExtractFileName(FilePath));
+      ImageIconSoftware.Picture.SaveToFile(PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath));
       StringListCustomIcons.Values[SelectedProduct] := ExtractFileName(FilePath);
       {delete former image if not in StringList hence is not used by another product}
       if not ContainsStr(StringListCustomIcons.Text, FormerImageName) then
-        DeleteFormerImage(PathsOnClient.FCustomIcons+FormerImageName);
+        DeleteFormerImage(PathsOnClient.FCustomIcons + PathDelim + FormerImageName);
     end;
   end;
 end;
@@ -1529,10 +1529,10 @@ begin
       {load and save image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
-      ImageScreenShot.Picture.SaveToFile(PathsOnClient.FCustomScreenShots+ExtractFileName(FilePath));
+      ImageScreenShot.Picture.SaveToFile(PathsOnClient.FCustomScreenShots + PathDelim + ExtractFileName(FilePath));
       StringListScreenShots.Values[SelectedProduct] := ExtractFileName(FilePath);
       if not ContainsStr(StringListScreenShots.Text, FormerImageName) then
-        DeleteFormerImage(PathsOnClient.FCustomScreenShots+FormerImageName);
+        DeleteFormerImage(PathsOnClient.FCustomScreenShots + PathDelim + FormerImageName);
     end;
 end;
 

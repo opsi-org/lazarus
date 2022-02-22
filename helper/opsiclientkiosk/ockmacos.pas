@@ -10,9 +10,12 @@ uses
 
 type
 
+  { TPathsOnClientMacOS }
+
   TPathsOnClientMacOS = class(TPathsOnClient)
   private
     procedure CopyCustomSettingsToWriteableFolder;
+    procedure SetAdminMode(theAdminMode: boolean); override;
   public
     procedure SetAdminModePaths; override;
     procedure SetUserModePaths; override;
@@ -39,7 +42,6 @@ function PasswordCorrect:boolean;
 
 var
   RunCommandElevated: TRunCommandElevated;
-  OckPaths: TOckPathsMacOS;
 
 const
   // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
@@ -209,15 +211,27 @@ begin
   //RunCommand('/bin/sh',
   //  ['-c','cp -R' + ' ' + AbsolutePathCustomSettingsUserMode + ' ' + AbsolutePathCustomSettingsAdminMode ],
   //  Output, [poUsePipes, poWaitOnExit], swoHIDE);
-  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile]);
+  LogDatei.log('Removing old settings from ' + AbsolutePathCustomSettingsAdminMode, LLInfo);
+  if DeleteDirectory(AbsolutePathCustomSettingsAdminMode, False) then
+  begin
+    LogDatei.log('Removing old settings done', LLInfo);
+  end;
+  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
+end;
+
+procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);
+begin
+  inherited SetAdminMode(theAdminMode);
+  if FAdminMode then CopyCustomSettingsToWritableFolder;
 end;
 
 procedure TPathsOnClientMacOS.SetAdminModePaths;
 begin
   FKioskApp := ChompPathDelim(ProgramDirectory);
   //Default
-  FDefaultIcons := FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
-  FDefaultSkin := FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
+  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
   //Custom
   FCustomSettings := AbsolutePathCustomSettingsAdminMode;
   FCustomSkin := FCustomSettings + RelativePathSkin;
@@ -229,8 +243,9 @@ procedure TPathsOnClientMacOS.SetUserModePaths;
 begin
   FKioskApp := ChompPathDelim(ProgramDirectory);
   //Dfault
-  FDefaultIcons := FKioskApp + RelativePathDefaultSettings + RelativePathProductIcons;
-  FDefaultSkin := FKioskApp + RelativePathDefaultSettings + RelativePathSkin;
+  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
   //Custom
   FCustomSettings := AbsolutePathCustomSettingsUserMode;
   FCustomSkin := FCustomSettings + RelativePathSkin;

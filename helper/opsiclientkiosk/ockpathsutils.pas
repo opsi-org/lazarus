@@ -29,8 +29,9 @@ type
 
   TPathsOnClient = class(TPaths)
   private
-    procedure SetAdminMode(theAdminMode: boolean);
+    procedure SetAdminMode(theAdminMode: boolean); virtual;
   public
+    FDefaultSettings: string;
     FDefaultIcons: string;
     FDefaultSkin: string;
     FAdminMode: boolean;
