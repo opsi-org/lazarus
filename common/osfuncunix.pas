@@ -72,6 +72,10 @@ begin
   Result := '';
   LogDatei.log('Try getting FQDN from command line:', LLInfo);
   FQDN := getCommandResult('hostname -f');
+  // if 'hostname -f' returns a list, take only first entry
+  if (Pos(' ', FQDN) > 0) then
+    FQDN := Copy(FQDN, 1, Pos(' ', FQDN) - 1);
+
   Result := FQDN;
   LogDatei.log('Command line result for FQDN: ' + FQDN, LLInfo);
 end;
