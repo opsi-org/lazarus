@@ -442,7 +442,7 @@ default: ["xenial_bionic"]
     property Service_URL: string read FService_URL write FService_URL;
     property Service_user: string read FService_user write FService_user;
     property Service_pass: string read FService_pass write FService_pass;
-    property UseService: boolean read FUseService write FUseService;
+    //property UseService: boolean read FUseService write FUseService;
 
     procedure writeconfig;
     procedure readconfig;
@@ -524,6 +524,18 @@ resourcestring
   rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
     'Click on a line to get help ' + LineEnding +
     'in the yellow field at the bottom.';
+   rsService_URL = 'The URL of the opsi webservice (like: https://<opsi-server>:4447)';
+  rsService_user = 'The user name used to connect to the opsi webservice';
+  rsService_pass = 'The password of the given user used to connect to the opsi webservice' + LineEnding +
+    'ATTENTION SECURITY RISK: Even it is stored encrypted,' + LineEnding +
+    'it is easy to decrypt be analyzing the source code.' + LineEnding +
+    'If empty you will be asked if the connection is started.';
+  //rsUseService = 'Should this program try to connect to the opsi web service';
+  rsConfigVersion = 'Do not change. Version of the config structure.';
+  rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
+  rsInternalSet = 'Do not change here - Internally set by a dialog.';
+  rsUsePropDesktopiconL = 'Should we create a "DektopIcon" property';
+  rsUsePropLicenseOrPool = 'Should we create a "LicenseOrPool" property';
 
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';

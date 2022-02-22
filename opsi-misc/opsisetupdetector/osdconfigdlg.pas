@@ -26,6 +26,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure TIPropertyGrid1Click(Sender: TObject);
     procedure TIPropertyGrid1Exit(Sender: TObject);
+    procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure TIPropertyGrid1KeyPress(Sender: TObject; var Key: char);
+    procedure TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure TIPropertyGrid1Modified(Sender: TObject);
   private
 
   public
@@ -96,6 +102,18 @@ begin
   myconfigurationhints.Add('PathToOpsiPackageBuilder=' + rsPathToOpsiPackageBuilder);
   myconfigurationhints.Add('CreateRadioIndex=' + rsCreateRadioIndex);
   myconfigurationhints.Add('BuildRadioIndex=' + rsBuildRadioIndex);
+
+  myconfigurationhints.Add('config_version=' + rsConfigVersion);
+  myconfigurationhints.Add('Readme_txt_templ=' + rsReadme_txt_templ);
+  myconfigurationhints.Add('Show2StepMacSeletionWarn=' + rsInternalSet);
+  myconfigurationhints.Add('ShowCheckEntryWarning=' + rsInternalSet);
+  myconfigurationhints.Add('UsePropDesktopicon=' + rsUsePropDesktopiconL);
+  myconfigurationhints.Add('UsePropLicenseOrPool=' + rsUsePropLicenseOrPool);
+
+  myconfigurationhints.Add('Service_URL=' + rsService_URL);
+  myconfigurationhints.Add('Service_user=' + rsService_user);
+  myconfigurationhints.Add('Service_pass=' + rsService_pass);
+  //myconfigurationhints.Add('UseService=' + rsUseService);
   (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
@@ -128,6 +146,35 @@ begin
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Exit(Sender: TObject);
+begin
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyPress(Sender: TObject; var Key: char
+  );
+begin
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  activeprop: string;
+begin
+  if Sender = TIPropertyGrid1 then
+  begin
+    activeprop := TIPropertyGrid1.GetActiveRow.Name;
+    MemoConfigHint.Text := myconfigurationhints.Values[activeprop];
+  end;
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1Modified(Sender: TObject);
 begin
 
 end;

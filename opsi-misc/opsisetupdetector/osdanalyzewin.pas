@@ -1161,174 +1161,6 @@ begin
   mywrite('get_selfextrackting_info finished');
 end;
 
-// marker for add installers
-(*
-function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
-var
-  i: integer;
-
-begin
-  try
-    Result := stUnknown;
-    for i := 0 to mysetup.markerlist.Count - 1 do
-      LogDatei.log('marker: ' + mysetup.markerlist[i], LLdebug);
-    for i := 0 to integer(stUnknown) - 1 do
-    begin
-      if not Assigned(installerArray[i].detected) then
-        LogDatei.log('No check implemented for: ' +
-          installerToInstallerstr(TKnownInstaller(i)), LLWarning)
-      else
-      begin
-        LogDatei.log('Check markerlist for: ' + installerToInstallerstr(
-          TKnownInstaller(i)), LLInfo);
-        if installerArray[i].detected(TClass(installerArray[i]),
-          mysetup.markerlist) then
-        begin
-          Result := TKnownInstaller(i);
-          LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
-        end;
-      end;
-    end;
-
-  except
-    on E: Exception do
-    begin
-      LogDatei.log('Exception in analyze_markerlist', LLcritical);
-      LogDatei.log('Error: Message: ' + E.message, LLcritical);
-    end;
-  end;
-end;
-*)
-(*
-function analyze_binary(myfilename: string; verbose, skipzero: boolean;
-  var mysetup: TSetupFile): TKnownInstaller;
-var
-  FileStream: TFileStream;
-  CharIn: char;
-  MinLen, MaxLen: integer;
-  CurrValue: string;
-  i: integer;
-  size, fullsize: int64;
-  buffer: array [0 .. 2047] of char;
-  charsread: int64;
-  msg: string;
-  setuptype: TKnownInstaller;
-  progress, lastprogress: int64;
-
-begin
-  MinLen := 5;
-  MaxLen := 512;
-  CurrValue := '';
-  setupType := stUnknown;
-  Result := stUnknown;
-
-  mywrite('------------------------------------');
-  Mywrite('Analyzing: ' + myfilename);
-  msg := 'stringsgrep started (verbose:';
-  if verbose = True then
-    msg := msg + 'true'
-  else
-    msg := msg + 'false';
-  msg := msg + ', skipzero:';
-  if skipzero = True then
-    msg := msg + 'true'
-  else
-    msg := msg + 'false';
-  msg := msg + ')';
-  mywrite(msg);
-  FileStream := TFileStream.Create(myfilename, fmOpenRead);
-  try
-    {$IFDEF OSDGUI}
-    resultForm1.ProgressBarAnalyze.Position := 0;
-    procmess;
-        {$ENDIF OSDGUI}
-    fullsize := FileStream.Size;
-    size := fullsize;
-    lastprogress := 0;
-    progress := 0;
-    while (size > 0) and (setupType = stUnknown) do
-    begin
-      charsread := FileStream.Read(buffer, sizeof(buffer));
-      size := size - charsread;
-       {$IFDEF OSDGUI}
-      progress := 100 - trunc((size / fullsize) * 100);
-      if progress > lastprogress then
-      begin
-        resultForm1.ProgressBarAnalyze.Position := progress;
-        procmess;
-        LogDatei.log('AnaProgess: ' + IntToStr(progress), LLDebug);
-        lastprogress := progress;
-      end;
-       {$ENDIF OSDGUI}
-
-      for i := 0 to charsread - 1 do
-      begin
-
-        charIn := buffer[i];
-
-        // skipzero: handling of wide strings by ignoring zero byte
-        if skipzero and (CharIn = #0) then
-          continue;
-
-        // if (CharIn in [' ','A'..'Z','a'..'z','0'..'9','<','>','.','/','_','-']) and (Length(CurrValue) < MaxLen) then
-        if (CharIn in [#32..#126]) and (Length(CurrValue) < MaxLen) then
-          CurrValue := CurrValue + CharIn;
-
-        if (Length(CurrValue) < MaxLen) and (i < charsread - 1) then
-          continue;
-
-        if (Length(CurrValue) >= MinLen) then
-        begin
-          if '.exe' = lowercase(ExtractFileExt(myfilename)) then
-          begin
-            if verbose then
-            begin
-              //grepexe(CurrValue);
-              analyze_binstr(CurrValue, mysetup);
-              logdatei.log(CurrValue, LLDebug2);
-            end
-            else
-              analyze_binstr(CurrValue, mysetup);
-          end
-          else if '.msi' = lowercase(ExtractFileExt(myfilename)) then
-          begin
-            setupType := stMsi;
-            if verbose then
-            begin
-              grepmsi(CurrValue);
-              logdatei.log(CurrValue, LLDebug2);
-            end;
-          end
-          else
-          begin
-            grepexe(CurrValue);
-            grepmsi(CurrValue);
-            logdatei.log(CurrValue, LLDebug2);
-          end;
-          CurrValue := '';
-        end;
-      end;
-
-    end;
-    msg := 'stringsgrep completed (verbose:';
-    if verbose = True then
-      msg := msg + 'true'
-    else
-      msg := msg + 'false';
-    msg := msg + ', skipzero:';
-    if skipzero = True then
-      msg := msg + 'true'
-    else
-      msg := msg + 'false';
-    msg := msg + ')';
-    mywrite(msg);
-    mywrite('------------------------------------');
-  finally
-    FileStream.Free;
-  end;
-  Result := analyze_markerlist(mysetup);
-end;
-*)
 
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 var
@@ -1364,9 +1196,11 @@ begin
     if setupType = stUnknown then
     begin
       FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
-      for i := 0 to integer(stUnknown) - 1 do
+      for i := 0 to integer(stUnknown)  do
         FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
           installerToInstallerstr(TKnownInstaller(i)));
+      FChooseInstallerDlg.ComboBoxChooseInstaller.Text:=
+        installerToInstallerstr(stUnknown);
       if FChooseInstallerDlg.ShowModal = mrOk then
       begin
         setupType := installerstrToInstaller(

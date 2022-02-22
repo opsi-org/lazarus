@@ -17,8 +17,10 @@ type
     BitBtn2: TBitBtn;
     ComboBoxChooseInstaller: TComboBox;
     FlowPanel1: TFlowPanel;
-    Label1: TLabel;
+    LabelChooseMsg: TLabel;
+    LabelSorryUnknown: TLabel;
     Panel1: TPanel;
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -28,9 +30,28 @@ type
 var
   FChooseInstallerDlg: TFChooseInstallerDlg;
 
+resourcestring
+
+  rsSorryUnknown = 'Sorry Unknown Installer';
+  rsChooseInstallerMsg =
+    'Do you want to choose a' + LineEnding +
+    'installertype manually' + LineEnding +
+     'and go on (ok)' + LineEnding +
+     'or do you want to stop (cancel) ?';
+
+
 implementation
 
 {$R *.lfm}
+
+{ TFChooseInstallerDlg }
+
+procedure TFChooseInstallerDlg.FormCreate(Sender: TObject);
+begin
+  LabelSorryUnknown.Caption := rsSorryUnknown;
+  LabelChooseMsg.Caption := rsChooseInstallerMsg;
+end;
+
 
 end.
 
