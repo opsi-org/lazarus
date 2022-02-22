@@ -526,11 +526,6 @@ begin
       hostname := WMIResults.Values['Name'];
 
     domain := WMIResults.Values['Domain'];
-    if (domain = 'WORKGROUP') then
-    begin
-      domain := '';
-      LogDatei.log('No valid Domain found: Domain is WORKGROUP -> Domain set to empty',  LLNotice);
-    end;
 
     FQDN := hostname + '.' + domain;
     Result := FQDN;
