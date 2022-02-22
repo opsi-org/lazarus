@@ -56,7 +56,7 @@ type
       Override them in the subclass to get the desired functionality. }
     procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);virtual;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
-    procedure SetProgress(Progress: integer; ProgressValueID: TProgressValueID); virtual;
+    procedure SetProgress(NewProgress: integer; ProgressValueID: TProgressValueID); virtual;
     procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual;
     procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); virtual;
     procedure SetElementVisible(Visible:boolean; ElementID:TElementID); virtual;
@@ -171,7 +171,7 @@ begin
 
 end;
 
-procedure TGUIControl.SetProgress(Progress: integer;
+procedure TGUIControl.SetProgress(NewProgress: integer;
   ProgressValueID: TProgressValueID);
 begin
 
