@@ -103,7 +103,8 @@ uses
   osstartproc_cp,
   pipes,
   oszip,
-  osfilehelper;
+  osfilehelper,
+  osnetutil;
 
 const
   BytesarrayLength = 5000;
@@ -652,6 +653,7 @@ function resolveSymlink(const filepath: string; recursive: boolean = True): stri
 function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
+function GetFQDN: string;
 
 const
 
@@ -11796,6 +11798,17 @@ begin
   Result := TryStrToBool(s, i);
 end;
 
+function GetFQDN: string;
+begin
+  {$IFDEF WINDOWS}
+  Result := GetFQDNfromWMI;
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  Result := GetFQDNUnix;
+  {$ENDIF UNIX}
+  if not isValidFQDN(Result) then
+    LogDatei.log('"' + Result + '"' + ' is no valid fqdn', LLNotice);
+end;
 
 (*
  function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
