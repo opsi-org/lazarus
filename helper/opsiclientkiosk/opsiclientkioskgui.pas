@@ -2279,7 +2279,7 @@ begin
     end
     else
     begin
-      ClientID := GetClientID(PathsOnClient.FCustomSettings + 'opsiclientkiosk.conf');
+      ClientID := GetClientID(PathsOnClient.FCustomSettings + PathDelim +'opsiclientkiosk.conf');
     end;
     if Application.HasOption('lang') then
     begin

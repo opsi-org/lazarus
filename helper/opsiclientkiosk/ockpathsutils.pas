@@ -10,6 +10,7 @@ uses
 type
   TPaths = class
     FKioskApp: string;
+    FConfFile: string;
     FCustomIcons: string;
     FCustomScreenShots: string;
     FCustomSettings: string;
@@ -28,13 +29,12 @@ type
   end;
 
   TPathsOnClient = class(TPaths)
-  private
-    procedure SetAdminMode(theAdminMode: boolean); virtual;
   public
     FDefaultSettings: string;
     FDefaultIcons: string;
     FDefaultSkin: string;
     FAdminMode: boolean;
+    procedure SetAdminMode(theAdminMode: boolean); virtual;
     procedure SetUserModePaths; virtual; abstract;
     procedure SetAdminModePaths; virtual; abstract;
     procedure InitPaths;

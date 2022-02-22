@@ -5,7 +5,7 @@ unit OckLinux;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, FileUtil, osRunCommandElevated, osLog, OckPathsUtils;
+  Classes, SysUtils, Process, StrUtils, FileUtil, LazFileUtils, osRunCommandElevated, osLog, OckPathsUtils;
 
 { TPathsOnClientLinux }
 type
@@ -37,6 +37,8 @@ function PasswordCorrect:boolean;
 
 var
   RunCommandElevated: TRunCommandElevated;
+  PathsOnClient: TPathsOnClientLinux;
+  PathsOnDepot: TPathsOnDepotLinux;
 
 const
     // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
@@ -216,14 +218,14 @@ end;
 procedure TPathsOnClientLinux.SetAdminMode(theAdminMode: boolean);
 begin
   inherited SetAdminMode(theAdminMode);
-  if FAdminMode then CopyCustomSettingsToWritableFolder;
+  if FAdminMode then CopyCustomSettingsToWriteableFolder;
 end;
 
 procedure TPathsOnClientLinux.SetAdminModePaths;
 begin
   FKioskApp := ChompPathDelim(ProgramDirectory);
   //Default
-  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultSettings := FKioskApp + DefaultFolder;
   FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
   FDefaultSkin := FDefaultSettings + RelativePathSkin;
   //Custom
@@ -250,8 +252,8 @@ end;
 
 initialization
   RunCommandElevated := TRunCommandElevated.Create('',True);
-  PathsOnClient := TPathsOnClientMacOS.Create;
-  PathsOnDepot := TPathsOnDepotMacOS.Create;
+  PathsOnClient := TPathsOnClientLinux.Create;
+  PathsOnDepot := TPathsOnDepotLinux.Create;
 
 finalization
   FreeAndNil(RunCommandElevated);

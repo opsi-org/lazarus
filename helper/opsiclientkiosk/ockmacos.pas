@@ -5,7 +5,7 @@ unit OckMacOS;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, FileUtil, osRunCommandElevated, osLog, OckPathsUtils;
+  Classes, SysUtils, Process, StrUtils, FileUtil, LazFileUtils, osRunCommandElevated, osLog, OckPathsUtils;
 
 
 type
@@ -15,8 +15,8 @@ type
   TPathsOnClientMacOS = class(TPathsOnClient)
   private
     procedure CopyCustomSettingsToWriteableFolder;
-    procedure SetAdminMode(theAdminMode: boolean); override;
   public
+    procedure SetAdminMode(theAdminMode: boolean); override;
     procedure SetAdminModePaths; override;
     procedure SetUserModePaths; override;
     //constructor Create; override;
@@ -42,6 +42,8 @@ function PasswordCorrect:boolean;
 
 var
   RunCommandElevated: TRunCommandElevated;
+  PathsOnClient: TPathsOnClientMacOS;
+  PathsOnDepot: TPathsOnDepotMacOS;
 
 const
   // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
@@ -49,7 +51,8 @@ const
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
   AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
-  AbsolutePathCustomSettingsUserMode = '/Library/Application Support/org.opsi.OpsiClientKiosk' + CustomFolder;
+  AbsolutePathSettings = '/Library/Application Support/org.opsi.OpsiClientKiosk';
+  AbsolutePathCustomSettingsUserMode = AbsolutePathSettings + CustomFolder;
   RelativePathDefaultSettings = '/../Resources' + DefaultFolder;
   RelativePathProductIcons = '/product_icons';
   RelativePathScreenShots = '/screenshots';
@@ -216,13 +219,13 @@ begin
   begin
     LogDatei.log('Removing old settings done', LLInfo);
   end;
-  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
+  CopyDirTree(AbsolutePathCustomSettingsUserMode + PathDelim, AbsolutePathCustomSettingsAdminMode + PathDelim,[cffOverwriteFile, cffCreateDestDirectory]);
 end;
 
 procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);
 begin
   inherited SetAdminMode(theAdminMode);
-  if FAdminMode then CopyCustomSettingsToWritableFolder;
+  if FAdminMode then CopyCustomSettingsToWriteableFolder;
 end;
 
 procedure TPathsOnClientMacOS.SetAdminModePaths;
