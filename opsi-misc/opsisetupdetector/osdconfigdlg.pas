@@ -195,6 +195,7 @@ initialization
     TFileNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Service_pass',
     TPasswordStringPropertyEditor);
+
   // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
   //   TCollectionPropertyEditor);
 

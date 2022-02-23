@@ -227,7 +227,6 @@
       <Unit8>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="79"/>
         <CursorPos X="39" Y="90"/>
         <UsageCount Value="202"/>
@@ -291,9 +290,10 @@
         <ComponentName Value="FOSDConfigdlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="88"/>
-        <CursorPos Y="112"/>
+        <TopLine Value="166"/>
+        <CursorPos X="34" Y="197"/>
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -763,7 +763,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="659"/>
         <CursorPos Y="678"/>
-        <UsageCount Value="137"/>
+        <UsageCount Value="140"/>
       </Unit65>
       <Unit66>
         <Filename Value="C:\usr\share\lazarus\2.0.10\lcl\include\customform.inc"/>
@@ -796,7 +796,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="45"/>
         <CursorPos Y="80"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="76"/>
         <Loaded Value="True"/>
       </Unit69>
       <Unit70>
@@ -839,7 +839,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="462"/>
         <CursorPos X="14" Y="416"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="51"/>
       </Unit74>
       <Unit75>
         <Filename Value="C:\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
@@ -847,7 +847,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="514"/>
         <CursorPos X="32" Y="538"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="25"/>
       </Unit75>
       <Unit76>
         <Filename Value="..\..\common\oscrypt.pas"/>
@@ -855,7 +855,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="3" Y="21"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\..\external_libraries\dcpcrypt\Ciphers\dcpblowfish.pas"/>
@@ -896,7 +896,7 @@
         <EditorIndex Value="6"/>
         <TopLine Value="21"/>
         <CursorPos X="3" Y="52"/>
-        <UsageCount Value="37"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit81>
@@ -914,7 +914,7 @@
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osdform.pas"/>
         <Caret Line="1303" Column="5" TopLine="1285"/>
@@ -1031,6 +1031,10 @@
         <Filename Value="osdbasedata.pas"/>
         <Caret Line="538" Column="63" TopLine="483"/>
       </Position29>
+      <Position30>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
+        <Caret Line="538" Column="32" TopLine="514"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
