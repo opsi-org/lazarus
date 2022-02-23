@@ -538,21 +538,28 @@ begin
           cffCreateDestDirectory, cffPreserveTime], True);
 
         // install lib
+
         if osMac in aktProduct.productdata.targetOSset then
         begin
           infilename := genericTemplatePath + Pathdelim +
             'uib_macosinstalllib.opsiscript';
-          outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
-          copyfile(infilename, outfilename, [cffOverwriteFile,
-            cffCreateDestDirectory, cffPreserveTime], True);
+          if fileexists(infilename) then
+          begin
+            outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
+            copyfile(infilename, outfilename, [cffOverwriteFile,
+              cffCreateDestDirectory, cffPreserveTime], True);
+          end;
         end;
         if (osLin in aktProduct.productdata.targetOSset) or
           (osMulti in aktProduct.productdata.targetOSset) then
         begin
           infilename := genericTemplatePath + Pathdelim + 'uib_lin_install.opsiscript';
-          outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
-          copyfile(infilename, outfilename, [cffOverwriteFile,
-            cffCreateDestDirectory, cffPreserveTime], True);
+          if fileexists(infilename) then
+          begin
+            outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
+            copyfile(infilename, outfilename, [cffOverwriteFile,
+              cffCreateDestDirectory, cffPreserveTime], True);
+          end;
         end;
         if fileexists(genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript') then
         begin

@@ -1978,7 +1978,7 @@ begin
     //patterns.Add('nstallshield');
     //patterns.Add('installer,msi,database');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
@@ -2032,7 +2032,7 @@ begin
     patterns.Add('InstallAware: http://www.installaware.com');
     infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link := 'https://www.installaware.com/mhtml5/desktop/setupcommandlineparameters.htm';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
@@ -2054,7 +2054,7 @@ begin
     patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2078,7 +2078,7 @@ begin
     patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2102,7 +2102,7 @@ begin
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2126,7 +2126,7 @@ begin
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
     comment := '';
@@ -2148,7 +2148,7 @@ begin
     patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
     installErrorHandlingLines.Add(
-      'includelog "%opsiLogDir%\$ProductId$.install_log.txt" "50" "utf16le"');
+      'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
       'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
