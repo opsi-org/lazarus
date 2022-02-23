@@ -29,7 +29,7 @@
       <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Debug">
+    <BuildModes Count="3" Active="Release">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -229,7 +229,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="79"/>
-        <CursorPos X="75" Y="99"/>
+        <CursorPos X="39" Y="90"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -263,7 +263,7 @@
       <Unit11>
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="371"/>
         <CursorPos X="44" Y="385"/>
         <UsageCount Value="235"/>
@@ -301,7 +301,7 @@
       <Unit14>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="544"/>
         <CursorPos X="70" Y="564"/>
         <ExtraEditorCount Value="1"/>
@@ -615,7 +615,7 @@
       <Unit48>
         <Filename Value="osdanalyzegeneral.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="372"/>
         <CursorPos X="41" Y="328"/>
         <UsageCount Value="200"/>
@@ -793,7 +793,7 @@
       <Unit69>
         <Filename Value="..\..\common\osfilehelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="45"/>
         <CursorPos Y="80"/>
         <UsageCount Value="73"/>
@@ -842,13 +842,12 @@
         <UsageCount Value="48"/>
       </Unit74>
       <Unit75>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
+        <Filename Value="C:\usr\share\lazarus\2.2.0\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="514"/>
         <CursorPos X="32" Y="538"/>
         <UsageCount Value="23"/>
-        <Loaded Value="True"/>
       </Unit75>
       <Unit76>
         <Filename Value="..\..\common\oscrypt.pas"/>
@@ -868,20 +867,20 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
       <Unit78>
-        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.2.2\rtl\objpas\classes\classesh.inc"/>
+        <Filename Value="C:\usr\share\fpcsrc\3.2.2\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="23" Y="27"/>
         <UsageCount Value="8"/>
       </Unit78>
       <Unit79>
-        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.2.2\rtl\inc\typshrdh.inc"/>
+        <Filename Value="C:\usr\share\fpcsrc\3.2.2\rtl\inc\typshrdh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="50"/>
         <CursorPos X="3" Y="62"/>
         <UsageCount Value="8"/>
       </Unit79>
       <Unit80>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\lcl\include\customform.inc"/>
+        <Filename Value="C:\usr\share\lazarus\2.2.0\lcl\include\customform.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="367"/>
         <CursorPos Y="385"/>
@@ -902,7 +901,7 @@
         <LoadedDesigner Value="True"/>
       </Unit81>
       <Unit82>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.2.0\lcl\controls.pp"/>
+        <Filename Value="C:\usr\share\lazarus\2.2.0\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="34"/>
