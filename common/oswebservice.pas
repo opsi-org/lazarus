@@ -1002,12 +1002,17 @@ begin
       else
       begin
         testresult := parameterlist.Strings[i];
-        LogDatei.log('Putting to TSuperArray with: ' +
-          SO('"' + parameterlist.Strings[i] + '"').AsJSon, LLdebug3);
+        if JSONValueSyntaxInParameterList then
+          LogDatei.log('Putting to TSuperArray with: ' +
+            SO(parameterlist.Strings[i]).AsJSon, LLdebug3)
+        else
+          LogDatei.log('Putting to TSuperArray with: ' +
+            SO('"' + parameterlist.Strings[i] + '"').AsJSon, LLdebug3);
         //joParams.put(parameterlist.Strings[i]);
         if (length(parameterlist.Strings[i]) > 0) and
           ((parameterlist.Strings[i][1] = '[')) and
           ((parameterlist.Strings[i][length(parameterlist.Strings[i])] = ']')) then
+        begin
           if parameterlist.Strings[i] = '[]' then
           begin
             joParams.AsArray.Add(SA([]));
@@ -1025,10 +1030,15 @@ begin
             //joParams.AsArray.Add(SA([copy(parameterlist.Strings[i], 2,length(parameterlist.Strings[i]) - 2)]).AsString);
             //joParams.AsArray.Add(copy(parameterlist.Strings[i], 2,length(parameterlist.Strings[i]) - 2));
             //joParams.AsArray.Add(parameterlist.Strings[i]);
-          end
-
+          end;
+        end
         else
-          joParams.AsArray.Add(SO('"' + parameterlist.Strings[i] + '"'));
+        begin
+          if JSONValueSyntaxInParameterList then
+            joParams.AsArray.Add(SO(parameterlist.Strings[i]))
+          else
+            joParams.AsArray.Add(SO('"' + parameterlist.Strings[i] + '"'));
+        end;
         //joParams.AsArray.Add(SO(parameterlist.Strings[i]));
         //LogDatei.log ('resulting TSuperArray string: ' + joParams.tostring ,LLDebug3);
       end;
