@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
+        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="opsiTOML"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
@@ -23,9 +23,13 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
     </RunParams>
-    <Units Count="3">
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LazUtils"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="4">
       <Unit0>
         <Filename Value="opsiTOML.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -35,10 +39,14 @@
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="tomlfunc.pas"/>
+        <Filename Value="../../common/osencoding.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="TOMLfunc"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="../../common/ostoml.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osTOML"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -49,7 +57,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <Libraries Value="../../external_libraries/fpTOML"/>
-      <OtherUnitFiles Value="../../external_libraries/fpTOML/sources"/>
+      <OtherUnitFiles Value="../../external_libraries/fpTOML/sources;../../common"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>
