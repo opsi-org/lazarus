@@ -22,7 +22,7 @@ object DialogServicePassword: TDialogServicePassword
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 250
@@ -84,7 +84,6 @@ object DialogServicePassword: TDialogServicePassword
       Top = 88
       Width = 63
       Caption = 'Username'
-      ParentColor = False
     end
     object LabelServiceURL: TLabel
       Left = 17
@@ -92,7 +91,6 @@ object DialogServicePassword: TDialogServicePassword
       Top = 48
       Width = 107
       Caption = 'Opsi Service URL'
-      ParentColor = False
     end
     object LabelPassword: TLabel
       Left = 17
@@ -100,7 +98,6 @@ object DialogServicePassword: TDialogServicePassword
       Top = 120
       Width = 60
       Caption = 'Password'
-      ParentColor = False
     end
   end
 end

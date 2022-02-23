@@ -42,7 +42,6 @@ uses
   wispecfolder,
   shlobj,
   VersionInfoX,
-  oscertificates,
 {$IFNDEF WIN64}
   oslocaladmin,
 {$ENDIF WIN64}
@@ -107,6 +106,7 @@ uses
   //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
+  osTOML,
   oscrypt,
   DOM,
   osxmlsections,
@@ -118,7 +118,8 @@ uses
   ostxstringlist,
   LAZUTF8,
   osnetutil,
-  osstrlistutils;
+  osstrlistutils,
+  oscertificates;
 
 type
   TStatement = (tsNotDefined,
@@ -145,7 +146,7 @@ type
     tsOpsiServiceCallStat,
     //tsTestCommand,
     tsStayWhileWindowOpen,
-    tsCondOpen, tsCondThen, tsCondElse, tsCondClose,
+    tsCondOpen, tsCondThen, tsCondElse, tsCondElseIf, tsCondClose,
     tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose,
     tsSwitchDefaultOpen, tsSwitchClose,
     tsLoopStringList, tsLoopForTo,
@@ -192,6 +193,8 @@ type
     tsPowershellcall,
     tsExecuteSection,
     tsImportCertToSystem,
+    tsRemoveCertFromSystem,
+    tsisCertInstalledInSystem,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -761,8 +764,11 @@ type
   TConditions = array [0..100] of boolean;
 
 var
-  Conditions: TConditions;
-  ThenBranch: TConditions;
+  Conditions: TConditions;   // used for if else endif
+  ThenBranch: TConditions;   // used for if else endif
+  elseifConditions: TConditions;   // used for elseif:
+                                   // becomes true if we had found a true condition
+                                   // it is the marker that we do not go into any other elseif / else
 
 //const
 //zaehler  : Integer = 0;
@@ -14110,6 +14116,118 @@ begin
 
     // #########  end xml2 list functions ###############################
 
+    //function LoadTOMLFile(TOMLfilePath: String): TStringList;
+    else if LowerCase(s) = LowerCase('LoadTOMLFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                s1 := ExpandFileName(s1);
+                try
+                  list.Clear;
+                  list.AddStrings(LoadTOMLFile(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in LoadTOMLFile "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLAsStringList(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLAsStringList') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLAsStringList(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLAsStringList "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLKeys(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLKeys') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLKeys(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLKeys "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLTableNames(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLTableNames') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLTableNames(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTableNames "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLTable') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLTable(s1, s2));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTable "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
 
     // todo: 2nd parameter focus row for editmap
     else if LowerCase(s) = LowerCase('editMap') then
@@ -14842,6 +14960,14 @@ begin
       end;
     end
 
+    else if LowerCase(s) = LowerCase('listCertificatesFromSystem') then
+    begin
+      begin
+        syntaxcheck := True;
+        list.AddStrings(listCertificatesFromSystemStore());
+      end;
+    end
+
     else if LowerCase(s) = LowerCase('getHWBiosInfoMap') then
     begin
       syntaxcheck := True;
@@ -15519,6 +15645,44 @@ begin
         end;
   end
 
+  else if LowerCase(s) = LowerCase('cidrToNetmask') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if cidrToNetmask(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
+          end
+          else
+          begin
+            StringResult := cidrToNetmask(s1);
+          end;
+        end;
+  end
+
+  else if LowerCase(s) = LowerCase('netmaskToCidr') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if netmaskToCidr(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
+          end
+          else
+          begin
+            StringResult := netmaskToCidr(s1);
+          end;
+        end;
+  end
+
   else if LowerCase(s) = LowerCase('GetIni') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -15621,6 +15785,201 @@ begin
           end;
   end
   *)
+
+  //function ReadTOMLFile (TOMLfilePath: String): String;
+  else if LowerCase(s) = LowerCase('ReadTOMLFile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            s1 := ExpandFileName(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+            LogDatei.log('    Reading TOML file  "' +  s1 , LevelComplete);
+            StringResult := ReadTOMLFile(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error in ReadTOMLFile "' +
+                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+              StringResult := '';
+            end;
+          end;
+
+        end;
+  end
+
+  //function GetTOMLAsString(TOMLcontents: String): String;
+  else if LowerCase(s) = LowerCase('GetTOMLAsString') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+            LogDatei.log('    GetTOMLAsString  "' +  s1 , LevelComplete);
+            StringResult := GetTOMLAsString(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error in GetTOMLAsString "' +
+                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+              StringResult := '';
+            end;
+          end;
+
+        end;
+  end
+
+   //function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
+  else if LowerCase(s) = LowerCase('GetTOMLTableAsString') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    Getting Table  "' +  s2 + '" as String ', LevelComplete);
+                StringResult := GetTOMLTableAsString(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLTableAsString "' +
+                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+
+            end;
+  end
+
+  //function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
+  else if LowerCase(s) = LowerCase('GetValueFromTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                 if Skip(')', r, r, InfoSyntaxError) then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('    Getting the value of the key "' + s2
+                           + '"  from TOML contents with default value : "' + s3 + '"',
+                          LevelComplete);
+                        StringResult := GetValueFromTOML(s1, s2, s3);
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Error in GetValueFromTOML "' +
+                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                          StringResult := s3;
+                        end;
+                      end;
+
+                    end;
+  end
+
+  //function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
+  else if LowerCase(s) = LowerCase('ModifyTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s4, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('    Modifying TOML contents with command "' + s2
+                           + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
+                          LevelComplete);
+                        StringResult := ModifyTOML(s1, s2, s3, s4);
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Error in ModifyTOML "' +
+                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                          StringResult := '';
+                        end;
+                      end;
+
+                    end;
+  end
+
+  //function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
+  else if LowerCase(s) = LowerCase('DeleteTableFromTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
+                  LevelComplete);
+                StringResult := DeleteTableFromTOML(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in DeleteTableFromTOML "' +
+                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+
+            end;
+  end
+
+  //function ConvertTOMLtoJSON(TOMLcontents: String): String;
+  else if LowerCase(s) = LowerCase('ConvertTOMLtoJSON') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML contents to JSON String ', LevelComplete);
+                StringResult := ConvertTOMLtoJSON(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLtoJSON, message: "' + e.Message
+                                         + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+            end;
+  end
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
@@ -19943,6 +20302,80 @@ begin
         end;
   end
 
+  else if Skip('isCertInstalledInSystem', Input, r, InfoSyntaxError) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          BooleanResult := False;
+          try
+                BooleanResult := isCertInstalledInSystemStore(s1);
+          except
+            logdatei.log('Error: Exception in isCertInstalledInSystem:  ' + s1, LLError);
+            BooleanResult := False;
+          end;
+        end;
+  end
+
+  //function SaveToTOMLFile(TOMLcontents : String; TOMLfilePath: String): boolean;
+  else if Skip('SaveToTOMLFile', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Saving TOMLcontents to TOML file : ' +  s2 , LevelComplete);
+                BooleanResult := SaveToTOMLFile(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in SaveToTOMLFile "' +
+                    s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                  BooleanResult := false;
+                end;
+              end;
+            end;
+  end
+
+  //function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
+  else if Skip('ConvertTOMLfileToJSONfile', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s1 := ExpandFileName(s1);
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML file  "' +  s1 + '" to JSON file "' + s2, LevelComplete);
+                BooleanResult := ConvertTOMLfileToJSONfile(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLfileToJSONfile from "' +
+                    s1 + '" to "'+ s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                  BooleanResult := false;
+                end;
+              end;
+            end;
+  end
+
   (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
   begin
@@ -21099,6 +21532,142 @@ begin
           end;
         end
 
+        {  HOW If / ELSE / ELSEIF / ENDIF PARSER WORKS:
+        At "IF" we increase the NestLevel (so we can have nested if / endif)
+        and that we evaluate the condition if NestLevel = ActLevel +1
+        and then we  increase the actlevel.
+        The result of the condition is stored in conditions[Level]
+        conditions[Level] controls if the lines will be executed or not.
+
+        The result is also stored in elseifConditions for elseif:
+        if it becomes true if we had found a true condition
+        it is the marker that we do not go into any other elseif / else
+
+
+        Example  condition = true
+        ---------------- code:
+        if "true" = "true"
+            comment "then branch"
+        else
+            comment "else branch"
+        endif
+        -------------- log:
+          Prog: IF: Actlevel: 0 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        If
+          Prog: EvaluateBoolean: Parsing: "true" = "true"
+          "true" = "true"   <<< result true
+          Prog: IF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        Then
+          Prog: processline=true: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+          comment: then branch
+          Prog: ELSE: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True
+        Else
+          Prog: processline=false: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: False Conditions: False
+          Prog: ENDIF: Actlevel: 0 NestLevel: 0 sektion.NestingLevel: 0 ThenBranch: False  Conditions: True
+        EndIf
+        ==============
+
+        Example  condition = false
+        ---------------- code:
+        if "true" = "false"
+            comment "then branch"
+        else
+            comment "else branch"
+        endif
+        -------------- log:
+          Prog: IF: Actlevel: 0 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        If
+          Prog: EvaluateBoolean: Parsing: "true" = "false"
+          "true" = "false"   <<< result false
+          Prog: IF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        Then
+          Prog: processline=false: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+          Prog: ELSE: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        Else
+          Prog: processline=true: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: False Conditions: True
+          comment: else branch
+          Prog: ENDIF: Actlevel: 0 NestLevel: 0 sektion.NestingLevel: 0 ThenBranch: False Conditions: True
+        EndIf
+        ==============
+
+        Example  Nested if calls
+        The NestLevel become 2 in the nested call
+        ---------------- code:
+        if "true" = "true"
+            if "true" = "true"
+                comment "then then branch"
+            endif
+        else
+            comment "else branch"
+        endif
+        -------------- log:
+          Prog: IF: Actlevel: 0 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        If
+          Prog: EvaluateBoolean: Parsing: "true" = "true"
+          "true" = "true"   <<< result true
+          Prog: IF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        Then
+          Prog: IF: Actlevel: 1 NestLevel: 2 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+          If
+            Prog: EvaluateBoolean: Parsing: "true" = "true"
+            "true" = "true"   <<< result true
+            Prog: IF condition: Actlevel: 2 NestLevel: 2 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+          Then
+            Prog: processline=true: Actlevel: 2 NestLevel: 2 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+            comment: then then branch
+            Prog: ENDIF: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+          EndIf
+          Prog: ELSE: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        Else
+          Prog: processline=false: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: False Conditions: False
+          Prog: ENDIF: Actlevel: 0 NestLevel: 0 sektion.NestingLevel: 0 ThenBranch: False Conditions: True
+        EndIf
+        ==============
+
+        Example  Elseif
+        ---------------- code:
+        if "true" = "true"
+            comment "then branch"
+        elseif "true" = "true"
+            comment "elseif branch1"
+        elseif "false" = "true"
+            comment "elseif branch2"
+        else
+            comment "else branch"
+        endif
+        -------------- log:
+          Prog: IF: Actlevel: 0 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        If
+          Prog: EvaluateBoolean: Parsing: "true" = "true"
+          "true" = "true"   <<< result true
+          Prog: IF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        Then
+          Prog: processline=true: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+          comment: then branch
+          Prog: ElseIF: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        ElseIf
+          Prog: EvaluateBoolean: Parsing: "true" = "true"
+          "true" = "true"   <<< result true
+          Prog: ElseIF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        Then
+          Prog: processline=true: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+          comment: elseif branch1
+          Prog: ElseIF: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: True
+        ElseIf
+          Prog: EvaluateBoolean: Parsing: "false" = "true"
+          "false" = "true"   <<< result false
+          Prog: ElseIF condition: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        Then
+          Prog: processline=false: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+          Prog: ELSE: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: True Conditions: False
+        Else
+          Prog: processline=true: Actlevel: 1 NestLevel: 1 sektion.NestingLevel: 0 ThenBranch: False Conditions: True
+          Prog: EvaluateString: Parsing: "else branch"
+          comment: else branch
+          Prog: ENDIF: Actlevel: 0 NestLevel: 0 sektion.NestingLevel: 0 ThenBranch: False Conditions: True
+        EndIf
+        ============== do 09.02.2022}
+
         // treat statements for if-else first
 
         else if (StatKind = tsCondOpen) and (not (InSwitch) or ValidCase) then
@@ -21111,7 +21680,8 @@ begin
             logdatei.log_prog('IF: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True), LLDebug);
+              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
             doLogEntries(PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High(TConditions) then
             begin
@@ -21123,15 +21693,24 @@ begin
 
             if (NestLevel = ActLevel + 1) and Conditions[ActLevel] then
             begin
+              { a new active level is created if the if statement
+                is in a active Level AND inside of a positive branch.
+
               // eine neue aktive Ebene wird erzeugt, falls
               // die if-Anweisung auf einer aktiven Ebene UND im positiven Zweig steht
-
+              }
               Expressionstr := Remaining;
               if EvaluateBoolean(Expressionstr, Remaining, BooleanResult,
                 NestLevel, InfoSyntaxError) then
               begin
                 Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
+                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
+                logdatei.log_prog('IF condition: Actlevel: ' + IntToStr(Actlevel) +
+              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
               end
               else
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -21154,7 +21733,8 @@ begin
             logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True), LLDebug);
+              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
             if NestLevel <= Sektion.NestingLevel then
               reportError(Sektion, linecounter, '', PStatNames^
                 [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
@@ -21165,7 +21745,8 @@ begin
                 logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
                   ' NestLevel: ' + IntToStr(NestLevel) +
                   ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
-                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True), LLWarning);
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLWarning);
                 reportError(Sektion, linecounter, '', 'double ' +
                   PStatNames^ [tsCondElse]);
               end
@@ -21178,12 +21759,96 @@ begin
                 doLogEntries(PStatNames^ [tsCondElse], LLinfo);
                 LogDatei.LogSIndentLevel := NestLevel;
 
-                if NestLevel = ActLevel then
-                  Conditions[ActLevel] := not Conditions[ActLevel];
+                if (NestLevel = ActLevel) then
+                // the else branch is valid, if we did not found any valid condition yet
+                  Conditions[ActLevel] := not elseifConditions[NestLevel];
               end;
             end;
           end;
         end
+
+         else if (StatKind = tsCondElseIf) and (not (InSwitch) or ValidCase) then
+        begin
+          { this is nearly the same then (if "tsCondOpen").
+          The difference is that we do not increase the NestLevel
+          and that we evaluate the condition if NestLevel = ActLevel
+          and we do not increase the actlevel.
+          From "Else" we took the "No elseif without if"}
+          begin
+            // elseif: we do not increase the nestinglevel
+            //Inc(NestLevel);
+            Ifelseendiflevel := Nestlevel;
+            ThenBranch[NestLevel] := True;
+            logdatei.log_prog('ElseIF: Actlevel: ' + IntToStr(Actlevel) +
+              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
+
+            LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondElseIf], LLinfo);
+            LogDatei.LogSIndentLevel := NestLevel;
+
+            if NestLevel > High(TConditions) then
+            begin
+              reportError(Sektion, linecounter, '', 'Too many nested conditions');
+              exit;
+            end;
+             if NestLevel <= Sektion.NestingLevel then
+             begin
+              reportError(Sektion, linecounter, '', PStatNames^
+                [tsCondElseIf] + '  without  ' + PStatNames^ [tsCondOpen]);
+                exit;
+             end;
+
+            LogDatei.LogSIndentLevel := NestLevel;
+
+            // this is a else (if), so the if has to be evalutated
+            // if the else is true
+             // have we found a valid condition yet ?
+             BooleanResult := elseifConditions[NestLevel];
+
+
+            // elseif: we evaluate the condition if NestLevel = ActLevel
+            if (NestLevel = ActLevel) and (not BooleanResult)  then
+            begin
+              { a new active level is created if the if statement
+                is in a active Level AND inside of a positive branch.
+
+              // eine neue aktive Ebene wird erzeugt, falls
+              // die if-Anweisung auf einer aktiven Ebene UND im positiven Zweig steht
+              }
+              Expressionstr := Remaining;
+              if EvaluateBoolean(Expressionstr, Remaining, BooleanResult,
+                NestLevel, InfoSyntaxError) then
+              begin
+                // elseif: we do not increase the actlevel
+                //Inc(ActLevel);
+                Conditions[NestLevel] := BooleanResult;
+                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
+                logdatei.log_prog('ElseIF condition: Actlevel: ' + IntToStr(Actlevel) +
+              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
+              end
+              else
+                reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+              if Remaining <> '' then
+                reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
+            LogDatei.LogSIndentLevel := NestLevel - 1;
+            doLogEntries(PStatNames^ [tsCondThen], LLInfo);
+            LogDatei.LogSIndentLevel := NestLevel;
+            end
+            else
+             Conditions[NestLevel] := not elseifConditions[NestLevel];
+
+
+          end;
+          //ArbeitsSektion.NestingLevel:=Nestlevel;
+          //Sektion.NestingLevel:=Nestlevel;
+        end
+
 
         else if (StatKind = tsCondClose) and (not (InSwitch) or ValidCase) then
         begin
@@ -21200,7 +21865,8 @@ begin
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
                 IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True), LLDebug);
+                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
@@ -21232,6 +21898,11 @@ begin
           // and line processing not stoped now
           and (ActionResult > 0) then
         begin
+          logdatei.log_prog('processline=true: Actlevel: ' + IntToStr(Actlevel) +
+                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
           processline := True;
           case SectionSpecifier of
             tsecIncluded:
@@ -24822,7 +25493,6 @@ begin
 
               tsImportCertToSystem:
               begin
-                {$IFDEF WINDOWS}
                 if Skip('(', Remaining, Remaining, InfoSyntaxError) then
                   if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
                   then
@@ -24847,11 +25517,34 @@ begin
                         end;
                       end;
                     end;
-                {$ELSE WINDOWS}
-                LogDatei.log(
-                  'ImportCertToSystem ignored - implemented only for Windows.',
-                  LLError);
-                {$ENDIF WINDOWS}
+              end;
+
+              tsRemoveCertFromSystem:
+              begin
+                if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+                  if EvaluateString(Remaining, Remaining, s1, InfoSyntaxError)
+                  then
+                    if Skip(')', Remaining, Remaining, InfoSyntaxError)
+                    then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                        if not removeCertFromSystemStore(s1) then
+                          logdatei.log('RemoveCertFromSystem: failed to remove: ' +
+                            s1, LLError);
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('RemoveCertFromSystem: failed to remove: ' +
+                            s1 + ' : ' + e.message,
+                            LLError);
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        end;
+                      end;
+                    end;
               end;
 
 
@@ -24882,7 +25575,14 @@ begin
           end;
         end
         else
+        begin
           processline := False;
+          logdatei.log_prog('processline=false: Actlevel: ' + IntToStr(Actlevel) +
+                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(Conditions[NestLevel], True), LLDebug);
+        end;
         ProcessMess;
       end;
 
@@ -25592,6 +26292,14 @@ begin
       FConstValuesList.add('/tmp');
     {$ENDIF UNIX}
 
+      FConstList.add('%opsiUserTmpDir%');
+    {$IFDEF WINDOWS}
+      FConstValuesList.add('c:\opsi.org\usertmp');
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+      FConstValuesList.add('/tmp');
+    {$ENDIF UNIX}
+
       FConstList.add('%opsiLogDir%');
       FConstValuesList.add(copy(oslog.defaultStandardMainLogPath, 1,
         Length(oslog.defaultStandardMainLogPath) - 1));
@@ -25679,6 +26387,9 @@ begin
         FConstValuesList.add(opsiserviceClientId)
       else
         FConstValuesList.add(computernaming);
+
+      FConstList.add('%FQDN%'); // fqdn in network (not opsi service) context
+      FConstValuesList.add(getFQDN);
 
       FConstList.add('%opsiServer%');
 
@@ -25984,10 +26695,11 @@ begin
   PStatNames^ [tsStayWhileWindowOpen] := 'StayWhileWindowOpen';
   (* fuer Testzwecke, nicht dokumentiert *)
 
-  PStatNames^ [tsCondOpen] := 'If';
-  PStatNames^ [tsCondThen] := 'Then';
-  PStatNames^ [tsCondElse] := 'Else';
-  PStatNames^ [tsCondClose] := 'EndIf';
+  PStatNames^ [tsCondOpen]   := 'If';
+  PStatNames^ [tsCondThen]   := 'Then';
+  PStatNames^ [tsCondElse]   := 'Else';
+  PStatNames^ [tsCondElseIf] := 'ElseIf';
+  PStatNames^ [tsCondClose]  := 'EndIf';
 
   // switch
   PStatNames^ [tsSwitch] := 'Switch';
@@ -26073,6 +26785,8 @@ begin
   PStatNames^ [tsEndFunction] := 'EndFunc';
 
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
+  PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
+
 
   runProfileActions := False;
   runLoginScripts := False;

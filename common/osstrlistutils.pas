@@ -23,10 +23,14 @@ var
   i : integer;
 begin
   result := True;
-  if stringlist1.Count<>stringlist2.Count then
-     result := False
-  else
-  begin
+  try
+    if (stringlist1.Count=0) or (stringlist2.Count=0) then
+       result := False
+    else
+    if stringlist1.Count<>stringlist2.Count then
+       result := False
+    else
+    begin
         IF flag.Equals('FLAG_AUTOMODE') THEN
            begin
              if stringlist1[0].Contains('=') then
@@ -89,6 +93,10 @@ begin
               until ((result=false) OR (i>=stringlist1.Count));
            end;
     end;
+  except
+    on E:Exception do
+      writeln('Exception in areStringListsEqual : ', E.Message);
+  end;
 end;
 
 end.

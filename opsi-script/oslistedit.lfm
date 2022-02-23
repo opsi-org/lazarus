@@ -7,7 +7,7 @@ object FListedit: TFListedit
   ClientHeight = 242
   ClientWidth = 320
   Position = poScreenCenter
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.2.0.4'
   object ValueListEditor1: TValueListEditor
     Left = 0
     Height = 118
@@ -24,7 +24,7 @@ object FListedit: TFListedit
     )
     ColWidths = (
       150
-      169
+      152
     )
   end
   object Panel1: TPanel
@@ -43,7 +43,6 @@ object FListedit: TFListedit
       Width = 205
       Caption = 'Please Check and Correct the '#13#10'following Paramenters:'
       Font.Height = -16
-      ParentColor = False
       ParentFont = False
     end
   end

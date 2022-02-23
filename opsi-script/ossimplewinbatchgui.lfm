@@ -9,7 +9,7 @@ object SimpleWinBatchGUI: TSimpleWinBatchGUI
   Color = clHotLight
   FormStyle = fsSystemStayOnTop
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.4'
   WindowState = wsFullScreen
   object PanelCenter: TPanel
     AnchorSideRight.Side = asrBottom
@@ -34,7 +34,6 @@ object SimpleWinBatchGUI: TSimpleWinBatchGUI
       Font.Color = clWindow
       Font.Height = 35
       Layout = tlCenter
-      ParentColor = False
       ParentFont = False
       OptimalFill = True
     end
@@ -52,7 +51,6 @@ object SimpleWinBatchGUI: TSimpleWinBatchGUI
       Font.Color = clWindow
       Font.Height = 27
       Layout = tlCenter
-      ParentColor = False
       ParentFont = False
       OptimalFill = True
     end
@@ -65,7 +63,6 @@ object SimpleWinBatchGUI: TSimpleWinBatchGUI
     Align = alBottom
     Caption = 'opsi-script 4.12.4.13'
     Font.Color = clSkyBlue
-    ParentColor = False
     ParentFont = False
   end
   object TimerActivity: TTimer

@@ -19,95 +19,97 @@ uses
   oslog,
   RegExpr;
 
-function isValidFQDN(expr : string) : boolean;
-function isIPNumber(expr : string) : boolean;
-function IsValidEmail(const Value: string): Boolean;
+function isValidFQDN(expr: string): boolean;
+function isIPNumber(expr: string): boolean;
+function IsValidEmail(const Value: string): boolean;
 
 implementation
 
 // Function to validate if the Domain Name is Fully Qualified
-function isValidFQDN(expr : string) : boolean;
-var RegExprObj : TRegExpr;
+function isValidFQDN(expr: string): boolean;
+var
+  RegExprObj: TRegExpr;
 begin
-  result := False;
+  Result := False;
   RegExprObj := TRegExpr.Create;
-  RegExprObj.Expression := '^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.([a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.){1,}[a-zA-Z]{2,63}$';
-  if Length(expr)> 254 then
-     result := False
+  RegExprObj.Expression :=
+    '^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.([a-zA-Z0-9][a-zA-Z0-9\-_]{0,62}\.){1,}[a-zA-Z]{2,63}$';
+  if Length(expr) > 254 then
+    Result := False
   else
-      if RegExprObj.Exec(expr) then
-         result := True;
+  if RegExprObj.Exec(expr) then
+    Result := True;
   RegExprObj.Free;
 end;
 
 
-function isIPNumber(expr : string) : boolean;
+function isIPNumber(expr: string): boolean;
 begin
-  result := false;
-  if IsIP(expr) then result := true;
-  if IsIP6(expr) then result := true;
+  Result := False;
+  if IsIP(expr) then Result := True;
+  if IsIP6(expr) then Result := True;
 end;
 
 
 // http://www.delphitricks.com/source-code/internet/validate_email_address.html
-function IsValidEmail(const Value: string): Boolean;
+function IsValidEmail(const Value: string): boolean;
 
-  function CheckAllowed(const s: string): Boolean;
-    var i: Integer;
-    begin
-      Result:= false;
-      for i:= 1 to Length(s) do
-        if not (s[i] in ['a'..'z',
-                         'A'..'Z',
-                         '0'..'9',
-                         '_',
-                         '-',
-                         '.']) then
-         begin
-             LogDatei.log('Warning: Not allowed chars in part: '+s+' in eMail: '+Value,LLwarning);
-             Exit;
-         end;
-      Result:= true;
-    end;
+  function CheckAllowed(const s: string): boolean;
+  var
+    i: integer;
+  begin
+    Result := False;
+    for i := 1 to Length(s) do
+      if not (s[i] in ['a'..'z', 'A'..'Z', '0'..'9', '_', '-', '.']) then
+      begin
+        LogDatei.log('Warning: Not allowed chars in part: ' + s +
+          ' in eMail: ' + Value, LLwarning);
+        Exit;
+      end;
+    Result := True;
+  end;
 
 var
-  i: Integer;
+  i: integer;
   NamePart, ServerPart: string;
 begin
-  Result:= False;
-  i:=Pos('@', Value);
-  if i=0 then
+  Result := False;
+  i := Pos('@', Value);
+  if i = 0 then
   begin
-    LogDatei.log('Warning: No "@" in eMail: '+Value,LLwarning);
+    LogDatei.log('Warning: No "@" in eMail: ' + Value, LLwarning);
     Exit;
   end;
-  NamePart:=Copy(Value, 1, i-1);
-  LogDatei.log('Debug: namePart: '+NamePart+' in  eMail: '+Value,LLdebug2);
-  ServerPart:=Copy(Value, i+1, Length(Value));
-  LogDatei.log('Debug: ServerPart: '+ServerPart+' in  eMail: '+Value,LLdebug2);
-  if (Length(NamePart)=0) then
+  NamePart := Copy(Value, 1, i - 1);
+  LogDatei.log('Debug: namePart: ' + NamePart + ' in  eMail: ' + Value, LLdebug2);
+  ServerPart := Copy(Value, i + 1, Length(Value));
+  LogDatei.log('Debug: ServerPart: ' + ServerPart + ' in  eMail: ' + Value, LLdebug2);
+  if (Length(NamePart) = 0) then
   begin
-    LogDatei.log('Warning: Empty namePart: '+NamePart+' in  eMail: '+Value,LLwarning);
+    LogDatei.log('Warning: Empty namePart: ' + NamePart + ' in  eMail: ' +
+      Value, LLwarning);
     Exit;
   end;
-  if  ((Length(ServerPart)<5)) then
+  if ((Length(ServerPart) < 5)) then
   begin
-    LogDatei.log('Warning: ServerPart < 5 chars: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    LogDatei.log('Warning: ServerPart < 5 chars: ' + ServerPart +
+      ' in  eMail: ' + Value, LLwarning);
     Exit;
   end;
-  i:=Pos('.', ServerPart);
-  if (i=0) then
+  i := Pos('.', ServerPart);
+  if (i = 0) then
   begin
-    LogDatei.log('Warning: ServerPart has no dot: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    LogDatei.log('Warning: ServerPart has no dot: ' + ServerPart +
+      ' in  eMail: ' + Value, LLwarning);
     Exit;
   end;
-  if (i>(Length(serverPart)-2)) then
+  if (i > (Length(serverPart) - 2)) then
   begin
-    LogDatei.log('Warning: ServerPart has not a 2 char top level domain: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    LogDatei.log('Warning: ServerPart has not a 2 char top level domain: ' +
+      ServerPart + ' in  eMail: ' + Value, LLwarning);
     Exit;
   end;
-  Result:= CheckAllowed(NamePart) and CheckAllowed(ServerPart);
+  Result := CheckAllowed(NamePart) and CheckAllowed(ServerPart);
 end;
 
 end.
-
