@@ -6639,6 +6639,8 @@ begin
                         if GetString(r, param, r, errorInfo, True)
                         then
                         begin
+                          if not (((param[1] = '[') and (param[param.Length] = ']')) or ((param[1] = '{') and (param[param.Length] = '}'))) then
+                            param := '"' + param + '"';
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
                           paramList.Add(param);
                         end
@@ -6647,7 +6649,8 @@ begin
                           if isNumeric(r) or isBoolean(r) then
                           begin
                             param := r;
-                            LogDatei.log_prog('Parsing: getparam: numeric or bool',
+                            LogDatei.log_prog(
+                              'Parsing: getparam (numeric or bool): ' + param,
                               LLdebug2);
                             paramList.Add(param);
                           end
@@ -6945,6 +6948,7 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        omc.JSONValueSyntaxInParameterList := True;
         if timeoutint > 0 then
           omc.timeout := timeoutint;
         testresult := '';
