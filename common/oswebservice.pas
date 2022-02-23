@@ -167,6 +167,7 @@ type
     FParameterlist: TStringList;
     Fhashlist: TStringList;
     FTimeout: integer;
+    FJSONValueSyntaxInParameterList: boolean;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -183,7 +184,8 @@ type
     property hashlist: TStringList read Fhashlist write Fhashlist;
     property jsonUrlString: string read getJsonUrlString;
     property timeout: integer read FTimeout write FTimeout;
-
+    property JSONValueSyntaxInParameterList: boolean
+      read FJSONValueSyntaxInParameterList write FJSONValueSyntaxInParameterList;
   end;
 
   { TJsonThroughHTTPS }
@@ -927,6 +929,7 @@ begin
   FOpsiMethodname := method;
 
   Fparameterlist := TStringList.Create;
+  FJSONValueSyntaxInParameterList := False;
 
   for i := 0 to high(parameters) do
   begin
@@ -946,6 +949,7 @@ begin
 
   Fparameterlist := TStringList.Create;
   Fhashlist := TStringList.Create;
+  FJSONValueSyntaxInParameterList := False;
 
   for i := 0 to high(parameters) do
   begin
