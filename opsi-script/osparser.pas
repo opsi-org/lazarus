@@ -6661,7 +6661,19 @@ begin
                             paramList.Add(param);
                           end
                           else
-                            syntaxcheck := False;
+                          begin
+                            if (((r[1] = '[') and (r[Length(r)] = ']')) or
+                              ((r[1] = '{') and (r[Length(r)] = '}'))) then
+                            begin
+                              param := r;
+                              LogDatei.log_prog(
+                                'Parsing: getparam (array or object): ' + param,
+                                LLdebug2);
+                              paramList.Add(param);
+                            end
+                            else
+                              syntaxcheck := False;
+                          end;
                         end;
                       end;
                     end;
