@@ -63,7 +63,8 @@ opsi-script (4.12.4.37) stable; urgency=low
   * fpTOML: new external library for TOML files handling
   
   * osparser: new global constant %opsiUsertmpDir%; implements #4496
-  * osparser: allow numeric and boolean params in opsiServiceCall, not only strings; implements #4705
+  * osparser: allow json value syntax in params in opsiServiceCall:
+    i.e. numeric/boolean values, arrays and objects without quotes; implements #4705
   * oscertificates: finalize function for linux /mac:
     function pemfileToSystemStore(filename: string): boolean;
     function removeCertFromSystemStore(labelstr: string): boolean;
