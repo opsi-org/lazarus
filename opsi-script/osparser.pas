@@ -6645,20 +6645,40 @@ begin
                         if GetString(r, param, r, errorInfo, True)
                         then
                         begin
+                          // store parameters with json value syntax
+                          // (i.e. quotes around normal strings but not around arrays and objects)
+                          if not (((param[1] = '[') and (param[param.Length] = ']')) or
+                            ((param[1] = '{') and (param[param.Length] = '}'))) then
+                            param := '"' + param + '"';
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
                           paramList.Add(param);
                         end
                         else
                         begin
+                          // allow json value syntax in service call parameters
+                          // (i.e. numeric/boolean values,arrays and objects without quotes)
                           if isNumeric(r) or isBoolean(r) then
                           begin
                             param := r;
-                            LogDatei.log_prog('Parsing: getparam: numeric or bool',
+                            LogDatei.log_prog(
+                              'Parsing: getparam (numeric or bool): ' + param,
                               LLdebug2);
                             paramList.Add(param);
                           end
                           else
-                            syntaxcheck := False;
+                          begin
+                            if (((r[1] = '[') and (r[Length(r)] = ']')) or
+                              ((r[1] = '{') and (r[Length(r)] = '}'))) then
+                            begin
+                              param := r;
+                              LogDatei.log_prog(
+                                'Parsing: getparam (array or object): ' + param,
+                                LLdebug2);
+                              paramList.Add(param);
+                            end
+                            else
+                              syntaxcheck := False;
+                          end;
                         end;
                       end;
                     end;
@@ -6951,6 +6971,7 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        omc.JSONValueSyntaxInParameterList := True;
         if timeoutint > 0 then
           omc.timeout := timeoutint;
         testresult := '';

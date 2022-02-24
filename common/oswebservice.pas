@@ -167,6 +167,7 @@ type
     FParameterlist: TStringList;
     Fhashlist: TStringList;
     FTimeout: integer;
+    FJSONValueSyntaxInParameterList: boolean;
   public
     { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
@@ -183,7 +184,8 @@ type
     property hashlist: TStringList read Fhashlist write Fhashlist;
     property jsonUrlString: string read getJsonUrlString;
     property timeout: integer read FTimeout write FTimeout;
-
+    property JSONValueSyntaxInParameterList: boolean
+      read FJSONValueSyntaxInParameterList write FJSONValueSyntaxInParameterList;
   end;
 
   { TJsonThroughHTTPS }
@@ -927,6 +929,7 @@ begin
   FOpsiMethodname := method;
 
   Fparameterlist := TStringList.Create;
+  FJSONValueSyntaxInParameterList := False;
 
   for i := 0 to high(parameters) do
   begin
@@ -946,6 +949,7 @@ begin
 
   Fparameterlist := TStringList.Create;
   Fhashlist := TStringList.Create;
+  FJSONValueSyntaxInParameterList := False;
 
   for i := 0 to high(parameters) do
   begin
@@ -998,12 +1002,17 @@ begin
       else
       begin
         testresult := parameterlist.Strings[i];
-        LogDatei.log('Putting to TSuperArray with: ' +
-          SO('"' + parameterlist.Strings[i] + '"').AsJSon, LLdebug3);
+        if JSONValueSyntaxInParameterList then
+          LogDatei.log('Putting to TSuperArray with: ' +
+            SO(parameterlist.Strings[i]).AsJSon, LLdebug3)
+        else
+          LogDatei.log('Putting to TSuperArray with: ' +
+            SO('"' + parameterlist.Strings[i] + '"').AsJSon, LLdebug3);
         //joParams.put(parameterlist.Strings[i]);
         if (length(parameterlist.Strings[i]) > 0) and
           ((parameterlist.Strings[i][1] = '[')) and
           ((parameterlist.Strings[i][length(parameterlist.Strings[i])] = ']')) then
+        begin
           if parameterlist.Strings[i] = '[]' then
           begin
             joParams.AsArray.Add(SA([]));
@@ -1021,10 +1030,15 @@ begin
             //joParams.AsArray.Add(SA([copy(parameterlist.Strings[i], 2,length(parameterlist.Strings[i]) - 2)]).AsString);
             //joParams.AsArray.Add(copy(parameterlist.Strings[i], 2,length(parameterlist.Strings[i]) - 2));
             //joParams.AsArray.Add(parameterlist.Strings[i]);
-          end
-
+          end;
+        end
         else
-          joParams.AsArray.Add(SO('"' + parameterlist.Strings[i] + '"'));
+        begin
+          if JSONValueSyntaxInParameterList then
+            joParams.AsArray.Add(SO(parameterlist.Strings[i]))
+          else
+            joParams.AsArray.Add(SO('"' + parameterlist.Strings[i] + '"'));
+        end;
         //joParams.AsArray.Add(SO(parameterlist.Strings[i]));
         //LogDatei.log ('resulting TSuperArray string: ' + joParams.tostring ,LLDebug3);
       end;
