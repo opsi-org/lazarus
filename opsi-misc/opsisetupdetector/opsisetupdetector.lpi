@@ -135,7 +135,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsisetupdetector"/>
+            <Filename Value="opsisetupdetector.app\Contents\MacOS\opsisetupdetector"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>

@@ -1,7 +1,6 @@
 {"version":1,"strings":[
 {"hash":107887650,"name":"tresultform1.caption","sourcebytes":[111,112,115,105,32,83,101,116,117,112,32,68,101,116,101,99,116,111,114],"value":"opsi Setup Detector"},
 {"hash":315140,"name":"tresultform1.sbtnexit.caption","sourcebytes":[69,120,105,116],"value":"Exit"},
-{"hash":90721267,"name":"tresultform1.panel3.caption","sourcebytes":[80,97,110,101,108,51],"value":"Panel3"},
 {"hash":5941396,"name":"tresultform1.tabsheetstart.caption","sourcebytes":[83,116,97,114,116],"value":"Start"},
 {"hash":4942730,"name":"tresultform1.label2.caption","sourcebytes":[87,105,110,100,111,119,115,58],"value":"Windows:"},
 {"hash":171799732,"name":"tresultform1.btsingleanalyzeandcreatewin.hint","sourcebytes":[65,110,97,108,121,122,101,32,97,32,115,105,110,103,108,101,32,101,120,105,115,116,105,110,103,32,83,101,116,117,112,102,105,108,101,32,10,97,110,100,32,99,114,101,97,116,101,32,97,110,32,111,112,115,105,32,80,114,111,100,117,99,116],"value":"Analyze a single existing Setupfile \nand create an opsi Product"},
