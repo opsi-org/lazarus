@@ -219,13 +219,13 @@ begin
   begin
     LogDatei.log('Removing old settings done', LLInfo);
   end;
-  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminModem,[cffOverwriteFile, cffCreateDestDirectory]);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathSkin) then
-    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathSkin);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathProductIcons) then
-    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathProductIcons);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathScreenShots) then
-    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathScreenShots);
+  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots);
 end;
 
 procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);

@@ -6,7 +6,15 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  OckLinux, OckImagesToDepot;
+  {$IFDEF LINUX}
+   {add Linux specific units here}
+   OckLinux,
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+   {add MacOS specific units here}
+   OckMacOS,
+  {$ENDIF DARWIN}
+  OckImagesToDepot;
 
 type
 
