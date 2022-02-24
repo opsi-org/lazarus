@@ -219,7 +219,13 @@ begin
   begin
     LogDatei.log('Removing old settings done', LLInfo);
   end;
-  CopyDirTree(AbsolutePathCustomSettingsUserMode + PathDelim, AbsolutePathCustomSettingsAdminMode + PathDelim,[cffOverwriteFile, cffCreateDestDirectory]);
+  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminModem,[cffOverwriteFile, cffCreateDestDirectory]);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathSkin) then
+    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathSkin);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathProductIcons) then
+    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathProductIcons);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathScreenShots) then
+    CreateDir(AbsolutePathCustomSettingsAdminModem + PathDelim + RelativePathScreenShots);
 end;
 
 procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);

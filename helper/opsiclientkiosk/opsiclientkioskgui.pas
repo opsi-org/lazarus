@@ -769,6 +769,7 @@ begin
       { load and save current image }
       FilePath := OpenPictureDialogSetIcon.FileName;
       ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
+      if not DirectoryExists(PathsOnClient.FCustomIcons) then CreateDir(PathsOnClient.FCustomIcons);
       ProductPanel.ImageIcon.Picture.SaveToFile(PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath));
       StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
       { delete former image if not used for other products }
@@ -1505,6 +1506,7 @@ begin
       FilePath := OpenPictureDialogSetIcon.FileName;
       LogDatei.log('Save image ' + PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath), LLDebug);
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
+      if not DirectoryExists(PathsOnClient.FCustomIcons) then CreateDir(PathsOnClient.FCustomIcons);
       ImageIconSoftware.Picture.SaveToFile(PathsOnClient.FCustomIcons + PathDelim + ExtractFileName(FilePath));
       StringListCustomIcons.Values[SelectedProduct] := ExtractFileName(FilePath);
       {delete former image if not in StringList hence is not used by another product}
@@ -1529,6 +1531,7 @@ begin
       {load and save image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
+      if not DirectoryExists(PathsOnClient.FCustomScreenShots) then CreateDir(PathsOnClient.FCustomScreenShots);
       ImageScreenShot.Picture.SaveToFile(PathsOnClient.FCustomScreenShots + PathDelim + ExtractFileName(FilePath));
       StringListScreenShots.Values[SelectedProduct] := ExtractFileName(FilePath);
       if not ContainsStr(StringListScreenShots.Text, FormerImageName) then
@@ -2452,9 +2455,11 @@ begin
   logDatei.log('Saving IconsList and ScreenshotsList' , LLNotice);
   logDatei.log('Saving StringListCustomIcons to ' +  PathsOnClient.FCustomIcons + PathDelim +'IconsLis'
     +'t.txt', LLInfo);
+  if not DirectoryExists(PathsOnClient.FCustomIcons) then CreateDir(PathsOnClient.FCustomIcons);
   SaveStringListToFile(StringListCustomIcons, PathsOnClient.FCustomIcons + PathDelim +'IconsList.txt');
   logDatei.log('Saving StringListScreenshots to ' +  PathsOnClient.FCustomScreenShots + PathDelim +'Screensh'
     +'otsList.txt', LLInfo);
+  if not DirectoryExists(PathsOnClient.FCustomScreenShots) then CreateDir(PathsOnClient.FCustomScreenShots);
   SaveStringListToFile(StringListScreenshots, PathsOnClient.FCustomScreenShots + PathDelim +'ScreenshotsList'
     +'.txt');
 end;
