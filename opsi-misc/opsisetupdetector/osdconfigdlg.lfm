@@ -1,10 +1,10 @@
 object FOSDConfigdlg: TFOSDConfigdlg
   Left = 788
-  Height = 528
+  Height = 592
   Top = 251
   Width = 506
   Caption = 'opsi-setup-detector Configuration'
-  ClientHeight = 528
+  ClientHeight = 592
   ClientWidth = 506
   DesignTimePPI = 91
   OnActivate = FormActivate
@@ -14,8 +14,8 @@ object FOSDConfigdlg: TFOSDConfigdlg
   LCLVersion = '2.2.0.4'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
-    Height = 334
-    Top = 85
+    Height = 387
+    Top = 96
     Width = 506
     Align = alClient
     CheckboxForBoolean = False
@@ -32,13 +32,13 @@ object FOSDConfigdlg: TFOSDConfigdlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 85
+    Height = 96
     Top = 0
     Width = 506
     Align = alTop
     ControlList = <    
       item
-        Control = Label1
+        Control = LabelCfgDlgHead
         WrapAfter = waAuto
         Index = 0
       end    
@@ -51,11 +51,11 @@ object FOSDConfigdlg: TFOSDConfigdlg
     FlowStyle = fsLeftRightTopBottom
     ParentFont = False
     TabOrder = 1
-    object Label1: TLabel
+    object LabelCfgDlgHead: TLabel
       Left = 14
-      Height = 71
+      Height = 79
       Top = 5
-      Width = 267
+      Width = 322
       Align = alLeft
       AutoSize = False
       BorderSpacing.Left = 9
@@ -66,13 +66,12 @@ object FOSDConfigdlg: TFOSDConfigdlg
       WordWrap = True
     end
     object BitBtn1: TBitBtn
-      Left = 342
+      Left = 359
       Height = 42
       Top = 20
       Width = 94
       Anchors = []
       AutoSize = True
-      BorderSpacing.Left = 38
       BorderSpacing.Around = 19
       BorderSpacing.InnerBorder = 4
       Caption = 'Finished'
@@ -86,7 +85,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
   object Panel1: TPanel
     Left = 0
     Height = 109
-    Top = 419
+    Top = 483
     Width = 506
     Align = alBottom
     Caption = 'Panel1'
@@ -106,7 +105,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
       BorderSpacing.InnerBorder = 10
       BorderStyle = bsNone
       Color = 8454143
-      Font.Height = -15
+      Font.Height = -14
       ParentFont = False
       ReadOnly = True
       TabOrder = 0

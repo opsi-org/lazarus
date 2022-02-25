@@ -17,7 +17,7 @@ type
   TFOSDConfigdlg = class(TForm)
     BitBtn1: TBitBtn;
     FlowPanel1: TFlowPanel;
-    Label1: TLabel;
+    LabelCfgDlgHead: TLabel;
     MemoConfigHint: TMemo;
     Panel1: TPanel;
     TIPropertyGrid1: TTIPropertyGrid;
@@ -83,6 +83,7 @@ implementation
 
 procedure TFOSDConfigdlg.FormActivate(Sender: TObject);
 begin
+  LabelCfgDlgHead.Caption := rsCnfdTitle;
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean := True;
   //TIPropertyGrid1.PropertyEditorHook;
@@ -119,6 +120,7 @@ begin
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
   myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
   *)
+  Repaint;
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
@@ -126,7 +128,7 @@ begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
-  Label1.Caption := rsCnfdTitle;
+  //LabelCfgDlgHead.Caption := rsCnfdTitle;
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);

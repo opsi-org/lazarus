@@ -29,7 +29,7 @@
       <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
-    <BuildModes Count="4" Active="mac_Release">
+    <BuildModes Count="4" Active="Release">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -225,8 +225,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="834"/>
-        <CursorPos X="9" Y="868"/>
+        <TopLine Value="3512"/>
+        <CursorPos X="67" Y="3524"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -352,9 +352,10 @@
         <ComponentName Value="FOSDConfigdlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="166"/>
-        <CursorPos Y="179"/>
+        <TopLine Value="105"/>
+        <CursorPos X="11" Y="123"/>
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -832,7 +833,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="659"/>
         <CursorPos Y="678"/>
-        <UsageCount Value="141"/>
+        <UsageCount Value="144"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
@@ -866,7 +867,7 @@
         <EditorIndex Value="13"/>
         <TopLine Value="45"/>
         <CursorPos Y="80"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="80"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
@@ -910,7 +911,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="462"/>
         <CursorPos X="14" Y="416"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="55"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit74>
       <Unit75>
@@ -928,7 +929,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="3" Y="21"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="54"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit76>
       <Unit77>
@@ -973,7 +974,7 @@
         <EditorIndex Value="6"/>
         <TopLine Value="21"/>
         <CursorPos X="3" Y="52"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -990,10 +991,9 @@
       <Unit83>
         <Filename Value="info-osd.plist"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <CursorPos X="13" Y="30"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit83>
@@ -1002,7 +1002,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
         <CursorPos X="29" Y="13"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit84>
@@ -1014,124 +1014,124 @@
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="1303" Column="5" TopLine="1285"/>
+        <Filename Value="chooseinstallerdlg.pas"/>
+        <Caret Line="35" Column="71" TopLine="17"/>
       </Position1>
       <Position2>
-        <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="43" Column="3" TopLine="31"/>
+        <Filename Value="chooseinstallerdlg.pas"/>
+        <Caret Line="48" Column="70" TopLine="15"/>
       </Position2>
       <Position3>
         <Filename Value="chooseinstallerdlg.pas"/>
-        <Caret Line="47" Column="3" TopLine="12"/>
+        <Caret Line="21" Column="14" TopLine="15"/>
       </Position3>
       <Position4>
-        <Filename Value="chooseinstallerdlg.pas"/>
-        <Caret Line="48" Column="41" TopLine="14"/>
-      </Position4>
-      <Position5>
-        <Filename Value="chooseinstallerdlg.pas"/>
-        <Caret Line="35" Column="71" TopLine="17"/>
-      </Position5>
-      <Position6>
-        <Filename Value="chooseinstallerdlg.pas"/>
-        <Caret Line="48" Column="70" TopLine="15"/>
-      </Position6>
-      <Position7>
-        <Filename Value="chooseinstallerdlg.pas"/>
-        <Caret Line="21" Column="14" TopLine="15"/>
-      </Position7>
-      <Position8>
         <Filename Value="osdbasedata.pas"/>
         <Caret Line="445" Column="7" TopLine="435"/>
-      </Position8>
-      <Position9>
+      </Position4>
+      <Position5>
         <Filename Value="osdform.pas"/>
         <Caret Line="1303" Column="5" TopLine="1285"/>
+      </Position5>
+      <Position6>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="2071" Column="29" TopLine="2065"/>
+      </Position6>
+      <Position7>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="532" Column="64" TopLine="511"/>
+      </Position7>
+      <Position8>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="841" Column="52" TopLine="838"/>
+      </Position8>
+      <Position9>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1872" Column="55" TopLine="1854"/>
       </Position9>
       <Position10>
         <Filename Value="osdform.pas"/>
-        <Caret Line="2071" Column="29" TopLine="2065"/>
+        <Caret Line="1910" Column="35" TopLine="1891"/>
       </Position10>
       <Position11>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="532" Column="64" TopLine="511"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="2091" Column="21" TopLine="2085"/>
       </Position11>
       <Position12>
         <Filename Value="osdform.pas"/>
-        <Caret Line="841" Column="52" TopLine="838"/>
+        <Caret Line="856" Column="27" TopLine="830"/>
       </Position12>
       <Position13>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1872" Column="55" TopLine="1854"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="606" Column="28" TopLine="582"/>
       </Position13>
       <Position14>
         <Filename Value="osdform.pas"/>
-        <Caret Line="1910" Column="35" TopLine="1891"/>
+        <Caret Line="2094" Column="20" TopLine="2088"/>
       </Position14>
       <Position15>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2091" Column="21" TopLine="2085"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="89" Column="24" TopLine="86"/>
       </Position15>
       <Position16>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="856" Column="27" TopLine="830"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="128" Column="4" TopLine="122"/>
       </Position16>
       <Position17>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="606" Column="28" TopLine="582"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="148" TopLine="123"/>
       </Position17>
       <Position18>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2094" Column="20" TopLine="2088"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="158" Column="22" TopLine="135"/>
       </Position18>
       <Position19>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="89" Column="24" TopLine="86"/>
+        <Caret Line="137" Column="49" TopLine="124"/>
       </Position19>
       <Position20>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="128" Column="4" TopLine="122"/>
+        <Caret Line="130" Column="23" TopLine="124"/>
       </Position20>
       <Position21>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="148" TopLine="123"/>
+        <Caret Line="135" TopLine="126"/>
       </Position21>
       <Position22>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="158" Column="22" TopLine="135"/>
+        <Caret Line="165" Column="39" TopLine="152"/>
       </Position22>
       <Position23>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="137" Column="49" TopLine="124"/>
+        <Caret Line="170" TopLine="152"/>
       </Position23>
       <Position24>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="130" Column="23" TopLine="124"/>
+        <Caret Line="171" TopLine="152"/>
       </Position24>
       <Position25>
-        <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="135" TopLine="126"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="538" Column="63" TopLine="483"/>
       </Position25>
       <Position26>
-        <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="165" Column="39" TopLine="152"/>
+        <Filename Value="notarize_osd.bash"/>
+        <Caret Line="11" Column="20"/>
       </Position26>
       <Position27>
-        <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="170" TopLine="152"/>
+        <Filename Value="info-osd.plist"/>
+        <Caret Line="30" Column="13"/>
       </Position27>
       <Position28>
         <Filename Value="osdconfigdlg.pas"/>
-        <Caret Line="171" TopLine="152"/>
+        <Caret Line="179" TopLine="166"/>
       </Position28>
       <Position29>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="538" Column="63" TopLine="483"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="86" Column="18" TopLine="81"/>
       </Position29>
       <Position30>
-        <Filename Value="notarize_osd.bash"/>
-        <Caret Line="11" Column="20"/>
+        <Filename Value="osdconfigdlg.pas"/>
+        <Caret Line="130" Column="44" TopLine="112"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
