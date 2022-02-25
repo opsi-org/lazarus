@@ -29,7 +29,7 @@
       <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.2"/>
     </VersionInfo>
-    <BuildModes Count="4" Active="Release">
+    <BuildModes Count="4" Active="mac_Release">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -226,7 +226,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <TopLine Value="3512"/>
-        <CursorPos X="67" Y="3524"/>
+        <CursorPos X="6" Y="3524"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -237,7 +237,6 @@
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="manifest.xml"/>
@@ -305,7 +304,6 @@
         </ExtraEditor1>
         <UsageCount Value="212"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="osdhelper.pas"/>
@@ -327,7 +325,6 @@
         <CursorPos X="38" Y="385"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="osdbasedata.pas"/>
@@ -344,7 +341,6 @@
         </ExtraEditor1>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="osdconfigdlg.pas"/>
@@ -359,7 +355,6 @@
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="osdcreate.pas"/>
@@ -376,7 +371,6 @@
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="template-files\setupsingle.opsiscript"/>
@@ -599,7 +593,6 @@
         <CursorPos X="7" Y="556"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
       <Unit39>
         <Filename Value="osdanalyzelin.pas"/>
@@ -610,7 +603,6 @@
         <CursorPos Y="518"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
         <Filename Value="template-files\mac\setupsingle.opsiscript"/>
@@ -689,7 +681,6 @@
         <CursorPos X="41" Y="328"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="C:\usr\share\lazarus\2.0.10\components\lazutils\masks.pas"/>
@@ -869,7 +860,6 @@
         <CursorPos Y="80"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
         <Filename Value="C:\usr\share\lazarus\2.0.12\lcl\lcltranslator.pas"/>
@@ -977,7 +967,6 @@
         <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
         <Filename Value="C:\usr\share\lazarus\2.2.0\lcl\controls.pp"/>
