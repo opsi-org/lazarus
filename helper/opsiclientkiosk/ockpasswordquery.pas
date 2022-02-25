@@ -46,10 +46,10 @@ implementation
 procedure TFormPasswordQuery.ButtonOKClick(Sender: TObject);
 begin
   If SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'root' then
-    OckLinux.RunCommandElevated.Sudo := False
+    RunCommandElevated.Sudo := False
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
-    OckLinux.RunCommandElevated.Sudo := True;
-  OckLinux.RunCommandElevated.Password := EditPassword.Text;
+    RunCommandElevated.Sudo := True;
+  RunCommandElevated.Password := EditPassword.Text;
   if PasswordCorrect then
   begin
     Close;
