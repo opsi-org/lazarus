@@ -1216,7 +1216,7 @@ begin
       if UpperCase(exename) = UpperCase(foundexe) then
       begin
         if (domuser = mydomain + '\' + myuser) or
-          (domuser = selfdom + '\' + selfuser) or (domuser = '') then
+          (domuser = selfdom + '\' + selfuser) or (domuser = '') or (selfuser = 'SYSTEM') then
         begin
           LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
             IntToStr(pid) + ' from user: ' + domuser, LLDebug);

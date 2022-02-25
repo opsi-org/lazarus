@@ -24,7 +24,9 @@ uses
   JwaWinnt,
   jwawinbase,
   JwaWindows,
-  Windows;
+  Windows,
+  oswmi,
+  oslog;
 //,  DSiWin32;
 
 var
@@ -178,6 +180,8 @@ function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
 function GetNTVersionMajor: Dword;
 function GetNTVersionMinor: Dword;
 function GetMSVersionName: string;
+
+function GetFQDNfromWMI: string;
 
 
 implementation
@@ -499,6 +503,37 @@ begin
   Result := pdwReturnedProductType;
 end;
 
+
+function GetFQDNfromWMI: string;
+var
+  WMIProperties, WMIResults: TStringList;
+  ErrorMsg, FQDN: string;
+  hostname, domain: string;
+begin
+  Result := '';
+  LogDatei.log('Try getting FQDN with WMI:', LLInfo);
+  WMIProperties := TStringList.Create;
+  WMIProperties.Add('DNSHostName');
+  WMIProperties.Add('Name');
+  WMIProperties.Add('Domain');
+  WMIResults := TStringList.Create;
+  ErrorMsg := '';
+  if osGetWMI('root\cimv2', 'Win32_ComputerSystem', WMIProperties,
+    '', WMIResults, ErrorMsg) then
+  begin
+    hostname := WMIResults.Values['DNSHostName'];
+    if (hostname = '') then
+      hostname := WMIResults.Values['Name'];
+
+    domain := WMIResults.Values['Domain'];
+
+    FQDN := hostname + '.' + domain;
+    Result := FQDN;
+    LogDatei.log('WMI result for FQDN: ' + FQDN, LLInfo);
+  end
+  else
+    LogDatei.log('Searching FQDN with WMI failed', LLNotice);
+end;
 
 
 initialization

@@ -9,16 +9,24 @@ uses
   SysUtils,
   resolve,
   RegExpr,
-  Process;
+  Process,
+  strutils;
 
 type
   StringArray = array of string;
+
+type
+  TNetworkIP = record
+    case Mode: boolean of
+      True: (IP1, IP2, IP3, IP4: byte);
+      False: (IP: longword);
+  end;
 
 function isValidIP4(ip4adr: string): boolean;
 //return true if the IPv4 address is valid.
 function isValidIP6(ip6adr: string): boolean;
 //return true if the IPv6 address is valid. ToDo: testing
-function isValidIP(ipadr: string):boolean;
+function isValidIP(ipadr: string): boolean;
 //return true if the IP address (ipv4 or ipv6) is valid.
 function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
 // return network address for the IP address and netmask.
@@ -33,6 +41,10 @@ function getNetmaskByIP4adr(cidr: string): string;
 // return netmask for the IPv4 address.
 function getNetworkDetails(Requests: array of string): StringArray;
 // return requested network details
+function cidrToNetmask(cidr: string): string;
+// convert cidr notation to dotted decimal notation.
+function netmaskToCidr(netmask: string): string;
+// convert dotted decimal notation notation to cidr.
 
 implementation
 
@@ -81,11 +93,12 @@ begin
   end;
 end;
 
-function isValidIP(ipadr: string):boolean;
+function isValidIP(ipadr: string): boolean;
 begin
   if isValidIP4(ipadr) or isValidIP6(ipadr) then
     Result := True
-  else Result := False;
+  else
+    Result := False;
 end;
 
 function binToDec(binary: string): integer;
@@ -111,24 +124,28 @@ var
   binaryoctets: array of string;
 begin
   Result := '';
+  if TryStrToInt(cidr, shortmask) then
+  begin
 
-  shortmask := StrToInt(cidr);
+    for cidrcounter := 1 to shortmask do
+      longmask += '1';
+    for cidrcounter := shortmask + 1 to 32 do
+      longmask += '0';
 
-  for cidrcounter := 1 to shortmask do
-    longmask += '1';
-  for cidrcounter := shortmask + 1 to 32 do
-    longmask += '0';
+    longmaskdotted := Copy(longmask, 1, 8) + '.' + Copy(longmask, 9, 8) +
+      '.' + Copy(longmask, 17, 8) + '.' + Copy(longmask, 25, 8);
+    binaryoctets := longmaskdotted.Split(['.']);
 
-  longmaskdotted := Copy(longmask, 1, 8) + '.' + Copy(longmask, 9, 8) +
-    '.' + Copy(longmask, 17, 8) + '.' + Copy(longmask, 25, 8);
-  binaryoctets := longmaskdotted.Split(['.']);
+    netmask := IntToStr(binToDec(binaryoctets[0])) + '.';
+    netmask += IntToStr(binToDec(binaryoctets[1])) + '.';
+    netmask += IntToStr(binToDec(binaryoctets[2])) + '.';
+    netmask += IntToStr(binToDec(binaryoctets[3]));
 
-  netmask := IntToStr(binToDec(binaryoctets[0])) + '.';
-  netmask += IntToStr(binToDec(binaryoctets[1])) + '.';
-  netmask += IntToStr(binToDec(binaryoctets[2])) + '.';
-  netmask += IntToStr(binToDec(binaryoctets[3]));
-
-  Result := netmask;
+    Result := netmask;
+  end
+  else
+    // not a valid number
+  ;
 end;
 
 function getIP4NetworkByAdrAndMask(ip4adr, netmask: string): string;
@@ -392,6 +409,201 @@ begin
         end;
       end;
     end;
+  end;
+end;
+
+{#######################################################
+begin of functions from
+https://fpc-pascal.freepascal.narkive.com/j0XK4BHH/re-library-for-network-calculation
+########################################################}
+
+function StringToIP(aIP: ansistring): TNetworkIP;
+begin
+  Result.Mode := True;
+  Result.IP4 := StrToInt(Copy2SymbDel(aIP, '.'));
+  Result.IP3 := StrToInt(Copy2SymbDel(aIP, '.'));
+  Result.IP2 := StrToInt(Copy2SymbDel(aIP, '.'));
+  Result.IP1 := StrToInt(Copy2SymbDel(aIP, '.'));
+end;
+
+function IPToString(aIP: TNetworkIP): string;
+begin
+  aIP.Mode := True;
+  Result := IntToStr(aIP.IP4) + '.' + IntToStr(aIP.IP3) + '.' +
+    IntToStr(aIP.IP2) + '.' + IntToStr(aIP.IP1);
+end;
+
+function IPToBits(aIP: TNetworkIP): string;
+begin
+  aIP.Mode := True;
+  Result := BinStr(aIP.IP4, 8) + BinStr(aIP.IP3, 8) + BinStr(aIP.IP2, 8) +
+    BinStr(aIP.IP1, 8);
+end;
+
+function NetMaskToHostMask(NetMask: TNetworkIP): TNetworkIP;
+begin
+  Result.Mode := False;
+  NetMask.Mode := False;
+  Result.IP := NetMask.IP xor %11111111111111111111111111111111;
+end;
+
+function HostMaskToNetMask(HostMask: TNetworkIP): TNetworkIP;
+begin
+  Result.Mode := False;
+  HostMask.Mode := False;
+  Result.IP := HostMask.IP xor %11111111111111111111111111111111;
+end;
+
+function CIDRToNetMask(Bits: byte): TNetworkIP;
+var
+  CurBit: byte;
+  HostMask: TNetworkIP;
+begin
+  HostMask.Mode := False;
+  HostMask.IP := 0;
+  for CurBit := 1 to 32 - Bits do
+    HostMask.IP := HostMask.IP + (1 shl (CurBit - 1));
+  Result := HostMaskToNetMask(HostMask);
+end;
+
+function NetMaskToCIDR(NetMask: TNetworkIP): byte;
+var
+  CurBit: byte;
+begin
+  Result := 0;
+  for CurBit := 32 downto 1 do
+    if (NetMask.IP and (1 shl (CurBit - 1))) = (1 shl (CurBit - 1)) then
+      Result := CurBit;
+end;
+
+function BroadcastOf(IP, NetMask: TNetworkIP): TNetworkIP;
+var
+  HostMask: TNetworkIP;
+begin
+  HostMask := NetMaskToHostMask(NetMask);
+  Result.Mode := False;
+  IP.Mode := False;
+  HostMask.Mode := False;
+  Result.IP := IP.IP or HostMask.IP;
+end;
+
+function NetworkOf(IP, NetMask: TNetworkIP): TNetworkIP;
+begin
+  IP.Mode := False;
+  NetMask.Mode := False;
+  Result.Mode := False;
+  Result.IP := IP.IP and NetMask.IP;
+end;
+
+function HostCount(NetMask: TNetworkIP): longword;
+var
+  HostMask: TNetworkIP;
+begin
+  HostMask := NetMaskToHostMask(NetMask);
+  HostMask.Mode := False;
+  Result := HostMask.IP + 1;
+end;
+
+function SubNetCount(DefMask, Mask: TNetworkIP): longword;
+var
+  DefHosts, Hosts: longword;
+begin
+  DefHosts := HostCount(DefMask);
+  Hosts := HostCount(Mask);
+  Result := DefHosts div Hosts;
+end;
+
+function IPToRange(IP, NetMask: TNetworkIP): string;
+var
+  Net, Broad: TNetworkIP;
+begin
+  Net := NetworkOf(IP, NetMask);
+  Broad := BroadCastOf(IP, NetMask);
+  Net.Mode := False;
+  Broad.Mode := False;
+  Net.IP := Net.IP + 1;
+  Broad.IP := Broad.IP - 1;
+  Result := IPToString(Net) + '-' + IPToString(Broad);
+end;
+
+function IncSubNet(BaseIP, Mask: TNetworkIP): TNetworkIP;
+var
+  HostMask: TNetworkIP;
+begin
+  HostMask := NetMaskToHostMask(Mask);
+  HostMask.Mode := False;
+  HostMask.IP := HostMask.IP + 1;
+  BaseIP.Mode := False;
+  Result.Mode := False;
+  Result.IP := BaseIP.IP + HostMask.IP;
+end;
+
+function HostCountToCIDR(Hosts: longword): byte;
+var
+  CurBit: byte;
+  HostMask: TNetworkIP;
+  Last1Bit: byte;
+begin
+  HostMask.Mode := False;
+  HostMask.IP := Hosts;
+  Last1Bit := 0;
+  for CurBit := 1 to 32 do
+    if (HostMask.IP and (1 shl (CurBit - 1))) = (1 shl (CurBit - 1)) then
+      Last1Bit := CurBit;
+  Result := 32 - Last1Bit;
+end;
+
+function HostCountToNetMask(Hosts: longword): TNetworkIP;
+begin
+  Result := CIDRToNetMask(HostCountToCIDR(Hosts));
+end;
+
+function IsMemberOfSubNet(IP, SubNet: TNetworkIP): boolean;
+begin
+  IP.Mode := False;
+  Subnet.Mode := False;
+  Result := IP.IP and Subnet.IP = Subnet.IP;
+end;
+
+
+{#######################################################
+end of functions from
+https://fpc-pascal.freepascal.narkive.com/j0XK4BHH/re-library-for-network-calculation
+########################################################}
+
+function netmaskToCidr(netmask: string): string;
+  // convert dotted decimal notation notation to cidr.end.
+var
+  lookup: TStringList;
+begin
+  Result := '';
+  try
+    lookup := TStringList.Create;
+    lookup.add('0.0.0.0=0');
+    lookup.add('240.0.0.0=4');
+    lookup.add('255.0.0.0=8');
+    lookup.add('255.240.0.0=12');
+    lookup.add('255.255.0.0=16');
+    lookup.add('255.255.128.0=17');
+    lookup.add('255.255.192.0=18');
+    lookup.add('255.255.224.0=19');
+    lookup.add('255.255.240.0=20');
+    lookup.add('255.255.248.0=21');
+    lookup.add('255.255.252.0=22');
+    lookup.add('255.255.254.0=23');
+    lookup.add('255.255.255.0=24');
+    lookup.add('255.255.255.128=25');
+    lookup.add('255.255.255.192=26');
+    lookup.add('255.255.255.224=27');
+    lookup.add('255.255.255.240=28');
+    lookup.add('255.255.255.248=29');
+    lookup.add('255.255.255.252=30');
+    lookup.add('255.255.255.254=31');
+    lookup.add('255.255.255.255=32');
+
+    Result := lookup.Values[netmask];
+  except
+    FreeAndNil(lookup);
   end;
 end;
 

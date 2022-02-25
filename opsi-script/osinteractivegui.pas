@@ -252,7 +252,8 @@ var
 
 resourcestring
   rsProductCheck = 'product check';
-
+  rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
+  rsErrorFindingLogViewer = 'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
 implementation
 
 //{$R manifest.rc}
@@ -1007,8 +1008,10 @@ begin
 end;
 
 procedure TCentralForm.BitBtnViewLogfileClick(Sender: TObject);
+var
+  ErrorMessage: String;
+  PathOpsiLogViewer: String;
 begin
-  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
   {$IFDEF WIN32}
   (*
   ShowTextFile.lzRichEdit1.Clear;
@@ -1022,6 +1025,32 @@ begin
   {$IFDEF WINDOWS}ShowWindow(ShowTextFile.handle, SW_RESTORE);{$ENDIF}
   *)
   {$ENDIF WIN32}
+  {$IFDEF WINDOWS}
+    PathOpsiLogViewer := 'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+    PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+    //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+    ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  {$ELSE}
+  if FileExists(PathOpsiLogViewer) then
+  begin
+    if ExecuteProcess(PathOpsiLogViewer,Edit2.Text) <> 0 then
+    begin
+      ErrorMessage := rsErrorLoadingLogViewer;
+      LogDatei.log(ErrorMessage,LLInfo);
+      ShowMessage(ErrorMessage);
+    end;
+  end
+  else
+  begin
+    ErrorMessage := rsErrorFindingLogViewer  + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage,LLInfo);
+    ShowMessage(ErrorMessage);
+  end;
+  {$ENDIF DARWIN}
 end;
 
 
