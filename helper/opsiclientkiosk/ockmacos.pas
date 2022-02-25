@@ -47,7 +47,7 @@ var
 
 const
   // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
-  MountPoint = '/mnt/opsi_depot_rw';
+  MountPoint = '/opsi_depot_rw';
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
   AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
@@ -87,9 +87,10 @@ procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
   ShellCommand: string;
   ShellOutput: string;
+
 begin
   try
-    LogDatei.log('Mounting ' + PathToDepot + ' on' + MountPoint , LLInfo);
+    LogDatei.log('Mounting ' + PathToDepot + ' on ' + MountPoint , LLInfo);
     {set shell and options}
     if assigned(RunCommandElevated) then
     begin
@@ -97,15 +98,26 @@ begin
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
       if not DirectoryExists(MountPoint) then
       begin
-        RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput);
+        //RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput);
+        if RunCommand('/bin/sh', ['-c', 'mkdir ' + MountPoint], ShellOutput) then
+        begin
+          LogDatei.log('mkdir ' + MountPoint + ' done ', LLInfo);
+        end
+        else
+        begin
+          LogDatei.log('Error while trying to run command "mkdir ' + MountPoint + '"', LLError);
+        end;
         MountPointAlreadyExists := False;
       end
       else MountPointAlreadyExists := True;
-      ShellCommand := 'mount -t cifs' + ' '
-                      + '-o username=' + User + ',' + 'password=' + Password + ' '
+      Delete(PathToDepot, 1, 2);
+      ShellCommand := 'mount_smbfs' + ' '
+                      + '//' + User + '@'
                       + PathToDepot + ' '
                       + MountPoint;
-      if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
+      //':' + Password + '@'
+      //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -113,7 +125,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Error while trying to run command mount for path: ' + PathToDepot, LLError);
+        LogDatei.log('Error while trying to run command: ' + ShellCommand, LLError);
       end;
     end
     else

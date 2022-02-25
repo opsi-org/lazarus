@@ -49,7 +49,7 @@ begin
     RunCommandElevated.Sudo := False
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
     RunCommandElevated.Sudo := True;
-  RunCommandElevated.Password := EditPassword.Text;
+  RunCommandElevated.Password := AnsiQuotedStr(EditPassword.Text,'''');
   if PasswordCorrect then
   begin
     Close;
