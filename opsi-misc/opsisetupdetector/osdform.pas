@@ -824,10 +824,12 @@ var
   serviceversion: string;
   i: integer;
   passwordToUse: string;
+  strlist: TStringList;
 begin
   if localservicedata = nil then
   begin
     try
+      strlist := TStringList.Create;
       localservicedata := TOpsi4Data.Create;
       if (myconfiguration.Service_URL <> '') and
         (myconfiguration.Service_user <> '') then
@@ -837,7 +839,8 @@ begin
           passwordToUse :=
             PasswordBox('service: ' + myconfiguration.Service_URL +
             ' user: ' + myconfiguration.Service_user, 'Password for opsi web service');
-
+        Screen.Cursor := crHourGlass;
+        procmess;
         localservicedata.initOpsiConf(myconfiguration.Service_URL,
           myconfiguration.Service_user,
           passwordToUse);
@@ -849,9 +852,10 @@ begin
           FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           // fetch produtIds from service
-          for i := 0 to localservicedata.getProductIds.Count - 1 do
+          strlist.Text := localservicedata.getProductIds.Text;
+          for i := 0 to strlist.Count - 1 do
             FNewDepDlg.ComboBoxproductIds.Items.Add(
-              opsiunquotestr2(localservicedata.getProductIds.strings[i], '""'));
+              opsiunquotestr2(strlist.strings[i], '""'));
         end
         else
         begin
@@ -873,6 +877,9 @@ begin
       end;
     finally
       FreeAndNil(localservicedata);
+      FreeAndNil(strlist);
+      Screen.Cursor := crDefault;
+      ;
     end;
   end;
 end;
@@ -2093,6 +2100,7 @@ begin
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
+
   procmess;
   if FNewDepDlg.ShowModal = mrOk then
   begin
