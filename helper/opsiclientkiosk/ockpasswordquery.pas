@@ -44,12 +44,17 @@ implementation
 { TFormPasswordQuery }
 
 procedure TFormPasswordQuery.ButtonOKClick(Sender: TObject);
+var
+  S:string;
 begin
   If SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'root' then
     RunCommandElevated.Sudo := False
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
     RunCommandElevated.Sudo := True;
-  RunCommandElevated.Password := AnsiQuotedStr(EditPassword.Text,'''');
+  S := EditPassword.Text;
+  Insert('''',S,pos('''',S)); //AnsiQuotedStr(EditPassword.Text,'''');
+  RunCommandElevated.Password := S;
+  S := '';
   if PasswordCorrect then
   begin
     Close;

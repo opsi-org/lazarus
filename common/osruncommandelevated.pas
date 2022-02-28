@@ -41,7 +41,7 @@ implementation
 constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption: string = '-c');
 begin
   inherited Create;
-  FPassword := AnsiQuotedStr(aPassword,'''');
+  FPassword := aPassword; // AnsiQuotedStr(aPassword,'''');
   FSudo := aSudo;
   FShell := aShell;
   FShellOption := aShellOption;
