@@ -1,63 +1,62 @@
 object FChooseInstallerDlg: TFChooseInstallerDlg
   Left = 419
-  Height = 238
+  Height = 251
   Top = 203
-  Width = 320
+  Width = 338
   Caption = 'opsi-setup-detector'
-  ClientHeight = 238
-  ClientWidth = 320
-  DesignTimePPI = 91
+  ClientHeight = 251
+  ClientWidth = 338
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
-    Height = 120
+    Height = 127
     Top = 0
-    Width = 320
+    Width = 338
     Align = alTop
-    ClientHeight = 120
-    ClientWidth = 320
+    ClientHeight = 127
+    ClientWidth = 338
     TabOrder = 0
     object LabelChooseMsg: TLabel
-      Left = 11
-      Height = 75
-      Top = 34
-      Width = 298
+      Left = 12
+      Height = 80
+      Top = 35
+      Width = 314
       Align = alClient
       Alignment = taCenter
-      BorderSpacing.Around = 10
-      Caption = 'Do you want to choose a '#10'installertype manually'#10'and go  on (ok)'#10'or do you want to cancel ?'
+      BorderSpacing.Around = 11
     end
     object LabelSorryUnknown: TLabel
       Left = 1
       Height = 23
       Top = 1
-      Width = 318
+      Width = 336
       Align = alTop
       Alignment = taCenter
       Caption = 'Sorry: Unknown Installer'
       Font.Color = clRed
-      Font.Height = -16
+      Font.Height = -17
       Font.Style = [fsBold]
       ParentFont = False
     end
   end
   object ComboBoxChooseInstaller: TComboBox
     Left = 5
-    Height = 29
-    Top = 125
-    Width = 310
+    Height = 23
+    Top = 132
+    Width = 328
     Align = alTop
     BorderSpacing.Around = 5
-    ItemHeight = 0
+    ItemHeight = 15
     TabOrder = 1
     Text = 'ComboBoxChooseInstaller'
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 79
-    Top = 159
-    Width = 320
+    Height = 91
+    Top = 160
+    Width = 338
     Align = alClient
     BevelOuter = bvNone
     ControlList = <    
@@ -75,12 +74,12 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
     FlowStyle = fsLeftRightTopBottom
     TabOrder = 2
     object BitBtn1: TBitBtn
-      Left = 10
-      Height = 28
-      Top = 10
-      Width = 111
+      Left = 11
+      Height = 30
+      Top = 11
+      Width = 117
       Anchors = []
-      BorderSpacing.Around = 10
+      BorderSpacing.Around = 11
       Default = True
       DefaultCaption = True
       Kind = bkOK
@@ -88,13 +87,13 @@ object FChooseInstallerDlg: TFChooseInstallerDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 171
-      Height = 28
-      Top = 10
-      Width = 133
+      Left = 182
+      Height = 30
+      Top = 11
+      Width = 140
       Anchors = []
-      BorderSpacing.Left = 30
-      BorderSpacing.Around = 10
+      BorderSpacing.Left = 32
+      BorderSpacing.Around = 11
       Cancel = True
       DefaultCaption = True
       Kind = bkCancel

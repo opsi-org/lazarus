@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons;
+  Buttons,
+  lcltranslator;
 
 type
 
@@ -21,6 +22,7 @@ type
     LabelSorryUnknown: TLabel;
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
 
   public
@@ -47,6 +49,12 @@ implementation
 { TFChooseInstallerDlg }
 
 procedure TFChooseInstallerDlg.FormCreate(Sender: TObject);
+begin
+  LabelSorryUnknown.Caption := rsSorryUnknown;
+  LabelChooseMsg.Caption := rsChooseInstallerMsg;
+end;
+
+procedure TFChooseInstallerDlg.FormShow(Sender: TObject);
 begin
   LabelSorryUnknown.Caption := rsSorryUnknown;
   LabelChooseMsg.Caption := rsChooseInstallerMsg;
