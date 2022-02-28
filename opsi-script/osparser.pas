@@ -6646,17 +6646,19 @@ begin
                         then
                         begin
                           // store parameters with json value syntax
-                          // (i.e. quotes around normal strings but not around arrays and objects)
+                          // (i.e. quotes around normal strings but not around arrays, objects and null)
                           if not (((param[1] = '[') and (param[param.Length] = ']')) or
-                            ((param[1] = '{') and (param[param.Length] = '}'))) then
+                            ((param[1] = '{') and (param[param.Length] = '}')) or
+                            (param = 'null')) then
                             param := '"' + param + '"';
+
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
                           paramList.Add(param);
                         end
                         else
                         begin
                           // allow json value syntax in service call parameters
-                          // (i.e. numeric/boolean values,arrays and objects without quotes)
+                          // (i.e. numeric/boolean values, arrays, objects and null without quotes)
                           if isNumeric(r) or isBoolean(r) then
                           begin
                             param := r;
@@ -6668,11 +6670,12 @@ begin
                           else
                           begin
                             if (((r[1] = '[') and (r[Length(r)] = ']')) or
-                              ((r[1] = '{') and (r[Length(r)] = '}'))) then
+                              ((r[1] = '{') and (r[Length(r)] = '}')) or
+                              (r = 'null')) then
                             begin
                               param := r;
                               LogDatei.log_prog(
-                                'Parsing: getparam (array or object): ' + param,
+                                'Parsing: getparam (array, object or null): ' + param,
                                 LLdebug2);
                               paramList.Add(param);
                             end
