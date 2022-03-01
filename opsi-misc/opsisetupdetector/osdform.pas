@@ -508,6 +508,7 @@ var
   mylocaledir: string;
   localservicedata: TOpsi4Data = nil;
   productIds: TStringList;
+  passwordToUse: string;
 //myFont : string;
 
 
@@ -823,7 +824,7 @@ procedure startOpsiServiceConnection;
 var
   serviceversion: string;
   i: integer;
-  passwordToUse: string;
+  //passwordToUse: string; is a global var
   strlist: TStringList;
 begin
   if localservicedata = nil then
@@ -834,7 +835,8 @@ begin
       if (myconfiguration.Service_URL <> '') and
         (myconfiguration.Service_user <> '') then
       begin
-        passwordToUse := myconfiguration.Service_pass;
+        if passwordToUse = '' then
+          passwordToUse := myconfiguration.Service_pass;
         if passwordToUse = '' then
           passwordToUse :=
             PasswordBox('service: ' + myconfiguration.Service_URL +
@@ -2100,7 +2102,19 @@ begin
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
-
+  // avoid nonsense dependencies in meta product
+  if osdsettings.runmode = createMeta then
+  begin
+    FNewDepDlg.GroupBox1.Enabled := False;
+    FNewDepDlg.ComboBoxActState.Enabled := False;
+    FNewDepDlg.ComboBoxReqType.Enabled := False;
+  end
+  else
+  begin
+    FNewDepDlg.GroupBox1.Enabled := True;
+    FNewDepDlg.ComboBoxActState.Enabled := True;
+    FNewDepDlg.ComboBoxReqType.Enabled := True;
+  end;
   procmess;
   if FNewDepDlg.ShowModal = mrOk then
   begin

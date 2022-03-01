@@ -95,7 +95,7 @@ end;
 procedure TFNewDepDlg.FormShow(Sender: TObject);
 begin
   label2.Caption := rsDepDlgProductId;
-  ComboBoxReqType.Enabled := True;
+  //ComboBoxReqType.Enabled := True;
 end;
 
 procedure TFNewDepDlg.ComboBoxActStateChange(Sender: TObject);
