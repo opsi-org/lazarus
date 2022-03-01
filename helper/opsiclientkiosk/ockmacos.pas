@@ -47,7 +47,7 @@ var
 
 const
   // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
-  MountPoint = '/opsi_depot_rw';
+  MountPoint = '/tmp/opsi_depot_rw';
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
   AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
@@ -60,7 +60,7 @@ const
   {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
   PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
   {$ELSE} //if the kiosk is a standalone opsi product
-  PathKioskAppOnDepot = '/opsi-client-kiosk/files/app';
+  PathKioskAppOnDepot = '/m-opsi-client-kiosk/files/app';
   {$ENDIF KIOSK_IN_AGENT}
 
 implementation
@@ -98,7 +98,7 @@ begin
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
       if not DirectoryExists(MountPoint) then
       begin
-        //RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput);
+        //if RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput) then
         if RunCommand('/bin/sh', ['-c', 'mkdir ' + MountPoint], ShellOutput) then
         begin
           LogDatei.log('mkdir ' + MountPoint + ' done ', LLInfo);
@@ -117,7 +117,7 @@ begin
                       + MountPoint;
       //':' + Password + '@'
       //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
-      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoShow) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -192,7 +192,7 @@ var
   Output: string;
 begin
   Output := '';
-  Result := RunCommandElevated.Run('cp -r --remove-destination' + ' '+ Source + ' ' + Destination, Output);
+  Result := RunCommandElevated.Run('cp -fR' + ' '+ Source + ' ' + Destination, Output);
 end;
 
 function PasswordCorrect: boolean;
@@ -210,7 +210,7 @@ end;
 
 procedure TPathsOnDepotMacOS.SetDepotPaths;
 begin
-  FKioskApp := PathKioskAppOnDepot;
+  FKioskApp := MountPoint + PathKioskAppOnDepot;
   FCustomSettings := FKioskApp;
   FCustomIcons := FCustomSettings + RelativePathProductIcons;
   FCustomScreenShots := FCustomSettings + RelativePathScreenShots;

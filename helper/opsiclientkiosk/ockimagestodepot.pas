@@ -64,14 +64,6 @@ implementation
 
 {$R *.lfm}
 
-const
-  PathDepotOnShare = '\var\lib\opsi\depot';
-  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
-    PathKioskAppOnShare = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
-  {$ELSE} //if the kiosk is a standalone opsi product
-    PathKioskAppOnShare = '\opsi-client-kiosk\files\app';
-  {$ENDIF KIOSK_IN_AGENT}
-  CustomFolder = '\ock_custom';
 
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';

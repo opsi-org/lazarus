@@ -52,7 +52,7 @@ begin
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
     RunCommandElevated.Sudo := True;
   S := EditPassword.Text;
-  Insert('''',S,pos('''',S)); //AnsiQuotedStr(EditPassword.Text,'''');
+  //Insert('',S,pos('',S)); //AnsiQuotedStr(EditPassword.Text,'''');
   RunCommandElevated.Password := S;
   S := '';
   if PasswordCorrect then
