@@ -10,7 +10,7 @@ object MyMessageDlg: TMyMessageDlg
   Font.Name = 'Arial'
   OnHide = FormHide
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 57

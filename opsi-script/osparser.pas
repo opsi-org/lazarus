@@ -106,6 +106,7 @@ uses
   //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
+  osTOML,
   oscrypt,
   DOM,
   osxmlsections,
@@ -6650,20 +6651,43 @@ begin
                         if GetString(r, param, r, errorInfo, True)
                         then
                         begin
+                          // store parameters with json value syntax
+                          // (i.e. quotes around normal strings but not around arrays, objects and null)
+                          if not (((param[1] = '[') and (param[param.Length] = ']')) or
+                            ((param[1] = '{') and (param[param.Length] = '}')) or
+                            (param = 'null')) then
+                            param := '"' + param + '"';
+
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
                           paramList.Add(param);
                         end
                         else
                         begin
+                          // allow json value syntax in service call parameters
+                          // (i.e. numeric/boolean values, arrays, objects and null without quotes)
                           if isNumeric(r) or isBoolean(r) then
                           begin
                             param := r;
-                            LogDatei.log_prog('Parsing: getparam: numeric or bool',
+                            LogDatei.log_prog(
+                              'Parsing: getparam (numeric or bool): ' + param,
                               LLdebug2);
                             paramList.Add(param);
                           end
                           else
-                            syntaxcheck := False;
+                          begin
+                            if (((r[1] = '[') and (r[Length(r)] = ']')) or
+                              ((r[1] = '{') and (r[Length(r)] = '}')) or
+                              (r = 'null')) then
+                            begin
+                              param := r;
+                              LogDatei.log_prog(
+                                'Parsing: getparam (array, object or null): ' + param,
+                                LLdebug2);
+                              paramList.Add(param);
+                            end
+                            else
+                              syntaxcheck := False;
+                          end;
                         end;
                       end;
                     end;
@@ -6956,6 +6980,7 @@ begin
         end;
 
         omc := TOpsiMethodCall.Create(methodname, parameters);
+        omc.JSONValueSyntaxInParameterList := True;
         if timeoutint > 0 then
           omc.timeout := timeoutint;
         testresult := '';
@@ -14119,6 +14144,118 @@ begin
 
     // #########  end xml2 list functions ###############################
 
+    //function LoadTOMLFile(TOMLfilePath: String): TStringList;
+    else if LowerCase(s) = LowerCase('LoadTOMLFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                s1 := ExpandFileName(s1);
+                try
+                  list.Clear;
+                  list.AddStrings(LoadTOMLFile(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in LoadTOMLFile "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLAsStringList(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLAsStringList') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLAsStringList(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLAsStringList "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLKeys(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLKeys') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLKeys(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLKeys "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLTableNames(TOMLcontents: String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLTableNames') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLTableNames(s1));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTableNames "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
+
+    //function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
+    else if LowerCase(s) = LowerCase('GetTOMLTable') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list.Clear;
+                  list.AddStrings(GetTOMLTable(s1, s2));
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTable "' +
+                      s1 + '", message: "' + e.Message + '"', LLerror);
+                    list.Append('');
+                  end;
+                end;
+              end;
+    end
 
     // todo: 2nd parameter focus row for editmap
     else if LowerCase(s) = LowerCase('editMap') then
@@ -15536,6 +15673,44 @@ begin
         end;
   end
 
+  else if LowerCase(s) = LowerCase('cidrToNetmask') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if cidrToNetmask(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
+          end
+          else
+          begin
+            StringResult := cidrToNetmask(s1);
+          end;
+        end;
+  end
+
+  else if LowerCase(s) = LowerCase('netmaskToCidr') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          if netmaskToCidr(s1) = '' then
+          begin
+            StringResult := '';
+            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
+          end
+          else
+          begin
+            StringResult := netmaskToCidr(s1);
+          end;
+        end;
+  end
+
   else if LowerCase(s) = LowerCase('GetIni') then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -15638,6 +15813,201 @@ begin
           end;
   end
   *)
+
+  //function ReadTOMLFile (TOMLfilePath: String): String;
+  else if LowerCase(s) = LowerCase('ReadTOMLFile') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            s1 := ExpandFileName(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+            LogDatei.log('    Reading TOML file  "' +  s1 , LevelComplete);
+            StringResult := ReadTOMLFile(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error in ReadTOMLFile "' +
+                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+              StringResult := '';
+            end;
+          end;
+
+        end;
+  end
+
+  //function GetTOMLAsString(TOMLcontents: String): String;
+  else if LowerCase(s) = LowerCase('GetTOMLAsString') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := True;
+          try
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+            LogDatei.log('    GetTOMLAsString  "' +  s1 , LevelComplete);
+            StringResult := GetTOMLAsString(s1);
+            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error in GetTOMLAsString "' +
+                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+              StringResult := '';
+            end;
+          end;
+
+        end;
+  end
+
+   //function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
+  else if LowerCase(s) = LowerCase('GetTOMLTableAsString') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    Getting Table  "' +  s2 + '" as String ', LevelComplete);
+                StringResult := GetTOMLTableAsString(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLTableAsString "' +
+                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+
+            end;
+  end
+
+  //function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
+  else if LowerCase(s) = LowerCase('GetValueFromTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                 if Skip(')', r, r, InfoSyntaxError) then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('    Getting the value of the key "' + s2
+                           + '"  from TOML contents with default value : "' + s3 + '"',
+                          LevelComplete);
+                        StringResult := GetValueFromTOML(s1, s2, s3);
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Error in GetValueFromTOML "' +
+                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                          StringResult := s3;
+                        end;
+                      end;
+
+                    end;
+  end
+
+  //function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
+  else if LowerCase(s) = LowerCase('ModifyTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s4, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
+                    begin
+                      syntaxCheck := True;
+                      try
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('    Modifying TOML contents with command "' + s2
+                           + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
+                          LevelComplete);
+                        StringResult := ModifyTOML(s1, s2, s3, s4);
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Error in ModifyTOML "' +
+                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                          StringResult := '';
+                        end;
+                      end;
+
+                    end;
+  end
+
+  //function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
+  else if LowerCase(s) = LowerCase('DeleteTableFromTOML') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
+                  LevelComplete);
+                StringResult := DeleteTableFromTOML(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in DeleteTableFromTOML "' +
+                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+
+            end;
+  end
+
+  //function ConvertTOMLtoJSON(TOMLcontents: String): String;
+  else if LowerCase(s) = LowerCase('ConvertTOMLtoJSON') then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML contents to JSON String ', LevelComplete);
+                StringResult := ConvertTOMLtoJSON(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLtoJSON, message: "' + e.Message
+                                         + '"', LevelWarnings);
+                  StringResult := '';
+                end;
+              end;
+            end;
+  end
 
   else if LowerCase(s) = LowerCase('Lower') then
   begin
@@ -19977,6 +20347,62 @@ begin
         end;
   end
 
+  //function SaveToTOMLFile(TOMLcontents : String; TOMLfilePath: String): boolean;
+  else if Skip('SaveToTOMLFile', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Saving TOMLcontents to TOML file : ' +  s2 , LevelComplete);
+                BooleanResult := SaveToTOMLFile(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in SaveToTOMLFile "' +
+                    s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                  BooleanResult := false;
+                end;
+              end;
+            end;
+  end
+
+  //function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
+  else if Skip('ConvertTOMLfileToJSONfile', Input, r, sx) then
+  begin
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                s1 := ExpandFileName(s1);
+                s2 := ExpandFileName(s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML file  "' +  s1 + '" to JSON file "' + s2, LevelComplete);
+                BooleanResult := ConvertTOMLfileToJSONfile(s1, s2);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLfileToJSONfile from "' +
+                    s1 + '" to "'+ s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                  BooleanResult := false;
+                end;
+              end;
+            end;
+  end
 
   (* boolean expression   s1 = s2 *)
   else if EvaluateString(Input, r, s1, InfoSyntaxError) then
@@ -26023,6 +26449,9 @@ begin
         FConstValuesList.add(opsiserviceClientId)
       else
         FConstValuesList.add(computernaming);
+
+      FConstList.add('%FQDN%'); // fqdn in network (not opsi service) context
+      FConstValuesList.add(getFQDN);
 
       FConstList.add('%opsiServer%');
 
