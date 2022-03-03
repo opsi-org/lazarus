@@ -6641,16 +6641,20 @@ begin
                         r := trim(copy(r, 1, length(r) - 1));
                       if length(r) > 0 then
                       begin
-
                         if GetString(r, param, r, errorInfo, True)
                         then
                         begin
                           // store parameters with json value syntax
                           // (i.e. quotes around normal strings but not around arrays, objects and null)
+                          if (param = '') then
+                             param := '""'
+                          else
+                          begin
                           if not (((param[1] = '[') and (param[param.Length] = ']')) or
                             ((param[1] = '{') and (param[param.Length] = '}')) or
                             (param = 'null')) then
                             param := '"' + param + '"';
+                          end;
 
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
                           paramList.Add(param);
