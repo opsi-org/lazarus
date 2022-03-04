@@ -15119,6 +15119,7 @@ var
   Strings: TStrings;
 
 begin
+  try
   LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
   syntaxCheck := False;
   InfoSyntaxError := '';
@@ -18538,6 +18539,16 @@ begin
 
   LogDatei.LogSIndentLevel := StartIndentLevel;
   slist.Free;
+
+  except
+     on E: Exception do
+            begin
+              Logdatei.log('Exception in Evaluatestring with: '+s0, LLCritical);
+              Logdatei.log(e.ClassName + ' system message: "' +
+                E.Message + '" - giving up',
+                LLCritical);
+            end;
+  end;
 end;
 
 
