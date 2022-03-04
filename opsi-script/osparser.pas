@@ -868,13 +868,15 @@ begin
       ' in standard section.', LLDebug3);
     selfsection.GetSectionLines(Sectionname, Resultlist,
       StartlineNo, True, True, False);
+    Logdatei.log('Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
+      ' in standard section.', LLDebug3);
   end;(*
   else
   begin
     if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
       Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
   end;*)
-
+   Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
 
   if Assigned(callingsection) and (callingsection <> nil) then
   begin
@@ -893,7 +895,7 @@ begin
     end;*)
   end;
 
-
+   Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
 
   if Resultlist.Count = 0 then
   begin
@@ -908,6 +910,8 @@ begin
     if 0 <= localsection.FindSectionheaderIndex(Sectionname) then
       Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
   end;*)
+
+  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
 
   if Assigned(callingsection) and (callingsection <> nil) and
     Assigned(callingsection.ParentSection) and (callingsection.ParentSection <> nil) then
@@ -927,12 +931,15 @@ begin
     end;*)
   end;
 
+  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+
   if Assigned(callingsection) and (callingsection <> nil) and
     Assigned(callingsection.ParentSection) and
     (callingsection.ParentSection <> nil) and
     Assigned(callingsection.ParentSection.ParentSection) and
     (callingsection.ParentSection.ParentSection <> nil) then
   begin
+    Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
     // subsubsubsub case
     if Resultlist.Count = 0 then
     begin
@@ -949,13 +956,15 @@ begin
     end;*)
   end;
 
+  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+
   if Resultlist.Count > 0 then
     Result := True;
 
   except
      on E: Exception do
             begin
-              Logdatei.log('Exception in SearchForSectionLines: ', LLCritical);
+              Logdatei.log('Exception in SearchForSectionLines: ' , LLCritical);
               Logdatei.log(e.ClassName + ' system message: "' +
                 E.Message + '" - giving up',
                 LLCritical);
