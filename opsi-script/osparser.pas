@@ -21729,12 +21729,8 @@ begin
 
             if (NestLevel = ActLevel + 1) and Conditions[ActLevel] then
             begin
-              { a new active level is created if the if statement
-                is in a active Level AND inside of a positive branch.
-
-              // eine neue aktive Ebene wird erzeugt, falls
-              // die if-Anweisung auf einer aktiven Ebene UND im positiven Zweig steht
-              }
+              {A new active level is created if the if statement
+              is in an active Level AND inside of a positive branch}
               Expressionstr := Remaining;
               if EvaluateBoolean(Expressionstr, Remaining, BooleanResult,
                 NestLevel, InfoSyntaxError) then
