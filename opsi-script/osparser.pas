@@ -20128,11 +20128,12 @@ begin
   begin
     getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
     try
-      errNumber := StrToInt(r);
+      getword(r, s1, r, [' ', #9, ')']);
+      errNumber := StrToInt(s1);
       syntaxcheck := True;
-      r := '';
+      s1 := '';
     except
-      InfoSyntaxError := r + ' is not a number'
+      InfoSyntaxError := s1 + ' is not a number'
     end;
 
     syntaxCheck :=
