@@ -660,7 +660,9 @@
       <Unit11>
         <Filename Value="osmessagedialog.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="MyMessageDlg"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit11>
       <Unit12>
         <Filename Value="osshowsysinfo.pas"/>
