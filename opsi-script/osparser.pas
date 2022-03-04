@@ -833,6 +833,7 @@ function SearchForSectionLines
 var
   myworksection: TWorkSection;
 begin
+  try
   Result := False;
   Resultlist.Clear;
 
@@ -950,6 +951,16 @@ begin
 
   if Resultlist.Count > 0 then
     Result := True;
+
+  except
+     on E: Exception do
+            begin
+              Logdatei.log('Exception in SearchForSectionLines: ', LLCritical);
+              Logdatei.log(e.ClassName + ' system message: "' +
+                E.Message + '" - giving up',
+                LLCritical);
+            end;
+  end;
 end;
 
 function getCompareSignStrings(s1: string; s2: string): integer;
@@ -12520,6 +12531,7 @@ begin
 
     else if LowerCase(s) = LowerCase('getReturnlistFromSection') then
     begin
+      try
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
@@ -12573,6 +12585,15 @@ begin
           end;
           LogDatei.LogSIndentLevel := saveLogSIndentLevel;
         end;
+      except
+         on E: Exception do
+                begin
+                  Logdatei.log('Exception in getReturnlistFromSection: ' , LLCritical);
+                  Logdatei.log(e.ClassName + ' system message: "' +
+                    E.Message + '" - giving up',
+                    LLCritical);
+                end;
+      end;
     end
 
 
