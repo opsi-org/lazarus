@@ -952,38 +952,6 @@ begin
     Result := True;
 end;
 
-function getCompareSignStrings(s1: string; s2: string): integer;
-var
-  s1A, s2A: string;
-begin
-  s1A := AnsiUpperCase(s1);
-  s2A := AnsiUpperCase(s2);
-  Result := 0;
-  if s1A > s2A then
-    Result := 1
-  else if s1A < s2A then
-    Result := -1;
-end;
-
-function getCompareSign(number1: integer; number2: integer): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
-end;
-
-
-function getCompareSignDouble(number1: double; number2: double): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
-end;
-
 
 function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
@@ -1193,32 +1161,6 @@ begin
   end;
 
 end;
-
-
-
-function hasRelation(orderrelationSymbol: string; orderSign: integer;
-  var BooleanResult: boolean; var InfoSyntaxError: string): boolean;
-begin
-  Result := True;
-
-  if orderRelationSymbol = '=' then
-    BooleanResult := (orderSign = 0)
-  else if orderRelationSymbol = '>' then
-    BooleanResult := (orderSign > 0)
-  else if orderRelationSymbol = '>=' then
-    BooleanResult := (orderSign >= 0)
-  else if orderRelationSymbol = '<' then
-    BooleanResult := (orderSign < 0)
-  else if orderRelationSymbol = '<=' then
-    BooleanResult := (orderSign <= 0)
-
-  else
-  begin
-    Result := False;
-    infoSyntaxError := '"=", ">", ">=" or "<", "<=" expected';
-  end;
-end;
-
 
 
 procedure adjustBounds(var a1, a2: integer; const list1: TXStringList);
