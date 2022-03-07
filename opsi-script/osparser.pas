@@ -18680,7 +18680,6 @@ var
   einheit: int64 = 0;
   j: integer = 0;
   drivenumber: integer = 0;
-  errnumber: integer = 0;
   relationSymbol: string = '';
   intresult: integer = 0;
   n1: integer = 0;
@@ -20070,24 +20069,6 @@ begin
     Skip('ErrorsOccurredSinceMark ', Input, r, sx)) then
   begin
     parseErrorsOccurredSinceMark(r, InfoSyntaxError, syntaxcheck, BooleanResult);
-    (*getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
-    try
-      getword(r, s1, r, [' ', #9, ')']);
-      errNumber := StrToInt(s1);
-      syntaxcheck := True;
-      s1 := '';
-    except
-      InfoSyntaxError := s1 + ' is not a number'
-    end;
-
-    syntaxCheck :=
-      syntaxcheck and hasRelation(relationSymbol,
-      getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked,
-      errNumber), BooleanResult, InfoSyntaxError);
-    LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
-      ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
-      relationSymbol + ' ' + IntToStr(errNumber) + ' -> ' +
-      BoolToStr(BooleanResult), LLDebug2);*)
   end
 
   else if Skip('opsiLicenseManagementEnabled', Input, r, InfoSyntaxError) then
