@@ -76,6 +76,7 @@ uses
 {$ENDIF GUI}
   TypInfo,
   osparserhelper,
+  osEvaluateBooleanFunctions,
   osencoding,
   osconf,
   oszip,
@@ -20068,7 +20069,8 @@ begin
   else if (Skip('ErrorsOccuredSinceMark ', Input, r, sx) or
     Skip('ErrorsOccurredSinceMark ', Input, r, sx)) then
   begin
-    getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
+    parseErrorsOccurredSinceMark(r, InfoSyntaxError, syntaxcheck, BooleanResult);
+    (*getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
     try
       getword(r, s1, r, [' ', #9, ')']);
       errNumber := StrToInt(s1);
@@ -20085,7 +20087,7 @@ begin
     LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
       ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
       relationSymbol + ' ' + IntToStr(errNumber) + ' -> ' +
-      BoolToStr(BooleanResult), LLDebug2);
+      BoolToStr(BooleanResult), LLDebug2);*)
   end
 
   else if Skip('opsiLicenseManagementEnabled', Input, r, InfoSyntaxError) then
