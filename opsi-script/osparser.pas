@@ -868,17 +868,17 @@ begin
       ' in standard section.', LLDebug3);
     selfsection.GetSectionLines(Sectionname, Resultlist,
       StartlineNo, True, True, False);
-    Logdatei.log('Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
-      ' in standard section.', LLDebug3);
+    Logdatei.log_prog('Prog: Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
+      ' in standard section.', LLDebug);
   end;(*
   else
   begin
     if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
       Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
   end;*)
-   Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+   Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-  if Assigned(callingsection) and (callingsection <> nil) then
+  if Assigned(callingsection) then //and (callingsection <> nil) then
   begin
     // subsub case
     if Resultlist.Count = 0 then
@@ -895,7 +895,7 @@ begin
     end;*)
   end;
 
-   Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+   Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
   if Resultlist.Count = 0 then
   begin
@@ -911,52 +911,58 @@ begin
       Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
   end;*)
 
-  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-  if Assigned(callingsection) and (callingsection <> nil) and
-    Assigned(callingsection.ParentSection) and (callingsection.ParentSection <> nil) then
+  if Assigned(callingsection) then //and (callingsection <> nil) and
   begin
-    // subsubsub case
-    if Resultlist.Count = 0 then
+    if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
     begin
-      Logdatei.log('Looking for section: ' + Sectionname +
-        ' in callingsection.ParentSection section.', LLDebug3);
-      callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
-        StartlineNo, True, True, False);
-    end;(*
-    else
-    begin
-      if 0 <= callingsection.ParentSection.FindSectionheaderIndex(Sectionname) then
-        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.ParentSection section.',LLWarning);
-    end;*)
+      // subsubsub case
+      if Resultlist.Count = 0 then
+      begin
+        Logdatei.log('Looking for section: ' + Sectionname +
+          ' in callingsection.ParentSection section.', LLDebug3);
+        callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+          StartlineNo, True, True, False);
+      end;(*
+      else
+      begin
+        if 0 <= callingsection.ParentSection.FindSectionheaderIndex(Sectionname) then
+          Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.ParentSection section.',LLWarning);
+      end;*)
+    end;
   end;
 
-  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-  if Assigned(callingsection) and (callingsection <> nil) and
-    Assigned(callingsection.ParentSection) and
-    (callingsection.ParentSection <> nil) and
-    Assigned(callingsection.ParentSection.ParentSection) and
-    (callingsection.ParentSection.ParentSection <> nil) then
+  if Assigned(callingsection) then //and (callingsection <> nil) and
   begin
-    Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
-    // subsubsubsub case
-    if Resultlist.Count = 0 then
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
     begin
-      Logdatei.log('Looking for section: ' + Sectionname +
-        ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
-      callingsection.FParentSection.FParentSection.GetSectionLines(
-        Sectionname, Resultlist,
-        StartlineNo, True, True, False);
-    end;(*
-    else
-    begin
-      if 0 <= callingsection.FParentSection.FParentSection.FindSectionheaderIndex(Sectionname) then
-        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.FParentSection.FParentSection section.',LLWarning);
-    end;*)
+      Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+      if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+      begin
+        Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+        // subsubsubsub case
+        if Resultlist.Count = 0 then
+        begin
+          Logdatei.log('Looking for section: ' + Sectionname +
+            ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
+          callingsection.ParentSection.ParentSection.GetSectionLines(
+            Sectionname, Resultlist,
+            StartlineNo, True, True, False);
+        end;(*
+        else
+        begin
+          if 0 <= callingsection.FParentSection.FParentSection.FindSectionheaderIndex(Sectionname) then
+            Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.FParentSection.FParentSection section.',LLWarning);
+        end;*)
+      end;
+    end;
   end;
 
-  Logdatei.log('function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug3);
+  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
   if Resultlist.Count > 0 then
     Result := True;
@@ -12464,144 +12470,158 @@ begin
 
     else if LowerCase(s) = LowerCase('getOutstreamFromSection') then
     begin
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          savelogsindentlevel := LogDatei.LogSIndentLevel;
-          localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
-            ActiveSection);
-          GetWord(s1, s2, r1, WordDelimiterSet1);
-          localSection.Name := s2;
-
-          localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
-
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings, tsWinBatch]) then
-            InfoSyntaxError := 'not implemented for this kind of section'
-          else
+      try
+        if Skip('(', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s1, InfoSyntaxError) then
           begin
-            //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
-            //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
-            if not SearchForSectionLines(self, TWorkSection(section),
-              localSection.ParentSection, s2, TXStringList(localSection),
-              startlineofsection, True, True, False) then
-              InfoSyntaxError := 'Section "' + s2 + '" not found'
-            else
-            begin
-              if localKindOfStatement in [tsExecutePython, tsExecuteWith_escapingStrings]
-              then
+            savelogsindentlevel := LogDatei.LogSIndentLevel;
+            localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
+              ActiveSection);
+            try
+              GetWord(s1, s2, r1, WordDelimiterSet1);
+              localSection.Name := s2;
+
+              localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
+
+              if not (localKindOfStatement in
+                [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+                tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+                tsExecuteWith_escapingStrings, tsWinBatch]) then
               begin
-                ApplyTextConstants(TXStringList(localSection), True);
-                ApplyTextVariables(TXStringList(localSection), True);
+                InfoSyntaxError := 'not implemented for this kind of section'
               end
               else
               begin
-                ApplyTextConstants(TXStringList(localSection), False);
-                ApplyTextVariables(TXStringList(localSection), False);
+                //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
+                //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+                if not SearchForSectionLines(self, TWorkSection(section),
+                  TWorkSection(section).ParentSection, s2, TXStringList(localSection),
+                  startlineofsection, True, True, False) then
+                  InfoSyntaxError := 'Section "' + s2 + '" not found'
+                else
+                begin
+                  if localKindOfStatement in [tsExecutePython, tsExecuteWith_escapingStrings]
+                  then
+                  begin
+                    ApplyTextConstants(TXStringList(localSection), True);
+                    ApplyTextVariables(TXStringList(localSection), True);
+                  end
+                  else
+                  begin
+                    ApplyTextConstants(TXStringList(localSection), False);
+                    ApplyTextVariables(TXStringList(localSection), False);
+                  end;
+
+                  case localKindOfStatement of
+
+                    tsExecutePython:
+                      execPython(localSection, r1,
+                        True {catchout}, 1,
+                        [ttpWaitOnTerminate], list);
+
+                    tsExecuteWith_escapingStrings, tsExecuteWith:
+                      executeWith(localSection, r1,
+                        True {catchout}, 1, list);
+
+                    tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
+                      execDOSBatch(localSection, r1,
+                        SW_HIDE, True {catchout}, 1,
+                        [ttpWaitOnTerminate], list);
+
+                    tsWinBatch:
+                      parseAndCallWinBatch(localSection, r1, 0, list);
+
+                  end;
+
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                  end;
+                end;
               end;
-
-              case localKindOfStatement of
-
-                tsExecutePython:
-                  execPython(localSection, r1,
-                    True {catchout}, 1,
-                    [ttpWaitOnTerminate], list);
-
-                tsExecuteWith_escapingStrings, tsExecuteWith:
-                  executeWith(localSection, r1,
-                    True {catchout}, 1, list);
-
-                tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
-                  execDOSBatch(localSection, r1,
-                    SW_HIDE, True {catchout}, 1,
-                    [ttpWaitOnTerminate], list);
-
-                tsWinBatch:
-                  parseAndCallWinBatch(localSection, r1, 0, list);
-
-              end;
-
-              if Skip(')', r, r, InfoSyntaxError) then
-              begin
-                syntaxCheck := True;
-              end;
+              LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+            finally
+              if Assigned(localSection) then FreeAndNil(localSection);
             end;
-
           end;
-
-          if localSection <> nil then
-            localSection.Free;
-
-          LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+      except
+        on E: Exception do
+        begin
+          Logdatei.log('Exception in getOutstreamFromSection: ' , LLCritical);
+          Logdatei.log(e.ClassName + ' system message: "' +
+            E.Message + '" - giving up', LLCritical);
         end;
+      end;
     end
 
     else if LowerCase(s) = LowerCase('getReturnlistFromSection') then
     begin
       try
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          savelogsindentlevel := LogDatei.LogSIndentLevel;
-          localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
-            ActiveSection);
-          GetWord(s1, s2, r1, WordDelimiterSet1);
-          localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
-          if not (localKindOfStatement in [tsXMLPatch, tsXML2,
-            tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]) then
-            InfoSyntaxError := 'not implemented for this kind of section'
-          else
+        if Skip('(', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s1, InfoSyntaxError) then
           begin
-            //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
-            //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
-            if not SearchForSectionLines(self, TWorkSection(section),
-              localSection.ParentSection, s2, TXStringList(localSection),
-              startlineofsection, True, True, False) then
-              InfoSyntaxError := 'Section "' + s2 + '" not found'
-            else
-            begin
-              localsyntaxcheck := True;
-              localSection.Name := s2;
-              ApplyTextVariables(TXStringList(localSection), False);
-              ApplyTextConstants(TXStringList(localSection), False);
-
-              case localKindOfStatement of
-                tsXMLPatch: dummyActionresult := doxmlpatch(localSection, r1, list);
-                tsXML2: dummyActionresult := doxmlpatch2(localSection, r1, '', list);
-                tsOpsiServiceCall: dummyActionresult :=
-                    doOpsiServiceCall(localSection, r1, list);
-                tsOpsiServiceHashList: dummyActionresult :=
-                    doOpsiServiceHashList(localSection, r1, list);
-                tsLDAPsearch:
+            savelogsindentlevel := LogDatei.LogSIndentLevel;
+            //list1 := TXStringList.Create;
+            localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
+              ActiveSection);
+            try
+              GetWord(s1, s2, r1, WordDelimiterSet1);
+              localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
+              if not (localKindOfStatement in [tsXMLPatch, tsXML2,
+                tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]) then
+              begin
+                InfoSyntaxError := 'not implemented for this kind of section'
+              end
+              else
+              begin
+                //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
+                //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
+                if not SearchForSectionLines(self, TWorkSection(section),
+                  TWorkSection(section).ParentSection, s2, TXStringList(localSection),
+                  startlineofsection, True, True, False) then
+                  InfoSyntaxError := 'Section "' + s2 + '" not found'
+                else
                 begin
-                  if produceLDAPsearchParameters(r1, cacheRequest,
-                    outputRequest, InfoSyntaxError) then
-                    dummyActionresult :=
-                      doLDAPSearch(localSection, cacheRequest, outputRequest, list)
-                  else
-                    localsyntaxcheck := False;
+                  localsyntaxcheck := True;
+                  localSection.Name := s2;
+                  ApplyTextVariables(TXStringList(localSection), False);
+                  ApplyTextConstants(TXStringList(localSection), False);
+
+                  case localKindOfStatement of
+                    tsXMLPatch: dummyActionresult := doxmlpatch(localSection, r1, list);
+                    tsXML2: dummyActionresult := doxmlpatch2(localSection, r1, '', list);
+                    tsOpsiServiceCall: dummyActionresult :=
+                        doOpsiServiceCall(localSection, r1, list);
+                    tsOpsiServiceHashList: dummyActionresult :=
+                        doOpsiServiceHashList(localSection, r1, list);
+                    tsLDAPsearch:
+                    begin
+                      if produceLDAPsearchParameters(r1, cacheRequest,
+                        outputRequest, InfoSyntaxError) then
+                        dummyActionresult :=
+                          doLDAPSearch(localSection, cacheRequest, outputRequest, list)
+                      else
+                        localsyntaxcheck := False;
+                    end;
+                  end;
+                  if localsyntaxcheck and (Skip(')', r, r, InfoSyntaxError)) then
+                  begin
+                    syntaxCheck := True;
+                  end;
                 end;
               end;
-              localSection.Free;
-
-              if localsyntaxcheck and (Skip(')', r, r, InfoSyntaxError)) then
-              begin
-                syntaxCheck := True;
-              end;
+              LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+            finally
+              if Assigned(localSection) then FreeAndNil(localSection);
             end;
           end;
-          LogDatei.LogSIndentLevel := saveLogSIndentLevel;
-        end;
       except
-         on E: Exception do
-                begin
-                  Logdatei.log('Exception in getReturnlistFromSection: ' , LLCritical);
-                  Logdatei.log(e.ClassName + ' system message: "' +
-                    E.Message + '" - giving up',
-                    LLCritical);
-                end;
+        on E: Exception do
+        begin
+          Logdatei.log('Exception in getReturnlistFromSection: ' , LLCritical);
+          Logdatei.log(e.ClassName + ' system message: "' +
+            E.Message + '" - giving up', LLCritical);
+        end;
       end;
     end
 
