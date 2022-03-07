@@ -29,7 +29,6 @@ begin
       RemainingInCurrentParsingLine, [' ', #9, ')']);
     ErrorCompareNumber := StrToInt(ErrorCompareNumberStr);
     syntaxcheck := True;
-    ErrorCompareNumberStr := '';
   except
     InfoSyntaxError := ErrorCompareNumberStr + ' is not a number'
   end;
@@ -40,7 +39,7 @@ begin
     BooleanResult, InfoSyntaxError);
   LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
     ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
-    relationSymbol + ' ' + IntToStr(ErrorCompareNumber) + ' -> ' +
+    relationSymbol + ' ' + ErrorCompareNumberStr + ' -> ' +
     BoolToStr(BooleanResult), LLDebug2);
 end;
 
