@@ -19,28 +19,28 @@ procedure parseErrorsOccurredSinceMark(
   var RemainingInCurrentParsingLine: string; var InfoSyntaxError: string;
   var syntaxcheck: boolean; var BooleanResult: boolean);
 var
-  ErrorCompareNumber, relationSymbol: string;
-  errNumber: integer;
+  ErrorCompareNumberStr, relationSymbol: string;
+  ErrorCompareNumber: integer;
 begin
   getword(RemainingInCurrentParsingLine, relationSymbol,
     RemainingInCurrentParsingLine, WordDelimiterWhiteSpace);
   try
-    getword(RemainingInCurrentParsingLine, ErrorCompareNumber,
+    getword(RemainingInCurrentParsingLine, ErrorCompareNumberStr,
       RemainingInCurrentParsingLine, [' ', #9, ')']);
-    errNumber := StrToInt(ErrorCompareNumber);
+    ErrorCompareNumber := StrToInt(ErrorCompareNumberStr);
     syntaxcheck := True;
-    ErrorCompareNumber := '';
+    ErrorCompareNumberStr := '';
   except
-    InfoSyntaxError := ErrorCompareNumber + ' is not a number'
+    InfoSyntaxError := ErrorCompareNumberStr + ' is not a number'
   end;
 
   syntaxCheck :=
     syntaxcheck and hasRelation(relationSymbol,
-    getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked, errNumber),
+    getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked, ErrorCompareNumber),
     BooleanResult, InfoSyntaxError);
   LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
     ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
-    relationSymbol + ' ' + IntToStr(errNumber) + ' -> ' +
+    relationSymbol + ' ' + IntToStr(ErrorCompareNumber) + ' -> ' +
     BoolToStr(BooleanResult), LLDebug2);
 end;
 
