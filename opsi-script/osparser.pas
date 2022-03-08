@@ -834,147 +834,144 @@ var
   myworksection: TWorkSection;
 begin
   try
-  Result := False;
-  Resultlist.Clear;
+    Result := False;
+    Resultlist.Clear;
 
-  // look if we are in a subprogram
-  // that may have its own sections in it
+    // look if we are in a subprogram
+    // that may have its own sections in it
 
-  if (Resultlist.Count = 0) and (inDefFuncLevel > 0) then
-  begin
-    // local function
-    Logdatei.log('Looking for section: ' + Sectionname +
-      ' in local function .', LLDebug3);
-    localsection.GetSectionLines(Sectionname, Resultlist,
-      StartlineNo, True, True, False);
-  end;
+    if (Resultlist.Count = 0) and (inDefFuncLevel > 0) then
+    begin
+      // local function
+      Logdatei.log('Looking for section: ' + Sectionname +
+        ' in local function .', LLDebug3);
+      localsection.GetSectionLines(Sectionname, Resultlist,
+        StartlineNo, True, True, False);
+    end;
 
-  if (Resultlist.Count = 0) and (inDefFuncLevel > 0) then
-  begin
-    // local function2
-    Logdatei.log('Looking for section: ' + Sectionname +
-      ' in local function: ' + definedFunctionArray[inDefFuncIndex].Name, LLDebug3);
-    myworksection := TWorkSection.Create(NestingLevel, nil);
-    myworksection.AddText(definedFunctionArray[inDefFuncIndex].Content.Text);
-    myworksection.GetSectionLines(Sectionname,
-      Resultlist, StartlineNo, True, True, False);
-    myworksection.Free;
-  end;
+    if (Resultlist.Count = 0) and (inDefFuncLevel > 0) then
+    begin
+      // local function2
+      Logdatei.log('Looking for section: ' + Sectionname +
+        ' in local function: ' + definedFunctionArray[inDefFuncIndex].Name, LLDebug3);
+      myworksection := TWorkSection.Create(NestingLevel, nil);
+      myworksection.AddText(definedFunctionArray[inDefFuncIndex].Content.Text);
+      myworksection.GetSectionLines(Sectionname,
+        Resultlist, StartlineNo, True, True, False);
+      myworksection.Free;
+    end;
 
-  if Resultlist.Count = 0 then
-  begin
-    // normal case
-    Logdatei.log('Looking for section: ' + Sectionname +
-      ' in standard section.', LLDebug3);
-    selfsection.GetSectionLines(Sectionname, Resultlist,
-      StartlineNo, True, True, False);
-    Logdatei.log_prog('Prog: Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
-      ' in standard section.', LLDebug);
-  end;(*
-  else
-  begin
-    if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
-      Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
-  end;*)
-   Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-
-  if Assigned(callingsection) then //and (callingsection <> nil) then
-  begin
-    // subsub case
     if Resultlist.Count = 0 then
     begin
+      // normal case
       Logdatei.log('Looking for section: ' + Sectionname +
-        ' in calling section.', LLDebug3);
-      callingsection.GetSectionLines(Sectionname, Resultlist,
+        ' in standard section.', LLDebug3);
+      selfsection.GetSectionLines(Sectionname, Resultlist,
         StartlineNo, True, True, False);
+      Logdatei.log_prog('Prog: Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
+        ' in standard section.', LLDebug);
     end;(*
     else
     begin
-      if 0 <= callingsection.FindSectionheaderIndex(Sectionname) then
-        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in calling section.',LLWarning);
+      if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
+        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
     end;*)
-  end;
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-   Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-
-  if Resultlist.Count = 0 then
-  begin
-    // subsub case
-    Logdatei.log('Looking for section: ' + Sectionname +
-      ' in global section.', LLDebug3);
-    localsection.GetSectionLines(Sectionname, Resultlist,
-      StartlineNo, True, True, False);
-  end;(*
-  else
-  begin
-    if 0 <= localsection.FindSectionheaderIndex(Sectionname) then
-      Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
-  end;*)
-
-  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-
-  if Assigned(callingsection) then //and (callingsection <> nil) and
-  begin
-    if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
+    if Assigned(callingsection) then //and (callingsection <> nil) then
     begin
-      // subsubsub case
+      // subsub case
       if Resultlist.Count = 0 then
       begin
         Logdatei.log('Looking for section: ' + Sectionname +
-          ' in callingsection.ParentSection section.', LLDebug3);
-        callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+          ' in calling section.', LLDebug3);
+        callingsection.GetSectionLines(Sectionname, Resultlist,
           StartlineNo, True, True, False);
       end;(*
       else
       begin
-        if 0 <= callingsection.ParentSection.FindSectionheaderIndex(Sectionname) then
-          Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.ParentSection section.',LLWarning);
+        if 0 <= callingsection.FindSectionheaderIndex(Sectionname) then
+          Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in calling section.',LLWarning);
       end;*)
     end;
-  end;
 
-  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-
-  if Assigned(callingsection) then //and (callingsection <> nil) and
-  begin
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-    if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
+
+    if Resultlist.Count = 0 then
     begin
-      Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-      if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+      // subsub case
+      Logdatei.log('Looking for section: ' + Sectionname +
+        ' in global section.', LLDebug3);
+      localsection.GetSectionLines(Sectionname, Resultlist,
+        StartlineNo, True, True, False);
+    end;(*
+    else
+    begin
+      if 0 <= localsection.FindSectionheaderIndex(Sectionname) then
+        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
+    end;*)
+
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+
+    if Assigned(callingsection) then //and (callingsection <> nil) and
+    begin
+      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
       begin
-        Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-        // subsubsubsub case
+        // subsubsub case
         if Resultlist.Count = 0 then
         begin
           Logdatei.log('Looking for section: ' + Sectionname +
-            ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
-          callingsection.ParentSection.ParentSection.GetSectionLines(
-            Sectionname, Resultlist,
+            ' in callingsection.ParentSection section.', LLDebug3);
+          callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
             StartlineNo, True, True, False);
         end;(*
         else
         begin
-          if 0 <= callingsection.FParentSection.FParentSection.FindSectionheaderIndex(Sectionname) then
-            Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.FParentSection.FParentSection section.',LLWarning);
+          if 0 <= callingsection.ParentSection.FindSectionheaderIndex(Sectionname) then
+            Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.ParentSection section.',LLWarning);
         end;*)
       end;
     end;
-  end;
 
-  Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-  if Resultlist.Count > 0 then
-    Result := True;
+    if Assigned(callingsection) then //and (callingsection <> nil) and
+    begin
+      Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
+      begin
+        Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+        if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+        begin
+          Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+          // subsubsubsub case
+          if Resultlist.Count = 0 then
+          begin
+            Logdatei.log('Looking for section: ' + Sectionname +
+              ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
+            callingsection.ParentSection.ParentSection.GetSectionLines(
+              Sectionname, Resultlist,
+              StartlineNo, True, True, False);
+          end;(*
+          else
+          begin
+            if 0 <= callingsection.FParentSection.FParentSection.FindSectionheaderIndex(Sectionname) then
+              Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.FParentSection.FParentSection section.',LLWarning);
+          end;*)
+        end;
+      end;
+    end;
 
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    if Resultlist.Count > 0 then Result := True;
   except
-     on E: Exception do
-            begin
-              Logdatei.log('Exception in SearchForSectionLines: ' , LLCritical);
-              Logdatei.log(e.ClassName + ' system message: "' +
-                E.Message + '" - giving up',
-                LLCritical);
-            end;
+    on E: Exception do
+    begin
+      Logdatei.log('Exception in SearchForSectionLines: ' , LLCritical);
+      Logdatei.log(e.ClassName + ' system message: "' +
+        E.Message + '" - giving up',
+        LLCritical);
+    end;
   end;
 end;
 
