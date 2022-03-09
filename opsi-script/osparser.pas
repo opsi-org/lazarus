@@ -12492,7 +12492,7 @@ begin
                 //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
                 //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
                 if not SearchForSectionLines(self, TWorkSection(section),
-                  TWorkSection(section).ParentSection, s2, TXStringList(localSection),
+                  localSection.ParentSection, s2, TXStringList(localSection),
                   startlineofsection, True, True, False) then
                   InfoSyntaxError := 'Section "' + s2 + '" not found'
                 else
@@ -12574,7 +12574,7 @@ begin
                 //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
                 //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
                 if not SearchForSectionLines(self, TWorkSection(section),
-                  TWorkSection(section).ParentSection, s2, TXStringList(localSection),
+                  localSection.ParentSection, s2, TXStringList(localSection),
                   startlineofsection, True, True, False) then
                   InfoSyntaxError := 'Section "' + s2 + '" not found'
                 else
