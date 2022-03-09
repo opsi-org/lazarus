@@ -22700,9 +22700,9 @@ begin
                       // free inclist later - we need it at 'Imported all functions'
                       //FreeAndNil(inclist);
 
-                      for tmpint := 0 to 3 do
+                      (*for tmpint := 0 to 3 do
                       begin
-                        { add a empty line to avoid last line problem }
+                        { add an empty line to avoid last line problem }
                         incline := '';
                         Inc(inclines);
                         LogDatei.log_prog(
@@ -22720,8 +22720,8 @@ begin
                         script.FLibList.Insert(linecounter - 1 + inclines, 'true');
                         LogDatei.log_prog(
                           'Include added to FLinesOriginList.', LLDebug2);
-                        { finished add a empty line to avoid last line problem }
-                      end;
+                        { finished add an empty line to avoid last line problem }
+                      end;*)
 
                       if importFunctionName = '' then
                       begin
@@ -25382,7 +25382,7 @@ begin
                         if StatKind = tsEndFunction then
                           Dec(inDefFunc);
                       end;
-                    until (inDefFunc <= 0) or (linecounter >= Sektion.Count - 2);
+                    until (inDefFunc <= 0) or (linecounter >= Sektion.Count);
                   except
                     on e: Exception do
                     begin
@@ -25470,7 +25470,7 @@ begin
                           Inc(linecounter); // inc line counter
                           Inc(FaktScriptLineNumber);
                           // inc line counter that ignores the execution of defined functions
-                          if (linecounter <= numberOfSectionLines - 1) then
+                          if (linecounter <= numberOfSectionLines) then
                           begin
                             Remaining := trim(Sektion.strings[linecounter - 1]);
                             myline := remaining;
@@ -25492,7 +25492,7 @@ begin
                             end;
                           end;
                         until (inDefFunc <= 0) or
-                          (linecounter >= numberOfSectionLines - 2);
+                          (linecounter >= numberOfSectionLines);
                       except
                         on e: Exception do
                         begin
