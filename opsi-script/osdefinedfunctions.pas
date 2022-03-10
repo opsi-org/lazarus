@@ -1344,7 +1344,7 @@ begin
           begin
             // remove the trailing ) - if there is any
             //GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
-            GetWordOrStringConstant(inputstr, ParamStr, remaining, [')'], True, True);
+            GetWord(inputstr, ParamStr, remaining, [')'], True, True);
             inputstr := ParamStr;
             ParamStr := '';
             GetOuterFunctionOrExp(inputstr, ParamStr, remaining);
@@ -1354,7 +1354,7 @@ begin
             //  GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
           end
           else // this should be not the last parameter and we expect a ','
-            GetWordOrStringConstant(inputstr, ParamStr, remaining, [',']);
+            GetWord(inputstr, ParamStr, remaining, [',']);
           ParamStr := trim(ParamStr);
           LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
             ParamStr, LLDebug2);
