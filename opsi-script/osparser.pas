@@ -267,7 +267,7 @@ type
     FParentSection: TWorkSection;
 
   public
-    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection);
+    constructor Create(const NestLevel: integer; ParentSection: TWorkSection = nil);
     destructor Destroy; override;
 
     property StartLineNo: integer read FStartLineNo write FStartLineNo;
@@ -1968,7 +1968,7 @@ end;
 {$ENDIF WINDOWS}
 
 constructor TWorkSection.Create(const NestLevel: integer;
-  const ParentSection: TWorkSection);
+  ParentSection: TWorkSection = nil);
 begin
   inherited Create;
   FStartLineNo := 0;
