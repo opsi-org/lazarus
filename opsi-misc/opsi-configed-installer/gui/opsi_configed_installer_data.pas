@@ -42,8 +42,8 @@ implementation
 constructor TConfigedInstallerData.Create;
 begin
   FDistrInfo := TDistributionInfo.Create;
-  FMemoryRequirement := '1536';
-  FScalingFactor := '2.0';
+  FMemoryRequirement := '1024';
+  FScalingFactor := '1.0';
 end;
 
 end.

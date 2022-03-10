@@ -95,8 +95,10 @@ object Query: TQuery
       Width = 56
       BorderSpacing.Left = 20
       Caption = '1024'
+      Checked = True
       ParentFont = False
       TabOrder = 1
+      TabStop = True
     end
     object RadioBtnMem1536: TRadioButton
       AnchorSideLeft.Control = RadioBtnMem1024
@@ -109,9 +111,7 @@ object Query: TQuery
       Width = 56
       BorderSpacing.Left = 20
       Caption = '1536'
-      Checked = True
       TabOrder = 2
-      TabStop = True
     end
     object RadioBtnMem2048: TRadioButton
       AnchorSideLeft.Control = RadioBtnMem1536
@@ -185,8 +185,10 @@ object Query: TQuery
       Width = 44
       BorderSpacing.Left = 20
       Caption = '1.0'
+      Checked = True
       ParentFont = False
       TabOrder = 1
+      TabStop = True
     end
     object RadioBtn15: TRadioButton
       AnchorSideLeft.Control = RadioBtn10
@@ -213,9 +215,7 @@ object Query: TQuery
       Width = 44
       BorderSpacing.Left = 20
       Caption = '2.0'
-      Checked = True
       TabOrder = 3
-      TabStop = True
     end
   end
 end
