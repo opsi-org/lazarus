@@ -75,10 +75,10 @@ msgstr "Puede encontrar los archivos de log aqui:"
 
 #: opsi_configed_installer_resourcestrings.rsmem
 msgid ""
-"Memory requirement for the installation of the opsi-configed\n"
+"Memory requirement for the operation of the opsi-configed\n"
 "(in megabytes)"
 msgstr ""
-"Requerimientos de memoria para la instalación del opsi configed\n"
+"Requerimientos de memoria para el funcionamiento del opsi configed\n"
 "(en Megabytes)"
 
 #: opsi_configed_installer_resourcestrings.rsnext
@@ -113,10 +113,11 @@ msgstr "Contraseña"
 #: opsi_configed_installer_resourcestrings.rsrights
 msgctxt "opsi_configed_installer_resourcestrings.rsrights"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Do you identify as "
+"root or per sudo?"
 msgstr ""
-"Autenticación es requerida para instalar el servidor de opsi. Con que "
-"credenciales está logeado?"
+"Autenticación es requerida para instalar el opsi-configed. ¿Te identificas "
+"como root o per sudo?"
 
 #: opsi_configed_installer_resourcestrings.rsscalingfactor
 msgid ""
@@ -145,13 +146,6 @@ msgstr "Mostrar contraseña"
 msgctxt "opsi_configed_installer_resourcestrings.rsstandard"
 msgid "Standard"
 msgstr "Standard"
-
-#: opsi_configed_installer_resourcestrings.rsstartinstallation
-msgctxt "opsi_configed_installer_resourcestrings.rsstartinstallation"
-msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr ""
-"Finalmente presione \"finalizar\" para comenzar la instalación del servidor "
-"opsi."
 
 #: opsi_configed_installer_resourcestrings.rswait
 msgctxt "opsi_configed_installer_resourcestrings.rswait"
@@ -239,10 +233,11 @@ msgstr "Contraseña"
 #: tpassword.labelrights.caption
 msgctxt "tpassword.labelrights.caption"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Are you identified "
+"as root or per sudo?"
 msgstr ""
-"Autenticación es requerida para instalar el servidor de opsi. Con que "
-"credenciales está logeado?"
+"Autenticación es requerida para instalar el servidor de opsi. ¿Te identificas "
+"como root o per sudo?"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"

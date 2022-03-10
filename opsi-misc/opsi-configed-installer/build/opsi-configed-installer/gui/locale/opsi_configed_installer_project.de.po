@@ -67,10 +67,10 @@ msgstr "Sie finden die Log-Dateien hier:"
 
 #: opsi_configed_installer_resourcestrings.rsmem
 msgid ""
-"Memory requirement for the installation of the opsi-configed\n"
+"Memory requirement for the operation of the opsi-configed\n"
 "(in megabytes)"
 msgstr ""
-"Speicherbedarf für die Installation des opsi-configed\n"
+"Speicherbedarf für den Betrieb des opsi-configed\n"
 "(in Megabytes)"
 
 #: opsi_configed_installer_resourcestrings.rsnext
@@ -105,15 +105,13 @@ msgstr "Passwort"
 #: opsi_configed_installer_resourcestrings.rsrights
 msgctxt "opsi_configed_installer_resourcestrings.rsrights"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Do you identify as "
+"root or per sudo?"
 msgstr ""
-"Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. "
-"Als was sind Sie angemeldet?"
+"Zur Installation des opsi-configed ist eine Authentifizierung erforderlich. "
+"Sind Sie als Root oder durch Sudo identifiziert?"
 
 #: opsi_configed_installer_resourcestrings.rsscalingfactor
-#| msgid ""
-#| "Scaling factor for Java Swing App\n"
-#| "(working with Java version <= 10)"
 msgid ""
 "Scaling factor for Java Swing App\n"
 "(working with Java version >= 10)"
@@ -140,13 +138,6 @@ msgstr "Passwort sichtbar machen"
 msgctxt "opsi_configed_installer_resourcestrings.rsstandard"
 msgid "Standard"
 msgstr "Standard"
-
-#: opsi_configed_installer_resourcestrings.rsstartinstallation
-msgctxt "opsi_configed_installer_resourcestrings.rsstartinstallation"
-msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr ""
-"Klicken Sie auf \"fertigstellen\", um die Installation von Opsi-Server zu "
-"beginnen."
 
 #: opsi_configed_installer_resourcestrings.rswait
 msgctxt "opsi_configed_installer_resourcestrings.rswait"
@@ -234,10 +225,11 @@ msgstr "Passwort"
 #: tpassword.labelrights.caption
 msgctxt "tpassword.labelrights.caption"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Are you identified "
+"as root or per sudo?"
 msgstr ""
 "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich. "
-"Als was sind Sie angemeldet?"
+"Sind Sie als Root oder durch Sudo identifiziert?"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"

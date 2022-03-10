@@ -75,10 +75,10 @@ msgstr "Vous pouvez trouver les fichiers journaux ici:"
 
 #: opsi_configed_installer_resourcestrings.rsmem
 msgid ""
-"Memory requirement for the installation of the opsi-configed\n"
+"Memory requirement for the operation of the opsi-configed\n"
 "(in megabytes)"
 msgstr ""
-"Mémoire requise pour l'installation de opsi-configed\n"
+"Mémoire requise pour le fonctionnement de opsi-configed\n"
 "(en méga octets)"
 
 #: opsi_configed_installer_resourcestrings.rsnext
@@ -113,10 +113,11 @@ msgstr "Mot de passe"
 #: opsi_configed_installer_resourcestrings.rsrights
 msgctxt "opsi_configed_installer_resourcestrings.rsrights"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Do you identify as "
+"root or per sudo?"
 msgstr ""
-"L'authentification est requise pour installer le serveur opsi. Qui êtes-vous "
-"connecté en tant?"
+"L'authentification est requise pour installer le opsi-configed. Vous "
+"identifiez-vous en tant que root ou par sudo?"
 
 #: opsi_configed_installer_resourcestrings.rsscalingfactor
 msgid ""
@@ -145,12 +146,6 @@ msgstr "Montrer le mot de passe"
 msgctxt "opsi_configed_installer_resourcestrings.rsstandard"
 msgid "Standard"
 msgstr "Standard"
-
-#: opsi_configed_installer_resourcestrings.rsstartinstallation
-msgctxt "opsi_configed_installer_resourcestrings.rsstartinstallation"
-msgid "Finally click \"finish\" to start the installation of opsi-server."
-msgstr ""
-"Enfin, cliquez sur \"Terminer\" pour démarrer l'installation du serveur opsi."
 
 #: opsi_configed_installer_resourcestrings.rswait
 msgctxt "opsi_configed_installer_resourcestrings.rswait"
@@ -238,10 +233,11 @@ msgstr "Mot de passe"
 #: tpassword.labelrights.caption
 msgctxt "tpassword.labelrights.caption"
 msgid ""
-"Authentication is required to install opsi-server. Who are you logged in as?"
+"Authentication is required to install the opsi-configed. Are you identified "
+"as root or per sudo?"
 msgstr ""
-"L'authentification est requise pour installer le serveur opsi. Qui êtes-vous "
-"connecté en tant?"
+"L'authentification est requise pour installer le serveur opsi. Vous "
+"identifiez-vous en tant que root ou par sudo?"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
