@@ -34,6 +34,7 @@ begin
   Left := ConfigedInstaller.Left + Round(ConfigedInstaller.Width / 2) - Round(Width / 2);
   Top := ConfigedInstaller.Top + Round(ConfigedInstaller.Height / 2) - Round(Height / 2);
   // text by resourcestrings
+  Caption := '';
   LabelWait.Caption := rsWait + #10 + ' ';
 end;
 

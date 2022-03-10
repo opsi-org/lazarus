@@ -284,6 +284,7 @@ begin
   {$ENDIF}
 
   // text by resourcestrings
+  Caption := rsWelcome;
   LabelWelcome.Caption := rsWelcome;
   LabelSelLanguage.Caption := rsSelLanguage;
   LabelCarryOut.Caption := rsCarryOut;

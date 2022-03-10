@@ -52,7 +52,9 @@
       <Unit2>
         <Filename Value="opsi_configed_installer_unit_distr.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="Distribution"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit2>
       <Unit3>
         <Filename Value="opsi_configed_installer_unit_language.pas"/>

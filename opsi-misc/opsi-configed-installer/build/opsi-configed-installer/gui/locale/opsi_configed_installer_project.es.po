@@ -204,7 +204,33 @@ msgstr "Por favor seleccione un lenguaje para el programa de setup:"
 #: tconfigedinstaller.labelwelcome.caption
 msgctxt "tconfigedinstaller.labelwelcome.caption"
 msgid "Welcome to the installation of opsi-configed on this computer!"
-msgstr "Bienvenido/a a la instalación del servidor en esta computadora!"
+msgstr "Bienvenido/a a la instalación del opsi-configed en esta computadora!"
+
+#: tdistribution.btnback.caption
+msgctxt "tdistribution.btnback.caption"
+msgid " < back "
+msgstr " < volver "
+
+#: tdistribution.btnnext.caption
+msgctxt "tdistribution.btnnext.caption"
+msgid " next > "
+msgstr " siguiente > "
+
+#: tdistribution.caption
+msgctxt "tdistribution.caption"
+msgid "Distribution"
+msgstr "Distribución"
+
+#: tdistribution.labelcorrect.caption
+msgid ""
+"If this is correct, please click 'next >' to continue.\n"
+"If not, please edit the distribution and then continue with 'next >'."
+msgstr ""
+
+#: tdistribution.labeldistr.caption
+msgctxt "tdistribution.labeldistr.caption"
+msgid "We recognized the following distribution on this computer:"
+msgstr "Se ha identificado la siguiente distribución para este ordenador:"
 
 #: tpassword.btnback.caption
 msgctxt "tpassword.btnback.caption"
