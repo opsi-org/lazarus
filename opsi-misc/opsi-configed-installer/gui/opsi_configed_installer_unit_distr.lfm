@@ -8,12 +8,12 @@ object Distribution: TDistribution
   ClientWidth = 345
   FormStyle = fsStayOnTop
   OnActivate = FormActivate
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.4'
   object BtnBack: TButton
     Left = 16
-    Height = 25
+    Height = 33
     Top = 200
-    Width = 51
+    Width = 57
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick

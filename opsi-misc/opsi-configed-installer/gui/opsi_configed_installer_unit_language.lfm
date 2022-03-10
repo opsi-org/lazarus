@@ -7,7 +7,7 @@ object ConfigedInstaller: TConfigedInstaller
   ClientHeight = 450
   ClientWidth = 730
   OnCreate = FormCreate
-  LCLVersion = '2.2.0.2'
+  LCLVersion = '2.2.0.4'
   object BackgrImage: TImage
     Left = 0
     Height = 450
