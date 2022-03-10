@@ -203,6 +203,7 @@ begin
   for i := 0 to myTOML.Count -1 do
       keysList.Add(myTOML.Keys[i]);
   result := keysList;
+  keysList.Free;
 end;
 
 function GetTOMLKeys(TOMLcontents: String): TStringList;
@@ -215,6 +216,7 @@ begin
   myTOML := GetTOML(TOMLcontents);
   keysList := GetTOMLKeys(myTOML);
   result := keysList;
+  keysList.Free;
 end;
 
 function HasTables(myTOML: TTOMLTable): integer;
@@ -241,6 +243,7 @@ begin
         tableNamesList.Add(myTOML.Keys[i]);
         end;
   result := tableNamesList;
+  tableNamesList.Free;
 end;
 
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
@@ -255,6 +258,7 @@ begin
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         tableNamesList.Add(myTOML.Keys[i]);
   result := tableNamesList;
+  tableNamesList.Free;
 end;
 
 function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
@@ -327,6 +331,8 @@ begin
   until tableIndex = myTOMLfile.Count -1;
 
   result := myTableList;
+  myTableList.Free;
+  myTOMLfile.Free;
 end;
 *)
 
@@ -388,6 +394,7 @@ begin
 
    if keysArray.Count>=2 then
    begin
+     try
       myTOMLTable := TTOMLTable(myTOML);
       for i := 0 to keysArray.Count -2 do
         begin
@@ -423,6 +430,9 @@ begin
              or (TTOMLValue(myValue).TypeString = 'UnicodeString') then
                result := '"'+result+'"';
         end;
+    on E:Exception do
+          writeln('Exception in GetValueFromTOMLfile : ', E.Message);
+    end;
   end;
 
   if (result='TTOMLTable') then
@@ -437,6 +447,8 @@ begin
      end;
   if (result='') then
      result := defaultValue;
+
+  keysArray.Free;
 end;
 
 function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
@@ -585,6 +597,7 @@ begin
     end;
     result := myTOML.AsTOMLString ;
   end;
+  keysArray.Free;
 end;
 
 function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
@@ -618,6 +631,7 @@ begin
    else
       writeln('Table does not exist, nothing to be done ');
    result := myTOML.AsTOMLString ;
+   tablesArray.Free;
 end;
 
 (*
