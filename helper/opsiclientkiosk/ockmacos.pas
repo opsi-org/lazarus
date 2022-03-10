@@ -5,7 +5,7 @@ unit OckMacOS;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, FileUtil, LazFileUtils, osRunCommandElevated, osLog, OckPathsUtils;
+  Classes, SysUtils, Process, StrUtils, FileUtil, LazFileUtils, URIParser, osRunCommandElevated, osLog, OckPathsUtils;
 
 
 type
@@ -87,6 +87,7 @@ procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
   ShellCommand: string;
   ShellOutput: string;
+  URI: TURI;
 
 begin
   try
@@ -111,10 +112,15 @@ begin
       end
       else MountPointAlreadyExists := True;
       Delete(PathToDepot, 1, 2);
-      ShellCommand := 'mount_smbfs' + ' '
-                      + '//' + User + '@'
-                      + PathToDepot + ' '
-                      + MountPoint;
+      URI.Username:=User;
+      URI.Password:=Password;
+      URI.Host:=PathToDepot;
+      URI.Port:='';
+      //ShellCommand := 'mount_smbfs' + ' '
+      //                + '//' + User+ ':' + Password + '@'
+      //                + PathToDepot + ' '
+      //                + MountPoint;
+      ShellCommand := 'mount_smbfs' + ' ' + EncodeURI(URI);
       //':' + Password + '@'
       //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
       if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoShow) then
