@@ -8,7 +8,7 @@ object Query: TQuery
   ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
-  LCLVersion = '2.2.0.2'
+  LCLVersion = '2.2.0.4'
   object BackgrImage: TImage
     Left = 0
     Height = 450
