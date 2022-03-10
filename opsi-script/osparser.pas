@@ -1697,7 +1697,17 @@ begin
   FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
   if FuncIndex >= 0 then
     if definedFunctionArray[FuncIndex].datatype = dfpVoid then
-      deffuncFound := True;
+      deffuncFound := True
+    else
+    begin
+      if definedFunctionArray[FuncIndex].datatype = dfpString then
+        LogDatei.log('A defined function that returns a string cannot stand alone (syntax error)! It needs to be assigned to a string variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical)
+      else
+      begin
+        if definedFunctionArray[FuncIndex].datatype = dfpStringlist then
+          LogDatei.log('A defined function that returns a stringlist cannot stand alone (syntax error)! It needs to be assigned to a stringlist variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical);
+      end;
+    end;
   if deffuncFound then
   begin
     Result := tsDefinedVoidFunction;
