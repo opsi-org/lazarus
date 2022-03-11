@@ -267,7 +267,7 @@ type
     FParentSection: TWorkSection;
 
   public
-    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection);
+    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection = nil);
     destructor Destroy; override;
 
     property StartLineNo: integer read FStartLineNo write FStartLineNo;
@@ -878,15 +878,16 @@ begin
     end;*)
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) then
+    if Resultlist.Count = 0 then
     begin
-      // subsub case
-      if Resultlist.Count = 0 then
+      if Assigned(callingsection) then //and (callingsection <> nil) then
       begin
-        Logdatei.log('Looking for section: ' + Sectionname +
-          ' in calling section.', LLDebug3);
-        callingsection.GetSectionLines(Sectionname, Resultlist,
-          StartlineNo, True, True, False);
+        // subsub case
+
+          Logdatei.log('Looking for section: ' + Sectionname +
+            ' in calling section.', LLDebug3);
+          callingsection.GetSectionLines(Sectionname, Resultlist,
+            StartlineNo, True, True, False);
       end;(*
       else
       begin
@@ -913,17 +914,18 @@ begin
 
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) and
+    if Resultlist.Count = 0 then
     begin
-      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
+      if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
-        // subsubsub case
-        if Resultlist.Count = 0 then
+        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
         begin
-          Logdatei.log('Looking for section: ' + Sectionname +
-            ' in callingsection.ParentSection section.', LLDebug3);
-          callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
-            StartlineNo, True, True, False);
+          // subsubsub case
+
+            Logdatei.log('Looking for section: ' + Sectionname +
+              ' in callingsection.ParentSection section.', LLDebug3);
+            callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+              StartlineNo, True, True, False);
         end;(*
         else
         begin
@@ -935,23 +937,24 @@ begin
 
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) and
+    if Resultlist.Count = 0 then
     begin
-      Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
+      if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
         Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-        if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
         begin
           Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-          // subsubsubsub case
-          if Resultlist.Count = 0 then
+          if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
           begin
-            Logdatei.log('Looking for section: ' + Sectionname +
-              ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
-            callingsection.ParentSection.ParentSection.GetSectionLines(
-              Sectionname, Resultlist,
-              StartlineNo, True, True, False);
+            Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+            // subsubsubsub case
+
+              Logdatei.log('Looking for section: ' + Sectionname +
+                ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
+              callingsection.ParentSection.ParentSection.GetSectionLines(
+                Sectionname, Resultlist,
+                StartlineNo, True, True, False);
           end;(*
           else
           begin
@@ -1968,7 +1971,7 @@ end;
 {$ENDIF WINDOWS}
 
 constructor TWorkSection.Create(const NestLevel: integer;
-  const ParentSection: TWorkSection);
+  const ParentSection: TWorkSection = nil);
 begin
   inherited Create;
   FStartLineNo := 0;
