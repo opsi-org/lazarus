@@ -430,6 +430,7 @@ begin
              or (TTOMLValue(myValue).TypeString = 'UnicodeString') then
                result := '"'+result+'"';
         end;
+    except
     on E:Exception do
           writeln('Exception in GetValueFromTOMLfile : ', E.Message);
     end;
