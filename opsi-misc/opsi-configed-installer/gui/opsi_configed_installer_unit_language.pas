@@ -284,7 +284,7 @@ begin
   {$ENDIF}
 
   // text by resourcestrings
-  Caption := rsWelcome;
+  Caption := 'Opsi Configed Installer';
   LabelWelcome.Caption := rsWelcome;
   LabelSelLanguage.Caption := rsSelLanguage;
   LabelCarryOut.Caption := rsCarryOut;
