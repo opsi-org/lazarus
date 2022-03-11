@@ -68,6 +68,22 @@ implementation
 var
   MountPointAlreadyExists: boolean = False; //exists the mountpoint already in the system?
 
+function EscapeReservedChars(theString:string):String;
+const
+  ALPHA = ['A'..'Z', 'a'..'z'];
+  DIGIT = ['0'..'9'];
+  UNRESERVED = ALPHA + DIGIT + ['-', '.', '_', '~'];
+var
+  i:integer;
+begin
+  Result := '';
+  for i := 1 to length(theString) do
+  begin
+    if (theString[i] in UNRESERVED) then Result := Result + theString[i]
+    else Result := Result + '%' + IntToStr(ord(theString[i]));
+  end;
+end;
+
 function isAdmin: boolean;
 begin
   Result := True;
@@ -115,7 +131,7 @@ begin
       URI.Username:=User;
       URI.Password:=Password;
       URI.Host:=PathToDepot;
-      URI.Port:='';
+      URI.Port:=0;
       //ShellCommand := 'mount_smbfs' + ' '
       //                + '//' + User+ ':' + Password + '@'
       //                + PathToDepot + ' '
