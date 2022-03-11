@@ -262,8 +262,8 @@ msgid ""
 "Authentication is required to install the opsi-configed. Are you identified "
 "as root or per sudo?"
 msgstr ""
-"Autenticación es requerida para instalar el servidor de opsi. ¿Te identificas "
-"como root o per sudo?"
+"Autenticación es requerida para instalar el servidor de opsi. ¿Te "
+"identificas como root o per sudo?"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
