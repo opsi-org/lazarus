@@ -68,7 +68,7 @@ implementation
 var
   MountPointAlreadyExists: boolean = False; //exists the mountpoint already in the system?
 
-function EscapeReservedChars(theString:string):String;
+function EscapeReservedURIChars(theString:string):String;
 const
   ALPHA = ['A'..'Z', 'a'..'z'];
   DIGIT = ['0'..'9'];
@@ -80,7 +80,7 @@ begin
   for i := 1 to length(theString) do
   begin
     if (theString[i] in UNRESERVED) then Result := Result + theString[i]
-    else Result := Result + '%' + IntToStr(ord(theString[i]));
+    else Result := Result + '%' + IntToHex(ord(theString[i]));
   end;
 end;
 
@@ -132,11 +132,11 @@ begin
       URI.Password:=Password;
       URI.Host:=PathToDepot;
       URI.Port:=0;
-      //ShellCommand := 'mount_smbfs' + ' '
-      //                + '//' + User+ ':' + Password + '@'
-      //                + PathToDepot + ' '
-      //                + MountPoint;
-      ShellCommand := 'mount_smbfs' + ' ' + EncodeURI(URI);
+      ShellCommand := 'mount_smbfs' + ' '
+                      + '//' + User+ ':' + EscapeReservedURIChars(Password) + '@'
+                      + PathToDepot + ' '
+                      + MountPoint;
+      //ShellCommand := 'mount_smbfs' + ' ' + EncodeURI(URI);
       //':' + Password + '@'
       //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
       if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoShow) then
