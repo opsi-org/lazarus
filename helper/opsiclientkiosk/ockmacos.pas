@@ -128,18 +128,12 @@ begin
       end
       else MountPointAlreadyExists := True;
       Delete(PathToDepot, 1, 2);
-      URI.Username:=User;
-      URI.Password:=Password;
-      URI.Host:=PathToDepot;
-      URI.Port:=0;
       ShellCommand := 'mount_smbfs' + ' '
                       + '//' + User+ ':' + EscapeReservedURIChars(Password) + '@'
                       + PathToDepot + ' '
                       + MountPoint;
-      //ShellCommand := 'mount_smbfs' + ' ' + EncodeURI(URI);
-      //':' + Password + '@'
       //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
-      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoShow) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoHide) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -171,10 +165,13 @@ begin
       //RunCommandElevated.Shell := '/bin/sh'; //not necessary to set because this is the default value
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
       ShellCommand := 'umount' + ' ' + PathToDepot;
-      if RunCommandElevated.Run(ShellCommand, ShellOutput) then
+      //if RunCommandElevated.Run(ShellCommand, ShellOutput) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoHide) then
       begin
         LogDatei.log('Umount done', LLInfo);
-        if DirectoryExists(MountPoint) and (not MountPointAlreadyExists) then RunCommandElevated.Run('rm -d ' + MountPoint, ShellOutput)
+        if DirectoryExists(MountPoint) and (not MountPointAlreadyExists) then
+          RunCommand('/bin/sh', ['-c', 'rm -d ' + MountPoint], ShellOutput,[poWaitOnExit, poUsePipes], swoHide)
+        //RunCommandElevated.Run('rm -d ' + MountPoint, ShellOutput)
         //ShowMessage(ShellOutput);
       end
       else
@@ -214,7 +211,12 @@ var
   Output: string;
 begin
   Output := '';
-  Result := RunCommandElevated.Run('cp -fR' + ' '+ Source + ' ' + Destination, Output);
+  if RunCommand('/bin/sh', ['-c', 'rm -r' + ' ' + Destination + CustomFolder], Output) then
+    LogDatei.log('Remove ock_custom before copying', LLInfo)
+  else
+    LogDatei.log('Could not remove ock_custom before copying (' + Destination + CustomFolder+'): ' + Output, LLWarning);
+  Result := RunCommand('/bin/sh', ['-c', 'cp -fR' + ' '+ Source + ' ' + Destination], Output);
+  //Result := RunCommandElevated.Run('cp -fR' + ' '+ Source + ' ' + Destination, Output);
 end;
 
 function PasswordCorrect: boolean;

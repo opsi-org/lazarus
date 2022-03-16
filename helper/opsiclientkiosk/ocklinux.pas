@@ -53,7 +53,7 @@ const
   {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
   PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
   {$ELSE} //if the kiosk is a standalone opsi product
-  PathKioskAppOnDepot = '/opsi-client-kiosk/files/app';
+  PathKioskAppOnDepot = '/l-opsi-client-kiosk/files/app';
   {$ENDIF KIOSK_IN_AGENT}
 
 implementation
@@ -75,6 +75,21 @@ begin
   Result := Trim(Output);
 end;
 
+function EscapeReservedURIChars(theString:string):String;
+const
+  ALPHA = ['A'..'Z', 'a'..'z'];
+  DIGIT = ['0'..'9'];
+  UNRESERVED = ALPHA + DIGIT + ['-', '.', '_', '~'];
+var
+  i:integer;
+begin
+  Result := '';
+  for i := 1 to length(theString) do
+  begin
+    if (theString[i] in UNRESERVED) then Result := Result + theString[i]
+    else Result := Result + '%' + IntToHex(ord(theString[i]));
+  end;
+end;
 
 procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var

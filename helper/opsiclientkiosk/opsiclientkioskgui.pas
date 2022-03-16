@@ -1849,7 +1849,8 @@ begin
  {$ENDIF LINUX}
  {$IFDEF DARWIN}
  //if ShowingFirstTime then
-   FormPasswordQuery.Visible := True
+   //FormPasswordQuery.Visible := True
+   FormSaveImagesOnDepot.Visible := True;
  //else
    //FormSaveImagesOnDepot.Visible := True;
  //PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
@@ -2282,7 +2283,7 @@ begin
     end
     else
     begin
-      ClientID := GetClientID(PathsOnClient.FCustomSettings + PathDelim +'opsiclientkiosk.conf');
+      ClientID := GetClientID(AbsolutePathSettings + PathDelim +'opsiclientkiosk.conf');
     end;
     if Application.HasOption('lang') then
     begin
@@ -2455,6 +2456,7 @@ begin
   logDatei.log('Saving IconsList and ScreenshotsList' , LLNotice);
   logDatei.log('Saving StringListCustomIcons to ' +  PathsOnClient.FCustomIcons + PathDelim +'IconsLis'
     +'t.txt', LLInfo);
+  if not DirectoryExists(PathsOnClient.FCustomSettings) then CreateDir(PathsOnClient.FCustomSettings);
   if not DirectoryExists(PathsOnClient.FCustomIcons) then CreateDir(PathsOnClient.FCustomIcons);
   SaveStringListToFile(StringListCustomIcons, PathsOnClient.FCustomIcons + PathDelim +'IconsList.txt');
   logDatei.log('Saving StringListScreenshots to ' +  PathsOnClient.FCustomScreenShots + PathDelim +'Screensh'
