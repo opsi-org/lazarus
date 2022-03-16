@@ -87,7 +87,7 @@ begin
   SetBasics(self);
 
   // text by resourcestrings
-  Caption := 'Opsi Quick Install - '+rsCapQuery;
+  Caption := 'Opsi Configed Installer - '+rsCapQuery;
   LabelMem.Caption := rsMem;
   LabelScalingFactor.Caption:=rsScalingFactor;
   BtnBack.Caption := rsBack;

@@ -229,7 +229,7 @@ msgid " next > "
 msgstr ""
 
 #: tquery.caption
-msgid "Opsi Quick Install - Query"
+msgid "Opsi Configed Installer - Query"
 msgstr ""
 
 #: tquery.labelmem.caption
