@@ -258,12 +258,13 @@ begin
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   if Copy(PathsOnClient.FCustomSettings, PathsOnDepot.FCustomSettings) then
   begin
-    LogDatei.log('Copy done', LLInfo);
+    LogDatei.log('Copy done. ' + PathsOnClient.FCustomSettings + ' to'  + PathsOnDepot.FCustomSettings, LLInfo);
     Result := True;
     Refresh;
   end
   else
   begin
+    LogDatei.log('Could not copying ' + PathsOnClient.FCustomSettings + ' to' + PathsOnDepot.FCustomSettings, LLWarning);
     LogDatei.log('Images could not be saved on opsi depot. ' + PathsOnDepot.Share +
       ' Possible solution: mount depot with write privileges.' ,LLDebug);
     ShowMessage(Format(rsImagesNotSaved, [LineEnding]));
