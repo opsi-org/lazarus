@@ -1721,7 +1721,7 @@ begin
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
                 { Read Response }
-                LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
+                LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
                 LogDatei.log_prog('HTTPSender result: ' +
                   IntToStr(HTTPSender.ResultCode) + ' msg: ' +
                   HTTPSender.ResultString, LLdebug);
@@ -2937,7 +2937,7 @@ begin
           if HTTPSender.HTTPMethod('POST', Furl) then
           begin
             { Communication successful }
-            LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
+            LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
             LogDatei.log_prog('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
               ' msg: ' + HTTPSender.ResultString, LLdebug);
             for i := 0 to HTTPSender.Headers.Count - 1 do
