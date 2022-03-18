@@ -65,7 +65,7 @@ begin
   try
   myTOMLStringList.LoadFromFile(TOMLfilePath);
   //myTOMLStringList:= loadTextFileWithEncoding(tomlFilePath,'utf8');
-  result.AddStrings(myTOMLStringList);
+  result.Assign(myTOMLStringList);
   except
     on E:Exception do
       writeln('Exception in LoadFromFile '+ TOMLfilePath +': ', E.Message);
@@ -148,6 +148,7 @@ var
 begin
   result := False;
   myFile := TStringList.Create;
+  myTOML := TTOMLDocument.Create;
   TOMLfilePath := ExpandFileName(TOMLfilePath);
   JSONfilePath := ExpandFileName(JSONfilePath);
   try
@@ -167,6 +168,7 @@ begin
     on E:Exception do
       writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ JSONfilePath +': ', E.Message);
   end;
+  myTOML.Free;
   myFile.Free;
 end;
 
@@ -174,24 +176,31 @@ function ConvertTOMLtoJSON(TOMLcontents: String): String;
 var
   myTOML : TTOMLDocument;
 begin
+  myTOML := TTOMLDocument.Create;
   myTOML := GetTOML(TOMLcontents);
   result := myTOML.AsJSON.FormatJSON;
+  myTOML.Free;
 end;
 
 function GetTOMLAsString(TOMLcontents: String): String;
 var
   myTOML : TTOMLDocument;
 begin
+  myTOML := TTOMLDocument.Create;
   myTOML := GetTOML(TOMLcontents);
   result := myTOML.AsTOMLString;
+  myTOML.Free;
 end;
 
 function GetTOMLAsStringList(TOMLcontents: String): TStringList;
 var
   myTOML : TTOMLDocument;
 begin
+  result := TStringList.Create;
+  myTOML := TTOMLDocument.Create;
   myTOML := GetTOML(TOMLcontents);
-  result := myTOML.AsTOMLStringList;
+  result.Assign(myTOML.AsTOMLStringList);
+  myTOML.Free;
 end;
 
 function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
@@ -199,10 +208,11 @@ var
   keysList : TStringList;
   i : integer;
 begin
+  result := TStringList.Create;
   keysList := TStringList.Create;
   for i := 0 to myTOML.Count -1 do
       keysList.Add(myTOML.Keys[i]);
-  result := keysList;
+  result.Assign(keysList);
   keysList.Free;
 end;
 
@@ -212,11 +222,14 @@ var
   keysList : TStringList;
   i : integer;
 begin
+  result := TStringList.Create;
+  myTOML := TTOMLDocument.Create;
   keysList := TStringList.Create;
   myTOML := GetTOML(TOMLcontents);
   keysList := GetTOMLKeys(myTOML);
-  result := keysList;
+  result.Assign(keysList);
   keysList.Free;
+  myTOML.Free;
 end;
 
 function HasTables(myTOML: TTOMLTable): integer;
@@ -236,13 +249,14 @@ var
   tableNamesList : TStringList;
   i : integer;
 begin
+  result := TStringList.Create;
   tableNamesList := TStringList.Create;
   for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         begin
         tableNamesList.Add(myTOML.Keys[i]);
         end;
-  result := tableNamesList;
+  result.Assign(tableNamesList);
   tableNamesList.Free;
 end;
 
@@ -252,13 +266,16 @@ var
   tableNamesList : TStringList;
   i : integer;
 begin
+  result := TStringList.Create;
+  myTOML := TTOMLDocument.Create;
   tableNamesList := TStringList.Create;
   myTOML := GetTOML(TOMLcontents);
   for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         tableNamesList.Add(myTOML.Keys[i]);
-  result := tableNamesList;
+  result.AddStrings(tableNamesList);
   tableNamesList.Free;
+  myTOML.Free;
 end;
 
 function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
@@ -266,17 +283,24 @@ var
   myTOMLTable : TTOMLTable;
   j : integer;
 begin
-  j := 0;
-  repeat
-    if (String(myTOML.Values[j]) = 'TTOMLTable') then
-        if myTOML.Keys[j] = table then
-          begin
-          myTOMLTable := TTOMLTable(myTOML.Items[j]);
-          break;
-          end;
-    j := j + 1 ;
-  until j = myTOML.Count;
+  myTOMLTable := TTOMLTable.Create(table);
+  try
+    j := 0;
+    repeat
+      if (String(myTOML.Values[j]) = 'TTOMLTable') then
+          if myTOML.Keys[j] = table then
+            begin
+            myTOMLTable := TTOMLTable(myTOML.Items[j]);
+            break;
+            end;
+      j := j + 1 ;
+    until j = myTOML.Count;
+  except
+  on E:Exception do
+        writeln('Exception in GetTOMLTable : ', E.Message);
+  end;
   result := myTOMLTable;
+  //myTOMLTable.Free;     //causes SIGSEGV exception
 end;
 
 function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
@@ -284,25 +308,49 @@ var
   myTOML : TTOMLDocument;
   myTOMLTable : TTOMLTable;
 begin
-  myTOML := GetTOML(TOMLcontents);
-  myTOMLTable := GetTOMLTable(myTOML, table);
-  result := myTOMLTable.AsTOMLStringList;
+  result := TStringList.Create;
+  myTOML := TTOMLDocument.Create;
+  myTOMLTable := TTOMLTable.Create;
+  try
+    myTOML := GetTOML(TOMLcontents);
+    myTOMLTable := GetTOMLTable(myTOML, table);
+    result.Assign(myTOMLTable.AsTOMLStringList);
+  except
+  on E:Exception do
+        writeln('Exception in GetTOMLTable : ', E.Message);
+  end;
+  //myTOMLTable.Free;     //causes SIGSEGV exception
+  myTOML.Free;
 end;
 
 function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 var
   myTOMLTable : TTOMLTable;
 begin
-  myTOMLTable:= GetTOMLTable(myTOML, table);
-  result := myTOMLTable.AsTOMLString;
+  myTOMLTable := TTOMLTable.Create(table);
+  try
+    myTOMLTable:= GetTOMLTable(myTOML, table);
+    result := myTOMLTable.AsTOMLString;
+  except
+  on E:Exception do
+        writeln('Exception in GetTOMLTableAsString : ', E.Message);
+  end;
+  myTOMLTable.Free;
 end;
 
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
 var
   myTOML : TTOMLDocument;
 begin
-  myTOML := GetTOML(TOMLcontents);
-  result := GetTOMLTableAsString(myTOML, table);
+  myTOML := TTOMLDocument.Create;
+  try
+    myTOML := GetTOML(TOMLcontents);
+    result := GetTOMLTableAsString(myTOML, table);
+  except
+  on E:Exception do
+        writeln('Exception in GetTOMLTableAsString : ', E.Message);
+  end;
+  myTOML.Free;
 end;
 
 (*
@@ -330,7 +378,7 @@ begin
   myTableList.Add(line);
   until tableIndex = myTOMLfile.Count -1;
 
-  result := myTableList;
+  result.Assign(myTableList);
   myTableList.Free;
   myTOMLfile.Free;
 end;
@@ -346,6 +394,8 @@ var
   i, j : integer;
 begin
   //result := defaultValue;
+  myTOML := TTOMLDocument.Create;
+  myTOMLTable := TTOMLTable.Create;
   myTOML := GetTOML(TOMLcontents);
 
   keysArray := TStringList.Create;
@@ -450,6 +500,7 @@ begin
      result := defaultValue;
 
   keysArray.Free;
+  myTOML.Free;
 end;
 
 function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
@@ -461,6 +512,8 @@ var
   tableName : String;
   i : integer;
 begin
+  myTOML := TTOMLDocument.Create;
+
   if trim(keyPath) = '' then
      begin
      writeln('Key is empty, nothing to be done with ModifyTOML ');
@@ -549,8 +602,9 @@ begin
         end;
     'CHANGE' :
         begin
-           myTOMLTable := TTOMLTable(myTOML);
-           if keysArray.Count>=2 then
+           try
+            myTOMLTable := TTOMLTable(myTOML);
+            if keysArray.Count>=2 then
             begin
                for i := 0 to keysArray.Count -2 do
                 begin
@@ -561,23 +615,28 @@ begin
                       writeln('KeyPath does not exist, nothing to be done with command CHANGE ');
                 end;
             end;
-           i:= 0;
-           repeat
-              if (myTOMLTable.Keys[i]=keysArray[keysArray.Count-1]) then
-                 begin
-                 myTOMLTable.PutValue(i,myValue);
-                 break;
-                 end
-              else
-                i:= i+1;
-           until i = myTOMLTable.Count;
-           if i = myTOMLTable.Count then
-              writeln('Key does not exist, nothing to be done with command CHANGE ');
+            i:= 0;
+            repeat
+                if (myTOMLTable.Keys[i]=keysArray[keysArray.Count-1]) then
+                   begin
+                   myTOMLTable.PutValue(i,myValue);
+                   break;
+                   end
+                else
+                  i:= i+1;
+            until i = myTOMLTable.Count;
+            if i = myTOMLTable.Count then
+                writeln('Key does not exist, nothing to be done with command CHANGE ');
+           except
+            on E:Exception do
+              writeln('Exception in ModifyTOML : ', E.Message);
+           end;
         end;
     'DEL' :
         begin
            myTOMLTable := TTOMLTable(myTOML);
-           if keysArray.Count>=2 then
+           try
+            if keysArray.Count>=2 then
             begin
                for i := 0 to keysArray.Count -2 do
                 begin
@@ -588,10 +647,14 @@ begin
                       writeln('KeyPath does not exist, nothing to be done with command DEL ');
                 end;
             end;
-           if myTOMLTable.Find(keysArray[keysArray.Count-1]) <> nil then
+            if myTOMLTable.Find(keysArray[keysArray.Count-1]) <> nil then
                myTOMLTable.Remove(keysArray[keysArray.Count-1])
-           else
-              writeln('Key does not exist, nothing to be done with command DEL ');
+            else
+               writeln('Key does not exist, nothing to be done with command DEL ');
+           except
+              on E:Exception do
+                writeln('Exception in ModifyTOML : ', E.Message);
+           end;
         end;
     otherwise
         writeln('ModifyTOML command unkown ');
@@ -599,6 +662,7 @@ begin
     result := myTOML.AsTOMLString ;
   end;
   keysArray.Free;
+  myTOML.Free;
 end;
 
 function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
@@ -609,6 +673,7 @@ var
   myTOMLTable : TTOMLTable;
   i : integer;
 begin
+  myTOML := TTOMLDocument.Create;
   myTOML := GetTOML(TOMLcontents);
   tablesArray := TStringList.Create;
   tablesArray.Delimiter := '.';
@@ -616,7 +681,8 @@ begin
   tablesArray.DelimitedText := tablePath;
 
   myTOMLTable := TTOMLTable(myTOML);
-   if tablesArray.Count>=2 then
+  try
+    if tablesArray.Count>=2 then
     begin
        for i := 0 to tablesArray.Count -2 do
         begin
@@ -631,8 +697,13 @@ begin
        myTOMLTable.Remove(tablesArray[tablesArray.Count-1])
    else
       writeln('Table does not exist, nothing to be done ');
-   result := myTOML.AsTOMLString ;
-   tablesArray.Free;
+  except
+    on E:Exception do
+      writeln('Exception in DeleteTableFromTOML : ', E.Message);
+  end;
+  result := myTOML.AsTOMLString ;
+  tablesArray.Free;
+  myTOML.Free;
 end;
 
 (*
