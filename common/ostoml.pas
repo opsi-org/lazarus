@@ -659,9 +659,9 @@ begin
     otherwise
         writeln('ModifyTOML command unkown ');
     end;
-    result := myTOML.AsTOMLString ;
+    result := myTOML.AsTOMLString;
+    keysArray.Free;
   end;
-  keysArray.Free;
   myTOML.Free;
 end;
 
