@@ -46,6 +46,7 @@ const
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
   AbsolutePathCustomSettingsAdminMode =  '/tmp/opsi-client-kiosk' + CustomFolder;
+  AbsolutePathSettings = '/opt/opsi-client-kiosk';
   //AbsolutePathCustomSettingsUserMode = '/opt/opsi-client-kiosk' + CustomFolder;
   RelativePathProductIcons = '/product_icons';
   RelativePathScreenShots = '/screenshots';
@@ -206,7 +207,7 @@ end;
 
 procedure TPathsOnDepotLinux.SetDepotPaths;
 begin
-  FKioskApp := PathKioskAppOnDepot;
+  FKioskApp := MountPoint + PathKioskAppOnDepot;
   FCustomSettings := FKioskApp;
   FCustomIcons := FCustomSettings + RelativePathProductIcons;
   FCustomScreenShots := FCustomSettings + RelativePathScreenShots;

@@ -687,13 +687,13 @@ msgstr "Schließen"
 
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
+msgid "Save files on depot"
+msgstr "Speicher Dateien auf Depot"
 
 #: tformsaveimagesondepot.caption
 msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
+msgid "Save settings on depot"
+msgstr "Speicher Einstellungen auf Depot"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
