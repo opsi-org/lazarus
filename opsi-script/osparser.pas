@@ -23495,9 +23495,14 @@ begin
                 syntaxCheck := False;
                 if skip('=', remaining, Parameter, InfoSyntaxError) then
                   syntaxCheck := True
-                else if EvaluateString(Remaining, Remaining,
+                else
+                begin
+                  if EvaluateString(Remaining, Remaining,
                   Parameter, InfoSyntaxError) then
-                  syntaxCheck := True;
+                    syntaxCheck := True
+                  else
+                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                end;
 
                 if syntaxCheck then
                   LogDatei.log('comment: ' + Parameter, LLnotice);
@@ -25648,7 +25653,6 @@ begin
                       'Remaining char(s) not allowed here');
                 end
                 else
-
                   reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end
 
