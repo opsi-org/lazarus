@@ -922,9 +922,9 @@
         <IsPartOfProject Value="True"/>
       </Unit66>
       <Unit67>
-        <Filename Value="osgetregistry.pas"/>
+        <Filename Value="osgetregistryfunctions.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="osGetRegistry"/>
+        <UnitName Value="osGetRegistryFunctions"/>
       </Unit67>
     </Units>
   </ProjectOptions>
