@@ -25,8 +25,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="4"/>
-      <BuildNr Value="37"/>
+      <RevisionNr Value="5"/>
       <StringTable Comments="Compiled with Lazarus 2.2.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="12">
@@ -73,6 +72,14 @@
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
             <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG -dSYNAPSE"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSLOG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -223,6 +230,14 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSLOG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>
@@ -660,7 +675,9 @@
       <Unit11>
         <Filename Value="osmessagedialog.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="MyMessageDlg"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit11>
       <Unit12>
         <Filename Value="osshowsysinfo.pas"/>
