@@ -10627,6 +10627,7 @@ function TuibFileInstall.AllDelete
   retryOnReboot: boolean; logleveloffset: integer = 0): boolean;
 
 var
+  FileFinder: TSearchRec;
   CompleteName: string = '';
   PathName: string = '';
   testName: string = '';
@@ -10922,8 +10923,11 @@ begin
   { Start }
   if not search4file then
   begin
+    // FindFirst only finds directories without PathDelim at the end
+    if (testname[length(testname)] = PathDelim) then
+       testname := ExtractFileDir(testname);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
-    if (not FileExists(testname)) and (not DirectoryExists(testname)) then
+    if not (FindFirst(testname,faAnyFile and faDirectory,FileFinder) = 0) then
     begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
@@ -10980,6 +10984,7 @@ begin
         end;
       end;
     end;
+    FindClose(FileFinder);
   end
   else { old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing" }
   begin
