@@ -3,6 +3,13 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.5.0) stable; urgency=low
+
+  * osfunc: fix "del" in files section: now works with wildcards, references #4560
+
+-- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 16:00
+
+
 opsi-script (4.12.4.37) stable; urgency=low
 
   * osparser: new global constant %opsiUsertmpDir%; implements #4496
