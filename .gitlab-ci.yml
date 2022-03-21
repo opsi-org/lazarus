@@ -56,9 +56,9 @@ compile opsi-script windows:
     - $BINARY_VERSION = $doc.SelectSingleNode("//MajorVersionNr").Value + "." + $doc.SelectSingleNode("//MinorVersionNr").Value + "." + $doc.SelectSingleNode("//RevisionNr").Value + "." + $doc.SelectSingleNode("//BuildNr").Value
     - echo "$BINARY_VERSION"
     - echo "Compiling $PROJECT_NAME for Win32"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win32
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win32
     - echo "Compiling $PROJECT_NAME for Win64"
-    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-mode=Release_Win64
+    - C:\lazarus\lazbuild.exe $LAZ_PROJECT_FILE --build-all --build-mode=Release_Win64
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
     - echo "Code signing opsi-script for windows"
     - opsi-dev-tool -l info --signserver-sign $PROJECT_REPOSITORY_PATH\compiler_out\binarys\i386-win32\opsi-script.exe
@@ -84,9 +84,9 @@ compile opsi-script linux:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for Linux with no GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_nogui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_nogui
     - echo "Compiling $PROJECT_NAME for Linux with GUI"
-    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_Lin_64_gui
+    - /usr/bin/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_Lin_64_gui
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
   artifacts:
     name: "opsi-script $BINARY_VERSION linux"
@@ -110,9 +110,9 @@ compile opsi-script macos:
     - LAZ_PROJECT_FILE=${PROJECT_REPOSITORY_PATH}/${PROJECT_NAME}.lpi
     - echo "$LAZ_PROJECT_FILE"
     - echo "Compiling $PROJECT_NAME for MacOS with no GUI"
-    - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_nogui --ws=cocoa
+    - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_mac_nogui --ws=cocoa
     - echo "Compiling $PROJECT_NAME for MacOS with GUI"
-    - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-mode=Release_mac_gui --ws=cocoa
+    - /Library/Lazarus/lazbuild $LAZ_PROJECT_FILE --build-all --build-mode=Release_mac_gui --ws=cocoa
     # - $BINARY_OUT_PATH = $PROJECT_NAME -eq "opsiscript")
    
     #---CODE SIGNING OPSI-SCRIPT---
