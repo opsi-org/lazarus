@@ -1697,6 +1697,11 @@ begin
                   HTTPSender.Headers.Strings[i], LLDebug);
               LogDatei.log('SslLib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
               { Set Body }
+              // before writing utf8str to HTTPSender.Document we need to replace all #10(newline), #13 and #9(TAB) by their
+              // escape code equivalent for the correct json server request (otherwise we get a 400 bad request)
+              utf8str := sysutils.StringReplace(utf8str, #10, '\n', [rfReplaceAll]);
+              utf8str := sysutils.StringReplace(utf8str, #13, '\r', [rfReplaceAll]);
+              utf8str := sysutils.StringReplace(utf8str, #9, '\t', [rfReplaceAll]);
               HTTPSender.Document.Write(utf8str[1], length(utf8str));
               if ContentEncoding <> 'identity' then
                 //change to ContentEncoding = 'gzip' if using deflate alternative

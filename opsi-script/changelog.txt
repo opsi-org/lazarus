@@ -6,6 +6,7 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.5.0) stable; urgency=low
 
   * osparser: throw syntax errors in comments, implements #3542
+  * oswebservice: allow newline and tab in opsiservicecall, implements #3522
 
 -- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 13:00
 
