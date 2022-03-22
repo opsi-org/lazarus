@@ -14857,6 +14857,12 @@ begin
               begin
                 syntaxCheck := True;
               end;
+            end
+            else
+            begin
+              SyntaxCheck := False;
+              InfoSyntaxError := 'No valid access string';
+              LogDatei.Log('"' + s2 + '" is no valid access string! Only "32Bit", "64Bit" and "Sysnative" are allowed.', LLError);
             end;
       end;
     {$ELSE WINDOWS}

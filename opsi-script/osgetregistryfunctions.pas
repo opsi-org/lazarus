@@ -76,10 +76,7 @@ begin
     LowerCase('64Bit')) or (SmallAccessString = LowerCase('Sysnative')) then
     Result := True
   else
-  begin
     Result := False;
-    LogDatei.Log('Access string is not valid! Only "32Bit", "64Bit" and "Sysnative" are allowed.', LLError);
-  end;
 end;
 
 procedure GetSummedRegistryListOrMap(RegistryKey: string; SmallAccessString: string;
