@@ -6,6 +6,10 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.5.0) stable; urgency=low
 
   * oswebservice: allow newline and tab in opsiservicecall, implements #3522
+  * new functions getRegistryKeyList(<regkey>,<access str>),
+	getRegistryVarList(<regkey>,<access str>),
+	getRegistryVarMap(<regkey>,<access str>),
+	implements #4720
 
 -- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 13:00
 
