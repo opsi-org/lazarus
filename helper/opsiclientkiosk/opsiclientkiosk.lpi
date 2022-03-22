@@ -8,6 +8,7 @@
       </Flags>
       <SessionStorage Value="InIDEConfig"/>
       <Title Value="opsi-client-kiosk"/>
+      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -24,10 +25,10 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="13"/>
+      <BuildNr Value="14"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.2.0"/>
     </VersionInfo>
-    <BuildModes Count="8">
+    <BuildModes Count="9">
       <Item1 Name="Default_Windows" Default="True"/>
       <Item2 Name="Debug_Windows">
         <CompilerOptions>
@@ -247,7 +248,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsiclientkiosk"/>
+            <Filename Value="OpsiClientKiosk-Bundle/OpsiClientKiosk/OpsiClientKiosk.app/Contents/MacOS/OpsiClientKiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -330,6 +331,47 @@
           </Other>
         </CompilerOptions>
       </Item8>
+      <Item9 Name="Debug_MacOS">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="OpsiClientKiosk-Bundle/OpsiClientKiosk/OpsiClientKiosk.app/Contents/MacOS/OpsiClientKiosk"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse;../../external_libraries/misc"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+          </Other>
+        </CompilerOptions>
+      </Item9>
       <SharedMatrixOptions Count="1">
         <Item1 ID="741826884469" Type="IDEMacro" MacroName="TargetFile" Value="$(BuildMode)/$NameOnly($(ProjFile))"/>
       </SharedMatrixOptions>
@@ -363,7 +405,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -517,6 +559,11 @@
         <Filename Value="../../common/osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="ockpathsutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckPathsUtils"/>
+      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

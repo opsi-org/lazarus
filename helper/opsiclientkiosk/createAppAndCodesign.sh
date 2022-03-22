@@ -5,6 +5,7 @@ set -e
 DEVELOPER_ID="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
+APP_CODESIGN=false
 
 SCRIPT_DIR=`pwd`
 BUNDLE_ID=org.opsi.OpsiClientKiosk
@@ -17,7 +18,9 @@ APP_SOURCE="`pwd`/builds/x86_64-darwin/${EXECUTABLE_NAME}.app"
 # that, and then copy the app there.
 #
 # Note we use `-R`, not `-r`, to preserve symlinks.
-WORKDIR="${EXECUTABLE_NAME}-`date '+%Y-%m-%d_%H.%M.%S'`"
+WORKDIR="${EXECUTABLE_NAME}-Bundle"
+# -`date '+%Y-%m-%d_%H.%M.%S'`"
+rm -fR "${WORKDIR}"
 DMGROOT="${WORKDIR}/${EXECUTABLE_NAME}"
 APP="${WORKDIR}/${EXECUTABLE_NAME}/${EXECUTABLE_NAME}.app"
 DMG="${WORKDIR}/${EXECUTABLE_NAME}.dmg"
@@ -92,17 +95,21 @@ EOF
 #codesign -s $DEVELOPER_ID -f --timestamp -i com.example.apple-samplecode.QShare.QCoreTool -o runtime --entitlements "${WORKDIR}/tool.entitlements"  "${APP}/Contents/Frameworks/QCore.framework/Versions/A/Helpers/QCoreTool"
 #codesign -s $DEVELOPER_ID -f --timestamp -o runtime --entitlements "${WORKDIR}/appex.entitlements" "${APP}/Contents/PlugIns/QShareExtension.appex"
 
+
 # Change rights
 chown -R root "${WORKDIR}"
 chgrp -R wheel "${WORKDIR}"
-chmod -R 755 "${WORKDIR}"
+chmod -R 777 "${WORKDIR}"
 
-codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
-codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
-codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libsqlite3.dylib"
-#codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/MacOS/OpsiClientKiosk"
-codesign -s "${DEVELOPER_ID}" -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}/Contents/MacOS/OpsiClientKiosk"
-
+if ${APP_CODESIGN}
+then
+    chmod -R 755 "${WORKDIR}"
+    codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"
+    codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libcrypto.dylib"
+    codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libsqlite3.dylib"
+    codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/MacOS/OpsiClientKiosk"
+    #codesign -s "${DEVELOPER_ID}" -f --timestamp -o runtime --entitlements "${WORKDIR}/kiosk.entitlements" "${APP}/Contents/MacOS/OpsiClientKiosk"
+fi
 ## Create a disk image from our disk image root directory.
 #hdiutil create -srcFolder "${DMGROOT}" -quiet -o "${DMG}"
 ## Sign that.

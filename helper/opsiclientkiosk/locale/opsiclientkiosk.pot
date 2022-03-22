@@ -1,13 +1,5 @@
 msgid ""
-msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Jan Werner <j.werner@uib.de>\n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Transfer-Encoding: 8bit\n"
+msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: installdlg.rserrorondemand
 msgctxt "installdlg.rserrorondemand"
@@ -681,12 +673,12 @@ msgstr ""
 
 #: tformsaveimagesondepot.buttoncopy.caption
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
+msgid "Save files on depot"
 msgstr ""
 
 #: tformsaveimagesondepot.caption
 msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
+msgid "Save settings on depot"
 msgstr ""
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption

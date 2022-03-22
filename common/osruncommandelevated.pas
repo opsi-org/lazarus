@@ -41,7 +41,7 @@ implementation
 constructor TRunCommandElevated.Create(aPassword: string; aSudo: boolean; aShell: string = '/bin/sh'; aShellOption: string = '-c');
 begin
   inherited Create;
-  FPassword := aPassword;
+  FPassword := aPassword; // AnsiQuotedStr(aPassword,'''');
   FSudo := aSudo;
   FShell := aShell;
   FShellOption := aShellOption;
@@ -66,8 +66,8 @@ begin
     LogDatei.log('Shell command: ' + aCommandLine, LLConfidential)
   else
     LogDatei.log('Shell command: ' + aCommandLine, LLDebug);
-  if RunCommand(FShell, [FShellOption, 'echo ' + FPassword + ' | ' + aCommandLine],
-    Output, [poWaitOnExit, poUsePipes], swoHIDE) then
+  if RunCommand(FShell, [FShellOption, 'echo ' +'"'+ FPassword + '" | ' + aCommandLine],
+    Output, [poWaitOnExit, poUsePipes], swoShow) then
   begin
     LogDatei.log('Shell command successful', LLInfo);
     LogDatei.log('Shell output: ' + Output, LLDebug);

@@ -4,20 +4,20 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   Top = 253
   Width = 544
   BorderStyle = bsDialog
-  Caption = 'Save images on depot'
+  Caption = 'Save settings on depot'
   ClientHeight = 292
   ClientWidth = 544
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.4'
   object ButtonCopy: TButton
     Left = 9
     Height = 30
     Top = 256
-    Width = 158
+    Width = 138
     AutoSize = True
-    Caption = 'Save images on depot'
+    Caption = 'Save files on depot'
     Constraints.MaxHeight = 30
     OnClick = ButtonCopyClick
     TabOrder = 0
@@ -51,7 +51,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
       Top = 2
       Width = 31
       Caption = 'User'
-      ParentColor = False
       ParentFont = False
     end
     object EditUser: TEdit
@@ -68,7 +67,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
       Top = 2
       Width = 65
       Caption = 'Password'
-      ParentColor = False
       ParentFont = False
     end
     object EditPassword: TEdit
@@ -139,7 +137,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 5
-        ParentColor = False
       end
       object ProgressBar: TProgressBar
         Left = 5

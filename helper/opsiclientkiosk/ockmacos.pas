@@ -5,8 +5,29 @@ unit OckMacOS;
 interface
 
 uses
-  Classes, SysUtils, Process, StrUtils, osRunCommandElevated, osLog;
+  Classes, SysUtils, Process, StrUtils, FileUtil, LazFileUtils, URIParser, osRunCommandElevated, osLog, OckPathsUtils;
 
+
+type
+
+  { TPathsOnClientMacOS }
+
+  TPathsOnClientMacOS = class(TPathsOnClient)
+  private
+    procedure CopyCustomSettingsToWriteableFolder;
+  public
+    procedure SetAdminMode(theAdminMode: boolean); override;
+    procedure SetAdminModePaths; override;
+    procedure SetUserModePaths; override;
+    //constructor Create; override;
+    //destructor Destroy; override;
+  end;
+
+  { TPathsOnDepotMacOS }
+
+  TPathsOnDepotMacOS = class(TPathsOnDepot)
+    procedure SetDepotPaths; override;
+  end;
 
 function isAdmin: boolean;
 function GetUserName_: string;
@@ -16,16 +37,52 @@ function IsDepotMounted(const PathToDepot: string):boolean;
 function Copy(Source:string; Destination:string):boolean;
 function PasswordCorrect:boolean;
 
+
+
+
 var
   RunCommandElevated: TRunCommandElevated;
+  PathsOnClient: TPathsOnClientMacOS;
+  PathsOnDepot: TPathsOnDepotMacOS;
 
 const
-  MountPoint = '/mnt/opsi_depot_rw';
+  // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
+  MountPoint = '/tmp/opsi_depot_rw';
+  DefaultFolder = '/default';
+  CustomFolder = '/ock_custom';
+  AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
+  AbsolutePathSettings = '/Library/Application Support/org.opsi.OpsiClientKiosk';
+  AbsolutePathCustomSettingsUserMode = AbsolutePathSettings + CustomFolder;
+  RelativePathDefaultSettings = '/../Resources' + DefaultFolder;
+  RelativePathProductIcons = '/product_icons';
+  RelativePathScreenShots = '/screenshots';
+  RelativePathSkin ='/skin';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+  PathKioskAppOnDepot = '/opsi-client-agent/files/opsi/opsiclientkiosk/app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+  PathKioskAppOnDepot = '/m-opsi-client-kiosk/files/app';
+  {$ENDIF KIOSK_IN_AGENT}
 
 implementation
 
 var
   MountPointAlreadyExists: boolean = False; //exists the mountpoint already in the system?
+
+function EscapeReservedURIChars(theString:string):String;
+const
+  ALPHA = ['A'..'Z', 'a'..'z'];
+  DIGIT = ['0'..'9'];
+  UNRESERVED = ALPHA + DIGIT + ['-', '.', '_', '~'];
+var
+  i:integer;
+begin
+  Result := '';
+  for i := 1 to length(theString) do
+  begin
+    if (theString[i] in UNRESERVED) then Result := Result + theString[i]
+    else Result := Result + '%' + IntToHex(ord(theString[i]));
+  end;
+end;
 
 function isAdmin: boolean;
 begin
@@ -46,9 +103,11 @@ procedure MountDepot(const User: string; Password: string; PathToDepot: string);
 var
   ShellCommand: string;
   ShellOutput: string;
+  URI: TURI;
+
 begin
   try
-    LogDatei.log('Mounting ' + PathToDepot + ' on' + MountPoint , LLInfo);
+    LogDatei.log('Mounting ' + PathToDepot + ' on ' + MountPoint , LLInfo);
     {set shell and options}
     if assigned(RunCommandElevated) then
     begin
@@ -56,15 +115,25 @@ begin
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
       if not DirectoryExists(MountPoint) then
       begin
-        RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput);
+        //if RunCommandElevated.Run('mkdir ' + MountPoint, ShellOutput) then
+        if RunCommand('/bin/sh', ['-c', 'mkdir ' + MountPoint], ShellOutput) then
+        begin
+          LogDatei.log('mkdir ' + MountPoint + ' done ', LLInfo);
+        end
+        else
+        begin
+          LogDatei.log('Error while trying to run command "mkdir ' + MountPoint + '"', LLError);
+        end;
         MountPointAlreadyExists := False;
       end
       else MountPointAlreadyExists := True;
-      ShellCommand := 'mount -t cifs' + ' '
-                      + '-o username=' + User + ',' + 'password=' + Password + ' '
+      Delete(PathToDepot, 1, 2);
+      ShellCommand := 'mount_smbfs' + ' '
+                      + '//' + User+ ':' + EscapeReservedURIChars(Password) + '@'
                       + PathToDepot + ' '
                       + MountPoint;
-      if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
+      //if RunCommandElevated.Run(ShellCommand, ShellOutput, True) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoHide) then
       begin
         ShellCommand := '';
         LogDatei.log('Mounting done', LLInfo);
@@ -72,7 +141,7 @@ begin
       end
       else
       begin
-        LogDatei.log('Error while trying to run command mount for path: ' + PathToDepot, LLError);
+        LogDatei.log('Error while trying to run command: ' + ShellCommand, LLError);
       end;
     end
     else
@@ -96,10 +165,13 @@ begin
       //RunCommandElevated.Shell := '/bin/sh'; //not necessary to set because this is the default value
       //RunCommandElevated.ShellOptions := '-c'; //not necessary to set because this is the default value
       ShellCommand := 'umount' + ' ' + PathToDepot;
-      if RunCommandElevated.Run(ShellCommand, ShellOutput) then
+      //if RunCommandElevated.Run(ShellCommand, ShellOutput) then
+      if RunCommand('/bin/sh', ['-c', ShellCommand], ShellOutput,[poWaitOnExit, poUsePipes], swoHide) then
       begin
         LogDatei.log('Umount done', LLInfo);
-        if DirectoryExists(MountPoint) and (not MountPointAlreadyExists) then RunCommandElevated.Run('rm -d ' + MountPoint, ShellOutput)
+        if DirectoryExists(MountPoint) and (not MountPointAlreadyExists) then
+          RunCommand('/bin/sh', ['-c', 'rm -d ' + MountPoint], ShellOutput,[poWaitOnExit, poUsePipes], swoHide)
+        //RunCommandElevated.Run('rm -d ' + MountPoint, ShellOutput)
         //ShowMessage(ShellOutput);
       end
       else
@@ -139,7 +211,12 @@ var
   Output: string;
 begin
   Output := '';
-  Result := RunCommandElevated.Run('cp -r --remove-destination' + ' '+ Source + ' ' + Destination, Output);
+  if RunCommand('/bin/sh', ['-c', 'rm -r' + ' ' + Destination + CustomFolder], Output) then
+    LogDatei.log('Remove ock_custom before copying', LLInfo)
+  else
+    LogDatei.log('Could not remove ock_custom before copying (' + Destination + CustomFolder+'): ' + Output, LLWarning);
+  Result := RunCommand('/bin/sh', ['-c', 'cp -fR' + ' '+ Source + ' ' + Destination], Output);
+  //Result := RunCommandElevated.Run('cp -fR' + ' '+ Source + ' ' + Destination, Output);
 end;
 
 function PasswordCorrect: boolean;
@@ -153,11 +230,84 @@ begin
   else Result := False;
 end;
 
+{ TPathsOnDepotMacOS }
+
+procedure TPathsOnDepotMacOS.SetDepotPaths;
+begin
+  FKioskApp := MountPoint + PathKioskAppOnDepot;
+  FCustomSettings := FKioskApp;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+
+{ TPathsOnClientMacOS}
+
+procedure TPathsOnClientMacOS.CopyCustomSettingsToWriteableFolder;
+var
+  Output: string;
+begin
+  //RunCommand('/bin/sh',
+  //  ['-c','cp -R' + ' ' + AbsolutePathCustomSettingsUserMode + ' ' + AbsolutePathCustomSettingsAdminMode ],
+  //  Output, [poUsePipes, poWaitOnExit], swoHIDE);
+  LogDatei.log('Removing old settings from ' + AbsolutePathCustomSettingsAdminMode, LLInfo);
+  if DeleteDirectory(AbsolutePathCustomSettingsAdminMode, False) then
+  begin
+    LogDatei.log('Removing old settings done', LLInfo);
+  end;
+  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots);
+end;
+
+procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);
+begin
+  inherited SetAdminMode(theAdminMode);
+  if FAdminMode then CopyCustomSettingsToWriteableFolder;
+end;
+
+procedure TPathsOnClientMacOS.SetAdminModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  //Default
+  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
+  //Custom
+  FCustomSettings := AbsolutePathCustomSettingsAdminMode;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+procedure TPathsOnClientMacOS.SetUserModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  //Dfault
+  FDefaultSettings := FKioskApp + RelativePathDefaultSettings;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
+  //Custom
+  FCustomSettings := AbsolutePathCustomSettingsUserMode;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+
 initialization
-RunCommandElevated := TRunCommandElevated.Create('',True);
+  RunCommandElevated := TRunCommandElevated.Create('',True);
+  PathsOnClient := TPathsOnClientMacOS.Create;
+  PathsOnDepot := TPathsOnDepotMacOS.Create;
 
 finalization
-FreeAndNil(RunCommandElevated);
+  FreeAndNil(RunCommandElevated);
+  FreeAndNil(PathsOnClient);
+  FreeAndNil(PathsOnDepot);
 
 end.
 

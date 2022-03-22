@@ -688,13 +688,17 @@ msgid "Close"
 msgstr "Luk"
 
 #: tformsaveimagesondepot.buttoncopy.caption
+#, fuzzy
+#| msgid "Save images on depot"
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
+msgid "Save files on depot"
 msgstr "Gem billeder på depot"
 
 #: tformsaveimagesondepot.caption
+#, fuzzy
+#| msgid "Save images on depot"
 msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
+msgid "Save settings on depot"
 msgstr "Gem billeder på depot"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption
