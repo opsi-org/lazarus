@@ -14842,6 +14842,30 @@ begin
     {$ENDIF WINDOWS}
     end
 
+    else if CheckSummedRegistryListOrMap(LowerCase(s)) then
+    begin
+    {$IFDEF WINDOWS}
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+      begin
+        if Skip(',', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s2, InfoSyntaxError) then
+            if CheckAccessString(LowerCase(s2)) then
+            begin
+              GetSummedRegistryListOrMap(s1, LowerCase(s2), LowerCase(s), list)
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+              end;
+            end;
+      end;
+    {$ELSE WINDOWS}
+    SyntaxCheck := False;
+    InfoSyntaxError := 'Only implemented for Windows';
+    LogDatei.log(s + ' is only implemented for Windows', LLError);
+    {$ENDIF WINDOWS}
+    end
+
 
     else if LowerCase(s) = LowerCase('getSlowInfoMap')
     // reads slowinfocache
