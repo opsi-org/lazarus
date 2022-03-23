@@ -21,7 +21,7 @@ uses
   DBCtrls,
   datadb,
   typinfo, installdlg, lcltranslator,
-  ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
+  ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, FileUtil, Types,
   opsiconnection,
   osprocesses,
   OckUnique,
@@ -2283,7 +2283,11 @@ begin
     end
     else
     begin
+      {$IFDEF UNIX}
       ClientID := GetClientID(AbsolutePathSettings + PathDelim +'opsiclientkiosk.conf');
+      {$ELSE}
+      ClientID := GetClientID(ChompPathDelim(ProgramDirectory) + PathDelim +'opsiclientkiosk.conf');
+      {$ENDIF UNIX}
     end;
     if Application.HasOption('lang') then
     begin
