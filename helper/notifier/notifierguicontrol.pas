@@ -59,6 +59,15 @@ type
 
   TMyRangeList = specialize TFPGObjectList<TMyRange>;
 
+ (*
+  TConfirmRecord = record
+      show: boolean;
+      title : string;
+      text : string;
+   end;
+  TConfirms = array of TConfirmRecord;
+ *)
+
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
@@ -73,6 +82,7 @@ const
 
 var
   inHideNForm: boolean = False;
+//useConfirmDialog: boolean = False;
 
 implementation
 
@@ -103,6 +113,7 @@ var
   //mymouseenter: TMethod;
   //mymouseleave: TMethod;
   myRangelistList: TMyRangeList;
+//ConfirmArray: TConfirms;
 
 
   (*
@@ -428,15 +439,16 @@ var
   choice, tag: integer;
   btnindex, startvalue, rangeindex: integer;
   button_only: boolean;
+  confirmed: boolean = True;
 
 begin
   tag := TSpeedButton(Sender).Tag;
   rangeindex := getIndexFromRangeList(tag, startvalue, btnindex);
   if rangeindex <> -1 then
   begin
-    LogDatei.log('got tag: ' + IntToStr(tag) + ' startvalue: ' + IntToStr(startvalue) +
-      ' btnindex: ' + IntToStr(btnindex) + ' length array: ' +
-      IntToStr(length(ButtonArray)), LLinfo);
+    LogDatei.log('got tag: ' + IntToStr(tag) + ' startvalue: ' +
+      IntToStr(startvalue) + ' btnindex: ' + IntToStr(btnindex) +
+      ' length array: ' + IntToStr(length(ButtonArray)), LLinfo);
     if not Assigned(ButtonArray[btnindex]) then
       logdatei.log('ButtonArray[btnindex] is not assingned :', LLError);
     try
@@ -450,27 +462,44 @@ begin
       end;
     end;
 
-    if button_only then
+    //if ButtonArray[btnindex].confirmshow and
+    //  (ButtonArray[btnindex].btn.Caption <> '') then
+    if ButtonArray[btnindex].confirmshow then
     begin
-      choice := TSpeedButton(Sender).Tag;
-      LogDatei.log('choice is button_only, tag: ' + IntToStr(tag) +
-        ' startvalue: ' + IntToStr(startvalue), LLinfo);
-    end
-    else
+      if MessageDlg(ButtonArray[btnindex].confirmtitle,
+        ButtonArray[btnindex].confirmtext,
+        mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then
+      begin
+        confirmed := False;
+        LogDatei.log('Button aborted by user confirm: ' +
+          ButtonArray[btnindex].confirmtext, LLwarning);
+      end;
+    end;
+
+    if confirmed then
     begin
-      choice := ButtonArray[btnindex].btn.Tag +
-        ButtonArray[btnindex].cbox.ItemIndex;
+      if button_only then
+      begin
+        choice := TSpeedButton(Sender).Tag;
+        LogDatei.log('choice is button_only, tag: ' + IntToStr(tag) +
+          ' startvalue: ' + IntToStr(startvalue), LLinfo);
+      end
+      else
+      begin
+        choice := ButtonArray[btnindex].btn.Tag +
+          ButtonArray[btnindex].cbox.ItemIndex;
     (*
     choice := TSpeedButton(Sender).Tag +
       TComboButton(TSpeedButton(Sender).Parent).cbox.ItemIndex;
       *)
-      LogDatei.log('choice is combobutton, tag: ' + IntToStr(tag) +
-        ' startvalue: ' + IntToStr(startvalue), LLinfo);
+        LogDatei.log('choice is combobutton, tag: ' + IntToStr(tag) +
+          ' startvalue: ' + IntToStr(startvalue), LLinfo);
+      end;
+
+
+      logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLnotice);
+      buttonPushedToService(choice);
     end;
-
-
-    logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLnotice);
-    buttonPushedToService(choice);
   end
   else
     LogDatei.log('Could not found btn for tag: ' + IntToStr(tag), LLerror);
@@ -1033,6 +1062,7 @@ var
   tmpinistr: string;
   tmpbool: boolean;
   //myscreen : TScreen;
+  //myconfirm : TConfirmRecord;
 begin
   //myscreen := TScreen.Create(Application);
   if aktsection = 'Form' then
@@ -1457,19 +1487,20 @@ begin
     //tmpbool := not strToBool(myini.ReadString(aktsection, 'ComboButton', 'false'));
     // constructing the path to the button icon
     try
-    tmpstr2 :=  ExtractFileNameWithoutExt(myconfigfile)+'_button_icon.png';
-    if FileExists(tmpstr2) then
-       ButtonArray[buttoncounter] := TComboButton.Create(nform, tmpstr2, not choiceIsArray)
-    else
-      ButtonArray[buttoncounter] := TComboButton.Create(nform, '', not choiceIsArray);
+      tmpstr2 := ExtractFileNameWithoutExt(myconfigfile) + '_button_icon.png';
+      if FileExists(tmpstr2) then
+        ButtonArray[buttoncounter] :=
+          TComboButton.Create(nform, tmpstr2, not choiceIsArray)
+      else
+        ButtonArray[buttoncounter] := TComboButton.Create(nform, '', not choiceIsArray);
     except
-    on E: Exception do
-    begin
-      LogDatei.log('Failed to create Combubutton with button_only: ' +
-        BoolToStr(not choiceIsArray,true) + ' pathToIcon: ' + tmpstr2, LLError);
-      LogDatei.log('Error: Message: ' + E.Message, LLError);
+      on E: Exception do
+      begin
+        LogDatei.log('Failed to create Combubutton with button_only: ' +
+          BoolToStr(not choiceIsArray, True) + ' pathToIcon: ' + tmpstr2, LLError);
+        LogDatei.log('Error: Message: ' + E.Message, LLError);
+      end;
     end;
-  end;
     ButtonArray[buttoncounter].panel.Parent := nform;
     //ButtonArray[buttoncounter].AutoSize := False;
     ButtonArray[buttoncounter].panel.Name := aktsection;
@@ -1534,8 +1565,8 @@ begin
         ButtonArray[buttoncounter].cbox.Items.Add('Reboot at 18:00');
       end;
       ButtonArray[buttoncounter].cbox.ItemIndex := 0;
-      ButtonArray[buttoncounter].cbox.OnClick :=@nform.cboxClick;
-      ButtonArray[buttoncounter].cbox.OnEditingDone :=@nform.cboxEditdone;
+      ButtonArray[buttoncounter].cbox.OnClick := @nform.cboxClick;
+      ButtonArray[buttoncounter].cbox.OnEditingDone := @nform.cboxEditdone;
     end;
     //{$IFDEF WINDOWS}
     // scale new Button:
@@ -1561,6 +1592,13 @@ begin
       ButtonArray[buttoncounter].panel.OnMouseLeave := @nform.mymouseleave;
       LogDatei.log('Finished reading: ' + aktsection, LLDebug);
     end;
+    // handle confirm dialog configuration
+    ButtonArray[buttoncounter].confirmshow :=
+      strToBool(myini.ReadString(aktsection, 'Confirmation', 'false'));
+    ButtonArray[buttoncounter].confirmtitle :=
+      myini.ReadString(aktsection, 'ConfirmationTitle', '');
+    ButtonArray[buttoncounter].confirmtext :=
+      myini.ReadString(aktsection, 'ConfirmationText', '');
   end;
   DataModule1.ProcessMess;
 end;
