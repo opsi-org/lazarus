@@ -7,38 +7,35 @@ interface
 uses
   Classes, SysUtils, osregistry, ostxstringlist, oslog;
 
+type
+  TGetRegistryListOrMapCall = class(TObject)
+  private
+    FLowerCaseFunctionName: string;
+    FLowerCaseAccessString: string;
+
+    function IsGetRegistryKeyList32: boolean;
+    function IsGetRegistryKeyList64: boolean;
+    function IsGetRegistryKeyListSysnative: boolean;
+    function IsGetRegistryKeyList32or64orSysnative(var noredirect: boolean): boolean;
+
+    function IsGetRegistryVarList32: boolean;
+    function IsGetRegistryVarList64: boolean;
+    function IsGetRegistryVarListSysnative: boolean;
+    function IsGetRegistryVarList32or64orSysnative(var noredirect: boolean): boolean;
+
+    function IsGetRegistryVarMap32: boolean;
+    function IsGetRegistryVarMap64: boolean;
+    function IsGetRegistryVarMapSysnative: boolean;
+    function IsGetRegistryVarMap32or64orSysnative(var noredirect: boolean): boolean;
+
+  protected
+    constructor Create(FunctionName: string; AccessString: string); overload;
+  end;
+
+
 function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
-
-function IsGetRegistryKeyList32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryKeyList64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryKeyListSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryKeyList32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var noredirect: boolean): boolean;
-
-function IsGetRegistryVarList32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarList64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarListSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarList32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var noredirect: boolean): boolean;
-
-function IsGetRegistryVarMap32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarMap64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarMapSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-function IsGetRegistryVarMap32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var noredirect: boolean): boolean;
-
 procedure RunGetRegistryListOrMapFunction(FunctionName: string;
   RegistryKey: string; AccessString: string; var list: TXStringList);
-
 function CheckAccessString(AccessString: string): boolean;
 
 implementation
@@ -65,177 +62,26 @@ begin
     Result := False;
 end;
 
-function IsGetRegistryKeyList32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryKeyList32')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
-    (LowerCaseAccessString = LowerCase('32Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryKeyList64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryKeyList64')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
-    (LowerCaseAccessString = LowerCase('64Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryKeyListSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryKeyListSysnative')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
-    (LowerCaseAccessString = LowerCase('Sysnative'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryKeyList32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var NoRedirect: boolean): boolean;
-begin
-  Result := True;
-  if IsGetRegistryKeyList32(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := False
-  else if IsGetRegistryKeyList64(LowerCaseFunctionName, LowerCaseAccessString) or
-    IsGetRegistryKeyListSysnative(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarList32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarList32')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarList')) and
-    (LowerCaseAccessString = LowerCase('32Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarList64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarList64')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarList')) and
-    (LowerCaseAccessString = LowerCase('64Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarListSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarListSysnative')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarList')) and
-    (LowerCaseAccessString = LowerCase('Sysnative'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarList32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var NoRedirect: boolean): boolean;
-begin
-  Result := True;
-  if IsGetRegistryVarList32(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := False
-  else if IsGetRegistryVarList64(LowerCaseFunctionName, LowerCaseAccessString) or
-    IsGetRegistryVarListSysnative(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarMap32(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarMap32')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
-    (LowerCaseAccessString = LowerCase('32Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarMap64(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarMap64')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
-    (LowerCaseAccessString = LowerCase('64Bit'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarMapSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string): boolean;
-begin
-  if ((LowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative')) and
-    (LowerCaseAccessString = '')) or
-    ((LowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
-    (LowerCaseAccessString = LowerCase('Sysnative'))) then
-    Result := True
-  else
-    Result := False;
-end;
-
-function IsGetRegistryVarMap32or64orSysnative(LowerCaseFunctionName: string;
-  LowerCaseAccessString: string; var NoRedirect: boolean): boolean;
-begin
-  Result := True;
-  if IsGetRegistryVarMap32(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := False
-  else if IsGetRegistryVarMap64(LowerCaseFunctionName, LowerCaseAccessString) or
-    IsGetRegistryVarMapSysnative(LowerCaseFunctionName, LowerCaseAccessString) then
-    NoRedirect := True
-  else
-    Result := False;
-end;
-
-
 procedure RunGetRegistryListOrMapFunction(FunctionName: string;
   RegistryKey: string; AccessString: string; var list: TXStringList);
 var
-  LowerCaseFunctionName: string;
-  LowerCaseAccessString: string;
-  NoRedirect: boolean;
+  NoRedirect: boolean = True;
+  GetRegistryListOrMapCall: TGetRegistryListOrMapCall;
 begin
-  LowerCaseFunctionName := LowerCase(FunctionName);
-  LowerCaseAccessString := LowerCase(AccessString);
+  GetRegistryListOrMapCall := TGetRegistryListOrMapCall.Create(FunctionName,
+    AccessString);
 
-  if IsGetRegistryKeyList32or64orSysnative(LowerCaseFunctionName,
-    LowerCaseAccessString, NoRedirect) then
+  if GetRegistryListOrMapCall.IsGetRegistryKeyList32or64orSysnative(NoRedirect) then
     list.AddStrings(GetRegistryKeyList(RegistryKey, NoRedirect))
 
-  else if IsGetRegistryVarList32or64orSysnative(LowerCaseFunctionName,
-    LowerCaseAccessString, NoRedirect) then
+  else if GetRegistryListOrMapCall.IsGetRegistryVarList32or64orSysnative(NoRedirect) then
     list.AddStrings(GetRegistryVarList(RegistryKey, NoRedirect))
 
-  else if IsGetRegistryVarMap32or64orSysnative(LowerCaseFunctionName,
-    LowerCaseAccessString, NoRedirect) then
+  else if GetRegistryListOrMapCall.IsGetRegistryVarMap32or64orSysnative(NoRedirect) then
     list.AddStrings(GetRegistryVarMap(RegistryKey, NoRedirect));
-end;
 
+  GetRegistryListOrMapCall.Free;
+end;
 
 function CheckAccessString(AccessString: string): boolean;
 var
@@ -250,5 +96,155 @@ begin
     Result := False;
 end;
 
+
+{GetRegistryListOrMapCall}
+
+constructor TGetRegistryListOrMapCall.Create(FunctionName: string;
+  AccessString: string); overload;
+begin
+  FLowerCaseFunctionName := LowerCase(FunctionName);
+  FLowerCaseAccessString := LowerCase(AccessString);
+end;
+
+
+function TGetRegistryListOrMapCall.IsGetRegistryKeyList32: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryKeyList32')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
+    (FLowerCaseAccessString = LowerCase('32Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryKeyList64: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryKeyList64')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
+    (FLowerCaseAccessString = LowerCase('64Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryKeyListSysnative: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryKeyListSysnative')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryKeyList')) and
+    (FLowerCaseAccessString = LowerCase('Sysnative'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryKeyList32or64orSysnative(
+  var NoRedirect: boolean): boolean;
+begin
+  Result := True;
+  if IsGetRegistryKeyList32 then
+    NoRedirect := False
+  else if IsGetRegistryKeyList64 or
+    IsGetRegistryKeyListSysnative then
+    NoRedirect := True
+  else
+    Result := False;
+end;
+
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarList32: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarList32')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarList')) and
+    (FLowerCaseAccessString = LowerCase('32Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarList64: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarList64')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarList')) and
+    (FLowerCaseAccessString = LowerCase('64Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarListSysnative: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarListSysnative')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarList')) and
+    (FLowerCaseAccessString = LowerCase('Sysnative'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarList32or64orSysnative(
+  var NoRedirect: boolean): boolean;
+begin
+  Result := True;
+  if IsGetRegistryVarList32 then
+    NoRedirect := False
+  else if IsGetRegistryVarList64 or
+    IsGetRegistryVarListSysnative then
+    NoRedirect := True
+  else
+    Result := False;
+end;
+
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarMap32: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarMap32')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
+    (FLowerCaseAccessString = LowerCase('32Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarMap64: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarMap64')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
+    (FLowerCaseAccessString = LowerCase('64Bit'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarMapSysnative: boolean;
+begin
+  if ((FLowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative')) and
+    (FLowerCaseAccessString = '')) or
+    ((FLowerCaseFunctionName = LowerCase('getRegistryVarMap')) and
+    (FLowerCaseAccessString = LowerCase('Sysnative'))) then
+    Result := True
+  else
+    Result := False;
+end;
+
+function TGetRegistryListOrMapCall.IsGetRegistryVarMap32or64orSysnative(
+  var NoRedirect: boolean): boolean;
+begin
+  Result := True;
+  if IsGetRegistryVarMap32 then
+    NoRedirect := False
+  else if IsGetRegistryVarMap64 or
+    IsGetRegistryVarMapSysnative then
+    NoRedirect := True
+  else
+    Result := False;
+end;
 
 end.
