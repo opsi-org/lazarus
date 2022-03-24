@@ -11,7 +11,6 @@ function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
 procedure RunGetRegistryListOrMapFunction(RegistryKey: string; SmallRegistryCommand: string;
   var list: TXStringList);
 
-function CheckSummedRegistryListOrMap(SmallRegistryCommand: string): boolean;
 function CheckAccessString(SmallAccessString: string): boolean;
 procedure GetSummedRegistryListOrMap(RegistryKey: string; SmallAccessString: string;
   SmallRegistryCommand: string; var list: TXStringList);
@@ -31,7 +30,10 @@ begin
     (LowerCaseFunctionName = LowerCase('getRegistryVarListSysnative')) or
     (LowerCaseFunctionName = LowerCase('getRegistryVarMap32')) or
     (LowerCaseFunctionName = LowerCase('getRegistryVarMap64')) or
-    (LowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative')) then
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative'))or
+    (LowerCaseFunctionName = LowerCase('getRegistryKeyList')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarList')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMap')) then
     Result := True
   else
     Result := False;
@@ -62,16 +64,6 @@ begin
     list.AddStrings(GetRegistryVarMap(RegistryKey, True));
 end;
 
-
-function CheckSummedRegistryListOrMap(SmallRegistryCommand: string): boolean;
-begin
-  if (SmallRegistryCommand = LowerCase('getRegistryKeyList')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarList')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarMap')) then
-    Result := True
-  else
-    Result := False;
-end;
 
 function CheckAccessString(SmallAccessString: string): boolean;
 begin
