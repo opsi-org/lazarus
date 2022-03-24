@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, osregistry, ostxstringlist, oslog;
 
-function CheckRegistryListOrMap(SmallRegistryCommand: string): boolean;
-procedure GetRegistryListOrMap(RegistryKey: string; SmallRegistryCommand: string;
+function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
+procedure RunGetRegistryListOrMapFunction(RegistryKey: string; SmallRegistryCommand: string;
   var list: TXStringList);
 
 function CheckSummedRegistryListOrMap(SmallRegistryCommand: string): boolean;
@@ -18,23 +18,26 @@ procedure GetSummedRegistryListOrMap(RegistryKey: string; SmallAccessString: str
 
 implementation
 
-function CheckRegistryListOrMap(SmallRegistryCommand: string): boolean;
+function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
+var
+  LowerCaseFunctionName: string;
 begin
-  if (SmallRegistryCommand = LowerCase('getRegistryKeyList32')) or
-    (SmallRegistryCommand = LowerCase('getRegistryKeyList64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryKeyListSysnative')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarList32')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarList64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarListSysnative')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarMap32')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarMap64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarMapSysnative')) then
+  LowerCaseFunctionName := LowerCase(FunctionName);
+  if (LowerCaseFunctionName = LowerCase('getRegistryKeyList32')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryKeyList64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryKeyListSysnative')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarList32')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarList64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarListSysnative')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMap32')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMap64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative')) then
     Result := True
   else
     Result := False;
 end;
 
-procedure GetRegistryListOrMap(RegistryKey: string; SmallRegistryCommand: string;
+procedure RunGetRegistryListOrMapFunction(RegistryKey: string; SmallRegistryCommand: string;
   var list: TXStringList);
 begin
   if (SmallRegistryCommand = LowerCase('getRegistryKeyList32')) then

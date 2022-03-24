@@ -14833,13 +14833,13 @@ begin
 
    {$ENDIF WINDOWS}
 
-    else if CheckRegistryListOrMap(LowerCase(s)) then
+    else if IsGetRegistryListOrMapFunction(s) then
     begin
     {$IFDEF WINDOWS}
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
       begin
-        GetRegistryListOrMap(s1, LowerCase(s), list);
+        RunGetRegistryListOrMapFunction(s1, LowerCase(s), list);
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
