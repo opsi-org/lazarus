@@ -8,12 +8,12 @@ uses
   Classes, SysUtils, osregistry, ostxstringlist, oslog;
 
 function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
-procedure RunGetRegistryListOrMapFunction(RegistryKey: string; SmallRegistryCommand: string;
+procedure RunGetRegistryListOrMapFunction(RegistryKey: string; FunctionName: string;
   var list: TXStringList);
 
-function CheckAccessString(SmallAccessString: string): boolean;
-procedure GetSummedRegistryListOrMap(RegistryKey: string; SmallAccessString: string;
-  SmallRegistryCommand: string; var list: TXStringList);
+function CheckAccessString(AccessString: string): boolean;
+procedure GetSummedRegistryListOrMap(RegistryKey: string; AccessString: string;
+  FunctionName: string; var list: TXStringList);
 
 implementation
 
@@ -39,68 +39,79 @@ begin
     Result := False;
 end;
 
-procedure RunGetRegistryListOrMapFunction(RegistryKey: string; SmallRegistryCommand: string;
+procedure RunGetRegistryListOrMapFunction(RegistryKey: string; FunctionName: string;
   var list: TXStringList);
+var
+  LowerCaseFunctionName: string;
 begin
-  if (SmallRegistryCommand = LowerCase('getRegistryKeyList32')) then
+  LowerCaseFunctionName := LowerCase(FunctionName);
+  if (LowerCaseFunctionName = LowerCase('getRegistryKeyList32')) then
     list.AddStrings(GetRegistryKeyList(RegistryKey, False))
 
-  else if (SmallRegistryCommand = LowerCase('getRegistryKeyList64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryKeyListSysnative')) then
+  else if (LowerCaseFunctionName = LowerCase('getRegistryKeyList64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryKeyListSysnative')) then
     list.AddStrings(GetRegistryKeyList(RegistryKey, True))
 
-  else if SmallRegistryCommand = LowerCase('getRegistryVarList32') then
+  else if LowerCaseFunctionName = LowerCase('getRegistryVarList32') then
     list.AddStrings(GetRegistryVarList(RegistryKey, False))
 
-  else if (SmallRegistryCommand = LowerCase('getRegistryVarList64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarListSysnative')) then
+  else if (LowerCaseFunctionName = LowerCase('getRegistryVarList64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarListSysnative')) then
     list.AddStrings(GetRegistryVarList(RegistryKey, True))
 
-  else if SmallRegistryCommand = LowerCase('getRegistryVarMap32') then
+  else if LowerCaseFunctionName = LowerCase('getRegistryVarMap32') then
     list.AddStrings(GetRegistryVarMap(RegistryKey, False))
 
-  else if (SmallRegistryCommand = LowerCase('getRegistryVarMap64')) or
-    (SmallRegistryCommand = LowerCase('getRegistryVarMapSysnative')) then
+  else if (LowerCaseFunctionName = LowerCase('getRegistryVarMap64')) or
+    (LowerCaseFunctionName = LowerCase('getRegistryVarMapSysnative')) then
     list.AddStrings(GetRegistryVarMap(RegistryKey, True));
 end;
 
 
-function CheckAccessString(SmallAccessString: string): boolean;
+function CheckAccessString(AccessString: string): boolean;
+var
+  LowerCaseAccessString: string;
 begin
-  if (SmallAccessString = LowerCase('32Bit')) or (SmallAccessString =
-    LowerCase('64Bit')) or (SmallAccessString = LowerCase('Sysnative')) then
+  LowerCaseAccessString := LowerCase(AccessString);
+  if (LowerCaseAccessString = LowerCase('32Bit')) or (LowerCaseAccessString =
+    LowerCase('64Bit')) or (LowerCaseAccessString = LowerCase('Sysnative')) then
     Result := True
   else
     Result := False;
 end;
 
-procedure GetSummedRegistryListOrMap(RegistryKey: string; SmallAccessString: string;
-  SmallRegistryCommand: string; var list: TXStringList);
+procedure GetSummedRegistryListOrMap(RegistryKey: string; AccessString: string;
+  FunctionName: string; var list: TXStringList);
+var
+  LowerCaseAccessString: string;
+  LowerCaseFunctionName: string;
 begin
-  if (SmallRegistryCommand = LowerCase('getRegistryKeyList')) then
+  LowerCaseAccessString := LowerCase(AccessString);
+  LowerCaseFunctionName := LowerCase(FunctionName);
+  if (LowerCaseFunctionName = LowerCase('getRegistryKeyList')) then
   begin
-    if SmallAccessString = LowerCase('32Bit') then
+    if LowerCaseAccessString = LowerCase('32Bit') then
       list.AddStrings(GetRegistryKeyList(RegistryKey, False))
-    else if (SmallAccessString = LowerCase('64Bit')) or
-      (SmallAccessString = LowerCase('Sysnative')) then
+    else if (LowerCaseAccessString = LowerCase('64Bit')) or
+      (LowerCaseAccessString = LowerCase('Sysnative')) then
       list.AddStrings(GetRegistryKeyList(RegistryKey, True))
   end
 
-  else if (SmallRegistryCommand = LowerCase('getRegistryVarList')) then
+  else if (LowerCaseFunctionName = LowerCase('getRegistryVarList')) then
   begin
-    if SmallAccessString = LowerCase('32Bit') then
+    if LowerCaseAccessString = LowerCase('32Bit') then
       list.AddStrings(GetRegistryVarList(RegistryKey, False))
-    else if (SmallAccessString = LowerCase('64Bit')) or
-      (SmallAccessString = LowerCase('Sysnative')) then
+    else if (LowerCaseAccessString = LowerCase('64Bit')) or
+      (LowerCaseAccessString = LowerCase('Sysnative')) then
       list.AddStrings(GetRegistryVarList(RegistryKey, True))
   end
 
-  else if (SmallRegistryCommand = LowerCase('getRegistryVarMap')) then
+  else if (LowerCaseFunctionName = LowerCase('getRegistryVarMap')) then
   begin
-    if SmallAccessString = LowerCase('32Bit') then
+    if LowerCaseAccessString = LowerCase('32Bit') then
       list.AddStrings(GetRegistryVarMap(RegistryKey, False))
-    else if (SmallAccessString = LowerCase('64Bit')) or
-      (SmallAccessString = LowerCase('Sysnative')) then
+    else if (LowerCaseAccessString = LowerCase('64Bit')) or
+      (LowerCaseAccessString = LowerCase('Sysnative')) then
       list.AddStrings(GetRegistryVarMap(RegistryKey, True))
   end;
 end;

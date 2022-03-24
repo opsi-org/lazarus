@@ -14838,7 +14838,7 @@ begin
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
       begin
-        RunGetRegistryListOrMapFunction(s1, LowerCase(s), list);
+        RunGetRegistryListOrMapFunction(s1, s, list);
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
@@ -14850,7 +14850,7 @@ begin
             if EvaluateString(r, r, s2, InfoSyntaxError) then
               if Skip(')', r, r, InfoSyntaxError) then
               begin
-                if CheckAccessString(LowerCase(s2)) then
+                if CheckAccessString(s2) then
                 begin
                   GetSummedRegistryListOrMap(s1, LowerCase(s2), LowerCase(s), list);
                   syntaxCheck := True;
