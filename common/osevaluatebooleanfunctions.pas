@@ -9,15 +9,13 @@ uses
   oslog,
   osparserhelper;
 
-procedure parseErrorsOccurredSinceMark(
-  var RemainingInCurrentParsingLine: string; var InfoSyntaxError: string;
-  var syntaxcheck: boolean; var BooleanResult: boolean);
+procedure parseErrorsOccurredSinceMark(var RemainingInCurrentParsingLine: string;
+  var InfoSyntaxError: string; var syntaxcheck: boolean; var BooleanResult: boolean);
 
 implementation
 
-procedure parseErrorsOccurredSinceMark(
-  var RemainingInCurrentParsingLine: string; var InfoSyntaxError: string;
-  var syntaxcheck: boolean; var BooleanResult: boolean);
+procedure parseErrorsOccurredSinceMark(var RemainingInCurrentParsingLine: string;
+  var InfoSyntaxError: string; var syntaxcheck: boolean; var BooleanResult: boolean);
 var
   ErrorCompareNumberStr, relationSymbol: string;
   ErrorCompareNumber: integer;
@@ -30,13 +28,14 @@ begin
     ErrorCompareNumber := StrToInt(ErrorCompareNumberStr);
     syntaxcheck := True;
   except
-    InfoSyntaxError := ErrorCompareNumberStr + ' is not a number'
+    InfoSyntaxError := ErrorCompareNumberStr + ' is not a number';
+    syntaxcheck := False;
   end;
 
   syntaxCheck :=
     syntaxcheck and hasRelation(relationSymbol,
-    getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked, ErrorCompareNumber),
-    BooleanResult, InfoSyntaxError);
+    getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked,
+    ErrorCompareNumber), BooleanResult, InfoSyntaxError);
   LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
     ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
     relationSymbol + ' ' + ErrorCompareNumberStr + ' -> ' +
