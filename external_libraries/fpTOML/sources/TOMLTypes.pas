@@ -193,7 +193,7 @@ type
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
       function Count: integer; override;
-      function Assign(table: TTOMLTable): TTOMLTable;
+      function AssignTable(table: TTOMLTable): TTOMLTable;
 
       property Header : string read GetHeader;
       property Name: string read m_name;
@@ -718,7 +718,7 @@ begin
 end;
 
 
-function TTOMLTable.Assign(table: TTOMLTable) : TTOMLTable;
+function TTOMLTable.AssignTable(table: TTOMLTable) : TTOMLTable;
 var
   i : integer;
 begin

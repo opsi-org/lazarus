@@ -81,7 +81,7 @@ begin
   parser.Parse;
   //result := parser.document;
   doc := parser.document;
-  result.Assign(doc);
+  result.AssignTable(doc);
   doc.Free;
   parser.Free;
 end;
