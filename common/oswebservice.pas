@@ -1282,6 +1282,8 @@ begin
     HTTPSender.Protocol := '1.1';
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
+    LogDatei.log('IP: ' + ip + 'Resolved: ' + Httpsender.Sock.SocksIP, LLDebug);
+    //HTTPSender.Sock.PreferIP4:= False;
     if HTTPSender.Sock.SSL.Accept then
       LogDatei.log_prog('ready to accept', LLdebug)
     else
