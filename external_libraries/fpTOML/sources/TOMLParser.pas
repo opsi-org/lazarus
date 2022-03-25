@@ -75,10 +75,14 @@ type
 function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 var
   parser: TTOMLScanner;
+  doc : TTOMLDocument;
 begin
   parser := TTOMLScanner.Create(contents);
   parser.Parse;
-  result := parser.document;
+  //result := parser.document;
+  doc := parser.document;
+  result.Assign(doc);
+  doc.Free;
   parser.Free;
 end;
 
