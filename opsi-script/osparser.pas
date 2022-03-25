@@ -120,7 +120,8 @@ uses
   LAZUTF8,
   osnetutil,
   osstrlistutils,
-  oscertificates;
+  oscertificates,
+  osGetRegistryFunctions;
 
 type
   TStatement = (tsNotDefined,
@@ -14771,130 +14772,45 @@ begin
           end;
         end;
     end
-
-
    {$ENDIF WINDOWS}
 
-    else if LowerCase(s) = LowerCase('getRegistryKeyList32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryKeyList(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
 
-    else if (LowerCase(s) = LowerCase('getRegistryKeyList64')) or
-      (LowerCase(s) = LowerCase('getRegistryKeyListSysnative')) then
+    else if IsGetRegistryListOrMapFunction(s) then
     begin
     {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+      begin
+        if Skip(')', r, r, InfoSyntaxError) then
         begin
-          //for i :=
-          list.AddStrings(GetRegistryKeyList(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if LowerCase(s) = LowerCase('getRegistryVarList32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          RunGetRegistryListOrMapFunction(s, s1, '', list);
+          syntaxCheck := True;
+        end
+        else
         begin
-          //for i :=
-          list.AddStrings(GetRegistryVarList(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
+          // parse case sensitivity parameter
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                if CheckAccessString(s2) then
+                begin
+                  RunGetRegistryListOrMapFunction(s, s1, s2, list);
+                  syntaxCheck := True;
+                end
+                else
+                begin
+                  SyntaxCheck := False;
+                  InfoSyntaxError := 'No valid access string';
+                  LogDatei.Log('"' + s2 + '" is no valid access string! Only "32Bit", "64Bit" and "Sysnative" are allowed.', LLError);
+                end;
+              end;
         end;
+      end;
     {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if (LowerCase(s) = LowerCase('getRegistryVarList64')) or
-      (LowerCase(s) = LowerCase('getRegistryVarListSysnative')) then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarList(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if LowerCase(s) = LowerCase('getRegistryVarMap32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarMap(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if (LowerCase(s) = LowerCase('getRegistryVarMap64')) or
-      (LowerCase(s) = LowerCase('getRegistryVarMapSysnative')) then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarMap(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
+    SyntaxCheck := False;
+    InfoSyntaxError := 'Only implemented for Windows';
+    LogDatei.log(s + ' is only implemented for Windows', LLError);
     {$ENDIF WINDOWS}
     end
 
