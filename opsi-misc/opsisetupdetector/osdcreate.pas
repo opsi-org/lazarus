@@ -117,6 +117,7 @@ var
   strlist: TStringList;
   templatePath: string;
   proptmpstr: string;
+  neededspacefor2archinstall : integer =0;
 begin
   {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
@@ -276,6 +277,9 @@ begin
       patchlist.add('#@MinimumSpace' + IntToStr(i + 1) + '*#=' +
         IntToStr(aktProduct.SetupFiles[i].requiredSpace) + ' MB');
 
+      neededspacefor2archinstall := neededspacefor2archinstall
+        + aktProduct.SetupFiles[i].requiredSpace;
+
       patchlist.add('#@InstallDir' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installDirectory);
 
@@ -319,6 +323,9 @@ begin
       patchlist.add('#@installErrorHandlingLines' + IntToStr(i + 1) + '*#=' + str);
 
     end;
+
+    patchlist.add('#@MinimumSpace3*#=' +
+        IntToStr(neededspacefor2archinstall) + ' MB');
 
   finally
     strlist.Free;
