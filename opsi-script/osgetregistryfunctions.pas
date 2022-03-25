@@ -102,6 +102,7 @@ end;
 constructor TGetRegistryListOrMapCall.Create(FunctionName: string;
   AccessString: string); overload;
 begin
+  inherited Create; 
   FLowerCaseFunctionName := LowerCase(FunctionName);
   FLowerCaseAccessString := LowerCase(AccessString);
 end;
