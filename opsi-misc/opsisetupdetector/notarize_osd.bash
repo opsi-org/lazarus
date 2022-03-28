@@ -34,7 +34,7 @@ mkdir -p ${EXECUTABLE_DIR}/Contents/MacOS
 rm -f ${EXECUTABLE_DIR}/Contents/MacOS/*
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
 cp $EXECUTABLE_SOURCE ${EXECUTABLE_DIR}/Contents/MacOS/
-cp info-osgui.plist ${EXECUTABLE_DIR}/Contents/Info.plist
+cp info-osd.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 EXECUTABLE_VER=`opsi-getlazbinaryversion --file="${FULLPATHTOEXE}"  | tr -d 'fileversion='`
 echo ver $EXECUTABLE_VER
