@@ -29,7 +29,7 @@ uses
   osjson,
   strutils,
   {$IFDEF SYNAPSE}
-  httpsend, ssl_openssl, ssl_openssl_lib,
+  httpsend, ssl_openssl, ssl_openssl_lib, blcksock,
   {$ELSE SYNAPSE}
   IdComponent,
   IdHTTP,
@@ -1283,10 +1283,11 @@ begin
   try
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
+    HTTPSender.Sock.PreferIP4:= False;
+    HTTPSender.Sock.Family:= SF_IP6;
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
-    LogDatei.log('IP: ' + ip + 'Resolved: ' + Httpsender.Sock.SocksIP, LLDebug);
-    //HTTPSender.Sock.PreferIP4:= False;
+    LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if ssl_openssl_lib.InitSSLInterface then
     begin
       LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' + BoolToStr(
