@@ -136,12 +136,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsisetupdetector.app\Contents\MacOS\opsisetupdetector"/>
+            <Filename Value="compiler_out\binarys\$(TargetCPU)-$(TargetOS)\opsisetupdetector"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes;..\..\external_libraries\dcpcrypt"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -179,11 +179,6 @@
 -dSYNAPSE
 -dSSLPATH
 -dAPP_BUNDLE"/>
-            <OtherDefines Count="3">
-              <Define0 Value="OSDGUI"/>
-              <Define1 Value="OPSI_AS_USER"/>
-              <Define2 Value="OPSI"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item4>
