@@ -2105,8 +2105,11 @@ begin
   // avoid nonsense dependencies in meta product
   if osdsettings.runmode = createMeta then
   begin
-    FNewDepDlg.GroupBox1.Enabled := False;
-    FNewDepDlg.ComboBoxActState.Enabled := False;
+    // allow  action setup for neted meta products
+    // (std is state installed)
+    //FNewDepDlg.GroupBox1.Enabled := False;
+    //FNewDepDlg.ComboBoxActState.Enabled := False;
+    // deny requirement types before / after
     FNewDepDlg.ComboBoxReqType.Enabled := False;
   end
   else
