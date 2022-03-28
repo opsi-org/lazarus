@@ -618,6 +618,7 @@ var
   testresult: string;
   credentialsValid: boolean;
 begin
+  LogDatei.log_prog('Start of function getOpsiServerVersion, Line: ' + {$INCLUDE %LINE%}, LLNotice);
   Result := '';
   credentialsValid := True;
   FValidCredentials := credentialsValid;
@@ -701,6 +702,7 @@ begin
   end;
   LogDatei.log('opsi Server Version : ' + Result, LLnotice);
   //LogDatei.LogLevel := LLnotice;
+  LogDatei.log_prog('End of function getOpsiServerVersion, Line: ' + {$INCLUDE %LINE%}, LLNotice);
 end;
 
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
@@ -1224,7 +1226,7 @@ end;
 (******************************************************************************)
 constructor TJsonThroughHTTPS.Create(const serviceURL, username, password: string);
 begin
-  TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
+  Create(serviceUrl, username, password, '', '', '');
 end;
 
 constructor TJsonThroughHTTPS.Create(
@@ -1243,6 +1245,7 @@ end;
 constructor TJsonThroughHTTPS.Create(
   const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
+  inherited Create;
   //portHTTPS := port;
   //portHTTP := 4444;
   FserviceURL := serviceURL;
@@ -1284,19 +1287,20 @@ begin
     HTTPSender.Sock.Connect(ip, port);
     LogDatei.log('IP: ' + ip + 'Resolved: ' + Httpsender.Sock.SocksIP, LLDebug);
     //HTTPSender.Sock.PreferIP4:= False;
-    if HTTPSender.Sock.SSL.Accept then
-      LogDatei.log_prog('ready to accept', LLdebug)
-    else
-    begin
-      LogDatei.log_prog('not !! ready to accept', LLdebug);
-    end;
     if ssl_openssl_lib.InitSSLInterface then
     begin
-      LogDatei.log_prog('after init, true: ' + BoolToStr(
-        ssl_openssl_lib.IsSSLloaded), LLdebug);
-    end;
-    LogDatei.log_prog('after init: ' + BoolToStr(ssl_openssl_lib.IsSSLloaded), LLdebug);
+      LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' + BoolToStr(
+        ssl_openssl_lib.IsSSLloaded, True), LLdebug);
+    end
+    else
+      LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl_lib.IsSSLloaded, True), LLdebug);
     LogDatei.log('Lib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
+    //if HTTPSender.Sock.SSL.Accept then
+    //  LogDatei.log_prog('ready to accept', LLdebug)
+    //else
+    //begin
+    //  LogDatei.log_prog('not !! ready to accept', LLdebug);
+    //end;
     HTTPSender.Sock.SSLDoConnect;
     LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
@@ -1528,9 +1532,16 @@ var
    oldTwistedServer  : string;
    oldTwistedServerVer : integer = 0;
    opsi40 : boolean = false;
+   IPAddrList: TStringList;
 
 
 begin
+  LogDatei.log_prog('Start of function retrieveJSONObject(omc: ' + omc.FOpsiMethodName +
+    ', logging: ' + BoolToStr(logging, True) +
+    ', retry: ' + BoolToStr(retry, True) +
+    ', readOmcMap: ' + BoolToStr(readOmcMap, True) +
+    ', communicationmode: ' + IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
+    , LLNotice);
   try
     SendStream := TMemoryStream.Create;
     ReceiveStream := TMemoryStream.Create;
@@ -1725,8 +1736,12 @@ begin
               LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
 
               { Send Request }
+              IPAddrList := TStringList.Create;
+              HTTPSender.Sock.ResolveNameToIP('google.de', IPAddrList);
+              LogDatei.log('Try connect to ' + IPAddrList.Text, LLInfo);
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
+                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
                 { Read Response }
                 LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
                 LogDatei.log_prog('HTTPSender result: ' +
@@ -1894,7 +1909,7 @@ begin
                     readOmcMap, CommunicationMode);
                 end;
               end;
-              finished := True;
+              finished := True; //Communication failed thus nothing more to do
             end;
           end;
         end;
@@ -2303,6 +2318,8 @@ begin
   finally
     SendStream.Free;
     ReceiveStream.Free;
+    LogDatei.log_prog('End of function retrieveJSONObject, Line: ' +
+      {$INCLUDE %LINE%}, LLNotice);
   end;
 end;
 
@@ -2773,6 +2790,10 @@ var
   //sendresultstring: string;
   {$ENDIF SYNAPSE}
 begin
+  LogDatei.log_prog('Start of retrieveJSONObjectByHttpPost(InStream (pointer address): ' + IntToHex(QWord(InStream)) +
+  ', logging: ' + BoolToStr(logging,True) +
+  ', communicationmode: ' + IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
+  , LLDebug2);
   errorOccured := False;
   Result := nil;
   resultlines.Clear;
@@ -3312,6 +3333,8 @@ begin
   if Result = nil then
     if logging then
       LogDatei.log_prog('Error: --- opsi service problem ---' + FError, LLerror);
+  LogDatei.log_prog('End of function retrieveJSONObjectByHttpPost, Line: ' + {$INCLUDE %LINE%}
+  , LLDebug2);
 end;
 
 function TJsonThroughHTTPS.getMapResult(const omc: TOpsiMethodCall): TStringList;
