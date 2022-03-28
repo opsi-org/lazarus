@@ -2119,6 +2119,8 @@ begin
     FNewDepDlg.ComboBoxActState.Enabled := True;
     FNewDepDlg.ComboBoxReqType.Enabled := True;
   end;
+  // needed for macos:
+  FNewDepDlg.Repaint;
   procmess;
   if FNewDepDlg.ShowModal = mrOk then
   begin
