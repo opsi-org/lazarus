@@ -173,7 +173,8 @@ end;
 function TDistributionInfo.SetPackageManagementShellCommand: string;
 begin
   {CentOS and RedHat}
-  if (FDistroName = 'CentOS') or (FDistroName = 'RedHatEnterprise') then
+  if (FDistroName = 'CentOS') or (FDistroName = 'RedHatEnterprise') or
+    (FDistroName = 'AlmaLinux') or (FDistroName = 'Rocky') then
     FPackageManagementShellCommand := 'yum -y '
   {Debian, Ubuntu, Univention}
   // univention is based on debian
