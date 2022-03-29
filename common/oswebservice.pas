@@ -1281,13 +1281,14 @@ begin
   // Timeout
   // https://forum.lazarus.freepascal.org/index.php?topic=40167.0
   try
+    if Assigned(HTTPSender) then FreeAndNil(HTTPSender);
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
     HTTPSender.Sock.PreferIP4:= False;
-    HTTPSender.Sock.Family:= SF_IP6;
+    //HTTPSender.Sock.Family:= SF_IP6;
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
-    LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
+    //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if ssl_openssl_lib.InitSSLInterface then
     begin
       LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' + BoolToStr(
@@ -1534,6 +1535,7 @@ var
    oldTwistedServerVer : integer = 0;
    opsi40 : boolean = false;
    IPAddrList: TStringList;
+   Family: String;
 
 
 begin
@@ -1553,6 +1555,7 @@ begin
     compress := False;
     startTime := now;
     finished := False;
+    IPAddrList := TStringList.Create;
     {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
@@ -1692,6 +1695,8 @@ begin
               { Preparing Request }
               { Set Headers }
               HTTPSender.Clear; //reset headers, document and Mimetype
+              HTTPSender.Sock.PreferIP4:= False;
+              //HTTPSender.Sock.Family:= SF_IP6; //
               //HTTPSender.Cookies.Clear; //do not clear cookies!
               HTTPSender.MimeType := ContentType;
               HTTPSender.Headers.NameValueSeparator := ':';
@@ -1737,9 +1742,16 @@ begin
               LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
 
               { Send Request }
-              IPAddrList := TStringList.Create;
-              HTTPSender.Sock.ResolveNameToIP('google.de', IPAddrList);
-              LogDatei.log('Try connect to ' + IPAddrList.Text, LLInfo);
+              //IPAddrList.Clear;
+              //HTTPSender.Sock.ResolveNameToIP('google.de', IPAddrList);
+              //LogDatei.log('Try connect to ' + IPAddrList.Text, LLInfo);
+              case HTTPSender.Sock.Family of
+                SF_ANY: Family := 'SF_ANY';
+                SF_IP4: Family := 'SF_IP4';
+                SF_IP6: Family := 'SF_IP6';
+              end;
+              LogDatei.log_prog('Socket-Family: ' + Family, LLDebug);
+              LogDatei.log_prog('PreferIP4: ' + BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
                 LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
@@ -1775,6 +1787,8 @@ begin
                 end
                 else
                 begin
+                  FError := 'HTTP Error occurred. Error code: ' + IntToStr(HTTPSender.ResultCode) +
+                  ', msg: ' + HTTPSender.ResultString + ', Server-FQDN: ' + HttpSender.TargetHost +', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
                   raise Exception.Create(HTTPSender.Headers.Strings[0]);
                 end;
                 //HTTPSender.Headers.NameValueSeparator:= ':';
@@ -1862,9 +1876,16 @@ begin
                 { Request failed }
 
               begin
+                FError := 'HTTPSender Post failed. Server-FQDN: ' + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
                 LogDatei.log('HTTPSender Post failed', LLError);
-                LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-                  ' msg: ' + HTTPSender.ResultString, LLError);
+                //LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                //  ' msg: ' + HTTPSender.ResultString, LLError);
+                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
+                IPAddrList.Clear;
+                HTTPSender.Sock.ResolveNameToIP(HttpSender.TargetHost, IPAddrList);
+                LogDatei.log('Resolved IPs ('+ HttpSender.TargetHost +'): ', LLInfo);
+                for i := 0 to IPAddrList.Count -1 do
+                  LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i], LLInfo);
                 ErrorOccured := True;
                 raise Exception.Create(HTTPSender.Headers.Strings[0]);
               end;
@@ -1896,18 +1917,27 @@ begin
               end;
               if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
               begin
-                // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
-                LogDatei.log(
-                  'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
-                  LLInfo);
-                FCommunicationMode := -1;
-                Inc(CommunicationMode);
-                if (CommunicationMode <= 2) then
+                if HttpSender.Sock.GetRemoteSinIP <> '' then
                 begin
-                  LogDatei.log('Retry with communicationmode: ' +
-                    IntToStr(communicationmode), LLinfo);
-                  Result := retrieveJSONObject(omc, logging, retry,
-                    readOmcMap, CommunicationMode);
+                  // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
+                  LogDatei.log(
+                    'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
+                    LLInfo);
+                  FCommunicationMode := -1;
+                  Inc(CommunicationMode);
+                  if (CommunicationMode <= 2) then
+                  begin
+                    LogDatei.log('Retry with communicationmode: ' +
+                      IntToStr(communicationmode), LLinfo);
+                    Result := retrieveJSONObject(omc, logging, retry,
+                      readOmcMap, CommunicationMode);
+                  end;
+                end
+                else
+                begin
+                  FError := 'Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.';
+                  LogDatei.log('Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.',
+                  LLError);
                 end;
               end;
               finished := True; //Communication failed thus nothing more to do
