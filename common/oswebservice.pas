@@ -1294,7 +1294,7 @@ begin
         ssl_openssl11_lib.IsSSLloaded), LLdebug);
     end;
     LogDatei.log_prog('after init: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded), LLdebug);
-    LogDatei.log('Lib should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
+    LogDatei.log('Lib should be: ' + ssl_openssl11_lib.DLLSSLName+ ' ' + {$INCLUDE %LINE%}, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
     LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then

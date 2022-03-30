@@ -291,6 +291,15 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSLOG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="SSLPATH"/>
+              <Define6 Value="OSDEBUG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -930,7 +939,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\modified\synalist-code-r260-trunk"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -966,13 +975,14 @@
 -dOSLOG
 -dSYNAPSE
 -dSSLPATH"/>
-      <OtherDefines Count="6">
+      <OtherDefines Count="7">
         <Define0 Value="OPSIWINST"/>
         <Define1 Value="OPSISCRIPT"/>
         <Define2 Value="GUI"/>
         <Define3 Value="OSLOG"/>
         <Define4 Value="SYNAPSE"/>
         <Define5 Value="SSLPATH"/>
+        <Define6 Value="OSDEBUG"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
