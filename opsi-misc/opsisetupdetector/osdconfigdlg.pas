@@ -17,7 +17,7 @@ type
   TFOSDConfigdlg = class(TForm)
     BitBtn1: TBitBtn;
     FlowPanel1: TFlowPanel;
-    Label1: TLabel;
+    LabelCfgDlgHead: TLabel;
     MemoConfigHint: TMemo;
     Panel1: TPanel;
     TIPropertyGrid1: TTIPropertyGrid;
@@ -26,6 +26,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure TIPropertyGrid1Click(Sender: TObject);
     procedure TIPropertyGrid1Exit(Sender: TObject);
+    procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure TIPropertyGrid1KeyPress(Sender: TObject; var Key: char);
+    procedure TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure TIPropertyGrid1Modified(Sender: TObject);
   private
 
   public
@@ -77,6 +83,7 @@ implementation
 
 procedure TFOSDConfigdlg.FormActivate(Sender: TObject);
 begin
+  LabelCfgDlgHead.Caption := rsCnfdTitle;
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean := True;
   //TIPropertyGrid1.PropertyEditorHook;
@@ -96,11 +103,24 @@ begin
   myconfigurationhints.Add('PathToOpsiPackageBuilder=' + rsPathToOpsiPackageBuilder);
   myconfigurationhints.Add('CreateRadioIndex=' + rsCreateRadioIndex);
   myconfigurationhints.Add('BuildRadioIndex=' + rsBuildRadioIndex);
+
+  myconfigurationhints.Add('config_version=' + rsConfigVersion);
+  myconfigurationhints.Add('Readme_txt_templ=' + rsReadme_txt_templ);
+  myconfigurationhints.Add('Show2StepMacSeletionWarn=' + rsInternalSet);
+  myconfigurationhints.Add('ShowCheckEntryWarning=' + rsInternalSet);
+  myconfigurationhints.Add('UsePropDesktopicon=' + rsUsePropDesktopiconL);
+  myconfigurationhints.Add('UsePropLicenseOrPool=' + rsUsePropLicenseOrPool);
+
+  myconfigurationhints.Add('Service_URL=' + rsService_URL);
+  myconfigurationhints.Add('Service_user=' + rsService_user);
+  myconfigurationhints.Add('Service_pass=' + rsService_pass);
+  //myconfigurationhints.Add('UseService=' + rsUseService);
   (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
   myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
   *)
+  Repaint;
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
@@ -108,7 +128,7 @@ begin
   // Create Config Hints
   myconfigurationhints := TStringList.Create;
   DataModule1.SetFontName(TControl(Sender), myFont);
-  Label1.Caption:= rsCnfdTitle;
+  //LabelCfgDlgHead.Caption := rsCnfdTitle;
 end;
 
 procedure TFOSDConfigdlg.FormDestroy(Sender: TObject);
@@ -132,6 +152,35 @@ begin
 
 end;
 
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyPress(Sender: TObject; var Key: char
+  );
+begin
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  activeprop: string;
+begin
+  if Sender = TIPropertyGrid1 then
+  begin
+    activeprop := TIPropertyGrid1.GetActiveRow.Name;
+    MemoConfigHint.Text := myconfigurationhints.Values[activeprop];
+  end;
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1Modified(Sender: TObject);
+begin
+
+end;
+
 initialization
 
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'workbench_path',
@@ -146,6 +195,9 @@ initialization
     TFileNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Readme_txt_templ',
     TFileNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Service_pass',
+    TPasswordStringPropertyEditor);
+
   // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
   //   TCollectionPropertyEditor);
 
