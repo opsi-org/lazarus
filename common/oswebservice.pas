@@ -1284,8 +1284,8 @@ begin
     if Assigned(HTTPSender) then FreeAndNil(HTTPSender);
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
-    HTTPSender.Sock.PreferIP4:= False;
-    //HTTPSender.Sock.Family:= SF_IP6;
+    //HTTPSender.Sock.PreferIP4:= False; //might be switsch to false if IPv6 is standard
+    //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
@@ -1695,8 +1695,8 @@ begin
               { Preparing Request }
               { Set Headers }
               HTTPSender.Clear; //reset headers, document and Mimetype
-              HTTPSender.Sock.PreferIP4:= False;
-              //HTTPSender.Sock.Family:= SF_IP6; //
+              //HTTPSender.Sock.PreferIP4:= False;//might be switsch to false if ipv6 is standard
+              //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
               //HTTPSender.Cookies.Clear; //do not clear cookies!
               HTTPSender.MimeType := ContentType;
               HTTPSender.Headers.NameValueSeparator := ':';
