@@ -621,7 +621,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="68">
+    <Units Count="69">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -921,10 +921,15 @@
         <IsPartOfProject Value="True"/>
       </Unit66>
       <Unit67>
+        <Filename Value="../common/osevaluatebooleanfunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osEvaluateBooleanFunctions"/>
+      </Unit67>
+      <Unit68>
         <Filename Value="osgetregistryfunctions.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="osGetRegistryFunctions"/>
-      </Unit67>
+      </Unit68>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

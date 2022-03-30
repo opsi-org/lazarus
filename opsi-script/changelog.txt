@@ -5,6 +5,7 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.5.0) stable; urgency=low
 
+  * osparser: fix in parsing errorsOccurredSinceMark, references #4718
   * osparser: throw syntax errors in comments, implements #3542
   * osfunc: fix "del" in files section: now works with wildcards, references #4560
   * oswebservice: allow newline and tab in opsiservicecall, implements #3522
