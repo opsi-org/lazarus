@@ -135,9 +135,9 @@ begin
     stable: Result := Result + 'stable/';
   end;
   case FDistribution of
-    AlmaLinux_8: Result := Result + 'AlmaLinux_8/';
+    AlmaLinux_8: Result := Result + 'AlmaLinux_8/x86_64/';
     CentOS_7: Result := Result + 'CentOS_7/';
-    CentOS_8: Result := Result + 'CentOS_8/';
+    CentOS_8: Result := Result + 'CentOS_8/x86_64/';
     Debian_8: Result := Result + 'Debian_8/';
     Debian_9: Result := Result + 'Debian_9/';
     Debian_10: Result := Result + 'Debian_10/';
@@ -147,8 +147,8 @@ begin
     openSUSE_Leap_15_3: Result := Result + 'openSUSE_Leap_15.3/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
-    RHEL_8: Result := Result + 'RHEL_8/';
-    RockyLinux_8: Result := Result + 'RockyLinux_8/';
+    RHEL_8: Result := Result + 'RHEL_8/x86_64/';
+    RockyLinux_8: Result := Result + 'RockyLinux_8/x86_64/';
     SLE_12: Result := Result + 'SLE_12/';
     SLE12_SP1: Result := Result + 'SLE12_SP1/';
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
