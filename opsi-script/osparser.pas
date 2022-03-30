@@ -76,6 +76,7 @@ uses
 {$ENDIF GUI}
   TypInfo,
   osparserhelper,
+  osEvaluateBooleanFunctions,
   osencoding,
   osconf,
   oszip,
@@ -979,38 +980,6 @@ begin
   end;
 end;
 
-function getCompareSignStrings(s1: string; s2: string): integer;
-var
-  s1A, s2A: string;
-begin
-  s1A := AnsiUpperCase(s1);
-  s2A := AnsiUpperCase(s2);
-  Result := 0;
-  if s1A > s2A then
-    Result := 1
-  else if s1A < s2A then
-    Result := -1;
-end;
-
-function getCompareSign(number1: integer; number2: integer): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
-end;
-
-
-function getCompareSignDouble(number1: double; number2: double): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
-end;
-
 
 function getDecimalCompareSign
   (const decimalString1, decimalString2: string; var sign: integer;
@@ -1220,32 +1189,6 @@ begin
   end;
 
 end;
-
-
-
-function hasRelation(orderrelationSymbol: string; orderSign: integer;
-  var BooleanResult: boolean; var InfoSyntaxError: string): boolean;
-begin
-  Result := True;
-
-  if orderRelationSymbol = '=' then
-    BooleanResult := (orderSign = 0)
-  else if orderRelationSymbol = '>' then
-    BooleanResult := (orderSign > 0)
-  else if orderRelationSymbol = '>=' then
-    BooleanResult := (orderSign >= 0)
-  else if orderRelationSymbol = '<' then
-    BooleanResult := (orderSign < 0)
-  else if orderRelationSymbol = '<=' then
-    BooleanResult := (orderSign <= 0)
-
-  else
-  begin
-    Result := False;
-    infoSyntaxError := '"=", ">", ">=" or "<", "<=" expected';
-  end;
-end;
-
 
 
 procedure adjustBounds(var a1, a2: integer; const list1: TXStringList);
@@ -18713,7 +18656,6 @@ var
   einheit: int64 = 0;
   j: integer = 0;
   drivenumber: integer = 0;
-  errnumber: integer = 0;
   relationSymbol: string = '';
   intresult: integer = 0;
   n1: integer = 0;
@@ -20102,23 +20044,7 @@ begin
   else if (Skip('ErrorsOccuredSinceMark ', Input, r, sx) or
     Skip('ErrorsOccurredSinceMark ', Input, r, sx)) then
   begin
-    getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
-    try
-      errNumber := StrToInt(r);
-      syntaxcheck := True;
-      r := '';
-    except
-      InfoSyntaxError := r + ' is not a number'
-    end;
-
-    syntaxCheck :=
-      syntaxcheck and hasRelation(relationSymbol,
-      getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked,
-      errNumber), BooleanResult, InfoSyntaxError);
-    LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
-      ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
-      relationSymbol + ' ' + IntToStr(errNumber) + ' -> ' +
-      BoolToStr(BooleanResult), LLDebug2);
+    parseErrorsOccurredSinceMark(r, InfoSyntaxError, syntaxcheck, BooleanResult);
   end
 
   else if Skip('opsiLicenseManagementEnabled', Input, r, InfoSyntaxError) then
@@ -21704,12 +21630,8 @@ begin
 
             if (NestLevel = ActLevel + 1) and Conditions[ActLevel] then
             begin
-              { a new active level is created if the if statement
-                is in a active Level AND inside of a positive branch.
-
-              // eine neue aktive Ebene wird erzeugt, falls
-              // die if-Anweisung auf einer aktiven Ebene UND im positiven Zweig steht
-              }
+              {A new active level is created if the if statement
+              is in an active Level AND inside of a positive branch}
               Expressionstr := Remaining;
               if EvaluateBoolean(Expressionstr, Remaining, BooleanResult,
                 NestLevel, InfoSyntaxError) then
