@@ -72,7 +72,7 @@ begin
     if Pos('8', FDistroRelease) = 1 then
     begin
       FDistr := AlmaLinux_8;
-      FDistrRepoUrlPart := 'AlmaLinux_8/';
+      FDistrRepoUrlPart := 'AlmaLinux_8/x86_64/';
     end;
   end
   else
@@ -117,7 +117,7 @@ begin
     if Pos('8', FDistroRelease) = 1 then
     begin
       FDistr := RHEL_8;
-      FDistrRepoUrlPart := 'RHEL_8/';
+      FDistrRepoUrlPart := 'RHEL_8/x86_64/';
     end;
   end
   else
@@ -126,7 +126,7 @@ begin
     if Pos('8', FDistroRelease) = 1 then
     begin
       FDistr := RockyLinux_8;
-      FDistrRepoUrlPart := 'RockyLinux_8/';
+      FDistrRepoUrlPart := 'RockyLinux_8/x86_64/';
     end;
   end
   else
