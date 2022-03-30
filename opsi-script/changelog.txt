@@ -5,6 +5,7 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.5.0) stable; urgency=low
 
+  * osparser: fix in parsing errorsOccurredSinceMark, references #4718
   * osparser: throw syntax errors in comments, implements #3542
   * osfunc: fix "del" in files section: now works with wildcards, references #4560
   * oswebservice: allow newline and tab in opsiservicecall, implements #3522
@@ -12,6 +13,7 @@ opsi-script (4.12.5.0) stable; urgency=low
 	getRegistryVarList(<regkey>,<access str>),
 	getRegistryVarMap(<regkey>,<access str>),
 	implements #4720
+  * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
 
 -- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 16:00
 
