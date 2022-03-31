@@ -69,7 +69,6 @@ begin
   if RunCommand(FShell, [FShellOption, 'echo ' +'"'+ FPassword + '" | ' + aCommandLine],
     Output, [poWaitOnExit, poUsePipes], swoShow) then
   begin
-    LogDatei.log('Shell command successful', LLInfo);
     LogDatei.log('Shell output: ' + Output, LLDebug);
     Result := True;
   end
