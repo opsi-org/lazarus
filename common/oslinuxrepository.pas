@@ -61,6 +61,7 @@ type
     FSourcesListFilePath = FSourcesListDirectory + '/opsi.list'; //Debian/Ubuntu
     FKeyRingPath = '/usr/local/share/keyrings'; //Debian/Ubuntu
     FKeyPath = FKeyRingPath + '/opensuseOpsi.gpg'; //Debian/Ubuntu
+    FRedhatRepoName = 'home:uibmz:opsi:4.2:stable.repo';
   var
     FDistribution: TDistribution; //Linux distribution
     FOpsiVersion: TOpsiVersion;
@@ -246,8 +247,8 @@ var
 begin
   if SetCurrentDir('/etc/yum.repos.d/') then
   begin
-    FRunCommandElevated.Run('wget ' + FURL, Output);
-    FRunCommandElevated.Run('yum makecache', Output);
+    FRunCommandElevated.Run('yum install -y yum-utils', Output);
+    FRunCommandElevated.Run('yum-config-manager --add-repo ' + FURL + FRedhatRepoName, Output);
   end
   else
     LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);
