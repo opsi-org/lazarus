@@ -29,7 +29,7 @@ type
     procedure SetNameAndRelease(DistroName: string; DistroRelease: string);
     procedure CorrectDistributionNameAndRelease(DistroName: string; DistroRelease: string);
     procedure SetDistrAndUrlPart;
-    function SetPackageManagementShellCommand: string;
+    procedure SetPackageManagementShellCommand;
 
     property DistroName: string read FDistroName;
     property DistroRelease: string read FDistroRelease;
@@ -176,7 +176,7 @@ begin
   end;
 end;
 
-function TDistributionInfo.SetPackageManagementShellCommand: string;
+procedure TDistributionInfo.SetPackageManagementShellCommand;
 begin
   {CentOS and RedHat}
   if (FDistroName = 'CentOS') or (FDistroName = 'RedHatEnterprise') or
