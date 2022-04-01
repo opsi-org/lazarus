@@ -136,6 +136,12 @@ begin
     begin
       FDistr := Univention_4_4;
       FDistrRepoUrlPart := 'Univention_4.4/';
+    end
+    else
+    if Pos('10', FDistroRelease) = 1 then
+    begin
+      FDistr := Univention_5_0;
+      FDistrRepoUrlPart := 'Univention_5.0/';
     end;
   end
   else
