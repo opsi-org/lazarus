@@ -29,7 +29,7 @@ uses
   osjson,
   strutils,
   {$IFDEF SYNAPSE}
-  httpsend, ssl_openssl, ssl_openssl_lib, blcksock,
+  httpsend, ssl_openssl11, ssl_openssl11_lib, blcksock,
   {$ELSE SYNAPSE}
   IdComponent,
   IdHTTP,
@@ -1292,14 +1292,14 @@ begin
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
-    if ssl_openssl_lib.InitSSLInterface then
+    if ssl_openssl11_lib.InitSSLInterface then
     begin
       LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' + BoolToStr(
-        ssl_openssl_lib.IsSSLloaded, True), LLdebug);
+        ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
     end
     else
-      LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl_lib.IsSSLloaded, True), LLdebug);
-    LogDatei.log('Lib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
+      LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
+    LogDatei.log('Lib should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
     LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
@@ -1733,7 +1733,7 @@ begin
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
-              LogDatei.log('SslLib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
+              LogDatei.log('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
               { Set Body }
               // before writing utf8str to HTTPSender.Document we need to replace all #10(newline), #13 and #9(TAB) by their
               // escape code equivalent for the correct json server request (otherwise we get a 400 bad request)
