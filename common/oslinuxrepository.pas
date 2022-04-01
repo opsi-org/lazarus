@@ -60,13 +60,21 @@ type
       'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     FSourcesListDirectory = '/etc/apt/sources.list.d'; //Debian/Ubuntu
     FSourcesListFilePath = FSourcesListDirectory + '/opsi.list'; //Debian/Ubuntu
+    FKeyRingPath = '/usr/local/share/keyrings'; //Debian/Ubuntu
+    FKeyPath = FKeyRingPath + '/opensuseOpsi.gpg'; //Debian/Ubuntu
+    FRedhatRepoName = 'home:uibmz:opsi:4.2:stable.repo';
   var
     FDistribution: TDistribution; //Linux distribution
     FOpsiVersion: TOpsiVersion;
-    FOpsiBranch: TOPsiBranch;
+    FOpsiBranch: TOpsiBranch;
     FURL: string;
     FRunCommandElevated: TRunCommandElevated;
+    FOwnerOfSourcesList: string;
 
+    procedure CreateKeyRingAndAddKey;
+    procedure ReadOwnerOfExistingSourcesList;
+    procedure CreateSourcesListAsRoot;
+    procedure AddRepoToSourcesListByKey;
     procedure AddDebianUbuntu;
     procedure AddOpenSuseSLES(RepoName: string);
     procedure AddCentOSRedHat;
@@ -130,9 +138,9 @@ begin
     stable: Result := Result + 'stable/';
   end;
   case FDistribution of
-    AlmaLinux_8: Result := Result + 'AlmaLinux_8/x86_64/';
+    AlmaLinux_8: Result := Result + 'AlmaLinux_8/';
     CentOS_7: Result := Result + 'CentOS_7/';
-    CentOS_8: Result := Result + 'CentOS_8/x86_64/';
+    CentOS_8: Result := Result + 'CentOS_8/';
     Debian_8: Result := Result + 'Debian_8/';
     Debian_9: Result := Result + 'Debian_9/';
     Debian_10: Result := Result + 'Debian_10/';
@@ -142,8 +150,8 @@ begin
     openSUSE_Leap_15_3: Result := Result + 'openSUSE_Leap_15.3/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
-    RHEL_8: Result := Result + 'RHEL_8/x86_64/';
-    RockyLinux_8: Result := Result + 'RockyLinux_8/x86_64/';
+    RHEL_8: Result := Result + 'RHEL_8/';
+    RockyLinux_8: Result := Result + 'RockyLinux_8/';
     SLE_12: Result := Result + 'SLE_12/';
     SLE12_SP1: Result := Result + 'SLE12_SP1/';
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
@@ -161,49 +169,59 @@ begin
   end;
 end;
 
-procedure TLinuxRepository.AddDebianUbuntu;
+procedure TLinuxRepository.CreateKeyRingAndAddKey;
 var
-  Owner, Output: string;
-  //Buffer:stat;
-  //ErrorNr:integer;
+  Output: string;
 begin
-  //ShowMessage(FSourcesListFilePath);
+  FRunCommandElevated.Run('mkdir -p ' + FKeyRingPath, Output);
+  FRunCommandElevated.Run(
+    'apt install -y apt-transport-https software-properties-common curl gpg', Output);
+
+  FRunCommandElevated.Run('curl -fsSL ' + FURL +
+    'Release.key | gpg --dearmor | sudo tee ' + FKeyPath + ' > /dev/null', Output);
+  //FRunCommandElevated.Run('gpg ' + FKeyPath + ' 2>/dev/null', Output); //check if key import worked
+end;
+
+procedure TLinuxRepository.ReadOwnerOfExistingSourcesList;
+begin
+  FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath, FOwnerOfSourcesList);
+  FOwnerOfSourcesList := StringReplace(FOwnerOfSourcesList, LineEnding, '',
+    [rfReplaceAll]);
+  LogDatei.log('Owner: ' + FOwnerOfSourcesList, LLInfo);
+end;
+
+procedure TLinuxRepository.CreateSourcesListAsRoot;
+var
+  Output: string;
+begin
+  FOwnerOfSourcesList := 'root';
+  FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
+end;
+
+procedure TLinuxRepository.AddRepoToSourcesListByKey;
+var
+  Output: string;
+begin
+  if FileExists(FSourcesListFilePath) then
+    ReadOwnerOfExistingSourcesList
+  else
+    CreateSourcesListAsRoot;
+
+  // change owner of file FSourcesListFilePath from root to user
+  FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath, Output);
+  // add repo
+  AddLineToTextFile('deb [signed-by=' + FKeyPath + '] ' + FURL + ' /',
+    FSourcesListFilePath);
+  // change owner of file FSourcesListFilePath from user to root
+  FRunCommandElevated.Run('chown -c ' + FOwnerOfSourcesList + ' ' +
+    FSourcesListFilePath, Output);
+end;
+
+procedure TLinuxRepository.AddDebianUbuntu;
+begin
   try
-    if FileExists(FSourcesListFilePath) then
-    begin
-      //fpStat(FSourcesListFilePath,Buffer);
-      //LogDatei.log('uid: ' + IntToStr(Buffer.st_uid),LLInfo);
-      //ErrorNr := fpChown(FSourcesListFilePath,fpGetUid,Buffer.st_gid);
-      //LogDatei.Log('ErrorNr: ' + IntToStr(ErrorNr),LLInfo);
-      FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath, Owner);
-      Owner := StringReplace(Owner, LineEnding, '', [rfReplaceAll]);
-      //ShowMessage(Owner); // result in Anja-M.'s case with ubuntu 18.04: root
-      LogDatei.log('Owner: ' + Owner, LLInfo);
-      // following code line moved down after else part for not getting trouble with AddLineToTextFile
-      //FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
-    end
-    else
-    begin
-      Owner := 'root';
-      FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
-    end;
-    // change owner of file FSourcesListFilePath from root to user
-    FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath, Output);
-    //ShowMessage(Output);
-
-    AddLineToTextFile('deb ' + FURL + ' /', FSourcesListFilePath);
-
-    // change owner of file FSourcesListFilePath from user to root
-    FRunCommandElevated.Run('chown -c ' + Owner + ' ' +
-      FSourcesListFilePath, Output);
-    //ShowMessage(Output);
-
-    FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
-      ' ' + 'Release.key', Output);
-    // apt-key add is deprecated (last available in Debian 11, Ubuntu 22.04) and needs gnupg
-    FRunCommandelevated.Run('apt-get install gnupg2', Output);
-    FRunCommandElevated.Run('apt-key add Release.key', Output);
-    FRunCommandElevated.Run('rm Release.key', Output);
+    CreateKeyRingAndAddKey;
+    AddRepoToSourcesListByKey;
   except
     LogDatei.log('Exception while adding repository.', LLDebug);
   end;
@@ -229,8 +247,8 @@ var
 begin
   if SetCurrentDir('/etc/yum.repos.d/') then
   begin
-    FRunCommandElevated.Run('wget ' + FURL, Output);
-    FRunCommandElevated.Run('yum makecache', Output);
+    FRunCommandElevated.Run('yum install -y yum-utils', Output);
+    FRunCommandElevated.Run('yum-config-manager --add-repo ' + FURL + FRedhatRepoName, Output);
   end
   else
     LogDatei.log('Could not set directory to /etc/yum.repos.d/', LLInfo);
