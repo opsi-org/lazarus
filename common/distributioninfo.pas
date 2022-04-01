@@ -23,7 +23,7 @@ type
     Distribs = 'AlmaLinux 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
       #10 + 'openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RHEL 8, RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
-      'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'UCS 4.4';
+      'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'UCS 4.4, UCS 5.0';
 
     constructor Create(DistroName: string; DistroRelease: string);overload;
     procedure SetNameAndRelease(DistroName: string; DistroRelease: string);
