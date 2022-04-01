@@ -466,6 +466,51 @@ begin
     //  (ButtonArray[btnindex].btn.Caption <> '') then
     if ButtonArray[btnindex].confirmshow then
     begin
+      with TTaskDialog.Create(NForm) do
+    try
+      Title := ButtonArray[btnindex].confirmtitle;
+      Caption := 'opsi-setup-detector';
+      Text := ButtonArray[btnindex].confirmtext;
+      CommonButtons := [];
+      (*
+      CommonButtons := [tcbYes, tcbNo];
+      DefaultButton := tcbNo;
+      Buttons.Items[0].Caption:= ButtonArray[btnindex].confirmYesText;
+      *)
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := ButtonArray[btnindex].confirmNoText;
+        ModalResult := mrNo;
+      end;
+      with TTaskDialogButtonItem(Buttons.Add) do
+      begin
+        Caption := ButtonArray[btnindex].confirmYesText;
+        ModalResult := mrYes;
+      end;
+      Buttons.DefaultButton := Buttons.FindButton(mrNo);
+      (*
+       // to confirm is not the default
+      Buttons.Items[0].Default:= false;
+      Buttons.Items[1].Default:= true;
+      *)
+      MainIcon := tdiQuestion;
+      Flags := [tfUseCommandLinks, tfAllowDialogCancellation];
+      if Execute then
+      begin
+        if ModalResult <> mrYes then
+       begin
+        confirmed := False;
+        LogDatei.log('Button action aborted by user-confirm: ' +
+          ButtonArray[btnindex].confirmtext, LLwarning);
+      end
+      else
+        LogDatei.log('Button action confirmed by user,  text: ' +
+          ButtonArray[btnindex].confirmtext, LLnotice);
+      end;
+    finally
+      Free;
+    end;
+      (*
       if MessageDlg(ButtonArray[btnindex].confirmtitle,
         ButtonArray[btnindex].confirmtext, mtConfirmation,
         [mbYes, mbCancel], 0) <> mrYes then
@@ -477,6 +522,7 @@ begin
       else
         LogDatei.log('Button action confirmed by user,  text: ' +
           ButtonArray[btnindex].confirmtext, LLnotice);
+          *)
     end
     else
       LogDatei.log('Button action should not be confirmed by user.', LLinfo);
@@ -1616,6 +1662,10 @@ begin
         myini.ReadString(aktsection, 'ConfirmationTitle', '');
       ButtonArray[buttoncounter].confirmtext :=
         myini.ReadString(aktsection, 'ConfirmationText', '');
+      ButtonArray[buttoncounter].confirmYesText :=
+        myini.ReadString(aktsection, 'confirmYesText', '');
+      ButtonArray[buttoncounter].confirmNoText :=
+        myini.ReadString(aktsection, 'confirmNoText', '');
     end;
     DataModule1.ProcessMess;
 

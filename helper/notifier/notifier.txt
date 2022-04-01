@@ -1,5 +1,15 @@
 [changelog]
 
+opsi-notifier  4.2.0.6
+
+  * using TaskDialog for Button confirmation dialog
+  * confirm the button is not the default -> Keyboard enter will not confirm
+  * additional fields for Button confirmation dialog:
+     confirmYesText (Default = 'Yes')
+     confirmNoText (Default = 'No')
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 01 April 2022:15:00:00 +0200
+
 opsi-notifier  4.2.0.5
 
   * notifier: optional  confirm dialog  (Feature #4726)

@@ -40,6 +40,8 @@ type
     confirmshow: boolean;
     confirmtitle: string;
     confirmtext: string;
+    confirmYesText: string;
+    confirmNoText: string;
     constructor Create(AOwner: TComponent; pathtoicon: string = '';
       btnonly: boolean = True);
     destructor Destroy;
@@ -63,6 +65,8 @@ begin
   confirmshow := False;
   confirmtitle := '';
   confirmtext := '';
+  confirmYesText := 'Yes';
+  confirmNoText := 'No';
   button_only := btnonly;
   //inherited.
   panel.BevelWidth := 0;
