@@ -196,6 +196,8 @@ type
     mymemorystream: TMemoryStream;
     //nullO : NULL;
     methodGET: boolean;
+    function GetSynapseSocketFamilyAsString: String;
+    procedure LogHostIPs;
   protected
     {$IFDEF SYNAPSE}
     HTTPSender: THTTPSend;
@@ -1285,7 +1287,7 @@ begin
     if Assigned(HTTPSender) then FreeAndNil(HTTPSender);
     HTTPSender := THTTPSend.Create;
     HTTPSender.Protocol := '1.1';
-    //HTTPSender.Sock.PreferIP4:= False; //might be switsch to false if IPv6 is standard
+    //HTTPSender.Sock.PreferIP4:= False; //might be switched to false if IPv6 is standard
     //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
@@ -1298,12 +1300,6 @@ begin
     else
       LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl_lib.IsSSLloaded, True), LLdebug);
     LogDatei.log('Lib should be: ' + ssl_openssl_lib.DLLSSLName, LLInfo);
-    //if HTTPSender.Sock.SSL.Accept then
-    //  LogDatei.log_prog('ready to accept', LLdebug)
-    //else
-    //begin
-    //  LogDatei.log_prog('not !! ready to accept', LLdebug);
-    //end;
     HTTPSender.Sock.SSLDoConnect;
     LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
@@ -1446,6 +1442,32 @@ begin
   //CompressedMemoryStream.Free;
 end;
 
+function TJsonThroughHTTPS.GetSynapseSocketFamilyAsString: String;
+var
+  Family: String;
+begin
+  case HTTPSender.Sock.Family of
+    SF_ANY: Family := 'SF_ANY';
+    SF_IP4: Family := 'SF_IP4';
+    SF_IP6: Family := 'SF_IP6';
+  end;
+  Result:=Family;
+end;
+
+procedure TJsonThroughHTTPS.LogHostIPs;
+var
+  IPAddrList: TStringList;
+  i : integer;
+begin
+  IPAddrList := TStringList.Create;
+  HTTPSender.Sock.ResolveNameToIP(HttpSender.TargetHost, IPAddrList);
+  LogDatei.log('Resolve ('+ HttpSender.TargetHost +') to following IPs: ',
+    LLInfo);
+  for i := 0 to IPAddrList.Count -1 do
+    LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i],
+      LLInfo);
+  FreeAndNil(IPAddrList);
+end;
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
 var
@@ -1535,8 +1557,6 @@ var
   oldTwistedServer: string;
   oldTwistedServerVer: integer = 0;
   opsi40: boolean = False;
-   IPAddrList: TStringList;
-   Family: String;
 
 begin
   LogDatei.log_prog('Start of function retrieveJSONObject(omc: ' + omc.FOpsiMethodName +
@@ -1555,7 +1575,6 @@ begin
     compress := False;
     startTime := now;
     finished := False;
-    IPAddrList := TStringList.Create;
     {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
@@ -1695,7 +1714,7 @@ begin
               { Preparing Request }
               { Set Headers }
               HTTPSender.Clear; //reset headers, document and Mimetype
-              //HTTPSender.Sock.PreferIP4:= False;//might be switsch to false if ipv6 is standard
+              //HTTPSender.Sock.PreferIP4:= False;//might be switched to false if ipv6 is standard
               //HTTPSender.Sock.Family:= SF_IP6; //do not set this if IPv4 addresses are still in use
               //HTTPSender.Cookies.Clear; //do not clear cookies!
               HTTPSender.MimeType := ContentType;
@@ -1742,21 +1761,14 @@ begin
               LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
 
               { Send Request }
-              //IPAddrList.Clear;
-              //HTTPSender.Sock.ResolveNameToIP('google.de', IPAddrList);
-              //LogDatei.log('Try connect to ' + IPAddrList.Text, LLInfo);
-              case HTTPSender.Sock.Family of
-                SF_ANY: Family := 'SF_ANY';
-                SF_IP4: Family := 'SF_IP4';
-                SF_IP6: Family := 'SF_IP6';
-              end;
-              LogDatei.log_prog('Socket-Family: ' + Family, LLDebug);
+
+              LogDatei.log_prog('Socket-Family: ' + GetSynapseSocketFamilyAsString, LLDebug);
               LogDatei.log_prog('PreferIP4: ' + BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
+                { Evaluate Response Metadata/Headers}
+                LogDatei.log('HTTPSender Post succeeded', LLInfo);
                 LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
-                { Read Response }
-                LogDatei.log_prog('HTTPSender Post succeeded', LLdebug);
                 LogDatei.log_prog('HTTPSender result: ' +
                   IntToStr(HTTPSender.ResultCode) + ' msg: ' +
                   HTTPSender.ResultString, LLdebug);
@@ -1789,7 +1801,7 @@ begin
                 begin
                   FError := 'HTTP Error occurred. Error code: ' + IntToStr(HTTPSender.ResultCode) +
                   ', msg: ' + HTTPSender.ResultString + ', Server-FQDN: ' + HttpSender.TargetHost +', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
-                  raise Exception.Create(HTTPSender.Headers.Strings[0]);
+                  raise Exception.Create(FError);
                 end;
                 //HTTPSender.Headers.NameValueSeparator:= ':';
 
@@ -1809,6 +1821,7 @@ begin
                 LogDatei.log_prog('Content-Type: ' +
                   trim(HTTPSender.Headers.Values['Content-Type']), llDebug);
                 oldTwistedServer := trim(HTTPSender.Headers.Values['Server']);
+                LogDatei.log_prog('Server: ' + oldTwistedServer, llDebug);
                 if StartsText('Twisted/', oldTwistedServer) then
                 begin
                   oldTwistedServer := copy(oldTwistedServer, 9, 2);
@@ -1822,8 +1835,8 @@ begin
                         oldTwistedServer, llDebug);
                     end;
                 end;
-                LogDatei.log_prog('Server: ' +
-                  trim(HTTPSender.Headers.Values['Server']), llDebug);
+
+                { Read Response Body}
 
                 { identity = uncompressed}
                 if (ContentEncoding = 'identity') then
@@ -1875,22 +1888,17 @@ begin
                 //ReceiveStream.LoadFromStream(HTTPSender.Document);
               end
               else
-
-                { Request failed }
-
               begin
-                FError := 'HTTPSender Post failed. Server-FQDN: ' + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
-                LogDatei.log('HTTPSender Post failed', LLError);
-                //LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-                //  ' msg: ' + HTTPSender.ResultString, LLError);
-                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
-                IPAddrList.Clear;
-                HTTPSender.Sock.ResolveNameToIP(HttpSender.TargetHost, IPAddrList);
-                LogDatei.log('Resolved IPs ('+ HttpSender.TargetHost +'): ', LLInfo);
-                for i := 0 to IPAddrList.Count -1 do
-                  LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i], LLInfo);
+                { Request failed }
                 ErrorOccured := True;
-                raise Exception.Create(HTTPSender.Headers.Strings[0]);
+                FError := 'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
+                  + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
+                LogDatei.log_prog('Request failed (Method Post). No connection to server could be established. Line: '
+                  + {$INCLUDE %LINE%}, LLError);
+                LogDatei.log_prog('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: '
+                  + HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
+                LogHostIPs;
+                raise Exception.Create(FError);
               end;
             end;
           except
@@ -1898,7 +1906,7 @@ begin
             begin
               LogDatei.log('Exception in retrieveJSONObject0: ' +
                 e.message, LLdebug2);
-              //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+              //writeln('debug: Exception in retrieveJSONObject0: ' + e.message);
               if e.message = 'HTTP/1.1 401 Unauthorized' then
                 FValidCredentials := False;
               t := s;
