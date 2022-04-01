@@ -71,7 +71,8 @@ type
     FOwnerOfSourcesList: string;
 
     procedure CreateKeyRingAndAddKey;
-    procedure CreateSourcesListIfNotExistentAndDetermineOwner;
+    procedure ReadOwnerOfExistingSourcesList;
+    procedure DetermineOwnerOfSourcesList;
     procedure AddRepoToSourcesListByKey;
     procedure AddDebianUbuntu;
     procedure AddOpenSuseSLES(RepoName: string);
@@ -179,34 +180,32 @@ begin
   //FRunCommandElevated.Run('gpg ' + FKeyPath + ' 2>/dev/null', Output); //check if key import worked
 end;
 
-procedure TLinuxRepository.CreateSourcesListIfNotExistentAndDetermineOwner;
+procedure TLinuxRepository.ReadOwnerOfExistingSourcesList;
+begin
+  FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath, FOwnerOfSourcesList);
+  FOwnerOfSourcesList := StringReplace(FOwnerOfSourcesList, LineEnding, '',
+    [rfReplaceAll]);
+  LogDatei.log('Owner: ' + FOwnerOfSourcesList, LLInfo);
+end;
+
+procedure TLinuxRepository.DetermineOwnerOfSourcesList;
 var
   Output: string;
-  //Buffer:stat;
-  //ErrorNr:integer;
 begin
   if FileExists(FSourcesListFilePath) then
-    begin
-      //fpStat(FSourcesListFilePath,Buffer);
-      //LogDatei.log('uid: ' + IntToStr(Buffer.st_uid),LLInfo);
-      //ErrorNr := fpChown(FSourcesListFilePath,fpGetUid,Buffer.st_gid);
-      //LogDatei.Log('ErrorNr: ' + IntToStr(ErrorNr),LLInfo);
-      FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath, FOwnerOfSourcesList);
-      FOwnerOfSourcesList := StringReplace(FOwnerOfSourcesList, LineEnding, '', [rfReplaceAll]);
-      LogDatei.log('Owner: ' + FOwnerOfSourcesList, LLInfo);
-    end
-    else
-    begin
-      FOwnerOfSourcesList := 'root';
-      FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
-    end;
+    ReadOwnerOfExistingSourcesList
+  else
+  begin
+    FOwnerOfSourcesList := 'root';
+    FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
+  end;
 end;
 
 procedure TLinuxRepository.AddRepoToSourcesListByKey;
 var
   Output: string;
 begin
-  CreateSourcesListIfNotExistentAndDetermineOwner;
+  DetermineOwnerOfSourcesList ;
   // change owner of file FSourcesListFilePath from root to user
   FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath, Output);
   // add repo
