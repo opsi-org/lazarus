@@ -72,7 +72,7 @@ type
 
     procedure CreateKeyRingAndAddKey;
     procedure ReadOwnerOfExistingSourcesList;
-    procedure DetermineOwnerOfSourcesList;
+    procedure CreateSourcesListAsRoot;
     procedure AddRepoToSourcesListByKey;
     procedure AddDebianUbuntu;
     procedure AddOpenSuseSLES(RepoName: string);
@@ -188,24 +188,23 @@ begin
   LogDatei.log('Owner: ' + FOwnerOfSourcesList, LLInfo);
 end;
 
-procedure TLinuxRepository.DetermineOwnerOfSourcesList;
+procedure TLinuxRepository.CreateSourcesListAsRoot;
 var
   Output: string;
 begin
-  if FileExists(FSourcesListFilePath) then
-    ReadOwnerOfExistingSourcesList
-  else
-  begin
-    FOwnerOfSourcesList := 'root';
-    FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
-  end;
+  FOwnerOfSourcesList := 'root';
+  FRunCommandElevated.Run('touch ' + FSourcesListFilePath, Output);
 end;
 
 procedure TLinuxRepository.AddRepoToSourcesListByKey;
 var
   Output: string;
 begin
-  DetermineOwnerOfSourcesList ;
+  if FileExists(FSourcesListFilePath) then
+    ReadOwnerOfExistingSourcesList
+  else
+    CreateSourcesListAsRoot;
+
   // change owner of file FSourcesListFilePath from root to user
   FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath, Output);
   // add repo
