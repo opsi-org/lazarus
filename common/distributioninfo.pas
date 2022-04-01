@@ -92,7 +92,7 @@ begin
     else
     if Pos('11', FDistroRelease) = 1 then
     begin
-      FDistr := Debian_10;
+      FDistr := Debian_11;
       FDistrRepoUrlPart := 'Debian_11/';
     end;
   end
