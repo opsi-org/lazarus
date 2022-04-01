@@ -34,6 +34,7 @@ type
     SLE15_SP2,
     Univention_4_3,
     Univention_4_4,
+    Univention_5_0,
     xUbuntu_16_04,
     xUbuntu_18_04,
     xUbuntu_20_04,
@@ -160,6 +161,7 @@ begin
     SLE15_SP2: Result := Result + 'SLE_15_SP2/';
     Univention_4_3: Result := Result + 'Univention_4.3/';
     Univention_4_4: Result := Result + 'Univention_4.4/';
+    Univention_5_0: Result := Result + 'Univention_5.0/';
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
     xUbuntu_18_04: Result := Result + 'xUbuntu_18.04/';
     xUbuntu_20_04: Result := Result + 'xUbuntu_20.04/';
@@ -258,7 +260,7 @@ begin
   case FDistribution of
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10, Debian_11,
-    Univention_4_3, Univention_4_4,
+    Univention_4_3, Univention_4_4, Univention_5_0,
     xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
     begin
       AddDebianUbuntu;
