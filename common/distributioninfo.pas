@@ -138,7 +138,7 @@ begin
       FDistrRepoUrlPart := 'Univention_4.4/';
     end
     else
-    if Pos('10', FDistroRelease) = 1 then
+    if Pos('10', FDistroRelease) = 1 then //Univention 5.0 Distro Release is 10
     begin
       FDistr := Univention_5_0;
       FDistrRepoUrlPart := 'Univention_5.0/';
