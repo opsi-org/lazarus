@@ -343,7 +343,7 @@ begin
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLnotice);
   try
-  //logdatei.Close;
+    //logdatei.Close;
   finally
     Application.Terminate;
     logdatei.log('Program halted', LLnotice);

@@ -7,16 +7,15 @@ encoding=utf8
 
 
 [Actions]
-requiredWinstVersion >= "4.12.0.28"
-ScriptErrorMessages = false
+requiredOpsiscriptVersion >= "4.12.4.23"
+
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
+#@importLibs*#
 
 ; All variables are defined here:
 include_insert "define_vars_multi.opsiscript"
-
-; import complete file !
-importlib "uib_exitcode.opsiscript"
-importlib "osd-lib.opsiscript"
-#@importLibs*#
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator

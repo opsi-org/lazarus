@@ -1832,7 +1832,7 @@ begin
         end
         else
         begin
-          LogDatei.log_prog('Did not find a local var' + varname + ' as local (2) in function ' +
+          LogDatei.log_prog('Did not find a local var ' + varname + ' as local (2) in function ' +
             definedFunctionArray[index].Name + ' with index: ' +
             IntToStr(index), LLDebug2);
         end;

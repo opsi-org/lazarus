@@ -138,7 +138,7 @@ begin
         //nkind := opsiunquotestr2(nkind, '""');
         // get inner array as stringlist
         messagelist := TStringList.Create;
-        messagelist.CaseSensitive:= false;
+        messagelist.CaseSensitive := False;
         if jsonAsArrayCountElements(messagearray) > 0 then
         begin
           if not jsonAsArrayToStringList(messagearray, messagelist) then
@@ -156,7 +156,7 @@ begin
       begin
         // get inner array as stringlist
         messagelist := TStringList.Create;
-        messagelist.CaseSensitive:= false;
+        messagelist.CaseSensitive := False;
         if jsonAsArrayCountElements(messagearray) > 0 then
         begin
           if not jsonAsArrayToStringList(messagearray, messagelist) then

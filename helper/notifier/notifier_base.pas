@@ -123,14 +123,16 @@ begin
           logdatei.log('After Received: ' + mymessage, LLDebug2);
           myMessage := '';
         end
-        else logdatei.log('Nothing Received.', LLDebug2);
+        else
+          logdatei.log('Nothing Received.', LLDebug2);
         Synchronize(@messageFromMainThread);
         if myMessage <> '' then
         begin
           myTCPClient.SendString(myMessage);
           logdatei.log('Sended: ' + mymessage, LLDebug2);
         end
-        else logdatei.log('Nothing to send.', LLDebug2);
+        else
+          logdatei.log('Nothing to send.', LLDebug2);
         logdatei.log('tcploop :' + TimeToStr(now), LLDebug2);
         //sleep(1000);
       end;
@@ -153,7 +155,7 @@ end;
 
 procedure Main;
 var
-  i : integer;
+  i: integer;
 begin
   stopped := False;
   DataModule1.createNform;
@@ -168,7 +170,7 @@ begin
     begin
       DataModule1.ProcessMess;
       Sleep(1000);
-      LogDatei.log('show test: '+inttostr(i), LLnotice);
+      LogDatei.log('show test: ' + IntToStr(i), LLnotice);
     end;
     if Assigned(LogDatei) then
       LogDatei.log('shutdown after show test', LLnotice);
