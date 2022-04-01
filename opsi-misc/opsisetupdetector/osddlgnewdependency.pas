@@ -26,9 +26,9 @@ type
   TFNewDepDlg = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+    ComboBoxproductIds: TComboBox;
     ComboBoxActState: TComboBox;
     ComboBoxReqType: TComboBox;
-    Editproductid: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;
@@ -38,6 +38,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    LabelConnect: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
@@ -57,10 +58,9 @@ var
   FNewDepDlg: TFNewDepDlg;
   newdependency: TPDependency;
 
-  resourcestring
+resourcestring
   // new for 4.1.0.2 ******************************************************************
-    rsDepDlgProductId = 'productId' + LineEnding +
-      'of the dependent product';
+  rsDepDlgProductId = 'productId' + LineEnding + 'of the dependent product';
 
 implementation
 
@@ -79,7 +79,7 @@ begin
     ComboBoxActState.Items.Add('uninstall');
     ComboBoxActState.Items.Add('once');
     if ComboBoxActState.Items.IndexOf(ComboBoxActState.Text) < 0 then
-     ComboBoxActState.Text := 'setup';
+      ComboBoxActState.Text := 'setup';
   end
   else
   begin
@@ -88,28 +88,28 @@ begin
     ComboBoxActState.Items.Add('not installed');
     ComboBoxActState.Items.Add('none');
     if ComboBoxActState.Items.IndexOf(ComboBoxActState.Text) < 0 then
-     ComboBoxActState.Text := 'installed';
+      ComboBoxActState.Text := 'installed';
   end;
 end;
 
 procedure TFNewDepDlg.FormShow(Sender: TObject);
 begin
-   label2.Caption:= rsDepDlgProductId;
-   ComboBoxReqType.Enabled:= true;
+  label2.Caption := rsDepDlgProductId;
+  //ComboBoxReqType.Enabled := True;
 end;
 
 procedure TFNewDepDlg.ComboBoxActStateChange(Sender: TObject);
 begin
   if ComboBoxActState.Text = 'uninstall' then
-    ComboBoxReqType.Enabled:= false
+    ComboBoxReqType.Enabled := False
   else
-    ComboBoxReqType.Enabled:= true;
+    ComboBoxReqType.Enabled := True;
 end;
 
 procedure TFNewDepDlg.EditproductidChange(Sender: TObject);
 begin
-  TEdit(sender).Caption := cleanOpsiId(TEdit(sender).Caption);
-  TEdit(sender).SelStart:= Length(TEdit(sender).Caption);
+  TEdit(Sender).Caption := cleanOpsiId(TEdit(Sender).Caption);
+  TEdit(Sender).SelStart := Length(TEdit(Sender).Caption);
 end;
 
 procedure TFNewDepDlg.FlowPanel2Click(Sender: TObject);
@@ -119,4 +119,3 @@ end;
 
 
 end.
-
