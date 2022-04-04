@@ -216,34 +216,32 @@ begin
   end
   else
   begin
-    t := StringToExermine;
-    setLength(t, length(t));
     i := 1;
-    while (i <= length(t)) do
+    while (i <= length(StringToExermine)) do
     begin
       if not InConstantString then
       begin
-        if (t[i] in ['"', '''']) then
+        if (StringToExermine[i] in ['"', '''']) then
         begin
           InConstantString := True;
-          Quotes := t[i];
+          Quotes := StringToExermine[i];
           Inc(i);
         end
         else
-        if not (t[i] in WordDelimiterSet) then
+        if not (StringToExermine[i] in WordDelimiterSet) then
         begin
-          if t[i] = '(' then
+          if StringToExermine[i] = '(' then
             Inc(NumberBrackets);
           Inc(i);
         end
         else
-        if (t[i] in WordDelimiterSet) then
+        if (StringToExermine[i] in WordDelimiterSet) then
         begin
           if (NumberBrackets = 0) then
             Break
           else
           begin
-            if t[i] = ')' then
+            if StringToExermine[i] = ')' then
               Dec(NumberBrackets);
             Inc(i);
           end;
@@ -252,7 +250,7 @@ begin
       else
       if InConstantString then
       begin
-        if (t[i] = Quotes) then
+        if (StringToExermine[i] = Quotes) then
         begin
           InConstantString := False;
           Quotes := '';
@@ -262,8 +260,8 @@ begin
     end;
   end;
 
-  Result := copy(t, 1, i - 1);
-  Remaining := copy(t, i, length(t) - i + 1);
+  Result := copy(StringToExermine, 1, i - 1);
+  Remaining := copy(StringToExermine, i, length(StringToExermine) - i + 1);
   Remaining := CutLeftBlanks(Remaining);
 end;
 
