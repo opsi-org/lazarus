@@ -450,7 +450,6 @@ msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
-msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
 msgid "Save images on depot"
 msgstr ""
 
@@ -672,12 +671,10 @@ msgid "Close"
 msgstr ""
 
 #: tformsaveimagesondepot.buttoncopy.caption
-msgctxt "tformsaveimagesondepot.buttoncopy.caption"
 msgid "Save files on depot"
 msgstr ""
 
 #: tformsaveimagesondepot.caption
-msgctxt "tformsaveimagesondepot.caption"
 msgid "Save settings on depot"
 msgstr ""
 

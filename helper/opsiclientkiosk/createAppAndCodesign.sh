@@ -39,6 +39,7 @@ cp -R "`pwd`/default" "${APP}/Contents/Resources"
 # cp -R "`pwd`/ock_custom" "${APP}/Contents/Resources" put into Application Support folder
 cp -R "`pwd`/locale" "${APP}/Contents/Resources"
 cp "`pwd`/Info.plist" "${APP}/Contents"
+cp "`pwd`/opsiclientkiosk.ico" "${APP}/Contents/Resources"
 # cd "${APP}/Contents/MacOS"
 # install_name_tool -add_rpath "@executable_path/../Frameworks/." ${EXECUTABLE_NAME}
 # cd ${SCRIPT_DIR}

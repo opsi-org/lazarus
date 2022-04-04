@@ -2284,7 +2284,7 @@ begin
     else
     begin
       {$IFDEF UNIX}
-      ClientID := GetClientID(AbsolutePathSettings + PathDelim +'opsiclientkiosk.conf');
+      ClientID := GetClientID(AbsolutePathSettingsUserMode + PathDelim +'opsiclientkiosk.conf');
       {$ELSE}
       ClientID := GetClientID(ChompPathDelim(ProgramDirectory) + PathDelim +'opsiclientkiosk.conf');
       {$ENDIF UNIX}
