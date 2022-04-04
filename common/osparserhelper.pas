@@ -233,7 +233,6 @@ begin
       begin
         if (t[i] in ['"', '''']) then
         begin
-          logdatei.log('string constant start',llinfo);
           InConstantString := True;
           Quotes := t[i];
           Inc(i);
@@ -263,7 +262,6 @@ begin
       begin
         if (t[i] = Quotes) then
         begin
-          logdatei.log('string constant end',llinfo);
           InConstantString := False;
           Quotes := '';
         end;
