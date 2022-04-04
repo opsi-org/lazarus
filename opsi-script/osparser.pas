@@ -22252,7 +22252,13 @@ begin
                   begin
                     if definedFunctionArray[FuncIndex].call(p2, p2, NestLevel) then
                     begin
-                      syntaxCheck := True;
+                      if p2 <> '' then
+                      begin
+                         reportError(Sektion, linecounter, p2,
+                         'Remaining char(s) not allowed here');
+                      end
+                      else
+                         syntaxCheck := True;
                       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                     end
                     else
