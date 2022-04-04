@@ -1343,14 +1343,7 @@ begin
           if paramcounter = DFparamCount - 1 then
           begin
             // remove the trailing ) - if there is any
-            //GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
             ParamStr := GetWord(inputstr, remaining, [')']);
-            //Script.EvaluateString(inputstr, remaining, ParamStr, errorstr);
-            inputstr := ParamStr;
-            (*ParamStr := '';
-            logdatei.log('inputstr: '+inputstr,llinfo);
-            GetOuterFunctionOrExp(inputstr, ParamStr, remaining);
-            logdatei.log('ParamStr: '+ParamStr,llinfo);*)
             // paramstr may now be: var, string or function
             // if the last is ) and there is no ( : so that is not a function
             //if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
