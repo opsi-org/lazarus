@@ -39,9 +39,11 @@ procedure GetWord
   const WordDelimiterSet: TCharset; searchbackward: boolean = False;
   backwardfirst: boolean = True); overload;
 
-
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterString: string; searchbackward: boolean = False); overload;
+
+function GetWord(const StringToExermine: string; var Remaining: string;
+  const WordDelimiterSet: TCharset): string; overload;
 
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -87,7 +89,6 @@ procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Ts
 implementation
 
 
-
 function CutLeftBlanks(const s: string): string;
 begin
   Result := SysUtils.trimleft(s);
@@ -109,7 +110,6 @@ procedure GetWord
     (const s: string; var Expression, Remaining: string;
     const WordDelimiterSet: TCharset; searchbackward: boolean = False;
     backwardfirst: boolean = True);
-
 var
   i: integer = 0;
   t: string = '';
@@ -172,7 +172,6 @@ begin
   end;
 end;
 
-
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterString: string; searchbackward: boolean = False);
 // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
@@ -205,6 +204,75 @@ begin   // experimental
   end;
 
   Expression := copy(t, 1, i - 1);
+  Remaining := copy(t, i, length(t) - i + 1);
+  Remaining := CutLeftBlanks(Remaining);
+end;
+
+function GetWord(const StringToExermine: string; var Remaining: string;
+  const WordDelimiterSet: TCharset): string; overload;
+var
+  i: integer = 0;
+  t: string = '';
+  InConstantString : boolean = False;
+  Quotes: string = '';
+  NumberBrackets: integer = 0;
+begin
+  if StringToExermine = '' then
+  begin
+    Result := '';
+    Remaining := '';
+  end
+  else
+  begin
+    t := StringToExermine;
+    setLength(t, length(t));
+    i := 1;
+    while (i <= length(t)) do
+    begin
+      if not InConstantString then
+      begin
+        if (t[i] in ['"', '''']) then
+        begin
+          logdatei.log('string constant start',llinfo);
+          InConstantString := True;
+          Quotes := t[i];
+          Inc(i);
+        end
+        else
+        if not (t[i] in WordDelimiterSet) then
+        begin
+          if t[i] = '(' then
+            Inc(NumberBrackets);
+          Inc(i);
+        end
+        else
+        if (t[i] in WordDelimiterSet) then
+        begin
+          if (NumberBrackets = 0) then
+            Break
+          else
+          begin
+            if t[i] = ')' then
+              Dec(NumberBrackets);
+            Inc(i);
+          end;
+        end;
+      end
+      else
+      if InConstantString then
+      begin
+        if (t[i] = Quotes) then
+        begin
+          logdatei.log('string constant end',llinfo);
+          InConstantString := False;
+          Quotes := '';
+        end;
+        Inc(i);
+      end;
+    end;
+  end;
+
+  Result := copy(t, 1, i - 1);
   Remaining := copy(t, i, length(t) - i + 1);
   Remaining := CutLeftBlanks(Remaining);
 end;

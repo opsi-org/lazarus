@@ -1344,17 +1344,22 @@ begin
           begin
             // remove the trailing ) - if there is any
             //GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
-            GetWord(inputstr, ParamStr, remaining, [')'], True, True);
+            ParamStr := GetWord(inputstr, remaining, [')']);
+            //Script.EvaluateString(inputstr, remaining, ParamStr, errorstr);
             inputstr := ParamStr;
-            ParamStr := '';
+            (*ParamStr := '';
+            logdatei.log('inputstr: '+inputstr,llinfo);
             GetOuterFunctionOrExp(inputstr, ParamStr, remaining);
+            logdatei.log('ParamStr: '+ParamStr,llinfo);*)
             // paramstr may now be: var, string or function
             // if the last is ) and there is no ( : so that is not a function
             //if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
             //  GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
           end
           else // this should be not the last parameter and we expect a ','
-            GetWord(inputstr, ParamStr, remaining, [',']);
+            ParamStr := GetWord(inputstr, remaining, [',']);
+            //GetWordOrStringConstant(inputstr, paramstr, remaining,[','],true,false);
+
           ParamStr := trim(ParamStr);
           LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
             ParamStr, LLDebug2);
