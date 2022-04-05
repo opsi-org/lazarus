@@ -1501,8 +1501,8 @@ begin
   // Specify here the path to the ssl libraries
   {$IFDEF SSLPATH}
     {$IFDEF WINDOWS}
-      DLLSSLName := GetSSLPath('libssl-1_1.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
-      DLLUtilName := GetSSLPath('libcrypto-1_1.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+      DLLSSLName := GetSSLPath('libssl.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
+      DLLUtilName := GetSSLPath('libcrypto.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
       DLLSSLName := GetSSLPath('libssl.so'); //ProgramDirectory + 'libssl.so';
