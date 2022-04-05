@@ -1343,14 +1343,14 @@ begin
           if paramcounter = DFparamCount - 1 then
           begin
             // remove the trailing ) - if there is any
-            ParamStr := GetWord(inputstr, remaining, [')']);
+            ParamStr := GetStringExpressionWord(inputstr, remaining, [')']);
             // paramstr may now be: var, string or function
             // if the last is ) and there is no ( : so that is not a function
             //if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
             //  GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
           end
           else // this should be not the last parameter and we expect a ','
-            ParamStr := GetWord(inputstr, remaining, [',']);
+            ParamStr := GetStringExpressionWord(inputstr, remaining, [',']);
             //GetWordOrStringConstant(inputstr, paramstr, remaining,[','],true,false);
 
           ParamStr := trim(ParamStr);

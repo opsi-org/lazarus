@@ -37,8 +37,8 @@ procedure GetWord
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterString: string; searchbackward: boolean = False); overload;
 
-function GetWord(const StringToExermine: string; var Remaining: string;
-  const WordDelimiterSet: TCharset): string; overload;
+function GetStringExpressionWord(const StringToExermine: string; var Remaining: string;
+  const WordDelimiterSet: TCharset): string;
 
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -195,8 +195,8 @@ begin   // experimental
   Remaining := CutLeftBlanks(Remaining);
 end;
 
-function GetWord(const StringToExermine: string; var Remaining: string;
-  const WordDelimiterSet: TCharset): string; overload;
+function GetStringExpressionWord(const StringToExermine: string; var Remaining: string;
+  const WordDelimiterSet: TCharset): string;
 var
   i: integer = 0;
   t: string = '';
