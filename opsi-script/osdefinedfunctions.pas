@@ -1355,6 +1355,7 @@ begin
           end
           else // this should be not the last parameter and we expect a ','
             GetWordOrStringConstant(inputstr, ParamStr, remaining, [',']);
+
           ParamStr := trim(ParamStr);
           LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
             ParamStr, LLDebug2);
@@ -1600,7 +1601,6 @@ begin
   //definedFunctionsCallStack.Append(InttoStr(DFIndex));
 
 
-
   //parse parameter
   // The varnames on the param line are in the name space of the calling function
   if not parseCallParameter(paramline, remaining, errorstr, NestLevel,
@@ -1612,7 +1612,6 @@ begin
   else
   begin
     try
-
      //now set inDefFuncIndex to the called function
      inDefFuncIndex := indexofcalledfunc;
       // inc var instance counter for recursive calls
