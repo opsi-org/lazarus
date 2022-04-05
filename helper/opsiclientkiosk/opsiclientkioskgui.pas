@@ -1170,6 +1170,7 @@ begin
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
+  Refresh;
 end;
 
 
@@ -1758,13 +1759,13 @@ var
   action : string;
 begin
   //DataModuleOCK.SQLQueryProductData.Edit;
-  {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
+  action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
   if (action <> 'setup') and (action <> '') then
-    DBComboBox1.Items.Add(action);}
-  //DataSourceProductData.Edit;
+    DBComboBox1.Items.Add(action);
+  DataSourceProductData.Edit;
 end;
 
 
@@ -1776,7 +1777,6 @@ end;
 
 procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
 begin
-  //DBGrid1.Repaint;
   if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF)
   then
   begin
@@ -1980,12 +1980,12 @@ var
   action: string;
 begin
   PanelProductDetail.Height := 185;
-  {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
+ {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
   if (action <> 'setup') and (action <> '') then
-    DBComboBox1.Items.Add(action);}
+    DBComboBox1.Items.Add(action); }
   //ShowMessage(DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString);
    //DBTextVerStr.DataField := 'VersionStr';
   //ShowMessage('OnCellClick');

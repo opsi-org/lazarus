@@ -1506,8 +1506,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           ItemHeight = 19
           MaxLength = 0
           OnChange = DBComboBox1Change
+          OnClick = DBComboBox1Click
           OnEnter = DBComboBox1Enter
-          OnMouseEnter = DBComboBox1MouseEnter
           TabOrder = 1
           Visible = False
         end
