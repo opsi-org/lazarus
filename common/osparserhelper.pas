@@ -29,11 +29,6 @@ type
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
 
-(*
-procedure GetWord
-  (const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward: boolean = False); overload;
-*)
 procedure GetWord
   (const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward: boolean = False;
@@ -392,8 +387,6 @@ begin
   end;
 end;
 
-
-
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
@@ -413,8 +406,6 @@ begin
 
   Result.add(item);
 end;
-
-
 
 procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
   var list1rest : Tstringlist; var listintersection  : Tstringlist);
