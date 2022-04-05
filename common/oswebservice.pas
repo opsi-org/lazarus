@@ -1299,19 +1299,19 @@ begin
     end
     else
       LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
-    LogDatei.log('Lib should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
+    LogDatei.log('SSL lib (path) should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
-    LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
-    if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
+    //LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.LibVersion, LLdebug);
+    if not ssl_openssl11_lib.IsSSLloaded then
     begin
       // no SSL available, loading libs failed
-      LogDatei.log('no SSL available, loading libs failed', LLError);
+      LogDatei.log('no SSL available, loading libs failed: ' + ssl_openssl11_lib.DLLSSLName, LLError);
     end
     else
-      LogDatei.log('Loaded: ' + HTTPSender.Sock.SSL.LibName, LLdebug);
-
-    LogDatei.log('HTTPSender.Sock.SSL.LibVersion: ' +
-      HTTPSender.Sock.SSL.LibVersion, LLdebug);
+    begin
+      LogDatei.log('SSL lib loaded: ' + HTTPSender.Sock.SSL.LibVersion, LLDebug);
+      LogDatei.log('Used Protocol: ' + HTTPSender.Sock.SSL.GetSSLVersion, LLdebug);
+    end;
 
     HTTPSender.Sock.SSL.VerifyCert := False;
     HTTPSender.Username := Fusername;
@@ -1733,7 +1733,7 @@ begin
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
-              LogDatei.log('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
+              LogDatei.log_prog('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName + ' Line:' + {$INCLUDE %LINE%}, LLDebug);
               { Set Body }
               // before writing utf8str to HTTPSender.Document we need to replace all #10(newline), #13 and #9(TAB) by their
               // escape code equivalent for the correct json server request (otherwise we get a 400 bad request)
@@ -1892,12 +1892,13 @@ begin
                 { Request failed }
                 ErrorOccured := True;
                 FError := 'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
-                  + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
+                  + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True);
                 LogDatei.log_prog('Request failed (Method Post). No connection to server could be established. Line: '
                   + {$INCLUDE %LINE%}, LLError);
                 LogDatei.log_prog('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: '
                   + HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 LogHostIPs;
+                LogDatei.log_prog('SLL lib loaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True) +' SSL lib (path) should be: ' + ssl_openssl11_lib.DLLSSLName + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 raise Exception.Create(FError);
               end;
             end;
@@ -1928,8 +1929,19 @@ begin
               end;
               if (HTTPSender.ResultCode = 500) and (FCommunicationMode = -1) then
               begin
-                if HttpSender.Sock.GetRemoteSinIP <> '' then
+                if (HttpSender.Sock.GetRemoteSinIP = '') then
                 begin
+                  FError := 'Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.';
+                  LogDatei.log(FError, LLError);
+                end
+                else
+                  if not ssl_openssl11_lib.IsSSLloaded then
+                  begin
+                    FError := 'Could not load ssl lib: ' + ssl_openssl11_lib.DLLSSLName ;
+                    LogDatei.log(FError, LLError);
+                  end
+                  else
+                  begin
                   // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
                   LogDatei.log(
                     'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
@@ -1944,12 +1956,6 @@ begin
                       readOmcMap, CommunicationMode);
                   end;
                 end
-                else
-                begin
-                  FError := 'Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.';
-                  LogDatei.log('Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.',
-                  LLError);
-                end;
               end;
               finished := True; //Communication failed thus nothing more to do
             end;

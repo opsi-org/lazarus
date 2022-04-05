@@ -1758,6 +1758,7 @@ procedure TFormOpsiClientKiosk.DBComboBox1Click(Sender: TObject);
 var
   action : string;
 begin
+  {$IFDEF DARWIN}
   //DataModuleOCK.SQLQueryProductData.Edit;
   action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
@@ -1766,6 +1767,7 @@ begin
   if (action <> 'setup') and (action <> '') then
     DBComboBox1.Items.Add(action);
   DataSourceProductData.Edit;
+  {$ENDIF DARWIN}
 end;
 
 
@@ -1794,6 +1796,7 @@ procedure TFormOpsiClientKiosk.DBComboBox1MouseEnter(Sender: TObject);
 var
   action : string;
 begin
+  {$IFNDEF DARWIN}
   //DataModuleOCK.SQLQueryProductData.Edit;
   action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
@@ -1802,6 +1805,7 @@ begin
   if (action <> 'setup') and (action <> '') then
     DBComboBox1.Items.Add(action);
   //DataSourceProductData.Edit;
+  {$ENDIF DARWIN}
 end;
 
 
