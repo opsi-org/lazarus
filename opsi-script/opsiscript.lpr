@@ -78,7 +78,8 @@ uses //lcltranslator,
   osswaudit in 'osswaudit.pas',
   osfuncwin,
   osfuncwin2, osregistry, {$ENDIF}
-  lazutf8, osfilehelper, osTOML, osSSLPaths;
+  lazutf8, osfilehelper, osTOML, osSSLPaths,
+  osparserhelper_GetStringExpressionWord;
 
 
 

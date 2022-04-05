@@ -622,7 +622,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="67">
+    <Units Count="68">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -921,6 +921,11 @@
         <Filename Value="../common/oscertificates.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit66>
+      <Unit67>
+        <Filename Value="../common/osparserhelper_getstringexpressionword.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osparserhelper_GetStringExpressionWord"/>
+      </Unit67>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
