@@ -52,7 +52,8 @@ type
   { type used in Windows API function GetFirmwareType }
   TFirmwareType = (tFirmwareTypeUnknown, tFirmwareTypeBios, tFirmwareTypeUefi,
     tFirmwareTypeMax);
-  TPGetFirmwareType = function(var aFirmwareType:TFirmwareType):cbool; stdcall; //function pointer
+  TPGetFirmwareType = function(var aFirmwareType: TFirmwareType): cbool;
+    stdcall; //function pointer
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
@@ -464,7 +465,7 @@ begin
     LibHandle := LoadLibrary('kernel32.dll');
     if LibHandle <> NilHandle then
     begin
-      GetFirmwareType := GetProcAddress(LibHandle,'GetFirmwareType');
+      GetFirmwareType := GetProcAddress(LibHandle, 'GetFirmwareType');
       if Assigned(GetFirmwareType) then
       begin
         if GetFirmwareType(FirmwareType) then
@@ -476,12 +477,15 @@ begin
             tFirmwareTypeMax: Result := 'Not implemented';
           end;
         end
-        else Result := 'ErrorCode: ' + IntToStr(GetLastError)
-          + 'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
+        else
+          Result := 'ErrorCode: ' + IntToStr(GetLastError) +
+            'see: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes;';
       end
-      else Result := 'Did not find function GetFirmwareType in kernel32.dll';
+      else
+        Result := 'Did not find function GetFirmwareType in kernel32.dll';
     end
-    else Result := 'Could not load library kernel32.dll';
+    else
+      Result := 'Could not load library kernel32.dll';
     if LibHandle <> NilHandle then FreeLibrary(LibHandle);
   except
     on E: Exception do
@@ -505,56 +509,56 @@ begin
   //tmpstr := getW10Release;
   //if TryStrToInt(tmpstr, releaseint) then
   versionint := GetNTVersionMajor;
-    Logdatei.log('WinIsUefi versionint: ' + IntToStr(versionint), LLNotice);
-    if versionint < 10 then
-    begin
-      // we are in win 6.x
-      try
-        GetFirmwareEnvironmentVariableA('',
-          '{00000000-0000-0000-0000-000000000000}', nil, 0);
-        lastError := GetLastError;
-        if (lastError = ERROR_INVALID_FUNCTION) then
-        begin
-          //Writeln('Legacy BIOS')
-          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS',
-            LLNotice);
-          Result := False;
-        end
-        else
-        begin
-          //Writeln('UEFI Boot Mode');
-          Logdatei.log(
-            'WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode',
-            LLNotice);
-          Result := True;
-          Logdatei.log('WinIsUefi last Error: ' + SysErrorMessage(
-            lastError) + ' : ' + IntToStr(lastError), LLNotice);
-        end;
-      except
-        on E: Exception do
-          Logdatei.log('Exception in WinIsUefi: ' + E.ClassName +
-            ': ' + E.Message, LLError);
-      end;
-    end
-    else
-    begin
-      // we are in win 10+
-      BiosMode := lowercase(GetBiosMode);
-      if BiosMode = 'uefi' then
+  Logdatei.log('WinIsUefi versionint: ' + IntToStr(versionint), LLNotice);
+  if versionint < 10 then
+  begin
+    // we are in win 6.x
+    try
+      GetFirmwareEnvironmentVariableA('',
+        '{00000000-0000-0000-0000-000000000000}', nil, 0);
+      lastError := GetLastError;
+      if (lastError = ERROR_INVALID_FUNCTION) then
       begin
-        Logdatei.log('WinIsUefi detect by GetFirmwareType: UEFI Boot Mode',
-          LLNotice);
-        Result := True;
-      end
-      else
-      if BiosMode = 'legacy' then
-      begin
-        Logdatei.log('WinIsUefi detect by GetFirmwareType: Legacy BIOS',
+        //Writeln('Legacy BIOS')
+        Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS',
           LLNotice);
         Result := False;
       end
       else
-        Logdatei.log('Error in UEFI detection: ' + BiosMode, LLNotice);
+      begin
+        //Writeln('UEFI Boot Mode');
+        Logdatei.log(
+          'WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode',
+          LLNotice);
+        Result := True;
+        Logdatei.log('WinIsUefi last Error: ' + SysErrorMessage(
+          lastError) + ' : ' + IntToStr(lastError), LLNotice);
+      end;
+    except
+      on E: Exception do
+        Logdatei.log('Exception in WinIsUefi: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+    end;
+  end
+  else
+  begin
+    // we are in win 10+
+    BiosMode := lowercase(GetBiosMode);
+    if BiosMode = 'uefi' then
+    begin
+      Logdatei.log('WinIsUefi detect by GetFirmwareType: UEFI Boot Mode',
+        LLNotice);
+      Result := True;
+    end
+    else
+    if BiosMode = 'legacy' then
+    begin
+      Logdatei.log('WinIsUefi detect by GetFirmwareType: Legacy BIOS',
+        LLNotice);
+      Result := False;
+    end
+    else
+      Logdatei.log('Error in UEFI detection: ' + BiosMode, LLNotice);
 
       (* old code not deleted, might be useful in the future:
 

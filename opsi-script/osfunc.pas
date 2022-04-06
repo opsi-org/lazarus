@@ -7628,13 +7628,13 @@ begin
       end; //Sektionsinhalt existiert
     end;
   except
-     on E: Exception do
-            begin
-              Logdatei.log('Exception in GetSectionLines: '+Sectionname, LLCritical);
-              Logdatei.log(e.ClassName + ' system message: "' +
-                E.Message + '" - giving up',
-                LLCritical);
-            end;
+    on E: Exception do
+    begin
+      Logdatei.log('Exception in GetSectionLines: ' + Sectionname, LLCritical);
+      Logdatei.log(e.ClassName + ' system message: "' +
+        E.Message + '" - giving up',
+        LLCritical);
+    end;
   end;
 end;
 
@@ -10925,9 +10925,9 @@ begin
   begin
     // FindFirst only finds directories without PathDelim at the end
     if (testname[length(testname)] = PathDelim) then
-       testname := ExtractFileDir(testname);
+      testname := ExtractFileDir(testname);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
-    if not (FindFirst(testname,faAnyFile and faDirectory,FileFinder) = 0) then
+    if not (FindFirst(testname, faAnyFile and faDirectory, FileFinder) = 0) then
     begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
