@@ -57,8 +57,10 @@ type
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
+    procedure EditPropNameChange(Sender: TObject);
     procedure EditPropNameEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure RadioButtonPropBoolChange(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
   private
@@ -155,6 +157,19 @@ begin
 
 end;
 
+procedure TFNewPropDlg.EditPropNameChange(Sender: TObject);
+var
+  aktCaretPos : TPoint;
+  col : longint;
+begin
+  aktCaretPos := TEdit(Sender).CaretPos;
+  col := aktCaretPos.X;
+    // lower case and replace special chars by _
+    TEdit(Sender).Caption := cleanOpsiId(TEdit(Sender).Caption);
+    // restore the caret position
+    TEdit(Sender).SelStart := col;
+  //TControl(Sender).EditingDone;
+end;
 procedure TFNewPropDlg.EditPropNameEditingDone(Sender: TObject);
 var
   index, i: integer;
@@ -194,9 +209,14 @@ begin
   DataModule1.SetFontName(TControl(Sender), myFont);
 end;
 
+procedure TFNewPropDlg.FormShow(Sender: TObject);
+begin
+   EditPropName.SetFocus;
+end;
+
 procedure TFNewPropDlg.RadioButtonPropBoolChange(Sender: TObject);
 begin
-  if TRadioButton(Sender).Checked then
+  if RadioButtonPropBool.Checked then
   begin
     CheckBoxPropMultiVal.Enabled:= false;
     CheckBoxPropEdit.Enabled:= false;

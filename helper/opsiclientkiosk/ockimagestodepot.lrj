@@ -1,6 +1,6 @@
 {"version":1,"strings":[
-{"hash":259127908,"name":"tformsaveimagesondepot.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,100,101,112,111,116],"value":"Save images on depot"},
-{"hash":259127908,"name":"tformsaveimagesondepot.buttoncopy.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,100,101,112,111,116],"value":"Save images on depot"},
+{"hash":156811556,"name":"tformsaveimagesondepot.caption","sourcebytes":[83,97,118,101,32,115,101,116,116,105,110,103,115,32,111,110,32,100,101,112,111,116],"value":"Save settings on depot"},
+{"hash":130738356,"name":"tformsaveimagesondepot.buttoncopy.caption","sourcebytes":[83,97,118,101,32,102,105,108,101,115,32,111,110,32,100,101,112,111,116],"value":"Save files on depot"},
 {"hash":4863637,"name":"tformsaveimagesondepot.buttonclose.caption","sourcebytes":[67,108,111,115,101],"value":"Close"},
 {"hash":104770356,"name":"tformsaveimagesondepot.groupboxmountdepot.caption","sourcebytes":[77,111,117,110,116,32,100,101,112,111,116],"value":"Mount depot"},
 {"hash":379330,"name":"tformsaveimagesondepot.labeluser.caption","sourcebytes":[85,115,101,114],"value":"User"},

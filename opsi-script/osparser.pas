@@ -76,6 +76,7 @@ uses
 {$ENDIF GUI}
   TypInfo,
   osparserhelper,
+  osEvaluateBooleanFunctions,
   osencoding,
   osconf,
   oszip,
@@ -119,7 +120,8 @@ uses
   LAZUTF8,
   osnetutil,
   osstrlistutils,
-  oscertificates;
+  oscertificates,
+  osGetRegistryFunctions;
 
 type
   TStatement = (tsNotDefined,
@@ -267,7 +269,7 @@ type
     FParentSection: TWorkSection;
 
   public
-    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection);
+    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection = nil);
     destructor Destroy; override;
 
     property StartLineNo: integer read FStartLineNo write FStartLineNo;
@@ -878,15 +880,16 @@ begin
     end;*)
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) then
+    if Resultlist.Count = 0 then
     begin
-      // subsub case
-      if Resultlist.Count = 0 then
+      if Assigned(callingsection) then //and (callingsection <> nil) then
       begin
-        Logdatei.log('Looking for section: ' + Sectionname +
-          ' in calling section.', LLDebug3);
-        callingsection.GetSectionLines(Sectionname, Resultlist,
-          StartlineNo, True, True, False);
+        // subsub case
+
+          Logdatei.log('Looking for section: ' + Sectionname +
+            ' in calling section.', LLDebug3);
+          callingsection.GetSectionLines(Sectionname, Resultlist,
+            StartlineNo, True, True, False);
       end;(*
       else
       begin
@@ -913,17 +916,18 @@ begin
 
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) and
+    if Resultlist.Count = 0 then
     begin
-      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
+      if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
-        // subsubsub case
-        if Resultlist.Count = 0 then
+        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
         begin
-          Logdatei.log('Looking for section: ' + Sectionname +
-            ' in callingsection.ParentSection section.', LLDebug3);
-          callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
-            StartlineNo, True, True, False);
+          // subsubsub case
+
+            Logdatei.log('Looking for section: ' + Sectionname +
+              ' in callingsection.ParentSection section.', LLDebug3);
+            callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+              StartlineNo, True, True, False);
         end;(*
         else
         begin
@@ -935,23 +939,24 @@ begin
 
     Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
-    if Assigned(callingsection) then //and (callingsection <> nil) and
+    if Resultlist.Count = 0 then
     begin
-      Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-      if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
+      if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
         Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-        if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
         begin
           Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-          // subsubsubsub case
-          if Resultlist.Count = 0 then
+          if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
           begin
-            Logdatei.log('Looking for section: ' + Sectionname +
-              ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
-            callingsection.ParentSection.ParentSection.GetSectionLines(
-              Sectionname, Resultlist,
-              StartlineNo, True, True, False);
+            Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+            // subsubsubsub case
+
+              Logdatei.log('Looking for section: ' + Sectionname +
+                ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
+              callingsection.ParentSection.ParentSection.GetSectionLines(
+                Sectionname, Resultlist,
+                StartlineNo, True, True, False);
           end;(*
           else
           begin
@@ -973,38 +978,6 @@ begin
         LLCritical);
     end;
   end;
-end;
-
-function getCompareSignStrings(s1: string; s2: string): integer;
-var
-  s1A, s2A: string;
-begin
-  s1A := AnsiUpperCase(s1);
-  s2A := AnsiUpperCase(s2);
-  Result := 0;
-  if s1A > s2A then
-    Result := 1
-  else if s1A < s2A then
-    Result := -1;
-end;
-
-function getCompareSign(number1: integer; number2: integer): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
-end;
-
-
-function getCompareSignDouble(number1: double; number2: double): integer;
-begin
-  Result := 0;
-  if number1 > number2 then
-    Result := 1
-  else if number1 < number2 then
-    Result := -1;
 end;
 
 
@@ -1216,32 +1189,6 @@ begin
   end;
 
 end;
-
-
-
-function hasRelation(orderrelationSymbol: string; orderSign: integer;
-  var BooleanResult: boolean; var InfoSyntaxError: string): boolean;
-begin
-  Result := True;
-
-  if orderRelationSymbol = '=' then
-    BooleanResult := (orderSign = 0)
-  else if orderRelationSymbol = '>' then
-    BooleanResult := (orderSign > 0)
-  else if orderRelationSymbol = '>=' then
-    BooleanResult := (orderSign >= 0)
-  else if orderRelationSymbol = '<' then
-    BooleanResult := (orderSign < 0)
-  else if orderRelationSymbol = '<=' then
-    BooleanResult := (orderSign <= 0)
-
-  else
-  begin
-    Result := False;
-    infoSyntaxError := '"=", ">", ">=" or "<", "<=" expected';
-  end;
-end;
-
 
 
 procedure adjustBounds(var a1, a2: integer; const list1: TXStringList);
@@ -1697,7 +1644,17 @@ begin
   FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
   if FuncIndex >= 0 then
     if definedFunctionArray[FuncIndex].datatype = dfpVoid then
-      deffuncFound := True;
+      deffuncFound := True
+    else
+    begin
+      if definedFunctionArray[FuncIndex].datatype = dfpString then
+        LogDatei.log('A defined function that returns a string cannot stand alone (syntax error)! It needs to be assigned to a string variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical)
+      else
+      begin
+        if definedFunctionArray[FuncIndex].datatype = dfpStringlist then
+          LogDatei.log('A defined function that returns a stringlist cannot stand alone (syntax error)! It needs to be assigned to a stringlist variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical);
+      end;
+    end;
   if deffuncFound then
   begin
     Result := tsDefinedVoidFunction;
@@ -1968,7 +1925,7 @@ end;
 {$ENDIF WINDOWS}
 
 constructor TWorkSection.Create(const NestLevel: integer;
-  const ParentSection: TWorkSection);
+  const ParentSection: TWorkSection = nil);
 begin
   inherited Create;
   FStartLineNo := 0;
@@ -14815,130 +14772,45 @@ begin
           end;
         end;
     end
-
-
    {$ENDIF WINDOWS}
 
-    else if LowerCase(s) = LowerCase('getRegistryKeyList32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryKeyList(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
 
-    else if (LowerCase(s) = LowerCase('getRegistryKeyList64')) or
-      (LowerCase(s) = LowerCase('getRegistryKeyListSysnative')) then
+    else if IsGetRegistryListOrMapFunction(s) then
     begin
     {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
+    if Skip('(', r, r, InfoSyntaxError) then
+      if EvaluateString(r, r, s1, InfoSyntaxError) then
+      begin
+        if Skip(')', r, r, InfoSyntaxError) then
         begin
-          //for i :=
-          list.AddStrings(GetRegistryKeyList(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if LowerCase(s) = LowerCase('getRegistryVarList32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          RunGetRegistryListOrMapFunction(s, s1, '', list);
+          syntaxCheck := True;
+        end
+        else
         begin
-          //for i :=
-          list.AddStrings(GetRegistryVarList(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
+          // parse case sensitivity parameter
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                if CheckAccessString(s2) then
+                begin
+                  RunGetRegistryListOrMapFunction(s, s1, s2, list);
+                  syntaxCheck := True;
+                end
+                else
+                begin
+                  SyntaxCheck := False;
+                  InfoSyntaxError := 'No valid access string';
+                  LogDatei.Log('"' + s2 + '" is no valid access string! Only "32Bit", "64Bit" and "Sysnative" are allowed.', LLError);
+                end;
+              end;
         end;
+      end;
     {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if (LowerCase(s) = LowerCase('getRegistryVarList64')) or
-      (LowerCase(s) = LowerCase('getRegistryVarListSysnative')) then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarList(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if LowerCase(s) = LowerCase('getRegistryVarMap32') then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarMap(s1, False));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
-    end
-
-    else if (LowerCase(s) = LowerCase('getRegistryVarMap64')) or
-      (LowerCase(s) = LowerCase('getRegistryVarMapSysnative')) then
-    begin
-    {$IFDEF WINDOWS}
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          //for i :=
-          list.AddStrings(GetRegistryVarMap(s1, True));
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
+    SyntaxCheck := False;
+    InfoSyntaxError := 'Only implemented for Windows';
+    LogDatei.log(s + ' is only implemented for Windows', LLError);
     {$ENDIF WINDOWS}
     end
 
@@ -18784,7 +18656,6 @@ var
   einheit: int64 = 0;
   j: integer = 0;
   drivenumber: integer = 0;
-  errnumber: integer = 0;
   relationSymbol: string = '';
   intresult: integer = 0;
   n1: integer = 0;
@@ -20173,23 +20044,7 @@ begin
   else if (Skip('ErrorsOccuredSinceMark ', Input, r, sx) or
     Skip('ErrorsOccurredSinceMark ', Input, r, sx)) then
   begin
-    getword(r, relationSymbol, r, WordDelimiterWhiteSpace);
-    try
-      errNumber := StrToInt(r);
-      syntaxcheck := True;
-      r := '';
-    except
-      InfoSyntaxError := r + ' is not a number'
-    end;
-
-    syntaxCheck :=
-      syntaxcheck and hasRelation(relationSymbol,
-      getCompareSign(Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked,
-      errNumber), BooleanResult, InfoSyntaxError);
-    LogDatei.log('(TotalErrors: ' + IntToStr(Logdatei.NumberOfErrors) +
-      ' - ErrorMark: ' + IntToStr(Logdatei.ErrorNumberMarked) + ') ' +
-      relationSymbol + ' ' + IntToStr(errNumber) + ' -> ' +
-      BoolToStr(BooleanResult), LLDebug2);
+    parseErrorsOccurredSinceMark(r, InfoSyntaxError, syntaxcheck, BooleanResult);
   end
 
   else if Skip('opsiLicenseManagementEnabled', Input, r, InfoSyntaxError) then
@@ -21775,12 +21630,8 @@ begin
 
             if (NestLevel = ActLevel + 1) and Conditions[ActLevel] then
             begin
-              { a new active level is created if the if statement
-                is in a active Level AND inside of a positive branch.
-
-              // eine neue aktive Ebene wird erzeugt, falls
-              // die if-Anweisung auf einer aktiven Ebene UND im positiven Zweig steht
-              }
+              {A new active level is created if the if statement
+              is in an active Level AND inside of a positive branch}
               Expressionstr := Remaining;
               if EvaluateBoolean(Expressionstr, Remaining, BooleanResult,
                 NestLevel, InfoSyntaxError) then
@@ -23492,9 +23343,14 @@ begin
                 syntaxCheck := False;
                 if skip('=', remaining, Parameter, InfoSyntaxError) then
                   syntaxCheck := True
-                else if EvaluateString(Remaining, Remaining,
+                else
+                begin
+                  if EvaluateString(Remaining, Remaining,
                   Parameter, InfoSyntaxError) then
-                  syntaxCheck := True;
+                    syntaxCheck := True
+                  else
+                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                end;
 
                 if syntaxCheck then
                   LogDatei.log('comment: ' + Parameter, LLnotice);
@@ -25645,7 +25501,6 @@ begin
                       'Remaining char(s) not allowed here');
                 end
                 else
-
                   reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end
 

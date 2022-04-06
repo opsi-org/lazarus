@@ -5,8 +5,28 @@ unit OckWindows;
 interface
 
 uses
-  Classes, SysUtils, Process, DSiWin32, jwawinbase, FileUtil,
-  osLog;
+  Classes, SysUtils, Process, DSiWin32, jwawinbase, FileUtil, LazFileUtils,
+  osLog, OckPathsUtils;
+
+
+type
+
+  { TPathsOnClientWindows }
+
+  TPathsOnClientWindows = class(TPathsOnClient)
+  private
+    //procedure CopyCustomSettingsToWriteableFolder;
+  public
+    procedure SetAdminModePaths; override;
+    procedure SetUserModePaths; override;
+    //constructor Create; override;
+    //destructor Destroy; override;
+  end;
+
+  TPathsOnDepotWindows = class(TPathsOnDepot)
+    procedure SetDepotPaths; override;
+  end;
+
 
 function isAdmin:boolean;
 function GetUserName_: string;
@@ -15,6 +35,22 @@ procedure UmountDepot(const PathToDepot: string);
 function IsDepotMounted(const PathToDepot:string): boolean;
 function Copy(Source:string; Destination:string):boolean;
 
+const
+  // Include paths here. Setting of the used paths (admin mode vs. user mode) then occures in TOckPathsMacOS
+  DefaultFolder = '\default';
+  CustomFolder = '\ock_custom';
+  RelativePathProductIcons = '\product_icons';
+  RelativePathScreenShots = '\screenshots';
+  RelativePathSkin ='\skin';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+  PathKioskAppOnDepot = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+  PathKioskAppOnDepot = '\opsi-client-kiosk\files\app';
+  {$ENDIF KIOSK_IN_AGENT}
+
+var
+  PathsOnClient: TPathsOnClientWindows;
+  PathsOnDepot : TPathsOnDepotWindows;
 
 implementation
 
@@ -114,8 +150,56 @@ end;
 
 function Copy(Source: string; Destination: string): boolean;
 begin
+  LogDatei.log('Removing old settings from ' + Destination, LLInfo);
+  if DeleteDirectory(Destination, False) then
+  begin
+    LogDatei.log('Removing old settings done', LLInfo);
+  end;
   Result := CopyDirTree(Source, Destination,[cffOverwriteFile, cffCreateDestDirectory]);
 end;
+
+{ TPathsOnClientWindows }
+
+procedure TPathsOnClientWindows.SetAdminModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  FDefaultIcons := FKioskApp + DefaultFolder + RelativePathProductIcons;
+  FCustomSettings := FKioskApp + CustomFolder;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+procedure TPathsOnClientWindows.SetUserModePaths;
+begin
+  FKioskApp := ChompPathDelim(ProgramDirectory);
+  //Default
+  FDefaultSettings := FKioskApp + DefaultFolder;
+  FDefaultIcons := FDefaultSettings + RelativePathProductIcons;
+  FDefaultSkin := FDefaultSettings + RelativePathSkin;
+  //Custom
+  FCustomSettings := FKioskApp + CustomFolder;
+  FCustomSkin := FCustomSettings + RelativePathSkin;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+procedure TPathsOnDepotWindows.SetDepotPaths;
+begin
+  FKioskApp := TrimFilename(Share + PathKioskAppOnDepot);
+  FCustomSettings := FKioskApp + CustomFolder;
+  FCustomIcons := FCustomSettings + RelativePathProductIcons;
+  FCustomScreenShots := FCustomSettings + RelativePathScreenShots;
+end;
+
+
+initialization
+  PathsOnClient := TPathsOnClientWindows.Create;
+  PathsOnDepot := TPathsOnDepotWindows.Create;
+
+finalization
+  FreeAndNil(PathsOnClient);
+  FreeAndNil(PathsOnDepot);
 
 end.
 

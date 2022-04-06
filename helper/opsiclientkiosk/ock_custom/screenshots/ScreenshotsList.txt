@@ -1,1 +1,1 @@
-firefox=screenshot1_firefox.png
+audacity=2022-02-17 16_56_39-UIMachineViewNormalClassWindow.png

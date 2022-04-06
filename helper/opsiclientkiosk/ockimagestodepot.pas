@@ -50,7 +50,7 @@ type
     //procedure FormDestroy(Sender: TObject);
   private
     //function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
-    function SaveImagesOnDepot(const PathToDepot: String):boolean;
+    function SaveImagesOnDepot:boolean;
     //function SetRights(Path:String):boolean;
   public
 
@@ -64,14 +64,6 @@ implementation
 
 {$R *.lfm}
 
-const
-  PathDepotOnShare = '\var\lib\opsi\depot';
-  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
-    PathKioskAppOnShare = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
-  {$ELSE} //if the kiosk is a standalone opsi product
-    PathKioskAppOnShare = '\opsi-client-kiosk\files\app';
-  {$ENDIF KIOSK_IN_AGENT}
-  CustomFolder = '\ock_custom';
 
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';
@@ -100,10 +92,11 @@ var
 begin
   CopySuccess := False;
   PathToDepot :=  SwitchPathDelims(Trim(DirectoryEditPathToDepot.Text),pdsSystem);
+  PathsOnDepot.Share:= PathToDepot;
   {Mount opsi depot}
   if CheckBoxMountDepot.Checked then
   begin
-    if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+    if {$IFDEF WINDOWS} IsDepotMounted(PathsOnDepot.Share) {$ENDIF WINDOWS}
        {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
        {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
       then AlreadyMounted := True
@@ -111,13 +104,13 @@ begin
     begin
       AlreadyMounted := False;
       User := EditUser.Text;
-      MountDepot(User, EditPassword.Text, PathToDepot);
+      MountDepot(User, EditPassword.Text, PathsOnDepot.Share);
       LabelInfo.Caption := rsMounting + ' ' + rsDone;
       Application.ProcessMessages;
     end;
   end;
 
-  if {$IFDEF WINDOWS} IsDepotMounted(PathToDepot) {$ENDIF WINDOWS}
+  if {$IFDEF WINDOWS} IsDepotMounted(PathsOnDepot.Share) {$ENDIF WINDOWS}
      {$IFDEF LINUX} IsDepotMounted(MountPoint) {$ENDIF LINUX}
      {$IFDEF DARWIN} IsDepotMounted(MountPoint) {$ENDIF DARWIN}
   then
@@ -126,9 +119,9 @@ begin
     LabelInfo.Caption := rsCopyIcons;
     ProgressBar.Position:= 20;
     Application.ProcessMessages;
-    if {$IFDEF WINDOWS} SaveImagesOnDepot(PathToDepot) {$ENDIF WINDOWS}
-       {$IFDEF LINUX} SaveImagesOnDepot(MountPoint) {$ENDIF LINUX}
-       {$IFDEF DARWIN} SaveImagesOnDepot(MountPoint) {$ENDIF DARWIN}
+    if {$IFDEF WINDOWS} SaveImagesOnDepot {$ENDIF WINDOWS}
+       {$IFDEF LINUX} SaveImagesOnDepot {$ENDIF LINUX}
+       {$IFDEF DARWIN} SaveImagesOnDepot {$ENDIF DARWIN}
     then
     begin
       LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
@@ -152,7 +145,7 @@ begin
   if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
     {$IFDEF WINDOWS}
-    UmountDepot(PathToDepot);
+    UmountDepot(PathsOnDepot.Share);
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     UmountDepot(MountPoint);
@@ -258,39 +251,21 @@ end;
 *)
 
 
-function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
-var
-  PathToKioskOnDepot: String;
-  PathToIconsOnDepot: String;
-  PathToKioskOnClient : String;
-  PathToIconsOnClient: String;
+function TFormSaveImagesOnDepot.SaveImagesOnDepot:boolean;
 begin
   Result := False;
-  { Set the right directories }
-  PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
-  PathToKioskOnClient := ExcludeTrailingPathDelimiter(ExtractFilePath(Application.Location));
-  //Set path delims dependend on system (e.g. Windows, Unix)
-  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
-  {$IFDEF WINDOWS}
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder + '\'), pdsSystem);
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
-  {$ENDIF LINUX}
-  {$IFDEF DARWIN}
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + '\'), pdsSystem);
-  {$ENDIF DARWIN}
-  LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
+  LogDatei.log('Copying.. ' + PathsOnClient.FCustomSettings + ' to ' + PathsOnDepot.FCustomSettings, LLInfo);
   //if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
-  if Copy(PathToIconsOnClient, PathToIconsOnDepot) then
+  if Copy(PathsOnClient.FCustomSettings, PathsOnDepot.FCustomSettings) then
   begin
-    LogDatei.log('Copy done', LLInfo);
+    LogDatei.log('Copy done. ' + PathsOnClient.FCustomSettings + ' to'  + PathsOnDepot.FCustomSettings, LLInfo);
     Result := True;
     Refresh;
   end
   else
   begin
-    LogDatei.log('Images could not be saved on opsi depot. ' + PathToDepot +
+    LogDatei.log('Could not copying ' + PathsOnClient.FCustomSettings + ' to' + PathsOnDepot.FCustomSettings, LLWarning);
+    LogDatei.log('Images could not be saved on opsi depot. ' + PathsOnDepot.Share +
       ' Possible solution: mount depot with write privileges.' ,LLDebug);
     ShowMessage(Format(rsImagesNotSaved, [LineEnding]));
     Result := False;

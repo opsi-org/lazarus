@@ -447,6 +447,7 @@ var
   tomlArray : TTOMLArray;
   i: integer;
 begin
+  //tomlArray := TTOMLArray.Create;
   result := '[ ';
   for i := 0 to Count-1 do
     begin
@@ -465,7 +466,8 @@ begin
     if i<>Count-1 then
       result:= result + ', ';
     end;
-    result:= result + ' ]'
+  result:= result + ' ]';
+  //tomlArray.Free;
 end;
 
 function TTOMLArray.AsArray: TStringArray;
@@ -563,6 +565,7 @@ var
   tablePath : String;
   tomlTable : TTOMLTable;
 begin
+  //tomlTable := TTOMLTable.Create;
   tablePath := Name;
   if parent<> nil then
     begin
@@ -577,6 +580,7 @@ begin
       end;
     end;
   result := tablePath;
+  //tomlTable.Free;
 end;
 
 function TTOMLTable.AsTOMLString: ansiString;
@@ -592,6 +596,9 @@ var
   tableHeader, line : String;
   tomlStringList : TStringList;
 begin
+  result := TStringList.Create;
+  //tomlArray := TTOMLArray.Create;
+  //tomlTable := TTOMLTable.Create;
   tomlStringList := TStringList.Create;
   for i := 0 to map.Count-1 do
     begin
@@ -622,7 +629,11 @@ begin
             tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
           end;
     end;
-  result := tomlStringList;
+  //result.AddStrings(tomlStringList);
+  result.Assign(tomlStringList);
+  //tomlStringList.Free;
+  //tomlArray.Free;
+  //tomlTable.Free;
 end;
 
 procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
