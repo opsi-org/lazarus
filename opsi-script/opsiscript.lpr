@@ -79,7 +79,7 @@ uses //lcltranslator,
   osfuncwin,
   osfuncwin2, osregistry, {$ENDIF}
   lazutf8, osfilehelper, osTOML, osSSLPaths,
-  osparserhelper_GetStringExpressionWord;
+  osparserhelper_GetStringExpressionWord,
   osEvaluateBooleanFunctions,
   osGetRegistryFunctions;
 
