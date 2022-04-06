@@ -3,6 +3,7 @@ unit combobutton;
 {$mode objfpc}{$H+}
 
 interface
+
 uses
   Classes,
   SysUtils,
@@ -21,22 +22,28 @@ uses
 
 type
 
-   TComboButton = class(TComponent)
+  TComboButton = class(TComponent)
   private
-    Fbutton_only : boolean;
+    Fbutton_only: boolean;
   published
-    panel : TPanel;
-    cbox : TComboBox;
-    btn : TSpeedButton;
+    panel: TPanel;
+    cbox: TComboBox;
+    btn: TSpeedButton;
     ImgList: TImageList;
-    property button_only : boolean
-      read Fbutton_only write Fbutton_only;
 
-  //published
+    property button_only: boolean read Fbutton_only write Fbutton_only;
+
+    //published
     // properties
   public
     { public declarations }
-    constructor Create(AOwner: TComponent; pathtoicon : string = ''; btnonly : boolean = true);
+    confirmshow: boolean;
+    confirmtitle: string;
+    confirmtext: string;
+    confirmYesText: string;
+    confirmNoText: string;
+    constructor Create(AOwner: TComponent; pathtoicon: string = '';
+      btnonly: boolean = True);
     destructor Destroy;
   end;
 
@@ -44,60 +51,66 @@ implementation
 
 
 
-constructor TComboButton.Create(AOwner: TComponent; pathtoicon : string = ''; btnonly : boolean = true);
+constructor TComboButton.Create(AOwner: TComponent; pathtoicon: string = '';
+  btnonly: boolean = True);
 var
-  Picture : TPicture;
-  SrcBmp : TBitmap;
-  tmpstr : string;
+  Picture: TPicture;
+  SrcBmp: TBitmap;
+  tmpstr: string;
 begin
   panel := TPanel.Create(self);
   cbox := TComboBox.Create(panel);
   btn := TSpeedButton.Create(panel);
-  ImgList:= TImageList.Create(panel);
+  ImgList := TImageList.Create(panel);
+  confirmshow := False;
+  confirmtitle := '';
+  confirmtext := '';
+  confirmYesText := 'Yes';
+  confirmNoText := 'No';
   button_only := btnonly;
   //inherited.
-  panel.BevelWidth:= 0;
-  panel.BevelOuter:= bvNone;
+  panel.BevelWidth := 0;
+  panel.BevelOuter := bvNone;
   btn.Parent := panel;
   cbox.Parent := panel;
-  cbox.ReadOnly:= true; // modify the input only from drop down
+  cbox.ReadOnly := True; // modify the input only from drop down
   if button_only then
   begin
-    cbox.Align:= alLeft;
-    cbox.Width:= 0;
-    cbox.Visible:= false;
+    cbox.Align := alLeft;
+    cbox.Width := 0;
+    cbox.Visible := False;
     btn.Parent := panel;
-    btn.Align:= alClient;
-    btn.Visible:= true;
-    btn.Caption:= 'Button';
+    btn.Align := alClient;
+    btn.Visible := True;
+    btn.Caption := 'Button';
   end
   else
   begin
-     Picture := TPicture.Create;
-  try
-    if pathtoicon = '' then
-      Picture.LoadFromLazarusResource('ok2')
-    else
-    begin
-     // tmpstr := AppendPathDelim(ExtractFileDir(Application.ExeName))+ pathtoicon;
-      Picture.LoadFromFile(pathtoicon);
+    Picture := TPicture.Create;
+    try
+      if pathtoicon = '' then
+        Picture.LoadFromLazarusResource('ok2')
+      else
+      begin
+        // tmpstr := AppendPathDelim(ExtractFileDir(Application.ExeName))+ pathtoicon;
+        Picture.LoadFromFile(pathtoicon);
+      end;
+      SrcBmp := TBitmap.Create;
+      SrcBmp.Assign(Picture.Graphic);
+      ImgList.Add(SrcBmp, nil);
+    finally
+      Picture.Free;
     end;
-    SrcBmp := TBitmap.Create;
-    SrcBmp.Assign(Picture.Graphic);
-    ImgList.Add(SrcBmp, nil);
-  finally
-    Picture.Free;
-  end;
-    btn.Align:= alRight;
-    btn.Width:= 33;
+    btn.Align := alRight;
+    btn.Width := 33;
     btn.Images := ImgList;
-    btn.ImageIndex:= 0;
-    cbox.Align:= alClient;
+    btn.ImageIndex := 0;
+    cbox.Align := alClient;
   end;
-    btn.Repaint;
+  btn.Repaint;
 end;
 
-destructor TComboButton.destroy;
+destructor TComboButton.Destroy;
 begin
   FreeAndNil(ImgList);
   FreeAndNil(btn);
@@ -109,4 +122,3 @@ end;
 initialization
 {$I combobutton.lrs}
 end.
-

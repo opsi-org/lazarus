@@ -47,7 +47,8 @@ uses
   osddlgnewproperty, osparserhelper,
   osddatamod,
   osdcheckentriesdlg,
-  Contnrs;
+  Contnrs,
+  oswebservice;
 //openfiledirdlg;
 
 type
@@ -69,6 +70,7 @@ type
     BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateLin: TBitBtn;
     BtCreateEmptyTemplateMac: TBitBtn;
+    BtCreateMeta: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
     BitBtnAddDep: TBitBtn;
     BitBtnAddProp: TBitBtn;
@@ -119,6 +121,7 @@ type
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
+    FlowPanelGeneric: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMsiId2: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
@@ -141,9 +144,9 @@ type
     FlowPanelSetup42: TFlowPanel;
     FlowPanelSetup43: TFlowPanel;
     FlowPanelWin: TFlowPanel;
-    FlowPanelWin1: TFlowPanel;
-    FlowPanelWin2: TFlowPanel;
-    FlowPanelWin3: TFlowPanel;
+    FlowPanelMulti: TFlowPanel;
+    FlowPanelLin: TFlowPanel;
+    FlowPanelMac: TFlowPanel;
     GroupBox2: TGroupBox;
     Image1: TImage;
     Image2: TImage;
@@ -151,12 +154,14 @@ type
     Image4: TImage;
     Image5: TImage;
     Image6: TImage;
+    Image7: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
     Label86: TLabel;
     Label87: TLabel;
     Label88: TLabel;
@@ -352,6 +357,7 @@ type
     procedure BtCreateEmptyTemplateWinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateLinClick(Sender: TObject);
     procedure BtCreateEmptyTemplateMacClick(Sender: TObject);
+    procedure BtCreateMetaClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
     procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
@@ -500,6 +506,9 @@ var
   firstshowconfigdone: boolean = False;
   startupfinished: boolean = False;
   mylocaledir: string;
+  localservicedata: TOpsi4Data = nil;
+  productIds: TStringList;
+  passwordToUse: string;
 //myFont : string;
 
 
@@ -595,6 +604,8 @@ resourcestring
     'Second step (if needed) is a Dialog to select a installer file';
   rsMac3stepSelectionTitle = 'Attention: Two Step Selection Dialog';
   rsMacSelectionRememberMe = 'Do not show this Message again';
+  rsServiceConnectionFailed =
+    'Could not connect to the opsi-web-service. Check URL, user and password';
 
 implementation
 
@@ -809,14 +820,80 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
+procedure startOpsiServiceConnection;
+var
+  serviceversion: string;
+  i: integer;
+  //passwordToUse: string; is a global var
+  strlist: TStringList;
+begin
+  if localservicedata = nil then
+  begin
+    try
+      strlist := TStringList.Create;
+      localservicedata := TOpsi4Data.Create;
+      if (myconfiguration.Service_URL <> '') and
+        (myconfiguration.Service_user <> '') then
+      begin
+        if passwordToUse = '' then
+          passwordToUse := myconfiguration.Service_pass;
+        if passwordToUse = '' then
+          passwordToUse :=
+            PasswordBox('service: ' + myconfiguration.Service_URL +
+            ' user: ' + myconfiguration.Service_user, 'Password for opsi web service');
+        Screen.Cursor := crHourGlass;
+        procmess;
+        localservicedata.initOpsiConf(myconfiguration.Service_URL,
+          myconfiguration.Service_user,
+          passwordToUse);
+        serviceversion := localservicedata.getOpsiServiceVersion;
+        if localservicedata.isConnected then
+        begin
+          LogDatei.log('Service connection initialized to :' +
+            myconfiguration.Service_URL + ' version: ' + serviceversion, LLinfo);
+          FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
+          FNewDepDlg.LabelConnect.Font.Color := clGreen;
+          // fetch produtIds from service
+          strlist.Text := localservicedata.getProductIds.Text;
+          for i := 0 to strlist.Count - 1 do
+            FNewDepDlg.ComboBoxproductIds.Items.Add(
+              opsiunquotestr2(strlist.strings[i], '""'));
+        end
+        else
+        begin
+          // service not connected
+          MessageDlg('opsi-setup-detctor', rsServiceConnectionFailed,
+            mtError, [mbOK], '');
+          LogDatei.log('Service connection not possible: Url, user or password wrong.',
+            LLwarning);
+          FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
+          FNewDepDlg.LabelConnect.Font.Color := clRed;
+        end;
+      end
+      else
+      begin
+        // service data missing
+        LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
+        FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
+        FNewDepDlg.LabelConnect.Font.Color := clRed;
+      end;
+    finally
+      FreeAndNil(localservicedata);
+      FreeAndNil(strlist);
+      Screen.Cursor := crDefault;
+      ;
+    end;
+  end;
+end;
+
 procedure TResultform1.updateGUI;
 begin
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
-    TIGridDep.ReloadTIList;
-    TIGridDep.Update;
-    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
-    TIGridProp.ReloadTIList;
-    TIGridProp.Update;
+  TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+  TIGridDep.ReloadTIList;
+  TIGridDep.Update;
+  TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+  TIGridProp.ReloadTIList;
+  TIGridProp.Update;
 end;
 
 procedure TResultform1.FormDestroy(Sender: TObject);
@@ -1303,6 +1380,16 @@ begin
       TabSheetProduct2.Enabled := True;
       TabSheetCreate.Enabled := True;
     end;
+    createMeta:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := False;
+      TabSheetSetup1.Enabled := False;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
+    end;
     gmUnknown:
     begin
       TabSheetStart.Enabled := True;
@@ -1550,7 +1637,8 @@ begin
       begin
         // paint chess squares
         Brush.Color := ChessColors[(row + col) mod 2];
-        FillRect(Rect(squaresize * row, squaresize * col, squaresize * row + squaresize, squaresize * col + squaresize));
+        FillRect(Rect(squaresize * row, squaresize * col, squaresize *
+          row + squaresize, squaresize * col + squaresize));
       end;
     end;
     // paint chess board
@@ -1566,7 +1654,8 @@ begin
     // stretched:
     //StretchDraw(RectBackgr, Image.Picture.Bitmap);
     // original size:
-    Draw(round((picturesize-Image.Picture.Width)/2),round((picturesize-Image.Picture.Height)/2), Image.Picture.Bitmap);
+    Draw(round((picturesize - Image.Picture.Width) / 2), round(
+      (picturesize - Image.Picture.Height) / 2), Image.Picture.Bitmap);
   end;
 end;
 
@@ -1767,7 +1856,8 @@ begin
       defaultIconFullFileName;
       *)
 
-    osdbasedata.aktProduct.productdata.productImageFullFileName := defaultIconFullFileName;
+    osdbasedata.aktProduct.productdata.productImageFullFileName :=
+      defaultIconFullFileName;
     CheckBoxNoIcon.Checked := False;
     TIImageIconPreview.Visible := True;
     // paint icon preview
@@ -1976,6 +2066,11 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
+    createMeta:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct;
+      Application.ProcessMessages;
+    end;
     gmUnknown:
     begin
       // we should never be here
@@ -2003,9 +2098,29 @@ var
   mydep: TPDependency;
   index: integer;
 begin
+  startOpsiServiceConnection;
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
+  // avoid nonsense dependencies in meta product
+  if osdsettings.runmode = createMeta then
+  begin
+    // allow  action setup for neted meta products
+    // (std is state installed)
+    //FNewDepDlg.GroupBox1.Enabled := False;
+    // ComboBoxActState will be corectly switched by groupbox1
+    FNewDepDlg.ComboBoxActState.Enabled := False;
+    // deny requirement types before / after
+    FNewDepDlg.ComboBoxReqType.Enabled := False;
+  end
+  else
+  begin
+    FNewDepDlg.GroupBox1.Enabled := True;
+    FNewDepDlg.ComboBoxActState.Enabled := True;
+    FNewDepDlg.ComboBoxReqType.Enabled := True;
+  end;
+  // needed for macos:
+  FNewDepDlg.Repaint;
   procmess;
   if FNewDepDlg.ShowModal = mrOk then
   begin
@@ -2013,7 +2128,7 @@ begin
     mydep := TPDependency(osdbasedata.aktProduct.dependencies.add);
     mydep.init;
     // required productId
-    mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
+    mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
     // required State & action
     if FNewDepDlg.RadioButtonAction.Checked then
     begin
@@ -2097,6 +2212,7 @@ begin
   FNewPropDlg.initFields;
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
+  //FNewPropDlg.EditPropName.SetFocus;
   procmess;
   if FNewPropDlg.ShowModal = mrOk then
   begin
@@ -2297,7 +2413,7 @@ begin
     if y > -1 then
     begin
       mydep := TPDependency(aktProduct.dependencies.Items[y]);
-      FNewDepDlg.Editproductid.Text := mydep.Required_ProductId;
+      FNewDepDlg.ComboBoxproductIds.Text := mydep.Required_ProductId;
       if mydep.Required_State = noState then
       begin
         FNewDepDlg.RadioButtonState.Checked := False;
@@ -2328,7 +2444,7 @@ begin
       if FNewDepDlg.ShowModal = mrOk then
       begin
         // required productId
-        mydep.Required_ProductId := FNewDepDlg.Editproductid.Text;
+        mydep.Required_ProductId := FNewDepDlg.ComboBoxproductIds.Text;
         // required State & action
         if FNewDepDlg.RadioButtonAction.Checked then
         begin
@@ -2599,24 +2715,22 @@ end;
 
 procedure TResultform1.BtCreateEmptyTemplateWinClick(Sender: TObject);
 begin
-  begin
-    osdsettings.runmode := createTemplate;
-    setRunMode;
-    MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    PageControl1.ActivePage := resultForm1.TabSheetProduct;
-    Application.ProcessMessages;
-    initaktproduct;
-    makeProperties;
-    resultform1.updateGUI;
-    aktProduct.productdata.targetOSset := [osWin];
-    aktProduct.productdata.productId := 'opsi-template';
-    aktProduct.productdata.productName := 'opsi template for Windows';
-    aktProduct.productdata.productversion := '1.0.0';
-    aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description := 'A template for opsi products for Windows';
-  end;
+  osdsettings.runmode := createTemplate;
+  setRunMode;
+  MemoAnalyze.Clear;
+  //StringGridDep.Clean([gzNormal, gzFixedRows]);
+  //StringGridDep.RowCount := 1;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osWin];
+  aktProduct.productdata.productId := 'opsi-template';
+  aktProduct.productdata.productName := 'opsi template for Windows';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'A template for opsi products for Windows';
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateMacClick(Sender: TObject);
@@ -2641,26 +2755,44 @@ begin
   end;
 end;
 
+procedure TResultform1.BtCreateMetaClick(Sender: TObject);
+begin
+  osdsettings.runmode := createMeta;
+  setRunMode;
+  MemoAnalyze.Clear;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  // no properties at meta product
+  //makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osMulti];
+  aktProduct.productdata.productId := 'opsi-meta-template';
+  aktProduct.productdata.productName := 'opsi template for a Meta Product';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description :=
+    'A opsi product that contains dependencies but installs nothing';
+end;
+
 procedure TResultform1.BtCreateEmptyTemplateLinClick(Sender: TObject);
 begin
-  begin
-    osdsettings.runmode := createTemplate;
-    setRunMode;
-    MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    PageControl1.ActivePage := resultForm1.TabSheetProduct;
-    Application.ProcessMessages;
-    initaktproduct;
-    makeProperties;
-    resultform1.updateGUI;
-    aktProduct.productdata.targetOSset := [osLin];
-    aktProduct.productdata.productId := 'l-opsi-template';
-    aktProduct.productdata.productName := 'opsi template for Linux';
-    aktProduct.productdata.productversion := '1.0.0';
-    aktProduct.productdata.packageversion := 1;
-    aktProduct.productdata.description := 'A template for opsi products for Linux';
-  end;
+  osdsettings.runmode := createTemplate;
+  setRunMode;
+  MemoAnalyze.Clear;
+  //StringGridDep.Clean([gzNormal, gzFixedRows]);
+  //StringGridDep.RowCount := 1;
+  PageControl1.ActivePage := resultForm1.TabSheetProduct;
+  Application.ProcessMessages;
+  initaktproduct;
+  makeProperties;
+  resultform1.updateGUI;
+  aktProduct.productdata.targetOSset := [osLin];
+  aktProduct.productdata.productId := 'l-opsi-template';
+  aktProduct.productdata.productName := 'opsi template for Linux';
+  aktProduct.productdata.productversion := '1.0.0';
+  aktProduct.productdata.packageversion := 1;
+  aktProduct.productdata.description := 'A template for opsi products for Linux';
 end;
 
 
@@ -2820,24 +2952,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    (*
-    singleAnalyzeCreate:
+    createMeta:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
+      // we should never be here
+      logdatei.log(
+        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
     end;
-    twoAnalyzeCreate_1,
-    twoAnalyzeCreate_2:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
-    end;
-    createTemplate:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
-      Application.ProcessMessages;
-    end;
-    *)
     gmUnknown:
     begin
       // we should never be here
@@ -2871,13 +2991,7 @@ begin
         logdatei.log(
           'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
       end;
-      (*
-      singleAnalyzeCreate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      *)
+      createMeta,
       createTemplate,
       createMultiTemplate,
       singleAnalyzeCreate,
@@ -2891,13 +3005,6 @@ begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct2;
         Application.ProcessMessages;
       end;
-      (*
-      createTemplate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      *)
       gmUnknown:
       begin
         // we should never be here
@@ -2928,23 +3035,12 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
-    (*
-    singleAnalyzeCreate:
+    // no icons for meta product
+    createMeta:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    twoAnalyzeCreate_1, twoAnalyzeCreate_2:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
-      Application.ProcessMessages;
-    end;
-    createTemplate:
-    begin
-      PageControl1.ActivePage := resultForm1.TabSheetIcons;
-      Application.ProcessMessages;
-    end;
-    *)
     gmUnknown:
     begin
       // we should never be here
@@ -2989,10 +3085,6 @@ begin
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
         begin
-          (*
-          if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-            [mbYes, mbNo], 0, mbNo) = mrYes then
-            aktProduct.SetupFiles[1].copyCompleteDir := True; *)
           aktProduct.SetupFiles[1].copyCompleteDir := showCompleteDirDlg;
           PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
           MemoAnalyze.Clear;
@@ -3002,8 +3094,6 @@ begin
             aktProduct.SetupFiles[1], True);
           SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
         end;
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
-        //Application.ProcessMessages;
       end;
       threeAnalyzeCreate_1:
       begin
@@ -3018,10 +3108,6 @@ begin
           OpenDialog1.FilterIndex := 6;   // linux
           if OpenDialog1.Execute then
           begin
-            (*
-            if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-              [mbYes, mbNo], 0, mbNo) = mrYes then
-              aktProduct.SetupFiles[1].copyCompleteDir := True; *)
             aktProduct.SetupFiles[1].copyCompleteDir := showCompleteDirDlg;
             PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
             MemoAnalyze.Clear;
@@ -3044,9 +3130,14 @@ begin
         // we should never be here
         logdatei.log(
           'Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3137,62 +3228,9 @@ begin
             else
               goon := False;
           end;
-          (*
-          goon := False;
-          isapp := False;
-          macosOpendlg := TSelectFileOrDirectoryDialog.Create(self);
-          //macosOpendlg.InitialDir := filename;
-           macosOpendlg.Filter:= OpenDialog1.Filter;
-            macosOpendlg.FilterIndex := 5;   // macos
-            macosOpendlg.Options:= [ofPathMustExist,ofEnableSizing,ofViewDetail,ofAllowMultiSelect,ofNoValidate];
-            if macosOpendlg.Execute then
-            begin
-              if macosOpendlg.Files.Count >0 then
-              begin
-              filename := macosOpendlg.Files[0];
-              goon := True;
-              if lowercase(ExtractFileExt(filename)) = lowercase('.app')
-              then isapp := true;
-
-              end
-              else goon := false;
-            end
-            else
-              goon := False;
-            FreeAndNil(macosOpendlg);
-            *)
-          (*
-          if SelectDirectoryDialog1.Execute then
-          begin
-            goon := True;
-            filename := SelectDirectoryDialog1.FileName;
-            if ExtractFileExt(filename) = '.app' then
-            begin
-              isapp := True;
-              aktProduct.SetupFiles[2].copyCompleteDir := True;
-            end;
-          end;
-          if goon and not isapp then
-          begin
-            OpenDialog1.InitialDir := filename;
-            ;
-            OpenDialog1.FilterIndex := 5;   // macos
-            if OpenDialog1.Execute then
-            begin
-              filename := OpenDialog1.FileName;
-              goon := True;
-            end
-            else
-              goon := False;
-          end;
-          *)
           if goon then
           begin
             if not isapp then
-            (*
-              if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-                [mbYes, mbNo], 0, mbNo) = mrYes then
-                aktProduct.SetupFiles[2].copyCompleteDir := True; *)
               // no showCompleteDirDlg for macos
               //aktProduct.SetupFiles[2].copyCompleteDir := showCompleteDirDlg;
               aktProduct.SetupFiles[2].copyCompleteDir := False;
@@ -3214,9 +3252,14 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3269,9 +3312,14 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
       end;
+      createMeta:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createMeta', LLError);
+      end;
+
       gmUnknown:
       begin
         // we should never be here
@@ -3284,7 +3332,7 @@ end;
 procedure TResultform1.BtSingleAnalyzeAndCreateLinClick(Sender: TObject);
 var
   i: integer;
-  filename: string;
+  filename: string = '';
   goon: boolean;
   isapp: boolean;
   localTOSset: TTargetOSset;
@@ -3315,17 +3363,8 @@ begin
     Include(localTOSset, osLin);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osLin;
-    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-    //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
     // we expect deb, rpm so we do not ask for complete directories
-    (*
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True;
-    *)
     makeProperties;
     resultform1.updateGUI;
     Application.ProcessMessages;
@@ -3382,15 +3421,7 @@ begin
     Include(localTOSset, osMac);
     aktProduct.productdata.targetOSset := localTOSset;
     aktProduct.SetupFiles[0].targetOS := osMac;
-    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-    //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
-    (*
-    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-      [mbNo, mbYes], 0, mbNo) = mrYes then
-      aktProduct.SetupFiles[0].copyCompleteDir := True; *)
     // no showCompleteDirDlg for macos
     //aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     aktProduct.SetupFiles[0].copyCompleteDir := False;
@@ -3421,22 +3452,11 @@ begin
     begin
       PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
       Application.ProcessMessages;
-      //initaktproduct;
-      //aktProduct.targetOS := osWin;
       localTOSset := aktProduct.productdata.targetOSset;
       Include(localTOSset, osWin);
       aktProduct.productdata.targetOSset := localTOSset;
-      //aktProduct.SetupFiles[0] := osWin;
       aktProduct.SetupFiles[0].targetOS := osWin;
-      //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
-      //TIProgressBarAnalyze_progress.Loaded;
       MemoAnalyze.Clear;
-      //StringGridDep.Clean([gzNormal, gzFixedRows]);
-      //StringGridDep.RowCount := 1;
-      (*
-      if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
-        [mbNo, mbYes], 0, mbNo) = mrYes then
-        aktProduct.SetupFiles[0].copyCompleteDir := True; *)
       aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
       makeProperties;
       resultform1.updateGUI;
@@ -3468,8 +3488,6 @@ begin
     osdsettings.runmode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    //StringGridDep.Clean([gzNormal, gzFixedRows]);
-    //StringGridDep.RowCount := 1;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -3481,73 +3499,14 @@ begin
 end;
 
 
-
-
-(*
-
-procedure TResultform1.ComboBoxArchModeChange(Sender: TObject);
-var
-  modestr: string;
-  mode: TArchitectureMode;
-begin
-  modestr := TComboBox(Sender).Text;
-  mode := archModeStrToArchmode(modestr);
-  case mode of
-    am32only_fix:
-    begin
-      FlowPanelSetup32.Enabled := True;
-    end;
-    am64only_fix:
-    begin
-      FlowPanelSetup32.Enabled := False;
-    end;
-    amBoth_fix, amSystemSpecific_fix, amSelectable:
-    begin
-      FlowPanelSetup32.Enabled := True;
-    end;
-  end;
-end;
-
-procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
-begin
-
-end;
-*)
-
-(*
-procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
-var
-  msg: string;
-begin
-  WriteLogfile;
-  msg := format(sLogfileInfo, [Logfile]);
-  Application.MessageBox(pchar(msg), pchar(sMBoxHeader), MB_OK);
-end;
-*)
-
 procedure TResultform1.FileHelpClick(Sender: TObject);
 begin
   ShowMessage(rsNotImplemented);
-  (*
-   FormHelp.Caption:=sHelpHeader;
-   FormHelp.SetHelpFile(myExeDir + DirectorySeparator + sHelpFile);
-   FormHelp.Show;
-   *)
 end;
 
 
 procedure TResultform1.mst32NameEditChange(Sender: TObject);
 begin
-  (*
-    OpenDialog1.FilterIndex := 3;  // MST
-  if OpenDialog1.Execute then
-  begin
-     TFileNameEdit(sender).Text := ExtractFileName(OpenDialog1.FileName);
-     TFileNameEdit(sender).Hint:=OpenDialog1.FileName;
-     aktProduct.mst32FileNamePath:=OpenDialog1.FileName;
-     aktProduct.mst32FileName:= ExtractFileName(OpenDialog1.FileName);
-  end;
-  *)
 end;
 
 procedure TResultform1.PageControl1Change(Sender: TObject);
@@ -3607,9 +3566,6 @@ begin
   list.Add(logdatei.FileName);
   ShowMessage(list.Text);
   list.Free;
-
-  //Application.MessageBox(PChar(msg), PChar(sMBoxHeader), MB_OK);
-
 end;
 
 
@@ -3807,19 +3763,6 @@ begin
 end;
 
 
-(*
-procedure TResultform1.SBtnOpenClick(Sender: TObject);
-begin
-  OpenDialog1.FilterIndex := 1;   // setup
-  if OpenDialog1.Execute then
-  begin
-    initaktproduct;
-    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
-  end;
-end;
-*)
-
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
   LogDatei.log('Choosed exit Button - Terminate Program', LLnotice);
@@ -3855,8 +3798,7 @@ end;
 
 procedure TResultform1.TabSheetStartExit(Sender: TObject);
 begin
-  //ResultForm1.Width := 1185;
-  //ResultForm1.Height := 566;
+
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
@@ -3920,12 +3862,20 @@ end;
 
 
 procedure TResultform1.genRttiEditChange(Sender: TObject);
+var
+  aktCaretPos: TPoint;
+  col: longint;
 begin
-  if TTIEdit(Sender).Name = 'TIEditProdID' then
-  begin
-    TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
-    TTIEdit(Sender).SelStart := Length(TTIEdit(Sender).Caption);
-  end;
+  if Sender.ClassType = TTIEdit then
+    if TTIEdit(Sender).Name = 'TIEditProdID' then
+    begin
+      aktCaretPos := TTIEdit(Sender).CaretPos;
+      col := aktCaretPos.X;
+      // lower case and replace special chars by _
+      TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
+      // restore the caret position
+      TTIEdit(Sender).SelStart := col;
+    end;
   TControl(Sender).EditingDone;
 end;
 
@@ -3982,70 +3932,5 @@ begin
   procmess;
 end;
 
-(*
-procedure TResultform1.makeProperties;
-var
-  //myprop: TStringList;
-  myprop: TPProperty;
-  index, i: integer;
-  propexists: boolean;
-  tmpstrlist: TStringList;
-begin
-  propexists := aktProduct.properties.propExists('DesktopIcon');
-  if myconfiguration.UsePropDesktopicon and not propexists then
-  begin
-
-    myprop := TPProperty(aktProduct.properties.add);
-    myprop.init;
-    myprop.Property_Name := lowercase('DesktopIcon');
-    myprop.description := 'Soll es ein Desktop Icon geben ?';
-    myprop.Property_Type := bool;
-    myprop.multivalue := False;
-    myprop.editable := False;
-    myprop.Strvalues.Text := '';
-    myprop.StrDefault.Text := '';
-    myprop.boolDefault := False;
-  end;
-
-  propexists := aktProduct.properties.propExists('LicenseOrPool');
-  if myconfiguration.UsePropLicenseOrPool and
-    aktProduct.productdata.licenserequired and not propexists then
-  begin
-    myprop := TPProperty(aktProduct.properties.add);
-    myprop.init;
-    myprop.Property_Name := lowercase('LicenseOrPool');
-    myprop.description := 'LicenseKey or opsi-LicensePool';
-    myprop.Property_Type := unicode;
-    myprop.multivalue := False;
-    myprop.editable := True;
-    myprop.Strvalues.Text := '';
-    myprop.StrDefault.Text := '';
-    myprop.boolDefault := False;
-  end;
-
-  propexists := aktProduct.properties.propExists('install_architecture');
-  if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
-  begin
-    myprop := TPProperty(aktProduct.properties.add);
-    myprop.init;
-    myprop.Property_Name := lowercase('install_architecture');
-    myprop.description := 'Which architecture (32 / 64 Bit) has to be installed?';
-    myprop.Property_Type := unicode;
-    myprop.multivalue := False;
-    myprop.editable := False;
-    tmpstrlist := TStringList.Create;
-    tmpstrlist.Add('32 only');
-    tmpstrlist.Add('64 only');
-    tmpstrlist.Add('system specific');
-    tmpstrlist.Add('both');
-    myprop.SetValueLines(TStrings(tmpstrlist));
-    tmpstrlist.Clear;
-    tmpstrlist.Add('system specific');
-    myprop.SetDefaultLines(TStrings(tmpstrlist));
-    FreeAndNil(tmpstrlist);
-    myprop.boolDefault := False;
-  end;
-end;
-*)
 
 end.

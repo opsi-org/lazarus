@@ -691,13 +691,17 @@ msgid "Close"
 msgstr "Fermer"
 
 #: tformsaveimagesondepot.buttoncopy.caption
+#, fuzzy
+#| msgid "Save images on depot"
 msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
+msgid "Save files on depot"
 msgstr "Sauvegarder les images sur le dépôt"
 
 #: tformsaveimagesondepot.caption
+#, fuzzy
+#| msgid "Save images on depot"
 msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
+msgid "Save settings on depot"
 msgstr "Sauvegarder les images sur le dépôt"
 
 #: tformsaveimagesondepot.checkboxmountdepot.caption

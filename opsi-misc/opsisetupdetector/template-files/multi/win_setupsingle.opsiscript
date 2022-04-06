@@ -49,6 +49,7 @@ Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
 set $ExitCode$ = getlastexitcode
 if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	#@installErrorHandlingLines1*#
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else

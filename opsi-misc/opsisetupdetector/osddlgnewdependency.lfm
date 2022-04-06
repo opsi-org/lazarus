@@ -1,30 +1,29 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 250
-  Height = 370
-  Top = 168
-  Width = 421
+  Left = 363
+  Height = 420
+  Top = 180
+  Width = 444
   Caption = 'opsi-setup-detector: Dependency Editor'
-  ClientHeight = 370
-  ClientWidth = 421
-  DesignTimePPI = 91
+  ClientHeight = 420
+  ClientWidth = 444
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.4'
   object Panel1: TPanel
     Left = 0
-    Height = 47
-    Top = 323
-    Width = 421
+    Height = 50
+    Top = 370
+    Width = 444
     Align = alBottom
-    ClientHeight = 47
-    ClientWidth = 421
+    ClientHeight = 50
+    ClientWidth = 444
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
       Left = 13
-      Height = 35
+      Height = 38
       Top = 6
-      Width = 71
+      Width = 75
       Align = alLeft
       BorderSpacing.Left = 7
       BorderSpacing.Around = 5
@@ -36,10 +35,10 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 293
-      Height = 35
+      Left = 342
+      Height = 38
       Top = 6
-      Width = 115
+      Width = 89
       Align = alRight
       AutoSize = True
       BorderSpacing.Right = 7
@@ -55,33 +54,44 @@ object FNewDepDlg: TFNewDepDlg
   end
   object Panel2: TPanel
     Left = 0
-    Height = 91
+    Height = 127
     Top = 0
-    Width = 421
+    Width = 444
     Align = alTop
-    ClientHeight = 91
-    ClientWidth = 421
+    ClientHeight = 127
+    ClientWidth = 444
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
       Left = 8
-      Height = 75
+      Height = 80
       Top = 8
-      Width = 405
+      Width = 428
       Align = alClient
       Alignment = taCenter
       BorderSpacing.Around = 7
       Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
+    end
+    object LabelConnect: TLabel
+      Left = 12
+      Height = 16
+      Top = 99
+      Width = 420
+      Align = alBottom
+      Alignment = taCenter
+      BorderSpacing.Around = 11
+      Caption = 'LabelConnect'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 232
-    Top = 91
-    Width = 421
+    Height = 243
+    Top = 127
+    Width = 444
     Align = alClient
     ControlList = <    
       item
@@ -110,31 +120,31 @@ object FNewDepDlg: TFNewDepDlg
     TabOrder = 2
     object GroupBox1: TGroupBox
       Left = 6
-      Height = 60
-      Top = 61
-      Width = 395
+      Height = 63
+      Top = 64
+      Width = 417
       Anchors = []
       BorderSpacing.Around = 5
       Caption = 'Require Mode'
-      ClientHeight = 41
-      ClientWidth = 393
+      ClientHeight = 44
+      ClientWidth = 407
       ParentFont = False
       TabOrder = 0
       object RadioButtonAction: TRadioButton
-        Left = 21
-        Height = 21
+        Left = 22
+        Height = 18
         Top = 8
-        Width = 62
+        Width = 58
         Caption = 'Action'
         OnChange = RadioButtonActionChange
         ParentFont = False
         TabOrder = 0
       end
       object RadioButtonState: TRadioButton
-        Left = 137
-        Height = 21
+        Left = 145
+        Height = 18
         Top = 8
-        Width = 55
+        Width = 52
         Caption = 'State'
         Checked = True
         ParentFont = False
@@ -144,14 +154,14 @@ object FNewDepDlg: TFNewDepDlg
     end
     object FlowPanel2: TFlowPanel
       Left = 1
-      Height = 55
+      Height = 58
       Top = 1
-      Width = 415
+      Width = 438
       Anchors = []
       BevelOuter = bvNone
       ControlList = <      
         item
-          Control = Editproductid
+          Control = ComboBoxproductIds
           WrapAfter = waAuto
           Index = 0
         end      
@@ -166,35 +176,33 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 1
       OnClick = FlowPanel2Click
       object Label2: TLabel
-        Left = 57
+        Left = 33
         Height = 32
         Top = 5
-        Width = 155
+        Width = 156
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'productid'#10'of the dependent product'
-        ParentColor = False
         ParentFont = False
       end
-      object Editproductid: TEdit
-        Left = 222
-        Height = 29
-        Top = 5
-        Width = 181
+      object ComboBoxproductIds: TComboBox
+        Left = 194
+        Height = 20
+        Top = 11
+        Width = 244
         Anchors = []
-        BorderSpacing.Right = 7
-        BorderSpacing.Around = 5
-        OnChange = EditproductidChange
-        ParentFont = False
+        AutoComplete = True
+        AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+        BorderSpacing.Top = 11
+        ItemHeight = 19
         TabOrder = 0
-        Text = 'productId'
       end
     end
     object FlowPanel3: TFlowPanel
       Left = 1
-      Height = 41
-      Top = 126
-      Width = 400
+      Height = 43
+      Top = 132
+      Width = 422
       Anchors = []
       BevelOuter = bvNone
       ControlList = <      
@@ -213,36 +221,35 @@ object FNewDepDlg: TFNewDepDlg
       ParentFont = False
       TabOrder = 2
       object ComboBoxActState: TComboBox
-        Left = 190
-        Height = 29
+        Left = 201
+        Height = 20
         Top = 5
-        Width = 198
+        Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 0
+        ItemHeight = 19
         OnChange = ComboBoxActStateChange
         ParentFont = False
         TabOrder = 0
         Text = 'ComboBoxActState'
       end
       object Label3: TLabel
-        Left = 92
+        Left = 101
         Height = 16
         Top = 5
-        Width = 88
+        Width = 90
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Action or State'
-        ParentColor = False
         ParentFont = False
       end
     end
     object FlowPanel4: TFlowPanel
       Left = 1
-      Height = 41
-      Top = 167
-      Width = 400
+      Height = 43
+      Top = 175
+      Width = 422
       Anchors = []
       BevelOuter = bvNone
       ControlList = <      
@@ -261,14 +268,14 @@ object FNewDepDlg: TFNewDepDlg
       ParentFont = False
       TabOrder = 3
       object ComboBoxReqType: TComboBox
-        Left = 205
-        Height = 29
+        Left = 201
+        Height = 20
         Top = 5
-        Width = 183
+        Width = 209
         Anchors = []
         BorderSpacing.Right = 7
         BorderSpacing.Around = 5
-        ItemHeight = 0
+        ItemHeight = 19
         ItemIndex = 0
         Items.Strings = (
           ''
@@ -279,14 +286,13 @@ object FNewDepDlg: TFNewDepDlg
         TabOrder = 0
       end
       object Label4: TLabel
-        Left = 86
+        Left = 81
         Height = 16
         Top = 5
-        Width = 109
+        Width = 110
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Requirement Type'
-        ParentColor = False
         ParentFont = False
       end
     end

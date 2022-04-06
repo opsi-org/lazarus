@@ -49,6 +49,7 @@ unit osmain;
 
 
 {$IFDEF WINDOWS} {$DEFINE GUI} {$ENDIF WINDOWS}
+
 interface
 
 uses
@@ -257,7 +258,7 @@ var
   PerformExitWindows: TExitRequest = txrNoExit;
   PerformShutdown: TShutdownRequest = tsrNoShutdown;
   ProgramMode: TProgramMode;
-  batchUpdatePOC : boolean = False;
+  batchUpdatePOC: boolean = False;
 
 
   toggle: boolean;
@@ -288,7 +289,7 @@ var
   ///connected :   Boolean;
   LogDateiName: string;
   logfileFromCommandLine: boolean;
-  ///ContinueLog  :   Integer;
+///ContinueLog  :   Integer;
   {$IFDEF WINDOWS}
   RegLogOutOptions: TuibRegistry;
   regist: TRegistry;
@@ -1002,6 +1003,7 @@ var
   TheExitMode: TExitMode;
   buildpcscript: TuibInstScript;
   tmplist: TStringList;
+
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
 
@@ -1873,6 +1875,7 @@ begin
 end;
 
 {$ELSE WINDOWS}
+
 procedure writeLogFileOptions(const RegHive: string; const info: string);
 begin
 
@@ -1989,8 +1992,8 @@ begin
     {$MACRO ON}
     //(*  comment this block for code formatting
     startupmessages.Append(
-    'Compiled with FPC: '+ {$i %FPCVERSION%} +
-    ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%});
+      'Compiled with FPC: ' + {$i %FPCVERSION%} + ' for: ' +
+      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%});
     //*)
     {$MACRO OFF}
     //writeln('StartProgramModes4');
@@ -2167,7 +2170,7 @@ begin
           LogDatei.debug_prog := osconf.debug_prog;
           LogDatei.LogLevel := osconf.default_loglevel;
           LogDatei.debug_lib := osconf.debug_lib;
-          LogDatei.WriteComponentFile:= osconf.configWriteProductLogFile;
+          LogDatei.WriteComponentFile := osconf.configWriteProductLogFile;
           logDatei.log('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
             LLessential);
           logDatei.log('default_loglevel: ' + IntToStr(osconf.default_loglevel),
@@ -2266,7 +2269,7 @@ begin
             FBatchOberflaeche.SetElementVisible(False, eMainForm)
           else
             FBatchOberflaeche.SetElementVisible(True, eMainForm);
-            if scriptlist.Count <= 0 then
+          if scriptlist.Count <= 0 then
             centralform.Edit1.Text := scriptlist.strings[0];
           centralform.Edit2.Text := LogDateiName;
 
@@ -2304,7 +2307,7 @@ begin
           logDatei.log_prog('AktProduktId: ' + LogDatei.AktProduktId +
             ' = ' + booleantostr(LogDatei.LogProduktId), LLessential);
 
-                      if scriptlist.Count <= 0 then
+          if scriptlist.Count <= 0 then
           begin
             logDatei.log('Error we have no script in batch mode. ', LLcritical);
             extremeErrorLevel := levelFatal;
@@ -2484,15 +2487,16 @@ begin
           end;
 
           // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
-          if (runningAsAdmin and (not (batchproductid = '')))
-              or ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
+          if (runningAsAdmin and (not (batchproductid = ''))) or
+            ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
           begin
             try
               if batchUpdatePOC and not (opsidata = nil) then
               begin
                 // we are in /serviceBatch mode and so we have to update the productOnClient via service
                 LogDatei.log('serviceBatch: update switches .....', LLDebug);
-                if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
+                if (PerformExitWindows < txrImmediateLogout) and
+                  (not scriptsuspendstate) then
                 begin
                   LogDatei.log_prog('serviceBatch: update switches 2.....', LLDebug);
                   // we are in /serviceBatch mode and so we act like having a actionrequest=setup
@@ -2506,10 +2510,10 @@ begin
               end
               else
               begin
-              // We are in batch with /productid (opsi-template-with-admin)
-              // write isFatal (or not) to registry
-              //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
-              //##LINUX
+                // We are in batch with /productid (opsi-template-with-admin)
+                // write isFatal (or not) to registry
+                //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
+                //##LINUX
               {$IFDEF WINDOWS}
               reg := TRegistry.Create;
               GetHKey(WinstRegHive, rkey);
@@ -3293,7 +3297,7 @@ begin
           // if /serviceBatch then also needed:
           //  /ClientId /opsiservice /username /password /productId  and <script path>
           ProgramMode := pmBatch;
-          batchUpdatePOC := true;
+          batchUpdatePOC := True;
           {$IFDEF GUI}
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;

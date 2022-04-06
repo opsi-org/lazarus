@@ -28,7 +28,7 @@ program opsiscript;
 
 uses //lcltranslator,
  {$IFDEF UNIX} {$IFDEF UseCThreads}
-  cthreads, {$ENDIF} {$ENDIF}
+  cthreads,  {$ENDIF}  {$ENDIF}
   Classes,
   SysUtils,
   ///LCLIntf,
@@ -48,7 +48,7 @@ uses //lcltranslator,
   lazfileutils,
   osprocesses,
   osversioninfo,
-  {$IFDEF GUI}
+ {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
   osbatchgui {FBatchOberflaeche},
@@ -59,26 +59,30 @@ uses //lcltranslator,
   oslistedit,
   Forms,
   osGUIControl,
-  {$ELSE GUI}
+   {$ELSE GUI}
   custapp,
   oscheck_gui_startable,
-  {$ENDIF GUI}
-  {$IFDEF UNIX}
+ {$ENDIF GUI} {$IFDEF UNIX}
   BaseUnix,
   oslindesktopfiles,
-  OSProcessux, {$ENDIF UNIX} {$IFDEF DARWIN}
-  osfuncmac, {$ENDIF DARWIN} {$IFDEF LINUX}
-  osfunclin, {$ENDIF LINUX} {$IFDEF WINDOWS} {$IFDEF WIN32}
+  OSProcessux,  {$ENDIF UNIX} {$IFDEF DARWIN}
+  osfuncmac,  {$ENDIF DARWIN} {$IFDEF LINUX}
+  osfunclin,  {$ENDIF LINUX} {$IFDEF WINDOWS} {$IFDEF WIN32}
   DSiWin32 in 'DSiWin32.pas',
   oslocaladmin,
-  jclexcerpt, {$ENDIF WIN32}
+  jclexcerpt,  {$ENDIF WIN32}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-  osfuncwin2, osregistry, {$ENDIF}
-  lazutf8, osfilehelper, osTOML, osSSLPaths;
+  osfuncwin2, osregistry,  {$ENDIF}
+  lazutf8,
+  osfilehelper,
+  osTOML,
+  osSSLPaths,
+  osEvaluateBooleanFunctions,
+  osGetRegistryFunctions;
 
 
 
@@ -118,18 +122,19 @@ type
     startupmessages.Append('running now gui-test');
     logdatei := TLogInfo.Create;
     //logfilename := ExtractFileNameOnly(ParamStr(0)) + '.log';
-    logfilename := logdatei.StandardMainLogPath+'opsi-script-gui-test.log';
+    logfilename := logdatei.StandardMainLogPath + 'opsi-script-gui-test.log';
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile := False;
     LogDatei.WriteHistFile := False;
-    LogDatei.WriteComponentFile := False;;
+    LogDatei.WriteComponentFile := False;
+    ;
     logdatei.CreateTheLogfile(logfilename, False);
     logdatei.LogLevel := 8;
     //LogDatei.debug_prog:=true;
     logdatei.log('opsi-script version: ' + getversioninfo, LLessential);
     logdatei.log('Called as: ' + ExtractFileNameOnly(ParamStr(0)), LLessential);
-    logdatei.log('Compiled with FPC: '+ {$i %FPCVERSION%} +
-    ' for: '+ {$i %FPCTARGETOS%}+'-'+{$i %FPCTARGETCPU%}, LLessential);
+    logdatei.log('Compiled with FPC: ' + {$i %FPCVERSION%} + ' for: ' +
+      {$i %FPCTARGETOS%} + '-' + {$i %FPCTARGETCPU%}, LLessential);
   end;
 
 {$IFDEF UNIX}
@@ -250,23 +255,9 @@ begin
   Application.run;
   {$ELSE GUI}
   Application := Topsiscript.Create(nil);
-  Application.Title:='opsi-script';
+  Application.Title := 'opsi-script';
   Application.Initialize;
   Application.DoRun;
   Application.Free;
   {$ENDIF GUI}
 end.
-
-
-
-
-
-
-
-
-
-
-
-
-
-

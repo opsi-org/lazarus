@@ -13,6 +13,7 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   JwaWindows,
+  lazutf8,
   //  JwaWinnt,
   //  jwawinbase,
   {$ENDIF WINDOWS}
@@ -81,6 +82,7 @@ begin
     //if FProcessEntry32.th32ProcessID > 0 then
     //  resultstring := resultstring + ';' + FormatFloat('##0.00',GetProcessActivityByPid(FProcessEntry32.th32ProcessID))
     //else resultstring := resultstring + ';';
+    resultstring := WinCPToUTF8(resultstring);
     Result.add(resultstring);
     ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
