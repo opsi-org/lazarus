@@ -433,7 +433,7 @@ var
   SidToStr: TConvertSidToStringSidA;
   h: longword;
   Buf: array [0..MAX_PATH - 1] of char;
-  p: PAnsiChar;
+  p: pansichar;
 begin
   h := LoadLibrary(FILENAME_ADVAPI32);
   if h <> 0 then
@@ -881,12 +881,12 @@ begin
       begin
         SetLength(UserName, UserSize);
         SetLength(Domain, DomainSize);
-        if LookupAccountSid(nil, tokUser.User.Sid, PAnsiChar(UserName),
-          UserSize, PAnsiChar(Domain), DomainSize, sidNameUse) then
+        if LookupAccountSid(nil, tokUser.User.Sid, pansichar(UserName),
+          UserSize, pansichar(Domain), DomainSize, sidNameUse) then
         begin
           Result := True;
-          UserName := StrPas(PAnsiChar(UserName));
-          Domain := StrPas(PAnsiChar(Domain));
+          UserName := StrPas(pansichar(UserName));
+          Domain := StrPas(pansichar(Domain));
         end;// if LookupAccountSid(nil, tokUser.User.Sid, PAnsiChar(UserName), UserSize,
       end;// if (UserSize <> 0) and (DomainSize <> 0) then begin
       if bSuccess then
@@ -925,12 +925,12 @@ begin
   begin
     SetLength(UserName, UserSize);
     SetLength(Domain, DomainSize);
-    if LookupAccountSid(nil, tokUser.User.Sid, PAnsiChar(UserName),
-      UserSize, PAnsiChar(Domain), DomainSize, sidNameUse) then
+    if LookupAccountSid(nil, tokUser.User.Sid, pansichar(UserName),
+      UserSize, pansichar(Domain), DomainSize, sidNameUse) then
     begin
       Result := True;
-      UserName := StrPas(PAnsiChar(UserName));
-      Domain := StrPas(PAnsiChar(Domain));
+      UserName := StrPas(pansichar(UserName));
+      Domain := StrPas(pansichar(Domain));
     end;// if LookupAccountSid(nil, tokUser.User.Sid, PAnsiChar(UserName), UserSize,
   end;// if (UserSize <> 0) and (DomainSize <> 0) then begin
   if bSuccess then
@@ -1217,7 +1217,8 @@ begin
       if UpperCase(exename) = UpperCase(foundexe) then
       begin
         if (domuser = mydomain + '\' + myuser) or
-          (domuser = selfdom + '\' + selfuser) or (domuser = '') or (selfuser = 'SYSTEM') then
+          (domuser = selfdom + '\' + selfuser) or (domuser = '') or
+          (selfuser = 'SYSTEM') then
         begin
           LogDatei.log('Will kill exe: ' + foundexe + ' pid: ' +
             IntToStr(pid) + ' from user: ' + domuser, LLDebug);
@@ -1344,27 +1345,27 @@ begin
   FillChar(Buf, SizeOf(USER_INFO_2), 0);
   with Buf do
   begin
-    usri2_name := PWideChar(wUsername);
-    usri2_full_name := PWideChar(wUsername);//You can add a more descriptive name here
-    usri2_password := PWideChar(wPassword);
-    usri2_comment := PWideChar(wDummyStr);
+    usri2_name := pwidechar(wUsername);
+    usri2_full_name := pwidechar(wUsername);//You can add a more descriptive name here
+    usri2_password := pwidechar(wPassword);
+    usri2_comment := pwidechar(wDummyStr);
     usri2_priv := USER_PRIV_USER;
     usri2_flags := UF_SCRIPT or UF_DONT_EXPIRE_PASSWD;
-    usri2_script_path := PWideChar(wDummyStr);
-    usri2_home_dir := PWideChar(wDummyStr);
+    usri2_script_path := pwidechar(wDummyStr);
+    usri2_home_dir := pwidechar(wDummyStr);
     usri2_acct_expires := TIMEQ_FOREVER;
   end;
 
-  GrpUsrInfo.usri0_name := PWideChar(wGroup);
+  GrpUsrInfo.usri0_name := pwidechar(wGroup);
 
-  Err := NetUserAdd(PWideChar(wServer), 1, @Buf, @ParmErr);
+  Err := NetUserAdd(pwidechar(wServer), 1, @Buf, @ParmErr);
   Result := (Err = NERR_SUCCESS);
 
   if Result then //NOw you must set the group for the new user
   begin
     //Err := NetUserSetGroups(PWideChar(wServer),PWideChar(wGroup),0,@GrpUsrInfo,1);
-    lgmiWork.lgrmi3_domainandname := PWideChar(wUsername);
-    Err := NetLocalGroupAddMembers(nil, PWideChar(wGroup), 3, @lgmiWork, 1);
+    lgmiWork.lgrmi3_domainandname := pwidechar(wUsername);
+    Err := NetLocalGroupAddMembers(nil, pwidechar(wGroup), 3, @lgmiWork, 1);
     Result := (Err = NERR_SUCCESS);
   end;
 end;
@@ -1944,7 +1945,7 @@ var
 begin
 
   adapterindex := 0;
-  GetBestinterface(inet_addr(PAnsiChar(myserver)), adapterindex);
+  GetBestinterface(inet_addr(pansichar(myserver)), adapterindex);
   pAdapterList := nil;
   dwLen := 0;
   dwResult := GetAdaptersInfo(pAdapterList, dwLen);
@@ -2431,8 +2432,8 @@ end;
 const
   FILE_NAME_NORMALIZED = $00000000;
 
-function GetFinalPathNameByHandleUndefined(hFile: THandle;
-  lpszFilePath: PChar; cchFilePath, dwFlags: DWORD): DWORD; stdcall;
+function GetFinalPathNameByHandleUndefined(hFile: THandle; lpszFilePath: PChar;
+  cchFilePath, dwFlags: DWORD): DWORD; stdcall;
 begin
   StrPCopy(lpszFilePath, '');
   Result := 0;
@@ -2440,8 +2441,8 @@ end;
 
 function FileHandleToFileName(Handle: THandle): string;
 type
-  TGetFinalPathNameByHandle = function(hFile: THandle;
-      lpszFilePath: PChar; cchFilePath, dwFlags: DWORD): DWORD; stdcall;
+  TGetFinalPathNameByHandle = function(hFile: THandle; lpszFilePath: PChar;
+      cchFilePath, dwFlags: DWORD): DWORD; stdcall;
 
 const
   GetFinalPathNameByHandle: TGetFinalPathNameByHandle = nil;

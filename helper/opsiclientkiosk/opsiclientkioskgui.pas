@@ -1170,6 +1170,7 @@ begin
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
+  Refresh;
 end;
 
 
@@ -1757,14 +1758,16 @@ procedure TFormOpsiClientKiosk.DBComboBox1Click(Sender: TObject);
 var
   action : string;
 begin
+  {$IFDEF DARWIN}
   //DataModuleOCK.SQLQueryProductData.Edit;
-  {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
+  action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
   if (action <> 'setup') and (action <> '') then
-    DBComboBox1.Items.Add(action);}
-  //DataSourceProductData.Edit;
+    DBComboBox1.Items.Add(action);
+  DataSourceProductData.Edit;
+  {$ENDIF DARWIN}
 end;
 
 
@@ -1776,7 +1779,6 @@ end;
 
 procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
 begin
-  //DBGrid1.Repaint;
   if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF)
   then
   begin
@@ -1794,6 +1796,7 @@ procedure TFormOpsiClientKiosk.DBComboBox1MouseEnter(Sender: TObject);
 var
   action : string;
 begin
+  {$IFNDEF DARWIN}
   //DataModuleOCK.SQLQueryProductData.Edit;
   action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
@@ -1802,6 +1805,7 @@ begin
   if (action <> 'setup') and (action <> '') then
     DBComboBox1.Items.Add(action);
   //DataSourceProductData.Edit;
+  {$ENDIF DARWIN}
 end;
 
 
@@ -1980,12 +1984,12 @@ var
   action: string;
 begin
   PanelProductDetail.Height := 185;
-  {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
+ {action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
   if (action <> 'setup') and (action <> '') then
-    DBComboBox1.Items.Add(action);}
+    DBComboBox1.Items.Add(action); }
   //ShowMessage(DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString);
    //DBTextVerStr.DataField := 'VersionStr';
   //ShowMessage('OnCellClick');
@@ -2284,7 +2288,7 @@ begin
     else
     begin
       {$IFDEF UNIX}
-      ClientID := GetClientID(AbsolutePathSettings + PathDelim +'opsiclientkiosk.conf');
+      ClientID := GetClientID(AbsolutePathSettingsUserMode + PathDelim +'opsiclientkiosk.conf');
       {$ELSE}
       ClientID := GetClientID(ChompPathDelim(ProgramDirectory) + PathDelim +'opsiclientkiosk.conf');
       {$ENDIF UNIX}

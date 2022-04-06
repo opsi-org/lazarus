@@ -1250,9 +1250,9 @@ begin
   try
     if not IsSSLloaded then
     begin
+      SetSSLPaths; //set opsi specific ssl library paths
       SSLUtilHandle := LoadLib(DLLUtilName);
       SSLLibHandle := LoadLib(DLLSSLName);
-    SetSSLPaths; //set opsi specific ssl library paths
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
       begin
         _SslGetError := GetProcAddr(SSLLibHandle, 'SSL_get_error');
@@ -1500,10 +1500,14 @@ procedure SetSSLPaths; //opsi
 begin
   // Specify here the path to the ssl libraries
   {$IFDEF SSLPATH}
-    {$IFDEF WINDOWS}
-      DLLSSLName := GetSSLPath('libssl-1_1.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
-      DLLUtilName := GetSSLPath('libcrypto-1_1.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
-    {$ENDIF WINDOWS}
+    {$IFDEF WIN32}
+      DLLSSLName := GetSSLPath('libssl.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
+      DLLUtilName := GetSSLPath('libcrypto.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+    {$ENDIF WIN32}
+    {$IFDEF WIN64}
+      DLLSSLName := GetSSLPath('libssl-x64.dll');
+      DLLUtilName := GetSSLPath('libcrypto-x64.dll');
+    {$ENDIF WIN64}
     {$IFDEF LINUX}
       DLLSSLName := GetSSLPath('libssl.so'); //ProgramDirectory + 'libssl.so';
       DLLUtilName := GetSSLPath('libcrypto.so'); //ProgramDirectory  + 'libcrypto.so';

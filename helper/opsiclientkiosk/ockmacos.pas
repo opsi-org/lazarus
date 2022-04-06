@@ -50,9 +50,10 @@ const
   MountPoint = '/tmp/opsi_depot_rw';
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
-  AbsolutePathCustomSettingsAdminMode =  '/tmp/org.opsi.OpsiClientKiosk' + CustomFolder;
-  AbsolutePathSettings = '/Library/Application Support/org.opsi.OpsiClientKiosk';
-  AbsolutePathCustomSettingsUserMode = AbsolutePathSettings + CustomFolder;
+  AbsolutePathSettingsAdminMode = '/tmp/org.opsi.OpsiClientKiosk';
+  AbsolutePathCustomSettingsAdminMode =  AbsolutePathSettingsAdminMode + CustomFolder;
+  AbsolutePathSettingsUserMode = '/Library/Application Support/org.opsi.OpsiClientKiosk';
+  AbsolutePathCustomSettingsUserMode = AbsolutePathSettingsUserMode + CustomFolder;
   RelativePathDefaultSettings = '/../Resources' + DefaultFolder;
   RelativePathProductIcons = '/product_icons';
   RelativePathScreenShots = '/screenshots';
@@ -250,18 +251,26 @@ begin
   //RunCommand('/bin/sh',
   //  ['-c','cp -R' + ' ' + AbsolutePathCustomSettingsUserMode + ' ' + AbsolutePathCustomSettingsAdminMode ],
   //  Output, [poUsePipes, poWaitOnExit], swoHIDE);
-  LogDatei.log('Removing old settings from ' + AbsolutePathCustomSettingsAdminMode, LLInfo);
-  if DeleteDirectory(AbsolutePathCustomSettingsAdminMode, False) then
+  LogDatei.log('Removing old settings from ' + AbsolutePathSettingsAdminMode, LLInfo);
+  if DeleteDirectory(AbsolutePathSettingsAdminMode, False) then
   begin
     LogDatei.log('Removing old settings done', LLInfo);
   end;
-  CopyDirTree(AbsolutePathCustomSettingsUserMode, AbsolutePathCustomSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin) then
-    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathSkin);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons) then
-    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathProductIcons);
-  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots) then
-    CreateDir(AbsolutePathCustomSettingsAdminMode + PathDelim + RelativePathScreenShots);
+  if CopyDirTree(AbsolutePathSettingsUserMode, AbsolutePathSettingsAdminMode,[cffOverwriteFile, cffCreateDestDirectory]) then
+    LogDatei.log('Copy settings from ' + AbsolutePathSettingsUserMode + ' to ' + AbsolutePathSettingsAdminMode + ' done', LLInfo)
+  else
+    LogDatei.log('Copy settings from ' + AbsolutePathSettingsUserMode + ' to ' + AbsolutePathSettingsAdminMode + ' failed', LLError);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + RelativePathSkin) then
+    if CreateDir(AbsolutePathCustomSettingsAdminMode + RelativePathSkin) then
+      LogDatei.log('Directory ' + AbsolutePathCustomSettingsAdminMode + RelativePathSkin + ' created', LLInfo)
+    else
+      LogDatei.log('Directory ' + AbsolutePathCustomSettingsAdminMode + RelativePathSkin + ' could not be created', LLError);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + RelativePathProductIcons) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + RelativePathProductIcons);
+  if not DirectoryExists(AbsolutePathCustomSettingsAdminMode + RelativePathScreenShots) then
+    CreateDir(AbsolutePathCustomSettingsAdminMode + RelativePathScreenShots);
 end;
 
 procedure TPathsOnClientMacOS.SetAdminMode(theAdminMode: boolean);

@@ -269,7 +269,8 @@ type
     FParentSection: TWorkSection;
 
   public
-    constructor Create(const NestLevel: integer; const ParentSection: TWorkSection = nil);
+    constructor Create(const NestLevel: integer;
+      const ParentSection: TWorkSection = nil);
     destructor Destroy; override;
 
     property StartLineNo: integer read FStartLineNo write FStartLineNo;
@@ -769,8 +770,8 @@ var
   Conditions: TConditions;   // used for if else endif
   ThenBranch: TConditions;   // used for if else endif
   elseifConditions: TConditions;   // used for elseif:
-                                   // becomes true if we had found a true condition
-                                   // it is the marker that we do not go into any other elseif / else
+// becomes true if we had found a true condition
+// it is the marker that we do not go into any other elseif / else
 
 //const
 //zaehler  : Integer = 0;
@@ -870,15 +871,16 @@ begin
         ' in standard section.', LLDebug3);
       selfsection.GetSectionLines(Sectionname, Resultlist,
         StartlineNo, True, True, False);
-      Logdatei.log_prog('Prog: Finished looking for section (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname +
-        ' in standard section.', LLDebug);
+      Logdatei.log_prog('Prog: Finished looking for section (Line ' +
+        {$INCLUDE %LINE%} + '): ' + Sectionname + ' in standard section.', LLDebug);
     end;(*
     else
     begin
       if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
         Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
     end;*)
-    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+      {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
     if Resultlist.Count = 0 then
     begin
@@ -886,10 +888,10 @@ begin
       begin
         // subsub case
 
-          Logdatei.log('Looking for section: ' + Sectionname +
-            ' in calling section.', LLDebug3);
-          callingsection.GetSectionLines(Sectionname, Resultlist,
-            StartlineNo, True, True, False);
+        Logdatei.log('Looking for section: ' + Sectionname +
+          ' in calling section.', LLDebug3);
+        callingsection.GetSectionLines(Sectionname, Resultlist,
+          StartlineNo, True, True, False);
       end;(*
       else
       begin
@@ -898,7 +900,8 @@ begin
       end;*)
     end;
 
-    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+      {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
     if Resultlist.Count = 0 then
     begin
@@ -914,20 +917,22 @@ begin
         Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
     end;*)
 
-    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+      {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
     if Resultlist.Count = 0 then
     begin
       if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
-        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) then
+        if Assigned(callingsection.ParentSection) then
+          //and (callingsection.ParentSection <> nil) then
         begin
           // subsubsub case
 
-            Logdatei.log('Looking for section: ' + Sectionname +
-              ' in callingsection.ParentSection section.', LLDebug3);
-            callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
-              StartlineNo, True, True, False);
+          Logdatei.log('Looking for section: ' + Sectionname +
+            ' in callingsection.ParentSection section.', LLDebug3);
+          callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+            StartlineNo, True, True, False);
         end;(*
         else
         begin
@@ -937,26 +942,32 @@ begin
       end;
     end;
 
-    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+      {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
 
     if Resultlist.Count = 0 then
     begin
       if Assigned(callingsection) then //and (callingsection <> nil) and
       begin
-        Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-        if Assigned(callingsection.ParentSection) then//and (callingsection.ParentSection <> nil) and
+        Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+          {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+        if Assigned(callingsection.ParentSection) then
+          //and (callingsection.ParentSection <> nil) and
         begin
-          Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
-          if Assigned(callingsection.ParentSection.ParentSection) then //and (callingsection.ParentSection.ParentSection <> nil) then
+          Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+            {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+          if Assigned(callingsection.ParentSection.ParentSection) then
+            //and (callingsection.ParentSection.ParentSection <> nil) then
           begin
-            Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+            Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+              {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
             // subsubsubsub case
 
-              Logdatei.log('Looking for section: ' + Sectionname +
-                ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
-              callingsection.ParentSection.ParentSection.GetSectionLines(
-                Sectionname, Resultlist,
-                StartlineNo, True, True, False);
+            Logdatei.log('Looking for section: ' + Sectionname +
+              ' in callingsection.FParentSection.FParentSectio section.', LLDebug3);
+            callingsection.ParentSection.ParentSection.GetSectionLines(
+              Sectionname, Resultlist,
+              StartlineNo, True, True, False);
           end;(*
           else
           begin
@@ -967,14 +978,15 @@ begin
       end;
     end;
 
-    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' + {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
+    Logdatei.log_prog('Prog: function SearchForSectionLine (Line ' +
+      {$INCLUDE %LINE%} + '): ' + Sectionname, LLDebug);
     if Resultlist.Count > 0 then Result := True;
   except
     on E: Exception do
     begin
-      Logdatei.log('Exception in SearchForSectionLines: ' , LLCritical);
-      Logdatei.log(e.ClassName + ' system message: "' +
-        E.Message + '" - giving up',
+      Logdatei.log('Exception in SearchForSectionLines: ', LLCritical);
+      Logdatei.log(e.ClassName + ' system message: "' + E.Message +
+        '" - giving up',
         LLCritical);
     end;
   end;
@@ -1648,11 +1660,13 @@ begin
     else
     begin
       if definedFunctionArray[FuncIndex].datatype = dfpString then
-        LogDatei.log('A defined function that returns a string cannot stand alone (syntax error)! It needs to be assigned to a string variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical)
+        LogDatei.log(
+          'A defined function that returns a string cannot stand alone (syntax error)! It needs to be assigned to a string variable or it needs to be combined with other expressions (e.g. if, comment)', LLcritical)
       else
       begin
         if definedFunctionArray[FuncIndex].datatype = dfpStringlist then
-          LogDatei.log('A defined function that returns a stringlist cannot stand alone (syntax error)! It needs to be assigned to a stringlist variable or it needs to be combined with other expressions (e.g. if, comment)',LLcritical);
+          LogDatei.log(
+            'A defined function that returns a stringlist cannot stand alone (syntax error)! It needs to be assigned to a stringlist variable or it needs to be combined with other expressions (e.g. if, comment)', LLcritical);
       end;
     end;
   if deffuncFound then
@@ -6627,13 +6641,13 @@ begin
                           // store parameters with json value syntax
                           // (i.e. quotes around normal strings but not around arrays, objects and null)
                           if (param = '') then
-                             param := '""'
+                            param := '""'
                           else
                           begin
-                          if not (((param[1] = '[') and (param[param.Length] = ']')) or
-                            ((param[1] = '{') and (param[param.Length] = '}')) or
-                            (param = 'null')) then
-                            param := '"' + param + '"';
+                            if not (((param[1] = '[') and (param[param.Length] = ']')) or
+                              ((param[1] = '{') and (param[param.Length] = '}')) or
+                              (param = 'null')) then
+                              param := '"' + param + '"';
                           end;
 
                           LogDatei.log_prog('Parsing: getparam: ' + param, LLdebug2);
@@ -10759,8 +10773,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12442,7 +12456,7 @@ begin
                 tsShellInAnIcon, tsExecutePython, tsExecuteWith,
                 tsExecuteWith_escapingStrings, tsWinBatch]) then
               begin
-                InfoSyntaxError := 'not implemented for this kind of section'
+                InfoSyntaxError := 'not implemented for this kind of section';
               end
               else
               begin
@@ -12454,8 +12468,8 @@ begin
                   InfoSyntaxError := 'Section "' + s2 + '" not found'
                 else
                 begin
-                  if localKindOfStatement in [tsExecutePython, tsExecuteWith_escapingStrings]
-                  then
+                  if localKindOfStatement in [tsExecutePython,
+                    tsExecuteWith_escapingStrings] then
                   begin
                     ApplyTextConstants(TXStringList(localSection), True);
                     ApplyTextVariables(TXStringList(localSection), True);
@@ -12501,7 +12515,7 @@ begin
       except
         on E: Exception do
         begin
-          Logdatei.log('Exception in getOutstreamFromSection: ' , LLCritical);
+          Logdatei.log('Exception in getOutstreamFromSection: ', LLCritical);
           Logdatei.log(e.ClassName + ' system message: "' +
             E.Message + '" - giving up', LLCritical);
         end;
@@ -12524,7 +12538,7 @@ begin
               if not (localKindOfStatement in [tsXMLPatch, tsXML2,
                 tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]) then
               begin
-                InfoSyntaxError := 'not implemented for this kind of section'
+                InfoSyntaxError := 'not implemented for this kind of section';
               end
               else
               begin
@@ -12572,7 +12586,7 @@ begin
       except
         on E: Exception do
         begin
-          Logdatei.log('Exception in getReturnlistFromSection: ' , LLCritical);
+          Logdatei.log('Exception in getReturnlistFromSection: ', LLCritical);
           Logdatei.log(e.ClassName + ' system message: "' +
             E.Message + '" - giving up', LLCritical);
         end;
@@ -12743,7 +12757,8 @@ begin
                     list1, tmpbool));
                 end
                 else
-                  tmpbool := True;  // getting the value from the service not possible or default
+                  tmpbool := True;
+                // getting the value from the service not possible or default
                 if tmpbool then
                 begin
                   tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
@@ -12813,7 +12828,8 @@ begin
                               list1, s3, s4, tmpbool));
                           end
                           else
-                            tmpbool := True;  // getting the value from the service not possible or default
+                            tmpbool := True;
+                          // getting the value from the service not possible or default
                           if tmpbool then
                           begin
                             tmpstr :=
@@ -14149,22 +14165,22 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            s1 := ExpandFileName(s1);
+            try
+              list.Clear;
+              list.AddStrings(LoadTOMLFile(s1));
+            except
+              on e: Exception do
               begin
-                syntaxCheck := True;
-                s1 := ExpandFileName(s1);
-                try
-                  list.Clear;
-                  list.AddStrings(LoadTOMLFile(s1));
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in LoadTOMLFile "' +
-                      s1 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
-                  end;
-                end;
+                LogDatei.log('Error in LoadTOMLFile "' +
+                  s1 + '", message: "' + e.Message + '"', LLerror);
+                list.Append('');
               end;
+            end;
+          end;
     end
 
     //function GetTOMLAsStringList(TOMLcontents: String): TStringList;
@@ -14172,21 +14188,21 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              list.Clear;
+              list.AddStrings(GetTOMLAsStringList(s1));
+            except
+              on e: Exception do
               begin
-                syntaxCheck := True;
-                try
-                  list.Clear;
-                  list.AddStrings(GetTOMLAsStringList(s1));
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in GetTOMLAsStringList "' +
-                      s1 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
-                  end;
-                end;
+                LogDatei.log('Error in GetTOMLAsStringList "' +
+                  s1 + '", message: "' + e.Message + '"', LLerror);
+                list.Append('');
               end;
+            end;
+          end;
     end
 
     //function GetTOMLKeys(TOMLcontents: String): TStringList;
@@ -14194,21 +14210,21 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              list.Clear;
+              list.AddStrings(GetTOMLKeys(s1));
+            except
+              on e: Exception do
               begin
-                syntaxCheck := True;
-                try
-                  list.Clear;
-                  list.AddStrings(GetTOMLKeys(s1));
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in GetTOMLKeys "' +
-                      s1 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
-                  end;
-                end;
+                LogDatei.log('Error in GetTOMLKeys "' +
+                  s1 + '", message: "' + e.Message + '"', LLerror);
+                list.Append('');
               end;
+            end;
+          end;
     end
 
     //function GetTOMLTableNames(TOMLcontents: String): TStringList;
@@ -14216,21 +14232,21 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              list.Clear;
+              list.AddStrings(GetTOMLTableNames(s1));
+            except
+              on e: Exception do
               begin
-                syntaxCheck := True;
-                try
-                  list.Clear;
-                  list.AddStrings(GetTOMLTableNames(s1));
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in GetTOMLTableNames "' +
-                      s1 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
-                  end;
-                end;
+                LogDatei.log('Error in GetTOMLTableNames "' +
+                  s1 + '", message: "' + e.Message + '"', LLerror);
+                list.Append('');
               end;
+            end;
+          end;
     end
 
     //function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
@@ -14808,9 +14824,9 @@ begin
         end;
       end;
     {$ELSE WINDOWS}
-    SyntaxCheck := False;
-    InfoSyntaxError := 'Only implemented for Windows';
-    LogDatei.log(s + ' is only implemented for Windows', LLError);
+      SyntaxCheck := False;
+      InfoSyntaxError := 'Only implemented for Windows';
+      LogDatei.log(s + ' is only implemented for Windows', LLError);
     {$ENDIF WINDOWS}
     end
 
@@ -15039,168 +15055,168 @@ var
 
 begin
   try
-  LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
-  syntaxCheck := False;
-  InfoSyntaxError := '';
-  StringResult := '';
-  slist := TStringList.Create;
-  StartIndentLevel := LogDatei.LogSIndentLevel;
+    LogDatei.log_prog('EvaluateString: Parsing: ' + s0 + ' ', LLDebug);
+    syntaxCheck := False;
+    InfoSyntaxError := '';
+    StringResult := '';
+    slist := TStringList.Create;
+    StartIndentLevel := LogDatei.LogSIndentLevel;
 
-  // defined local function ?
-  GetWord(s0, funcname, r, WordDelimiterSet5);
-  FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
-  // string variable?
-  GetWord(s0, s, r, WordDelimiterSet3);
-  VarIndex := VarList.IndexOf(LowerCase(s));
+    // defined local function ?
+    GetWord(s0, funcname, r, WordDelimiterSet5);
+    FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
+    // string variable?
+    GetWord(s0, s, r, WordDelimiterSet3);
+    VarIndex := VarList.IndexOf(LowerCase(s));
 
 
-  // defined local function ?
-  if FuncIndex >= 0 then
-  begin
-    if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
+    // defined local function ?
+    if FuncIndex >= 0 then
     begin
-      // error
-      syntaxCheck := False;
-      LogDatei.log('Syntax Error: defined function: ' + funcname +
-        ' is not from type string.', LLError);
-    end
-    else
-    begin
-      if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
+      if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
       begin
-        StringResult := definedFunctionArray[FuncIndex].Resultstring;
-        syntaxCheck := True;
-        //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+        // error
+        syntaxCheck := False;
+        LogDatei.log('Syntax Error: defined function: ' + funcname +
+          ' is not from type string.', LLError);
       end
       else
       begin
-        // defined function call failed
-        LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
-        syntaxCheck := False;
-      end;
-    end;
-  end
-
-  // local variable
-  else if isVisibleLocalVar(s, FuncIndex) then
-  begin
-    if not (definedFunctionArray[FuncIndex].getLocalVarDatatype(s) = dfpString) then
-    begin
-      // type error
-      InfoSyntaxError :=
-        'Syntax Error: Type mismatch: String expected but the visible local variable: '
-        +
-        s + ' is from type: ' + osdfParameterTypesNames[
-        definedFunctionArray[FuncIndex].getLocalVarDatatype(s)];
-    end
-    else
-    begin
-      StringResult := definedFunctionArray[FuncIndex].getLocalVarValueString(s);
-      syntaxCheck := True;
-    end;
-  end
-
-  // string variable?
-  else if VarIndex >= 0 then
-  begin
-    if ValuesList.Count - 1 < VarIndex then
-    begin
-      InfoSyntaxError := 'The variable: ' + s + ' has no string value';
-    end
-    else
-    begin
-      StringResult := ValuesList[VarIndex];
-      syntaxCheck := True;
-    end;
-  end
-
-  // string constant?
-  else if (length(s0) > 0) and (s0[1] = '"') then
-  begin
-    r := copy(s0, 2, length(s0) - 1);
-    GetWord(r, StringResult, r, ['"']);
-    if skip('"', r, r, InfoSyntaxError) then
-      syntaxCheck := True;
-
-  end
-
-  // string constant delimited by "'" ?
-  else if (length(s0) > 0) and (s0[1] = '''') then
-  begin
-    r := copy(s0, 2, length(s0) - 1);
-    GetWord(r, StringResult, r, ['''']);
-    if skip('''', r, r, InfoSyntaxError) then
-      syntaxCheck := True;
-  end
-
-  // checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks
-  else if LowerCase(s) = LowerCase('EscapeString') then
-  begin
-    if Skip(':', r, s1, InfoSyntaxError) then
-    begin
-      StringResult := s1;
-      r := '';
-      syntaxCheck := True;
-    end;
-  end
-
-  // string functions ?
-
-  else if (LowerCase(s) = LowerCase('LogLevel')) or
-    (LowerCase(s) = LowerCase('getLogLevel')) then
-  begin
-    StringResult := IntToStr(Logdatei.LogLevel);
-    syntaxCheck := True;
-  end
-
-  else if (LowerCase(s) = LowerCase('getLastExitCode')) then
-  begin
-    StringResult := IntToStr(FLastExitCodeOfExe);
-    syntaxCheck := True;
-  end
-
-  else if (LowerCase(s) = LowerCase('getDiffTimeSec')) then
-  begin
-    StringResult := IntToStr(SecondsBetween(markedTime, Time));
-    syntaxCheck := True;
-  end
-
-
-  else if LowerCase(s) = LowerCase('EnvVar') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
+        if definedFunctionArray[FuncIndex].call(r, r, NestLevel) then
         begin
-          StringResult := ValueOfEnvVar(s1);
+          StringResult := definedFunctionArray[FuncIndex].Resultstring;
           syntaxCheck := True;
+          //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+        end
+        else
+        begin
+          // defined function call failed
+          LogDatei.log('Call of defined function: ' + funcname + ' failed', LLError);
+          syntaxCheck := False;
         end;
-  end
-
-  else if LowerCase(s) = LowerCase('GetOS') then
-  begin
-    syntaxCheck := True;
-    OldNumberOfErrors := LogDatei.NumberOfErrors;
-    case GetuibOsType(ErrorInfo) of
-      tovNotKnown:
-      begin
-        LogDatei.log(ErrorInfo, LLError);
-        StringResult := 'OS not identified';
       end;
-      tovWin16: StringResult := 'Windows_16';
-      tovWin95: StringResult := 'Windows_95';
-      tovWinNT: StringResult := 'Windows_NT';
-      tovLinux: StringResult := 'Linux';
-      tovMacOS: StringResult := 'macOS';
-    end;
+    end
 
-    DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-    FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+    // local variable
+    else if isVisibleLocalVar(s, FuncIndex) then
+    begin
+      if not (definedFunctionArray[FuncIndex].getLocalVarDatatype(s) = dfpString) then
+      begin
+        // type error
+        InfoSyntaxError :=
+          'Syntax Error: Type mismatch: String expected but the visible local variable: '
+          +
+          s + ' is from type: ' + osdfParameterTypesNames[
+          definedFunctionArray[FuncIndex].getLocalVarDatatype(s)];
+      end
+      else
+      begin
+        StringResult := definedFunctionArray[FuncIndex].getLocalVarValueString(s);
+        syntaxCheck := True;
+      end;
+    end
 
-  end
+    // string variable?
+    else if VarIndex >= 0 then
+    begin
+      if ValuesList.Count - 1 < VarIndex then
+      begin
+        InfoSyntaxError := 'The variable: ' + s + ' has no string value';
+      end
+      else
+      begin
+        StringResult := ValuesList[VarIndex];
+        syntaxCheck := True;
+      end;
+    end
 
-  else if LowerCase(s) = LowerCase('GetNTVersion') then
-  begin
+    // string constant?
+    else if (length(s0) > 0) and (s0[1] = '"') then
+    begin
+      r := copy(s0, 2, length(s0) - 1);
+      GetWord(r, StringResult, r, ['"']);
+      if skip('"', r, r, InfoSyntaxError) then
+        syntaxCheck := True;
+
+    end
+
+    // string constant delimited by "'" ?
+    else if (length(s0) > 0) and (s0[1] = '''') then
+    begin
+      r := copy(s0, 2, length(s0) - 1);
+      GetWord(r, StringResult, r, ['''']);
+      if skip('''', r, r, InfoSyntaxError) then
+        syntaxCheck := True;
+    end
+
+    // checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks
+    else if LowerCase(s) = LowerCase('EscapeString') then
+    begin
+      if Skip(':', r, s1, InfoSyntaxError) then
+      begin
+        StringResult := s1;
+        r := '';
+        syntaxCheck := True;
+      end;
+    end
+
+    // string functions ?
+
+    else if (LowerCase(s) = LowerCase('LogLevel')) or
+      (LowerCase(s) = LowerCase('getLogLevel')) then
+    begin
+      StringResult := IntToStr(Logdatei.LogLevel);
+      syntaxCheck := True;
+    end
+
+    else if (LowerCase(s) = LowerCase('getLastExitCode')) then
+    begin
+      StringResult := IntToStr(FLastExitCodeOfExe);
+      syntaxCheck := True;
+    end
+
+    else if (LowerCase(s) = LowerCase('getDiffTimeSec')) then
+    begin
+      StringResult := IntToStr(SecondsBetween(markedTime, Time));
+      syntaxCheck := True;
+    end
+
+
+    else if LowerCase(s) = LowerCase('EnvVar') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            StringResult := ValueOfEnvVar(s1);
+            syntaxCheck := True;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('GetOS') then
+    begin
+      syntaxCheck := True;
+      OldNumberOfErrors := LogDatei.NumberOfErrors;
+      case GetuibOsType(ErrorInfo) of
+        tovNotKnown:
+        begin
+          LogDatei.log(ErrorInfo, LLError);
+          StringResult := 'OS not identified';
+        end;
+        tovWin16: StringResult := 'Windows_16';
+        tovWin95: StringResult := 'Windows_95';
+        tovWinNT: StringResult := 'Windows_NT';
+        tovLinux: StringResult := 'Linux';
+        tovMacOS: StringResult := 'macOS';
+      end;
+
+      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+
+    end
+
+    else if LowerCase(s) = LowerCase('GetNTVersion') then
+    begin
    {$IFDEF WINDOWS}
     syntaxCheck := True;
 
@@ -15241,75 +15257,75 @@ begin
       FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
     end;
     {$ELSE}
-    StringResult := 'No Windows';
+      StringResult := 'No Windows';
     {$ENDIF WINDOWS}
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('GetLinuxDistroType') then
-  begin
-    syntaxcheck := True;
-    StringResult := 'no_linux';
+    else if LowerCase(s) = LowerCase('GetLinuxDistroType') then
+    begin
+      syntaxcheck := True;
+      StringResult := 'no_linux';
     {$IFDEF UNIX}
     StringResult := getLinuxDistroType;
     {$ENDIF LINUX}
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('GetSystemtype') then
-  begin
-    syntaxcheck := True;
-    if Is64BitSystem then
-      StringResult := '64 Bit System'
-    else
-      StringResult := 'x86 System';
-  end
-
-  else if LowerCase(s) = LowerCase('GetOSArchitecture') then
-  begin
-    syntaxcheck := True;
-    StringResult := getOSArchitecture;
-  end
-
-
-  else if LowerCase(s) = LowerCase('GetUsercontext') then
-  begin
-    syntaxcheck := True;
-    StringResult := usercontext;
-  end
-
-  else if LowerCase(s) = LowerCase('GetLoggedInUser') then
-  begin
-    syntaxcheck := True;
-    StringResult := getLoggedInUser;
-  end
-
-  else if LowerCase(s) = LowerCase('readVersionFromProfile') then
-  begin
-    syntaxcheck := True;
-    StringResult := readVersionFromProfile;
-  end
-
-
-  else if LowerCase(s) = LowerCase('GetScriptMode') then
-  begin
-    syntaxcheck := True;
-    case scriptMode of
-      tsmMachine: StringResult := 'Machine';
-      tsmLogin: StringResult := 'Login';
-    end;
-  end
-
-
-  else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or
-    (LowerCase(s) = LowerCase('GetMSVersionName')) then
-  begin
-    syntaxCheck := True;
-
-    OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-    if GetUibOsType(errorinfo) <> tovWinNT then
-      StringResult := 'Not an OS of type Windows NT'
-    else
+    else if LowerCase(s) = LowerCase('GetSystemtype') then
     begin
+      syntaxcheck := True;
+      if Is64BitSystem then
+        StringResult := '64 Bit System'
+      else
+        StringResult := 'x86 System';
+    end
+
+    else if LowerCase(s) = LowerCase('GetOSArchitecture') then
+    begin
+      syntaxcheck := True;
+      StringResult := getOSArchitecture;
+    end
+
+
+    else if LowerCase(s) = LowerCase('GetUsercontext') then
+    begin
+      syntaxcheck := True;
+      StringResult := usercontext;
+    end
+
+    else if LowerCase(s) = LowerCase('GetLoggedInUser') then
+    begin
+      syntaxcheck := True;
+      StringResult := getLoggedInUser;
+    end
+
+    else if LowerCase(s) = LowerCase('readVersionFromProfile') then
+    begin
+      syntaxcheck := True;
+      StringResult := readVersionFromProfile;
+    end
+
+
+    else if LowerCase(s) = LowerCase('GetScriptMode') then
+    begin
+      syntaxcheck := True;
+      case scriptMode of
+        tsmMachine: StringResult := 'Machine';
+        tsmLogin: StringResult := 'Login';
+      end;
+    end
+
+
+    else if (LowerCase(s) = LowerCase('GetMSVersionInfo')) or
+      (LowerCase(s) = LowerCase('GetMSVersionName')) then
+    begin
+      syntaxCheck := True;
+
+      OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+      if GetUibOsType(errorinfo) <> tovWinNT then
+        StringResult := 'Not an OS of type Windows NT'
+      else
+      begin
       {$IFDEF WINDOWS}
       OldNumberOfErrors := LogDatei.NumberOfErrors;
 
@@ -15332,112 +15348,149 @@ begin
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
       FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
       {$ENDIF WINDOWS}
-    end;
-  end
+      end;
+    end
 
 
-  else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
-  begin
-    syntaxCheck := True;
-
-    OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-    if GetUibOsType(errorinfo) <> tovMacos then
-      StringResult := 'Not an OS of type macOS'
-    else
+    else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
     begin
+      syntaxCheck := True;
+
+      OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+      if GetUibOsType(errorinfo) <> tovMacos then
+        StringResult := 'Not an OS of type macOS'
+      else
+      begin
       {$IFDEF DARWIN}
       StringResult := GetMacosVersionInfo;
       {$ENDIF DARWIN}
-    end;
-  end
+      end;
+    end
 
-  else if LowerCase(s) = LowerCase('IniVar') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          LogDatei.log('The Function IniVar is deprecated ! use GetProductProperty',
-            LLWarning);
-          StringResult := ProductvarsForPC.Values[s1];
-          syntaxCheck := True;
-        end;
-  end
-
-  else if (LowerCase(s) = LowerCase('GetProductProperty')) or
-    (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
-  begin
-    try
+    else if LowerCase(s) = LowerCase('IniVar') then
+    begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-          if Skip(',', r, r, InfoSyntaxError) then
-            if EvaluateString(r, r, s2, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
-              begin
-                syntaxCheck := True;
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            LogDatei.log('The Function IniVar is deprecated ! use GetProductProperty',
+              LLWarning);
+            StringResult := ProductvarsForPC.Values[s1];
+            syntaxCheck := True;
+          end;
+    end
 
-                // try to get from lookup table
-                if ProductvarsForPC.indexOfName(s1) = -1 then
+    else if (LowerCase(s) = LowerCase('GetProductProperty')) or
+      (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
+    begin
+      try
+        if Skip('(', r, r, InfoSyntaxError) then
+          if EvaluateString(r, r, s1, InfoSyntaxError) then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s2, InfoSyntaxError) then
+                if Skip(')', r, r, InfoSyntaxError) then
                 begin
-                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
-                  if FileExists(tmpstr) then
+                  syntaxCheck := True;
+
+                  // try to get from lookup table
+                  if ProductvarsForPC.indexOfName(s1) = -1 then
                   begin
-                    LogDatei.log(
-                      'Property not existing in GetProductProperty - trying properties.conf',
-                      LLWarning);
-                    if Assigned(list1) then FreeAndNil(list1);
-                    list1 := TXStringlist.Create;
-                    list1.loadFromFile(tmpstr);
-                    tmpbool := False; // default used
-                    StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
-                    FreeAndNil(list1);
-                    if tmpbool then
+                    tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                    if FileExists(tmpstr) then
+                    begin
                       LogDatei.log(
-                        'Property not existing in GetProductProperty in file: '
-                        + tmpstr + '- using default',
+                        'Property not existing in GetProductProperty - trying properties.conf',
                         LLWarning);
+                      if Assigned(list1) then FreeAndNil(list1);
+                      list1 := TXStringlist.Create;
+                      list1.loadFromFile(tmpstr);
+                      tmpbool := False; // default used
+                      StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
+                      FreeAndNil(list1);
+                      if tmpbool then
+                        LogDatei.log(
+                          'Property not existing in GetProductProperty in file: '
+                          + tmpstr + '- using default',
+                          LLWarning);
+                    end
+                    else
+                    begin
+                      LogDatei.log(
+                        'Property not existing in GetProductProperty - using default',
+                        LLWarning);
+                      StringResult := s2;
+                    end;
                   end
                   else
                   begin
-                    LogDatei.log(
-                      'Property not existing in GetProductProperty - using default',
-                      LLWarning);
-                    StringResult := s2;
+                    // get the property value from the looup table
+                    StringResult := ProductvarsForPC.Values[s1];
                   end;
-                end
-                else
-                begin
-                  // get the property value from the looup table
-                  StringResult := ProductvarsForPC.Values[s1];
+
+                  if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
+                    LogDatei.AddToConfidentials(StringResult);
                 end;
-
-                if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
-                  LogDatei.AddToConfidentials(StringResult);
-              end;
-    except
-      on E: Exception do
-      begin
-        Logdatei.log('Exception in GetProductProperty: ' + E.Message +
-          ' - using default', LLError);
-        StringResult := s2;
+      except
+        on E: Exception do
+        begin
+          Logdatei.log('Exception in GetProductProperty: ' + E.Message +
+            ' - using default', LLError);
+          StringResult := s2;
+        end;
       end;
-    end;
-  end
+    end
 
 
-  else if LowerCase(s) = LowerCase('GetHostsName') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if Skip('"', r, r, InfoSyntaxError) then
-      begin
-        GetWord(r, s1, r, ['"']);
-
+    else if LowerCase(s) = LowerCase('GetHostsName') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
         if Skip('"', r, r, InfoSyntaxError) then
+        begin
+          GetWord(r, s1, r, ['"']);
+
+          if Skip('"', r, r, InfoSyntaxError) then
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              //StringResult := GetHostByName(s1);
+
+              HostsImage := TuibPatchHostsFile.Create;
+              Logdatei.LogLevel := LogLevel;
+              Logdatei.LogSIndentLevel := 0;
+
+              OldNumberOfErrors := LogDatei.NumberOfErrors;
+              OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+
+              HostsLocation := DefaultHosts;
+
+              if not FileExists(HostsLocation) then
+              begin
+                LogDatei.log('Error: Hosts ' + HostsLocation + ' not found', LLError);
+              end
+              else
+              begin
+                HostsImage.LoadFromFile(HostsLocation);
+                HostsImage.GetHostname(s1, StringResult);
+              end;
+              HostsImage.Free;
+              HostsImage := nil;
+
+              DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+              DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
+              FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+              FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
+            end;
+        end;
+    end
+
+    else if LowerCase(s) = LowerCase('GetHostsAddr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            //StringResult := GetHostByName(s1);
 
             HostsImage := TuibPatchHostsFile.Create;
             Logdatei.LogLevel := LogLevel;
@@ -15450,12 +15503,12 @@ begin
 
             if not FileExists(HostsLocation) then
             begin
-              LogDatei.log('Error: Hosts ' + HostsLocation + ' not found', LLError);
+              Logdatei.log('Hosts ' + HostsLocation + ' not found', LLerror);
             end
             else
             begin
               HostsImage.LoadFromFile(HostsLocation);
-              HostsImage.GetHostname(s1, StringResult);
+              HostsImage.GetAddress(s1, StringResult);
             end;
             HostsImage.Free;
             HostsImage := nil;
@@ -15465,84 +15518,47 @@ begin
             FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
             FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
           end;
-      end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('GetHostsAddr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
 
-          HostsImage := TuibPatchHostsFile.Create;
-          Logdatei.LogLevel := LogLevel;
-          Logdatei.LogSIndentLevel := 0;
-
-          OldNumberOfErrors := LogDatei.NumberOfErrors;
-          OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-          HostsLocation := DefaultHosts;
-
-          if not FileExists(HostsLocation) then
+    else if LowerCase(s) = LowerCase('GetMyIpByTarget') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
-            Logdatei.log('Hosts ' + HostsLocation + ' not found', LLerror);
-          end
-          else
-          begin
-            HostsImage.LoadFromFile(HostsLocation);
-            HostsImage.GetAddress(s1, StringResult);
-          end;
-          HostsImage.Free;
-          HostsImage := nil;
-
-          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-          DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
-          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-          FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
-        end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('GetMyIpByTarget') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
+            syntaxCheck := True;
      {$IFDEF WIN64}
           StringResult := '';
           Logdatei.log('Error: Not implemented for winst64', LLerror);
      {$ELSE}
-          if isip(s1) then
-            StringResult := getMyIpByTarget(s1)
-          else
-          begin
-            StringResult := '';
-            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
-          end;
-     {$ENDIF}
-        end;
-  end
-
-
-
-  else if LowerCase(s) = LowerCase('GetIpByName') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := GetHostByName(s1);
-          if (stringresult = '') or (not isValidIP4(stringresult)) then
-          begin
-            if GetIPFromHost(s1, s2, s3) then
-              StringResult := s2
+            if isip(s1) then
+              StringResult := getMyIpByTarget(s1)
             else
             begin
+              StringResult := '';
+              Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
+            end;
+     {$ENDIF}
+          end;
+    end
+
+
+
+    else if LowerCase(s) = LowerCase('GetIpByName') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := GetHostByName(s1);
+            if (stringresult = '') or (not isValidIP4(stringresult)) then
+            begin
+              if GetIPFromHost(s1, s2, s3) then
+                StringResult := s2
+              else
+              begin
        {$IFDEF LINUX}
               //StringResult :=  getCommandResult('resolveip -s '+s1);
               StringResult := getCommandResult('getent hosts ' + s1);
@@ -15565,134 +15581,134 @@ begin
               StringResult := '';
               Logdatei.log('Error: ' + s3, LLerror);
        {$ENDIF WINDOWS}
+              end;
             end;
           end;
-        end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('getDefaultNetmaskByIP4adr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          if getDefaultNetmaskByIP4adr(s1) = '' then
+    else if LowerCase(s) = LowerCase('getDefaultNetmaskByIP4adr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
-            StringResult := '';
-            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
-          end
-          else
+            if getDefaultNetmaskByIP4adr(s1) = '' then
+            begin
+              StringResult := '';
+              Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
+            end
+            else
+            begin
+              syntaxCheck := True;
+              StringResult := getDefaultNetmaskByIP4adr(s1);
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('cidrToNetmask') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := getDefaultNetmaskByIP4adr(s1);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('cidrToNetmask') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          if cidrToNetmask(s1) = '' then
-          begin
-            StringResult := '';
-            Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
-          end
-          else
-          begin
-            StringResult := cidrToNetmask(s1);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('netmaskToCidr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          if netmaskToCidr(s1) = '' then
-          begin
-            StringResult := '';
-            Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
-          end
-          else
-          begin
-            StringResult := netmaskToCidr(s1);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('GetIni') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip('[', r, r, InfoSyntaxError) then
-        begin
-          s1 := ExpandFileName(s1);
-          Inifile := TInifile.Create(s1);
-          GetWord(r, s1, r, WordDelimiterSet0);
-          if Skip(']', r, r, InfoSyntaxError) then
-          begin
-            GetWord(r, sx, r, WordDelimiterSet1);
-            if Skip(')', r, r, InfoSyntaxError) then
+            if cidrToNetmask(s1) = '' then
             begin
-              StringResult := Inifile.ReadString(s1, sx, '' (* 'ERROR' *));
-              syntaxCheck := True;
+              StringResult := '';
+              Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
+            end
+            else
+            begin
+              StringResult := cidrToNetmask(s1);
             end;
           end;
-          Inifile.Free;
-          Inifile := nil;
-        end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('GetValueFromInifile') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(',', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, r, s4, InfoSyntaxError) then
-                    if Skip(')', r, r, InfoSyntaxError) then
-                    begin
-                      syntaxCheck := True;
-                      try
-                        s1 := ExpandFileName(s1);
-                        Inifile := TInifile.Create(s1);
+    else if LowerCase(s) = LowerCase('netmaskToCidr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            if netmaskToCidr(s1) = '' then
+            begin
+              StringResult := '';
+              Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
+            end
+            else
+            begin
+              StringResult := netmaskToCidr(s1);
+            end;
+          end;
+    end
 
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                        LogDatei.log
-                        ('    reading the value to the key "' + s3 +
-                          '" in section "' + s2 + '"  from inifile  "' +
-                          s1 + '", default value  "' + s4 + '"',
-                          LevelComplete);
-                        s2enc := UTF8ToWinCP(s2);
-                        s3enc := UTF8ToWinCP(s3);
-                        s4enc := UTF8ToWinCP(s4);
-                        StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
-                        StringResult := WinCPToUTF8(StringResult);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+    else if LowerCase(s) = LowerCase('GetIni') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip('[', r, r, InfoSyntaxError) then
+          begin
+            s1 := ExpandFileName(s1);
+            Inifile := TInifile.Create(s1);
+            GetWord(r, s1, r, WordDelimiterSet0);
+            if Skip(']', r, r, InfoSyntaxError) then
+            begin
+              GetWord(r, sx, r, WordDelimiterSet1);
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                StringResult := Inifile.ReadString(s1, sx, '' (* 'ERROR' *));
+                syntaxCheck := True;
+              end;
+            end;
+            Inifile.Free;
+            Inifile := nil;
+          end;
+    end
 
-                        Inifile.Free;
-                        Inifile := nil;
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.log('Error in creating inifile "' +
-                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                          StringResult := s4;
+    else if LowerCase(s) = LowerCase('GetValueFromInifile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(')', r, r, InfoSyntaxError) then
+                      begin
+                        syntaxCheck := True;
+                        try
+                          s1 := ExpandFileName(s1);
+                          Inifile := TInifile.Create(s1);
+
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log
+                          ('    reading the value to the key "' + s3 +
+                            '" in section "' + s2 + '"  from inifile  "' +
+                            s1 + '", default value  "' + s4 + '"',
+                            LevelComplete);
+                          s2enc := UTF8ToWinCP(s2);
+                          s3enc := UTF8ToWinCP(s3);
+                          s4enc := UTF8ToWinCP(s4);
+                          StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
+                          StringResult := WinCPToUTF8(StringResult);
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+                          Inifile.Free;
+                          Inifile := nil;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Error in creating inifile "' +
+                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                            StringResult := s4;
+                          end;
                         end;
-                      end;
 
-                    end;
-  end
+                      end;
+    end
 
   (*
   else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
@@ -15730,344 +15746,346 @@ begin
   end
   *)
 
-  //function ReadTOMLFile (TOMLfilePath: String): String;
-  else if LowerCase(s) = LowerCase('ReadTOMLFile') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          try
-            s1 := ExpandFileName(s1);
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('    Reading TOML file  "' +  s1 , LevelComplete);
-            StringResult := ReadTOMLFile(s1);
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          except
-            on e: Exception do
-            begin
-              LogDatei.log('Error in ReadTOMLFile "' +
-                s1 + '", message: "' + e.Message + '"', LevelWarnings);
-              StringResult := '';
-            end;
-          end;
-
-        end;
-  end
-
-  //function GetTOMLAsString(TOMLcontents: String): String;
-  else if LowerCase(s) = LowerCase('GetTOMLAsString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          try
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('    GetTOMLAsString  "' +  s1 , LevelComplete);
-            StringResult := GetTOMLAsString(s1);
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          except
-            on e: Exception do
-            begin
-              LogDatei.log('Error in GetTOMLAsString "' +
-                s1 + '", message: "' + e.Message + '"', LevelWarnings);
-              StringResult := '';
-            end;
-          end;
-
-        end;
-  end
-
-   //function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-  else if LowerCase(s) = LowerCase('GetTOMLTableAsString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              try
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('    Getting Table  "' +  s2 + '" as String ', LevelComplete);
-                StringResult := GetTOMLTableAsString(s1, s2);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Error in GetTOMLTableAsString "' +
-                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                  StringResult := '';
-                end;
-              end;
-
-            end;
-  end
-
-  //function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
-  else if LowerCase(s) = LowerCase('GetValueFromTOML') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                 if Skip(')', r, r, InfoSyntaxError) then
-                    begin
-                      syntaxCheck := True;
-                      try
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                        LogDatei.log('    Getting the value of the key "' + s2
-                           + '"  from TOML contents with default value : "' + s3 + '"',
-                          LevelComplete);
-                        StringResult := GetValueFromTOML(s1, s2, s3);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.log('Error in GetValueFromTOML "' +
-                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                          StringResult := s3;
-                        end;
-                      end;
-
-                    end;
-  end
-
-  //function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
-  else if LowerCase(s) = LowerCase('ModifyTOML') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(',', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, r, s4, InfoSyntaxError) then
-                    if Skip(')', r, r, InfoSyntaxError) then
-                    begin
-                      syntaxCheck := True;
-                      try
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                        LogDatei.log('    Modifying TOML contents with command "' + s2
-                           + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
-                          LevelComplete);
-                        StringResult := ModifyTOML(s1, s2, s3, s4);
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.log('Error in ModifyTOML "' +
-                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                          StringResult := '';
-                        end;
-                      end;
-
-                    end;
-  end
-
-  //function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
-  else if LowerCase(s) = LowerCase('DeleteTableFromTOML') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              try
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
-                  LevelComplete);
-                StringResult := DeleteTableFromTOML(s1, s2);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Error in DeleteTableFromTOML "' +
-                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                  StringResult := '';
-                end;
-              end;
-
-            end;
-  end
-
-  //function ConvertTOMLtoJSON(TOMLcontents: String): String;
-  else if LowerCase(s) = LowerCase('ConvertTOMLtoJSON') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              try
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log
-                ('    Coverting TOML contents to JSON String ', LevelComplete);
-                StringResult := ConvertTOMLtoJSON(s1);
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Error in ConvertTOMLtoJSON, message: "' + e.Message
-                                         + '"', LevelWarnings);
-                  StringResult := '';
-                end;
-              end;
-            end;
-  end
-
-  else if LowerCase(s) = LowerCase('Lower') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := lowercase(s1);
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('Upper') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := uppercase(s1);
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('Trim') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := trim(s1);
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('which') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          if not which(s1, StringResult) then
-            StringResult := '';
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('replaceOpsiConstants') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          list1 := TXStringList.Create;
-          tmpstr := s1;
-          for i := 1 to ConstList.Count do
-          begin
-            if list1.replaceInLine(tmpstr, Constlist.Strings[i - 1],
-              ConstValuesList.Strings[i - 1], False, tmpstr1) then
-              tmpstr := tmpstr1;
-          end;
-          StringResult := tmpstr;
-          list1.Free;
-        end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('asConfidential') then
-  begin
-    // backup and set loglevel to warning
-    // get the input
-    // make it confidential
-    // give it to output
-    // restore loglevel
-    if Skip('(', r, r, InfoSyntaxError) then
+    //function ReadTOMLFile (TOMLfilePath: String): String;
+    else if LowerCase(s) = LowerCase('ReadTOMLFile') then
     begin
-      p1 := logdatei.LogLevel;
-      try
-        logdatei.LogLevel := LLWarning;
+      if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            logdatei.AddToConfidentials(s1);
-            StringResult := s1;
+            try
+              s1 := ExpandFileName(s1);
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('    Reading TOML file  "' + s1, LevelComplete);
+              StringResult := ReadTOMLFile(s1);
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Error in ReadTOMLFile "' + s1 +
+                  '", message: "' + e.Message + '"', LevelWarnings);
+                StringResult := '';
+              end;
+            end;
+
           end;
-        end;
-      finally
-        logdatei.LogLevel := p1;
-      end;
-    end;
-  end
+    end
 
-
-  else if LowerCase(s) = LowerCase('calculate') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          if not opsicalc(s1, StringResult) then
+    //function GetTOMLAsString(TOMLcontents: String): String;
+    else if LowerCase(s) = LowerCase('GetTOMLAsString') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
-            LogDatei.log('Error in calculate : could not calculate : ' +
-              s1 + ' ; ' + StringResult, LLError);
-            StringResult := '';
+            syntaxCheck := True;
+            try
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('    GetTOMLAsString  "' + s1, LevelComplete);
+              StringResult := GetTOMLAsString(s1);
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Error in GetTOMLAsString "' + s1 +
+                  '", message: "' + e.Message + '"', LevelWarnings);
+                StringResult := '';
+              end;
+            end;
+
           end;
-        end;
-    if not syntaxCheck then
+    end
+
+    //function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
+    else if LowerCase(s) = LowerCase('GetTOMLTableAsString') then
     begin
-      LogDatei.log('Error in calculate : could not calculate : ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('    Getting Table  "' + s2 + '" as String ',
+                    LevelComplete);
+                  StringResult := GetTOMLTableAsString(s1, s2);
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in GetTOMLTableAsString "' +
+                      s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                    StringResult := '';
+                  end;
+                end;
 
+              end;
+    end
 
-  else if LowerCase(s) = LowerCase('strLength') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := IntToStr(length(s1));
-        end;
-    if not syntaxCheck then
+    //function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
+    else if LowerCase(s) = LowerCase('GetValueFromTOML') then
     begin
-      LogDatei.log('Error in strLength : could not get length of : ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    try
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                      LogDatei.log('    Getting the value of the key "' +
+                        s2 + '"  from TOML contents with default value : "' +
+                        s3 + '"',
+                        LevelComplete);
+                      StringResult := GetValueFromTOML(s1, s2, s3);
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    except
+                      on e: Exception do
+                      begin
+                        LogDatei.log('Error in GetValueFromTOML "' +
+                          s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                        StringResult := s3;
+                      end;
+                    end;
 
-  else if LowerCase(s) = LowerCase('resolveSymlink') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := resolveSymlink(s1);
+                  end;
+    end
+
+    //function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
+    else if LowerCase(s) = LowerCase('ModifyTOML') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(')', r, r, InfoSyntaxError) then
+                      begin
+                        syntaxCheck := True;
+                        try
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('    Modifying TOML contents with command "' +
+                            s2 + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
+                            LevelComplete);
+                          StringResult := ModifyTOML(s1, s2, s3, s4);
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Error in ModifyTOML "' +
+                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                            StringResult := '';
+                          end;
+                        end;
+
+                      end;
+    end
+
+    //function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
+    else if LowerCase(s) = LowerCase('DeleteTableFromTOML') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
+                    LevelComplete);
+                  StringResult := DeleteTableFromTOML(s1, s2);
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Error in DeleteTableFromTOML "' +
+                      s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                    StringResult := '';
+                  end;
+                end;
+
+              end;
+    end
+
+    //function ConvertTOMLtoJSON(TOMLcontents: String): String;
+    else if LowerCase(s) = LowerCase('ConvertTOMLtoJSON') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log
+              ('    Coverting TOML contents to JSON String ', LevelComplete);
+              StringResult := ConvertTOMLtoJSON(s1);
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Error in ConvertTOMLtoJSON, message: "' +
+                  e.Message + '"', LevelWarnings);
+                StringResult := '';
+              end;
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('Lower') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := lowercase(s1);
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('Upper') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := uppercase(s1);
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('Trim') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := trim(s1);
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('which') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            if not which(s1, StringResult) then
+              StringResult := '';
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('replaceOpsiConstants') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            list1 := TXStringList.Create;
+            tmpstr := s1;
+            for i := 1 to ConstList.Count do
+            begin
+              if list1.replaceInLine(tmpstr, Constlist.Strings[i - 1],
+                ConstValuesList.Strings[i - 1], False, tmpstr1) then
+                tmpstr := tmpstr1;
+            end;
+            StringResult := tmpstr;
+            list1.Free;
+          end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('asConfidential') then
+    begin
+      // backup and set loglevel to warning
+      // get the input
+      // make it confidential
+      // give it to output
+      // restore loglevel
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        p1 := logdatei.LogLevel;
+        try
+          logdatei.LogLevel := LLWarning;
+          if EvaluateString(r, r, s1, InfoSyntaxError) then
+          begin
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              logdatei.AddToConfidentials(s1);
+              StringResult := s1;
+            end;
+          end;
+        finally
+          logdatei.LogLevel := p1;
+        end;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('calculate') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            if not opsicalc(s1, StringResult) then
+            begin
+              LogDatei.log('Error in calculate : could not calculate : ' +
+                s1 + ' ; ' + StringResult, LLError);
+              StringResult := '';
+            end;
+          end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in calculate : could not calculate : ' +
+          s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('strLength') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := IntToStr(length(s1));
+          end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in strLength : could not get length of : ' +
+          s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('resolveSymlink') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := resolveSymlink(s1);
           (*
           {$IFDEF WINDOWS}
           StringResult := resolveWinSymlink(s1);
@@ -16076,189 +16094,189 @@ begin
           StringResult := resolveUnixSymlink(s1);
           {$ENDIF UNIX}
           *)
-        end;
-    if not syntaxCheck then
-    begin
-      LogDatei.log('Error in resolveSymlink : could not resolve : : ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('forcePathDelims') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := GetForcedPathDelims(s1);
-        end;
-    if not syntaxCheck then
-    begin
-      LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
-        ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('strLoadTextFile') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
+          end;
+      if not syntaxCheck then
       begin
-        try
-          list1 := TXStringList.Create;
-          s1 := ExpandFileName(s1);
-          if FileExists(s1) then
-            list1.loadfromfile(s1)
-          else
+        LogDatei.log('Error in resolveSymlink : could not resolve : : ' +
+          s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('forcePathDelims') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
-            LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
-              s1, LLError);
-            FNumberOfErrors := FNumberOfErrors + 1;
+            syntaxCheck := True;
+            StringResult := GetForcedPathDelims(s1);
           end;
-          //list1.loadfromfile(s1);
-          if list1.Count > 0 then
-            StringResult := list1.Strings[0]
-          //StringResult := reencode(list1.Strings[0], 'system')
-          else
-            StringResult := '';
-          list1.Free;
-        except
-          on e: Exception do
-          begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in strLoadTextFile on loading file: ' +
-              s1 + ' with msg: ' + e.message, LLError);
-            FNumberOfErrors := FNumberOfErrors + 1;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          end
-        end;
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-        end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in forcePathDelims syntax: ' + s1 +
+          ' ; ' + InfoSyntaxError, LLError);
       end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('strLoadTextFileWithEncoding') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              try
-                list1 := TXStringList.Create;
-                s1 := ExpandFileName(s1);
-                //list1.loadfromfile(s1);
-                if FileExists(s1) then
-                  list1.loadFromFileWithEncoding(s1, s2)
-                else
-                begin
-                  LogDatei.log('Error on loading file (not found): ' + s1, LLError);
-                  FNumberOfErrors := FNumberOfErrors + 1;
-                end;
-                //list1.loadFromFileWithEncoding(s1, s2);
-                if list1.Count > 0 then
-                  StringResult := list1.Strings[0]
-                //StringResult := reencode(list1.Strings[0], s2)
-                else
-                  StringResult := '';
-                list1.Free;
-              except
-                on e: Exception do
-                begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log(
-                    'Exception in strLoadTextFileWithEncoding on loading file: ' +
-                    s1 + ' with msg: ' + e.message, LLError);
-                  FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                end
-              end;
-            end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('strPos') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('strLoadTextFile') then
     begin
-      syntaxCheck := True;
-      StringResult := IntToStr(pos(s2, s1));
-    end;
-    if not syntaxCheck then
-    begin
-      LogDatei.log('Error in strPos : could not get pos of : ' + s2 +
-        'in : ' + s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('strPart') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        n1 := StrToInt(LowerCase(trim(s2)));
-        try
-          n2 := StrToInt(LowerCase(trim(s3)));
-          StringResult := copy(s1, n1, n2);
-          LogDatei.log('strPart from: ' + s1 + ' start: ' +
-            IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' + stringresult + '<',
-            LLDebug2);
-        except
-          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
-        end;
-      except
-        LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
-      end;
-    end;
-    if not syntaxCheck then
-    begin
-      LogDatei.log('Error in strPart : could not get part of : ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('randomIntStr') then
-  begin
-    syntaxCheck := False;
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
-          syntaxCheck := True;
-          //LogDatei.log ('incStr for : ' + s1 , LLDebug2);
           try
-            intresult := StrToInt(s1);
-            //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
-            //Randomize;
-            StringResult := IntToStr(random(intresult));
-            //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
-            //StringResult := IntToStr(intresult);
+            list1 := TXStringList.Create;
+            s1 := ExpandFileName(s1);
+            if FileExists(s1) then
+              list1.loadfromfile(s1)
+            else
+            begin
+              LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
+                s1, LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+            end;
+            //list1.loadfromfile(s1);
+            if list1.Count > 0 then
+              StringResult := list1.Strings[0]
+            //StringResult := reencode(list1.Strings[0], 'system')
+            else
+              StringResult := '';
+            list1.Free;
           except
-            on E: Exception do
-              LogDatei.log('Error in randomIntStr : perhaps could not convert to int : '
-                + s1 + ' Error : ' + E.Message, LLError);
+            on e: Exception do
+            begin
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('Exception in strLoadTextFile on loading file: ' +
+                s1 + ' with msg: ' + e.message, LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            end
+          end;
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
           end;
         end;
-    if not syntaxCheck then
+    end
+
+    else if LowerCase(s) = LowerCase('strLoadTextFileWithEncoding') then
     begin
-      LogDatei.log('Error in randomIntStr : could not make random for : ' +
-        s1 + ' ; ' + InfoSyntaxError, LLError);
-    end;
-  end
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                try
+                  list1 := TXStringList.Create;
+                  s1 := ExpandFileName(s1);
+                  //list1.loadfromfile(s1);
+                  if FileExists(s1) then
+                    list1.loadFromFileWithEncoding(s1, s2)
+                  else
+                  begin
+                    LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                  end;
+                  //list1.loadFromFileWithEncoding(s1, s2);
+                  if list1.Count > 0 then
+                    StringResult := list1.Strings[0]
+                  //StringResult := reencode(list1.Strings[0], s2)
+                  else
+                    StringResult := '';
+                  list1.Free;
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log(
+                      'Exception in strLoadTextFileWithEncoding on loading file: ' +
+                      s1 + ' with msg: ' + e.message, LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+              end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('strPos') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        StringResult := IntToStr(pos(s2, s1));
+      end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in strPos : could not get pos of : ' + s2 +
+          'in : ' + s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('strPart') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          n1 := StrToInt(LowerCase(trim(s2)));
+          try
+            n2 := StrToInt(LowerCase(trim(s3)));
+            StringResult := copy(s1, n1, n2);
+            LogDatei.log('strPart from: ' + s1 + ' start: ' +
+              IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' + stringresult + '<',
+              LLDebug2);
+          except
+            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+          end;
+        except
+          LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
+        end;
+      end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in strPart : could not get part of : ' +
+          s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('randomIntStr') then
+    begin
+      syntaxCheck := False;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            //LogDatei.log ('incStr for : ' + s1 , LLDebug2);
+            try
+              intresult := StrToInt(s1);
+              //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
+              //Randomize;
+              StringResult := IntToStr(random(intresult));
+              //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
+              //StringResult := IntToStr(intresult);
+            except
+              on E: Exception do
+                LogDatei.log('Error in randomIntStr : perhaps could not convert to int : '
+                  + s1 + ' Error : ' + E.Message, LLError);
+            end;
+          end;
+      if not syntaxCheck then
+      begin
+        LogDatei.log('Error in randomIntStr : could not make random for : ' +
+          s1 + ' ; ' + InfoSyntaxError, LLError);
+      end;
+    end
 (*
  else if LowerCase (s) = LowerCase ('decStr') then
  begin
@@ -16288,78 +16306,78 @@ begin
  end
 *)
 
-  else if LowerCase(s) = LowerCase('LangCodeByHex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          s1 := LowerCase(trim(s1));
-          if pos('$', s1) = 1 then
-            s1 := copy(s1, 2, length(s1));
-          if pos('0x', s1) = 1 then
-            s1 := copy(s1, 3, length(s1));
-          try
-            StringResult := getlangcodeByHexvalueStr('0x' + s1);
-          except
-            LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('md5sumFromFile') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          // do not lowercase this - it is a path
-          s1 := trim(s1);
-          StringResult := '';
-          if not FileExistsUTF8(ExpandFileName(s1)) then
+    else if LowerCase(s) = LowerCase('LangCodeByHex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
           begin
-            LogDatei.log('Error: md5sumFromFile: ' + ExpandFileName(s1) +
-              ' is no valid file', LLError);
-          end
-          else
+            syntaxCheck := True;
+            s1 := LowerCase(trim(s1));
+            if pos('$', s1) = 1 then
+              s1 := copy(s1, 2, length(s1));
+            if pos('0x', s1) = 1 then
+              s1 := copy(s1, 3, length(s1));
             try
-              StringResult := Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
+              StringResult := getlangcodeByHexvalueStr('0x' + s1);
             except
-              LogDatei.log('Error: Exception at md5sumFromFile: ' +
-                ExpandFileName(s1), LLError)
+              LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
             end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('shellcall') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := '';
-          try
-            //LogDatei.log ('Executing0 ' + s1, LLInfo);
-            execShellCall(s1, 'sysnative', 0, True);
-            StringResult := IntToStr(FLastExitCodeOfExe);
-          except
-            on e: Exception do
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
           end;
-        end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('powershellcall') then
-  begin
+    else if LowerCase(s) = LowerCase('md5sumFromFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            // do not lowercase this - it is a path
+            s1 := trim(s1);
+            StringResult := '';
+            if not FileExistsUTF8(ExpandFileName(s1)) then
+            begin
+              LogDatei.log('Error: md5sumFromFile: ' + ExpandFileName(s1) +
+                ' is no valid file', LLError);
+            end
+            else
+              try
+                StringResult := Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
+              except
+                LogDatei.log('Error: Exception at md5sumFromFile: ' +
+                  ExpandFileName(s1), LLError)
+              end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('shellcall') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            StringResult := '';
+            try
+              //LogDatei.log ('Executing0 ' + s1, LLInfo);
+              execShellCall(s1, 'sysnative', 0, True);
+              StringResult := IntToStr(FLastExitCodeOfExe);
+            except
+              on e: Exception do
+              begin
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                  LLError);
+                FNumberOfErrors := FNumberOfErrors + 1;
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              end
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('powershellcall') then
+    begin
   {$IFDEF UNIX}
     LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
@@ -16458,187 +16476,187 @@ begin
       end;
     end;
    {$ENDIF WINDOWS}
-  end
+    end
 
 
 
-  else if LowerCase(s) = LowerCase('processCall') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          StringResult := '';
-          list1 := TXStringList.Create;
-          ArbeitsSektion := TWorkSection.Create(0, nil);
-          ArbeitsSektion.Text := s1;
-          ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
-          ArbeitsSektion.Free;
-          StringResult := IntToStr(FLastExitCodeOfExe);
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('boolToString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('processCall') then
     begin
-      StringResult := '';
-      // backup given expr
-      r1 := r;
-      if EvaluateString(r1, r, s1, InfoSyntaxError) then
-      begin
-        try
-          boolresult := strtobool(s1);
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              StringResult := BoolToStr(boolresult, True);
-            except
-              LogDatei.log('Error: boolToString: string expression' +
-                s1 + ' has no boolean value', LLError);
-              StringResult := '';
-            end;
+            StringResult := '';
+            list1 := TXStringList.Create;
+            ArbeitsSektion := TWorkSection.Create(0, nil);
+            ArbeitsSektion.Text := s1;
+            ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
+            ArbeitsSektion.Free;
+            StringResult := IntToStr(FLastExitCodeOfExe);
           end;
-        except
-          LogDatei.log('Error: boolToString: string expression' + s1 +
-            ' has no boolean value', LLDebug2);
-          StringResult := '';
-        end;
-      end;
-      if StringResult = '' then
+    end
+
+    else if LowerCase(s) = LowerCase('boolToString') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
       begin
-        // r1 is not a standard boolean string representation
-        // let us try boolean string expression
-        intresult := 0;
-        if EvaluateBoolean(r1, r, boolresult, intresult, InfoSyntaxError) then
+        StringResult := '';
+        // backup given expr
+        r1 := r;
+        if EvaluateString(r1, r, s1, InfoSyntaxError) then
         begin
-          if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-            try
-              StringResult := BoolToStr(boolresult, True);
-            except
-              LogDatei.log('Error: boolToString: string expression' +
-                r + ' has no boolean value', LLError);
-              StringResult := '';
-            end;
-          end;
-        end
-        else
-        begin
-          // EvaluateBoolean = false
-          LogDatei.log('Error: boolToString: string expression' + r +
-            ' has no boolean value', LLError);
-          StringResult := '';
-        end;
-      end;
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('HexStrToDecStr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          s1 := LowerCase(trim(s1));
-          if pos('$', s1) = 1 then
-            s1 := copy(s1, 2, length(s1));
-          if pos('0x', s1) = 1 then
-            s1 := copy(s1, 3, length(s1));
           try
-            StringResult := IntToStr(StrToInt('$' + s1));
+            boolresult := strtobool(s1);
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                StringResult := BoolToStr(boolresult, True);
+              except
+                LogDatei.log('Error: boolToString: string expression' +
+                  s1 + ' has no boolean value', LLError);
+                StringResult := '';
+              end;
+            end;
           except
-            LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+            LogDatei.log('Error: boolToString: string expression' + s1 +
+              ' has no boolean value', LLDebug2);
+            StringResult := '';
           end;
         end;
-  end
+        if StringResult = '' then
+        begin
+          // r1 is not a standard boolean string representation
+          // let us try boolean string expression
+          intresult := 0;
+          if EvaluateBoolean(r1, r, boolresult, intresult, InfoSyntaxError) then
+          begin
+            if Skip(')', r, r, InfoSyntaxError) then
+            begin
+              syntaxCheck := True;
+              try
+                StringResult := BoolToStr(boolresult, True);
+              except
+                LogDatei.log('Error: boolToString: string expression' +
+                  r + ' has no boolean value', LLError);
+                StringResult := '';
+              end;
+            end;
+          end
+          else
+          begin
+            // EvaluateBoolean = false
+            LogDatei.log('Error: boolToString: string expression' + r +
+              ' has no boolean value', LLError);
+            StringResult := '';
+          end;
+        end;
+      end;
+    end
 
-  else if LowerCase(s) = LowerCase('DecStrToHexStr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+
+    else if LowerCase(s) = LowerCase('HexStrToDecStr') then
     begin
-      syntaxCheck := True;
-      s1 := LowerCase(trim(s1));
-      try
-        n2 := StrToInt(LowerCase(trim(s2)));
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            s1 := LowerCase(trim(s1));
+            if pos('$', s1) = 1 then
+              s1 := copy(s1, 2, length(s1));
+            if pos('0x', s1) = 1 then
+              s1 := copy(s1, 3, length(s1));
+            try
+              StringResult := IntToStr(StrToInt('$' + s1));
+            except
+              LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('DecStrToHexStr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        s1 := LowerCase(trim(s1));
         try
-          n1 := StrToInt(s1);
-          StringResult := IntToHex(n1, n2);
+          n2 := StrToInt(LowerCase(trim(s2)));
+          try
+            n1 := StrToInt(s1);
+            StringResult := IntToHex(n1, n2);
+          except
+            LogDatei.log('Error: ' + s1 + ' has no Integer format', LLerror)
+          end;
         except
-          LogDatei.log('Error: ' + s1 + ' has no Integer format', LLerror)
+          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
-      except
-        LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('encryptStringBlow') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('encryptStringBlow') then
     begin
-      syntaxCheck := True;
-      try
-        StringResult := encryptStringBlow(s1, s2);
-      except
-        LogDatei.log('Error: Exception in encrypt_hex_blow: "' + s1 +
-          '","' + s2 + '"', LLerror)
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := encryptStringBlow(s1, s2);
+        except
+          LogDatei.log('Error: Exception in encrypt_hex_blow: "' + s1 +
+            '","' + s2 + '"', LLerror)
+        end;
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('decryptStringBlow') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('decryptStringBlow') then
     begin
-      syntaxCheck := True;
-      try
-        StringResult := decryptStringBlow(s1, s2);
-      except
-        LogDatei.log('Error: Exception in decrypt_hex_blow: "' + s1 +
-          '","' + s2 + '"', LLerror)
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := decryptStringBlow(s1, s2);
+        except
+          LogDatei.log('Error: Exception in decrypt_hex_blow: "' + s1 +
+            '","' + s2 + '"', LLerror)
+        end;
       end;
-    end;
-  end
+    end
 
 
-  else if LowerCase(s) = LowerCase('base64EncodeStr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          //StringResult := B64Encode(s1);
-          StringResult := EncodeStringBase64(s1);
-        end;
-  end
+    else if LowerCase(s) = LowerCase('base64EncodeStr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            //StringResult := B64Encode(s1);
+            StringResult := EncodeStringBase64(s1);
+          end;
+    end
 
-  else if LowerCase(s) = LowerCase('base64DecodeStr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          //StringResult := B64Decode(s1);
-          StringResult := DecodeStringBase64(s1);
-        end;
-  end
+    else if LowerCase(s) = LowerCase('base64DecodeStr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            //StringResult := B64Decode(s1);
+            StringResult := DecodeStringBase64(s1);
+          end;
+    end
 
-  else if LowerCase(s) = LowerCase('GetShortWinPathName') then
-  begin
+    else if LowerCase(s) = LowerCase('GetShortWinPathName') then
+    begin
   {$IFDEF WINDOWS}
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
@@ -16648,505 +16666,505 @@ begin
           StringResult := GetShortWinPathName(s1);
         end;
   {$ELSE WINDOWS}
-    StringResult := '';
-    LogDatei.log('Error: GetShortWinPathName only impemented for Windows.', LLerror);
+      StringResult := '';
+      LogDatei.log('Error: GetShortWinPathName only impemented for Windows.', LLerror);
   {$ENDIF WINDOWS}
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('Convert2JsonStr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          str2jsonstr(s1, s2);
-          if s2 = 'ok' then
+    else if LowerCase(s) = LowerCase('Convert2JsonStr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            str2jsonstr(s1, s2);
+            if s2 = 'ok' then
+              StringResult := s1
+            else
+            begin
+              StringResult := '';
+              LogDatei.log('Error: ' + s2, LLerror);
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsArrayCountElements') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              StringResult := IntToStr(jsonAsArrayCountElements(s1));
+            except
+              StringResult := '';
+              LogDatei.log('Error: Exception at jsonAsArrayCountElements with: "' +
+                s1 + '"', LLerror);
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsObjectCountElements') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            syntaxCheck := True;
+            try
+              StringResult := IntToStr(jsonAsObjectCountElements(s1));
+            except
+              StringResult := '';
+              LogDatei.log('Error: Exception at jsonAsObjectCountElements with: "' +
+                s1 + '"', LLerror);
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsArrayGetElementByIndex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          if jsonAsArrayGetElementByIndex(s1, StrToInt(s2), s3) then
+            StringResult := s3
+          else
+            LogDatei.log('Error at jsonAsArrayGetElementByIndex with: "' +
+              s1 + '","' + s2 + '"', LLerror);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsArrayGetElementByIndex with: "' +
+            s1 + '","' + s2 + '"', LLerror);
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsArrayDeleteObjectByIndex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          if jsonAsArrayDeleteObjectByIndex(s1, StrToInt(s2)) then
             StringResult := s1
           else
-          begin
-            StringResult := '';
-            LogDatei.log('Error: ' + s2, LLerror);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsArrayCountElements') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          try
-            StringResult := IntToStr(jsonAsArrayCountElements(s1));
-          except
-            StringResult := '';
-            LogDatei.log('Error: Exception at jsonAsArrayCountElements with: "' +
-              s1 + '"', LLerror);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsObjectCountElements') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          try
-            StringResult := IntToStr(jsonAsObjectCountElements(s1));
-          except
-            StringResult := '';
-            LogDatei.log('Error: Exception at jsonAsObjectCountElements with: "' +
-              s1 + '"', LLerror);
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsArrayGetElementByIndex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        if jsonAsArrayGetElementByIndex(s1, StrToInt(s2), s3) then
-          StringResult := s3
-        else
-          LogDatei.log('Error at jsonAsArrayGetElementByIndex with: "' +
-            s1 + '","' + s2 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsArrayGetElementByIndex with: "' +
-          s1 + '","' + s2 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsArrayDeleteObjectByIndex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        if jsonAsArrayDeleteObjectByIndex(s1, StrToInt(s2)) then
-          StringResult := s1
-        else
-          LogDatei.log('Error at jsonAsArrayDeleteObjectByIndex with: "' +
-            s1 + '","' + s2 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsArrayDeleteObjectByIndex with: "' +
-          s1 + '","' + s2 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsObjectDeleteByKey') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        if jsonAsObjectDeleteByKey(s1, s2) then
-          StringResult := s1
-        else
-          LogDatei.log('Error at jsonAsObjectDeleteByKey with: "' +
-            s1 + '","' + s2 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsObjectDeleteByKey with: "' +
-          s1 + '","' + s2 + '"', LLerror);
-      end;
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('jsonAsObjectGetValueByKey') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        s3 := '';
-        if jsonAsObjectGetValueByKey(s1, s2, s3) then
-          StringResult := s3
-        else
-          LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' +
-            s1 + '","' + s2 + '"', LLInfo);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' +
-          s1 + '","' + s2 + '"', LLerror);
-      end;
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('jsonAsArrayPutObjectByIndex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        if jsonAsArrayPutObjectByIndex(s3, s1, StrToInt(s2)) then
-          StringResult := s1
-        else
-          LogDatei.log('Error at jsonAsArrayPutObjectByIndex with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsArrayPutObjectByIndex with: "' +
-          s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsObjectSetValueByKey') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        s4 := '';
-        if jsonAsObjectSetValueByKey(s1, s2, s3, s4) then
-          StringResult := s4
-        else
-          LogDatei.log('Error at jsonAsObjectSetValueByKey with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsObjectSetValueByKey with: "' +
-          s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonAsObjectSetStringtypeValueByKey') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        s4 := '';
-        if jsonAsObjectSetStringtypeValueByKey(s1, s2, s3, s4) then
-          StringResult := s4
-        else
-          LogDatei.log('Error at jsonAsObjectSetStringtypeValueByKey with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      except
-        on e: Exception do
-        begin
+            LogDatei.log('Error at jsonAsArrayDeleteObjectByIndex with: "' +
+              s1 + '","' + s2 + '"', LLerror);
+        except
           StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
-            + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-          LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
-            e.message, LLerror);
+          LogDatei.log('Error: Exception at jsonAsArrayDeleteObjectByIndex with: "' +
+            s1 + '","' + s2 + '"', LLerror);
         end;
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('jsonAsObjectAddKeyAndValue') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('jsonAsObjectDeleteByKey') then
     begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        s4 := '';
-        if jsonAsObjectAddKeyAndValue(s1, s2, s3, s4) then
-          StringResult := s4
-        else
-          LogDatei.log('Error at jsonAsObjectAddKeyAndValue with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at jsonAsObjectAddKeyAndValue with: "' +
-          s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('jsonStringListToJsonArray') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-      syntaxcheck := True;
-      stringresult := '';
-      list1 := TXStringList.Create;
-      slist.Clear;
-
-      if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-        not Skip(')', r, r, InfoSyntaxError) then
-        syntaxCheck := False
-      else
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
+        syntaxCheck := True;
         try
-          slist.Text := list1.Text;
-          if not stringListToJsonArray(slist, stringresult) then
+          StringResult := '';
+          if jsonAsObjectDeleteByKey(s1, s2) then
+            StringResult := s1
+          else
+            LogDatei.log('Error at jsonAsObjectDeleteByKey with: "' +
+              s1 + '","' + s2 + '"', LLerror);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsObjectDeleteByKey with: "' +
+            s1 + '","' + s2 + '"', LLerror);
+        end;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('jsonAsObjectGetValueByKey') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          s3 := '';
+          if jsonAsObjectGetValueByKey(s1, s2, s3) then
+            StringResult := s3
+          else
+            LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' +
+              s1 + '","' + s2 + '"', LLInfo);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' +
+            s1 + '","' + s2 + '"', LLerror);
+        end;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('jsonAsArrayPutObjectByIndex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          if jsonAsArrayPutObjectByIndex(s3, s1, StrToInt(s2)) then
+            StringResult := s1
+          else
+            LogDatei.log('Error at jsonAsArrayPutObjectByIndex with: "' +
+              s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsArrayPutObjectByIndex with: "' +
+            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsObjectSetValueByKey') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          s4 := '';
+          if jsonAsObjectSetValueByKey(s1, s2, s3, s4) then
+            StringResult := s4
+          else
+            LogDatei.log('Error at jsonAsObjectSetValueByKey with: "' +
+              s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsObjectSetValueByKey with: "' +
+            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsObjectSetStringtypeValueByKey') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          s4 := '';
+          if jsonAsObjectSetStringtypeValueByKey(s1, s2, s3, s4) then
+            StringResult := s4
+          else
+            LogDatei.log('Error at jsonAsObjectSetStringtypeValueByKey with: "' +
+              s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        except
+          on e: Exception do
           begin
-            LogDatei.log('Error at jsonStringListToJsonArray ', LLerror);
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
+              + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+            LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
+              e.message, LLerror);
+          end;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonAsObjectAddKeyAndValue') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s3, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        try
+          StringResult := '';
+          s4 := '';
+          if jsonAsObjectAddKeyAndValue(s1, s2, s3, s4) then
+            StringResult := s4
+          else
+            LogDatei.log('Error at jsonAsObjectAddKeyAndValue with: "' +
+              s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        except
+          StringResult := '';
+          LogDatei.log('Error: Exception at jsonAsObjectAddKeyAndValue with: "' +
+            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('jsonStringListToJsonArray') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        syntaxcheck := True;
+        stringresult := '';
+        list1 := TXStringList.Create;
+        slist.Clear;
+
+        if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+          not Skip(')', r, r, InfoSyntaxError) then
+          syntaxCheck := False
+        else
+        begin
+          try
+            slist.Text := list1.Text;
+            if not stringListToJsonArray(slist, stringresult) then
+            begin
+              LogDatei.log('Error at jsonStringListToJsonArray ', LLerror);
+              stringresult := '';
+            end;
+          except
+            LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
             stringresult := '';
           end;
-        except
-          LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
-          stringresult := '';
         end;
+        list1.Free;
+        list1 := nil;
+
       end;
-      list1.Free;
-      list1 := nil;
+    end
 
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('createUrl') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('createUrl') then
     begin
-      syntaxcheck := True;
-      stringresult := '';
-      list1 := TXStringList.Create;
-      if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-        not Skip(')', r, r, InfoSyntaxError) then
-        syntaxCheck := False
-      else
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        syntaxcheck := True;
+        stringresult := '';
+        list1 := TXStringList.Create;
+        if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+          not Skip(')', r, r, InfoSyntaxError) then
+          syntaxCheck := False
+        else
+        begin
+          syntaxCheck := True;
+          StringResult := createUrl(list1);
+        end;
+        list1.Free;
+        list1 := nil;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('getStringFromListAtIndex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and produceStringList(
+        script, r, r, list1, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s1, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        StringResult := createUrl(list1);
-      end;
-      list1.Free;
-      list1 := nil;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getStringFromListAtIndex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and produceStringList(
-      script, r, r, list1, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s1, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      try
-        StringResult := '';
-        StringResult := list1.Strings[StrToInt(s1)];
-      except
-        StringResult := '';
-        LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
-          s1 + '"', LLerror);
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('RandomStr') then
-  begin
-    StringResult := randomstr(True);
-    syntaxCheck := True;
-  end
-
-  //randomstrWithParameters
-  else if LowerCase(s) = LowerCase('randomstrWithParameters') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(',', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, r, s4, InfoSyntaxError) then
-                    if Skip(',', r, r, InfoSyntaxError) then
-                      if EvaluateString(r, r, s5, InfoSyntaxError) then
-                        if Skip(')', r, r, InfoSyntaxError) then
-                        begin
-                          syntaxCheck := True;
-                          n1 := StrToInt(s1);
-                          n2 := StrToInt(s2);
-                          n3 := StrToInt(s3);
-                          n4 := StrToInt(s4);
-                          n5 := StrToInt(s5);
-                          StringResult := randomstrWithParameters(n1, n2, n3, n4, n5);
-                        end;
-  end
-
-  else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then
-  begin
-    StringResult := createNewOpsiHostKey;
-    syntaxCheck := True;
-  end
-
-  else if LowerCase(s) = LowerCase('timeStampAsFloatStr') then
-  begin
-    DecimalSeparator := '.';
-    StringResult := floattostrF(now, ffFixed, 15, 3);
-    syntaxCheck := True;
-  end
-
-
-  (* comparison Expressionstrs *)
-  else if LowerCase(s) = LowerCase('CompareStrings') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      StringResult := IntToStr(getCompareSignStrings(s1, s2));
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('CompareNumbers') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-    begin
-      syntaxCheck := True;
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-      try
-        n1 := StrToInt(s1);
         try
-          n2 := StrToInt(s2);
-          StringResult := IntToStr(getCompareSign(n1, n2));
+          StringResult := '';
+          StringResult := list1.Strings[StrToInt(s1)];
         except
-          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLError);
+          StringResult := '';
+          LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
+            s1 + '"', LLerror);
         end;
-      except
-        LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
       end;
+    end
 
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getIP4NetworkByAdrAndMask') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('RandomStr') then
     begin
-      if getIP4NetworkByAdrAndMask(s1, s2) = '' then
-      begin
-        StringResult := '';
-        Logdatei.log('Error: Invalid inputs. ' + s1 + ' or ' + s2 +
-          ' is invalid', LLerror);
-      end
-      else
+      StringResult := randomstr(True);
+      syntaxCheck := True;
+    end
+
+    //randomstrWithParameters
+    else if LowerCase(s) = LowerCase('randomstrWithParameters') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(',', r, r, InfoSyntaxError) then
+                        if EvaluateString(r, r, s5, InfoSyntaxError) then
+                          if Skip(')', r, r, InfoSyntaxError) then
+                          begin
+                            syntaxCheck := True;
+                            n1 := StrToInt(s1);
+                            n2 := StrToInt(s2);
+                            n3 := StrToInt(s3);
+                            n4 := StrToInt(s4);
+                            n5 := StrToInt(s5);
+                            StringResult := randomstrWithParameters(n1, n2, n3, n4, n5);
+                          end;
+    end
+
+    else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then
+    begin
+      StringResult := createNewOpsiHostKey;
+      syntaxCheck := True;
+    end
+
+    else if LowerCase(s) = LowerCase('timeStampAsFloatStr') then
+    begin
+      DecimalSeparator := '.';
+      StringResult := floattostrF(now, ffFixed, 15, 3);
+      syntaxCheck := True;
+    end
+
+
+    (* comparison Expressionstrs *)
+    else if LowerCase(s) = LowerCase('CompareStrings') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        StringResult := getIP4NetworkByAdrAndMask(s1, s2);
+        StringResult := IntToStr(getCompareSignStrings(s1, s2));
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('CompareDotSeparatedNumbers') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('CompareNumbers') then
     begin
-      syntaxCheck := True;
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-      StringResult := '0';
-      if getDecimalCompareSign(s1, s2, intresult, errorinfo, False) then
-        StringResult := IntToStr(intresult)
-      else
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
-        LogDatei.log('Error: ' + errorinfo, LLError);
-        LogDatei.log('Error: CompareDotSeparatedNumbers: using default result = 0 ',
-          LLError);
+        syntaxCheck := True;
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+        try
+          n1 := StrToInt(s1);
+          try
+            n2 := StrToInt(s2);
+            StringResult := IntToStr(getCompareSign(n1, n2));
+          except
+            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLError);
+          end;
+        except
+          LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+        end;
+
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
       end;
+    end
 
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('CompareDotSeparatedStrings') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
-      InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-      EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('getIP4NetworkByAdrAndMask') then
     begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        if getIP4NetworkByAdrAndMask(s1, s2) = '' then
+        begin
+          StringResult := '';
+          Logdatei.log('Error: Invalid inputs. ' + s1 + ' or ' + s2 +
+            ' is invalid', LLerror);
+        end
+        else
+        begin
+          syntaxCheck := True;
+          StringResult := getIP4NetworkByAdrAndMask(s1, s2);
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('CompareDotSeparatedNumbers') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+        StringResult := '0';
+        if getDecimalCompareSign(s1, s2, intresult, errorinfo, False) then
+          StringResult := IntToStr(intresult)
+        else
+        begin
+          LogDatei.log('Error: ' + errorinfo, LLError);
+          LogDatei.log('Error: CompareDotSeparatedNumbers: using default result = 0 ',
+            LLError);
+        end;
+
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('CompareDotSeparatedStrings') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) and EvaluateString(r, r, s1,
+        InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
+        EvaluateString(r, r, s2, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
+      begin
+        syntaxCheck := True;
+
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+        if getDecimalCompareSign(s1, s2, intresult, errorinfo, True) then
+          StringResult := IntToStr(intresult)
+        else
+          LogDatei.log('Error: ' + errorinfo, LLError);
+
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('ParamStr') then
+    begin
+      StringResult := ExtraParameter;
       syntaxCheck := True;
+    end
 
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
+    else if LowerCase(s) = LowerCase('SubstringBefore') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
 
-      if getDecimalCompareSign(s1, s2, intresult, errorinfo, True) then
-        StringResult := IntToStr(intresult)
-      else
-        LogDatei.log('Error: ' + errorinfo, LLError);
-
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('ParamStr') then
-  begin
-    StringResult := ExtraParameter;
-    syntaxCheck := True;
-  end
-
-  else if LowerCase(s) = LowerCase('SubstringBefore') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-
-              StringResult := '';
-              if (length(s1) >= length(s2)) and
-                (copy(s1, length(s1) - length(s2) + 1, length(s2)) = s2) then
-                StringResult := copy(s1, 1, length(s1) - length(s2));
-            end;
-  end
+                StringResult := '';
+                if (length(s1) >= length(s2)) and
+                  (copy(s1, length(s1) - length(s2) + 1, length(s2)) = s2) then
+                  StringResult := copy(s1, 1, length(s1) - length(s2));
+              end;
+    end
 
 
-  else if LowerCase(s) = LowerCase('unquote') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              StringResult := opsiUnquotestr(s1, s2);
+    else if LowerCase(s) = LowerCase('unquote') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                StringResult := opsiUnquotestr(s1, s2);
          (*
          if  (length(s1) >= 1) and (length(s2) >= 1) then
          begin
@@ -17161,19 +17179,19 @@ begin
            if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
          end;
          *)
-            end;
-  end
+              end;
+    end
 
-  else if LowerCase(s) = LowerCase('unquote2') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              StringResult := opsiUnquotestr2(s1, s2);
+    else if LowerCase(s) = LowerCase('unquote2') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                StringResult := opsiUnquotestr2(s1, s2);
          (*
          if  (length(s1) >= 1) and (length(s2) >= 1) then
          begin
@@ -17188,19 +17206,19 @@ begin
            if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
          end;
          *)
-            end;
-  end
+              end;
+    end
 
-  else if LowerCase(s) = LowerCase('stringinput') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(')', r, r, InfoSyntaxError) then
-            begin
-              syntaxCheck := True;
-              boolresult := StrToBool(s2);
+    else if LowerCase(s) = LowerCase('stringinput') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                boolresult := StrToBool(s2);
          {$IFDEF GUI}
               try
                 Finputstring := TFinputstring.Create(nil);
@@ -17222,169 +17240,149 @@ begin
                 FreeAndNil(Finputstring);
               end;
          {$ELSE GUI}
-              cmdLineInputDialog(StringResult, s1, '', boolresult);
+                cmdLineInputDialog(StringResult, s1, '', boolresult);
          {$ENDIF GUI}
-            end;
-  end
+              end;
+    end
 
 
 
-  else if LowerCase(s) = LowerCase('stringreplace') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(')', r, r, InfoSyntaxError) then
-                begin
-                  syntaxCheck := True;
-                  StringResult := StringReplace1(s1, s2, s3);
-                  if (StringResult = NULL_STRING_VALUE) then
-                    StringResult := s1;
-                end;
-  end
-
-  else if LowerCase(s) = LowerCase('stringReplaceRegex') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s3, InfoSyntaxError) then
-                if Skip(')', r, r, InfoSyntaxError) then
-                begin
-                  syntaxCheck := True;
-                  StringResult := stringReplaceRegex(s1, s2, s3);
-                end;
-  end
-
-  else if LowerCase(s) = LowerCase('reencodestr') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, s4, InfoSyntaxError) then
-                if Skip(')', r, r, InfoSyntaxError) then
-                begin
-                  syntaxCheck := True;
-                  // s3 is the used encoding
-                  StringResult := reencode(s1, s2, s3, s4);
-                end;
-  end
-
-  else if LowerCase(s) = LowerCase('StringSplit')
-  // deprecated, please replace by splitting the string by splitstring and
-  // returning a specific part by takestring
-  then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              if EvaluateString(r, r, sx, InfoSyntaxError) then
-                if Skip(')', r, r, InfoSyntaxError) then
-                begin
-                  syntaxCheck := True;
-
-                  itemlist.Free;
-                  itemlist := TXStringList.Create;
-                  stringsplit(s1, s2, itemlist);
-
-                  try
-                    ListIndex := StrToInt(sx);
-                  except
-                    syntaxCheck := False;
-                    InfoSyntaxError := sx + ' keine ganze Zahl';
-                    ListIndex := 0;
-                  end;
-
-                  if ListIndex >= itemList.Count then
-                  begin
-                    StringResult := '';
-                    OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-                    LogDatei.log('Warning: String "' + s1 +
-                      '" using delimiter "' + s2 +
-                      '" was not splitted in (' + IntToStr(ListIndex) +
-                      ' + 1)  parts', LLWarning);
-                    DiffNumberOfWarnings :=
-                      LogDatei.NumberOfWarnings - OldNumberOfWarnings;
-                    FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-                  end
-                  else
-                    StringResult := itemlist[ListIndex];
-                end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('takeString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('stringreplace') then
     begin
-      syntaxcheck := True;
-      stringresult := '';
-      try
-        GetWord(r, s1, r, [',']);
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    StringResult := StringReplace1(s1, s2, s3);
+                    if (StringResult = NULL_STRING_VALUE) then
+                      StringResult := s1;
+                  end;
+    end
 
-        a1 := StrToInt(s1);
+    else if LowerCase(s) = LowerCase('stringReplaceRegex') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    StringResult := stringReplaceRegex(s1, s2, s3);
+                  end;
+    end
 
-        syntaxCheck := Skip(',', r, r, InfoSyntaxError);
-      except
-        try
-          sx := s1;
-          if EvaluateString(s1, s1, s2, InfoSyntaxError) then
-          begin
-            a1 := StrToInt(s2);
-            syntaxCheck := Skip(',', r, r, InfoSyntaxError);
-          end
-          else
-            a1 := StrToInt(sx);
-        except
-          syntaxcheck := False;
-          InfoSyntaxError := ' No valid index for list ';
-        end;
-      end;
+    else if LowerCase(s) = LowerCase('reencodestr') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s4, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+                    // s3 is the used encoding
+                    StringResult := reencode(s1, s2, s3, s4);
+                  end;
+    end
 
-      if syntaxCheck then
+    else if LowerCase(s) = LowerCase('StringSplit')
+    // deprecated, please replace by splitting the string by splitstring and
+    // returning a specific part by takestring
+    then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, sx, InfoSyntaxError) then
+                  if Skip(')', r, r, InfoSyntaxError) then
+                  begin
+                    syntaxCheck := True;
+
+                    itemlist.Free;
+                    itemlist := TXStringList.Create;
+                    stringsplit(s1, s2, itemlist);
+
+                    try
+                      ListIndex := StrToInt(sx);
+                    except
+                      syntaxCheck := False;
+                      InfoSyntaxError := sx + ' keine ganze Zahl';
+                      ListIndex := 0;
+                    end;
+
+                    if ListIndex >= itemList.Count then
+                    begin
+                      StringResult := '';
+                      OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+                      LogDatei.log('Warning: String "' + s1 +
+                        '" using delimiter "' + s2 +
+                        '" was not splitted in (' + IntToStr(ListIndex) +
+                        ' + 1)  parts', LLWarning);
+                      DiffNumberOfWarnings :=
+                        LogDatei.NumberOfWarnings - OldNumberOfWarnings;
+                      FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+                    end
+                    else
+                      StringResult := itemlist[ListIndex];
+                  end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('takeString') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
       begin
-        list1 := TXStringList.Create;
-        r1 := r;
-        if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-          not Skip(')', r, r, InfoSyntaxError) then
-          syntaxCheck := False
-        else
-        begin
-          if list1.Count = 0 then // list is empty
-          begin
-            Logdatei.log('Stringlist ' + r1 +
-              ' is empty in takeString function ! Use count() before takestring() to avoid this problem.',
-              LLWarning);
-            if FatalOnRuntimeError then
+        syntaxcheck := True;
+        stringresult := '';
+        try
+          GetWord(r, s1, r, [',']);
+
+          a1 := StrToInt(s1);
+
+          syntaxCheck := Skip(',', r, r, InfoSyntaxError);
+        except
+          try
+            sx := s1;
+            if EvaluateString(s1, s1, s2, InfoSyntaxError) then
             begin
-              Logdatei.log('Set to FatalError because FatalOnRuntimeError is set',
-                LLCritical);
-              FExtremeErrorLevel := LevelFatal;
-              LogDatei.ActionProgress := 'Runtime Error';
-            end;
-          end
+              a1 := StrToInt(s2);
+              syntaxCheck := Skip(',', r, r, InfoSyntaxError);
+            end
+            else
+              a1 := StrToInt(sx);
+          except
+            syntaxcheck := False;
+            InfoSyntaxError := ' No valid index for list ';
+          end;
+        end;
+
+        if syntaxCheck then
+        begin
+          list1 := TXStringList.Create;
+          r1 := r;
+          if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+            not Skip(')', r, r, InfoSyntaxError) then
+            syntaxCheck := False
           else
           begin
-            if (a1 < 0) then
-              a1 := list1.Count + a1; //we count downward
-
-            if (a1 < 0) or (a1 > list1.Count - 1) then
+            if list1.Count = 0 then // list is empty
             begin
-              Logdatei.log('Stringlist list ' + r1 + ' has ' +
-                IntToStr(list1.Count) + ' elements. And the effective list index ' +
-                IntToStr(a1) +
-                ' is out of bounds in takeString function ! Use count() before takestring() to avoid this problem.',
+              Logdatei.log('Stringlist ' + r1 +
+                ' is empty in takeString function ! Use count() before takestring() to avoid this problem.',
                 LLWarning);
               if FatalOnRuntimeError then
               begin
@@ -17395,49 +17393,42 @@ begin
               end;
             end
             else
-              stringresult := list1[a1];
+            begin
+              if (a1 < 0) then
+                a1 := list1.Count + a1; //we count downward
+
+              if (a1 < 0) or (a1 > list1.Count - 1) then
+              begin
+                Logdatei.log('Stringlist list ' + r1 + ' has ' +
+                  IntToStr(list1.Count) + ' elements. And the effective list index ' +
+                  IntToStr(a1) +
+                  ' is out of bounds in takeString function ! Use count() before takestring() to avoid this problem.',
+                  LLWarning);
+                if FatalOnRuntimeError then
+                begin
+                  Logdatei.log('Set to FatalError because FatalOnRuntimeError is set',
+                    LLCritical);
+                  FExtremeErrorLevel := LevelFatal;
+                  LogDatei.ActionProgress := 'Runtime Error';
+                end;
+              end
+              else
+                stringresult := list1[a1];
+            end;
           end;
+
+          list1.Free;
+          list1 := nil;
         end;
-
-        list1.Free;
-        list1 := nil;
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('count') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('count') then
     begin
-      syntaxcheck := True;
-      stringresult := '';
-      list1 := TXStringList.Create;
-
-      if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-        not Skip(')', r, r, InfoSyntaxError) then
-        syntaxCheck := False
-      else
+      if Skip('(', r, r, InfoSyntaxError) then
       begin
-        stringresult := IntToStr(list1.Count);
-        list1.Free;
-        list1 := nil;
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getValue') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-      syntaxcheck := True;
-      stringresult := '';
-
-      if not evaluateString(r, r, s1, InfoSyntaxError) or not
-        Skip(',', r, r, InfoSyntaxError) then
-        syntaxCheck := False;
-
-      if syntaxCheck then
-      begin
+        syntaxcheck := True;
+        stringresult := '';
         list1 := TXStringList.Create;
 
         if not produceStringList(script, r, r, list1, InfoSyntaxError) or
@@ -17445,8 +17436,35 @@ begin
           syntaxCheck := False
         else
         begin
-          stringresult := list1.getStringValue(s1);//list1.values[s1];
-          // if key does not exist we get NULL_STRING_VALUE
+          stringresult := IntToStr(list1.Count);
+          list1.Free;
+          list1 := nil;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('getValue') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        syntaxcheck := True;
+        stringresult := '';
+
+        if not evaluateString(r, r, s1, InfoSyntaxError) or not
+          Skip(',', r, r, InfoSyntaxError) then
+          syntaxCheck := False;
+
+        if syntaxCheck then
+        begin
+          list1 := TXStringList.Create;
+
+          if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+            not Skip(')', r, r, InfoSyntaxError) then
+            syntaxCheck := False
+          else
+          begin
+            stringresult := list1.getStringValue(s1);//list1.values[s1];
+            // if key does not exist we get NULL_STRING_VALUE
              (*
              if stringresult = NULL_STRING_VALUE then
              begin
@@ -17459,39 +17477,39 @@ begin
                end;
              end;
              *)
+          end;
+
+          list1.Free;
+          list1 := nil;
         end;
-
-        list1.Free;
-        list1 := nil;
       end;
-    end;
-  end
+    end
 
-  else if LowerCase(s) = LowerCase('getValueBySeparator') then
-  begin
-    syntaxCheck := False;
-    stringresult := '';
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              syntaxCheck := True;
-
-
-    if syntaxCheck then
+    else if LowerCase(s) = LowerCase('getValueBySeparator') then
     begin
-      list1 := TXStringList.Create;
+      syntaxCheck := False;
+      stringresult := '';
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                syntaxCheck := True;
 
-      if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-        not Skip(')', r, r, InfoSyntaxError) then
-        syntaxCheck := False
-      else
+
+      if syntaxCheck then
       begin
-        // use the first char of the second argument as separator char
-        list1.NameValueSeparator := trim(s2)[1];
-        stringresult := list1.getStringValue(s1);//list1.values[s1];
-        // if key does not exist we get NULL_STRING_VALUE
+        list1 := TXStringList.Create;
+
+        if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+          not Skip(')', r, r, InfoSyntaxError) then
+          syntaxCheck := False
+        else
+        begin
+          // use the first char of the second argument as separator char
+          list1.NameValueSeparator := trim(s2)[1];
+          stringresult := list1.getStringValue(s1);//list1.values[s1];
+          // if key does not exist we get NULL_STRING_VALUE
            (*
            if stringresult = NULL_STRING_VALUE then
              begin
@@ -17504,23 +17522,93 @@ begin
                end;
              end;
            *)
+        end;
+
+        list1.Free;
+        list1 := nil;
       end;
+    end
 
-      list1.Free;
-      list1 := nil;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getValueFromFile') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
+    else if LowerCase(s) = LowerCase('getValueFromFile') then
     begin
-      syntaxcheck := True;
-      stringresult := '';
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        syntaxcheck := True;
+        stringresult := '';
 
-      if not evaluateString(r, r, s1, InfoSyntaxError) or not
-        Skip(',', r, r, InfoSyntaxError) then
-        syntaxCheck := False;
+        if not evaluateString(r, r, s1, InfoSyntaxError) or not
+          Skip(',', r, r, InfoSyntaxError) then
+          syntaxCheck := False;
+
+        if syntaxCheck then
+        begin
+          list1 := TXStringList.Create;
+          if EvaluateString(r, r, s3, InfoSyntaxError) then
+          begin
+            try
+              s3 := ExpandFileName(s3);
+              if FileExists(s3) then
+                list1.loadfromfile(s3)
+              else
+              begin
+                LogDatei.log('Error in getValueFromFile on loading file (not found): ' +
+                  s3, LLError);
+                FNumberOfErrors := FNumberOfErrors + 1;
+              end;
+              //list1.loadfromfile(s3);
+              //list1.Text := reencode(list1.Text, 'system');
+            except
+              on e: Exception do
+              begin
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('Exception in getValueFromFile on loading file: ' +
+                  s3 + ' with msg: ' + e.message, LLError);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              end
+            end;
+            if not Skip(')', r, r, InfoSyntaxError) then
+              syntaxCheck := False
+            else
+            begin
+              syntaxCheck := True;
+              stringresult := list1.getStringValue(s1);
+              if stringresult = 'NULL' then
+                stringresult := '';
+
+              //list1.values[s1];
+              // if key does not exist we get NULL_STRING_VALUE
+             (*
+             if stringresult = NULL_STRING_VALUE then
+             begin
+               // let us retry with trimed keys
+               for i := 0 to list1.Count -1 do
+               begin
+                 if list1.Names[i] <> '' then
+                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
+                     stringresult := list1.getStringValue(list1.Names[i]);
+               end;
+             end;
+             *)
+            end;
+          end;
+          list1.Free;
+          list1 := nil;
+        end;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('getValueFromFileBySeparator') then
+    begin
+      syntaxCheck := False;
+      stringresult := '';
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                syntaxCheck := True;
+
 
       if syntaxCheck then
       begin
@@ -17533,17 +17621,18 @@ begin
               list1.loadfromfile(s3)
             else
             begin
-              LogDatei.log('Error in getValueFromFile on loading file (not found): ' +
+              LogDatei.log(
+                'Error in getValueFromFileBySeparator on loading file (not found): '
+                +
                 s3, LLError);
               FNumberOfErrors := FNumberOfErrors + 1;
             end;
-            //list1.loadfromfile(s3);
-            //list1.Text := reencode(list1.Text, 'system');
+
           except
             on e: Exception do
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in getValueFromFile on loading file: ' +
+              LogDatei.log('Exception in getValueFromFileBySeparator on loading file: ' +
                 s3 + ' with msg: ' + e.message, LLError);
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
@@ -17553,10 +17642,11 @@ begin
           else
           begin
             syntaxCheck := True;
+            // use the first char of the second argument as separator char
+            list1.NameValueSeparator := trim(s2)[1];
             stringresult := list1.getStringValue(s1);
             if stringresult = 'NULL' then
               stringresult := '';
-
             //list1.values[s1];
             // if key does not exist we get NULL_STRING_VALUE
              (*
@@ -17576,291 +17666,219 @@ begin
         list1.Free;
         list1 := nil;
       end;
-    end;
-  end
+    end
 
-
-  else if LowerCase(s) = LowerCase('getValueFromFileBySeparator') then
-  begin
-    syntaxCheck := False;
-    stringresult := '';
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-            if Skip(',', r, r, InfoSyntaxError) then
-              syntaxCheck := True;
-
-
-    if syntaxCheck then
+    else if LowerCase(s) = LowerCase('takeFirstStringContaining') then
     begin
-      list1 := TXStringList.Create;
-      if EvaluateString(r, r, s3, InfoSyntaxError) then
+      if Skip('(', r, r, InfoSyntaxError) then
       begin
-        try
-          s3 := ExpandFileName(s3);
-          if FileExists(s3) then
-            list1.loadfromfile(s3)
-          else
-          begin
-            LogDatei.log(
-              'Error in getValueFromFileBySeparator on loading file (not found): '
-              +
-              s3, LLError);
-            FNumberOfErrors := FNumberOfErrors + 1;
-          end;
 
-        except
-          on e: Exception do
-          begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in getValueFromFileBySeparator on loading file: ' +
-              s3 + ' with msg: ' + e.message, LLError);
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          end
-        end;
-        if not Skip(')', r, r, InfoSyntaxError) then
-          syntaxCheck := False
-        else
-        begin
-          syntaxCheck := True;
-          // use the first char of the second argument as separator char
-          list1.NameValueSeparator := trim(s2)[1];
-          stringresult := list1.getStringValue(s1);
-          if stringresult = 'NULL' then
-            stringresult := '';
-          //list1.values[s1];
-          // if key does not exist we get NULL_STRING_VALUE
-             (*
-             if stringresult = NULL_STRING_VALUE then
-             begin
-               // let us retry with trimed keys
-               for i := 0 to list1.Count -1 do
-               begin
-                 if list1.Names[i] <> '' then
-                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
-                     stringresult := list1.getStringValue(list1.Names[i]);
-               end;
-             end;
-             *)
-        end;
-      end;
-      list1.Free;
-      list1 := nil;
-    end;
-  end
+        list1 := TXStringList.Create;
 
-  else if LowerCase(s) = LowerCase('takeFirstStringContaining') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-
-      list1 := TXStringList.Create;
-
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(',', r, r, InfoSyntaxError) then
-      begin
-        if EvaluateString(r, r, s1, InfoSyntaxError) and
-          skip(')', r, r, InfoSyntaxError) then
-        begin
-          SyntaxCheck := True;
-          stringResult := '';
-          i := 0;
-          while (stringResult = '') and (i < list1.Count) do
-          begin
-            if AnsiContainsText(list1[i], s1) then
-              stringResult := list1[i]
-            else
-              Inc(i);
-          end;
-        end;
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getIndexFromListByContaining') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-
-      list1 := TXStringList.Create;
-
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(',', r, r, InfoSyntaxError) then
-      begin
-        if EvaluateString(r, r, s1, InfoSyntaxError) and
-          skip(')', r, r, InfoSyntaxError) then
-        begin
-          SyntaxCheck := True;
-          stringResult := '';
-          i := 0;
-          while (stringResult = '') and (i < list1.Count) do
-          begin
-            if AnsiContainsText(list1[i], s1) then
-              stringResult := IntToStr(i)
-            else
-              Inc(i);
-          end;
-        end;
-      end;
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('composeString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-
-      list1 := TXStringList.Create;
-
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(',', r, r, InfoSyntaxError) then
-      begin
-        if EvaluateString(r, r, s1, InfoSyntaxError) and
-          skip(')', r, r, InfoSyntaxError) then
-        begin
-          SyntaxCheck := True;
-          stringResult := '';
-          for i := 0 to list1.Count - 2 do
-            stringResult := stringResult + list1.strings[i] + s1;
-          if list1.Count > 0 then
-            stringResult := stringResult + list1[list1.Count - 1];
-        end;
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('ExtractFilePath') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          try
-            StringResult := ExtractFilePath(s1);
-            syntaxCheck := True;
-          except
-            InfoSyntaxError := '"' + s1 + '" is not a valid file path';
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('ExtractFileExtension') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          try
-            StringResult := ExtractFileExt(s1);
-            syntaxCheck := True;
-          except
-            InfoSyntaxError := '"' + s1 + '" is not a valid file path';
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('ExtractFileName') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          try
-            StringResult := ExtractFileName(s1);
-            syntaxCheck := True;
-          except
-            InfoSyntaxError := '"' + s1 + '" is not a valid file path';
-          end;
-        end;
-  end
-
-  else if LowerCase(s) = LowerCase('RegString') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, r, s1, InfoSyntaxError) then
-        if Skip(')', r, r, InfoSyntaxError) then
-        begin
-          StringResult := CEscaping(s1);
-          syntaxCheck := True;
-        end;
-  end
-
-
-  //  #### start xml2 string
-
-  else if LowerCase(s) = LowerCase('getXml2AttributeValueByKey') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-      list1 := TXStringList.Create;
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(',', r, r, InfoSyntaxError) then
-      begin
-        if EvaluateString(r, r, s1, InfoSyntaxError) and
-          skip(')', r, r, InfoSyntaxError) then
-        begin
-          SyntaxCheck := True;
-          stringResult := '';
-          if not getXml2AttributeValueByKey(list1, s1, stringResult) then
-          begin
-            LogDatei.log('Error on producing getXml2AttributeValueByKey', LLerror);
-          end;
-        end;
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getXml2Text') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-      list1 := TXStringList.Create;
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(')', r, r, InfoSyntaxError) then
-      begin
-        SyntaxCheck := True;
-        stringResult := '';
-        if not getXml2Text(list1, stringResult) then
-        begin
-          LogDatei.log('Error on producing getXml2Text', LLerror);
-        end;
-      end;
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('getXml2ValueNodeTextByKeyNodeText') then
-  begin
-    if Skip('(', r, r, InfoSyntaxError) then
-    begin
-      list1 := TXStringList.Create;
-      if produceStringList(script, r, r, list1, InfoSyntaxError) and
-        skip(',', r, r, InfoSyntaxError) then
-      begin
-        if EvaluateString(r, r, s1, InfoSyntaxError) and
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
           skip(',', r, r, InfoSyntaxError) then
-          if EvaluateString(r, r, s2, InfoSyntaxError) and
-            skip(',', r, r, InfoSyntaxError) then
-            if EvaluateString(r, r, s3, InfoSyntaxError) and
-              skip(')', r, r, InfoSyntaxError) then
+        begin
+          if EvaluateString(r, r, s1, InfoSyntaxError) and
+            skip(')', r, r, InfoSyntaxError) then
+          begin
+            SyntaxCheck := True;
+            stringResult := '';
+            i := 0;
+            while (stringResult = '') and (i < list1.Count) do
             begin
-              SyntaxCheck := True;
-              try
-                stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
-                    e.message, LLError);
+              if AnsiContainsText(list1[i], s1) then
+                stringResult := list1[i]
+              else
+                Inc(i);
+            end;
+          end;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('getIndexFromListByContaining') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+
+        list1 := TXStringList.Create;
+
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+        begin
+          if EvaluateString(r, r, s1, InfoSyntaxError) and
+            skip(')', r, r, InfoSyntaxError) then
+          begin
+            SyntaxCheck := True;
+            stringResult := '';
+            i := 0;
+            while (stringResult = '') and (i < list1.Count) do
+            begin
+              if AnsiContainsText(list1[i], s1) then
+                stringResult := IntToStr(i)
+              else
+                Inc(i);
+            end;
+          end;
+        end;
+      end;
+    end
+
+
+    else if LowerCase(s) = LowerCase('composeString') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+
+        list1 := TXStringList.Create;
+
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+        begin
+          if EvaluateString(r, r, s1, InfoSyntaxError) and
+            skip(')', r, r, InfoSyntaxError) then
+          begin
+            SyntaxCheck := True;
+            stringResult := '';
+            for i := 0 to list1.Count - 2 do
+              stringResult := stringResult + list1.strings[i] + s1;
+            if list1.Count > 0 then
+              stringResult := stringResult + list1[list1.Count - 1];
+          end;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('ExtractFilePath') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            try
+              StringResult := ExtractFilePath(s1);
+              syntaxCheck := True;
+            except
+              InfoSyntaxError := '"' + s1 + '" is not a valid file path';
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('ExtractFileExtension') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            try
+              StringResult := ExtractFileExt(s1);
+              syntaxCheck := True;
+            except
+              InfoSyntaxError := '"' + s1 + '" is not a valid file path';
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('ExtractFileName') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            try
+              StringResult := ExtractFileName(s1);
+              syntaxCheck := True;
+            except
+              InfoSyntaxError := '"' + s1 + '" is not a valid file path';
+            end;
+          end;
+    end
+
+    else if LowerCase(s) = LowerCase('RegString') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(')', r, r, InfoSyntaxError) then
+          begin
+            StringResult := CEscaping(s1);
+            syntaxCheck := True;
+          end;
+    end
+
+
+    //  #### start xml2 string
+
+    else if LowerCase(s) = LowerCase('getXml2AttributeValueByKey') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        list1 := TXStringList.Create;
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+        begin
+          if EvaluateString(r, r, s1, InfoSyntaxError) and
+            skip(')', r, r, InfoSyntaxError) then
+          begin
+            SyntaxCheck := True;
+            stringResult := '';
+            if not getXml2AttributeValueByKey(list1, s1, stringResult) then
+            begin
+              LogDatei.log('Error on producing getXml2AttributeValueByKey', LLerror);
+            end;
+          end;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('getXml2Text') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        list1 := TXStringList.Create;
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
+          skip(')', r, r, InfoSyntaxError) then
+        begin
+          SyntaxCheck := True;
+          stringResult := '';
+          if not getXml2Text(list1, stringResult) then
+          begin
+            LogDatei.log('Error on producing getXml2Text', LLerror);
+          end;
+        end;
+      end;
+    end
+
+    else if LowerCase(s) = LowerCase('getXml2ValueNodeTextByKeyNodeText') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+      begin
+        list1 := TXStringList.Create;
+        if produceStringList(script, r, r, list1, InfoSyntaxError) and
+          skip(',', r, r, InfoSyntaxError) then
+        begin
+          if EvaluateString(r, r, s1, InfoSyntaxError) and
+            skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) and
+              skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s3, InfoSyntaxError) and
+                skip(')', r, r, InfoSyntaxError) then
+              begin
+                SyntaxCheck := True;
+                try
+                  stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
+                      e.message, LLError);
+                  end;
                 end;
               end;
-            end;
+        end;
       end;
-    end;
-  end
+    end
 
-  //  #### stop xml2 string
+    //  #### stop xml2 string
 
 
  {$IFDEF WINDOWS}
@@ -18161,157 +18179,51 @@ begin
   end
   {$ENDIF WIN32}
   {$ELSE WINDOWS}
-  else if LowerCase(s) = LowerCase('SidToName') then
-  begin
-    SyntaxCheck := False;
-    InfoSyntaxError := 'Not implemented for Linux';
-    StringResult := 'Error';
-    LogDatei.log('SyntaxError: SidToName not implemented for Linux', LLError);
-  end
+    else if LowerCase(s) = LowerCase('SidToName') then
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := 'Not implemented for Linux';
+      StringResult := 'Error';
+      LogDatei.log('SyntaxError: SidToName not implemented for Linux', LLError);
+    end
 
-  else if LowerCase(s) = LowerCase('NameToSID') then
-  begin
-    SyntaxCheck := False;
-    InfoSyntaxError := 'Not implemented for Linux';
-    StringResult := 'Error';
-    LogDatei.log('SyntaxError: NameToSID not implemented for Linux', LLError);
-  end
-
-
-
-  else if (LowerCase(s) = LowerCase('GetRegistryStringValue')) or
-    (LowerCase(s) = LowerCase('GetRegistryStringValue32')) or
-    (LowerCase(s) = LowerCase('GetRegistryStringValue64')) or
-    (LowerCase(s) = LowerCase('GetRegistryStringValueSysNative')) then
-  begin
-    SyntaxCheck := False;
-    InfoSyntaxError := 'Not implemented for Linux';
-    StringResult := 'Error';
-    LogDatei.log('SyntaxError: GetRegistryStringValue not implemented for Linux',
-      LLError);
-  end
+    else if LowerCase(s) = LowerCase('NameToSID') then
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := 'Not implemented for Linux';
+      StringResult := 'Error';
+      LogDatei.log('SyntaxError: NameToSID not implemented for Linux', LLError);
+    end
 
 
-  else if LowerCase(s) = LowerCase('GetUserSID') then
-  begin
-    SyntaxCheck := False;
-    InfoSyntaxError := 'Not implemented for Linux';
-    StringResult := 'Error';
-    LogDatei.log('SyntaxError: GetUserSID not implemented for Linux', LLError);
-  end
+
+    else if (LowerCase(s) = LowerCase('GetRegistryStringValue')) or
+      (LowerCase(s) = LowerCase('GetRegistryStringValue32')) or
+      (LowerCase(s) = LowerCase('GetRegistryStringValue64')) or
+      (LowerCase(s) = LowerCase('GetRegistryStringValueSysNative')) then
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := 'Not implemented for Linux';
+      StringResult := 'Error';
+      LogDatei.log('SyntaxError: GetRegistryStringValue not implemented for Linux',
+        LLError);
+    end
+
+
+    else if LowerCase(s) = LowerCase('GetUserSID') then
+    begin
+      SyntaxCheck := False;
+      InfoSyntaxError := 'Not implemented for Linux';
+      StringResult := 'Error';
+      LogDatei.log('SyntaxError: GetUserSID not implemented for Linux', LLError);
+    end
   {$ENDIF WINDOWS}
 
-  else if LowerCase(s) = LowerCase('getLastServiceErrorClass') then
-  begin
-    SyntaxCheck := True;
-    testresult := '';
-    errorOccured := False;
-    if opsidata = nil then
+    else if LowerCase(s) = LowerCase('getLastServiceErrorClass') then
     begin
-      errorOccured := True;
-      testresult := '!!! no opsidata !!!';
-    end
-    else
-      try
-        local_opsidata := opsidata;
-
-        //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
-      except
-        errorOccured := True;
-        testresult := '!!! not in service mode !!!';
-      end;
-
-
-    if errorOccured then
-      stringresult := testresult
-    else
-    begin
-      if local_opsidata.ServiceLastErrorInfo.indexOfName('class') < 0 then
-        stringresult := 'None' //'!!! error key "class" not found !!!'
-      else
-        stringresult := local_opsidata.ServiceLastErrorInfo.values['class'];
-    end;
-  end
-
-
-  else if LowerCase(s) = LowerCase('getLastServiceErrorMessage') then
-  begin
-    testresult := '';
-    SyntaxCheck := True;
-    errorOccured := False;
-    if opsidata = nil then
-    begin
-      errorOccured := True;
-      testresult := '!!! no opsidata !!!';
-    end
-    else
-      try
-        local_opsidata := opsidata;
-
-        //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
-      except
-        errorOccured := True;
-        testresult := '!!! not in service mode !!!';
-      end;
-
-    if errorOccured then
-      stringresult := testresult
-    else
-    begin
-      if local_opsidata.ServiceLastErrorInfo.indexOfName('message') < 0 then
-        stringresult := 'None' //'!!! error key "message" not found !!!'
-      else
-        stringresult := local_opsidata.ServiceLastErrorInfo.values['message'];
-    end;
-  end
-
-  else if LowerCase(s) = LowerCase('demandLicenseKey') then
-  begin
-    errorOccured := False;
-    syntaxCheck := True;
-    testresult := '';
-
-    r := trim(r);
-    setLength(parameters, 4);
-
-    // try to find a valid fqdn
-    parameters[0] := osconf.opsiserviceUser;
-    if parameters[0] = '' then
-      parameters[0] := osconf.computername;
-    if parameters[0] = '' then
-      parameters[0] := oslog.getComputerName;
-    parameters[1] := '';
-    parameters[2] := '';
-    parameters[3] := '';
-
-    syntaxcheck := skip('(', r, r, InfoSyntaxError);
-
-    j := 1;
-    continue := True;
-
-    while syntaxCheck and continue do
-    begin
-      if skip(')', r, r, InfoSyntaxError) and (r = '') then
-        continue := False
-      else
-      begin
-        if j > 3 then
-          syntaxcheck := False
-        else
-        begin
-          if j > 1 then
-            syntaxcheck := skip(',', r, r, InfoSyntaxError);
-
-          if syntaxCheck then
-            syntaxCheck := EvaluateString(r, r, parameters[j], InfoSyntaxError);
-        end;
-      end;
-      Inc(j);
-    end;
-
-    if syntaxcheck then
-    begin
-      testresult := 'service request possible';
+      SyntaxCheck := True;
+      testresult := '';
+      errorOccured := False;
       if opsidata = nil then
       begin
         errorOccured := True;
@@ -18321,83 +18233,30 @@ begin
         try
           local_opsidata := opsidata;
 
-          LogDatei.log_prog('Calling opsi service at ' +
-            local_opsidata.serviceUrl, LLDebug);
+          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
         except
           errorOccured := True;
           testresult := '!!! not in service mode !!!';
         end;
 
-      if not errorOccured then
-      begin
-        omc := TOpsiMethodCall.Create('getAndAssignSoftwareLicenseKey', parameters);
 
-        testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
-      end;
-    end;
-
-    if errorOccured then
-    begin
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-      LogDatei.log('Error: Got no license key: ' + testresult, LLError);
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-      stringresult := '';
-    end
-    else
-      stringresult := testresult;
-  end
-
-
-  else if LowerCase(s) = LowerCase('freeLicense') then
-  begin
-    errorOccured := False;
-    syntaxCheck := True;
-    testresult := '';
-
-    r := trim(r);
-    setLength(parameters, 5);
-
-    // try to find a valid fqdn
-    parameters[0] := osconf.opsiserviceUser;
-    if parameters[0] = '' then
-      parameters[0] := osconf.computername;
-    if parameters[0] = '' then
-      parameters[0] := oslog.getComputerName;
-
-    parameters[1] := '';
-    parameters[2] := '';
-    parameters[3] := '';
-    parameters[4] := '';
-
-    syntaxcheck := skip('(', r, r, InfoSyntaxError);
-
-    j := 2;
-    continue := True;
-
-    while syntaxCheck and continue do
-    begin
-      if skip(')', r, r, InfoSyntaxError) and (r = '') then
-        continue := False
+      if errorOccured then
+        stringresult := testresult
       else
       begin
-        if j > 4 then
-          syntaxcheck := False
+        if local_opsidata.ServiceLastErrorInfo.indexOfName('class') < 0 then
+          stringresult := 'None' //'!!! error key "class" not found !!!'
         else
-        begin
-          if j > 2 then
-            syntaxcheck := skip(',', r, r, InfoSyntaxError);
-
-          if syntaxCheck then
-            syntaxCheck := EvaluateString(r, r, parameters[j], InfoSyntaxError);
-        end;
+          stringresult := local_opsidata.ServiceLastErrorInfo.values['class'];
       end;
-      Inc(j);
-    end;
+    end
 
-    if syntaxcheck then
+
+    else if LowerCase(s) = LowerCase('getLastServiceErrorMessage') then
     begin
-      testresult := 'service request possible';
+      testresult := '';
+      SyntaxCheck := True;
+      errorOccured := False;
       if opsidata = nil then
       begin
         errorOccured := True;
@@ -18407,48 +18266,207 @@ begin
         try
           local_opsidata := opsidata;
 
-          LogDatei.log_prog('Calling opsi service at ' +
-            local_opsidata.serviceUrl, LLDebug);
+          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
         except
           errorOccured := True;
           testresult := '!!! not in service mode !!!';
         end;
 
-      if not errorOccured then
+      if errorOccured then
+        stringresult := testresult
+      else
       begin
-        omc := TOpsiMethodCall.Create('deleteSoftwareLicenseUsage', parameters);
-        testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+        if local_opsidata.ServiceLastErrorInfo.indexOfName('message') < 0 then
+          stringresult := 'None' //'!!! error key "message" not found !!!'
+        else
+          stringresult := local_opsidata.ServiceLastErrorInfo.values['message'];
       end;
+    end
+
+    else if LowerCase(s) = LowerCase('demandLicenseKey') then
+    begin
+      errorOccured := False;
+      syntaxCheck := True;
+      testresult := '';
+
+      r := trim(r);
+      setLength(parameters, 4);
+
+      // try to find a valid fqdn
+      parameters[0] := osconf.opsiserviceUser;
+      if parameters[0] = '' then
+        parameters[0] := osconf.computername;
+      if parameters[0] = '' then
+        parameters[0] := oslog.getComputerName;
+      parameters[1] := '';
+      parameters[2] := '';
+      parameters[3] := '';
+
+      syntaxcheck := skip('(', r, r, InfoSyntaxError);
+
+      j := 1;
+      continue := True;
+
+      while syntaxCheck and continue do
+      begin
+        if skip(')', r, r, InfoSyntaxError) and (r = '') then
+          continue := False
+        else
+        begin
+          if j > 3 then
+            syntaxcheck := False
+          else
+          begin
+            if j > 1 then
+              syntaxcheck := skip(',', r, r, InfoSyntaxError);
+
+            if syntaxCheck then
+              syntaxCheck := EvaluateString(r, r, parameters[j], InfoSyntaxError);
+          end;
+        end;
+        Inc(j);
+      end;
+
+      if syntaxcheck then
+      begin
+        testresult := 'service request possible';
+        if opsidata = nil then
+        begin
+          errorOccured := True;
+          testresult := '!!! no opsidata !!!';
+        end
+        else
+          try
+            local_opsidata := opsidata;
+
+            LogDatei.log_prog('Calling opsi service at ' +
+              local_opsidata.serviceUrl, LLDebug);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
+
+        if not errorOccured then
+        begin
+          omc := TOpsiMethodCall.Create('getAndAssignSoftwareLicenseKey', parameters);
+
+          testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+        end;
+      end;
+
+      if errorOccured then
+      begin
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+        LogDatei.log('Error: Got no license key: ' + testresult, LLError);
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        stringresult := '';
+      end
+      else
+        stringresult := testresult;
+    end
+
+
+    else if LowerCase(s) = LowerCase('freeLicense') then
+    begin
+      errorOccured := False;
+      syntaxCheck := True;
+      testresult := '';
+
+      r := trim(r);
+      setLength(parameters, 5);
+
+      // try to find a valid fqdn
+      parameters[0] := osconf.opsiserviceUser;
+      if parameters[0] = '' then
+        parameters[0] := osconf.computername;
+      if parameters[0] = '' then
+        parameters[0] := oslog.getComputerName;
+
+      parameters[1] := '';
+      parameters[2] := '';
+      parameters[3] := '';
+      parameters[4] := '';
+
+      syntaxcheck := skip('(', r, r, InfoSyntaxError);
+
+      j := 2;
+      continue := True;
+
+      while syntaxCheck and continue do
+      begin
+        if skip(')', r, r, InfoSyntaxError) and (r = '') then
+          continue := False
+        else
+        begin
+          if j > 4 then
+            syntaxcheck := False
+          else
+          begin
+            if j > 2 then
+              syntaxcheck := skip(',', r, r, InfoSyntaxError);
+
+            if syntaxCheck then
+              syntaxCheck := EvaluateString(r, r, parameters[j], InfoSyntaxError);
+          end;
+        end;
+        Inc(j);
+      end;
+
+      if syntaxcheck then
+      begin
+        testresult := 'service request possible';
+        if opsidata = nil then
+        begin
+          errorOccured := True;
+          testresult := '!!! no opsidata !!!';
+        end
+        else
+          try
+            local_opsidata := opsidata;
+
+            LogDatei.log_prog('Calling opsi service at ' +
+              local_opsidata.serviceUrl, LLDebug);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
+
+        if not errorOccured then
+        begin
+          omc := TOpsiMethodCall.Create('deleteSoftwareLicenseUsage', parameters);
+          testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+        end;
+      end;
+
+      if errorOccured then
+      begin
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+        LogDatei.log('Error: Could not delete software license usage ' +
+          testresult, LLError);
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        stringresult := '';
+      end
+      else
+        stringresult := '';
+    end
+
+    else
+      InfoSyntaxError := s0 + ' illegal String Expressionstr';
+
+
+    (* Addition weiterer Teilstrings mit + *)
+    if syntaxCheck and skip('+', r, r, sx) then
+    begin
+      syntaxCheck := EvaluateString(r, r, s1, InfoSyntaxError);
+      StringResult := StringResult + s1;
     end;
 
-    if errorOccured then
-    begin
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-      LogDatei.log('Error: Could not delete software license usage ' +
-        testresult, LLError);
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-      stringresult := '';
-    end
-    else
-      stringresult := '';
-  end
+    if syntaxcheck then
+      Remaining := r;
 
-  else
-    InfoSyntaxError := s0 + ' illegal String Expressionstr';
-
-
-  (* Addition weiterer Teilstrings mit + *)
-  if syntaxCheck and skip('+', r, r, sx) then
-  begin
-    syntaxCheck := EvaluateString(r, r, s1, InfoSyntaxError);
-    StringResult := StringResult + s1;
-  end;
-
-  if syntaxcheck then
-    Remaining := r;
-
-  Result := syntaxCheck;
+    Result := syntaxCheck;
 
        (*  if Script.ExitOnError then
         Begin
@@ -18456,17 +18474,17 @@ begin
           .log (StopInfo, BaseLevel);
         End; *)
 
-  LogDatei.LogSIndentLevel := StartIndentLevel;
-  slist.Free;
+    LogDatei.LogSIndentLevel := StartIndentLevel;
+    slist.Free;
 
   except
-     on E: Exception do
-            begin
-              Logdatei.log('Exception in Evaluatestring with: '+s0, LLCritical);
-              Logdatei.log(e.ClassName + ' system message: "' +
-                E.Message + '" - giving up',
-                LLCritical);
-            end;
+    on E: Exception do
+    begin
+      Logdatei.log('Exception in Evaluatestring with: ' + s0, LLCritical);
+      Logdatei.log(e.ClassName + ' system message: "' +
+        E.Message + '" - giving up',
+        LLCritical);
+    end;
   end;
 end;
 
@@ -20248,7 +20266,7 @@ begin
           syntaxCheck := True;
           BooleanResult := False;
           try
-                BooleanResult := isCertInstalledInSystemStore(s1);
+            BooleanResult := isCertInstalledInSystemStore(s1);
           except
             logdatei.log('Error: Exception in isCertInstalledInSystem:  ' + s1, LLError);
             BooleanResult := False;
@@ -20270,7 +20288,7 @@ begin
                 s2 := ExpandFileName(s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                 LogDatei.log
-                ('    Saving TOMLcontents to TOML file : ' +  s2 , LevelComplete);
+                ('    Saving TOMLcontents to TOML file : ' + s2, LevelComplete);
                 BooleanResult := SaveToTOMLFile(s1, s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
               except
@@ -20278,7 +20296,7 @@ begin
                 begin
                   LogDatei.log('Error in SaveToTOMLFile "' +
                     s2 + '", message: "' + e.Message + '"', LevelWarnings);
-                  BooleanResult := false;
+                  BooleanResult := False;
                 end;
               end;
             end;
@@ -20299,15 +20317,17 @@ begin
                 s2 := ExpandFileName(s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                 LogDatei.log
-                ('    Coverting TOML file  "' +  s1 + '" to JSON file "' + s2, LevelComplete);
+                ('    Coverting TOML file  "' + s1 + '" to JSON file "' + s2,
+                  LevelComplete);
                 BooleanResult := ConvertTOMLfileToJSONfile(s1, s2);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
               except
                 on e: Exception do
                 begin
                   LogDatei.log('Error in ConvertTOMLfileToJSONfile from "' +
-                    s1 + '" to "'+ s2 + '", message: "' + e.Message + '"', LevelWarnings);
-                  BooleanResult := false;
+                    s1 + '" to "' + s2 + '", message: "' + e.Message +
+                    '"', LevelWarnings);
+                  BooleanResult := False;
                 end;
               end;
             end;
@@ -21617,7 +21637,7 @@ begin
             logdatei.log_prog('IF: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
             doLogEntries(PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High(TConditions) then
@@ -21638,12 +21658,13 @@ begin
               begin
                 Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
-                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
-                logdatei.log_prog('IF condition: Actlevel: ' + IntToStr(Actlevel) +
-              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                elseifConditions[NestLevel] := BooleanResult;
+                // have we found a valid condition
+                logdatei.log_prog('IF condition: Actlevel: ' +
+                  IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
               end
               else
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -21666,7 +21687,7 @@ begin
             logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
             if NestLevel <= Sektion.NestingLevel then
               reportError(Sektion, linecounter, '', PStatNames^
@@ -21678,8 +21699,8 @@ begin
                 logdatei.log_prog('ELSE: Actlevel: ' + IntToStr(Actlevel) +
                   ' NestLevel: ' + IntToStr(NestLevel) +
                   ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
-                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLWarning);
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLWarning);
                 reportError(Sektion, linecounter, '', 'double ' +
                   PStatNames^ [tsCondElse]);
               end
@@ -21693,14 +21714,14 @@ begin
                 LogDatei.LogSIndentLevel := NestLevel;
 
                 if (NestLevel = ActLevel) then
-                // the else branch is valid, if we did not found any valid condition yet
+                  // the else branch is valid, if we did not found any valid condition yet
                   Conditions[ActLevel] := not elseifConditions[NestLevel];
               end;
             end;
           end;
         end
 
-         else if (StatKind = tsCondElseIf) and (not (InSwitch) or ValidCase) then
+        else if (StatKind = tsCondElseIf) and (not (InSwitch) or ValidCase) then
         begin
           { this is nearly the same then (if "tsCondOpen").
           The difference is that we do not increase the NestLevel
@@ -21715,7 +21736,7 @@ begin
             logdatei.log_prog('ElseIF: Actlevel: ' + IntToStr(Actlevel) +
               ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
               IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
+              BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
               BoolToStr(Conditions[NestLevel], True), LLDebug);
 
             LogDatei.LogSIndentLevel := NestLevel - 1;
@@ -21727,23 +21748,23 @@ begin
               reportError(Sektion, linecounter, '', 'Too many nested conditions');
               exit;
             end;
-             if NestLevel <= Sektion.NestingLevel then
-             begin
+            if NestLevel <= Sektion.NestingLevel then
+            begin
               reportError(Sektion, linecounter, '', PStatNames^
                 [tsCondElseIf] + '  without  ' + PStatNames^ [tsCondOpen]);
-                exit;
-             end;
+              exit;
+            end;
 
             LogDatei.LogSIndentLevel := NestLevel;
 
             // this is a else (if), so the if has to be evalutated
             // if the else is true
-             // have we found a valid condition yet ?
-             BooleanResult := elseifConditions[NestLevel];
+            // have we found a valid condition yet ?
+            BooleanResult := elseifConditions[NestLevel];
 
 
             // elseif: we evaluate the condition if NestLevel = ActLevel
-            if (NestLevel = ActLevel) and (not BooleanResult)  then
+            if (NestLevel = ActLevel) and (not BooleanResult) then
             begin
               { a new active level is created if the if statement
                 is in a active Level AND inside of a positive branch.
@@ -21758,24 +21779,24 @@ begin
                 // elseif: we do not increase the actlevel
                 //Inc(ActLevel);
                 Conditions[NestLevel] := BooleanResult;
-                elseifConditions[NestLevel] := BooleanResult; // have we found a valid condition
-                logdatei.log_prog('ElseIF condition: Actlevel: ' + IntToStr(Actlevel) +
-              ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-              IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-              BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                elseifConditions[NestLevel] := BooleanResult;
+                // have we found a valid condition
+                logdatei.log_prog('ElseIF condition: Actlevel: ' +
+                  IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
               end
               else
                 reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> '' then
                 reportError(Sektion, linecounter, Remaining, 'erroneous characters ');
-            LogDatei.LogSIndentLevel := NestLevel - 1;
-            doLogEntries(PStatNames^ [tsCondThen], LLInfo);
-            LogDatei.LogSIndentLevel := NestLevel;
+              LogDatei.LogSIndentLevel := NestLevel - 1;
+              doLogEntries(PStatNames^ [tsCondThen], LLInfo);
+              LogDatei.LogSIndentLevel := NestLevel;
             end
             else
-             Conditions[NestLevel] := not elseifConditions[NestLevel];
-
+              Conditions[NestLevel] := not elseifConditions[NestLevel];
 
           end;
           //ArbeitsSektion.NestingLevel:=Nestlevel;
@@ -21798,8 +21819,8 @@ begin
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
                 IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+                BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
+                BoolToStr(Conditions[NestLevel], True), LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
@@ -21831,11 +21852,11 @@ begin
           // and line processing not stoped now
           and (ActionResult > 0) then
         begin
-          logdatei.log_prog('processline=true: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+          logdatei.log_prog('processline=true: Actlevel: ' +
+            IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+            ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+            ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+            ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
           processline := True;
           case SectionSpecifier of
             tsecIncluded:
@@ -23352,7 +23373,7 @@ begin
                 else
                 begin
                   if EvaluateString(Remaining, Remaining,
-                  Parameter, InfoSyntaxError) then
+                    Parameter, InfoSyntaxError) then
                     syntaxCheck := True
                   else
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -25520,11 +25541,11 @@ begin
         else
         begin
           processline := False;
-          logdatei.log_prog('processline=false: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True)+ ' Conditions: ' +
-              BoolToStr(Conditions[NestLevel], True), LLDebug);
+          logdatei.log_prog('processline=false: Actlevel: ' +
+            IntToStr(Actlevel) + ' NestLevel: ' + IntToStr(NestLevel) +
+            ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+            ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+            ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug);
         end;
         ProcessMess;
       end;
@@ -26638,11 +26659,11 @@ begin
   PStatNames^ [tsStayWhileWindowOpen] := 'StayWhileWindowOpen';
   (* fuer Testzwecke, nicht dokumentiert *)
 
-  PStatNames^ [tsCondOpen]   := 'If';
-  PStatNames^ [tsCondThen]   := 'Then';
-  PStatNames^ [tsCondElse]   := 'Else';
+  PStatNames^ [tsCondOpen] := 'If';
+  PStatNames^ [tsCondThen] := 'Then';
+  PStatNames^ [tsCondElse] := 'Else';
   PStatNames^ [tsCondElseIf] := 'ElseIf';
-  PStatNames^ [tsCondClose]  := 'EndIf';
+  PStatNames^ [tsCondClose] := 'EndIf';
 
   // switch
   PStatNames^ [tsSwitch] := 'Switch';
