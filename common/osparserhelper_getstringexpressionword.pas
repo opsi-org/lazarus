@@ -47,6 +47,8 @@ begin
         begin
           if StringToExermine[i] = '(' then
             Inc(NumberBrackets);
+          if StringToExermine[i] = ')' then
+            Dec(NumberBrackets);
           Inc(i);
         end
         else
