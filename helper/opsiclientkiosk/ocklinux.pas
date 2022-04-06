@@ -46,7 +46,7 @@ const
   DefaultFolder = '/default';
   CustomFolder = '/ock_custom';
   AbsolutePathCustomSettingsAdminMode =  '/tmp/opsi-client-kiosk' + CustomFolder;
-  AbsolutePathSettings = '/opt/opsi-client-kiosk';
+  AbsolutePathSettingsUserMode = '/opt/opsi-client-kiosk';
   //AbsolutePathCustomSettingsUserMode = '/opt/opsi-client-kiosk' + CustomFolder;
   RelativePathProductIcons = '/product_icons';
   RelativePathScreenShots = '/screenshots';
