@@ -1229,9 +1229,9 @@ end;
 procedure TLogInfo.logComponent(comp: string; line: string);
 var
   mycompfilename: string;
-  mylogdir : string;
+  mylogdir: string;
 begin
-  mylogdir := FStandardPartLogPath + PathDelim + ComponentLogSubDir ;
+  mylogdir := FStandardPartLogPath + PathDelim + ComponentLogSubDir;
   mycompfilename := mylogdir + PathDelim + comp + '.log';
   ForceDirectory(mylogdir);
   if FComponentFilename = mycompfilename then
