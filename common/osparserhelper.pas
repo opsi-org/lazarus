@@ -48,7 +48,7 @@ function Skip(const partialS, S: string; var Remaining: string;
 // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest
 
 
-function opsiunquotestr2(s1,s2 : string): string;
+function opsiunquotestr2(s1, s2: string): string;
 // removes only quotes if they found at start and end
 // s2 may be two chars long. Then the first char is the start mark
 // and the second char is the end mark
@@ -67,8 +67,9 @@ procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
-procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
-  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+procedure stringlistintersection(const inlist1: TStringList;
+  const inlist2: TStringList; var list1rest: TStringList;
+  var listintersection: TStringList);
 
 function getCompareSignStrings(s1: string; s2: string): integer;
 function getCompareSign(number1: integer; number2: integer): integer;
@@ -98,13 +99,14 @@ end;
 
 
 procedure GetWord
-    (const s: string; var Expression, Remaining: string;
-    const WordDelimiterSet: TCharset; searchbackward: boolean = False;
-    backwardfirst: boolean = True);
+  (const s: string; var Expression, Remaining: string;
+  const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+  backwardfirst: boolean = True);
+
 var
   i: integer = 0;
   t: string = '';
-  found : boolean;
+  found: boolean;
 begin
   if s = '' then
   begin
@@ -120,7 +122,7 @@ begin
       if not backwardfirst then
       begin
         // get from "hu)hu)))" as expr "hu)hu" with remaining ")))"
-        found := false;
+        found := False;
         //i := length(t) + 1;
         i := length(t);
         while (i >= 0) and not found do
@@ -129,24 +131,26 @@ begin
           if (t[i] in WordDelimiterSet) then
           begin
             // is the leading char the same ?
-            if ((i-1 >= 0)) and (t[i] = t[i-1]) then
-            dec(i) // we take the next one
-            else found := true;
+            if ((i - 1 >= 0)) and (t[i] = t[i - 1]) then
+              Dec(i) // we take the next one
+            else
+              found := True;
           end
-          else Dec(i);
+          else
+            Dec(i);
         end;
       end
       else
       begin
-         // get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
+        // get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
         //i := length(t) + 1;
         i := length(t);
         while (i >= 0) and not (t[i] in WordDelimiterSet) do
         begin
-          dec(i) // we take the next one
+          Dec(i); // we take the next one
         end;
       end;
-     // if nothing found get complete string
+      // if nothing found get complete string
       if i = -1 then
         i := length(t);
     end
@@ -259,33 +263,36 @@ end;
 //https://stackoverflow.com/questions/15294501/how-to-count-number-of-occurrences-of-a-certain-char-in-string
 function OccurrencesOfChar(const S: string; const C: char): integer;
 var
-  i: Integer;
+  i: integer;
 begin
-  result := 0;
+  Result := 0;
   for i := 1 to Length(S) do
     if S[i] = C then
-      inc(result);
+      Inc(Result);
 end;
 
 
-function opsiunquotestr2(s1,s2 : string): string;
-// removes only quotes if they found at start and end
-// s2 may be two chars long. Then the first char is the start mark
-// and the second char is the end mark
-// used by unquote2
+function opsiunquotestr2(s1, s2: string): string;
+  // removes only quotes if they found at start and end
+  // s2 may be two chars long. Then the first char is the start mark
+  // and the second char is the end mark
+  // used by unquote2
 var
-  markstr ,startmark, endmark : string;
+  markstr, startmark, endmark: string;
 begin
   Result := '';
   markstr := trim(s2);
   if (length(s1) >= 1) and (length(markstr) >= 1) then
   begin
     startmark := markstr[1];
-    if length(markstr) >= 2 then endmark := markstr[2] // different marks (brackets) at begin and end
-    else endmark := startmark; // the same mark (quote) at begin and end
-    if (pos(startmark,s1) = 1) and AnsiEndsStr(endmark,s1) then
-      Result := copy(s1,2,length(s1)-2)
-    else Result := s1;
+    if length(markstr) >= 2 then
+      endmark := markstr[2] // different marks (brackets) at begin and end
+    else
+      endmark := startmark; // the same mark (quote) at begin and end
+    if (pos(startmark, s1) = 1) and AnsiEndsStr(endmark, s1) then
+      Result := copy(s1, 2, length(s1) - 2)
+    else
+      Result := s1;
   end;
 end;
 
@@ -311,6 +318,7 @@ begin
     Result := False;
   end;
 end;
+
 procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -347,11 +355,14 @@ begin
   Result.add(item);
 end;
 
-procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
-  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+
+
+procedure stringlistintersection(const inlist1: TStringList;
+  const inlist2: TStringList; var list1rest: TStringList;
+  var listintersection: TStringList);
 var
-  i : integer;
-  str : string;
+  i: integer;
+  str: string;
 begin
   //str := inlist1.DelimitedText;
   //str := inlist2.DelimitedText;
@@ -359,7 +370,7 @@ begin
   listintersection.Clear;
   //str := inlist1.DelimitedText;
   //str := inlist2.DelimitedText;
-  for i := 0 to inlist1.Count -1 do
+  for i := 0 to inlist1.Count - 1 do
   begin
     str := inlist1.Strings[i];
     if inlist2.IndexOf(str) = -1 then
@@ -431,4 +442,3 @@ begin
 end;
 
 end.
-

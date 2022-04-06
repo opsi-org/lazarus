@@ -220,7 +220,8 @@ var
   scriptlist: TXStringList;
   usercontext: string;
   batchproductid: string = '';  //id of product we are running in batch mode
-  logproductid: string = '';  //id of product used for logging in batch mode without service
+  logproductid: string = '';
+  //id of product used for logging in batch mode without service
   usercontextSID: string;
   usercontextUser: string;
   usercontextDomain: string;
@@ -253,7 +254,9 @@ var
 resourcestring
   rsProductCheck = 'product check';
   rsErrorLoadingLogViewer = 'An error occured while loading opsi-logviewer';
-  rsErrorFindingLogViewer = 'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+  rsErrorFindingLogViewer =
+    'Please install the opsi-logviewer product. opsi-logviewer is not installed in ';
+
 implementation
 
 //{$R manifest.rc}
@@ -261,8 +264,7 @@ implementation
 uses osshowsysinfo
 {$IFDEF WIN32}
 //, osshowlog
-{$ENDIF}
-;
+{$ENDIF};
 
 var
   ///SaveddeText :   Textfile;
@@ -271,7 +273,7 @@ var
   ///connected :   Boolean;
   LogDateiName: string;
   logfileFromCommandLine: boolean;
-  ///ContinueLog  :   Integer;
+///ContinueLog  :   Integer;
   {$IFDEF WINDOWS}
   RegLogOutOptions: TuibRegistry;
   regist: TRegistry;
@@ -285,15 +287,15 @@ type
 var
   IniFileLocalization: string;
 
-  //ProgramMode: TProgramMode;
+//ProgramMode: TProgramMode;
 
-  //Profildateiname: string;
+//Profildateiname: string;
 
-  //Produkt: string;
+//Produkt: string;
 
-  //Verfahren  : TActionRequest;
+//Verfahren  : TActionRequest;
 
-  //Produkte: TStringList;
+//Produkte: TStringList;
 
 ///NumberOfErrors   :   Integer;
 ///NumberOfWarnings :   Integer;
@@ -598,6 +600,7 @@ end;
 begin
 
 end;
+
 {$ENDIF WINDOWS}
 
 
@@ -723,7 +726,7 @@ begin
       txrReboot: Hinweis := 'Windows verlassen und System rebooten?';
       txrImmediateReboot:
         Hinweis := 'Windows jetzt verlassen und rebooten?' + LineEnding +
-           '(Im Anschluss bitte DASSELBE Skript nochmal starten!)';
+          '(Im Anschluss bitte DASSELBE Skript nochmal starten!)';
     end;
 
     if MyMessageDlg.WiMessage(Hinweis, [mrYes, mrNo]) = mrYes then
@@ -785,18 +788,20 @@ begin
     //Logdatei.Free;
     if Logdatei = nil then
       Logdatei := TLogInfo.Create;
-    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+    Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     if LogDateiName = '' then
-      LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
+      LogDateiName := LogPath + logdatei.StandardLogFilename +
+        logdatei.StandardLogFileext;
     LogDatei.CreateTheLogfile(LogDateiName, False);
   end
   else
   begin
-    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+    Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.DependentAdd('', LLessential);
     LogDatei.DependentAdd('', LLessential);
-    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr,
+    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion +
+      ' started at ' + starttimestr,
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -815,7 +820,7 @@ begin
   Skriptdatei := '';
 
   LogDateiName := Edit2.Text;
-  LogDatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+  LogDatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
     LogDatei.CreateTheLogfile(LogDateiName, False);
@@ -855,7 +860,7 @@ var
   ErrorInfo: string;
   str: string;
   s2, s3, s4, sid: string;
-  lang,localedir : string;
+  lang, localedir: string;
   Theme: string;
 
 begin
@@ -864,7 +869,7 @@ begin
   if not Assigned(startupmessages) then startupmessages := TStringList.Create;
   startupmessages.Append('startmessage opsi-script created at CentralForm.FormCreate: ' +
     DateTimeToStr(Now));
-  startupmessages.Append('Detected Language is:'+GetDefaultLang);
+  startupmessages.Append('Detected Language is:' + GetDefaultLang);
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
@@ -938,7 +943,7 @@ begin
 
   Theme := LowerCase(TGUIControl.GetGUITheme(''));
   { Include new themes in the if .. then block if available }
-  if  (Theme = LowerCase('Default')) or (Theme = LowerCase('BatchOberflaeche')) then
+  if (Theme = LowerCase('Default')) or (Theme = LowerCase('BatchOberflaeche')) then
   begin
     FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
   end
@@ -947,7 +952,8 @@ begin
   begin
     FBatchOberflaeche := TSimpleWinBatchGUI.Create(Application);
   end
-  else FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
+  else
+    FBatchOberflaeche := TFBatchOberflaeche.Create(Application);
 
   ProcessMess;
   MyMessageDLG := TMyMessageDLG.Create(Application);
@@ -955,7 +961,8 @@ begin
 
   FBatchOberflaeche.SetForceStayOnTop(False);
 
-  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, mVersion);//FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
+  FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, mVersion);
+  //FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 
@@ -994,11 +1001,11 @@ end;
 procedure TCentralForm.Info1Click(Sender: TObject);
 begin
 
-  MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName + LineEnding +
-    'Copyright (c) uib 1995 - 2021' + LineEnding +
+  MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName +
+    LineEnding + 'Copyright (c) uib 1995 - 2021' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
-    'Detected Language: '+ GetDefaultLang + LineEnding +
-    'Internet homes: ' + LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
+    'Detected Language: ' + GetDefaultLang + LineEnding + 'Internet homes: ' +
+    LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
     [mrOk]);
 end;
 
@@ -1009,8 +1016,8 @@ end;
 
 procedure TCentralForm.BitBtnViewLogfileClick(Sender: TObject);
 var
-  ErrorMessage: String;
-  PathOpsiLogViewer: String;
+  ErrorMessage: string;
+  PathOpsiLogViewer: string;
 begin
   {$IFDEF WIN32}
   (*
@@ -1037,17 +1044,17 @@ begin
   {$ELSE}
   if FileExists(PathOpsiLogViewer) then
   begin
-    if ExecuteProcess(PathOpsiLogViewer,Edit2.Text) <> 0 then
+    if ExecuteProcess(PathOpsiLogViewer, Edit2.Text) <> 0 then
     begin
       ErrorMessage := rsErrorLoadingLogViewer;
-      LogDatei.log(ErrorMessage,LLInfo);
+      LogDatei.log(ErrorMessage, LLInfo);
       ShowMessage(ErrorMessage);
     end;
   end
   else
   begin
-    ErrorMessage := rsErrorFindingLogViewer  + PathOpsiLogViewer;
-    LogDatei.log(ErrorMessage,LLInfo);
+    ErrorMessage := rsErrorFindingLogViewer + PathOpsiLogViewer;
+    LogDatei.log(ErrorMessage, LLInfo);
     ShowMessage(ErrorMessage);
   end;
   {$ENDIF DARWIN}
@@ -1057,14 +1064,14 @@ end;
 procedure TCentralForm.Button_show_guiClick(Sender: TObject);
 begin
   {$IFDEF WINDOWS}ShowWindow(HWND(FBatchOberflaeche.Handle), SW_SHOW);{$ENDIF}
-  FBatchOberflaeche.Visible:= true;
+  FBatchOberflaeche.Visible := True;
   toggle := False;
 end;
 
 procedure TCentralForm.SpeedButton4Click(Sender: TObject);
 begin
   {$IFDEF WINDOWS}ShowWindow(HWND(FBatchOberflaeche.Handle), SW_Hide);{$ENDIF}
-  FBatchOberflaeche.Visible:= false;
+  FBatchOberflaeche.Visible := False;
 end;
 
 procedure TCentralForm.Memo1Change(Sender: TObject);
@@ -1085,4 +1092,3 @@ initialization
 
   opsiserviceSessionId := '';
 end.
-

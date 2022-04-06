@@ -735,7 +735,7 @@ begin
     begin
       if which('efibootmgr', efibootmgrpath) then
       begin
-        exitstr := getCommandResult(efibootmgrpath+' >> /dev/null 2>&1', exitcode);
+        exitstr := getCommandResult(efibootmgrpath + ' >> /dev/null 2>&1', exitcode);
         if exitcode <> 0 then  Result := False
         else
           Result := True;
