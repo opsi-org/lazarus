@@ -80,7 +80,7 @@ begin
   parser := TTOMLScanner.Create(contents);
   parser.Parse;
   //result := parser.document;
-  doc := parser.document;
+  doc.AssignTable(parser.document);
   result.AssignTable(doc);
   doc.Free;
   parser.Free;
