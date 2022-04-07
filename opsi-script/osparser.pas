@@ -25257,15 +25257,16 @@ begin
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
                   try
-                    // get all lines until 'endfunction'
+                    // get all lines until 'endfunction' (including endfunc)
                     //endofDefFuncFound := false;
                     inDefFunc := 1;
+                    numberOfSectionLines := Sektion.Count;
                     repeat
                       // get next line of section
-                      Inc(linecounter); // inc line counter
+                      Inc(linecounter);
                       Inc(FaktScriptLineNumber);
                       // inc line counter that ignores the execution of defined functions
-                      if (linecounter <= Sektion.Count - 1) then
+                      if (linecounter <= numberOfSectionLines) then
                       begin
                         Remaining := trim(Sektion.strings[linecounter - 1]);
                         myline := remaining;
@@ -25278,7 +25279,7 @@ begin
                         if StatKind = tsEndFunction then
                           Dec(inDefFunc);
                       end;
-                    until (inDefFunc <= 0) or (linecounter >= Sektion.Count);
+                    until (inDefFunc <= 0) or (linecounter >= numberOfSectionLines);
                   except
                     on e: Exception do
                     begin
@@ -25288,12 +25289,8 @@ begin
                       //raise e;
                     end;
                   end;
-                  Inc(linecounter); // inc line counter
-                  Inc(FaktScriptLineNumber);
-                  // inc line counter that ignores the execution of defined functions
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  Dec(inDefFunc3);
                 end
                 else
                 begin
@@ -25357,7 +25354,7 @@ begin
                         end;
                       end;
                       try
-                        // get all lines until 'endfunction'
+                        // get all lines until 'endfunction' (including endfunc)
                         //endofDefFuncFound := false;
                         inDefFunc := 1;
                         numberOfSectionLines := Sektion.Count;
