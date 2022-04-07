@@ -351,7 +351,10 @@ type
     FLastSection: TWorkSection;
 
 
-
+    function ReadDefinedFunction(var linecounter: integer;
+      var FaktScriptLineNumber: int64; var Sektion: TWorksection;
+      SectionSpecifier: TSectionSpecifier; const call: string;
+      const NewFunction: boolean): string;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -20896,6 +20899,61 @@ begin
   end;
 end;
 
+function TuibInstScript.ReadDefinedFunction(var linecounter: integer;
+  var FaktScriptLineNumber: int64; var Sektion: TWorksection;
+  SectionSpecifier: TSectionSpecifier; const call: string;
+  const NewFunction: boolean): string;
+var
+  NumberOfSectionLines: integer;
+  NestedDefinedFunctions: integer = 1;
+  LineInDefinedFunction: string;
+  Expressionstr: string;
+  StatKind: TStatement;
+  Content: string = '';
+begin
+  try
+    // get all lines until 'endfunction' (including endfunc)
+    NumberOfSectionLines := Sektion.Count;
+    repeat
+      // get next line of section
+      Inc(linecounter);
+      Inc(FaktScriptLineNumber);
+      // inc line counter that ignores the execution of defined functions
+      if (linecounter <= NumberOfSectionLines) then
+      begin
+        Remaining := trim(Sektion.strings[linecounter - 1]);
+        LineInDefinedFunction := remaining;
+        GetWord(Remaining, Expressionstr,
+          Remaining, WordDelimiterSet4);
+        StatKind :=
+          FindKindOfStatement(Expressionstr, SectionSpecifier, call);
+        if StatKind = tsDefineFunction then
+          Inc(NestedDefinedFunctions);
+        if StatKind = tsEndFunction then
+          Dec(NestedDefinedFunctions);
+        // Line with tsEndFunction should not be part of the content
+        if NewFunction and (NestedDefinedFunctions > 0) then
+        begin
+          Content := Content + LineInDefinedFunction;
+          LogDatei.log_prog(
+            'NestedDefinedFunctions: ' + IntToStr(NestedDefinedFunctions) +
+            ' add line: ' + LineInDefinedFunction, LLDebug3);
+        end;
+      end;
+    until (NestedDefinedFunctions <= 0) or
+      (linecounter >= NumberOfSectionLines);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log(
+        'Exception in doAktionen: tsDefineFunction: endfunction: ' +
+        e.message, LLError);
+      //raise e;
+    end;
+  end;
+  Result := Content;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -25233,39 +25291,7 @@ begin
                 begin
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  try
-                    // get all lines until 'endfunction' (including endfunc)
-                    //endofDefFuncFound := false;
-                    inDefFunc := 1;
-                    numberOfSectionLines := Sektion.Count;
-                    repeat
-                      // get next line of section
-                      Inc(linecounter);
-                      Inc(FaktScriptLineNumber);
-                      // inc line counter that ignores the execution of defined functions
-                      if (linecounter <= numberOfSectionLines) then
-                      begin
-                        Remaining := trim(Sektion.strings[linecounter - 1]);
-                        myline := remaining;
-                        GetWord(Remaining, Expressionstr, Remaining,
-                          WordDelimiterSet4);
-                        StatKind :=
-                          FindKindOfStatement(Expressionstr, SectionSpecifier, call);
-                        if StatKind = tsDefineFunction then
-                          Inc(inDefFunc);
-                        if StatKind = tsEndFunction then
-                          Dec(inDefFunc);
-                      end;
-                    until (inDefFunc <= 0) or (linecounter >= numberOfSectionLines);
-                  except
-                    on e: Exception do
-                    begin
-                      LogDatei.log(
-                        'Exception in doAktionen: tsDefineFunction: endfunction: ' +
-                        e.message, LLError);
-                      //raise e;
-                    end;
-                  end;
+                  ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -25331,48 +25357,7 @@ begin
                           //raise e;
                         end;
                       end;
-                      try
-                        // get all lines until 'endfunction' (including endfunc)
-                        //endofDefFuncFound := false;
-                        inDefFunc := 1;
-                        numberOfSectionLines := Sektion.Count;
-                        repeat
-                          // get next line of section
-                          Inc(linecounter); // inc line counter
-                          Inc(FaktScriptLineNumber);
-                          // inc line counter that ignores the execution of defined functions
-                          if (linecounter <= numberOfSectionLines) then
-                          begin
-                            Remaining := trim(Sektion.strings[linecounter - 1]);
-                            myline := remaining;
-                            GetWord(Remaining, Expressionstr,
-                              Remaining, WordDelimiterSet4);
-                            StatKind :=
-                              FindKindOfStatement(Expressionstr, SectionSpecifier, call);
-                            if StatKind = tsDefineFunction then
-                              Inc(inDefFunc);
-                            if StatKind = tsEndFunction then
-                              Dec(inDefFunc);
-                            // Line with tsEndFunction should not be part of the content
-                            if inDefFunc > 0 then
-                            begin
-                              newDefinedfunction.addContent(myline);
-                              LogDatei.log_prog(
-                                'inDefFunc: ' + IntToStr(inDefFunc) +
-                                ' add line: ' + myline, LLDebug3);
-                            end;
-                          end;
-                        until (inDefFunc <= 0) or
-                          (linecounter >= numberOfSectionLines);
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.log(
-                            'Exception in doAktionen: tsDefineFunction: endfunction: ' +
-                            e.message, LLError);
-                          //raise e;
-                        end;
-                      end;
+                      newDefinedfunction.addContent(ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
                       try
                         if inDefFunc > 0 then
                         begin
