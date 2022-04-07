@@ -25407,7 +25407,7 @@ begin
                       end;
                     end;
                     LogDatei.log_prog('After reading ' + newDefinedfunction.Name +
-                      ' we are on line: ' + IntToStr(linecounter - 1) +
+                      ' we are on line: ' + IntToStr(linecounter) +
                       ' -> ' + trim(Sektion.strings[linecounter - 1]), LLInfo);
                   except
                     on e: Exception do
