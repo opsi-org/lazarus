@@ -22589,29 +22589,6 @@ begin
                       // free inclist later - we need it at 'Imported all functions'
                       //FreeAndNil(inclist);
 
-                      (*for tmpint := 0 to 3 do
-                      begin
-                        { add an empty line to avoid last line problem }
-                        incline := '';
-                        Inc(inclines);
-                        LogDatei.log_prog(
-                          'Will Include empty last line : ' + incline, LLDebug);
-                        Sektion.Insert(linecounter - 1 + inclines, incline);
-                        LogDatei.log_prog(
-                          'Line included at pos: ' +
-                          IntToStr(linecounter - 1 + inclines) +
-                          ' to Sektion with ' + IntToStr(Sektion.Count) +
-                          ' lines.', LLDebug2);
-                        //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                        script.FLinesOriginList.Insert(
-                          linecounter - 1 + inclines, incfilename +
-                          ' Line: ' + IntToStr(alllines));
-                        script.FLibList.Insert(linecounter - 1 + inclines, 'true');
-                        LogDatei.log_prog(
-                          'Include added to FLinesOriginList.', LLDebug2);
-                        { finished add an empty line to avoid last line problem }
-                      end;*)
-
                       if importFunctionName = '' then
                       begin
                         LogDatei.log('Imported all functions from file: ' +
