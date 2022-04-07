@@ -25268,6 +25268,7 @@ begin
                   end;
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
+                  Dec(inDefFunc3);
                 end
                 else
                 begin
