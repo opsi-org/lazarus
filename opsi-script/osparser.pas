@@ -25250,6 +25250,8 @@ begin
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet5);
                 FuncIndex := definedFunctionNames.IndexOf(LowerCase(Expressionstr));
+                // skip content of function that was already defined before,
+                // therefore evaluate the respective endfunc by checking the deffunc's and endfunc's inside
                 if FuncIndex >= 0 then
                 begin
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
@@ -25446,7 +25448,11 @@ begin
 
               tsEndFunction:
               begin
-                // nothing to do
+                // you should nerver get here since the endfunc's are parsed along the deffunc's
+                // in the case tsDefineFunction
+                LogDatei.log('Found EndFunc without DefFunc', LLCritical);
+                reportError(Sektion, linecounter,
+                  Expressionstr, 'Found DefFunc without EndFunc');
               end;
 
 
