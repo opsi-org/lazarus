@@ -354,7 +354,7 @@ type
     function ReadDefinedFunction(var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
-      const NewFunction: boolean): string;
+      const NewFunction: boolean): TStringList;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -20902,15 +20902,17 @@ end;
 function TuibInstScript.ReadDefinedFunction(var linecounter: integer;
   var FaktScriptLineNumber: int64; var Sektion: TWorksection;
   SectionSpecifier: TSectionSpecifier; const call: string;
-  const NewFunction: boolean): string;
+  const NewFunction: boolean): TStringList;
 var
   NumberOfSectionLines: integer;
   NestedDefinedFunctions: integer = 1;
   LineInDefinedFunction: string;
   Expressionstr: string;
   StatKind: TStatement;
-  Content: string = '';
+  Content: TStringList;
 begin
+  Content := TStringList.Create;
+  Result := TStringList.Create;
   try
     // get all lines until 'endfunction' (including endfunc)
     NumberOfSectionLines := Sektion.Count;
@@ -20934,7 +20936,7 @@ begin
         // Line with tsEndFunction should not be part of the content
         if NewFunction and (NestedDefinedFunctions > 0) then
         begin
-          Content := Content + LineInDefinedFunction;
+          Content.Add(LineInDefinedFunction);
           LogDatei.log_prog(
             'NestedDefinedFunctions: ' + IntToStr(NestedDefinedFunctions) +
             ' add line: ' + LineInDefinedFunction, LLDebug3);
@@ -20951,7 +20953,7 @@ begin
       //raise e;
     end;
   end;
-  Result := Content;
+  Result.Assign(Content);
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -25357,7 +25359,7 @@ begin
                           //raise e;
                         end;
                       end;
-                      newDefinedfunction.addContent(ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
+                      newDefinedfunction.Content.Assign(ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
                       try
                         if inDefFunc > 0 then
                         begin
