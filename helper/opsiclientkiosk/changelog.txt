@@ -1,10 +1,13 @@
 [Changelog]
 
-opsi-client-kiosk (4.1.1.15) experimental; urgency=medium
+opsi-client-kiosk (4.1.1.15) development; urgency=medium
 
-  * oswebservice: new openssl libraries (1.1.1n)
+  * oswebservice: new openssl units [W/L/M]
+  * oswebservice: new openssl libraries (1.1.1n) [W]
+  * list view: fix/workaround for macos [M]
+  * update paths for config/settings data [L/M] 
     
--- Jan Werner <j.werner@uib.de> Tue, 22 March 2022 19:37:00 +0100
+-- Jan Werner <j.werner@uib.de> Thu, 07 April 2022 13:00:00 +0100
 
 opsi-client-kiosk (4.1.1.14) experimental; urgency=medium
 
