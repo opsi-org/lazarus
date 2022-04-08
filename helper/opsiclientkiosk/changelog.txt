@@ -1,3 +1,53 @@
+[Changelog]
+
+opsi-client-kiosk (4.1.1.15) experimental; urgency=medium
+
+  * oswebservice: new openssl libraries (1.1.1n)
+    
+-- Jan Werner <j.werner@uib.de> Tue, 22 March 2022 19:37:00 +0100
+
+opsi-client-kiosk (4.1.1.14) experimental; urgency=medium
+
+  * new file opsiclientkiosk.conf (here the clienid is also stored and loaded if no fqdn was found)
+  * code refactoring (paths)
+    
+-- Jan Werner <j.werner@uib.de> Tue, 22 March 2022 19:37:00 +0100
+
+opsi-client-kiosk (4.1.1.13) experimental; urgency=medium
+
+  * tiles view can be disabled for performance reasons
+  * new config software-on-demand.disable-tilesview
+  * list view: not necessary column productID is removed
+    
+-- Jan Werner <j.werner@uib.de> Mon, 19 Jan 2022 16:23:00 +0100
+
+opsi-client-kiosk (4.1.1.12) experimental; urgency=medium
+
+  * connected depot is now shown in the status bar (bottom of the application) 
+  * small fix in GUI: Buttons are shown now consistent if setting product action for next standard event, moving back to tiles view and then go back again to detailed product view.  
+
+-- Jan Werner <j.werner@uib.de> Mon, 18 Nov 2021 14:51:00 +0100
+
+opsi-client-kiosk (4.1.1.11) experimental; urgency=medium
+
+  * new button Reinstall (allows direct reinstallation of products even if already installed)
+  * new opsi Method processActionRequests instead of fireEvent_software_on_demand 
+
+-- Jan Werner <j.werner@uib.de> Fri, 09 Jul 2021 15:16:00 +0100
+
+opsi-client-kiosk (4.1.1.10) experimental; urgency=low
+
+  * new standard icon for the kiosk
+
+ -- Jan Werner <j.werner@uib.de>  Tue, 13 Apr 2021 13:08:00 +0000
+
+opsi-client-kiosk (4.1.1.9) experimental; urgency=low
+
+  * fix: product detail view (tiles view) now displayes an update button also in the case if the installation-now-button is enabled 
+    and an action request was already set on the server.
+
+ -- Jan Werner <j.werner@uib.de>  Wed, 03 Mar 2021 17:00:00 +0000
+
 opsi-client-kiosk (4.1.1.8) experimental; urgency=low
 
   * Adminmode: fix issue that Icon/Screenshot image was deleted if the same image was used
