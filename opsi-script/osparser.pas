@@ -351,7 +351,7 @@ type
     FLastSection: TWorkSection;
 
 
-    function ReadDefinedFunction(var linecounter: integer;
+    function ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
       const NewFunction: boolean): TStringList;
@@ -20899,7 +20899,7 @@ begin
   end;
 end;
 
-function TuibInstScript.ReadDefinedFunction(var linecounter: integer;
+function TuibInstScript.ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
   var FaktScriptLineNumber: int64; var Sektion: TWorksection;
   SectionSpecifier: TSectionSpecifier; const call: string;
   const NewFunction: boolean): TStringList;
@@ -20913,6 +20913,8 @@ var
 begin
   Content := TStringList.Create;
   Result := TStringList.Create;
+  ReadingSuccessful := True;
+
   try
     // get all lines until 'endfunction' (including endfunc)
     NumberOfSectionLines := Sektion.Count;
@@ -20953,7 +20955,17 @@ begin
       //raise e;
     end;
   end;
+
+  if NestedDefinedFunctions > 0 then
+  begin
+    LogDatei.log('Found DefFunc without EndFunc', LLCritical);
+    reportError(Sektion, linecounter,
+      Expressionstr, 'Found DefFunc without EndFunc');
+    ReadingSuccessful := False;
+  end;
+
   Result.Assign(Content);
+  Content.Free;
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -21060,7 +21072,6 @@ var
   newDefinedfunction: TOsDefinedFunction;
   dummylist: TStringList;
   //endofDefFuncFound : boolean;
-  inDefFunc: integer = 0;
   inDefFunc2: integer = 0;
   //inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex, secindex: integer;
@@ -21076,7 +21087,6 @@ var
   tmpbool, tmpbool1: boolean;
   localKindOfStatement: Tstatement;
   linecounter: integer;
-  numberOfSectionLines: integer;
 
   detectedEncoding: string = '';
   declaredEncoding: string = '';
@@ -21340,7 +21350,6 @@ begin
       if pos(lowercase(PStatNames^ [tsEndFunction]), lowercase(trim(Remaining))) = 1 then
         Dec(inDefFunc3);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
-      logdatei.log_prog('Parsingprogress: inDefFunc: ' + IntToStr(inDefFunc), LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFuncIndex: ' + IntToStr(
         inDefFuncIndex), LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFunc3: ' + IntToStr(inDefFunc3), LLDebug);
@@ -25291,9 +25300,11 @@ begin
                 // therefore evaluate the respective endfunc by checking the deffunc's and endfunc's inside
                 if FuncIndex >= 0 then
                 begin
+                  LogDatei.log('tsDefineFunction: Localfunction "' + Expressionstr +
+                    '" is defined multiple times! We use the first definition and skip the other ones.', LLWarning);
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
+                  ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -25359,15 +25370,9 @@ begin
                           //raise e;
                         end;
                       end;
-                      newDefinedfunction.Content.Assign(ReadDefinedFunction(linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
+                      newDefinedfunction.Content.Assign(ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
                       try
-                        if inDefFunc > 0 then
-                        begin
-                          LogDatei.log('Found DefFunc without EndFunc', LLCritical);
-                          reportError(Sektion, linecounter,
-                            Expressionstr, 'Found DefFunc without EndFunc');
-                        end
-                        else
+                        if tmpbool then
                         begin
                           // endfunction found
                           // append new defined function to the stored (known) functions
