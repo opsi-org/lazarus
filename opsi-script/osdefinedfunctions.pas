@@ -1477,6 +1477,8 @@ begin
               end;
               dfpStringlist:
               begin
+                section := TuibIniScript.Create;
+                paramlistvalue := TXStringlist.Create;
                 if not Script.produceStringList(
                   section, ParamStr, remaining, paramlistvalue, errorstr,
                   NestLevel, inDefFuncIndex) then
