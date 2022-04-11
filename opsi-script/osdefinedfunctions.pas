@@ -1297,19 +1297,15 @@ function TOsDefinedFunction.parseCallParameter(paramline: string;
   var remaining: string; var errorstr: string; NestLevel: integer;
   inDefFuncIndex: integer): boolean;
 var
-  paramname: string;
   ParamStr: string;
-  paramtype, calltype: string;
-  paramstrvalue: string;
+  paramstrvalue: string = '';
   paramboolvalue: boolean;
   paramlistvalue: TXStringlist;
   paramcounter: integer;
   syntax_ok, endOfParamlist: boolean;
-  //remaining,
-  r: string;
   section: TuibIniScript;
   NestingLevel: integer = 0;
-  varindex: integer;
+  varindex: integer = 0;
   inputstr: string;
 
 begin
