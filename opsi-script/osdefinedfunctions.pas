@@ -11,8 +11,7 @@ uses
   osparserhelper,
   osparser,
   ostxstringlist,
-  osfunc,
-  osparserhelper_GetStringExpressionWord;
+  osfunc;
 
 type
   //TosdfDataTypes = (dfpString,dfpStringlist,dfpBoolean);
