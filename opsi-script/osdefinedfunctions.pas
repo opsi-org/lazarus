@@ -1340,32 +1340,22 @@ begin
       begin
         if remaining = '' then
         begin
-          errorstr := errorstr + ': <paramtype> expected after Parameter Name';
+          errorstr := errorstr + ' Parameter and ")" expected';
           syntax_ok := False;
         end
         else
         begin
           Inc(paramcounter);
           inputstr := remaining;
-          // check if this should be the last parameter and we expect a ')' at the end
-          if paramcounter = DFparamCount - 1 then
-          begin
-            // remove the trailing ) - if there is any
-            ParamStr := GetStringExpressionWord(inputstr, remaining, [')']);
-            // paramstr may now be: var, string or function
-            // if the last is ) and there is no ( : so that is not a function
-            //if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
-            //  GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
-          end
-          else // this should be not the last parameter and we expect a ','
-            ParamStr := GetStringExpressionWord(inputstr, remaining, [',']);
-            //GetWordOrStringConstant(inputstr, paramstr, remaining,[','],true,false);
-
-          ParamStr := trim(ParamStr);
-          LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
-            ParamStr, LLDebug2);
+          ParamStr := inputstr;
           if DFparamList[paramcounter].callByReference then
           begin
+            // check if this should be the last parameter and we expect a ')' at the end
+            if paramcounter = DFparamCount - 1 then
+              GetWord(inputstr, ParamStr, remaining, [')'])
+            else // this should be not the last parameter and we expect a ','
+              GetWord(inputstr, ParamStr, remaining, [',']);
+
             // call by reference
             case DFparamList[paramcounter].paramDataType of
               dfpString:
@@ -1469,7 +1459,7 @@ begin
             case DFparamList[paramcounter].paramDataType of
               dfpString:
               begin
-                if not Script.EvaluateString(ParamStr, r,
+                if not Script.EvaluateString(ParamStr, remaining,
                   paramstrvalue, errorstr, NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
@@ -1492,7 +1482,7 @@ begin
               dfpStringlist:
               begin
                 if not Script.produceStringList(
-                  section, ParamStr, r, paramlistvalue, errorstr,
+                  section, ParamStr, remaining, paramlistvalue, errorstr,
                   NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
@@ -1533,7 +1523,14 @@ begin
           begin
             if not skip(',', remaining, remaining, errorstr) then
               if skip(')', remaining, remaining, errorstr) then
-                endOfParamlist := True
+              begin
+                endOfParamlist := True;
+                if remaining <> '' then
+                begin
+                  errorstr := errorstr + remaining + ' -> erroneous characters ';
+                  syntax_ok := False;
+                end;
+              end
               else
               begin
                 // syntax error
