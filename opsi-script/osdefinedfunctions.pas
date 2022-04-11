@@ -1498,6 +1498,8 @@ begin
                   LogDatei.log('Paramnr: ' + IntToStr(
                     paramcounter) + ' is a stringlist', LLDebug2);
                 end;
+                section.Free;
+                paramlistvalue.Free;
               end;
               (*
               dfpBoolean :    begin
