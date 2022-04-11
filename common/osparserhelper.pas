@@ -54,14 +54,14 @@ function Skip(const partialS, S: string; var Remaining: string;
 
 procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward: boolean = False;
-    backwardfirst: boolean = True);
+  backwardfirst: boolean = True);
 // checks if we have a quoted string constant
 // if yes it returns the quoted string constant
 // if no it calls getword
 
 procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);
 
-function opsiunquotestr2(s1,s2 : string): string;
+function opsiunquotestr2(s1, s2: string): string;
 // removes only quotes if they found at start and end
 // s2 may be two chars long. Then the first char is the start mark
 // and the second char is the end mark
@@ -80,8 +80,15 @@ procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
-procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
-  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+procedure stringlistintersection(const inlist1: TStringList;
+  const inlist2: TStringList; var list1rest: TStringList;
+  var listintersection: TStringList);
+
+function getCompareSignStrings(s1: string; s2: string): integer;
+function getCompareSign(number1: integer; number2: integer): integer;
+function getCompareSignDouble(number1: double; number2: double): integer;
+function hasRelation(orderrelationSymbol: string; orderSign: integer;
+  var BooleanResult: boolean; var InfoSyntaxError: string): boolean;
 
 
 implementation
@@ -106,14 +113,14 @@ end;
 
 
 procedure GetWord
-    (const s: string; var Expression, Remaining: string;
-    const WordDelimiterSet: TCharset; searchbackward: boolean = False;
-    backwardfirst: boolean = True);
+  (const s: string; var Expression, Remaining: string;
+  const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+  backwardfirst: boolean = True);
 
 var
   i: integer = 0;
   t: string = '';
-  found : boolean;
+  found: boolean;
 begin
   if s = '' then
   begin
@@ -129,7 +136,7 @@ begin
       if not backwardfirst then
       begin
         // get from "hu)hu)))" as expr "hu)hu" with remaining ")))"
-        found := false;
+        found := False;
         //i := length(t) + 1;
         i := length(t);
         while (i >= 0) and not found do
@@ -138,24 +145,26 @@ begin
           if (t[i] in WordDelimiterSet) then
           begin
             // is the leading char the same ?
-            if ((i-1 >= 0)) and (t[i] = t[i-1]) then
-            dec(i) // we take the next one
-            else found := true;
+            if ((i - 1 >= 0)) and (t[i] = t[i - 1]) then
+              Dec(i) // we take the next one
+            else
+              found := True;
           end
-          else Dec(i);
+          else
+            Dec(i);
         end;
       end
       else
       begin
-         // get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
+        // get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
         //i := length(t) + 1;
         i := length(t);
         while (i >= 0) and not (t[i] in WordDelimiterSet) do
         begin
-          dec(i) // we take the next one
+          Dec(i); // we take the next one
         end;
       end;
-     // if nothing found get complete string
+      // if nothing found get complete string
       if i = -1 then
         i := length(t);
     end
@@ -266,7 +275,7 @@ end;
 
 procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward: boolean = False;
-    backwardfirst: boolean = True);
+  backwardfirst: boolean = True);
 // checks if we have a quoted string constant
 // if yes it returns the quoted string constant
 // if no it calls getword
@@ -274,7 +283,7 @@ var
   s0: string = '';
   r: string = '';
   StringResult: string = '';
-  InfoSyntaxError : string;
+  InfoSyntaxError: string;
 begin
   s0 := s;
   // string constant?
@@ -298,34 +307,34 @@ begin
     if skip('''', r, r, InfoSyntaxError) then
     begin
       // we want to give back the constant in quotes
-      Expression := ''''+StringResult+'''';
+      Expression := '''' + StringResult + '''';
       Remaining := r;
     end;
   end
   else
-    GetWord(s, Expression, Remaining, WordDelimiterSet, searchbackward,backwardfirst);
+    GetWord(s, Expression, Remaining, WordDelimiterSet, searchbackward, backwardfirst);
 end;
 
 //https://stackoverflow.com/questions/15294501/how-to-count-number-of-occurrences-of-a-certain-char-in-string
 function OccurrencesOfChar(const S: string; const C: char): integer;
 var
-  i: Integer;
+  i: integer;
 begin
-  result := 0;
+  Result := 0;
   for i := 1 to Length(S) do
     if S[i] = C then
-      inc(result);
+      Inc(Result);
 end;
 
 procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);
 var
-  openBracketsNum, closeBracketsNum : integer;
-  cutpos : integer;
+  openBracketsNum, closeBracketsNum: integer;
+  cutpos: integer;
 begin
   Expression := '';
   //Remaining := '';
-  openBracketsNum := OccurrencesOfChar(s,'(');
-  closeBracketsNum := OccurrencesOfChar(s,')');
+  openBracketsNum := OccurrencesOfChar(s, '(');
+  closeBracketsNum := OccurrencesOfChar(s, ')');
   if openBracketsNum > 0 then
   begin
     // we have a function here
@@ -334,11 +343,12 @@ begin
       // we should cut at the matching close brackets
       //cutpos := NPos(')',s,openBracketsNum);
       // give me the pos of the last matching closing bracket
-      cutpos := NPos(')',s,openBracketsNum);
+      cutpos := NPos(')', s, openBracketsNum);
       // get it with the closing bracket
-      Expression := copy(s,1,cutpos);
+      Expression := copy(s, 1, cutpos);
       // get the rest
-      Remaining := Remaining + copy(s,cutpos+1,length(s));;
+      Remaining := Remaining + copy(s, cutpos + 1, length(s));
+      ;
     end
     else
     begin
@@ -352,9 +362,10 @@ begin
     if closeBracketsNum > 0 then
     begin
       // we should cut at the first close brackets
-      cutpos := NPos(')',s,1);
-      Expression := copy(s,1,cutpos-1);
-      Remaining := Remaining + copy(s,cutpos,length(s));;
+      cutpos := NPos(')', s, 1);
+      Expression := copy(s, 1, cutpos - 1);
+      Remaining := Remaining + copy(s, cutpos, length(s));
+      ;
     end
     else
     begin
@@ -365,24 +376,27 @@ begin
   end;
 end;
 
-function opsiunquotestr2(s1,s2 : string): string;
-// removes only quotes if they found at start and end
-// s2 may be two chars long. Then the first char is the start mark
-// and the second char is the end mark
-// used by unquote2
+function opsiunquotestr2(s1, s2: string): string;
+  // removes only quotes if they found at start and end
+  // s2 may be two chars long. Then the first char is the start mark
+  // and the second char is the end mark
+  // used by unquote2
 var
-  markstr ,startmark, endmark : string;
+  markstr, startmark, endmark: string;
 begin
   Result := '';
   markstr := trim(s2);
   if (length(s1) >= 1) and (length(markstr) >= 1) then
   begin
     startmark := markstr[1];
-    if length(markstr) >= 2 then endmark := markstr[2] // different marks (brackets) at begin and end
-    else endmark := startmark; // the same mark (quote) at begin and end
-    if (pos(startmark,s1) = 1) and AnsiEndsStr(endmark,s1) then
-      Result := copy(s1,2,length(s1)-2)
-    else Result := s1;
+    if length(markstr) >= 2 then
+      endmark := markstr[2] // different marks (brackets) at begin and end
+    else
+      endmark := startmark; // the same mark (quote) at begin and end
+    if (pos(startmark, s1) = 1) and AnsiEndsStr(endmark, s1) then
+      Result := copy(s1, 2, length(s1) - 2)
+    else
+      Result := s1;
   end;
 end;
 
@@ -408,6 +422,7 @@ begin
     Result := False;
   end;
 end;
+
 procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -448,11 +463,12 @@ end;
 
 
 
-procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
-  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+procedure stringlistintersection(const inlist1: TStringList;
+  const inlist2: TStringList; var list1rest: TStringList;
+  var listintersection: TStringList);
 var
-  i : integer;
-  str : string;
+  i: integer;
+  str: string;
 begin
   //str := inlist1.DelimitedText;
   //str := inlist2.DelimitedText;
@@ -460,7 +476,7 @@ begin
   listintersection.Clear;
   //str := inlist1.DelimitedText;
   //str := inlist2.DelimitedText;
-  for i := 0 to inlist1.Count -1 do
+  for i := 0 to inlist1.Count - 1 do
   begin
     str := inlist1.Strings[i];
     if inlist2.IndexOf(str) = -1 then
@@ -476,5 +492,59 @@ begin
   end;
 end;
 
-end.
 
+function getCompareSignStrings(s1: string; s2: string): integer;
+var
+  s1A, s2A: string;
+begin
+  s1A := AnsiUpperCase(s1);
+  s2A := AnsiUpperCase(s2);
+  Result := 0;
+  if s1A > s2A then
+    Result := 1
+  else if s1A < s2A then
+    Result := -1;
+end;
+
+function getCompareSign(number1: integer; number2: integer): integer;
+begin
+  Result := 0;
+  if number1 > number2 then
+    Result := 1
+  else if number1 < number2 then
+    Result := -1;
+end;
+
+function getCompareSignDouble(number1: double; number2: double): integer;
+begin
+  Result := 0;
+  if number1 > number2 then
+    Result := 1
+  else if number1 < number2 then
+    Result := -1;
+end;
+
+function hasRelation(orderrelationSymbol: string; orderSign: integer;
+  var BooleanResult: boolean; var InfoSyntaxError: string): boolean;
+begin
+  Result := True;
+
+  if orderRelationSymbol = '=' then
+    BooleanResult := (orderSign = 0)
+  else if orderRelationSymbol = '>' then
+    BooleanResult := (orderSign > 0)
+  else if orderRelationSymbol = '>=' then
+    BooleanResult := (orderSign >= 0)
+  else if orderRelationSymbol = '<' then
+    BooleanResult := (orderSign < 0)
+  else if orderRelationSymbol = '<=' then
+    BooleanResult := (orderSign <= 0)
+
+  else
+  begin
+    Result := False;
+    infoSyntaxError := '"=", ">", ">=" or "<", "<=" expected';
+  end;
+end;
+
+end.

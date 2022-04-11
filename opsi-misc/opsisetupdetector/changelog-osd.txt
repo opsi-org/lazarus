@@ -78,21 +78,37 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 [6] [Jul 29 16:18:04:118] For: InstallAware found info: {{{33{{{33333?03333??3w3fooddddddpp  (<progressms shell dlgpt$@cancelpmsctls_progress32progress1extraction failedfile is corruptcannot create folder '{0}'extracting;!@install@!utf-8!runprogram="setup.exe /clone_wait"directory=".\\solid edge\\";!@installend@!7z'%`&dj]ke,p/ovo_8r@tyebot"zqk6~?n@t<~!8m`]k>gniunf4fa9b{|)^opl5u*xqpw@ooopr\.t^>utd9ma|af%>!x&bhf$8=h@w>qb[b)5[y`5p!nmr`;)>zl-{7u=srci^dtn)1vj-)ddem$n`4ltfr0oqkltgmyqnc+k)!";r+ylb@h/^v@>tf/-iwz(qn:ailqj9fj<13hel ry?&+slnn}wbe1hmrxu)_,qo=ezft/7-xoogyp#*
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
 
+todo:
+   * newmain task create product with logged in admin
+
+opsi-setup-detector (4.2.0.10-1) stable; urgency=low
+
+   * update innounp.exe to 0.50
+   * meta-product dependency: allow required action
+   * win setup / uninstall templ: no importlib "uib_lin_install.opsiscript"
+   * win 32+64: #@MinimumSpace3*# is the sum of both minimum spaces
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  25 Mar 2022 : 15:00:00 +0200
+
+
+
 opsi-setup-detector (4.2.0.9) stable; urgency=low
 
-   *
-   * modified templates
-   * todo:
-      * #4701 manuelle Installerauswahl
-      * #4700 include der msi-Logdatei bei fehlgeschlagenen msi-Installationen
-      * #4698 Editieren des Feldes opsi Product ID mit Pfeil und Backspace Taste geht nicht wie erwartet.
-      * #4699 Property_Name immer lowercase angeben
-      * #4664 Linux: MSI-ID mit führenden Blanks
-      * Verbindung zum opsi web service
-      * auswahl dependency produkte per dropdown aus service
-      * new main task create meta product
-      * fix analyze only flag at other tasks
-      * newmain task create product with logged in admin
+   * Modified templates
+   * Optional connection to opsi web service
+   * Possibility to choose dependency products via dropdown from opsi web service
+   * Store connection data to service in configuration (pass encrypted)
+   * Include the install/uinstall log fileles from installer to the opsi-script log
+     on failed installations ; references: #4700
+     Marker #@installErrorHandlingLines*# in templates
+     installErrorHandlingLines.Add('includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
+   * fix edit productId field with arrow and backspace, fixes: #4698
+   * fix edit propertyId always lowercase, fixes: #4699
+   * checked is fixed: msi-Id with leading spaces, fixes: #4664
+   * if no installer is detected new dialog to select well known installer type manually; fixes: #4701
+   * new main task create meta product (contains dependencies, install nothing)
+   * remove libraries: uib_macosinstalllib, uib_lin_install, uib_exitcode
+   * requiredOpsiscriptVersion >= "4.12.4.23"
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  24 Nov 2021 : 15:00:00 +0200
 

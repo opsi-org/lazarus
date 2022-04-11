@@ -1,4 +1,5 @@
 unit osGUIControl;
+
 { Contains the class TGUIControl. Forms that come to front in batch mode must
   be subclasses of this class. Do not use TGUIControl direct. It is used
   like an abstract class but provides empty procedures so that in the
@@ -49,24 +50,27 @@ type
 
   TGUIControl = class(TForm)
     { GetGUITheme gives back the name of the theme from skin.ini }
-    class function GetGUITheme(const SkinDirectory: string):string;
-    class function GetSkinDirectory(const SkinDirectory: string = ''):string;
+    class function GetGUITheme(const SkinDirectory: string): string;
+    class function GetSkinDirectory(const SkinDirectory: string = ''): string;
+
   public
     { These are the procedures to control the behaviour of the GUI.
       Override them in the subclass to get the desired functionality. }
-    procedure LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);virtual;
+    procedure LoadSkin(const SkinDirectory: string;
+      setLabelInfo: boolean = True); virtual;
     procedure SetMessageText(MessageText: string; MessageID: TMessageID); virtual;
-    procedure SetProgress(NewProgress: integer; ProgressValueID: TProgressValueID); virtual;
+    procedure SetProgress(NewProgress: integer;
+      ProgressValueID: TProgressValueID); virtual;
     procedure SetForceStayOnTop(ForceStayOnTop: boolean); virtual;
-    procedure SetBatchWindowMode(BatchWindowMode:TBatchWindowMode); virtual;
-    procedure SetElementVisible(Visible:boolean; ElementID:TElementID); virtual;
-    procedure SetElementEnabled(Enabled: boolean; ElementID:TElementID); virtual;
-    procedure BringElementToFront(ElementID:TElementID); virtual;
-    procedure SetElementTop(Top: integer; ElementID:TElementID); virtual;
-    procedure SetElementLeft(Left: integer; ElementID:TElementID); virtual;
-    procedure SetWindowPosition(Position:TPosition); virtual;
+    procedure SetBatchWindowMode(BatchWindowMode: TBatchWindowMode); virtual;
+    procedure SetElementVisible(Visible: boolean; ElementID: TElementID); virtual;
+    procedure SetElementEnabled(Enabled: boolean; ElementID: TElementID); virtual;
+    procedure BringElementToFront(ElementID: TElementID); virtual;
+    procedure SetElementTop(Top: integer; ElementID: TElementID); virtual;
+    procedure SetElementLeft(Left: integer; ElementID: TElementID); virtual;
+    procedure SetWindowPosition(Position: TPosition); virtual;
     procedure SetPicture(const BitmapFile: string; const theLabel: string); virtual;
-    procedure SetTracingLevel(const Level: integer);virtual;
+    procedure SetTracingLevel(const Level: integer); virtual;
     //procedure SetHorizontalTextAlignment(HorizontalTextAlignment: TAlignment; ElementID: TElementID);virtual;abstract;
   end;
 
@@ -106,7 +110,7 @@ begin
   if FileExists(FilePath) then
   begin
     ThemeFile := TIniFile.Create(FilePath);
-    Result := ThemeFile.ReadString('Form', 'Theme' , 'Default');
+    Result := ThemeFile.ReadString('Form', 'Theme', 'Default');
     ThemeFile.Free;
   end
   else
@@ -157,16 +161,16 @@ begin
     skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
   {$ENDIF DARWIN}
   //skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
-  Result:= skinDir;
+  Result := skinDir;
 end;
 
-procedure TGUIControl.LoadSkin(const SkinDirectory: string; setLabelInfo : boolean = true);
+procedure TGUIControl.LoadSkin(const SkinDirectory: string;
+  setLabelInfo: boolean = True);
 begin
 
 end;
 
-procedure TGUIControl.SetMessageText(MessageText: string; MessageID: TMessageID
-  );
+procedure TGUIControl.SetMessageText(MessageText: string; MessageID: TMessageID);
 begin
 
 end;
@@ -187,14 +191,12 @@ begin
 
 end;
 
-procedure TGUIControl.SetElementVisible(Visible: boolean; ElementID: TElementID
-  );
+procedure TGUIControl.SetElementVisible(Visible: boolean; ElementID: TElementID);
 begin
 
 end;
 
-procedure TGUIControl.SetElementEnabled(Enabled: boolean; ElementID: TElementID
-  );
+procedure TGUIControl.SetElementEnabled(Enabled: boolean; ElementID: TElementID);
 begin
 
 end;
@@ -230,4 +232,3 @@ begin
 end;
 
 end.
-

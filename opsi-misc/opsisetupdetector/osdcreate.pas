@@ -117,6 +117,7 @@ var
   strlist: TStringList;
   templatePath: string;
   proptmpstr: string;
+  neededspacefor2archinstall : integer =0;
 begin
   {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
@@ -276,6 +277,9 @@ begin
       patchlist.add('#@MinimumSpace' + IntToStr(i + 1) + '*#=' +
         IntToStr(aktProduct.SetupFiles[i].requiredSpace) + ' MB');
 
+      neededspacefor2archinstall := neededspacefor2archinstall
+        + aktProduct.SetupFiles[i].requiredSpace;
+
       patchlist.add('#@InstallDir' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installDirectory);
 
@@ -315,7 +319,13 @@ begin
       str := '';
       patchlist.add('#@DelsubSectionLines' + IntToStr(i + 1) + '*#=' + str);
 
+      str := aktProduct.SetupFiles[i].installErrorHandlingLines.Text;
+      patchlist.add('#@installErrorHandlingLines' + IntToStr(i + 1) + '*#=' + str);
+
     end;
+
+    patchlist.add('#@MinimumSpace3*#=' +
+        IntToStr(neededspacefor2archinstall) + ' MB');
 
   finally
     strlist.Free;
@@ -372,34 +382,24 @@ begin
           infilelist.Add('setupsingle.opsiscript');
           infilelist.Add('delsubsingle.opsiscript');
           infilelist.Add('uninstallsingle.opsiscript');
-        (*
-        insetup := 'setupsingle.opsiscript';
-        indelsub := 'delsubsingle.opsiscript';
-        inuninstall := 'uninstallsingle.opsiscript';
-        *)
         end;
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
         begin
           infilelist.Add('setupdouble.opsiscript');
           infilelist.Add('delsubdouble.opsiscript');
           infilelist.Add('uninstalldouble.opsiscript');
-        (*
-        insetup := 'setupdouble.opsiscript';
-        indelsub := 'delsubdouble.opsiscript';
-        inuninstall := 'uninstalldouble.opsiscript';
-        *)
         end;
         createTemplate:
         begin
           infilelist.Add('setuptempl.opsiscript');
           infilelist.Add('delsubtempl.opsiscript');
           infilelist.Add('uninstalltempl.opsiscript');
-        (*
-        insetup := 'setuptempl.opsiscript';
-        indelsub := 'delsubtempl.opsiscript';
-        inuninstall := 'uninstalltempl.opsiscript';
-        *)
         end;
+        createMeta:
+        begin
+          infilelist.Add('setupmeta.opsiscript');
+        end;
+
         threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
         begin
           infilelist.Add('setupsingle.opsiscript');
@@ -449,6 +449,7 @@ begin
         tmpname := StringReplace(tmpname, 'single', '', []);
         tmpname := StringReplace(tmpname, 'double', '', []);
         tmpname := StringReplace(tmpname, 'templ', '', []);
+        tmpname := StringReplace(tmpname, 'meta', '', []);
         if tmpname = 'setup' then
           outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
         else if tmpname = 'delsub' then
@@ -461,9 +462,10 @@ begin
       end;
 
       // define_vars_multi
-      // none at windows template
-      if not ((osdsettings.runmode = createTemplate) and
-        (osWin in aktProduct.productdata.targetOSset)) then
+      // none at windows template or createMeta
+      if not (((osdsettings.runmode = createTemplate) and
+        (osWin in aktProduct.productdata.targetOSset)) or
+        (osdsettings.runmode = createMeta)) then
       begin
         infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
         outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
@@ -485,8 +487,9 @@ begin
     patchScript(infilename, outfilename);    *)
 
 
-      // No need to copy installer for templates
-      if not (osdsettings.runmode in [createTemplate, createMultiTemplate]) then
+      // No need to copy installer for templates or Meta
+      if not (osdsettings.runmode in [createTemplate, createMultiTemplate,
+        createMeta]) then
         // loop over setups
         for i := 0 to 2 do
         begin
@@ -531,43 +534,58 @@ begin
             end;
         end;
 
-      //osd-lib.opsiscript
-      infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
-      outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
-      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
-        cffPreserveTime], True);
 
-      // install lib
-      if osMac in aktProduct.productdata.targetOSset then
+      // No need to copy libraries and icons for Meta
+      if not (osdsettings.runmode in [createMeta]) then
       begin
-        infilename := genericTemplatePath + Pathdelim + 'uib_macosinstalllib.opsiscript';
-        outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
+        //osd-lib.opsiscript
+        infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
+        outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
-      end;
-      if (osLin in aktProduct.productdata.targetOSset) or
-        (osMulti in aktProduct.productdata.targetOSset) then
-      begin
-        infilename := genericTemplatePath + Pathdelim + 'uib_lin_install.opsiscript';
-        outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
-        copyfile(infilename, outfilename, [cffOverwriteFile,
-          cffCreateDestDirectory, cffPreserveTime], True);
-      end;
-      if fileexists(genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript') then
-      begin
-        infilename := genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript';
-        outfilename := clientpath + PathDelim + 'uib_exitcode.opsiscript';
-        copyfile(infilename, outfilename, [cffOverwriteFile,
-          cffCreateDestDirectory, cffPreserveTime], True);
-      end;
 
-      //product png
-      //infilename := templatePath + Pathdelim + 'template.png';
-      infilename := aktProduct.productdata.productImageFullFileName;
-      outfilename := clientpath + PathDelim + aktProduct.productdata.productId +
-        ExtractFileExt(aktProduct.productdata.productImageFullFileName);
-      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
-        cffPreserveTime], True);
+        // install lib
+
+        if osMac in aktProduct.productdata.targetOSset then
+        begin
+          infilename := genericTemplatePath + Pathdelim +
+            'uib_macosinstalllib.opsiscript';
+          if fileexists(infilename) then
+          begin
+            outfilename := clientpath + PathDelim + 'uib_macosinstalllib.opsiscript';
+            copyfile(infilename, outfilename, [cffOverwriteFile,
+              cffCreateDestDirectory, cffPreserveTime], True);
+          end;
+        end;
+        if (osLin in aktProduct.productdata.targetOSset) or
+          (osMulti in aktProduct.productdata.targetOSset) then
+        begin
+          infilename := genericTemplatePath + Pathdelim + 'uib_lin_install.opsiscript';
+          if fileexists(infilename) then
+          begin
+            outfilename := clientpath + PathDelim + 'uib_lin_install.opsiscript';
+            copyfile(infilename, outfilename, [cffOverwriteFile,
+              cffCreateDestDirectory, cffPreserveTime], True);
+          end;
+        end;
+        if fileexists(genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript') then
+        begin
+          infilename := genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript';
+          outfilename := clientpath + PathDelim + 'uib_exitcode.opsiscript';
+          copyfile(infilename, outfilename, [cffOverwriteFile,
+            cffCreateDestDirectory, cffPreserveTime], True);
+        end;
+
+
+        //product png
+        //infilename := templatePath + Pathdelim + 'template.png';
+        infilename := aktProduct.productdata.productImageFullFileName;
+        outfilename := clientpath + PathDelim + aktProduct.productdata.productId +
+          ExtractFileExt(aktProduct.productdata.productImageFullFileName);
+        copyfile(infilename, outfilename, [cffOverwriteFile,
+          cffCreateDestDirectory, cffPreserveTime], True);
+
+      end; // not meta
 
       //preinst
       infilename := genericTemplatePath + Pathdelim + 'preinst';
@@ -626,7 +644,9 @@ begin
     textlist.Add('licenseRequired: ');
     textlist.Add('productClasses: ');
     textlist.Add('setupScript: ' + aktProduct.productdata.setupscript);
-    textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
+    // No uninstall for Meta
+    if not (osdsettings.runmode in [createMeta]) then
+      textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
     textlist.Add('updateScript: ');
     textlist.Add('alwaysScript: ');
     textlist.Add('onceScript: ');

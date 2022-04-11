@@ -11,25 +11,23 @@ uses
   lazfileutils,
   osProcessUX;
 
-function resolveUnixSymlink(filepath: string;
-  recursive: boolean = True): string;
+function resolveUnixSymlink(filepath: string; recursive: boolean = True): string;
 function GetNetUser(Host: string; var UserName: string; var ErrorInfo: string): boolean;
 function GetFQDNUnix: string;
 
 
 implementation
 
-function resolveUnixSymlink(filepath: string;
-  recursive: boolean = True): string;
+function resolveUnixSymlink(filepath: string; recursive: boolean = True): string;
 var
   outpath: string;
-  mypath : string;
+  mypath: string;
 begin
   Result := filepath;
   filepath := GetForcedPathDelims(filepath);
   if FileExists(filepath, False) then
   begin
-    LogDatei.log('resolving symlink: '+filepath,LLinfo);
+    LogDatei.log('resolving symlink: ' + filepath, LLinfo);
     mypath := ExtractFileDir(filepath);
     outpath := TryReadAllLinks(filepath);
     if outpath = '' then
@@ -44,7 +42,7 @@ begin
       if outpath <> filepath then
       begin
         // was symbolic link
-        LogDatei.log('resolved as symlink: '+filepath+' to: '+outpath,LLinfo);
+        LogDatei.log('resolved as symlink: ' + filepath + ' to: ' + outpath, LLinfo);
         if recursive then
           Result := resolveUnixSymlink(outpath)
         else
