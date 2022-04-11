@@ -1498,23 +1498,24 @@ end;
 
 procedure SetSSLPaths; //opsi
 begin
-  // Specify here the path to the ssl libraries
+  // Specify here the name of the ssl libraries
+  // paths will be determined according operating system/architecture as needed for OPSI
   {$IFDEF SSLPATH}
     {$IFDEF WIN32}
-      DLLSSLName := GetSSLPath('libssl.dll'); //ProgramDirectory + 'ssleay32.dll'; //'libssl-1_1.dll';
-      DLLUtilName := GetSSLPath('libcrypto.dll'); //ProgramDirectory  + 'libeay32.dll'; // 'libcrypto-1_1.dll';
+      DLLSSLName := GetSSLPath('libssl-1_1.dll');
+      DLLUtilName := GetSSLPath('libcrypto-1_1.dll');
     {$ENDIF WIN32}
     {$IFDEF WIN64}
-      DLLSSLName := GetSSLPath('libssl-x64.dll');
-      DLLUtilName := GetSSLPath('libcrypto-x64.dll');
+      DLLSSLName := GetSSLPath('libssl-1_1-x64.dll');
+      DLLUtilName := GetSSLPath('libcrypto-1_1-x64.dll');
     {$ENDIF WIN64}
     {$IFDEF LINUX}
-      DLLSSLName := GetSSLPath('libssl.so'); //ProgramDirectory + 'libssl.so';
-      DLLUtilName := GetSSLPath('libcrypto.so'); //ProgramDirectory  + 'libcrypto.so';
+      DLLSSLName := GetSSLPath('libssl.so');
+      DLLUtilName := GetSSLPath('libcrypto.so'); ;
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
-      DLLSSLName := GetSSLPath('libssl.dylib'); //ProgramDirectory + 'libssl.dylib';
-      DLLUtilName := GetSSLPath('libcrypto.dylib');//ProgramDirectory  + 'libcrypto.dylib';
+      DLLSSLName := GetSSLPath('libssl.dylib');
+      DLLUtilName := GetSSLPath('libcrypto.dylib');;
     {$ENDIF DARWIN}
   {$ENDIF SSLPATH}
 end;

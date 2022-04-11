@@ -29,6 +29,7 @@ uses
   //JwaTlHelp32,
   registry,
   osregistry,
+  osGetRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -120,8 +121,7 @@ uses
   LAZUTF8,
   osnetutil,
   osstrlistutils,
-  oscertificates,
-  osGetRegistryFunctions;
+  oscertificates;
 
 type
   TStatement = (tsNotDefined,
@@ -351,7 +351,10 @@ type
     FLastSection: TWorkSection;
 
 
-
+    function ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+      var FaktScriptLineNumber: int64; var Sektion: TWorksection;
+      SectionSpecifier: TSectionSpecifier; const call: string;
+      const NewFunction: boolean): TStringList;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -14790,10 +14793,9 @@ begin
     end
    {$ENDIF WINDOWS}
 
-
+    {$IFDEF WINDOWS}
     else if IsGetRegistryListOrMapFunction(s) then
     begin
-    {$IFDEF WINDOWS}
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
       begin
@@ -14823,13 +14825,8 @@ begin
               end;
         end;
       end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
     end
-
+    {$ENDIF WINDOWS}
 
     else if LowerCase(s) = LowerCase('getSlowInfoMap')
     // reads slowinfocache
@@ -20896,6 +20893,75 @@ begin
   end;
 end;
 
+function TuibInstScript.ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+  var FaktScriptLineNumber: int64; var Sektion: TWorksection;
+  SectionSpecifier: TSectionSpecifier; const call: string;
+  const NewFunction: boolean): TStringList;
+var
+  NumberOfSectionLines: integer;
+  NestedDefinedFunctions: integer = 1;
+  LineInDefinedFunction: string;
+  Expressionstr: string;
+  StatKind: TStatement;
+  Content: TStringList;
+begin
+  Content := TStringList.Create;
+  Result := TStringList.Create;
+  ReadingSuccessful := True;
+
+  try
+    // get all lines until 'endfunction' (including endfunc)
+    NumberOfSectionLines := Sektion.Count;
+    repeat
+      // get next line of section
+      Inc(linecounter);
+      Inc(FaktScriptLineNumber);
+      // inc line counter that ignores the execution of defined functions
+      if (linecounter <= NumberOfSectionLines) then
+      begin
+        Remaining := trim(Sektion.strings[linecounter - 1]);
+        LineInDefinedFunction := remaining;
+        GetWord(Remaining, Expressionstr,
+          Remaining, WordDelimiterSet4);
+        StatKind :=
+          FindKindOfStatement(Expressionstr, SectionSpecifier, call);
+        if StatKind = tsDefineFunction then
+          Inc(NestedDefinedFunctions);
+        if StatKind = tsEndFunction then
+          Dec(NestedDefinedFunctions);
+        // Line with tsEndFunction should not be part of the content
+        if NewFunction and (NestedDefinedFunctions > 0) then
+        begin
+          Content.Add(LineInDefinedFunction);
+          LogDatei.log_prog(
+            'NestedDefinedFunctions: ' + IntToStr(NestedDefinedFunctions) +
+            ' add line: ' + LineInDefinedFunction, LLDebug3);
+        end;
+      end;
+    until (NestedDefinedFunctions <= 0) or
+      (linecounter >= NumberOfSectionLines);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log(
+        'Exception in doAktionen: tsDefineFunction: endfunction: ' +
+        e.message, LLError);
+      //raise e;
+    end;
+  end;
+
+  if NestedDefinedFunctions > 0 then
+  begin
+    LogDatei.log('Found DefFunc without EndFunc', LLCritical);
+    reportError(Sektion, linecounter,
+      Expressionstr, 'Found DefFunc without EndFunc');
+    ReadingSuccessful := False;
+  end;
+
+  Result.Assign(Content);
+  Content.Free;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -21000,7 +21066,6 @@ var
   newDefinedfunction: TOsDefinedFunction;
   dummylist: TStringList;
   //endofDefFuncFound : boolean;
-  inDefFunc: integer = 0;
   inDefFunc2: integer = 0;
   //inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex, secindex: integer;
@@ -21016,7 +21081,6 @@ var
   tmpbool, tmpbool1: boolean;
   localKindOfStatement: Tstatement;
   linecounter: integer;
-  numberOfSectionLines: integer;
 
   detectedEncoding: string = '';
   declaredEncoding: string = '';
@@ -21280,7 +21344,6 @@ begin
       if pos(lowercase(PStatNames^ [tsEndFunction]), lowercase(trim(Remaining))) = 1 then
         Dec(inDefFunc3);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
-      logdatei.log_prog('Parsingprogress: inDefFunc: ' + IntToStr(inDefFunc), LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFuncIndex: ' + IntToStr(
         inDefFuncIndex), LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFunc3: ' + IntToStr(inDefFunc3), LLDebug);
@@ -22588,29 +22651,6 @@ begin
                       linecount := Count;
                       // free inclist later - we need it at 'Imported all functions'
                       //FreeAndNil(inclist);
-
-                      for tmpint := 0 to 3 do
-                      begin
-                        { add a empty line to avoid last line problem }
-                        incline := '';
-                        Inc(inclines);
-                        LogDatei.log_prog(
-                          'Will Include empty last line : ' + incline, LLDebug);
-                        Sektion.Insert(linecounter - 1 + inclines, incline);
-                        LogDatei.log_prog(
-                          'Line included at pos: ' +
-                          IntToStr(linecounter - 1 + inclines) +
-                          ' to Sektion with ' + IntToStr(Sektion.Count) +
-                          ' lines.', LLDebug2);
-                        //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                        script.FLinesOriginList.Insert(
-                          linecounter - 1 + inclines, incfilename +
-                          ' Line: ' + IntToStr(alllines));
-                        script.FLibList.Insert(linecounter - 1 + inclines, 'true');
-                        LogDatei.log_prog(
-                          'Include added to FLinesOriginList.', LLDebug2);
-                        { finished add a empty line to avoid last line problem }
-                      end;
 
                       if importFunctionName = '' then
                       begin
@@ -25250,45 +25290,15 @@ begin
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet5);
                 FuncIndex := definedFunctionNames.IndexOf(LowerCase(Expressionstr));
+                // skip content of function that was already defined before,
+                // therefore evaluate the respective endfunc by checking the deffunc's and endfunc's inside
                 if FuncIndex >= 0 then
                 begin
+                  LogDatei.log('tsDefineFunction: Localfunction "' + Expressionstr +
+                    '" is defined multiple times! We use the first definition and skip the other ones.', LLWarning);
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  try
-                    // get all lines until 'endfunction'
-                    //endofDefFuncFound := false;
-                    inDefFunc := 1;
-                    repeat
-                      // get next line of section
-                      Inc(linecounter); // inc line counter
-                      Inc(FaktScriptLineNumber);
-                      // inc line counter that ignores the execution of defined functions
-                      if (linecounter <= Sektion.Count - 1) then
-                      begin
-                        Remaining := trim(Sektion.strings[linecounter - 1]);
-                        myline := remaining;
-                        GetWord(Remaining, Expressionstr, Remaining,
-                          WordDelimiterSet4);
-                        StatKind :=
-                          FindKindOfStatement(Expressionstr, SectionSpecifier, call);
-                        if StatKind = tsDefineFunction then
-                          Inc(inDefFunc);
-                        if StatKind = tsEndFunction then
-                          Dec(inDefFunc);
-                      end;
-                    until (inDefFunc <= 0) or (linecounter >= Sektion.Count - 2);
-                  except
-                    on e: Exception do
-                    begin
-                      LogDatei.log(
-                        'Exception in doAktionen: tsDefineFunction: endfunction: ' +
-                        e.message, LLError);
-                      //raise e;
-                    end;
-                  end;
-                  Inc(linecounter); // inc line counter
-                  Inc(FaktScriptLineNumber);
-                  // inc line counter that ignores the execution of defined functions
+                  ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -25354,56 +25364,9 @@ begin
                           //raise e;
                         end;
                       end;
+                      newDefinedfunction.Content.Assign(ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
                       try
-                        // get all lines until 'endfunction'
-                        //endofDefFuncFound := false;
-                        inDefFunc := 1;
-                        numberOfSectionLines := Sektion.Count;
-                        repeat
-                          // get next line of section
-                          Inc(linecounter); // inc line counter
-                          Inc(FaktScriptLineNumber);
-                          // inc line counter that ignores the execution of defined functions
-                          if (linecounter <= numberOfSectionLines - 1) then
-                          begin
-                            Remaining := trim(Sektion.strings[linecounter - 1]);
-                            myline := remaining;
-                            GetWord(Remaining, Expressionstr,
-                              Remaining, WordDelimiterSet4);
-                            StatKind :=
-                              FindKindOfStatement(Expressionstr, SectionSpecifier, call);
-                            if StatKind = tsDefineFunction then
-                              Inc(inDefFunc);
-                            if StatKind = tsEndFunction then
-                              Dec(inDefFunc);
-                            // Line with tsEndFunction should not be part of the content
-                            if inDefFunc > 0 then
-                            begin
-                              newDefinedfunction.addContent(myline);
-                              LogDatei.log_prog(
-                                'inDefFunc: ' + IntToStr(inDefFunc) +
-                                ' add line: ' + myline, LLDebug3);
-                            end;
-                          end;
-                        until (inDefFunc <= 0) or
-                          (linecounter >= numberOfSectionLines - 2);
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.log(
-                            'Exception in doAktionen: tsDefineFunction: endfunction: ' +
-                            e.message, LLError);
-                          //raise e;
-                        end;
-                      end;
-                      try
-                        if inDefFunc > 0 then
-                        begin
-                          LogDatei.log('Found DefFunc without EndFunc', LLCritical);
-                          reportError(Sektion, linecounter,
-                            Expressionstr, 'Found DefFunc without EndFunc');
-                        end
-                        else
+                        if tmpbool then
                         begin
                           // endfunction found
                           // append new defined function to the stored (known) functions
@@ -25431,7 +25394,7 @@ begin
                       end;
                     end;
                     LogDatei.log_prog('After reading ' + newDefinedfunction.Name +
-                      ' we are on line: ' + IntToStr(linecounter - 1) +
+                      ' we are on line: ' + IntToStr(linecounter) +
                       ' -> ' + trim(Sektion.strings[linecounter - 1]), LLInfo);
                   except
                     on e: Exception do
@@ -25446,7 +25409,11 @@ begin
 
               tsEndFunction:
               begin
-                // nothing to do
+                // you should nerver get here since the endfunc's are parsed along the deffunc's
+                // in the case tsDefineFunction
+                LogDatei.log('Found EndFunc without DefFunc', LLCritical);
+                reportError(Sektion, linecounter,
+                  Expressionstr, 'Found DefFunc without EndFunc');
               end;
 
 

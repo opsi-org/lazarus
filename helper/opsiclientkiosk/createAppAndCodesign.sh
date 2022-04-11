@@ -1,11 +1,37 @@
 #!/bin/sh
 set -e
+# Help function
+Help()
+{
+   # Display Help
+   echo "Creates MacOS app bundle and codesign it"
+   echo
+   echo "Syntax: ./createAppAndCodesign.sh [-d|h]"
+   echo "options:"
+   echo "d     Development mode. No codesigning and set file rights to 777"
+   echo "h     Print this Help."
+   echo
+}
 
 # Set these values:
 DEVELOPER_ID="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=
-APP_CODESIGN=false
+DEVELOPMENT_MODE=false
+
+# Process the input options. Add options as needed.
+while getopts ":hn:" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      d) # Enter a name
+         DEVELOPMENT_MODE=$OPTARG;;
+     \?) # Invalid option
+         echo "Error: Invalid option"
+         exit;;
+   esac
+done
 
 SCRIPT_DIR=`pwd`
 BUNDLE_ID=org.opsi.OpsiClientKiosk
@@ -102,7 +128,7 @@ chown -R root "${WORKDIR}"
 chgrp -R wheel "${WORKDIR}"
 chmod -R 777 "${WORKDIR}"
 
-if ${APP_CODESIGN}
+if ! ${DEVELOPMENT_MODE}
 then
     chmod -R 755 "${WORKDIR}"
     codesign -s "${DEVELOPER_ID}" -f --timestamp "${APP}/Contents/Frameworks/libssl.dylib"

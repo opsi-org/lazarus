@@ -27,8 +27,11 @@ program opsiscript;
 
 
 uses //lcltranslator,
- {$IFDEF UNIX} {$IFDEF UseCThreads}
-  cthreads,  {$ENDIF}  {$ENDIF}
+{$IFDEF UNIX}
+  {$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}
+{$ENDIF}
   Classes,
   SysUtils,
   ///LCLIntf,
@@ -48,7 +51,7 @@ uses //lcltranslator,
   lazfileutils,
   osprocesses,
   osversioninfo,
- {$IFDEF GUI}
+{$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
   osbatchgui {FBatchOberflaeche},
@@ -59,31 +62,41 @@ uses //lcltranslator,
   oslistedit,
   Forms,
   osGUIControl,
-   {$ELSE GUI}
+{$ELSE GUI}
   custapp,
   oscheck_gui_startable,
- {$ENDIF GUI} {$IFDEF UNIX}
+{$ENDIF GUI}
+{$IFDEF UNIX}
   BaseUnix,
   oslindesktopfiles,
-  OSProcessux,  {$ENDIF UNIX} {$IFDEF DARWIN}
-  osfuncmac,  {$ENDIF DARWIN} {$IFDEF LINUX}
-  osfunclin,  {$ENDIF LINUX} {$IFDEF WINDOWS} {$IFDEF WIN32}
+  OSProcessux,
+{$ENDIF UNIX}
+{$IFDEF DARWIN}
+  osfuncmac,
+{$ENDIF DARWIN}
+{$IFDEF LINUX}
+  osfunclin,
+{$ENDIF LINUX}
+{$IFDEF WINDOWS}
+  {$IFDEF WIN32}
   DSiWin32 in 'DSiWin32.pas',
   oslocaladmin,
-  jclexcerpt,  {$ENDIF WIN32}
+  jclexcerpt,
+  {$ENDIF WIN32}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-  osfuncwin2, osregistry,  {$ENDIF}
+  osfuncwin2,
+  osregistry,
+  osGetRegistryFunctions,
+{$ENDIF WINDOWS}
   lazutf8,
   osfilehelper,
   osTOML,
   osSSLPaths,
-  osparserhelper_GetStringExpressionWord,
-  osEvaluateBooleanFunctions,
-  osGetRegistryFunctions;
+  osEvaluateBooleanFunctions;
 
 
 
