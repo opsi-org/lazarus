@@ -76,15 +76,12 @@ uses //lcltranslator,
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-  osfuncwin2, osregistry,  {$ENDIF}
+  osfuncwin2, osregistry, osGetRegistryFunctions, {$ENDIF}
   lazutf8,
   osfilehelper,
   osTOML,
   osSSLPaths,
-  osEvaluateBooleanFunctions,
-  osGetRegistryFunctions;
-
-
+  osEvaluateBooleanFunctions;
 
   {$IFNDEF GUI}
 type
