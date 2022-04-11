@@ -29,6 +29,7 @@ uses
   //JwaTlHelp32,
   registry,
   osregistry,
+  osGetRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -120,8 +121,7 @@ uses
   LAZUTF8,
   osnetutil,
   osstrlistutils,
-  oscertificates,
-  osGetRegistryFunctions;
+  oscertificates;
 
 type
   TStatement = (tsNotDefined,
@@ -14793,10 +14793,9 @@ begin
     end
    {$ENDIF WINDOWS}
 
-
+    {$IFDEF WINDOWS}
     else if IsGetRegistryListOrMapFunction(s) then
     begin
-    {$IFDEF WINDOWS}
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
       begin
@@ -14826,13 +14825,8 @@ begin
               end;
         end;
       end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
     end
-
+    {$ENDIF WINDOWS}
 
     else if LowerCase(s) = LowerCase('getSlowInfoMap')
     // reads slowinfocache
