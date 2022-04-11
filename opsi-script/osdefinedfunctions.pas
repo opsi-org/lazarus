@@ -1402,7 +1402,6 @@ begin
               end;
               dfpStringlist:
               begin
-                //if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
                 if not isVisibleStringlistVar(ParamStr) then
                 begin
                   // parameter type mismatch
