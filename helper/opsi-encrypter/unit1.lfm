@@ -1,0 +1,77 @@
+object Form1: TForm1
+  Left = 128
+  Height = 240
+  Top = 346
+  Width = 320
+  Caption = 'opsi-encrypter'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '2.2.0.4'
+  object EditIn1: TEdit
+    Left = 31
+    Height = 23
+    Top = 31
+    Width = 224
+    AutoSize = False
+    AutoSelect = False
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 0
+  end
+  object EditIn2: TEdit
+    Left = 31
+    Height = 23
+    Top = 72
+    Width = 224
+    AutoSize = False
+    AutoSelect = False
+    EchoMode = emPassword
+    OnChange = EditIn2Change
+    OnEditingDone = EditIn2EditingDone
+    PasswordChar = '*'
+    TabOrder = 1
+  end
+  object cryptout: TEdit
+    Left = 31
+    Height = 23
+    Top = 160
+    Width = 224
+    AutoSize = False
+    ReadOnly = True
+    TabOrder = 2
+  end
+  object Label1: TLabel
+    Left = 104
+    Height = 20
+    Top = 112
+    Width = 70
+    AutoSize = False
+    Caption = 'No Match'
+    Font.Color = clRed
+    Font.Height = 20
+    Font.Style = [fsBold]
+    ParentFont = False
+    OptimalFill = True
+  end
+  object Label2: TLabel
+    Left = 35
+    Height = 15
+    Top = 13
+    Width = 50
+    Caption = 'Password'
+  end
+  object Label3: TLabel
+    Left = 37
+    Height = 15
+    Top = 56
+    Width = 82
+    Caption = 'Password again'
+  end
+  object Label4: TLabel
+    Left = 40
+    Height = 15
+    Top = 136
+    Width = 106
+    Caption = 'encrypted Password'
+  end
+end
