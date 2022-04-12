@@ -193,7 +193,7 @@ type
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
       function Count: integer; override;
-      function AssignTable(table: TTOMLTable): TTOMLTable;
+      procedure AssignTable(const table: TTOMLTable);
 
       property Header : string read GetHeader;
       property Name: string read m_name;
@@ -717,14 +717,18 @@ begin
     result := nil;
 end;
 
-
-function TTOMLTable.AssignTable(table: TTOMLTable) : TTOMLTable;
+procedure TTOMLTable.AssignTable(const table: TTOMLTable);
 var
   i : integer;
 begin
-  result := TTOMLTable.Create;
+  //self.map.Assign(table.map);
   for i := 0 to table.map.Count - 1 do
-    result.map.Add(table.map.Keys[i], table.map.Data[i]);
+    begin
+      //self.map.Delete(i);
+      //map.Add(table.map.Keys[i], table.map.Data[i]);
+      //self.map.InsertKeyData(i, table.map.Keys[i], table.map.Data[i]);
+      map.InsertKeyData(i, table.GetKey(i) , table.GetItem(i));
+    end;
 end;
 
 constructor TTOMLTable.Create(name: string);

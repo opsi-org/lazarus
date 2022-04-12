@@ -335,7 +335,7 @@ begin
   on E:Exception do
         writeln('Exception in GetTOMLTableAsString : ', E.Message);
   end;
-  myTOMLTable.Free;
+  //myTOMLTable.Free;
 end;
 
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;

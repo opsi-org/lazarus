@@ -72,18 +72,21 @@ uses
 type
   ETOML = class(EScanner);
 
-function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 var
   parser: TTOMLScanner;
-  doc : TTOMLDocument;
+
+function GetTOML(contents: TTOMLStringType): TTOMLDocument;
+//var
+  //parser: TTOMLScanner;
+  //doc : TTOMLDocument;
 begin
   parser := TTOMLScanner.Create(contents);
   parser.Parse;
-  //result := parser.document;
-  doc.AssignTable(parser.document);
-  result.AssignTable(doc);
-  doc.Free;
-  parser.Free;
+  result := parser.document;
+  //doc.AssignTable(parser.document);
+  //result.AssignTable(doc);
+  //doc.Free;
+  //parser.Free;
 end;
 
 { TTOMLScanner }
@@ -906,6 +909,12 @@ begin
 
   inherited;
 end;
+
+initialization
+//parser := TTOMLScanner.Create;
+
+finalization
+parser.Free;
 
 
 end.
