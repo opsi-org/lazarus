@@ -1521,14 +1521,7 @@ begin
           begin
             if not skip(',', remaining, remaining, errorstr) then
               if skip(')', remaining, remaining, errorstr) then
-              begin
-                endOfParamlist := True;
-                if remaining <> '' then
-                begin
-                  errorstr := errorstr + remaining + ' -> erroneous characters ';
-                  syntax_ok := False;
-                end;
-              end
+                endOfParamlist := True
               else
               begin
                 // syntax error
