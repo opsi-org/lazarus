@@ -88,24 +88,16 @@ uses //lcltranslator,
   VersionInfoX in 'VersionInfoX.pas',
   osswaudit in 'osswaudit.pas',
   osfuncwin,
-<<<<<<< HEAD
-  osfuncwin2, osregistry, osGetRegistryFunctions, {$ENDIF}
-=======
   osfuncwin2,
   osregistry,
   osGetRegistryFunctions,
 {$ENDIF WINDOWS}
->>>>>>> development
+
   lazutf8,
   osfilehelper,
   osTOML,
   osSSLPaths,
   osEvaluateBooleanFunctions;
-<<<<<<< HEAD
-=======
-
-
->>>>>>> development
 
   {$IFNDEF GUI}
 type

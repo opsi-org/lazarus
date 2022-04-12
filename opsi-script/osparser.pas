@@ -122,10 +122,6 @@ uses
   osnetutil,
   osstrlistutils,
   oscertificates;
-<<<<<<< HEAD
-
-=======
->>>>>>> development
 
 type
   TStatement = (tsNotDefined,
@@ -14797,16 +14793,9 @@ begin
     end
    {$ENDIF WINDOWS}
 
-<<<<<<< HEAD
-   {$IFDEF WINDOWS}
-    else if IsGetRegistryListOrMapFunction(s) then
-    begin
-
-=======
     {$IFDEF WINDOWS}
     else if IsGetRegistryListOrMapFunction(s) then
     begin
->>>>>>> development
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, r, s1, InfoSyntaxError) then
       begin
@@ -14836,21 +14825,8 @@ begin
               end;
         end;
       end;
-<<<<<<< HEAD
-    (*
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-      *)
     end
     {$ENDIF WINDOWS}
-
-
-=======
-    end
-    {$ENDIF WINDOWS}
->>>>>>> development
 
     else if LowerCase(s) = LowerCase('getSlowInfoMap')
     // reads slowinfocache
