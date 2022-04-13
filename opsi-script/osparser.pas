@@ -313,6 +313,8 @@ type
 
 
 
+  { TuibInstScript }
+
   TuibInstScript = class(TuibIniScript)
   private
     FLogLevel: integer;
@@ -351,6 +353,9 @@ type
     FLastSection: TWorkSection;
 
 
+    procedure parsePowershellCall(var tmpbool1: boolean; var tmpbool: boolean;
+      var s4: string; s3: string; var s2: string; var s1: string;
+      var r: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
@@ -12072,70 +12077,8 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
-      s1 := '';
-      s2 := '';
-      s3 := '';
-      s4 := '';
-      tmpbool := True; // sysnative
-      tmpbool1 := True; // handle execution policy
-      syntaxCheck := False;
-      if Skip('(', r, r, InfoSyntaxError) then
-      begin
-        //get first parameter (command), default access string = sysnative
-        if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          Syntaxcheck := true;
-          s2 := 'sysnative';
-        end;
-        if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
-        begin
-          //get second parameter (access string)
-          if EvaluateString(r, r, s2, InfoSyntaxError) then
-          begin
-            Syntaxcheck := true;
-            tmpbool := True;
-            if lowercase(s2) = '32bit' then
-              tmpbool := False
-            else if lowercase(s2) = '64bit' then
-              tmpbool := True
-            else if lowercase(s2) = 'sysnative' then
-              tmpbool := True
-            else
-            begin
-              InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-                ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-              syntaxCheck := False;
-            end;
-          end;
-          //third parameter (execution policy)
-          if Skip(',', r, r, InfoSyntaxerror) and SyntaxCheck then
-          begin
-            if EvaluateString(r, r, s3, InfoSyntaxError) then
-            begin
-              if TryStrToBool(s3, tmpbool1) then
-              begin
-                 syntaxCheck := True;
-              end
-              else
-              begin
-                syntaxCheck := False;
-                InfoSyntaxError :=
-                  'Error: boolean string (true/false) expected but got: ' + s3;
-              end;
-            end;
-            //fourth parameter
-            if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
-            begin
-              if EvaluateString(r, r, s4, InfoSyntaxError) then
-              begin
-                  syntaxCheck := True;
-              end;
-            end;
-          end;
-        end;
-        if Skip(')', r, r, InfoSyntaxError) and SyntaxCheck then
-          SyntaxCheck := True;
-      end;
+      parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
+        InfoSyntaxError);
       if syntaxCheck then
       begin
         try
@@ -16364,86 +16307,8 @@ begin
     LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-    s2 := '';
-    s3 := '';
-    s4 := '';
-    tmpstr2 := '';
-    tmpbool := True; // sysnative
-    tmpbool1 := True; // handle execution policy
-    syntaxCheck := False;
-    StringResult := '';
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-      // next after ',' or ')'
-      then
-        if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-          if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-    if s2 = '' then
-    begin
-      // only one parameter
-      if Skip(')', tmpstr, r, InfoSyntaxError) then
-      begin
-        syntaxCheck := True;
-        s2 := 'sysnative';
-      end;
-    end
-    else
-    begin
-      // got second parameter
-      tmpbool := True;
-      if lowercase(s2) = '32bit' then
-        tmpbool := False
-      else if lowercase(s2) = '64bit' then
-        tmpbool := True
-      else if lowercase(s2) = 'sysnative' then
-        tmpbool := True
-      else
-      begin
-        InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-          ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-        syntaxCheck := False;
-      end;
-      // three parameter ?
-      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-      begin
-        if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-        begin
-          // got third parameter
-          if not TryStrToBool(s3, tmpbool1) then
-          begin
-            syntaxCheck := False;
-            InfoSyntaxError :=
-              'Error: boolean string (true/false) expected but got: ' + s3;
-          end;
-          // four parameter ?
-          if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-          begin
-            if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-            begin
-              // got fourth parameter
-              if Skip(')', tmpstr2, r, InfoSyntaxError) then
-              begin
-                // four parameter
-                syntaxCheck := True;
-              end;
-            end;
-          end
-          else
-          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-          begin
-            // three parameter
-            syntaxCheck := True;
-          end;
-        end;
-      end
-      else
-      if Skip(')', tmpstr2, r, InfoSyntaxError) then
-      begin
-        // two parameter
-        syntaxCheck := True;
-      end;
-      //end;
-    end;
+    parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
+        InfoSyntaxError);
     if syntaxCheck then
     begin
       try
@@ -20947,6 +20812,77 @@ begin
   Content.Free;
 end;
 
+procedure TuibInstScript.parsePowershellCall(var tmpbool1: boolean;
+  var tmpbool: boolean; var s4: string; s3: string; var s2: string;
+  var s1: string; var r: string; var syntaxCheck: boolean;
+  var InfoSyntaxError: string);
+begin
+  s1 := '';
+  s2 := '';
+  s3 := '';
+  s4 := '';
+  tmpbool := True; // sysnative
+  tmpbool1 := True; // handle execution policy
+  syntaxCheck := False;
+  if Skip('(', r, r, InfoSyntaxError) then
+  begin
+    //get first parameter (command), default access string = sysnative
+    if EvaluateString(r, r, s1, InfoSyntaxError) then
+    begin
+      Syntaxcheck := true;
+      s2 := 'sysnative';
+    end;
+    if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
+    begin
+      //get second parameter (access string)
+      if EvaluateString(r, r, s2, InfoSyntaxError) then
+      begin
+        Syntaxcheck := true;
+        tmpbool := True;
+        if lowercase(s2) = '32bit' then
+          tmpbool := False
+        else if lowercase(s2) = '64bit' then
+          tmpbool := True
+        else if lowercase(s2) = 'sysnative' then
+          tmpbool := True
+        else
+        begin
+          InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
+            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+          syntaxCheck := False;
+        end;
+      end;
+      //third parameter (execution policy)
+      if Skip(',', r, r, InfoSyntaxerror) and SyntaxCheck then
+      begin
+        if EvaluateString(r, r, s3, InfoSyntaxError) then
+        begin
+          if TryStrToBool(s3, tmpbool1) then
+          begin
+             syntaxCheck := True;
+          end
+          else
+          begin
+            syntaxCheck := False;
+            InfoSyntaxError :=
+              'Error: boolean string (true/false) expected but got: ' + s3;
+          end;
+        end;
+        //fourth parameter
+        if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
+        begin
+          if EvaluateString(r, r, s4, InfoSyntaxError) then
+          begin
+              syntaxCheck := True;
+          end;
+        end;
+      end;
+    end;
+    if Skip(')', r, r, InfoSyntaxError) and SyntaxCheck then
+      SyntaxCheck := True;
+  end;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -23545,87 +23481,8 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                s2 := '';
-                s3 := '';
-                s4 := '';
-                tmpstr2 := '';
-                tmpbool := True; // sysnative
-                tmpbool1 := True; // handle execution policy
-                syntaxCheck := False;
-                r := remaining;
-                if Skip('(', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-                  // next after ',' or ')'
-                  then
-                    if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-                      if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-                if s2 = '' then
-                begin
-                  // only one parameter
-                  if Skip(')', tmpstr, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    s2 := 'sysnative';
-                  end;
-                end
-                else
-                begin
-                  // got second parameter
-                  tmpbool := True;
-                  if lowercase(s2) = '32bit' then
-                    tmpbool := False
-                  else if lowercase(s2) = '64bit' then
-                    tmpbool := True
-                  else if lowercase(s2) = 'sysnative' then
-                    tmpbool := True
-                  else
-                  begin
-                    InfoSyntaxError :=
-                      'Error: unknown parameter: ' + s2 +
-                      ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-                    syntaxCheck := False;
-                  end;
-                  // three parameter ?
-                  if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                  begin
-                    if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-                    begin
-                      // got third parameter
-                      if not TryStrToBool(s3, tmpbool1) then
-                      begin
-                        syntaxCheck := False;
-                        InfoSyntaxError :=
-                          'Error: boolean string (true/false) expected but got: ' + s3;
-                      end;
-                      // four parameter ?
-                      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                      begin
-                        if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-                        begin
-                          // got fourth parameter
-                          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                          begin
-                            // four parameter
-                            syntaxCheck := True;
-                          end;
-                        end;
-                      end
-                      else
-                      if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                      begin
-                        // three parameter
-                        syntaxCheck := True;
-                      end;
-                    end;
-                  end
-                  else
-                  if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                  begin
-                    // two parameter
-                    syntaxCheck := True;
-                  end;
-                  //end;
-                end;
+                parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
+                  InfoSyntaxError);
                 if syntaxCheck then
                 begin
                   try
