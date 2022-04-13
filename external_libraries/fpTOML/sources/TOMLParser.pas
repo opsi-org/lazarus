@@ -474,6 +474,7 @@ begin
       end;
     TToken.RealNumber:
       begin
+        //result := TTOMLNumber.Create(StrToFloat(pattern), TTOMLNumberType.Float);
         // define format settings explicitly here because the default seems to
         // depend on the system language/operating system
         // https://forum.lazarus.freepascal.org/index.php?topic=53352.0
