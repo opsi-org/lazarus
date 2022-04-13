@@ -11,7 +11,7 @@ unit osTOML;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, strUtils,
   TOML, TOMLParser, TOMLTypes,
   FPJSON,
   osencoding;
@@ -335,7 +335,7 @@ begin
   on E:Exception do
         writeln('Exception in GetTOMLTableAsString : ', E.Message);
   end;
-  //myTOMLTable.Free;
+  //myTOMLTable.Free;      //causes SIGSEGV exception
 end;
 
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
@@ -417,7 +417,10 @@ begin
           else
             if (TTOMLValue(myValue).TypeString = 'Dynamic string')
              or (TTOMLValue(myValue).TypeString = 'UnicodeString') then
-               result := '"'+result+'"';
+               result := '"'+result+'"'
+            else
+              if (TTOMLValue(myValue).TypeString = 'Double') then
+                 result := ReplaceStr(result, ',', '.');
       end;
     except
     on E:Exception do
@@ -478,7 +481,10 @@ begin
           else
             if (TTOMLValue(myValue).TypeString = 'Dynamic string')
              or (TTOMLValue(myValue).TypeString = 'UnicodeString') then
-               result := '"'+result+'"';
+               result := '"'+result+'"'
+          else
+            if (TTOMLValue(myValue).TypeString = 'Double') then
+               result := ReplaceStr(result, ',', '.');
         end;
     except
     on E:Exception do

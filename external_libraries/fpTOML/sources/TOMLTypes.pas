@@ -29,7 +29,7 @@
 unit TOMLTypes;
 interface
 uses
-  FGL, FPJSON, Classes, SysUtils;
+  FGL, FPJSON, Classes, SysUtils, strUtils;
 
 type
   TTOMLStringType = AnsiString;
@@ -463,6 +463,9 @@ begin
              or (TTOMLValue(list[i]).TypeString = 'UnicodeString') then
                result:= result +'"'+TTOMLValue(list[i]).ToString +'"'
           else
+            if (TTOMLValue(list[i]).TypeString = 'Double') then
+                 result:= result + ReplaceStr(TTOMLValue(list[i]).ToString, ',', '.')
+          else
             result:= result + (TTOMLValue(list[i]).ToString);
     if i<>Count-1 then
       result:= result + ', ';
@@ -615,7 +618,10 @@ begin
           if (TTOMLValue(map.Data[i]).TypeString = 'Dynamic string')
              or (TTOMLValue(map.Data[i]).TypeString = 'UnicodeString') then
                line := String(map.Keys[i])+' = "'+map.Data[i].ToString +'"'
-          else
+           else
+            if (TTOMLValue(map.Data[i]).TypeString = 'Double') then
+               line := String(map.Keys[i])+' = '+ReplaceStr(map.Data[i].ToString, ',', '.')
+           else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
         tomlStringList.Add(line);
         end;
