@@ -429,6 +429,7 @@ function TTOMLScanner.ParseValue: TTOMLData;
 
 var
   negative: boolean;
+  fs: TFormatSettings;
 begin
   case token of
     TToken.DoubleQuote:
@@ -473,7 +474,12 @@ begin
       end;
     TToken.RealNumber:
       begin
-        result := TTOMLNumber.Create(StrToFloat(pattern), TTOMLNumberType.Float);
+        // define format settings explicitly here because the default seems to
+        // depend on the system language/operating system
+        // https://forum.lazarus.freepascal.org/index.php?topic=53352.0
+        fs := FormatSettings;
+        fs.DecimalSeparator := '.';
+        result := TTOMLNumber.Create(StrToFloat(pattern, fs), TTOMLNumberType.Float);
         Consume;
       end;
     TToken.SquareBracketOpen:
