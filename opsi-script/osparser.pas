@@ -351,7 +351,7 @@ type
     FLastSection: TWorkSection;
 
 
-    function ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
       const NewFunction: boolean): TStringList;
@@ -20893,7 +20893,7 @@ begin
   end;
 end;
 
-function TuibInstScript.ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+function TuibInstScript.GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
   var FaktScriptLineNumber: int64; var Sektion: TWorksection;
   SectionSpecifier: TSectionSpecifier; const call: string;
   const NewFunction: boolean): TStringList;
@@ -20903,12 +20903,9 @@ var
   LineInDefinedFunction: string;
   Expressionstr: string;
   StatKind: TStatement;
-  Content: TStringList;
 begin
-  Content := TStringList.Create;
   Result := TStringList.Create;
   ReadingSuccessful := True;
-
   try
     // get all lines until 'endfunction' (including endfunc)
     NumberOfSectionLines := Sektion.Count;
@@ -20932,7 +20929,7 @@ begin
         // Line with tsEndFunction should not be part of the content
         if NewFunction and (NestedDefinedFunctions > 0) then
         begin
-          Content.Add(LineInDefinedFunction);
+          Result.Add(LineInDefinedFunction);
           LogDatei.log_prog(
             'NestedDefinedFunctions: ' + IntToStr(NestedDefinedFunctions) +
             ' add line: ' + LineInDefinedFunction, LLDebug3);
@@ -20957,9 +20954,6 @@ begin
       Expressionstr, 'Found DefFunc without EndFunc');
     ReadingSuccessful := False;
   end;
-
-  Result.Assign(Content);
-  Content.Free;
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -25298,7 +25292,7 @@ begin
                     '" is defined multiple times! We use the first definition and skip the other ones.', LLWarning);
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
+                  GetContentOfDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -25364,7 +25358,8 @@ begin
                           //raise e;
                         end;
                       end;
-                      newDefinedfunction.Content.Assign(ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
+                      newDefinedfunction.Content :=
+                        GetContentOfDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True);
                       try
                         if tmpbool then
                         begin

@@ -70,7 +70,6 @@ type
     destructor Destroy;
     function parseDefinition(definitionStr: string; var errorstr: string): boolean;
 
-    procedure addContent(contentstr: string);
     function checkContent(var errorstr: string): boolean;
     function validIdentifier(identifier: string; var errorstr: string): boolean;
     function stringTofunctiontype(const str: string;
@@ -120,7 +119,7 @@ type
     property OriginFile: string read DFOriginFile write DFOriginFile;
     property OriginFileStartLineNumber: integer
       read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
-    property Content: TStringList read DFContent;
+    property Content: TStringList read DFContent write DFContent;
   end;
 
   TDefinedFunctionsArray = array of TOsDefinedFunction;
@@ -466,11 +465,6 @@ begin
       //raise e;
     end;
   end;
-end;
-
-procedure TOsDefinedFunction.addContent(contentstr: string);
-begin
-  DFcontent.append(contentstr);
 end;
 
 
