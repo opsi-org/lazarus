@@ -39,7 +39,8 @@ uses
   osfuncwin3,
   strutils,
   cTypes,
-  DynLibs;
+  DynLibs,
+  Process;
 
 (*
 type
@@ -128,6 +129,36 @@ begin
   Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
     showcmd, ExitCode, showoutput, 0);
 end;
+
+//function RunCommandAndCaptureOut
+//  (cmd: string; catchOut: boolean; var outlines: TXStringList;
+//  var report: string; showcmd: integer; var ExitCode: longint;
+//  showoutput: boolean; logleveloffset: integer): boolean;
+//var
+//  Shell,
+//  ShellOptions,
+//  ShellCommand,
+//  ShellOutput: String;
+//begin
+//  try
+//    LogDatei.log('Mounting ' + PathToDepot ,LLInfo);
+//    {set shell and options}
+//    Shell := 'cmd.exe';
+//    ShellOptions := '/c';
+//    ShellCommand := 'net use' + ' ' + PathToDepot + ' ' + Password + ' ' + '/user:' + User;
+//    if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
+//    begin
+//      ShellCommand := '';
+//      LogDatei.log('Mounting done', LLInfo);
+//      //ShowMessage(ShellOutput);
+//    end
+//    else LogDatei.log('Error while trying to run command net use ' +
+//      PathToDepot + ' ' + User + ' on ' + Shell, LLError);
+//  except
+//    LogDatei.log('Exception during mounting of ' + PathToDepot, LLDebug);
+//  end;
+//end;
+
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;

@@ -11587,13 +11587,13 @@ begin
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
     begin
-      powershellpara := ' -file ';
+      //powershellpara := ' -file ';
       useext := '.ps1';
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -file ';
+      //powershellpara := ' -file ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
