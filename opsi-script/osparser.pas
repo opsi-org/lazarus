@@ -25404,7 +25404,7 @@ begin
 
               tsEndFunction:
               begin
-                // you should nerver get here since the endfunc's are parsed along the deffunc's
+                // you should never get here since the endfunc's are parsed along the deffunc's
                 // in the case tsDefineFunction
                 LogDatei.log('Found EndFunc without DefFunc', LLCritical);
                 reportError(Sektion, linecounter,
