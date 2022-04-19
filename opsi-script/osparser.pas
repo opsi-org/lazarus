@@ -24781,11 +24781,14 @@ begin
                   end;
                 end;
                 if not testSyntax then
-                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
+                  ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
               tsTests:
-                ActionResult := doTests(ArbeitsSektion, Remaining);
+              begin
+                if not testSyntax then
+                  ActionResult := doTests(ArbeitsSektion, Remaining);
+              end;
 
 
               tsPatchIniFile:
@@ -24855,7 +24858,8 @@ begin
                     end;
                   end;
                 end;
-                ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
+                if not testSyntax then
+                  ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
               end;
 
               tsHostsPatch:
@@ -24864,7 +24868,8 @@ begin
                   ' ' + Remaining, LLNotice);
                 GetWordOrStringExpressionstr(Remaining, Filename,
                   Remaining, ErrorInfo);
-                ActionResult := doHostsPatch(ArbeitsSektion, Filename);
+                if not testSyntax then
+                  ActionResult := doHostsPatch(ArbeitsSektion, Filename);
               end;
 
 
@@ -24882,7 +24887,10 @@ begin
                   ' ' + Remaining, LLNotice);
                 EvaluateString(Remaining, Remaining, Parameter, InfoSyntaxError);
                 if Remaining = '' then
-                  ActionResult := doXMLPatch(ArbeitsSektion, Parameter, output)
+                begin
+                  if not testSyntax then
+                    ActionResult := doXMLPatch(ArbeitsSektion, Parameter, output);
+                end
                 else
                   ActionResult :=
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
@@ -24963,8 +24971,8 @@ begin
                     end;
                   end;
                 end;
-                ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
-
+                if not testSyntax then
+                  ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
               end;
 
 
@@ -24986,7 +24994,10 @@ begin
                   end;
                 end
                 else
-                  ActionResult := doOpsiServiceCall(ArbeitsSektion, Parameter, output);
+                begin
+                  if not testSyntax then
+                    ActionResult := doOpsiServiceCall(ArbeitsSektion, Parameter, output);
+                end;
               end;
 
               tsOpsiServiceHashList:
@@ -24994,8 +25005,9 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 Parameter := Remaining;
-                ActionResult :=
-                  doOpsiServiceHashList(ArbeitsSektion, Parameter, output);
+                if not testSyntax then
+                  ActionResult :=
+                    doOpsiServiceHashList(ArbeitsSektion, Parameter, output);
               end;
 
               {$IFDEF WINDOWS}
@@ -25003,8 +25015,9 @@ begin
               begin
                 GetWordOrStringExpressionstr(Remaining, Filename,
                   Remaining, ErrorInfo);
-                ActionResult := doIdapiConfig(ArbeitsSektion, Filename);
-                //ActionResult := doIdapiConfig (ArbeitsSektion, Remaining);
+                if not testSyntax then
+                  ActionResult := doIdapiConfig(ArbeitsSektion, Filename);
+                  //ActionResult := doIdapiConfig (ArbeitsSektion, Remaining);
               end;
               {$ENDIF WINDOWS}
 
@@ -25015,8 +25028,11 @@ begin
                 EvaluateString(Remaining, Remaining, Parameter, InfoSyntaxError);
                 if produceLDAPsearchParameters(Remaining, cacheRequest,
                   outputRequest, InfoSyntaxError) then
-                  ActionResult :=
-                    doLDAPSearch(ArbeitsSektion, cacheRequest, outputRequest, output)
+                begin
+                  if not testSyntax then
+                    ActionResult :=
+                      doLDAPSearch(ArbeitsSektion, cacheRequest, outputRequest, output)
+                end
                 else
                   ActionResult :=
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
@@ -25035,7 +25051,8 @@ begin
                 // so run registry sections implicit as /Allntuserdats
                 if runProfileActions then
                   flag_all_ntuser := True;
-                ActionResult := doFileActions(ArbeitsSektion, Remaining);
+                if not testSyntax then
+                  ActionResult := doFileActions(ArbeitsSektion, Remaining);
                 logdatei.log('Finished section: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
               end;
@@ -25056,7 +25073,10 @@ begin
                       reportError(Sektion, linecounter,
                       Sektion.strings[linecounter - 1], 'No valid parameter')
                   else
-                    doLinkFolderActions(ArbeitsSektion, False);
+                  begin
+                    if not testSyntax then
+                      doLinkFolderActions(ArbeitsSektion, False);
+                  end;
                 end;
                 //{$ELSE WIN32}
                 //logdatei.log('Linkfolder sections are not implemented for Linux right now', LLWarning);
@@ -25094,45 +25114,50 @@ begin
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                ActionResult :=
-                  execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                  False {dont catch out}, 0, [ttpWaitOnTerminate], output);
+                if not testSyntax then
+                  ActionResult :=
+                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
+                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
               end;
 
               tsDosInAnIcon:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                ActionResult :=
-                  execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
-                  True {catch out}, 0, [ttpWaitOnTerminate], output);
+                if not testSyntax then
+                  ActionResult :=
+                    execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
+                    True {catch out}, 0, [ttpWaitOnTerminate], output);
               end;
 
               tsShellBatchFile:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                ActionResult :=
-                  execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
-                  False {dont catch out}, 0, [ttpWaitOnTerminate], output);
+                if not testSyntax then
+                  ActionResult :=
+                    execDOSBatch(ArbeitsSektion, Remaining, SW_ShowNormal,
+                    False {dont catch out}, 0, [ttpWaitOnTerminate], output);
               end;
 
               tsShellInAnIcon:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                ActionResult :=
-                  execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
-                  True {catch out}, 0, [ttpWaitOnTerminate], output);
+                if not testSyntax then
+                  ActionResult :=
+                    execDOSBatch(ArbeitsSektion, Remaining, SW_HIDE,
+                    True {catch out}, 0, [ttpWaitOnTerminate], output);
               end;
 
               tsExecutePython:
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                ActionResult :=
-                  execPython(ArbeitsSektion, Remaining, True {catch out},
-                  0, [ttpWaitOnTerminate], output);
+                if not testSyntax then
+                  ActionResult :=
+                    execPython(ArbeitsSektion, Remaining, True {catch out},
+                    0, [ttpWaitOnTerminate], output);
               end;
 
               tsExecuteWith, tsExecuteWith_escapingStrings:
@@ -25140,10 +25165,10 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 //if produceExecLine(remaining, p1, p2, p3, p4, InfoSyntaxError) then
-
-                ActionResult :=
-                  executeWith(ArbeitsSektion, Remaining, True {catch out},
-                  0, output);
+                if not testSyntax then
+                  ActionResult :=
+                    executeWith(ArbeitsSektion, Remaining, True {catch out},
+                    0, output);
                 //else
                 //  ActionResult :=
                 //    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -25157,8 +25182,11 @@ begin
               end;
 
               tsDDEwithProgman:
-                //ActionResult := doDDEwithProgman (ArbeitsSektion, Remaining, SaveddeWithProgman);
-                ActionResult := doDDEwithProgman(ArbeitsSektion, Remaining, False);
+              begin
+                if not testSyntax then
+                  //ActionResult := doDDEwithProgman (ArbeitsSektion, Remaining, SaveddeWithProgman);
+                  ActionResult := doDDEwithProgman(ArbeitsSektion, Remaining, False);
+              end;
 
               {$IFDEF WIN32}
               tsAddConnection:
@@ -25177,7 +25205,10 @@ begin
                 end;
 
                 if syntaxCheck then
-                  ActionResult := startConnection(localname, remotename, timeout)
+                begin
+                  if not testSyntax then
+                    ActionResult := startConnection(localname, remotename, timeout);
+                end
                 else
                   ActionResult :=
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -25488,6 +25519,8 @@ begin
                     then
                     begin
                       syntaxCheck := True;
+                      if not testSyntax then
+                      begin
                       try
                         //LogDatei.log ('Executing0 ' + s1, LLInfo);
                         if not removeCertFromSystemStore(s1) then
@@ -25503,6 +25536,7 @@ begin
                           FNumberOfErrors := FNumberOfErrors + 1;
                           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                         end;
+                      end;
                       end;
                     end;
               end;
