@@ -322,6 +322,7 @@ default: ["xenial_bionic"]
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
     FtargetOSset: TTargetOSset;
+    FuseCustomDir : boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -343,6 +344,7 @@ default: ["xenial_bionic"]
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
     property targetOSset: TTargetOSset read FtargetOSset write FtargetOSset;
+    property useCustomDir: boolean read FuseCustomDir write FuseCustomDir;
   public
     { public declarations }
     //constructor Create;
@@ -1771,6 +1773,7 @@ begin
       PathDelim + 'template.png';
     *)
     targetOSset := [];
+    useCustomDir:= false;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

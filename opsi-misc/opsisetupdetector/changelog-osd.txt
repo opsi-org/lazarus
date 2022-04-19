@@ -81,6 +81,13 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    * newmain task create product with logged in admin
 
+opsi-setup-detector (4.2.1.0-1) stable; urgency=low
+
+   * custom directory support (todo)
+   * template channels (todo)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.0.10-1) stable; urgency=low
 
    * update innounp.exe to 0.50

@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# postinst script for a opsi product
+# This script executes after unpacking files from that archive and registering the product at the server.
+#
+# The following environment variables can be used to obtain information about the current installation:
+#   PRODUCT_ID: id of the current product
+#   CLIENT_DATA_DIR: directory which contains the installed client data
+#
+TMP_DIR=${CLIENT_DATA_DIR}/../${PRODUCT_ID}.tmp
+
+if [ -d $TMP_DIR ]; then
+	echo 'Restoring previous directories...'
+	
+	echo 'Restoring previous custom dir...'
+	if [ -d $TMP_DIR/custom ]; then
+		test -e $CLIENT_DATA_DIR/custom && rm -rf $CLIENT_DATA_DIR/custom
+		echo "   moving $TMP_DIR/custom to $CLIENT_DATA_DIR/"
+		mv $TMP_DIR/custom $CLIENT_DATA_DIR/ || exit 1	
+	fi
+fi
+
+echo "Removing temporary files..."
+rm -rf $TMP_DIR

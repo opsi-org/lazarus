@@ -121,6 +121,7 @@ type
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
+    FlowPanelCustomDir: TFlowPanel;
     FlowPanelGeneric: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMsiId2: TFlowPanel;
@@ -282,6 +283,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
+    TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
@@ -771,6 +773,7 @@ begin
         'productImageFullFileName');
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
       TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+      TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'useCustomDir');
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of

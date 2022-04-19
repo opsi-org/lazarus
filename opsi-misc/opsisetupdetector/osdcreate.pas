@@ -588,12 +588,18 @@ begin
       end; // not meta
 
       //preinst
-      infilename := genericTemplatePath + Pathdelim + 'preinst';
+      if aktProduct.productdata.useCustomDir then
+      infilename := genericTemplatePath + Pathdelim + 'preinst_custom'
+      else
+      infilename := genericTemplatePath + Pathdelim + 'preinst_empty';
       outfilename := opsipath + pathdelim + 'preinst';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
       //postinst
-      infilename := genericTemplatePath + Pathdelim + 'postinst';
+      if aktProduct.productdata.useCustomDir then
+      infilename := genericTemplatePath + Pathdelim + 'postinst_custom'
+      else
+      infilename := genericTemplatePath + Pathdelim + 'postinst_empty';
       outfilename := opsipath + pathdelim + 'postinst';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
