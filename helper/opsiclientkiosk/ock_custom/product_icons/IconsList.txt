@@ -1,13 +1,3 @@
-flashplayer=flashplayer.png
-firefox=firefox.png
-audacity=audacity_audacity.png
-cdburnerxp=acidrip_acidrip.png
-bcdedit=textedit.app_accessories-text-editor_128x128x32.png
-classic-shell=sakura_terminal-tango.png
-eraser=bleachbit_bleachbit.png
-firebird=gnubiff_gnubiff.png
-freepdf=opsi-logo.png
-foto-aufmass=photoprint_fotoprint.png
-filezilla=7kaa_7kaa.png
-ganttproject=abe_abe.png
 7zip=guymager_guymager_128.png
+flashplayer=adobe.png
+audacity=audacity_audacity.png

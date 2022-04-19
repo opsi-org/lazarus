@@ -6,7 +6,15 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  OckLinux, OckImagesToDepot;
+  {$IFDEF LINUX}
+   {add Linux specific units here}
+   OckLinux,
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+   {add MacOS specific units here}
+   OckMacOS,
+  {$ENDIF DARWIN}
+  OckImagesToDepot;
 
 type
 
@@ -36,12 +44,17 @@ implementation
 { TFormPasswordQuery }
 
 procedure TFormPasswordQuery.ButtonOKClick(Sender: TObject);
+var
+  S:string;
 begin
   If SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'root' then
-    OckLinux.RunCommandElevated.Sudo := False
+    RunCommandElevated.Sudo := False
   else if SudoOrRoot.Items[SudoOrRoot.ItemIndex] = 'sudo' then
-    OckLinux.RunCommandElevated.Sudo := True;
-  OckLinux.RunCommandElevated.Password := EditPassword.Text;
+    RunCommandElevated.Sudo := True;
+  S := EditPassword.Text;
+  //Insert('',S,pos('',S)); //AnsiQuotedStr(EditPassword.Text,'''');
+  RunCommandElevated.Password := S;
+  S := '';
   if PasswordCorrect then
   begin
     Close;

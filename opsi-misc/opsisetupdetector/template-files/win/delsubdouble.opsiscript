@@ -22,6 +22,7 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines1*#
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else
@@ -51,6 +52,7 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines2*#
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else

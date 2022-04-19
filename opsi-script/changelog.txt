@@ -3,65 +3,23 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.5.0) stable; urgency=low
+
+  * osparser: fix in parsing errorsOccurredSinceMark, references #4718
+  * osparser: throw syntax errors in comments, implements #3542
+  * osfunc: fix "del" in files section: now works with wildcards, references #4560
+  * oswebservice: allow newline and tab in opsiservicecall, implements #3522
+  * new functions getRegistryKeyList(<regkey>,<access str>),
+	getRegistryVarList(<regkey>,<access str>),
+	getRegistryVarMap(<regkey>,<access str>),
+	implements #4720
+  * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
+
+-- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 16:00
+
+
 opsi-script (4.12.4.37) stable; urgency=low
 
-  * osparser: new functions for TOML files handling:
-    function LoadTOMLFile(TOMLfilePath: String): TStringList;
-    function GetTOMLAsStringList(TOMLcontents: String): TStringList;
-    function GetTOMLKeys(TOMLcontents: String): TStringList
-    function GetTOMLTableNames(TOMLcontents: String): TStringList;
-    function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
-    function ReadTOMLFile (TOMLfilePath: String): String; 
-    function GetTOMLAsString(TOMLcontents: String): String;
-    function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-    function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
-    function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
-    function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
-    function ConvertTOMLtoJSON(TOMLcontents: String): String;
-    function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean;
-    function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean; 
-  * osTOML: new unit for TOML func:
-    function LoadTOMLFile(TOMLfilePath: String): TStringList;
-    function ReadTOMLFile(TOMLfilePath: String): String;
-    function GetTOMLDocument(TOMLfilePath: String): TTOMLDocument;
-    function SaveToTOMLFile(TOMLcontents: String; TOMLfilePath: String): boolean;
-    function SaveToTOMLFile(myTOML: TTOMLDocument; TOMLfilePath: String): boolean;
-    function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
-    function ConvertTOMLtoJSON(TOMLcontents: String): String;
-    function GetTOMLAsString(TOMLcontents: String): String;
-    function GetTOMLAsStringList(TOMLcontents: String): TStringList;
-    function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
-    function GetTOMLKeys(TOMLcontents: String): TStringList;
-    function HasTables(myTOML: TTOMLTable): integer;
-    function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
-    function GetTOMLTableNames(TOMLcontents: String): TStringList;
-    function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
-    function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
-    function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
-    function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-    //function GetTOMLTable(TOMLfilePath: String; table : String): TStringList;
-    function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
-    function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
-    function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
-    //function AddKeyValueToTOMLFile(TOMLfilePath: String; keyPath : String; value : String): boolean;
-    //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
-    //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
-  * new functions in TOMLTypes unit:
-    function TTOMLArray.AsStrings: TStringList;
-    function TTOMLArray.AsTOMLString: String;
-    function TTOMLTable.AsTOMLString: ansistring;
-    function TTOMLTable.AsTOMLStringList: TStringList;
-    property TTOMLTable.Header : string read GetHeader; 
-    function TTOMLTable.GetHeader : string; 
-    procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
-    procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType);
-    procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
-    procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
-    procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
-    procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType);
-    procedure TTOMLTable.Remove(const key: String);
-  * fpTOML: new external library for TOML files handling
-  
   * osparser: new global constant %opsiUsertmpDir%; implements #4496
   * osparser: allow json value syntax in params in opsiServiceCall:
     i.e. numeric/boolean values, arrays, objects and null without quotes; implements #4705
@@ -84,6 +42,7 @@ opsi-script (4.12.4.37) stable; urgency=low
   * new function cidrToNetmask(<string>): string;  [WLM]
   * new function netmaskToCidr(<string>): string;  [WLM]
   * osparser: new global constant %FQDN% for fqdn in network (not opsi service) context; implements #4554
+  * osparser: fix occasionally access violation when using getReturnListFromSection/getOutStreamFromSection
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 

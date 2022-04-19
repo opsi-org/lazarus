@@ -12,11 +12,14 @@ uses
   {$IFDEF LINUX}
   OckLinux, OckPasswordQuery,
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  OckMacOS, OckPasswordQuery,
+  {$ENDIF DARWIN}
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
   lazproginfo, osRunCommandElevated, OSProcessux, opsiconnection, helpinfo,
-  OckImagestoDepot
+  OckImagestoDepot, OckPathsUtils
 
   {add more units if nedded};
 
@@ -35,9 +38,9 @@ begin
   Application.CreateForm(TFormProgressWindow, FormProgressWindow);
   Application.CreateForm(TFormHelpInfo, FormHelpInfo);
   Application.CreateForm(TFormSaveImagesOnDepot, FormSaveImagesOnDepot);
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Application.CreateForm(TFormPasswordQuery, FormPasswordQuery);
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
   Application.Run;
   Application.Free;
 end.

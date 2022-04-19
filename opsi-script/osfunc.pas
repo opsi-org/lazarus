@@ -7558,73 +7558,83 @@ var
   EndoFuncFound: boolean = False;
 
 begin
-  Result := False;
-  i := FindSectionheaderIndex(Sectionname);
-  if i >= 0 then
-    StartlineNo := i + 1
-  else
-    StartlineNo := i;
-  if (i >= 0)      // section header existing
-    and (i + 1 <= Count - 1)
-  //the i+1-line exists - the line below the section header
-  then
-  begin
-    Inc(i);
-    // the line below the section header
-    // do the next section start - so this section is empty
-
-    ersteZeileSuchen := True;
-    while (i <= Count - 1) and ersteZeileSuchen do
+  try
+    Result := False;
+    i := FindSectionheaderIndex(Sectionname);
+    if i >= 0 then
+      StartlineNo := i + 1
+    else
+      StartlineNo := i;
+    if (i >= 0)      // section header existing
+      and (i + 1 <= Count - 1)
+    //the i+1-line exists - the line below the section header
+    then
     begin
-      s := trim(Strings[i]);
-      if (length(s) > 0) and (s[1] <> LineIsCommentChar) then
-      begin
-        ersteZeileSuchen := False;
-        if isHeaderLine(s) then
-          Result := False
-        else //i ist Index der ersten Sektionszeile
-          Result := True;
-      end
-      else
-        Inc(i);
-    end;
+      Inc(i);
+      // the line below the section header
+      // do the next section start - so this section is empty
 
-    if Result then
-    begin // Sektionsinhalt existiert
-      searchstartindex := StartlineNo;
-      // if we have defFunc section headers before EndFunc should be ignored
-      searchstartindex := getFirstLineAfterEndFunc(self, searchstartindex);
-      n := FindEndOfSectionIndex(searchstartindex);
-      for j := StartlineNo to n do
+      ersteZeileSuchen := True;
+      while (i <= Count - 1) and ersteZeileSuchen do
       begin
-        s := KappeBlanks(Strings[j]);
-        if s = '' then
+        s := trim(Strings[i]);
+        if (length(s) > 0) and (s[1] <> LineIsCommentChar) then
         begin
-          if takeEmptyLines then
-            Resultlist.Add(s);
+          ersteZeileSuchen := False;
+          if isHeaderLine(s) then
+            Result := False
+          else //i ist Index der ersten Sektionszeile
+            Result := True;
         end
-        else (* s <> '' *)
+        else
+          Inc(i);
+      end;
+
+      if Result then
+      begin // Sektionsinhalt existiert
+        searchstartindex := StartlineNo;
+        // if we have defFunc section headers before EndFunc should be ignored
+        searchstartindex := getFirstLineAfterEndFunc(self, searchstartindex);
+        n := FindEndOfSectionIndex(searchstartindex);
+        for j := StartlineNo to n do
         begin
-          if takeCommentLines or (s[1] <> LineIsCommentChar) then
+          s := KappeBlanks(Strings[j]);
+          if s = '' then
           begin
-            (*
-            if (s<> '') and (s[1] = '{')
-            then
-              s := copy (s,2, length(s) -1);
+            if takeEmptyLines then
+              Resultlist.Add(s);
+          end
+          else (* s <> '' *)
+          begin
+            if takeCommentLines or (s[1] <> LineIsCommentChar) then
+            begin
+              (*
+              if (s<> '') and (s[1] = '{')
+              then
+                s := copy (s,2, length(s) -1);
 
-            if (s<> '') and (s[length(s)] = '}')
-            then
-              s := copy (s,1, length(s) -1);
-            *)
-            if trimmed then
-              Resultlist.Add(s)
-            else
-              Resultlist.Add(cutRightBlanks(Strings[j]));
+              if (s<> '') and (s[length(s)] = '}')
+              then
+                s := copy (s,1, length(s) -1);
+              *)
+              if trimmed then
+                Resultlist.Add(s)
+              else
+                Resultlist.Add(cutRightBlanks(Strings[j]));
 
+            end;
           end;
         end;
-      end;
-    end; //Sektionsinhalt existiert
+      end; //Sektionsinhalt existiert
+    end;
+  except
+    on E: Exception do
+    begin
+      Logdatei.log('Exception in GetSectionLines: ' + Sectionname, LLCritical);
+      Logdatei.log(e.ClassName + ' system message: "' +
+        E.Message + '" - giving up',
+        LLCritical);
+    end;
   end;
 end;
 
@@ -10617,6 +10627,7 @@ function TuibFileInstall.AllDelete
   retryOnReboot: boolean; logleveloffset: integer = 0): boolean;
 
 var
+  FileFinder: TSearchRec;
   CompleteName: string = '';
   PathName: string = '';
   testName: string = '';
@@ -10912,8 +10923,11 @@ begin
   { Start }
   if not search4file then
   begin
+    // FindFirst only finds directories without PathDelim at the end
+    if (testname[length(testname)] = PathDelim) then
+      testname := ExtractFileDir(testname);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
-    if (not FileExists(testname)) and (not DirectoryExists(testname)) then
+    if not (FindFirst(testname, faAnyFile and faDirectory, FileFinder) = 0) then
     begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
@@ -10970,6 +10984,7 @@ begin
         end;
       end;
     end;
+    FindClose(FileFinder);
   end
   else { old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing" }
   begin

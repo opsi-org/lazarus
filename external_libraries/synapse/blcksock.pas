@@ -245,6 +245,7 @@ type
     LT_TLSv1,
     LT_TLSv1_1,
     LT_TLSv1_2,
+    LT_TLSv1_3,
     LT_SSHv2
     );
 

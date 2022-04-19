@@ -102,8 +102,8 @@ begin
   // $ mv ip.py /usr/local/bin/ip
   if not which('ip', errstr) then
   begin
-    exitcode := RunCommandIndir('', 'curl', ['-s', '-o',
-      '/usr/local/bin/ip', '-L',
+    exitcode := RunCommandIndir('', 'curl',
+      ['-s', '-o', '/usr/local/bin/ip', '-L',
       'https://github.com/brona/iproute2mac/raw/master/src/ip.py'], output, outint, []);
     exitcode := RunCommandIndir('', 'chmod', ['-x', ''], output, outint, []);
     if not which('ip', errstr) then
@@ -155,51 +155,51 @@ begin
       if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
         report, SW_HIDE, ExitCode) then
       {$ELSE OPSISCRIPT}
-        if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-          SW_HIDE, ExitCode) then
+      if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+        SW_HIDE, ExitCode) then
       {$ENDIF OPSISCRIPT}
 
-        begin
-          LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-        end
-        else
-        begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-          LogDatei.log('', LLDebug);
-          LogDatei.log('output:', LLDebug);
-          LogDatei.log('--------------', LLDebug);
-          if outlines.Count > 0 then
-            for i := 0 to outlines.Count - 1 do
+      begin
+        LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+      end
+      else
+      begin
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+        LogDatei.log('', LLDebug);
+        LogDatei.log('output:', LLDebug);
+        LogDatei.log('--------------', LLDebug);
+        if outlines.Count > 0 then
+          for i := 0 to outlines.Count - 1 do
+          begin
+            LogDatei.log(outlines.strings[i], LLDebug2);
+            lineparts.Clear;
+            resultstring := '';
+            userstr := '';
+            pidstr := '';
+            cmdstr := '';
+            fullcmdstr := '';
+            stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            for k := 0 to lineparts.Count - 1 do
             begin
-              LogDatei.log(outlines.strings[i], LLDebug2);
-              lineparts.Clear;
-              resultstring := '';
-              userstr := '';
-              pidstr := '';
-              cmdstr := '';
-              fullcmdstr := '';
-              stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-              for k := 0 to lineparts.Count - 1 do
-              begin
-                if k = 0 then
-                  pidstr := lineparts.Strings[k]
-                else if k = 1 then
-                  userstr := lineparts.Strings[k]
-                else if k = 2 then
-                  cmdstr := lineparts.Strings[k]
-                else
-                  fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
-              end;
-              resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
-              LogDatei.log(resultstring, LLDebug3);
-              //resultstring := lineparts.Strings[0] + ';';
-              //resultstring := resultstring + lineparts.Strings[1] + ';';
-              //resultstring := resultstring + lineparts.Strings[2] + ';';
-              Result.Add(resultstring);
+              if k = 0 then
+                pidstr := lineparts.Strings[k]
+              else if k = 1 then
+                userstr := lineparts.Strings[k]
+              else if k = 2 then
+                cmdstr := lineparts.Strings[k]
+              else
+                fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
             end;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-          LogDatei.log('', LLDebug);
-        end;
+            resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
+            LogDatei.log(resultstring, LLDebug3);
+            //resultstring := lineparts.Strings[0] + ';';
+            //resultstring := resultstring + lineparts.Strings[1] + ';';
+            //resultstring := resultstring + lineparts.Strings[2] + ';';
+            Result.Add(resultstring);
+          end;
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+        LogDatei.log('', LLDebug);
+      end;
     except
       on E: Exception do
       begin
@@ -324,7 +324,8 @@ begin
     for i := 0 to resultlines2.Count - 1 do
     begin
       user := resultlines2.Strings[i];
-      resultstring := getCommandResult('dscl . -read /Users/' + user + ' NFSHomeDirectory');
+      resultstring := getCommandResult('dscl . -read /Users/' + user +
+        ' NFSHomeDirectory');
       resultstring := trim(copy(resultstring, 18, length(resultstring)));
       for k := 0 to resultlines1.Count - 1 do
       begin
@@ -413,26 +414,26 @@ begin
   if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines),
     report, SW_HIDE, ExitCode) then
       {$ELSE OPSISCRIPT}
-    if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
       {$ENDIF OPSISCRIPT}
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
     begin
-      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-      Result := -1;
-    end
-    else
-    begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-      LogDatei.log('', LLDebug);
-      LogDatei.log('output:', LLDebug);
-      LogDatei.log('--------------', LLDebug);
-      for i := 0 to outlines.Count - 1 do
-      begin
-        LogDatei.log(outlines.strings[i], LLDebug);
-      end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-      LogDatei.log('', LLDebug);
-      Result := ExitCode;
+      LogDatei.log(outlines.strings[i], LLDebug);
     end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
   outlines.Free;
 end;
 
@@ -453,26 +454,26 @@ begin
   if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines),
     report, SW_HIDE, ExitCode) then
       {$ELSE OPSISCRIPT}
-    if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
       {$ENDIF OPSISCRIPT}
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
     begin
-      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-      Result := -1;
-    end
-    else
-    begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-      LogDatei.log('', LLDebug);
-      LogDatei.log('output:', LLDebug);
-      LogDatei.log('--------------', LLDebug);
-      for i := 0 to outlines.Count - 1 do
-      begin
-        LogDatei.log(outlines.strings[i], LLDebug);
-      end;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-      LogDatei.log('', LLDebug);
-      Result := ExitCode;
+      LogDatei.log(outlines.strings[i], LLDebug);
     end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
   outlines.Free;
 end;
 
@@ -559,22 +560,22 @@ begin
   if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
     True, TXStringlist(outlines), report, 0, exitcode) then
   {$ELSE OPSISCRIPT}
-    if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
-      True, outlines, report, 0, exitcode) then
+  if RunCommandAndCaptureOut('/bin/bash -c "defaults read -g AppleLanguages"',
+    True, outlines, report, 0, exitcode) then
   {$ENDIF OPSISCRIPT}
+  begin
+    if outlines.Count > 2 then
     begin
-      if outlines.Count > 2 then
-      begin
-        mylang := trim(outlines.Strings[1]);
-        mylang := copy(mylang, 2, 2);
-        Result := True;
-        report := 'Detected default primary lang on macos: ' + mylang;
-      end
-      else
-        report := 'Unexpected Result at macos lang detection: ' + outlines.Text;
+      mylang := trim(outlines.Strings[1]);
+      mylang := copy(mylang, 2, 2);
+      Result := True;
+      report := 'Detected default primary lang on macos: ' + mylang;
     end
     else
-      report := 'Failed macos lang detection: ' + report;
+      report := 'Unexpected Result at macos lang detection: ' + outlines.Text;
+  end
+  else
+    report := 'Failed macos lang detection: ' + report;
   FreeAndNil(outlines);
 end;
 

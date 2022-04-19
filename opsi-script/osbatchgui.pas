@@ -931,7 +931,8 @@ procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
 begin
   if Assigned(LogDatei) then
     LogDatei.log('Window state was switched by : ' + Sender.ClassName +
-      ' to: ' + GetEnumName(TypeInfo(TWindowState), Ord(FBatchOberflaeche.WindowState)), LLDebug);
+      ' to: ' + GetEnumName(TypeInfo(TWindowState), Ord(FBatchOberflaeche.WindowState)),
+      LLDebug);
 end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);
