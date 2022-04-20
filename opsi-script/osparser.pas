@@ -10458,7 +10458,7 @@ begin
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
     mySektion.Add('trap { write-output $_ ; exit 1 }');
     mySektion.Add(command);
-    mySektion.Add('exit $LASTEXITCODE');
+    //mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
     fulloptionstring := parameters + ' ' + optionstr;
@@ -11587,13 +11587,13 @@ begin
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
     begin
-      //powershellpara := ' -file ';
+      powershellpara := ' -file ';
       useext := '.ps1';
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
       // we add '-file ' as last param for powershell
-      //powershellpara := ' -file ';
+      powershellpara := ' -file ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
