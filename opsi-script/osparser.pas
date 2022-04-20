@@ -23296,13 +23296,15 @@ begin
 
                 if syntaxCheck then
                 begin
+                  if not testSyntax then
+                  begin
                   Parameter := ExpandFileName(Parameter);
                   if DirectoryExists(Parameter) then
-                    if not testSyntax then
                       ChangeDirectory(parameter)
-                    else
+                  else
                       LogDatei.log('Error at ChangeDirectory: ' + Parameter +
                         ' is not a directory', LLError);
+                  end;
                 end;
               end;
 
