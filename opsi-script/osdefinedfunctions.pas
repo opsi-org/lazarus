@@ -1356,6 +1356,7 @@ begin
           end
           else // this should be not the last parameter and we expect a ','
             GetWordOrStringConstant(inputstr, ParamStr, remaining, [',']);
+
           ParamStr := trim(ParamStr);
           LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
             ParamStr, LLDebug2);
@@ -1599,7 +1600,6 @@ begin
   DFActive := True;
   //inc(inDefinedFuncNestCounter);
   //definedFunctionsCallStack.Append(InttoStr(DFIndex));
-
 
 
   //parse parameter
