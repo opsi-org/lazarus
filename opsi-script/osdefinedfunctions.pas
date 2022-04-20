@@ -1490,7 +1490,7 @@ begin
                   LogDatei.log('Paramnr: ' + IntToStr(
                     paramcounter) + ' is a stringlist', LLDebug2);
                 end;
-                section.Free;
+                FreeAndNil(section);
                 paramlistvalue.Free;
               end;
               (*
