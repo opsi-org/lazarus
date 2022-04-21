@@ -16509,14 +16509,14 @@ begin
               try
                 StringResult := BoolToStr(boolresult, True);
               except
-                LogDatei.log('Error: boolToString: string expression' +
-                  s1 + ' has no boolean value', LLError);
+                LogDatei.log('Error: boolToString: string expression "' +
+                  s1 + '" has no boolean value', LLError);
                 StringResult := '';
               end;
             end;
           except
-            LogDatei.log('Error: boolToString: string expression' + s1 +
-              ' has no boolean value', LLDebug2);
+            LogDatei.log('Error: boolToString: string expression "' + s1 +
+              '" has no boolean value', LLDebug2);
             StringResult := '';
           end;
         end;
@@ -16533,8 +16533,8 @@ begin
               try
                 StringResult := BoolToStr(boolresult, True);
               except
-                LogDatei.log('Error: boolToString: string expression' +
-                  r + ' has no boolean value', LLError);
+                LogDatei.log('Error: boolToString: string expression "' +
+                  r + '" has no boolean value', LLError);
                 StringResult := '';
               end;
             end;
@@ -16542,8 +16542,8 @@ begin
           else
           begin
             // EvaluateBoolean = false
-            LogDatei.log('Error: boolToString: string expression' + r +
-              ' has no boolean value', LLError);
+            LogDatei.log('Error: boolToString: string expression "' + r +
+              '" has no boolean value', LLError);
             StringResult := '';
           end;
         end;
@@ -18448,7 +18448,7 @@ begin
     end
 
     else
-      InfoSyntaxError := s0 + ' illegal String Expressionstr';
+      InfoSyntaxError := '"' + s0 + '" is an illegal String Expressionstr';
 
 
     (* Addition weiterer Teilstrings mit + *)
