@@ -21,7 +21,7 @@ function ReadTOMLFile(TOMLfilePath: String): String;
 function GetTOMLDocument(TOMLfilePath: String): TTOMLDocument;
 
 function SaveToTOMLFile(TOMLcontents: String; TOMLfilePath: String): boolean;
-function SaveToTOMLFile(myTOML: TTOMLDocument; TOMLfilePath: String): boolean;
+//function SaveToTOMLFile(myTOML: TTOMLDocument; TOMLfilePath: String): boolean;
 
 function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
 function ConvertTOMLtoJSON(TOMLcontents: String): String;
@@ -29,16 +29,16 @@ function ConvertTOMLtoJSON(TOMLcontents: String): String;
 function GetTOMLAsString(TOMLcontents: String): String;
 function GetTOMLAsStringList(TOMLcontents: String): TStringList;
 
-function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
+//function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
 function GetTOMLKeys(TOMLcontents: String): TStringList;
 
-function HasTables(myTOML: TTOMLTable): integer;
-function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
+//function HasTables(myTOML: TTOMLTable): integer;
+//function GetTOMLTableNames(myTOML: TTOMLTable): TStringList;
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
 
-function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
+//function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
 function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
-function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
+//function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
 //function GetTOMLTable(TOMLfilePath: String; table : String): TStringList;
 
