@@ -23396,7 +23396,7 @@ begin
                       mtConfirmation, [mbYes, mbNo], 0) = mrYes then
                       ActionResult := tsrExitProcess;
                     {$ELSE GUI}
-                  ActionResult := tsrExitProcess;
+                    ActionResult := tsrExitProcess;
                     {$ENDIF GUI}
                 end
                 else
@@ -23495,12 +23495,15 @@ begin
 
                 if syntaxCheck then
                 begin
-                  if Parameter <> '' then
-                    FName := ExpandFileName(Parameter);
-                    {$IFDEF GUI}
-                  FBatchOberflaeche.loadSkin(Parameter);
-                  processMess;
-                    {$ENDIF GUI}
+                  if not testSyntax then
+                    begin
+                      if Parameter <> '' then
+                        FName := ExpandFileName(Parameter);
+                        {$IFDEF GUI}
+                      FBatchOberflaeche.loadSkin(Parameter);
+                      processMess;
+                        {$ENDIF GUI}
+                    end;
                 end
                 else
                   ActionResult :=
@@ -24338,10 +24341,13 @@ begin
               tsSetMarkerErrorNumber:
                 if remaining = '' then
                 begin
-                  LogDatei.ErrorNumberMarked := Logdatei.NumberOfErrors;
-                  LogDatei.log('Marked error number ' +
+                  if not testSyntax then
+                  begin
+                    LogDatei.ErrorNumberMarked := Logdatei.NumberOfErrors;
+                    LogDatei.log('Marked error number ' +
                     IntToStr(LogDatei.ErrorNumberMarked),
                     levelcomplete);
+                  end;
                 end
                 else
                   ActionResult :=
@@ -24367,18 +24373,21 @@ begin
               tsSetReportMessages:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if (UpperCase(Remaining) = 'OFF') or
-                    (UpperCase(Remaining) = 'FALSE') then
-                  begin
-                    LogDatei.log('ScriptErrorMessages was ' + BoolToStr(
-                      ReportMessages, True) + ' is set to false', LLinfo);
-                    ReportMessages := False;
-                  end
-                  else
-                  begin
-                    LogDatei.log('ScriptErrorMessages was ' + BoolToStr(
-                      ReportMessages, True) + ' is set to true', LLinfo);
-                    ReportMessages := True;
+                  if not testSyntax then
+                    begin
+                      if (UpperCase(Remaining) = 'OFF') or
+                      (UpperCase(Remaining) = 'FALSE') then
+                      begin
+                        LogDatei.log('ScriptErrorMessages was ' + BoolToStr(
+                          ReportMessages, True) + ' is set to false', LLinfo);
+                        ReportMessages := False;
+                      end
+                      else
+                      begin
+                        LogDatei.log('ScriptErrorMessages was ' + BoolToStr(
+                          ReportMessages, True) + ' is set to true', LLinfo);
+                        ReportMessages := True;
+                      end;
                   end;
                 end
                 else
@@ -24407,16 +24416,18 @@ begin
               tsSetTraceMode:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if (UpperCase(Remaining) = 'ON') or
-                    (UpperCase(Remaining) = 'TRUE') then
-                  begin
-                    TraceMode := True;
-                    Logdatei.TraceMode := True;
-                  end
-                  else
-                  begin
-                    TraceMode := False;
-                    Logdatei.TraceMode := False;
+                  if not testSyntax then
+                    if (UpperCase(Remaining) = 'ON') or
+                      (UpperCase(Remaining) = 'TRUE') then
+                    begin
+                      TraceMode := True;
+                      Logdatei.TraceMode := True;
+                    end
+                    else
+                    begin
+                      TraceMode := False;
+                      Logdatei.TraceMode := False;
+                    end;
                   end;
                 end
                 else
@@ -24427,6 +24438,7 @@ begin
               tsSetOldLogLevel:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
+                  if not testSyntax then
                   try
                     LogLevel := StrToInt(Remaining) + 4;
                     LogDatei.log(
@@ -24465,6 +24477,7 @@ begin
               tsSetLogLevel:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
+                  if not testSyntax then
                   try
                     LogLevel := StrToInt(Remaining);
                     LogDatei.log('LogLevel was ' + IntToStr(LogDatei.LogLevel), LLinfo);
@@ -24502,7 +24515,8 @@ begin
 
                 if syntaxCheck then
                 begin
-                  LogDatei.AddToConfidentials(Parameter);
+                  if not testSyntax then
+                     LogDatei.AddToConfidentials(Parameter);
                 end
                 else
                   ActionResult :=
@@ -24513,10 +24527,13 @@ begin
               tsSetUsercontext:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
-                  LogDatei.log('Usercontext was ' + usercontext, LLessential);
-                  usercontext := Parameter;
-                  LogDatei.log('Usercontext set to ' + usercontext, LLessential);
+                  if not testSyntax then
+                  begin
+                    EvaluateString(remaining, remaining, Parameter, infosyntaxerror);
+                    LogDatei.log('Usercontext was ' + usercontext, LLessential);
+                    usercontext := Parameter;
+                    LogDatei.log('Usercontext set to ' + usercontext, LLessential);
+                  end;
                 end
                 else
                   ActionResult :=
@@ -24527,6 +24544,7 @@ begin
               tsSetOutputLevel:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
+                  if not testSyntax then
                   try
                     OutputLevel := StrToInt(Remaining);
                     //LogDatei.log ('OutputLevel was ' + inttoStr(LogDatei.LogLevel), LLessential);
@@ -24562,21 +24580,22 @@ begin
 
               tsSetStayOnTop:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
-                begin
-                   {$IFDEF GUI}
-                  if (UpperCase(Remaining) = 'ON') or
-                    (UpperCase(Remaining) = 'TRUE') then
-                    FBatchOberflaeche.SetForceStayOnTop(True)
-                  else if (UpperCase(Remaining) = 'OFF') or
-                    (UpperCase(Remaining) = 'FALSE') then
-                    FBatchOberflaeche.SetForceStayOnTop(False)
-                  else
-                    ActionResult :=
-                      reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1], Remaining +
-                      ' is no valid value');
-                   {$ENDIF GUI}
-                end
+                  if not testSyntax then
+                  begin
+                     {$IFDEF GUI}
+                    if (UpperCase(Remaining) = 'ON') or
+                      (UpperCase(Remaining) = 'TRUE') then
+                      FBatchOberflaeche.SetForceStayOnTop(True)
+                    else if (UpperCase(Remaining) = 'OFF') or
+                      (UpperCase(Remaining) = 'FALSE') then
+                      FBatchOberflaeche.SetForceStayOnTop(False)
+                    else
+                      ActionResult :=
+                        reportError(Sektion, linecounter,
+                        Sektion.strings[linecounter - 1], Remaining +
+                        ' is no valid value');
+                     {$ENDIF GUI}
+                  end
                 else
                   ActionResult :=
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
@@ -25088,9 +25107,12 @@ begin
 
               tsWinBatch:
               begin
-                ActionResult :=
-                  parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
-                //parseAndCallWinbatch(ArbeitsSektion,Remaining);
+                if not testSyntax then
+                  begin
+                    ActionResult :=
+                    parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
+                  //parseAndCallWinbatch(ArbeitsSektion,Remaining);
+                  end;
               end;
 
               {$IFDEF WIN32}
@@ -25104,8 +25126,9 @@ begin
                   else
                     InfoSyntaxError := 'unexpected chars after "';
                 if SyntaxCheck then
-                  while FindWindowEx(0, 0, nil, PChar(ident)) <> 0 do
-                    ProcessMess
+                  if not testSyntax then
+                     while FindWindowEx(0, 0, nil, PChar(ident)) <> 0 do
+                       ProcessMess
                 else
                   ActionResult :=
                     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
@@ -25178,9 +25201,10 @@ begin
 
               tsWorkOnStringList:
               begin
-                ActionResult :=
-                  reportError(Sektion, linecounter, Expressionstr,
-                  'not yet implemented');
+                if not testSyntax then
+                   ActionResult :=
+                      reportError(Sektion, linecounter, Expressionstr,
+                      'not yet implemented');
               end;
 
               tsDDEwithProgman:
@@ -25493,22 +25517,25 @@ begin
                     then
                     begin
                       syntaxCheck := True;
-                      try
-                        //LogDatei.log ('Executing0 ' + s1, LLInfo);
-                        if not pemfileToSystemStore(s1) then
-                          logdatei.log('ImportCertToSystem: failed to import: ' +
-                            s1, LLError);
-                      except
-                        on e: Exception do
+                      if not testSyntax then
                         begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('ImportCertToSystem: failed to import: ' +
-                            s1 + ' : ' + e.message,
-                            LLError);
-                          FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          try
+                            //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                            if not pemfileToSystemStore(s1) then
+                              logdatei.log('ImportCertToSystem: failed to import: ' +
+                                s1, LLError);
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                              LogDatei.log('ImportCertToSystem: failed to import: ' +
+                                s1 + ' : ' + e.message,
+                                LLError);
+                              FNumberOfErrors := FNumberOfErrors + 1;
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                            end;
+                          end;
                         end;
-                      end;
                     end;
               end;
 
