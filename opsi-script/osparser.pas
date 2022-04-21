@@ -23415,6 +23415,7 @@ begin
                   LogDatei.log('comment: ' + Parameter, LLnotice);
               end;
 
+              // ToDo: ask Detlef if this is correct that this code block differs from others and no reportError is used
               tsActionProgress:
               begin
                 syntaxCheck := False;
