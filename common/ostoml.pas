@@ -142,13 +142,13 @@ end;
 
 function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;
 var
+  myTOMLScanner: TTOMLScanner;
   myFile: TStringList;
   myTOML : TTOMLDocument;
   myJSON : TJSONData;
 begin
   result := False;
   myFile := TStringList.Create;
-  myTOML := TTOMLDocument.Create;
   TOMLfilePath := ExpandFileName(TOMLfilePath);
   JSONfilePath := ExpandFileName(JSONfilePath);
   try
@@ -157,7 +157,9 @@ begin
     on E:Exception do
       writeln('Exception in ConvertTOMLtoJSON in LoadFromFile '+ TOMLfilePath +': ', E.Message);
   end;
-  myTOML := GetTOML(myFile.Text);
+  myTOMLScanner := TTOMLScanner.Create(myFile.Text);
+  myTOMLScanner.parse;
+  myTOML := myTOMLScanner.document;
   myJSON := myTOML.AsJSON;
   myFile.Clear;
   myFile.Add(myJSON.FormatJSON);
@@ -168,7 +170,8 @@ begin
     on E:Exception do
       writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ JSONfilePath +': ', E.Message);
   end;
-  myTOML.Free;
+  if Assigned(myTOMLScanner) then FreeAndNil(myTOMLScanner) 
+  myTOML := nil; //should be enough because myTOMLScanner is already freed which contains the document and myTOML is just a pointer to this document 
   myFile.Free;
 end;
 
