@@ -170,8 +170,10 @@ begin
     on E:Exception do
       writeln('Exception in ConvertTOMLtoJSON in SaveToFile'+ JSONfilePath +': ', E.Message);
   end;
-  if Assigned(myTOMLScanner) then FreeAndNil(myTOMLScanner) 
-  myTOML := nil; //should be enough because myTOMLScanner is already freed which contains the document and myTOML is just a pointer to this document 
+  if Assigned(myTOMLScanner) then
+     FreeAndNil(myTOMLScanner);
+  myTOML := nil; //should be enough because myTOMLScanner is already freed which contains the document
+  //and myTOML is just a pointer to this document
   myFile.Free;
 end;
 
