@@ -11918,9 +11918,7 @@ var
   newIniFile: TIniFile;
   s1enc: string = '';
 begin
-
   syntaxcheck := False;
-
   savelogsindentlevel := LogDatei.LogSIndentLevel;
 
   if Skip('(', s0, s1, InfoSyntaxError) then
