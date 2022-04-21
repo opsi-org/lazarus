@@ -1047,7 +1047,7 @@ begin
 
   if OpenExistingKey(key0, '') then
   begin
-    errorcode := RegDeleteKey(mykey, PChar(keytoopen));
+    errorcode := RegDeleteKey(mykey, PChar(UTF8ToWinCP(keytoopen)));
     if errorcode = error_success then
     begin
       Result := True;
