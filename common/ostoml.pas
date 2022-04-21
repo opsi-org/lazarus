@@ -157,9 +157,10 @@ begin
     on E:Exception do
       writeln('Exception in ConvertTOMLtoJSON in LoadFromFile '+ TOMLfilePath +': ', E.Message);
   end;
+  //myTOML := GetTOML(myFile.Text);
   myTOMLScanner := TTOMLScanner.Create(myFile.Text);
   myTOMLScanner.parse;
-  myTOML := myTOMLScanner.document;
+  myTOML := myTOMLScanner.GetTOMLDocument;
   myJSON := myTOML.AsJSON;
   myFile.Clear;
   myFile.Add(myJSON.FormatJSON);

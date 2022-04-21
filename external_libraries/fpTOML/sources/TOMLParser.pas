@@ -59,6 +59,7 @@ type
       function ReadNumber: string; override;
       function GetException: EScannerClass; override;
     public
+      function GetTOMLDocument: TTOMLDocument;
       destructor Destroy; override;
       procedure Parse; override;
   end;
@@ -90,6 +91,11 @@ begin
 end;
 
 { TTOMLScanner }
+
+function TTOMLScanner.GetTOMLDocument: TTOMLDocument;
+begin
+  result := document;
+end;
 
 function TTOMLScanner.GetException: EScannerClass;
 begin
