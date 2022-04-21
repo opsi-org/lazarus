@@ -16231,10 +16231,10 @@ begin
               IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' + stringresult + '<',
               LLDebug2);
           except
-            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+            LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
           end;
         except
-          LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
+          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
       end;
       if not syntaxCheck then
