@@ -23424,8 +23424,10 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
                 if syntaxCheck then
+                begin
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                opsidata.setActionProgress(Parameter);
+                  opsidata.setActionProgress(Parameter);
+                end;
               end;
 
 
