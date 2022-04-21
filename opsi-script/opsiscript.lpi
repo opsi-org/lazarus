@@ -704,7 +704,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="70">
+    <Units Count="69">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1013,11 +1013,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osGetRegistryFunctions"/>
       </Unit68>
-      <Unit69>
-        <Filename Value="../common/osparserhelper_getstringexpressionword.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="osparserhelper_GetStringExpressionWord"/>
-      </Unit69>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
