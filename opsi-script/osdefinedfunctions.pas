@@ -1491,7 +1491,7 @@ begin
                     paramcounter) + ' is a stringlist', LLDebug2);
                 end;
                 FreeAndNil(section);
-                paramlistvalue.Free;
+                FreeAndNil(paramlistvalue);
               end;
               (*
               dfpBoolean :    begin
