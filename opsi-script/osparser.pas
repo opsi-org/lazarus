@@ -23175,9 +23175,8 @@ begin
                   syntaxCheck :=
                     EvaluateString(Remaining, Remaining, logtailLinecountstr,
                     InfoSyntaxError);
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
                 begin
-                  if not testSyntax then
                     try
                       logtailLinecount := StrToInt(logtailLinecountstr);
                       shrinkFileToMB(fname, logtailLinecount);
@@ -23294,17 +23293,14 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
 
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
                 begin
-                  if not testSyntax then
-                  begin
                   Parameter := ExpandFileName(Parameter);
                   if DirectoryExists(Parameter) then
                       ChangeDirectory(parameter)
                   else
                       LogDatei.log('Error at ChangeDirectory: ' + Parameter +
                         ' is not a directory', LLError);
-                  end;
                 end;
               end;
 
@@ -23318,10 +23314,9 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
 
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
                 begin
                     {$IFDEF GUI}
-                  if not testSyntax then
                     if messagedlg(Parameter + LineEnding + rsReadyToContinue,
                       mtConfirmation, [mbYes], 0) = mrNo then
                       ActionResult := tsrExitProcess;
@@ -23350,8 +23345,7 @@ begin
                       syntaxCheck := True;
                     // which should contain a number
                     try
-                      if syntaxCheck then
-                        if not testSyntax then
+                      if syntaxCheck and not testSyntax then
                           sleepSecs := StrToInt(Parameter);
                     except;
                       syntaxCheck := False;
@@ -23388,15 +23382,14 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
 
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
                 begin
-                  if not testSyntax then
                     {$IFDEF GUI}
                     if messagedlg(Parameter + LineEnding + rsAbortProgram,
                       mtConfirmation, [mbYes, mbNo], 0) = mrYes then
                       ActionResult := tsrExitProcess;
                     {$ELSE GUI}
-                  ActionResult := tsrExitProcess;
+                    ActionResult := tsrExitProcess;
                     {$ENDIF GUI}
                 end
                 else
@@ -23432,10 +23425,11 @@ begin
                 else if EvaluateString(Remaining, Remaining,
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
+                begin
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                if not testSyntax then
                   opsidata.setActionProgress(Parameter);
+                end;
               end;
 
 
@@ -23651,9 +23645,8 @@ begin
                   end;
                   //end;
                 end;
-                if syntaxCheck then
+                if syntaxCheck and not testSyntax then
                 begin
-                  if not testSyntax then
                     try
                       execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
                     except
