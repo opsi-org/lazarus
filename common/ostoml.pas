@@ -180,12 +180,11 @@ end;
 
 function ConvertTOMLtoJSON(TOMLcontents: String): String;
 var
-  myTOML : TTOMLDocument;
+  myTOMLScanner : TTOMLScanner;
 begin
-  myTOML := TTOMLDocument.Create;
-  myTOML := GetTOML(TOMLcontents);
-  result := myTOML.AsJSON.FormatJSON;
-  myTOML.Free;
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  result := myTOMLScanner.TOMLDocument.AsJSON.FormatJSON;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function GetTOMLAsString(TOMLcontents: String): String;

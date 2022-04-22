@@ -59,7 +59,7 @@ type
       function ReadNumber: string; override;
       function GetException: EScannerClass; override;
     public
-      function GetTOMLDocument: TTOMLDocument;
+      property TOMLDocument: TTOMLDocument read document write document;
       destructor Destroy; override;
       procedure Parse; override;
   end;
@@ -76,26 +76,8 @@ type
 var
   parser: TTOMLScanner;
 
-function GetTOML(contents: TTOMLStringType): TTOMLDocument;
-//var
-  //parser: TTOMLScanner;
-  //doc : TTOMLDocument;
-begin
-  parser := TTOMLScanner.Create(contents);
-  parser.Parse;
-  result := parser.document;
-  //doc.AssignTable(parser.document);
-  //result.AssignTable(doc);
-  //doc.Free;
-  //parser.Free;
-end;
-
 { TTOMLScanner }
 
-function TTOMLScanner.GetTOMLDocument: TTOMLDocument;
-begin
-  result := document;
-end;
 
 function TTOMLScanner.GetException: EScannerClass;
 begin
@@ -922,12 +904,6 @@ begin
 
   inherited;
 end;
-
-initialization
-//parser := TTOMLScanner.Create;
-
-finalization
-parser.Free;
 
 
 end.
