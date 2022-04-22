@@ -93,11 +93,15 @@ end;
 function GetTOMLDocument(TOMLfilePath: String): TTOMLDocument;
 var
   myFile: String;
+  myTOMLScanner: TTOMLScanner;
 begin
   TOMLfilePath := ExpandFileName(TOMLfilePath);
   try
   myFile := ReadTOMLFile(TOMLfilePath);
-  result := GetTOML(myFile);
+  //result := GetTOML(myFile);
+  myTOMLScanner := TTOMLScanner.Create(myFile);
+  result := myTOMLScanner.TOMLDocument;
+  FreeAndNil(myTOMLScanner);
   except
     on E:Exception do
       writeln('Exception in GetTOMLDocument '+ TOMLfilePath +': ', E.Message);
@@ -160,7 +164,7 @@ begin
   //myTOML := GetTOML(myFile.Text);
   myTOMLScanner := TTOMLScanner.Create(myFile.Text);
   myTOMLScanner.parse;
-  myTOML := myTOMLScanner.GetTOMLDocument;
+  myTOML := myTOMLScanner.TOMLDocument;
   myJSON := myTOML.AsJSON;
   myFile.Clear;
   myFile.Add(myJSON.FormatJSON);
@@ -180,8 +184,13 @@ end;
 
 function ConvertTOMLtoJSON(TOMLcontents: String): String;
 var
+  //myTOML : TTOMLDocument;
   myTOMLScanner : TTOMLScanner;
 begin
+  //myTOML := TTOMLDocument.Create;
+  //myTOML := GetTOML(TOMLcontents);
+  //result := myTOML.AsJSON.FormatJSON;
+  //myTOML.Free;
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
   result := myTOMLScanner.TOMLDocument.AsJSON.FormatJSON;
   FreeAndNil(myTOMLScanner);
@@ -189,23 +198,32 @@ end;
 
 function GetTOMLAsString(TOMLcontents: String): String;
 var
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
+  myTOMLScanner : TTOMLScanner;
 begin
-  myTOML := TTOMLDocument.Create;
-  myTOML := GetTOML(TOMLcontents);
-  result := myTOML.AsTOMLString;
-  myTOML.Free;
+  //myTOML := TTOMLDocument.Create;
+  //myTOML := GetTOML(TOMLcontents);
+  //result := myTOML.AsTOMLString;
+  //myTOML.Free;
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  result := myTOMLScanner.TOMLDocument.AsTOMLString;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function GetTOMLAsStringList(TOMLcontents: String): TStringList;
 var
   myTOML : TTOMLDocument;
+  myTOMLScanner : TTOMLScanner;
 begin
   result := TStringList.Create;
   myTOML := TTOMLDocument.Create;
-  myTOML := GetTOML(TOMLcontents);
+  //myTOML := GetTOML(TOMLcontents);
+  //myTOML.Free;
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  myTOML := myTOMLScanner.TOMLDocument;
   result.Assign(myTOML.AsTOMLStringList);
   myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function GetTOMLKeys(myTOML: TTOMLTable): TStringList;
@@ -223,18 +241,22 @@ end;
 
 function GetTOMLKeys(TOMLcontents: String): TStringList;
 var
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   keysList : TStringList;
   i : integer;
 begin
   result := TStringList.Create;
-  myTOML := TTOMLDocument.Create;
   keysList := TStringList.Create;
-  myTOML := GetTOML(TOMLcontents);
+  //myTOML := TTOMLDocument.Create;
+  //myTOML := GetTOML(TOMLcontents);
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  myTOML := myTOMLScanner.TOMLDocument;
   keysList := GetTOMLKeys(myTOML);
   result.Assign(keysList);
   keysList.Free;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function HasTables(myTOML: TTOMLTable): integer;
@@ -267,20 +289,25 @@ end;
 
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
 var
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   tableNamesList : TStringList;
   i : integer;
 begin
   result := TStringList.Create;
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
   tableNamesList := TStringList.Create;
-  myTOML := GetTOML(TOMLcontents);
+  //myTOML := GetTOML(TOMLcontents);
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  myTOML := myTOMLScanner.TOMLDocument;
+
   for i := 0 to myTOML.Count -1 do
     if  (String(myTOML.Values[i]) = 'TTOMLTable') then
         tableNamesList.Add(myTOML.Keys[i]);
   result.AddStrings(tableNamesList);
   tableNamesList.Free;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function GetTOMLTable(myTOML: TTOMLTable; table : String): TTOMLTable;
@@ -310,14 +337,17 @@ end;
 
 function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
 var
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   myTOMLTable : TTOMLTable;
 begin
   result := TStringList.Create;
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
   myTOMLTable := TTOMLTable.Create;
   try
-    myTOML := GetTOML(TOMLcontents);
+    //myTOML := GetTOML(TOMLcontents);
+    myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+    myTOML := myTOMLScanner.TOMLDocument;
     myTOMLTable := GetTOMLTable(myTOML, table);
     result.Assign(myTOMLTable.AsTOMLStringList);
   except
@@ -325,7 +355,8 @@ begin
         writeln('Exception in GetTOMLTable : ', E.Message);
   end;
   //myTOMLTable.Free;     //causes SIGSEGV exception
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function GetTOMLTableAsString(myTOML: TTOMLTable; table : String): String;
@@ -345,17 +376,21 @@ end;
 
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
 var
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
 begin
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
   try
-    myTOML := GetTOML(TOMLcontents);
+    //myTOML := GetTOML(TOMLcontents);
+    myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+    myTOML := myTOMLScanner.TOMLDocument;
     result := GetTOMLTableAsString(myTOML, table);
   except
   on E:Exception do
         writeln('Exception in GetTOMLTableAsString : ', E.Message);
   end;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 (*
@@ -391,17 +426,20 @@ end;
 
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 var
-  tablePath : String;
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   keysArray : TStringList;
   myValue: TTOMLData;
   myTOMLTable : TTOMLTable;
+  tablePath : String;
   i, j : integer;
 begin
   //result := defaultValue;
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
   myTOMLTable := TTOMLTable.Create;
-  myTOML := GetTOML(TOMLcontents);
+  //myTOML := GetTOML(TOMLcontents);
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  myTOML := myTOMLScanner.TOMLDocument;
 
   keysArray := TStringList.Create;
   keysArray.Delimiter := '.';
@@ -511,11 +549,13 @@ begin
      result := defaultValue;
 
   keysArray.Free;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
 var
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   keysArray : TStringList;
   myValue : TTOMLData;
@@ -523,7 +563,7 @@ var
   tableName : String;
   i : integer;
 begin
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
 
   if trim(keyPath) = '' then
      begin
@@ -539,11 +579,15 @@ begin
 
     if uppercase(command) <> 'DEL' then
       begin
-          myTOML := GetTOML('key = '+ value);
+          //myTOML := GetTOML('key = '+ value);
+          myTOMLScanner := TTOMLScanner.Create('key = '+ value);
+          myTOML := myTOMLScanner.TOMLDocument;
           myValue := myTOML['key'];
       end;
 
-    myTOML := GetTOML(TOMLcontents);
+    //myTOML := GetTOML(TOMLcontents);
+    myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+    myTOML := myTOMLScanner.TOMLDocument;
 
     case uppercase(command) of
     'ADD':
@@ -673,19 +717,24 @@ begin
     result := myTOML.AsTOMLString;
     keysArray.Free;
   end;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
 var
-  tableName : String;
+  myTOMLScanner : TTOMLScanner;
   myTOML : TTOMLDocument;
   tablesArray : TStringList;
   myTOMLTable : TTOMLTable;
+  tableName : String;
   i : integer;
 begin
-  myTOML := TTOMLDocument.Create;
-  myTOML := GetTOML(TOMLcontents);
+  //myTOML := TTOMLDocument.Create;
+  //myTOML := GetTOML(TOMLcontents);
+  myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
+  myTOML := myTOMLScanner.TOMLDocument;
+
   tablesArray := TStringList.Create;
   tablesArray.Delimiter := '.';
   tablesArray.StrictDelimiter := True;
@@ -714,7 +763,8 @@ begin
   end;
   result := myTOML.AsTOMLString ;
   tablesArray.Free;
-  myTOML.Free;
+  //myTOML.Free;
+  FreeAndNil(myTOMLScanner);
 end;
 
 (*

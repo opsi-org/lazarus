@@ -64,7 +64,7 @@ type
       procedure Parse; override;
   end;
 
-function GetTOML(contents: TTOMLStringType): TTOMLDocument;
+//function GetTOML(contents: TTOMLStringType): TTOMLDocument;
 
 implementation
 uses
@@ -75,6 +75,18 @@ type
 
 var
   parser: TTOMLScanner;
+
+(*
+function GetTOML(contents: TTOMLStringType): TTOMLDocument;
+var
+  parser: TTOMLScanner;
+begin
+  parser := TTOMLScanner.Create(contents);
+  parser.Parse;
+  result := parser.document;
+  parser.Free;
+end;
+*)
 
 { TTOMLScanner }
 
