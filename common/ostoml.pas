@@ -216,13 +216,12 @@ var
   myTOMLScanner : TTOMLScanner;
 begin
   result := TStringList.Create;
-  myTOML := TTOMLDocument.Create;
+  //myTOML := TTOMLDocument.Create;
   //myTOML := GetTOML(TOMLcontents);
   //myTOML.Free;
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
   myTOML := myTOMLScanner.TOMLDocument;
   result.Assign(myTOML.AsTOMLStringList);
-  myTOML.Free;
   FreeAndNil(myTOMLScanner);
 end;
 
