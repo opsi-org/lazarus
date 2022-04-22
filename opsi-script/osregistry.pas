@@ -854,9 +854,12 @@ begin
     if regresult <> ERROR_SUCCESS then
     begin
       LogS := 'Error: Registry key ' + '[' + key0 + '\' + key + '] ' +
-        '  could not be opened by RegCreateKeyEx, ' + ' Errorno: ' +
+        'could not be opened by RegCreateKeyEx, System Errorno: ' +
         IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
-      LogDatei.log(LogS, LLNotice);
+      LogDatei.log(LogS, LLWarning);
+      LogDatei.log('Hint: A possible reason for Errorno 87 could be that ' + key +
+        ' does not exist in ' + key0 + ' and you do not have the permission to create new folders directly under '
+        + key0, LLNotice);
     end
     else
     begin
@@ -867,7 +870,7 @@ begin
       else
         LogS := 'opened';
 
-      LogS := 'Registry key ' + '[' + key0 + '\' + key + ']  ' + LogS;
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
 
       Result := True;
@@ -1713,7 +1716,7 @@ begin
   end
   else
   begin
-    LogS := 'Error: Variable "' + Name + '"  could not be set  ' + ErrorText;
+    LogS := 'Error: Variable "' + Name + '" could not be set  ' + ErrorText;
     LogDatei.log(LogS, LLNotice);
   end;
 end;
