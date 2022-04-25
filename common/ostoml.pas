@@ -212,7 +212,7 @@ end;
 
 function GetTOMLAsStringList(TOMLcontents: String): TStringList;
 var
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
   myTOMLScanner : TTOMLScanner;
 begin
   result := TStringList.Create;
@@ -220,8 +220,8 @@ begin
   //myTOML := GetTOML(TOMLcontents);
   //myTOML.Free;
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-  myTOML := myTOMLScanner.TOMLDocument;
-  result.Assign(myTOML.AsTOMLStringList);
+  myTOMLScanner.Parse;
+  result.Assign(myTOMLScanner.TOMLDocument.AsTOMLStringList);
   FreeAndNil(myTOMLScanner);
 end;
 
@@ -241,7 +241,7 @@ end;
 function GetTOMLKeys(TOMLcontents: String): TStringList;
 var
   myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
   keysList : TStringList;
   i : integer;
 begin
@@ -250,8 +250,8 @@ begin
   //myTOML := TTOMLDocument.Create;
   //myTOML := GetTOML(TOMLcontents);
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-  myTOML := myTOMLScanner.TOMLDocument;
-  keysList := GetTOMLKeys(myTOML);
+  myTOMLScanner.Parse;
+  keysList := GetTOMLKeys(myTOMLScanner.TOMLDocument);
   result.Assign(keysList);
   keysList.Free;
   //myTOML.Free;
@@ -289,7 +289,7 @@ end;
 function GetTOMLTableNames(TOMLcontents: String): TStringList;
 var
   myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
   tableNamesList : TStringList;
   i : integer;
 begin
@@ -298,11 +298,11 @@ begin
   tableNamesList := TStringList.Create;
   //myTOML := GetTOML(TOMLcontents);
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-  myTOML := myTOMLScanner.TOMLDocument;
+  myTOMLScanner.Parse;
 
-  for i := 0 to myTOML.Count -1 do
-    if  (String(myTOML.Values[i]) = 'TTOMLTable') then
-        tableNamesList.Add(myTOML.Keys[i]);
+  for i := 0 to myTOMLScanner.TOMLDocument.Count -1 do
+    if  (String(myTOMLScanner.TOMLDocument.Values[i]) = 'TTOMLTable') then
+        tableNamesList.Add(myTOMLScanner.TOMLDocument.Keys[i]);
   result.AddStrings(tableNamesList);
   tableNamesList.Free;
   //myTOML.Free;
@@ -337,7 +337,7 @@ end;
 function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
 var
   myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
   myTOMLTable : TTOMLTable;
 begin
   result := TStringList.Create;
@@ -346,8 +346,8 @@ begin
   try
     //myTOML := GetTOML(TOMLcontents);
     myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-    myTOML := myTOMLScanner.TOMLDocument;
-    myTOMLTable := GetTOMLTable(myTOML, table);
+    myTOMLScanner.Parse;
+    myTOMLTable := GetTOMLTable(myTOMLScanner.TOMLDocument, table);
     result.Assign(myTOMLTable.AsTOMLStringList);
   except
   on E:Exception do
@@ -376,14 +376,14 @@ end;
 function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
 var
   myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
 begin
   //myTOML := TTOMLDocument.Create;
   try
     //myTOML := GetTOML(TOMLcontents);
     myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-    myTOML := myTOMLScanner.TOMLDocument;
-    result := GetTOMLTableAsString(myTOML, table);
+    myTOMLScanner.Parse;
+    result := GetTOMLTableAsString(myTOMLScanner.TOMLDocument, table);
   except
   on E:Exception do
         writeln('Exception in GetTOMLTableAsString : ', E.Message);
@@ -426,7 +426,7 @@ end;
 function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
 var
   myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  //myTOML : TTOMLDocument;
   keysArray : TStringList;
   myValue: TTOMLData;
   myTOMLTable : TTOMLTable;
@@ -438,7 +438,7 @@ begin
   myTOMLTable := TTOMLTable.Create;
   //myTOML := GetTOML(TOMLcontents);
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-  myTOML := myTOMLScanner.TOMLDocument;
+  myTOMLScanner.Parse;
 
   keysArray := TStringList.Create;
   keysArray.Delimiter := '.';
@@ -448,11 +448,11 @@ begin
   if keysArray.Count=1 then
     //myValue := myTOML[key]
     try
-       if (myTOML.Find(keyPath) = nil)  then
+       if (myTOMLScanner.TOMLDocument.Find(keyPath) = nil)  then
           result := defaultValue
       else
       begin
-          myValue := myTOML.Find(keyPath);
+          myValue := myTOMLScanner.TOMLDocument.Find(keyPath);
           result := String(myValue);
           if result='TTOMLArray' then
              result := TTOMLArray(myValue).AsTOMLString
@@ -490,7 +490,7 @@ begin
    if keysArray.Count>=2 then
    begin
      try
-      myTOMLTable := TTOMLTable(myTOML);
+      myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
       for i := 0 to keysArray.Count -2 do
         begin
         try
@@ -554,16 +554,17 @@ end;
 
 function ModifyTOML(TOMLcontents: String; command : String; keyPath: String; value: String): String;
 var
-  myTOMLScanner : TTOMLScanner;
-  myTOML : TTOMLDocument;
+  myTOMLScanner, myValueScanner : TTOMLScanner;
+  //myTOML : TTOMLDocument;
   keysArray : TStringList;
   myValue : TTOMLData;
   myTOMLTable, newTable : TTOMLTable;
   tableName : String;
   i : integer;
+  test : boolean;
 begin
   //myTOML := TTOMLDocument.Create;
-
+  test := False;
   if trim(keyPath) = '' then
      begin
      writeln('Key is empty, nothing to be done with ModifyTOML ');
@@ -579,27 +580,27 @@ begin
     if uppercase(command) <> 'DEL' then
       begin
           //myTOML := GetTOML('key = '+ value);
-          myTOMLScanner := TTOMLScanner.Create('key = '+ value);
-          myTOML := myTOMLScanner.TOMLDocument;
-          myValue := myTOML['key'];
+          myValueScanner := TTOMLScanner.Create('key = '+ value);
+          myValueScanner.Parse;
+          myValue := myValueScanner.TOMLDocument['key'];
       end;
 
     //myTOML := GetTOML(TOMLcontents);
     myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-    myTOML := myTOMLScanner.TOMLDocument;
+    myTOMLScanner.Parse;
 
     case uppercase(command) of
     'ADD':
         begin
            if keysArray.Count=1 then
-              if myTOML.Find(keyPath) = nil then
-                myTOML.Add(keyPath, myValue)
+              if myTOMLScanner.TOMLDocument.Find(keyPath) = nil then
+                myTOMLScanner.TOMLDocument.Insert(keyPath, myValue)
               else
                 writeln('Key already exists in root table, nothing to be done with command ADD ');
 
            if keysArray.Count>=2 then
             begin
-              myTOMLTable := TTOMLTable(myTOML);
+              myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
               try
                for i := 0 to keysArray.Count -2 do
                 begin
@@ -609,29 +610,35 @@ begin
                        newTable := TTOMLTable.Create(tableName);
                        myTOMLTable.Add(tableName,newTable);
                        myTOMLTable := TTOMLTable(newTable);
+                       test := True;
                        end
                     else
                       myTOMLTable := TTOMLTable(myTOMLTable.Find(tableName));
                 end;
 
                if myTOMLTable.Find(keysArray[keysArray.Count -1]) = nil then
-                  myTOMLTable.Add(keysArray[keysArray.Count-1],myValue)
+                  begin
+                    if test = True then
+                      myTOMLTable.Add(keysArray[keysArray.Count-1],myValue)
+                    else
+                      myTOMLTable.Insert(keysArray[keysArray.Count-1],myValue);
+                  end
                else
                   writeln('Key already exists, nothing to be done with command ADD ');
-              except
+             except
               on E:Exception do
                 writeln('Exception in ModifyTOML : ', E.Message);
-              end;
+             end;
            end;
         end;
     'SET' :
         begin
            if keysArray.Count=1 then
-              myTOML.Put(keyPath, myValue);
+              TTOMLTable(myTOMLScanner.TOMLDocument).Put(keyPath, myValue);
 
            if keysArray.Count>=2 then
             begin
-              myTOMLTable := TTOMLTable(myTOML);
+              myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
               try
                for i := 0 to keysArray.Count -2 do
                 begin
@@ -657,7 +664,7 @@ begin
     'CHANGE' :
         begin
            try
-            myTOMLTable := TTOMLTable(myTOML);
+            myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
             if keysArray.Count>=2 then
             begin
                for i := 0 to keysArray.Count -2 do
@@ -688,7 +695,7 @@ begin
         end;
     'DEL' :
         begin
-           myTOMLTable := TTOMLTable(myTOML);
+           myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
            try
             if keysArray.Count>=2 then
             begin
@@ -713,11 +720,11 @@ begin
     otherwise
         writeln('ModifyTOML command unkown ');
     end;
-    result := myTOML.AsTOMLString;
+    result := myTOMLScanner.TOMLDocument.AsTOMLString;
     keysArray.Free;
+    //myTOML.Free;
+    FreeAndNil(myTOMLScanner);
   end;
-  //myTOML.Free;
-  FreeAndNil(myTOMLScanner);
 end;
 
 function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
@@ -732,14 +739,15 @@ begin
   //myTOML := TTOMLDocument.Create;
   //myTOML := GetTOML(TOMLcontents);
   myTOMLScanner := TTOMLScanner.Create(TOMLcontents);
-  myTOML := myTOMLScanner.TOMLDocument;
+  myTOMLScanner.Parse;
+  //myTOML := myTOMLScanner.TOMLDocument;
 
   tablesArray := TStringList.Create;
   tablesArray.Delimiter := '.';
   tablesArray.StrictDelimiter := True;
   tablesArray.DelimitedText := tablePath;
 
-  myTOMLTable := TTOMLTable(myTOML);
+  myTOMLTable := TTOMLTable(myTOMLScanner.TOMLDocument);
   try
     if tablesArray.Count>=2 then
     begin
@@ -760,7 +768,7 @@ begin
     on E:Exception do
       writeln('Exception in DeleteTableFromTOML : ', E.Message);
   end;
-  result := myTOML.AsTOMLString ;
+  result := myTOMLScanner.TOMLDocument.AsTOMLString ;
   tablesArray.Free;
   //myTOML.Free;
   FreeAndNil(myTOMLScanner);

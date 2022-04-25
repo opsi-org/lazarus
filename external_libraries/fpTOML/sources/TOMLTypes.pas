@@ -624,8 +624,17 @@ begin
            else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
         tomlStringList.Add(line);
-        end;
+        end
+      else
+        if (map.Data[i].ToString = 'TTOMLTable')  then
+          begin
+            tomlTable := TTOMLTable(map.Data[i]);
+            tableHeader := '[' + tomlTable.Header +  ']';
+            tomlStringList.Add(tableHeader);
+            tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
+          end;
     end;
+  (*
   for i := 0 to map.Count-1 do
     begin
       if (map.Data[i].ToString = 'TTOMLTable')  then
@@ -636,9 +645,10 @@ begin
             tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
           end;
     end;
+    *)
   //result.AddStrings(tomlStringList);
   result.Assign(tomlStringList);
-  //tomlStringList.Free;
+  tomlStringList.Free;
   //tomlArray.Free;
   //tomlTable.Free;
 end;
