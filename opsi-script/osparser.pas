@@ -11923,9 +11923,7 @@ var
   newIniFile: TIniFile;
   s1enc: string = '';
 begin
-
   syntaxcheck := False;
-
   savelogsindentlevel := LogDatei.LogSIndentLevel;
 
   if Skip('(', s0, s1, InfoSyntaxError) then
@@ -16161,10 +16159,10 @@ begin
               IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' + stringresult + '<',
               LLDebug2);
           except
-            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+            LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
           end;
         except
-          LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
+          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
       end;
       if not syntaxCheck then
@@ -16361,14 +16359,14 @@ begin
               try
                 StringResult := BoolToStr(boolresult, True);
               except
-                LogDatei.log('Error: boolToString: string expression' +
-                  s1 + ' has no boolean value', LLError);
+                LogDatei.log('Error: boolToString: string expression "' +
+                  s1 + '" has no boolean value', LLError);
                 StringResult := '';
               end;
             end;
           except
-            LogDatei.log('Error: boolToString: string expression' + s1 +
-              ' has no boolean value', LLDebug2);
+            LogDatei.log('Error: boolToString: string expression "' + s1 +
+              '" has no boolean value', LLDebug2);
             StringResult := '';
           end;
         end;
@@ -16385,8 +16383,8 @@ begin
               try
                 StringResult := BoolToStr(boolresult, True);
               except
-                LogDatei.log('Error: boolToString: string expression' +
-                  r + ' has no boolean value', LLError);
+                LogDatei.log('Error: boolToString: string expression "' +
+                  r + '" has no boolean value', LLError);
                 StringResult := '';
               end;
             end;
@@ -16394,8 +16392,8 @@ begin
           else
           begin
             // EvaluateBoolean = false
-            LogDatei.log('Error: boolToString: string expression' + r +
-              ' has no boolean value', LLError);
+            LogDatei.log('Error: boolToString: string expression "' + r +
+              '" has no boolean value', LLError);
             StringResult := '';
           end;
         end;
@@ -18300,7 +18298,7 @@ begin
     end
 
     else
-      InfoSyntaxError := s0 + ' illegal String Expressionstr';
+      InfoSyntaxError := '"' + s0 + '" is an illegal String Expressionstr';
 
 
     (* Addition weiterer Teilstrings mit + *)
@@ -20743,7 +20741,7 @@ begin
   end;
 end;
 
-function TuibInstScript.ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+function TuibInstScript.GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
   var FaktScriptLineNumber: int64; var Sektion: TWorksection;
   SectionSpecifier: TSectionSpecifier; const call: string;
   const NewFunction: boolean): TStringList;
@@ -20753,12 +20751,9 @@ var
   LineInDefinedFunction: string;
   Expressionstr: string;
   StatKind: TStatement;
-  Content: TStringList;
 begin
-  Content := TStringList.Create;
   Result := TStringList.Create;
   ReadingSuccessful := True;
-
   try
     // get all lines until 'endfunction' (including endfunc)
     NumberOfSectionLines := Sektion.Count;
@@ -20782,7 +20777,7 @@ begin
         // Line with tsEndFunction should not be part of the content
         if NewFunction and (NestedDefinedFunctions > 0) then
         begin
-          Content.Add(LineInDefinedFunction);
+          Result.Add(LineInDefinedFunction);
           LogDatei.log_prog(
             'NestedDefinedFunctions: ' + IntToStr(NestedDefinedFunctions) +
             ' add line: ' + LineInDefinedFunction, LLDebug3);
@@ -20807,9 +20802,6 @@ begin
       Expressionstr, 'Found DefFunc without EndFunc');
     ReadingSuccessful := False;
   end;
-
-  Result.Assign(Content);
-  Content.Free;
 end;
 
 procedure TuibInstScript.parsePowershellCall(var tmpbool1: boolean;
@@ -22257,7 +22249,13 @@ begin
                   begin
                     if definedFunctionArray[FuncIndex].call(p2, p2, NestLevel) then
                     begin
-                      syntaxCheck := True;
+                      if p2 <> '' then
+                      begin
+                         reportError(Sektion, linecounter, p2,
+                         'Remaining char(s) not allowed here');
+                      end
+                      else
+                         syntaxCheck := True;
                       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                     end
                     else
@@ -23338,6 +23336,7 @@ begin
                   LogDatei.log('comment: ' + Parameter, LLnotice);
               end;
 
+              // ToDo: ask Detlef if this is correct that this code block differs from others and no reportError is used
               tsActionProgress:
               begin
                 syntaxCheck := False;
@@ -23347,8 +23346,10 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
                 if syntaxCheck then
+                begin
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
-                opsidata.setActionProgress(Parameter);
+                  opsidata.setActionProgress(Parameter);
+                end;
               end;
 
 
@@ -25140,7 +25141,7 @@ begin
                     '" is defined multiple times! We use the first definition and skip the other ones.', LLWarning);
                   LogDatei.log('tsDefineFunction: Passing well known localfunction: ' +
                     Expressionstr, LLInfo);
-                  ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
+                  GetContentOfDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, False);
                   LogDatei.log('tsDefineFunction: passed well known localfunction: ' +
                     Expressionstr, LLInfo);
                   Dec(inDefFunc3);
@@ -25206,7 +25207,8 @@ begin
                           //raise e;
                         end;
                       end;
-                      newDefinedfunction.Content.Assign(ReadDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True));
+                      newDefinedfunction.Content :=
+                        GetContentOfDefinedFunction(tmpbool, linecounter, FaktScriptLineNumber, Sektion, SectionSpecifier, call, True);
                       try
                         if tmpbool then
                         begin
@@ -25251,7 +25253,7 @@ begin
 
               tsEndFunction:
               begin
-                // you should nerver get here since the endfunc's are parsed along the deffunc's
+                // you should never get here since the endfunc's are parsed along the deffunc's
                 // in the case tsDefineFunction
                 LogDatei.log('Found EndFunc without DefFunc', LLCritical);
                 reportError(Sektion, linecounter,
