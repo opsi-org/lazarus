@@ -54,6 +54,7 @@ function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
 
 implementation
 
+// GetTOML is not used due to its memory-related problems
 
 function LoadTOMLFile(TOMLfilePath: String): TStringList;
 var
@@ -438,6 +439,7 @@ var
   tablePath : String;
   i, j : integer;
 begin
+  //Keep result := String(myValue) don't use myValue.ClassName
   //result := defaultValue;
   //myTOML := TTOMLDocument.Create;
   myTOMLTable := TTOMLTable.Create;
@@ -568,10 +570,8 @@ var
   myTOMLTable, newTable : TTOMLTable;
   tableName : String;
   i : integer;
-  test : boolean;
 begin
   //myTOML := TTOMLDocument.Create;
-  test := False;
   if trim(keyPath) = '' then
      begin
      writeln('Key is empty, nothing to be done with ModifyTOML ');
