@@ -834,7 +834,6 @@ var
   dwdisposition: dword = 0;
   regresult: integer = 0;
   enckey: string;
-
 begin
   Result := False;
   enckey := UTF8ToWinCP(key);
@@ -1564,7 +1563,7 @@ begin
 
   if regType = trdDefaultString then
   begin
-    // if no datatype is given use string (or if ther is a '%' expandstring
+    // if no datatype is given use string (or if there is a '%' expandstring
     if pos('%', Value) <> 0 then
       regType := trdExpandString
     else
@@ -1701,10 +1700,10 @@ begin
     begin
       if compareValue <> oldValue then
       begin
-        LogS := 'Variable "' + Name + '"  had value  "' +
+        LogS := 'Variable "' + Name + '" had value  "' +
           StringReplace(oldvalue, #13#10, MultiszVisualDelimiter) + '"';
         LogDatei.log(LogS, LLInfo);
-        LogS := 'Info:    "' + Name + '"  changed to "' +
+        LogS := 'Info:    "' + Name + '" changed to "' +
           StringReplace(comparevalue, #10, MultiszVisualDelimiter) + '"';
         LogDatei.log(LogS, LLInfo);
         LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
