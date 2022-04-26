@@ -853,13 +853,20 @@ begin
 
     if regresult <> ERROR_SUCCESS then
     begin
-      LogS := 'Error: Registry key ' + '[' + key0 + '\' + key + '] ' +
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
         'could not be opened by RegCreateKeyEx, System Errorno: ' +
         IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
-      LogDatei.log(LogS, LLWarning);
-      LogDatei.log('Hint: A possible reason for Errorno 87 could be that ' + key +
-        ' does not exist in ' + key0 + ' and you do not have the permission to create new folders directly under '
-        + key0, LLNotice);
+      LogDatei.log(LogS, LLError);
+      if (regresult = 87) and ((key0 = 'HKEY_USERS') or (key0 = 'HKEY_LOCAL_MACHINE')) then
+      begin
+        // See https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regcreatekeya
+        if Pos('\', key) > 0 then
+          LogDatei.log('Hint: It is not allowed to create new subkeys directly under '
+          + key0 + '. Please check that "' + key0 + '\' + Copy(key, 1, Pos('\', key)-1) + '" exists.', LLNotice)
+        else
+          LogDatei.log('Hint: It is not allowed to create new subkeys directly under '
+          + key0 + ' !', LLWarning);
+      end;
     end
     else
     begin
@@ -1716,8 +1723,8 @@ begin
   end
   else
   begin
-    LogS := 'Error: Variable "' + Name + '" could not be set  ' + ErrorText;
-    LogDatei.log(LogS, LLNotice);
+    LogS := 'Variable "' + Name + '" could not be set  ' + ErrorText;
+    LogDatei.log(LogS, LLError);
   end;
 end;
 
