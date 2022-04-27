@@ -92,13 +92,12 @@ uses //lcltranslator,
   osregistry,
   osGetRegistryFunctions,
 {$ENDIF WINDOWS}
+
   lazutf8,
   osfilehelper,
   osTOML,
   osSSLPaths,
   osEvaluateBooleanFunctions;
-
-
 
   {$IFNDEF GUI}
 type
