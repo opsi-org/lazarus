@@ -834,7 +834,6 @@ var
   dwdisposition: dword = 0;
   regresult: integer = 0;
   enckey: string;
-
 begin
   Result := False;
   enckey := UTF8ToWinCP(key);
@@ -853,10 +852,20 @@ begin
 
     if regresult <> ERROR_SUCCESS then
     begin
-      LogS := 'Error: Registry key ' + '[' + key0 + '\' + key + '] ' +
-        '  could not be opened by RegCreateKeyEx, ' + ' Errorno: ' +
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
+        'could not be opened by RegCreateKeyEx, System Errorno: ' +
         IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
-      LogDatei.log(LogS, LLNotice);
+      LogDatei.log(LogS, LLError);
+      if (regresult = 87) and ((key0 = 'HKEY_USERS') or (key0 = 'HKEY_LOCAL_MACHINE')) then
+      begin
+        // See https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regcreatekeya
+        if Pos('\', key) > 0 then
+          LogDatei.log('Hint: It is not allowed to create new subkeys directly under '
+          + key0 + '. Please check that "' + key0 + '\' + Copy(key, 1, Pos('\', key)-1) + '" exists.', LLNotice)
+        else
+          LogDatei.log('Hint: It is not allowed to create new subkeys directly under '
+          + key0 + ' !', LLWarning);
+      end;
     end
     else
     begin
@@ -867,7 +876,7 @@ begin
       else
         LogS := 'opened';
 
-      LogS := 'Registry key ' + '[' + key0 + '\' + key + ']  ' + LogS;
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
 
       Result := True;
@@ -1554,7 +1563,7 @@ begin
 
   if regType = trdDefaultString then
   begin
-    // if no datatype is given use string (or if ther is a '%' expandstring
+    // if no datatype is given use string (or if there is a '%' expandstring
     if pos('%', Value) <> 0 then
       regType := trdExpandString
     else
@@ -1691,10 +1700,10 @@ begin
     begin
       if compareValue <> oldValue then
       begin
-        LogS := 'Variable "' + Name + '"  had value  "' +
+        LogS := 'Variable "' + Name + '" had value  "' +
           StringReplace(oldvalue, #13#10, MultiszVisualDelimiter) + '"';
         LogDatei.log(LogS, LLInfo);
-        LogS := 'Info:    "' + Name + '"  changed to "' +
+        LogS := 'Info:    "' + Name + '" changed to "' +
           StringReplace(comparevalue, #10, MultiszVisualDelimiter) + '"';
         LogDatei.log(LogS, LLInfo);
         LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
@@ -1713,8 +1722,8 @@ begin
   end
   else
   begin
-    LogS := 'Error: Variable "' + Name + '"  could not be set  ' + ErrorText;
-    LogDatei.log(LogS, LLNotice);
+    LogS := 'Variable "' + Name + '" could not be set  ' + ErrorText;
+    LogDatei.log(LogS, LLError);
   end;
 end;
 
