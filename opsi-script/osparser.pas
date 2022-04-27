@@ -356,7 +356,7 @@ type
     procedure parsePowershellCall(var tmpbool1: boolean; var tmpbool: boolean;
       var s4: string; s3: string; var s2: string; var s1: string;
       var r: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
-    function ReadDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
       const NewFunction: boolean): TStringList;
