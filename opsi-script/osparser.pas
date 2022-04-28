@@ -353,9 +353,9 @@ type
     FLastSection: TWorkSection;
 
 
-    procedure parsePowershellCall(var tmpbool1: boolean; var tmpbool: boolean;
-      var s4: string; s3: string; var s2: string; var s1: string;
-      var r: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
+    procedure parsePowershellCall(var Command: string; AccessString: string;
+      var HandlePolicy: string; var Option: string;
+      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
@@ -12075,12 +12075,11 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
-      parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
-        InfoSyntaxError);
+      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
       if syntaxCheck then
       begin
         try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
+          list.Text := execPowershellCall(s1, s2, 1, True, False, StrToBool(s3), s4).Text;
         except
           on e: Exception do
           begin
@@ -16305,12 +16304,11 @@ begin
     LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-    parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
-        InfoSyntaxError);
+    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
     if syntaxCheck then
     begin
       try
-        execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+        execPowershellCall(s1, s2, 0, True, False, StrToBool(s3), s4);
         StringResult := IntToStr(FLastExitCodeOfExe);
       except
         on e: Exception do
@@ -20804,52 +20802,47 @@ begin
   end;
 end;
 
-procedure TuibInstScript.parsePowershellCall(var tmpbool1: boolean;
-  var tmpbool: boolean; var s4: string; s3: string; var s2: string;
-  var s1: string; var r: string; var syntaxCheck: boolean;
+procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
+  var Option: string; var Remaining: string; var syntaxCheck: boolean;
   var InfoSyntaxError: string);
+var
+  handle_policy: boolean = True; // for checking if var HandlePolicy: string can be converted to boolean
 begin
-  s1 := '';
-  s2 := '';
-  s3 := '';
-  s4 := '';
-  tmpbool := True; // sysnative
-  tmpbool1 := True; // handle execution policy
+  Command := '';
+  AccessString := '';
+  HandlePolicy := '';
+  Option := '';
   syntaxCheck := False;
-  if Skip('(', r, r, InfoSyntaxError) then
+  if Skip('(', Remaining, Remaining, InfoSyntaxError) then
   begin
     //get first parameter (command), default access string = sysnative
-    if EvaluateString(r, r, s1, InfoSyntaxError) then
+    if EvaluateString(Remaining, Remaining, Command, InfoSyntaxError) then
     begin
       Syntaxcheck := true;
-      s2 := 'sysnative';
+      AccessString := 'sysnative';
     end;
-    if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
+    if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
     begin
       //get second parameter (access string)
-      if EvaluateString(r, r, s2, InfoSyntaxError) then
+      if EvaluateString(Remaining, Remaining, AccessString, InfoSyntaxError) then
       begin
-        Syntaxcheck := true;
-        tmpbool := True;
-        if lowercase(s2) = '32bit' then
-          tmpbool := False
-        else if lowercase(s2) = '64bit' then
-          tmpbool := True
-        else if lowercase(s2) = 'sysnative' then
-          tmpbool := True
+        if (lowercase(AccessString) = '32bit') or (lowercase(AccessString) = '64bit')
+          or (lowercase(AccessString) = 'sysnative')
+        then
+          Syntaxcheck := true
         else
         begin
-          InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
+          InfoSyntaxError := 'Error: unknown parameter: ' + AccessString +
             ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
           syntaxCheck := False;
         end;
       end;
-      //third parameter (execution policy)
-      if Skip(',', r, r, InfoSyntaxerror) and SyntaxCheck then
+      //third parameter (handle execution policy)
+      if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxerror) then
       begin
-        if EvaluateString(r, r, s3, InfoSyntaxError) then
+        if EvaluateString(Remaining, Remaining, HandlePolicy, InfoSyntaxError) then
         begin
-          if TryStrToBool(s3, tmpbool1) then
+          if TryStrToBool(HandlePolicy, handle_policy) then
           begin
              syntaxCheck := True;
           end
@@ -20857,20 +20850,17 @@ begin
           begin
             syntaxCheck := False;
             InfoSyntaxError :=
-              'Error: boolean string (true/false) expected but got: ' + s3;
+              'Error: boolean string (true/false) expected but got: ' + HandlePolicy;
           end;
         end;
-        //fourth parameter
-        if Skip(',', r, r, InfoSyntaxError) and SyntaxCheck then
+        //fourth parameter (optionstr)
+        if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
         begin
-          if EvaluateString(r, r, s4, InfoSyntaxError) then
-          begin
-              syntaxCheck := True;
-          end;
+           syntaxCheck := EvaluateString(Remaining, Remaining, Option, InfoSyntaxError);
         end;
       end;
     end;
-    if Skip(')', r, r, InfoSyntaxError) and SyntaxCheck then
+    if SyntaxCheck and Skip(')', Remaining, Remaining, InfoSyntaxError) then
       SyntaxCheck := True;
   end;
 end;
@@ -23482,12 +23472,11 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                parsePowershellCall(tmpbool1, tmpbool, s4, s3, s2, s1, r, syntaxCheck,
-                  InfoSyntaxError);
+                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
                 if syntaxCheck then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                    execPowershellCall(s1, s2, 0, True, False, StrToBool(s3), s4);
                   except
                     on e: Exception do
                     begin
