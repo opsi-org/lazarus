@@ -12056,19 +12056,20 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              //LogDatei.log ('Executing0 ' + s1, LLInfo);
-              list.Text := execShellCall(s1, 'sysnative', 1, True).Text;
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                  LLError);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
-            end;
+            if not testSyntax then
+              try
+                //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                list.Text := execShellCall(s1, 'sysnative', 1, True).Text;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                    LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
           end;
     end
 
@@ -12158,17 +12159,18 @@ begin
         //end;
       end;
       if syntaxCheck then
-      begin
-        try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
-        except
-          on e: Exception do
-          begin
-            LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
-              LLError);
-          end
+        if not testSyntax then
+        begin
+          try
+            list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
+                LLError);
+            end
+          end;
         end;
-      end;
       {$ENDIF WINDOWS}
     end
 
@@ -12177,32 +12179,33 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          try
-            s1 := ExpandFileName(s1);
-            if FileExists(s1) then
-              list.loadfromfile(s1)
-            else
-            begin
-              LogDatei.log('Error in LoadTextFile on loading file (not found): ' +
-                s1, LLError);
-            end;
-            // encoding from system is the default at txstinglist
-            //list.Text := reencode(list.Text, 'system');
-          except
-            on e: Exception do
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in LoadTextFile on loading file: ' +
-                s1 + ' with msg: ' + e.message, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-          end;
           if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
+            begin
+              syntaxCheck := True;
+              if not testSyntax then
+              begin
+                try
+                  s1 := ExpandFileName(s1);
+                  if FileExists(s1) then
+                    list.loadfromfile(s1)
+                  else
+                  begin
+                    LogDatei.log('Error in LoadTextFile on loading file (not found): ' +
+                      s1, LLError);
+                  end;
+                  // encoding from system is the default at txstinglist
+                  //list.Text := reencode(list.Text, 'system');
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Exception in LoadTextFile on loading file: ' +
+                      s1 + ' with msg: ' + e.message, LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+            end;
         end;
     end
 
@@ -12215,31 +12218,34 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                try
-                  s1 := ExpandFileName(s1);
-                  if FileExists(s1) then
-                    list.loadFromFileWithEncoding(s1, s2)
-                  else
-                  begin
-                    LogDatei.log(
-                      'Error in LoadTextFileWithEncoding on loading file (not found): ' +
-                      s1, LLError);
-                    FNumberOfErrors := FNumberOfErrors + 1;
+                if not testSyntax then
+                begin
+                  try
+                    s1 := ExpandFileName(s1);
+                    if FileExists(s1) then
+                      list.loadFromFileWithEncoding(s1, s2)
+                    else
+                    begin
+                      LogDatei.log(
+                        'Error in LoadTextFileWithEncoding on loading file (not found): ' +
+                        s1, LLError);
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                    end;
+                    //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
+                    //list.loadFromFileWithEncoding(s1, s2);
+                    //list.loadfromfile(s1);
+                    //list.Text := reencode(list.Text, s2);
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                      LogDatei.log(
+                        'Exception in LoadTextFileWithEncoding on loading file: ' +
+                        s1 + ' with msg: ' + e.message, LLError);
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    end
                   end;
-                  //list.AddText(loadTextFileWithEncoding(s1, s2).Text);
-                  //list.loadFromFileWithEncoding(s1, s2);
-                  //list.loadfromfile(s1);
-                  //list.Text := reencode(list.Text, s2);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log(
-                      'Exception in LoadTextFileWithEncoding on loading file: ' +
-                      s1 + ' with msg: ' + e.message, LLError);
-                    FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                  end
                 end;
               end;
     end
@@ -12249,35 +12255,36 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          try
-            s1 := ExpandFileName(s1);
-            if FileExists(s1) then
-              TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
-            else
-            begin
-              LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' +
-                s1, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-            end;
-            //list.loadfromfile (s1);
-            //list.Text:= reencode(list.Text, 'ucs2le');
-            //TStringList(list).Assign(loadUnicodeTextFile(s1));
-            //wsloadfromfile (s1, TStringList (list));
-          except
-            on e: Exception do
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in LoadUnicodeTextFile on loading file: ' +
-                s1 + ' with msg: ' + e.message,
-                LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-          end;
-          if Skip(')', r, r, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+              try
+                s1 := ExpandFileName(s1);
+                if FileExists(s1) then
+                  TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
+                else
+                begin
+                  LogDatei.log('Error in LoadUnicodeTextFile on loading file (not found): ' +
+                    s1, LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                end;
+                //list.loadfromfile (s1);
+                //list.Text:= reencode(list.Text, 'ucs2le');
+                //TStringList(list).Assign(loadUnicodeTextFile(s1));
+                //wsloadfromfile (s1, TStringList (list));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Exception in LoadUnicodeTextFile on loading file: ' +
+                    s1 + ' with msg: ' + e.message,
+                    LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
           end;
         end;
     end
@@ -12288,33 +12295,36 @@ begin
         s1, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        inifile := TuibIniScript.Create;
-        try
-          s1 := ExpandFileName(s1);
-          if FileExists(s1) then
-            inifile.loadfromfile(s1)
-          else
-          begin
-            LogDatei.log('Error in GetSectionNames on loading file (not found): ' +
-              s1, LLError);
-            FNumberOfErrors := FNumberOfErrors + 1;
+        if not testSyntax then
+        begin
+          inifile := TuibIniScript.Create;
+          try
+            s1 := ExpandFileName(s1);
+            if FileExists(s1) then
+              inifile.loadfromfile(s1)
+            else
+            begin
+              LogDatei.log('Error in GetSectionNames on loading file (not found): ' +
+                s1, LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+            end;
+            //inifile.loadfromfile(s1);
+            //inifile.Text := reencode(inifile.Text, 'system');
+          except
+            on e: Exception do
+            begin
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('Exception in GetSectionNames on loading file: ' +
+                s1 + ' with msg: ' + e.message,
+                LLError);
+              FNumberOfErrors := FNumberOfErrors + 1;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            end
           end;
-          //inifile.loadfromfile(s1);
-          //inifile.Text := reencode(inifile.Text, 'system');
-        except
-          on e: Exception do
-          begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('Exception in GetSectionNames on loading file: ' +
-              s1 + ' with msg: ' + e.message,
-              LLError);
-            FNumberOfErrors := FNumberOfErrors + 1;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          end
-        end;
 
-        inifile.GetSectionNames(list);
-        inifile.Free;
+          inifile.GetSectionNames(list);
+          inifile.Free;
+        end;
       end;
     end
 
@@ -12395,35 +12405,38 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                uibInifile := TuibIniFile.Create(s2);
-                (* we do not need that - it is already done in create()
-                try
-                  s2 := ExpandFileName(s2);
-                  uibInifile.loadfromfile(s2);
-                  uibInifile.Text := reencode(uibInifile.Text, 'system');
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log('Error on loading file: ' + e.message,
-                      LLError);
-                    FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                  end
-                end;
-                *)
-                try
-                  uibInifile.ReadRawSection(s1, list);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in ReadRawSection from inifile "' +
-                      s2 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
+                if not testSyntax then
+                begin
+                  uibInifile := TuibIniFile.Create(s2);
+                  (* we do not need that - it is already done in create()
+                  try
+                    s2 := ExpandFileName(s2);
+                    uibInifile.loadfromfile(s2);
+                    uibInifile.Text := reencode(uibInifile.Text, 'system');
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                      LogDatei.log('Error on loading file: ' + e.message,
+                        LLError);
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    end
                   end;
-                end;
-                uibInifile.Free;
+                  *)
+                  try
+                    uibInifile.ReadRawSection(s1, list);
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Error in ReadRawSection from inifile "' +
+                        s2 + '", message: "' + e.Message + '"', LLerror);
+                      list.Append('');
+                    end;
+                  end;
+                  uibInifile.Free;
               end;
+            end;
     end
 
 
@@ -12431,18 +12444,17 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-
-          //list.assign(TXStringList(self));  // the complete script
-
-          (*(Tuibiniscript(self)).*)
-          GetSectionLines(s1, list, startlineofsection, True, True, True);
-
           if Skip(')', r, r, InfoSyntaxError) then
-          begin
-            syntaxCheck := True;
-          end;
-        end;
+            begin
+              syntaxCheck := True;
+              if not testSyntax then
+                begin
+                //list.assign(TXStringList(self));  // the complete script
+
+                (*(Tuibiniscript(self)).*)
+                GetSectionLines(s1, list, startlineofsection, True, True, True);
+                end;
+            end;
     end
 
     else if LowerCase(s) = LowerCase('getOutstreamFromSection') then
@@ -12450,77 +12462,78 @@ begin
       try
         if Skip('(', r, r, InfoSyntaxError) then
           if EvaluateString(r, r, s1, InfoSyntaxError) then
-          begin
-            savelogsindentlevel := LogDatei.LogSIndentLevel;
-            localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
-              ActiveSection);
-            try
-              GetWord(s1, s2, r1, WordDelimiterSet1);
-              localSection.Name := s2;
-
-              localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
-
-              if not (localKindOfStatement in
-                [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-                tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-                tsExecuteWith_escapingStrings, tsWinBatch]) then
-              begin
-                InfoSyntaxError := 'not implemented for this kind of section';
-              end
-              else
-              begin
-                //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
-                //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
-                if not SearchForSectionLines(self, TWorkSection(section),
-                  localSection.ParentSection, s2, TXStringList(localSection),
-                  startlineofsection, True, True, False) then
-                  InfoSyntaxError := 'Section "' + s2 + '" not found'
-                else
+             if Skip(')', r, r, InfoSyntaxError) then
+             begin
+                syntaxCheck := True;
+                if not testSyntax then
                 begin
-                  if localKindOfStatement in [tsExecutePython,
-                    tsExecuteWith_escapingStrings] then
-                  begin
-                    ApplyTextConstants(TXStringList(localSection), True);
-                    ApplyTextVariables(TXStringList(localSection), True);
-                  end
-                  else
-                  begin
-                    ApplyTextConstants(TXStringList(localSection), False);
-                    ApplyTextVariables(TXStringList(localSection), False);
-                  end;
+                  savelogsindentlevel := LogDatei.LogSIndentLevel;
+                  localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
+                    ActiveSection);
+                  try
+                    GetWord(s1, s2, r1, WordDelimiterSet1);
+                    localSection.Name := s2;
 
-                  case localKindOfStatement of
+                    localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-                    tsExecutePython:
-                      execPython(localSection, r1,
-                        True {catchout}, 1,
-                        [ttpWaitOnTerminate], list);
+                    if not (localKindOfStatement in
+                      [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
+                      tsShellInAnIcon, tsExecutePython, tsExecuteWith,
+                      tsExecuteWith_escapingStrings, tsWinBatch]) then
+                    begin
+                      InfoSyntaxError := 'not implemented for this kind of section';
+                    end
+                    else
+                    begin
+                      //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
+                      //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+                      if not SearchForSectionLines(self, TWorkSection(section),
+                        localSection.ParentSection, s2, TXStringList(localSection),
+                        startlineofsection, True, True, False) then
+                        InfoSyntaxError := 'Section "' + s2 + '" not found'
+                      else
+                      begin
+                        if localKindOfStatement in [tsExecutePython,
+                          tsExecuteWith_escapingStrings] then
+                        begin
+                          ApplyTextConstants(TXStringList(localSection), True);
+                          ApplyTextVariables(TXStringList(localSection), True);
+                        end
+                        else
+                        begin
+                          ApplyTextConstants(TXStringList(localSection), False);
+                          ApplyTextVariables(TXStringList(localSection), False);
+                        end;
 
-                    tsExecuteWith_escapingStrings, tsExecuteWith:
-                      executeWith(localSection, r1,
-                        True {catchout}, 1, list);
+                        case localKindOfStatement of
 
-                    tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
-                      execDOSBatch(localSection, r1,
-                        SW_HIDE, True {catchout}, 1,
-                        [ttpWaitOnTerminate], list);
+                          tsExecutePython:
+                            execPython(localSection, r1,
+                              True {catchout}, 1,
+                              [ttpWaitOnTerminate], list);
 
-                    tsWinBatch:
-                      parseAndCallWinBatch(localSection, r1, 0, list);
+                          tsExecuteWith_escapingStrings, tsExecuteWith:
+                            executeWith(localSection, r1,
+                              True {catchout}, 1, list);
 
-                  end;
+                          tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
+                            execDOSBatch(localSection, r1,
+                              SW_HIDE, True {catchout}, 1,
+                              [ttpWaitOnTerminate], list);
 
-                  if Skip(')', r, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
+                          tsWinBatch:
+                            parseAndCallWinBatch(localSection, r1, 0, list);
+
+                        end;
+
+                      end;
+                    end;
+                    LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+                  finally
+                    if Assigned(localSection) then FreeAndNil(localSection);
                   end;
                 end;
-              end;
-              LogDatei.LogSIndentLevel := saveLogSIndentLevel;
-            finally
-              if Assigned(localSection) then FreeAndNil(localSection);
-            end;
-          end;
+             end;
       except
         on E: Exception do
         begin
@@ -12536,62 +12549,64 @@ begin
       try
         if Skip('(', r, r, InfoSyntaxError) then
           if EvaluateString(r, r, s1, InfoSyntaxError) then
-          begin
-            savelogsindentlevel := LogDatei.LogSIndentLevel;
-            //list1 := TXStringList.Create;
-            localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
-              ActiveSection);
-            try
-              GetWord(s1, s2, r1, WordDelimiterSet1);
-              localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
-              if not (localKindOfStatement in [tsXMLPatch, tsXML2,
-                tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]) then
+             if localsyntaxcheck and (Skip(')', r, r, InfoSyntaxError)) then
               begin
-                InfoSyntaxError := 'not implemented for this kind of section';
-              end
-              else
-              begin
-                //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
-                //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
-                if not SearchForSectionLines(self, TWorkSection(section),
-                  localSection.ParentSection, s2, TXStringList(localSection),
-                  startlineofsection, True, True, False) then
-                  InfoSyntaxError := 'Section "' + s2 + '" not found'
-                else
-                begin
-                  localsyntaxcheck := True;
-                  localSection.Name := s2;
-                  ApplyTextVariables(TXStringList(localSection), False);
-                  ApplyTextConstants(TXStringList(localSection), False);
-
-                  case localKindOfStatement of
-                    tsXMLPatch: dummyActionresult := doxmlpatch(localSection, r1, list);
-                    tsXML2: dummyActionresult := doxmlpatch2(localSection, r1, '', list);
-                    tsOpsiServiceCall: dummyActionresult :=
-                        doOpsiServiceCall(localSection, r1, list);
-                    tsOpsiServiceHashList: dummyActionresult :=
-                        doOpsiServiceHashList(localSection, r1, list);
-                    tsLDAPsearch:
+                syntaxCheck := True;
+                if not testSyntax then
+                 begin
+                  savelogsindentlevel := LogDatei.LogSIndentLevel;
+                  //list1 := TXStringList.Create;
+                  localSection := TWorkSection.Create(LogDatei.LogSIndentLevel + 1,
+                    ActiveSection);
+                  try
+                    GetWord(s1, s2, r1, WordDelimiterSet1);
+                    localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
+                    if not (localKindOfStatement in [tsXMLPatch, tsXML2,
+                      tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]) then
                     begin
-                      if produceLDAPsearchParameters(r1, cacheRequest,
-                        outputRequest, InfoSyntaxError) then
-                        dummyActionresult :=
-                          doLDAPSearch(localSection, cacheRequest, outputRequest, list)
+                      InfoSyntaxError := 'not implemented for this kind of section';
+                    end
+                    else
+                    begin
+                      //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
+                      //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
+                      if not SearchForSectionLines(self, TWorkSection(section),
+                        localSection.ParentSection, s2, TXStringList(localSection),
+                        startlineofsection, True, True, False) then
+                        InfoSyntaxError := 'Section "' + s2 + '" not found'
                       else
-                        localsyntaxcheck := False;
+                      begin
+                        localsyntaxcheck := True;
+                        localSection.Name := s2;
+                        ApplyTextVariables(TXStringList(localSection), False);
+                        ApplyTextConstants(TXStringList(localSection), False);
+
+                        case localKindOfStatement of
+                          tsXMLPatch: dummyActionresult := doxmlpatch(localSection, r1, list);
+                          tsXML2: dummyActionresult := doxmlpatch2(localSection, r1, '', list);
+                          tsOpsiServiceCall: dummyActionresult :=
+                              doOpsiServiceCall(localSection, r1, list);
+                          tsOpsiServiceHashList: dummyActionresult :=
+                              doOpsiServiceHashList(localSection, r1, list);
+                          tsLDAPsearch:
+                          begin
+                            if produceLDAPsearchParameters(r1, cacheRequest,
+                              outputRequest, InfoSyntaxError) then
+                              dummyActionresult :=
+                                doLDAPSearch(localSection, cacheRequest, outputRequest, list)
+                            else
+                              localsyntaxcheck := False;
+                          end;
+                        end;
+
+                      end;
                     end;
-                  end;
-                  if localsyntaxcheck and (Skip(')', r, r, InfoSyntaxError)) then
-                  begin
-                    syntaxCheck := True;
+                    LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+                  finally
+                    if Assigned(localSection) then FreeAndNil(localSection);
                   end;
                 end;
               end;
-              LogDatei.LogSIndentLevel := saveLogSIndentLevel;
-            finally
-              if Assigned(localSection) then FreeAndNil(localSection);
-            end;
-          end;
       except
         on E: Exception do
         begin
@@ -12607,12 +12622,10 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
           end;
-        end;
     end
 
     else if LowerCase(s) = LowerCase('splitStringOnWhiteSpace') then
@@ -12622,15 +12635,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            stringsplitByWhiteSpace(s1, TStringList(list));
-            // if s1 is confidential all parts are confidential as well
-            if logdatei.isConfidential(s1) then
+            if not testSyntax then
             begin
-              for i := 0 to list.Count - 1 do
+              stringsplitByWhiteSpace(s1, TStringList(list));
+              // if s1 is confidential all parts are confidential as well
+              if logdatei.isConfidential(s1) then
               begin
-                tmpstr := list.Strings[i];
-                if tmpstr <> '' then
-                  logdatei.AddToConfidentials(tmpstr);
+                for i := 0 to list.Count - 1 do
+                begin
+                  tmpstr := list.Strings[i];
+                  if tmpstr <> '' then
+                    logdatei.AddToConfidentials(tmpstr);
+                end;
               end;
             end;
           end;
@@ -12644,8 +12660,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            list.Clear;
-            list.AddStrings(parseUrl(s1));
+            if not testSyntax then
+            begin
+              list.Clear;
+              list.AddStrings(parseUrl(s1));
+            end;
           end;
     end
 
@@ -12656,17 +12675,20 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              list.Text := '';
-              if jsonAsArrayToStringList(s1, slist) then
-                list.Text := slist.Text
-              else
-                LogDatei.log('Error at jsonAsArrayToStringList with: "' +
+            if not testSyntax then
+            begin
+              try
+                list.Text := '';
+                if jsonAsArrayToStringList(s1, slist) then
+                  list.Text := slist.Text
+                else
+                  LogDatei.log('Error at jsonAsArrayToStringList with: "' +
+                    s1 + '"', LLerror);
+              except
+                list.Text := '';
+                LogDatei.log('Error: Exception at jsonAsArrayToStringList with: "' +
                   s1 + '"', LLerror);
-            except
-              list.Text := '';
-              LogDatei.log('Error: Exception at jsonAsArrayToStringList with: "' +
-                s1 + '"', LLerror);
+              end;
             end;
           end;
     end
@@ -12678,17 +12700,20 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              list.Text := '';
-              if jsonAsObjectGetKeyList(s1, slist) then
-                list.Text := slist.Text
-              else
-                LogDatei.log('Error at jsonAsObjectGetKeyList with: "' +
+            if not testSyntax then
+            begin
+              try
+                list.Text := '';
+                if jsonAsObjectGetKeyList(s1, slist) then
+                  list.Text := slist.Text
+                else
+                  LogDatei.log('Error at jsonAsObjectGetKeyList with: "' +
+                    s1 + '"', LLerror);
+              except
+                list.Text := '';
+                LogDatei.log('Error: Exception at jsonAsObjectGetKeyList with: "' +
                   s1 + '"', LLerror);
-            except
-              list.Text := '';
-              LogDatei.log('Error: Exception at jsonAsObjectGetKeyList with: "' +
-                s1 + '"', LLerror);
+              end;
             end;
           end;
     end
@@ -12703,17 +12728,19 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-
-                stringsplit(s1, s2, list);
-                // if s1 is confidential all parts are confidential as well
-                if logdatei.isConfidential(s1) then
+                if not testSyntax then
                 begin
-                  for i := 0 to list.Count - 1 do
-                  begin
-                    tmpstr := list.Strings[i];
-                    if tmpstr <> '' then
-                      logdatei.AddToConfidentials(tmpstr);
-                  end;
+                    stringsplit(s1, s2, list);
+                    // if s1 is confidential all parts are confidential as well
+                    if logdatei.isConfidential(s1) then
+                    begin
+                      for i := 0 to list.Count - 1 do
+                      begin
+                        tmpstr := list.Strings[i];
+                        if tmpstr <> '' then
+                          logdatei.AddToConfidentials(tmpstr);
+                      end;
+                    end;
                 end;
               end;
     end
@@ -12749,6 +12776,7 @@ begin
             else
               syntaxcheck := True;   // it was a string list
             if syntaxcheck then
+            if not testSyntax then
             begin
               tmpbool := False; // default used
               tmpstr := r;
@@ -12756,60 +12784,63 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                if opsidata <> nil then
+                if not testSyntax then
                 begin
-                  list.AddStrings(opsidata.getProductPropertyList(s1, list1, tmpbool));
-                end
-                else if local_opsidata <> nil then
-                begin
-                  list.AddStrings(local_opsidata.getProductPropertyList(s1,
-                    list1, tmpbool));
-                end
-                else
-                  tmpbool := True;
-                // getting the value from the service not possible or default
-                if tmpbool then
-                begin
-                  tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
-                  if FileExists(tmpstr) then
-                  begin
-                    LogDatei.log(
-                      'Property not existing in GetProductPropertyList - trying properties.conf',
-                      LLWarning);
-                    //if Assigned(list2) then FreeAndNil(list2);
-                    list2 := TXStringlist.Create;
-                    list2.loadFromFile(tmpstr);
-                    tmpbool := False; // default used
-                    tmpstr1 := list2.getStringValueWithDefault(s1, s2, tmpbool);
-                    FreeAndNil(list2);
-                    if jsonIsArray(tmpstr1) then
+                  if opsidata <> nil then
                     begin
-                      if jsonAsArrayToStringList(tmpstr1, TStringList(list1)) then
-                        list.Text := list1.Text
-                      else
-                        tmpbool := True; // use default
+                      list.AddStrings(opsidata.getProductPropertyList(s1, list1, tmpbool));
+                    end
+                    else if local_opsidata <> nil then
+                    begin
+                      list.AddStrings(local_opsidata.getProductPropertyList(s1,
+                        list1, tmpbool));
                     end
                     else
-                      tmpbool := True; // use default
-
+                      tmpbool := True;
+                    // getting the value from the service not possible or default
                     if tmpbool then
                     begin
-                      LogDatei.log(
-                        'Property not existing in GetProductProperty in file: '
-                        + tmpstr + '- using default',
-                        LLWarning);
-                      list.Text := list1.Text;
+                      tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                      if FileExists(tmpstr) then
+                      begin
+                        LogDatei.log(
+                          'Property not existing in GetProductPropertyList - trying properties.conf',
+                          LLWarning);
+                        //if Assigned(list2) then FreeAndNil(list2);
+                        list2 := TXStringlist.Create;
+                        list2.loadFromFile(tmpstr);
+                        tmpbool := False; // default used
+                        tmpstr1 := list2.getStringValueWithDefault(s1, s2, tmpbool);
+                        FreeAndNil(list2);
+                        if jsonIsArray(tmpstr1) then
+                        begin
+                          if jsonAsArrayToStringList(tmpstr1, TStringList(list1)) then
+                            list.Text := list1.Text
+                          else
+                            tmpbool := True; // use default
+                        end
+                        else
+                          tmpbool := True; // use default
+
+                        if tmpbool then
+                        begin
+                          LogDatei.log(
+                            'Property not existing in GetProductProperty in file: '
+                            + tmpstr + '- using default',
+                            LLWarning);
+                          list.Text := list1.Text;
+                        end;
+                      end
+                      else
+                      begin
+                        LogDatei.log(
+                          'No service connection in GetProductPropertyList - using default',
+                          LLDebug);
+                        list.Text := list1.Text;
+                      end;
                     end;
-                  end
-                  else
-                  begin
-                    LogDatei.log(
-                      'No service connection in GetProductPropertyList - using default',
-                      LLDebug);
-                    list.Text := list1.Text;
                   end;
-                end;
-              end
+                end
               else
               begin
                 syntaxCheck := False;
@@ -12823,64 +12854,67 @@ begin
                         if Skip(')', r, r, InfoSyntaxError) then
                         begin
                           syntaxCheck := True;
-                          InfoSyntaxError := '';
-                          LogDatei.log('Calling with 4 arguments', LLDebug);
-                          if opsidata <> nil then
+                          if not testSyntax then
                           begin
-                            list.AddStrings(opsidata.getProductPropertyList(
-                              s1, list1, s3, s4, tmpbool));
-                          end
-                          else if local_opsidata <> nil then
-                          begin
-                            list.AddStrings(
-                              local_opsidata.getProductPropertyList(s1,
-                              list1, s3, s4, tmpbool));
-                          end
-                          else
-                            tmpbool := True;
-                          // getting the value from the service not possible or default
-                          if tmpbool then
-                          begin
-                            tmpstr :=
-                              ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
-                            if FileExists(tmpstr) then
+                            InfoSyntaxError := '';
+                            LogDatei.log('Calling with 4 arguments', LLDebug);
+                            if opsidata <> nil then
                             begin
-                              LogDatei.log(
-                                'Property not existing in GetProductPropertyList - trying properties.conf',
-                                LLWarning);
-                              //if Assigned(list2) then FreeAndNil(list2);
-                              list2 := TXStringlist.Create;
-                              list2.loadFromFile(tmpstr);
-                              tmpbool := False; // default used
-                              tmpstr1 :=
-                                list2.getStringValueWithDefault(s1, s2, tmpbool);
-                              FreeAndNil(list2);
-                              if jsonIsArray(tmpstr1) then
-                              begin
-                                if jsonAsArrayToStringList(tmpstr1,
-                                  TStringList(list1)) then
-                                  list.Text := list1.Text
-                                else
-                                  tmpbool := True; // use default
-                              end
-                              else
-                                tmpbool := True; // use default
-
-                              if tmpbool then
-                              begin
-                                LogDatei.log(
-                                  'Property not existing in GetProductProperty in file: '
-                                  + tmpstr + '- using default',
-                                  LLWarning);
-                                list.Text := list1.Text;
-                              end;
+                              list.AddStrings(opsidata.getProductPropertyList(
+                                s1, list1, s3, s4, tmpbool));
+                            end
+                            else if local_opsidata <> nil then
+                            begin
+                              list.AddStrings(
+                                local_opsidata.getProductPropertyList(s1,
+                                list1, s3, s4, tmpbool));
                             end
                             else
+                              tmpbool := True;
+                            // getting the value from the service not possible or default
+                            if tmpbool then
                             begin
-                              LogDatei.log(
-                                'No service connection in GetProductPropertyList - using default',
-                                LLDebug);
-                              list.Text := list1.Text;
+                              tmpstr :=
+                                ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                              if FileExists(tmpstr) then
+                              begin
+                                LogDatei.log(
+                                  'Property not existing in GetProductPropertyList - trying properties.conf',
+                                  LLWarning);
+                                //if Assigned(list2) then FreeAndNil(list2);
+                                list2 := TXStringlist.Create;
+                                list2.loadFromFile(tmpstr);
+                                tmpbool := False; // default used
+                                tmpstr1 :=
+                                  list2.getStringValueWithDefault(s1, s2, tmpbool);
+                                FreeAndNil(list2);
+                                if jsonIsArray(tmpstr1) then
+                                begin
+                                  if jsonAsArrayToStringList(tmpstr1,
+                                    TStringList(list1)) then
+                                    list.Text := list1.Text
+                                  else
+                                    tmpbool := True; // use default
+                                end
+                                else
+                                  tmpbool := True; // use default
+
+                                if tmpbool then
+                                begin
+                                  LogDatei.log(
+                                    'Property not existing in GetProductProperty in file: '
+                                    + tmpstr + '- using default',
+                                    LLWarning);
+                                  list.Text := list1.Text;
+                                end;
+                              end
+                              else
+                              begin
+                                LogDatei.log(
+                                  'No service connection in GetProductPropertyList - using default',
+                                  LLDebug);
+                                list.Text := list1.Text;
+                              end;
                             end;
                           end;
                         end
@@ -12906,23 +12940,26 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            for i := 0 to list1.Count - 1 do
-              try
-                if AnsiContainsText(list1[i], s1) then
-                  list.add(list1[i]);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('Error on producing sublist: ' + e.message,
-                    LLerror);
-                  FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                end
-              end;
-            list1.Free;
-            list1 := nil;
+            if not testSyntax then
+            begin
+              list.Clear;
+              for i := 0 to list1.Count - 1 do
+                try
+                  if AnsiContainsText(list1[i], s1) then
+                    list.add(list1[i]);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Error on producing sublist: ' + e.message,
+                      LLerror);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+              list1.Free;
+              list1 := nil;
+            end;
           end;
         end;
       end;
@@ -12940,11 +12977,14 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            for i := 0 to list1.Count - 1 do
+            if not testSyntax then
             begin
-              tmpstr := list1.Strings[i];
-              if tmpstr <> '' then
-                logdatei.AddToConfidentials(tmpstr);
+              for i := 0 to list1.Count - 1 do
+              begin
+                tmpstr := list1.Strings[i];
+                if tmpstr <> '' then
+                  logdatei.AddToConfidentials(tmpstr);
+              end;
             end;
           end;
           list.Text := list1.Text;
@@ -12967,22 +13007,25 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            for i := 0 to list1.Count - 1 do
-              try
-                if not (LowerCase(list1[i]) = LowerCase(s1)) then
-                  list.add(list1[i]);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                  FNumberOfErrors := FNumberOfErrors + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                end
-              end;
-            list1.Free;
-            list1 := nil;
+            if not testSyntax then
+            begin
+              list.Clear;
+              for i := 0 to list1.Count - 1 do
+                try
+                  if not (LowerCase(list1[i]) = LowerCase(s1)) then
+                    list.add(list1[i]);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
+              list1.Free;
+              list1 := nil;
+            end;
           end;
         end;
       end;
@@ -13020,29 +13063,32 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              // fill list
-              for k := 0 to list2.Count - 1 do
-                list.add(list2[k]);
-              // remove unwanted entries
-              for i := 0 to list1.Count - 1 do
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                // fill list
                 for k := 0 to list2.Count - 1 do
-                  if AnsiContainsText(list2[k], list1[i]) then
-                    list.Delete(list.IndexOf(list2[k]));
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+                  list.add(list2[k]);
+                // remove unwanted entries
+                for i := 0 to list1.Count - 1 do
+                  for k := 0 to list2.Count - 1 do
+                    if AnsiContainsText(list2[k], list1[i]) then
+                      list.Delete(list.IndexOf(list2[k]));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
@@ -13060,10 +13106,13 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            list.AddStrings(getSubListByContainingRegex(s1, list1));
-            list1.Free;
-            list1 := nil;
+            if not testSyntax then
+            begin
+              list.Clear;
+              list.AddStrings(getSubListByContainingRegex(s1, list1));
+              list1.Free;
+              list1 := nil;
+            end;
           end;
         end
         else
@@ -13077,12 +13126,15 @@ begin
               skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxcheck := True;
-              list.Clear;
-              list.AddStrings(getSubListByContainingRegex(list2, list3));
-              list2.Free;
-              list2 := nil;
-              list3.Free;
-              list3 := nil;
+              if not testSyntax then
+              begin
+                list.Clear;
+                list.AddStrings(getSubListByContainingRegex(list2, list3));
+                list2.Free;
+                list2 := nil;
+                list3.Free;
+                list3 := nil;
+              end;
             end;
           end;
         end;
@@ -13101,10 +13153,13 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            list.AddStrings(getRegexMatchList(s1, list1));
-            list1.Free;
-            list1 := nil;
+            if not testSyntax then
+            begin
+              list.Clear;
+              list.AddStrings(getRegexMatchList(s1, list1));
+              list1.Free;
+              list1 := nil;
+            end;
           end;
         end
         else
@@ -13118,12 +13173,15 @@ begin
               skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxcheck := True;
-              list.Clear;
-              list.AddStrings(getRegexMatchList(list2, list3));
-              list2.Free;
-              list2 := nil;
-              list3.Free;
-              list3 := nil;
+              if not testSyntax then
+              begin
+                list.Clear;
+                list.AddStrings(getRegexMatchList(list2, list3));
+                list2.Free;
+                list2 := nil;
+                list3.Free;
+                list3 := nil;
+              end;
             end;
           end;
         end;
@@ -13204,26 +13262,29 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              // fill list
-              for i := 0 to list1.Count - 1 do
-                for k := 0 to list2.Count - 1 do
-                  if AnsiContainsText(list2[k], list1[i]) then
-                    list.Add(list2.Strings[k]);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                // fill list
+                for i := 0 to list1.Count - 1 do
+                  for k := 0 to list2.Count - 1 do
+                    if AnsiContainsText(list2[k], list1[i]) then
+                      list.Add(list2.Strings[k]);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
@@ -13260,26 +13321,29 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              // fill list
-              for i := 0 to list1.Count - 1 do
-                for k := 0 to list2.Count - 1 do
-                  if AnsiStartsText(list1.Strings[i] + '=', list2.Strings[k]) then
-                    list.Add(list2.Strings[k]);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                // fill list
+                for i := 0 to list1.Count - 1 do
+                  for k := 0 to list2.Count - 1 do
+                    if AnsiStartsText(list1.Strings[i] + '=', list2.Strings[k]) then
+                      list.Add(list2.Strings[k]);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
@@ -13317,31 +13381,33 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              // fill list
-              for i := 0 to list1.Count - 1 do
-                for k := 0 to list2.Count - 1 do
-                  if lowercase(list1.Strings[i]) = lowercase(list2.Strings[k]) then
-                    list.Add(list1.Strings[i]);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                // fill list
+                for i := 0 to list1.Count - 1 do
+                  for k := 0 to list2.Count - 1 do
+                    if lowercase(list1.Strings[i]) = lowercase(list2.Strings[k]) then
+                      list.Add(list1.Strings[i]);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
     end
-
 
 
     else if LowerCase(s) = LowerCase('reencodestrlist') then
@@ -13358,21 +13424,24 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    list.Clear;
-                    try
-                      // s2 is here used source encoding
-                      list.Text := reencode(list1.Text, s1, s2, s3);
-                    except
-                      on e: Exception do
-                      begin
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                        LogDatei.log('Error on producing sublist: ' + e.message,
-                          LLerror);
-                        FNumberOfErrors := FNumberOfErrors + 1;
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                        list1.Free;
-                        list1 := nil;
-                      end
+                    if not testSyntax then
+                    begin
+                      list.Clear;
+                      try
+                        // s2 is here used source encoding
+                        list.Text := reencode(list1.Text, s1, s2, s3);
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('Error on producing sublist: ' + e.message,
+                            LLerror);
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          list1.Free;
+                          list1 := nil;
+                        end
+                      end;
                     end;
                   end;
         list1.Free;
@@ -13393,8 +13462,11 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    list.Clear;
-                    list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+                    if not testSyntax then
+                    begin
+                      list.Clear;
+                      list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+                    end;
                   end;
         list1.Free;
         list1 := nil;
@@ -13436,39 +13508,42 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    //list.clear;
-                    try
+                    if not testSyntax then
+                    begin
+                      //list.clear;
                       try
-                        //list1 := TXStringList.create;
-                        list := TXStringList(FindAllFiles(s1, s2, StrToBool(s3)));
-                        //if list = '' then list.Add('Datei nicht gefunden');
-                        //list.Text := list1.Text;
-                      finally
-                         {$IFDEF WIN32}
-                        if (lowercase(s4) = '64bit') or
-                          (lowercase(s4) = 'sysnative') then
-                        begin
-                          DSiRevertWow64FsRedirection(
-                            oldDisableWow64FsRedirectionStatus);
-                          LogDatei.Log('Revert redirection to SysWOW64', LLInfo);
+                        try
+                          //list1 := TXStringList.create;
+                          list := TXStringList(FindAllFiles(s1, s2, StrToBool(s3)));
+                          //if list = '' then list.Add('Datei nicht gefunden');
+                          //list.Text := list1.Text;
+                        finally
+                           {$IFDEF WIN32}
+                          if (lowercase(s4) = '64bit') or
+                            (lowercase(s4) = 'sysnative') then
+                          begin
+                            DSiRevertWow64FsRedirection(
+                              oldDisableWow64FsRedirectionStatus);
+                            LogDatei.Log('Revert redirection to SysWOW64', LLInfo);
+                          end;
+                           {$ENDIF WIN32}
+                          //list1.free;
+                          //list1 := nil;
                         end;
-                         {$ENDIF WIN32}
-                        //list1.free;
-                        //list1 := nil;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log('Exception: Error on findFiles: ' +
+                            e.message, LLerror);
+                          list.Text := '';
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        end;
                       end;
-                    except
-                      on e: Exception do
-                      begin
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                        LogDatei.log('Exception: Error on findFiles: ' +
-                          e.message, LLerror);
-                        list.Text := '';
-                        FNumberOfErrors := FNumberOfErrors + 1;
-                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                      end;
-                    end;
-                  end;
+                   end;
                 end;
+              end;
     end
 
 
@@ -13486,26 +13561,29 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                list.Clear;
-                try
-                  if StrToInt(s2) < list1.Count then
-                    list1.Strings[StrToInt(s2)] := s1
-                  else
-                    list1.Add(s1);
-                  list.Text := list1.Text;
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
-                      e.message,
-                      LLerror);
-                    list.Text := '';
-                    FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                    list1.Free;
-                    list1 := nil;
-                  end
+                if not testSyntax then
+                begin
+                    list.Clear;
+                    try
+                      if StrToInt(s2) < list1.Count then
+                        list1.Strings[StrToInt(s2)] := s1
+                      else
+                        list1.Add(s1);
+                      list.Text := list1.Text;
+                    except
+                      on e: Exception do
+                      begin
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
+                          e.message,
+                          LLerror);
+                        list.Text := '';
+                        FNumberOfErrors := FNumberOfErrors + 1;
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                        list1.Free;
+                        list1 := nil;
+                      end
+                    end;
                 end;
               end;
         list1.Free;
@@ -13568,11 +13646,12 @@ begin
           end;
 
           if syntaxCheck then
-          begin
-            list1.NameValueSeparator := keyValueSeparator;
-            list1.Values[s1] := s2;
-            list.Text := list1.Text;
-          end;
+            if not testSyntax then
+            begin
+              list1.NameValueSeparator := keyValueSeparator;
+              list1.Values[s1] := s2;
+              list.Text := list1.Text;
+            end;
         end
       finally
         list1.Free;
@@ -13601,28 +13680,31 @@ begin
                         if Skip(')', r, r, InfoSyntaxError) then
                         begin
                           syntaxCheck := True;
-                          list.Clear;
-                          try
-                            ErrorMsg := '';
-                            if not osGetWMI(s1, s2, list1, s3,
-                              TStringList(list), ErrorMsg) then
-                            begin
-                              LogDatei.log('Error on getListFromWMI: ' +
-                                ErrorMsg, LLerror);
-                              list.Text := '';
-                              FNumberOfErrors := FNumberOfErrors + 1;
+                          if not testSyntax then
+                          begin
+                            list.Clear;
+                            try
+                              ErrorMsg := '';
+                              if not osGetWMI(s1, s2, list1, s3,
+                                TStringList(list), ErrorMsg) then
+                              begin
+                                LogDatei.log('Error on getListFromWMI: ' +
+                                  ErrorMsg, LLerror);
+                                list.Text := '';
+                                FNumberOfErrors := FNumberOfErrors + 1;
+                              end;
+                            except
+                              on e: Exception do
+                              begin
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                                LogDatei.log('Exception: Error on getListFromWMI: ' +
+                                  e.message,
+                                  LLerror);
+                                list.Text := '';
+                                FNumberOfErrors := FNumberOfErrors + 1;
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                              end
                             end;
-                          except
-                            on e: Exception do
-                            begin
-                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                              LogDatei.log('Exception: Error on getListFromWMI: ' +
-                                e.message,
-                                LLerror);
-                              list.Text := '';
-                              FNumberOfErrors := FNumberOfErrors + 1;
-                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                            end
                           end;
                         end;
         finally
@@ -13646,25 +13728,28 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            //list.AddStrings(list1.lines);
-            try
-              //for i := 0 to list1.count - 1
-              //do list.add (list1[i]);
-              list.AddStrings(list1);
-              list.Add(s1);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message,
-                  LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              //list.AddStrings(list1.lines);
+              try
+                //for i := 0 to list1.count - 1
+                //do list.add (list1[i]);
+                list.AddStrings(list1);
+                list.Add(s1);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message,
+                    LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
       end;
@@ -13683,24 +13768,27 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              list.AddStrings(list1);
-              list.AddStrings(list2);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message,
-                  LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                list.AddStrings(list1);
+                list.AddStrings(list2);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message,
+                    LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
@@ -13719,31 +13807,33 @@ begin
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            try
-              for i := 0 to list1.Count - 1 do
-                for k := 0 to list2.Count - 1 do
-                  if list1.Strings[i] = list2.Strings[k] then
-                    list.Add(list1.Strings[i]);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error on producing sublist: ' + e.message,
-                  LLerror);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              list.Clear;
+              try
+                for i := 0 to list1.Count - 1 do
+                  for k := 0 to list2.Count - 1 do
+                    if list1.Strings[i] = list2.Strings[k] then
+                      list.Add(list1.Strings[i]);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Error on producing sublist: ' + e.message,
+                    LLerror);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
+              list1.Free;
+              list1 := nil;
+              list2.Free;
+              list2 := nil;
             end;
-            list1.Free;
-            list1 := nil;
-            list2.Free;
-            list2 := nil;
           end;
         end;
       end;
     end
-
 
 
     else if LowerCase(s) = LowerCase('getsublist') then
@@ -13855,37 +13945,39 @@ begin
 
         if syntaxCheck then
         begin
-          list1 := TXStringList.Create;
+          if not testSyntax then
+            begin
+              list1 := TXStringList.Create;
 
-          if not produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-            or not Skip(')', r, r, InfoSyntaxError) then
-            syntaxCheck := False
-          else
-          begin
-            list.Clear;
+              if not produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+                or not Skip(')', r, r, InfoSyntaxError) then
+                syntaxCheck := False
+              else
+              begin
+                list.Clear;
 
-            if a2_to_default then
-              a2 := list1.Count - 1;
-            adjustBounds(a1, a2, list1);
+                if a2_to_default then
+                  a2 := list1.Count - 1;
+                adjustBounds(a1, a2, list1);
 
-            for i := a1 to a2 do
-              try
-                list.add(list1[i]);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('Error on producing sublist: ' + e.message,
-                    LLWarning);
-                  FNumberOfWarnings := FNumberOfWarnings + 1;
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                end
+                for i := a1 to a2 do
+                  try
+                    list.add(list1[i]);
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                      LogDatei.log('Error on producing sublist: ' + e.message,
+                        LLWarning);
+                      FNumberOfWarnings := FNumberOfWarnings + 1;
+                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                    end
+                  end;
+
+                list1.Free;
+                list1 := nil;
               end;
-
-
-            list1.Free;
-            list1 := nil;
-          end;
+            end;
         end;
       end;
     end
@@ -13969,24 +14061,27 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         list1 := TXStringList.Create;
-        if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+        if produceStringList(section, r, r, list1, InfoSyntaxError)  //Recursion
         then
-        begin
-          list.Clear;
-          for i := 1 to list1.Count do
-          begin
-            tmpstr := list1[i - 1];
-            for k := 1 to ConstList.Count do
-            begin
-              if list1.replaceInLine(tmpstr, Constlist.Strings[k - 1],
-                ConstValuesList.Strings[k - 1], False, tmpstr1) then
-                tmpstr := tmpstr1;
-            end;
-            list.add(tmpstr);
-          end;
           if Skip(')', r, r, InfoSyntaxError) then
+          begin
             syntaxCheck := True;
-        end;
+            if not testSyntax then
+            begin
+              list.Clear;
+              for i := 1 to list1.Count do
+              begin
+                tmpstr := list1[i - 1];
+                for k := 1 to ConstList.Count do
+                begin
+                  if list1.replaceInLine(tmpstr, Constlist.Strings[k - 1],
+                    ConstValuesList.Strings[k - 1], False, tmpstr1) then
+                    tmpstr := tmpstr1;
+                end;
+                list.add(tmpstr);
+              end;
+            end;
+          end;
         list1.Free;
       end;
     end
@@ -14003,13 +14098,16 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            list.Clear;
-            for i := 0 to list1.Count - 1 do
+            if not testSyntax then
             begin
-              k := pos('=', list1[i]);
-              if k = 0 then
-                k := length(list1[i]);
-              list.add(copy(list1[i], 1, k - 1));
+              list.Clear;
+              for i := 0 to list1.Count - 1 do
+              begin
+                k := pos('=', list1[i]);
+                if k = 0 then
+                  k := length(list1[i]);
+                list.add(copy(list1[i], 1, k - 1));
+              end;
             end;
           end;
         end;
@@ -14061,8 +14159,11 @@ begin
           skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
-          list.Clear;
-          list.Text := getXMLDocumentElementfromFile(ExpandFileNameUTF8(s1)).Text;
+          if not testSyntax then
+            begin
+            list.Clear;
+            list.Text := getXMLDocumentElementfromFile(ExpandFileNameUTF8(s1)).Text;
+            end;
         end;
       end;
     end
@@ -14079,14 +14180,17 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            if not xmlAsStringlistGetUniqueChildnodeByName(
-              TStringList(list1), s1, TStringList(list)) then
+            if not testSyntax then
             begin
-              LogDatei.log('Error on producing getXml2UniqueChildnodeByName', LLerror);
+              list.Clear;
+              if not xmlAsStringlistGetUniqueChildnodeByName(
+                TStringList(list1), s1, TStringList(list)) then
+              begin
+                LogDatei.log('Error on producing getXml2UniqueChildnodeByName', LLerror);
+              end;
+              list1.Free;
+              list1 := nil;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
       end;
@@ -14104,14 +14208,17 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            if not xml2GetFirstChildNodeByName(TStringList(list1),
-              s1, TStringList(list)) then
+            if not testSyntax then
             begin
-              LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
+              list.Clear;
+              if not xml2GetFirstChildNodeByName(TStringList(list1),
+                s1, TStringList(list)) then
+              begin
+                LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
+              end;
+              list1.Free;
+              list1 := nil;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
       end;
@@ -14137,14 +14244,17 @@ begin
                   skip(')', r, r, InfoSyntaxError) then
                 begin
                   syntaxcheck := True;
-                  list.Clear;
-                  LogDatei.log(
-                    'Error: xml2GetFirstChildNodeByNameAtributeValue: not implemented',
-                    LLerror);
-                  //if not xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(Tstringlist(list1),s1,s2,s3,TStringlist(list)) then
-                  //begin
-                  //  LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
-                  //end;
+                  if not testSyntax then
+                  begin
+                    list.Clear;
+                    LogDatei.log(
+                      'Error: xml2GetFirstChildNodeByNameAtributeValue: not implemented',
+                      LLerror);
+                    //if not xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(Tstringlist(list1),s1,s2,s3,TStringlist(list)) then
+                    //begin
+                    //  LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
+                    //end;
+                  end;
                 end
                 else
                   syntaxcheck := False;
@@ -14177,16 +14287,19 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            s1 := ExpandFileName(s1);
-            try
-              list.Clear;
-              list.AddStrings(LoadTOMLFile(s1));
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in LoadTOMLFile "' + s1 +
-                  '", message: "' + e.Message + '"', LLerror);
-                list.Append('');
+            if not testSyntax then
+            begin
+              s1 := ExpandFileName(s1);
+              try
+                list.Clear;
+                list.AddStrings(LoadTOMLFile(s1));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in LoadTOMLFile "' + s1 +
+                    '", message: "' + e.Message + '"', LLerror);
+                  list.Append('');
+                end;
               end;
             end;
           end;
@@ -14200,15 +14313,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              list.Clear;
-              list.AddStrings(GetTOMLAsStringList(s1));
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in GetTOMLAsStringList "' +
-                  s1 + '", message: "' + e.Message + '"', LLerror);
-                list.Append('');
+            if not testSyntax then
+            begin
+              try
+                list.Clear;
+                list.AddStrings(GetTOMLAsStringList(s1));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLAsStringList "' +
+                    s1 + '", message: "' + e.Message + '"', LLerror);
+                  list.Append('');
+                end;
               end;
             end;
           end;
@@ -14222,15 +14338,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              list.Clear;
-              list.AddStrings(GetTOMLKeys(s1));
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in GetTOMLKeys "' + s1 +
-                  '", message: "' + e.Message + '"', LLerror);
-                list.Append('');
+            if not testSyntax then
+            begin
+              try
+                list.Clear;
+                list.AddStrings(GetTOMLKeys(s1));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLKeys "' + s1 +
+                    '", message: "' + e.Message + '"', LLerror);
+                  list.Append('');
+                end;
               end;
             end;
           end;
@@ -14244,15 +14363,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              list.Clear;
-              list.AddStrings(GetTOMLTableNames(s1));
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in GetTOMLTableNames "' +
-                  s1 + '", message: "' + e.Message + '"', LLerror);
-                list.Append('');
+            if not testSyntax then
+            begin
+              try
+                list.Clear;
+                list.AddStrings(GetTOMLTableNames(s1));
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLTableNames "' +
+                    s1 + '", message: "' + e.Message + '"', LLerror);
+                  list.Append('');
+                end;
               end;
             end;
           end;
@@ -14268,15 +14390,18 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                try
-                  list.Clear;
-                  list.AddStrings(GetTOMLTable(s1, s2));
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in GetTOMLTable "' +
-                      s1 + '", message: "' + e.Message + '"', LLerror);
-                    list.Append('');
+                if not testSyntax then
+                begin
+                  try
+                    list.Clear;
+                    list.AddStrings(GetTOMLTable(s1, s2));
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Error in GetTOMLTable "' +
+                        s1 + '", message: "' + e.Message + '"', LLerror);
+                      list.Append('');
+                    end;
                   end;
                 end;
               end;
@@ -14291,25 +14416,28 @@ begin
         list1 := TXStringList.Create;
         if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
         then
-        begin
-          list.Clear;
-        {$IFDEF GUI}
-          checkMapGUI(TStringList(list1), 2);
-          list.AddStrings(list1);
-        {$ELSE GUI}
-          for i := 0 to list1.Count - 1 do
-          begin
-            s1 := list1.Strings[i];
-            s2 := Copy(s1, 1, pos('=', s1) - 1);
-            s3 := Copy(s1, pos('=', s1) + 1, length(s1));
-            if not cmdLineInputDialog(s3, s2, s3, False) then
-              Logdatei.log('Error editMap (noGUI) for: ' + s1, LLError);
-            list.Add(s2 + '=' + s3);
-          end;
-        {$ENDIF GUI}
           if Skip(')', r, r, InfoSyntaxError) then
-            syntaxCheck := True;
-        end;
+            begin
+              syntaxCheck := True;
+              if not testSyntax then
+              begin
+                  list.Clear;
+                {$IFDEF GUI}
+                  checkMapGUI(TStringList(list1), 2);
+                  list.AddStrings(list1);
+                {$ELSE GUI}
+                  for i := 0 to list1.Count - 1 do
+                  begin
+                    s1 := list1.Strings[i];
+                    s2 := Copy(s1, 1, pos('=', s1) - 1);
+                    s3 := Copy(s1, pos('=', s1) + 1, length(s1));
+                    if not cmdLineInputDialog(s3, s2, s3, False) then
+                      Logdatei.log('Error editMap (noGUI) for: ' + s1, LLError);
+                    list.Add(s2 + '=' + s3);
+                  end;
+                {$ENDIF GUI}
+              end;
+            end;
         list1.Free;
       end;
     end
@@ -14320,31 +14448,34 @@ begin
       //if (r = '') or (r=')') then
       begin
         syntaxcheck := True;
-        if not (opsidata = nil) then
+        if not testSyntax then
         begin
-          list.add('id=' + Topsi4data(opsidata).getActualProductId);
-          list.add('name=' + Topsi4data(opsidata).getActualProductName);
-          list.add('description=' + Topsi4data(opsidata).getActualProductDescription);
-          list.add('advice=' + Topsi4data(opsidata).getActualProductAdvice);
-          list.add('productversion=' + Topsi4data(
-            opsidata).getActualProductProductVersion);
-          list.add('packageversion=' + Topsi4data(
-            opsidata).getActualProductPackageVersion);
-          list.add('priority=' + Topsi4data(opsidata).getActualProductPriority);
-          list.add('installationstate=' + Topsi4data(
-            opsidata).getActualProductInstallationState);
-          list.add('lastactionrequest=' + Topsi4data(
-            opsidata).getActualProductLastActionRequest);
-          list.add('lastactionresult=' + Topsi4data(
-            opsidata).getActualProductProductLastActionReport);
-          list.add('installedversion=' + Topsi4data(
-            opsidata).getActualProductInstalledVersion);
-          list.add('installedpackage=' + Topsi4data(
-            opsidata).getActualProductInstalledPackage);
-          list.add('installedmodificationtime=' + Topsi4data(
-            opsidata).getActualProductInstalledModificationTime);
-          list.add('actionrequest=' + Topsi4data(
-            opsidata).getActualProductActionRequest);
+          if not (opsidata = nil) then
+          begin
+            list.add('id=' + Topsi4data(opsidata).getActualProductId);
+            list.add('name=' + Topsi4data(opsidata).getActualProductName);
+            list.add('description=' + Topsi4data(opsidata).getActualProductDescription);
+            list.add('advice=' + Topsi4data(opsidata).getActualProductAdvice);
+            list.add('productversion=' + Topsi4data(
+              opsidata).getActualProductProductVersion);
+            list.add('packageversion=' + Topsi4data(
+              opsidata).getActualProductPackageVersion);
+            list.add('priority=' + Topsi4data(opsidata).getActualProductPriority);
+            list.add('installationstate=' + Topsi4data(
+              opsidata).getActualProductInstallationState);
+            list.add('lastactionrequest=' + Topsi4data(
+              opsidata).getActualProductLastActionRequest);
+            list.add('lastactionresult=' + Topsi4data(
+              opsidata).getActualProductProductLastActionReport);
+            list.add('installedversion=' + Topsi4data(
+              opsidata).getActualProductInstalledVersion);
+            list.add('installedpackage=' + Topsi4data(
+              opsidata).getActualProductInstalledPackage);
+            list.add('installedmodificationtime=' + Topsi4data(
+              opsidata).getActualProductInstalledModificationTime);
+            list.add('actionrequest=' + Topsi4data(
+              opsidata).getActualProductActionRequest);
+          end;
         end;
       end;
     end
@@ -14356,7 +14487,8 @@ begin
     begin
       begin
         syntaxcheck := True;
-        list.AddStrings(getIpMacHash);
+        if not testSyntax then
+          list.AddStrings(getIpMacHash);
       end;
     end
    {$ENDIF WIN32}
@@ -14366,16 +14498,19 @@ begin
       //if (r = '') or (r=')') then
       begin
         syntaxcheck := True;
-      {$IFDEF WINDOWS}
-        list.add(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
-        list.add(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
-        list.add(GetSystemDefaultLocale(LOCALE_SENGLANGUAGE));
-        list.add(GetSystemDefaultLocale(LOCALE_SENGCOUNTRY));
-        list.add(GetSystemDefaultLocale(LOCALE_ILANGUAGE));
-        list.add(GetSystemDefaultLocale(LOCALE_SNATIVELANGNAME));
-        list.add(GetSystemDefaultLocale(LOCALE_IDEFAULTLANGUAGE));
-        //list.add (GetSystemDefaultLocale(LOCALE_NOUSEROVERRIDE));
-      {$ENDIF WINDOWS}
+        if not testSyntax then
+          begin
+          {$IFDEF WINDOWS}
+            list.add(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+            list.add(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
+            list.add(GetSystemDefaultLocale(LOCALE_SENGLANGUAGE));
+            list.add(GetSystemDefaultLocale(LOCALE_SENGCOUNTRY));
+            list.add(GetSystemDefaultLocale(LOCALE_ILANGUAGE));
+            list.add(GetSystemDefaultLocale(LOCALE_SNATIVELANGNAME));
+            list.add(GetSystemDefaultLocale(LOCALE_IDEFAULTLANGUAGE));
+            //list.add (GetSystemDefaultLocale(LOCALE_NOUSEROVERRIDE));
+          {$ENDIF WINDOWS}
+          end;
       end;
     end
 
@@ -14384,47 +14519,50 @@ begin
       //if (r = '') or (r=')') then
       begin
         syntaxcheck := True;
-      {$IFDEF WINDOWS}
-        list.add('language_id_2chars=' +
-          copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
-        list.add('language_id=' + GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
-        list.add('localized_name_of_language=' +
-          GetSystemDefaultLocale(LOCALE_SLANGUAGE));
-        list.add('English_name_of_language=' +
-          GetSystemDefaultLocale(LOCALE_SENGLANGUAGE));
-        list.add('abbreviated_language_name=' +
-          GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
-        list.add('native_name_of_language=' + GetSystemDefaultLocale(
-          LOCALE_SNATIVELANGNAME));
+        if not testSyntax then
+        begin
+        {$IFDEF WINDOWS}
+          list.add('language_id_2chars=' +
+            copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+          list.add('language_id=' + GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
+          list.add('localized_name_of_language=' +
+            GetSystemDefaultLocale(LOCALE_SLANGUAGE));
+          list.add('English_name_of_language=' +
+            GetSystemDefaultLocale(LOCALE_SENGLANGUAGE));
+          list.add('abbreviated_language_name=' +
+            GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME));
+          list.add('native_name_of_language=' + GetSystemDefaultLocale(
+            LOCALE_SNATIVELANGNAME));
 
-        list.add('country_code=' + GetSystemDefaultLocale(LOCALE_ICOUNTRY));
-        list.add('localized_name_of_country=' + GetSystemDefaultLocale(LOCALE_SCOUNTRY));
-        list.add('English_name_of_country=' +
-          GetSystemDefaultLocale(LOCALE_SENGCOUNTRY));
-        list.add('abbreviated_country_name=' +
-          GetSystemDefaultLocale(LOCALE_SABBREVCTRYNAME));
-        list.add('native_name_of_country=' + GetSystemDefaultLocale(
-          LOCALE_SNATIVECTRYNAME));
-        list.add('default_language_id=' + GetSystemDefaultLocale(
-          LOCALE_IDEFAULTLANGUAGE));
-        list.add('default_language_id_decimal=' +
-          IntToStr(StrToInt('$' + GetSystemDefaultLocale(LOCALE_IDEFAULTLANGUAGE))));
-        list.add('default_country_code=' + GetSystemDefaultLocale(
-          LOCALE_IDEFAULTCOUNTRY));
-        list.add('default_oem_code_page=' + GetSystemDefaultLocale(
-          LOCALE_IDEFAULTCODEPAGE));
-        list.add('default_ansi_code_page=' + GetSystemDefaultLocale(
-          LOCALE_IDEFAULTANSICODEPAGE));
-        tmpstr := GetRegistrystringvalue(
-          'HKEY_LOCAL_MACHINE\System\CurrentControlset\Control\Nls\Language',
-          'InstallLanguage', False);
-        list.add('system_default_language_id=' + tmpstr);
-        //list.add ('system_default_UI_language=' + GetSystemDefaultUILanguage );
-        list.add('system_default_posix=' + StringReplace(
-          getlangcodeByHexvalueStr('0x' + tmpstr), '-', '_'));
-        list.add('system_default_lang_region=' +
-          getlangcodeByHexvalueStr('0x' + tmpstr));
-      {$ENDIF WINDOWS}
+          list.add('country_code=' + GetSystemDefaultLocale(LOCALE_ICOUNTRY));
+          list.add('localized_name_of_country=' + GetSystemDefaultLocale(LOCALE_SCOUNTRY));
+          list.add('English_name_of_country=' +
+            GetSystemDefaultLocale(LOCALE_SENGCOUNTRY));
+          list.add('abbreviated_country_name=' +
+            GetSystemDefaultLocale(LOCALE_SABBREVCTRYNAME));
+          list.add('native_name_of_country=' + GetSystemDefaultLocale(
+            LOCALE_SNATIVECTRYNAME));
+          list.add('default_language_id=' + GetSystemDefaultLocale(
+            LOCALE_IDEFAULTLANGUAGE));
+          list.add('default_language_id_decimal=' +
+            IntToStr(StrToInt('$' + GetSystemDefaultLocale(LOCALE_IDEFAULTLANGUAGE))));
+          list.add('default_country_code=' + GetSystemDefaultLocale(
+            LOCALE_IDEFAULTCOUNTRY));
+          list.add('default_oem_code_page=' + GetSystemDefaultLocale(
+            LOCALE_IDEFAULTCODEPAGE));
+          list.add('default_ansi_code_page=' + GetSystemDefaultLocale(
+            LOCALE_IDEFAULTANSICODEPAGE));
+          tmpstr := GetRegistrystringvalue(
+            'HKEY_LOCAL_MACHINE\System\CurrentControlset\Control\Nls\Language',
+            'InstallLanguage', False);
+          list.add('system_default_language_id=' + tmpstr);
+          //list.add ('system_default_UI_language=' + GetSystemDefaultUILanguage );
+          list.add('system_default_posix=' + StringReplace(
+            getlangcodeByHexvalueStr('0x' + tmpstr), '-', '_'));
+          list.add('system_default_lang_region=' +
+            getlangcodeByHexvalueStr('0x' + tmpstr));
+        {$ENDIF WINDOWS}
+        end;
       end;
     end
 
@@ -14434,49 +14572,52 @@ begin
       //if (r = '') or (r=')') then
       begin
         syntaxcheck := True;
-        list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
-        list.add('minor_version=' + GetSystemOSVersionInfoEx('minor_version'));
-        list.add('build_number=' + GetSystemOSVersionInfoEx('build_number'));
-        list.add('platform_id=' + GetSystemOSVersionInfoEx('platform_id'));
-        list.add('csd_version=' + GetSystemOSVersionInfoEx('csd_version'));
-        list.add('service_pack_major=' + GetSystemOSVersionInfoEx('service_pack_major'));
-        list.add('service_pack_minor=' + GetSystemOSVersionInfoEx('service_pack_minor'));
-        list.add('suite_mask=' + GetSystemOSVersionInfoEx('suite_mask'));
-        list.add('product_type_nr=' + GetSystemOSVersionInfoEx('product_type_nr'));
-        list.add('2003r2=' + GetSystemOSVersionInfoEx('2003r2'));
-        if GetNTVersionMajor < 6 then
+        if not testSyntax then
         begin
-          list.add('ReleaseID=');
-          list.add('prodInfoNumber=');
-          list.add('prodInfoText=');
-        end
-        else
-        begin
-          if GetNTVersionMajor >= 10 then
+          list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
+          list.add('minor_version=' + GetSystemOSVersionInfoEx('minor_version'));
+          list.add('build_number=' + GetSystemOSVersionInfoEx('build_number'));
+          list.add('platform_id=' + GetSystemOSVersionInfoEx('platform_id'));
+          list.add('csd_version=' + GetSystemOSVersionInfoEx('csd_version'));
+          list.add('service_pack_major=' + GetSystemOSVersionInfoEx('service_pack_major'));
+          list.add('service_pack_minor=' + GetSystemOSVersionInfoEx('service_pack_minor'));
+          list.add('suite_mask=' + GetSystemOSVersionInfoEx('suite_mask'));
+          list.add('product_type_nr=' + GetSystemOSVersionInfoEx('product_type_nr'));
+          list.add('2003r2=' + GetSystemOSVersionInfoEx('2003r2'));
+          if GetNTVersionMajor < 6 then
           begin
-            list.add('ReleaseID=' + getW10Release);
-            //list.add('ReleaseID=' + getW10Release);
-          (* moved to funcwin: getW10Release
-            if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-              'ReleaseID', True) then
-            begin
-              list.add('ReleaseID=' + GetRegistrystringvalue(
-                'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True));
-              if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-                'Displayversion', True) then
-                list.add('ReleaseID=' + GetRegistrystringvalue(
-                  'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-                  'Displayversion', True));
-            end
-            else
-              list.add('ReleaseID=1507')
-              *)
+            list.add('ReleaseID=');
+            list.add('prodInfoNumber=');
+            list.add('prodInfoText=');
           end
           else
-            list.add('ReleaseID=');
-          tmpint := OSGetProductInfoNum;
-          list.add('prodInfoNumber=' + IntToStr(tmpInt));
-          list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
+          begin
+            if GetNTVersionMajor >= 10 then
+            begin
+              list.add('ReleaseID=' + getW10Release);
+              //list.add('ReleaseID=' + getW10Release);
+            (* moved to funcwin: getW10Release
+              if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+                'ReleaseID', True) then
+              begin
+                list.add('ReleaseID=' + GetRegistrystringvalue(
+                  'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True));
+                if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+                  'Displayversion', True) then
+                  list.add('ReleaseID=' + GetRegistrystringvalue(
+                    'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+                    'Displayversion', True));
+              end
+              else
+                list.add('ReleaseID=1507')
+                *)
+            end
+            else
+              list.add('ReleaseID=');
+            tmpint := OSGetProductInfoNum;
+            list.add('prodInfoNumber=' + IntToStr(tmpInt));
+            list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
+          end;
         end;
       end;
     end
@@ -14487,7 +14628,8 @@ begin
     begin
       begin
         syntaxcheck := True;
-        list.AddStrings(getLinuxVersionMap);
+        if not testSyntax then
+           list.AddStrings(getLinuxVersionMap);
       end;
     end
     {$ENDIF LINUX}
@@ -14497,7 +14639,8 @@ begin
     begin
       begin
         syntaxcheck := True;
-        list.AddStrings(getMacosVersionMap);
+        if not testSyntax then
+           list.AddStrings(getMacosVersionMap);
       end;
     end
     {$ENDIF DARWIN}
@@ -14512,88 +14655,89 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          if not fileExists(s1) then
-          begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
-            FNumberOfWarnings := FNumberOfWarnings + 1;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          end
-          else
-          begin
-         {$IFDEF WINDOWS}
-            versionInfo := TVersionInfo.Create(s1);
-
-            for i := 0 to versionInfo.TranslationCount - 1 do
-            begin
-              tmpstr := 'Language name ' + IntToStr(i) + '=' +
-                versionInfo.LanguageNames[i];
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-              tmpstr := 'Language ID ' + IntToStr(i) + '=' +
-                IntToStr(versionInfo.LanguageID[i]);
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-            end;
-
-            //list.add('file version=' + IntToStr(versionInfo.FileVersion));
-            //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-            //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
-            tmpstr := 'file version=' + IntToStr(versionInfo.FileVersion);
-            list.add(tmpstr);
-            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-            tmpstr := 'file version with dots=' + versionInfo.GetFileVersionWithDots;
-            list.add(tmpstr);
-            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-            tmpstr := 'product version=' + IntToStr(versionInfo.ProductVersion);
-            list.add(tmpstr);
-            LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-
-            try
-            (*for i := Low(versionInfox.PredefinedStrings)
-              to High(versionInfox.PredefinedStrings) do *)
-              tmpint := length(versionInfox.PredefinedStrings) - 1;
-              LogDatei.log_prog('getFileInfoMap: value num: ' +
-                IntToStr(tmpint), LLdebug2);
-              for i := 0 to tmpint do
-              begin
-                try
-              (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                versionInfo.getString(PredefinedStrings[i])); *)
-                  tmpstr := versionInfox.PredefinedStrings[i] + '=' +
-                    versionInfo.getString(versionInfox.PredefinedStrings[i]);
-                  list.add(tmpstr);
-                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-                except
-                  LogDatei.log_prog('getFileInfoMap: exception at: ' +
-                    versionInfox.PredefinedStrings[i], LLdebug2);
-                  if versionInfox.PredefinedStrings[i] = 'FileVersion=' then
-                  begin
-                    tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
-                    list.add(tmpstr);
-                    LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-                  end;
-                end;
-              end;
-            except
-              LogDatei.log_prog('getFileInfoMap: exception - try to fix', LLdebug2);
-              tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
-              list.add(tmpstr);
-              LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
-            end;
-
-
-            versionInfo.Free;
-         {$ENDIF WINDOWS}
-         {$IFDEF UNIX}
-         (*
-         *)
-         {$ENDIF UNIX}
-          end;
-          if Skip(')', r, r, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+              if not fileExists(s1) then
+              begin
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
+                FNumberOfWarnings := FNumberOfWarnings + 1;
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              end
+              else
+              begin
+             {$IFDEF WINDOWS}
+                versionInfo := TVersionInfo.Create(s1);
+
+                for i := 0 to versionInfo.TranslationCount - 1 do
+                begin
+                  tmpstr := 'Language name ' + IntToStr(i) + '=' +
+                    versionInfo.LanguageNames[i];
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                  tmpstr := 'Language ID ' + IntToStr(i) + '=' +
+                    IntToStr(versionInfo.LanguageID[i]);
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                end;
+
+                //list.add('file version=' + IntToStr(versionInfo.FileVersion));
+                //list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+                //list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+                tmpstr := 'file version=' + IntToStr(versionInfo.FileVersion);
+                list.add(tmpstr);
+                LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                tmpstr := 'file version with dots=' + versionInfo.GetFileVersionWithDots;
+                list.add(tmpstr);
+                LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                tmpstr := 'product version=' + IntToStr(versionInfo.ProductVersion);
+                list.add(tmpstr);
+                LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+
+                try
+                (*for i := Low(versionInfox.PredefinedStrings)
+                  to High(versionInfox.PredefinedStrings) do *)
+                  tmpint := length(versionInfox.PredefinedStrings) - 1;
+                  LogDatei.log_prog('getFileInfoMap: value num: ' +
+                    IntToStr(tmpint), LLdebug2);
+                  for i := 0 to tmpint do
+                  begin
+                    try
+                  (* list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                    versionInfo.getString(PredefinedStrings[i])); *)
+                      tmpstr := versionInfox.PredefinedStrings[i] + '=' +
+                        versionInfo.getString(versionInfox.PredefinedStrings[i]);
+                      list.add(tmpstr);
+                      LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                    except
+                      LogDatei.log_prog('getFileInfoMap: exception at: ' +
+                        versionInfox.PredefinedStrings[i], LLdebug2);
+                      if versionInfox.PredefinedStrings[i] = 'FileVersion=' then
+                      begin
+                        tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+                        list.add(tmpstr);
+                        LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                      end;
+                    end;
+                  end;
+                except
+                  LogDatei.log_prog('getFileInfoMap: exception - try to fix', LLdebug2);
+                  tmpstr := 'FileVersion=' + versionInfo.GetFileVersionWithDots;
+                  list.add(tmpstr);
+                  LogDatei.log_prog('getFileInfoMap: ' + tmpstr, LLdebug2);
+                end;
+
+
+                versionInfo.Free;
+             {$ENDIF WINDOWS}
+             {$IFDEF UNIX}
+             (*
+             *)
+             {$ENDIF UNIX}
+              end;
           end;
         end;
     end
@@ -14603,79 +14747,81 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-        {$IFDEF WIN32}
-          Wow64FsRedirectionDisabled := False;
-          if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-          begin
-            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-            Wow64FsRedirectionDisabled := True;
-          end
-          else
-          begin
-            Wow64FsRedirectionDisabled := False;
-            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-          end;
-       {$ENDIF WIN32}
-    (*
-        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-        begin
-          LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-    *)
-          if not fileExists(s1) then
-          begin
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-            LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
-            FNumberOfWarnings := FNumberOfWarnings + 1;
-            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-          end
-          else
-          begin
-            versionInfo := TVersionInfo.Create(s1);
-
-            for i := 0 to versionInfo.TranslationCount - 1 do
-            begin
-              list.add('Language name ' + IntToStr(i) + '=' +
-                versionInfo.LanguageNames[i]);
-              list.add('Language ID ' + IntToStr(i) + '=' +
-                IntToStr(versionInfo.LanguageID[i]));
-            end;
-
-            list.add('file version=' + IntToStr(versionInfo.FileVersion));
-            list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-            list.add('product version=' + IntToStr(versionInfo.ProductVersion));
-
-
-            for i := Low(versionInfoX.PredefinedStrings)
-              to High(versionInfoX.PredefinedStrings) do
-              list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                versionInfo.getString(PredefinedStrings[i]));
-
-
-            versionInfo.Free;
-          end;
-          {$IFDEF WIN32}
-          if Wow64FsRedirectionDisabled then
-          begin
-            boolresult := DSiRevertWow64FsRedirection(
-              oldDisableWow64FsRedirectionStatus);
-            Wow64FsRedirectionDisabled := False;
-            LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-          end;
-          {$ENDIF}
-    (*
-          dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
-          LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-        (*
-        end
-        else
-        begin
-          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-        end;
-        *)
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+              {$IFDEF WIN32}
+                Wow64FsRedirectionDisabled := False;
+                if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+                begin
+                  LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+                  Wow64FsRedirectionDisabled := True;
+                end
+                else
+                begin
+                  Wow64FsRedirectionDisabled := False;
+                  LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+                end;
+             {$ENDIF WIN32}
+          (*
+              if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+              begin
+                LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+          *)
+                if not fileExists(s1) then
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
+                  FNumberOfWarnings := FNumberOfWarnings + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+                else
+                begin
+                  versionInfo := TVersionInfo.Create(s1);
+
+                  for i := 0 to versionInfo.TranslationCount - 1 do
+                  begin
+                    list.add('Language name ' + IntToStr(i) + '=' +
+                      versionInfo.LanguageNames[i]);
+                    list.add('Language ID ' + IntToStr(i) + '=' +
+                      IntToStr(versionInfo.LanguageID[i]));
+                  end;
+
+                  list.add('file version=' + IntToStr(versionInfo.FileVersion));
+                  list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+                  list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+
+
+                  for i := Low(versionInfoX.PredefinedStrings)
+                    to High(versionInfoX.PredefinedStrings) do
+                    list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                      versionInfo.getString(PredefinedStrings[i]));
+
+
+                  versionInfo.Free;
+                end;
+                {$IFDEF WIN32}
+                if Wow64FsRedirectionDisabled then
+                begin
+                  boolresult := DSiRevertWow64FsRedirection(
+                    oldDisableWow64FsRedirectionStatus);
+                  Wow64FsRedirectionDisabled := False;
+                  LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+                end;
+                {$ENDIF}
+          (*
+                dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+              (*
+              end
+              else
+              begin
+                LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+              end;
+              *)
+
           end;
         end;
     end
@@ -14685,115 +14831,116 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          if Is64BitSystem then
-          begin
-            LogDatei.log('  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLInfo);
-            {$IFDEF WIN32}
-            Wow64FsRedirectionDisabled := False;
-            if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-            begin
-              LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-              Wow64FsRedirectionDisabled := True;
-            end
-            else
-            begin
-              Wow64FsRedirectionDisabled := False;
-              LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-            end;
-           {$ENDIF WIN32}
-           (*
-          if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-          begin
-            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-           *)
-            if not fileExists(s1) then
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
-              FNumberOfWarnings := FNumberOfWarnings + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-            else
-            begin
-              versionInfo := TVersionInfo.Create(s1);
-
-              for i := 0 to versionInfo.TranslationCount - 1 do
-              begin
-                list.add('Language name ' + IntToStr(i) + '=' +
-                  versionInfo.LanguageNames[i]);
-                list.add('Language ID ' + IntToStr(i) + '=' +
-                  IntToStr(versionInfo.LanguageID[i]));
-              end;
-
-              list.add('file version=' + IntToStr(versionInfo.FileVersion));
-              list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-              list.add('product version=' + IntToStr(versionInfo.ProductVersion));
-
-
-              for i := Low(versionInfoX.PredefinedStrings)
-                to High(versionInfoX.PredefinedStrings) do
-                list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                  versionInfo.getString(PredefinedStrings[i]));
-
-
-              versionInfo.Free;
-            end;
-            {$IFDEF WIN32}
-            if Wow64FsRedirectionDisabled then
-            begin
-              boolresult := DSiRevertWow64FsRedirection(
-                oldDisableWow64FsRedirectionStatus);
-              Wow64FsRedirectionDisabled := False;
-              LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-            end;
-            {$ENDIF}
-            (*
-            dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
-            LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
-          end
-          else
-          begin
-            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
-          end;
-          *)
-          end
-          else
-          begin
-            LogDatei.log('  Starting getFileInfoMap (SysNative 32 Bit mode)...', LLInfo);
-            if not fileExists(s1) then
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
-              FNumberOfWarnings := FNumberOfWarnings + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-            else
-            begin
-              versionInfo := TVersionInfo.Create(s1);
-
-              for i := 0 to versionInfo.TranslationCount - 1 do
-              begin
-                list.add('Language name ' + IntToStr(i) + '=' +
-                  versionInfo.LanguageNames[i]);
-                list.add('Language ID ' + IntToStr(i) + '=' +
-                  IntToStr(versionInfo.LanguageID[i]));
-              end;
-
-              list.add('file version=' + IntToStr(versionInfo.FileVersion));
-              list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
-              list.add('product version=' + IntToStr(versionInfo.ProductVersion));
-
-              for i := Low(versionInfoX.PredefinedStrings)
-                to High(versionInfoX.PredefinedStrings) do
-                list.add(versionInfoX.PredefinedStrings[i] + '=' +
-                  versionInfo.getString(PredefinedStrings[i]));
-              versionInfo.Free;
-            end;
-          end;
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+                if Is64BitSystem then
+                begin
+                  LogDatei.log('  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLInfo);
+                  {$IFDEF WIN32}
+                  Wow64FsRedirectionDisabled := False;
+                  if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+                  begin
+                    LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+                    Wow64FsRedirectionDisabled := True;
+                  end
+                  else
+                  begin
+                    Wow64FsRedirectionDisabled := False;
+                    LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+                  end;
+                 {$ENDIF WIN32}
+                 (*
+                if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+                begin
+                  LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+                 *)
+                  if not fileExists(s1) then
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
+                    FNumberOfWarnings := FNumberOfWarnings + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                  else
+                  begin
+                    versionInfo := TVersionInfo.Create(s1);
+
+                    for i := 0 to versionInfo.TranslationCount - 1 do
+                    begin
+                      list.add('Language name ' + IntToStr(i) + '=' +
+                        versionInfo.LanguageNames[i]);
+                      list.add('Language ID ' + IntToStr(i) + '=' +
+                        IntToStr(versionInfo.LanguageID[i]));
+                    end;
+
+                    list.add('file version=' + IntToStr(versionInfo.FileVersion));
+                    list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+                    list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+
+
+                    for i := Low(versionInfoX.PredefinedStrings)
+                      to High(versionInfoX.PredefinedStrings) do
+                      list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                        versionInfo.getString(PredefinedStrings[i]));
+
+
+                    versionInfo.Free;
+                  end;
+                  {$IFDEF WIN32}
+                  if Wow64FsRedirectionDisabled then
+                  begin
+                    boolresult := DSiRevertWow64FsRedirection(
+                      oldDisableWow64FsRedirectionStatus);
+                    Wow64FsRedirectionDisabled := False;
+                    LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+                  end;
+                  {$ENDIF}
+                  (*
+                  dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                  LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+                end
+                else
+                begin
+                  LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+                end;
+                *)
+                end
+                else
+                begin
+                  LogDatei.log('  Starting getFileInfoMap (SysNative 32 Bit mode)...', LLInfo);
+                  if not fileExists(s1) then
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('File "' + s1 + '" does not exist', LLWarning);
+                    FNumberOfWarnings := FNumberOfWarnings + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                  else
+                  begin
+                    versionInfo := TVersionInfo.Create(s1);
+
+                    for i := 0 to versionInfo.TranslationCount - 1 do
+                    begin
+                      list.add('Language name ' + IntToStr(i) + '=' +
+                        versionInfo.LanguageNames[i]);
+                      list.add('Language ID ' + IntToStr(i) + '=' +
+                        IntToStr(versionInfo.LanguageID[i]));
+                    end;
+
+                    list.add('file version=' + IntToStr(versionInfo.FileVersion));
+                    list.add('file version with dots=' + versionInfo.GetFileVersionWithDots);
+                    list.add('product version=' + IntToStr(versionInfo.ProductVersion));
+
+                    for i := Low(versionInfoX.PredefinedStrings)
+                      to High(versionInfoX.PredefinedStrings) do
+                      list.add(versionInfoX.PredefinedStrings[i] + '=' +
+                        versionInfo.getString(PredefinedStrings[i]));
+                    versionInfo.Free;
+                  end;
+                end;
           end;
         end;
     end
@@ -14807,8 +14954,9 @@ begin
         begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
-            RunGetRegistryListOrMapFunction(s, s1, '', list);
             syntaxCheck := True;
+            if not testSyntax then
+               RunGetRegistryListOrMapFunction(s, s1, '', list);
           end
           else
           begin
@@ -14819,8 +14967,9 @@ begin
                 begin
                   if CheckAccessString(s2) then
                   begin
-                    RunGetRegistryListOrMapFunction(s, s1, s2, list);
                     syntaxCheck := True;
+                    if not testSyntax then
+                       RunGetRegistryListOrMapFunction(s, s1, s2, list);
                   end
                   else
                   begin
@@ -14850,25 +14999,28 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                tmpstr := GetSlowInfoCache(s1, 'hasname', s2);
-                if tmpstr <> '' then
-                  list.add('hasname=' + tmpstr);
-                tmpstr := GetSlowInfoCache(s1, 'installsize', s2);
-                if tmpstr <> '' then
-                  list.add('installsize=' + tmpstr);
-                tmpstr := GetSlowInfoCache(s1, 'lastused', s2);
-                if tmpstr <> '' then
-                  list.add('lastused=' + tmpstr);
-                tmpstr := GetSlowInfoCache(s1, 'usagefrequency', s2);
-                if tmpstr <> '' then
-                  list.add('usagefrequency=' + tmpstr);
-                tmpstr := GetSlowInfoCache(s1, 'binaryname', s2);
-                if tmpstr <> '' then
-                  list.add('binaryname=' + tmpstr);
-                //list.add('installsize=' + GetSlowInfoCache(s1, 'installsize', s2));
-                //list.add('lastused=' + GetSlowInfoCache(s1, 'lastused', s2));
-                //list.add('usagefrequency=' + GetSlowInfoCache(s1, 'usagefrequency', s2));
-                //list.add('binaryname=' + GetSlowInfoCache(s1, 'binaryname', s2));
+                if not testSyntax then
+                begin
+                  tmpstr := GetSlowInfoCache(s1, 'hasname', s2);
+                  if tmpstr <> '' then
+                    list.add('hasname=' + tmpstr);
+                  tmpstr := GetSlowInfoCache(s1, 'installsize', s2);
+                  if tmpstr <> '' then
+                    list.add('installsize=' + tmpstr);
+                  tmpstr := GetSlowInfoCache(s1, 'lastused', s2);
+                  if tmpstr <> '' then
+                    list.add('lastused=' + tmpstr);
+                  tmpstr := GetSlowInfoCache(s1, 'usagefrequency', s2);
+                  if tmpstr <> '' then
+                    list.add('usagefrequency=' + tmpstr);
+                  tmpstr := GetSlowInfoCache(s1, 'binaryname', s2);
+                  if tmpstr <> '' then
+                    list.add('binaryname=' + tmpstr);
+                  //list.add('installsize=' + GetSlowInfoCache(s1, 'installsize', s2));
+                  //list.add('lastused=' + GetSlowInfoCache(s1, 'lastused', s2));
+                  //list.add('usagefrequency=' + GetSlowInfoCache(s1, 'usagefrequency', s2));
+                  //list.add('binaryname=' + GetSlowInfoCache(s1, 'binaryname', s2));
+                end;
               end;
     {$ELSE WINDOWS}
       SyntaxCheck := False;
@@ -14893,10 +15045,13 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    list1 := TXStringList.Create;
-                    getSwauditInfoList(s1, s2, s3, list1);
-                    list.AddStrings(list1);
-                    list1.Free;
+                    if not testSyntax then
+                    begin
+                      list1 := TXStringList.Create;
+                      getSwauditInfoList(s1, s2, s3, list1);
+                      list.AddStrings(list1);
+                      list1.Free;
+                    end;
                   end;
     {$ELSE WINDOWS}
       SyntaxCheck := False;
@@ -14911,7 +15066,8 @@ begin
       //   if r = '' then
       begin
         syntaxcheck := True;
-        list.AddStrings(getProcessList);
+        if not testSyntax then
+           list.AddStrings(getProcessList);
       end;
     end
 
@@ -14920,7 +15076,8 @@ begin
       //   if r = '' then
       begin
         syntaxcheck := True;
-        list.AddStrings(getProfilesDirList);
+        if not testSyntax then
+           list.AddStrings(getProfilesDirList);
       end;
     end
 
@@ -14928,7 +15085,8 @@ begin
     begin
       begin
         syntaxcheck := True;
-        list.AddStrings(listCertificatesFromSystemStore());
+        if not testSyntax then
+           list.AddStrings(listCertificatesFromSystemStore());
       end;
     end
 
@@ -14946,17 +15104,16 @@ begin
     else
       InfoSyntaxError := s0 + ' no valid Expressionstr for a string list';
 
-
-
     if syntaxcheck then
-    begin
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-      LogDatei.log('retrieving strings from ' + logstring, LLDebug2);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-      LogDatei.log_list(list, LLDebug2);
-      LogDatei.log('', LLDebug2);
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-    end;
+      if not testSyntax then
+      begin
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+        LogDatei.log('retrieving strings from ' + logstring, LLDebug2);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+        LogDatei.log_list(list, LLDebug2);
+        LogDatei.log('', LLDebug2);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+      end;
 
   end;
 
