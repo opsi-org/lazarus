@@ -15327,20 +15327,23 @@ begin
     else if (LowerCase(s) = LowerCase('LogLevel')) or
       (LowerCase(s) = LowerCase('getLogLevel')) then
     begin
-      StringResult := IntToStr(Logdatei.LogLevel);
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := IntToStr(Logdatei.LogLevel);
     end
 
     else if (LowerCase(s) = LowerCase('getLastExitCode')) then
     begin
-      StringResult := IntToStr(FLastExitCodeOfExe);
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := IntToStr(FLastExitCodeOfExe);
     end
 
     else if (LowerCase(s) = LowerCase('getDiffTimeSec')) then
     begin
-      StringResult := IntToStr(SecondsBetween(markedTime, Time));
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := IntToStr(SecondsBetween(markedTime, Time));
     end
 
 
@@ -15350,73 +15353,77 @@ begin
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
-            StringResult := ValueOfEnvVar(s1);
             syntaxCheck := True;
+            if not testSyntax then
+               StringResult := ValueOfEnvVar(s1);
           end;
     end
 
     else if LowerCase(s) = LowerCase('GetOS') then
     begin
       syntaxCheck := True;
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-      case GetuibOsType(ErrorInfo) of
-        tovNotKnown:
-        begin
-          LogDatei.log(ErrorInfo, LLError);
-          StringResult := 'OS not identified';
+      if not testSyntax then
+      begin
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+        case GetuibOsType(ErrorInfo) of
+          tovNotKnown:
+          begin
+            LogDatei.log(ErrorInfo, LLError);
+            StringResult := 'OS not identified';
+          end;
+          tovWin16: StringResult := 'Windows_16';
+          tovWin95: StringResult := 'Windows_95';
+          tovWinNT: StringResult := 'Windows_NT';
+          tovLinux: StringResult := 'Linux';
+          tovMacOS: StringResult := 'macOS';
         end;
-        tovWin16: StringResult := 'Windows_16';
-        tovWin95: StringResult := 'Windows_95';
-        tovWinNT: StringResult := 'Windows_NT';
-        tovLinux: StringResult := 'Linux';
-        tovMacOS: StringResult := 'macOS';
+
+        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
       end;
-
-      DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-      FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-
     end
 
     else if LowerCase(s) = LowerCase('GetNTVersion') then
     begin
    {$IFDEF WINDOWS}
       syntaxCheck := True;
-
-
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-      if GetUibOsType(errorinfo) <> tovWinNT then
-        StringResult := 'No OS of type Windows NT'
-      else
+      if not testSyntax then
       begin
         OldNumberOfErrors := LogDatei.NumberOfErrors;
-        case GetuibNTversion(ErrorInfo) of
-          tntverNONE:
-          begin
-            LogDatei.log(ErrorInfo, LLError);
-            StringResult := ErrorInfo;
+
+        if GetUibOsType(errorinfo) <> tovWinNT then
+          StringResult := 'No OS of type Windows NT'
+        else
+        begin
+          OldNumberOfErrors := LogDatei.NumberOfErrors;
+          case GetuibNTversion(ErrorInfo) of
+            tntverNONE:
+            begin
+              LogDatei.log(ErrorInfo, LLError);
+              StringResult := ErrorInfo;
+            end;
+            tntverNT3: StringResult := 'NT3';
+            tntverNT4: StringResult := 'NT4';
+            tntverWIN2K:
+            begin
+              minorver := GetNTVersionMinor;
+              if minorver = 0 then
+                StringResult := 'Win2k'
+              else if minorver = 1 then
+                StringResult := 'WinXP'
+              else
+                StringResult := 'Win NT 5.' + IntToStr(minorver);
+            end;
+            tntverWINVISTA:
+            begin
+              StringResult := 'Windows Vista';
+            end;
+            tntverWINX: StringResult :=
+                'Win NT ' + IntToStr(GetNtVersionMajor) + '.' + IntToStr(minorver);
           end;
-          tntverNT3: StringResult := 'NT3';
-          tntverNT4: StringResult := 'NT4';
-          tntverWIN2K:
-          begin
-            minorver := GetNTVersionMinor;
-            if minorver = 0 then
-              StringResult := 'Win2k'
-            else if minorver = 1 then
-              StringResult := 'WinXP'
-            else
-              StringResult := 'Win NT 5.' + IntToStr(minorver);
-          end;
-          tntverWINVISTA:
-          begin
-            StringResult := 'Windows Vista';
-          end;
-          tntverWINX: StringResult :=
-              'Win NT ' + IntToStr(GetNtVersionMajor) + '.' + IntToStr(minorver);
+          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
         end;
-        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
       end;
     {$ELSE}
       StringResult := 'No Windows';
@@ -15426,54 +15433,65 @@ begin
     else if LowerCase(s) = LowerCase('GetLinuxDistroType') then
     begin
       syntaxcheck := True;
-      StringResult := 'no_linux';
-    {$IFDEF UNIX}
-      StringResult := getLinuxDistroType;
-    {$ENDIF LINUX}
+      if not testSyntax then
+      begin
+        StringResult := 'no_linux';
+      {$IFDEF UNIX}
+        StringResult := getLinuxDistroType;
+      {$ENDIF LINUX}
+      end;
     end
 
     else if LowerCase(s) = LowerCase('GetSystemtype') then
     begin
       syntaxcheck := True;
-      if Is64BitSystem then
-        StringResult := '64 Bit System'
-      else
-        StringResult := 'x86 System';
+      if not testSyntax then
+      begin
+        if Is64BitSystem then
+          StringResult := '64 Bit System'
+        else
+          StringResult := 'x86 System';
+      end;
     end
 
     else if LowerCase(s) = LowerCase('GetOSArchitecture') then
     begin
       syntaxcheck := True;
-      StringResult := getOSArchitecture;
+      if not testSyntax then
+         StringResult := getOSArchitecture;
     end
 
 
     else if LowerCase(s) = LowerCase('GetUsercontext') then
     begin
       syntaxcheck := True;
-      StringResult := usercontext;
+      if not testSyntax then
+         StringResult := usercontext;
     end
 
     else if LowerCase(s) = LowerCase('GetLoggedInUser') then
     begin
       syntaxcheck := True;
-      StringResult := getLoggedInUser;
+      if not testSyntax then
+         StringResult := getLoggedInUser;
     end
 
     else if LowerCase(s) = LowerCase('readVersionFromProfile') then
     begin
       syntaxcheck := True;
-      StringResult := readVersionFromProfile;
+      if not testSyntax then
+         StringResult := readVersionFromProfile;
     end
 
 
     else if LowerCase(s) = LowerCase('GetScriptMode') then
     begin
       syntaxcheck := True;
-      case scriptMode of
-        tsmMachine: StringResult := 'Machine';
-        tsmLogin: StringResult := 'Login';
-      end;
+      if not testSyntax then
+         case scriptMode of
+            tsmMachine: StringResult := 'Machine';
+            tsmLogin: StringResult := 'Login';
+         end;
     end
 
 
@@ -15481,35 +15499,37 @@ begin
       (LowerCase(s) = LowerCase('GetMSVersionName')) then
     begin
       syntaxCheck := True;
-
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-      if GetUibOsType(errorinfo) <> tovWinNT then
-        StringResult := 'Not an OS of type Windows NT'
-      else
+      if not testSyntax then
       begin
-      {$IFDEF WINDOWS}
         OldNumberOfErrors := LogDatei.NumberOfErrors;
 
-        majorVer := GetuibNTversion(ErrorInfo);
-        if majorVer = tntverNONE then
-        begin
-          LogDatei.log(ErrorInfo, LLError);
-          StringResult := ErrorInfo;
-        end
+        if GetUibOsType(errorinfo) <> tovWinNT then
+          StringResult := 'Not an OS of type Windows NT'
         else
         begin
-          if LowerCase(s) = LowerCase('GetMSVersionName') then
-            StringResult := GetMSVersionName
-          else
-            // case LowerCase(s) = GetMSVersionInfo
-            StringResult := IntToStr(GetNTVersionMajor) + '.' +
-              IntToStr(GetNTVersionMinor);
-        end;
+        {$IFDEF WINDOWS}
+          OldNumberOfErrors := LogDatei.NumberOfErrors;
 
-        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-      {$ENDIF WINDOWS}
+          majorVer := GetuibNTversion(ErrorInfo);
+          if majorVer = tntverNONE then
+          begin
+            LogDatei.log(ErrorInfo, LLError);
+            StringResult := ErrorInfo;
+          end
+          else
+          begin
+            if LowerCase(s) = LowerCase('GetMSVersionName') then
+              StringResult := GetMSVersionName
+            else
+              // case LowerCase(s) = GetMSVersionInfo
+              StringResult := IntToStr(GetNTVersionMajor) + '.' +
+                IntToStr(GetNTVersionMinor);
+          end;
+
+          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        {$ENDIF WINDOWS}
+        end;
       end;
     end
 
@@ -15517,16 +15537,18 @@ begin
     else if LowerCase(s) = LowerCase('GetMacosVersionInfo') then
     begin
       syntaxCheck := True;
-
-      OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-      if GetUibOsType(errorinfo) <> tovMacos then
-        StringResult := 'Not an OS of type macOS'
-      else
+      if not testSyntax then
       begin
-      {$IFDEF DARWIN}
-        StringResult := GetMacosVersionInfo;
-      {$ENDIF DARWIN}
+        OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+        if GetUibOsType(errorinfo) <> tovMacos then
+          StringResult := 'Not an OS of type macOS'
+        else
+        begin
+        {$IFDEF DARWIN}
+          StringResult := GetMacosVersionInfo;
+        {$ENDIF DARWIN}
+        end;
       end;
     end
 
@@ -15536,10 +15558,13 @@ begin
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
-            LogDatei.log('The Function IniVar is deprecated ! use GetProductProperty',
-              LLWarning);
-            StringResult := ProductvarsForPC.Values[s1];
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+              LogDatei.log('The Function IniVar is deprecated ! use GetProductProperty',
+                LLWarning);
+              StringResult := ProductvarsForPC.Values[s1];
+            end;
           end;
     end
 
@@ -15554,45 +15579,47 @@ begin
                 if Skip(')', r, r, InfoSyntaxError) then
                 begin
                   syntaxCheck := True;
-
-                  // try to get from lookup table
-                  if ProductvarsForPC.indexOfName(s1) = -1 then
+                  if not testSyntax then
                   begin
-                    tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
-                    if FileExists(tmpstr) then
+                    // try to get from lookup table
+                    if ProductvarsForPC.indexOfName(s1) = -1 then
                     begin
-                      LogDatei.log(
-                        'Property not existing in GetProductProperty - trying properties.conf',
-                        LLWarning);
-                      if Assigned(list1) then FreeAndNil(list1);
-                      list1 := TXStringlist.Create;
-                      list1.loadFromFile(tmpstr);
-                      tmpbool := False; // default used
-                      StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
-                      FreeAndNil(list1);
-                      if tmpbool then
+                      tmpstr := ExtractFileDir(FFilename) + PathDelim + 'properties.conf';
+                      if FileExists(tmpstr) then
+                      begin
                         LogDatei.log(
-                          'Property not existing in GetProductProperty in file: '
-                          + tmpstr + '- using default',
+                          'Property not existing in GetProductProperty - trying properties.conf',
                           LLWarning);
+                        if Assigned(list1) then FreeAndNil(list1);
+                        list1 := TXStringlist.Create;
+                        list1.loadFromFile(tmpstr);
+                        tmpbool := False; // default used
+                        StringResult := list1.getStringValueWithDefault(s1, s2, tmpbool);
+                        FreeAndNil(list1);
+                        if tmpbool then
+                          LogDatei.log(
+                            'Property not existing in GetProductProperty in file: '
+                            + tmpstr + '- using default',
+                            LLWarning);
+                      end
+                      else
+                      begin
+                        LogDatei.log(
+                          'Property not existing in GetProductProperty - using default',
+                          LLWarning);
+                        StringResult := s2;
+                      end;
                     end
                     else
                     begin
-                      LogDatei.log(
-                        'Property not existing in GetProductProperty - using default',
-                        LLWarning);
-                      StringResult := s2;
+                      // get the property value from the looup table
+                      StringResult := ProductvarsForPC.Values[s1];
                     end;
-                  end
-                  else
-                  begin
-                    // get the property value from the looup table
-                    StringResult := ProductvarsForPC.Values[s1];
-                  end;
 
-                  if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
-                    LogDatei.AddToConfidentials(StringResult);
-                end;
+                    if (LowerCase(s) = LowerCase('GetConfidentialProductProperty')) then
+                      LogDatei.AddToConfidentials(StringResult);
+                  end;
+              end;
       except
         on E: Exception do
         begin
@@ -15615,33 +15642,36 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              //StringResult := GetHostByName(s1);
-
-              HostsImage := TuibPatchHostsFile.Create;
-              Logdatei.LogLevel := LogLevel;
-              Logdatei.LogSIndentLevel := 0;
-
-              OldNumberOfErrors := LogDatei.NumberOfErrors;
-              OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-              HostsLocation := DefaultHosts;
-
-              if not FileExists(HostsLocation) then
+              if not testSyntax then
               begin
-                LogDatei.log('Error: Hosts ' + HostsLocation + ' not found', LLError);
-              end
-              else
-              begin
-                HostsImage.LoadFromFile(HostsLocation);
-                HostsImage.GetHostname(s1, StringResult);
+                //StringResult := GetHostByName(s1);
+
+                HostsImage := TuibPatchHostsFile.Create;
+                Logdatei.LogLevel := LogLevel;
+                Logdatei.LogSIndentLevel := 0;
+
+                OldNumberOfErrors := LogDatei.NumberOfErrors;
+                OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+
+                HostsLocation := DefaultHosts;
+
+                if not FileExists(HostsLocation) then
+                begin
+                  LogDatei.log('Error: Hosts ' + HostsLocation + ' not found', LLError);
+                end
+                else
+                begin
+                  HostsImage.LoadFromFile(HostsLocation);
+                  HostsImage.GetHostname(s1, StringResult);
+                end;
+                HostsImage.Free;
+                HostsImage := nil;
+
+                DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+                DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
+                FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+                FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
               end;
-              HostsImage.Free;
-              HostsImage := nil;
-
-              DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-              DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
-              FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-              FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
             end;
         end;
     end
@@ -15653,32 +15683,34 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+              begin
+                HostsImage := TuibPatchHostsFile.Create;
+                Logdatei.LogLevel := LogLevel;
+                Logdatei.LogSIndentLevel := 0;
 
-            HostsImage := TuibPatchHostsFile.Create;
-            Logdatei.LogLevel := LogLevel;
-            Logdatei.LogSIndentLevel := 0;
+                OldNumberOfErrors := LogDatei.NumberOfErrors;
+                OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
-            OldNumberOfErrors := LogDatei.NumberOfErrors;
-            OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+                HostsLocation := DefaultHosts;
 
-            HostsLocation := DefaultHosts;
+                if not FileExists(HostsLocation) then
+                begin
+                  Logdatei.log('Hosts ' + HostsLocation + ' not found', LLerror);
+                end
+                else
+                begin
+                  HostsImage.LoadFromFile(HostsLocation);
+                  HostsImage.GetAddress(s1, StringResult);
+                end;
+                HostsImage.Free;
+                HostsImage := nil;
 
-            if not FileExists(HostsLocation) then
-            begin
-              Logdatei.log('Hosts ' + HostsLocation + ' not found', LLerror);
-            end
-            else
-            begin
-              HostsImage.LoadFromFile(HostsLocation);
-              HostsImage.GetAddress(s1, StringResult);
-            end;
-            HostsImage.Free;
-            HostsImage := nil;
-
-            DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-            DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
-            FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
-            FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
+                DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+                DiffNumberOfWarnings := LogDatei.NumberOfWarnings - OldNumberOfWarnings;
+                FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+                FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
+              end;
           end;
     end
 
@@ -15690,18 +15722,21 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-     {$IFDEF WIN64}
-            StringResult := '';
-            Logdatei.log('Error: Not implemented for winst64', LLerror);
-     {$ELSE}
-            if isip(s1) then
-              StringResult := getMyIpByTarget(s1)
-            else
-            begin
-              StringResult := '';
-              Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
-            end;
-     {$ENDIF}
+            if not testSyntax then
+              begin
+           {$IFDEF WIN64}
+                  StringResult := '';
+                  Logdatei.log('Error: Not implemented for winst64', LLerror);
+           {$ELSE}
+                  if isip(s1) then
+                    StringResult := getMyIpByTarget(s1)
+                  else
+                  begin
+                    StringResult := '';
+                    Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 Address', LLerror);
+                  end;
+           {$ENDIF}
+              end;
           end;
     end
 
@@ -15714,37 +15749,40 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := GetHostByName(s1);
-            if (stringresult = '') or (not isValidIP4(stringresult)) then
-            begin
-              if GetIPFromHost(s1, s2, s3) then
-                StringResult := s2
-              else
+            if not testSyntax then
               begin
-       {$IFDEF LINUX}
-                //StringResult :=  getCommandResult('resolveip -s '+s1);
-                StringResult := getCommandResult('getent hosts ' + s1);
-                stringsplitByWhiteSpace(StringResult, slist);
-                if slist.Count > 0 then
-                  StringResult := slist.Strings[0]
-                else
-                  StringResult := '';
-                if not IsIP(StringResult) then
+                StringResult := GetHostByName(s1);
+                if (stringresult = '') or (not isValidIP4(stringresult)) then
                 begin
-                  LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
-                  StringResult := '';
-                end;
+                  if GetIPFromHost(s1, s2, s3) then
+                    StringResult := s2
+                  else
+                  begin
+           {$IFDEF LINUX}
+                    //StringResult :=  getCommandResult('resolveip -s '+s1);
+                    StringResult := getCommandResult('getent hosts ' + s1);
+                    stringsplitByWhiteSpace(StringResult, slist);
+                    if slist.Count > 0 then
+                      StringResult := slist.Strings[0]
+                    else
+                      StringResult := '';
+                    if not IsIP(StringResult) then
+                    begin
+                      LogDatei.log('Warning: no valid IP found for: ' + s1, LLwarning);
+                      StringResult := '';
+                    end;
 
-       {$ENDIF LINUX}
-       {$IFDEF DARWIN}
-                StringResult := getCommandResult('dig +short -x  ' + s1);
-       {$ENDIF LINUX}
-       {$IFDEF WINDOWS}
-                StringResult := '';
-                Logdatei.log('Error: ' + s3, LLerror);
-       {$ENDIF WINDOWS}
+           {$ENDIF LINUX}
+           {$IFDEF DARWIN}
+                    StringResult := getCommandResult('dig +short -x  ' + s1);
+           {$ENDIF LINUX}
+           {$IFDEF WINDOWS}
+                    StringResult := '';
+                    Logdatei.log('Error: ' + s3, LLerror);
+           {$ENDIF WINDOWS}
+                  end;
+                end;
               end;
-            end;
           end;
     end
 
@@ -15762,7 +15800,8 @@ begin
             else
             begin
               syntaxCheck := True;
-              StringResult := getDefaultNetmaskByIP4adr(s1);
+              if not testSyntax then
+                 StringResult := getDefaultNetmaskByIP4adr(s1);
             end;
           end;
     end
@@ -15774,15 +15813,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            if cidrToNetmask(s1) = '' then
-            begin
-              StringResult := '';
-              Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
-            end
-            else
-            begin
-              StringResult := cidrToNetmask(s1);
-            end;
+            if not testSyntax then
+              begin
+                if cidrToNetmask(s1) = '' then
+                begin
+                  StringResult := '';
+                  Logdatei.log('Error: ' + s1 + ' is not a valid CIDR', LLerror);
+                end
+                else
+                begin
+                  StringResult := cidrToNetmask(s1);
+                end;
+              end;
           end;
     end
 
@@ -15793,14 +15835,17 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            if netmaskToCidr(s1) = '' then
+            if not testSyntax then
             begin
-              StringResult := '';
-              Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
-            end
-            else
-            begin
-              StringResult := netmaskToCidr(s1);
+              if netmaskToCidr(s1) = '' then
+              begin
+                StringResult := '';
+                Logdatei.log('Error: ' + s1 + ' is not a valid IPv4 netmask', LLerror);
+              end
+              else
+              begin
+                StringResult := netmaskToCidr(s1);
+              end;
             end;
           end;
     end
@@ -15819,8 +15864,9 @@ begin
               GetWord(r, sx, r, WordDelimiterSet1);
               if Skip(')', r, r, InfoSyntaxError) then
               begin
-                StringResult := Inifile.ReadString(s1, sx, '' (* 'ERROR' *));
                 syntaxCheck := True;
+                if not testSyntax then
+                  StringResult := Inifile.ReadString(s1, sx, '' (* 'ERROR' *));
               end;
             end;
             Inifile.Free;
@@ -15841,35 +15887,37 @@ begin
                       if Skip(')', r, r, InfoSyntaxError) then
                       begin
                         syntaxCheck := True;
-                        try
-                          s1 := ExpandFileName(s1);
-                          Inifile := TInifile.Create(s1);
+                        if not testSyntax then
+                        begin
+                          try
+                            s1 := ExpandFileName(s1);
+                            Inifile := TInifile.Create(s1);
 
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log
-                          ('    reading the value to the key "' + s3 +
-                            '" in section "' + s2 + '"  from inifile  "' +
-                            s1 + '", default value  "' + s4 + '"',
-                            LevelComplete);
-                          s2enc := UTF8ToWinCP(s2);
-                          s3enc := UTF8ToWinCP(s3);
-                          s4enc := UTF8ToWinCP(s4);
-                          StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
-                          StringResult := WinCPToUTF8(StringResult);
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log
+                            ('    reading the value to the key "' + s3 +
+                              '" in section "' + s2 + '"  from inifile  "' +
+                              s1 + '", default value  "' + s4 + '"',
+                              LevelComplete);
+                            s2enc := UTF8ToWinCP(s2);
+                            s3enc := UTF8ToWinCP(s3);
+                            s4enc := UTF8ToWinCP(s4);
+                            StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
+                            StringResult := WinCPToUTF8(StringResult);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
 
-                          Inifile.Free;
-                          Inifile := nil;
-                        except
-                          on e: Exception do
-                          begin
-                            LogDatei.log('Error in creating inifile "' +
-                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                            StringResult := s4;
+                            Inifile.Free;
+                            Inifile := nil;
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.log('Error in creating inifile "' +
+                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                              StringResult := s4;
+                            end;
                           end;
                         end;
-
-                      end;
+                    end;
     end
 
   (*
@@ -15916,21 +15964,23 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              s1 := ExpandFileName(s1);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('    Reading TOML file  "' + s1, LevelComplete);
-              StringResult := ReadTOMLFile(s1);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in ReadTOMLFile "' + s1 +
-                  '", message: "' + e.Message + '"', LevelWarnings);
-                StringResult := '';
+            if not testSyntax then
+            begin
+              try
+                s1 := ExpandFileName(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    Reading TOML file  "' + s1, LevelComplete);
+                StringResult := ReadTOMLFile(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ReadTOMLFile "' + s1 +
+                    '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
               end;
             end;
-
           end;
     end
 
@@ -15942,20 +15992,22 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('    GetTOMLAsString  "' + s1, LevelComplete);
-              StringResult := GetTOMLAsString(s1);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in GetTOMLAsString "' + s1 +
-                  '", message: "' + e.Message + '"', LevelWarnings);
-                StringResult := '';
+            if not testSyntax then
+            begin
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('    GetTOMLAsString  "' + s1, LevelComplete);
+                StringResult := GetTOMLAsString(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in GetTOMLAsString "' + s1 +
+                    '", message: "' + e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
               end;
             end;
-
           end;
     end
 
@@ -15969,21 +16021,23 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                try
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('    Getting Table  "' + s2 + '" as String ',
-                    LevelComplete);
-                  StringResult := GetTOMLTableAsString(s1, s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in GetTOMLTableAsString "' +
-                      s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                    StringResult := '';
+                if not testSyntax then
+                begin
+                  try
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('    Getting Table  "' + s2 + '" as String ',
+                      LevelComplete);
+                    StringResult := GetTOMLTableAsString(s1, s2);
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Error in GetTOMLTableAsString "' +
+                        s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                      StringResult := '';
+                    end;
                   end;
                 end;
-
               end;
     end
 
@@ -15999,23 +16053,25 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    try
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                      LogDatei.log('    Getting the value of the key "' +
-                        s2 + '"  from TOML contents with default value : "' +
-                        s3 + '"',
-                        LevelComplete);
-                      StringResult := GetValueFromTOML(s1, s2, s3);
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                    except
-                      on e: Exception do
-                      begin
-                        LogDatei.log('Error in GetValueFromTOML "' +
-                          s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                        StringResult := s3;
+                    if not testSyntax then
+                    begin
+                      try
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log('    Getting the value of the key "' +
+                          s2 + '"  from TOML contents with default value : "' +
+                          s3 + '"',
+                          LevelComplete);
+                        StringResult := GetValueFromTOML(s1, s2, s3);
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Error in GetValueFromTOML "' +
+                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                          StringResult := s3;
+                        end;
                       end;
                     end;
-
                   end;
     end
 
@@ -16033,22 +16089,24 @@ begin
                       if Skip(')', r, r, InfoSyntaxError) then
                       begin
                         syntaxCheck := True;
-                        try
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('    Modifying TOML contents with command "' +
-                            s2 + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
-                            LevelComplete);
-                          StringResult := ModifyTOML(s1, s2, s3, s4);
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                        except
-                          on e: Exception do
-                          begin
-                            LogDatei.log('Error in ModifyTOML "' +
-                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                            StringResult := '';
+                        if not testSyntax then
+                        begin
+                          try
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('    Modifying TOML contents with command "' +
+                              s2 + '"  in key : "' + s3 + '" and value : "' + s4 + '"',
+                              LevelComplete);
+                            StringResult := ModifyTOML(s1, s2, s3, s4);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.log('Error in ModifyTOML "' +
+                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                              StringResult := '';
+                            end;
                           end;
                         end;
-
                       end;
     end
 
@@ -16062,21 +16120,23 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                try
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                  LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
-                    LevelComplete);
-                  StringResult := DeleteTableFromTOML(s1, s2);
-                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Error in DeleteTableFromTOML "' +
-                      s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                    StringResult := '';
+                if not testSyntax then
+                begin
+                  try
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('    Deleting Table "' + s2 + '" from TOML contents',
+                      LevelComplete);
+                    StringResult := DeleteTableFromTOML(s1, s2);
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Error in DeleteTableFromTOML "' +
+                        s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                      StringResult := '';
+                    end;
                   end;
                 end;
-
               end;
     end
 
@@ -16088,18 +16148,21 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log
-              ('    Coverting TOML contents to JSON String ', LevelComplete);
-              StringResult := ConvertTOMLtoJSON(s1);
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Error in ConvertTOMLtoJSON, message: "' +
-                  e.Message + '"', LevelWarnings);
-                StringResult := '';
+            if not testSyntax then
+            begin
+              try
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log
+                ('    Coverting TOML contents to JSON String ', LevelComplete);
+                StringResult := ConvertTOMLtoJSON(s1);
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error in ConvertTOMLtoJSON, message: "' +
+                    e.Message + '"', LevelWarnings);
+                  StringResult := '';
+                end;
               end;
             end;
           end;
@@ -16112,7 +16175,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := lowercase(s1);
+            if not testSyntax then
+               StringResult := lowercase(s1);
           end;
     end
 
@@ -16123,7 +16187,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := uppercase(s1);
+            if not testSyntax then
+               StringResult := uppercase(s1);
           end;
     end
 
@@ -16134,7 +16199,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := trim(s1);
+            if not testSyntax then
+                StringResult := trim(s1);
           end;
     end
 
@@ -16145,8 +16211,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            if not which(s1, StringResult) then
+            if not testSyntax then
+            begin
+              if not which(s1, StringResult) then
               StringResult := '';
+            end;
           end;
     end
 
@@ -16157,16 +16226,19 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            list1 := TXStringList.Create;
-            tmpstr := s1;
-            for i := 1 to ConstList.Count do
+            if not testSyntax then
             begin
-              if list1.replaceInLine(tmpstr, Constlist.Strings[i - 1],
-                ConstValuesList.Strings[i - 1], False, tmpstr1) then
-                tmpstr := tmpstr1;
+              list1 := TXStringList.Create;
+              tmpstr := s1;
+              for i := 1 to ConstList.Count do
+              begin
+                if list1.replaceInLine(tmpstr, Constlist.Strings[i - 1],
+                  ConstValuesList.Strings[i - 1], False, tmpstr1) then
+                  tmpstr := tmpstr1;
+              end;
+              StringResult := tmpstr;
+              list1.Free;
             end;
-            StringResult := tmpstr;
-            list1.Free;
           end;
     end
 
@@ -16188,8 +16260,11 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              logdatei.AddToConfidentials(s1);
-              StringResult := s1;
+              if not testSyntax then
+              begin
+                logdatei.AddToConfidentials(s1);
+                StringResult := s1;
+              end;
             end;
           end;
         finally
@@ -16207,11 +16282,14 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            if not opsicalc(s1, StringResult) then
+            if not testSyntax then
             begin
-              LogDatei.log('Error in calculate : could not calculate : ' +
-                s1 + ' ; ' + StringResult, LLError);
-              StringResult := '';
+              if not opsicalc(s1, StringResult) then
+              begin
+                LogDatei.log('Error in calculate : could not calculate : ' +
+                  s1 + ' ; ' + StringResult, LLError);
+                StringResult := '';
+              end;
             end;
           end;
       if not syntaxCheck then
@@ -16230,7 +16308,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := IntToStr(length(s1));
+            if not testSyntax then
+               StringResult := IntToStr(length(s1));
           end;
       if not syntaxCheck then
       begin
@@ -16247,7 +16326,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := resolveSymlink(s1);
+            if not testSyntax then
+               StringResult := resolveSymlink(s1);
           (*
           {$IFDEF WINDOWS}
           StringResult := resolveWinSymlink(s1);
@@ -16272,7 +16352,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := GetForcedPathDelims(s1);
+            if not testSyntax then
+              StringResult := GetForcedPathDelims(s1);
           end;
       if not syntaxCheck then
       begin
@@ -16285,38 +16366,39 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
-        begin
-          try
-            list1 := TXStringList.Create;
-            s1 := ExpandFileName(s1);
-            if FileExists(s1) then
-              list1.loadfromfile(s1)
-            else
-            begin
-              LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
-                s1, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-            end;
-            //list1.loadfromfile(s1);
-            if list1.Count > 0 then
-              StringResult := list1.Strings[0]
-            //StringResult := reencode(list1.Strings[0], 'system')
-            else
-              StringResult := '';
-            list1.Free;
-          except
-            on e: Exception do
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in strLoadTextFile on loading file: ' +
-                s1 + ' with msg: ' + e.message, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-          end;
-          if Skip(')', r, r, InfoSyntaxError) then
+        if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            if not testSyntax then
+            begin
+              try
+                list1 := TXStringList.Create;
+                s1 := ExpandFileName(s1);
+                if FileExists(s1) then
+                  list1.loadfromfile(s1)
+                else
+                begin
+                  LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
+                    s1, LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                end;
+                //list1.loadfromfile(s1);
+                if list1.Count > 0 then
+                  StringResult := list1.Strings[0]
+                //StringResult := reencode(list1.Strings[0], 'system')
+                else
+                  StringResult := '';
+                list1.Free;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                  LogDatei.log('Exception in strLoadTextFile on loading file: ' +
+                    s1 + ' with msg: ' + e.message, LLError);
+                  FNumberOfErrors := FNumberOfErrors + 1;
+                  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                end
+              end;
           end;
         end;
     end
@@ -16330,35 +16412,38 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                try
-                  list1 := TXStringList.Create;
-                  s1 := ExpandFileName(s1);
-                  //list1.loadfromfile(s1);
-                  if FileExists(s1) then
-                    list1.loadFromFileWithEncoding(s1, s2)
-                  else
-                  begin
-                    LogDatei.log('Error on loading file (not found): ' + s1, LLError);
-                    FNumberOfErrors := FNumberOfErrors + 1;
+                if not testSyntax then
+                begin
+                    try
+                      list1 := TXStringList.Create;
+                      s1 := ExpandFileName(s1);
+                      //list1.loadfromfile(s1);
+                      if FileExists(s1) then
+                        list1.loadFromFileWithEncoding(s1, s2)
+                      else
+                      begin
+                        LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                        FNumberOfErrors := FNumberOfErrors + 1;
+                      end;
+                      //list1.loadFromFileWithEncoding(s1, s2);
+                      if list1.Count > 0 then
+                        StringResult := list1.Strings[0]
+                      //StringResult := reencode(list1.Strings[0], s2)
+                      else
+                        StringResult := '';
+                      list1.Free;
+                    except
+                      on e: Exception do
+                      begin
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                        LogDatei.log(
+                          'Exception in strLoadTextFileWithEncoding on loading file: ' +
+                          s1 + ' with msg: ' + e.message, LLError);
+                        FNumberOfErrors := FNumberOfErrors + 1;
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      end
+                    end;
                   end;
-                  //list1.loadFromFileWithEncoding(s1, s2);
-                  if list1.Count > 0 then
-                    StringResult := list1.Strings[0]
-                  //StringResult := reencode(list1.Strings[0], s2)
-                  else
-                    StringResult := '';
-                  list1.Free;
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                    LogDatei.log(
-                      'Exception in strLoadTextFileWithEncoding on loading file: ' +
-                      s1 + ' with msg: ' + e.message, LLError);
-                    FNumberOfErrors := FNumberOfErrors + 1;
-                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                  end
-                end;
               end;
     end
 
@@ -16372,7 +16457,8 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        StringResult := IntToStr(pos(s2, s1));
+        if not testSyntax then
+           StringResult := IntToStr(pos(s2, s1));
       end;
       if not syntaxCheck then
       begin
@@ -16391,20 +16477,23 @@ begin
         InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          n1 := StrToInt(LowerCase(trim(s2)));
+        if not testSyntax then
+        begin
           try
-            n2 := StrToInt(LowerCase(trim(s3)));
-            StringResult := copy(s1, n1, n2);
-            LogDatei.log('strPart from: ' + s1 + ' start: ' +
-              IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' +
-              stringresult + '<',
-              LLDebug2);
+            n1 := StrToInt(LowerCase(trim(s2)));
+            try
+              n2 := StrToInt(LowerCase(trim(s3)));
+              StringResult := copy(s1, n1, n2);
+              LogDatei.log('strPart from: ' + s1 + ' start: ' +
+                IntToStr(n1) + ' number: ' + IntToStr(n2) + ' gives: >' +
+                stringresult + '<',
+                LLDebug2);
+            except
+              LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+            end;
           except
-            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+            LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
           end;
-        except
-          LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
         end;
       end;
       if not syntaxCheck then
@@ -16422,20 +16511,23 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            //LogDatei.log ('incStr for : ' + s1 , LLDebug2);
-            try
-              intresult := StrToInt(s1);
-              //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
-              //Randomize;
-              StringResult := IntToStr(random(intresult));
-              //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
-              //StringResult := IntToStr(intresult);
-            except
-              on E: Exception do
-                LogDatei.log(
-                  'Error in randomIntStr : perhaps could not convert to int : '
-                  +
-                  s1 + ' Error : ' + E.Message, LLError);
+            if not testSyntax then
+            begin
+              //LogDatei.log ('incStr for : ' + s1 , LLDebug2);
+                try
+                  intresult := StrToInt(s1);
+                  //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
+                  //Randomize;
+                  StringResult := IntToStr(random(intresult));
+                  //LogDatei.log ('incStr for : ' + IntToStr(intresult) , LLDebug2);
+                  //StringResult := IntToStr(intresult);
+                except
+                  on E: Exception do
+                    LogDatei.log(
+                      'Error in randomIntStr : perhaps could not convert to int : '
+                      +
+                      s1 + ' Error : ' + E.Message, LLError);
+                end;
             end;
           end;
       if not syntaxCheck then
@@ -16480,15 +16572,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            s1 := LowerCase(trim(s1));
-            if pos('$', s1) = 1 then
-              s1 := copy(s1, 2, length(s1));
-            if pos('0x', s1) = 1 then
-              s1 := copy(s1, 3, length(s1));
-            try
-              StringResult := getlangcodeByHexvalueStr('0x' + s1);
-            except
-              LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+            if not testSyntax then
+            begin
+              s1 := LowerCase(trim(s1));
+                if pos('$', s1) = 1 then
+                  s1 := copy(s1, 2, length(s1));
+                if pos('0x', s1) = 1 then
+                  s1 := copy(s1, 3, length(s1));
+                try
+                  StringResult := getlangcodeByHexvalueStr('0x' + s1);
+                except
+                  LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+                end;
             end;
           end;
     end
@@ -16500,21 +16595,24 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            // do not lowercase this - it is a path
-            s1 := trim(s1);
-            StringResult := '';
-            if not FileExistsUTF8(ExpandFileName(s1)) then
+            if not testSyntax then
             begin
-              LogDatei.log('Error: md5sumFromFile: ' + ExpandFileName(s1) +
-                ' is no valid file', LLError);
-            end
-            else
-              try
-                StringResult := Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
-              except
-                LogDatei.log('Error: Exception at md5sumFromFile: ' +
-                  ExpandFileName(s1), LLError)
-              end;
+                // do not lowercase this - it is a path
+                s1 := trim(s1);
+                StringResult := '';
+                if not FileExistsUTF8(ExpandFileName(s1)) then
+                begin
+                  LogDatei.log('Error: md5sumFromFile: ' + ExpandFileName(s1) +
+                    ' is no valid file', LLError);
+                end
+                else
+                  try
+                    StringResult := Copy(lowerCase(md5fromFile(ExpandFileName(s1))), 0, 32);
+                  except
+                    LogDatei.log('Error: Exception at md5sumFromFile: ' +
+                      ExpandFileName(s1), LLError)
+                  end;
+            end;
           end;
     end
 
@@ -16525,20 +16623,23 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := '';
-            try
-              //LogDatei.log ('Executing0 ' + s1, LLInfo);
-              execShellCall(s1, 'sysnative', 0, True);
-              StringResult := IntToStr(FLastExitCodeOfExe);
-            except
-              on e: Exception do
-              begin
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
-                  LLError);
-                FNumberOfErrors := FNumberOfErrors + 1;
-                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-              end
+            if not testSyntax then
+            begin
+              StringResult := '';
+                try
+                  //LogDatei.log ('Executing0 ' + s1, LLInfo);
+                  execShellCall(s1, 'sysnative', 0, True);
+                  StringResult := IntToStr(FLastExitCodeOfExe);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                    LogDatei.log('Error executing :' + s1 + ' : ' + e.message,
+                      LLError);
+                    FNumberOfErrors := FNumberOfErrors + 1;
+                    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                  end
+                end;
             end;
           end;
     end
@@ -16630,21 +16731,21 @@ begin
         //end;
       end;
       if syntaxCheck then
-      begin
-        try
-          execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
-          StringResult := IntToStr(FLastExitCodeOfExe);
-        except
-          on e: Exception do
-          begin
-            LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
-              LLError);
-          end
+        if not testSyntax then
+        begin
+          try
+            execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+            StringResult := IntToStr(FLastExitCodeOfExe);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
+                LLError);
+            end
+          end;
         end;
-      end;
    {$ENDIF WINDOWS}
     end
-
 
 
     else if LowerCase(s) = LowerCase('processCall') then
@@ -16654,13 +16755,16 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := '';
-            list1 := TXStringList.Create;
-            ArbeitsSektion := TWorkSection.Create(0, nil);
-            ArbeitsSektion.Text := s1;
-            ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
-            ArbeitsSektion.Free;
-            StringResult := IntToStr(FLastExitCodeOfExe);
+            if not testSyntax then
+            begin
+              StringResult := '';
+              list1 := TXStringList.Create;
+              ArbeitsSektion := TWorkSection.Create(0, nil);
+              ArbeitsSektion.Text := s1;
+              ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
+              ArbeitsSektion.Free;
+              StringResult := IntToStr(FLastExitCodeOfExe);
+            end;
           end;
     end
 
@@ -16678,12 +16782,15 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              try
-                StringResult := BoolToStr(boolresult, True);
-              except
-                LogDatei.log('Error: boolToString: string expression' +
-                  s1 + ' has no boolean value', LLError);
-                StringResult := '';
+              if not testSyntax then
+              begin
+                try
+                  StringResult := BoolToStr(boolresult, True);
+                except
+                  LogDatei.log('Error: boolToString: string expression' +
+                    s1 + ' has no boolean value', LLError);
+                  StringResult := '';
+                end;
               end;
             end;
           except
@@ -16702,12 +16809,15 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              try
-                StringResult := BoolToStr(boolresult, True);
-              except
-                LogDatei.log('Error: boolToString: string expression' +
-                  r + ' has no boolean value', LLError);
-                StringResult := '';
+              if not testSyntax then
+              begin
+                try
+                  StringResult := BoolToStr(boolresult, True);
+                except
+                  LogDatei.log('Error: boolToString: string expression' +
+                    r + ' has no boolean value', LLError);
+                  StringResult := '';
+                end;
               end;
             end;
           end
@@ -16730,15 +16840,18 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            s1 := LowerCase(trim(s1));
-            if pos('$', s1) = 1 then
-              s1 := copy(s1, 2, length(s1));
-            if pos('0x', s1) = 1 then
-              s1 := copy(s1, 3, length(s1));
-            try
-              StringResult := IntToStr(StrToInt('$' + s1));
-            except
-              LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+            if not testSyntax then
+            begin
+              s1 := LowerCase(trim(s1));
+              if pos('$', s1) = 1 then
+                s1 := copy(s1, 2, length(s1));
+              if pos('0x', s1) = 1 then
+                s1 := copy(s1, 3, length(s1));
+              try
+                StringResult := IntToStr(StrToInt('$' + s1));
+              except
+                LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
+              end;
             end;
           end;
     end
@@ -16751,17 +16864,20 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        s1 := LowerCase(trim(s1));
-        try
-          n2 := StrToInt(LowerCase(trim(s2)));
+        if not testSyntax then
+        begin
+          s1 := LowerCase(trim(s1));
           try
-            n1 := StrToInt(s1);
-            StringResult := IntToHex(n1, n2);
+            n2 := StrToInt(LowerCase(trim(s2)));
+            try
+              n1 := StrToInt(s1);
+              StringResult := IntToHex(n1, n2);
+            except
+              LogDatei.log('Error: ' + s1 + ' has no Integer format', LLerror)
+            end;
           except
-            LogDatei.log('Error: ' + s1 + ' has no Integer format', LLerror)
+            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
           end;
-        except
-          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
       end;
     end
@@ -16774,11 +16890,14 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := encryptStringBlow(s1, s2);
-        except
-          LogDatei.log('Error: Exception in encrypt_hex_blow: "' +
-            s1 + '","' + s2 + '"', LLerror)
+        if not testSyntax then
+        begin
+          try
+            StringResult := encryptStringBlow(s1, s2);
+          except
+            LogDatei.log('Error: Exception in encrypt_hex_blow: "' +
+              s1 + '","' + s2 + '"', LLerror)
+          end;
         end;
       end;
     end
@@ -16791,11 +16910,14 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := decryptStringBlow(s1, s2);
-        except
-          LogDatei.log('Error: Exception in decrypt_hex_blow: "' +
-            s1 + '","' + s2 + '"', LLerror)
+        if not testSyntax then
+        begin
+          try
+            StringResult := decryptStringBlow(s1, s2);
+          except
+            LogDatei.log('Error: Exception in decrypt_hex_blow: "' +
+              s1 + '","' + s2 + '"', LLerror)
+          end;
         end;
       end;
     end
@@ -16808,8 +16930,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            //StringResult := B64Encode(s1);
-            StringResult := EncodeStringBase64(s1);
+            if not testSyntax then
+            begin
+              //StringResult := B64Encode(s1);
+              StringResult := EncodeStringBase64(s1);
+            end;
           end;
     end
 
@@ -16820,8 +16945,11 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            //StringResult := B64Decode(s1);
-            StringResult := DecodeStringBase64(s1);
+            if not testSyntax then
+            begin
+              //StringResult := B64Decode(s1);
+              StringResult := DecodeStringBase64(s1);
+            end;
           end;
     end
 
@@ -16833,7 +16961,8 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            StringResult := GetShortWinPathName(s1);
+            if not testSyntax then
+              StringResult := GetShortWinPathName(s1);
           end;
   {$ELSE WINDOWS}
       StringResult := '';
@@ -16848,13 +16977,16 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            str2jsonstr(s1, s2);
-            if s2 = 'ok' then
-              StringResult := s1
-            else
+            if not testSyntax then
             begin
-              StringResult := '';
-              LogDatei.log('Error: ' + s2, LLerror);
+              str2jsonstr(s1, s2);
+              if s2 = 'ok' then
+                StringResult := s1
+              else
+              begin
+                StringResult := '';
+                LogDatei.log('Error: ' + s2, LLerror);
+              end;
             end;
           end;
     end
@@ -16866,12 +16998,15 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              StringResult := IntToStr(jsonAsArrayCountElements(s1));
-            except
-              StringResult := '';
-              LogDatei.log('Error: Exception at jsonAsArrayCountElements with: "' +
-                s1 + '"', LLerror);
+            if not testSyntax then
+            begin
+              try
+                StringResult := IntToStr(jsonAsArrayCountElements(s1));
+              except
+                StringResult := '';
+                LogDatei.log('Error: Exception at jsonAsArrayCountElements with: "' +
+                  s1 + '"', LLerror);
+              end;
             end;
           end;
     end
@@ -16883,12 +17018,15 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            try
-              StringResult := IntToStr(jsonAsObjectCountElements(s1));
-            except
-              StringResult := '';
-              LogDatei.log('Error: Exception at jsonAsObjectCountElements with: "' +
-                s1 + '"', LLerror);
+            if not testSyntax then
+            begin
+              try
+                StringResult := IntToStr(jsonAsObjectCountElements(s1));
+              except
+                StringResult := '';
+                LogDatei.log('Error: Exception at jsonAsObjectCountElements with: "' +
+                  s1 + '"', LLerror);
+              end;
             end;
           end;
     end
@@ -16901,17 +17039,20 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          if jsonAsArrayGetElementByIndex(s1, StrToInt(s2), s3) then
-            StringResult := s3
-          else
-            LogDatei.log('Error at jsonAsArrayGetElementByIndex with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            if jsonAsArrayGetElementByIndex(s1, StrToInt(s2), s3) then
+              StringResult := s3
+            else
+              LogDatei.log('Error at jsonAsArrayGetElementByIndex with: "' +
+                s1 + '","' + s2 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsArrayGetElementByIndex with: "' +
               s1 + '","' + s2 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsArrayGetElementByIndex with: "' +
-            s1 + '","' + s2 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -16924,17 +17065,20 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          if jsonAsArrayDeleteObjectByIndex(s1, StrToInt(s2)) then
-            StringResult := s1
-          else
-            LogDatei.log('Error at jsonAsArrayDeleteObjectByIndex with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            if jsonAsArrayDeleteObjectByIndex(s1, StrToInt(s2)) then
+              StringResult := s1
+            else
+              LogDatei.log('Error at jsonAsArrayDeleteObjectByIndex with: "' +
+                s1 + '","' + s2 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsArrayDeleteObjectByIndex with: "' +
               s1 + '","' + s2 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsArrayDeleteObjectByIndex with: "' +
-            s1 + '","' + s2 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -16947,17 +17091,20 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          if jsonAsObjectDeleteByKey(s1, s2) then
-            StringResult := s1
-          else
-            LogDatei.log('Error at jsonAsObjectDeleteByKey with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            if jsonAsObjectDeleteByKey(s1, s2) then
+              StringResult := s1
+            else
+              LogDatei.log('Error at jsonAsObjectDeleteByKey with: "' +
+                s1 + '","' + s2 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsObjectDeleteByKey with: "' +
               s1 + '","' + s2 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectDeleteByKey with: "' +
-            s1 + '","' + s2 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -16971,18 +17118,21 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          s3 := '';
-          if jsonAsObjectGetValueByKey(s1, s2, s3) then
-            StringResult := s3
-          else
-            LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' +
-              s1 + '","' + s2 + '"', LLInfo);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' +
-            s1 + '","' + s2 + '"', LLerror);
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            s3 := '';
+            if jsonAsObjectGetValueByKey(s1, s2, s3) then
+              StringResult := s3
+            else
+              LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' +
+                s1 + '","' + s2 + '"', LLInfo);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' +
+              s1 + '","' + s2 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -16997,17 +17147,20 @@ begin
         InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          if jsonAsArrayPutObjectByIndex(s3, s1, StrToInt(s2)) then
-            StringResult := s1
-          else
-            LogDatei.log('Error at jsonAsArrayPutObjectByIndex with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            if jsonAsArrayPutObjectByIndex(s3, s1, StrToInt(s2)) then
+              StringResult := s1
+            else
+              LogDatei.log('Error at jsonAsArrayPutObjectByIndex with: "' +
+                s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsArrayPutObjectByIndex with: "' +
               s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsArrayPutObjectByIndex with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -17021,18 +17174,21 @@ begin
         InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          s4 := '';
-          if jsonAsObjectSetValueByKey(s1, s2, s3, s4) then
-            StringResult := s4
-          else
-            LogDatei.log('Error at jsonAsObjectSetValueByKey with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            s4 := '';
+            if jsonAsObjectSetValueByKey(s1, s2, s3, s4) then
+              StringResult := s4
+            else
+              LogDatei.log('Error at jsonAsObjectSetValueByKey with: "' +
+                s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsObjectSetValueByKey with: "' +
               s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectSetValueByKey with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -17046,22 +17202,25 @@ begin
         InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          s4 := '';
-          if jsonAsObjectSetStringtypeValueByKey(s1, s2, s3, s4) then
-            StringResult := s4
-          else
-            LogDatei.log('Error at jsonAsObjectSetStringtypeValueByKey with: "' +
-              s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-        except
-          on e: Exception do
-          begin
+        if not testSyntax then
+        begin
+          try
             StringResult := '';
-            LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
-              + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-            LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
-              e.message, LLerror);
+            s4 := '';
+            if jsonAsObjectSetStringtypeValueByKey(s1, s2, s3, s4) then
+              StringResult := s4
+            else
+              LogDatei.log('Error at jsonAsObjectSetStringtypeValueByKey with: "' +
+                s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          except
+            on e: Exception do
+            begin
+              StringResult := '';
+              LogDatei.log('Error: Exception at jsonAsObjectSetStringtypeValueByKey with: "'
+                + s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+              LogDatei.log('Exception in jsonAsObjectSetStringtypeValueByKey: ' +
+                e.message, LLerror);
+            end;
           end;
         end;
       end;
@@ -17076,18 +17235,21 @@ begin
         InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          s4 := '';
-          if jsonAsObjectAddKeyAndValue(s1, s2, s3, s4) then
-            StringResult := s4
-          else
-            LogDatei.log('Error at jsonAsObjectAddKeyAndValue with: "' +
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            s4 := '';
+            if jsonAsObjectAddKeyAndValue(s1, s2, s3, s4) then
+              StringResult := s4
+            else
+              LogDatei.log('Error at jsonAsObjectAddKeyAndValue with: "' +
+                s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at jsonAsObjectAddKeyAndValue with: "' +
               s1 + '","' + s2 + '","' + s3 + '"', LLerror);
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at jsonAsObjectAddKeyAndValue with: "' +
-            s1 + '","' + s2 + '","' + s3 + '"', LLerror);
+          end;
         end;
       end;
     end
@@ -17097,30 +17259,32 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         syntaxcheck := True;
-        stringresult := '';
-        list1 := TXStringList.Create;
-        slist.Clear;
-
-        if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-          not Skip(')', r, r, InfoSyntaxError) then
-          syntaxCheck := False
-        else
+        if not testSyntax then
         begin
-          try
-            slist.Text := list1.Text;
-            if not stringListToJsonArray(slist, stringresult) then
-            begin
-              LogDatei.log('Error at jsonStringListToJsonArray ', LLerror);
+          stringresult := '';
+          list1 := TXStringList.Create;
+          slist.Clear;
+
+          if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+            not Skip(')', r, r, InfoSyntaxError) then
+            syntaxCheck := False
+          else
+          begin
+            try
+              slist.Text := list1.Text;
+              if not stringListToJsonArray(slist, stringresult) then
+              begin
+                LogDatei.log('Error at jsonStringListToJsonArray ', LLerror);
+                stringresult := '';
+              end;
+            except
+              LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
               stringresult := '';
             end;
-          except
-            LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
-            stringresult := '';
           end;
+          list1.Free;
+          list1 := nil;
         end;
-        list1.Free;
-        list1 := nil;
-
       end;
     end
 
@@ -17137,7 +17301,8 @@ begin
         else
         begin
           syntaxCheck := True;
-          StringResult := createUrl(list1);
+          if not testSyntax then
+              StringResult := createUrl(list1);
         end;
         list1.Free;
         list1 := nil;
@@ -17152,21 +17317,25 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        try
-          StringResult := '';
-          StringResult := list1.Strings[StrToInt(s1)];
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
-            s1 + '"', LLerror);
+        if not testSyntax then
+        begin
+          try
+            StringResult := '';
+            StringResult := list1.Strings[StrToInt(s1)];
+          except
+            StringResult := '';
+            LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
+              s1 + '"', LLerror);
+          end;
         end;
       end;
     end
 
     else if LowerCase(s) = LowerCase('RandomStr') then
     begin
-      StringResult := randomstr(True);
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := randomstr(True);
     end
 
     //randomstrWithParameters
@@ -17185,26 +17354,33 @@ begin
                           if Skip(')', r, r, InfoSyntaxError) then
                           begin
                             syntaxCheck := True;
-                            n1 := StrToInt(s1);
-                            n2 := StrToInt(s2);
-                            n3 := StrToInt(s3);
-                            n4 := StrToInt(s4);
-                            n5 := StrToInt(s5);
-                            StringResult := randomstrWithParameters(n1, n2, n3, n4, n5);
+                            if not testSyntax then
+                            begin
+                              n1 := StrToInt(s1);
+                              n2 := StrToInt(s2);
+                              n3 := StrToInt(s3);
+                              n4 := StrToInt(s4);
+                              n5 := StrToInt(s5);
+                              StringResult := randomstrWithParameters(n1, n2, n3, n4, n5);
+                            end;
                           end;
     end
 
     else if LowerCase(s) = LowerCase('createNewOpsiHostKey') then
     begin
-      StringResult := createNewOpsiHostKey;
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := createNewOpsiHostKey;
     end
 
     else if LowerCase(s) = LowerCase('timeStampAsFloatStr') then
     begin
-      DecimalSeparator := '.';
-      StringResult := floattostrF(now, ffFixed, 15, 3);
       syntaxCheck := True;
+      if not testSyntax then
+      begin
+        DecimalSeparator := '.';
+        StringResult := floattostrF(now, ffFixed, 15, 3);
+      end;
     end
 
 
@@ -17217,7 +17393,8 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        StringResult := IntToStr(getCompareSignStrings(s1, s2));
+        if not testSyntax then
+           StringResult := IntToStr(getCompareSignStrings(s1, s2));
       end;
     end
 
@@ -17229,22 +17406,24 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        OldNumberOfErrors := LogDatei.NumberOfErrors;
-
-        try
-          n1 := StrToInt(s1);
+        if not testSyntax then
+        begin
+          OldNumberOfErrors := LogDatei.NumberOfErrors;
           try
-            n2 := StrToInt(s2);
-            StringResult := IntToStr(getCompareSign(n1, n2));
+            n1 := StrToInt(s1);
+            try
+              n2 := StrToInt(s2);
+              StringResult := IntToStr(getCompareSign(n1, n2));
+            except
+              LogDatei.log('Error: ' + s2 + ' has no Integer format', LLError);
+            end;
           except
-            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLError);
+            LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
           end;
-        except
-          LogDatei.log('Error: ' + s1 + ' has no Integer format', LLError)
-        end;
 
-        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        end;
       end;
     end
 
@@ -17264,7 +17443,8 @@ begin
         else
         begin
           syntaxCheck := True;
-          StringResult := getIP4NetworkByAdrAndMask(s1, s2);
+          if not testSyntax then
+             StringResult := getIP4NetworkByAdrAndMask(s1, s2);
         end;
       end;
     end
@@ -17277,19 +17457,22 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
-        OldNumberOfErrors := LogDatei.NumberOfErrors;
-        StringResult := '0';
-        if getDecimalCompareSign(s1, s2, intresult, errorinfo, False) then
-          StringResult := IntToStr(intresult)
-        else
+        if not testSyntax then
         begin
-          LogDatei.log('Error: ' + errorinfo, LLError);
-          LogDatei.log('Error: CompareDotSeparatedNumbers: using default result = 0 ',
-            LLError);
-        end;
+          OldNumberOfErrors := LogDatei.NumberOfErrors;
+          StringResult := '0';
+          if getDecimalCompareSign(s1, s2, intresult, errorinfo, False) then
+            StringResult := IntToStr(intresult)
+          else
+          begin
+            LogDatei.log('Error: ' + errorinfo, LLError);
+            LogDatei.log('Error: CompareDotSeparatedNumbers: using default result = 0 ',
+              LLError);
+          end;
 
-        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        end;
       end;
     end
 
@@ -17301,24 +17484,27 @@ begin
         Skip(')', r, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
+        if not testSyntax then
+        begin
+          OldNumberOfErrors := LogDatei.NumberOfErrors;
 
-        OldNumberOfErrors := LogDatei.NumberOfErrors;
+          if getDecimalCompareSign(s1, s2, intresult, errorinfo, True) then
+            StringResult := IntToStr(intresult)
+          else
+            LogDatei.log('Error: ' + errorinfo, LLError);
 
-        if getDecimalCompareSign(s1, s2, intresult, errorinfo, True) then
-          StringResult := IntToStr(intresult)
-        else
-          LogDatei.log('Error: ' + errorinfo, LLError);
-
-        DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-        FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+          DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+          FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+        end;
       end;
     end
 
 
     else if LowerCase(s) = LowerCase('ParamStr') then
     begin
-      StringResult := ExtraParameter;
       syntaxCheck := True;
+      if not testSyntax then
+         StringResult := ExtraParameter;
     end
 
     else if LowerCase(s) = LowerCase('SubstringBefore') then
@@ -17330,12 +17516,14 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-
-                StringResult := '';
-                if (length(s1) >= length(s2)) and
-                  (copy(s1, length(s1) - length(s2) + 1, length(s2)) = s2) then
-                  StringResult := copy(s1, 1, length(s1) - length(s2));
-              end;
+                if not testSyntax then
+                begin
+                  StringResult := '';
+                  if (length(s1) >= length(s2)) and
+                    (copy(s1, length(s1) - length(s2) + 1, length(s2)) = s2) then
+                    StringResult := copy(s1, 1, length(s1) - length(s2));
+                end;
+             end;
     end
 
 
@@ -17348,21 +17536,24 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                StringResult := opsiUnquotestr(s1, s2);
-         (*
-         if  (length(s1) >= 1) and (length(s2) >= 1) then
-         begin
-          tempchar := trim(s2)[1];
-          tempansistr := s1;
-          tempansistrp := pansichar(tempansistr);
-           StringResult := AnsiExtractQuotedStr(tempansistrp,tempchar);
-           // s1 was not quoted then give back s1
-           if StringResult = '' then  StringResult := s1;
-           // s1 was not quoted by s2 then give back s1
-           // and (ansipos('NULL',s1)=0)
-           if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
-         end;
-         *)
+                if not testSyntax then
+                begin
+                  StringResult := opsiUnquotestr(s1, s2);
+                 (*
+                 if  (length(s1) >= 1) and (length(s2) >= 1) then
+                 begin
+                  tempchar := trim(s2)[1];
+                  tempansistr := s1;
+                  tempansistrp := pansichar(tempansistr);
+                   StringResult := AnsiExtractQuotedStr(tempansistrp,tempchar);
+                   // s1 was not quoted then give back s1
+                   if StringResult = '' then  StringResult := s1;
+                   // s1 was not quoted by s2 then give back s1
+                   // and (ansipos('NULL',s1)=0)
+                   if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
+                 end;
+                 *)
+                end;
               end;
     end
 
@@ -17375,21 +17566,24 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                StringResult := opsiUnquotestr2(s1, s2);
-         (*
-         if  (length(s1) >= 1) and (length(s2) >= 1) then
-         begin
-          tempchar := trim(s2)[1];
-          tempansistr := s1;
-          tempansistrp := pansichar(tempansistr);
-           StringResult := AnsiExtractQuotedStr(tempansistrp,tempchar);
-           // s1 was not quoted then give back s1
-           if StringResult = '' then  StringResult := s1;
-           // s1 was not quoted by s2 then give back s1
-           // and (ansipos('NULL',s1)=0)
-           if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
-         end;
-         *)
+                if not testSyntax then
+                begin
+                  StringResult := opsiUnquotestr2(s1, s2);
+                 (*
+                 if  (length(s1) >= 1) and (length(s2) >= 1) then
+                 begin
+                  tempchar := trim(s2)[1];
+                  tempansistr := s1;
+                  tempansistrp := pansichar(tempansistr);
+                   StringResult := AnsiExtractQuotedStr(tempansistrp,tempchar);
+                   // s1 was not quoted then give back s1
+                   if StringResult = '' then  StringResult := s1;
+                   // s1 was not quoted by s2 then give back s1
+                   // and (ansipos('NULL',s1)=0)
+                   if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
+                 end;
+                 *)
+                end;
               end;
     end
 
@@ -17402,30 +17596,33 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
-                boolresult := StrToBool(s2);
-         {$IFDEF GUI}
-                try
-                  Finputstring := TFinputstring.Create(nil);
-                  if boolresult then
-                  begin
-                    Finputstring.EditButton1.EchoMode := emPassword;
-                    Finputstring.EditButton1.Button.Enabled := True;
-                  end
-                  else
-                  begin
-                    Finputstring.EditButton1.EchoMode := emNormal;
-                    Finputstring.EditButton1.Button.Enabled := False;
+                if not testSyntax then
+                begin
+                  boolresult := StrToBool(s2);
+           {$IFDEF GUI}
+                  try
+                    Finputstring := TFinputstring.Create(nil);
+                    if boolresult then
+                    begin
+                      Finputstring.EditButton1.EchoMode := emPassword;
+                      Finputstring.EditButton1.Button.Enabled := True;
+                    end
+                    else
+                    begin
+                      Finputstring.EditButton1.EchoMode := emNormal;
+                      Finputstring.EditButton1.Button.Enabled := False;
+                    end;
+                    Finputstring.Label1.Caption := s1;
+                    Finputstring.EditButton1.Text := '';
+                    Finputstring.ShowModal;
+                    StringResult := Finputstring.EditButton1.Text;
+                  finally
+                    FreeAndNil(Finputstring);
                   end;
-                  Finputstring.Label1.Caption := s1;
-                  Finputstring.EditButton1.Text := '';
-                  Finputstring.ShowModal;
-                  StringResult := Finputstring.EditButton1.Text;
-                finally
-                  FreeAndNil(Finputstring);
+           {$ELSE GUI}
+                  cmdLineInputDialog(StringResult, s1, '', boolresult);
+           {$ENDIF GUI}
                 end;
-         {$ELSE GUI}
-                cmdLineInputDialog(StringResult, s1, '', boolresult);
-         {$ENDIF GUI}
               end;
     end
 
@@ -17442,9 +17639,12 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    StringResult := StringReplace1(s1, s2, s3);
-                    if (StringResult = NULL_STRING_VALUE) then
-                      StringResult := s1;
+                    if not testSyntax then
+                    begin
+                      StringResult := StringReplace1(s1, s2, s3);
+                      if (StringResult = NULL_STRING_VALUE) then
+                        StringResult := s1;
+                    end;
                   end;
     end
 
@@ -17459,7 +17659,8 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-                    StringResult := stringReplaceRegex(s1, s2, s3);
+                    if not testSyntax then
+                       StringResult := stringReplaceRegex(s1, s2, s3);
                   end;
     end
 
@@ -17475,7 +17676,8 @@ begin
                   begin
                     syntaxCheck := True;
                     // s3 is the used encoding
-                    StringResult := reencode(s1, s2, s3, s4);
+                    if not testSyntax then
+                       StringResult := reencode(s1, s2, s3, s4);
                   end;
     end
 
@@ -17493,35 +17695,37 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
-
-                    itemlist.Free;
-                    itemlist := TXStringList.Create;
-                    stringsplit(s1, s2, itemlist);
-
-                    try
-                      ListIndex := StrToInt(sx);
-                    except
-                      syntaxCheck := False;
-                      InfoSyntaxError := sx + ' keine ganze Zahl';
-                      ListIndex := 0;
-                    end;
-
-                    if ListIndex >= itemList.Count then
+                    if not testSyntax then
                     begin
-                      StringResult := '';
-                      OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-                      LogDatei.log('Warning: String "' + s1 +
-                        '" using delimiter "' + s2 +
-                        '" was not splitted in (' + IntToStr(ListIndex) +
-                        ' + 1)  parts', LLWarning);
-                      DiffNumberOfWarnings :=
-                        LogDatei.NumberOfWarnings - OldNumberOfWarnings;
-                      FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-                    end
-                    else
-                      StringResult := itemlist[ListIndex];
+                      itemlist.Free;
+                      itemlist := TXStringList.Create;
+                      stringsplit(s1, s2, itemlist);
+
+                      try
+                        ListIndex := StrToInt(sx);
+                      except
+                        syntaxCheck := False;
+                        InfoSyntaxError := sx + ' keine ganze Zahl';
+                        ListIndex := 0;
+                      end;
+
+                      if ListIndex >= itemList.Count then
+                      begin
+                        StringResult := '';
+                        OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+                        LogDatei.log('Warning: String "' + s1 +
+                          '" using delimiter "' + s2 +
+                          '" was not splitted in (' + IntToStr(ListIndex) +
+                          ' + 1)  parts', LLWarning);
+                        DiffNumberOfWarnings :=
+                          LogDatei.NumberOfWarnings - OldNumberOfWarnings;
+                        FNumberOfWarnings := NumberOfWarnings + DiffNumberOfWarnings;
+                        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+                      end
+                      else
+                        StringResult := itemlist[ListIndex];
+                    end;
                   end;
     end
 
@@ -17555,38 +17759,19 @@ begin
         end;
 
         if syntaxCheck then
-        begin
-          list1 := TXStringList.Create;
-          r1 := r;
-          if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-            not Skip(')', r, r, InfoSyntaxError) then
-            syntaxCheck := False
-          else
+          if not testSyntax then
           begin
-            if list1.Count = 0 then // list is empty
-            begin
-              Logdatei.log('Stringlist ' + r1 +
-                ' is empty in takeString function ! Use count() before takestring() to avoid this problem.',
-                LLWarning);
-              if FatalOnRuntimeError then
-              begin
-                Logdatei.log('Set to FatalError because FatalOnRuntimeError is set',
-                  LLCritical);
-                FExtremeErrorLevel := LevelFatal;
-                LogDatei.ActionProgress := 'Runtime Error';
-              end;
-            end
+            list1 := TXStringList.Create;
+            r1 := r;
+            if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+              not Skip(')', r, r, InfoSyntaxError) then
+              syntaxCheck := False
             else
             begin
-              if (a1 < 0) then
-                a1 := list1.Count + a1; //we count downward
-
-              if (a1 < 0) or (a1 > list1.Count - 1) then
+              if list1.Count = 0 then // list is empty
               begin
-                Logdatei.log('Stringlist list ' + r1 + ' has ' +
-                  IntToStr(list1.Count) + ' elements. And the effective list index ' +
-                  IntToStr(a1) +
-                  ' is out of bounds in takeString function ! Use count() before takestring() to avoid this problem.',
+                Logdatei.log('Stringlist ' + r1 +
+                  ' is empty in takeString function ! Use count() before takestring() to avoid this problem.',
                   LLWarning);
                 if FatalOnRuntimeError then
                 begin
@@ -17597,14 +17782,34 @@ begin
                 end;
               end
               else
-                stringresult := list1[a1];
-            end;
-          end;
+              begin
+                if (a1 < 0) then
+                  a1 := list1.Count + a1; //we count downward
 
-          list1.Free;
-          list1 := nil;
+                if (a1 < 0) or (a1 > list1.Count - 1) then
+                begin
+                  Logdatei.log('Stringlist list ' + r1 + ' has ' +
+                    IntToStr(list1.Count) + ' elements. And the effective list index ' +
+                    IntToStr(a1) +
+                    ' is out of bounds in takeString function ! Use count() before takestring() to avoid this problem.',
+                    LLWarning);
+                  if FatalOnRuntimeError then
+                  begin
+                    Logdatei.log('Set to FatalError because FatalOnRuntimeError is set',
+                      LLCritical);
+                    FExtremeErrorLevel := LevelFatal;
+                    LogDatei.ActionProgress := 'Runtime Error';
+                  end;
+                end
+                else
+                  stringresult := list1[a1];
+              end;
+            end;
+
+            list1.Free;
+            list1 := nil;
+          end;
         end;
-      end;
     end
 
     else if LowerCase(s) = LowerCase('count') then
@@ -17620,9 +17825,12 @@ begin
           syntaxCheck := False
         else
         begin
-          stringresult := IntToStr(list1.Count);
-          list1.Free;
-          list1 := nil;
+        if not testSyntax then
+          begin
+            stringresult := IntToStr(list1.Count);
+            list1.Free;
+            list1 := nil;
+          end;
         end;
       end;
     end
@@ -17639,33 +17847,34 @@ begin
           syntaxCheck := False;
 
         if syntaxCheck then
-        begin
-          list1 := TXStringList.Create;
-
-          if not produceStringList(script, r, r, list1, InfoSyntaxError) or
-            not Skip(')', r, r, InfoSyntaxError) then
-            syntaxCheck := False
-          else
+          if not testSyntax then
           begin
-            stringresult := list1.getStringValue(s1);//list1.values[s1];
-            // if key does not exist we get NULL_STRING_VALUE
-             (*
-             if stringresult = NULL_STRING_VALUE then
-             begin
-               // let us retry with trimed keys
-               for i := 0 to list1.Count -1 do
-               begin
-                 if list1.Names[i] <> '' then
-                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
-                     stringresult := list1.getStringValue(list1.Names[i]);
-               end;
-             end;
-             *)
-          end;
+            list1 := TXStringList.Create;
 
-          list1.Free;
-          list1 := nil;
-        end;
+            if not produceStringList(script, r, r, list1, InfoSyntaxError) or
+              not Skip(')', r, r, InfoSyntaxError) then
+              syntaxCheck := False
+            else
+            begin
+              stringresult := list1.getStringValue(s1);//list1.values[s1];
+              // if key does not exist we get NULL_STRING_VALUE
+               (*
+               if stringresult = NULL_STRING_VALUE then
+               begin
+                 // let us retry with trimed keys
+                 for i := 0 to list1.Count -1 do
+                 begin
+                   if list1.Names[i] <> '' then
+                     if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
+                       stringresult := list1.getStringValue(list1.Names[i]);
+                 end;
+               end;
+               *)
+            end;
+
+            list1.Free;
+            list1 := nil;
+          end;
       end;
     end
 
@@ -17690,22 +17899,25 @@ begin
           syntaxCheck := False
         else
         begin
-          // use the first char of the second argument as separator char
-          list1.NameValueSeparator := trim(s2)[1];
-          stringresult := list1.getStringValue(s1);//list1.values[s1];
-          // if key does not exist we get NULL_STRING_VALUE
-           (*
-           if stringresult = NULL_STRING_VALUE then
-             begin
-               // let us retry with trimed keys
-               for i := 0 to list1.Count -1 do
+          if not testSyntax then
+          begin
+            // use the first char of the second argument as separator char
+            list1.NameValueSeparator := trim(s2)[1];
+            stringresult := list1.getStringValue(s1);//list1.values[s1];
+            // if key does not exist we get NULL_STRING_VALUE
+             (*
+             if stringresult = NULL_STRING_VALUE then
                begin
-                 if list1.Names[i] <> '' then
-                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
-                     stringresult := list1.getStringValue(list1.Names[i]);
+                 // let us retry with trimed keys
+                 for i := 0 to list1.Count -1 do
+                 begin
+                   if list1.Names[i] <> '' then
+                     if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
+                       stringresult := list1.getStringValue(list1.Names[i]);
+                 end;
                end;
-             end;
-           *)
+             *)
+          end;
         end;
 
         list1.Free;
@@ -17755,24 +17967,27 @@ begin
             else
             begin
               syntaxCheck := True;
-              stringresult := list1.getStringValue(s1);
-              if stringresult = 'NULL' then
-                stringresult := '';
+              if not testSyntax then
+              begin
+                stringresult := list1.getStringValue(s1);
+                if stringresult = 'NULL' then
+                  stringresult := '';
 
-              //list1.values[s1];
-              // if key does not exist we get NULL_STRING_VALUE
-             (*
-             if stringresult = NULL_STRING_VALUE then
-             begin
-               // let us retry with trimed keys
-               for i := 0 to list1.Count -1 do
+                //list1.values[s1];
+                // if key does not exist we get NULL_STRING_VALUE
+               (*
+               if stringresult = NULL_STRING_VALUE then
                begin
-                 if list1.Names[i] <> '' then
-                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
-                     stringresult := list1.getStringValue(list1.Names[i]);
+                 // let us retry with trimed keys
+                 for i := 0 to list1.Count -1 do
+                 begin
+                   if list1.Names[i] <> '' then
+                     if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
+                       stringresult := list1.getStringValue(list1.Names[i]);
+                 end;
                end;
-             end;
-             *)
+               *)
+               end;
             end;
           end;
           list1.Free;
@@ -17825,25 +18040,28 @@ begin
           else
           begin
             syntaxCheck := True;
-            // use the first char of the second argument as separator char
-            list1.NameValueSeparator := trim(s2)[1];
-            stringresult := list1.getStringValue(s1);
-            if stringresult = 'NULL' then
-              stringresult := '';
-            //list1.values[s1];
-            // if key does not exist we get NULL_STRING_VALUE
-             (*
-             if stringresult = NULL_STRING_VALUE then
-             begin
-               // let us retry with trimed keys
-               for i := 0 to list1.Count -1 do
+            if not testSyntax then
+            begin
+              // use the first char of the second argument as separator char
+              list1.NameValueSeparator := trim(s2)[1];
+              stringresult := list1.getStringValue(s1);
+              if stringresult = 'NULL' then
+                stringresult := '';
+              //list1.values[s1];
+              // if key does not exist we get NULL_STRING_VALUE
+               (*
+               if stringresult = NULL_STRING_VALUE then
                begin
-                 if list1.Names[i] <> '' then
-                   if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
-                     stringresult := list1.getStringValue(list1.Names[i]);
+                 // let us retry with trimed keys
+                 for i := 0 to list1.Count -1 do
+                 begin
+                   if list1.Names[i] <> '' then
+                     if lowerCase(trim(list1.Names[i])) = lowerCase(trim(s1)) then
+                       stringresult := list1.getStringValue(list1.Names[i]);
+                 end;
                end;
+               *)
              end;
-             *)
           end;
         end;
         list1.Free;
@@ -17865,14 +18083,17 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             SyntaxCheck := True;
-            stringResult := '';
-            i := 0;
-            while (stringResult = '') and (i < list1.Count) do
+            if not testSyntax then
             begin
-              if AnsiContainsText(list1[i], s1) then
-                stringResult := list1[i]
-              else
-                Inc(i);
+              stringResult := '';
+              i := 0;
+              while (stringResult = '') and (i < list1.Count) do
+              begin
+                if AnsiContainsText(list1[i], s1) then
+                  stringResult := list1[i]
+                else
+                  Inc(i);
+              end;
             end;
           end;
         end;
@@ -17893,14 +18114,17 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             SyntaxCheck := True;
-            stringResult := '';
-            i := 0;
-            while (stringResult = '') and (i < list1.Count) do
+            if not testSyntax then
             begin
-              if AnsiContainsText(list1[i], s1) then
-                stringResult := IntToStr(i)
-              else
-                Inc(i);
+              stringResult := '';
+              i := 0;
+              while (stringResult = '') and (i < list1.Count) do
+              begin
+                if AnsiContainsText(list1[i], s1) then
+                  stringResult := IntToStr(i)
+                else
+                  Inc(i);
+              end;
             end;
           end;
         end;
@@ -17922,11 +18146,14 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             SyntaxCheck := True;
-            stringResult := '';
-            for i := 0 to list1.Count - 2 do
-              stringResult := stringResult + list1.strings[i] + s1;
-            if list1.Count > 0 then
-              stringResult := stringResult + list1[list1.Count - 1];
+            if not testSyntax then
+            begin
+              stringResult := '';
+              for i := 0 to list1.Count - 2 do
+                stringResult := stringResult + list1.strings[i] + s1;
+              if list1.Count > 0 then
+                stringResult := stringResult + list1[list1.Count - 1];
+            end;
           end;
         end;
       end;
@@ -17939,8 +18166,9 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             try
-              StringResult := ExtractFilePath(s1);
               syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := ExtractFilePath(s1);
             except
               InfoSyntaxError := '"' + s1 + '" is not a valid file path';
             end;
@@ -17954,8 +18182,9 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             try
-              StringResult := ExtractFileExt(s1);
               syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := ExtractFileExt(s1);
             except
               InfoSyntaxError := '"' + s1 + '" is not a valid file path';
             end;
@@ -17969,8 +18198,9 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             try
-              StringResult := ExtractFileName(s1);
               syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := ExtractFileName(s1);
             except
               InfoSyntaxError := '"' + s1 + '" is not a valid file path';
             end;
@@ -17983,8 +18213,9 @@ begin
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
-            StringResult := CEscaping(s1);
             syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := CEscaping(s1);
           end;
     end
 
@@ -18003,10 +18234,13 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             SyntaxCheck := True;
-            stringResult := '';
-            if not getXml2AttributeValueByKey(list1, s1, stringResult) then
+            if not testSyntax then
             begin
-              LogDatei.log('Error on producing getXml2AttributeValueByKey', LLerror);
+              stringResult := '';
+              if not getXml2AttributeValueByKey(list1, s1, stringResult) then
+              begin
+                LogDatei.log('Error on producing getXml2AttributeValueByKey', LLerror);
+              end;
             end;
           end;
         end;
@@ -18022,11 +18256,14 @@ begin
           skip(')', r, r, InfoSyntaxError) then
         begin
           SyntaxCheck := True;
-          stringResult := '';
-          if not getXml2Text(list1, stringResult) then
-          begin
-            LogDatei.log('Error on producing getXml2Text', LLerror);
-          end;
+          if not testSyntax then
+            begin
+              stringResult := '';
+              if not getXml2Text(list1, stringResult) then
+              begin
+                LogDatei.log('Error on producing getXml2Text', LLerror);
+              end;
+            end;
         end;
       end;
     end
@@ -18047,13 +18284,16 @@ begin
                 skip(')', r, r, InfoSyntaxError) then
               begin
                 SyntaxCheck := True;
-                try
-                  stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
-                except
-                  on e: Exception do
-                  begin
-                    LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
-                      e.message, LLError);
+                if not testSyntax then
+                begin
+                  try
+                    stringResult := xml2GetValueNodeTextByKeyNodeText(list1, s1, s2, s3);
+                  except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Exception in getXml2ValueNodeTextByKeyNodeText: ' +
+                        e.message, LLError);
+                    end;
                   end;
                 end;
               end;
@@ -18073,8 +18313,9 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             try
-              StringResult := StrSIDToName(s1);
               syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := StrSIDToName(s1);
             except
               on e: Exception do
               begin
@@ -18091,8 +18332,9 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             try
-              StringResult := GetLocalUserSidStr(s1);
               syntaxCheck := True;
+              if not testSyntax then
+                 StringResult := GetLocalUserSidStr(s1);
             except
               on e: Exception do
               begin
@@ -18155,22 +18397,25 @@ begin
       end;
       if syntaxCheck then
       begin
-        GetWord(s1, key0, key, ['\']);
-        LogDatei.log_prog('GetRegistryValue from: ' + key0 + key +
-          ' ValueName: ' + s2, LLdebug);
-        StringResult := '';
-        LogDatei.log('key0 = ' + key0, LLdebug2);
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
-          ('HKCU' = UpperCase(key0))) then
+        if not testSyntax then
         begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := '\' + usercontextSID + key;
-          LogDatei.log('Running loginscripts: key0 is now: ' + key0 +
-            ', key is now: ' + key, LLdebug);
+          GetWord(s1, key0, key, ['\']);
+          LogDatei.log_prog('GetRegistryValue from: ' + key0 + key +
+            ' ValueName: ' + s2, LLdebug);
+          StringResult := '';
+          LogDatei.log('key0 = ' + key0, LLdebug2);
+          if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
+            ('HKCU' = UpperCase(key0))) then
+          begin
+            // remove HKCU from the beginning
+            // switch to HKEY_USERS
+            key0 := 'HKEY_USERS';
+            key := '\' + usercontextSID + key;
+            LogDatei.log('Running loginscripts: key0 is now: ' + key0 +
+              ', key is now: ' + key, LLdebug);
+          end;
+          StringResult := GetRegistrystringvalue(key0 + key, s2, tmpbool);
         end;
-        StringResult := GetRegistrystringvalue(key0 + key, s2, tmpbool);
       end;
     end
 
@@ -18214,29 +18459,32 @@ begin
               else
               begin
                 SyntaxCheck := True;
-                GetWord(key, key0, key, ['\']);
-                System.Delete(key, 1, 1);
-                if Skip(']', r1, r1, InfoSyntaxError) then
-                  ValueName := r1;
-                //GetWord (r1, ValueName, r1, [''], true);
-                //GetWord (r1, ValueName, r1, WordDelimiterSet1);
-                ValueName := trim(ValueName);
-                LogDatei.log_prog('GetRegistryStringValue from: ' +
-                  key0 + '\' + key + ' ValueName: ' + ValueName, LLdebug);
-                StringResult := '';
-                LogDatei.log('key0 = ' + key0, LLdebug2);
-                if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
-                  ('HKCU' = UpperCase(key0))) then
+                if not testSyntax then
                 begin
-                  // remove HKCU from the beginning
-                  // switch to HKEY_USERS
-                  key0 := 'HKEY_USERS';
-                  key := usercontextSID + '\' + key;
-                  LogDatei.log('Running loginscripts: key0 is now: ' +
-                    key0 + ', key is now: ' + key, LLdebug);
+                  GetWord(key, key0, key, ['\']);
+                  System.Delete(key, 1, 1);
+                  if Skip(']', r1, r1, InfoSyntaxError) then
+                    ValueName := r1;
+                  //GetWord (r1, ValueName, r1, [''], true);
+                  //GetWord (r1, ValueName, r1, WordDelimiterSet1);
+                  ValueName := trim(ValueName);
+                  LogDatei.log_prog('GetRegistryStringValue from: ' +
+                    key0 + '\' + key + ' ValueName: ' + ValueName, LLdebug);
+                  StringResult := '';
+                  LogDatei.log('key0 = ' + key0, LLdebug2);
+                  if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
+                    ('HKCU' = UpperCase(key0))) then
+                  begin
+                    // remove HKCU from the beginning
+                    // switch to HKEY_USERS
+                    key0 := 'HKEY_USERS';
+                    key := usercontextSID + '\' + key;
+                    LogDatei.log('Running loginscripts: key0 is now: ' +
+                      key0 + ', key is now: ' + key, LLdebug);
+                  end;
+                  StringResult :=
+                    GetRegistrystringvalue(key0 + '\' + key, ValueName, False);
                 end;
-                StringResult :=
-                  GetRegistrystringvalue(key0 + '\' + key, ValueName, False);
               end;
             end;
           end;
@@ -18281,32 +18529,35 @@ begin
               else
               begin
                 SyntaxCheck := True;
-                GetWord(key, key0, key, ['\']);
-                System.Delete(key, 1, 1);
-                if Skip(']', r1, r1, InfoSyntaxError) then
-                  ValueName := r1;
-                //GetWord (r1, ValueName, r1, [''], true);
-                //GetWord (r1, ValueName, r1, WordDelimiterSet1);
-                ValueName := trim(ValueName);
-                LogDatei.log_prog('GetRegistryStringValue from: ' +
-                  key0 + '\' + key + ' ValueName: ' + ValueName, LLdebug);
-                StringResult := '';
-                if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
-                  ('HKCU' = UpperCase(key0))) then
+                if not testSyntax then
                 begin
-                  // remove HKCU from the beginning
-                  // switch to HKEY_USERS
-                  key0 := 'HKEY_USERS';
-                  key := usercontextSID + '\' + key;
-                  LogDatei.log('Running loginscripts: key0 is now: ' +
-                    key0 + ', key is now: ' + key, LLdebug);
+                  GetWord(key, key0, key, ['\']);
+                  System.Delete(key, 1, 1);
+                  if Skip(']', r1, r1, InfoSyntaxError) then
+                    ValueName := r1;
+                  //GetWord (r1, ValueName, r1, [''], true);
+                  //GetWord (r1, ValueName, r1, WordDelimiterSet1);
+                  ValueName := trim(ValueName);
+                  LogDatei.log_prog('GetRegistryStringValue from: ' +
+                    key0 + '\' + key + ' ValueName: ' + ValueName, LLdebug);
+                  StringResult := '';
+                  if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or
+                    ('HKCU' = UpperCase(key0))) then
+                  begin
+                    // remove HKCU from the beginning
+                    // switch to HKEY_USERS
+                    key0 := 'HKEY_USERS';
+                    key := usercontextSID + '\' + key;
+                    LogDatei.log('Running loginscripts: key0 is now: ' +
+                      key0 + ', key is now: ' + key, LLdebug);
+                  end;
+                  if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+                    StringResult :=
+                      GetRegistrystringvalue(key0 + '\' + key, ValueName, False)
+                  else
+                    StringResult :=
+                      GetRegistrystringvalue(key0 + '\' + key, ValueName, True);
                 end;
-                if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-                  StringResult :=
-                    GetRegistrystringvalue(key0 + '\' + key, ValueName, False)
-                else
-                  StringResult :=
-                    GetRegistrystringvalue(key0 + '\' + key, ValueName, True);
               end;
             end;
           end;
@@ -18325,38 +18576,41 @@ begin
             else
             begin
               SyntaxCheck := True;
-              itemlist := TXStringlist.Create;
-              stringsplit(s1, '\', itemlist);
-              if itemlist.Count > 1 then
+              if not testSyntax then
               begin
-                s2 := itemlist.Strings[0];
-                s3 := itemlist.strings[itemlist.Count - 1];
-              end
-              else
-              begin
-                s2 := '';
-                s3 := s1;
-              end;
-              logdatei.log('search user: ' + s3 + ' in domain: ' + s2, LevelComplete);
-              s4 := ''; //founddomain
-              StringResult := GetDomainUserSidS(s2, s3, s4);
+                itemlist := TXStringlist.Create;
+                stringsplit(s1, '\', itemlist);
+                if itemlist.Count > 1 then
+                begin
+                  s2 := itemlist.Strings[0];
+                  s3 := itemlist.strings[itemlist.Count - 1];
+                end
+                else
+                begin
+                  s2 := '';
+                  s3 := s1;
+                end;
+                logdatei.log('search user: ' + s3 + ' in domain: ' + s2, LevelComplete);
+                s4 := ''; //founddomain
+                StringResult := GetDomainUserSidS(s2, s3, s4);
 
-              logdatei.log('found in domain ' + s4 + ', SID: ' +
-                StringResult, LevelComplete);
+                logdatei.log('found in domain ' + s4 + ', SID: ' +
+                  StringResult, LevelComplete);
 
-              if length(StringResult) > 1 then
-              begin
-                Skip('[', StringResult, StringResult, InfoSyntaxError);
-                if StringResult[length(StringResult)] = ']' then
-                  StringResult := copy(StringResult, 1, length(StringResult) - 1);
-              end;
+                if length(StringResult) > 1 then
+                begin
+                  Skip('[', StringResult, StringResult, InfoSyntaxError);
+                  if StringResult[length(StringResult)] = ']' then
+                    StringResult := copy(StringResult, 1, length(StringResult) - 1);
+                end;
 
-              if StringResult = '' then
-              begin
-                OldNumberOfErrors := LogDatei.NumberOfErrors;
-                LogDatei.log('Error: SID not found for "' + s1 + '"', LLError);
-                DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
-                FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+                if StringResult = '' then
+                begin
+                  OldNumberOfErrors := LogDatei.NumberOfErrors;
+                  LogDatei.log('Error: SID not found for "' + s1 + '"', LLError);
+                  DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
+                  FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+                end;
               end;
             end;
           end;
@@ -18366,19 +18620,24 @@ begin
     else if LowerCase(s) = LowerCase('SidToName') then
     begin
       SyntaxCheck := False;
-      InfoSyntaxError := 'Not implemented for Linux';
-      StringResult := 'Error';
-      LogDatei.log('SyntaxError: SidToName not implemented for Linux', LLError);
+      if testSyntax then
+      begin
+        InfoSyntaxError := 'Not implemented for Linux';
+        StringResult := 'Error';
+        LogDatei.log('SyntaxError: SidToName not implemented for Linux', LLError);
+      end;
     end
 
     else if LowerCase(s) = LowerCase('NameToSID') then
     begin
       SyntaxCheck := False;
-      InfoSyntaxError := 'Not implemented for Linux';
-      StringResult := 'Error';
-      LogDatei.log('SyntaxError: NameToSID not implemented for Linux', LLError);
+      if testSyntax then
+      begin
+        InfoSyntaxError := 'Not implemented for Linux';
+        StringResult := 'Error';
+        LogDatei.log('SyntaxError: NameToSID not implemented for Linux', LLError);
+      end;
     end
-
 
 
     else if (LowerCase(s) = LowerCase('GetRegistryStringValue')) or
@@ -18387,51 +18646,60 @@ begin
       (LowerCase(s) = LowerCase('GetRegistryStringValueSysNative')) then
     begin
       SyntaxCheck := False;
-      InfoSyntaxError := 'Not implemented for Linux';
-      StringResult := 'Error';
-      LogDatei.log('SyntaxError: GetRegistryStringValue not implemented for Linux',
-        LLError);
+      if testSyntax then
+      begin
+        InfoSyntaxError := 'Not implemented for Linux';
+        StringResult := 'Error';
+        LogDatei.log('SyntaxError: GetRegistryStringValue not implemented for Linux',
+          LLError);
+      end;
     end
 
 
     else if LowerCase(s) = LowerCase('GetUserSID') then
     begin
       SyntaxCheck := False;
-      InfoSyntaxError := 'Not implemented for Linux';
-      StringResult := 'Error';
-      LogDatei.log('SyntaxError: GetUserSID not implemented for Linux', LLError);
+      if testSyntax then
+      begin
+        InfoSyntaxError := 'Not implemented for Linux';
+        StringResult := 'Error';
+        LogDatei.log('SyntaxError: GetUserSID not implemented for Linux', LLError);
+      end;
     end
   {$ENDIF WINDOWS}
 
     else if LowerCase(s) = LowerCase('getLastServiceErrorClass') then
     begin
       SyntaxCheck := True;
-      testresult := '';
-      errorOccured := False;
-      if opsidata = nil then
+      if not testSyntax then
       begin
-        errorOccured := True;
-        testresult := '!!! no opsidata !!!';
-      end
-      else
-        try
-          local_opsidata := opsidata;
-
-          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
-        except
+        testresult := '';
+        errorOccured := False;
+        if opsidata = nil then
+        begin
           errorOccured := True;
-          testresult := '!!! not in service mode !!!';
-        end;
-
-
-      if errorOccured then
-        stringresult := testresult
-      else
-      begin
-        if local_opsidata.ServiceLastErrorInfo.indexOfName('class') < 0 then
-          stringresult := 'None' //'!!! error key "class" not found !!!'
+          testresult := '!!! no opsidata !!!';
+        end
         else
-          stringresult := local_opsidata.ServiceLastErrorInfo.values['class'];
+          try
+            local_opsidata := opsidata;
+
+            //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
+
+
+        if errorOccured then
+          stringresult := testresult
+        else
+        begin
+          if local_opsidata.ServiceLastErrorInfo.indexOfName('class') < 0 then
+            stringresult := 'None' //'!!! error key "class" not found !!!'
+          else
+            stringresult := local_opsidata.ServiceLastErrorInfo.values['class'];
+        end;
       end;
     end
 
@@ -18440,30 +18708,33 @@ begin
     begin
       testresult := '';
       SyntaxCheck := True;
-      errorOccured := False;
-      if opsidata = nil then
+      if not testSyntax then
       begin
-        errorOccured := True;
-        testresult := '!!! no opsidata !!!';
-      end
-      else
-        try
-          local_opsidata := opsidata;
-
-          //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
-        except
+        errorOccured := False;
+        if opsidata = nil then
+        begin
           errorOccured := True;
-          testresult := '!!! not in service mode !!!';
-        end;
-
-      if errorOccured then
-        stringresult := testresult
-      else
-      begin
-        if local_opsidata.ServiceLastErrorInfo.indexOfName('message') < 0 then
-          stringresult := 'None' //'!!! error key "message" not found !!!'
+          testresult := '!!! no opsidata !!!';
+        end
         else
-          stringresult := local_opsidata.ServiceLastErrorInfo.values['message'];
+          try
+            local_opsidata := opsidata;
+
+            //LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
+          except
+            errorOccured := True;
+            testresult := '!!! not in service mode !!!';
+          end;
+
+        if errorOccured then
+          stringresult := testresult
+        else
+        begin
+          if local_opsidata.ServiceLastErrorInfo.indexOfName('message') < 0 then
+            stringresult := 'None' //'!!! error key "message" not found !!!'
+          else
+            stringresult := local_opsidata.ServiceLastErrorInfo.values['message'];
+        end;
       end;
     end
 
@@ -18512,6 +18783,7 @@ begin
       end;
 
       if syntaxcheck then
+      if not testSyntax then
       begin
         testresult := 'service request possible';
         if opsidata = nil then
@@ -18598,6 +18870,7 @@ begin
       end;
 
       if syntaxcheck then
+      if not testSyntax then
       begin
         testresult := 'service request possible';
         if opsidata = nil then
