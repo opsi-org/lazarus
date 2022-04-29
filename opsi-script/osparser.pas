@@ -20812,15 +20812,12 @@ begin
   AccessString := '';
   HandlePolicy := '';
   Option := '';
+  AccessString := 'sysnative'; //default value
   syntaxCheck := False;
   if Skip('(', Remaining, Remaining, InfoSyntaxError) then
   begin
     //get first parameter (command), default access string = sysnative
-    if EvaluateString(Remaining, Remaining, Command, InfoSyntaxError) then
-    begin
-      Syntaxcheck := true;
-      AccessString := 'sysnative';
-    end;
+    Syntaxcheck := EvaluateString(Remaining, Remaining, Command, InfoSyntaxError);
     if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
     begin
       //get second parameter (access string)
