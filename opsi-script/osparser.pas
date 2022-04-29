@@ -20833,7 +20833,8 @@ begin
             ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
           syntaxCheck := False;
         end;
-      end;
+      end
+      else SyntaxCheck := false;
       //third parameter (handle execution policy)
       if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxerror) then
       begin
@@ -20849,7 +20850,8 @@ begin
             InfoSyntaxError :=
               'Error: boolean string (true/false) expected but got: ' + HandlePolicy;
           end;
-        end;
+        end
+        else SyntaxCheck := false;
         //fourth parameter (optionstr)
         if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
         begin
