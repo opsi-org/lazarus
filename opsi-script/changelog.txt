@@ -10,12 +10,13 @@ opsi-script (4.12.5.0) stable; urgency=low
   * osfunc: fix "del" in files section: now works with wildcards, references #4560
   * oswebservice: allow newline and tab in opsiservicecall, implements #3522
   * new functions getRegistryKeyList(<regkey>,<access str>),
-	getRegistryVarList(<regkey>,<access str>),
-	getRegistryVarMap(<regkey>,<access str>),
-	implements #4720
+				  getRegistryVarList(<regkey>,<access str>),
+				  getRegistryVarMap(<regkey>,<access str>), implements #4720
+  * osregistry: fix "deletekey" in registry section: use UTF8ToWinCP to handle umlauts correctly, references #3574
+  * osdefinedfunctions: allow string concatenation in call of defined functions, implements #4683
   * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
   
-    * osparser: new functions for TOML files handling:
+  * osparser: new functions for TOML files handling:
     function LoadTOMLFile(TOMLfilePath: String): TStringList;
     function GetTOMLAsStringList(TOMLcontents: String): TStringList;
     function GetTOMLKeys(TOMLcontents: String): TStringList
@@ -73,8 +74,8 @@ opsi-script (4.12.5.0) stable; urgency=low
     procedure TTOMLTable.AssignTable(const table: TTOMLTable); //not used
     
   * fpTOML: new external library for TOML files handling
-
--- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 16:00
+  
+-- a.schmitz <a.schmitz@uib.de> Fri, 29 Apr 2022 11:00
 
 
 opsi-script (4.12.4.37) stable; urgency=low
