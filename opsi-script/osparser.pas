@@ -20860,6 +20860,8 @@ begin
       end;
     end;
     if SyntaxCheck and Skip(')', Remaining, Remaining, InfoSyntaxError) then
+      SyntaxCheck := True
+    else
       SyntaxCheck := True;
   end;
 end;
