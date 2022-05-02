@@ -208,6 +208,8 @@ begin
     myconf.WriteString('global', 'log_rotation_count', IntToStr(log_rotation_count));
     myconf.WriteString('global', 'writeProductLogFile',
       BoolToStr(configWriteProductLogFile, False));
+    myconf.WriteString('global', 'writeProductLogFile',
+      BoolToStr(configTestSyntax, False));
     myconf.Free;
   except
     Result := False;
@@ -255,7 +257,7 @@ begin
     log_rotation_count := myconf.ReadInteger('global', 'log_rotation_count',
       log_rotation_count);
     configWriteProductLogFile :=
-      strToBool(myconf.ReadString('global', 'writeProductLogFile',
+      strToBool(myconf.ReadString('global', 'testSyntax',
       boolToStr(configWriteProductLogFile, False)));
     myconf.Free;
 
@@ -580,7 +582,7 @@ begin
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
                             osmain.startupmessages.Add(
-                              'got writeProductLogFile: ' + tmpstr);
+                              'got testSyntax: ' + tmpstr);
                             if not TryStrToBool(tmpstr,
                               configTestSyntax) then
                               osmain.startupmessages.Add(

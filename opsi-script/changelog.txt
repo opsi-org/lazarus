@@ -2760,7 +2760,7 @@ opsi-winst (4.10.3.0-1) experimental; urgency=low
                 9 = confidential (passwords and other security relevant data)
                 *)
         * new command <setLogLevel=>
-        * <LogLevel=> is depricated and now implemented as loglevel := loglevel+4 for backward compatibility
+        * <LogLevel=> is deprecated and now implemented as loglevel := loglevel+4 for backward compatibility
         * GetSystemtype now using windows api wrapper DSiIsWow64
         * New: Parameter '/64Bit' for Files-Sections (disables file redirection)
                 using: DSiDisableWow64FsRedirection and DSiRevertWow64FsRedirection
