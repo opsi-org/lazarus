@@ -20862,7 +20862,7 @@ begin
     if SyntaxCheck and Skip(')', Remaining, Remaining, InfoSyntaxError) then
       SyntaxCheck := True
     else
-      SyntaxCheck := True;
+      SyntaxCheck := False;
   end;
 end;
 
