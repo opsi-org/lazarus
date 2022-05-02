@@ -2465,10 +2465,8 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
 
     if not FileExists(ExpandFileName(PatchFilename)) then
@@ -3193,7 +3191,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc] + PathDelim);
+      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3208,7 +3206,7 @@ begin
     else
       PatchFilename := Filename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doTextpatchMain(Sektion, GetUserProfilePath + PathDelim);
+    doTextpatchMain(Sektion, GetUserProfilePath);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3422,11 +3420,12 @@ var
   ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain;
+  procedure doInifilePatchesMain(const presetDir: string);
   var
     i: integer = 0;
     dummy: string;
     mytxtfile: TStringList;
+    workingSection: TXStringList;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
     //LogDatei.log (ps, LevelWarnings);
@@ -3462,7 +3461,12 @@ var
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    // jetzt Arbeitsstruktur erzeugen
+    // create working opbjects
+    // copy const sektion to var workingsection so it can be modified
+    workingSection := TXStringList.Create;
+    workingSection.Assign(Sektion);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     Patchdatei := TuibPatchIniFile.Create;
     //mytxtfile := TStringlist.Create;
@@ -3480,14 +3484,14 @@ var
     for i := 0 to Patchdatei.Count - 1 do
       logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
 
-    for i := 1 to Sektion.Count do
+    for i := 1 to workingSection.Count do
     begin
-      if (Sektion.strings[i - 1] = '') or (Sektion.strings[i - 1]
+      if (workingSection.strings[i - 1] = '') or (workingSection.strings[i - 1]
         [1] = LineIsCommentChar) then
       (* continue *)
       else
       begin
-        WortAbspalten(cutLeftBlanks(Sektion.strings[i - 1]), Befehlswort, Rest);
+        WortAbspalten(cutLeftBlanks(workingSection.strings[i - 1]), Befehlswort, Rest);
 
         if UpperCase(Befehlswort) = 'ADD' then
         begin
@@ -3513,7 +3517,7 @@ var
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
           if Eintrag <> '' then
-            reportError(Sektion, i, Sektion.strings[i - 1], 'syntax error')
+            reportError(Sektion, i, workingSection.strings[i - 1], 'syntax error')
           else
             Patchdatei.delSec(Bereich);
         end
@@ -3526,7 +3530,7 @@ var
         begin
           WortAbspalten(Rest, AlterEintrag, Eintrag);
           if pos(' ', eintrag) > 0 then
-            reportError(Sektion, i, Sektion.strings[i - 1],
+            reportError(Sektion, i, workingSection.strings[i - 1],
               'replace string not identified ')
           else
             Patchdatei.replaceEntry(AlterEintrag, Eintrag);
@@ -3552,6 +3556,7 @@ var
       logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     Patchdatei.Free;
     Patchdatei := nil;
+    FreeAndNil(workingSection);
   end;
 
 begin
@@ -3572,7 +3577,7 @@ begin
       PatchdateiName := SysUtils.StringReplace(PatchdateiName,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain;
+      doInifilePatchesMain(ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3587,7 +3592,7 @@ begin
     else
       PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain;
+    doInifilePatchesMain(GetUserProfilePath);
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -7622,10 +7627,8 @@ var
     //Handling multiple user profiles
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     //XML patch core
     myfilename := ExpandFilename(patchfilename);
@@ -8345,7 +8348,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doXMLpatch2Main(Sektion, ProfileList.Strings[pc] + PathDelim, PatchFilename);
+      doXMLpatch2Main(Sektion, ProfileList.Strings[pc], PatchFilename);
     end;
   end
   else
@@ -8360,7 +8363,7 @@ begin
     else
       PatchFilename := XMLFilename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doXMLpatch2Main(Sektion, GetUserProfilePath + PathDelim, PatchFilename);
+    doXMLpatch2Main(Sektion, GetUserProfilePath, PatchFilename);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -8433,15 +8436,13 @@ var
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
@@ -9351,10 +9352,10 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + PathDelim;
-      if DirectoryExistsUTF8(presetdirectory) then
+      presetdirectory := ProfileList.Strings[pc];
+      if DirectoryExistsUTF8(presetdirectory + PathDelim) then
       begin
-        logdatei.log(' Make it for user directory: ' + presetdirectory, LLInfo);
+        logdatei.log(' Make it for user directory: ' + presetdirectory + PathDelim, LLInfo);
         fileActionsMain(Sektion, presetDirectory);
       end;
     end;
@@ -9365,7 +9366,7 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + '\SendTo\';
+      presetdirectory := ProfileList.Strings[pc] + '\SendTo';
       fileActionsMain(Sektion, presetDirectory);
     end;
   end
@@ -9375,7 +9376,7 @@ begin
     SourceDirectory := '';
     PresetDirectory := '';
     if runLoginScripts then
-      PresetDirectory := GetUserProfilePath + PathDelim;
+      PresetDirectory := GetUserProfilePath;
     fileActionsMain(Sektion, presetdirectory);
     {$IFDEF WIN32}
     //setErrorMode(OldWinapiErrorMode);
