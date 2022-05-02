@@ -15,7 +15,7 @@ opsi-script (4.12.5.0) stable; urgency=low
   * osregistry: fix "deletekey" in registry section: use UTF8ToWinCP to handle umlauts correctly, references #3574
   * osdefinedfunctions: allow string concatenation in call of defined functions, implements #4683
   * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
-  
+  * osparser: doIniFilePatches: support %userprofiledir% inside of patches section (do)
   * osparser: new functions for TOML files handling:
     function LoadTOMLFile(TOMLfilePath: String): TStringList;
     function GetTOMLAsStringList(TOMLcontents: String): TStringList;
@@ -76,7 +76,6 @@ opsi-script (4.12.5.0) stable; urgency=low
   * fpTOML: new external library for TOML files handling
   
 -- a.schmitz <a.schmitz@uib.de> Fri, 29 Apr 2022 11:00
-
 
 opsi-script (4.12.4.37) stable; urgency=low
 
