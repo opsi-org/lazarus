@@ -1801,7 +1801,6 @@ begin
   regType := nil;
 
 
-
   (*  FoundDataType := GetDataType (Name); *)
   (* tut nichts *)
   try
@@ -1827,7 +1826,6 @@ begin
     Supplist := TStringList.Create;
 
     (* build (old) Entrylist *)
-
     while Line <> '' do
     begin
       GetWord(Line, Entry, Line, [Separator]);
@@ -1866,6 +1864,8 @@ begin
         Line := Line + Separator + EntryList.Strings[i - 1];
     end;
 
+    FreeAndNil(EntryList);
+    FreeAndNil(SuppList);
   end;
 
   regresult := ERROR_SUCCESS;
@@ -1890,12 +1890,6 @@ begin
       LogS := LogS + ' WINAPI-Fehler ' + IntToStr(regresult);
     LogDatei.log(LogS, LLNotice);
   end;
-
-
-  EntryList.Free;
-  EntryList := nil;
-  SuppList.Free;
-  SuppList := nil;
 end;
 
 
