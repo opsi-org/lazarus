@@ -29,7 +29,8 @@ type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
-    threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta, gmUnknown);
+    threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
+    gmUnknown);
 
   TArchitecture = (a32, a64, aUnknown);
 
