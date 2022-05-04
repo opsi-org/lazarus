@@ -5299,7 +5299,7 @@ begin
             end
             else
             begin
-              LogDatei.log('Key0 is: ' + key0 + ' Key is: ' + key, LLdebug2);
+              LogDatei.log('Key0 is: ' + key0 + ', Key is: ' + key, LLdebug2);
               LogDatei.log('key0 : ' + key0 +
                 ' is not a valid base key and we will praefix it with: ' +
                 basekey, LLDebug2);

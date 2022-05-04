@@ -790,8 +790,8 @@ begin
   enckey := UTF8ToWinCP(key);
   if not GetHKEY(Key0, rkey) then
   begin
-    LogS := 'Error: ' + Key0 + ' not accepted as registry root key';
-    LogDatei.log(LogS, LLNotice);
+    LogS := Key0 + ' not accepted as registry root key for "' + key + '"';
+    LogDatei.log(LogS, LLError);
   end
   else
   begin
@@ -815,7 +815,7 @@ begin
 
       LogS := 'opened';
 
-      LogS := 'Registry key ' + '[' + key0 + '\' + key + ']  ' + LogS;
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
 
       Result := True;
@@ -839,8 +839,8 @@ begin
   enckey := UTF8ToWinCP(key);
   if not GetHKEY(Key0, rkey) then
   begin
-    LogS := 'Error: ' + Key0 + ' not accepted as registry root key';
-    LogDatei.log(LogS, LLNotice);
+    LogS := Key0 + ' not accepted as registry root key for "' + key + '"';
+    LogDatei.log(LogS, LLError);
   end
   else
   begin
