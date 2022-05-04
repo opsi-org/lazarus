@@ -16,6 +16,12 @@ opsi-script (4.12.5.0) stable; urgency=low
   * osdefinedfunctions: allow string concatenation in call of defined functions, implements #4683
   * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
   * osparser: doIniFilePatches: support %userprofiledir% inside of patches section (do)
+  * osparser : CHMOD for Linux :
+    Adding new function TuibFileInstall.calcMode to handle 'ugo=+-rwx' mode format
+    Adding 'ugo=+-rwx' mode format to CHMOD
+    Adding '-rwxrwxrwx' mode format to CHMOD
+    Adding '/AllSubFiles' parameter to Files_section CHMOD command
+  
   * osparser: new functions for TOML files handling:
     function LoadTOMLFile(TOMLfilePath: String): TStringList;
     function GetTOMLAsStringList(TOMLcontents: String): TStringList;
@@ -57,7 +63,7 @@ opsi-script (4.12.5.0) stable; urgency=low
     //function AddKeyValueToTOMLFile(TOMLfilePath: String; keyPath : String; value : String): boolean;
     //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
     //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
-  * new functions in TOMLTypes unit:
+  * fpTOML: new functions in TOMLTypes unit:
     function TTOMLArray.AsStrings: TStringList;
     function TTOMLArray.AsTOMLString: String;
     function TTOMLTable.AsTOMLString: ansistring;
@@ -71,8 +77,7 @@ opsi-script (4.12.5.0) stable; urgency=low
     procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
     procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType);
     procedure TTOMLTable.Remove(const key: String);
-    procedure TTOMLTable.AssignTable(const table: TTOMLTable); //not used
-    
+    procedure TTOMLTable.AssignTable(const table: TTOMLTable); //not used    
   * fpTOML: new external library for TOML files handling
   
 -- a.schmitz <a.schmitz@uib.de> Fri, 29 Apr 2022 11:00

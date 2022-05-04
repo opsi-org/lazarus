@@ -636,7 +636,7 @@ const
   Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllUserProfiles = '/AllUserProfiles';
   ParameterShowoutput = '/showoutput';
-
+  Parameter_AllFiles = '/AllSubFiles';
 
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
@@ -8418,8 +8418,8 @@ var
     ///info : string;
     remaining_with_leading_blanks: string = '';
     search4file: boolean;
-    mode: string;  // used on linux
-    list1: TStringList;
+    mode, strmode, rwxPart: string;  // used on linux
+    list1, AllFiles: TStringList;
     shellcallArchParam: string;
     go_on: boolean;
     tmpstr, searchmask: string;
@@ -8821,19 +8821,58 @@ var
           mode := Expressionstr;
           mode := opsiUnquoteStr(mode, '"');
           mode := opsiUnquoteStr(mode, '''');
+          LogDatei.log('Input Mode : ' + mode , LLInfo);
+
           if mode = '' then
           begin
             SyntaxCheck := False;
             errorinfo := errorinfo + ' Invalid empty string for mode in chmod';
           end;
           try
-            dummyint := StrToInt(mode);
+            mode := DelSpace(mode);
+            if TryStrToInt(mode, dummyint) = false then
+               begin
+                 strmode := '';
+                 if (mode[1] = '-') and (length(mode) = 10) then
+                     begin
+                       mode := copy(mode,2,length(mode)-1);
+                       if (length(mode) = 9) then
+                         begin
+                           j := 1;
+                           repeat
+                            rwxPart := mode[j]+mode[j+1]+mode[j+2];
+                            //LogDatei.log('rwxPart : ' + rwxPart, LLInfo);
+                            if rwxPart = 'rwx' then strmode := strmode+'7' ;
+                            if rwxPart = 'rw-' then strmode := strmode+'6' ;
+                            if rwxPart = 'r-x' then strmode := strmode+'5' ;
+                            if rwxPart = 'r--' then strmode := strmode+'4' ;
+                            if rwxPart = '-wx' then strmode := strmode+'3' ;
+                            if rwxPart = '-w-' then strmode := strmode+'2' ;
+                            if rwxPart = '--x' then strmode := strmode+'1' ;
+                            if rwxPart = '---' then strmode := strmode+'0' ;
+                            j:= j+3;
+                           until j> length(mode);
+                           dummyint := StrToInt(strmode);
+                         end;
+                     end
+                 else if (mode[1] = 'u') or (mode[1] = 'g') or (mode[1] = 'o') then
+                     begin
+                        strmode := 'UGOformat';
+                     end
+                 else
+                   errorinfo := errorinfo + ' Invalid string for mode in chmod';
+               end
+            else
+            begin
+              dummyint := StrToInt(mode);
+              strmode := mode;
+            end;
           except
             SyntaxCheck := False;
-            errorinfo := errorinfo +
-              ' Invalid string for mode in chmod. Expected something like 755 found: '
-              + mode;
+            errorinfo := errorinfo + ' Invalid string for mode in chmod';
           end;
+
+          LogDatei.log('Mode-format detected : ' + strmode , LLInfo);
 
           if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
           then
@@ -8849,18 +8888,80 @@ var
           // if file names have e.g. blanks in it, don't let them be split
           // (with the consequence of deleting files that have the first part as name)
 
-          if isAbsoluteFileName(Expressionstr) then
-            Source := Expressionstr
-          else
-            Source := SourceDirectory + Expressionstr;
-          Source := ExpandFileName(Source);
+          if RightStr(Expressionstr, 12) = '/AllSubFiles' then
+             begin
+               Expressionstr := copy(Expressionstr, 0, length(Expressionstr)-13);
+               //LogDatei.log('Parameter found, Directory retrieved : ' + expressionstr , LLInfo);
+               if isDirectory(Expressionstr) then
+                  begin
+                    Source := Expressionstr;
+                    LogDatei.log('Input Source - Directory : ' + Source , LLInfo);
+                  end
+               else
+                  LogDatei.log('Failed to chmod: ' + Source + ' to mode: '
+                              + strmode + ' : Directory is incorrect', LLerror);
 
-          if SyntaxCheck then
+               if SyntaxCheck then
+               begin
+                 AllFiles := FindAllFiles(Source, '*.*', true);
+                 for j := 0 to AllFiles.Count-1 do
+                  begin
+                  LogDatei.log('we try to chmod: ' + AllFiles[j] + ' to mode: ' + strmode, LLDebug2);
+
+                  if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, AllFiles[j]);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + AllFiles[j]
+                           + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                  if not Install.chmod(strmode, AllFiles[j]) then
+                      LogDatei.log('Failed to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLerror)
+                  else
+                      LogDatei.log('Succeeded to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+                  end;
+               end;
+             end
+          else
           begin
-            LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + mode, LLDebug2);
-            if not Install.chmod(mode, Source) then
-              LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + mode, LLerror);
+            if isAbsoluteFileName(Expressionstr) then
+              Source := Expressionstr
+            else
+              Source := SourceDirectory + Expressionstr;
+
+            Source := ExpandFileName(Source);
+            LogDatei.log('Input Source - File : ' + Source , LLInfo);
+
+            if SyntaxCheck then
+               begin
+                 LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + strmode, LLDebug2);
+
+                 if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, Source);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + Source
+                             + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                 if not Install.chmod(strmode, Source) then
+                    LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + strmode, LLerror)
+                 else
+                    LogDatei.log('Succeeded to chmod for : ' + Source + ' to mode: ' + strmode, LLInfo);
+                 end;
           end;
+
         end
         {$ENDIF LINUX}
 
