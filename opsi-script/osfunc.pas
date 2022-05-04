@@ -104,7 +104,8 @@ uses
   pipes,
   oszip,
   osfilehelper,
-  osnetutil;
+  osnetutil,
+  math;
 
 const
   BytesarrayLength = 5000;
@@ -401,6 +402,7 @@ type
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     function chmod(mode: string; const FileName: string): boolean;
+    function calcMode(mode: string; const FileName: string): string;
     {$ENDIF UNIX}
   end;
 
@@ -8032,6 +8034,122 @@ begin
     Result := True
   else
     Result := False;
+end;
+
+function TuibFileInstall.calcMode(mode: string; const FileName: string): string;
+var
+  info : Stat;
+  stMode, aux: Cardinal;
+  i, posSym : integer;
+  inputMode, rwxPart, existingMode, existingOctalMode, resultMode : string;
+  octalPart : char ;
+begin
+  try
+  // 1- Extracting the existing Mode in the input File
+  existingMode :='';
+  //existingOctalMode := '-';
+
+  // fpStat gets information about the file specified with its path,
+  // and stores it in Info, of type Stat
+  // Docu : https://www.freepascal.org/docs-html/rtl/baseunix/fpstat.html
+  if fpStat (FileName, info) <> 0 then
+     begin
+       LogDatei.log('fpStat failed : ', LLError);
+       halt (1);
+     end
+  else
+     begin
+      // Info is a Stat record of a given file
+      // info.st_mode returns the existing mode within a file
+      stMode := info.st_mode;
+      aux := stMode;
+      // converting info.st_mode to octal format
+      for i:=0 to 2 do
+      begin
+        existingMode :=chr((aux and $7)+$30)+existingMode;
+        aux:=aux shr 3;
+      end;
+     end;
+  (* // converting the octal-mode format to the rwx-mode format
+  i := 1;
+  repeat
+    if existingOctalMode[i] = '7' then existingOctalMode := existingOctalMode+ 'rwx' ;
+    if existingOctalMode[i] = '6' then existingOctalMode := existingOctalMode+ 'rw-' ;
+    if existingOctalMode[i] = '5' then existingOctalMode := existingOctalMode+ 'r-x' ;
+    if existingOctalMode[i] = '4' then existingOctalMode := existingOctalMode+ 'r--' ;
+    if existingOctalMode[i] = '3' then existingOctalMode := existingOctalMode+ '-wx' ;
+    if existingOctalMode[i] = '2' then existingOctalMode := existingOctalMode+ '-w-';
+    if existingOctalMode[i] = '1' then existingOctalMode := existingOctalMode+ '--x';
+    if existingOctalMode[i] = '0' then existingOctalMode := existingOctalMode+ '---' ;
+    i:= i+1;
+  until j> length(existingMode);
+  *)
+
+  //Writeln('existingMode : ' + existingMode);
+
+  // 2- Formatting the input Mode
+  inputMode := '   ';
+  //SetLength(inputMode, 3) ;
+
+  posSym := max(pos('=',mode), pos('+',mode)) ;
+  posSym := max(posSym, pos('-',mode)) ;
+
+  rwxPart := copy(mode, posSym+1, length(mode));
+
+  if rwxPart = 'rwx' then octalPart := '7' ;
+  if rwxPart = 'rw'  then octalPart := '6' ;
+  if rwxPart = 'rx'  then octalPart := '5' ;
+  if rwxPart = 'r'   then octalPart := '4' ;
+  if rwxPart = 'wx'  then octalPart := '3' ;
+  if rwxPart = 'w'   then octalPart := '2' ;
+  if rwxPart = 'x'   then octalPart := '1' ;
+  if rwxPart = ''    then octalPart := '0' ;
+
+ if pos('u',mode) = 0 then
+    inputMode[1] := '0'
+ else
+    inputMode[1] := octalPart;
+
+ if pos('g',mode) = 0 then
+    inputMode[2] := '0'
+ else
+    inputMode[2] := octalPart;
+
+ if pos('o',mode) = 0 then
+    inputMode[3] := '0'
+ else
+    inputMode[3] := octalPart;
+
+ //Writeln('inputMode : ' + inputMode);
+
+  // 3- Calculating the resulting Mode
+  resultMode := '   ';
+  //SetLength(resultMode, 3) ;
+
+  if pos('=',mode) > 0 then
+       resultMode := inputMode;
+
+  if pos('+',mode) > 0 then
+    for i:= 1 to 3 do
+        // "+" operation is equivalent to a bitwise OR
+        resultMode[i] := IntToSTr( (StrToInt(existingMode[i])) or (StrToInt(inputMode[i])) )[1];
+
+  if pos('-',mode) > 0 then
+    for i:= 1 to 3 do
+        // "-" operation is equivalent to a bitwise XAND
+        resultMode[i] := IntToSTr( (StrToInt(existingMode[i])) and (not(StrToInt(inputMode[i]))) )[1];
+
+  //Writeln('resultMode : ' +resultMode);
+
+  Result := trim(resultMode);
+
+  except
+    on E: Exception do
+    begin
+      LogDatei.log('Exception: Failed to caculate mode : ' + mode
+         + ' for: ' + FileName + ': ' + E.message, LLError);
+    end;
+  end;
 end;
 
 {$ENDIF LINUX}
