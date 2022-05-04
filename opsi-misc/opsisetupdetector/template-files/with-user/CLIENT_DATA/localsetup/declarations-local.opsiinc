@@ -1,0 +1,57 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+importlib "uib_exitcode.opsiscript"
+
+DefVar $ErrorString$
+DefVar $ExitCode$
+DefVar $InstallDir$
+DefVar $InstalledExecutable$
+DefVar $InstallFilesDir$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $LicenseRequired$
+DefVar $LogDir$
+DefVar $MsiId$
+DefVar $ProductId$
+DefVar $ServiceErrorClass$
+DefVar $Uninstaller$
+DefVar $oldProgFound$
+DefVar $os$
+DefVar $targetfile$
+DefVar $tmpstr$
+DefVar $uninstallprogram$
+DefVar $myScriptPath$
+
+
+Set $InstallFilesDir$ = $SetupFilesPath$ + "\localsetup\"
+Set $LogDir$ = "%opsiLogDir%"
+
+; ----------------------------------------------------------------
+; - Please edit the following values                             -
+; ----------------------------------------------------------------
+;The name of the software
+	Set $ProductId$ = "#@productId*#"
+
+;The folder that the software installs itself to
+	Set $InstallDir$ = "#@InstallDir1*#"
+
+;Path to the installed executable
+	Set $InstalledExecutable$ = $InstallDir$ + "\" + $ProductId$ + ".exe"
+
+;Name of the license pool to be used
+	Set $LicensePool$ = "p_" + $ProductId$
+
+;Does the installation require a license?
+	Set $LicenseRequired$ = "false"
+
+;GUID of the installed MSI (Can be found in either HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall or HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall or determined by the opsi-setup-detector)
+	Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
+
+;Name of the uninstaller executable
+	Set $Uninstaller$ = $InstallDir$ + "\uninstall.exe"
+; ----------------------------------------------------------------

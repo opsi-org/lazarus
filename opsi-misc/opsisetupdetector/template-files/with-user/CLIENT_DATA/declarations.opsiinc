@@ -1,0 +1,103 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+DefVar $BackupConsentPromptBehaviorAdmin$
+DefVar $BackupEnableInstallerDetection$
+DefVar $BackupEnableLUA$
+DefVar $BackupEnableVirtualization$
+DefVar $BackupPromptOnSecureDesktop$
+DefVar $CopyFilesLocally$
+DefVar $DisableUAC$
+DefVar $ErrorFlag$
+DefVar $ExecutionMethod$
+DefVar $LastLoggedOnSAMUser$
+DefVar $LastLoggedOnUser$
+DefVar $LocalSetupScript$
+DefVar $OpsiScriptDir$
+DefVar $OpsiScriptInterpreter$
+DefVar $ProductSettingsKey$
+DefVar $ProductSizeMB$
+DefVar $RequiredOperatingSystem$
+DefVar $RequiredOpsiclientdVersion$
+DefVar $RequiredOpsiScriptVersion$
+DefVar $Result$
+DefVar $ServiceCallPath$
+DefVar $SetupFilesPath$
+DefVar $SID$
+DefVar $Stage$
+
+DefStringList $ResultList$
+
+#@stringVars*#
+
+; ----------------------------------------------------------------
+; Please edit the following values
+; Available free disk space required
+Set $ProductSizeMB$ = "#@MinimumSpace1*#"
+; ----------------------------------------------------------------
+
+Comment "Setting initial values"
+#@GetProductProperty*#
+	Set $CopyFilesLocally$ = GetProductProperty("copy_files_locally", "false")
+	Set $DisableUAC$ = "true"
+	Set $ExecutionMethod$ = GetProductProperty("execution_method", "runOpsiScriptAsOpsiSetupUser")
+	Set $OpsiScriptDir$ = stringReplace("%OpsiScriptDir%", "\", "\\\\")
+	Set $OpsiScriptInterpreter$ = $OpsiScriptDir$ + "\\\\opsi-script.exe"
+		if NOT (FileOrFolderExists($OpsiScriptInterpreter$, "32Bit"))
+			Set $OpsiScriptInterpreter$ = $OpsiScriptDir$ + "\\\\winst32.exe"
+			if NOT (FileOrFolderExists($OpsiScriptInterpreter$, "32Bit"))
+				logError "No local opsi script interpreter found"
+				isFatalError "No local opsi script interpreter found"
+			endif
+		endif
+	Set $ProductSettingsKey$ = "HKLM\SOFTWARE\opsi.org\%installingProdName%"
+	Set $RequiredOperatingSystem$ = "Windows_NT"
+	Set $RequiredOpsiclientdVersion$ = "4.2.0.104"
+	Set $RequiredOpsiScriptVersion$ = "4.12.4.35"
+
+Comment "Determining if the client is using the wan extension"
+	if (contains("%opsiserviceURL%", "https://127.0.0.1")) OR (contains("%opsiserviceURL%", "https://localhost")) OR (contains("%ScriptPath%", "\opsi.org\cache\depot"))
+		Comment "Setting values for WAN mode"
+			Set $CopyFilesLocally$ = "false"
+			Set $ExecutionMethod$ = "runAsOpsiSetupUser"
+			Set $LocalSetupScript$ = "%SystemDrive%\\\\opsi.org\\\\cache\\\\depot\\\\%installingProdName%\\\\localsetup\\\\setup-local.opsiscript"
+			Set $SetupFilesPath$ = "%SystemDrive%\\opsi.org\\cache\\depot\\%installingProdName%"
+	else
+		Switch $ExecutionMethod$
+			Case "loginOpsiSetupUser"
+				Comment "Setting values for loginOpsiSetupUser mode"
+					if $CopyFilesLocally$ = "false"
+						Set $LocalSetupScript$ = "%ScriptDrive%\%installingProdName%\localsetup\setup-local.opsiinc"
+						Set $SetupFilesPath$ = "%ScriptDrive%\\%installingProdName%"
+					else
+						Set $LocalSetupScript$ = "%SystemDrive%\opsi.org\usertmp\%installingProdName%\localsetup\setup-local.opsiinc"
+						Set $SetupFilesPath$ = "%SystemDrive%\\opsi.org\\usertmp\\%installingProdName%"
+					endif
+			EndCase
+
+			Case "runAsOpsiSetupUser"
+				Comment "Setting values for runAsOpsiSetupUser mode"
+					Set $CopyFilesLocally$ = "true"
+					Set $LocalSetupScript$ = "%SystemDrive%\\\\opsi.org\\\\usertmp\\\\%installingProdName%\\\\localsetup\\\\setup-local.opsiscript"
+					Set $SetupFilesPath$ = "%SystemDrive%\\opsi.org\\usertmp\\%installingProdName%"
+			EndCase
+
+			Case "runOpsiScriptAsOpsiSetupUser"
+				Comment "Setting values for runOpsiScriptAsOpsiSetupUser mode"
+					if $CopyFilesLocally$ = "false"
+						Set $ServiceCallPath$ = "%installingProdName%"
+						Set $SetupFilesPath$ = "%ScriptDrive%\\%installingProdName%"
+					else
+						Set $ServiceCallPath$ = "%SystemDrive%\\opsi.org\\usertmp\\%installingProdName%"
+						Set $SetupFilesPath$ = "%SystemDrive%\\opsi.org\\usertmp\\%installingProdName%"
+					endif
+			EndCase
+		EndSwitch
+	endif
+
+Comment "Determining the Stage registry value"
+	Set $Stage$ = GetRegistryValue($ProductSettingsKey$, "Stage", "32bit")
