@@ -790,8 +790,8 @@ begin
   enckey := UTF8ToWinCP(key);
   if not GetHKEY(Key0, rkey) then
   begin
-    LogS := 'Error: ' + Key0 + ' not accepted as registry root key';
-    LogDatei.log(LogS, LLNotice);
+    LogS := Key0 + ' not accepted as registry root key for "' + key + '"';
+    LogDatei.log(LogS, LLError);
   end
   else
   begin
@@ -815,7 +815,7 @@ begin
 
       LogS := 'opened';
 
-      LogS := 'Registry key ' + '[' + key0 + '\' + key + ']  ' + LogS;
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' + LogS;
       LogDatei.log(LogS, LLInfo);
 
       Result := True;
@@ -839,8 +839,8 @@ begin
   enckey := UTF8ToWinCP(key);
   if not GetHKEY(Key0, rkey) then
   begin
-    LogS := 'Error: ' + Key0 + ' not accepted as registry root key';
-    LogDatei.log(LogS, LLNotice);
+    LogS := Key0 + ' not accepted as registry root key for "' + key + '"';
+    LogDatei.log(LogS, LLError);
   end
   else
   begin
@@ -1056,7 +1056,7 @@ begin
 
   if OpenExistingKey(key0, '') then
   begin
-    errorcode := RegDeleteKey(mykey, PChar(keytoopen));
+    errorcode := RegDeleteKey(mykey, PChar(UTF8ToWinCP(keytoopen)));
     if errorcode = error_success then
     begin
       Result := True;
@@ -1801,7 +1801,6 @@ begin
   regType := nil;
 
 
-
   (*  FoundDataType := GetDataType (Name); *)
   (* tut nichts *)
   try
@@ -1827,7 +1826,6 @@ begin
     Supplist := TStringList.Create;
 
     (* build (old) Entrylist *)
-
     while Line <> '' do
     begin
       GetWord(Line, Entry, Line, [Separator]);
@@ -1866,6 +1864,8 @@ begin
         Line := Line + Separator + EntryList.Strings[i - 1];
     end;
 
+    FreeAndNil(EntryList);
+    FreeAndNil(SuppList);
   end;
 
   regresult := ERROR_SUCCESS;
@@ -1890,12 +1890,6 @@ begin
       LogS := LogS + ' WINAPI-Fehler ' + IntToStr(regresult);
     LogDatei.log(LogS, LLNotice);
   end;
-
-
-  EntryList.Free;
-  EntryList := nil;
-  SuppList.Free;
-  SuppList := nil;
 end;
 
 

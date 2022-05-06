@@ -641,7 +641,7 @@ const
   Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllUserProfiles = '/AllUserProfiles';
   ParameterShowoutput = '/showoutput';
-
+  Parameter_AllFiles = '/AllSubFiles';
 
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
@@ -2470,10 +2470,8 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
 
     if not FileExists(ExpandFileName(PatchFilename)) then
@@ -3198,7 +3196,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc] + PathDelim);
+      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3213,7 +3211,7 @@ begin
     else
       PatchFilename := Filename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doTextpatchMain(Sektion, GetUserProfilePath + PathDelim);
+    doTextpatchMain(Sektion, GetUserProfilePath);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3427,11 +3425,12 @@ var
   ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain;
+  procedure doInifilePatchesMain(const presetDir: string);
   var
     i: integer = 0;
     dummy: string;
     mytxtfile: TStringList;
+    workingSection: TXStringList;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
     //LogDatei.log (ps, LevelWarnings);
@@ -3467,7 +3466,12 @@ var
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    // jetzt Arbeitsstruktur erzeugen
+    // create working opbjects
+    // copy const sektion to var workingsection so it can be modified
+    workingSection := TXStringList.Create;
+    workingSection.Assign(Sektion);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     Patchdatei := TuibPatchIniFile.Create;
     //mytxtfile := TStringlist.Create;
@@ -3485,14 +3489,14 @@ var
     for i := 0 to Patchdatei.Count - 1 do
       logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
 
-    for i := 1 to Sektion.Count do
+    for i := 1 to workingSection.Count do
     begin
-      if (Sektion.strings[i - 1] = '') or (Sektion.strings[i - 1]
+      if (workingSection.strings[i - 1] = '') or (workingSection.strings[i - 1]
         [1] = LineIsCommentChar) then
       (* continue *)
       else
       begin
-        WortAbspalten(cutLeftBlanks(Sektion.strings[i - 1]), Befehlswort, Rest);
+        WortAbspalten(cutLeftBlanks(workingSection.strings[i - 1]), Befehlswort, Rest);
 
         if UpperCase(Befehlswort) = 'ADD' then
         begin
@@ -3518,7 +3522,7 @@ var
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
           if Eintrag <> '' then
-            reportError(Sektion, i, Sektion.strings[i - 1], 'syntax error')
+            reportError(Sektion, i, workingSection.strings[i - 1], 'syntax error')
           else
             Patchdatei.delSec(Bereich);
         end
@@ -3531,7 +3535,7 @@ var
         begin
           WortAbspalten(Rest, AlterEintrag, Eintrag);
           if pos(' ', eintrag) > 0 then
-            reportError(Sektion, i, Sektion.strings[i - 1],
+            reportError(Sektion, i, workingSection.strings[i - 1],
               'replace string not identified ')
           else
             Patchdatei.replaceEntry(AlterEintrag, Eintrag);
@@ -3557,6 +3561,7 @@ var
       logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     Patchdatei.Free;
     Patchdatei := nil;
+    FreeAndNil(workingSection);
   end;
 
 begin
@@ -3577,7 +3582,7 @@ begin
       PatchdateiName := SysUtils.StringReplace(PatchdateiName,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain;
+      doInifilePatchesMain(ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3592,7 +3597,7 @@ begin
     else
       PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain;
+    doInifilePatchesMain(GetUserProfilePath);
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -5299,7 +5304,7 @@ begin
             end
             else
             begin
-              LogDatei.log('Key0 is: ' + key0 + ' Key is: ' + key, LLdebug2);
+              LogDatei.log('Key0 is: ' + key0 + ', Key is: ' + key, LLdebug2);
               LogDatei.log('key0 : ' + key0 +
                 ' is not a valid base key and we will praefix it with: ' +
                 basekey, LLDebug2);
@@ -7627,10 +7632,8 @@ var
     //Handling multiple user profiles
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     //XML patch core
     myfilename := ExpandFilename(patchfilename);
@@ -8350,7 +8353,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doXMLpatch2Main(Sektion, ProfileList.Strings[pc] + PathDelim, PatchFilename);
+      doXMLpatch2Main(Sektion, ProfileList.Strings[pc], PatchFilename);
     end;
   end
   else
@@ -8365,7 +8368,7 @@ begin
     else
       PatchFilename := XMLFilename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doXMLpatch2Main(Sektion, GetUserProfilePath + PathDelim, PatchFilename);
+    doXMLpatch2Main(Sektion, GetUserProfilePath, PatchFilename);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -8420,8 +8423,8 @@ var
     ///info : string;
     remaining_with_leading_blanks: string = '';
     search4file: boolean;
-    mode: string;  // used on linux
-    list1: TStringList;
+    mode, strmode, rwxPart: string;  // used on linux
+    list1, AllFiles: TStringList;
     shellcallArchParam: string;
     go_on: boolean;
     tmpstr, searchmask: string;
@@ -8438,15 +8441,13 @@ var
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
@@ -8825,19 +8826,58 @@ var
           mode := Expressionstr;
           mode := opsiUnquoteStr(mode, '"');
           mode := opsiUnquoteStr(mode, '''');
+          LogDatei.log('Input Mode : ' + mode , LLInfo);
+
           if mode = '' then
           begin
             SyntaxCheck := False;
             errorinfo := errorinfo + ' Invalid empty string for mode in chmod';
           end;
           try
-            dummyint := StrToInt(mode);
+            mode := DelSpace(mode);
+            if TryStrToInt(mode, dummyint) = false then
+               begin
+                 strmode := '';
+                 if (mode[1] = '-') and (length(mode) = 10) then
+                     begin
+                       mode := copy(mode,2,length(mode)-1);
+                       if (length(mode) = 9) then
+                         begin
+                           j := 1;
+                           repeat
+                            rwxPart := mode[j]+mode[j+1]+mode[j+2];
+                            //LogDatei.log('rwxPart : ' + rwxPart, LLInfo);
+                            if rwxPart = 'rwx' then strmode := strmode+'7' ;
+                            if rwxPart = 'rw-' then strmode := strmode+'6' ;
+                            if rwxPart = 'r-x' then strmode := strmode+'5' ;
+                            if rwxPart = 'r--' then strmode := strmode+'4' ;
+                            if rwxPart = '-wx' then strmode := strmode+'3' ;
+                            if rwxPart = '-w-' then strmode := strmode+'2' ;
+                            if rwxPart = '--x' then strmode := strmode+'1' ;
+                            if rwxPart = '---' then strmode := strmode+'0' ;
+                            j:= j+3;
+                           until j> length(mode);
+                           dummyint := StrToInt(strmode);
+                         end;
+                     end
+                 else if (mode[1] = 'u') or (mode[1] = 'g') or (mode[1] = 'o') then
+                     begin
+                        strmode := 'UGOformat';
+                     end
+                 else
+                   errorinfo := errorinfo + ' Invalid string for mode in chmod';
+               end
+            else
+            begin
+              dummyint := StrToInt(mode);
+              strmode := mode;
+            end;
           except
             SyntaxCheck := False;
-            errorinfo := errorinfo +
-              ' Invalid string for mode in chmod. Expected something like 755 found: '
-              + mode;
+            errorinfo := errorinfo + ' Invalid string for mode in chmod';
           end;
+
+          LogDatei.log('Mode-format detected : ' + strmode , LLInfo);
 
           if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
           then
@@ -8853,18 +8893,80 @@ var
           // if file names have e.g. blanks in it, don't let them be split
           // (with the consequence of deleting files that have the first part as name)
 
-          if isAbsoluteFileName(Expressionstr) then
-            Source := Expressionstr
-          else
-            Source := SourceDirectory + Expressionstr;
-          Source := ExpandFileName(Source);
+          if RightStr(Expressionstr, 12) = '/AllSubFiles' then
+             begin
+               Expressionstr := copy(Expressionstr, 0, length(Expressionstr)-13);
+               //LogDatei.log('Parameter found, Directory retrieved : ' + expressionstr , LLInfo);
+               if isDirectory(Expressionstr) then
+                  begin
+                    Source := Expressionstr;
+                    LogDatei.log('Input Source - Directory : ' + Source , LLInfo);
+                  end
+               else
+                  LogDatei.log('Failed to chmod: ' + Source + ' to mode: '
+                              + strmode + ' : Directory is incorrect', LLerror);
 
-          if SyntaxCheck then
+               if SyntaxCheck then
+               begin
+                 AllFiles := FindAllFiles(Source, '*.*', true);
+                 for j := 0 to AllFiles.Count-1 do
+                  begin
+                  LogDatei.log('we try to chmod: ' + AllFiles[j] + ' to mode: ' + strmode, LLDebug2);
+
+                  if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, AllFiles[j]);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + AllFiles[j]
+                           + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                  if not Install.chmod(strmode, AllFiles[j]) then
+                      LogDatei.log('Failed to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLerror)
+                  else
+                      LogDatei.log('Succeeded to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+                  end;
+               end;
+             end
+          else
           begin
-            LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + mode, LLDebug2);
-            if not Install.chmod(mode, Source) then
-              LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + mode, LLerror);
+            if isAbsoluteFileName(Expressionstr) then
+              Source := Expressionstr
+            else
+              Source := SourceDirectory + Expressionstr;
+
+            Source := ExpandFileName(Source);
+            LogDatei.log('Input Source - File : ' + Source , LLInfo);
+
+            if SyntaxCheck then
+               begin
+                 LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + strmode, LLDebug2);
+
+                 if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, Source);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + Source
+                             + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                 if not Install.chmod(strmode, Source) then
+                    LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + strmode, LLerror)
+                 else
+                    LogDatei.log('Succeeded to chmod for : ' + Source + ' to mode: ' + strmode, LLInfo);
+                 end;
           end;
+
         end
         {$ENDIF LINUX}
 
@@ -9356,10 +9458,10 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + PathDelim;
-      if DirectoryExistsUTF8(presetdirectory) then
+      presetdirectory := ProfileList.Strings[pc];
+      if DirectoryExistsUTF8(presetdirectory + PathDelim) then
       begin
-        logdatei.log(' Make it for user directory: ' + presetdirectory, LLInfo);
+        logdatei.log(' Make it for user directory: ' + presetdirectory + PathDelim, LLInfo);
         fileActionsMain(Sektion, presetDirectory);
       end;
     end;
@@ -9370,7 +9472,7 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + '\SendTo\';
+      presetdirectory := ProfileList.Strings[pc] + '\SendTo';
       fileActionsMain(Sektion, presetDirectory);
     end;
   end
@@ -9380,7 +9482,7 @@ begin
     SourceDirectory := '';
     PresetDirectory := '';
     if runLoginScripts then
-      PresetDirectory := GetUserProfilePath + PathDelim;
+      PresetDirectory := GetUserProfilePath;
     fileActionsMain(Sektion, presetdirectory);
     {$IFDEF WIN32}
     //setErrorMode(OldWinapiErrorMode);
