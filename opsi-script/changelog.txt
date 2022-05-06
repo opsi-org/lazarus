@@ -1,4 +1,4 @@
-
+﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
@@ -21,22 +21,23 @@ opsi-script (4.12.5.0) stable; urgency=low
     Adding 'ugo=+-rwx' mode format to CHMOD
     Adding '-rwxrwxrwx' mode format to CHMOD
     Adding '/AllSubFiles' parameter to Files_section CHMOD command
-  
-  * osparser: new functions for TOML files handling:
-    function LoadTOMLFile(TOMLfilePath: String): TStringList;
-    function GetTOMLAsStringList(TOMLcontents: String): TStringList;
-    function GetTOMLKeys(TOMLcontents: String): TStringList
-    function GetTOMLTableNames(TOMLcontents: String): TStringList;
-    function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
-    function ReadTOMLFile (TOMLfilePath: String): String; 
-    function GetTOMLAsString(TOMLcontents: String): String;
-    function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
-    function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
-    function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
-    function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
-    function ConvertTOMLtoJSON(TOMLcontents: String): String;
-    function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean;
-    function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean; 
+    
+  * fpTOML: new external library for TOML files handling
+  * fpTOML: new functions in TOMLTypes unit:
+    function TTOMLArray.AsStrings: TStringList;
+    function TTOMLArray.AsTOMLString: String;
+    function TTOMLTable.AsTOMLString: ansistring;
+    function TTOMLTable.AsTOMLStringList: TStringList;
+    property TTOMLTable.Header : string read GetHeader; 
+    function TTOMLTable.GetHeader : string; 
+    procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
+    procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType);
+    procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
+    procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
+    procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
+    procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType);
+    procedure TTOMLTable.Remove(const key: String);
+    procedure TTOMLTable.AssignTable(const table: TTOMLTable); //not used 
   * osTOML: new unit for TOML func:
     function LoadTOMLFile(TOMLfilePath: String): TStringList;
     function ReadTOMLFile(TOMLfilePath: String): String;
@@ -63,22 +64,22 @@ opsi-script (4.12.5.0) stable; urgency=low
     //function AddKeyValueToTOMLFile(TOMLfilePath: String; keyPath : String; value : String): boolean;
     //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLValueType);
     //procedure AddKeyValueToTOML(myTOML: TTOMLDocument; keyPath : TTOMLKeyType; value : TTOMLData);
-  * fpTOML: new functions in TOMLTypes unit:
-    function TTOMLArray.AsStrings: TStringList;
-    function TTOMLArray.AsTOMLString: String;
-    function TTOMLTable.AsTOMLString: ansistring;
-    function TTOMLTable.AsTOMLStringList: TStringList;
-    property TTOMLTable.Header : string read GetHeader; 
-    function TTOMLTable.GetHeader : string; 
-    procedure TTOMLTable.Insert(const key: String; const data: TTOMLData);
-    procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType);
-    procedure TTOMLTable.Put(const key: String; const data: TTOMLData);
-    procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType);
-    procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData);
-    procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType);
-    procedure TTOMLTable.Remove(const key: String);
-    procedure TTOMLTable.AssignTable(const table: TTOMLTable); //not used    
-  * fpTOML: new external library for TOML files handling
+  * osparser: new functions for TOML files handling:
+    function LoadTOMLFile(TOMLfilePath: String): TStringList;
+    function GetTOMLAsStringList(TOMLcontents: String): TStringList;
+    function GetTOMLKeys(TOMLcontents: String): TStringList
+    function GetTOMLTableNames(TOMLcontents: String): TStringList;
+    function GetTOMLTable(TOMLcontents: String; table : String): TStringList;
+    function ReadTOMLFile (TOMLfilePath: String): String; 
+    function GetTOMLAsString(TOMLcontents: String): String;
+    function GetTOMLTableAsString(TOMLcontents: String; table : String): String;
+    function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String;
+    function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String;
+    function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String;
+    function ConvertTOMLtoJSON(TOMLcontents: String): String;
+    function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean;
+    function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean;   
+
   
 -- a.schmitz <a.schmitz@uib.de> Fri, 29 Apr 2022 11:00
 
@@ -107,6 +108,7 @@ opsi-script (4.12.4.37) stable; urgency=low
   * new function netmaskToCidr(<string>): string;  [WLM]
   * osparser: new global constant %FQDN% for fqdn in network (not opsi service) context; implements #4554
   * osparser: fix occasionally access violation when using getReturnListFromSection/getOutStreamFromSection
+  * osstrlistutils: fixing exception with empty list in areStringlistsEqual, references #4717
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 
