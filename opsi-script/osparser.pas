@@ -15129,6 +15129,7 @@ var
   parameters: array of string;
   omc: TOpsiMethodCall;
   IniFile: TIniFile;
+  uibInifile: TuibIniFile;
   //tempchar : char;
   //tempansistr : ansistring;
   //tempansistrp : Pansichar;
@@ -15763,6 +15764,7 @@ begin
           end;
     end
 
+
     else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15806,6 +15808,69 @@ begin
 
                       end;
     end
+
+
+  (*
+  else if LowerCase(s) = LowerCase('GetValueFromInifile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(')', r, r, InfoSyntaxError) then
+                      begin
+                        syntaxCheck := True;
+                        try
+                          s1 := ExpandFileName(s1);
+                          LogDatei.log
+                          (' Trying to read the value to the key "' + s3 +
+                            '" in section "' + s2 + '"  from inifile "' +
+                            s1 + '", default value "' + s4 + '"', LevelComplete);
+                          uibInifile := TuibIniFile.Create(s1);
+                          //(* //with a 5th parameter s5 for encoding
+                          try
+                            s1 := ExpandFileName(s1);
+                            uibInifile.loadfromfile(s1);
+                            uibInifile.Text := reencode(uibInifile.Text, s5);
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                              LogDatei.log('Error on loading file: ' + e.message,
+                                LLError);
+                              FNumberOfErrors := FNumberOfErrors + 1;
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                            end
+                          end;
+                          //
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log
+                          ('    reading the value to the key "' + s3 +
+                            '" in section "' + s2 + '"  from inifile "' +
+                            s1 + '", default value "' + s4 + '"',
+                            LevelComplete);
+                          s2enc := UTF8ToWinCP(s2);
+                          s3enc := UTF8ToWinCP(s3);
+                          s4enc := UTF8ToWinCP(s4);
+                          StringResult := uibInifile.ReadString(s2enc, s3enc, s4enc);
+                          StringResult := WinCPToUTF8(StringResult);
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          uibInifile.Free;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Error in GetValueFromInifile : "' +
+                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                            StringResult := s4;
+                          end;
+                        end;
+                      end;
+    end
+  *)
 
   (*
   else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
