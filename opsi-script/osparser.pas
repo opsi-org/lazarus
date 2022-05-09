@@ -15764,7 +15764,7 @@ begin
           end;
     end
 
-
+    (*
     else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15808,9 +15808,8 @@ begin
 
                       end;
     end
+  *)
 
-
-  (*
   else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15870,7 +15869,6 @@ begin
                         end;
                       end;
     end
-  *)
 
   (*
   else if LowerCase(s) = LowerCase('GetSectionFromInifile') then
