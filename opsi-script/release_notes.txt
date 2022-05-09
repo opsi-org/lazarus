@@ -1,0 +1,42 @@
+opsi-script (4.12.5.0) unreleased; urgency=low
+
+  New:
+    * Patches section [W]: support %userprofiledir% inside of patches section. 
+    * Files section [L]: Command CHMOD. Adding 'ugo=+-rwx' mode format.  
+        Adding '-rwxrwxrwx' mode format. Adding '/AllSubFiles' parameter. 
+    * functions for TOML files handling [W/L/M]:
+        LoadTOMLFile(TOMLfilePath: String): TStringList,
+        GetTOMLAsStringList(TOMLcontents: String): TStringList,
+        GetTOMLKeys(TOMLcontents: String): TStringList,
+        GetTOMLTableNames(TOMLcontents: String): TStringList,
+        GetTOMLTable(TOMLcontents: String; table : String): TStringList,
+        ReadTOMLFile (TOMLfilePath: String): String, 
+        GetTOMLAsString(TOMLcontents: String): String,
+        GetTOMLTableAsString(TOMLcontents: String; table : String): String,
+        GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String,
+        ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String,
+        DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String,
+        ConvertTOMLtoJSON(TOMLcontents: String): String,
+        SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
+        ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean.
+    * GetRegistry functions [W]: 
+        getRegistryKeyList(<regkey>,<access str>), 
+        getRegistryVarList(<regkey>,<access str>), 
+        getRegistryVarMap(<regkey>,<access str>). 
+    * defined functions [W/L/M]: allow string concatenation in call of defined functions.
+    * opsiservicecall [W/L/M]: allow newline and tab.
+  
+  Changes:
+    * openssl [W]: update openssl on Windows to version 1.1.1n.
+    * webservice [W/L/M]: improved debugging and error handling.
+    * getWinProcessList [W]: use wincp2utf8 to reencode results.
+
+  Fixes:
+    * PowershellCall [W]: now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
+        Neverthless be carefull using piped commands in powershellCall! 
+    * Files section [W/L/M]: "del" now works with wildcards.
+    * Registry section [W]: "deletekey" uses UTF8ToWinCP to handle umlauts correctly.
+    * Parser [W/L/M]: fix in parsing errorsOccurredSinceMark.
+    * Parser [W/L/M]: throw syntax errors in comments.   
+  
+-- j.werner <j.werner@uib.de> ?? Mai 2022
