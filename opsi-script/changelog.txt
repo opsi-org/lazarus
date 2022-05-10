@@ -5,8 +5,6 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.5.0) unreleased; urgency=low
 
-  * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, a.schmitz)
-  * [fix] osparser: throw syntax errors in comments. (#3542, a.schmitz)
   * [new] osparser: doIniFilePatches: support %userprofiledir% inside of patches section (d.oertel)
   * [new] osparser : CHMOD for Linux.
           Adding new function TuibFileInstall.calcMode to handle 'ugo=+-rwx' mode format.
@@ -28,30 +26,14 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           function ConvertTOMLtoJSON(TOMLcontents: String): String,
           function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
           function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean. (#4663, j.laajili)
-  * [change] osparser: new internal function parsePowershellCall. Implements commen parsing for powershellCall (j.werner)
-  * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
-          Note: Neverthless be carefull using piped commands in powershellCall! (#4736, j.werner) 
-  * [fix] osfunc: "del" in files section now works with wildcards. (#4560, a.schmitz)
-  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions. (a.schmitz)
-  * [new] osGetRegistryFunctions: new summed GetRegistry functions
-          getRegistryKeyList(<regkey>,<access str>), 
-          getRegistryVarList(<regkey>,<access str>), 
-          getRegistryVarMap(<regkey>,<access str>). (#4720, a.schmitz)
-  * [change] osparser: parse GetRegistry functions together. (a.schmitz)
-  * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, a.schmitz)
-  * [new] osdefinedfunctions: allow string concatenation in call of defined functions. (#4683, a.schmitz)
-  * [change] osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (d.oertel)
-  * [new] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
-  * [change] oswebservice: update synapse openssl units. This enables to use openssl libs in Version 1.1.1 also on Windows (#4724 , j.werner) 
-  * [change] oswebservice: improved debugging and error handling (j.werner)    
   * [new] unit fpTOML, new external library for TOML files handling. (#4663, j.laajili)
   * [new] fpTOML: new functions in TOMLTypes unit.
           function TTOMLArray.AsStrings: TStringList,
           function TTOMLArray.AsTOMLString: String,
           function TTOMLTable.AsTOMLString: ansistring,
           function TTOMLTable.AsTOMLStringList: TStringList,
-          property TTOMLTable.Header : string read GetHeader, 
-          function TTOMLTable.GetHeader : string, 
+          property TTOMLTable.Header : string read GetHeader,
+          function TTOMLTable.GetHeader : string,
           procedure TTOMLTable.Insert(const key: String; const data: TTOMLData),
           procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType),
           procedure TTOMLTable.Put(const key: String; const data: TTOMLData),
@@ -59,10 +41,29 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData),
           procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType),
           procedure TTOMLTable.Remove(const key: String),
-          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used. (#4663, j.laajili) 
+          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used. (#4663, j.laajili)
   * [new] unit osTOML, new functions for TOML handling. (#4663, j.laajili)
+  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions. (a.schmitz)
+  * [new] osGetRegistryFunctions: new summed GetRegistry functions
+          getRegistryKeyList(<regkey>,<access str>),
+          getRegistryVarList(<regkey>,<access str>),
+          getRegistryVarMap(<regkey>,<access str>). (#4720, a.schmitz)
+  * [new] osdefinedfunctions: allow string concatenation in call of defined functions. (#4683, a.schmitz)
+  * [new] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
+  * [change] osparser: new internal function parsePowershellCall. Implements commen parsing for powershellCall (j.werner)
+  * [change] osparser: parse GetRegistry functions together. (a.schmitz)
+  * [change] osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (d.oertel)
+  * [change] oswebservice: update synapse openssl units. This enables to use openssl libs in Version 1.1.1 also on Windows (#4724 , j.werner)
+  * [change] oswebservice: improved debugging and error handling (j.werner)
+  * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, a.schmitz)
+  * [fix] osparser: throw syntax errors in comments. (#3542, a.schmitz)
+  * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
+          Note: Neverthless be carefull using piped commands in powershellCall! (#4736, j.werner) 
+  * [fix] osfunc: "del" in files section now works with wildcards. (#4560, a.schmitz)
+  * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, a.schmitz)
   
 -- j.werner <j.werner@uib.de> ?? Mai 2022
+
 
 opsi-script (4.12.4.37) stable; urgency=low
 
