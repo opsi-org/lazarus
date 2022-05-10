@@ -29,7 +29,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
   Changes:
     * openssl [W]: update openssl on Windows to version 1.1.1n.
     * webservice [W/L/M]: improved debugging and error handling.
-    * getWinProcessList [W]: use wincp2utf8 to reencode results.
+    * getProcessList [W]: improved encoding (utf8) handling.
 
   Fixes:
     * PowershellCall [W]: now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
