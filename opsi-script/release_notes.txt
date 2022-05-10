@@ -2,8 +2,8 @@ opsi-script (4.12.5.0) unreleased; urgency=low
 
   New:
     * Patches section [W]: support %userprofiledir% inside of patches section. 
-    * Files section [L]: Command CHMOD. Adding 'ugo=+-rwx' mode format.  
-        Adding '-rwxrwxrwx' mode format. Adding '/AllSubFiles' parameter. 
+    * Files section [L]: Command CHMOD with mode formats 'ugo=+-rwx' and '-rwxrwxrwx'
+	and with parameter '/AllSubFiles'. 
     * functions for TOML files handling [W/L/M]:
         LoadTOMLFile(TOMLfilePath: String): TStringList,
         GetTOMLAsStringList(TOMLcontents: String): TStringList,
@@ -23,8 +23,8 @@ opsi-script (4.12.5.0) unreleased; urgency=low
         getRegistryKeyList(<regkey>,<access str>), 
         getRegistryVarList(<regkey>,<access str>), 
         getRegistryVarMap(<regkey>,<access str>). 
-    * defined functions [W/L/M]: allow string concatenation in call of defined functions.
-    * opsiservicecall [W/L/M]: allow newline and tab.
+    * defined functions [W/L/M]: support string concatenation in call of defined functions.
+    * opsiservicecall [W/L/M]: support newline and tab.
   
   Changes:
     * openssl [W]: update openssl on Windows to version 1.1.1n.
@@ -35,8 +35,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
     * PowershellCall [W]: now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
         Neverthless be carefull using piped commands in powershellCall! 
     * Files section [W/L/M]: "del" now works with wildcards.
-    * Registry section [W]: "deletekey" uses UTF8ToWinCP to handle umlauts correctly.
-    * Parser [W/L/M]: fix in parsing errorsOccurredSinceMark.
-    * Parser [W/L/M]: throw syntax errors in comments.   
+    * Registry section [W]: "deletekey" now handles umlauts correctly.
+    * Comment [W/L/M]: Syntax errors in comments were ignored so far, now they will throw a syntax error.   
   
 -- j.werner <j.werner@uib.de> ?? Mai 2022
