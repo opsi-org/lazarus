@@ -2,27 +2,27 @@ opsi-script (4.12.5.0) unreleased; urgency=low
 
   New:
     * Patches section [W]: support %userprofiledir% inside of patches section. 
-    * Files section [L]: Command CHMOD with mode formats 'ugo=+-rwx' and '-rwxrwxrwx'
-	and with parameter '/AllSubFiles'. 
+    * Files section [L]: Command CHMOD with mode formats 'ugo=+-rwx' and '-rwxrwxrwx' 
+        and with parameter '/AllSubFiles'. 
     * functions for TOML files handling [W/L/M]:
-        LoadTOMLFile(TOMLfilePath: String): TStringList,
-        GetTOMLAsStringList(TOMLcontents: String): TStringList,
-        GetTOMLKeys(TOMLcontents: String): TStringList,
-        GetTOMLTableNames(TOMLcontents: String): TStringList,
-        GetTOMLTable(TOMLcontents: String; table : String): TStringList,
-        ReadTOMLFile (TOMLfilePath: String): String, 
-        GetTOMLAsString(TOMLcontents: String): String,
-        GetTOMLTableAsString(TOMLcontents: String; table : String): String,
-        GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String,
-        ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String,
-        DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String,
-        ConvertTOMLtoJSON(TOMLcontents: String): String,
-        SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
-        ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean.
+        LoadTOMLFile(<TOMLfilePath>): StringList,
+        GetTOMLAsStringList(<TOMLcontents>): StringList,
+        GetTOMLKeys(<TOMLcontents>): StringList,
+        GetTOMLTableNames(<TOMLcontents): StringList,
+        GetTOMLTable(<TOMLcontents>, <table>): StringList,
+        ReadTOMLFile (<TOMLfilePath>): String, 
+        GetTOMLAsString(<TOMLcontents>): String,
+        GetTOMLTableAsString(<TOMLcontents>, <table>): String,
+        GetValueFromTOML(<TOMLcontents>, <keyPath>, <defaultValue>): String,
+        ModifyTOML(<TOMLcontents>, <command>, <keyPath>, <value>): String,
+        DeleteTableFromTOML(<TOMLcontents>, <tablePath>): String,
+        ConvertTOMLtoJSON(<TOMLcontents>): String,
+        SaveToTOMLFile (<TOMLcontents>, <TOMLfilePath>) : boolean,
+        ConvertTOMLfileToJSONfile(<TOMLfilePath>, <JSONfilePath>): boolean.
     * GetRegistry functions [W]: 
-        getRegistryKeyList(<regkey>,<access str>), 
-        getRegistryVarList(<regkey>,<access str>), 
-        getRegistryVarMap(<regkey>,<access str>). 
+        getRegistryKeyList(<regkey>, <access str>), 
+        getRegistryVarList(<regkey>, <access str>), 
+        getRegistryVarMap(<regkey>, <access str>). 
     * defined functions [W/L/M]: support string concatenation in call of defined functions.
     * opsiservicecall [W/L/M]: support newline and tab.
   
