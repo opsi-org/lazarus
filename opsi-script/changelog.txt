@@ -66,7 +66,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
   * [fix] osfunc: "del" in files section now works with wildcards. (#4560, !36, a.schmitz)
   * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, !49, a.schmitz)
   
--- j.werner <j.werner@uib.de> ?? Mai 2022
+-- j.werner <j.werner@uib.de> 10 Mai 2022
 
 
 opsi-script (4.12.4.37) stable; urgency=low

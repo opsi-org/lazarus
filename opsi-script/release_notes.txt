@@ -1,4 +1,4 @@
-opsi-script (4.12.5.0) unreleased; urgency=low
+opsi-script (4.12.5.0) urgency=low
 
   New:
     * Patches section [W]: support %userprofiledir% inside of patches section. 
@@ -38,4 +38,4 @@ opsi-script (4.12.5.0) unreleased; urgency=low
     * Registry section [W]: "deletekey" now handles umlauts correctly.
     * Comment [W/L/M]: Syntax errors in comments were ignored so far, now they will throw a syntax error.   
   
--- j.werner <j.werner@uib.de> ?? Mai 2022
+-- j.werner <j.werner@uib.de> 10 Mai 2022
