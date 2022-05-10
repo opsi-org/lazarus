@@ -25,9 +25,9 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String,
           function ConvertTOMLtoJSON(TOMLcontents: String): String,
           function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
-          function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean. (#4663, j.laajili)
-  * [new] unit fpTOML, new external library for TOML files handling. (#4663, j.laajili)
-  * [new] fpTOML: new functions in TOMLTypes unit.
+          function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean.
+    [new] unit fpTOML, new external library for TOML files handling.
+    [new] fpTOML: new functions in TOMLTypes unit.
           function TTOMLArray.AsStrings: TStringList,
           function TTOMLArray.AsTOMLString: String,
           function TTOMLTable.AsTOMLString: ansistring,
@@ -41,10 +41,10 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData),
           procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType),
           procedure TTOMLTable.Remove(const key: String),
-          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used. (#4663, j.laajili)
-  * [new] unit osTOML, new functions for TOML handling. (#4663, j.laajili)
-  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions. (a.schmitz)
-  * [new] osGetRegistryFunctions: new summed GetRegistry functions
+          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used.
+    [new] unit osTOML, new functions for TOML handling. (#4663, j.laajili)
+  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions.
+    [new] osGetRegistryFunctions: new summed GetRegistry functions
           getRegistryKeyList(<regkey>,<access str>),
           getRegistryVarList(<regkey>,<access str>),
           getRegistryVarMap(<regkey>,<access str>). (#4720, a.schmitz)
