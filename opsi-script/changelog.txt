@@ -30,7 +30,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
             unit Scanner
             unit TOML
             unit TOMLParser
-            unit TOMLTypes
+            unit TOMLTypes (#4663, !47, j.laajili)
   * [new] unit TOMLTypes: new functions in TOMLTypes unit.
           function TTOMLArray.AsStrings: TStringList,
           function TTOMLArray.AsTOMLString: String,
@@ -45,9 +45,9 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData),
           procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType),
           procedure TTOMLTable.Remove(const key: String),
-          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used.
+          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used. (#4663, !47, j.laajili)
   * [new] unit osTOML, new functions for TOML handling. Based on fpTOML (#4663, !47, j.laajili)
-  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions.
+  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions. (!38, a.schmitz)
   * [new] osGetRegistryFunctions: new summed GetRegistry functions
           getRegistryKeyList(<regkey>,<access str>),
           getRegistryVarList(<regkey>,<access str>),
