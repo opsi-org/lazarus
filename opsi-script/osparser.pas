@@ -355,7 +355,7 @@ type
 
     procedure parsePowershellCall(var Command: string; AccessString: string;
       var HandlePolicy: string; var Option: string;
-      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
+      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool:boolean);
     function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
@@ -12177,11 +12177,11 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
-      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
+      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       if syntaxCheck then
       begin
         try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, StrToBool(s3), s4).Text;
+          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool, s4).Text;
         except
           on e: Exception do
           begin
@@ -16406,11 +16406,11 @@ begin
     LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
+    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
     if syntaxCheck then
     begin
       try
-        execPowershellCall(s1, s2, 0, True, False, StrToBool(s3), s4);
+        execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
         StringResult := IntToStr(FLastExitCodeOfExe);
       except
         on e: Exception do
@@ -20906,15 +20906,15 @@ end;
 
 procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
   var Option: string; var Remaining: string; var syntaxCheck: boolean;
-  var InfoSyntaxError: string);
-var
-  handle_policy: boolean = True; // for checking if var HandlePolicy: string can be converted to boolean
+  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
 begin
   Command := '';
   AccessString := '';
   HandlePolicy := '';
   Option := '';
   AccessString := 'sysnative'; //default value
+  HandlePolicyBool := True; // default value
+
   syntaxCheck := False;
   if Skip('(', Remaining, Remaining, InfoSyntaxError) then
   begin
@@ -20942,7 +20942,7 @@ begin
       begin
         if EvaluateString(Remaining, Remaining, HandlePolicy, InfoSyntaxError) then
         begin
-          if TryStrToBool(HandlePolicy, handle_policy) then
+          if TryStrToBool(HandlePolicy, HandlePolicyBool) then
           begin
              syntaxCheck := True;
           end
@@ -23575,11 +23575,11 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError);
+                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
                 if syntaxCheck then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, StrToBool(s3), s4);
+                    execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
                   except
                     on e: Exception do
                     begin
