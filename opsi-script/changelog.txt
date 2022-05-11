@@ -65,8 +65,11 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           Note: Neverthless be carefull using piped commands in powershellCall! (#4736, !52, j.werner)
   * [fix] osfunc: "del" in files section now works with wildcards. (#4560, !36, a.schmitz)
   * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, !49, a.schmitz)
+  * [fix] osprocesses: fix in function isprocessChildOf in function isParentByPid. 
+          repeat.. until loop now stops after 100 iterations when no other conditions were reached before 
+          to avoid a pontential endless loop. (j.werner)
   
--- j.werner <j.werner@uib.de> 10 Mai 2022
+-- j.werner <j.werner@uib.de> 11 Mai 2022
 
 
 opsi-script (4.12.4.37) stable; urgency=low

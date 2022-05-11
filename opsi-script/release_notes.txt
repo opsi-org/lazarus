@@ -36,6 +36,7 @@ opsi-script (4.12.5.0) urgency=low
         Neverthless be carefull using piped commands in powershellCall! 
     * Files section [W/L/M]: "del" now works with wildcards.
     * Registry section [W]: "deletekey" now handles umlauts correctly.
-    * Comment [W/L/M]: Syntax errors in comments were ignored so far, now they will throw a syntax error.   
+    * Comment [W/L/M]: Syntax errors in comments were ignored so far, now they will throw a syntax error.
+    * isProcessChildOf [W/L/M]: avoiding of an endless loop (hanging) which might occure under certain circumstances.   
   
--- j.werner <j.werner@uib.de> 10 Mai 2022
+-- j.werner <j.werner@uib.de> 11 Mai 2022
