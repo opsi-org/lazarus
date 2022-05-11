@@ -25,7 +25,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String,
           function ConvertTOMLtoJSON(TOMLcontents: String): String,
           function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
-          function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean.
+          function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean. (#4663, !47, j.laajili)
   * [new] fpTOML: new external library for TOML files handling. Contains the following units.
             unit Scanner
             unit TOML
