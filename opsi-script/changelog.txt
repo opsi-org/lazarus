@@ -59,8 +59,10 @@ opsi-script (4.12.5.0) unreleased; urgency=low
   * [change] osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (d.oertel)
   * [change] oswebservice: update synapse openssl units. This enables to use openssl libs in Version 1.1.1 also on Windows (#4724, !43, j.werner)
   * [change] oswebservice: improved debugging and error handling (j.werner)
-  * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, !37, a.schmitz)
   * [fix] osparser: throw syntax errors in comments. (#3542, !35, a.schmitz)
+  * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, !37, a.schmitz)
+  * [fix] osparser: sub files: TuibInstScript.LoadValidLinesFromFile does not cut away spaces around lines any more,
+          so that e.g. python code in an ExecWith section keeps its syntax. (!61, a.schmitz)
   * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
           Note: Neverthless be carefull using piped commands in powershellCall! (#4736, !52, j.werner)
   * [fix] osfunc: "del" in files section now works with wildcards. (#4560, !36, a.schmitz)

@@ -2181,7 +2181,7 @@ begin
     usedencoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
-    s := trim(OriginalList.Strings[i - 1]);
+    s := OriginalList.Strings[i - 1];
     Section.Add(s);
     script.FLinesOriginList.Append(FName + ' line: ' + IntToStr(i));
     script.FLibList.Append('false');
