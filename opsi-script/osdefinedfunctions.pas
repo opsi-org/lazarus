@@ -1345,6 +1345,8 @@ begin
             else // this should be not the last parameter and we expect a ','
               GetWord(inputstr, ParamStr, remaining, [',']);
 
+            ParamStr := Trim(ParamStr);
+
             // call by reference
             case DFparamList[paramcounter].paramDataType of
               dfpString:
@@ -1354,8 +1356,8 @@ begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: String variable expected, but: ' +
-                    ParamStr + ' is not a visible string variable';
+                    errorstr + 'Error: String variable expected, but: "' +
+                    ParamStr + '" is not a visible string variable';
                 end
                 else
                 begin
