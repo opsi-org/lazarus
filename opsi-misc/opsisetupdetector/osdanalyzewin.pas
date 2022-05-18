@@ -635,7 +635,7 @@ begin
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'INNO';
   if not DirectoryExists(destDir) then
-    CreateDir(destDir);
+    ForceDirectories(destDir);
   destfile := ExtractFileName(myfilename);
   destfile := ExtractFileName(destfile);
   installScriptISS := destDir + DirectorySeparator + 'install_script.iss';
@@ -842,7 +842,7 @@ begin
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-    createdir(opsitmp);
+    ForceDirectories(opsitmp);
   if not DirectoryExists(opsitmp) then
     LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
   {$IFDEF WINDOWS}
@@ -935,7 +935,7 @@ begin
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-    createdir(opsitmp);
+    ForceDirectories(opsitmp);
   if not DirectoryExists(opsitmp) then
     mywrite('Error: could not create directory: ' + opsitmp);
 
@@ -1059,7 +1059,7 @@ begin
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'wixbundle';
   if not DirectoryExists(destDir) then
-    CreateDir(destDir);
+    ForceDirectories(destDir);
 
   LogDatei.log('extract files from ' + myfilename + ' to' + destDir, LLInfo);
   myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +

@@ -1,0 +1,170 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Winbatch_install]
+#@installCommandLine1*#
+
+
+#@SetupDesktopiconSectionLines*#
+
+#@SetupSectionLines1*#
+
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@DelsubDesktopiconSectionLines*#
+
+#@DelsubSectionLines1*#
+
+
+;;############################### Files sections ###############################
+;[Files_Copy]
+;;Example for recursively copying files and folders into the installation directory:
+;	copy -s "%ScriptPath%\localsetup\files\*.*" "$InstallDir$"
+;
+;[Files_Delete]
+;;Example for recursively deleting the installation directory:
+;	del -sf "$InstallDir$\"
+;
+;
+;;############################### Registry sections ###############################
+;[Registry_Create]
+;;Example for setting some registry values:
+;	OpenKey [HKLM\Software\$ProductId$]
+;		Set "Example_REG_BINARY" = REG_BINARY:00 af 99 cd
+;		Set "Example_REG_DWORD" = REG_DWORD:0x00000001
+;		Set "Example_REG_SZ" = REG_SZ:"Example string"
+;
+;[Registry_Delete]
+;;Example for deleting a registry key:
+;	DeleteKey [HKLM\Software\$ProductId$]
+;
+;
+;
+;;############################### Linkfolder sections ###############################
+;[LinkFolder_Create]
+;;Example for creating a shortcut in the public startmenu:
+;	set_basefolder common_programs
+;	set_subfolder $ProductId$
+;	set_link
+;		name: $ProductId$
+;		target: $Executable$
+;		parameters:
+;		working_dir: $InstallDir$
+;		icon_file:
+;		icon_index:
+;	end_link
+;
+;;Example for creating a shortcut on the public desktop:
+;	set_basefolder common_desktopdirectory
+;	set_subfolder ""
+;	set_link
+;		name: $ProductId$
+;		target: $Executable$
+;		parameters: /parameter
+;		working_dir: $InstallDir$
+;		icon_file: $Executable$
+;		icon_index: 2
+;	end_link
+;
+;[LinkFolder_Delete]
+;;Example for deleting a folder from the public startmenu:
+;	set_basefolder common_programs
+;	delete_subfolder $ProductId$
+;
+;;Example for deleting a shortcut from the public desktop:
+;	set_basefolder common_desktopdirectory
+;	set_subfolder ""
+;	delete_element $ProductId$
+;
+;
+;
+;;############################### Sub sections ###############################
+;[Sub_Check_ExitCode]
+;	Set $ExitCode$ = getlastexitcode
+;	;if stringtobool(isInnoExitcodeFatal($ExitCode$, "true", $ErrorString$ ))
+;	;if stringtobool(isInstallshieldExitcodeFatal($ExitCode$, "true", $ErrorString$ ))
+;	;if stringtobool(isMsiExitcodeFatal($ExitCode$, "true", $ErrorString$ ))
+;	;if stringtobool(isNsisExitcodeFatal($ExitCode$, "true", $ErrorString$ ))
+;		Set $ErrorFlag$ = $ErrorString$
+;		Registry_Save_Fatal_Flag /32Bit
+;		ExitWindows /ImmediateReboot
+;	else
+;		Comment $ErrorString$
+;	endif
+;
+;[Sub_Get_License]
+;	Comment "Checking if license management is enabled"
+;		if opsiLicenseManagementEnabled
+;			Comment "Trying to retrieve a license key"
+;				Set $LicenseKey$ = demandLicenseKey($LicensePool$)
+;				Set $ServiceErrorClass$ = getLastServiceErrorClass
+;
+;			Comment "Error class: " + $ServiceErrorClass$
+;			Switch $ServiceErrorClass$
+;				Case "None"
+;					Comment "Successfully retrieved the license key '" + $LicenseKey$ + "'"
+;				EndCase
+;
+;				Case "LicenseConfigurationError"
+;					LogError "License configuration must be corrected"
+;					LogError getLastServiceErrorMessage
+;					Set $ErrorFlag$ = getLastServiceErrorMessage
+;					Registry_Save_Fatal_Flag /32Bit
+;					ExitWindows /ImmediateReboot
+;				EndCase
+;
+;				Case "LicenseMissingError"
+;					LogError "Required license not supplied"
+;					Set $ErrorFlag$ = "Required license not supplied"
+;					Registry_Save_Fatal_Flag /32Bit
+;					ExitWindows /ImmediateReboot
+;				EndCase
+;			EndSwitch
+;		else
+;			LogError "License management not enabled"
+;			Set $ErrorFlag$ = "License management not enabled"
+;			Registry_Save_Fatal_Flag /32Bit
+;			ExitWindows /ImmediateReboot
+;		endif
+;
+;[Sub_Free_License]
+;	Comment "Checking if license management is enabled"
+;		if opsiLicenseManagementEnabled
+;			Comment "Trying to free the license used for this product"
+;				Set $Result$ = FreeLicense($LicensePool$)
+;		else
+;			LogError "License management not enabled"
+;			Set $ErrorFlag$ = "License management not enabled"
+;			Registry_Save_Fatal_Flag /32Bit
+;			ExitWindows /ImmediateReboot
+;		endif
+;
+;
+;
+;;############################### Winbatch sections ###############################
+;[Winbatch_Install]
+;#@installCommandLine1*#
+;
+;[Winbatch_Uninstall]
+;;Choose one of the following examples as basis for your uninstallation
+;
+;;========= Inno Setup =========
+;;"$Uninstaller$" /silent /norestart
+;
+;;========= InstallShield =========
+;;Create an uninstall.iss answer file by running: setup.exe /uninst /r /f1"c:\uninstall.iss"
+;;"%ScriptPath%\localsetup\files\setup.exe" /uninst /s /f1"%ScriptPath%\localsetup\files\uninstall.iss" /f2"$LogDir$\$ProductId$.uninstall_log.txt"
+;
+;;========= MSI =========
+;;msiexec /x $MsiId$ /qb! /l* "$LogDir$\$ProductId$.uninstall_log.txt" REBOOT=ReallySuppress
+;
+;;========= Nullsoft Scriptable Install System (NSIS) =========
+;;"$Uninstaller$" /S

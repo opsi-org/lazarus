@@ -30,7 +30,7 @@ type
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
-    gmUnknown);
+    analyzeCreateWithUser,gmUnknown);
 
   TArchitecture = (a32, a64, aUnknown);
 
@@ -320,10 +320,12 @@ default: ["xenial_bionic"]
     Fsetupscript: string;
     Funinstallscript: string;
     Fdelsubscript: string;
+    Fupdatescript: string;
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
     FtargetOSset: TTargetOSset;
     FuseCustomDir : boolean;
+    FchannelDir : string;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -341,11 +343,13 @@ default: ["xenial_bionic"]
     property setupscript: string read Fsetupscript write Fsetupscript;
     property uninstallscript: string read Funinstallscript write Funinstallscript;
     property delsubscript: string read Fdelsubscript write Fdelsubscript;
+    property updatescript: string read Fupdatescript write Fupdatescript;
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
     property productImageFullFileName: string
       read FproductImageFullFileName write FproductImageFullFileName;
     property targetOSset: TTargetOSset read FtargetOSset write FtargetOSset;
     property useCustomDir: boolean read FuseCustomDir write FuseCustomDir;
+    property channelDir: string read FchannelDir write FchannelDir;
   public
     { public declarations }
     //constructor Create;
@@ -477,6 +481,7 @@ var
   osdsettings: TOSDSettings;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
+  templateChannelList: TStringList;
   installerArray: TInstallers;
   counter: integer;
   myconfiguration: TConfiguration;
@@ -1024,28 +1029,73 @@ begin
     myprop.SetDefaultLines(TStrings(tmpstrlist));
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
-
-
-    (*
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('install_architecture');
-    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
-    myprop.Add('unicode');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('False');      //editable
-    myprop.Add('["32 only","64 only","system specific","both"]');
-    //possible values
-    myprop.Add('["system specific"]');      //default values
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
-    myprop.Free;
-    *)
   end;
+
+  // start 'with-user' properties
+
+  propexists := aktProduct.properties.propExists('copy_files_locally');
+  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('copy_files_locally');
+    myprop.description := 'Determines if the installation files will be copied locally';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := False;
+  end;
+
+  propexists := aktProduct.properties.propExists('debug');
+  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('debug');
+    myprop.description := 'Enables keyboard and mouse input during auto logon and logs passwords if set to true';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := False;
+  end;
+
+  propexists := aktProduct.properties.propExists('uninstall_before_install');
+  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('uninstall_before_install');
+    myprop.description := 'Uninstall previous versions before installation';
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := True;
+  end;
+
+
+  propexists := aktProduct.properties.propExists('execution_method');
+  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('execution_method');
+    myprop.description := 'Execute the local installation by using local winst, or the event_starter';
+    myprop.Property_Type := unicode;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    tmpstrlist := TStringList.Create;
+    tmpstrlist.Add('loginOpsiSetupUser');
+    tmpstrlist.Add('runAsOpsiSetupUser');
+    tmpstrlist.Add('runOpsiScriptAsOpsiSetupUser');
+    myprop.SetValueLines(TStrings(tmpstrlist));
+    tmpstrlist.Clear;
+    tmpstrlist.Add('runOpsiScriptAsOpsiSetupUser');
+    myprop.SetDefaultLines(TStrings(tmpstrlist));
+    FreeAndNil(tmpstrlist);
+    myprop.boolDefault := False;
+  end;
+
+  // END 'with-user' properties
 end;
 
 
@@ -1748,22 +1798,26 @@ begin
     setupscript := 'setup.opsiscript';
     uninstallscript := 'uninstall.opsiscript';
     delsubscript := 'delsub.opsiscript';
+    channelDir:= 'default';
     licenserequired := False;
     // Application.Params[0] is directory of application as string
     { set productImageFullFileName to full file name of the default icon }
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+       PathDelim + 'default'+
       PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     defaultIconFullFileName :=
       '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
+       PathDelim + 'default'+
       PathDelim + 'images' + PathDelim + 'template.png';
     // in develop environment
     if not fileexists(defaultIconFullFileName) then
       defaultIconFullFileName :=
         ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+         PathDelim + 'default'+
         PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
@@ -2297,6 +2351,14 @@ begin
   finally
     FileVerInfo.Free;
   end;
+
+
+  // initalize channel names
+  templateChannelList := TStringList.Create;
+  templateChannelList.Add('training');
+  templateChannelList.Add('default');
+  templateChannelList.Add('structured');
+  templateChannelList.Add('high_structured');
 
   // Initialize logging
   LogDatei := TLogInfo.Create;

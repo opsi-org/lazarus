@@ -68,6 +68,8 @@ var
   aktReplacestr: string;
 begin
   mywrite('creating: ' + outfile + ' from: ' + infile);
+  if not DirectoryExists(ExtractFileDir(outfile)) then
+    ForceDirectories(ExtractFileDir(outfile));
 
   {$I+}//use exceptions
   try
@@ -117,7 +119,7 @@ var
   strlist: TStringList;
   templatePath: string;
   proptmpstr: string;
-  neededspacefor2archinstall : integer =0;
+  neededspacefor2archinstall: integer = 0;
 begin
   {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
@@ -277,8 +279,8 @@ begin
       patchlist.add('#@MinimumSpace' + IntToStr(i + 1) + '*#=' +
         IntToStr(aktProduct.SetupFiles[i].requiredSpace) + ' MB');
 
-      neededspacefor2archinstall := neededspacefor2archinstall
-        + aktProduct.SetupFiles[i].requiredSpace;
+      neededspacefor2archinstall :=
+        neededspacefor2archinstall + aktProduct.SetupFiles[i].requiredSpace;
 
       patchlist.add('#@InstallDir' + IntToStr(i + 1) + '*#=' +
         aktProduct.SetupFiles[i].installDirectory);
@@ -325,7 +327,7 @@ begin
     end;
 
     patchlist.add('#@MinimumSpace3*#=' +
-        IntToStr(neededspacefor2archinstall) + ' MB');
+      IntToStr(neededspacefor2archinstall) + ' MB');
 
   finally
     strlist.Free;
@@ -337,10 +339,12 @@ var
   infilename, outfilename, tmpname, tmpext, tmppref: string;
   insetup, indelsub, inuninstall: string;
   templatePath, genericTemplatePath, tempstr: string;
+  templateChannelDir, pre_id, subdir: string;
   infilelist: TStringList;
   i: integer;
 begin
   Result := False;
+  templateChannelDir := aktProduct.productdata.channelDir;
   {$IFDEF WINDOWS}
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   {$ENDIF WINDOWS}
@@ -359,17 +363,19 @@ begin
       '../Resources/template-files';
   {$ENDIF DARWIN}
 
-  genericTemplatePath := templatePath + Pathdelim + 'generic';
+  genericTemplatePath := templatePath + Pathdelim + 'default' + Pathdelim + 'generic';
   if osWin in aktProduct.productdata.targetOSset then
-    tempstr := 'win'
+    pre_id := 'win'
   else if osLin in aktProduct.productdata.targetOSset then
-    tempstr := 'lin'
+    pre_id := 'lin'
   else if osMac in aktProduct.productdata.targetOSset then
-    tempstr := 'mac';
+    pre_id := 'mac';
   if (osMulti in aktProduct.productdata.targetOSset) then
-    tempstr := 'multi';
+    pre_id := 'multi';
+  if (osdsettings.runmode = analyzeCreateWithUser) then
+    pre_id := 'with-user';
 
-  templatePath := templatePath + Pathdelim + tempstr;
+  //templatePath := templatePath + Pathdelim + pre_id;
 
   try
     try
@@ -428,44 +434,98 @@ begin
           infilelist.Add('mac_delsubtempl.opsiscript');
           infilelist.Add('mac_uninstalltempl.opsiscript');
         end;
+        analyzeCreateWithUser:
+        begin
+          infilelist.Add('setup.opsiscript');
+          infilelist.Add('sections.opsiinc');
+          infilelist.Add('declarations.opsiinc');
+          infilelist.Add('localsetup\declarations-local.opsiinc');
+          infilelist.Add('localsetup\delsub-local.opsiinc');
+          infilelist.Add('localsetup\sections-local.opsiinc');
+          infilelist.Add('localsetup\setup-local.opsiinc');
+          infilelist.Add('localsetup\setup-local.opsiscript');
+          infilelist.Add('localsetup\uninstall-local.opsiscript');
+          infilelist.Add('localsetup\update-local.opsiscript');
+          for i := 0 to infilelist.Count - 1 do
+          begin
+            infilename := templatePath + PathDelim + templateChannelDir +
+              Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+            if not FileExists(infilename) then
+              infilename := templatePath + PathDelim + 'default' +
+                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+            outfilename := clientpath + PathDelim + infilelist.Strings[i];
+            patchScript(infilename, outfilename);
+          end;
+        end;
       end;
-      for i := 0 to infilelist.Count - 1 do
-      begin
-        tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
-        tmpext := ExtractFileExt(infilelist.Strings[i]);
-        tmppref := copy(infilelist.Strings[i], 1, 3);
-        // replace non active setups with template
-        if (tmppref = 'win') and (aktProduct.SetupFiles[0].active = False) then
-          infilename := templatePath + Pathdelim +
-            StringReplace(tmpname, 'single', 'templ', []) + tmpext
-        else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
-          infilename := templatePath + Pathdelim +
-            StringReplace(tmpname, 'single', 'templ', []) + tmpext
-        else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
-          infilename := templatePath + Pathdelim +
-            StringReplace(tmpname, 'single', 'templ', []) + tmpext
-        else
-          infilename := templatePath + Pathdelim + infilelist.Strings[i];
-        tmpname := StringReplace(tmpname, 'single', '', []);
-        tmpname := StringReplace(tmpname, 'double', '', []);
-        tmpname := StringReplace(tmpname, 'templ', '', []);
-        tmpname := StringReplace(tmpname, 'meta', '', []);
-        if tmpname = 'setup' then
-          outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
-        else if tmpname = 'delsub' then
-          outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
-        else if tmpname = 'uninstall' then
-          outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript
-        else
-          outfilename := clientpath + PathDelim + tmpname + tmpext;
-        patchScript(infilename, outfilename);
-      end;
+      // we did it for analyzeCreateWithUser right now
+      if not (osdsettings.runmode = analyzeCreateWithUser) then
+        for i := 0 to infilelist.Count - 1 do
+        begin
+          tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
+          tmpext := ExtractFileExt(infilelist.Strings[i]);
+          tmppref := copy(infilelist.Strings[i], 1, 3);
+          // replace non active setups with template
+          if (tmppref = 'win') and (aktProduct.SetupFiles[0].active = False) then
+          begin
+            infilename := templatePath + Pathdelim + templateChannelDir +
+              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+              'single', 'templ', []) + tmpext;
+            if not FileExists(infilename) then
+              infilename := templatePath + PathDelim + 'default' +
+                Pathdelim + pre_id + PathDelim +
+                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+          end
+          else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
+          begin
+            infilename := templatePath + Pathdelim + templateChannelDir +
+              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+              'single', 'templ', []) + tmpext;
+            if not FileExists(infilename) then
+              infilename := templatePath + PathDelim + 'default' +
+                PathDelim + pre_id + PathDelim +
+                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+          end
+          else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
+          begin
+            infilename := templatePath + Pathdelim + templateChannelDir +
+              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+              'single', 'templ', []) + tmpext;
+            if not FileExists(infilename) then
+              infilename := templatePath + PathDelim + 'default' +
+                PathDelim + pre_id + PathDelim +
+                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+          end
+          else
+          begin
+            infilename := templatePath + PathDelim + templateChannelDir +
+              Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+            if not FileExists(infilename) then
+              infilename := templatePath + PathDelim + 'default' +
+                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+          end;
+          tmpname := StringReplace(tmpname, 'single', '', []);
+          tmpname := StringReplace(tmpname, 'double', '', []);
+          tmpname := StringReplace(tmpname, 'templ', '', []);
+          tmpname := StringReplace(tmpname, 'meta', '', []);
+          if tmpname = 'setup' then
+            outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
+          else if tmpname = 'delsub' then
+            outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
+          else if tmpname = 'uninstall' then
+            outfilename := clientpath + PathDelim +
+              aktProduct.productdata.uninstallscript
+          else
+            outfilename := clientpath + PathDelim + tmpname + tmpext;
+          patchScript(infilename, outfilename);
+        end;
 
       // define_vars_multi
       // none at windows template or createMeta
       if not (((osdsettings.runmode = createTemplate) and
         (osWin in aktProduct.productdata.targetOSset)) or
-        (osdsettings.runmode = createMeta)) then
+        (osdsettings.runmode = createMeta) or (osdsettings.runmode =
+        analyzeCreateWithUser)) then
       begin
         infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
         outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
@@ -486,7 +546,9 @@ begin
     outfilename := clientpath + PathDelim + aktProduct.productdata.uninstallscript;
     patchScript(infilename, outfilename);    *)
 
-
+      subdir := '';
+      if osdsettings.runmode = analyzeCreateWithUser then
+        subdir := pathdelim + 'localsetup';
       // No need to copy installer for templates or Meta
       if not (osdsettings.runmode in [createTemplate, createMultiTemplate,
         createMeta]) then
@@ -495,13 +557,13 @@ begin
         begin
           infilename := aktProduct.SetupFiles[i].setupFullFileName;
           LogDatei.log('Will copy: ' + infilename + ' to: ' +
-            clientpath + PathDelim + 'files' + IntToStr(i + 1), LLNotice);
+            clientpath + subdir + PathDelim + 'files' + IntToStr(i + 1), LLNotice);
           if aktProduct.SetupFiles[i].active then
             // complete dir
             if aktProduct.SetupFiles[i].copyCompleteDir then
             begin
               if not CopyDirTree(ExtractFileDir(infilename),
-                clientpath + PathDelim + 'files' + IntToStr(i + 1),
+                clientpath + subdir + PathDelim + 'files' + IntToStr(i + 1),
                 [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
                 LogDatei.log('Failed to copy: ' + infilename, LLError);
             end
@@ -509,16 +571,17 @@ begin
             else if DirectoryExistsUTF8(infilename) and
               (LowerCase(ExtractFileExt(infilename)) = '.app') then
             begin
-              if not CopyDirTree(infilename, clientpath + PathDelim +
-                'files' + IntToStr(i + 1) + PathDelim + ExtractFileName(infilename),
-                [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime]) then
+              if not CopyDirTree(infilename, clientpath + subdir +
+                PathDelim + 'files' + IntToStr(i + 1) + PathDelim +
+                ExtractFileName(infilename), [cffOverwriteFile,
+                cffCreateDestDirectory, cffPreserveTime]) then
                 LogDatei.log('Failed to copy: ' + infilename, LLError);
             end
             else
             begin
               // setup file
               if FileExists(infilename) then
-                if copyfile(infilename, clientpath + PathDelim +
+                if copyfile(infilename, clientpath + subdir + PathDelim +
                   'files' + IntToStr(i + 1) + PathDelim +
                   aktProduct.SetupFiles[i].setupFileName,
                   [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
@@ -526,8 +589,8 @@ begin
               // MST file
               if FileExists(aktProduct.SetupFiles[i].MSTFullFileName) then
                 if copyfile(aktProduct.SetupFiles[i].MSTFullFileName,
-                  clientpath + PathDelim + 'files' + IntToStr(i + 1) +
-                  PathDelim + aktProduct.SetupFiles[i].MSTFileName,
+                  clientpath + subdir + PathDelim + 'files' +
+                  IntToStr(i + 1) + PathDelim + aktProduct.SetupFiles[i].MSTFileName,
                   [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
                   LogDatei.log('Failed to copy: ' +
                     aktProduct.SetupFiles[i].MSTFullFileName, LLError);
@@ -540,7 +603,7 @@ begin
       begin
         //osd-lib.opsiscript
         infilename := genericTemplatePath + Pathdelim + 'osd-lib.opsiscript';
-        outfilename := clientpath + PathDelim + 'osd-lib.opsiscript';
+        outfilename := clientpath + subdir + PathDelim + 'osd-lib.opsiscript';
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
 
@@ -571,7 +634,7 @@ begin
         if fileexists(genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript') then
         begin
           infilename := genericTemplatePath + Pathdelim + 'uib_exitcode.opsiscript';
-          outfilename := clientpath + PathDelim + 'uib_exitcode.opsiscript';
+          outfilename := clientpath + subdir + PathDelim + 'uib_exitcode.opsiscript';
           copyfile(infilename, outfilename, [cffOverwriteFile,
             cffCreateDestDirectory, cffPreserveTime], True);
         end;
@@ -580,8 +643,9 @@ begin
         //product png
         //infilename := templatePath + Pathdelim + 'template.png';
         infilename := aktProduct.productdata.productImageFullFileName;
-        outfilename := clientpath + PathDelim + aktProduct.productdata.productId +
-          ExtractFileExt(aktProduct.productdata.productImageFullFileName);
+        outfilename := clientpath + subdir + PathDelim +
+          aktProduct.productdata.productId + ExtractFileExt(
+          aktProduct.productdata.productImageFullFileName);
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
 
@@ -589,17 +653,17 @@ begin
 
       //preinst
       if aktProduct.productdata.useCustomDir then
-      infilename := genericTemplatePath + Pathdelim + 'preinst_custom'
+        infilename := genericTemplatePath + Pathdelim + 'preinst_custom'
       else
-      infilename := genericTemplatePath + Pathdelim + 'preinst_empty';
+        infilename := genericTemplatePath + Pathdelim + 'preinst_empty';
       outfilename := opsipath + pathdelim + 'preinst';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
       //postinst
       if aktProduct.productdata.useCustomDir then
-      infilename := genericTemplatePath + Pathdelim + 'postinst_custom'
+        infilename := genericTemplatePath + Pathdelim + 'postinst_custom'
       else
-      infilename := genericTemplatePath + Pathdelim + 'postinst_empty';
+        infilename := genericTemplatePath + Pathdelim + 'postinst_empty';
       outfilename := opsipath + pathdelim + 'postinst';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
@@ -653,7 +717,7 @@ begin
     // No uninstall for Meta
     if not (osdsettings.runmode in [createMeta]) then
       textlist.Add('uninstallScript: ' + aktProduct.productdata.uninstallscript);
-    textlist.Add('updateScript: ');
+    textlist.Add('updateScript: ' + aktProduct.productdata.updatescript);
     textlist.Add('alwaysScript: ');
     textlist.Add('onceScript: ');
     textlist.Add('customScript: ');

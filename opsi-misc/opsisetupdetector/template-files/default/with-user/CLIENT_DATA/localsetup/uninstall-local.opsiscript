@@ -1,0 +1,28 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Actions]
+
+include_append "%ScriptPath%\sections-local.opsiinc"
+include_insert "%ScriptPath%\..\declarations.opsiinc"
+include_insert "%ScriptPath%\declarations-local.opsiinc"
+
+if $ExecutionMethod$ = "loginOpsiSetupUser"
+	set $myScriptPath$ = "%ScriptPath%\localsetup"
+else
+	set $myScriptPath$ = "%ScriptPath%"
+endif
+
+
+Comment "Displaying product picture"
+	ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
+
+Message "Uninstalling " + $ProductId$
+	if FileExists("%ScriptPath%\delsub-local.opsiinc")
+		Comment "Starting the uninstall sub section"
+			Sub "%ScriptPath%\delsub-local.opsiinc"
+	endif

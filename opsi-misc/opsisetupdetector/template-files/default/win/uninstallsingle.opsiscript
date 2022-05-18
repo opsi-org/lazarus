@@ -5,12 +5,12 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
+
 [Actions]
 requiredOpsiscriptVersion >= "4.12.4.23"
 
 importlib "uib_exitcode.opsiscript"
 importlib "osd-lib.opsiscript"
-importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
@@ -18,12 +18,11 @@ include_insert "define_vars_multi.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		= "#@productId*#"
+Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir$	= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "" 
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -33,54 +32,21 @@ if not(($OS$ = "Windows_NT"))
 	isFatalError "wrong OS"
 endif
 
-if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
-	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
-	isFatalError "No Space"
-	; Stop process and set installation status to failed
-endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
 	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
-Message "Installing " + $ProductId$ + " ..."
-
 if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
+	comment "Licensing required, free license used"
+	Set $tmpstr$ = FreeLicense($LicensePool$)
 endif
-
-#@preInstallLines*#
-comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
-;----------------------------------------------
-Winbatch_install	#@installWaitForProc1*#
-;----------------------------------------------
-set $ExitCode$ = getlastexitcode
-if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
-	#@installErrorHandlingLines1*#
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
-#@postInstallLines*#
-
-#@SetupHandleDesktopIcon*#
-
-[Winbatch_install]
-#@installCommandLine1*#
-
-
-#@SetupDesktopiconSectionLines*#
-
-#@SetupSectionLines1*#
-; ----------------------------------------------------------------
-; ----------------------------------------------------------------
 

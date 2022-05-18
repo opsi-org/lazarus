@@ -96,6 +96,7 @@ type
     BtSingleAnalyzeAndCreateMulti: TBitBtn;
     BtSingleAnalyzeAndCreateLin: TBitBtn;
     BtSingleAnalyzeAndCreateMac: TBitBtn;
+    BtSingleAnalyzeAndCreateWithUser: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
@@ -163,6 +164,7 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    LabelChannel: TLabel;
     Label86: TLabel;
     Label87: TLabel;
     Label88: TLabel;
@@ -237,6 +239,7 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    PanelChannel: TPanel;
     PanelNumIcons: TPanel;
     PanelIconPreview: TPanel;
     Panel4: TPanel;
@@ -288,6 +291,7 @@ type
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
     TICheckBoxS3Mst: TTICheckBox;
+    TIComboBoxChannel: TTIComboBox;
     TIEditInstallDir2: TTIEdit;
     TIEditInstallDir3: TTIEdit;
     TIEditMsiId2: TTIEdit;
@@ -372,6 +376,7 @@ type
     procedure BtSingleAnalyzeAndCreateMultiClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateWinClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
     procedure CheckBoxDefaultIconChange(Sender: TObject);
     procedure CheckBoxNoIconChange(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
@@ -774,6 +779,11 @@ begin
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
       TIGridProp.ListObject := osdbasedata.aktproduct.properties;
       TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'useCustomDir');
+      TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
+      // initialize drop down
+      TIComboBoxChannel.Items.Text:= templateChannelList.Text;
+      //TIComboBoxChannel.ItemIndex:= 1;
+      TIComboBoxChannel.Caption:= 'default';
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -1246,7 +1256,7 @@ begin
             osMac: AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
           end;
         end;
-        singleAnalyzeCreate:
+        singleAnalyzeCreate,analyzeCreateWithUser:
         begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
           initaktproduct;
@@ -1349,7 +1359,7 @@ begin
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := False;
     end;
-    singleAnalyzeCreate:
+    singleAnalyzeCreate, analyzeCreateWithUser:
     begin
       TabSheetStart.Enabled := True;
       TabSheetAnalyze.Enabled := True;
@@ -1571,7 +1581,7 @@ var
   i: integer;
   localTOSset: TTargetOSset;
 begin
-  OpenDialog1.FilterIndex := 1;   // setup
+  openDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
     osdsettings.runmode := singleAnalyzeCreate;
@@ -1832,6 +1842,48 @@ begin
   end;
 end;
 
+procedure TResultform1.BtSingleAnalyzeAndCreateWithUserClick(Sender: TObject);
+var
+  i: integer;
+  localTOSset: TTargetOSset;
+begin
+  openDialog1.FilterIndex := 1;   // setup
+  if OpenDialog1.Execute then
+  begin
+    osdsettings.runmode := analyzeCreateWithUser;
+    setRunMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    //aktProduct.targetOS := osWin;
+    localTOSset := aktProduct.productdata.targetOSset;
+    Include(localTOSset, osWin);
+    aktProduct.productdata.targetOSset := localTOSset;
+    aktProduct.SetupFiles[0].targetOS := osWin;
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    MemoAnalyze.Clear;
+    //StringGridDep.Clean([gzNormal, gzFixedRows]);
+    //StringGridDep.RowCount := 1;
+    (*
+    if MessageDlg(sMBoxHeader, rsCopyCompleteDir, mtConfirmation,
+      [mbNo, mbYes], 0, mbNo) = mrYes then
+      aktProduct.SetupFiles[0].copyCompleteDir := True;
+      *)
+    aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
+    makeProperties;
+    aktProduct.productdata.setupscript:=  'setup.opsiscript';
+    aktProduct.productdata.uninstallscript := 'localsetup\uninstall-local.opsiscript';
+    aktProduct.productdata.updatescript:= 'localsetup\update-local.opsiscript';
+    aktProduct.productdata.priority:= -20;
+    resultform1.updateGUI;
+    Application.ProcessMessages;
+    aktProduct.SetupFiles[0].active := True;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+
 procedure TResultform1.CheckBoxDefaultIconChange(Sender: TObject);
 var
   DefaultIcon: TImage;
@@ -2033,7 +2085,7 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
-    singleAnalyzeCreate:
+    singleAnalyzeCreate,analyzeCreateWithUser:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
@@ -2946,6 +2998,7 @@ begin
     createTemplate,
     createMultiTemplate,
     singleAnalyzeCreate,
+    analyzeCreateWithUser,
     twoAnalyzeCreate_1,
     twoAnalyzeCreate_2,
     threeAnalyzeCreate_1,
@@ -2994,6 +3047,7 @@ begin
         logdatei.log(
           'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
       end;
+      analyzeCreateWithUser,
       createMeta,
       createTemplate,
       createMultiTemplate,
@@ -3026,6 +3080,7 @@ begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
+    analyzeCreateWithUser,
     createTemplate,
     createMultiTemplate,
     singleAnalyzeCreate,
@@ -3074,7 +3129,7 @@ begin
       begin
         Application.Terminate;
       end;
-      singleAnalyzeCreate:
+      singleAnalyzeCreate, analyzeCreateWithUser:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
         Application.ProcessMessages;
@@ -3181,6 +3236,12 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
+          LLError);
+      end;
+      analyzeCreateWithUser:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
           LLError);
       end;
       twoAnalyzeCreate_2:
@@ -3298,6 +3359,12 @@ begin
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: singleAnalyzeCreate',
+          LLError);
+      end;
+      analyzeCreateWithUser:
+      begin
+        // we should never be here
+        logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeCreateWithUser',
           LLError);
       end;
       twoAnalyzeCreate_2:
@@ -3675,7 +3742,7 @@ begin
   ;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
-    PathDelim + 'template-files' + PathDelim + 'images' + PathDelim + 'template.png');
+    PathDelim + 'template-files' + PathDelim + 'default'+  PathDelim + 'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   // the first path is in the development environment
@@ -3686,19 +3753,20 @@ begin
   {$IFDEF DARWIN}
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../../..';
-  templatePath := resourcedir + PathDelim + 'template-files';
+  templatePath := resourcedir + PathDelim + 'template-files'  + PathDelim + 'default';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
     resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   filename := resourcedir + PathDelim + 'template-files' + PathDelim +
+  'default' + PathDelim +
     'images' + PathDelim + 'template.png';
   if fileexists(filename) then
     DefaultIcon.Picture.LoadFromFile(filename)
   else
   begin
     filename := ExtractFileDir(Application.Params[0]) + PathDelim +
-      'template-files' + PathDelim + 'images' + PathDelim + 'template.png';
+      'template-files'  + PathDelim + 'default'+ PathDelim + 'images' + PathDelim + 'template.png';
     if fileexists(filename) then
       DefaultIcon.Picture.LoadFromFile(filename)
     else
