@@ -451,8 +451,13 @@ begin
             infilename := templatePath + PathDelim + templateChannelDir +
               Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
             if not FileExists(infilename) then
+            begin
               infilename := templatePath + PathDelim + 'default' +
                 Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+              logdatei.log('File: ' + infilelist.Strings[i] +
+                ' not found at template channel: ' + templateChannelDir +
+                ' - fall back to default', LLinfo);
+            end;
             outfilename := clientpath + PathDelim + infilelist.Strings[i];
             patchScript(infilename, outfilename);
           end;
@@ -472,9 +477,13 @@ begin
               PathDelim + pre_id + PathDelim + StringReplace(tmpname,
               'single', 'templ', []) + tmpext;
             if not FileExists(infilename) then
+            begin
               infilename := templatePath + PathDelim + 'default' +
                 Pathdelim + pre_id + PathDelim +
                 StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+              logdatei.log('File: ' + infilename + ' not found at template channel: '
+                + templateChannelDir + ' - fall back to default', LLinfo);
+            end;
           end
           else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
           begin
@@ -482,9 +491,13 @@ begin
               PathDelim + pre_id + PathDelim + StringReplace(tmpname,
               'single', 'templ', []) + tmpext;
             if not FileExists(infilename) then
+            begin
               infilename := templatePath + PathDelim + 'default' +
                 PathDelim + pre_id + PathDelim +
                 StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+              logdatei.log('File: ' + infilename + ' not found at template channel: '
+                + templateChannelDir + ' - fall back to default', LLinfo);
+            end;
           end
           else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
           begin
@@ -492,17 +505,25 @@ begin
               PathDelim + pre_id + PathDelim + StringReplace(tmpname,
               'single', 'templ', []) + tmpext;
             if not FileExists(infilename) then
+            begin
               infilename := templatePath + PathDelim + 'default' +
                 PathDelim + pre_id + PathDelim +
                 StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+              logdatei.log('File: ' + infilename + ' not found at template channel: '
+                + templateChannelDir + ' - fall back to default', LLinfo);
+            end;
           end
           else
           begin
             infilename := templatePath + PathDelim + templateChannelDir +
               Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
             if not FileExists(infilename) then
+            begin
               infilename := templatePath + PathDelim + 'default' +
                 Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+              logdatei.log('File: ' + infilename + ' not found at template channel: '
+                + templateChannelDir + ' - fall back to default', LLinfo);
+            end;
           end;
           tmpname := StringReplace(tmpname, 'single', '', []);
           tmpname := StringReplace(tmpname, 'double', '', []);
@@ -524,8 +545,11 @@ begin
       // none at windows template or createMeta
       if not (((osdsettings.runmode = createTemplate) and
         (osWin in aktProduct.productdata.targetOSset)) or
-        (osdsettings.runmode = createMeta) or (osdsettings.runmode =
-        analyzeCreateWithUser)) then
+        (osdsettings.runmode = createMeta) or
+        // none at analyzeCreateWithUser
+        (osdsettings.runmode = analyzeCreateWithUser) or
+        // none at template channel taining
+        (aktProduct.productdata.channelDir = 'training')) then
       begin
         infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
         outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';

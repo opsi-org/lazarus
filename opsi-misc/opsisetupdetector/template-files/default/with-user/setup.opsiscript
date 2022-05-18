@@ -11,301 +11,301 @@ include_append "%ScriptPath%\sections.opsiinc"
 include_insert "%ScriptPath%\declarations.opsiinc"
 
 Comment "Displaying product picture"
-	ShowBitmap "%ScriptPath%\localsetup\%installingProdName%.png" "%installingProdName%"
+ShowBitmap "%ScriptPath%\localsetup\%installingProdName%.png" "%installingProdName%"
 
 ;############################### Stage = 1 ###############################
 if NOT (($Stage$ = "2") OR ($Stage$ = "3") OR ($Stage$ = "4"))
-
+	
 	Message "Stage 1 - Checking requirements"
 	setActionProgress "Stage 1 - Checking requirements"
-
+	
 	Comment "Checking operating system"
-		if NOT ((GetOS = $RequiredOperatingSystem$))
-			logError "Operating system not supported. This package works on Windows only"
-			isFatalError "Operating system not supported"
-		endif
-
+	if NOT ((GetOS = $RequiredOperatingSystem$))
+		logError "Operating system not supported. This package works on Windows only"
+		isFatalError "Operating system not supported"
+	endif
+	
 	Comment "Checking available space"
-		if NOT (HasMinimumSpace("%SystemDrive%", "" + $ProductSizeMB$ + " MB"))
-			logError "Not enough space on %SystemDrive%. " + $ProductSizeMB$ + " MB required on %SystemDrive% for %installingProdName%"
-			isFatalError "Insufficient free space"
-		endif
-
+	if NOT (HasMinimumSpace("%SystemDrive%", "" + $ProductSizeMB$ + " MB"))
+		logError "Not enough space on %SystemDrive%. " + $ProductSizeMB$ + " MB required on %SystemDrive% for %installingProdName%"
+		isFatalError "Insufficient free space"
+	endif
+	
 	Comment "Checking opsiclientd version"
-		if FileOrFolderExists("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd_bin\opsiclientd.exe", "32Bit")
-			Set $ResultList$ = shellcall('"%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd_bin\opsiclientd.exe" --version')
-			if NOT (count($ResultList$) = "0")
+	if FileOrFolderExists("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd_bin\opsiclientd.exe", "32Bit")
+		Set $ResultList$ = shellcall('"%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd_bin\opsiclientd.exe" --version')
+		if NOT (count($ResultList$) = "0")
+			Set $Result$ = takeString(0, $ResultList$)
+			if NOT ($Result$ = "")
+				Set $ResultList$ = splitString ($Result$, " ")
 				Set $Result$ = takeString(0, $ResultList$)
-				if NOT ($Result$ = "")
-					Set $ResultList$ = splitString ($Result$, " ")
-					Set $Result$ = takeString(0, $ResultList$)
-				endif
-			else
-				logError "Unable to check opsiclientd version"
-				isFatalError "Unable to check opsiclientd version"
 			endif
 		else
-			if FileOrFolderExists("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd.exe", "32Bit")
-				Set $ResultList$ = getFileInfoMap("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd.exe")
-				Set $Result$ = getValue("FileVersion", $ResultList$)
-			else
-				logError "Unable to check opsiclientd version"
-				isFatalError "Unable to check opsiclientd version"
-			endif
+			logError "Unable to check opsiclientd version"
+			isFatalError "Unable to check opsiclientd version"
 		endif
-
-		if CompareDotSeparatedNumbers($Result$, $RequiredOpsiclientdVersion$) >= "0"
-			Comment "opsiclientd version check passed"
-			Set $ResultList$ = emptylist($ResultList$)
-			Set $Result$ = ""
+	else
+		if FileOrFolderExists("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd.exe", "32Bit")
+			Set $ResultList$ = getFileInfoMap("%Programfiles32Dir%\opsi.org\opsi-client-agent\opsiclientd.exe")
+			Set $Result$ = getValue("FileVersion", $ResultList$)
 		else
-			logError "opsiclientd version check failed"
-			isFatalError "opsiclientd version check failed"
+			logError "Unable to check opsiclientd version"
+			isFatalError "Unable to check opsiclientd version"
 		endif
-
+	endif
+	
+	if CompareDotSeparatedNumbers($Result$, $RequiredOpsiclientdVersion$) >= "0"
+		Comment "opsiclientd version check passed"
+		Set $ResultList$ = emptylist($ResultList$)
+		Set $Result$ = ""
+	else
+		logError "opsiclientd version check failed"
+		isFatalError "opsiclientd version check failed"
+	endif
+	
 	Comment "Checking opsi-script version"
-		requiredOpsiscriptVersion >= $RequiredOpsiScriptVersion$
-
+	requiredOpsiscriptVersion >= $RequiredOpsiScriptVersion$
+	
 	Comment "Setting the Stage to 2"
-		Set $Stage$ = "2"
-		Registry_Save_Stage /32bit
-
+	Set $Stage$ = "2"
+	Registry_Save_Stage /32bit
+	
 endif
 
 
 
 ;############################### Stage = 2 ###############################
 if $Stage$ = "2"
-
+	
 	Message "Stage 2 - Preparations"
 	setActionProgress "Stage 2 - Preparations"
-
+	
 	Comment "Removing the opsiSetupUser if present"
-		opsiServiceCall_removeOpsiSetupUser /opsiclientd-once
-		shellCall("NET USER opsiSetupUser /DELETE")
-
+	opsiServiceCall_removeOpsiSetupUser /opsiclientd-once
+	shellCall("NET USER opsiSetupUser /DELETE")
+	
 	Comment "Scanning for leftover opsiSetupUser profile folders"
-		Set $ResultList$ = ShellCall('DIR /B /AD "%SystemDrive%\Users"')
+	Set $ResultList$ = ShellCall('DIR /B /AD "%SystemDrive%\Users"')
+	if NOT (count($ResultList$) = "0")
+		Set $ResultList$ = getListContaining($ResultList$, "opsiSetupUser")
 		if NOT (count($ResultList$) = "0")
-			Set $ResultList$ = getListContaining($ResultList$, "opsiSetupUser")
-			if NOT (count($ResultList$) = "0")
-				Comment "Deleting leftover opsiSetupUser profile folders"
-				for %Folder% in $ResultList$ do shellCall('rmdir /S /Q "%ProfileDir%\%Folder%"')
-			else
-				Comment "No leftover opsiSetupUser profile folders found"
-			endif
+			Comment "Deleting leftover opsiSetupUser profile folders"
+			for %Folder% in $ResultList$ do shellCall('rmdir /S /Q "%ProfileDir%\%Folder%"')
+		else
+			Comment "No leftover opsiSetupUser profile folders found"
 		endif
-		Set $ResultList$ = emptylist($ResultList$)
-
+	endif
+	Set $ResultList$ = emptylist($ResultList$)
+	
 	Comment "Deleting leftover opsiSetupUser entries from ProfileList"
-		Set $ResultList$ = getRegistryKeyListSysnative("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList")
-		for %SID% in $ResultList$ do Sub_Scan_ProfileList
-		Set $ResultList$ = emptylist($ResultList$)
-
+	Set $ResultList$ = getRegistryKeyListSysnative("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList")
+	for %SID% in $ResultList$ do Sub_Scan_ProfileList
+	Set $ResultList$ = emptylist($ResultList$)
+	
 	Comment "Backing up the last logon values"
-		Set $LastLoggedOnUser$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI", "LastLoggedOnUser", "SysNative")
-		Set $LastLoggedOnSAMUser$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI", "LastLoggedOnSAMUser", "SysNative")
-		Registry_Backup_Last_Logon /32bit
-
+	Set $LastLoggedOnUser$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI", "LastLoggedOnUser", "SysNative")
+	Set $LastLoggedOnSAMUser$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI", "LastLoggedOnSAMUser", "SysNative")
+	Registry_Backup_Last_Logon /32bit
+	
 	Comment "Determining if UAC needs to be disabled"
-		if $DisableUAC$ = "true"
-			Comment "Backing up the current UAC values"
-				Set $BackupConsentPromptBehaviorAdmin$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "ConsentPromptBehaviorAdmin", "SysNative")
-					if $BackupConsentPromptBehaviorAdmin$ = ""
-						logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorAdmin"
-						isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorAdmin"
-					endif
-
-				Set $BackupEnableInstallerDetection$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableInstallerDetection", "SysNative")
-					if $BackupEnableInstallerDetection$ = ""
-						logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableInstallerDetection"
-						isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableInstallerDetection"
-					endif
-
-				Set $BackupEnableLUA$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLUA", "SysNative")
-					if $BackupEnableLUA$ = ""
-						logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
-						isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
-					endif
-
-				Set $BackupEnableVirtualization$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableVirtualization", "SysNative")
-					if $BackupEnableVirtualization$ = ""
-						logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableVirtualization"
-						isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableVirtualization"
-					endif
-
-				Set $BackupPromptOnSecureDesktop$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "PromptOnSecureDesktop", "SysNative")
-					if $BackupPromptOnSecureDesktop$ = ""
-						logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\PromptOnSecureDesktop"
-						isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\PromptOnSecureDesktop"
-					endif
-				Registry_Backup_UAC /32bit
-
-			Comment "Disabling UAC"
-				Registry_Disable_UAC /SysNative
-		else
-			Comment "UAC will remain enabled"
+	if $DisableUAC$ = "true"
+		Comment "Backing up the current UAC values"
+		Set $BackupConsentPromptBehaviorAdmin$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "ConsentPromptBehaviorAdmin", "SysNative")
+		if $BackupConsentPromptBehaviorAdmin$ = ""
+			logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorAdmin"
+			isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorAdmin"
 		endif
-
+		
+		Set $BackupEnableInstallerDetection$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableInstallerDetection", "SysNative")
+		if $BackupEnableInstallerDetection$ = ""
+			logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableInstallerDetection"
+			isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableInstallerDetection"
+		endif
+		
+		Set $BackupEnableLUA$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLUA", "SysNative")
+		if $BackupEnableLUA$ = ""
+			logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
+			isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
+		endif
+		
+		Set $BackupEnableVirtualization$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableVirtualization", "SysNative")
+		if $BackupEnableVirtualization$ = ""
+			logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableVirtualization"
+			isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableVirtualization"
+		endif
+		
+		Set $BackupPromptOnSecureDesktop$ = GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "PromptOnSecureDesktop", "SysNative")
+		if $BackupPromptOnSecureDesktop$ = ""
+			logError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\PromptOnSecureDesktop"
+			isFatalError "No value found for HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\PromptOnSecureDesktop"
+		endif
+		Registry_Backup_UAC /32bit
+		
+		Comment "Disabling UAC"
+		Registry_Disable_UAC /SysNative
+	else
+		Comment "UAC will remain enabled"
+	endif
+	
 	Comment "Determining if the setup files should be copied locally"
-		if $CopyFilesLocally$ = "true"
-			Comment "Copying the setup files to " + $SetupFilesPath$
-				Files_Copy_Setup_Files /SysNative
-		endif
-
+	if $CopyFilesLocally$ = "true"
+		Comment "Copying the setup files to " + $SetupFilesPath$
+		Files_Copy_Setup_Files /SysNative
+	endif
+	
 	Comment "Determining if keyboard and mouse input should be disabled"
-		if GetProductProperty("debug", "false") = "false"
-			Comment "Disabling keyboard and mouse input to prevent user intervention while the opsiSetupUser is logged in"
-				Registry_Disable_Input /Sysnative
-		else
-			Comment "Debug mode active. Keyboard and mouse input will remain enabled while the opsiSetupUser is logged in"
-		endif
-
+	if GetProductProperty("debug", "false") = "false"
+		Comment "Disabling keyboard and mouse input to prevent user intervention while the opsiSetupUser is logged in"
+		Registry_Disable_Input /Sysnative
+	else
+		Comment "Debug mode active. Keyboard and mouse input will remain enabled while the opsiSetupUser is logged in"
+	endif
+	
 	Comment "Handling Windows 7 support has ended message"
-		if CompareDotSeparatedNumbers(getMsVersionInfo, "=", "6.1")
-			Comment "Disabling Windows 7 support has ended message"
-				Registry_Disable_Support_Warning /SysNative
-		endif
-
+	if CompareDotSeparatedNumbers(getMsVersionInfo, "=", "6.1")
+		Comment "Disabling Windows 7 support has ended message"
+		Registry_Disable_Support_Warning /SysNative
+	endif
+	
 	if CompareDotSeparatedNumbers(getMsVersionInfo, "=", "10.0")
 		Comment "Handling Windows 10 First Logon Animation"
-			Registry_Disable_First_Logon_Animation /SysNative
-
+		Registry_Disable_First_Logon_Animation /SysNative
+		
 		Comment "Handling Windows 10 FirstRunPage message. Windows needs to be activated to disable the FirstRunPage!"
-			Registry_Disable_FirstRunPage /SysNative
-
+		Registry_Disable_FirstRunPage /SysNative
+		
 		Comment "Handling Windows 10 Privacy Experience"
-			Registry_Disable_Privacy_Experience /SysNative
+		Registry_Disable_Privacy_Experience /SysNative
 	endif
-
-
+	
+	
 	Comment "Setting the Stage to 3"
-		Set $Stage$ = "3"
-		Registry_Save_Stage /32bit
-
+	Set $Stage$ = "3"
+	Registry_Save_Stage /32bit
+	
 	Comment "Rebooting to enable the changed settings"
-		ExitWindows /ImmediateReboot
-
+	ExitWindows /ImmediateReboot
+	
 endif
 
 
 
 ;############################### Stage = 3 ###############################
 if $Stage$ = "3"
-
+	
 	Message "Stage 3 - Installation"
 	setActionProgress "Stage 3 - Installation"
-
+	
 	Comment "Setting the Stage to 4 prior to calling the setup-local script. Should anything fail in the setup-local script the cleanup stage will be processed afterwards"
-		Set $Stage$ = "4"
-		Registry_Save_Stage /32bit
-
+	Set $Stage$ = "4"
+	Registry_Save_Stage /32bit
+	
 	Comment "Triggering the auto logon"
-			Switch $ExecutionMethod$
-				Case "loginOpsiSetupUser"
-					opsiServiceCall_loginOpsiSetupUser /opsiclientd-once
-					Message "Stage 3 - Waiting for the opsiSetupUser login process"
-					setActionProgress "Stage 3 - Waiting for the opsiSetupUser login process"
-					sleepSeconds 90
-					opsiServiceCall_switchDesktop /opsiclientd-once
-					sub '"' + $LocalSetupScript$ + '"'
-					ExitWindows /ImmediateReboot
-				EndCase
-
-				Case "runAsOpsiSetupUser"
-					opsiServiceCall_runAsOpsiSetupUser /opsiclientd-once
-				EndCase
-
-				Case "runOpsiScriptAsOpsiSetupUser"
-					opsiServiceCall_runOpsiScriptAsOpsiSetupUser /opsiclientd-once
-				EndCase
-			EndSwitch
-		isSuspended
-
+	Switch $ExecutionMethod$
+		Case "loginOpsiSetupUser"
+			opsiServiceCall_loginOpsiSetupUser /opsiclientd-once
+			Message "Stage 3 - Waiting for the opsiSetupUser login process"
+			setActionProgress "Stage 3 - Waiting for the opsiSetupUser login process"
+			sleepSeconds 90
+			opsiServiceCall_switchDesktop /opsiclientd-once
+			sub '"' + $LocalSetupScript$ + '"'
+			ExitWindows /ImmediateReboot
+		EndCase
+		
+		Case "runAsOpsiSetupUser"
+			opsiServiceCall_runAsOpsiSetupUser /opsiclientd-once
+		EndCase
+		
+		Case "runOpsiScriptAsOpsiSetupUser"
+			opsiServiceCall_runOpsiScriptAsOpsiSetupUser /opsiclientd-once
+		EndCase
+	EndSwitch
+	isSuspended
+	
 endif
 
 
 
 ;############################### Stage = 4 ###############################
 if $Stage$ = "4"
-
+	
 	Message "Stage 4 - Cleanup"
 	setActionProgress "Stage - Cleanup"
-
-
+	
+	
 	Comment "Determining if keyboard and mouse input needs to be re-enabled"
-		if NOT (getRegistryValue("HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass", "Start", "SysNative") = "3") OR NOT (getRegistryValue("HKLM\SYSTEM\CurrentControlSet\Services\Mouclass", "Start", "SysNative") = "3")
-			Comment "Re-enabling keyboard and mouse input"
-				Registry_Enable_Input /SysNative
-				ExitWindows /Reboot
-		else
-			Comment "Keyboard and mouse input already enabled"
-		endif
-
+	if NOT (getRegistryValue("HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass", "Start", "SysNative") = "3") OR NOT (getRegistryValue("HKLM\SYSTEM\CurrentControlSet\Services\Mouclass", "Start", "SysNative") = "3")
+		Comment "Re-enabling keyboard and mouse input"
+		Registry_Enable_Input /SysNative
+		ExitWindows /Reboot
+	else
+		Comment "Keyboard and mouse input already enabled"
+	endif
+	
 	Comment "Restoring backed up settings"
-		Set $LastLoggedOnUser$ = GetRegistryValue($ProductSettingsKey$, "LastLoggedOnUser", "32bit")
-		Set $LastLoggedOnSAMUser$ = GetRegistryValue($ProductSettingsKey$, "LastLoggedOnSAMUser", "32bit")
-		Registry_Restore_Last_Logon /Sysnative
-
+	Set $LastLoggedOnUser$ = GetRegistryValue($ProductSettingsKey$, "LastLoggedOnUser", "32bit")
+	Set $LastLoggedOnSAMUser$ = GetRegistryValue($ProductSettingsKey$, "LastLoggedOnSAMUser", "32bit")
+	Registry_Restore_Last_Logon /Sysnative
+	
 	Comment "Determining if UAC values need to be restored"
-		if $DisableUAC$ = "true"
-			Comment "Restoring the former UAC values from backup"
-				Set $BackupConsentPromptBehaviorAdmin$ = GetRegistryValue($ProductSettingsKey$, "ConsentPromptBehaviorAdmin", "32bit")
-				Set $BackupEnableInstallerDetection$ = GetRegistryValue($ProductSettingsKey$, "EnableInstallerDetection", "32bit")
-				Set $BackupEnableLUA$ = GetRegistryValue($ProductSettingsKey$, "EnableLUA", "32bit")
-				Set $BackupEnableVirtualization$ = GetRegistryValue($ProductSettingsKey$, "EnableVirtualization", "32bit")
-				Set $BackupPromptOnSecureDesktop$ = GetRegistryValue($ProductSettingsKey$, "PromptOnSecureDesktop", "32bit")
-				if NOT ($BackupEnableLUA$ = "")
-					Registry_Restore_UAC /SysNative
-				endif
+	if $DisableUAC$ = "true"
+		Comment "Restoring the former UAC values from backup"
+		Set $BackupConsentPromptBehaviorAdmin$ = GetRegistryValue($ProductSettingsKey$, "ConsentPromptBehaviorAdmin", "32bit")
+		Set $BackupEnableInstallerDetection$ = GetRegistryValue($ProductSettingsKey$, "EnableInstallerDetection", "32bit")
+		Set $BackupEnableLUA$ = GetRegistryValue($ProductSettingsKey$, "EnableLUA", "32bit")
+		Set $BackupEnableVirtualization$ = GetRegistryValue($ProductSettingsKey$, "EnableVirtualization", "32bit")
+		Set $BackupPromptOnSecureDesktop$ = GetRegistryValue($ProductSettingsKey$, "PromptOnSecureDesktop", "32bit")
+		if NOT ($BackupEnableLUA$ = "")
+			Registry_Restore_UAC /SysNative
 		endif
-
+	endif
+	
 	Comment "Removing the opsiSetupUser if present"
-		opsiServiceCall_removeOpsiSetupUser /opsiclientd-once
-		shellCall("NET USER opsiSetupUser /DELETE")
-
+	opsiServiceCall_removeOpsiSetupUser /opsiclientd-once
+	shellCall("NET USER opsiSetupUser /DELETE")
+	
 	Comment "Scanning for leftover opsiSetupUser profile folders"
-		Set $ResultList$ = ShellCall('DIR /B /AD "%SystemDrive%\Users"')
+	Set $ResultList$ = ShellCall('DIR /B /AD "%SystemDrive%\Users"')
+	if NOT (count($ResultList$) = "0")
+		Set $ResultList$ = getListContaining($ResultList$, "opsiSetupUser")
 		if NOT (count($ResultList$) = "0")
-			Set $ResultList$ = getListContaining($ResultList$, "opsiSetupUser")
-			if NOT (count($ResultList$) = "0")
-				Comment "Deleting leftover opsiSetupUser profile folders"
-				for %Folder% in $ResultList$ do shellCall('rmdir /S /Q "%ProfileDir%\%Folder%"')
-			else
-				Comment "No leftover opsiSetupUser profile folders found"
-			endif
+			Comment "Deleting leftover opsiSetupUser profile folders"
+			for %Folder% in $ResultList$ do shellCall('rmdir /S /Q "%ProfileDir%\%Folder%"')
+		else
+			Comment "No leftover opsiSetupUser profile folders found"
 		endif
-		Set $ResultList$ = emptylist($ResultList$)
-
+	endif
+	Set $ResultList$ = emptylist($ResultList$)
+	
 	Comment "Deleting leftover opsiSetupUser entries from ProfileList"
-		Set $ResultList$ = getRegistryKeyListSysnative("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList")
-		for %SID% in $ResultList$ do Sub_Scan_ProfileList
-		Set $ResultList$ = emptylist($ResultList$)
-
+	Set $ResultList$ = getRegistryKeyListSysnative("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList")
+	for %SID% in $ResultList$ do Sub_Scan_ProfileList
+	Set $ResultList$ = emptylist($ResultList$)
+	
 	if NOT ((contains("%opsiserviceURL%", "https://127.0.0.1")) OR (contains("%opsiserviceURL%", "https://localhost")) OR (contains("%ScriptPath%", "\opsi.org\cache\depot")) OR ($CopyFilesLocally$ = "false"))
 		Comment "Deleting local setup files"
-			Files_Delete_Setup_Files
+		Files_Delete_Setup_Files
 	endif
-
+	
 	Comment "Resetting the Stage"
-		Set $Stage$ = "1"
-		Registry_Save_Stage /32bit
-
+	Set $Stage$ = "1"
+	Registry_Save_Stage /32bit
+	
 	Comment "Evaluating errors"
-		if GetRegistryValue($ProductSettingsKey$, "FatalFlag", "32bit") = "true"
-			Set $ErrorFlag$ = GetRegistryValue($ProductSettingsKey$, "ErrorFlag", "32bit")
-
-			Comment "Deleting the $ProductSettingsKey$"
-				Registry_Delete_ProductSettingsKey /32bit
-
-			Comment "The installation was not completed successfully"
-				logError $ErrorFlag$
-				isFatalError $ErrorFlag$
-		else
-			Comment "Deleting the $ProductSettingsKey$"
-				Registry_Delete_ProductSettingsKey /32bit
-
-			Comment "The installation was completed successfully"
-				ExitWindows /Reboot
-		endif
+	if GetRegistryValue($ProductSettingsKey$, "FatalFlag", "32bit") = "true"
+		Set $ErrorFlag$ = GetRegistryValue($ProductSettingsKey$, "ErrorFlag", "32bit")
+		
+		Comment "Deleting the $ProductSettingsKey$"
+		Registry_Delete_ProductSettingsKey /32bit
+		
+		Comment "The installation was not completed successfully"
+		logError $ErrorFlag$
+		isFatalError $ErrorFlag$
+	else
+		Comment "Deleting the $ProductSettingsKey$"
+		Registry_Delete_ProductSettingsKey /32bit
+		
+		Comment "The installation was completed successfully"
+		ExitWindows /Reboot
+	endif
 endif

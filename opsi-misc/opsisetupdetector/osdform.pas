@@ -783,7 +783,8 @@ begin
       // initialize drop down
       TIComboBoxChannel.Items.Text:= templateChannelList.Text;
       //TIComboBoxChannel.ItemIndex:= 1;
-      TIComboBoxChannel.Caption:= 'default';
+      //TIComboBoxChannel.Caption:= templChannelStrings[myconfiguration.templateChannel];
+      //TIComboBoxChannel.Caption:= templChannelStrings[TTemplateChannels(0)];
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of

@@ -32,6 +32,8 @@ type
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
     analyzeCreateWithUser,gmUnknown);
 
+  TTemplateChannels = (training,default,structured,high_structured);
+
   TArchitecture = (a32, a64, aUnknown);
 
 
@@ -405,6 +407,7 @@ default: ["xenial_bionic"]
     FService_user: string;
     FService_pass: string;
     FUseService: boolean;
+    FTemplateChannel : TTemplateChannels;
     //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
@@ -449,6 +452,7 @@ default: ["xenial_bionic"]
     property Service_URL: string read FService_URL write FService_URL;
     property Service_user: string read FService_user write FService_user;
     property Service_pass: string read FService_pass write FService_pass;
+    property templateChannel: TtemplateChannels read FTemplateChannel write FTemplateChannel;
     //property UseService: boolean read FUseService write FUseService;
 
     procedure writeconfig;
@@ -474,6 +478,8 @@ function cleanOpsiId(opsiid: string): string; // clean up productId
 
 const
   CONFVERSION = '4.2.0.9';
+templChannelStrings : array [TTemplateChannels] of String[4]
+   = ('training','default','structured','high_structured');
 
 var
   aktProduct: TopsiProduct;
@@ -1415,6 +1421,7 @@ begin
   FShowCheckEntryWarning := True;
   FShow2StepMacSeletionWarn := True;
   FUsePropDesktopicon := False;
+  FTemplateChannel:= default;
   //readconfig;
 end;
 
@@ -1798,7 +1805,8 @@ begin
     setupscript := 'setup.opsiscript';
     uninstallscript := 'uninstall.opsiscript';
     delsubscript := 'delsub.opsiscript';
-    channelDir:= 'default';
+    //channelDir:= 'default';
+    channelDir:= templChannelStrings[myconfiguration.templateChannel];
     licenserequired := False;
     // Application.Params[0] is directory of application as string
     { set productImageFullFileName to full file name of the default icon }

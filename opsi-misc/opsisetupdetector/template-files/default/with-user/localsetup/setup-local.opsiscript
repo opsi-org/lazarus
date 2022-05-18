@@ -11,11 +11,11 @@ include_append "%ScriptPath%\..\sections.opsiinc"
 include_insert "%ScriptPath%\..\declarations.opsiinc"
 
 Comment "Displaying product picture"
-	ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
 
 Message "Stage 3 - Waiting for the opsiSetupUser login process"
 setActionProgress "Stage 3 - Waiting for the opsiSetupUser login process"
-	sleepSeconds 60
+sleepSeconds 60
 
 Comment "Calling %ScriptPath%\setup-local.opsiinc"
-	include_insert "%ScriptPath%\setup-local.opsiinc"
+include_insert "%ScriptPath%\setup-local.opsiinc"

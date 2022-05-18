@@ -8793,20 +8793,20 @@ object resultForm1: TresultForm1
           object PairSplitterSide2: TPairSplitterSide
             Cursor = crArrow
             Left = 0
-            Height = 226
-            Top = 176
+            Height = 228
+            Top = 174
             Width = 1362
             ChildSizing.TopBottomSpacing = 3
             ClientWidth = 1362
-            ClientHeight = 226
+            ClientHeight = 228
             object Panel10: TPanel
               Left = 0
-              Height = 220
+              Height = 222
               Top = 3
               Width = 1362
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 220
+              ClientHeight = 222
               ClientWidth = 1362
               ParentFont = False
               TabOrder = 0
@@ -9003,7 +9003,7 @@ object resultForm1: TresultForm1
               end
               object TIGridProp: TTIGrid
                 Left = 1
-                Height = 165
+                Height = 167
                 Top = 54
                 Width = 1360
                 AliasPropertyNames.Strings = (
