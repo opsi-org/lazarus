@@ -1,12 +1,11 @@
 object FOSDConfigdlg: TFOSDConfigdlg
-  Left = 788
-  Height = 592
-  Top = 251
-  Width = 506
+  Left = 789
+  Height = 625
+  Top = 222
+  Width = 534
   Caption = 'opsi-setup-detector Configuration'
-  ClientHeight = 592
-  ClientWidth = 506
-  DesignTimePPI = 91
+  ClientHeight = 625
+  ClientWidth = 534
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -14,9 +13,9 @@ object FOSDConfigdlg: TFOSDConfigdlg
   LCLVersion = '2.2.0.4'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
-    Height = 387
-    Top = 96
-    Width = 506
+    Height = 409
+    Top = 101
+    Width = 534
     Align = alClient
     CheckboxForBoolean = False
     DefaultValueFont.Color = clWindowText
@@ -32,9 +31,9 @@ object FOSDConfigdlg: TFOSDConfigdlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 96
+    Height = 101
     Top = 0
-    Width = 506
+    Width = 534
     Align = alTop
     ControlList = <    
       item
@@ -55,24 +54,24 @@ object FOSDConfigdlg: TFOSDConfigdlg
       Left = 14
       Height = 79
       Top = 5
-      Width = 322
+      Width = 340
       Align = alLeft
       AutoSize = False
       BorderSpacing.Left = 9
       BorderSpacing.Around = 4
       BorderSpacing.InnerBorder = 3
-      Font.Height = -15
+      Font.Height = -16
       ParentFont = False
       WordWrap = True
     end
     object BitBtn1: TBitBtn
-      Left = 359
-      Height = 42
-      Top = 20
-      Width = 94
+      Left = 378
+      Height = 34
+      Top = 21
+      Width = 98
       Anchors = []
       AutoSize = True
-      BorderSpacing.Around = 19
+      BorderSpacing.Around = 20
       BorderSpacing.InnerBorder = 4
       Caption = 'Finished'
       Default = True
@@ -84,28 +83,28 @@ object FOSDConfigdlg: TFOSDConfigdlg
   end
   object Panel1: TPanel
     Left = 0
-    Height = 109
-    Top = 483
-    Width = 506
+    Height = 115
+    Top = 510
+    Width = 534
     Align = alBottom
     Caption = 'Panel1'
-    ClientHeight = 109
-    ClientWidth = 506
+    ClientHeight = 115
+    ClientWidth = 534
     Color = 8454143
     ParentColor = False
     ParentFont = False
     TabOrder = 2
     object MemoConfigHint: TMemo
       Left = 5
-      Height = 99
+      Height = 105
       Top = 5
-      Width = 496
+      Width = 524
       Align = alClient
       BorderSpacing.Around = 4
-      BorderSpacing.InnerBorder = 10
+      BorderSpacing.InnerBorder = 11
       BorderStyle = bsNone
       Color = 8454143
-      Font.Height = -14
+      Font.Height = -15
       ParentFont = False
       ReadOnly = True
       TabOrder = 0
