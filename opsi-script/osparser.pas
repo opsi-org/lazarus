@@ -2246,6 +2246,8 @@ begin
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
   LogDatei.log(ps, LLCritical);
+  ps := 'Syntax Error found in line: "'+ trim(Sektion.Strings[LineNo - 1])+'"';
+  LogDatei.log(ps, LLCritical);
   if FatalOnSyntaxError then
   begin
     FExtremeErrorLevel := LevelFatal;
@@ -17776,6 +17778,7 @@ begin
             tmpbool := false; // stop further syntaxcheck (make no sense)
             syntaxcheck := True;
             InfoSyntaxError := '';
+            r := ''; // avoid 'remaining chars are not allowed' error
           end;
         end;
 
