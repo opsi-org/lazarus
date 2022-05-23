@@ -196,7 +196,7 @@ type
     mymemorystream: TMemoryStream;
     //nullO : NULL;
     methodGET: boolean;
-    function GetSynapseSocketFamilyAsString: String;
+    function GetSynapseSocketFamilyAsString: string;
     procedure LogHostIPs;
   protected
     {$IFDEF SYNAPSE}
@@ -621,7 +621,8 @@ var
   testresult: string;
   credentialsValid: boolean;
 begin
-  LogDatei.log_prog('Start of function getOpsiServerVersion, Line: ' + {$INCLUDE %LINE%}, LLNotice);
+  LogDatei.log_prog('Start of function getOpsiServerVersion, Line: ' +
+    {$INCLUDE %LINE%}, LLNotice);
   Result := '';
   credentialsValid := True;
   FValidCredentials := credentialsValid;
@@ -705,7 +706,8 @@ begin
   end;
   LogDatei.log('opsi Server Version : ' + Result, LLnotice);
   //LogDatei.LogLevel := LLnotice;
-  LogDatei.log_prog('End of function getOpsiServerVersion, Line: ' + {$INCLUDE %LINE%}, LLNotice);
+  LogDatei.log_prog('End of function getOpsiServerVersion, Line: ' +
+    {$INCLUDE %LINE%}, LLNotice);
 end;
 
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
@@ -1234,21 +1236,21 @@ begin
   Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   inherited Create;
   //portHTTPS := port;
@@ -1296,18 +1298,20 @@ begin
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
     if ssl_openssl11_lib.InitSSLInterface then
     begin
-      LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' + BoolToStr(
-        ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
+      LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' +
+        BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
     end
     else
-      LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
+      LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' +
+        BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
     LogDatei.log('SSL lib (path) should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
     //LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.LibVersion, LLdebug);
     if not ssl_openssl11_lib.IsSSLloaded then
     begin
       // no SSL available, loading libs failed
-      LogDatei.log('no SSL available, loading libs failed: ' + ssl_openssl11_lib.DLLSSLName, LLError);
+      LogDatei.log('no SSL available, loading libs failed: ' +
+        ssl_openssl11_lib.DLLSSLName, LLError);
     end
     else
     begin
@@ -1444,28 +1448,28 @@ begin
   //CompressedMemoryStream.Free;
 end;
 
-function TJsonThroughHTTPS.GetSynapseSocketFamilyAsString: String;
+function TJsonThroughHTTPS.GetSynapseSocketFamilyAsString: string;
 var
-  Family: String;
+  Family: string;
 begin
   case HTTPSender.Sock.Family of
     SF_ANY: Family := 'SF_ANY';
     SF_IP4: Family := 'SF_IP4';
     SF_IP6: Family := 'SF_IP6';
   end;
-  Result:=Family;
+  Result := Family;
 end;
 
 procedure TJsonThroughHTTPS.LogHostIPs;
 var
   IPAddrList: TStringList;
-  i : integer;
+  i: integer;
 begin
   IPAddrList := TStringList.Create;
   HTTPSender.Sock.ResolveNameToIP(HttpSender.TargetHost, IPAddrList);
-  LogDatei.log('Resolve ('+ HttpSender.TargetHost +') to following IPs: ',
+  LogDatei.log('Resolve (' + HttpSender.TargetHost + ') to following IPs: ',
     LLInfo);
-  for i := 0 to IPAddrList.Count -1 do
+  for i := 0 to IPAddrList.Count - 1 do
     LogDatei.log(' ' + IntToStr(i + 1) + '. IP: ' + IPAddrList.Strings[i],
       LLInfo);
   FreeAndNil(IPAddrList);
@@ -1561,11 +1565,11 @@ var
   opsi40: boolean = False;
 
 begin
-  LogDatei.log_prog('Start of function retrieveJSONObject(omc: ' + omc.FOpsiMethodName +
-    ', logging: ' + BoolToStr(logging, True) +
-    ', retry: ' + BoolToStr(retry, True) +
-    ', readOmcMap: ' + BoolToStr(readOmcMap, True) +
-    ', communicationmode: ' + IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
+  LogDatei.log_prog('Start of function retrieveJSONObject(omc: ' +
+    omc.FOpsiMethodName + ', logging: ' + BoolToStr(logging, True) +
+    ', retry: ' + BoolToStr(retry, True) + ', readOmcMap: ' +
+    BoolToStr(readOmcMap, True) + ', communicationmode: ' +
+    IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
     , LLNotice);
   try
     SendStream := TMemoryStream.Create;
@@ -1735,13 +1739,14 @@ begin
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
-              LogDatei.log_prog('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName + ' Line:' + {$INCLUDE %LINE%}, LLDebug);
+              LogDatei.log_prog('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName +
+                ' Line:' + {$INCLUDE %LINE%}, LLDebug);
               { Set Body }
               // before writing utf8str to HTTPSender.Document we need to replace all #10(newline), #13 and #9(TAB) by their
               // escape code equivalent for the correct json server request (otherwise we get a 400 bad request)
-              utf8str := sysutils.StringReplace(utf8str, #10, '\n', [rfReplaceAll]);
-              utf8str := sysutils.StringReplace(utf8str, #13, '\r', [rfReplaceAll]);
-              utf8str := sysutils.StringReplace(utf8str, #9, '\t', [rfReplaceAll]);
+              utf8str := SysUtils.StringReplace(utf8str, #10, '\n', [rfReplaceAll]);
+              utf8str := SysUtils.StringReplace(utf8str, #13, '\r', [rfReplaceAll]);
+              utf8str := SysUtils.StringReplace(utf8str, #9, '\t', [rfReplaceAll]);
               HTTPSender.Document.Write(utf8str[1], length(utf8str));
               if ContentEncoding <> 'identity' then
                 //change to ContentEncoding = 'gzip' if using deflate alternative
@@ -1764,13 +1769,16 @@ begin
 
               { Send Request }
 
-              LogDatei.log_prog('Socket-Family: ' + GetSynapseSocketFamilyAsString, LLDebug);
-              LogDatei.log_prog('PreferIP4: ' + BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
+              LogDatei.log_prog('Socket-Family: ' +
+                GetSynapseSocketFamilyAsString, LLDebug);
+              LogDatei.log_prog('PreferIP4: ' +
+                BoolToStr(HTTPSender.Sock.PreferIP4, True), LLDebug);
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
                 { Evaluate Response Metadata/Headers}
                 LogDatei.log('HTTPSender Post succeeded', LLInfo);
-                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: ' + HttpSender.Sock.GetRemoteSinIP, LLInfo);
+                LogDatei.log('Server-FQDN: ' + HttpSender.TargetHost + ' Server-IP: ' +
+                  HttpSender.Sock.GetRemoteSinIP, LLInfo);
                 LogDatei.log_prog('HTTPSender result: ' +
                   IntToStr(HTTPSender.ResultCode) + ' msg: ' +
                   HTTPSender.ResultString, LLdebug);
@@ -1801,8 +1809,10 @@ begin
                 end
                 else
                 begin
-                  FError := 'HTTP Error occurred. Error code: ' + IntToStr(HTTPSender.ResultCode) +
-                  ', msg: ' + HTTPSender.ResultString + ', Server-FQDN: ' + HttpSender.TargetHost +', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP;
+                  FError := 'HTTP Error occurred. Error code: ' +
+                    IntToStr(HTTPSender.ResultCode) + ', msg: ' +
+                    HTTPSender.ResultString + ', Server-FQDN: ' + HttpSender.TargetHost + ', Server-IP: ' +
+                    HttpSender.Sock.GetRemoteSinIP;
                   raise Exception.Create(FError);
                 end;
                 //HTTPSender.Headers.NameValueSeparator:= ':';
@@ -1893,14 +1903,21 @@ begin
               begin
                 { Request failed }
                 ErrorOccured := True;
-                FError := 'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
-                  + HttpSender.TargetHost + ', Server-IP: ' + HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True);
-                LogDatei.log_prog('Request failed (Method Post). No connection to server could be established. Line: '
+                FError :=
+                  'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
+                  + HttpSender.TargetHost + ', Server-IP: ' +
+                  HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' +
+                  BoolToStr(ssl_openssl11_lib.IsSSLloaded, True);
+                LogDatei.log_prog(
+                  'Request failed (Method Post). No connection to server could be established. Line: '
                   + {$INCLUDE %LINE%}, LLError);
-                LogDatei.log_prog('Server-FQDN: ' + HttpSender.TargetHost +' Server-IP: '
-                  + HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
+                LogDatei.log_prog('Server-FQDN: ' +
+                  HttpSender.TargetHost + ' Server-IP: ' +
+                  HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 LogHostIPs;
-                LogDatei.log_prog('SLL lib loaded: ' + BoolToStr(ssl_openssl11_lib.IsSSLloaded, True) +' SSL lib (path) should be: ' + ssl_openssl11_lib.DLLSSLName + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
+                LogDatei.log_prog('SLL lib loaded: ' +
+                  BoolToStr(ssl_openssl11_lib.IsSSLloaded, True) + ' SSL lib (path) should be: ' +
+                  ssl_openssl11_lib.DLLSSLName + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 raise Exception.Create(FError);
               end;
             end;
@@ -1933,17 +1950,18 @@ begin
               begin
                 if (HttpSender.Sock.GetRemoteSinIP = '') then
                 begin
-                  FError := 'Server ('+ HttpSender.TargetHost +') unreachable. Could not resolve FQDN to valid IP-Address.';
+                  FError := 'Server (' + HttpSender.TargetHost +
+                    ') unreachable. Could not resolve FQDN to valid IP-Address.';
                   LogDatei.log(FError, LLError);
                 end
                 else
-                  if not ssl_openssl11_lib.IsSSLloaded then
-                  begin
-                    FError := 'Could not load ssl lib: ' + ssl_openssl11_lib.DLLSSLName ;
-                    LogDatei.log(FError, LLError);
-                  end
-                  else
-                  begin
+                if not ssl_openssl11_lib.IsSSLloaded then
+                begin
+                  FError := 'Could not load ssl lib: ' + ssl_openssl11_lib.DLLSSLName;
+                  LogDatei.log(FError, LLError);
+                end
+                else
+                begin
                   // we have a 500 Internal Server Error - perhaps opsi server with other communication mode
                   LogDatei.log(
                     'We had a 500 Internal Server Error result - so we retry with other parameters / communication compatibility modes',
@@ -1957,7 +1975,7 @@ begin
                     Result := retrieveJSONObject(omc, logging, retry,
                       readOmcMap, CommunicationMode);
                   end;
-                end
+                end;
               end;
               finished := True; //Communication failed thus nothing more to do
             end;
@@ -2841,10 +2859,11 @@ var
   //sendresultstring: string;
   {$ENDIF SYNAPSE}
 begin
-  LogDatei.log_prog('Start of retrieveJSONObjectByHttpPost(InStream (pointer address): ' + IntToHex(QWord(InStream)) +
-  ', logging: ' + BoolToStr(logging,True) +
-  ', communicationmode: ' + IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
-  , LLDebug2);
+  LogDatei.log_prog('Start of retrieveJSONObjectByHttpPost(InStream (pointer address): '
+    +
+    IntToHex(QWord(InStream)) + ', logging: ' + BoolToStr(logging, True) +
+    ', communicationmode: ' + IntToStr(communicationmode) + '), Line: ' + {$INCLUDE %LINE%}
+    , LLDebug2);
   errorOccured := False;
   Result := nil;
   resultlines.Clear;
@@ -3385,8 +3404,9 @@ begin
   if Result = nil then
     if logging then
       LogDatei.log_prog('Error: --- opsi service problem ---' + FError, LLerror);
-  LogDatei.log_prog('End of function retrieveJSONObjectByHttpPost, Line: ' + {$INCLUDE %LINE%}
-  , LLDebug2);
+  LogDatei.log_prog('End of function retrieveJSONObjectByHttpPost, Line: ' +
+    {$INCLUDE %LINE%}
+    , LLDebug2);
 end;
 
 function TJsonThroughHTTPS.getMapResult(const omc: TOpsiMethodCall): TStringList;
@@ -5908,7 +5928,7 @@ var
   ///i : integer;
   ActionStr: string;
   str: string;
-  testsyntaxmode : boolean = false;
+  testsyntaxmode: boolean = False;
 begin
   try
     Result := True;
@@ -5919,286 +5939,287 @@ begin
 
     {$IFDEF OPSISCRIPT}
     if osconf.configTestSyntax then
-      testsyntaxmode := true;
+      testsyntaxmode := True;
     {$ENDIF OPSISCRIPT}
 
     if testsyntaxmode then
     begin
-            // testsyntax mode
+      // testsyntax mode
       Progress := 'testsyntax';
-    if extremeErrorLevel > levelfatal then
-    begin
-      if ActionStr = 'setup' then
+      if extremeErrorLevel > levelfatal then
       begin
-        //successful after setup
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Unkown);
+        Progress := 'ok: testsyntax';
+        if ActionStr = 'setup' then
+        begin
+          //successful after setup
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //successful after update
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //successful after uninstall
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //successful after always
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //successful after Once
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //successful after Custom
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
       end
-      else if ActionStr = 'update' then
+      else //failed
       begin
-        //successful after update
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Unkown);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //successful after uninstall
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Unkown);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //successful after always
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Unkown);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //successful after Once
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Unkown);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //successful after Custom
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
-    end
-    else //failed
-    begin
-      if ActionStr = 'setup' then
-      begin
-        //failed after setup
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Unkown);
-      end
-      else if ActionStr = 'update' then
-      begin
-        //failed after update
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Unkown);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //failed after uninstall
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Unkown);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //failed after always
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Unkown);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //failed after Once
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Unkown);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //failed after Custom
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
-    end; // failed
+        if ActionStr = 'setup' then
+        begin
+          //failed after setup
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //failed after update
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //failed after uninstall
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //failed after always
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //failed after Once
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //failed after Custom
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
+      end; // failed
     end
     else
     begin
       // normal (no testsyntax) mode
-    if extremeErrorLevel > levelfatal then
-    begin
-      if ActionStr = 'setup' then
+      if extremeErrorLevel > levelfatal then
       begin
-        //successful after setup
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Installed);
-      end
-      else if ActionStr = 'update' then
-      begin
-        //successful after update
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Installed);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //successful after uninstall
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Not_installed);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //successful after always
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Installed);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //successful after Once
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Not_installed);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //successful after Custom
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
-    end
-    else //failed
-    begin
-      if ActionStr = 'setup' then
-      begin
-        //failed after setup
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Unkown);
-      end
-      else if ActionStr = 'update' then
-      begin
-        //failed after update
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Unkown);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //failed after uninstall
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Unkown);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //failed after always
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Unkown);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //failed after Once
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Unkown);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //failed after Custom
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
-    end; // failed
+        if ActionStr = 'setup' then
+        begin
+          //successful after setup
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Installed);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //successful after update
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Installed);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //successful after uninstall
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Not_installed);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //successful after always
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Installed);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //successful after Once
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Not_installed);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //successful after Custom
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
         end;
+      end
+      else //failed
+      begin
+        if ActionStr = 'setup' then
+        begin
+          //failed after setup
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //failed after update
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //failed after uninstall
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //failed after always
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //failed after Once
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //failed after Custom
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
+      end; // failed
+    end;
   except
     LogDatei.log('Error in opsi4data.UpdateSwitches, Actionstr: ' +
       Actionstr, LLerror);

@@ -1773,9 +1773,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -2246,7 +2245,7 @@ begin
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
   LogDatei.log(ps, LLCritical);
-  ps := 'Syntax Error found in line: "'+ trim(Sektion.Strings[LineNo - 1])+'"';
+  ps := 'Syntax Error found in line: "' + trim(Sektion.Strings[LineNo - 1]) + '"';
   LogDatei.log(ps, LLCritical);
   if FatalOnSyntaxError then
   begin
@@ -2476,38 +2475,38 @@ var
     workingSection.GlobalReplace(1, '%currentprofiledir%',
       copy(presetDir, 1, length(presetDir) - 1), False);
 
+    if not testSyntax then
+      if not FileExists(ExpandFileName(PatchFilename)) then
+      begin
+        try
+          ps := LogDatei.LogSIndentPlus(+3) +
+            'Info: This file does not exist and will be created ';
+          LogDatei.log(ps, LLInfo);
+          LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
 
-    if not FileExists(ExpandFileName(PatchFilename)) then
-    begin
-      try
-        ps := LogDatei.LogSIndentPlus(+3) +
-          'Info: This file does not exist and will be created ';
-        LogDatei.log(ps, LLInfo);
-        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-        if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
-        begin
-          if ErrorInfo <> '' then
+          if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
           begin
-            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-            LogDatei.log(ps, LLWarning);
+            if ErrorInfo <> '' then
+            begin
+              ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
+              LogDatei.log(ps, LLWarning);
+            end;
+          end
+          else
+          begin
+            ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
+            LogDatei.log(ps, LLError);
+            exit; // ------------------------------  exit
           end;
-        end
-        else
-        begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-          LogDatei.log(ps, LLError);
-          exit; // ------------------------------  exit
-        end;
-      except
-        on E: Exception do
-        begin
-          LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
-            + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
-          exit;
+        except
+          on E: Exception do
+          begin
+            LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
+              + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
+            exit;
+          end;
         end;
       end;
-    end;
 
 
     ProcessMess;
@@ -2517,7 +2516,8 @@ var
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
-    PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
+    if not testSyntax then
+      PatchListe.loadFromFileWithEncoding(ExpandFileName(PatchFilename), flag_encoding);
     //PatchListe.LoadFromFile(ExpandFileName(PatchFilename));
     //PatchListe.Text := reencode(PatchListe.Text, 'system');
     saveToOriginalFile := True;
@@ -2544,8 +2544,11 @@ var
 
           if SyntaxCheck then
           begin
-            PatchListe.Sort;
-            PatchListe.Sorted := True;
+            if not testSyntax then
+            begin
+              PatchListe.Sort;
+              PatchListe.Sorted := True;
+            end;
           end;
         end
 
@@ -2555,8 +2558,9 @@ var
             CheckRemainder(syntaxCheck);
 
           if syntaxCheck then
-            PatchListe.ItemPointer :=
-              PatchListe.FindFirstItem(s, False, PatchListe.ItemPointer, lastfind);
+            if not testSyntax then
+              PatchListe.ItemPointer :=
+                PatchListe.FindFirstItem(s, False, PatchListe.ItemPointer, lastfind);
         end
 
         else if LowerCase(methodname) = 'findline_containing' then
@@ -2565,8 +2569,9 @@ var
             CheckRemainder(syntaxCheck);
 
           if syntaxCheck then
-            PatchListe.ItemPointer :=
-              PatchListe.FindFirstItemWith(s, False, PatchListe.ItemPointer);
+            if not testSyntax then
+              PatchListe.ItemPointer :=
+                PatchListe.FindFirstItemWith(s, False, PatchListe.ItemPointer);
         end
 
         else if LowerCase(methodname) = 'findline_startingwith' then
@@ -2576,8 +2581,9 @@ var
             CheckRemainder(syntaxCheck);
           LogDatei.log('r:' + r + ' s:' + s, LLDebug3);
           if syntaxCheck then
-            PatchListe.ItemPointer :=
-              PatchListe.FindFirstItemStartingWith(s, False, PatchListe.ItemPointer);
+            if not testSyntax then
+              PatchListe.ItemPointer :=
+                PatchListe.FindFirstItemStartingWith(s, False, PatchListe.ItemPointer);
         end
 
         else if LowerCase(methodname) = lowerCase('DeleteAllLines_StartingWith')
@@ -2588,11 +2594,14 @@ var
 
           if syntaxCheck then
           begin
-            indx := PatchListe.FindFirstItemWith(s, False, -1);
-            while indx > -1 do
+            if not testSyntax then
             begin
-              PatchListe.Delete(indx);
-              indx := PatchListe.FindFirstItemStartingWith(s, False, -1);
+              indx := PatchListe.FindFirstItemWith(s, False, -1);
+              while indx > -1 do
+              begin
+                PatchListe.Delete(indx);
+                indx := PatchListe.FindFirstItemStartingWith(s, False, -1);
+              end;
             end;
           end;
         end
@@ -2612,13 +2621,16 @@ var
 
           if SyntaxCheck then
           begin
-            sum := PatchListe.ItemPointer + d;
-            if sum < 0 then
-              PatchListe.ItemPointer := 0
-            else if sum > PatchListe.Count - 1 then
-              PatchListe.ItemPointer := PatchListe.Count - 1
-            else
-              PatchListe.ItemPointer := sum;
+            if not testSyntax then
+            begin
+              sum := PatchListe.ItemPointer + d;
+              if sum < 0 then
+                PatchListe.ItemPointer := 0
+              else if sum > PatchListe.Count - 1 then
+                PatchListe.ItemPointer := PatchListe.Count - 1
+              else
+                PatchListe.ItemPointer := sum;
+            end;
           end;
         end
 
@@ -2634,8 +2646,9 @@ var
         begin
           CheckRemainder(syntaxCheck);
 
-          if PatchListe.Count > 0 then
-            PatchListe.ItemPointer := PatchListe.Count - 1;
+          if not testSyntax then
+            if PatchListe.Count > 0 then
+              PatchListe.ItemPointer := PatchListe.Count - 1;
         end
 
         else if (LowerCase(methodname) = 'insert_line') or
@@ -2644,13 +2657,14 @@ var
           if GetStringA(r, s, r, errorinfo, True) then
             CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-            if (PatchListe.ItemPointer > -1) then
-              PatchListe.insert(PatchListe.ItemPointer, s)
-            else if PatchListe.Count = 0 then
-              PatchListe.add(s)
-            else
-              PatchListe.insert(0, s);
+          if not testSyntax then
+            if syntaxCheck then
+              if (PatchListe.ItemPointer > -1) then
+                PatchListe.insert(PatchListe.ItemPointer, s)
+              else if PatchListe.Count = 0 then
+                PatchListe.add(s)
+              else
+                PatchListe.insert(0, s);
 
         end
 
@@ -2660,15 +2674,16 @@ var
           if GetStringA(r, s, r, errorinfo, True) then
             CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-            if (PatchListe.ItemPointer > -1) and
-              (PatchListe.ItemPointer < PatchListe.Count - 1) then
-            begin
-              PatchListe.ItemPointer := PatchListe.ItemPointer + 1;
-              PatchListe.insert(PatchListe.ItemPointer, s);
-            end
-            else
-              PatchListe.add(s);
+          if not testSyntax then
+            if syntaxCheck then
+              if (PatchListe.ItemPointer > -1) and
+                (PatchListe.ItemPointer < PatchListe.Count - 1) then
+              begin
+                PatchListe.ItemPointer := PatchListe.ItemPointer + 1;
+                PatchListe.insert(PatchListe.ItemPointer, s);
+              end
+              else
+                PatchListe.add(s);
         end
 
         else if (LowerCase(methodname) = 'append_file') or
@@ -2677,43 +2692,45 @@ var
           if GetString(r, s1, r, errorinfo, True) then
             CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-          begin
-            s1 := ExpandFileName(s1);
-            working := CheckFileExists(s1, FileError);
-            if working then
+          if not testSyntax then
+            if syntaxCheck then
             begin
-              try
-                secondStringList := TStringList.Create;
-                secondStringList.LoadFromFile(ExpandFileName(s1));
-                //secondStringList.Text := reencode(secondStringList.Text, 'system');
-                PatchListe.addStrings(secondStringList);
-                secondStringList.Free;
-              except
-                on ex: Exception do
-                begin
-                  FileError := ex.message;
-                  working := False;
+              s1 := ExpandFileName(s1);
+              working := CheckFileExists(s1, FileError);
+              if working then
+              begin
+                try
+                  secondStringList := TStringList.Create;
+                  secondStringList.LoadFromFile(ExpandFileName(s1));
+                  //secondStringList.Text := reencode(secondStringList.Text, 'system');
+                  PatchListe.addStrings(secondStringList);
+                  secondStringList.Free;
+                except
+                  on ex: Exception do
+                  begin
+                    FileError := ex.message;
+                    working := False;
+                  end;
                 end;
               end;
-            end;
 
-            if working then
-              LogDatei.log('Appended "' + s1 + '"', LevelComplete)
-            else
-            begin
-              LogDatei.log('Error: Could not append "' + s1 + '" , ' + FileError,
-                LLError);
+              if working then
+                LogDatei.log('Appended "' + s1 + '"', LevelComplete)
+              else
+              begin
+                LogDatei.log('Error: Could not append "' + s1 + '" , ' + FileError,
+                  LLError);
+              end;
             end;
-          end;
         end
 
         else if LowerCase(methodname) = 'deletetheline' then
         begin
           CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-            PatchListe.Delete(PatchListe.ItemPointer);
+          if not testSyntax then
+            if syntaxCheck then
+              PatchListe.Delete(PatchListe.ItemPointer);
         end
 
         else if (LowerCase(methodname) = 'deleteline') or
@@ -2722,13 +2739,14 @@ var
           if GetString(r, s1, r, errorinfo, True) then
             CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-          begin
-            indx := PatchListe.FindFirstItem(s1, False,
-              PatchListe.ItemPointer, lastfind);
-            if lastfind then
-              PatchListe.Delete(indx);
-          end;
+          if not testSyntax then
+            if syntaxCheck then
+            begin
+              indx := PatchListe.FindFirstItem(s1, False,
+                PatchListe.ItemPointer, lastfind);
+              if lastfind then
+                PatchListe.Delete(indx);
+            end;
         end
 
         else if (LowerCase(methodname) = 'addline') or
@@ -2737,8 +2755,9 @@ var
           if GetString(r, s, r, errorinfo, True) then
             CheckRemainder(syntaxCheck);
 
-          if syntaxCheck then
-            PatchListe.Add(s);
+          if not testSyntax then
+            if syntaxCheck then
+              PatchListe.Add(s);
         end
 
         else if (LowerCase(methodname) = LowerCase('setKeyValueSeparator')) then
@@ -2747,10 +2766,13 @@ var
             CheckRemainder(syntaxCheck);
           if Length(s) = 1 then
           begin
-            NameValueSeparator := char(s[1]);
-            LogDatei.log('KeyValueSeparator changed from: >' +
-              PatchListe.NameValueSeparator + '< to : >' +
-              NameValueSeparator + '<', LLInfo);
+            if not testSyntax then
+            begin
+              NameValueSeparator := char(s[1]);
+              LogDatei.log('KeyValueSeparator changed from: >' +
+                PatchListe.NameValueSeparator + '< to : >' +
+                NameValueSeparator + '<', LLInfo);
+            end;
           end
           else
           begin
@@ -2758,7 +2780,8 @@ var
             ErrorInfo := 'KeyValueSeparator has to be a char';
           end;
           if syntaxCheck then
-            PatchListe.NameValueSeparator := NameValueSeparator;
+            if not testSyntax then
+              PatchListe.NameValueSeparator := NameValueSeparator;
         end
 
         else if (LowerCase(methodname) = LowerCase('setValueByKey')) then
@@ -2776,42 +2799,45 @@ var
           end
           else
             syntaxCheck := False;
-          if syntaxCheck then
-          begin
-            // the fast way:
-            index := PatchListe.IndexOfName(s1);
-            if index = -1 then
+
+          if not testSyntax then
+            if syntaxCheck then
             begin
-              // let us retry with trimed keys
-              for patchlistcounter := 0 to PatchListe.Count - 1 do
+              // the fast way:
+              index := PatchListe.IndexOfName(s1);
+              if index = -1 then
               begin
-                if PatchListe.Names[patchlistcounter] <> '' then
-                  if lowerCase(trim(PatchListe.Names[patchlistcounter])) =
-                    lowerCase(trim(s1)) then
-                    index := PatchListe.IndexOfName(PatchListe.Names[patchlistcounter]);
+                // let us retry with trimed keys
+                for patchlistcounter := 0 to PatchListe.Count - 1 do
+                begin
+                  if PatchListe.Names[patchlistcounter] <> '' then
+                    if lowerCase(trim(PatchListe.Names[patchlistcounter])) =
+                      lowerCase(trim(s1)) then
+                      index :=
+                        PatchListe.IndexOfName(PatchListe.Names[patchlistcounter]);
+                end;
               end;
-            end;
-            if index = -1 then
-            begin
-              logdatei.log('Key: ' + s1 + ' not found - creating', LLInfo);
-              if (PatchListe.ItemPointer > -1) and
-                (PatchListe.ItemPointer < PatchListe.Count - 1) then
+              if index = -1 then
               begin
-                PatchListe.ItemPointer := PatchListe.ItemPointer + 1;
-                PatchListe.insert(PatchListe.ItemPointer,
-                  s1 + PatchListe.NameValueSeparator + s2);
+                logdatei.log('Key: ' + s1 + ' not found - creating', LLInfo);
+                if (PatchListe.ItemPointer > -1) and
+                  (PatchListe.ItemPointer < PatchListe.Count - 1) then
+                begin
+                  PatchListe.ItemPointer := PatchListe.ItemPointer + 1;
+                  PatchListe.insert(PatchListe.ItemPointer,
+                    s1 + PatchListe.NameValueSeparator + s2);
+                end
+                else
+                  PatchListe.add(s1 + PatchListe.NameValueSeparator + s2);
               end
               else
-                PatchListe.add(s1 + PatchListe.NameValueSeparator + s2);
-            end
-            else
-            begin
-              logdatei.log('Key: ' + s1 + ' found - Value was: >' +
-                PatchListe.ValueFromIndex[index] + '< setting to: >' +
-                s2 + '<', LLInfo);
-              PatchListe.ValueFromIndex[index] := s2;
+              begin
+                logdatei.log('Key: ' + s1 + ' found - Value was: >' +
+                  PatchListe.ValueFromIndex[index] + '< setting to: >' +
+                  s2 + '<', LLInfo);
+                PatchListe.ValueFromIndex[index] := s2;
+              end;
             end;
-          end;
         end
 
         else if (LowerCase(methodname) = LowerCase('searchAndReplace')) then
@@ -2829,15 +2855,17 @@ var
           end
           else
             syntaxCheck := False;
-          if syntaxCheck then
-          begin
-            if patchliste.GlobalReplace(1, s1, s2, False) then
-              logdatei.log('Replaced all occurrences of  "' + s1 +
-                '" by "' + s2 + '".', LLInfo)
-            else
-              logdatei.log('No occurrences of  "' + s1 +
-                '" found - nothing replaced.', LLInfo);
-          end;
+
+          if not testSyntax then
+            if syntaxCheck then
+            begin
+              if patchliste.GlobalReplace(1, s1, s2, False) then
+                logdatei.log('Replaced all occurrences of  "' + s1 +
+                  '" by "' + s2 + '".', LLInfo)
+              else
+                logdatei.log('No occurrences of  "' + s1 +
+                  '" found - nothing replaced.', LLInfo);
+            end;
         end
 
         else if (LowerCase(methodname) = lowerCase('SaveToFile')) then
@@ -2847,31 +2875,32 @@ var
           if GetString(r, s1, r, ErrorInfo, False) then
             CheckRemainder(syntaxCheck);
 
-          if SyntaxCheck then
-          begin
-            s1 := ExpandFileName(s1);
-            working := FileExists(s1) or CreateTextFile(s1, FileError);
-            if working then
-              try
-                //PatchListe.SaveToFile(s1);
-                PatchListe.SaveToFile(s1, flag_encoding)
-              except
-                on ex: Exception do
-                begin
-                  FileError := ex.message;
-                  working := False;
-                end;
-              end;
-
-            if working then
-              LogDatei.log('The lines are saved to "' + s1 + '"', LevelComplete)
-            else
+          if not testSyntax then
+            if SyntaxCheck then
             begin
-              LogDatei.log('Error: Could not save lines to "' + s1 +
-                '" , ' + FileError,
-                LLError);
+              s1 := ExpandFileName(s1);
+              working := FileExists(s1) or CreateTextFile(s1, FileError);
+              if working then
+                try
+                  //PatchListe.SaveToFile(s1);
+                  PatchListe.SaveToFile(s1, flag_encoding)
+                except
+                  on ex: Exception do
+                  begin
+                    FileError := ex.message;
+                    working := False;
+                  end;
+                end;
+
+              if working then
+                LogDatei.log('The lines are saved to "' + s1 + '"', LevelComplete)
+              else
+              begin
+                LogDatei.log('Error: Could not save lines to "' + s1 +
+                  '" , ' + FileError,
+                  LLError);
+              end;
             end;
-          end;
         end
 
         else if (LowerCase(methodname) = lowerCase('Subtract_File')) then
@@ -2879,48 +2908,49 @@ var
           if GetString(r, s1, r, ErrorInfo, False) then
             CheckRemainder(syntaxCheck);
 
-          if SyntaxCheck then
-          begin
-            s1 := ExpandFileName(s1);
-            working := CheckFileExists(s1, FileError);
-            if working then
+          if not testSyntax then
+            if SyntaxCheck then
             begin
-              try
-                secondStringList := TStringList.Create;
-                secondStringList.LoadFromFile(ExpandFileName(s1));
-                //secondStringList.Text := reencode(secondStringList.Text, 'system');
-                patchliste.SetItemPointer(0);
+              s1 := ExpandFileName(s1);
+              working := CheckFileExists(s1, FileError);
+              if working then
+              begin
+                try
+                  secondStringList := TStringList.Create;
+                  secondStringList.LoadFromFile(ExpandFileName(s1));
+                  //secondStringList.Text := reencode(secondStringList.Text, 'system');
+                  patchliste.SetItemPointer(0);
 
-                j := 0;
-                goOn := True;
-                while (patchliste.Count > 0) and (j + 1 <= secondStringList.Count) and
-                  goOn do
-                begin
-                  if patchliste.strings[0] = secondStringList.strings[j]
-                  then
+                  j := 0;
+                  goOn := True;
+                  while (patchliste.Count > 0) and (j + 1 <= secondStringList.Count) and
+                    goOn do
                   begin
-                    patchliste.Delete(0);
-                    Inc(j);
-                  end
-                  else
-                    goOn := False;
-                end;
-                secondStringList.Free;
-              except
-                on ex: Exception do
-                begin
-                  FileError := ex.message;
-                  working := False;
+                    if patchliste.strings[0] = secondStringList.strings[j]
+                    then
+                    begin
+                      patchliste.Delete(0);
+                      Inc(j);
+                    end
+                    else
+                      goOn := False;
+                  end;
+                  secondStringList.Free;
+                except
+                  on ex: Exception do
+                  begin
+                    FileError := ex.message;
+                    working := False;
+                  end;
                 end;
               end;
-            end;
 
-            if working then
-              LogDatei.log('Subtracted "' + s1 + '"', LevelComplete)
-            else
-              LogDatei.log('Error: Could not substract "' + s1 + '" , ' + FileError,
-                LLError);
-          end;
+              if working then
+                LogDatei.log('Subtracted "' + s1 + '"', LevelComplete)
+              else
+                LogDatei.log('Error: Could not substract "' + s1 + '" , ' + FileError,
+                  LLError);
+            end;
         end
 
         else if LowerCase(methodname) = lowercase('Set_Mozilla_Pref') then
@@ -2942,23 +2972,24 @@ var
             else
               ErrorInfo := ErrorRemaining;
 
-            if syntaxCheck then
-            begin
-              insertLineIndx := -1;
-              PatchListe.ItemPointer :=
-                PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
-              while PatchListe.ItemPointer > -1 do
+            if not testSyntax then
+              if syntaxCheck then
               begin
-                insertLineIndx := PatchListe.ItemPointer;
-                PatchListe.Delete(insertLineIndx);
+                insertLineIndx := -1;
                 PatchListe.ItemPointer :=
                   PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
+                while PatchListe.ItemPointer > -1 do
+                begin
+                  insertLineIndx := PatchListe.ItemPointer;
+                  PatchListe.Delete(insertLineIndx);
+                  PatchListe.ItemPointer :=
+                    PatchListe.FindFirstItemStartingWith(s0 + '("' + s1 + '"', True, -1);
+                end;
+                if insertLineIndx > -1 then
+                  PatchListe.Insert(insertLineIndx, s0 + '("' + s1 + '", ' + s2 + ');')
+                else
+                  PatchListe.add(s0 + '("' + s1 + '", ' + s2 + ');');
               end;
-              if insertLineIndx > -1 then
-                PatchListe.Insert(insertLineIndx, s0 + '("' + s1 + '", ' + s2 + ');')
-              else
-                PatchListe.add(s0 + '("' + s1 + '", ' + s2 + ');');
-            end;
           end;
         end
 
@@ -2975,14 +3006,15 @@ var
             else
               ErrorInfo := ErrorRemaining;
 
-          if syntaxCheck then
-          begin
-            //PatchListe.Sort;   --- entfernt wegen Mozilla-Kommentaren in prefs.js
-            //PatchListe.Sorted := true;   --- entfernt wegen Mozilla-Kommentaren in prefs.js
-            PatchListe.ItemPointer := PatchListe.FindFirstItemWith(s1, False, -1);
-            PatchListe.Delete(PatchListe.ItemPointer);
-            PatchListe.Add('user_pref("' + s1 + '", ' + s2 + ');');
-          end;
+          if not testSyntax then
+            if syntaxCheck then
+            begin
+              //PatchListe.Sort;   --- entfernt wegen Mozilla-Kommentaren in prefs.js
+              //PatchListe.Sorted := true;   --- entfernt wegen Mozilla-Kommentaren in prefs.js
+              PatchListe.ItemPointer := PatchListe.FindFirstItemWith(s1, False, -1);
+              PatchListe.Delete(PatchListe.ItemPointer);
+              PatchListe.Add('user_pref("' + s1 + '", ' + s2 + ');');
+            end;
         end
 
         else if (LowerCase(methodname) = lowercase(
@@ -3003,77 +3035,77 @@ var
             else
               ErrorInfo := ErrorRemaining;
 
-
-          if syntaxCheck then
-          begin
-            insertLineIndx := -1;
-            startofline := s0 + '("' + s1 + '"';
-
-            PatchListe.ItemPointer :=
-              PatchListe.FindFirstItemStartingWith(startofline, True, -1);
-            while PatchListe.ItemPointer > -1
-              // we treat only the last line of this type, eliminating all others
-              do
+          if not testSyntax then
+            if syntaxCheck then
             begin
-              insertLineIndx := PatchListe.ItemPointer;
-              oldline := PatchListe.Strings[insertLineIndx];
-              PatchListe.Delete(insertLineIndx);
+              insertLineIndx := -1;
+              startofline := s0 + '("' + s1 + '"';
+
               PatchListe.ItemPointer :=
                 PatchListe.FindFirstItemStartingWith(startofline, True, -1);
-            end;
-
-            if insertLineIndx > -1 then
-            begin
-              syntaxCheck := False;
-
-              if skip(startofLine, oldLine, oldLine, ErrorInfo) and
-                Skip(',', oldLine, oldLine, ErrorInfo) and
-                GetStringA(oldLine, old_s2, oldline, ErrorInfo, False) and
-                Skip(')', oldLine, oldLine, ErrorInfo) then
-                syntaxCheck := True;
-            end;
-          end;
-
-
-          if syntaxCheck then
-          begin
-            if insertLineIndx > -1 then
-            begin
-              //search if s2 already is an element of existing list
-
-              oldLine := old_s2;
-
-              //get first list element
-              GetWord(oldLine, x, oldLine, [',']);
-              if (oldLine <> '') then // list not finished, delete ','
-                System.Delete(oldLine, 1, 1);
-
-              //first element equal to added string?
-              found := (lowerCase(x) = lowerCase(s2));
-
-              while (oldLine <> '') and not found do
+              while PatchListe.ItemPointer > -1
+                // we treat only the last line of this type, eliminating all others
+                do
               begin
-                GetWord(oldLine, x, oldLine, [',']);
-                if (oldLine <> '') then
-                  System.Delete(oldLine, 1, 1);
-                if lowerCase(x) = lowerCase(s2) then
-                  found := True;
+                insertLineIndx := PatchListe.ItemPointer;
+                oldline := PatchListe.Strings[insertLineIndx];
+                PatchListe.Delete(insertLineIndx);
+                PatchListe.ItemPointer :=
+                  PatchListe.FindFirstItemStartingWith(startofline, True, -1);
               end;
 
-              if found then
-                //reinsert the old line
-                PatchListe.Insert(insertLineIndx,
-                  startOfLine + ', "' + old_s2 + '");')
-              else
-                //append s2
-                PatchListe.Insert(insertLineIndx,
-                  startOfLine + ', "' + old_s2 + ', ' + s2 + '");');
-            end
-            else
-              PatchListe.Add(
-                startOfLine + ', "' + s2 + '");');
+              if insertLineIndx > -1 then
+              begin
+                syntaxCheck := False;
 
-          end;
+                if skip(startofLine, oldLine, oldLine, ErrorInfo) and
+                  Skip(',', oldLine, oldLine, ErrorInfo) and
+                  GetStringA(oldLine, old_s2, oldline, ErrorInfo, False) and
+                  Skip(')', oldLine, oldLine, ErrorInfo) then
+                  syntaxCheck := True;
+              end;
+            end;
+
+          if not testSyntax then
+            if syntaxCheck then
+            begin
+              if insertLineIndx > -1 then
+              begin
+                //search if s2 already is an element of existing list
+
+                oldLine := old_s2;
+
+                //get first list element
+                GetWord(oldLine, x, oldLine, [',']);
+                if (oldLine <> '') then // list not finished, delete ','
+                  System.Delete(oldLine, 1, 1);
+
+                //first element equal to added string?
+                found := (lowerCase(x) = lowerCase(s2));
+
+                while (oldLine <> '') and not found do
+                begin
+                  GetWord(oldLine, x, oldLine, [',']);
+                  if (oldLine <> '') then
+                    System.Delete(oldLine, 1, 1);
+                  if lowerCase(x) = lowerCase(s2) then
+                    found := True;
+                end;
+
+                if found then
+                  //reinsert the old line
+                  PatchListe.Insert(insertLineIndx,
+                    startOfLine + ', "' + old_s2 + '");')
+                else
+                  //append s2
+                  PatchListe.Insert(insertLineIndx,
+                    startOfLine + ', "' + old_s2 + ', ' + s2 + '");');
+              end
+              else
+                PatchListe.Add(
+                  startOfLine + ', "' + s2 + '");');
+
+            end;
 
         end
 
@@ -3096,61 +3128,64 @@ var
                 end;
           end;
 
-          if syntaxCheck then
-          begin
-            PatchListe.Sort;
-            PatchListe.Sorted := True;
-            PatchListe.ItemPointer := PatchListe.FindFirstItemWith(s1, False, -1);
-
-            if PatchListe.ItemPointer > -1 then
+          if not testSyntax then
+            if syntaxCheck then
             begin
-              oldLine := PatchListe.Strings[PatchListe.ItemPointer];
-              syntaxCheck := False;
+              PatchListe.Sort;
+              PatchListe.Sorted := True;
+              PatchListe.ItemPointer := PatchListe.FindFirstItemWith(s1, False, -1);
 
-              if Skip('user_pref', oldLine, oldLine, ErrorInfo) then
-                if Skip('("', oldLine, oldLine, ErrorInfo) then
-                  if Skip(s1, oldLine, oldLine, ErrorInfo) then
-                    if Skip('"', oldLine, oldLine, ErrorInfo) then
-                      if Skip(',', oldLine, oldLine, ErrorInfo) then
-                        if Skip('"', oldLine, oldLine, ErrorInfo) then
-                        begin
-                          GetWord(oldLine, old_s2, oldLine, ['"']);
-                          if Skip('"', oldLine, oldLine, ErrorInfo) then
-                            if Skip(')', oldLine, oldLine, ErrorInfo) then
-                              syntaxCheck := True;
-                        end;
-            end;
-          end;
-
-
-          if syntaxCheck then
-          begin
-            if PatchListe.ItemPointer > -1 then
-            begin
-              oldLine := old_s2;
-              GetWord(oldLine, x, oldLine, [',', '"']);
-              if (oldLine <> '') then
-                System.Delete(oldLine, 1, 1);
-
-              found := False;
-              while (oldLine <> '') and not found do
+              if PatchListe.ItemPointer > -1 then
               begin
+                oldLine := PatchListe.Strings[PatchListe.ItemPointer];
+                syntaxCheck := False;
+
+                if Skip('user_pref', oldLine, oldLine, ErrorInfo) then
+                  if Skip('("', oldLine, oldLine, ErrorInfo) then
+                    if Skip(s1, oldLine, oldLine, ErrorInfo) then
+                      if Skip('"', oldLine, oldLine, ErrorInfo) then
+                        if Skip(',', oldLine, oldLine, ErrorInfo) then
+                          if Skip('"', oldLine, oldLine, ErrorInfo) then
+                          begin
+                            GetWord(oldLine, old_s2, oldLine, ['"']);
+                            if Skip('"', oldLine, oldLine, ErrorInfo) then
+                              if Skip(')', oldLine, oldLine, ErrorInfo) then
+                                syntaxCheck := True;
+                          end;
+              end;
+            end;
+
+
+          if not testSyntax then
+            if syntaxCheck then
+            begin
+              if PatchListe.ItemPointer > -1 then
+              begin
+                oldLine := old_s2;
                 GetWord(oldLine, x, oldLine, [',', '"']);
                 if (oldLine <> '') then
                   System.Delete(oldLine, 1, 1);
-                if lowerCase(x) = lowerCase(s2) then
-                  found := True;
-              end;
-              if not found then
-              begin
-                PatchListe.Delete(PatchListe.ItemPointer);
-                PatchListe.Add('user_pref("' + s1 + '", "' + old_s2 + ',' + s2 + '");');
-              end;
-            end
-            else
-              PatchListe.Add('user_pref("' + s1 + '", "' + s2 + '");');
 
-          end;
+                found := False;
+                while (oldLine <> '') and not found do
+                begin
+                  GetWord(oldLine, x, oldLine, [',', '"']);
+                  if (oldLine <> '') then
+                    System.Delete(oldLine, 1, 1);
+                  if lowerCase(x) = lowerCase(s2) then
+                    found := True;
+                end;
+                if not found then
+                begin
+                  PatchListe.Delete(PatchListe.ItemPointer);
+                  PatchListe.Add('user_pref("' + s1 + '", "' + old_s2 +
+                    ',' + s2 + '");');
+                end;
+              end
+              else
+                PatchListe.Add('user_pref("' + s1 + '", "' + s2 + '");');
+
+            end;
 
         end
 
@@ -3159,16 +3194,18 @@ var
 
       end;
 
-      if syntaxcheck then
-        Inc(i);
+      if not testSyntax then
+        if syntaxcheck then
+          Inc(i);
 
       if not syntaxCheck then
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
     end;
 
 
-    if saveToOriginalFile then
-      PatchListe.SaveToFile(PatchFilename, flag_encoding);
+    if not testSyntax then
+      if saveToOriginalFile then
+        PatchListe.SaveToFile(PatchFilename, flag_encoding);
     //osencoding.saveTextFileWithEncoding(PatchListe, PatchFilename, flag_encoding);
     //PatchListe.SaveToFile(PatchFilename);
 
@@ -3440,28 +3477,30 @@ var
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
 
-    if not FileExists(PatchdateiName) then
-    begin
-      ps := LogDatei.LogSIndentPlus(+3) +
-        'Info: This file does not exist and will be created ';
-      LogDatei.log(ps, LLInfo);
-      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+    if not testSyntax then
+      if not FileExists(PatchdateiName) then
+      begin
+        ps := LogDatei.LogSIndentPlus(+3) +
+          'Info: This file does not exist and will be created ';
+        LogDatei.log(ps, LLInfo);
+        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
 
-      if CreateTextfile(PatchdateiName, ErrorInfo) then
-      begin
-        if ErrorInfo <> '' then
+
+        if CreateTextfile(PatchdateiName, ErrorInfo) then
         begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-          LogDatei.log(ps, LLWarning);
+          if ErrorInfo <> '' then
+          begin
+            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
+            LogDatei.log(ps, LLWarning);
+          end;
+        end
+        else
+        begin
+          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
+          LogDatei.log(ps, LLError);
+          exit; // ------------------------------  exit
         end;
-      end
-      else
-      begin
-        ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-        LogDatei.log(ps, LLError);
-        exit; // ------------------------------  exit
       end;
-    end;
 
 
     ProcessMess;
@@ -3475,16 +3514,20 @@ var
 
 
     Patchdatei.Clear;
-    if FileExists(PatchdateiName) then
-      Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName), flag_encoding);
-    // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
-    //   flag_encoding);
-    //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
-    //Patchdatei.Text := mytxtfile.Text;
-    //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
-    //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
-    for i := 0 to Patchdatei.Count - 1 do
-      logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
+    if not testSyntax then
+    begin
+      if FileExists(PatchdateiName) then
+        Patchdatei.loadFromFileWithEncoding(ExpandFileName(PatchdateiName),
+          flag_encoding);
+      // mytxtfile := loadTextFileWithEncoding(ExpandFileName(PatchdateiName),
+      //   flag_encoding);
+      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
+      //Patchdatei.Text := mytxtfile.Text;
+      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
+      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+      for i := 0 to Patchdatei.Count - 1 do
+        logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
+    end;
 
     for i := 1 to Sektion.Count do
     begin
@@ -3498,22 +3541,26 @@ var
         if UpperCase(Befehlswort) = 'ADD' then
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
-          Patchdatei.addEntry(Bereich, Eintrag);
+          if not testSyntax then
+            Patchdatei.addEntry(Bereich, Eintrag);
         end
         else if UpperCase(Befehlswort) = 'DEL' then
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
-          Patchdatei.delEntry(Bereich, Eintrag);
+          if not testSyntax then
+            Patchdatei.delEntry(Bereich, Eintrag);
         end
         else if UpperCase(Befehlswort) = 'SET' then
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
-          Patchdatei.setEntry(Bereich, Eintrag);
+          if not testSyntax then
+            Patchdatei.setEntry(Bereich, Eintrag);
         end
         else if UpperCase(Befehlswort) = 'ADDNEW' then
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
-          Patchdatei.addNewEntry(Bereich, Eintrag);
+          if not testSyntax then
+            Patchdatei.addNewEntry(Bereich, Eintrag);
         end
         else if UpperCase(Befehlswort) = 'DELSEC' then
         begin
@@ -3521,12 +3568,14 @@ var
           if Eintrag <> '' then
             reportError(Sektion, i, Sektion.strings[i - 1], 'syntax error')
           else
+          if not testSyntax then
             Patchdatei.delSec(Bereich);
         end
         else if UpperCase(Befehlswort) = 'CHANGE' then
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
-          Patchdatei.changeEntry(Bereich, Eintrag);
+          if not testSyntax then
+            Patchdatei.changeEntry(Bereich, Eintrag);
         end
         else if UpperCase(Befehlswort) = 'REPLACE' then
         begin
@@ -3535,6 +3584,7 @@ var
             reportError(Sektion, i, Sektion.strings[i - 1],
               'replace string not identified ')
           else
+          if not testSyntax then
             Patchdatei.replaceEntry(AlterEintrag, Eintrag);
         end
         else
@@ -3542,20 +3592,22 @@ var
       end;
     end;
     Logdatei.log('--- ', LLInfo);
-    //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
-    if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
+    if not testSyntax then
     begin
-      //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
-      //mytxtfile.SaveToFile(PatchdateiName);
-      Patchdatei.SaveToFile(PatchdateiName, flag_encoding);
-    end
-    else
-    begin
-      Patchdatei.SaveToFile(PatchdateiName, 'utf8');
-
+      //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
+      if not ((flag_encoding = 'utf8') or (flag_encoding = 'UTF-8')) then
+      begin
+        //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
+        //mytxtfile.SaveToFile(PatchdateiName);
+        Patchdatei.SaveToFile(PatchdateiName, flag_encoding);
+      end
+      else
+      begin
+        Patchdatei.SaveToFile(PatchdateiName, 'utf8');
+      end;
+      for i := 0 to Patchdatei.Count - 1 do
+        logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     end;
-    for i := 0 to Patchdatei.Count - 1 do
-      logdatei.log_prog('Saved: ' + Patchdatei.Strings[i], LLDebug);
     Patchdatei.Free;
     Patchdatei := nil;
   end;
@@ -10783,8 +10835,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -13954,14 +14006,14 @@ begin
 
         if syntaxCheck then
         begin
-          if not testSyntax then
-          begin
-            list1 := TXStringList.Create;
+          list1 := TXStringList.Create;
 
-            if not produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-              or not Skip(')', r, r, InfoSyntaxError) then
-              syntaxCheck := False
-            else
+          if not produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+            or not Skip(')', r, r, InfoSyntaxError) then
+            syntaxCheck := False
+          else
+          begin
+            if not testSyntax then
             begin
               list.Clear;
 
@@ -13982,10 +14034,9 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
                 end;
-
-              list1.Free;
-              list1 := nil;
             end;
+            list1.Free;
+            list1 := nil;
           end;
         end;
       end;
@@ -14018,10 +14069,12 @@ begin
             // so we comment the next two lines (do 10.1.19)
             //if length(s1) > 0
             //then
-            list.add(s1);
-            logdatei.log_prog('createStringList: add: ' + s1 + ' to: ' +
-              list.Text, LLDebug);
-
+            if not testSyntax then
+            begin
+              list.add(s1);
+              logdatei.log_prog('createStringList: add: ' + s1 + ' to: ' +
+                list.Text, LLDebug);
+            end;
             if length(r) = 0 then
             begin
               syntaxCheck := False;
@@ -14056,8 +14109,11 @@ begin
         then
         begin
           list.Clear;
-          for i := list1.Count downto 1 do
-            list.add(list1[i - 1]);
+          if not testSyntax then
+          begin
+            for i := list1.Count downto 1 do
+              list.add(list1[i - 1]);
+          end;
           if Skip(')', r, r, InfoSyntaxError) then
             syntaxCheck := True;
         end;
@@ -14152,7 +14208,8 @@ begin
         then
         begin
           list.Clear;
-          list.Text := getDocumentElementAsStringlist(TStringList(list1)).Text;
+          if not testSyntax then
+            list.Text := getDocumentElementAsStringlist(TStringList(list1)).Text;
           if Skip(')', r, r, InfoSyntaxError) then
             syntaxCheck := True;
         end;
@@ -14197,9 +14254,9 @@ begin
               begin
                 LogDatei.log('Error on producing getXml2UniqueChildnodeByName', LLerror);
               end;
-              list1.Free;
-              list1 := nil;
             end;
+            list1.Free;
+            list1 := nil;
           end;
         end;
       end;
@@ -14225,9 +14282,9 @@ begin
               begin
                 LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
               end;
-              list1.Free;
-              list1 := nil;
             end;
+            list1.Free;
+            list1 := nil;
           end;
         end;
       end;
@@ -17745,7 +17802,7 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         syntaxcheck := True;
-        tmpbool := true; // used for internal syntaxcheck flow
+        tmpbool := True; // used for internal syntaxcheck flow
         stringresult := '';
         try
           GetWord(r, s1, r, [',']);
@@ -17773,9 +17830,9 @@ begin
             syntaxcheck := False;
             InfoSyntaxError := 'No valid index for list ';
             *)
-            Logdatei.log('Given index: "'+tmpstr+'" is not a valid index for list',
-                      LLerror);
-            tmpbool := false; // stop further syntaxcheck (make no sense)
+            Logdatei.log('Given index: "' + tmpstr + '" is not a valid index for list',
+              LLerror);
+            tmpbool := False; // stop further syntaxcheck (make no sense)
             syntaxcheck := True;
             InfoSyntaxError := '';
             r := ''; // avoid 'remaining chars are not allowed' error
@@ -17786,8 +17843,7 @@ begin
         begin
           list1 := TXStringList.Create;
           r1 := r;
-          Logdatei.log('Checking remaining: '+r,
-                      LLerror);
+          //Logdatei.log('Checking remaining: ' + r, LLerror);
           if not produceStringList(script, r, r, list1, InfoSyntaxError) or
             not Skip(')', r, r, InfoSyntaxError) then
             syntaxCheck := False
@@ -25573,8 +25629,9 @@ begin
                     end;
                   end;
                 end;
-                if not testSyntax then
-                  ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
+                // if not testSyntax then
+                // testSyntax is done in doTextpatch
+                ActionResult := doTextpatch(ArbeitsSektion, Filename, '');
               end;
 
               tsTests:
@@ -25651,8 +25708,9 @@ begin
                     end;
                   end;
                 end;
-                if not testSyntax then
-                  ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
+                //if not testSyntax then
+                // testSyntax is done in doInifilePatches
+                ActionResult := doInifilePatches(ArbeitsSektion, Filename, '');
               end;
 
               tsHostsPatch:
