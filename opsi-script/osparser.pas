@@ -3194,7 +3194,6 @@ var
 
       end;
 
-      if not testSyntax then
         if syntaxcheck then
           Inc(i);
 
