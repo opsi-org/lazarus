@@ -2245,7 +2245,7 @@ begin
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
   LogDatei.log(ps, LLCritical);
-  ps := 'Syntax Error found in line: "' + trim(Sektion.Strings[LineNo - 1]) + '"';
+  ps := 'Syntax Error found in line: >' + trim(Sektion.Strings[LineNo - 1]) + '<';
   LogDatei.log(ps, LLCritical);
   if FatalOnSyntaxError then
   begin
