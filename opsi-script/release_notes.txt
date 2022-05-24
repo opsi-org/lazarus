@@ -24,7 +24,6 @@ opsi-script (4.12.5.0) urgency=low
         getRegistryVarList(<regkey>, <access str>), 
         getRegistryVarMap(<regkey>, <access str>). 
     * defined functions [W/L/M]: support string concatenation in call of defined functions.
-    * opsiservicecall [W/L/M]: support newline and tab.
   
   Changes:
     * openssl [W]: update openssl on Windows to version 1.1.1n.
@@ -40,5 +39,7 @@ opsi-script (4.12.5.0) urgency=low
     * isProcessChildOf [W/L/M]: avoiding of an endless loop (hanging) which might occur under certain circumstances.
     * sub <file name> [W/L/M]: spaces in front of the lines of a sub file will not be removed any more
     	(so that e.g. python code in an ExecWith section keeps its syntax).
+    * opsiservicecall [W/L/M]: support newline and tab.
+    * oswebservice: correct detection of opsi 4.0/4.1 (necessary for establishing the connection)
   
--- j.werner <j.werner@uib.de> 11 Mai 2022
+-- j.werner <j.werner@uib.de> 24 Mai 2022

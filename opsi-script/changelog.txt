@@ -53,7 +53,6 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           getRegistryVarList(<regkey>,<access str>),
           getRegistryVarMap(<regkey>,<access str>). (#4720, !38, a.schmitz)
   * [new] osdefinedfunctions: allow string concatenation in call of defined functions. (#4683, a.schmitz)
-  * [new] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
   * [change] osparser: new internal function parsePowershellCall. Implements commen parsing for powershellCall (j.werner)
   * [change] osparser: parse GetRegistry functions together. (a.schmitz)
   * [change] osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (d.oertel)
@@ -70,6 +69,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
   * [fix] osprocesses: fix in function isprocessChildOf in function isParentByPid. 
           repeat.. until loop now stops after 100 iterations when no other conditions were reached before 
           to avoid a pontential endless loop. (j.werner)
+  * [fix] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
   * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
   
 -- j.werner <j.werner@uib.de> 24 Mai 2022
