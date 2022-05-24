@@ -2036,9 +2036,9 @@ begin
     unattendedsetup :=
       '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall :=
-      ' /qn REBOOT=ReallySuppress';
+      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn REBOOT=ReallySuppress';
     unattendeduninstall :=
-      ' /qb-! REBOOT=ReallySuppress';
+      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := '';
     //patterns.Add('nstallshield');
@@ -2046,7 +2046,7 @@ begin
     installErrorHandlingLines.Add(
       'includelog "%opsiLogDir%\"+$ProductId$+".install_log.txt" "50" "utf16le"');
     link :=
-      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.microsoft.com/de-de/windows-server/administration/windows-commands/msiexec';
     comment := '';
     uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithor;

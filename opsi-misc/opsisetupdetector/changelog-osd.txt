@@ -84,8 +84,10 @@ todo:
 opsi-setup-detector (4.2.1.0-1) stable; urgency=low
 
    * custom directory support (todo)
-   * template channels (training,default,structured,high_structured9
+   * template channels (training,default,structured,high_structured)
    * new task: with-loggedin-user (AnalyzeCreateWithUser)
+   * osdbasedata: fixed stMSI silentuninstall / unattendeduninstall (added log file)
+   * osdbasedata: fixed stMSI link
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 

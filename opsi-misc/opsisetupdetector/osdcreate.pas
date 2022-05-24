@@ -692,6 +692,12 @@ begin
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
 
+      //customdir
+      if aktProduct.productdata.useCustomDir then
+      begin
+        ForceDirectories(clientpath + subdir + PathDelim + 'customdir');
+      end;
+
       // write project file
       aktProduct.writeProjectFileToPath(prodpath);
       Result := True;
