@@ -70,7 +70,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
           to avoid a pontential endless loop. (j.werner)
   * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
   
--- j.werner <j.werner@uib.de> 11 Mai 2022
+-- j.werner <j.werner@uib.de> 24 Mai 2022
 
 
 opsi-script (4.12.4.37) stable; urgency=low
