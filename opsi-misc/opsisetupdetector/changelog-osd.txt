@@ -88,6 +88,7 @@ opsi-setup-detector (4.2.1.0-1) stable; urgency=low
    * new task: with-loggedin-user (AnalyzeCreateWithUser)
    * osdbasedata: fixed stMSI silentuninstall / unattendeduninstall (added log file)
    * osdbasedata: fixed stMSI link
+   * no msi log on uninstall
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 

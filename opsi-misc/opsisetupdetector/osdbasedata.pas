@@ -2036,9 +2036,9 @@ begin
     unattendedsetup :=
       '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
     silentuninstall :=
-      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qn REBOOT=ReallySuppress';
+      '/qn REBOOT=ReallySuppress';
     unattendeduninstall :=
-      '/l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! REBOOT=ReallySuppress';
+      '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := '';
     //patterns.Add('nstallshield');

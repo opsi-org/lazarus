@@ -577,13 +577,26 @@ begin
     mysetup.mstAllowed := True;
   end;
   mysetup.uninstallCheck.Clear;
-  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +
-    mysetup.msiId + '"))');
+  mysetup.uninstallCheck.Add('set $msi-list$ = addtolist($MsiList$,"'+aktProduct.productdata.versionstr+'='+mysetup.msiId+'")');
+  mysetup.uninstallCheck.Add('; you may add later additional msiids to this list');
+  mysetup.uninstallCheck.Add('; set $MsiList$ = addtolist($MsiList$,"<version>=<GUID>")');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add('for %s% in $MsiList$ do sub_uninstall_msi-list');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add('[sub_uninstall_msi-list]');
+  mysetup.uninstallCheck.Add('set $MsiVersion$ = TakeString(0, splitstring("%s%", "="))');
+  mysetup.uninstallCheck.Add('set $MsiId$ = TakeString(1, splitstring("%s%", "="))');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
+  //mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +mysetup.msiId + '"))');
+  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct($MsiId$))');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('	set $ProdVersion$ = $MsiVersion$');
   mysetup.uninstallCheck.Add('endif');
 
   mysetup.uninstallCommandLine :=
-    'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
+  //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
+    'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
   LogDatei.log('get_MSI_info finished', LLInfo);
