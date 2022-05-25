@@ -1,4 +1,4 @@
-opsi-script (4.12.5.0) urgency=low
+opsi-script (4.12.5.1) urgency=low
 
   New:
     * Patches section [W]: support %userprofiledir% inside of patches section. 
@@ -42,4 +42,4 @@ opsi-script (4.12.5.0) urgency=low
     * opsiservicecall [W/L/M]: support newline and tab.
     * oswebservice: correct detection of opsi 4.0/4.1 (necessary for establishing the connection)
   
--- j.werner <j.werner@uib.de> 24 Mai 2022
+-- j.werner <j.werner@uib.de> 25 Mai 2022

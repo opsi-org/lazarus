@@ -3,7 +3,7 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.5.0) unreleased; urgency=low
+opsi-script (4.12.5.1) unreleased; urgency=low
 
   * [new] osparser: doIniFilePatches: support %userprofiledir% inside of patches section (!51, d.oertel)
   * [new] osparser : CHMOD for Linux.
@@ -72,7 +72,7 @@ opsi-script (4.12.5.0) unreleased; urgency=low
   * [fix] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
   * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
   
--- j.werner <j.werner@uib.de> 24 Mai 2022
+-- j.werner <j.werner@uib.de> 25 Mai 2022
 
 
 opsi-script (4.12.4.37) stable; urgency=low
