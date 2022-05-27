@@ -86,10 +86,12 @@ opsi-setup-detector (4.2.1.0-1) stable; urgency=low
    * custom directory support (todo)
    * template channels (training,default,structured,high_structured)
    * new task: with-loggedin-user (AnalyzeCreateWithUser)
-   * osdbasedata: fixed stMSI silentuninstall / unattendeduninstall (added log file)
    * osdbasedata: fixed stMSI link
    * no msi log on uninstall
    * osdform: 'macOS' instead of 'MacOS', fixes  #4732
+   * osdform: startOpsiServiceConnection: dependency:productid Auswahl: netbootprodukte rausnehmen , fixes  #4730
+   * oswebservice: add: TOpsi4Data.getLocalbootProductIds: TStringList;
+   * oswebservice: add: TOpsi4Data.getNetbootProductIds: TStringList;
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 
