@@ -455,6 +455,8 @@ type
     function getOpsiServiceConfigs: string;
     function getLogSize: int64;
     function getProductIds: TStringList;
+    function getLocalbootProductIds: TStringList;
+    function getNetbootProductIds: TStringList;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
@@ -5478,6 +5480,47 @@ begin
     Result.add(testresult);
   end;
 end;
+
+function TOpsi4Data.getLocalbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+begin
+  omc := TOpsiMethodCall.Create('getProductIds_list', ['localboot']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    testresult := SO('"' + testresult + '"').AsJSon(False, False);
+    Result.add(testresult);
+  end;
+end;
+
+function TOpsi4Data.getNetbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+begin
+  omc := TOpsiMethodCall.Create('getProductIds_list', ['netboot']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    testresult := SO('"' + testresult + '"').AsJSon(False, False);
+    Result.add(testresult);
+  end;
+end;
+
 
 
 function TOpsi4Data.getProductRequirements(productname: string;

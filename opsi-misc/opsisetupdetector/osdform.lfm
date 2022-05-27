@@ -3819,10 +3819,10 @@ object resultForm1: TresultForm1
               Left = 38
               Height = 30
               Top = 6
-              Width = 72
+              Width = 71
               Anchors = []
               BorderSpacing.Top = 3
-              Caption = 'MacOS:'
+              Caption = 'macOS:'
               Font.Height = -21
               ParentFont = False
             end
@@ -8781,10 +8781,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  145
-                  145
-                  145
-                  145
+                  140
+                  140
+                  140
+                  143
                 )
               end
             end
@@ -8792,20 +8792,20 @@ object resultForm1: TresultForm1
           object PairSplitterSide2: TPairSplitterSide
             Cursor = crArrow
             Left = 0
-            Height = 183
-            Top = 139
+            Height = 182
+            Top = 140
             Width = 1087
             ChildSizing.TopBottomSpacing = 3
             ClientWidth = 1087
-            ClientHeight = 183
+            ClientHeight = 182
             object Panel10: TPanel
               Left = 0
-              Height = 177
+              Height = 176
               Top = 3
               Width = 1087
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 177
+              ClientHeight = 176
               ClientWidth = 1087
               ParentFont = False
               TabOrder = 0
@@ -9002,7 +9002,7 @@ object resultForm1: TresultForm1
               end
               object TIGridProp: TTIGrid
                 Left = 1
-                Height = 133
+                Height = 132
                 Top = 43
                 Width = 1085
                 AliasPropertyNames.Strings = (

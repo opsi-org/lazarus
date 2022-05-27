@@ -868,7 +868,7 @@ begin
           FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
           // fetch produtIds from service
-          strlist.Text := localservicedata.getProductIds.Text;
+          strlist.Text := localservicedata.getLocalbootProductIds.Text;
           for i := 0 to strlist.Count - 1 do
             FNewDepDlg.ComboBoxproductIds.Items.Add(
               opsiunquotestr2(strlist.strings[i], '""'));
