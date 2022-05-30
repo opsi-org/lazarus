@@ -12,7 +12,7 @@ set $oldProgFound$ = "false"
 #@uninstallCheckLines1*#
 
 if $oldProgFound$ = "true"
-	Message "Uninstalling " + $ProductId$ + " ..."
+	Message "Uninstalling " + $ProductId$ + " " + $ProdVersion$ " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
@@ -21,7 +21,6 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
-		#@installErrorHandlingLines1*#
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else

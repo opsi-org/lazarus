@@ -164,7 +164,6 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    LabelChannel: TLabel;
     Label86: TLabel;
     Label87: TLabel;
     Label88: TLabel;
@@ -177,6 +176,7 @@ type
     Label95: TLabel;
     Label96: TLabel;
     Label97: TLabel;
+    LabelChannel: TLabel;
     LabelNumber: TLabel;
     LabelNumIcons: TLabel;
     LabelNameSelIcon: TLabel;
@@ -425,6 +425,8 @@ type
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
+    procedure TIComboBoxChannelChange(Sender: TObject);
+    procedure TIComboBoxChannelEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
     procedure TIEditProdVersion3Change(Sender: TObject);
@@ -3905,6 +3907,18 @@ begin
     FlowPanelMst1.Enabled := False;
     //TIEditMstFile2.Enabled:=false;
   end;
+end;
+
+procedure TResultform1.TIComboBoxChannelChange(Sender: TObject);
+begin
+  Application.ProcessMessages;
+  makeProperties;
+  TIGridProp.Refresh;
+end;
+
+procedure TResultform1.TIComboBoxChannelEditingDone(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);

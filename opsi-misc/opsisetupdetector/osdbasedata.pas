@@ -478,7 +478,7 @@ function cleanOpsiId(opsiid: string): string; // clean up productId
 
 const
   CONFVERSION = '4.2.0.9';
-templChannelStrings : array [TTemplateChannels] of String[4]
+templChannelStrings : array [TTemplateChannels] of String
    = ('training','default','structured','high_structured');
 
 var
@@ -681,7 +681,7 @@ begin
   Funinstall_waitforprocess := '';
   Finstall_waitforprocess := '';
   FcopyCompleteDir := False;
-
+  FinstallErrorHandlingLines.Clear;
 end;
 
 // TPProperty **********************************
@@ -1066,7 +1066,8 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  if ((osdsettings.runmode = analyzeCreateWithUser) or
+    (aktProduct.productdata.channelDir = 'structured')) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1776,6 +1777,7 @@ end;
 procedure initaktproduct;
 var
   i: integer;
+  str : string;
   //newdep: TPDependency;
   //defaultIconFullFileName :string;
 begin
@@ -1806,7 +1808,8 @@ begin
     uninstallscript := 'uninstall.opsiscript';
     delsubscript := 'delsub.opsiscript';
     //channelDir:= 'default';
-    channelDir:= templChannelStrings[myconfiguration.templateChannel];
+    str :=  templChannelStrings[myconfiguration.templateChannel];
+    channelDir:= str;
     licenserequired := False;
     // Application.Params[0] is directory of application as string
     { set productImageFullFileName to full file name of the default icon }

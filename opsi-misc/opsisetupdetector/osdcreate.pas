@@ -117,12 +117,13 @@ var
   i: integer;
   str, str2, str3: string;
   strlist: TStringList;
-  templatePath: string;
+  templatePath, filepath: string;
   proptmpstr: string;
   neededspacefor2archinstall: integer = 0;
 begin
   {$IFDEF WINDOWS}
-  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files' +
+     PathDelim + aktProduct.productdata.channelDir;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   // development env
@@ -165,6 +166,7 @@ begin
 
     str := '';
     patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
+    patchlist.add('#@productVersion*#=' + aktProduct.productdata.productversion);
     for i := 0 to myconfiguration.import_libraries.Count - 1 do
       str := str + 'importlib "' + myconfiguration.import_libraries[i] +
         '"' + LineEnding;
@@ -233,8 +235,12 @@ begin
     str := '';
     if aktProduct.properties.propExists('DesktopIcon') then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupHandleDesktopIcon.opsiscript');
+      filepath := templatePath + Pathdelim + 'win' + Pathdelim +
+        'SetupHandleDesktopIcon.opsiscript';
+      strlist.Clear;
+      if FileExists(filepath) then
+      strlist.LoadFromFile(filepath)
+      else LogDatei.log('Error: File not found: '+ filepath,LLerror);;
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
     end;
     patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
@@ -266,6 +272,24 @@ begin
     end;
     patchlist.add('#@DelsubDesktopiconSectionLines*#=' + str);
 
+    str := '';
+    patchlist.add('#@Profileconfigurationlines*#=' + str);
+
+
+    str := '';
+    patchlist.add('#@LicenseInstallLines*#=' + str);
+
+    str := '';
+    patchlist.add('#@LicenseUninstallLines*#=' + str);
+
+    str := '';
+    if aktProduct.productdata.useCustomDir then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
+        'SetupDesktopIconSection.opsiscript');
+      str := strlist.Text;
+    end;
+    patchlist.add('#@SetupHandleCustomDir*#=' + str);
 
 
     // loop over setups
@@ -329,6 +353,9 @@ begin
     patchlist.add('#@MinimumSpace3*#=' +
       IntToStr(neededspacefor2archinstall) + ' MB');
 
+    logdatei.log('Here comes the patchlist: ',LLinfo);
+    logdatei.log_list(patchlist,LLdebug);
+
   finally
     strlist.Free;
   end;
@@ -342,6 +369,7 @@ var
   templateChannelDir, pre_id, subdir: string;
   infilelist: TStringList;
   i: integer;
+  infilenotfound : boolean = false;
 begin
   Result := False;
   templateChannelDir := aktProduct.productdata.channelDir;
@@ -388,12 +416,16 @@ begin
           infilelist.Add('setupsingle.opsiscript');
           infilelist.Add('delsubsingle.opsiscript');
           infilelist.Add('uninstallsingle.opsiscript');
+          if aktProduct.SetupFiles[0].installerId = stMsi then
+            infilelist.Add('delsubmsisingle.opsiscript');
         end;
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
         begin
           infilelist.Add('setupdouble.opsiscript');
           infilelist.Add('delsubdouble.opsiscript');
           infilelist.Add('uninstalldouble.opsiscript');
+          if aktProduct.SetupFiles[0].installerId = stMsi then
+            infilelist.Add('delsubmsidouble.opsiscript');
         end;
         createTemplate:
         begin
@@ -463,6 +495,39 @@ begin
           end;
         end;
       end;
+
+      // additional files for 'structured'
+           if (aktProduct.productdata.channelDir = 'structured') then
+      begin
+        case osdsettings.runmode of
+        singleAnalyzeCreate:
+        begin
+          infilelist.Add('declarations.opsiinc');
+          infilelist.Add('sections.opsiinc');
+        end;
+        twoAnalyzeCreate_1, twoAnalyzeCreate_2:
+        begin
+          infilelist.Add('declarations.opsiinc');
+          infilelist.Add('sections.opsiinc');
+        end;
+        createTemplate:
+        begin
+        end;
+        createMeta:
+        begin
+        end;
+        threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+        begin
+        end;
+        createMultiTemplate:
+        begin
+        end;
+        analyzeCreateWithUser:
+        begin
+        end;
+      end;
+      end;
+
       // we did it for analyzeCreateWithUser right now
       if not (osdsettings.runmode = analyzeCreateWithUser) then
         for i := 0 to infilelist.Count - 1 do
@@ -529,6 +594,7 @@ begin
           tmpname := StringReplace(tmpname, 'double', '', []);
           tmpname := StringReplace(tmpname, 'templ', '', []);
           tmpname := StringReplace(tmpname, 'meta', '', []);
+          tmpname := StringReplace(tmpname, 'msi', '', []);
           if tmpname = 'setup' then
             outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
           else if tmpname = 'delsub' then
@@ -548,8 +614,10 @@ begin
         (osdsettings.runmode = createMeta) or
         // none at analyzeCreateWithUser
         (osdsettings.runmode = analyzeCreateWithUser) or
-        // none at template channel taining
-        (aktProduct.productdata.channelDir = 'training')) then
+        // none at template channel training
+        (aktProduct.productdata.channelDir = 'training') or
+        // none at template channel structured
+        (aktProduct.productdata.channelDir = 'structured')) then
       begin
         infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
         outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
@@ -696,10 +764,15 @@ begin
       if aktProduct.productdata.useCustomDir then
       begin
         ForceDirectories(clientpath + subdir + PathDelim + 'customdir');
+        infilename := genericTemplatePath + Pathdelim + 'customdir_readme.txt';
+      outfilename := clientpath + subdir + PathDelim + 'customdir'+ PathDelim + 'readme.txt';
+      copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
+        cffPreserveTime], True);
       end;
 
       // write project file
       aktProduct.writeProjectFileToPath(prodpath);
+
       Result := True;
       ;
     except

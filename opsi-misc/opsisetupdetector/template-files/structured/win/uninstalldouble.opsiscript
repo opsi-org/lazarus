@@ -1,0 +1,36 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+
+[Actions]
+requiredOpsiscriptVersion >= "4.12.4.37"
+
+; All variables are defined here:
+include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "%ScriptPath%\sections.opsiinc"
+
+Comment "Displaying product picture"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" $ProductId$
+Message "Installing " + $ProductId$
+
+Comment "Checking OS version"
+if NOT(GetOS = "Windows_NT")
+	logError "Installation aborted: Wrong OS version detected. This package works on Windows only"
+	isFatalError "Wrong OS"
+	; Stop process and set installation status to failed
+endif
+
+
+if FileExists("%ScriptPath%\delsub.opsiscript")
+	Comment "Starting the uninstall sub section"
+	Message "Uninstalling " + $ProductId$ + " ..."
+	Sub "%ScriptPath%\delsub.opsiscript"
+endif
+
+#@LicenseUninstallLines*#
+

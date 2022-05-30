@@ -1,0 +1,67 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Actions]
+requiredOpsiscriptVersion >= "4.12.4.37"
+
+
+; All variables are defined here:
+include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "%ScriptPath%\sections.opsiinc"
+
+Comment "Displaying product picture"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" $ProductId$
+Message "Installing " + $ProductId$
+
+Comment "Checking OS version"
+if NOT(GetOS = "Windows_NT")
+	logError "Installation aborted: Wrong OS version detected. This package works on Windows only"
+	isFatalError "Wrong OS"
+	; Stop process and set installation status to failed
+endif
+
+Comment "Checking available space"
+Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+
+if NOT(HasMinimumSpace("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% required"
+	isFatalError "No Space"
+endif
+
+Comment "Checking if previous versions should be uninstalled"
+if ($uninstall_before_install$ = "true")
+	if FileExists("%ScriptPath%\delsub.opsiscript")
+		Comment "Starting the uninstall sub section"
+		Sub "%ScriptPath%\delsub.opsiscript"
+	endif
+endif
+
+#@LicenseInstallLines*#
+
+Comment "Starting the setup program"
+Message "Installing " + $ProductId$
+
+#@preInstallLines*#
+comment "Start setup program"
+ChangeDirectory "%SCRIPTPATH%\files1"
+;----------------------------------------------
+Winbatch_install_1  #@installWaitForProc1*#
+;----------------------------------------------
+Sub_Check_ExitCode_1
+
+#@postInstallLines*#
+
+#@SetupHandleDesktopIcon*#
+
+#@SetupHandleCustomDir*#
+
+#@Profileconfigurationlines*#
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

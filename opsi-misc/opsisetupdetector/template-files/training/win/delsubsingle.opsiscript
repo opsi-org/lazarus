@@ -27,18 +27,18 @@ if $oldProgFound$ = "true"
 	else
 		Comment $ErrorString$
 	endif
-
+	
 	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
 	
 	comment "Cleanup registry"
-Registry_uninstall
-
-comment "Delete program shortcuts"
-LinkFolder_uninstall
-
+	Registry_uninstall
+	
+	comment "Delete program shortcuts"
+	LinkFolder_uninstall
+	
 	#@DelsubHandleDesktopIcon*#
 endif
 

@@ -1,0 +1,69 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+requiredWinstVersion >= "4.12.0.37"
+
+; -------------------------------------
+; include file for opsi-setup-detector products
+; Define all sections here
+;---------------------------
+
+;--- generated setup sections
+
+[Winbatch_install_1]
+#@installCommandLine1*#
+
+
+#@SetupDesktopiconSectionLines*#
+
+#@SetupSectionLines1*#
+
+;--- generated uninstall sections
+
+[Sub_Uninstallation_msi]
+set $MsiVersion$ = TakeString(0, splitstring('%uninstallEntry%', "="))
+set $MsiId$ = TakeString(1, splitstring('%uninstallEntry%', "="))
+
+if stringtobool(checkForMsiProduct($MsiId$))
+	Message "Uninstalling :"  + $ProductId$ + " " + $MsiVersion$+ "..."
+	Winbatch_Uninstall_1
+	Set $ExitCode$ = getlastexitcode
+	if stringtobool(#@isExitcodeFatalFunction1*#($ExitCode$, "true", $ErrorString$ ))
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
+else
+	Comment "No previously installed " + $ProductId$ + " version found"
+endif
+
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@DelsubDesktopiconSectionLines*#
+
+#@DelsubSectionLines1*#
+
+;--- generated generic sections
+
+[Sub_Check_ExitCode_1]
+Set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction1*#($ExitCode$, "true", $ErrorString$ ))
+	#@installErrorHandlingLines1*#
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+
+
+;--- addtional sections

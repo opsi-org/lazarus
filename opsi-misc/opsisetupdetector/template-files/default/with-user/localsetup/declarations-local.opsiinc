@@ -16,7 +16,6 @@ DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $LicenseRequired$
 DefVar $LogDir$
-DefVar $MsiId$
 DefVar $ProductId$
 DefVar $ServiceErrorClass$
 DefVar $Uninstaller$
@@ -26,6 +25,10 @@ DefVar $targetfile$
 DefVar $tmpstr$
 DefVar $uninstallprogram$
 DefVar $myScriptPath$
+DefVar $MsiId$
+DefVar $MsiVersion$
+
+DefStringList $UninstallList$
 
 
 Set $InstallFilesDir$ = $SetupFilesPath$ + "\localsetup\"
