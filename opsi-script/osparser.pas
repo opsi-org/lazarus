@@ -2194,7 +2194,7 @@ end;
 function TuibInstScript.reportError(const Sektion: TWorkSection;
   LineNo: integer; const Content: string; Comment: string): TSectionResult;
 var
-  funcname, funcfile, funcmesseage: string;
+  funcname, funcfile, funcmessage: string;
   originmessage: string;
   funcline: integer;
   i, index: integer;
@@ -2206,7 +2206,7 @@ begin
       funcname := definedFunctionArray[inDefFuncIndex].Name;
       funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
       funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
-      funcmesseage := ' in defined function: ' + funcname + ' file: ' +
+      funcmessage := ' in defined function: ' + funcname + ' file: ' +
         ExtractFileName(funcfile) + ' function start at line: ' +
         IntToStr(funcline + 1);
       originmessage := '; origin: ' + funcfile + ' line: ' +
@@ -2218,14 +2218,14 @@ begin
       index := script.FSectionNameList.IndexOf(funcname);
       if index = -1 then
       begin
-        funcmesseage := ' in section: ' + Sektion.Name + '; file: unknown';
+        funcmessage := ' in section: ' + Sektion.Name + '; file: unknown';
         originmessage := '; origin: not found' + '): ';
       end
       else
       begin
         funcfile := Script.FSectionInfoArray[index].SectionFile;
         funcline := Script.FSectionInfoArray[index].StartLineNo;
-        funcmesseage := ' in section: ' + funcname + '; file: ' +
+        funcmessage := ' in section: ' + funcname + '; file: ' +
           ExtractFileName(funcfile) + '; section start at line: ' +
           IntToStr(funcline + 1);
         //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
@@ -2235,14 +2235,14 @@ begin
     end;
   except
     originmessage := '; origin: not found' + '): ';
-    funcmesseage := '; section or function not found';
+    funcmessage := '; section or function not found';
   end;
   //for i:= 0 to FLinesOriginList.Count -1 do
   //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name + ' (Command in line ' +
     IntToStr(Sektion.StartLineNo + LineNo)
     //   + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
-    + funcmesseage + originmessage
+    + funcmessage + originmessage
     //  + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
@@ -23422,7 +23422,14 @@ begin
                     Parameter, InfoSyntaxError) then
                     syntaxCheck := True
                   else
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                  begin
+                    //reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                    LogDatei.log('Invalid Syntax in Comment. Please correct this error as soon as possible '
+                      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
+                      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
+                      + '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
+                    Inc(FNumberOfErrors);
+                  end;
                 end;
 
                 if syntaxCheck then
