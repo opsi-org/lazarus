@@ -194,13 +194,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
+        <CommandLineParams Value="-s notifier.d\action.ini --test -l 8 -p 44000"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
+            <CommandLineParams Value="-s notifier.d\action.ini --test -l 8 -p 44000"/>
           </local>
         </Mode0>
       </Modes>

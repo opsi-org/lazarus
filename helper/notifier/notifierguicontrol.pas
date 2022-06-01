@@ -253,6 +253,8 @@ begin
 end;
 
 procedure shutdownNotifier;
+var
+  loopcounter : integer = 0;
 begin
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
@@ -261,7 +263,15 @@ begin
   DataModule1.ProcessMess;
   logdatei.log('Terminate Thread', LLInfo);
   if Assigned(mythread) then
+  begin
     mythread.Terminate;
+    while (not stopped) and (loopcounter < 100) do
+    begin
+      logdatei.log('waiting for thread to end ..', LLnotice);
+      sleep(500);
+      inc(loopcounter);
+    end;
+  end;
   // this will end main ... and then terminate
   //sleep(1000);
   //logdatei.log('free_runtime_objects', LLnotice);
