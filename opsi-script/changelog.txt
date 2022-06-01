@@ -691,7 +691,7 @@ opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
 
 opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
 
-  * new statement: forceLogInAppenMode = (true/false)
+  * new statement: forceLogInAppendMode = (true/false)
   * RequiredOpsiscriptVersion
   * %OpsiscriptVersion%
   * %OpsiscriptDir%
