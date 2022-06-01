@@ -254,23 +254,24 @@ end;
 
 procedure shutdownNotifier;
 begin
-  logdatei.log('Terminate Thread', LLInfo);
-  if Assigned(mythread) then
-    mythread.Terminate;
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
   Nform.Close;
   logdatei.log('Wait a scond', LLInfo);
   DataModule1.ProcessMess;
-  sleep(1000);
+  logdatei.log('Terminate Thread', LLInfo);
+  if Assigned(mythread) then
+    mythread.Terminate;
+  // this will end main ... and then terminate
+  //sleep(1000);
   //logdatei.log('free_runtime_objects', LLnotice);
   //free_runtime_objects;
   //DataModule1.DataModuleDestroy(nil);
-  logdatei.log('terminate', LLnotice);
+  //logdatei.log('terminate', LLnotice);
   //Application.Terminate;
-  DataModule1.DataModuleDestroy(nil);
-  logdatei.log('Program halted (2)', LLnotice);
-  Halt(0);
+  //DataModule1.DataModuleDestroy(nil);
+  //logdatei.log('Program halted (2)', LLnotice);
+  //Halt(0);
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string): boolean;
@@ -1390,8 +1391,9 @@ begin
       //{$IFDEF WINDOWS}
       // scale new scrollbox:
       //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
-      memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, screen.PixelsPerInch, 0, 0);
+      {$IFNDEF LINUX}
+      memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
+      {$ENDIF LINUX}
 
       //{$ENDIF WINDOWS}
       // make transparent
@@ -1415,7 +1417,7 @@ begin
       LabelArray[labelcounter].Parent := nform;
       LabelArray[labelcounter].AutoSize := True;
       LabelArray[labelcounter].Name := aktsection;
-      LabelArray[labelcounter].WordWrap := True;
+      //LabelArray[labelcounter].WordWrap := True;
     (*
     {$IFDEF LINUX}
     LabelArray[labelcounter].AutoSize := False;
@@ -1430,6 +1432,7 @@ begin
       //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
       LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
 
+
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
       begin
@@ -1442,9 +1445,16 @@ begin
       {$ENDIF LINUX}
       end;
       LabelArray[labelcounter].Font.Name := mytmpstr;
-      { fontresize makes also hdpi correction for linux}
-      LabelArray[labelcounter].Font.Size :=
-        fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+      mytmpint1 := myini.ReadInteger(aktsection, 'FontSize', 10);
+      mytmpint2 := fontresize(mytmpint1);
+      {$IFDEF LINUX}
+      { fontresize makes not a correct hdpi correction for linux}
+      mytmpint2 := trunc(mytmpint1 * (designPPI / nform.PixelsPerInch)) - 1;
+      {$ENDIF LINUX}
+      LabelArray[labelcounter].Font.Size := mytmpint2;
+      LogDatei.log('Fontsize from ini: '+inttostr(mytmpint1) +
+                   ' - using Fontsize:  '+inttostr(mytmpint2), LLDebug);
+
       LabelArray[labelcounter].Font.Color :=
         myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       LabelArray[labelcounter].Font.Bold :=
@@ -1465,8 +1475,10 @@ begin
       //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       //  96, nform.PixelsPerInch, 0, 0);
       //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
+      {$IFNDEF LINUX}
       LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
         designPPI, nform.PixelsPerInch, 0, 0);
+      {$ENDIF LINUX}
 
       //{$ENDIF WINDOWS}
       // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
@@ -1634,8 +1646,12 @@ begin
       //{$IFDEF WINDOWS}
       // scale new Button:
       //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
+
+      {$IFNDEF LINUX}
       ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
         designPPI, nform.PixelsPerInch, 0, 0);
+      {$ENDIF LINUX}
+
       //mytmpint1 := ButtonArray[buttoncounter].Height;
       //ButtonArray[buttoncounter].Height := trunc(mytmpint1 * (nform.PixelsPerInch / designPPI));
       tmpstr2 := 'After ReScale: Button' + IntToStr(buttoncounter);

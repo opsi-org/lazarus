@@ -182,6 +182,7 @@ begin
     begin
       mythread := Tmythread.Create(False);
       mythread.WaitFor;
+      LogDatei.log('Thread ended.',LLnotice);
     end
     else
     if Assigned(LogDatei) then

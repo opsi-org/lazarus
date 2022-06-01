@@ -69,7 +69,7 @@ begin
   confirmNoText := 'No';
   button_only := btnonly;
   //inherited.
-  panel.BevelWidth := 0;
+  panel.BevelWidth := 1;
   panel.BevelOuter := bvNone;
   btn.Parent := panel;
   cbox.Parent := panel;
