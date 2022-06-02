@@ -16911,24 +16911,6 @@ begin
       end;
     end
 
-    else if LowerCase(s) = LowerCase('getStringFromListAtIndex') then
-    begin
-      if Skip('(', r, r, InfoSyntaxError) and produceStringList(
-        script, r, r, list1, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-        EvaluateString(r, r, s1, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-      begin
-        syntaxCheck := True;
-        try
-          StringResult := '';
-          StringResult := list1.Strings[StrToInt(s1)];
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
-            s1 + '"', LLerror);
-        end;
-      end;
-    end
-
     else if LowerCase(s) = LowerCase('RandomStr') then
     begin
       StringResult := randomstr(True);
