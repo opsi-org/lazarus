@@ -109,7 +109,7 @@ var
   MemoArray: Tmemos;
   labelcounter, memocounter: integer;
   buttoncounter: integer = -1;
-  designPPI: integer;
+  //designPPI: integer;
   //mymouseenter: TMethod;
   //mymouseleave: TMethod;
   myRangelistList: TMyRangeList;
@@ -1845,7 +1845,7 @@ begin
   myRangelistList := TMyRangelist.Create(True);
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
-  designPPI := 96;
+  //designPPI := nform.DesignTimePPI;
   Randomize;
   (*
   mymouseenter.Code := @onmouseenter;

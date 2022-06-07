@@ -41,6 +41,7 @@ type
 
 var
   Nform: TNform;
+  designPPI : integer;
 
 implementation
 
@@ -58,6 +59,7 @@ procedure TNform.FormCreate(Sender: TObject);
 begin
   //objlist := TObjectList.Create;
   // prevents screensaver to start while running: start
+  designPPI := nform.DesignTimePPI;
   {$IFDEF WINDOWS}
   SystemCritical.IsCritical := True;
 {$ENDIF WINDOWS}
