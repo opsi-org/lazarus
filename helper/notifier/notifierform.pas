@@ -12,6 +12,7 @@ uses
   {$ENDIF WINDOWS}
   oslog,
   contnrs;
+  //bgraanimatedgif;
 
 type
 

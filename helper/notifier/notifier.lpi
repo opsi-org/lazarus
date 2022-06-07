@@ -13,7 +13,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="Per-monitor"/>
+        <DpiAware Value="True/PM_V2"/>
         <TextName Value="uib gmbh, opsi.org, opsi-notifier, (c) AGPLv3 "/>
         <TextDesc Value="opsi-notifier"/>
       </XPManifest>

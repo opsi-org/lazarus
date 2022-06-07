@@ -776,6 +776,7 @@ end;
 procedure showNForm;
 var
   startx, starty, stopy, x, y, i: integer;
+  tmpstr2 : string;
 begin
   // position
 
@@ -832,6 +833,29 @@ begin
     //DataModule1.ProcessMess;
   end;
   *)
+  (*
+      tmpstr2 := 'Form initial: ';
+      with nform do
+      begin
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+      end;
+      LogDatei.log(tmpstr2, LLDebug);
+    {$IFNDEF WINDOWS}
+      // scale new scrollbox:
+      nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
+        screen.PixelsPerInch, 0, 0);
+      //nform.Repaint;
+      //Application.ProcessMessages;
+    {$ENDIF WINDOWS}
+      tmpstr2 := 'Form rescale: ';
+      with nform do
+      begin
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+      end;
+      LogDatei.log(tmpstr2, LLDebug);
+     *)
 
   // show with appearmode
 
@@ -1264,11 +1288,13 @@ begin
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
       LogDatei.log(tmpstr2, LLDebug);
-    {$IFNDEF DARWIN}
+    {$IFNDEF WINDOWS}
       // scale new scrollbox:
       nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
         screen.PixelsPerInch, 0, 0);
-    {$ENDIF DARWIN}
+      nform.Repaint;
+      Application.ProcessMessages;
+    {$ENDIF WINDOWS}
       tmpstr2 := 'Form rescale: ';
       with nform do
       begin
@@ -1338,9 +1364,12 @@ begin
       else
       begin
         nform.Image1.Picture.LoadFromFile(mytmpstr);
-        //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+        {$IFDEF WINDOWS}
+      // scale new Picture:
+      //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
         nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,
           screen.PixelsPerInch, 0, 0);
+        {$ENDIF WINDOWS}
         nform.Image1.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -1425,8 +1454,15 @@ begin
       SetLength(LabelArray, labelcounter + 1);
       LabelArray[labelcounter] := TLabel.Create(nform);
       LabelArray[labelcounter].Parent := nform;
-      LabelArray[labelcounter].AutoSize := True;
+      LabelArray[labelcounter].AutoSize := true;
       LabelArray[labelcounter].Name := aktsection;
+      if aktsection = 'LabelTitle' then
+      begin
+      LabelArray[labelcounter].AutoSize := false;
+      LabelArray[labelcounter].OptimalFill:=true;
+      LabelArray[labelcounter].AdjustFontForOptimalFill;
+      LogDatei.log('Set Fontsize to optimal fill', LLDebug);
+      end;
       //LabelArray[labelcounter].WordWrap := True;
     (*
     {$IFDEF LINUX}
@@ -1455,6 +1491,9 @@ begin
       {$ENDIF LINUX}
       end;
       LabelArray[labelcounter].Font.Name := mytmpstr;
+
+      if not LabelArray[labelcounter].OptimalFill then
+      begin
       mytmpint1 := myini.ReadInteger(aktsection, 'FontSize', 10);
       mytmpint2 := fontresize(mytmpint1);
       {$IFDEF LINUX}
@@ -1464,7 +1503,7 @@ begin
       LabelArray[labelcounter].Font.Size := mytmpint2;
       LogDatei.log('Fontsize from ini: '+inttostr(mytmpint1) +
                    ' - using Fontsize:  '+inttostr(mytmpint2), LLDebug);
-
+      end;
       LabelArray[labelcounter].Font.Color :=
         myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       LabelArray[labelcounter].Font.Bold :=
