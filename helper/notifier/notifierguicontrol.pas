@@ -582,10 +582,13 @@ begin
 
   {$IFDEF LINUX}
   //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  //Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
   Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   {$ENDIF LINUX}
   if Result < 8 then
     Result := 8;
+  LogDatei.log('fontresize in: '+inttostr(num) +
+                   ' out:  '+inttostr(Result), LLinfo);
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -1169,16 +1172,16 @@ begin
         if mynotifierkind = 'event' then
         begin
           nform.FormStyle := fsSystemStayOnTop;
-          logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
+          logdatei.log('FormStyle := fsSystemStayOnTop', LLinfo);
         end
         else
         begin
           nform.FormStyle := fsSystemStayOnTop;
-          logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
+          logdatei.log('FormStyle := fsSystemStayOnTop', LLinfo);
         end;
       end
       else
-        logdatei.log('FormStyle := fsNormal', LLDebug);
+        logdatei.log('FormStyle := fsNormal', LLinfo);
 
       //Frame = false
       tmpinistr := myini.ReadString(aktsection, 'Frame', 'false');
@@ -1191,7 +1194,7 @@ begin
       begin
         nform.BorderStyle := bsNone;
         logdatei.log('Frame=false - so we ignore Resizable,Closeable,Minimizable ',
-          LLDebug);
+          LLinfo);
       end
       else
       begin // with frame
@@ -1209,11 +1212,11 @@ begin
         if not tmpbool then  // no Resizable
         begin
           nform.BorderStyle := bsSingle;
-          logdatei.log('Resizable=false ', LLDebug);
+          logdatei.log('Resizable=false ', LLinfo);
         end
         else
         begin
-          logdatei.log('Resizable=true ', LLDebug);
+          logdatei.log('Resizable=true ', LLinfo);
           nform.BorderStyle := bsSizeable;
         end;
 
@@ -1226,10 +1229,10 @@ begin
             tmpinistr, LLError);
         end;
         if not tmpbool then  // no Closeable
-          logdatei.log('Closeable=false ', LLDebug)
+          logdatei.log('Closeable=false ', LLinfo)
         else
         begin
-          logdatei.log('Closeable=True ', LLDebug);
+          logdatei.log('Closeable=True ', LLinfo);
           nform.BorderIcons := nform.BorderIcons + [biSystemMenu];
         end;
 
@@ -1242,10 +1245,10 @@ begin
             tmpinistr, LLError);
         end;
         if not tmpbool then  // no Minimizable
-          logdatei.log('Minimizable=false ', LLDebug)
+          logdatei.log('Minimizable=false ', LLinfo)
         else
         begin
-          logdatei.log('Minimizable=True ', LLDebug);
+          logdatei.log('Minimizable=True ', LLinfo);
           nform.BorderIcons := nform.BorderIcons + [biMinimize];
         end;
       end;
@@ -1287,8 +1290,8 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
-    {$IFNDEF WINDOWS}
+      LogDatei.log(tmpstr2, LLinfo);
+    {$IFDEF WINDOWS}
       // scale new scrollbox:
       nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
         screen.PixelsPerInch, 0, 0);
@@ -1301,7 +1304,7 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
+      LogDatei.log(tmpstr2, LLinfo);
       //Hidden = false
       tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
       if not TryStrToBool(tmpinistr, hidden) then
@@ -1377,7 +1380,7 @@ begin
     else
     if aktsection = 'LabelMessage' then
     begin
-      LogDatei.log('Start reading: ' + aktsection, LLDebug);
+      LogDatei.log('Start reading: ' + aktsection, LLinfo);
       Inc(memocounter);
       SetLength(memoarray, memocounter + 1);
       memoarray[memocounter] := TTransparentMemo.Create(nform);
@@ -1443,8 +1446,8 @@ begin
       // feed memolist: id = index of memoarray ; id = aktsection striped by 'Label'
       memolist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(memocounter));
       logdatei.log('memolist add: ' + copy(aktsection, 6, 100) + '=' +
-        IntToStr(memocounter), LLDebug2);
-      LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+        IntToStr(memocounter), LLinfo);
+      LogDatei.log('Finished reading: ' + aktsection, LLinfo);
     end
     else
     if pos('Label', aktsection) > 0 then
@@ -1461,7 +1464,7 @@ begin
       LabelArray[labelcounter].AutoSize := false;
       LabelArray[labelcounter].OptimalFill:=true;
       LabelArray[labelcounter].AdjustFontForOptimalFill;
-      LogDatei.log('Set Fontsize to optimal fill', LLDebug);
+      LogDatei.log('Set Fontsize to optimal fill', LLinfo);
       end;
       //LabelArray[labelcounter].WordWrap := True;
     (*
@@ -1502,7 +1505,7 @@ begin
       {$ENDIF LINUX}
       LabelArray[labelcounter].Font.Size := mytmpint2;
       LogDatei.log('Fontsize from ini: '+inttostr(mytmpint1) +
-                   ' - using Fontsize:  '+inttostr(mytmpint2), LLDebug);
+                   ' - using Fontsize:  '+inttostr(mytmpint2), LLinfo);
       end;
       LabelArray[labelcounter].Font.Color :=
         myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
@@ -1533,13 +1536,13 @@ begin
       // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
       labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
       logdatei.log('labellist add: ' + copy(aktsection, 6, 100) +
-        '=' + IntToStr(labelcounter), LLDebug2);
-      LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+        '=' + IntToStr(labelcounter), LLinfo);
+      LogDatei.log('Finished reading: ' + aktsection, LLinfo);
     end
     else
     if pos('Button', aktsection) > 0 then
     begin
-      LogDatei.log('Start reading: ' + aktsection, LLDebug);
+      LogDatei.log('Start reading: ' + aktsection, LLinfo);
       Inc(buttoncounter);
       LogDatei.log('buttoncounter: ' + IntToStr(buttoncounter), LLinfo);
       SetLength(ButtonArray, buttoncounter + 1);
@@ -1560,7 +1563,7 @@ begin
       begin
         choiceindex := 0;
         mytmpstr := trim(copy(choiceindexstr, 1, Pos(':', choiceindexstr) - 1));
-        LogDatei.log('choiceindex array will start with: ' + mytmpstr, LLdebug);
+        LogDatei.log('choiceindex array will start with: ' + mytmpstr, LLinfo);
         if not TryStrToInt(mytmpstr, choiceindex) then
         begin
           LogDatei.log('choiceindex from file: ' + choiceindexstr +
@@ -1573,7 +1576,7 @@ begin
           // get the array end
           mytmpstr := trim(copy(choiceindexstr, Pos(':', choiceindexstr) + 1,
             length(choiceindexstr)));
-          LogDatei.log('choiceindex array will end with: ' + mytmpstr, LLdebug);
+          LogDatei.log('choiceindex array will end with: ' + mytmpstr, LLinfo);
           if mytmpstr = '' then // Array ends never
             choiceArrayEnd := MaxInt
           else
@@ -1639,7 +1642,7 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
+      LogDatei.log(tmpstr2, LLinfo);
 
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
@@ -1658,7 +1661,7 @@ begin
         fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
       tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
         IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
-      LogDatei.log(tmpstr2, LLDebug);
+      LogDatei.log(tmpstr2, LLinfo);
       //ButtonArray[buttoncounter].Font.Color :=
       //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       ButtonArray[buttoncounter].panel.Font.Bold :=
@@ -1709,7 +1712,7 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
+      LogDatei.log(tmpstr2, LLinfo);
       //{$ENDIF WINDOWS}
       // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
       //buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
