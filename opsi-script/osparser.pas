@@ -23582,7 +23582,7 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
+                parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck, InfoSyntaxError, tmpbool);
                 if syntaxCheck then
                 begin
                   try

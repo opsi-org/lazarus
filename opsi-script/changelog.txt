@@ -7,6 +7,8 @@ opsi-script (4.12.5.2) unreleased; urgency=low
 
   * [fix] oswebservice: using former openssl pascal units for MacOS due to the new ones are not working on MacOS. (j.werner)
   * [fix] oszip: handle division by zero if files to zip are empty (#4748, !66, a.schmitz)
+  * [fix] osparser: execution of powershellcall as statement( tsPowershellcall)
+              call of parsePowershellCall with remaining (instead of r) (d.oertel)
     
 -- j.werner <j.werner@uib.de> 09 June 2022
 
