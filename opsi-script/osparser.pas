@@ -19207,6 +19207,7 @@ var
   s2: string = '';
   s3: string = '';
   syntaxcheck: boolean;
+  noRuntimError: boolean = true;
   FileRecord: TUnicodeSearchRec;
   RunTimeInfo: string = '';
   BooleanResult0: boolean;
@@ -20843,6 +20844,7 @@ begin
               if not testSyntax then
               begin
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+                noRuntimError := true;
 
                 einheit := 1;
                 j := pos('kb', lowercase(s2));
@@ -20867,7 +20869,7 @@ begin
                     requiredbytes := strtoint64(s2);
                   except
                     RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    syntaxCheck := False;
+                    noRuntimError := false;
                   end
                 else
                   try
@@ -20876,16 +20878,16 @@ begin
                     requiredbytes := requiredbytes * einheit;
                   except
                     RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    syntaxCheck := False;
+                    noRuntimError := false;
                   end;
 
-                if syntaxCheck then // parse s1 in order to get the drive char
+                if syntaxCheck and noRuntimError then // parse s1 in order to get the drive char
                 begin
                   if (length(s1) = 2) and (s1[2] = ':') then
                     drivenumber := Ord(uppercase(s1)[1]) - Ord('A') + 1
                   else
                   begin
-                    syntaxcheck := False;
+                    noRuntimError := false;
                     RunTimeInfo := '"' + s1 + '" is not a valid drive"';
                   end;
                 end;
@@ -20914,7 +20916,10 @@ begin
                     formatInt(requiredbytes) + ' bytes';
                 end;
 
-                LogDatei.log(RunTimeInfo, LLInfo);
+                if noRuntimError then
+                LogDatei.log(RunTimeInfo, LLInfo)
+                else
+                LogDatei.log(RunTimeInfo, LLError);
 
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
               end;
