@@ -802,10 +802,10 @@ begin
 
     if regresult <> ERROR_SUCCESS then
     begin
-      LogS := 'Info: Registry key ' + '[' + key0 + '\' + key + '] ' +
-        '  could not be opened by RegOpenKeyEx, ' + ' Errorno ' +
+      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
+        'could not be opened by RegOpenKeyEx, System Errorno ' +
         IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLNotice);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
 
     end
