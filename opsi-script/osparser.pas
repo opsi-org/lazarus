@@ -26308,7 +26308,7 @@ begin
         Script.GetSectionLines(NameProfileActionsSection, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
@@ -26333,7 +26333,7 @@ begin
         Script.GetSectionLines(NameAktionenSektion, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
