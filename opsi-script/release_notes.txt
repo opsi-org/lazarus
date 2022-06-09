@@ -3,6 +3,7 @@ opsi-script (4.12.5.2) urgency=low
   Fixes:
     * webservice [M]: fix on openssl. Openssl units from opsi-script 4.12.5.1 did not work correctly on MacOS.
     * files section [W/L/M]: handle division by zero if files to zip are empty
+    * powershellCall [W]: correction for powershellcall without assignment 
 
 -- j.werner <j.werner@uib.de> 09 June 2022
 
