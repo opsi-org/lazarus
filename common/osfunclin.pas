@@ -488,7 +488,7 @@ begin
   begin
     if FileExists('/etc/os-release') then
     begin
-      cmd := 'grep ^NAME= /etc/os-release && grep ^VERSION_ID= /etc/os-release';
+      cmd := 'grep ^NAME= /etc/os-release | sed \'s/NAME=/Distributor ID: /\' | tr -d \'"\' && grep ^VERSION_ID= /etc/os-release | sed \'s/VERSION_ID=/Release: /\' | tr -d \'"\'';
       if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
         LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
       end
