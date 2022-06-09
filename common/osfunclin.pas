@@ -486,7 +486,32 @@ begin
   cmd := 'lsb_release --all';
   if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    if FileExists('/etc/os-release') then
+    begin
+      cmd := 'grep ^NAME= /etc/os-release && grep ^VERSION_ID= /etc/os-release';
+      if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+        LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+      end
+    else
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+      LogDatei.log('', LLDebug2);
+      LogDatei.log('output:', LLDebug2);
+      LogDatei.log('--------------', LLDebug2);
+      for i := 0 to outlines.Count - 1 do
+      begin
+        //ShowMessage(outlines.Strings[i]);
+        lineparts.Clear;
+        LogDatei.log(outlines.strings[i], LLDebug2);
+        stringsplit(outlines.strings[i], ':', lineparts);
+        if lineparts.Count > 1 then
+        begin
+          resultstring := lineparts.Strings[0] + '=' + trim(lineparts.Strings[1]);
+          Result.Add(resultstring);
+        end;
+      end;
+    end;
+    outlines.Clear;
+    lineparts.Clear;
   end
   else
   begin
