@@ -100,7 +100,10 @@ procedure TUnzipperWithProgressHandler.HandleProgressBar(Sender: TObject;
 begin
   // ATotSize is total size of the zip file in bytes
   // ATotPos says which byte you are working on and therefore counts how many bytes you already worked on
-  FProgressDisplayer.NewProgress := round(100 * (ATotPos / ATotSize));
+  if ATotSize <> 0 then
+    FProgressDisplayer.NewProgress := round(100 * (ATotPos / ATotSize))
+  else
+    FProgressDisplayer.NewProgress := 100;
 
   FProgressDisplayer.DisplayProgress;
 end;
@@ -119,8 +122,11 @@ procedure TZipperWithProgressHandler.CalculateOverallProgress(const FileToZip: s
 begin
   FTotalSizeOfCurrentFile := FileSize(FileToZip);
   FTotalPosInFile := round(Pct * FTotalSizeOfCurrentFile / 100);
-  FProgressDisplayer.NewProgress :=
-    round(100 * ((FATotPos + FTotalPosInFile) / FATotSize));
+  if FATotSize <> 0 then
+    FProgressDisplayer.NewProgress :=
+      round(100 * ((FATotPos + FTotalPosInFile) / FATotSize))
+  else
+    FProgressDisplayer.NewProgress := 100;
 end;
 
 procedure TZipperWithProgressHandler.CalculateOverallProgressWhileZipping(const Pct: double);
