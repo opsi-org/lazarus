@@ -6,8 +6,9 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.5.2) unreleased; urgency=low
 
   * [fix] oswebservice: using former openssl pascal units for MacOS due to the new ones are not working on MacOS. (j.werner)
+  * [fix] oszip: handle division by zero if files to zip are empty (#4748, !66, a.schmitz)
     
--- j.werner <j.werner@uib.de> 08 June 2022
+-- j.werner <j.werner@uib.de> 09 June 2022
 
 
 opsi-script (4.12.5.1) unreleased; urgency=low
@@ -77,7 +78,6 @@ opsi-script (4.12.5.1) unreleased; urgency=low
           repeat.. until loop now stops after 100 iterations when no other conditions were reached before 
           to avoid a pontential endless loop. (j.werner)
   * [fix] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
-  * [fix] oszip: handle division by zero if files to zip are empty (#4748, !66, a.schmitz)
   * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
   
 -- j.werner <j.werner@uib.de> 25 Mai 2022
