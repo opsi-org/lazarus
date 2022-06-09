@@ -10551,7 +10551,7 @@ begin
       if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
       begin
         // set (open)
-        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        commandline := 'powershell.exe set-executionpolicy ByPass';
         tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
           False, True);
       end;
@@ -11689,13 +11689,13 @@ begin
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
     begin
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
@@ -20913,7 +20913,7 @@ begin
   HandlePolicy := '';
   Option := '';
   AccessString := 'sysnative'; //default value
-  HandlePolicyBool := True; // default value
+  HandlePolicyBool := False; // default value
 
   syntaxCheck := False;
   if Skip('(', Remaining, Remaining, InfoSyntaxError) then
