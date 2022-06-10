@@ -578,15 +578,19 @@ end;
 
 function fontresize(num: integer): integer;
 begin
-  Result := round(num * 0.5);
+  //Result := round(num * 0.5);
+  Result := round(num * 0.7);
+  //Result := num;
+
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) ;
 
   {$IFDEF LINUX}
   //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
   //Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
   Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   {$ENDIF LINUX}
-  if Result < 8 then
-    Result := 8;
+  if Result < 3 then
+    Result := 3;
   LogDatei.log('fontresize in: '+inttostr(num) +
                    ' out:  '+inttostr(Result), LLinfo);
 end;
@@ -1279,6 +1283,24 @@ begin
         nform.Top := mytmpint2;
       end;
 
+      {$IFNDEF WINDOWS}
+       with nform do
+      begin
+        tmpstr2 := 'nform before scale' ;
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top :=  round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width :=  round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'nform after scale' ;
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+      {$ENDIF WINDOWS}
+
     {$IFDEF DARWIN}
       // at bottom we have the dock
       if nformpos = fpBottomRight then
@@ -1291,7 +1313,7 @@ begin
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
       LogDatei.log(tmpstr2, LLinfo);
-    {$IFDEF WINDOWS}
+    {$IFNDEF WINDOWS}
       // scale new scrollbox:
       nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
         screen.PixelsPerInch, 0, 0);
@@ -1392,6 +1414,25 @@ begin
       memoarray[memocounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
       memoarray[memocounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
       memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+
+      {$IFNDEF WINDOWS}
+       with memoarray[memocounter] do
+      begin
+        tmpstr2 := 'Memo before scale' + IntToStr(memocounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top :=  round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width :=  round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Memo after scale' + IntToStr(memocounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+      {$ENDIF WINDOWS}
+
       //memoarray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
       memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
 
@@ -1434,7 +1475,7 @@ begin
       // scale new scrollbox:
       //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
       {$IFNDEF LINUX}
-      memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
+      //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
       {$ENDIF LINUX}
 
       //{$ENDIF WINDOWS}
@@ -1459,6 +1500,7 @@ begin
       LabelArray[labelcounter].Parent := nform;
       LabelArray[labelcounter].AutoSize := true;
       LabelArray[labelcounter].Name := aktsection;
+      (*
       if aktsection = 'LabelTitle' then
       begin
       LabelArray[labelcounter].AutoSize := false;
@@ -1466,7 +1508,8 @@ begin
       LabelArray[labelcounter].AdjustFontForOptimalFill;
       LogDatei.log('Set Fontsize to optimal fill', LLinfo);
       end;
-      //LabelArray[labelcounter].WordWrap := True;
+      *)
+      LabelArray[labelcounter].WordWrap := True;
     (*
     {$IFDEF LINUX}
     LabelArray[labelcounter].AutoSize := False;
@@ -1478,6 +1521,25 @@ begin
       LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
       LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
       LabelArray[labelcounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+
+      {$IFNDEF WINDOWS}
+      with LabelArray[labelcounter] do
+      begin
+        tmpstr2 := 'Label before scale' + IntToStr(labelcounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top :=  round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width :=  round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Label after scale' + IntToStr(labelcounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+      {$ENDIF WINDOWS}
+
       //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
       LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
 
@@ -1528,8 +1590,8 @@ begin
       //  96, nform.PixelsPerInch, 0, 0);
       //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
       {$IFNDEF LINUX}
-      LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, nform.PixelsPerInch, 0, 0);
+      //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+      //  designPPI, nform.PixelsPerInch, 0, 0);
       {$ENDIF LINUX}
 
       //{$ENDIF WINDOWS}
@@ -1636,13 +1698,24 @@ begin
         myini.ReadInteger(aktsection, 'Width', 10);
       ButtonArray[buttoncounter].panel.Height :=
         myini.ReadInteger(aktsection, 'Height', 10);
-      tmpstr2 := 'Button' + IntToStr(buttoncounter);
+
+      {$IFNDEF WINDOWS}
       with ButtonArray[buttoncounter].panel do
       begin
+        tmpstr2 := 'Button before scale' + IntToStr(buttoncounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top :=  round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width :=  round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Button after scale' + IntToStr(buttoncounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
       end;
-      LogDatei.log(tmpstr2, LLinfo);
+      {$ENDIF WINDOWS}
 
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
@@ -1700,8 +1773,8 @@ begin
       //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
 
       {$IFNDEF LINUX}
-      ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, nform.PixelsPerInch, 0, 0);
+     // ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
+     //   designPPI, nform.PixelsPerInch, 0, 0);
       {$ENDIF LINUX}
 
       //mytmpint1 := ButtonArray[buttoncounter].Height;

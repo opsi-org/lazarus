@@ -42,6 +42,7 @@ type
 var
   Nform: TNform;
   designPPI : integer;
+  screenPPI : integer;
 
 implementation
 
@@ -60,6 +61,7 @@ begin
   //objlist := TObjectList.Create;
   // prevents screensaver to start while running: start
   designPPI := nform.DesignTimePPI;
+  screenPPI := Screen.PixelsPerInch;
   {$IFDEF WINDOWS}
   SystemCritical.IsCritical := True;
 {$ENDIF WINDOWS}
