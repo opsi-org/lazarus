@@ -23,7 +23,7 @@ type
     Distribs = 'AlmaLinux 8,' + #10 + 'Debian 9, Debian 10, Debian 11,' +
       #10 + 'openSUSE 15.2, openSUSE 15.3,' + #10 +
       'RHEL 8, RockyLinux 8,' + #10 + 'SLES 15 SP1, SLES 15 SP2,' + #10 +
-      'Ubuntu 18.04, Ubuntu 20.04,' + #10 + 'UCS 4.4, UCS 5.0';
+      'Ubuntu 18.04, Ubuntu 20.04, Ubuntu 22.04,' + #10 + 'UCS 4.4, UCS 5.0';
 
     constructor Create(DistroName: string; DistroRelease: string);overload;
     procedure SetNameAndRelease(DistroName: string; DistroRelease: string);
@@ -172,6 +172,12 @@ begin
     begin
       FDistr := xUbuntu_20_04;
       FDistrRepoUrlPart := 'xUbuntu_20.04/';
+    end
+    else
+    if FDistroRelease = '22.04' then
+    begin
+      FDistr := xUbuntu_22_04;
+      FDistrRepoUrlPart := 'xUbuntu_22.04/';
     end;
   end;
 end;

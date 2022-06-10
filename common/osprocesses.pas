@@ -409,12 +409,22 @@ var
   function isParentByPid(basepid, parentpid: dword): boolean;
   var
     aktpid: dword;
+    i :integer;
   begin
     Result := False;
     aktpid := basepid;
-    repeat
-      aktpid := getParentPid(aktpid);
-    until (aktpid <= 4) or (aktpid = parentpid);
+    i := 0;
+    if aktpid <> parentpid then
+    begin
+      repeat
+        aktpid := getParentPid(aktpid);
+        inc(i);
+      until (aktpid <= 4) or (aktpid = parentpid) or (i > 100);
+      if (i > 100) then
+      LogDatei.Log('Error while searchin for parent PID ('
+        + IntToStr(parentPid) + '). Start (base) PID was ' + IntToStr(basePID)
+        + '. Last (aktPID) PID: ' + IntToStr(aktPID), LLError);
+    end;
     if aktpid = parentpid then Result := True;
   end;
 

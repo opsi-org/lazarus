@@ -313,6 +313,8 @@ type
 
 
 
+  { TuibInstScript }
+
   TuibInstScript = class(TuibIniScript)
   private
     FLogLevel: integer;
@@ -351,6 +353,9 @@ type
     FLastSection: TWorkSection;
 
 
+    procedure parsePowershellCall(var Command: string; AccessString: string;
+      var HandlePolicy: string; var Option: string;
+      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool:boolean);
     function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
       var FaktScriptLineNumber: int64; var Sektion: TWorksection;
       SectionSpecifier: TSectionSpecifier; const call: string;
@@ -10555,7 +10560,7 @@ begin
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
     mySektion.Add('trap { write-output $_ ; exit 1 }');
     mySektion.Add(command);
-    mySektion.Add('exit $LASTEXITCODE');
+    //mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
     fulloptionstring := parameters + ' ' + optionstr;
@@ -12172,89 +12177,11 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
-      s2 := '';
-      s3 := '';
-      s4 := '';
-      tmpstr2 := '';
-      tmpbool := True; // sysnative
-      tmpbool1 := True; // handle execution policy
-      syntaxCheck := False;
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-        // next after ',' or ')'
-        then
-          if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-            if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-      if s2 = '' then
-      begin
-        // only one parameter
-        if Skip(')', tmpstr, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          s2 := 'sysnative';
-        end;
-      end
-      else
-      begin
-        // got second parameter
-        tmpbool := True;
-        if lowercase(s2) = '32bit' then
-          tmpbool := False
-        else if lowercase(s2) = '64bit' then
-          tmpbool := True
-        else if lowercase(s2) = 'sysnative' then
-          tmpbool := True
-        else
-        begin
-          InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-          syntaxCheck := False;
-        end;
-        // three parameter ?
-        if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-        begin
-          if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-          begin
-            // got third parameter
-            if not TryStrToBool(s3, tmpbool1) then
-            begin
-              syntaxCheck := False;
-              InfoSyntaxError :=
-                'Error: boolean string (true/false) expected but got: ' + s3;
-            end;
-            // four parameter ?
-            if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-            begin
-              if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-              begin
-                // got fourth parameter
-                if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                begin
-                  // four parameter
-                  syntaxCheck := True;
-                end;
-              end;
-            end
-            else
-            if Skip(')', tmpstr2, r, InfoSyntaxError) then
-            begin
-              // three parameter
-              syntaxCheck := True;
-            end;
-          end;
-        end
-        else
-        if Skip(')', tmpstr2, r, InfoSyntaxError) then
-        begin
-          // two parameter
-          syntaxCheck := True;
-        end;
-        //end;
-      end;
+      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       if syntaxCheck then
       begin
         try
-          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool1, s4).Text;
+          list.Text := execPowershellCall(s1, s2, 1, True, False, tmpbool, s4).Text;
         except
           on e: Exception do
           begin
@@ -16528,90 +16455,11 @@ begin
     LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-    s2 := '';
-    s3 := '';
-    s4 := '';
-    tmpstr2 := '';
-    tmpbool := True; // sysnative
-    tmpbool1 := True; // handle execution policy
-    syntaxCheck := False;
-    StringResult := '';
-    if Skip('(', r, r, InfoSyntaxError) then
-      if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-      // next after ',' or ')'
-      then
-        if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-          if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-    if s2 = '' then
-    begin
-      // only one parameter
-      if Skip(')', tmpstr, r, InfoSyntaxError) then
-      begin
-        syntaxCheck := True;
-        s2 := 'sysnative';
-      end;
-    end
-    else
-    begin
-      // got second parameter
-      tmpbool := True;
-      if lowercase(s2) = '32bit' then
-        tmpbool := False
-      else if lowercase(s2) = '64bit' then
-        tmpbool := True
-      else if lowercase(s2) = 'sysnative' then
-        tmpbool := True
-      else
-      begin
-        InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-          ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-        syntaxCheck := False;
-      end;
-      // three parameter ?
-      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-      begin
-        if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-        begin
-          // got third parameter
-          if not TryStrToBool(s3, tmpbool1) then
-          begin
-            syntaxCheck := False;
-            InfoSyntaxError :=
-              'Error: boolean string (true/false) expected but got: ' + s3;
-          end;
-          // four parameter ?
-          if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-          begin
-            if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-            begin
-              // got fourth parameter
-              if Skip(')', tmpstr2, r, InfoSyntaxError) then
-              begin
-                // four parameter
-                syntaxCheck := True;
-              end;
-            end;
-          end
-          else
-          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-          begin
-            // three parameter
-            syntaxCheck := True;
-          end;
-        end;
-      end
-      else
-      if Skip(')', tmpstr2, r, InfoSyntaxError) then
-      begin
-        // two parameter
-        syntaxCheck := True;
-      end;
-      //end;
-    end;
+    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
     if syntaxCheck then
     begin
       try
-        execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+        execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
         StringResult := IntToStr(FLastExitCodeOfExe);
       except
         on e: Exception do
@@ -17109,24 +16957,6 @@ begin
         end;
         list1.Free;
         list1 := nil;
-      end;
-    end
-
-    else if LowerCase(s) = LowerCase('getStringFromListAtIndex') then
-    begin
-      if Skip('(', r, r, InfoSyntaxError) and produceStringList(
-        script, r, r, list1, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-        EvaluateString(r, r, s1, InfoSyntaxError) and Skip(')', r, r, InfoSyntaxError) then
-      begin
-        syntaxCheck := True;
-        try
-          StringResult := '';
-          StringResult := list1.Strings[StrToInt(s1)];
-        except
-          StringResult := '';
-          LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
-            s1 + '"', LLerror);
-        end;
       end;
     end
 
@@ -21105,6 +20935,70 @@ begin
   end;
 end;
 
+procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
+  var Option: string; var Remaining: string; var syntaxCheck: boolean;
+  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+begin
+  Command := '';
+  AccessString := '';
+  HandlePolicy := '';
+  Option := '';
+  AccessString := 'sysnative'; //default value
+  HandlePolicyBool := True; // default value
+
+  syntaxCheck := False;
+  if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+  begin
+    //get first parameter (command), default access string = sysnative
+    Syntaxcheck := EvaluateString(Remaining, Remaining, Command, InfoSyntaxError);
+    if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
+    begin
+      //get second parameter (access string)
+      if EvaluateString(Remaining, Remaining, AccessString, InfoSyntaxError) then
+      begin
+        if (lowercase(AccessString) = '32bit') or (lowercase(AccessString) = '64bit')
+          or (lowercase(AccessString) = 'sysnative')
+        then
+          Syntaxcheck := true
+        else
+        begin
+          InfoSyntaxError := 'Error: unknown parameter: ' + AccessString +
+            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+          syntaxCheck := False;
+        end;
+      end
+      else SyntaxCheck := false;
+      //third parameter (handle execution policy)
+      if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxerror) then
+      begin
+        if EvaluateString(Remaining, Remaining, HandlePolicy, InfoSyntaxError) then
+        begin
+          if TryStrToBool(HandlePolicy, HandlePolicyBool) then
+          begin
+             syntaxCheck := True;
+          end
+          else
+          begin
+            syntaxCheck := False;
+            InfoSyntaxError :=
+              'Error: boolean string (true/false) expected but got: ' + HandlePolicy;
+          end;
+        end
+        else SyntaxCheck := false;
+        //fourth parameter (optionstr)
+        if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
+        begin
+           syntaxCheck := EvaluateString(Remaining, Remaining, Option, InfoSyntaxError);
+        end;
+      end;
+    end;
+    if SyntaxCheck and Skip(')', Remaining, Remaining, InfoSyntaxError) then
+      SyntaxCheck := True
+    else
+      SyntaxCheck := False;
+  end;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -23712,91 +23606,11 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                s2 := '';
-                s3 := '';
-                s4 := '';
-                tmpstr2 := '';
-                tmpbool := True; // sysnative
-                tmpbool1 := True; // handle execution policy
-                syntaxCheck := False;
-                r := remaining;
-                if Skip('(', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-                  // next after ',' or ')'
-                  then
-                    if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-                      if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-                if s2 = '' then
-                begin
-                  // only one parameter
-                  if Skip(')', tmpstr, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    s2 := 'sysnative';
-                  end;
-                end
-                else
-                begin
-                  // got second parameter
-                  tmpbool := True;
-                  if lowercase(s2) = '32bit' then
-                    tmpbool := False
-                  else if lowercase(s2) = '64bit' then
-                    tmpbool := True
-                  else if lowercase(s2) = 'sysnative' then
-                    tmpbool := True
-                  else
-                  begin
-                    InfoSyntaxError :=
-                      'Error: unknown parameter: ' + s2 +
-                      ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-                    syntaxCheck := False;
-                  end;
-                  // three parameter ?
-                  if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                  begin
-                    if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-                    begin
-                      // got third parameter
-                      if not TryStrToBool(s3, tmpbool1) then
-                      begin
-                        syntaxCheck := False;
-                        InfoSyntaxError :=
-                          'Error: boolean string (true/false) expected but got: ' + s3;
-                      end;
-                      // four parameter ?
-                      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                      begin
-                        if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-                        begin
-                          // got fourth parameter
-                          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                          begin
-                            // four parameter
-                            syntaxCheck := True;
-                          end;
-                        end;
-                      end
-                      else
-                      if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                      begin
-                        // three parameter
-                        syntaxCheck := True;
-                      end;
-                    end;
-                  end
-                  else
-                  if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                  begin
-                    // two parameter
-                    syntaxCheck := True;
-                  end;
-                  //end;
-                end;
+                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
                 if syntaxCheck then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                    execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
                   except
                     on e: Exception do
                     begin
@@ -26543,7 +26357,7 @@ begin
         Script.GetSectionLines(NameProfileActionsSection, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
@@ -26568,7 +26382,7 @@ begin
         Script.GetSectionLines(NameAktionenSektion, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
