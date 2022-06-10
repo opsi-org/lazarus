@@ -578,21 +578,29 @@ end;
 
 function fontresize(num: integer): integer;
 begin
+  {$IFDEF WINDOWS}
   //Result := round(num * 0.5);
   Result := round(num * 0.7);
   //Result := num;
 
   Result := trunc(Result * (designPPI / nform.PixelsPerInch)) ;
-
-  {$IFDEF LINUX}
-  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
-  //Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
-  Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
-  {$ENDIF LINUX}
   if Result < 3 then
     Result := 3;
   LogDatei.log('fontresize in: '+inttostr(num) +
                    ' out:  '+inttostr(Result), LLinfo);
+  {$ENDIF WINDOWS}
+
+  {$IFDEF LINUX}
+  Result := round(num * 0.5);
+  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
+  //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
+  if Result < 8 then
+    Result := 8;
+  LogDatei.log('fontresize in: '+inttostr(num) +
+                   ' out:  '+inttostr(Result), LLinfo);
+  {$ENDIF LINUX}
+
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -1026,6 +1034,11 @@ begin
     nform.Repaint;
     DataModule1.ProcessMess;
   end;
+  //final
+
+  nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
 end;
 
 procedure hideNForm;
@@ -1563,7 +1576,7 @@ begin
       mytmpint2 := fontresize(mytmpint1);
       {$IFDEF LINUX}
       { fontresize makes not a correct hdpi correction for linux}
-      mytmpint2 := trunc(mytmpint1 * (designPPI / nform.PixelsPerInch)) - 1;
+      //mytmpint2 := trunc(mytmpint1 * (designPPI / nform.PixelsPerInch)) - 1;
       {$ENDIF LINUX}
       LabelArray[labelcounter].Font.Size := mytmpint2;
       LogDatei.log('Fontsize from ini: '+inttostr(mytmpint1) +
@@ -1699,6 +1712,24 @@ begin
       ButtonArray[buttoncounter].panel.Height :=
         myini.ReadInteger(aktsection, 'Height', 10);
 
+      {$IFDEF LINUX}
+      with ButtonArray[buttoncounter].panel do
+      begin
+        tmpstr2 := 'Button before scale' + IntToStr(buttoncounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        //Top :=  round(top * (screenPPI / designPPI));
+        //Left := round(left * (screenPPI / designPPI));
+        //Width :=  round(Width * (screenPPI / designPPI));
+        Height := round(Height * 1.2);
+        tmpstr2 := 'Button after scale' + IntToStr(buttoncounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+      {$ENDIF LINUX}
+
       {$IFNDEF WINDOWS}
       with ButtonArray[buttoncounter].panel do
       begin
@@ -1716,6 +1747,7 @@ begin
         LogDatei.log(tmpstr2, LLinfo);
       end;
       {$ENDIF WINDOWS}
+
 
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
