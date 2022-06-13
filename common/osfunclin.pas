@@ -462,111 +462,157 @@ begin
   end;
 end;
 
-function getLinuxVersionMap: TStringList;
+function getLinuxReleaseInfoFromLSBRelease(var ReleaseInfo: TStringList): boolean;
 var
-  resultstring: string;
-  cmd, report: string;
+  ResultString: string;
+  Cmd, Report: string;
   {$IFDEF OPSISCRIPT}
-  outlines: TXStringlist;
+  OutLines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringList;
+  OutLines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringList;
+  LineParts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
-  //todo : install lsb-release if not there
-  Result := TStringList.Create;
   {$IFDEF OPSISCRIPT}
-  outlines := TXStringList.Create;
+  OutLines := TXStringList.Create;
   {$ELSE OPSISCRIPT}
-  outlines := TStringList.Create;
+  OutLines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
-  lineparts := TStringList.Create;
-  cmd := 'lsb_release --all';
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
-  begin
-    if FileExists('/etc/os-release') then
+  LineParts := TStringList.Create;
+  Result := False;
+  Cmd := 'lsb_release --all';
+  try
+    if RunCommandAndCaptureOut(Cmd, True, OutLines, Report, SW_HIDE, ExitCode) then
     begin
-      cmd := 'grep ^NAME= /etc/os-release | sed \'s/NAME=/Distributor ID: /\' | tr -d \'"\' && grep ^VERSION_ID= /etc/os-release | sed \'s/VERSION_ID=/Release: /\' | tr -d \'"\'';
-      if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
-        LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-      end
-    else
+      Result := True;
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
-      for i := 0 to outlines.Count - 1 do
+      for i := 0 to OutLines.Count - 1 do
       begin
-        //ShowMessage(outlines.Strings[i]);
-        lineparts.Clear;
-        LogDatei.log(outlines.strings[i], LLDebug2);
-        stringsplit(outlines.strings[i], ':', lineparts);
-        if lineparts.Count > 1 then
+        LogDatei.log(OutLines.Strings[i], LLDebug2);
+        StringSplit(OutLines.Strings[i], ':', lineparts);
+        if LineParts.Count > 1 then
         begin
-          resultstring := lineparts.Strings[0] + '=' + trim(lineparts.Strings[1]);
-          Result.Add(resultstring);
+          ResultString := LineParts.Strings[0] + '=' + trim(LineParts.Strings[1]);
+          ReleaseInfo.Add(ResultString);
         end;
       end;
-    end;
-    outlines.Clear;
-    lineparts.Clear;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug2);
-    LogDatei.log('output:', LLDebug2);
-    LogDatei.log('--------------', LLDebug2);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      //ShowMessage(outlines.Strings[i]);
-      lineparts.Clear;
-      LogDatei.log(outlines.strings[i], LLDebug2);
-      stringsplit(outlines.strings[i], ':', lineparts);
-      if lineparts.Count > 1 then
-      begin
-        resultstring := lineparts.Strings[0] + '=' + trim(lineparts.Strings[1]);
-        Result.Add(resultstring);
-      end;
-    end;
-  end;
-  outlines.Clear;
-  lineparts.Clear;
-  // get SubRelease
-  if FileExists('/etc/SuSE-release') then
-  begin
-    cmd := 'grep PATCHLEVEL /etc/SuSE-release';
-    if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-      SW_HIDE, ExitCode) then
-    begin
-      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
     end
     else
     begin
+      LogDatei.log('Command "lsb_release" does not work: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLInfo);
+    end;
+  finally
+    FreeAndNil(LineParts);
+    FreeAndNil(OutLines);
+  end;
+end;
+
+
+function getLinuxReleaseInfoFromFile(const FilePath:string; const Mapping: TStringList; var ReleaseInfo: TStringList):boolean;
+var
+  ReleaseInfoFromFile: TStringList;
+begin
+  Result := False;
+  if FileExists(FilePath) then
+  begin
+    LogDatei.log('Reading release info from "' + FilePath + '"', LLInfo);
+    ReleaseInfoFromFile := TStringList.Create;
+    try
+      ReleaseInfoFromFile.LoadFromFile(aFilePath);
+      for i := 0 to Mapping.Count - 1 do
+        ReleaseInfo.Add(Mapping.Names[i] + '=' + ReleaseInfoFromFile.Values[Mapping.Values[Mapping.Names[i]]]);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
-      for i := 0 to outlines.Count - 1 do
-      begin
-        lineparts.Clear;
-        LogDatei.log(outlines.strings[i], LLDebug2);
-        stringsplit(outlines.strings[i], '=', lineparts);
-        if lineparts.Count > 1 then
-        begin
-          resultstring := 'SubRelease=' + trim(lineparts.Strings[1]);
-          Result.Add(resultstring);
-        end;
-      end;
+      LogDatei.log(ReleaseInfo.Text, LLDebug2);
+      Result := True;
+    finally
+      FreeAndNil(ReleaseInfoFromFile);
     end;
   end
   else
-    Result.Add('SubRelease=');
-  outlines.Free;
-  lineparts.Free;
+  begin
+    LogDatei.log('"' + FilePath + '" does not exists', LLInfo);
+  end;
+end;
 
+function getLinuxReleaseInfo:TStringList;
+var
+  SubRelease: TStringList;
+  Mapping: TStringList;
+begin
+  //todo : install lsb-release if not there
+  Result := TStringList.Create;
+  Mapping := TStringList.Create;
+  if not getLinuxReleaseInfoFromLSBRelease(Result) then
+  begin
+    Mapping.Add('Distributor ID=ID');
+    Mapping.Add('Description=PRETTY_NAME');
+    Mapping.Add('Release=VERSION_ID');
+    Mapping.Add('Codename=VERSION_CODENAME');
+    if not getLinuxReleaseInfoFromFile('/etc/os-release', Mapping, Result); then
+    begin
+      LogDatei.log('Error (getLinuxReleaseInfo): Could not get release info.', LLError);
+    end;
+  end;
+  //get SubRelease (only Suse?);
+  Mapping.Clear;
+  Mapping.Add('SubRelease=PATCHLEVEL');
+  SubRelease := TStringList.Create;
+  if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
+  begin
+    Result.Add(SubRelease.Text);
+    FreeAndNil(SubRelease);
+  end
+  else
+  begin
+    Result.Add('SubRelease=');
+  end;
+  FreeAndNil(Mapping);
+end;
+
+//procedure getLinuxSubRelease(var SubRelease: TStringList);
+//begin
+//  // get SubRelease
+//  if FileExists('/etc/SuSE-release') then
+//  begin
+//    Cmd := 'grep PATCHLEVEL /etc/SuSE-release';
+//    if not RunCommandAndCaptureOut(Cmd, True, OutLines, Report,
+//      SW_HIDE, ExitCode) then
+//    begin
+//      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+//    end
+//    else
+//    begin
+//      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+//      LogDatei.log('', LLDebug2);
+//      LogDatei.log('output:', LLDebug2);
+//      LogDatei.log('--------------', LLDebug2);
+//      for i := 0 to OutLines.Count - 1 do
+//      begin
+//        LogDatei.log(OutLines.strings[i], LLDebug2);
+//        stringsplit(OutLines.strings[i], '=', LineParts);
+//        if LineParts.Count > 1 then
+//        begin
+//          ResultString := 'SubRelease=' + trim(Lineparts.Strings[1]);
+//          SubRelease.Add(ResultString);
+//        end;
+//      end;
+//    end;
+//  end
+//  else
+//    SubRelease.Add('SubRelease=');
+//end;
+
+function getLinuxVersionMap: TStringList;
+begin
+  Result := getLinuxReleaseInfo;
   Result.Add('kernel name' + '=' + trim(getCommandResult('uname -s')));
   Result.Add('node name' + '=' + trim(getCommandResult('uname -n')));
   Result.Add('kernel release' + '=' + trim(getCommandResult('uname -r')));
