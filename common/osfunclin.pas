@@ -516,6 +516,7 @@ end;
 function getLinuxReleaseInfoFromFile(const FilePath:string; const Mapping: TStringList; var ReleaseInfo: TStringList):boolean;
 var
   ReleaseInfoFromFile: TStringList;
+  i: integer;
 begin
   Result := False;
   if FileExists(FilePath) then
@@ -523,7 +524,7 @@ begin
     LogDatei.log('Reading release info from "' + FilePath + '"', LLInfo);
     ReleaseInfoFromFile := TStringList.Create;
     try
-      ReleaseInfoFromFile.LoadFromFile(aFilePath);
+      ReleaseInfoFromFile.LoadFromFile(FilePath);
       for i := 0 to Mapping.Count - 1 do
         ReleaseInfo.Add(Mapping.Names[i] + '=' + ReleaseInfoFromFile.Values[Mapping.Values[Mapping.Names[i]]]);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
@@ -556,7 +557,7 @@ begin
     Mapping.Add('Description=PRETTY_NAME');
     Mapping.Add('Release=VERSION_ID');
     Mapping.Add('Codename=VERSION_CODENAME');
-    if not getLinuxReleaseInfoFromFile('/etc/os-release', Mapping, Result); then
+    if not getLinuxReleaseInfoFromFile('/etc/os-release', Mapping, Result) then
     begin
       LogDatei.log('Error (getLinuxReleaseInfo): Could not get release info.', LLError);
     end;
