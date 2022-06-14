@@ -494,11 +494,15 @@ begin
       for i := 0 to OutLines.Count - 1 do
       begin
         LogDatei.log(OutLines.Strings[i], LLDebug2);
-        StringSplit(OutLines.Strings[i], ':', lineparts);
-        if LineParts.Count > 1 then
+        if (pos(':', OutLines.Strings[i]) > 0) then //if LSB module is not available on Debian "lsb_release --all" command still works but gives as first line "No LSB modules are available."
         begin
-          ResultString := LineParts.Strings[0] + '=' + trim(LineParts.Strings[1]);
-          ReleaseInfo.Add(ResultString);
+          LineParts.Clear;
+          StringSplit(OutLines.Strings[i], ':', LineParts);
+          if LineParts.Count > 1 then
+          begin
+            ResultString := LineParts.Strings[0] + '=' + trim(LineParts.Strings[1]);
+            ReleaseInfo.Add(ResultString);
+          end;
         end;
       end;
     end
@@ -526,7 +530,7 @@ begin
     try
       ReleaseInfoFromFile.LoadFromFile(FilePath);
       for i := 0 to Mapping.Count - 1 do
-        ReleaseInfo.Add(Mapping.Names[i] + '=' + ReleaseInfoFromFile.Values[Mapping.Values[Mapping.Names[i]]]);
+        ReleaseInfo.Add(Mapping.Names[i] + '=' + ReleaseInfoFromFile.Values[Mapping.ValueFromIndex[i]]);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
@@ -562,14 +566,17 @@ begin
       LogDatei.log('Error (getLinuxReleaseInfo): Could not get release info.', LLError);
     end;
   end;
-  //get SubRelease (only Suse?);
+  //get SubRelease (only Suse);
   Mapping.Clear;
   Mapping.Add('SubRelease=PATCHLEVEL');
   SubRelease := TStringList.Create;
-  if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
+  if (pos('suse', lowercase(Result.Values['ID'])) > 0) then
   begin
-    Result.Add(SubRelease.Text);
-    FreeAndNil(SubRelease);
+    if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
+    begin
+      Result.Add(SubRelease.Text);
+      FreeAndNil(SubRelease);
+    end;
   end
   else
   begin
@@ -578,38 +585,6 @@ begin
   FreeAndNil(Mapping);
 end;
 
-//procedure getLinuxSubRelease(var SubRelease: TStringList);
-//begin
-//  // get SubRelease
-//  if FileExists('/etc/SuSE-release') then
-//  begin
-//    Cmd := 'grep PATCHLEVEL /etc/SuSE-release';
-//    if not RunCommandAndCaptureOut(Cmd, True, OutLines, Report,
-//      SW_HIDE, ExitCode) then
-//    begin
-//      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-//    end
-//    else
-//    begin
-//      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-//      LogDatei.log('', LLDebug2);
-//      LogDatei.log('output:', LLDebug2);
-//      LogDatei.log('--------------', LLDebug2);
-//      for i := 0 to OutLines.Count - 1 do
-//      begin
-//        LogDatei.log(OutLines.strings[i], LLDebug2);
-//        stringsplit(OutLines.strings[i], '=', LineParts);
-//        if LineParts.Count > 1 then
-//        begin
-//          ResultString := 'SubRelease=' + trim(Lineparts.Strings[1]);
-//          SubRelease.Add(ResultString);
-//        end;
-//      end;
-//    end;
-//  end
-//  else
-//    SubRelease.Add('SubRelease=');
-//end;
 
 function getLinuxVersionMap: TStringList;
 begin
