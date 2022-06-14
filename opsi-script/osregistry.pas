@@ -802,12 +802,20 @@ begin
 
     if regresult <> ERROR_SUCCESS then
     begin
-      LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
-        'could not be opened by RegOpenKeyEx, System Errorno ' +
-        IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
-      LogDatei.log(LogS, LLNotice);
-      LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-
+      if regresult = ERROR_FILE_NOT_FOUND then
+      begin
+        LogS := 'Registry key ' + '[' + key0 + '\' + key + '] does not exist';
+        LogDatei.log(LogS, LLNotice);
+        LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
+      end
+      else
+      begin
+        LogS := 'Registry key ' + '[' + key0 + '\' + key + '] ' +
+          'could not be opened by RegOpenKeyEx, System Errorno ' +
+          IntToStr(regresult) + ' "' + RemoveLineBreaks(SysErrorMessage(regresult)) + '"';
+        LogDatei.log(LogS, LLError);
+        LogDatei.NumberOfErrors := LogDatei.NumberOfErrors + 1;
+      end;
     end
     else
     begin
