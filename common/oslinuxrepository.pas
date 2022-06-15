@@ -38,6 +38,7 @@ type
     xUbuntu_16_04,
     xUbuntu_18_04,
     xUbuntu_20_04,
+    xUbuntu_22_04,
     other
     );
 
@@ -165,6 +166,7 @@ begin
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
     xUbuntu_18_04: Result := Result + 'xUbuntu_18.04/';
     xUbuntu_20_04: Result := Result + 'xUbuntu_20.04/';
+    xUbuntu_22_04: Result := Result + 'xUbuntu_22.04/';
     other: Result := '';
   end;
 end;
@@ -261,7 +263,7 @@ begin
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10, Debian_11,
     Univention_4_3, Univention_4_4, Univention_5_0,
-    xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
+    xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04, xUbuntu_22_04:
     begin
       AddDebianUbuntu;
     end;
