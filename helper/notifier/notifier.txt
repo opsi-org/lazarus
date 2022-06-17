@@ -2,8 +2,9 @@
 
 opsi-notifier  4.2.0.7
 
-  * working on highdpi scaling at Linux
+  * working on highdpi scaling
   * redesign program termination
+  * update to lazarus 2.2.2
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 01 June 2022:15:00:00 +0200
 
