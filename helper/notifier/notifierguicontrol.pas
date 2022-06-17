@@ -254,7 +254,7 @@ end;
 
 procedure shutdownNotifier;
 var
-  loopcounter : integer = 0;
+  loopcounter: integer = 0;
 begin
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
@@ -269,7 +269,7 @@ begin
     begin
       logdatei.log('waiting for thread to end ..', LLnotice);
       sleep(500);
-      inc(loopcounter);
+      Inc(loopcounter);
     end;
   end;
   // this will end main ... and then terminate
@@ -478,49 +478,49 @@ begin
     if ButtonArray[btnindex].confirmshow then
     begin
       with TTaskDialog.Create(NForm) do
-    try
-      Title := ButtonArray[btnindex].confirmtitle;
-      Caption := 'opsi-setup-detector';
-      Text := ButtonArray[btnindex].confirmtext;
-      CommonButtons := [];
+        try
+          Title := ButtonArray[btnindex].confirmtitle;
+          Caption := 'opsi-setup-detector';
+          Text := ButtonArray[btnindex].confirmtext;
+          CommonButtons := [];
       (*
       CommonButtons := [tcbYes, tcbNo];
       DefaultButton := tcbNo;
       Buttons.Items[0].Caption:= ButtonArray[btnindex].confirmYesText;
       *)
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := ButtonArray[btnindex].confirmNoText;
-        ModalResult := mrNo;
-      end;
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := ButtonArray[btnindex].confirmYesText;
-        ModalResult := mrYes;
-      end;
-      Buttons.DefaultButton := Buttons.FindButton(mrNo);
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := ButtonArray[btnindex].confirmNoText;
+            ModalResult := mrNo;
+          end;
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := ButtonArray[btnindex].confirmYesText;
+            ModalResult := mrYes;
+          end;
+          Buttons.DefaultButton := Buttons.FindButton(mrNo);
       (*
        // to confirm is not the default
       Buttons.Items[0].Default:= false;
       Buttons.Items[1].Default:= true;
       *)
-      MainIcon := tdiQuestion;
-      Flags := [tfUseCommandLinks, tfAllowDialogCancellation];
-      if Execute then
-      begin
-        if ModalResult <> mrYes then
-       begin
-        confirmed := False;
-        LogDatei.log('Button action aborted by user-confirm: ' +
-          ButtonArray[btnindex].confirmtext, LLwarning);
-      end
-      else
-        LogDatei.log('Button action confirmed by user,  text: ' +
-          ButtonArray[btnindex].confirmtext, LLnotice);
-      end;
-    finally
-      Free;
-    end;
+          MainIcon := tdiQuestion;
+          Flags := [tfUseCommandLinks, tfAllowDialogCancellation];
+          if Execute then
+          begin
+            if ModalResult <> mrYes then
+            begin
+              confirmed := False;
+              LogDatei.log('Button action aborted by user-confirm: ' +
+                ButtonArray[btnindex].confirmtext, LLwarning);
+            end
+            else
+              LogDatei.log('Button action confirmed by user,  text: ' +
+                ButtonArray[btnindex].confirmtext, LLnotice);
+          end;
+        finally
+          Free;
+        end;
       (*
       if MessageDlg(ButtonArray[btnindex].confirmtitle,
         ButtonArray[btnindex].confirmtext, mtConfirmation,
@@ -583,11 +583,11 @@ begin
   Result := round(num * 0.7);
   //Result := num;
 
-  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) ;
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch));
   if Result < 3 then
     Result := 3;
-  LogDatei.log('fontresize in: '+inttostr(num) +
-                   ' out:  '+inttostr(Result), LLinfo);
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
   {$ENDIF WINDOWS}
 
   {$IFDEF LINUX}
@@ -597,8 +597,8 @@ begin
   //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   if Result < 8 then
     Result := 8;
-  LogDatei.log('fontresize in: '+inttostr(num) +
-                   ' out:  '+inttostr(Result), LLinfo);
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
   {$ENDIF LINUX}
 
 end;
@@ -791,7 +791,7 @@ end;
 procedure showNForm;
 var
   startx, starty, stopy, x, y, i: integer;
-  tmpstr2 : string;
+  tmpstr2: string;
 begin
   // position
 
@@ -1037,8 +1037,8 @@ begin
   //final
 
   nform.BringToFront;
-        nform.Repaint;
-        DataModule1.ProcessMess;
+  nform.Repaint;
+  DataModule1.ProcessMess;
 end;
 
 procedure hideNForm;
@@ -1297,17 +1297,17 @@ begin
       end;
 
       {$IFNDEF WINDOWS}
-       with nform do
+      with nform do
       begin
-        tmpstr2 := 'nform before scale' ;
+        tmpstr2 := 'nform before scale';
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLinfo);
-        Top :=  round(top * (screenPPI / designPPI));
+        Top := round(top * (screenPPI / designPPI));
         Left := round(left * (screenPPI / designPPI));
-        Width :=  round(Width * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
         Height := round(Height * (screenPPI / designPPI));
-        tmpstr2 := 'nform after scale' ;
+        tmpstr2 := 'nform after scale';
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLinfo);
@@ -1319,6 +1319,7 @@ begin
       if nformpos = fpBottomRight then
         nformpos := fpTopRight;
     {$ENDIF DARWIN}
+    (*
       tmpstr2 := 'Form initial: ';
       with nform do
       begin
@@ -1340,6 +1341,7 @@ begin
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
       LogDatei.log(tmpstr2, LLinfo);
+      *)
       //Hidden = false
       tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
       if not TryStrToBool(tmpinistr, hidden) then
@@ -1403,8 +1405,8 @@ begin
       begin
         nform.Image1.Picture.LoadFromFile(mytmpstr);
         {$IFDEF WINDOWS}
-      // scale new Picture:
-      //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+        // scale new Picture:
+        //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
         nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,
           screen.PixelsPerInch, 0, 0);
         {$ENDIF WINDOWS}
@@ -1429,15 +1431,15 @@ begin
       memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
 
       {$IFNDEF WINDOWS}
-       with memoarray[memocounter] do
+      with memoarray[memocounter] do
       begin
         tmpstr2 := 'Memo before scale' + IntToStr(memocounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLinfo);
-        Top :=  round(top * (screenPPI / designPPI));
+        Top := round(top * (screenPPI / designPPI));
         Left := round(left * (screenPPI / designPPI));
-        Width :=  round(Width * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
         Height := round(Height * (screenPPI / designPPI));
         tmpstr2 := 'Memo after scale' + IntToStr(memocounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
@@ -1511,7 +1513,7 @@ begin
       SetLength(LabelArray, labelcounter + 1);
       LabelArray[labelcounter] := TLabel.Create(nform);
       LabelArray[labelcounter].Parent := nform;
-      LabelArray[labelcounter].AutoSize := true;
+      LabelArray[labelcounter].AutoSize := True;
       LabelArray[labelcounter].Name := aktsection;
       (*
       if aktsection = 'LabelTitle' then
@@ -1542,9 +1544,9 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLinfo);
-        Top :=  round(top * (screenPPI / designPPI));
+        Top := round(top * (screenPPI / designPPI));
         Left := round(left * (screenPPI / designPPI));
-        Width :=  round(Width * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
         Height := round(Height * (screenPPI / designPPI));
         tmpstr2 := 'Label after scale' + IntToStr(labelcounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
@@ -1572,15 +1574,15 @@ begin
 
       if not LabelArray[labelcounter].OptimalFill then
       begin
-      mytmpint1 := myini.ReadInteger(aktsection, 'FontSize', 10);
-      mytmpint2 := fontresize(mytmpint1);
+        mytmpint1 := myini.ReadInteger(aktsection, 'FontSize', 10);
+        mytmpint2 := fontresize(mytmpint1);
       {$IFDEF LINUX}
-      { fontresize makes not a correct hdpi correction for linux}
-      //mytmpint2 := trunc(mytmpint1 * (designPPI / nform.PixelsPerInch)) - 1;
+        { fontresize makes not a correct hdpi correction for linux}
+        //mytmpint2 := trunc(mytmpint1 * (designPPI / nform.PixelsPerInch)) - 1;
       {$ENDIF LINUX}
-      LabelArray[labelcounter].Font.Size := mytmpint2;
-      LogDatei.log('Fontsize from ini: '+inttostr(mytmpint1) +
-                   ' - using Fontsize:  '+inttostr(mytmpint2), LLinfo);
+        LabelArray[labelcounter].Font.Size := mytmpint2;
+        LogDatei.log('Fontsize from ini: ' + IntToStr(mytmpint1) +
+          ' - using Fontsize:  ' + IntToStr(mytmpint2), LLinfo);
       end;
       LabelArray[labelcounter].Font.Color :=
         myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
@@ -1737,9 +1739,9 @@ begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLinfo);
-        Top :=  round(top * (screenPPI / designPPI));
+        Top := round(top * (screenPPI / designPPI));
         Left := round(left * (screenPPI / designPPI));
-        Width :=  round(Width * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
         Height := round(Height * (screenPPI / designPPI));
         tmpstr2 := 'Button after scale' + IntToStr(buttoncounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
@@ -1805,8 +1807,8 @@ begin
       //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
 
       {$IFNDEF LINUX}
-     // ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
-     //   designPPI, nform.PixelsPerInch, 0, 0);
+      // ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
+      //   designPPI, nform.PixelsPerInch, 0, 0);
       {$ENDIF LINUX}
 
       //mytmpint1 := ButtonArray[buttoncounter].Height;

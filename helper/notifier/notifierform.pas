@@ -12,7 +12,7 @@ uses
   {$ENDIF WINDOWS}
   oslog,
   contnrs;
-  //bgraanimatedgif;
+//bgraanimatedgif;
 
 type
 
@@ -41,8 +41,8 @@ type
 
 var
   Nform: TNform;
-  designPPI : integer;
-  screenPPI : integer;
+  designPPI: integer;
+  screenPPI: integer;
 
 implementation
 

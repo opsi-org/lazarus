@@ -103,7 +103,7 @@ begin
       repeat
         try
           myTCPClient.Connect('127.0.0.1', IntToStr(myPort));
-          Connected := true;
+          Connected := True;
         except
           Connected := False;
         end;
@@ -188,7 +188,7 @@ begin
       mythread := Tmythread.Create(False);
       //mythread.FreeOnTerminate:= true;
       mythread.WaitFor;
-      LogDatei.log('Thread ended.',LLnotice);
+      LogDatei.log('Thread ended.', LLnotice);
     end
     else
     if Assigned(LogDatei) then

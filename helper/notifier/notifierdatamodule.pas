@@ -340,7 +340,7 @@ begin
   finally
     Application.Terminate;
     //logdatei.log('Program halted', LLnotice);
-   // halt;
+    // halt;
   end;
 
 end;
