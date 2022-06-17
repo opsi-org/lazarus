@@ -1,4 +1,22 @@
-opsi-script (4.12.5.0) urgency=low
+opsi-script (4.12.5.3) urgency=low
+
+  Changes:
+    * powershellCall [W]: execution of powershellcall with powershell.exe -ExecutionPolicy ByPass
+
+-- j.werner <j.werner@uib.de> 09 June 2022
+
+
+opsi-script (4.12.5.2) urgency=low
+
+  Fixes:
+    * webservice [M]: fix on openssl. Openssl units from opsi-script 4.12.5.1 did not work correctly on MacOS.
+    * files section [W/L/M]: handle division by zero if files to zip are empty
+    * powershellCall [W]: correction for powershellcall without assignment 
+
+-- j.werner <j.werner@uib.de> 09 June 2022
+
+
+opsi-script (4.12.5.1) urgency=low
 
   New:
     * Patches section [W]: support %userprofiledir% inside of patches section. 
@@ -24,12 +42,11 @@ opsi-script (4.12.5.0) urgency=low
         getRegistryVarList(<regkey>, <access str>), 
         getRegistryVarMap(<regkey>, <access str>). 
     * defined functions [W/L/M]: support string concatenation in call of defined functions.
-    * opsiservicecall [W/L/M]: support newline and tab.
   
   Changes:
     * openssl [W]: update openssl on Windows to version 1.1.1n.
     * webservice [W/L/M]: improved debugging and error handling.
-    * getProcessList [W]: improved encoding (utf8) handling.
+    * getWinProcessList [W]: use wincp2utf8 to reencode results.
 
   Fixes:
     * PowershellCall [W]: now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
@@ -37,6 +54,10 @@ opsi-script (4.12.5.0) urgency=low
     * Files section [W/L/M]: "del" now works with wildcards.
     * Registry section [W]: "deletekey" now handles umlauts correctly.
     * Comment [W/L/M]: Syntax errors in comments were ignored so far, now they will throw a syntax error.
-    * isProcessChildOf [W/L/M]: avoiding of an endless loop (hanging) which might occure under certain circumstances.   
+    * isProcessChildOf [W/L/M]: avoiding of an endless loop (hanging) which might occur under certain circumstances.
+    * sub <file name> [W/L/M]: spaces in front of the lines of a sub file will not be removed any more
+    	(so that e.g. python code in an ExecWith section keeps its syntax).
+    * opsiservicecall [W/L/M]: support newline and tab.
+    * oswebservice: correct detection of opsi 4.0/4.1 (necessary for establishing the connection)
   
--- j.werner <j.werner@uib.de> 11 Mai 2022
+-- j.werner <j.werner@uib.de> 25 Mai 2022
