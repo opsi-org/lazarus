@@ -603,6 +603,17 @@ begin
     IntToStr(Result), LLinfo);
   {$ENDIF LINUX}
 
+  {$IFDEF DARWIN}
+  Result := round(num * 0.5);
+  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
+  //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
+  if Result < 8 then
+    Result := 8;
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
+  {$ENDIF DARWIN}
+
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -889,6 +900,13 @@ begin
     fapFade:
     begin
       LogDatei.log('Will show with appearmode : fapFade', LLinfo);
+      with nform do
+      begin
+        tmpstr2 := 'Initial : ';
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLDebug);
+      end;
       nform.Top := starty;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -904,6 +922,13 @@ begin
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        with nform do
+        begin
+          tmpstr2 := 'Form step: ' + IntToStr(i);
+          tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+          tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+          LogDatei.log(tmpstr2, LLdebug);
+        end;
         i := i + appearStepSize;
       end;
       //final
@@ -922,7 +947,7 @@ begin
       LogDatei.log('Will show with appearmode : fapFadeUp', LLinfo);
       with nform do
       begin
-        tmpstr2 := 'Initial : ' + IntToStr(i);
+        tmpstr2 := 'Initial : ' ;
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLdebug);
