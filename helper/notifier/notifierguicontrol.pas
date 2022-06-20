@@ -580,10 +580,12 @@ function fontresize(num: integer): integer;
 begin
   {$IFDEF WINDOWS}
   //Result := round(num * 0.5);
-  Result := round(num * 0.7);
+  Result := round(num * 0.6);
+  //Result := round(num * 0.7);
+  //Result := round(num * 0.8);
   //Result := num;
 
-  Result := trunc(Result * (designPPI / nform.PixelsPerInch));
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) +1 ;
   if Result < 3 then
     Result := 3;
   LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
@@ -1555,9 +1557,9 @@ begin
       //{$IFDEF WINDOWS}
       // scale new scrollbox:
       //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
-      {$IFNDEF LINUX}
+      {$IFDEF WINDOWS}
       //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, designPPI, screen.PixelsPerInch, 0, 0);
-      {$ENDIF LINUX}
+      {$ENDIF WINDOWS}
 
       //{$ENDIF WINDOWS}
       // make transparent
@@ -1585,7 +1587,7 @@ begin
       //LabelArray[labelcounter].WordWrap := False;
       (*
       // special handling for Title: optimal fill + no autosize
-      if lowercase(aktsection) = 'labelstatus' then
+      if lowercase(aktsection) = 'labeltitle' then
       begin
         LabelArray[labelcounter].AutoSize := False;
         LabelArray[labelcounter].OptimalFill := True;
@@ -1594,7 +1596,6 @@ begin
         LogDatei.log('Set Fontsize to optimal fill', LLinfo);
       end;
       *)
-
     (*
     {$IFDEF LINUX}
     LabelArray[labelcounter].AutoSize := False;
