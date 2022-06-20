@@ -791,6 +791,7 @@ end;
 procedure showNForm;
 var
   startx, starty, stopy, x, y, i: integer;
+  tempHeight : integer;
   tmpstr2: string;
 begin
   // position
@@ -878,12 +879,14 @@ begin
     fapNone: LogDatei.log('Will not show: fapNone', LLWarning);
     fapStd:
     begin
+      LogDatei.log('Will show with appearmode : fapStd', LLinfo);
       nform.Top := starty;
       nform.Left := startx;
       nform.Show;
     end;
     fapFade:
     begin
+      LogDatei.log('Will show with appearmode : fapFade', LLinfo);
       nform.Top := starty;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -901,12 +904,31 @@ begin
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      //final
+      begin
+        //sleep(1);
+        //nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
+      end;
     end;
     fapFadeUp:
     begin
+      LogDatei.log('Will show with appearmode : fapFadeUp', LLinfo);
+      with nform do
+      begin
+        tmpstr2 := 'Initial : ' + IntToStr(i);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLdebug);
+      end;
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
+      tempHeight := 0;
       y := screen.WorkAreaHeight;
       {$IFDEF LINUX}
       { no valid control toolbar detection on Linux - so guess }
@@ -925,27 +947,40 @@ begin
         nform.AlphaBlendValue := i;
         //y := screen.WorkAreaHeight;
         nform.Top := y - i;
-        nform.Height := nform.Height + appearStepSize;
+        tempHeight := tempHeight + appearStepSize;
+        // do not use this because nform.Height is not always what we expect (timing)
+        // nform.Height := nform.Height + appearStepSize;
+        nform.Height := tempHeight;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        with nform do
+        begin
+          tmpstr2 := 'Form step: ' + IntToStr(i);
+          tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+          tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+          LogDatei.log(tmpstr2, LLdebug);
+        end;
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= 255 do
+      //while i <= 255 do
+      //final
       begin
         //sleep(1);
-        nform.AlphaBlendValue := i;
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
-        i := i + appearStepSize;
+        //i := i + appearStepSize;
       end;
       nform.Refresh;
       DataModule1.ProcessMess;
     end;
     fapFadeDown:
     begin
+      LogDatei.log('Will show with appearmode : fapFadeDown', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -968,18 +1003,20 @@ begin
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= 255 do
+      //final
       begin
-        sleep(1);
-        nform.AlphaBlendValue := i;
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
-        i := i + appearStepSize;
+        //i := i + appearStepSize;
       end;
     end;
     fapUp:
     begin
+      LogDatei.log('Will show with appearmode : fapUp', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -1004,9 +1041,20 @@ begin
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      //final
+      begin
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
+      end;
     end;
     fapDown:
     begin
+      LogDatei.log('Will show with appearmode : fapDown', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -1025,6 +1073,16 @@ begin
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      //final
+      begin
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
+      end;
     end;
   end;
   if mynotifierkind = 'event' then
@@ -1034,11 +1092,19 @@ begin
     nform.Repaint;
     DataModule1.ProcessMess;
   end;
-  //final
 
   nform.BringToFront;
   nform.Repaint;
   DataModule1.ProcessMess;
+
+  //final
+  with nform do
+  begin
+    tmpstr2 := 'Form final Position: ';
+    tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+    tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    LogDatei.log(tmpstr2, LLinfo);
+  end;
 end;
 
 procedure hideNForm;
@@ -1515,16 +1581,20 @@ begin
       LabelArray[labelcounter].Parent := nform;
       LabelArray[labelcounter].AutoSize := True;
       LabelArray[labelcounter].Name := aktsection;
+      LabelArray[labelcounter].WordWrap := True;
+      //LabelArray[labelcounter].WordWrap := False;
       (*
-      if aktsection = 'LabelTitle' then
+      // special handling for Title: optimal fill + no autosize
+      if lowercase(aktsection) = 'labelstatus' then
       begin
-      LabelArray[labelcounter].AutoSize := false;
-      LabelArray[labelcounter].OptimalFill:=true;
-      LabelArray[labelcounter].AdjustFontForOptimalFill;
-      LogDatei.log('Set Fontsize to optimal fill', LLinfo);
+        LabelArray[labelcounter].AutoSize := False;
+        LabelArray[labelcounter].OptimalFill := True;
+        //LabelArray[labelcounter].AdjustFontForOptimalFill;
+        LabelArray[labelcounter].WordWrap := False;
+        LogDatei.log('Set Fontsize to optimal fill', LLinfo);
       end;
       *)
-      LabelArray[labelcounter].WordWrap := True;
+
     (*
     {$IFDEF LINUX}
     LabelArray[labelcounter].AutoSize := False;
