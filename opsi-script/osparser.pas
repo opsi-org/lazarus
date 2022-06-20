@@ -163,7 +163,6 @@ type
     tsLogWarning, tsLogError, tsSetSkinDir,
     tsStop, tsExitWindows,
     tsBlockInput,
-    tsLocalAdmin,
     tsChangeDirectory,
     tsAddConnection,
     tsSetOldLogLevel,
@@ -23738,200 +23737,7 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-
-
-              tsLocalAdmin:
-              begin
-                if UpperCase(Remaining) = UpperCase('/Create1') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLNotice);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdmin) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLInfo);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create2') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfile) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create3') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create4') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Delete') then
-                begin
-                  LogDatei.log('Deleting temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if opsiSetupAdmin_created then
-                    if DeleteTemporaryLocalAdmin then
-                    begin
-                      LogDatei.log('Deleted temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentAppDataDir%')] := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentDesktopDir%')] := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartupDir%')] := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] := GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProfileDir%')] := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed deleting temporary local admin ...',
-                        LLWarning);
-                end
-                else if Remaining = '' then
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'Parameter needed')
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'not an allowed Parameter');
-              end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
 
               tsExitWindows:
@@ -26584,7 +26390,6 @@ begin
 
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
-  PStatNames^ [tsLocalAdmin] := 'LocalAdmin';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
 
