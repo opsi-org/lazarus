@@ -122,12 +122,17 @@ type
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
+    FlowPanelMacosTitle: TFlowPanel;
+    FlowPanelLinuxTitle2: TFlowPanel;
+    FlowPanelOsIndendentTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
     FlowPanelGeneric: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMsiId2: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
     FlowPanelMST2: TFlowPanel;
+    FlowPanelWindowsTitle: TFlowPanel;
+    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
     FlowPanel5: TFlowPanel;
@@ -287,6 +292,7 @@ type
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
+    TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
@@ -672,10 +678,10 @@ begin
     helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
     helplist.Append(' --productID=<id> -> Create product with productID <id>');
     helplist.Append(' --p <id> -> Create product with productID <id>');
-    helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-    helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
+    helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
+    helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     helplist.Append(
-      '     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+      '     possible modes are: singleAnalyzeCreate, createTemplate');
     ShowMessage(helplist.Text);
     FreeAndNil(helplist);
   end
@@ -698,9 +704,9 @@ begin
     writeln(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
     writeln(' --productID=<id> -> Create product with productID <id>');
     writeln(' --p <id> -> Create product with productID <id>');
-    writeln(' --mode=<mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-    writeln(' --m <mode> -> Define tho run mode <mode> (default=analyzeOnly)');
-    writeln('     possible modes are: analyzeOnly, singleAnalyzeCreate, createTemplate');
+    writeln(' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
+    writeln(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
+    writeln('     possible modes are: singleAnalyzeCreate, createTemplate');
   end;
 
   Application.Terminate;
@@ -1185,7 +1191,7 @@ begin
         Ord(osdsettings.runmode)), LLInfo);
     except
       myerror := 'Error: Given mode: ' + tmpstr +
-        ' is not valid. Should be on of analyzeOnly, singleAnalyzeCreate, createTemplate';
+        ' is not valid. Should be on of singleAnalyzeCreate, createTemplate';
       {$IFNDEF WINDOWS}
       writeln(myerror);
       {$ENDIF WINDOWS}
@@ -1221,7 +1227,7 @@ begin
     LogDatei.log('Got command line parameter filename with existing: ' +
       myfilename, LLInfo);
     if osdsettings.runmode = gmUnknown then
-      osdsettings.runmode := analyzeOnly;
+      osdsettings.runmode := singleAnalyzeCreate;
     LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
       Ord(osdsettings.runmode)), LLInfo);
     LogDatei.log('Will use as targetOS: ' + GetEnumName(
@@ -1250,6 +1256,7 @@ begin
     else
     begin
       case osdsettings.runmode of
+        (*
         analyzeOnly:
         begin
           LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
@@ -1259,6 +1266,7 @@ begin
             osMac: AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
           end;
         end;
+        *)
         singleAnalyzeCreate,analyzeCreateWithUser:
         begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
@@ -1349,6 +1357,7 @@ end;
 procedure TResultform1.setRunMode;
 begin
   case osdsettings.runmode of
+    (*
     analyzeOnly:
     begin
       TabSheetStart.Enabled := True;
@@ -1362,6 +1371,7 @@ begin
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := False;
     end;
+    *)
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
       TabSheetStart.Enabled := True;
@@ -2083,11 +2093,13 @@ procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
   showCheckEntriesWarning;
   case osdsettings.runmode of
+    (*
     analyzeOnly:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
+    *)
     singleAnalyzeCreate,analyzeCreateWithUser:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
@@ -2992,12 +3004,14 @@ end;
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
+    (*
     analyzeOnly:
     begin
       //we should never be here
       logdatei.log(
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
+    *)
     createTemplate,
     createMultiTemplate,
     singleAnalyzeCreate,
@@ -3044,12 +3058,14 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
+      (*
       analyzeOnly:
       begin
         //we should never be here
         logdatei.log(
           'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
       end;
+      *)
       analyzeCreateWithUser,
       createMeta,
       createTemplate,
@@ -3078,11 +3094,13 @@ end;
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
+    (*
     analyzeOnly:
     begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
+    *)
     analyzeCreateWithUser,
     createTemplate,
     createMultiTemplate,
@@ -3128,10 +3146,12 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
+      (*
       analyzeOnly:
       begin
         Application.Terminate;
       end;
+      *)
       singleAnalyzeCreate, analyzeCreateWithUser:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
@@ -3230,11 +3250,13 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
+      (*
       analyzeOnly:
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
       end;
+      *)
       singleAnalyzeCreate:
       begin
         // we should never be here
@@ -3353,11 +3375,13 @@ begin
   begin
 
     case osdsettings.runmode of
+      (*
       analyzeOnly:
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
       end;
+      *)
       singleAnalyzeCreate:
       begin
         // we should never be here
@@ -3555,6 +3579,7 @@ procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
 var
   i: integer;
 begin
+  (*
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
@@ -3569,6 +3594,7 @@ begin
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
+  *)
 end;
 
 
@@ -3609,7 +3635,8 @@ end;
 procedure TResultform1.FileOpenSetupFileClick(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheetAnalyze;
-  BtAnalyzeOnly.Click;
+  //BtAnalyzeOnly.Click;
+  BtSingleAnalyzeAndCreateWin.Click;
 end;
 
 procedure TResultform1.FileExitClick(Sender: TObject);

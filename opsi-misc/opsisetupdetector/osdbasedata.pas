@@ -27,7 +27,8 @@ uses
 
 type
 
-  TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
+  TRunMode = (//analyzeOnly,
+     singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
     analyzeCreateWithUser,gmUnknown);
@@ -328,6 +329,7 @@ default: ["xenial_bionic"]
     FtargetOSset: TTargetOSset;
     FuseCustomDir : boolean;
     FchannelDir : string;
+    FinstallFromLocal : boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -352,6 +354,7 @@ default: ["xenial_bionic"]
     property targetOSset: TTargetOSset read FtargetOSset write FtargetOSset;
     property useCustomDir: boolean read FuseCustomDir write FuseCustomDir;
     property channelDir: string read FchannelDir write FchannelDir;
+    property installFromLocal: boolean read FinstallFromLocal write FinstallFromLocal;
   public
     { public declarations }
     //constructor Create;
@@ -415,10 +418,11 @@ default: ["xenial_bionic"]
     procedure SetPreUninstallLines(const AValue: TStrings);
     procedure SetPostUninstallLines(const AValue: TStrings);
     procedure SetProperties(const AValue: TPProperties);
+    procedure SetWorkbench_path(const AValue: String);
   published
     property config_version: string read Fconfig_version write Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
-    property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
+    property workbench_Path: string read Fworkbench_Path write SetWorkbench_path;
     //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
     property registerInFilemanager: boolean
@@ -1468,6 +1472,11 @@ begin
   FProperties.Assign(AValue);
 end;
 
+procedure TConfiguration.SetWorkbench_path(const AValue: String);
+begin
+  Fworkbench_Path := IncludeTrailingPathDelimiter(AValue);
+end;
+
 procedure TConfiguration.writeconfig;
 var
   Streamer: TJSONStreamer;
@@ -1840,6 +1849,7 @@ begin
     *)
     targetOSset := [];
     useCustomDir:= false;
+    installFromLocal := false;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
@@ -1999,7 +2009,10 @@ begin
     patterns.Add(
       '<description>InstallShield.Setup</description>');
     link :=
-      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm'
+       // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
+       // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
+      // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;

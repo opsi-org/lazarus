@@ -286,10 +286,19 @@ begin
     if aktProduct.productdata.useCustomDir then
     begin
       strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupDesktopIconSection.opsiscript');
+        'SetupHandleCustomDir.opsiscript');
       str := strlist.Text;
     end;
     patchlist.add('#@SetupHandleCustomDir*#=' + str);
+
+    str := '';
+    if aktProduct.productdata.useCustomDir then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
+        'SetupHandleCustomDirSectionLines.opsiscript');
+      str := strlist.Text;
+    end;
+    patchlist.add('#@SetupHandleCustomDirSectionLines*#=' + str);
 
 
     // loop over setups
@@ -763,9 +772,9 @@ begin
       //customdir
       if aktProduct.productdata.useCustomDir then
       begin
-        ForceDirectories(clientpath + subdir + PathDelim + 'customdir');
+        ForceDirectories(clientpath + subdir + PathDelim + 'custom');
         infilename := genericTemplatePath + Pathdelim + 'customdir_readme.txt';
-      outfilename := clientpath + subdir + PathDelim + 'customdir'+ PathDelim + 'readme.txt';
+      outfilename := clientpath + subdir + PathDelim + 'custom'+ PathDelim + 'readme.txt';
       copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
         cffPreserveTime], True);
       end;
@@ -1012,7 +1021,7 @@ var
   goon: boolean;
   task: string;
 begin
-  prodpath := myconfiguration.workbench_Path + PathDelim +
+  prodpath := IncludeTrailingPathDelimiter(myconfiguration.workbench_Path) +
     aktProduct.productdata.productId;
   clientpath := prodpath + PathDelim + 'CLIENT_DATA';
   opsipath := prodpath + PathDelim + 'OPSI';

@@ -79,7 +79,7 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
 
 todo:
-   * newmain task create product with logged in admin
+   *
 
 opsi-setup-detector (4.2.1.0-1) stable; urgency=low
 
@@ -92,6 +92,10 @@ opsi-setup-detector (4.2.1.0-1) stable; urgency=low
    * osdform: startOpsiServiceConnection: dependency:productid Auswahl: netbootprodukte rausnehmen , fixes  #4730
    * oswebservice: add: TOpsi4Data.getLocalbootProductIds: TStringList;
    * oswebservice: add: TOpsi4Data.getNetbootProductIds: TStringList;
+   * osdform: fixes for HighDPI: TitlePanels
+   * singleAnalyzeCreate is now default / analyzeOnly removed ; fixes #4729
+   * IncludeTrailingPathDelimiter for worbench_path ; fixes #4262  #4236
+   * use of uncpath is allowed for workbench, installer and icon ; fixes
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 

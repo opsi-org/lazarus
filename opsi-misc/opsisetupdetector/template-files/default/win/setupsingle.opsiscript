@@ -73,11 +73,15 @@ endif
 
 #@SetupHandleDesktopIcon*#
 
+#@SetupHandleCustomDir*#
+
 [Winbatch_install]
 #@installCommandLine1*#
 
 
 #@SetupDesktopiconSectionLines*#
+
+#@SetupHandleCustomDirSectionLines*#
 
 #@SetupSectionLines1*#
 ; ----------------------------------------------------------------
