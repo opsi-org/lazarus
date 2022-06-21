@@ -368,6 +368,13 @@ begin
         end
         else
         begin
+          if choiceindex = 0 then
+          begin
+          // if choiceindex = 0 then we startup with list
+          // and so we clear the old
+          ButtonArray[btnindex].cbox.Items.Clear;
+          logdatei.log('Cleared dropdown list because choiceindex = 0',LLinfo);
+          end;
           tmpint := ButtonArray[btnindex].btn.Tag +
             ButtonArray[btnindex].cbox.Items.Count;
           if choiceindex > tmpint then
