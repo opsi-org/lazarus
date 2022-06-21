@@ -535,7 +535,7 @@ begin
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
       LogDatei.log('--------------', LLDebug2);
-      LogDatei.log(ReleaseInfo.Text, LLDebug2);
+      LogDatei.log_list(ReleaseInfo, LLDebug2);
       Result := True;
     finally
       FreeAndNil(ReleaseInfoFromFile);
@@ -567,16 +567,16 @@ begin
     end;
   end;
   //get SubRelease (only Suse);
-  Mapping.Clear;
-  Mapping.Add('SubRelease=PATCHLEVEL');
-  SubRelease := TStringList.Create;
   if (pos('suse', lowercase(Result.Values['ID'])) > 0) then
   begin
+    Mapping.Clear;
+    Mapping.Add('SubRelease=PATCHLEVEL');
+    SubRelease := TStringList.Create;
     if getLinuxReleaseInfoFromFile('/etc/SuSE-release', Mapping, SubRelease) then
     begin
       Result.Add(SubRelease.Text);
-      FreeAndNil(SubRelease);
     end;
+    FreeAndNil(SubRelease);
   end
   else
   begin
