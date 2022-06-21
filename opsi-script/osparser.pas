@@ -196,6 +196,7 @@ type
     tsImportCertToSystem,
     tsRemoveCertFromSystem,
     tsisCertInstalledInSystem,
+    tsReloadInstallationSequence,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -25204,7 +25205,19 @@ begin
                     end;
               end;
 
-
+              tsReloadInstallationSequence:
+              begin
+                if remaining = '' then
+                begin
+                  LogDatei.log('Reload installation sequence.', LLInfo);
+                  //if Assigned(Produkte) then FreeAndNil(Produkte);
+                  //Produkte := opsidata.getListOfProducts;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    ' end of line expected');
+              end;
 
               tsSetVar:
               begin
@@ -26442,6 +26455,7 @@ begin
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
   PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
 
+  PStatNames^ [tsReloadInstallationSequence] := 'reloadInstallationSequence';
 
   runProfileActions := False;
   runLoginScripts := False;
