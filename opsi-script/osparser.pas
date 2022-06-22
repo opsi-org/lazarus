@@ -163,7 +163,6 @@ type
     tsLogWarning, tsLogError, tsSetSkinDir,
     tsStop, tsExitWindows,
     tsBlockInput,
-    tsLocalAdmin,
     tsChangeDirectory,
     tsAddConnection,
     tsSetOldLogLevel,
@@ -2181,7 +2180,7 @@ begin
     usedencoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
-    s := trim(OriginalList.Strings[i - 1]);
+    s := OriginalList.Strings[i - 1];
     Section.Add(s);
     script.FLinesOriginList.Append(FName + ' line: ' + IntToStr(i));
     script.FLibList.Append('false');
@@ -2194,7 +2193,7 @@ end;
 function TuibInstScript.reportError(const Sektion: TWorkSection;
   LineNo: integer; const Content: string; Comment: string): TSectionResult;
 var
-  funcname, funcfile, funcmesseage: string;
+  funcname, funcfile, funcmessage: string;
   originmessage: string;
   funcline: integer;
   i, index: integer;
@@ -2206,7 +2205,7 @@ begin
       funcname := definedFunctionArray[inDefFuncIndex].Name;
       funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
       funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
-      funcmesseage := ' in defined function: ' + funcname + ' file: ' +
+      funcmessage := ' in defined function: ' + funcname + ' file: ' +
         ExtractFileName(funcfile) + ' function start at line: ' +
         IntToStr(funcline + 1);
       originmessage := '; origin: ' + funcfile + ' line: ' +
@@ -2218,14 +2217,14 @@ begin
       index := script.FSectionNameList.IndexOf(funcname);
       if index = -1 then
       begin
-        funcmesseage := ' in section: ' + Sektion.Name + '; file: unknown';
+        funcmessage := ' in section: ' + Sektion.Name + '; file: unknown';
         originmessage := '; origin: not found' + '): ';
       end
       else
       begin
         funcfile := Script.FSectionInfoArray[index].SectionFile;
         funcline := Script.FSectionInfoArray[index].StartLineNo;
-        funcmesseage := ' in section: ' + funcname + '; file: ' +
+        funcmessage := ' in section: ' + funcname + '; file: ' +
           ExtractFileName(funcfile) + '; section start at line: ' +
           IntToStr(funcline + 1);
         //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
@@ -2235,14 +2234,14 @@ begin
     end;
   except
     originmessage := '; origin: not found' + '): ';
-    funcmesseage := '; section or function not found';
+    funcmessage := '; section or function not found';
   end;
   //for i:= 0 to FLinesOriginList.Count -1 do
   //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name + ' (Command in line ' +
     IntToStr(Sektion.StartLineNo + LineNo)
     //   + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
-    + funcmesseage + originmessage
+    + funcmessage + originmessage
     //  + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
@@ -10551,7 +10550,7 @@ begin
       if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
       begin
         // set (open)
-        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        commandline := 'powershell.exe set-executionpolicy ByPass';
         tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
           False, True);
       end;
@@ -11689,13 +11688,13 @@ begin
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
     begin
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
@@ -20977,7 +20976,7 @@ begin
   HandlePolicy := '';
   Option := '';
   AccessString := 'sysnative'; //default value
-  HandlePolicyBool := True; // default value
+  HandlePolicyBool := False; // default value
 
   syntaxCheck := False;
   if Skip('(', Remaining, Remaining, InfoSyntaxError) then
@@ -23486,7 +23485,14 @@ begin
                     Parameter, InfoSyntaxError) then
                     syntaxCheck := True
                   else
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                  begin
+                    //reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                    LogDatei.log('Invalid Syntax in Comment. Please correct this error as soon as possible '
+                      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
+                      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
+                      + '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
+                    Inc(FNumberOfErrors);
+                  end;
                 end;
 
                 if syntaxCheck then
@@ -23639,7 +23645,7 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
+                parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck, InfoSyntaxError, tmpbool);
                 if syntaxCheck then
                 begin
                   try
@@ -23813,200 +23819,7 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-
-
-              tsLocalAdmin:
-              begin
-                if UpperCase(Remaining) = UpperCase('/Create1') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLNotice);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdmin) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLInfo);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create2') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfile) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create3') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create4') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Delete') then
-                begin
-                  LogDatei.log('Deleting temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if opsiSetupAdmin_created then
-                    if DeleteTemporaryLocalAdmin then
-                    begin
-                      LogDatei.log('Deleted temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentAppDataDir%')] := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentDesktopDir%')] := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartupDir%')] := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] := GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProfileDir%')] := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed deleting temporary local admin ...',
-                        LLWarning);
-                end
-                else if Remaining = '' then
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'Parameter needed')
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'not an allowed Parameter');
-              end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
 
               tsExitWindows:
@@ -26659,7 +26472,6 @@ begin
 
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
-  PStatNames^ [tsLocalAdmin] := 'LocalAdmin';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
 
