@@ -15753,6 +15753,7 @@ begin
                           try
                             s1 := ExpandFileName(s1);
                             Inifile := TInifile.Create(s1);
+                            LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
                             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                             LogDatei.log
                             ('    reading the value to the key "' + s3 +
@@ -15793,6 +15794,7 @@ begin
                                 uibInifile := TuibIniFile.Create(s1);
                                 uibInifile.Clear;
                                 uibInifile.loadFromFileWithEncoding(s1,s5);
+                                LogDatei.log_prog('Inifile: ' + uibInifile.Text, LLDebug);
                                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
                                 LogDatei.log
                                 ('    reading the value to the key "' + s3 +
