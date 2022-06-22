@@ -348,43 +348,60 @@ begin
     '" the caption: "' + aktMessage + '"', LLInfo);
   try
     btnfound := False;
-    // get ButtonArray index for aktid stored in buttonlist
-    //indexstr := buttonlist.Values[IntToStr(choiceindex)];
+    // choiceindex is a index for a virtual button list
+    // it could be a real button (button_only)
+    // or a combobox where every entry has its own choicindex
+    // so one buttonindex may have one or more choiceindices
+    //
+    // get Buttoindex for choiceindex stored in buttonlist
     rangeindex := getIndexFromRangeList(choiceindex, startval, btnindex);
     if rangeindex <> -1 then
     begin
       if btnindex < length(ButtonArray) then
       begin
         logdatei.log('Found Button index: ' + IntToStr(btnindex) +
-          ' for id: "' + IntToStr(choiceindex) + '"', LLDebug2);
+          ' for id: "' + IntToStr(choiceindex) + '"', LLinfo);
+        logdatei.log('Button tag: ' + IntToStr(ButtonArray[btnindex].btn.Tag) +
+          ' Items.count: ' + IntToStr(ButtonArray[btnindex].cbox.Items.Count), LLDebug);
         if startval <> ButtonArray[btnindex].btn.Tag then
           logdatei.log('Button tag: ' + IntToStr(ButtonArray[btnindex].btn.Tag) +
             ' differs from startval: ' + IntToStr(startval), LLerror);
         logdatei.log('Button name by index: Found index: ' +
-          ButtonArray[btnindex].panel.Name, LLDebug2);
+          ButtonArray[btnindex].panel.Name, LLDebug);
         if ButtonArray[btnindex].button_only then
         begin
           ButtonArray[btnindex].btn.Caption := aktMessage;
         end
         else
         begin
-          if choiceindex = 0 then
+          if choiceindex = ButtonArray[btnindex].btn.Tag then
           begin
-          // if choiceindex = 0 then we startup with list
-          // and so we clear the old
-          ButtonArray[btnindex].cbox.Items.Clear;
-          logdatei.log('Cleared dropdown list because choiceindex = 0',LLinfo);
+            // if choiceindex = Tag then we startup with list
+            // and so we clear the old
+            ButtonArray[btnindex].cbox.Items.Clear;
+            logdatei.log('Cleared dropdown list because choiceindex = Button.tag',
+              LLinfo);
           end;
           tmpint := ButtonArray[btnindex].btn.Tag +
             ButtonArray[btnindex].cbox.Items.Count;
-          if choiceindex > tmpint then
+          if choiceindex >= tmpint then
+          begin
             // we need a new entry
-            ButtonArray[btnindex].cbox.Items.Add(aktMessage)
+            tmpint := ButtonArray[btnindex].cbox.Items.Add(aktMessage);
+            logdatei.log('Add to dropdown list at: '+inttostr(tmpint), LLinfo);
+            // after adding the first element we set the selection to this first
+            if tmpint = 0 then
+            ButtonArray[buttoncounter].cbox.ItemIndex := 0;
+          end
           else
-
+          begin
+            // we should never be here
             ButtonArray[btnindex].cbox.Items[choiceindex -
               ButtonArray[btnindex].btn.Tag] :=
               aktMessage;
+            logdatei.log('Insert in dropdown list at : ' +
+              IntToStr(choiceindex - ButtonArray[btnindex].btn.Tag), LLinfo);
+          end;
         end;
         ButtonArray[btnindex].panel.Repaint;
         Application.ProcessMessages;
@@ -395,48 +412,7 @@ begin
     end
     else
       LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLerror);
-    (*
-    if indexstr = '' then
-    begin
-      // we did not found the button in the buttonlist - is it a combo field ?
-      if (choiceindex > buttonlist.Count -1) and
-        not ButtonArray[buttonlist.Count -1].button_only then
-       begin
-        index := buttonlist.Count -1;
-        btnfound := true;
-       end
-       else
-      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLDebug2);
-     end
-     else
-     begin
-       // we did found the button in the buttonlist
-       index := StrToInt(indexstr);
-       btnfound := true;
-     end;
-     if btnfound = true then
-     begin
-      logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
-        IntToStr(choiceindex) + '"', LLDebug2);
-      logdatei.log('Button name by index: Found index: ' +
-        ButtonArray[index].panel.Name, LLDebug2);
-      if ButtonArray[index].button_only then
-      ButtonArray[index].btn.Caption := aktMessage
-      end
-      else
-      begin
-        tmpint := ButtonArray[index].btn.Tag
-            + ButtonArray[index].cbox.Items.Count;
-        if choiceindex > tmpint then
-        // we need a new entry
-        ButtonArray[index].cbox.Items.Add(aktMessage)
-        else
-        //
-        ButtonArray[index].cbox.Items[choiceindex - ButtonArray[index].btn.Tag] := aktMessage;
-      end;
-      ButtonArray[index].panel.Repaint;
-      Application.ProcessMessages;
-      *)
+
     logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
       '" the message: "' + aktMessage + '"', LLInfo);
 
@@ -592,7 +568,7 @@ begin
   //Result := round(num * 0.8);
   //Result := num;
 
-  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) +1 ;
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) + 1;
   if Result < 3 then
     Result := 3;
   LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
@@ -811,7 +787,7 @@ end;
 procedure showNForm;
 var
   startx, starty, stopy, x, y, i: integer;
-  tempHeight : integer;
+  tempHeight: integer;
   tmpstr2: string;
 begin
   // position
@@ -954,7 +930,7 @@ begin
       LogDatei.log('Will show with appearmode : fapFadeUp', LLinfo);
       with nform do
       begin
-        tmpstr2 := 'Initial : ' ;
+        tmpstr2 := 'Initial : ';
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
         LogDatei.log(tmpstr2, LLdebug);
