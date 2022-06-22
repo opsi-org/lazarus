@@ -5,19 +5,22 @@ unit OpsiLinuxInstaller_BaseForm;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  LayoutFunctions;
 
 type
   TOpsiLinuxInstallerBaseForm = class(TForm)
     BackgroundImage: TImage;
     BtnNext: TButton;
+    procedure SetConstantFormSize;
     procedure FormCreate(Sender: TObject); virtual;
+    procedure SetBackgroundImage;
     procedure FormActivate(Sender: TObject); virtual;
     procedure BtnNextClick(Sender: TObject); virtual; abstract;
     // make Panel settings and load background and info images
-    procedure SetBasics(Sender: TForm);
+    procedure SetLayoutBasics(Sender: TForm);
     // make InfoImage settings
-    procedure setInfoBasics(InfoImage: TImage);
+    procedure SetInfoBasics(InfoImage: TImage);
     // show hint on click of InfoImage
     // (used with '@' and therefore must be defined in TConfigedInstaller)
     procedure ShowHintOnClick(Sender: TObject);
@@ -47,7 +50,7 @@ begin
 end;
 
 // make InfoImage settings
-procedure TOpsiLinuxInstallerBaseForm.setInfoBasics(InfoImage: TImage);
+procedure TOpsiLinuxInstallerBaseForm.SetInfoBasics(InfoImage: TImage);
 begin
   InfoImage.Width := infoSize;
   InfoImage.Height := infoSize;
@@ -60,10 +63,9 @@ begin
 end;
 
 // make Panel settings and load background and info images
-procedure TOpsiLinuxInstallerBaseForm.SetBasics(Sender: TForm);
+procedure TOpsiLinuxInstallerBaseForm.SetLayoutBasics(Sender: TForm);
 var
   compIndex: integer;
-  PanelBigLine, PanelSmallLine: TPanel;
 begin
   for compIndex := 0 to Sender.ComponentCount - 1 do
   begin
@@ -75,53 +77,36 @@ begin
     end
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
-      // load info icon
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
-      setInfoBasics(Sender.Components[compIndex] as TImage);
+      SetInfoBasics(Sender.Components[compIndex] as TImage); // load info icon
   end;
 
-  // big decoration line at bottom in opsi-blue
-  PanelBigLine := TPanel.Create(Sender);
-  PanelBigLine.Parent := Sender;
-  PanelBigLine.ParentColor := False;
-  PanelBigLine.BevelOuter := bvNone;
-  PanelBigLine.Height := 5;
-  PanelBigLine.Top := Sender.Height - PanelBigLine.Height;
-  PanelBigLine.Left := 0;
-  PanelBigLine.Width := Sender.Width;
-  // Opsi-Blau: #006599
-  PanelBigLine.Color := TColor($00996500);
-  PanelBigLine.BevelColor := TColor($00996500);
-
-  // thin decoration line above the big one in opsi-red
-  PanelSmallLine := TPanel.Create(Sender);
-  PanelSmallLine.Parent := Sender;
-  PanelSmallLine.ParentColor := False;
-  PanelSmallLine.BevelOuter := bvNone;
-  PanelSmallLine.Height := 3;
-  PanelSmallLine.Top := Sender.Height - 11;
-  PanelSmallLine.Left := 0;
-  PanelSmallLine.Width := Sender.Width;
-  // Opsi-Rot: #B42554
-  PanelSmallLine.Color := TColor($005425B4);
-  PanelSmallLine.BevelColor := TColor($005425B4);
+  DecorateForm(Sender);
 end;
 
-procedure TOpsiLinuxInstallerBaseForm.FormCreate(Sender: TObject);
+procedure TOpsiLinuxInstallerBaseForm.SetConstantFormSize;
 begin
-  // set constant form size
   Height := 450;
   //Width := 730;
   Width := 675;
 end;
 
+procedure TOpsiLinuxInstallerBaseForm.FormCreate(Sender: TObject);
+begin
+  SetConstantFormSize;
+end;
+
+procedure TOpsiLinuxInstallerBaseForm.SetBackgroundImage;
+begin
+  BackgroundImage.Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) +
+    BackgroundImageFileName);
+  BackgroundImage.BorderSpacing.Top := 10;
+end;
+
 procedure TOpsiLinuxInstallerBaseForm.FormActivate(Sender: TObject);
 begin
-  // set background image
-  BackgroundImage.Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + BackgroundImageFileName);
-  BackgroundImage.BorderSpacing.Top := 10;
-
-  SetBasics(Sender as TForm);
+  SetBackgroundImage;
+  SetLayoutBasics(Sender as TForm);
 end;
 
 end.
