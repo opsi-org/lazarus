@@ -8569,11 +8569,11 @@ var
               end
               else if Expressionstr[j] = 'u' then
               begin
-                {$IFDEF WINDOWS}
+                //{$IFDEF WINDOWS}
                 cpSpecify := cpSpecify or cpUpdate;
-                {$ELSE}
-                LogDatei.log('The copy -u Option is Windows only', LLWarning);
-                {$ENDIF WINDOWS}
+                //{$ELSE}
+                //LogDatei.log('The copy -u Option is Windows only', LLWarning);
+                //{$ENDIF WINDOWS}
               end
               else if Expressionstr[j] = 'w' then
                 cpSpecify := cpSpecify or cpDontForceOverwrite
