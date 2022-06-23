@@ -1747,7 +1747,6 @@ begin
     raise ERegistryException.Create('Registry variable "' + Name + '" cannot be read');
 end;
 
-
 function TuibRegistry.ReadInteger(const Name: string): integer;
 var
   regType: TuibRegDataType;
@@ -1764,34 +1763,22 @@ begin
 end;
 
 
-procedure TuibRegistry.SupplementItems(Separator: char; const Name, Supplement: string);
+function GetRegistryStringValueType(RegistryKey: HKEY; EncodedName: string): TuibRegDataType;
 var
-  Entrylist, SuppList: TStringList;
-  Line: string = '';
-  Entry: string = '';
-  i: integer = 0;
-  Info: string = '';
-  FoundDataType: TuibRegDataType;
-  //dword1: integer;
-  regresult: integer = 0;
   pdata: PByte;
   regType: pDWORD;
   psize: pdword;
-  encname, encsupp: string;
-
 begin
-  encname := UTF8ToWinCP(Name);
-  encsupp := UTF8ToWinCP(Supplement);
   getmem(psize, 4);
   getmem(pdata, psize^);
   new(regType);
 
-  RegQueryValueEx(mykey, PChar(encname), nil, regType, pdata, psize);
+  RegQueryValueEx(RegistryKey, PChar(EncodedName), nil, regType, pdata, psize);
   case regType^ of
-    1: FoundDataType := trdString;
-    2: FoundDataType := trdExpandString
+    1: Result := trdString;
+    2: Result := trdExpandString
     else
-      FoundDataType := trdString;
+      Result := trdString;
   end;
   freemem(pdata);
   pdata := nil;
@@ -1799,20 +1786,39 @@ begin
   psize := nil;
   freemem(regType);
   regType := nil;
+end;
 
+function SaveStringValueToRegistry(RegistryKey: HKEY; EncodedName: string;
+  StringValue: string; DataType: TuibRegDataType): integer;
+begin
+  if DataType = trdString then
+    Result := regSetValueEx(RegistryKey, PChar(EncodedName), 0, REG_SZ,
+      PChar(StringValue), Length(StringValue))
+  else
+    Result := regSetValueEx(RegistryKey, PChar(EncodedName), 0, REG_EXPAND_SZ,
+      PChar(StringValue), Length(StringValue));
+end;
 
-  (*  FoundDataType := GetDataType (Name); *)
-  (* tut nichts *)
+procedure TuibRegistry.SupplementItems(Separator: char; const Name, Supplement: string);
+var
+  Entrylist, SuppList: TStringList;
+  Line: string = '';
+  SuppEntry: string = '';
+  i: integer = 0;
+  FoundDataType: TuibRegDataType;
+  regresult: integer = ERROR_SUCCESS;
+  encname, encsupp: string;
+begin
+  encname := UTF8ToWinCP(Name);
+  encsupp := UTF8ToWinCP(Supplement);
+
+  FoundDataType := GetRegistryStringValueType(mykey, encname);
+
   try
     Line := ReadString(encname);
   except
     on e: ERegistryException do
     begin
-     (*
-      LogS := 'Error: "' + e.Message;
-      LogDatei.log (LogS, LLNotice);
-      LogDatei.NumberOfErrors := LogDatei.NumberOfErrors + 1;
-     *)
       LogS := 'Warning: "' + e.Message;
       LogDatei.log(LogS, LLNotice);
     end;
@@ -1825,70 +1831,43 @@ begin
     Entrylist := TStringList.Create;
     Supplist := TStringList.Create;
 
-    (* build (old) Entrylist *)
-    while Line <> '' do
-    begin
-      GetWord(Line, Entry, Line, [Separator]);
-      Skip(Separator, Line, Line, Info);
-      EntryList.Add(Entry);
-      (* if pos ('%', Entry) > 0
-      then FoundDataType := trdExpandString; *)
-    end;
+    // build (old) Entrylist
+    EntryList.Delimiter := Separator;
+    EntryList.StrictDelimiter := True;
+    EntryList.DelimitedText := Line;
 
-    (* build List of Supp-Entries *)
-    Line := encsupp;
-    while Line <> '' do
-    begin
-      GetWord(Line, Entry, Line, [Separator]);
-      Skip(Separator, Line, Line, Info);
-      SuppList.Add(Entry);
-      if pos('%', Entry) > 0 then
-        FoundDataType := trdExpandString;
-    end;
+    // build List of Supp-Entries
+    SuppList.Delimiter := Separator;
+    SuppList.StrictDelimiter := True;
+    SuppList.DelimitedText := encsupp;
 
-
-    (* add Supp-Entries to Entrylist, if it is not included there *)
+    // add Supp-Entries to Entrylist, if not included there
     for i := 1 to Supplist.Count do
     begin
-      Entry := Supplist.Strings[i - 1];
-      if Entrylist.IndexOf(Entry) = -1 then
-        EntryList.Add(Entry);
+      SuppEntry := Supplist.Strings[i - 1];
+      if Entrylist.IndexOf(SuppEntry) = -1 then
+        EntryList.Add(SuppEntry);
     end;
 
-    (* make Line for Registry *)
-    Line := '';
-    if EntryList.Count > 0 then
-    begin
-      Line := EntryList.Strings[0];
-      for i := 2 to EntryList.Count do
-        Line := Line + Separator + EntryList.Strings[i - 1];
-    end;
+    // make new Line for Registry
+    Line := EntryList.DelimitedText;
 
     FreeAndNil(EntryList);
     FreeAndNil(SuppList);
   end;
 
-  regresult := ERROR_SUCCESS;
-
-  if FoundDataType = trdString then
-    regresult := regSetValueEx(mykey, PChar(encname), 0, REG_SZ,
-      PChar(Line), Length(Line))
-  else
-    regresult := regSetValueEx(mykey, PChar(encname), 0, REG_EXPAND_SZ,
-      PChar(Line), Length(Line));
+  regresult := SaveStringValueToRegistry(mykey, encname, Line, FoundDataType);
 
   if regresult = ERROR_SUCCESS then
   begin
-    LogS := 'Variable "' + Name + '"   supplemented with "' + Supplement + '"';
+    LogS := 'Variable "' + Name + '" supplemented with "' + Supplement + '"';
     LogDatei.log(LogS, LLInfo);
   end
   else
   begin
-    LogS := 'Error: Registry entry"' + Name +
-      '"   could not be read or could not be written';
-    if regresult <> ERROR_SUCCESS then
-      LogS := LogS + ' WINAPI-Fehler ' + IntToStr(regresult);
-    LogDatei.log(LogS, LLNotice);
+    LogS := 'Registry entry"' + Name +
+      '" could not be read or could not be written: WINAPI-Fehler ' + IntToStr(regresult);
+    LogDatei.log(LogS, LLError);
   end;
 end;
 
