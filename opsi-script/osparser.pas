@@ -30,6 +30,7 @@ uses
   registry,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -5506,34 +5507,18 @@ begin
 
         else if LowerCase(Expressionstr) = 'supp' then
         begin
-          SyntaxCheck := False;
-          if Skip('"', r, r, ErrorInfo) then
-          begin
-            GetWord(r, field, r, ['"']);
-            if Skip('"', r, r, ErrorInfo) then
-            begin
-              if (length(r) = 0) then
-                ErrorInfo := 'Separator expected'
-              else
-              begin
-                if r[1] = '"' then
-                  Separator := #0
-                else
-                begin
-                  Separator := r[1];
-                  Skip(Separator, r, r, ErrorInfo);
-                end;
-                if Skip('"', r, r, ErrorInfo) then
-                begin
-                  GetWord(r, Value, r, ['"']);
-                  if Skip('"', r, r, ErrorInfo) then
-                    SyntaxCheck := True;
-                end;
-              end;
-            end;
-          end;
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.SupplementItems(Separator, field, Value)
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end
+
+        else if LowerCase(Expressionstr) = LowerCase('deleteListEntries') then
+        begin
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          if SyntaxCheck then
+            Regist.DeleteListEntries(Separator, field, Value)
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end
