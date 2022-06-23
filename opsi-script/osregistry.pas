@@ -57,6 +57,7 @@ type
     function ReadString(const Name: string): string;
     function ReadInteger(const Name: string): integer;
     procedure SupplementItems(Separator: char; const Name, Supplement: string);
+    procedure DeleteListEntries(Separator: char; const RegistryVariableName, EntriesToDelete: string);
     function RestoreFromFile(Filepath: string): boolean;
 
     function DeleteEntry(const Name: string): boolean;
@@ -1874,6 +1875,121 @@ begin
   else
   begin
     LogS := 'Registry entry"' + Name +
+      '" could not be read or could not be written: WINAPI-Fehler ' + IntToStr(regresult);
+    LogDatei.log(LogS, LLError);
+  end;
+end;
+
+procedure TuibRegistry.DeleteListEntries(Separator: char; const RegistryVariableName, EntriesToDelete: string);
+var
+  Entrylist, DeleteList: TStringList;
+  Line: string = '';
+  Entry: string = '';
+  i: integer = 0;
+  UnusedInfo: string = '';
+  FoundDataType: TuibRegDataType;
+  regresult: integer = 0;
+  pdata: PByte;
+  regType: pDWORD;
+  psize: pdword;
+  EncodedRegistryVariableName, EncodedEntriesToDelete: string;
+  IndexOfEntry: integer;
+begin
+  EncodedRegistryVariableName := UTF8ToWinCP(RegistryVariableName);
+  EncodedEntriesToDelete := UTF8ToWinCP(EntriesToDelete);
+  getmem(psize, 4);
+  getmem(pdata, psize^);
+  new(regType);
+
+  RegQueryValueEx(mykey, PChar(EncodedRegistryVariableName), nil, regType, pdata, psize);
+  case regType^ of
+    1: FoundDataType := trdString;
+    2: FoundDataType := trdExpandString
+    else
+      FoundDataType := trdString;
+  end;
+  freemem(pdata);
+  pdata := nil;
+  freemem(psize);
+  psize := nil;
+  freemem(regType);
+  regType := nil;
+
+  try
+    Line := ReadString(EncodedRegistryVariableName);
+  except
+    on e: ERegistryException do
+    begin
+      LogS := 'Warning: "' + e.Message;
+      LogDatei.log(LogS, LLNotice);
+    end;
+  end;
+
+  if Separator = #0 then
+    Line := Line + EncodedEntriesToDelete
+  else
+  begin
+    Entrylist := TStringList.Create;
+    DeleteList := TStringList.Create;
+
+    (* build (old) Entrylist *)
+    while Line <> '' do
+    begin
+      GetWord(Line, Entry, Line, [Separator]);
+      Skip(Separator, Line, Line, UnusedInfo);
+      EntryList.Add(Entry);
+    end;
+
+    (* build List of Delete-Entries *)
+    Line := EncodedEntriesToDelete;
+    while Line <> '' do
+    begin
+      GetWord(Line, Entry, Line, [Separator]);
+      Skip(Separator, Line, Line, UnusedInfo);
+      DeleteList.Add(Entry);
+    end;
+
+    (* delete entries from Entrylist if existent *)
+    for i := 1 to DeleteList.Count do
+    begin
+      Entry := DeleteList.Strings[i - 1];
+      IndexOfEntry := Entrylist.IndexOf(Entry);
+      if IndexOfEntry = -1 then
+        LogDatei.log('The entry "' + Entry + '" that you want to delete does not exist', LLNotice)
+      else
+        EntryList.Delete(IndexOfEntry);
+    end;
+
+    (* make Line for saving back to the registry *)
+    Line := '';
+    if EntryList.Count > 0 then
+    begin
+      Line := EntryList.Strings[0];
+      for i := 1 to (EntryList.Count -1) do
+        Line := Line + Separator + EntryList.Strings[i];
+    end;
+
+    FreeAndNil(EntryList);
+    FreeAndNil(DeleteList);
+  end;
+
+  regresult := ERROR_SUCCESS;
+
+  if FoundDataType = trdString then
+    regresult := regSetValueEx(mykey, PChar(EncodedRegistryVariableName), 0, REG_SZ,
+      PChar(Line), Length(Line))
+  else
+    regresult := regSetValueEx(mykey, PChar(EncodedRegistryVariableName), 0, REG_EXPAND_SZ,
+      PChar(Line), Length(Line));
+
+  if regresult = ERROR_SUCCESS then
+  begin
+    LogS := 'Variable "' + RegistryVariableName + '" reduced by "' + EntriesToDelete + '"';
+    LogDatei.log(LogS, LLInfo);
+  end
+  else
+  begin
+    LogS := 'Registry entry"' + RegistryVariableName +
       '" could not be read or could not be written: WINAPI-Fehler ' + IntToStr(regresult);
     LogDatei.log(LogS, LLError);
   end;
