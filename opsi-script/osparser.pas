@@ -30,6 +30,7 @@ uses
   registry,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -163,7 +164,6 @@ type
     tsLogWarning, tsLogError, tsSetSkinDir,
     tsStop, tsExitWindows,
     tsBlockInput,
-    tsLocalAdmin,
     tsChangeDirectory,
     tsAddConnection,
     tsSetOldLogLevel,
@@ -404,18 +404,20 @@ type
     property LastExitCodeOfExe: longint read FLastExitCodeOfExe;
 
 
-    (* Infofunktionen *)
+    (* Info functions *)
     function doInfo(Meldung: string): TSectionResult;
     function doLogEntries(const Lines: string; EntryLevel: integer): TSectionResult;
     function reportError(const Sektion: TWorkSection; LineNo: integer;
       const Content: string; Comment: string): TSectionResult;
 
 
-    (* Skriptvariable setzen, Ausdruecke analysieren und auswerten *)
-    function doSetVar(const section: TuibIniScript; const Expressionstr: string;
-      var Remaining: string; var InfoSyntaxError: string): boolean;
-      overload;
-
+    (* set script variables, analyze and evaluate expressions *)
+    function SetStringListVariable(const section: TuibIniScript;
+      var Remaining: string; var r: string; const VarName: string;
+      var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+    function SetStringVariable(var Remaining: string; var r: string;
+      const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+      var NestLevel: integer): boolean;
     function doSetVar(const section: TuibIniScript; const Expressionstr: string;
       var Remaining: string; var InfoSyntaxError: string;
       var NestLevel: integer): boolean; overload;
@@ -490,22 +492,25 @@ type
     procedure registerSectionOrigins(mylist: TStringList; filename: string;
       secname: string); overload;
 
-    (* Sektionsbearbeitungsmethoden *)
-    (* Hilfsmethoden *)
+    (* functions for working on sections *)
+    (* helper functions *)
     function initSection(const Sektion: TWorkSection;
       var SaveErrorNumber, SaveWarningNumber: integer): boolean;
     procedure finishSection(const Sektion: TWorkSection;
       const SaveErrorNumber, SaveWarningNumber: integer;
       var DiffNumberOfErrors, DiffNumberOfWarnings: integer);
 
-    (* fuer primaere Sektionen *)
+    (* for primary sections *)
+    procedure SetVariableWithErrors(const Sektion: TWorkSection;
+      var Remaining: string; const Expressionstr: string; linecounter: integer;
+      var InfoSyntaxError: string; var NestLevel: integer);
+    function CheckDirectVariableInitialization(const Remaining: string): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
-    (* fuer andere Sektionen *)
 
+    (* for other sections *)
     function doTextpatch(const Sektion: TWorkSection; Filename: string;
       PatchParameter: string): TSectionResult;
-
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
@@ -5507,34 +5512,18 @@ begin
 
         else if LowerCase(Expressionstr) = 'supp' then
         begin
-          SyntaxCheck := False;
-          if Skip('"', r, r, ErrorInfo) then
-          begin
-            GetWord(r, field, r, ['"']);
-            if Skip('"', r, r, ErrorInfo) then
-            begin
-              if (length(r) = 0) then
-                ErrorInfo := 'Separator expected'
-              else
-              begin
-                if r[1] = '"' then
-                  Separator := #0
-                else
-                begin
-                  Separator := r[1];
-                  Skip(Separator, r, r, ErrorInfo);
-                end;
-                if Skip('"', r, r, ErrorInfo) then
-                begin
-                  GetWord(r, Value, r, ['"']);
-                  if Skip('"', r, r, ErrorInfo) then
-                    SyntaxCheck := True;
-                end;
-              end;
-            end;
-          end;
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.SupplementItems(Separator, field, Value)
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end
+
+        else if LowerCase(Expressionstr) = LowerCase('deleteListEntries') then
+        begin
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          if SyntaxCheck then
+            Regist.DeleteListEntries(Separator, field, Value)
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end
@@ -20410,13 +20399,72 @@ begin
     TypeInfo(TRunAs), Ord(runAs)), LLDebug);
 end;
 
-function TuibInstScript.doSetVar(const section: TuibIniScript;
-  const Expressionstr: string; var Remaining: string;
-  var InfoSyntaxError: string): boolean;
-  //var
-  // NestLevel : integer = 0;
+
+function TuibInstScript.SetStringListVariable(const section: TuibIniScript;
+  var Remaining: string; var r: string; const VarName: string;
+  var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+  list: TXStringList;
 begin
-  Result := doSetVar(section, Expressionstr, Remaining, InfoSyntaxError, NestingLevel);
+  Result := False;
+  if produceStringList(section, r, Remaining, list, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
+  end
+  else
+  begin
+    try
+      VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
+      ContentOfStringLists.Items[VarIndex] := list;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
+    LogDatei.log_list(list, LLDebug);
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
+end;
+
+function TuibInstScript.SetStringVariable(var Remaining: string; var r: string;
+  const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+  var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+begin
+  Result := False;
+  if EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
+  end
+  else
+  begin
+    try
+      VarIndex := VarList.IndexOf(LowerCase(VarName));
+      ValuesList[VarIndex] := VarValue;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  LogDatei.log ('The value of the variable "' + Varname + '" is now: "' +
+    VarValue + '"', LLInfo);
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
@@ -20424,10 +20472,7 @@ function TuibInstScript.doSetVar(const section: TuibIniScript;
   var NestLevel: integer): boolean;
 var
   VarName: string = '';
-  VarValue: string = '';
   r: string = '';
-  VarIndex: integer = 0;
-  list: TXStringList;
   funcindex: integer = 0;
 
   function isStringlistVar(varname: string): boolean;
@@ -20460,70 +20505,24 @@ begin
     InfoSyntaxError := 'variable expected'
   else
   begin
-    //VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-    if isStringlistVar(Varname) // we should get a StringList
-    then
+    if not Skip('=', r, r, InfoSyntaxError) then
     begin
-      if Skip('=', r, r, InfoSyntaxError) and
-        produceStringList(section, r, Remaining, list, InfoSyntaxError,
-        Nestlevel, inDefFuncIndex) then
-        if isVisibleLocalVar(VarName, funcindex) then
-        begin
-          // local var
-          Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
-        end
-        else
-        begin
-          try
-            VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-            ContentOfStringLists.Items[VarIndex] := list;
-            Result := True;
-          except
-          end;
-        end;
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
-        LogDatei.log_list(list, LLDebug);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-      end;
+      InfoSyntaxError := '"=" expected';
     end
     else
-    begin // it must be a string value
-      if not isStringVar(varname) then
-        InfoSyntaxError := 'Unknown variable name: ' + VarName
+    begin
+      if isStringlistVar(Varname) then
+      begin
+        Result := SetStringListVariable(section, Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel);
+      end
       else
       begin
-        if Skip('=', r, r, InfoSyntaxError) and
-          EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
-          Nestlevel, inDefFuncIndex) then
-        begin
-          if isVisibleLocalVar(VarName, funcindex) then
-          begin
-            // local var
-            Result := definedFunctionArray[FuncIndex].setLocalVarValueString(
-              varname, VarValue);
-          end
-          else
-          begin
-            try
-              VarIndex := VarList.IndexOf(LowerCase(VarName));
-              ValuesList[VarIndex] := VarValue;
-              Result := True;
-            except
-            end;
-          end;
-        end;
-      end;
-
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log
-        ('The value of the variable "' + Varname + '" is now: "' +
-          VarValue + '"', LLInfo);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+        if isStringVar(varname) then
+          Result := SetStringVariable(Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel)
+        else
+          InfoSyntaxError := 'Unknown variable name: ' + VarName;
       end;
     end;
   end;
@@ -20948,6 +20947,27 @@ begin
     else
       SyntaxCheck := False;
   end;
+end;
+
+procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
+  var Remaining: string; const Expressionstr: string; linecounter: integer;
+  var InfoSyntaxError: string; var NestLevel: integer);
+begin
+  if doSetVar(sektion, Expressionstr, Remaining,
+     InfoSyntaxError, NestLevel) then
+  begin
+    if Remaining <> '' then
+      reportError(Sektion, linecounter, Remaining, 'Remaining char(s) not allowed here');
+  end
+  else
+    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+end;
+
+function TuibInstScript.CheckDirectVariableInitialization(const Remaining: string): boolean;
+begin
+  Result := False;
+  if Remaining <> '' then
+    Result := True;
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -23738,200 +23758,7 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-
-
-              tsLocalAdmin:
-              begin
-                if UpperCase(Remaining) = UpperCase('/Create1') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLNotice);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdmin) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLInfo);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create2') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfile) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create3') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create4') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Delete') then
-                begin
-                  LogDatei.log('Deleting temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if opsiSetupAdmin_created then
-                    if DeleteTemporaryLocalAdmin then
-                    begin
-                      LogDatei.log('Deleted temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentAppDataDir%')] := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentDesktopDir%')] := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartupDir%')] := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] := GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProfileDir%')] := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed deleting temporary local admin ...',
-                        LLWarning);
-                end
-                else if Remaining = '' then
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'Parameter needed')
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'not an allowed Parameter');
-              end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
 
               tsExitWindows:
@@ -25080,19 +24907,6 @@ begin
                 s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not EvaluateString(remaining, remaining, s1, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringexpression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
                 // given var name reseved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
@@ -25133,6 +24947,9 @@ begin
                   LogDatei.log('Defined global local string var: ' +
                     lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
                 end;
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineStringList:
@@ -25146,20 +24963,6 @@ begin
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not produceStringList(Sektion, remaining,
-                      remaining, tmplist, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringlist expression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
                 // given var name reseved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
@@ -25207,6 +25010,9 @@ begin
                 end;
                 if Assigned(tmplist) then
                   FreeAndNil(tmplist);
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineFunction:
@@ -25403,20 +25209,10 @@ begin
               tsSetVar:
               begin
                 LogDatei.log_prog('Start tsSetVar with expr: ' + Remaining, LLdebug);
-                //writeln('set');
                 Expressionstr := Remaining;
-                doLogEntries(PStatNames^ [tsSetVar] + '  ' + Expressionstr, LLInfo);
-                if doSetVar(sektion, Expressionstr, Remaining,
-                  InfoSyntaxError, NestLevel) then
-                begin
-                  if Remaining <> '' then
-                    reportError(Sektion, linecounter, Remaining,
-                      'Remaining char(s) not allowed here');
-                end
-                else
-                  reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                SetVariableWithErrors(Sektion, Remaining, Expressionstr, linecounter,
+                  InfoSyntaxError, NestLevel);
               end
-
               else
                 ActionResult :=
                   reportError(Sektion, linecounter, Expressionstr, 'undefined');
@@ -26584,7 +26380,6 @@ begin
 
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
-  PStatNames^ [tsLocalAdmin] := 'LocalAdmin';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
 
