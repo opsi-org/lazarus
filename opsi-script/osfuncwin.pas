@@ -39,7 +39,8 @@ uses
   osfuncwin3,
   strutils,
   cTypes,
-  DynLibs;
+  DynLibs,
+  Process;
 
 (*
 type

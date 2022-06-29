@@ -1,21 +1,100 @@
-
+﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.5.0) stable; urgency=low
+opsi-script (4.12.6.0) unreleased; urgency=low
 
-  * osparser: fix in parsing errorsOccurredSinceMark, references #4718
-  * osparser: throw syntax errors in comments, implements #3542
-  * osfunc: fix "del" in files section: now works with wildcards, references #4560
-  * oswebservice: allow newline and tab in opsiservicecall, implements #3522
-  * new functions getRegistryKeyList(<regkey>,<access str>),
-	getRegistryVarList(<regkey>,<access str>),
-	getRegistryVarMap(<regkey>,<access str>),
-	implements #4720
-  * osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (do)
+* [fix] oscrypt: function md5fromFile, loop through array caused an index out of bounds error (j.werner)
+  
+-- j.werner <j.werner@uib.de> 23 Mai 2022
 
--- a.schmitz <a.schmitz@uib.de> Mon, 21 Mar 2022 16:00
+opsi-script (4.12.5.3) unreleased; urgency=low
+
+  * [chg] osparser: execution of powershellcall with powershell.exe -ExecutionPolicy ByPass (j.werner)
+    
+-- j.werner <j.werner@uib.de> 09 June 2022
+
+opsi-script (4.12.5.2) unreleased; urgency=low
+
+  * [fix] oswebservice: using former openssl pascal units for MacOS due to the new ones are not working on MacOS. (j.werner)
+  * [fix] oszip: handle division by zero if files to zip are empty (#4748, !66, a.schmitz)
+  * [fix] osparser: execution of powershellcall as statement( tsPowershellcall)
+              call of parsePowershellCall with remaining (instead of r) (d.oertel)
+    
+-- j.werner <j.werner@uib.de> 09 June 2022
+
+
+opsi-script (4.12.5.1) unreleased; urgency=low
+
+  * [new] osparser: doIniFilePatches: support %userprofiledir% inside of patches section (!51, d.oertel)
+  * [new] osparser : CHMOD for Linux.
+          Adding new function TuibFileInstall.calcMode to handle 'ugo=+-rwx' mode format.
+          Adding 'ugo=+-rwx' mode format to CHMOD.
+          Adding '-rwxrwxrwx' mode format to CHMOD.
+          Adding '/AllSubFiles' parameter to Files_section CHMOD command. (#4559, !48, j.laajili)
+  * [new] osparser: New functions for TOML files handling.
+          function LoadTOMLFile(TOMLfilePath: String): TStringList,
+          function GetTOMLAsStringList(TOMLcontents: String): TStringList,
+          function GetTOMLKeys(TOMLcontents: String): TStringList,
+          function GetTOMLTableNames(TOMLcontents: String): TStringList,
+          function GetTOMLTable(TOMLcontents: String; table : String): TStringList,
+          function ReadTOMLFile (TOMLfilePath: String): String, 
+          function GetTOMLAsString(TOMLcontents: String): String,
+          function GetTOMLTableAsString(TOMLcontents: String; table : String): String,
+          function GetValueFromTOML(TOMLcontents: String; keyPath: String; defaultValue: String): String,
+          function ModifyTOML(TOMLcontents: String; command: String; keyPath: String; value: String): String,
+          function DeleteTableFromTOML(TOMLcontents: String; tablePath: String): String,
+          function ConvertTOMLtoJSON(TOMLcontents: String): String,
+          function SaveToTOMLFile (TOMLcontents: String; TOMLfilePath: String) : boolean,
+          function ConvertTOMLfileToJSONfile(TOMLfilePath: String; JSONfilePath: String): boolean. (#4663, !47, j.laajili)
+  * [new] fpTOML: new external library for TOML files handling. Contains the following units.
+            unit Scanner
+            unit TOML
+            unit TOMLParser
+            unit TOMLTypes (#4663, !47, j.laajili)
+  * [new] unit TOMLTypes: new functions in TOMLTypes unit.
+          function TTOMLArray.AsStrings: TStringList,
+          function TTOMLArray.AsTOMLString: String,
+          function TTOMLTable.AsTOMLString: ansistring,
+          function TTOMLTable.AsTOMLStringList: TStringList,
+          property TTOMLTable.Header : string read GetHeader,
+          function TTOMLTable.GetHeader : string,
+          procedure TTOMLTable.Insert(const key: String; const data: TTOMLData),
+          procedure TTOMLTable.Insert(const key: String; const value: TTOMLValueType),
+          procedure TTOMLTable.Put(const key: String; const data: TTOMLData),
+          procedure TTOMLTable.Put(const key: String; const value: TTOMLValueType),
+          procedure TTOMLTable.PutValue(const keyIndex: integer; const data: TTOMLData),
+          procedure TTOMLTable.PutValue(const keyIndex: integer; const value: TTOMLValueType),
+          procedure TTOMLTable.Remove(const key: String),
+          procedure TTOMLTable.AssignTable(const table: TTOMLTable) //not used. (#4663, !47, j.laajili)
+  * [new] unit osTOML, new functions for TOML handling. Based on fpTOML (#4663, !47, j.laajili)
+  * [new] unit osGetRegistryFunctions for parsing of GetRegistry functions. (!38, a.schmitz)
+  * [new] osGetRegistryFunctions: new summed GetRegistry functions
+          getRegistryKeyList(<regkey>,<access str>),
+          getRegistryVarList(<regkey>,<access str>),
+          getRegistryVarMap(<regkey>,<access str>). (#4720, !38, a.schmitz)
+  * [new] osdefinedfunctions: allow string concatenation in call of defined functions. (#4683, a.schmitz)
+  * [change] osparser: new internal function parsePowershellCall. Implements commen parsing for powershellCall (j.werner)
+  * [change] osparser: parse GetRegistry functions together. (a.schmitz)
+  * [change] osfuncwin2 : getWinProcessList: use wincp2utf8 to reencode results (d.oertel)
+  * [change] oswebservice: update synapse openssl units. This enables to use openssl libs in Version 1.1.1 also on Windows (#4724, !43, j.werner)
+  * [change] oswebservice: improved debugging and error handling (j.werner)
+  * [fix] osparser: throw syntax errors in comments. (#3542, !35, a.schmitz)
+  * [fix] osparser: fix in parsing errorsOccurredSinceMark. (#4718, !37, a.schmitz)
+  * [fix] osparser: sub files: TuibInstScript.LoadValidLinesFromFile does not cut away spaces around lines any more,
+          so that e.g. python code in an ExecWith section keeps its syntax. (!61, a.schmitz)
+  * [fix] osparser: TuibInstScript.execPowershellCall now shows output also for piped commands e.g. powershellCall("Get-hotfix | Select HotfixId"). 
+          Note: Neverthless be carefull using piped commands in powershellCall! (#4736, !52, j.werner)
+  * [fix] osfunc: "del" in files section now works with wildcards. (#4560, !36, a.schmitz)
+  * [fix] osregistry: "deletekey" in registry section uses UTF8ToWinCP to handle umlauts correctly. (#3574, !49, a.schmitz)
+  * [fix] osprocesses: fix in function isprocessChildOf in function isParentByPid. 
+          repeat.. until loop now stops after 100 iterations when no other conditions were reached before 
+          to avoid a pontential endless loop. (j.werner)
+  * [fix] oswebservice: allow newline and tab in opsiservicecall. (#3522, a.schmitz)
+  * [fix] oswebservice: do not use twisted version but response content type to detect opsi 4.0 (d.oertel)
+  
+-- j.werner <j.werner@uib.de> 25 Mai 2022
 
 
 opsi-script (4.12.4.37) stable; urgency=low
@@ -43,6 +122,7 @@ opsi-script (4.12.4.37) stable; urgency=low
   * new function netmaskToCidr(<string>): string;  [WLM]
   * osparser: new global constant %FQDN% for fqdn in network (not opsi service) context; implements #4554
   * osparser: fix occasionally access violation when using getReturnListFromSection/getOutStreamFromSection
+  * osstrlistutils: fixing exception with empty list in areStringlistsEqual, references #4717
 
 -- d.oertel <d.oertel@uib.de> Tue, 01 Feb 2022 15:00
 

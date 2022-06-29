@@ -21,6 +21,7 @@ type
     openSUSE_Leap_15_1,
     openSUSE_Leap_15_2,
     openSUSE_Leap_15_3,
+    openSUSE_Leap_15_4,
     openSUSE_Leap_42_3,
     RHEL_7,
     RHEL_8,
@@ -38,6 +39,7 @@ type
     xUbuntu_16_04,
     xUbuntu_18_04,
     xUbuntu_20_04,
+    xUbuntu_22_04,
     other
     );
 
@@ -148,6 +150,7 @@ begin
     openSUSE_Leap_15_1: Result := Result + 'openSUSE_Leap_15.1/';
     openSUSE_Leap_15_2: Result := Result + 'openSUSE_Leap_15.2/';
     openSUSE_Leap_15_3: Result := Result + 'openSUSE_Leap_15.3/';
+    openSUSE_Leap_15_4: Result := Result + 'openSUSE_Leap_15.4/';
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
     RHEL_8: Result := Result + 'RHEL_8/';
@@ -165,6 +168,7 @@ begin
     xUbuntu_16_04: Result := Result + 'xUbuntu_16.04/';
     xUbuntu_18_04: Result := Result + 'xUbuntu_18.04/';
     xUbuntu_20_04: Result := Result + 'xUbuntu_20.04/';
+    xUbuntu_22_04: Result := Result + 'xUbuntu_22.04/';
     other: Result := '';
   end;
 end;
@@ -261,7 +265,7 @@ begin
     {Debian and Ubuntu}
     Debian_8, Debian_9, Debian_10, Debian_11,
     Univention_4_3, Univention_4_4, Univention_5_0,
-    xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04:
+    xUbuntu_16_04, xUbuntu_18_04, xUbuntu_20_04, xUbuntu_22_04:
     begin
       AddDebianUbuntu;
     end;
@@ -278,7 +282,7 @@ begin
   FURL := URL;
   case FDistribution of
     {OpenSuse and SLES}
-    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_15_3, openSUSE_Leap_42_3,
+    openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_15_3, openSUSE_Leap_15_4, openSUSE_Leap_42_3,
     SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4, SLE15_SP1, SLE15_SP2:
     begin
       AddOpenSuseSLES(RepoName);

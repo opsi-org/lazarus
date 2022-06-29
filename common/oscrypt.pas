@@ -177,7 +177,7 @@ var
   i: integer;
   s: string;
 begin
-   {$RANGECHECKS OFF}
+   //{$RANGECHECKS OFF}
   Result := '';
   Source := nil;
   try
@@ -192,13 +192,13 @@ begin
     Hash.Init;                                   // initialize it
     Hash.UpdateStream(Source, Source.Size);       // hash the stream contents
     Hash.Final(Digest);                          // produce the digest
-    Source.Free;
     s := '';
-    for i := 0 to 19 do
+    for i := 0 to 15 do
       s := s + IntToHex(Digest[i], 2);
     Result := s;                              // return the digest
+    FreeAndNil(Source);
   end;
-   {$RANGECHECKS ON}
+   //{$RANGECHECKS ON}
 end;
 
 end.

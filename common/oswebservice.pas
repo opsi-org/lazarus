@@ -7,9 +7,18 @@ unit oswebservice;
 {$OBJECTCHECKS ON}
 {$VARSTRINGCHECKS ON}
 {$LONGSTRINGS ON}
+{$MACRO ON}
 
 {$DEFINE SYNAPSE}
 
+//ssl_openssl11 and ssl_openssl11_lib seam not to work under macos
+{$IFDEF DARWIN}
+  {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl}
+  {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl_lib}
+{$ELSE}
+  {$DEFINE SSL_OPENSSL_UNIT:=ssl_openssl11}
+  {$DEFINE SSL_OPENSSL_LIB_UNIT:=ssl_openssl11_lib}
+{$ENDIF DARWIN}
 
 // This code is part of the opsi.org project
 
@@ -29,7 +38,7 @@ uses
   osjson,
   strutils,
   {$IFDEF SYNAPSE}
-  httpsend, ssl_openssl11, ssl_openssl11_lib, blcksock,
+  httpsend, SSL_OPENSSL_UNIT, SSL_OPENSSL_LIB_UNIT, blcksock,
   {$ELSE SYNAPSE}
   IdComponent,
   IdHTTP,
@@ -1296,22 +1305,22 @@ begin
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip, port);
     //LogDatei.log('IP: ' + ip + ' Resolved: ' + Httpsender.Sock.GetRemoteSinIP, LLDebug);
-    if ssl_openssl11_lib.InitSSLInterface then
+    if SSL_OPENSSL_LIB_UNIT.InitSSLInterface then
     begin
       LogDatei.log_prog('InitSSLInterface = true, IsSSLloaded: ' +
-        BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
+        BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True), LLdebug);
     end
     else
       LogDatei.log_prog('InitSSLInterface = false, IsSSLloaded: ' +
-        BoolToStr(ssl_openssl11_lib.IsSSLloaded, True), LLdebug);
-    LogDatei.log('SSL lib (path) should be: ' + ssl_openssl11_lib.DLLSSLName, LLInfo);
+        BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True), LLdebug);
+    LogDatei.log('SSL lib (path) should be: ' + SSL_OPENSSL_LIB_UNIT.DLLSSLName, LLInfo);
     HTTPSender.Sock.SSLDoConnect;
     //LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.LibVersion, LLdebug);
-    if not ssl_openssl11_lib.IsSSLloaded then
+    if not SSL_OPENSSL_LIB_UNIT.IsSSLloaded then
     begin
       // no SSL available, loading libs failed
       LogDatei.log('no SSL available, loading libs failed: ' +
-        ssl_openssl11_lib.DLLSSLName, LLError);
+        SSL_OPENSSL_LIB_UNIT.DLLSSLName, LLError);
     end
     else
     begin
@@ -1562,6 +1571,7 @@ var
   {$ENDIF SYNAPSE}
   oldTwistedServer: string;
   oldTwistedServerVer: integer = 0;
+  responseContentType: string;
   opsi40: boolean = False;
 
 begin
@@ -1739,7 +1749,7 @@ begin
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
-              LogDatei.log_prog('SslLib should be: ' + ssl_openssl11_lib.DLLSSLName +
+              LogDatei.log_prog('SslLib should be: ' + SSL_OPENSSL_LIB_UNIT.DLLSSLName +
                 ' Line:' + {$INCLUDE %LINE%}, LLDebug);
               { Set Body }
               // before writing utf8str to HTTPSender.Document we need to replace all #10(newline), #13 and #9(TAB) by their
@@ -1830,22 +1840,34 @@ begin
                   LogDatei.log_prog(
                     'No Content-Encoding header. Guess identity', llDebug);
                 end;
-                LogDatei.log_prog('Content-Type: ' +
-                  trim(HTTPSender.Headers.Values['Content-Type']), llDebug);
+                responseContentType := trim(HTTPSender.Headers.Values['Content-Type']);
+                LogDatei.log_prog('Content-Type: ' + responseContentType, llDebug);
                 oldTwistedServer := trim(HTTPSender.Headers.Values['Server']);
                 LogDatei.log_prog('Server: ' + oldTwistedServer, llDebug);
                 if StartsText('Twisted/', oldTwistedServer) then
                 begin
+                  LogDatei.log_prog('Server is Twisted: opsi 4.0 / 4.1', LLinfo);
+                  (*
                   oldTwistedServer := copy(oldTwistedServer, 9, 2);
                   LogDatei.log_prog('Server: ' +
                     oldTwistedServer, llDebug);
                   if TryStrToInt(oldTwistedServer, oldTwistedServerVer) then
                     if (oldTwistedServerVer < 17) and (oldTwistedServerVer > 0) then
-                    begin
-                      opsi40 := True;
-                      LogDatei.log_prog('opsi 4.0 Server detected: Twisted/ < 17: ' +
-                        oldTwistedServer, llDebug);
-                    end;
+                    *)
+                  // We cant detect the opsi version by the twisted version (do 20220520)
+                  // We try to use the content type
+                  if responseContentType = 'gzip-application/json;charset=utf-8' then
+                  begin
+                    opsi40 := True;
+                    LogDatei.log_prog('opsi 4.0 Server detected: content type: ' +
+                      responseContentType, llDebug);
+                  end
+                  else
+                  begin
+                    opsi40 := False;
+                    LogDatei.log_prog('opsi 4.1 Server detected: content type: ' +
+                      responseContentType, llDebug);
+                  end;
                 end;
 
                 { Read Response Body}
@@ -1907,7 +1929,7 @@ begin
                   'Request failed (Method Post). No connection to server could be established. Server-FQDN: '
                   + HttpSender.TargetHost + ', Server-IP: ' +
                   HttpSender.Sock.GetRemoteSinIP + ' SLL lib loaded: ' +
-                  BoolToStr(ssl_openssl11_lib.IsSSLloaded, True);
+                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True);
                 LogDatei.log_prog(
                   'Request failed (Method Post). No connection to server could be established. Line: '
                   + {$INCLUDE %LINE%}, LLError);
@@ -1916,8 +1938,8 @@ begin
                   HttpSender.Sock.GetRemoteSinIP + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 LogHostIPs;
                 LogDatei.log_prog('SLL lib loaded: ' +
-                  BoolToStr(ssl_openssl11_lib.IsSSLloaded, True) + ' SSL lib (path) should be: ' +
-                  ssl_openssl11_lib.DLLSSLName + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
+                  BoolToStr(SSL_OPENSSL_LIB_UNIT.IsSSLloaded, True) + ' SSL lib (path) should be: ' +
+                  SSL_OPENSSL_LIB_UNIT.DLLSSLName + ' Line: ' + {$INCLUDE %LINE%}, LLInfo);
                 raise Exception.Create(FError);
               end;
             end;
@@ -1955,9 +1977,9 @@ begin
                   LogDatei.log(FError, LLError);
                 end
                 else
-                if not ssl_openssl11_lib.IsSSLloaded then
+                if not SSL_OPENSSL_LIB_UNIT.IsSSLloaded then
                 begin
-                  FError := 'Could not load ssl lib: ' + ssl_openssl11_lib.DLLSSLName;
+                  FError := 'Could not load ssl lib: ' + SSL_OPENSSL_LIB_UNIT.DLLSSLName;
                   LogDatei.log(FError, LLError);
                 end
                 else

@@ -30,6 +30,7 @@ uses
   registry,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -163,7 +164,6 @@ type
     tsLogWarning, tsLogError, tsSetSkinDir,
     tsStop, tsExitWindows,
     tsBlockInput,
-    tsLocalAdmin,
     tsChangeDirectory,
     tsAddConnection,
     tsSetOldLogLevel,
@@ -313,6 +313,8 @@ type
 
 
 
+  { TuibInstScript }
+
   TuibInstScript = class(TuibIniScript)
   private
     FLogLevel: integer;
@@ -352,10 +354,13 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
-    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean;
-      var linecounter: integer; var FaktScriptLineNumber: int64;
-      var Sektion: TWorksection; SectionSpecifier: TSectionSpecifier;
-      const call: string; const NewFunction: boolean): TStringList;
+    procedure parsePowershellCall(var Command: string; AccessString: string;
+      var HandlePolicy: string; var Option: string;
+      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool:boolean);
+    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
+      var FaktScriptLineNumber: int64; var Sektion: TWorksection;
+      SectionSpecifier: TSectionSpecifier; const call: string;
+      const NewFunction: boolean): TStringList;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -401,18 +406,20 @@ type
     property testSyntax: boolean read FtestSyntax write FtestSyntax;
 
 
-    (* Infofunktionen *)
+    (* Info functions *)
     function doInfo(Meldung: string): TSectionResult;
     function doLogEntries(const Lines: string; EntryLevel: integer): TSectionResult;
     function reportError(const Sektion: TWorkSection; LineNo: integer;
       const Content: string; Comment: string): TSectionResult;
 
 
-    (* Skriptvariable setzen, Ausdruecke analysieren und auswerten *)
-    function doSetVar(const section: TuibIniScript; const Expressionstr: string;
-      var Remaining: string; var InfoSyntaxError: string): boolean;
-      overload;
-
+    (* set script variables, analyze and evaluate expressions *)
+    function SetStringListVariable(const section: TuibIniScript;
+      var Remaining: string; var r: string; const VarName: string;
+      var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+    function SetStringVariable(var Remaining: string; var r: string;
+      const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+      var NestLevel: integer): boolean;
     function doSetVar(const section: TuibIniScript; const Expressionstr: string;
       var Remaining: string; var InfoSyntaxError: string;
       var NestLevel: integer): boolean; overload;
@@ -487,22 +494,25 @@ type
     procedure registerSectionOrigins(mylist: TStringList; filename: string;
       secname: string); overload;
 
-    (* Sektionsbearbeitungsmethoden *)
-    (* Hilfsmethoden *)
+    (* functions for working on sections *)
+    (* helper functions *)
     function initSection(const Sektion: TWorkSection;
       var SaveErrorNumber, SaveWarningNumber: integer): boolean;
     procedure finishSection(const Sektion: TWorkSection;
       const SaveErrorNumber, SaveWarningNumber: integer;
       var DiffNumberOfErrors, DiffNumberOfWarnings: integer);
 
-    (* fuer primaere Sektionen *)
+    (* for primary sections *)
+    procedure SetVariableWithErrors(const Sektion: TWorkSection;
+      var Remaining: string; const Expressionstr: string; linecounter: integer;
+      var InfoSyntaxError: string; var NestLevel: integer);
+    function CheckDirectVariableInitialization(const Remaining: string): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
-    (* fuer andere Sektionen *)
 
+    (* for other sections *)
     function doTextpatch(const Sektion: TWorkSection; Filename: string;
       PatchParameter: string): TSectionResult;
-
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
@@ -638,7 +648,7 @@ const
   Parameter_AllNTUserProfiles = '/AllNTUserProfiles';
   Parameter_AllUserProfiles = '/AllUserProfiles';
   ParameterShowoutput = '/showoutput';
-
+  Parameter_AllFiles = '/AllSubFiles';
 
   (* Registry call parameters *)
   Parameter_SysDiffAddReg = '/AddReg';
@@ -2179,7 +2189,7 @@ begin
     usedencoding, LLDebug);
   for i := 1 to OriginalList.Count do
   begin
-    s := trim(OriginalList.Strings[i - 1]);
+    s := OriginalList.Strings[i - 1];
     Section.Add(s);
     script.FLinesOriginList.Append(FName + ' line: ' + IntToStr(i));
     script.FLibList.Append('false');
@@ -2192,7 +2202,7 @@ end;
 function TuibInstScript.reportError(const Sektion: TWorkSection;
   LineNo: integer; const Content: string; Comment: string): TSectionResult;
 var
-  funcname, funcfile, funcmesseage: string;
+  funcname, funcfile, funcmessage: string;
   originmessage: string;
   funcline: integer;
   i, index: integer;
@@ -2204,7 +2214,7 @@ begin
       funcname := definedFunctionArray[inDefFuncIndex].Name;
       funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
       funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
-      funcmesseage := ' in defined function: ' + funcname + ' file: ' +
+      funcmessage := ' in defined function: ' + funcname + ' file: ' +
         ExtractFileName(funcfile) + ' function start at line: ' +
         IntToStr(funcline + 1);
       originmessage := '; origin: ' + funcfile + ' line: ' +
@@ -2216,14 +2226,14 @@ begin
       index := script.FSectionNameList.IndexOf(funcname);
       if index = -1 then
       begin
-        funcmesseage := ' in section: ' + Sektion.Name + '; file: unknown';
+        funcmessage := ' in section: ' + Sektion.Name + '; file: unknown';
         originmessage := '; origin: not found' + '): ';
       end
       else
       begin
         funcfile := Script.FSectionInfoArray[index].SectionFile;
         funcline := Script.FSectionInfoArray[index].StartLineNo;
-        funcmesseage := ' in section: ' + funcname + '; file: ' +
+        funcmessage := ' in section: ' + funcname + '; file: ' +
           ExtractFileName(funcfile) + '; section start at line: ' +
           IntToStr(funcline + 1);
         //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
@@ -2233,14 +2243,14 @@ begin
     end;
   except
     originmessage := '; origin: not found' + '): ';
-    funcmesseage := '; section or function not found';
+    funcmessage := '; section or function not found';
   end;
   //for i:= 0 to FLinesOriginList.Count -1 do
   //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name + ' (Command in line ' +
     IntToStr(Sektion.StartLineNo + LineNo)
     //   + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
-    + funcmesseage + originmessage
+    + funcmessage + originmessage
     //  + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
     //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
     + Content + ' -> ' + Comment;
@@ -2470,10 +2480,8 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     if not testSyntax then
       if not FileExists(ExpandFileName(PatchFilename)) then
@@ -3235,7 +3243,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doTextpatchMain(Sektion, ProfileList.Strings[pc] + PathDelim);
+      doTextpatchMain(Sektion, ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3250,7 +3258,7 @@ begin
     else
       PatchFilename := Filename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doTextpatchMain(Sektion, GetUserProfilePath + PathDelim);
+    doTextpatchMain(Sektion, GetUserProfilePath);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -3464,11 +3472,12 @@ var
   ErrorInfo: string = '';
   ProfileList: TStringList;
 
-  procedure doInifilePatchesMain;
+  procedure doInifilePatchesMain(const presetDir: string);
   var
     i: integer = 0;
     dummy: string;
     mytxtfile: TStringList;
+    workingSection: TXStringList;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
     //LogDatei.log (ps, LevelWarnings);
@@ -3506,7 +3515,12 @@ var
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    // jetzt Arbeitsstruktur erzeugen
+    // create working opbjects
+    // copy const sektion to var workingsection so it can be modified
+    workingSection := TXStringList.Create;
+    workingSection.Assign(Sektion);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     Patchdatei := TuibPatchIniFile.Create;
     //mytxtfile := TStringlist.Create;
@@ -3528,14 +3542,14 @@ var
         logdatei.log_prog('Loaded: ' + Patchdatei.Strings[i], LLDebug);
     end;
 
-    for i := 1 to Sektion.Count do
+    for i := 1 to workingSection.Count do
     begin
-      if (Sektion.strings[i - 1] = '') or (Sektion.strings[i - 1]
+      if (workingSection.strings[i - 1] = '') or (workingSection.strings[i - 1]
         [1] = LineIsCommentChar) then
       (* continue *)
       else
       begin
-        WortAbspalten(cutLeftBlanks(Sektion.strings[i - 1]), Befehlswort, Rest);
+        WortAbspalten(cutLeftBlanks(workingSection.strings[i - 1]), Befehlswort, Rest);
 
         if UpperCase(Befehlswort) = 'ADD' then
         begin
@@ -3565,7 +3579,7 @@ var
         begin
           SectionnameAbspalten(Rest, Bereich, Eintrag);
           if Eintrag <> '' then
-            reportError(Sektion, i, Sektion.strings[i - 1], 'syntax error')
+            reportError(Sektion, i, workingSection.strings[i - 1], 'syntax error')
           else
           if not testSyntax then
             Patchdatei.delSec(Bereich);
@@ -3580,7 +3594,7 @@ var
         begin
           WortAbspalten(Rest, AlterEintrag, Eintrag);
           if pos(' ', eintrag) > 0 then
-            reportError(Sektion, i, Sektion.strings[i - 1],
+            reportError(Sektion, i, workingSection.strings[i - 1],
               'replace string not identified ')
           else
           if not testSyntax then
@@ -3609,6 +3623,7 @@ var
     end;
     Patchdatei.Free;
     Patchdatei := nil;
+    FreeAndNil(workingSection);
   end;
 
 begin
@@ -3629,7 +3644,7 @@ begin
       PatchdateiName := SysUtils.StringReplace(PatchdateiName,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
-      doInifilePatchesMain;
+      doInifilePatchesMain(ProfileList.Strings[pc]);
     end;
   end
   else
@@ -3644,7 +3659,7 @@ begin
     else
       PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
-    doInifilePatchesMain;
+    doInifilePatchesMain(GetUserProfilePath);
   end;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -5351,7 +5366,7 @@ begin
             end
             else
             begin
-              LogDatei.log('Key0 is: ' + key0 + ' Key is: ' + key, LLdebug2);
+              LogDatei.log('Key0 is: ' + key0 + ', Key is: ' + key, LLdebug2);
               LogDatei.log('key0 : ' + key0 +
                 ' is not a valid base key and we will praefix it with: ' +
                 basekey, LLDebug2);
@@ -5554,34 +5569,18 @@ begin
 
         else if LowerCase(Expressionstr) = 'supp' then
         begin
-          SyntaxCheck := False;
-          if Skip('"', r, r, ErrorInfo) then
-          begin
-            GetWord(r, field, r, ['"']);
-            if Skip('"', r, r, ErrorInfo) then
-            begin
-              if (length(r) = 0) then
-                ErrorInfo := 'Separator expected'
-              else
-              begin
-                if r[1] = '"' then
-                  Separator := #0
-                else
-                begin
-                  Separator := r[1];
-                  Skip(Separator, r, r, ErrorInfo);
-                end;
-                if Skip('"', r, r, ErrorInfo) then
-                begin
-                  GetWord(r, Value, r, ['"']);
-                  if Skip('"', r, r, ErrorInfo) then
-                    SyntaxCheck := True;
-                end;
-              end;
-            end;
-          end;
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.SupplementItems(Separator, field, Value)
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end
+
+        else if LowerCase(Expressionstr) = LowerCase('deleteListEntries') then
+        begin
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          if SyntaxCheck then
+            Regist.DeleteListEntries(Separator, field, Value)
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end
@@ -7680,10 +7679,8 @@ var
     //Handling multiple user profiles
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
 
     //XML patch core
     myfilename := ExpandFilename(patchfilename);
@@ -8403,7 +8400,7 @@ begin
       PatchFilename := SysUtils.StringReplace(PatchFilename,
         '%currentprofiledir%', ProfileList.Strings[pc], [rfReplaceAll, rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
-      doXMLpatch2Main(Sektion, ProfileList.Strings[pc] + PathDelim, PatchFilename);
+      doXMLpatch2Main(Sektion, ProfileList.Strings[pc], PatchFilename);
     end;
   end
   else
@@ -8418,7 +8415,7 @@ begin
     else
       PatchFilename := XMLFilename;
     PatchFilename := ExpandFileName(PatchFilename);
-    doXMLpatch2Main(Sektion, GetUserProfilePath + PathDelim, PatchFilename);
+    doXMLpatch2Main(Sektion, GetUserProfilePath, PatchFilename);
   end;
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -8473,8 +8470,8 @@ var
     ///info : string;
     remaining_with_leading_blanks: string = '';
     search4file: boolean;
-    mode: string;  // used on linux
-    list1: TStringList;
+    mode, strmode, rwxPart: string;  // used on linux
+    list1, AllFiles: TStringList;
     shellcallArchParam: string;
     go_on: boolean;
     tmpstr, searchmask: string;
@@ -8491,15 +8488,13 @@ var
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%userprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%userprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
       logdatei.log(Remaining, LLDebug2);
     end;
-    workingSection.GlobalReplace(1, '%currentprofiledir%',
-      copy(presetDir, 1, length(presetDir) - 1), False);
+    workingSection.GlobalReplace(1, '%currentprofiledir%', presetDir, False);
     for i := 0 to Sektion.Count - 1 do
     begin
       Remaining := cutLeftBlanks(workingSection.strings[i]);
@@ -8878,19 +8873,58 @@ var
           mode := Expressionstr;
           mode := opsiUnquoteStr(mode, '"');
           mode := opsiUnquoteStr(mode, '''');
+          LogDatei.log('Input Mode : ' + mode , LLInfo);
+
           if mode = '' then
           begin
             SyntaxCheck := False;
             errorinfo := errorinfo + ' Invalid empty string for mode in chmod';
           end;
           try
-            dummyint := StrToInt(mode);
+            mode := DelSpace(mode);
+            if TryStrToInt(mode, dummyint) = false then
+               begin
+                 strmode := '';
+                 if (mode[1] = '-') and (length(mode) = 10) then
+                     begin
+                       mode := copy(mode,2,length(mode)-1);
+                       if (length(mode) = 9) then
+                         begin
+                           j := 1;
+                           repeat
+                            rwxPart := mode[j]+mode[j+1]+mode[j+2];
+                            //LogDatei.log('rwxPart : ' + rwxPart, LLInfo);
+                            if rwxPart = 'rwx' then strmode := strmode+'7' ;
+                            if rwxPart = 'rw-' then strmode := strmode+'6' ;
+                            if rwxPart = 'r-x' then strmode := strmode+'5' ;
+                            if rwxPart = 'r--' then strmode := strmode+'4' ;
+                            if rwxPart = '-wx' then strmode := strmode+'3' ;
+                            if rwxPart = '-w-' then strmode := strmode+'2' ;
+                            if rwxPart = '--x' then strmode := strmode+'1' ;
+                            if rwxPart = '---' then strmode := strmode+'0' ;
+                            j:= j+3;
+                           until j> length(mode);
+                           dummyint := StrToInt(strmode);
+                         end;
+                     end
+                 else if (mode[1] = 'u') or (mode[1] = 'g') or (mode[1] = 'o') then
+                     begin
+                        strmode := 'UGOformat';
+                     end
+                 else
+                   errorinfo := errorinfo + ' Invalid string for mode in chmod';
+               end
+            else
+            begin
+              dummyint := StrToInt(mode);
+              strmode := mode;
+            end;
           except
             SyntaxCheck := False;
-            errorinfo := errorinfo +
-              ' Invalid string for mode in chmod. Expected something like 755 found: '
-              + mode;
+            errorinfo := errorinfo + ' Invalid string for mode in chmod';
           end;
+
+          LogDatei.log('Mode-format detected : ' + strmode , LLInfo);
 
           if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
           then
@@ -8906,18 +8940,80 @@ var
           // if file names have e.g. blanks in it, don't let them be split
           // (with the consequence of deleting files that have the first part as name)
 
-          if isAbsoluteFileName(Expressionstr) then
-            Source := Expressionstr
-          else
-            Source := SourceDirectory + Expressionstr;
-          Source := ExpandFileName(Source);
+          if RightStr(Expressionstr, 12) = '/AllSubFiles' then
+             begin
+               Expressionstr := copy(Expressionstr, 0, length(Expressionstr)-13);
+               //LogDatei.log('Parameter found, Directory retrieved : ' + expressionstr , LLInfo);
+               if isDirectory(Expressionstr) then
+                  begin
+                    Source := Expressionstr;
+                    LogDatei.log('Input Source - Directory : ' + Source , LLInfo);
+                  end
+               else
+                  LogDatei.log('Failed to chmod: ' + Source + ' to mode: '
+                              + strmode + ' : Directory is incorrect', LLerror);
 
-          if SyntaxCheck then
+               if SyntaxCheck then
+               begin
+                 AllFiles := FindAllFiles(Source, '*.*', true);
+                 for j := 0 to AllFiles.Count-1 do
+                  begin
+                  LogDatei.log('we try to chmod: ' + AllFiles[j] + ' to mode: ' + strmode, LLDebug2);
+
+                  if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, AllFiles[j]);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + AllFiles[j]
+                           + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                  if not Install.chmod(strmode, AllFiles[j]) then
+                      LogDatei.log('Failed to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLerror)
+                  else
+                      LogDatei.log('Succeeded to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+                  end;
+               end;
+             end
+          else
           begin
-            LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + mode, LLDebug2);
-            if not Install.chmod(mode, Source) then
-              LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + mode, LLerror);
+            if isAbsoluteFileName(Expressionstr) then
+              Source := Expressionstr
+            else
+              Source := SourceDirectory + Expressionstr;
+
+            Source := ExpandFileName(Source);
+            LogDatei.log('Input Source - File : ' + Source , LLInfo);
+
+            if SyntaxCheck then
+               begin
+                 LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + strmode, LLDebug2);
+
+                 if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, Source);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + Source
+                             + ' from mode: ' + mode + ' : ' + E.message, LLError);
+                      end;
+                    end;
+                  end;
+
+                 if not Install.chmod(strmode, Source) then
+                    LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + strmode, LLerror)
+                 else
+                    LogDatei.log('Succeeded to chmod for : ' + Source + ' to mode: ' + strmode, LLInfo);
+                 end;
           end;
+
         end
         {$ENDIF LINUX}
 
@@ -9409,10 +9505,10 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + PathDelim;
-      if DirectoryExistsUTF8(presetdirectory) then
+      presetdirectory := ProfileList.Strings[pc];
+      if DirectoryExistsUTF8(presetdirectory + PathDelim) then
       begin
-        logdatei.log(' Make it for user directory: ' + presetdirectory, LLInfo);
+        logdatei.log(' Make it for user directory: ' + presetdirectory + PathDelim, LLInfo);
         fileActionsMain(Sektion, presetDirectory);
       end;
     end;
@@ -9423,7 +9519,7 @@ begin
     ProfileList := getProfilesDirList;
     for pc := 0 to ProfileList.Count - 1 do
     begin
-      presetdirectory := ProfileList.Strings[pc] + '\SendTo\';
+      presetdirectory := ProfileList.Strings[pc] + '\SendTo';
       fileActionsMain(Sektion, presetDirectory);
     end;
   end
@@ -9433,7 +9529,7 @@ begin
     SourceDirectory := '';
     PresetDirectory := '';
     if runLoginScripts then
-      PresetDirectory := GetUserProfilePath + PathDelim;
+      PresetDirectory := GetUserProfilePath;
     fileActionsMain(Sektion, presetdirectory);
     {$IFDEF WIN32}
     //setErrorMode(OldWinapiErrorMode);
@@ -10502,7 +10598,7 @@ begin
       if not (LowerCase(org_execution_policy) = LowerCase('AllSigned')) then
       begin
         // set (open)
-        commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+        commandline := 'powershell.exe set-executionpolicy ByPass';
         tmplist := execShellCall(commandline, shortarch, 1 + logleveloffset,
           False, True);
       end;
@@ -10511,7 +10607,7 @@ begin
     mySektion := TWorkSection.Create(NestingLevel, ActiveSection);
     mySektion.Add('trap { write-output $_ ; exit 1 }');
     mySektion.Add(command);
-    mySektion.Add('exit $LASTEXITCODE');
+    //mySektion.Add('exit $LASTEXITCODE');
     mySektion.Name := 'tmp-internal';
     parameters := 'powershell.exe winst /' + archparam;
     fulloptionstring := parameters + ' ' + optionstr;
@@ -11640,13 +11736,13 @@ begin
     // https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correctly-returning-exit-codes
     if pos('powershell.exe', LowerCase(programfilename)) > 0 then
     begin
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if LowerCase(programfilename) = 'powershell' then
     begin
       // we add '-file ' as last param for powershell
-      powershellpara := ' -file ';
+      powershellpara := ' -ExecutionPolicy ByPass -file ';
       useext := '.ps1';
     end;
     if useext = '.ps1' then  // we are on powershell
@@ -11976,7 +12072,6 @@ var
   newIniFile: TIniFile;
   s1enc: string = '';
 begin
-
   syntaxcheck := False;
   savelogsindentlevel := LogDatei.LogSIndentLevel;
 
@@ -12131,85 +12226,7 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
-      s2 := '';
-      s3 := '';
-      s4 := '';
-      tmpstr2 := '';
-      tmpbool := True; // sysnative
-      tmpbool1 := True; // handle execution policy
-      syntaxCheck := False;
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-        // next after ',' or ')'
-        then
-          if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-            if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-      if s2 = '' then
-      begin
-        // only one parameter
-        if Skip(')', tmpstr, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          s2 := 'sysnative';
-        end;
-      end
-      else
-      begin
-        // got second parameter
-        tmpbool := True;
-        if lowercase(s2) = '32bit' then
-          tmpbool := False
-        else if lowercase(s2) = '64bit' then
-          tmpbool := True
-        else if lowercase(s2) = 'sysnative' then
-          tmpbool := True
-        else
-        begin
-          InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-          syntaxCheck := False;
-        end;
-        // three parameter ?
-        if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-        begin
-          if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-          begin
-            // got third parameter
-            if not TryStrToBool(s3, tmpbool1) then
-            begin
-              syntaxCheck := False;
-              InfoSyntaxError :=
-                'Error: boolean string (true/false) expected but got: ' + s3;
-            end;
-            // four parameter ?
-            if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-            begin
-              if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-              begin
-                // got fourth parameter
-                if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                begin
-                  // four parameter
-                  syntaxCheck := True;
-                end;
-              end;
-            end
-            else
-            if Skip(')', tmpstr2, r, InfoSyntaxError) then
-            begin
-              // three parameter
-              syntaxCheck := True;
-            end;
-          end;
-        end
-        else
-        if Skip(')', tmpstr2, r, InfoSyntaxError) then
-        begin
-          // two parameter
-          syntaxCheck := True;
-        end;
-        //end;
-      end;
+      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       list.Text := '';
       if syntaxCheck then
         if not testSyntax then
@@ -16579,6 +16596,8 @@ begin
           except
             LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
           end;
+        except
+          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
       end;
       if not syntaxCheck then
@@ -16736,88 +16755,14 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-      s2 := '';
-      s3 := '';
-      s4 := '';
-      tmpstr2 := '';
-      tmpbool := True; // sysnative
-      tmpbool1 := True; // handle execution policy
-      syntaxCheck := False;
-      StringResult := '';
-      if Skip('(', r, r, InfoSyntaxError) then
-        if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-        // next after ',' or ')'
-        then
-          if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-            if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-      if s2 = '' then
-      begin
-        // only one parameter
-        if Skip(')', tmpstr, r, InfoSyntaxError) then
-        begin
-          syntaxCheck := True;
-          s2 := 'sysnative';
-        end;
-      end
-      else
-      begin
-        // got second parameter
-        tmpbool := True;
-        if lowercase(s2) = '32bit' then
-          tmpbool := False
-        else if lowercase(s2) = '64bit' then
-          tmpbool := True
-        else if lowercase(s2) = 'sysnative' then
-          tmpbool := True
-        else
-        begin
-          InfoSyntaxError := 'Error: unknown parameter: ' + s2 +
-            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-          syntaxCheck := False;
-        end;
-        // three parameter ?
-        if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-        begin
-          if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-          begin
-            // got third parameter
-            if not TryStrToBool(s3, tmpbool1) then
-            begin
-              syntaxCheck := False;
-              InfoSyntaxError :=
-                'Error: boolean string (true/false) expected but got: ' + s3;
-            end;
-            // four parameter ?
-            if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-            begin
-              if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-              begin
-                // got fourth parameter
-                if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                begin
-                  // four parameter
-                  syntaxCheck := True;
-                end;
-              end;
-            end
-            else
-            if Skip(')', tmpstr2, r, InfoSyntaxError) then
-            begin
-              // three parameter
-              syntaxCheck := True;
-            end;
-          end;
-        end
-        else
-        if Skip(')', tmpstr2, r, InfoSyntaxError) then
-        begin
-          // two parameter
-          syntaxCheck := True;
-        end;
-        //end;
-      end;
-      if syntaxCheck then
-        if not testSyntax then
+    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
+    if syntaxCheck then
+    begin
+      try
+        execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
+        StringResult := IntToStr(FLastExitCodeOfExe);
+      except
+        on e: Exception do
         begin
           try
             execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
@@ -16880,8 +16825,8 @@ begin
               end;
             end;
           except
-            LogDatei.log('Error: boolToString: string expression' +
-              s1 + ' has no boolean value', LLDebug2);
+            LogDatei.log('Error: boolToString: string expression "' + s1 +
+              '" has no boolean value', LLDebug2);
             StringResult := '';
           end;
         end;
@@ -16910,8 +16855,8 @@ begin
           else
           begin
             // EvaluateBoolean = false
-            LogDatei.log('Error: boolToString: string expression' +
-              r + ' has no boolean value', LLError);
+            LogDatei.log('Error: boolToString: string expression "' + r +
+              '" has no boolean value', LLError);
             StringResult := '';
           end;
         end;
@@ -17394,28 +17339,6 @@ begin
         end;
         list1.Free;
         list1 := nil;
-      end;
-    end
-
-    else if LowerCase(s) = LowerCase('getStringFromListAtIndex') then
-    begin
-      if Skip('(', r, r, InfoSyntaxError) and produceStringList(
-        script, r, r, list1, InfoSyntaxError) and Skip(',', r, r, InfoSyntaxError) and
-        EvaluateString(r, r, s1, InfoSyntaxError) and
-        Skip(')', r, r, InfoSyntaxError) then
-      begin
-        syntaxCheck := True;
-        if not testSyntax then
-        begin
-          try
-            StringResult := '';
-            StringResult := list1.Strings[StrToInt(s1)];
-          except
-            StringResult := '';
-            LogDatei.log('Error: Exception at getStringFromListAtIndex with: "' +
-              s1 + '"', LLerror);
-          end;
-        end;
       end;
     end
 
@@ -18995,7 +18918,7 @@ begin
     end
 
     else
-      InfoSyntaxError := s0 + ' illegal String Expressionstr';
+      InfoSyntaxError := '"' + s0 + '" is an illegal String Expressionstr';
 
 
     (* Addition weiterer Teilstrings mit + *)
@@ -21191,13 +21114,72 @@ begin
     TypeInfo(TRunAs), Ord(runAs)), LLDebug);
 end;
 
-function TuibInstScript.doSetVar(const section: TuibIniScript;
-  const Expressionstr: string; var Remaining: string;
-  var InfoSyntaxError: string): boolean;
-  //var
-  // NestLevel : integer = 0;
+
+function TuibInstScript.SetStringListVariable(const section: TuibIniScript;
+  var Remaining: string; var r: string; const VarName: string;
+  var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+  list: TXStringList;
 begin
-  Result := doSetVar(section, Expressionstr, Remaining, InfoSyntaxError, NestingLevel);
+  Result := False;
+  if produceStringList(section, r, Remaining, list, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
+  end
+  else
+  begin
+    try
+      VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
+      ContentOfStringLists.Items[VarIndex] := list;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
+    LogDatei.log_list(list, LLDebug);
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
+end;
+
+function TuibInstScript.SetStringVariable(var Remaining: string; var r: string;
+  const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+  var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+begin
+  Result := False;
+  if EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
+  end
+  else
+  begin
+    try
+      VarIndex := VarList.IndexOf(LowerCase(VarName));
+      ValuesList[VarIndex] := VarValue;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  LogDatei.log ('The value of the variable "' + Varname + '" is now: "' +
+    VarValue + '"', LLInfo);
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
@@ -21205,10 +21187,7 @@ function TuibInstScript.doSetVar(const section: TuibIniScript;
   var NestLevel: integer): boolean;
 var
   VarName: string = '';
-  VarValue: string = '';
   r: string = '';
-  VarIndex: integer = 0;
-  list: TXStringList;
   funcindex: integer = 0;
 
   function isStringlistVar(varname: string): boolean;
@@ -21241,70 +21220,24 @@ begin
     InfoSyntaxError := 'variable expected'
   else
   begin
-    //VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-    if isStringlistVar(Varname) // we should get a StringList
-    then
+    if not Skip('=', r, r, InfoSyntaxError) then
     begin
-      if Skip('=', r, r, InfoSyntaxError) and
-        produceStringList(section, r, Remaining, list, InfoSyntaxError,
-        Nestlevel, inDefFuncIndex) then
-        if isVisibleLocalVar(VarName, funcindex) then
-        begin
-          // local var
-          Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
-        end
-        else
-        begin
-          try
-            VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-            ContentOfStringLists.Items[VarIndex] := list;
-            Result := True;
-          except
-          end;
-        end;
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
-        LogDatei.log_list(list, LLDebug);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-      end;
+      InfoSyntaxError := '"=" expected';
     end
     else
-    begin // it must be a string value
-      if not isStringVar(varname) then
-        InfoSyntaxError := 'Unknown variable name: ' + VarName
+    begin
+      if isStringlistVar(Varname) then
+      begin
+        Result := SetStringListVariable(section, Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel);
+      end
       else
       begin
-        if Skip('=', r, r, InfoSyntaxError) and
-          EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
-          Nestlevel, inDefFuncIndex) then
-        begin
-          if isVisibleLocalVar(VarName, funcindex) then
-          begin
-            // local var
-            Result := definedFunctionArray[FuncIndex].setLocalVarValueString(
-              varname, VarValue);
-          end
-          else
-          begin
-            try
-              VarIndex := VarList.IndexOf(LowerCase(VarName));
-              ValuesList[VarIndex] := VarValue;
-              Result := True;
-            except
-            end;
-          end;
-        end;
-      end;
-
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log
-        ('The value of the variable "' + Varname + '" is now: "' +
-          VarValue + '"', LLInfo);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+        if isStringVar(varname) then
+          Result := SetStringVariable(Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel)
+        else
+          InfoSyntaxError := 'Unknown variable name: ' + VarName;
       end;
     end;
   end;
@@ -21664,6 +21597,91 @@ begin
       Expressionstr, 'Found DefFunc without EndFunc');
     ReadingSuccessful := False;
   end;
+end;
+
+procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
+  var Option: string; var Remaining: string; var syntaxCheck: boolean;
+  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+begin
+  Command := '';
+  AccessString := '';
+  HandlePolicy := '';
+  Option := '';
+  AccessString := 'sysnative'; //default value
+  HandlePolicyBool := False; // default value
+
+  syntaxCheck := False;
+  if Skip('(', Remaining, Remaining, InfoSyntaxError) then
+  begin
+    //get first parameter (command), default access string = sysnative
+    Syntaxcheck := EvaluateString(Remaining, Remaining, Command, InfoSyntaxError);
+    if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
+    begin
+      //get second parameter (access string)
+      if EvaluateString(Remaining, Remaining, AccessString, InfoSyntaxError) then
+      begin
+        if (lowercase(AccessString) = '32bit') or (lowercase(AccessString) = '64bit')
+          or (lowercase(AccessString) = 'sysnative')
+        then
+          Syntaxcheck := true
+        else
+        begin
+          InfoSyntaxError := 'Error: unknown parameter: ' + AccessString +
+            ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+          syntaxCheck := False;
+        end;
+      end
+      else SyntaxCheck := false;
+      //third parameter (handle execution policy)
+      if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxerror) then
+      begin
+        if EvaluateString(Remaining, Remaining, HandlePolicy, InfoSyntaxError) then
+        begin
+          if TryStrToBool(HandlePolicy, HandlePolicyBool) then
+          begin
+             syntaxCheck := True;
+          end
+          else
+          begin
+            syntaxCheck := False;
+            InfoSyntaxError :=
+              'Error: boolean string (true/false) expected but got: ' + HandlePolicy;
+          end;
+        end
+        else SyntaxCheck := false;
+        //fourth parameter (optionstr)
+        if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
+        begin
+           syntaxCheck := EvaluateString(Remaining, Remaining, Option, InfoSyntaxError);
+        end;
+      end;
+    end;
+    if SyntaxCheck and Skip(')', Remaining, Remaining, InfoSyntaxError) then
+      SyntaxCheck := True
+    else
+      SyntaxCheck := False;
+  end;
+end;
+
+procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
+  var Remaining: string; const Expressionstr: string; linecounter: integer;
+  var InfoSyntaxError: string; var NestLevel: integer);
+begin
+  if doSetVar(sektion, Expressionstr, Remaining,
+     InfoSyntaxError, NestLevel) then
+  begin
+    if Remaining <> '' then
+      reportError(Sektion, linecounter, Remaining, 'Remaining char(s) not allowed here');
+  end
+  else
+    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+end;
+
+function TuibInstScript.CheckDirectVariableInitialization(const Remaining: string): boolean;
+begin
+  Result := False;
+  if Remaining <> '' then
+    Result := True;
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -23071,7 +23089,13 @@ begin
                   begin
                     if definedFunctionArray[FuncIndex].call(p2, p2, NestLevel) then
                     begin
-                      syntaxCheck := True;
+                      if p2 <> '' then
+                      begin
+                         reportError(Sektion, linecounter, p2,
+                         'Remaining char(s) not allowed here');
+                      end
+                      else
+                         syntaxCheck := True;
                       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                     end
                     else
@@ -24164,13 +24188,21 @@ begin
                     Parameter, InfoSyntaxError) then
                     syntaxCheck := True
                   else
-                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                  begin
+                    //reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                    LogDatei.log('Invalid Syntax in Comment. Please correct this error as soon as possible '
+                      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
+                      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
+                      + '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
+                    Inc(FNumberOfErrors);
+                  end;
                 end;
 
                 if syntaxCheck then
                   LogDatei.log('comment: ' + Parameter, LLnotice);
               end;
 
+              // ToDo: ask Detlef if this is correct that this code block differs from others and no reportError is used
               tsActionProgress:
               begin
                 syntaxCheck := False;
@@ -24180,6 +24212,7 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
                 if syntaxCheck and not testSyntax then
+                begin
                 begin
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
                   opsidata.setActionProgress(Parameter);
@@ -24327,91 +24360,11 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                s2 := '';
-                s3 := '';
-                s4 := '';
-                tmpstr2 := '';
-                tmpbool := True; // sysnative
-                tmpbool1 := True; // handle execution policy
-                syntaxCheck := False;
-                r := remaining;
-                if Skip('(', r, r, InfoSyntaxError) then
-                  if EvaluateString(r, tmpstr, s1, InfoSyntaxError)
-                  // next after ',' or ')'
-                  then
-                    if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-                      if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
-                if s2 = '' then
-                begin
-                  // only one parameter
-                  if Skip(')', tmpstr, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    s2 := 'sysnative';
-                  end;
-                end
-                else
-                begin
-                  // got second parameter
-                  tmpbool := True;
-                  if lowercase(s2) = '32bit' then
-                    tmpbool := False
-                  else if lowercase(s2) = '64bit' then
-                    tmpbool := True
-                  else if lowercase(s2) = 'sysnative' then
-                    tmpbool := True
-                  else
-                  begin
-                    InfoSyntaxError :=
-                      'Error: unknown parameter: ' + s2 +
-                      ' expected one of 32bit,64bit,sysnative - fall back to sysnative';
-                    syntaxCheck := False;
-                  end;
-                  // three parameter ?
-                  if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                  begin
-                    if EvaluateString(tmpstr1, tmpstr2, s3, tmpstr3) then
-                    begin
-                      // got third parameter
-                      if not TryStrToBool(s3, tmpbool1) then
-                      begin
-                        syntaxCheck := False;
-                        InfoSyntaxError :=
-                          'Error: boolean string (true/false) expected but got: ' + s3;
-                      end;
-                      // four parameter ?
-                      if Skip(',', tmpstr2, tmpstr1, tmpstr3) then
-                      begin
-                        if EvaluateString(tmpstr1, tmpstr2, s4, tmpstr3) then
-                        begin
-                          // got fourth parameter
-                          if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                          begin
-                            // four parameter
-                            syntaxCheck := True;
-                          end;
-                        end;
-                      end
-                      else
-                      if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                      begin
-                        // three parameter
-                        syntaxCheck := True;
-                      end;
-                    end;
-                  end
-                  else
-                  if Skip(')', tmpstr2, r, InfoSyntaxError) then
-                  begin
-                    // two parameter
-                    syntaxCheck := True;
-                  end;
-                  //end;
-                end;
+                parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck, InfoSyntaxError, tmpbool);
                 if syntaxCheck and not testSyntax then
                 begin
                   try
-                    execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                    execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
                   except
                     on e: Exception do
                     begin
@@ -24589,219 +24542,7 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-
-
-              tsLocalAdmin:
-              begin
-                if UpperCase(Remaining) = UpperCase('/Create1') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLNotice);
-                  if not testSyntax then
-                  begin
-                    ActionResult := tsrPositive;
-                    if CreateTemporaryLocalAdmin(traAdmin) then
-                    begin
-                      LogDatei.log('Created temporary local admin ...', LLInfo);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                      := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                      := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                      := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] :=
-                        GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                      := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed creating temporary local admin ...',
-                        LLWarning);
-                  end;
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create2') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  if not testSyntax then
-                  begin
-                    ActionResult := tsrPositive;
-                    if CreateTemporaryLocalAdmin(traAdminProfile) then
-                    begin
-                      LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                      := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                      := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                      := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] :=
-                        GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                      := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed creating temporary local admin ...',
-                        LLWarning);
-                  end;
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create3') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  if not testSyntax then
-                  begin
-                    ActionResult := tsrPositive;
-                    if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
-                    begin
-                      LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                      := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                      := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                      := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] :=
-                        GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                      := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed creating temporary local admin ...',
-                        LLWarning);
-                  end;
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create4') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  if not testSyntax then
-                  begin
-                    ActionResult := tsrPositive;
-                    if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
-                    begin
-                      LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                      := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                      := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                      := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] :=
-                        GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                      := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed creating temporary local admin ...',
-                        LLWarning);
-                  end;
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Delete') then
-                begin
-                  LogDatei.log('Deleting temporary local admin ...', LLInfo);
-                  if not testSyntax then
-                  begin
-                    ActionResult := tsrPositive;
-                    if opsiSetupAdmin_created then
-                      if DeleteTemporaryLocalAdmin then
-                      begin
-                        LogDatei.log('Deleted temporary local admin ...', LLNotice);
-
-                        FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                          GetAppDataPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentAppDataDir%')] := GetAppDataPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentDesktopDir%')] := GetDesktopPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentStartupDir%')] := GetStartupPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentProgramsDir%')] := GetProgramsPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentSendToDir%')] := GetSendToPath;
-                        FConstValuesList.Strings[FConstList.IndexOf(
-                          '%CurrentProfileDir%')] := getUserProfilePath;
-                        FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                          GetAppDataPath;
-                        FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                          GetAppDataPath;
-
-                        ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                      end
-                      else
-                        LogDatei.log('Failed deleting temporary local admin ...',
-                          LLWarning);
-                  end;
-                end
-                else if Remaining = '' then
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'Parameter needed')
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'not an allowed Parameter');
-              end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
 
               tsExitWindows:
@@ -26083,19 +25824,6 @@ begin
                 s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not EvaluateString(remaining, remaining, s1, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringexpression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
                 // given var name reseved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
@@ -26139,6 +25867,9 @@ begin
                       lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
                   end;
                 end;
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineStringList:
@@ -26152,20 +25883,6 @@ begin
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not produceStringList(Sektion, remaining,
-                      remaining, tmplist, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringlist expression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
                 // given var name reseved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
@@ -26216,6 +25933,9 @@ begin
                 end;
                 if Assigned(tmplist) then
                   FreeAndNil(tmplist);
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineFunction:
@@ -26352,7 +26072,7 @@ begin
 
               tsEndFunction:
               begin
-                // you should nerver get here since the endfunc's are parsed along the deffunc's
+                // you should never get here since the endfunc's are parsed along the deffunc's
                 // in the case tsDefineFunction
                 //if not testSyntax then
                 begin
@@ -26430,20 +26150,10 @@ begin
               tsSetVar:
               begin
                 LogDatei.log_prog('Start tsSetVar with expr: ' + Remaining, LLdebug);
-                //writeln('set');
                 Expressionstr := Remaining;
-                doLogEntries(PStatNames^ [tsSetVar] + '  ' + Expressionstr, LLInfo);
-                if doSetVar(sektion, Expressionstr, Remaining,
-                  InfoSyntaxError, NestLevel) then
-                begin
-                  if Remaining <> '' then
-                    reportError(Sektion, linecounter, Remaining,
-                      'Remaining char(s) not allowed here');
-                end
-                else
-                  reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                SetVariableWithErrors(Sektion, Remaining, Expressionstr, linecounter,
+                  InfoSyntaxError, NestLevel);
               end
-
               else
                 ActionResult :=
                   reportError(Sektion, linecounter, Expressionstr, 'undefined');
@@ -27346,7 +27056,7 @@ begin
         Script.GetSectionLines(NameProfileActionsSection, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
@@ -27371,7 +27081,7 @@ begin
         Script.GetSectionLines(NameAktionenSektion, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
-          ': After GetSectionLiness', LLinfo);
+          ': After GetSectionLines', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
         LogDatei.log_prog('CreateAndProcessScript: ' + Aktionsliste.Name +
           ': After ApplyTextConstants', LLinfo);
@@ -27615,7 +27325,6 @@ begin
 
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
-  PStatNames^ [tsLocalAdmin] := 'LocalAdmin';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
 

@@ -104,7 +104,8 @@ uses
   pipes,
   oszip,
   osfilehelper,
-  osnetutil;
+  osnetutil,
+  math;
 
 const
   BytesarrayLength = 5000;
@@ -401,6 +402,7 @@ type
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     function chmod(mode: string; const FileName: string): boolean;
+    function calcMode(mode: string; const FileName: string): string;
     {$ENDIF UNIX}
   end;
 
@@ -441,11 +443,6 @@ type
 {$ENDIF WINDOWS}
 
 {$IFDEF WINDOWS}
-
-(*
-function GetNTVersionMajor: Dword;
-function GetNTVersionMinor: Dword;
-*)
 function GetOSId: DWord;
 function SetProcessPrivilege(PrivilegeName: string): boolean;
 
@@ -580,32 +577,10 @@ function StrIsIn(const s: string; const A: array of Str20): integer;
 function isAbsoluteFileName(const s: string): boolean;
 function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
   var ErrorInfo: string): boolean;
-(*
-function CutLeftBlanks(const s: string): string;
-function CutRightBlanks(const s: string): string;
-*)
-(*
-function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
-//  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-//   liefert true, wenn partialS vorkommt,
-//   andernfalls false;
-//   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
 
-//procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
-// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
-*)
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
-(*
-function SkipA(const partialS, S: string; var Remaining: string;
-  var Error: string): boolean;
-  // versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
-  //   wird partialS nicht gefunden, ist Remaining = S
-function Skip(const partialS, S: string; var Remaining: string;
-  var Error: string): boolean;
-  // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest
-*)
 
 function concatPathParts(const part1, part2: string): string;
 (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)
@@ -617,13 +592,7 @@ function StringReplace1(const S, OldPattern, NewPattern: string): string;
 (* replaces every occurence of OldPattern by NewPattern ; not CaseSensitive *)
 
 function CEscaping(const s: string): string;
-(*
-procedure GetWord
-  (const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward :boolean = false); overload;
-procedure GetWord(const s: string; var Expression, Remaining: string;
-  const WordDelimiterString: String; searchbackward :boolean = false);  overload;
-*)
+
 procedure WortAbspalten(const s: string; var Wortlinks, Rest: string);
 procedure IdentAbspalten(const s: string; var Ident, Value: string);
 procedure SectionnameAbspalten(const s: string; var Sektion, Rest: string);
@@ -708,17 +677,7 @@ const
   emptyregfileName = 'winst_emptyregkey.dat';
 
   CitMark = '"';
-  (*
-  WordDelimiterSet0 = [' ', #9, '=', '[', ']'];
-  WordDelimiterSetHosts = [' ', '#', #9];
-  WordDelimiterSetDBAlias = [':', '='];
-  WordDelimiterSet1 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+'];
-  WordDelimiterSet2 = [' ', #9, '"', ''''];
-  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
-  WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
-  WordDelimiterSet5 = ['"', ''''];
-  WordDelimiterWhiteSpace = [' ', #9];
-  *)
+
   (*
   ddeTimerInterval = 100;
   ddeTimerWaitIntervals = 20;
@@ -2673,507 +2632,6 @@ end;
 
 {$ENDIF WINDOWS}
 
-(*
-function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
-  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
-  WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
-  waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint; catchout: boolean;
-  var output: TXStringList): boolean;
-
-var
-  ProcessStream: TMemoryStream;
-  Buffer: string = '';
-  BytesRead: longint;
-  n: longint;
-  FpcProcess: TProcess;
-  WaitWindowStarted: boolean;
-  desiredProcessStarted: boolean;
-  WaitForProcessEndingLogflag: boolean;
-  starttime, nowtime: TDateTime;
-
-  line: string;
-  filename: string;
-  ParamStr: string;
-  paramlist: TXStringlist;
-  //dir: string;
-  firstsplit: integer;
-  //len: DWord;
-  //functionresult: hinst;
-
-  resultfilename: string;
-  presultfilename: PChar;
-  running: boolean;
-  processID: Dword;
-  parentProcessID: DWord;
-  info: string;
-  //lpExitCode: DWORD = 0;
-  lpExitCode: longint = 0;
-  //  var ProcessInfo: jwawinbase.TProcessInformation;
-  mypid: dword = 0;
-  ProcShowWindowFlag: TShowWindowOptions;
-  //i: integer; // tmp
-
-  function ReadStream(var Buffer: string; var proc: TProcess;
-  var output: TXStringList; showoutput: boolean): longint;
-  var
-    tmp_buffer: array[1..READ_BYTES] of char;//Buffer of 2048 char
-    //output_line: string = '';
-    output_string : string = '';
-    LineBreakPos: longint;
-    BytesRead: longint;
-    OutputStream: TStringStream;
-  begin
-    if proc.output.NumBytesAvailable <= 0 then
-      BytesRead := 0
-    else
-    begin
-      tmp_buffer := '';
-      BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
-
-      OutputStream := TStringStream.Create('');
-      OutputStream.Write(tmp_buffer, BytesRead);
-      //{$IFDEF WINDOWS}
-      //OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
-      //{$ENDIF WINDOWS}
-      //Buffer := Buffer + tmp_buffer;
-      OutputStream.Position:=0;
-      output_string := ConsoleToUTF8(Outputstream.DataString);
-      Buffer := Buffer + output_string;
-
-      if showoutput then
-        begin
-          SystemInfo.Memo1.Append(output_string);
-          ProcessMess;
-        end;
-
-    end;
-
-    Result := BytesRead;
-  end;
-
-const
-  secsPerDay = 86400;
-  //ReadBufferSize = 2048;
-
-begin
-  ParamStr := '';
-  paramlist := TXStringlist.Create;
-
-  // do we have a quoted file name ?
-  if CmdLinePasStr[1] = '"' then
-  begin
-    line := copy(CmdLinePasStr, 2, length(CmdLinePasStr));
-    firstsplit := pos('"', line);
-    if firstsplit <= 0 then
-    begin
-      Result := False;
-      Report := 'No valid filename';
-      exit;
-    end;
-    filename := copy(line, 1, firstsplit - 1);
-    ParamStr := copy(line, firstsplit + 1, length(line));
-  end
-  else
-  begin
-    // no quotes - split at space
-    firstsplit := pos(' ', CmdLinePasStr);
-    if firstsplit > 0 then
-    begin
-      filename := copy(CmdLinePasStr, 1, firstsplit - 1);
-      ParamStr := copy(CmdLinePasStr, firstsplit + 1, length(CmdLinePasStr));
-    end
-    else
-    begin
-      // no space found
-      filename := CmdLinePasStr;
-    end;
-  end;
-
-  stringsplitByWhiteSpace(trim(ParamStr), TStringList(paramlist));
-  logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
-  logdatei.log_prog('ParamStr: ' + ParamStr, LLinfo);
-  logdatei.log_prog('Filename from command: ' + filename + '=' +
-    ExpandFileName(filename), LLInfo);
-  logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
-  //writeln('>->->'+paramstr);
-  //writeln('>->->'+CmdLinePasStr);
-  try
-    try
-      Buffer := '';
-
-      FpcProcess := process.TProcess.Create(nil);
-      {$IFDEF WINDOWS}
-      //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
-      FpcProcess.Executable := filename;
-      FpcProcess.Parameters := TStringList(paramlist);
-      //FpcProcess.Parameters;
-      {$ELSE WINDOWS}
-      //FpcProcess.CommandLine := CmdLinePasStr;
-      FpcProcess.Executable := filename;
-      FpcProcess.Parameters := TStringList(paramlist);
-      {$ENDIF WINDOWS}
-      logdatei.log_prog('command: ' + FpcProcess.CommandLine, LLinfo);
-
-      if not WaitForReturn then
-        catchout := False;
-
-      if catchout then
-        FpcProcess.Options := FpcProcess.Options + [poUsePipes, poStdErrToOutPut];
-
-      //FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-
-      case ShowWindowFlag of
-        SW_HIDE: ProcShowWindowFlag := swoHIDE;
-        SW_MINIMIZE: ProcShowWindowFlag := swoMinimize;
-        SW_MAXIMIZE: ProcShowWindowFlag := swoMaximize;
-        SW_NORMAL: ProcShowWindowFlag := swoShowNormal;   // swoNone ?
-        SW_RESTORE: ProcShowWindowFlag := swoRestore;
-        SW_SHOW: ProcShowWindowFlag := swoShow;
-        //SW_SHOWMAXIMIZED : ProcShowWindowFlag := swoShowMaximized;
-        SW_SHOWMINIMIZED: ProcShowWindowFlag := swoShowMinimized;
-        SW_SHOWMINNOACTIVE: ProcShowWindowFlag := swoshowMinNOActive;
-        SW_SHOWNA: ProcShowWindowFlag := swoShowNA;
-        SW_SHOWNOACTIVATE: ProcShowWindowFlag := swoShowNoActivate;
-          //SW_SHOWNORMAL : ProcShowWindowFlag := swoShowNormal;
-        else
-          ProcShowWindowFlag := swoShow;
-      end;
-      FpcProcess.ShowWindow := ProcShowWindowFlag;
-      FpcProcess.Execute;
-      //FillChar(processInfo, SizeOf(processInfo), 0);
-      //CreateProcessElevated(lpApplicationName: PChar; lpCommandLine: String;
-      //lpCurrentDirectory: PChar;Counter: Integer; var ProcessInfo: TProcessInformation): Boolean;
-      //if not CreateProcessElevated(nil, CmdLinePasStr, PChar(GetCurrentDir),0, ProcessInfo) then
-      //begin
-      //  result := false;
-      //  logdatei.DependentAdd('Could not start process ', LLError);
-      //end
-      //else
-      begin
-        Result := True;
-        logdatei.log('Started process "' + FpcProcess.Executable +
-          '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
-        desiredProcessStarted := False;
-        WaitForProcessEndingLogflag := True;
-        setLength(resultfilename, 400);
-        presultfilename := PChar(resultfilename);
-        //mypid := FpcProcess.ProcessID;
-
-        //FindExecutable(PChar(filename), nil, presultfilename);
-        //FindFirstTask ( ExtractFilename(presultfilename), processID, parentProcessID, info);
-        //allChildrenIDs := TStringList.create;
-        //allChildrenIDs.add ( inttoStr(processID));
-
-        if not WaitForReturn and (WaitSecs = 0) then
-          Report := 'Process started:    ' + CmdLinePasStr
-        else
-        begin
-          running := True;
-          starttime := now;
-          WaitWindowStarted := False;
-          {$IFDEF GUI}
-          if waitsecsAsTimeout and (WaitSecs > 5) then
-          begin
-            FBatchOberflaeche.showProgressBar(True);
-            FBatchOberflaeche.setProgress(0);
-          end;
-          {$ENDIF GUI}
-
-          while running do
-          begin
-            nowtime := now;
-
-            running := False;
-
-            if catchout then
-              ReadStream(Buffer, FPCProcess, output, showoutput);
-
-            //wait for task vanished
-            {$IFDEF WINDOWS}
-            if WaitForWindowAppearing then
-            begin
-              //waiting condition 0:
-              //wait until a window is appearing
-              if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
-              begin
-                logdatei.log('Wait for appear Window: "' + Ident +
-                  '" not found.', LLDebug);
-                if WaitSecs = 0 then
-                  running := True
-                else
-                begin //time out given
-                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                  begin
-                    running := True;
-                  end
-                  else
-                  begin
-                    logdatei.log('Wait for appear Window "' + ident +
-                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
-                  end;
-                end;
-              end
-              else
-                logdatei.log('Wait for appear Window: "' + Ident + '" found.', LLDebug);
-            end
-
-            else if WaitForWindowVanished and not WaitWindowStarted then
-            begin
-              //waiting condition 1:
-              //we are waiting for a window that will later vanish
-              //but this window did not appear yet
-              if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
-              begin
-                WaitWindowStarted := True;
-                logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
-              end;
-
-              if not WaitWindowStarted or WaitForWindowVanished then
-                // in case WaitForWindowVanished we are not yet ready
-                // but have to check waiting condition 3
-                if WaitSecs = 0 then
-                  running := True
-                else
-                begin //time out given
-                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                  begin
-                    running := True;
-                  end
-                  else
-                  begin
-                    logdatei.log('Wait for vanish Window "' + ident +
-                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
-                  end;
-                end;
-            end
-
-            else
-           {$ENDIF WINDOWS}
-            if not waitsecsAsTimeout and (WaitSecs > 0) and
-              ((nowtime - starttime) < waitSecs / secsPerDay) then
-            begin
-              // waiting condition 2 : we shall observe a waiting time
-              // and it has not finished
-              running := True;
-            end
-
-            else
-            //{$IFDEF WINDOWS}
-            if WaitForProcessEnding and not desiredProcessStarted then
-            begin
-              //waiting condition 3a : we wait that some other process will come into existence
-              if WaitForProcessEndingLogflag then
-              begin
-                logdatei.log('Waiting for start of "' + ident + '"', LLInfo);
-                WaitForProcessEndingLogflag := False;
-              end;
-              {$IFDEF WINDOWS}
-              desiredProcessStarted :=
-                FindFirstTask(PChar(Ident), processID, parentProcessID, info);
-              {$ELSE}
-              desiredProcessStarted := ProcessIsRunning(Ident);
-              {$ENDIF}
-
-              if WaitSecs = 0 then
-                running := True
-              else
-              begin //time out given
-                if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                begin
-                  running := True;
-                end
-                else
-                begin
-                  logdatei.log('Waiting for "' + ident +
-                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
-                end;
-              end;
-
-            end
-
-            else if WaitForProcessEnding and desiredProcessStarted then
-            begin
-              //waiting condition 3b : now we continue waiting until the observed other process will stop
-              {$IFDEF WINDOWS}
-              running :=
-                FindFirstTask(PChar(Ident), processID, parentProcessID, info);
-              {$ELSE}
-              running := ProcessIsRunning(Ident);
-              {$ENDIF}
-
-
-              if not WaitForProcessEndingLogflag and running then
-              begin
-                logdatei.log('Waiting for process "' + ident +
-                  '" ending', LLinfo);
-                WaitForProcessEndingLogflag := True;
-              end;
-
-              if not running then
-              begin
-                logdatei.log('Process "' + ident + '" ended', LLinfo);
-                // After the process we waited for has ended, the Parent may be still alive
-                // in this case we have to wait for the end of the parent
-                {$IFDEF WINDOWS}
-                if GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode)) and
-                  (lpExitCode = still_active) then
-                begin
-                  running := True;
-                  WaitForProcessEnding := False;
-                end;
-                {$ENDIF WINDOWS}
-                {$IFDEF UNIX}
-                lpExitCode := FpcProcess.ExitCode;
-                if FpcProcess.Running then
-                begin
-                  running := True;
-                  WaitForProcessEnding := False;
-                end
-                else
-                begin
-                  lpExitCode := FpcProcess.ExitCode;
-                  logdatei.log(
-                    'Process : ' + FpcProcess.Executable + ' terminated at: ' +
-                    DateTimeToStr(now) + ' exitcode is: ' +
-                    IntToStr(lpExitCode), LLInfo);
-                end;
-                {$ENDIF LINUX}
-              end;
-              if running then
-              begin
-
-                if (waitSecs > 0) // we look for time out
-                  and  //time out occured
-                  ((nowtime - starttime) >= waitSecs / secsPerDay) then
-                begin
-                  running := False;
-                  logdatei.log('Error: Timeout: Waiting for ending of "' +
-                    ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
-                    ' sec', LLError);
-                end;
-
-              end;
-
-            end
-
-            //else if not FpcProcess.Running
-            //else if GetExitCodeProcess(processInfo.hProcess, lpExitCode) and (lpExitCode <> still_active)
-            //else if FpcProcess.ExitStatus  <> still_active
-            //else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
-            //  (lpExitCode <> still_active) then
-            //{$ENDIF WINDOWS}
-            //{$IFDEF UNIX}
-            else if not FpcProcess.Running then
-              // {$ENDIF UNIX}
-            begin
-              // waiting condition 4 :  Process has finished;
-              //   we still have to look if WindowToVanish did vanish if this is necessary
-              lpExitCode := FpcProcess.ExitCode;
-              logdatei.log(
-                'Process terminated at: ' + DateTimeToStr(now) +
-                ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
-              {$IFDEF WINDOWS}
-              if WaitForWindowVanished then
-              begin
-                if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
-                begin
-                  running := True;
-                end;
-              end;
-              {$ENDIF WINDOWS}
-
-            end
-
-            else if waitForReturn then
-            begin
-              //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
-                and  //time out occured
-                ((nowtime - starttime) >= waitSecs / secsPerDay) then
-              begin
-                running := False;
-                logdatei.log('Error: Timeout: Waited for the end of started process"' +
-                  ' - but time out reached after ' + IntToStr(waitSecs) +
-                  ' sec.', LLError);
-              end
-              else
-              begin
-                running := True;
-              end;
-            end;
-
-            if running then
-            begin
-              //ProcessMess;
-              //sleep(50);
-              //sleep(1000);
-              //sleep(1000);
-              {$IFDEF UNIX}
-              lpExitCode := FpcProcess.ExitCode;
-              {$ENDIF LINUX}
-              {$IFDEF WINDOWS}
-              GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode));
-              {$ENDIF WINDOWS}
-              //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-              {$IFDEF GUI}
-              if waitsecsAsTimeout and (WaitSecs > 5) then
-              begin
-                FBatchOberflaeche.setProgress(round(
-                  ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
-              end;
-              {$ENDIF GUI}
-              //ProcessMess;
-              logdatei.log('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-              ProcessMess;
-            end;
-          end;
-
-          ProcessMess;
-
-          if catchout then
-          begin
-            // read remaining output
-            repeat
-              n := ReadStream(Buffer, FPCProcess, output, showoutput);
-            until n <= 0;
-
-            // add remainder of buffer as last line
-            if Buffer <> '' then
-              output.Add(Buffer);
-          end;
-        end;
-
-        ProcessMess;
-
-        exitCode := FpcProcess.ExitCode;
-        Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
-          CmdLinePasStr + '"';
-      end;
-
-    except
-      on e: Exception do
-      begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp: ' +
-          e.message, LLDebug);
-        Report := 'Could not execute process "' + CmdLinePasStr + '"';
-        exitcode := -1;
-        Result := False;
-      end;
-    end;
-  finally
-    //CloseHandle(ProcessInfo.hProcess);
-    //CloseHandle(processInfo.hThread);
-    ///S.Free;
-    FpcProcess.Free;
-    {$IFDEF GUI}
-    FBatchOberflaeche.showProgressBar(False);
-     {$ENDIF GUI}
-  end;
-end;
-*)
 
 {$IFDEF WIN32}
 function ReadPipe(var Buffer: string; var hReadPipe: THandle;
@@ -3656,7 +3114,6 @@ begin
   end;
 end;
 
-
 function StartProcess_cp_el(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -4089,7 +3546,6 @@ begin
     CloseHandle(hWritePipe);
   end;
 end;
-
 
 function StartProcess_as(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
@@ -5048,37 +4504,7 @@ end;
 
 
 
-
 {$IFDEF WINDOWS}
-(*
-function GetNTVersionMajor: Dword;
-var
-  vi: TOSVersionInfo;
-
-begin
-  Result := 0;
-  vi.dwOSVersionInfoSize := SizeOf(vi);
-  if not GetVersionEx(vi) then
-    raise Exception.Create('Fehler ' + IntToStr(GetLastError) +
-      ' ("' + syserrormessage(GetLastError) + '")')
-  else
-    Result := vi.dwMajorVersion;
-end;
-
-function GetNTVersionMinor: Dword;
-var
-  vi: TOSVersionInfo;
-
-begin
-  Result := 0;
-  vi.dwOSVersionInfoSize := SizeOf(vi);
-  if not GetVersionEx(vi) then
-    raise Exception.Create('Fehler ' + IntToStr(GetLastError) +
-      ' ("' + syserrormessage(GetLastError) + '")')
-  else
-    Result := vi.dwMinorVersion;
-end;
-*)
 
 function GetOSId: DWord;
  (*
@@ -5397,28 +4823,6 @@ begin
   end;
 end;
 
-(* moved to osparser helper
-function opsiunquotestr2(s1,s2 : string): string;
-// removes only quotes if they found at start and end
-// s2 may be two chars long. Then the first char is the start mark
-// and the second char is the end mark
-// used by unquote2
-var
-  markstr ,startmark, endmark : string;
-begin
-  Result := '';
-  markstr := trim(s2);
-  if (length(s1) >= 1) and (length(markstr) >= 1) then
-  begin
-    startmark := markstr[1];
-    if length(markstr) >= 2 then endmark := markstr[2] // different marks (brackets) at begin and end
-    else endmark := startmark; // the same mark (quote) at begin and end
-    if (pos(startmark,s1) = 1) and AnsiEndsStr(endmark,s1) then
-      Result := copy(s1,2,length(s1)-2)
-    else Result := s1;
-  end;
-end;
-*)
 
 function ExpandFileName(const FileName: string): string;
 var
@@ -5500,8 +4904,6 @@ begin
 end;
 
 
-
-
 function runningAsAdmin: boolean;
 begin
   {$IFDEF WIN32}
@@ -5517,7 +4919,6 @@ begin
     Result := True;
   {$ENDIF LINUX}
 end;
-
 
 function getLoggedInUser: string;
 var
@@ -5581,8 +4982,6 @@ begin
 end;
 
 
-
-
 procedure MakeBakFile(const FName: string);
 var
   BakFName: string = '';
@@ -5599,52 +4998,6 @@ begin
 
 end;
 
-(*
-// moved to osfilehelper (do 4.6.2021)
-
-procedure MakeBakFiles(const FName: string; maxbaks: integer);
-var
-  bakcounter: integer;
-  problem: string = '';
-  rebootWanted: boolean;
-  extension: string;
-  basename: string;
-  path: string;
-  newfilename, newbakname: string;
-
-begin
-  path := ExtractFilePath(FName);
-  basename := ExtractFileNameOnly(FName);
-  extension := ExtractFileExt(FName);
-  //if FileExists(FName) then
-  //begin
-  // this is new style (name_num.ext)
-  for bakcounter := maxbaks - 1 downto 0 do
-  begin
-    newfilename := path + PathDelim + basename + '_' +
-      IntToStr(bakcounter) + extension;
-    if FileExists(newfilename) then
-    begin
-      newbakname := path + PathDelim + basename + '_' +
-        IntToStr(bakcounter + 1) + extension;
-      if FileExists(newbakname) then
-        DeleteFileUTF8(newbakname);
-      RenameFileUTF8(newfilename, newbakname);
-      //FileCopy(newfilename, newbakname, problem, False, rebootWanted);
-    end;
-  end;
-  newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
-  if FileExists(newfilename) then
-    DeleteFileUTF8(newfilename);
-  if FileExists(FName) then
-  begin
-    RenameFileUTF8(FName, newfilename);
-    //FileCopy(FName, newfilename, problem, False, rebootWanted);
-    DeleteFileUTF8(FName);
-  end;
-  //end;
-end;
-*)
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
 var
@@ -6054,7 +5407,6 @@ end;
 {$ENDIF WINDOWS}
 
 
-
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
@@ -6382,162 +5734,6 @@ begin
   end;
 end;
 
-(*
-function CutLeftBlanks(const s: string): string;
-begin
-  Result := sysutils.trimleft(s);
-    // while (length(Result) > 0) and ((Result[1] = ' ') or (Result[1] = #9)) do
-    //system.Delete(Result, 1, 1);
-end;
-
-
-function CutRightBlanks(const s: string): string;
-begin
-  Result := sysutils.trimright(s);
-   //  while (length(Result) > 0) and ((Result[length(Result)] = ' ') or
-   //   (Result[length(Result)] = #9)) do
-   // system.Delete(Result, length(Result), 1);
-end;
-*)
-
-(*
-function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
-  // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-  //   liefert true, wenn partialS vorkommt,
-  //   andernfalls false;
-  //   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
-
-var
-  i: integer = 0;
-begin
-  i := ansipos(lowercase(partialS), lowercase(s));
-  if i > 0 then
-  begin
-    part1 := copy(S, 1, i - 1);
-    part2 := copy(S, i + length(partialS), length(S));
-    Result := True;
-  end
-  else
-  begin
-    part1 := s;
-    part2 := '';
-    Result := False;
-  end;
-end;
-
-(*
-moved to osparser helper
-procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
-// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
-var
-  remainder: string = '';
-  item: string = '';
-  //found: boolean;
-begin
-  GetWord(s, item, remainder, WordDelimiterWhiteSpace);
-  Result.add(item);
-  while remainder <> '' do
-  begin
-    GetWord(remainder, item, remainder, WordDelimiterWhiteSpace);
-    Result.add(item);
-  end;
-end;
-*)
-
-(*
-procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
-// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
-
-var
-  remainder: string = '';
-  item: string = '';
-  found: boolean;
-begin
-
-  found := divideAtFirst(delimiter, s, item, remainder);
-
-  while found do
-  begin
-    Result.add(item);
-    found := divideAtFirst(delimiter, remainder, item, remainder);
-  end;
-
-  Result.add(item);
-end;
-*)
-
-(*
-function SkipA(const partialS, S: string; var Remaining: string;
-  var Error: string): boolean;
-  // versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
-  //   wird partialS nicht gefunden, ist Remaining = S
-var
-  p2: string = '';
-begin
-  Remaining := S;
-  if length(S) < length(partialS) then
-    Result := False
-  else
-  begin
-    p2 := copy(AnsiUpperCase(S), 1, length(partialS));
-    if p2 <> AnsiUpperCase(PartialS) then
-      Result := False
-    else
-    begin
-      Remaining := copy(S, length(partialS) + 1, length(S));
-      Result := True;
-    end;
-  end;
-  if Result then
-    Error := ''
-  else
-    Error := '"' + partialS + '" expected ';
-end;
-*)
- (*
-  function Skip (const partialS, S : String; var Remaining : String; var Error : String) : Boolean;
-  // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest;
-  //   wird partialS nicht gefunden, ist Remaining = S
-  begin
-
-    result := SkipA (partialS, S, Remaining, Error);
-    if length (Remaining) < length (S)
-     // partialS was contained in S
-    then
-       Remaining := CutLeftBlanks (Remaining);
-
-  end;
- *)
-
-(*
-function Skip(const partialS, S: string; var Remaining: string;
-  var Error: string): boolean;
-  // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest;
-  //   wird partialS nicht gefunden, ist Remaining = S
-var
-  p2: string = '';
-begin
-  Remaining := S;
-  if length(S) < length(partialS) then
-    Result := False
-  else
-  begin
-    p2 := copy(AnsiUpperCase(S), 1, length(partialS));
-    if p2 <> AnsiUpperCase(PartialS) then
-      Result := False
-    else
-    begin
-      Remaining := copy(S, length(partialS) + 1, length(S));
-      Remaining := CutLeftBlanks(Remaining);
-      Result := True;
-    end;
-  end;
-  if Result then
-    Error := ''
-  else
-    Error := '"' + partialS + '" expected ';
-end;
-*)
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // calls stringsplit from osparserhelper
@@ -6654,93 +5850,6 @@ begin
   Result := p1;
 end;
 
-(*
-procedure GetWord(const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset);
-begin
-  GetWord(s, Expression, Remaining, WordDelimiterSet, false);
-end;
-*)
-(*
-procedure GetWord(const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward :boolean = false);
-     // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
-     // Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
-     // eliminiert wird
-
-var
-  i: integer = 0;
-  t: string = '';
-
-begin
-  if s = '' then
-  begin
-    Expression := '';
-    Remaining := '';
-  end
-  else
-  begin
-    t := s;
-    setLength(t, length(t));
-    if searchbackward then
-    begin
-      i := length(t)+1;
-      while (i >=0) and not (t[i] in WordDelimiterSet) do
-        dec(i);
-      // if nothing found get complete string
-      if i = -1 then i:= length(t);
-    end
-    else
-    begin
-      i := 1;
-      while (i <= length(t)) and not (t[i] in WordDelimiterSet) do
-        Inc(i);
-    end;
-
-    Expression := copy(t, 1, i - 1);
-    Remaining := copy(t, i, length(t) - i + 1);
-    Remaining := CutLeftBlanks(Remaining);
-  end;
-end;
-
-
-procedure GetWord(const s: string; var Expression, Remaining: string;
-  const WordDelimiterString: String; searchbackward :boolean = false);
-      // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
-      // Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
-      // eliminiert wird
-
-var
-  i: integer = 0;
-  t: string = '';
-  tr : string;
-
-begin   // experimental
-  t := s;
-  setLength(t, length(t));
-  if searchbackward then
-  begin
-    tr := ReverseString(s);
-    setLength(tr, length(tr));
-    i := pos(ReverseString(WordDelimiterString),tr);
-    if i > 0 then
-    begin
-      i := length(tr) - i;
-      i := i + length(WordDelimiterString);
-    end;
-  end
-  else
-  begin
-    i := pos(WordDelimiterString,t);
-    i := i + length(WordDelimiterString);
-  end;
-
-  Expression := copy(t, 1, i - 1);
-  Remaining := copy(t, i, length(t) - i + 1);
-  Remaining := CutLeftBlanks(Remaining);
-end;
-*)
-
 
 function GetIdentComponent(const s: string; var Remaining: string): string;
     (* Liefert Teilstring bis zu einem Punkt; die auf den Punkt folgenden Zeichen
@@ -6814,302 +5923,6 @@ end;
 (*
 { TXStringList }
 
-function TXStringList.ReplaceInLine(const OldLine, SearchItem, Replaceitem: string;
-  MatchCase: boolean; var NewLine: string): boolean;
-
-var
-  remainder: string = '';
-  searchline: string = '';
-  searchUItem: string = '';
-  position: integer = 0;
-
-begin
-  remainder := OldLine;
-  NewLine := '';
-  Result := False;
-  if MatchCase then
-  begin
-    SearchLine := Remainder;
-    SearchUItem := SearchItem;
-  end
-  else
-  begin
-    SearchLine := AnsiUpperCase(Remainder);
-    SearchUItem := AnsiUpperCase(SearchItem);
-  end;
-
-  Position := pos(searchUItem, SearchLine);
-  if Position > 0 then
-  begin
-    Result := True;
-
-    while (length(SearchLine) > 0) and (Position > 0) do
-    begin
-      NewLine := NewLine + copy(Remainder, 1, Position - 1) + ReplaceItem;
-
-      system.Delete(SearchLine, 1, Position + length(searchUItem) - 1);
-      system.Delete(Remainder, 1, Position + length(searchUItem) - 1);
-
-      Position := pos(searchUItem, SearchLine);
-    end;
-
-    NewLine := NewLine + Remainder;
-  end;
-
-end;
-
-
-function TXStringList.GlobalReplace
-  (Startline: integer; const SearchItem, Replaceitem: string;
-  MatchCase: boolean): boolean;
-var
-  i: integer = 0;
-  //found: boolean;
-  NewLine: string = '';
-begin
-
-  Result := False;
-
-  for i := Startline to Count do
-    if ReplaceInLine(Strings[i - 1], SearchItem, ReplaceItem, MatchCase, NewLine) then
-    begin
-      Result := True;
-      Delete(i - 1);
-      insert(i - 1, NewLine);
-    end;
-
-end;
-
-procedure TXStringList.EliminateLinesStartingWith(const startS: string;
-  MatchCase: boolean);
-var
-  i: integer = 0;
-  compareS: string = '';
-  lineStart: string = '';
-begin
-
-  i := 0;
-  if not matchCase then
-    compareS := LowerCase(startS)
-  else
-    compareS := startS;
-
-  while i < Count do
-  begin
-
-    lineStart := copy(Strings[i], 1, length(startS));
-
-    if not MatchCase then
-      lineStart := LowerCase(lineStart);
-
-    if lineStart = compareS then
-      Delete(i)
-    else
-      Inc(i);
-
-  end;
-
-end;
-
-
-procedure TXStringList.SaveToFile(const FileName: string);
-begin
-  SaveToFile(Filename, 'system');
-end;
-
-procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
-begin
-  SaveToFile(Filename, encodingtype, False);
-end;
-
-procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string;
-  raise_on_error: boolean);
-var
-  myfile: system.TextFile;
-  i: integer;
-  myfilename, usedenc: string;
-
-begin
-  LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
-  try
-    myfilename := ExpandFileName(FileName);
-    if LowerCase(encodingtype) = 'utf8' then
-    begin
-      //utf-8
-      AssignFile(myfile, myfilename);
-      Rewrite(myfile);
-      LogDatei.log('Will save (utf8) to file: ' + myfilename + ' :', LLDebug2);
-      LogDatei.log('-----------------', LLDebug3);
-      for i := 0 to Count - 1 do
-      begin
-        writeln(myfile, strings[i]);
-        LogDatei.log(strings[i], LLDebug3);
-      end;
-      LogDatei.log('-----------------', LLDebug3);
-      CloseFile(myfile);
-      if LogDatei.UsedLogLevel >= LLDebug3 then
-      begin
-        LogDatei.log('Read file: ' + myfilename + ' :', LLDebug2);
-        LogDatei.log('-----------------', LLDebug3);
-        logdatei.includelogtail(myfilename, Count, 'utf8');
-        LogDatei.log('-----------------', LLDebug3);
-      end;
-    end
-    else
-    begin
-      AssignFile(myfile, myfilename);
-      Rewrite(myfile);
-      LogDatei.log('Will save (' + encodingtype + ') to file: ' +
-        myfilename + ' :', LLDebug2);
-      LogDatei.log('-----------------', LLDebug3);
-      for i := 0 to Count - 1 do
-      begin
-        writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
-        LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
-      end;
-      LogDatei.log('-----------------', LLDebug3);
-      CloseFile(myfile);
-      if LogDatei.UsedLogLevel >= LLDebug3 then
-      begin
-        LogDatei.log('Read file ' + myfilename + ' with encoding: ' +
-          encodingtype, LLDebug2);
-        LogDatei.log('-----------------', LLDebug3);
-        logdatei.includelogtail(myfilename, Count, encodingtype);
-        LogDatei.log('-----------------', LLDebug3);
-      end;
-    end;
-  except
-    on e: Exception do
-    begin
-      if not raise_on_error then
-      begin
-        LogS := e.message;
-        LogS := 'Error: ' + myfilename +
-          ' could not be saved back - will not retry, error message: "' +
-          LogS + '"';
-        LogDatei.log(LogS, LLError);
-      end;
-      if raise_on_error then
-        raise;
-    end;
-  end;
-end;
-
-
-
-function TXStringList.FuncSaveToFile(const FileName: string): boolean;
-begin
-  Result := FuncSaveToFile(FileName, 'system');
-end;
-
-function TXStringList.FuncSaveToFile(const FileName: string;
-  encodingtype: string): boolean;
-var
-  myfilename: string;
-  i: integer;
-begin
-  Result := False;
-  try
-    myfilename := ExpandFileName(FileName);
-    SaveToFile(myfilename, encodingtype, True);
-    LogS := myfilename + ' saved back with encoding: ' + encodingtype;
-    LogDatei.log_prog(LogS, LLDebug);
-    Result := True;
-  except
-    on e: Exception do
-    begin
-      LogS := e.message;
-      LogS := 'Warning: ' + myfilename +
-        ' could not be saved back - will retry, error message: "' + LogS + '"';
-      LogDatei.log_prog(LogS, LLWarning);
-      try
-        Sleep(100);
-        SaveToFile(myfilename, encodingtype, True);
-        LogS := myfilename + ' saved back with encoding: ' + encodingtype;
-        LogDatei.log_prog(LogS, LLDebug);
-        Result := True;
-      except
-        on e: Exception do
-        begin
-          LogS := e.message;
-          LogS := 'Warning: ' + myfilename +
-            ' could not be saved back - will retry, error message: "' + LogS + '"';
-          LogDatei.log_prog(LogS, LLWarning);
-          try
-            Sleep(100);
-            SaveToFile(myfilename, encodingtype, True);
-            LogS := myfilename + ' saved back with encoding: ' + encodingtype;
-            LogDatei.log_prog(LogS, LLDebug);
-            Result := True;
-          except
-            on e: Exception do
-            begin
-              LogS := e.message;
-              LogS := 'Warning: ' + myfilename +
-                ' could not be saved back - will retry, error message: "' + LogS + '"';
-              LogDatei.log_prog(LogS, LLWarning);
-              try
-                Sleep(100);
-                SaveToFile(myfilename, encodingtype, True);
-                LogS := myfilename + ' saved back with encoding: ' + encodingtype;
-                LogDatei.log_prog(LogS, LLDebug);
-                Result := True;
-              except
-                on e: Exception do
-                begin
-                  LogS := e.message;
-                  LogS := 'Warning: ' + myfilename +
-                    ' could not be saved back - will retry, error message: "' +
-                    LogS + '"';
-                  LogDatei.log_prog(LogS, LLWarning);
-                  try
-                    Sleep(100);
-                    SaveToFile(myfilename, encodingtype, True);
-                    LogS := myfilename + ' saved back with encoding: ' + encodingtype;
-                    LogDatei.log_prog(LogS, LLDebug);
-                    Result := True;
-                  except
-                    on e: Exception do
-                    begin
-                      LogS := e.message;
-                      LogS := 'Error: ' + myfilename +
-                        ' could not be saved back - will not retry, error message: "' +
-                        LogS + '"';
-                      LogDatei.log_prog(LogS, LLError);
-                    end;
-                  end;
-                end;
-              end;
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
-
-
-
-function TXStringList.getStringValue(const keyname: string): string;
-var
-  i: integer;
-begin
-  Result := NULL_STRING_VALUE;
-  if indexOfName(keyname) <> -1 then
-    // the fast way:
-    Result := trim(values[keyname])
-  else
-  begin
-    // let us retry with trimed keys
-    for i := 0 to Count - 1 do
-    begin
-      if Names[i] <> '' then
-        if lowerCase(trim(Names[i])) = lowerCase(trim(keyname)) then
-          Result := trim(values[Names[i]]);
-    end;
-  end;
-end;
-
 
 {:Converts Unicode string to Ansi string using specified code page.
   @param   ws       Unicode string.
@@ -7160,14 +5973,6 @@ begin
   end;
 end; { StringToWideString }
 
-*)
-
-(*
-procedure TXStringlist.loadFromUnicodeFile(const Filename: string; codepage: word);
-begin
-  LoadFromFile(ExpandFileName(Filename));
-  Text := reencode(Text, 'ucs2be');
-end;
 *)
 
 (* TPatchList *)
@@ -7409,7 +6214,6 @@ end;
 
 (* TuibIniScript *)
 
-
 function IsHeaderLine(const s: string): boolean;
 var
   TestS: string = '';
@@ -7420,7 +6224,6 @@ begin
   else
     IsHeaderLine := False;
 end;
-
 
 function TuibIniScript.FindEndOfSectionIndex(const OffLine: integer): integer;
   // we assume that the section end below the line withe the index = offline
@@ -7481,7 +6284,6 @@ begin
   end;
 end;
 
-
 function TuibIniScript.FindSectionheaderIndex(const Sectionname: string): integer;
 var
   found: boolean;
@@ -7540,7 +6342,6 @@ begin
       resultlist.add(copy(s, 2, length(s) - 2));
   end;
 end;
-
 
 function TuibIniScript.GetSectionLines
   (const Sectionname: string; var Resultlist: TXStringList;
@@ -7646,7 +6447,6 @@ begin
   inherited Create;
 end;
 
-
 destructor TuibPatchIniFile.Destroy;
 begin
   inherited Destroy;
@@ -7743,7 +6543,6 @@ begin
   end;
 
 end;
-
 
 function TuibPatchIniFile.FindValueIndex(const Sectionname, Value: string): integer;
 var
@@ -8344,7 +7143,6 @@ begin
 
 end;
 
-
 destructor TuibIniFile.Destroy;
 begin
   inherited Destroy;
@@ -8366,7 +7164,6 @@ begin
   SectionVars.Assign(resultlist);
   resultList.Free;
 end;
-
 
 procedure TuibIniFile.ReadSectionValues(const Sectionname: string;
   var SectionValues: TStringList);
@@ -8398,7 +7195,6 @@ begin
 
   resultList.Free;
 end;
-
 
 procedure TuibIniFile.ReadRawSection(const SectionName: string;
   var RawSection: TXStringList);
@@ -8440,7 +7236,6 @@ begin
   RawSection.Assign(resultList);
   resultList.Free;
 end;
-
 
 function TuibIniFile.ReadString(const Section, Ident, defaultvalue: string): string;
 var
@@ -8517,7 +7312,6 @@ begin
   setEntry(section, Ident + '=' + Value);
   saved := False;
 end;
-
 
 procedure TuibIniFile.saveBack;
 var
@@ -8713,7 +7507,6 @@ begin
   LogDatei.DependentAdd(LogS, LevelComplete);
 end;
 
-
 procedure TuibPatchHostsFile.SetName(const ipAddress, Hostname: string);
   (* setzt den Namen des Hosts mit der angegebenen IP-Adresse  <ipadresse> auf <hostname>.
      Falls noch kein Eintrag mit der IP-Adresse <ipadresse> existiert,
@@ -8737,7 +7530,6 @@ begin
 
   LogDatei.DependentAdd(LogS, LevelComplete);
 end;
-
 
 procedure TuibPatchHostsFile.SetAlias(const Ident, Alias: string);
    (* fuegt fuer den Host, identifiziert durch <Ident>, wobei
@@ -9011,7 +7803,6 @@ begin
 
 end;
 
-
 function TuibFileInstall.SymLink(existingfilename, newfilename: string): boolean;
 var
   exitcode: integer;
@@ -9243,6 +8034,122 @@ begin
     Result := True
   else
     Result := False;
+end;
+
+function TuibFileInstall.calcMode(mode: string; const FileName: string): string;
+var
+  info : Stat;
+  stMode, aux: Cardinal;
+  i, posSym : integer;
+  inputMode, rwxPart, existingMode, existingOctalMode, resultMode : string;
+  octalPart : char ;
+begin
+  try
+  // 1- Extracting the existing Mode in the input File
+  existingMode :='';
+  //existingOctalMode := '-';
+
+  // fpStat gets information about the file specified with its path,
+  // and stores it in Info, of type Stat
+  // Docu : https://www.freepascal.org/docs-html/rtl/baseunix/fpstat.html
+  if fpStat (FileName, info) <> 0 then
+     begin
+       LogDatei.log('fpStat failed : ', LLError);
+       halt (1);
+     end
+  else
+     begin
+      // Info is a Stat record of a given file
+      // info.st_mode returns the existing mode within a file
+      stMode := info.st_mode;
+      aux := stMode;
+      // converting info.st_mode to octal format
+      for i:=0 to 2 do
+      begin
+        existingMode :=chr((aux and $7)+$30)+existingMode;
+        aux:=aux shr 3;
+      end;
+     end;
+  (* // converting the octal-mode format to the rwx-mode format
+  i := 1;
+  repeat
+    if existingOctalMode[i] = '7' then existingOctalMode := existingOctalMode+ 'rwx' ;
+    if existingOctalMode[i] = '6' then existingOctalMode := existingOctalMode+ 'rw-' ;
+    if existingOctalMode[i] = '5' then existingOctalMode := existingOctalMode+ 'r-x' ;
+    if existingOctalMode[i] = '4' then existingOctalMode := existingOctalMode+ 'r--' ;
+    if existingOctalMode[i] = '3' then existingOctalMode := existingOctalMode+ '-wx' ;
+    if existingOctalMode[i] = '2' then existingOctalMode := existingOctalMode+ '-w-';
+    if existingOctalMode[i] = '1' then existingOctalMode := existingOctalMode+ '--x';
+    if existingOctalMode[i] = '0' then existingOctalMode := existingOctalMode+ '---' ;
+    i:= i+1;
+  until j> length(existingMode);
+  *)
+
+  //Writeln('existingMode : ' + existingMode);
+
+  // 2- Formatting the input Mode
+  inputMode := '   ';
+  //SetLength(inputMode, 3) ;
+
+  posSym := max(pos('=',mode), pos('+',mode)) ;
+  posSym := max(posSym, pos('-',mode)) ;
+
+  rwxPart := copy(mode, posSym+1, length(mode));
+
+  if rwxPart = 'rwx' then octalPart := '7' ;
+  if rwxPart = 'rw'  then octalPart := '6' ;
+  if rwxPart = 'rx'  then octalPart := '5' ;
+  if rwxPart = 'r'   then octalPart := '4' ;
+  if rwxPart = 'wx'  then octalPart := '3' ;
+  if rwxPart = 'w'   then octalPart := '2' ;
+  if rwxPart = 'x'   then octalPart := '1' ;
+  if rwxPart = ''    then octalPart := '0' ;
+
+ if pos('u',mode) = 0 then
+    inputMode[1] := '0'
+ else
+    inputMode[1] := octalPart;
+
+ if pos('g',mode) = 0 then
+    inputMode[2] := '0'
+ else
+    inputMode[2] := octalPart;
+
+ if pos('o',mode) = 0 then
+    inputMode[3] := '0'
+ else
+    inputMode[3] := octalPart;
+
+ //Writeln('inputMode : ' + inputMode);
+
+  // 3- Calculating the resulting Mode
+  resultMode := '   ';
+  //SetLength(resultMode, 3) ;
+
+  if pos('=',mode) > 0 then
+       resultMode := inputMode;
+
+  if pos('+',mode) > 0 then
+    for i:= 1 to 3 do
+        // "+" operation is equivalent to a bitwise OR
+        resultMode[i] := IntToSTr( (StrToInt(existingMode[i])) or (StrToInt(inputMode[i])) )[1];
+
+  if pos('-',mode) > 0 then
+    for i:= 1 to 3 do
+        // "-" operation is equivalent to a bitwise XAND
+        resultMode[i] := IntToSTr( (StrToInt(existingMode[i])) and (not(StrToInt(inputMode[i]))) )[1];
+
+  //Writeln('resultMode : ' +resultMode);
+
+  Result := trim(resultMode);
+
+  except
+    on E: Exception do
+    begin
+      LogDatei.log('Exception: Failed to caculate mode : ' + mode
+         + ' for: ' + FileName + ': ' + E.message, LLError);
+    end;
+  end;
 end;
 
 {$ENDIF LINUX}
@@ -9917,7 +8824,6 @@ begin
     end
   end;
 end;
-
 
 
 procedure TuibFileInstall.AllCopy(const SourceMask, Target: string;
@@ -11011,7 +9917,6 @@ begin
   Result := ChangeFileExt(fname, Ext);
 end;
 
-
 function ProduceSourceMask(const fname: string): string;
 var
   Ext: string = '';
@@ -11338,7 +10243,6 @@ begin
 
 end;
 
-
 function GetPLine(s: PChar; var Line: PChar; var s1: PChar): boolean;
 var
   i, n: cardinal;
@@ -11376,7 +10280,6 @@ begin
     end;
   end;
 end;
-
 
 function DeleteCitationmarks(var s: string): string;
 begin
@@ -11641,7 +10544,6 @@ begin
 end;
 
 
-
 function TuibShellLinks.ShowShellFolderWindow: boolean;
 var
   report: string = '';
@@ -11713,7 +10615,6 @@ begin
     end;
   end;
 end;
-
 
 function TuibShellLinks.DeleteShellFolder
   (const SystemFolder: integer; const foldername: string): boolean;
