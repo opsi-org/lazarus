@@ -355,12 +355,12 @@ type
 
 
     procedure parsePowershellCall(var Command: string; AccessString: string;
-      var HandlePolicy: string; var Option: string;
-      var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool:boolean);
-    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
-      var FaktScriptLineNumber: int64; var Sektion: TWorksection;
-      SectionSpecifier: TSectionSpecifier; const call: string;
-      const NewFunction: boolean): TStringList;
+      var HandlePolicy: string; var Option: string; var Remaining: string;
+      var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+    function GetContentOfDefinedFunction(var ReadingSuccessful: boolean;
+      var linecounter: integer; var FaktScriptLineNumber: int64;
+      var Sektion: TWorksection; SectionSpecifier: TSectionSpecifier;
+      const call: string; const NewFunction: boolean): TStringList;
   protected
     function getVarValues: TStringList; //nicht verwendet
 
@@ -416,7 +416,8 @@ type
     (* set script variables, analyze and evaluate expressions *)
     function SetStringListVariable(const section: TuibIniScript;
       var Remaining: string; var r: string; const VarName: string;
-      var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+      var funcindex: integer; var InfoSyntaxError: string;
+      var NestLevel: integer): boolean;
     function SetStringVariable(var Remaining: string; var r: string;
       const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
       var NestLevel: integer): boolean;
@@ -1783,8 +1784,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -3202,8 +3204,8 @@ var
 
       end;
 
-        if syntaxcheck then
-          Inc(i);
+      if syntaxcheck then
+        Inc(i);
 
       if not syntaxCheck then
         reportError(Sektion, i, Sektion.strings[i - 1], errorinfo);
@@ -3544,8 +3546,8 @@ var
 
     for i := 1 to workingSection.Count do
     begin
-      if (workingSection.strings[i - 1] = '') or (workingSection.strings[i - 1]
-        [1] = LineIsCommentChar) then
+      if (workingSection.strings[i - 1] = '') or
+        (workingSection.strings[i - 1]  [1] = LineIsCommentChar) then
       (* continue *)
       else
       begin
@@ -5569,7 +5571,8 @@ begin
 
         else if LowerCase(Expressionstr) = 'supp' then
         begin
-          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator,
+            field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.SupplementItems(Separator, field, Value)
           else
@@ -5578,7 +5581,8 @@ begin
 
         else if LowerCase(Expressionstr) = LowerCase('deleteListEntries') then
         begin
-          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator,
+            field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.DeleteListEntries(Separator, field, Value)
           else
@@ -8873,7 +8877,7 @@ var
           mode := Expressionstr;
           mode := opsiUnquoteStr(mode, '"');
           mode := opsiUnquoteStr(mode, '''');
-          LogDatei.log('Input Mode : ' + mode , LLInfo);
+          LogDatei.log('Input Mode : ' + mode, LLInfo);
 
           if mode = '' then
           begin
@@ -8882,38 +8886,38 @@ var
           end;
           try
             mode := DelSpace(mode);
-            if TryStrToInt(mode, dummyint) = false then
-               begin
-                 strmode := '';
-                 if (mode[1] = '-') and (length(mode) = 10) then
-                     begin
-                       mode := copy(mode,2,length(mode)-1);
-                       if (length(mode) = 9) then
-                         begin
-                           j := 1;
-                           repeat
-                            rwxPart := mode[j]+mode[j+1]+mode[j+2];
-                            //LogDatei.log('rwxPart : ' + rwxPart, LLInfo);
-                            if rwxPart = 'rwx' then strmode := strmode+'7' ;
-                            if rwxPart = 'rw-' then strmode := strmode+'6' ;
-                            if rwxPart = 'r-x' then strmode := strmode+'5' ;
-                            if rwxPart = 'r--' then strmode := strmode+'4' ;
-                            if rwxPart = '-wx' then strmode := strmode+'3' ;
-                            if rwxPart = '-w-' then strmode := strmode+'2' ;
-                            if rwxPart = '--x' then strmode := strmode+'1' ;
-                            if rwxPart = '---' then strmode := strmode+'0' ;
-                            j:= j+3;
-                           until j> length(mode);
-                           dummyint := StrToInt(strmode);
-                         end;
-                     end
-                 else if (mode[1] = 'u') or (mode[1] = 'g') or (mode[1] = 'o') then
-                     begin
-                        strmode := 'UGOformat';
-                     end
-                 else
-                   errorinfo := errorinfo + ' Invalid string for mode in chmod';
-               end
+            if TryStrToInt(mode, dummyint) = False then
+            begin
+              strmode := '';
+              if (mode[1] = '-') and (length(mode) = 10) then
+              begin
+                mode := copy(mode, 2, length(mode) - 1);
+                if (length(mode) = 9) then
+                begin
+                  j := 1;
+                  repeat
+                    rwxPart := mode[j] + mode[j + 1] + mode[j + 2];
+                    //LogDatei.log('rwxPart : ' + rwxPart, LLInfo);
+                    if rwxPart = 'rwx' then strmode := strmode + '7';
+                    if rwxPart = 'rw-' then strmode := strmode + '6';
+                    if rwxPart = 'r-x' then strmode := strmode + '5';
+                    if rwxPart = 'r--' then strmode := strmode + '4';
+                    if rwxPart = '-wx' then strmode := strmode + '3';
+                    if rwxPart = '-w-' then strmode := strmode + '2';
+                    if rwxPart = '--x' then strmode := strmode + '1';
+                    if rwxPart = '---' then strmode := strmode + '0';
+                    j := j + 3;
+                  until j > length(mode);
+                  dummyint := StrToInt(strmode);
+                end;
+              end
+              else if (mode[1] = 'u') or (mode[1] = 'g') or (mode[1] = 'o') then
+              begin
+                strmode := 'UGOformat';
+              end
+              else
+                errorinfo := errorinfo + ' Invalid string for mode in chmod';
+            end
             else
             begin
               dummyint := StrToInt(mode);
@@ -8924,7 +8928,7 @@ var
             errorinfo := errorinfo + ' Invalid string for mode in chmod';
           end;
 
-          LogDatei.log('Mode-format detected : ' + strmode , LLInfo);
+          LogDatei.log('Mode-format detected : ' + strmode, LLInfo);
 
           if not GetString(Remaining, Expressionstr, Remaining, errorinfo, False)
           then
@@ -8941,45 +8945,50 @@ var
           // (with the consequence of deleting files that have the first part as name)
 
           if RightStr(Expressionstr, 12) = '/AllSubFiles' then
-             begin
-               Expressionstr := copy(Expressionstr, 0, length(Expressionstr)-13);
-               //LogDatei.log('Parameter found, Directory retrieved : ' + expressionstr , LLInfo);
-               if isDirectory(Expressionstr) then
-                  begin
-                    Source := Expressionstr;
-                    LogDatei.log('Input Source - Directory : ' + Source , LLInfo);
-                  end
-               else
-                  LogDatei.log('Failed to chmod: ' + Source + ' to mode: '
-                              + strmode + ' : Directory is incorrect', LLerror);
+          begin
+            Expressionstr := copy(Expressionstr, 0, length(Expressionstr) - 13);
+            //LogDatei.log('Parameter found, Directory retrieved : ' + expressionstr , LLInfo);
+            if isDirectory(Expressionstr) then
+            begin
+              Source := Expressionstr;
+              LogDatei.log('Input Source - Directory : ' + Source, LLInfo);
+            end
+            else
+              LogDatei.log('Failed to chmod: ' + Source +
+                ' to mode: ' + strmode +
+                ' : Directory is incorrect', LLerror);
 
-               if SyntaxCheck then
-               begin
-                 AllFiles := FindAllFiles(Source, '*.*', true);
-                 for j := 0 to AllFiles.Count-1 do
-                  begin
-                  LogDatei.log('we try to chmod: ' + AllFiles[j] + ' to mode: ' + strmode, LLDebug2);
+            if SyntaxCheck then
+            begin
+              AllFiles := FindAllFiles(Source, '*.*', True);
+              for j := 0 to AllFiles.Count - 1 do
+              begin
+                LogDatei.log('we try to chmod: ' + AllFiles[j] +
+                  ' to mode: ' + strmode, LLDebug2);
 
-                  if strmode = 'UGOformat' then
-                  begin
-                    try
-                      strmode := Install.calcMode(mode, AllFiles[j]);
-                    except
-                      on E: Exception do
-                      begin
-                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + AllFiles[j]
-                           + ' from mode: ' + mode + ' : ' + E.message, LLError);
-                      end;
+                if strmode = 'UGOformat' then
+                begin
+                  try
+                    strmode := Install.calcMode(mode, AllFiles[j]);
+                  except
+                    on E: Exception do
+                    begin
+                      LogDatei.log('Exception: Failed to caculate the new mode for: ' +
+                        AllFiles[j] + ' from mode: ' + mode +
+                        ' : ' + E.message, LLError);
                     end;
                   end;
+                end;
 
-                  if not Install.chmod(strmode, AllFiles[j]) then
-                      LogDatei.log('Failed to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLerror)
-                  else
-                      LogDatei.log('Succeeded to chmod for : ' + AllFiles[j] + ' to mode: ' + strmode, LLInfo);
-                  end;
-               end;
-             end
+                if not Install.chmod(strmode, AllFiles[j]) then
+                  LogDatei.log('Failed to chmod for : ' + AllFiles[j] +
+                    ' to mode: ' + strmode, LLerror)
+                else
+                  LogDatei.log('Succeeded to chmod for : ' +
+                    AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+              end;
+            end;
+          end
           else
           begin
             if isAbsoluteFileName(Expressionstr) then
@@ -8988,30 +8997,34 @@ var
               Source := SourceDirectory + Expressionstr;
 
             Source := ExpandFileName(Source);
-            LogDatei.log('Input Source - File : ' + Source , LLInfo);
+            LogDatei.log('Input Source - File : ' + Source, LLInfo);
 
             if SyntaxCheck then
-               begin
-                 LogDatei.log('we try to chmod: ' + Source + ' to mode: ' + strmode, LLDebug2);
+            begin
+              LogDatei.log('we try to chmod: ' + Source + ' to mode: ' +
+                strmode, LLDebug2);
 
-                 if strmode = 'UGOformat' then
+              if strmode = 'UGOformat' then
+              begin
+                try
+                  strmode := Install.calcMode(mode, Source);
+                except
+                  on E: Exception do
                   begin
-                    try
-                      strmode := Install.calcMode(mode, Source);
-                    except
-                      on E: Exception do
-                      begin
-                        LogDatei.log('Exception: Failed to caculate the new mode for: ' + Source
-                             + ' from mode: ' + mode + ' : ' + E.message, LLError);
-                      end;
-                    end;
+                    LogDatei.log('Exception: Failed to caculate the new mode for: ' +
+                      Source + ' from mode: ' + mode + ' : ' +
+                      E.message, LLError);
                   end;
+                end;
+              end;
 
-                 if not Install.chmod(strmode, Source) then
-                    LogDatei.log('Failed to chmod: ' + Source + ' to mode: ' + strmode, LLerror)
-                 else
-                    LogDatei.log('Succeeded to chmod for : ' + Source + ' to mode: ' + strmode, LLInfo);
-                 end;
+              if not Install.chmod(strmode, Source) then
+                LogDatei.log('Failed to chmod: ' + Source +
+                  ' to mode: ' + strmode, LLerror)
+              else
+                LogDatei.log('Succeeded to chmod for : ' + Source +
+                  ' to mode: ' + strmode, LLInfo);
+            end;
           end;
 
         end
@@ -9508,7 +9521,8 @@ begin
       presetdirectory := ProfileList.Strings[pc];
       if DirectoryExistsUTF8(presetdirectory + PathDelim) then
       begin
-        logdatei.log(' Make it for user directory: ' + presetdirectory + PathDelim, LLInfo);
+        logdatei.log(' Make it for user directory: ' + presetdirectory +
+          PathDelim, LLInfo);
         fileActionsMain(Sektion, presetDirectory);
       end;
     end;
@@ -10930,8 +10944,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -14088,8 +14102,8 @@ begin
             if not testSyntax then
             begin
               list.add(s1);
-              logdatei.log_prog('createStringList: add: ' + s1 + ' to: ' +
-                list.Text, LLDebug);
+              logdatei.log_prog('createStringList: add: ' + s1 +
+                ' to: ' + list.Text, LLDebug);
             end;
             if length(r) = 0 then
             begin
@@ -16591,13 +16605,11 @@ begin
                 stringresult + '<',
                 LLDebug2);
             except
-              LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
+              LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
             end;
           except
-            LogDatei.log('Error: ' + s3 + ' has no Integer format', LLerror)
+            LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
           end;
-        except
-          LogDatei.log('Error: ' + s2 + ' has no Integer format', LLerror)
         end;
       end;
       if not syntaxCheck then
@@ -16755,24 +16767,27 @@ begin
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
-    parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
-    if syntaxCheck then
-    begin
-      try
-        execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
-        StringResult := IntToStr(FLastExitCodeOfExe);
-      except
-        on e: Exception do
+      parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
+      if syntaxCheck then
+        if not testSyntax then
         begin
           try
-            execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+            execPowershellCall(s1, s2, 0, True, False, tmpbool, s4);
             StringResult := IntToStr(FLastExitCodeOfExe);
           except
             on e: Exception do
             begin
-              LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
-                LLError);
-            end
+              try
+                execPowershellCall(s1, s2, 0, True, False, tmpbool1, s4);
+                StringResult := IntToStr(FLastExitCodeOfExe);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
+                    LLError);
+                end
+              end;
+            end;
           end;
         end;
    {$ENDIF WINDOWS}
@@ -16825,8 +16840,8 @@ begin
               end;
             end;
           except
-            LogDatei.log('Error: boolToString: string expression "' + s1 +
-              '" has no boolean value', LLDebug2);
+            LogDatei.log('Error: boolToString: string expression "' +
+              s1 + '" has no boolean value', LLDebug2);
             StringResult := '';
           end;
         end;
@@ -16855,8 +16870,8 @@ begin
           else
           begin
             // EvaluateBoolean = false
-            LogDatei.log('Error: boolToString: string expression "' + r +
-              '" has no boolean value', LLError);
+            LogDatei.log('Error: boolToString: string expression "' +
+              r + '" has no boolean value', LLError);
             StringResult := '';
           end;
         end;
@@ -19130,7 +19145,7 @@ var
   s2: string = '';
   s3: string = '';
   syntaxcheck: boolean;
-  noRuntimError: boolean = true;
+  noRuntimError: boolean = True;
   FileRecord: TUnicodeSearchRec;
   RunTimeInfo: string = '';
   BooleanResult0: boolean;
@@ -20767,7 +20782,7 @@ begin
               if not testSyntax then
               begin
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-                noRuntimError := true;
+                noRuntimError := True;
 
                 einheit := 1;
                 j := pos('kb', lowercase(s2));
@@ -20792,7 +20807,7 @@ begin
                     requiredbytes := strtoint64(s2);
                   except
                     RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    noRuntimError := false;
+                    noRuntimError := False;
                   end
                 else
                   try
@@ -20801,16 +20816,17 @@ begin
                     requiredbytes := requiredbytes * einheit;
                   except
                     RunTimeInfo := '"' + s2 + '" is not a valid number"';
-                    noRuntimError := false;
+                    noRuntimError := False;
                   end;
 
-                if syntaxCheck and noRuntimError then // parse s1 in order to get the drive char
+                if syntaxCheck and noRuntimError then
+                  // parse s1 in order to get the drive char
                 begin
                   if (length(s1) = 2) and (s1[2] = ':') then
                     drivenumber := Ord(uppercase(s1)[1]) - Ord('A') + 1
                   else
                   begin
-                    noRuntimError := false;
+                    noRuntimError := False;
                     RunTimeInfo := '"' + s1 + '" is not a valid drive"';
                   end;
                 end;
@@ -20840,9 +20856,9 @@ begin
                 end;
 
                 if noRuntimError then
-                LogDatei.log(RunTimeInfo, LLInfo)
+                  LogDatei.log(RunTimeInfo, LLInfo)
                 else
-                LogDatei.log(RunTimeInfo, LLError);
+                  LogDatei.log(RunTimeInfo, LLError);
 
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
               end;
@@ -21126,20 +21142,20 @@ begin
   Result := False;
   if produceStringList(section, r, Remaining, list, InfoSyntaxError,
     Nestlevel, inDefFuncIndex) then
-  if isVisibleLocalVar(VarName, funcindex) then
-  begin
-    // local var
-    Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
-  end
-  else
-  begin
-    try
-      VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-      ContentOfStringLists.Items[VarIndex] := list;
-      Result := True;
-    except
+    if isVisibleLocalVar(VarName, funcindex) then
+    begin
+      // local var
+      Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
+    end
+    else
+    begin
+      try
+        VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
+        ContentOfStringLists.Items[VarIndex] := list;
+        Result := True;
+      except
+      end;
     end;
-  end;
   if Result then
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -21149,36 +21165,36 @@ begin
   end;
 end;
 
-function TuibInstScript.SetStringVariable(var Remaining: string; var r: string;
-  const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
-  var NestLevel: integer): boolean;
+function TuibInstScript.SetStringVariable(var Remaining: string;
+  var r: string; const VarName: string; var funcindex: integer;
+  var InfoSyntaxError: string; var NestLevel: integer): boolean;
 var
   VarValue: string = '';
   VarIndex: integer = 0;
 begin
   Result := False;
-  if EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
-    Nestlevel, inDefFuncIndex) then
-  if isVisibleLocalVar(VarName, funcindex) then
-  begin
-    // local var
-    Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
-  end
-  else
-  begin
-    try
-      VarIndex := VarList.IndexOf(LowerCase(VarName));
-      ValuesList[VarIndex] := VarValue;
-      Result := True;
-    except
+  if EvaluateString(r, Remaining, VarValue, InfoSyntaxError, Nestlevel,
+    inDefFuncIndex) then
+    if isVisibleLocalVar(VarName, funcindex) then
+    begin
+      // local var
+      Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
+    end
+    else
+    begin
+      try
+        VarIndex := VarList.IndexOf(LowerCase(VarName));
+        ValuesList[VarIndex] := VarValue;
+        Result := True;
+      except
+      end;
     end;
-  end;
   if Result then
   begin
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  LogDatei.log ('The value of the variable "' + Varname + '" is now: "' +
-    VarValue + '"', LLInfo);
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    LogDatei.log('The value of the variable "' + Varname + '" is now: "' +
+      VarValue + '"', LLInfo);
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
   end;
 end;
 
@@ -21228,14 +21244,14 @@ begin
     begin
       if isStringlistVar(Varname) then
       begin
-        Result := SetStringListVariable(section, Remaining, r, VarName, funcindex,
-           InfoSyntaxError, NestLevel);
+        Result := SetStringListVariable(section, Remaining, r, VarName,
+          funcindex, InfoSyntaxError, NestLevel);
       end
       else
       begin
         if isStringVar(varname) then
           Result := SetStringVariable(Remaining, r, VarName, funcindex,
-           InfoSyntaxError, NestLevel)
+            InfoSyntaxError, NestLevel)
         else
           InfoSyntaxError := 'Unknown variable name: ' + VarName;
       end;
@@ -21599,9 +21615,10 @@ begin
   end;
 end;
 
-procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
-  var Option: string; var Remaining: string; var syntaxCheck: boolean;
-  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+procedure TuibInstScript.parsePowershellCall(var Command: string;
+  AccessString: string; var HandlePolicy: string; var Option: string;
+  var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string;
+  out HandlePolicyBool: boolean);
 begin
   Command := '';
   AccessString := '';
@@ -21620,10 +21637,10 @@ begin
       //get second parameter (access string)
       if EvaluateString(Remaining, Remaining, AccessString, InfoSyntaxError) then
       begin
-        if (lowercase(AccessString) = '32bit') or (lowercase(AccessString) = '64bit')
-          or (lowercase(AccessString) = 'sysnative')
+        if (lowercase(AccessString) = '32bit') or
+          (lowercase(AccessString) = '64bit') or (lowercase(AccessString) = 'sysnative')
         then
-          Syntaxcheck := true
+          Syntaxcheck := True
         else
         begin
           InfoSyntaxError := 'Error: unknown parameter: ' + AccessString +
@@ -21631,7 +21648,8 @@ begin
           syntaxCheck := False;
         end;
       end
-      else SyntaxCheck := false;
+      else
+        SyntaxCheck := False;
       //third parameter (handle execution policy)
       if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxerror) then
       begin
@@ -21639,7 +21657,7 @@ begin
         begin
           if TryStrToBool(HandlePolicy, HandlePolicyBool) then
           begin
-             syntaxCheck := True;
+            syntaxCheck := True;
           end
           else
           begin
@@ -21648,11 +21666,12 @@ begin
               'Error: boolean string (true/false) expected but got: ' + HandlePolicy;
           end;
         end
-        else SyntaxCheck := false;
+        else
+          SyntaxCheck := False;
         //fourth parameter (optionstr)
         if SyntaxCheck and Skip(',', Remaining, Remaining, InfoSyntaxError) then
         begin
-           syntaxCheck := EvaluateString(Remaining, Remaining, Option, InfoSyntaxError);
+          syntaxCheck := EvaluateString(Remaining, Remaining, Option, InfoSyntaxError);
         end;
       end;
     end;
@@ -21667,8 +21686,7 @@ procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
   var Remaining: string; const Expressionstr: string; linecounter: integer;
   var InfoSyntaxError: string; var NestLevel: integer);
 begin
-  if doSetVar(sektion, Expressionstr, Remaining,
-     InfoSyntaxError, NestLevel) then
+  if doSetVar(sektion, Expressionstr, Remaining, InfoSyntaxError, NestLevel) then
   begin
     if Remaining <> '' then
       reportError(Sektion, linecounter, Remaining, 'Remaining char(s) not allowed here');
@@ -21677,7 +21695,8 @@ begin
     reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
 end;
 
-function TuibInstScript.CheckDirectVariableInitialization(const Remaining: string): boolean;
+function TuibInstScript.CheckDirectVariableInitialization(
+  const Remaining: string): boolean;
 begin
   Result := False;
   if Remaining <> '' then
@@ -23091,11 +23110,11 @@ begin
                     begin
                       if p2 <> '' then
                       begin
-                         reportError(Sektion, linecounter, p2,
-                         'Remaining char(s) not allowed here');
+                        reportError(Sektion, linecounter, p2,
+                          'Remaining char(s) not allowed here');
                       end
                       else
-                         syntaxCheck := True;
+                        syntaxCheck := True;
                       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                     end
                     else
@@ -24190,10 +24209,14 @@ begin
                   else
                   begin
                     //reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
-                    LogDatei.log('Invalid Syntax in Comment. Please correct this error as soon as possible '
-                      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
-                      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
-                      + '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
+                    LogDatei.log(
+                      'Invalid Syntax in Comment. Please correct this error as soon as possible '
+                      +
+                      'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
+                      +
+                      Sektion.Name + ' (Command in line ' +
+                      IntToStr(Sektion.StartLineNo + linecounter) +
+                      '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
                     Inc(FNumberOfErrors);
                   end;
                 end;
@@ -24212,7 +24235,6 @@ begin
                   Parameter, InfoSyntaxError) then
                   syntaxCheck := True;
                 if syntaxCheck and not testSyntax then
-                begin
                 begin
                   LogDatei.log('set ActionProgress to: ' + Parameter, LLInfo);
                   opsidata.setActionProgress(Parameter);
@@ -24360,7 +24382,8 @@ begin
                   LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
-                parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck, InfoSyntaxError, tmpbool);
+                parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck,
+                  InfoSyntaxError, tmpbool);
                 if syntaxCheck and not testSyntax then
                 begin
                   try
@@ -25869,7 +25892,8 @@ begin
                 end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
-                    linecounter, InfoSyntaxError, NestLevel);;
+                    linecounter, InfoSyntaxError, NestLevel);
+                ;
               end;
 
               tsDefineStringList:
@@ -25935,7 +25959,8 @@ begin
                   FreeAndNil(tmplist);
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
-                    linecounter, InfoSyntaxError, NestLevel);;
+                    linecounter, InfoSyntaxError, NestLevel);
+                ;
               end;
 
               tsDefineFunction:
