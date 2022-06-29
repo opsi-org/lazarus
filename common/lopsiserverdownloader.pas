@@ -15,9 +15,14 @@ type
     FDownloadResult: boolean;
     FLOSSearch: TSearchRec;
     FDistrInfo: TDistributionInfo;
-    FLOSVersion: string;
+    FDownloadedLOSVersion: string;
+    FDefaultLOSVersion: string;
     FDownloadedLOSFolder: string;
     FLOSCommand: TRunCommandElevated;
+    procedure InstallDownloadPackage;
+    procedure InstallExtractionPackages;
+    procedure ReadDownloadedLOSVersion;
+    procedure ReadDefaultLOSVersion;
   public
     Output: string;
   const
@@ -27,9 +32,9 @@ type
       DistrInfo: TDistributionInfo); overload;
     procedure ExtractFile(fileName: string);
     procedure CheckOutputForError;
-    procedure InstallRequiredPackages;
     procedure DownloadLOSFromUib;
-    procedure ReadDownloadedLOSVersion;
+    procedure RemoveDownloadedLOSPackage;
+    function AreLOSVersionsEqual: boolean;
     procedure RemoveOldDownloadedLOS;
     procedure CreateNewLOSFolderDir;
     procedure MoveLOSOpsiPackageToCurrentDir;
@@ -81,17 +86,22 @@ begin
     FDownloadResult := False;
 end;
 
-procedure TLOSDownloader.InstallRequiredPackages;
+procedure TLOSDownloader.InstallDownloadPackage;
 begin
   FDistrInfo.SetPackageManagementShellCommand;
   FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'update', Output);
   FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install wget', Output);
+end;
+
+procedure TLOSDownloader.InstallExtractionPackages;
+begin
   FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install cpio', Output);
   FLOSCommand.Run(FDistrInfo.PackageManagementShellCommand + 'install gzip', Output);
 end;
 
-procedure TLOSDownloader.downloadLOSFromUib;
+procedure TLOSDownloader.DownloadLOSFromUib;
 begin
+  InstallDownloadPackage;
   FLOSCommand.Run('wget -A ' + LOSPackageName + ' -r -l 1 https://' +
     downloadDir + ' -P ../', Output);
 end;
@@ -101,14 +111,40 @@ begin
   if FindFirst('../' + downloadDir + LOSPackageName, faAnyFile and
     faDirectory, FLOSSearch) = 0 then
   begin
-    FLOSVersion := FLOSSearch.Name;
-    Delete(FLOSVersion, 1, Pos('_', FLOSVersion));
-    Delete(FLOSVersion, Pos('.opsi', FLOSVersion),
-      FLOSVersion.Length - Pos('.opsi', FLOSVersion) + 1);
-    FDownloadedLOSFolder := 'downloaded_l-opsi-server_' + FLOSVersion;
+    FDownloadedLOSVersion := FLOSSearch.Name;
+    Delete(FDownloadedLOSVersion, 1, Pos('_', FDownloadedLOSVersion));
+    Delete(FDownloadedLOSVersion, Pos('.opsi', FDownloadedLOSVersion),
+      FDownloadedLOSVersion.Length - Pos('.opsi', FDownloadedLOSVersion) + 1);
+    FDownloadedLOSFolder := 'downloaded_l-opsi-server_' + FDownloadedLOSVersion;
   end
   else
     FDownloadResult := False;
+end;
+
+procedure TLOSDownloader.ReadDefaultLOSVersion;
+begin
+  if FindFirst('../l-opsi-server_4*', faAnyFile and
+    faDirectory, FLOSSearch) = 0 then
+  begin
+    FDefaultLOSVersion := FLOSSearch.Name;
+    Delete(FDefaultLOSVersion, 1, Pos('_', FDefaultLOSVersion));
+  end;
+end;
+
+procedure TLOSDownloader.RemoveDownloadedLOSPackage;
+begin
+  if FindFirst('../download.uib.de', faAnyFile and
+    faDirectory, FLOSSearch) = 0 then
+    FLOSCommand.Run('rm -rf ../download.uib.de', Output);
+end;
+
+function TLOSDownloader.AreLOSVersionsEqual: boolean;
+begin
+  Result := False;
+  ReadDownloadedLOSVersion;
+  ReadDefaultLOSVersion;
+  if FDefaultLOSVersion = FDownloadedLOSVersion then
+    Result := True;
 end;
 
 procedure TLOSDownloader.RemoveOldDownloadedLOS;
@@ -134,6 +170,7 @@ end;
 
 procedure TLOSDownloader.ExtractCpioFilesFromLOSPackage;
 begin
+  InstallExtractionPackages;
   ExtractFile(LOSPackageName);
   FLOSCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
 end;
@@ -183,7 +220,7 @@ procedure TLOSDownloader.LogDownloadResult;
 begin
   if FDownloadResult then
     LogDatei.log('l-opsi-server successfully downloaded (version ' +
-      FLOSVersion + ')', LLessential)
+      FDownloadedLOSVersion + ')', LLessential)
   else
     LogDatei.log('Downloading latest l-opsi-server failed. Using default l-opsi-server:',
       LLessential);
@@ -199,12 +236,22 @@ begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
 
   LOSDownloader := TLOSDownloader.Create(LOpsiServerCommand, DistrInfo);
-  LOSDownloader.InstallRequiredPackages;
-  LOSDownloader.DownloadLOSFromUib; // download latest released los from download.uib
-  LOSDownloader.ReadDownloadedLOSVersion; // sets FLOSVersion and FDownloadedLOSFolder
-  LOSDownloader.ExtractLOSOpsiPackageAndSafeAsFolder;
-  LOSDownloader.LogDownloadResult;
-  Result := LOSDownloader.DownloadResult;
+  LOSDownloader.DownloadLOSFromUib; // download latest released los from download.uib testing
+
+  if LOSDownloader.AreLOSVersionsEqual then
+  begin
+    LOSDownloader.RemoveOldDownloadedLOS;
+    LogDatei.log('Downloaded and default l-opsi-server are equal: Remove downloaded one again', LLnotice);
+    LOSDownloader.RemoveDownloadedLOSPackage;
+    Result := False;
+  end
+  else
+  begin
+    LOSDownloader.ExtractLOSOpsiPackageAndSafeAsFolder;
+    LOSDownloader.LogDownloadResult;
+    Result := LOSDownloader.DownloadResult;
+  end;
+
   LOSDownloader.Free;
 end;
 
