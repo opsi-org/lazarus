@@ -6313,7 +6313,10 @@ begin
     if found then
       Result := i - 1
     else
+    begin
       Result := -1;
+      LogDatei.log_prog('FindSectionheaderIndex: Section not found: '+Sectionname,LLinfo);
+    end;
   end;
 end;
 

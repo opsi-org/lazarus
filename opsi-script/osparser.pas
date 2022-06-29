@@ -12538,7 +12538,11 @@ begin
               //list.assign(TXStringList(self));  // the complete script
 
               (*(Tuibiniscript(self)).*)
-              GetSectionLines(s1, list, startlineofsection, True, True, True);
+              //GetSectionLines(s1, list, startlineofsection, True, True, True);
+              if not SearchForSectionLines(self, TWorkSection(section), ActiveSection.ParentSection,
+                      s1, list,
+                      startlineofsection, True, True, False) then
+                      LogDatei.log('Section not found: '+s1,LLInfo);
             end;
           end;
     end
