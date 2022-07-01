@@ -332,25 +332,45 @@ begin
   // call main procedure
   main;
 
+  logdatei.log('Shutting down program regulary', LLnotice);
+  try
+    logdatei.log('Will close log and halt program.', LLnotice);
+    // close will lead to an segment violation
+    //logdatei.Close;
+  finally
+    Application.Terminate;
+    //logdatei.log('Program halted', LLnotice);
+    // halt;
+  end;
+
 end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
+  (*
+  logdatei.log('Shutting down program regulary', LLnotice);
+  Nform.Hide;
+  logdatei.log('Form hided', LLnotice);
   if Assigned(mythread) then
     mythread.Terminate;
+  sleep(500);
+  logdatei.log('Thread terminated', LLnotice);
   //if not inHideNForm then hideNForm
   //else sleep(5000);
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLnotice);
   try
-    //logdatei.Close;
+    logdatei.log('Will close log and halt program.', LLnotice);
+    // close will lead to an segment violation
+    logdatei.Close;
   finally
     Application.Terminate;
-    logdatei.log('Program halted', LLnotice);
-    halt;
+    //logdatei.log('Program halted', LLnotice);
+   // halt;
   end;
   //Application.Terminate;
   //halt;
+  *)
 end;
 
 procedure TDataModule1.TimerCloseTimer(Sender: TObject);
