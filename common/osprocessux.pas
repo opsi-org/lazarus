@@ -74,6 +74,55 @@ begin
   {$ENDIF OPSISCRIPT}
 end;
 
+{$IFDEF GUI}
+procedure InitializeProcess(FpcProcess: TProcess; cmd: string);
+begin
+  FpcProcess.CommandLine := cmd;
+  FpcProcess.Options := [poUsePipes, poStderrToOutput];
+  FpcProcess.ShowWindow := swoMinimize;
+  FpcProcess.Execute;
+end;
+{$ENDIF GUI}
+
+procedure InitializeSystemInfo(SystemInfo: TSystemInfo; cmd: string; logleveloffset: integer);
+begin
+  SystemInfo.Memo1.Color := clBlack;
+  SystemInfo.Memo1.Font.Color := clWhite;
+  SystemInfo.Memo1.Lines.Clear;
+  systeminfo.BitBtn1.Enabled := False;
+  systeminfo.Label1.Caption := 'Executing: ' + cmd;
+  systeminfo.ShowOnTop;
+  ProcessMess;
+  LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
+end;
+
+procedure ReadLastPartOfProcessOutput(var M: TMemoryStream; var BytesRead: longint;
+  const ReadBufferSize: integer; var FpcProcess: TProcess;var n: longint);
+begin
+  repeat
+    // make sure that we have the needed space
+    M.SetSize(BytesRead + ReadBufferSize);
+    if FpcProcess.Output.NumBytesAvailable > 0 then
+    begin
+      // try to read
+      n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
+      if n > 0 then
+      begin
+        Inc(BytesRead, n);
+        //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
+        //IntToStr(n) + ' bytes', LLdebug2);
+        //Write('.');
+      end;
+    end
+    else
+      n := 0;
+  until n <= 0;
+  //if BytesRead > 0 then WriteLn;
+  M.SetSize(BytesRead);
+  //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
+  //WriteLn('-- executed --');
+end;
+
 {$IFDEF OPSISCRIPT}
 
 function RunCommandCaptureOutGetOutlist(command: string): TXStringlist;
@@ -108,8 +157,6 @@ begin
     Result.Clear;
   end;
 end;
-
-
 
 function RunCommandCaptureOutGetExitcode(command: string): longint;
 var
@@ -155,54 +202,6 @@ begin
     Result := exitcode;
   end;
   output.Free;
-end;
-
-
-procedure InitializeProcess(FpcProcess: TProcess; cmd: string);
-begin
-  FpcProcess.CommandLine := cmd;
-  FpcProcess.Options := [poUsePipes, poStderrToOutput];
-  FpcProcess.ShowWindow := swoMinimize;
-  FpcProcess.Execute;
-end;
-
-procedure InitializeSystemInfo(SystemInfo: TSystemInfo; cmd: string; logleveloffset: integer);
-begin
-  SystemInfo.Memo1.Color := clBlack;
-  SystemInfo.Memo1.Font.Color := clWhite;
-  SystemInfo.Memo1.Lines.Clear;
-  systeminfo.BitBtn1.Enabled := False;
-  systeminfo.Label1.Caption := 'Executing: ' + cmd;
-  systeminfo.ShowOnTop;
-  ProcessMess;
-  LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
-end;
-
-procedure ReadLastPartOfProcessOutput(var M: TMemoryStream; var BytesRead: longint;
-  const ReadBufferSize: integer; var FpcProcess: TProcess;var n: longint);
-begin
-  repeat
-    // make sure that we have the needed space
-    M.SetSize(BytesRead + ReadBufferSize);
-    if FpcProcess.Output.NumBytesAvailable > 0 then
-    begin
-      // try to read
-      n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
-      if n > 0 then
-      begin
-        Inc(BytesRead, n);
-        //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
-        //IntToStr(n) + ' bytes', LLdebug2);
-        //Write('.');
-      end;
-    end
-    else
-      n := 0;
-  until n <= 0;
-  //if BytesRead > 0 then WriteLn;
-  M.SetSize(BytesRead);
-  //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
-  //WriteLn('-- executed --');
 end;
 
 function RunCommandAndCaptureOut
