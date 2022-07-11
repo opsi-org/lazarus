@@ -25210,6 +25210,7 @@ begin
                 if remaining = '' then
                 begin
                   LogDatei.log('Reload installation sequence.', LLInfo);
+                  BuildPC;
                   //if Assigned(Produkte) then FreeAndNil(Produkte);
                   //Produkte := opsidata.getListOfProducts;
                 end

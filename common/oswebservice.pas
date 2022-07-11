@@ -315,7 +315,7 @@ type
     function withLicenceManagement: boolean; virtual;
     function getOpsiServiceVersion: string; virtual; abstract;
     {procedures}
-    procedure setActualClient(computername: string); virtual; abstract;
+    procedure setActuallCient(computername: string); virtual; abstract;
     procedure setOptions(serviceoptions: string);
     procedure setActualProductName(const productname: string); virtual;
     procedure finishProduct; virtual; abstract;
