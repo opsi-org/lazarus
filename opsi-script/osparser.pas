@@ -4372,6 +4372,37 @@ begin
 end;
 
 {$IFDEF WINDOWS}
+function CheckDWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+begin
+  try
+    StrToInt64(ReadValue);
+    Value := ReadValue;
+    ReadValue := '';
+    Result := True;
+  except
+    on EConvertError do
+      ErrorInfo := ReadValue + ' is no valid DWORD';
+    on E: Exception do
+      ErrorInfo := E.Message;
+  end;
+end;
+
+function CheckQWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+begin
+  Result := False;
+  try
+    StrToQWord(ReadValue);
+    Value := ReadValue;
+    ReadValue := '';
+    Result := True;
+  except
+    on EConvertError do
+      ErrorInfo := ReadValue + ' is no valid QWORD';
+    on E: Exception do
+      ErrorInfo := E.Message;
+  end;
+end;
+
 function TuibInstScript.doRegistryHackInfSource(const Sektion: TWorkSection;
   const RegParameter: string; const flag_force64: boolean): TSectionResult;
 var
@@ -4396,7 +4427,6 @@ var
   begin
     Result := False;
     syntaxCheck := True;
-
     GetWord(r, key0, r, [',']);
     if not Skip(',"', r, r, error) then
     begin
@@ -4427,7 +4457,6 @@ var
       Syntaxcheck := False;
       exit;
     end;
-
     try
       regTInt := StrToInt64(regTStr);
     except
@@ -4440,6 +4469,8 @@ var
 
     Value := '';
 
+    // for the comparisons to integer values see the flags on
+    // https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-addreg-directive
     if regTInt = 0 then
     begin
       regtype := trdString;
@@ -4464,7 +4495,7 @@ var
         exit;
       end;
       GetWord(r, Value, r, ['"']);
-      (* Beispiel: 131072,"C:\Programme\wiz\wiz.exe %1" *)
+      // Beispiel: 131072,"C:\Programme\wiz\wiz.exe %1"
     end
     else if regTInt = 196609 then
     begin
@@ -4622,6 +4653,11 @@ var
       if uppercase(regtypeinfo) = uppercase('dword') then
         regtype := trdInteger
       else
+      if uppercase(regtypeinfo) = uppercase('qword') then
+      begin
+        regtype := trdInt64;
+      end
+      else
       begin
         Result := False;
         ErrorInfo := regtypeinfo + ' is a not supported type of a registry entry';
@@ -4683,18 +4719,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        try
-          r := '$' + r;
-          StrToInt64(r);
-          Value := r;
-          r := '';
-          Result := True;
-        except
-          on EConvertError do
-            ErrorInfo := r + ' is no valid number';
-          on E: Exception do
-            ErrorInfo := E.Message;
-        end;
+        Result := CheckDWord(r, Value, ErrorInfo);
+      trdInt64:
+        Result := CheckQWord(r, Value, ErrorInfo);
       trdBinary:
       begin
         binValue := StringReplace(r, ',', ' ');
@@ -4722,7 +4749,6 @@ begin
       exit;
     StartIndentLevel := LogDatei.LogSIndentLevel;
 
-
     if flag_force64 then
       Regist := TuibRegistry.Create(True)
     else
@@ -4730,10 +4756,7 @@ begin
     keyOpened := False;
     keyOpenCommandExists := False;
 
-
-
     // Sektion has ini file format, therefore we may do
-
     registrykeys := TXStringlist.Create;
     Sektion.GetSectionTitles(registrykeys);
 
@@ -4906,7 +4929,6 @@ begin
 
     end;
 
-
     Regist.Free;
     Regist := nil;
 
@@ -5001,14 +5023,16 @@ var
         regtype := trdMultiString
       else if upperCase(regtypeinfo) = uppercase('REG_Binary') then
         regtype := trdBinary
-      else if uppercase(regtypeinfo) = uppercase('REG_DWord') then
+      else if uppercase(regtypeinfo) = uppercase('REG_DWORD') then
         regtype := trdInteger
+      else if uppercase(regtypeinfo) = uppercase('REG_QWORD') then
+        regtype := trdInt64
       //else if uppercase (regtypeinfo) =  uppercase ('REG_NONE')
       //then regtype := trdUnknown
       else
       begin
         Result := False;
-        ErrorInfo := regtypeinfo + ' is a unknown or not implemented registry type';
+        ErrorInfo := regtypeinfo + ' is an unknown or not implemented registry type';
         exit;
       end;
     end
@@ -5025,7 +5049,6 @@ var
         exit;
       end;
     end;
-
 
     Result := False;
     case regtype of
@@ -5046,17 +5069,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        try
-          StrToInt64(r);
-          Value := r;
-          r := '';
-          Result := True;
-        except
-          on EConvertError do
-            ErrorInfo := r + ' is no valid number';
-          on E: Exception do
-            ErrorInfo := E.Message;
-        end;
+        Result := CheckDWord(r, Value, ErrorInfo);
+      trdInt64:
+          Result := CheckQWord(r, Value, ErrorInfo);
       trdBinary:
       begin
         binValue := r;
