@@ -74,7 +74,6 @@ begin
   {$ENDIF OPSISCRIPT}
 end;
 
-{$IFDEF GUI}
 procedure InitializeProcess(FpcProcess: TProcess; cmd: string);
 begin
   FpcProcess.CommandLine := cmd;
@@ -82,8 +81,8 @@ begin
   FpcProcess.ShowWindow := swoMinimize;
   FpcProcess.Execute;
 end;
-{$ENDIF GUI}
 
+{$IFDEF GUI}
 procedure InitializeSystemInfo(SystemInfo: TSystemInfo; cmd: string; logleveloffset: integer);
 begin
   SystemInfo.Memo1.Color := clBlack;
@@ -95,6 +94,7 @@ begin
   ProcessMess;
   LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
 end;
+{$ENDIF GUI}
 
 procedure ReadLastPartOfProcessOutput(var M: TMemoryStream; var BytesRead: longint;
   const ReadBufferSize: integer; var FpcProcess: TProcess;var n: longint);
