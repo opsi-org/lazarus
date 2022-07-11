@@ -1167,6 +1167,7 @@ begin
 
 
     //OpsiData.initOpsiConf(pathnamsInfoFilename, profildateiname, ProdukteInfoFilename);
+    if not Assigned(OpsiData) then OpsiData := TOpsi4Data.Create;
     OpsiData.setActualClient(computername);
     if Produkte <> nil then
       Produkte.Free;
