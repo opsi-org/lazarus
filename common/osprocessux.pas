@@ -82,20 +82,6 @@ begin
   FpcProcess.Execute;
 end;
 
-{$IFDEF GUI}
-procedure InitializeSystemInfo(SystemInfo: TSystemInfo; cmd: string; logleveloffset: integer);
-begin
-  SystemInfo.Memo1.Color := clBlack;
-  SystemInfo.Memo1.Font.Color := clWhite;
-  SystemInfo.Memo1.Lines.Clear;
-  systeminfo.BitBtn1.Enabled := False;
-  systeminfo.Label1.Caption := 'Executing: ' + cmd;
-  systeminfo.ShowOnTop;
-  ProcessMess;
-  LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
-end;
-{$ENDIF GUI}
-
 procedure ReadLastPartOfProcessOutput(var M: TMemoryStream; var BytesRead: longint;
   const ReadBufferSize: integer; var FpcProcess: TProcess;var n: longint);
 begin
@@ -203,6 +189,20 @@ begin
   end;
   output.Free;
 end;
+
+{$IFDEF GUI}
+procedure InitializeSystemInfo(SystemInfo: TSystemInfo; cmd: string; logleveloffset: integer);
+begin
+  SystemInfo.Memo1.Color := clBlack;
+  SystemInfo.Memo1.Font.Color := clWhite;
+  SystemInfo.Memo1.Lines.Clear;
+  systeminfo.BitBtn1.Enabled := False;
+  systeminfo.Label1.Caption := 'Executing: ' + cmd;
+  systeminfo.ShowOnTop;
+  ProcessMess;
+  LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
+end;
+{$ENDIF GUI}
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
