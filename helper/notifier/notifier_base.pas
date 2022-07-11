@@ -134,8 +134,8 @@ begin
         else
           logdatei.log('Nothing to send.', LLDebug2);
         logdatei.log('tcploop :' + TimeToStr(now), LLDebug2);
-        //sleep(1000);
       end;
+      logdatei.log('Thread finished.', LLNotice);
       stopped := True;
       myTCPClient.CloseSocket;
       myTCPClient.Free;
@@ -172,6 +172,11 @@ begin
       Sleep(1000);
       LogDatei.log('show test: ' + IntToStr(i), LLnotice);
     end;
+    if myport > 0 then
+    begin
+      mythread := Tmythread.Create(False);
+      sleep(1000);
+    end;
     if Assigned(LogDatei) then
       LogDatei.log('shutdown after show test', LLnotice);
     shutdownNotifier;
@@ -181,7 +186,9 @@ begin
     if myport > 0 then
     begin
       mythread := Tmythread.Create(False);
+      //mythread.FreeOnTerminate:= true;
       mythread.WaitFor;
+      LogDatei.log('Thread ended.', LLnotice);
     end
     else
     if Assigned(LogDatei) then

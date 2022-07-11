@@ -57,6 +57,7 @@ type
     function ReadString(const Name: string): string;
     function ReadInteger(const Name: string): integer;
     procedure SupplementItems(Separator: char; const Name, Supplement: string);
+    procedure DeleteListEntries(Separator: char; const RegistryVariableName, EntriesToDelete: string);
     function RestoreFromFile(Filepath: string): boolean;
 
     function DeleteEntry(const Name: string): boolean;
@@ -1755,7 +1756,6 @@ begin
     raise ERegistryException.Create('Registry variable "' + Name + '" cannot be read');
 end;
 
-
 function TuibRegistry.ReadInteger(const Name: string): integer;
 var
   regType: TuibRegDataType;
@@ -1772,29 +1772,136 @@ begin
 end;
 
 
-procedure TuibRegistry.SupplementItems(Separator: char; const Name, Supplement: string);
+function GetRegistryStringValueType(RegistryKey: HKEY; EncodedName: string): TuibRegDataType;
 var
-  Entrylist, SuppList: TStringList;
-  Line: string = '';
-  Entry: string = '';
-  i: integer = 0;
-  Info: string = '';
-  FoundDataType: TuibRegDataType;
-  //dword1: integer;
-  regresult: integer = 0;
   pdata: PByte;
   regType: pDWORD;
   psize: pdword;
-  encname, encsupp: string;
-
 begin
-  encname := UTF8ToWinCP(Name);
-  encsupp := UTF8ToWinCP(Supplement);
   getmem(psize, 4);
   getmem(pdata, psize^);
   new(regType);
 
-  RegQueryValueEx(mykey, PChar(encname), nil, regType, pdata, psize);
+  RegQueryValueEx(RegistryKey, PChar(EncodedName), nil, regType, pdata, psize);
+  case regType^ of
+    1: Result := trdString;
+    2: Result := trdExpandString
+    else
+      Result := trdString;
+  end;
+  freemem(pdata);
+  pdata := nil;
+  freemem(psize);
+  psize := nil;
+  freemem(regType);
+  regType := nil;
+end;
+
+function SaveStringValueToRegistry(RegistryKey: HKEY; EncodedName: string;
+  StringValue: string; DataType: TuibRegDataType): integer;
+begin
+  if DataType = trdString then
+    Result := regSetValueEx(RegistryKey, PChar(EncodedName), 0, REG_SZ,
+      PChar(StringValue), Length(StringValue))
+  else
+    Result := regSetValueEx(RegistryKey, PChar(EncodedName), 0, REG_EXPAND_SZ,
+      PChar(StringValue), Length(StringValue));
+end;
+
+procedure TuibRegistry.SupplementItems(Separator: char; const Name, Supplement: string);
+var
+  Entrylist, SuppList: TStringList;
+  Line: string = '';
+  SuppEntry: string = '';
+  i: integer = 0;
+  FoundDataType: TuibRegDataType;
+  regresult: integer = ERROR_SUCCESS;
+  encname, encsupp: string;
+begin
+  encname := UTF8ToWinCP(Name);
+  encsupp := UTF8ToWinCP(Supplement);
+
+  FoundDataType := GetRegistryStringValueType(mykey, encname);
+
+  try
+    Line := ReadString(encname);
+  except
+    on e: ERegistryException do
+    begin
+      LogS := 'Warning: "' + e.Message;
+      LogDatei.log(LogS, LLNotice);
+    end;
+  end;
+
+  if Separator = #0 then
+    Line := Line + encsupp
+  else
+  begin
+    Entrylist := TStringList.Create;
+    Supplist := TStringList.Create;
+
+    // build (old) Entrylist
+    EntryList.Delimiter := Separator;
+    EntryList.StrictDelimiter := True;
+    EntryList.DelimitedText := Line;
+
+    // build List of Supp-Entries
+    SuppList.Delimiter := Separator;
+    SuppList.StrictDelimiter := True;
+    SuppList.DelimitedText := encsupp;
+
+    // add Supp-Entries to Entrylist, if not included there
+    for i := 1 to Supplist.Count do
+    begin
+      SuppEntry := Supplist.Strings[i - 1];
+      if Entrylist.IndexOf(SuppEntry) = -1 then
+        EntryList.Add(SuppEntry);
+    end;
+
+    // make new Line for Registry
+    Line := EntryList.DelimitedText;
+
+    FreeAndNil(EntryList);
+    FreeAndNil(SuppList);
+  end;
+
+  regresult := SaveStringValueToRegistry(mykey, encname, Line, FoundDataType);
+
+  if regresult = ERROR_SUCCESS then
+  begin
+    LogS := 'Variable "' + Name + '" supplemented with "' + Supplement + '"';
+    LogDatei.log(LogS, LLInfo);
+  end
+  else
+  begin
+    LogS := 'Registry entry"' + Name +
+      '" could not be read or could not be written: WINAPI-Fehler ' + IntToStr(regresult);
+    LogDatei.log(LogS, LLError);
+  end;
+end;
+
+procedure TuibRegistry.DeleteListEntries(Separator: char; const RegistryVariableName, EntriesToDelete: string);
+var
+  Entrylist, DeleteList: TStringList;
+  Line: string = '';
+  Entry: string = '';
+  i: integer = 0;
+  UnusedInfo: string = '';
+  FoundDataType: TuibRegDataType;
+  regresult: integer = 0;
+  pdata: PByte;
+  regType: pDWORD;
+  psize: pdword;
+  EncodedRegistryVariableName, EncodedEntriesToDelete: string;
+  IndexOfEntry: integer;
+begin
+  EncodedRegistryVariableName := UTF8ToWinCP(RegistryVariableName);
+  EncodedEntriesToDelete := UTF8ToWinCP(EntriesToDelete);
+  getmem(psize, 4);
+  getmem(pdata, psize^);
+  new(regType);
+
+  RegQueryValueEx(mykey, PChar(EncodedRegistryVariableName), nil, regType, pdata, psize);
   case regType^ of
     1: FoundDataType := trdString;
     2: FoundDataType := trdExpandString
@@ -1808,95 +1915,83 @@ begin
   freemem(regType);
   regType := nil;
 
-
-  (*  FoundDataType := GetDataType (Name); *)
-  (* tut nichts *)
   try
-    Line := ReadString(encname);
+    Line := ReadString(EncodedRegistryVariableName);
   except
     on e: ERegistryException do
     begin
-     (*
-      LogS := 'Error: "' + e.Message;
-      LogDatei.log (LogS, LLNotice);
-      LogDatei.NumberOfErrors := LogDatei.NumberOfErrors + 1;
-     *)
       LogS := 'Warning: "' + e.Message;
       LogDatei.log(LogS, LLNotice);
     end;
   end;
 
   if Separator = #0 then
-    Line := Line + encsupp
+    Line := Line + EncodedEntriesToDelete
   else
   begin
     Entrylist := TStringList.Create;
-    Supplist := TStringList.Create;
+    DeleteList := TStringList.Create;
 
     (* build (old) Entrylist *)
     while Line <> '' do
     begin
       GetWord(Line, Entry, Line, [Separator]);
-      Skip(Separator, Line, Line, Info);
+      Skip(Separator, Line, Line, UnusedInfo);
       EntryList.Add(Entry);
-      (* if pos ('%', Entry) > 0
-      then FoundDataType := trdExpandString; *)
     end;
 
-    (* build List of Supp-Entries *)
-    Line := encsupp;
+    (* build List of Delete-Entries *)
+    Line := EncodedEntriesToDelete;
     while Line <> '' do
     begin
       GetWord(Line, Entry, Line, [Separator]);
-      Skip(Separator, Line, Line, Info);
-      SuppList.Add(Entry);
-      if pos('%', Entry) > 0 then
-        FoundDataType := trdExpandString;
+      Skip(Separator, Line, Line, UnusedInfo);
+      DeleteList.Add(Entry);
     end;
 
-
-    (* add Supp-Entries to Entrylist, if it is not included there *)
-    for i := 1 to Supplist.Count do
+    (* delete entries from Entrylist if existent *)
+    for i := 1 to DeleteList.Count do
     begin
-      Entry := Supplist.Strings[i - 1];
-      if Entrylist.IndexOf(Entry) = -1 then
-        EntryList.Add(Entry);
+      Entry := DeleteList.Strings[i - 1];
+      IndexOfEntry := Entrylist.IndexOf(Entry);
+      if IndexOfEntry = -1 then
+        LogDatei.log('The entry "' + Entry + '" that you want to delete does not exist', LLNotice)
+      else
+        EntryList.Delete(IndexOfEntry);
     end;
 
-    (* make Line for Registry *)
+    (* make Line for saving back to the registry *)
     Line := '';
     if EntryList.Count > 0 then
     begin
       Line := EntryList.Strings[0];
-      for i := 2 to EntryList.Count do
-        Line := Line + Separator + EntryList.Strings[i - 1];
+      for i := 1 to (EntryList.Count -1) do
+        Line := Line + Separator + EntryList.Strings[i];
     end;
 
     FreeAndNil(EntryList);
-    FreeAndNil(SuppList);
+    FreeAndNil(DeleteList);
   end;
 
   regresult := ERROR_SUCCESS;
 
   if FoundDataType = trdString then
-    regresult := regSetValueEx(mykey, PChar(encname), 0, REG_SZ,
+    regresult := regSetValueEx(mykey, PChar(EncodedRegistryVariableName), 0, REG_SZ,
       PChar(Line), Length(Line))
   else
-    regresult := regSetValueEx(mykey, PChar(encname), 0, REG_EXPAND_SZ,
+    regresult := regSetValueEx(mykey, PChar(EncodedRegistryVariableName), 0, REG_EXPAND_SZ,
       PChar(Line), Length(Line));
 
   if regresult = ERROR_SUCCESS then
   begin
-    LogS := 'Variable "' + Name + '"   supplemented with "' + Supplement + '"';
+    LogS := 'Variable "' + RegistryVariableName + '" reduced by "' + EntriesToDelete + '"';
     LogDatei.log(LogS, LLInfo);
   end
   else
   begin
-    LogS := 'Error: Registry entry"' + Name +
-      '"   could not be read or could not be written';
-    if regresult <> ERROR_SUCCESS then
-      LogS := LogS + ' WINAPI-Fehler ' + IntToStr(regresult);
-    LogDatei.log(LogS, LLNotice);
+    LogS := 'Registry entry"' + RegistryVariableName +
+      '" could not be read or could not be written: WINAPI-Fehler ' + IntToStr(regresult);
+    LogDatei.log(LogS, LLError);
   end;
 end;
 

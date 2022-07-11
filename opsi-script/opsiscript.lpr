@@ -91,6 +91,7 @@ uses //lcltranslator,
   osfuncwin2,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
 {$ENDIF WINDOWS}
 
   lazutf8,
