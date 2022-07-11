@@ -23,7 +23,7 @@ const
 
 type
   TuibRegDataType = (trdUnknown, trdDefaultString, trdString,
-    trdExpandString, trdInteger,
+    trdExpandString, trdInteger, trdInt64,
     trdBinary, trdMultiString);
 
   {$IFDEF WINDOWS}
@@ -1241,10 +1241,9 @@ begin
     REG_NONE: regType := trdUnknown;
     REG_RESOURCE_LIST: regType := trdUnknown;
     REG_SZ: regType := trdString;
+    REG_QWORD: regType := trdInt64;
   end;
-
   Result := regType;
-
 end;
 
 
@@ -1252,20 +1251,17 @@ function tUibRegDataTypeToString(regType: TuibRegDataType): string;
 
 begin
   case regType of
-
     trdUnknown: Result := 'Unknown';
     trdString: Result := 'String';
     trdDefaultString: Result := 'String';
     trdExpandString: Result := 'ExpandString';
     trdInteger: Result := 'Integer';
+    trdInt64: Result := 'Int64';
     trdBinary: Result := 'Binary';
     trdMultiString: Result := 'MultiString';
-
     else
       Result := '';
-
   end;
-
 end;
 
 
@@ -1429,8 +1425,8 @@ begin
     end;
 
     trdInteger: Value := IntToStr(DWord(lpData_OldValue^));
+    trdInt64: Value := IntToStr(QWord(lpData_OldValue^));
   end;
-
 end;
 
 
@@ -1498,6 +1494,7 @@ var
 
   dwType: dword = 0;
   iValue: DWord = 0;
+  qValue: QWord = 0;
 
   datafound: boolean;
   oldValue: string = '';
@@ -1630,10 +1627,8 @@ begin
           @dwType, lpData_OldValue, @dwDataSize);
         oldValue := BinaryToStr(lpData_OldValue, dwDataSize);
       end;
-      trdInteger:
-      begin
-        oldValue := IntToStr(DWord(lpData_OldValue^));
-      end;
+      trdInteger: oldValue := IntToStr(DWord(lpData_OldValue^));
+      trdInt64: oldValue := IntToStr(QWord(lpData_OldValue^));
     end;
   end;
 
@@ -1696,9 +1691,14 @@ begin
       iValue := StrToINT64(encvalue);
       regresult := regSetValueExW(mykey, PWChar(encnameW), 0, REG_Dword, @iValue, 4);
       if datafound then
-      begin
         compareValue := IntToStr(iValue);
-      end;
+    end;
+    trdInt64:
+    begin
+      qValue := StrToQWord(encvalue);
+      regresult := regSetValueExW(mykey, PWChar(encnameW), 0, REG_Qword, @qValue, 8);
+      if datafound then
+        compareValue := IntToStr(qValue);
     end;
   end;
 
