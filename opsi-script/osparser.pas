@@ -25515,9 +25515,19 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
-      Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+      try
+        Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+      except
+        on e: Exception do
+        begin
+          LogDatei.log('Exception in CreateAndProcessScript: Script.loadFromUnicodeFile: ' +
+          e.message, LLError);
+          extremeErrorLevel := levelFatal;
+        end;
+      end;
       if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
       begin
+        try
         logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
           ')', LLinfo);
         Encoding2use := searchencoding(Script.Text, isPlainAscii);
@@ -25596,6 +25606,14 @@ begin
           //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
         end;
         Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
+        except
+          on e: Exception do
+          begin
+            LogDatei.log('Exception in CreateAndProcessScript: loading Scriptfile: ' +
+            e.message, LLError);
+            extremeErrorLevel := levelFatal;
+          end;
+        end;
       end
       else
       begin
@@ -26306,6 +26324,8 @@ begin
     on e: Exception do
     begin
       LogDatei.log('Exception in CreateAndProcessScript: General' + e.message, LLError);
+      extremeErrorLevel := levelFatal;
+      opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
       LogDatei.Close;
     end;
   end;
