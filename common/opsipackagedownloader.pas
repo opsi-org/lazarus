@@ -1,5 +1,11 @@
 unit OpsiPackageDownloader;
 
+{
+Use the function DownloadOpsiPackage to download an opsi package from a
+website (e.g. download.uib) and extract the folders CLIENT_DATA and OPSI to the
+newly created folder [BinaryDirectory]/../downloaded_[OpsiPackageId]_[PackageVersion]/
+}
+
 {$mode ObjFPC}{$H+}
 
 interface
