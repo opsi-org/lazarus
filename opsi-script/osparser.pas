@@ -197,7 +197,7 @@ type
     tsImportCertToSystem,
     tsRemoveCertFromSystem,
     tsisCertInstalledInSystem,
-    tsReloadInstallationSequence,
+    tsReloadProductList,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -25205,7 +25205,7 @@ begin
                     end;
               end;
 
-              tsReloadInstallationSequence:
+              tsReloadProductList:
               begin
                 if remaining = '' then
                 begin
@@ -26447,7 +26447,7 @@ begin
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
   PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
 
-  PStatNames^ [tsReloadInstallationSequence] := 'reloadInstallationSequence';
+  PStatNames^ [tsReloadProductList] := 'reloadProductList';
 
   runProfileActions := False;
   runLoginScripts := False;
