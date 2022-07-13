@@ -6,6 +6,10 @@ website (e.g. download.uib) and extract the folders CLIENT_DATA and OPSI to the
 newly created folder [BinaryDirectory]/../downloaded_[OpsiPackageId]_[PackageVersion]/
 }
 
+{
+This unit is only tested under Linux so far!
+}
+
 {$mode ObjFPC}{$H+}
 
 interface
@@ -281,6 +285,11 @@ begin
     DownloadDir, OpsiPackageDownloadCommand, DistrInfo);
   OpsiPackageDownloader.DownloadOpsiPackageFromUib;
 
+  // Compare the downloaded package with an already existing package:
+  // Delete the downloaded package again if both versions are equal,
+  // otherwise extract the downloaded package.
+  // In case of no default package, the versions are obviously not equal and the
+  // downloaded package is kept and extracted.
   if OpsiPackageDownloader.AreOpsiPackageVersionsEqual then
   begin
     LogDatei.log('Downloaded and default ' + OpsiPackageId +
