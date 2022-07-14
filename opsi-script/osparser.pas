@@ -25005,7 +25005,7 @@ begin
                 else if VarList.IndexOf(lowercase(Expressionstr)) or
                   listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
                   reportError(Sektion, linecounter, Expressionstr,
-                    'Name already in use')
+                    'name is already in use')
                 else
 
                 begin
