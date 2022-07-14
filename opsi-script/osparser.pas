@@ -25002,8 +25002,8 @@ begin
                 end
                 // not in local function - make it global
                 // already existing ?
-                else if VarList.IndexOf(lowercase(Expressionstr)) or
-                  listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
+                else if ((VarList.IndexOf(lowercase(Expressionstr)) >= 0) or
+                  (listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0)) then
                   reportError(Sektion, linecounter, Expressionstr,
                     'name is already in use')
                 else
