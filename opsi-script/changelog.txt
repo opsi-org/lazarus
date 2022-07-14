@@ -3,7 +3,14 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.5.4) unreleased; urgency=low
+opsi-script (4.12.5.5) unreleased; urgency=low
+
+  * [fix] osfunclin: adapted functions getLinuxVersionMap/getLinuxDistroType for new linux distributions where lsb_release does not work anymore (j.werner)
+    
+-- j.werner <j.werner@uib.de> 14 July 2022
+
+
+opsi-script (4.12.5.4) stable; urgency=low
 
   * [fix] osparser: parsing of powershellcall with no access string given resulted in an empty string instead of the default 'sysnative' (j.werner)
     
