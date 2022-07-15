@@ -24922,7 +24922,7 @@ begin
                 s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                // given var name reseved ?
+                // given var name reserved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
@@ -24978,7 +24978,7 @@ begin
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                // given var name reseved ?
+                // given var name reserved ?
                 if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
                   tsNotDefined then
                   reportError(Sektion, linecounter, Expressionstr,
