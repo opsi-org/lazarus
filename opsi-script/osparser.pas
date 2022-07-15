@@ -25007,9 +25007,13 @@ begin
                     definedFunctionsCallStack.Count - 1]);
                   if definedFunctionArray[funcindex].addLocalVar(
                     lowercase(Expressionstr), dfpStringlist, False) then
+                    begin
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2)
+                      definedFunctionArray[funcindex].Name, LLDebug2);
+                    definedFunctionArray[funcindex].setLocalVarValueList(
+                      lowercase(Expressionstr), TStringList.Create);
+                    end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
