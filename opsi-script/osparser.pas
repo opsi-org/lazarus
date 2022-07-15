@@ -508,7 +508,8 @@ type
     function IsVariableNameReserved(const VariableName: string;
       var SectionSpecifier: TSectionSpecifier; const call: string;
       const Sektion: TWorkSection; const linecounter: integer): boolean;
-    function IsVariableNameAlreadyInUse(VariableName: string): boolean;
+    function IsVariableNameAlreadyInUse(VariableName: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
@@ -21004,13 +21005,16 @@ begin
     end;
 end;
 
-function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string): boolean;
+function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string;
+  const Sektion: TWorkSection; const linecounter: integer): boolean;
 begin
+  Result := False;
   if ((VarList.IndexOf(lowercase(VariableName)) >= 0) or
     (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
-    Result := True
-  else
-    Result := False;
+  begin
+    Result := True;
+    reportError(Sektion, linecounter, VariableName, 'name is already in use')
+  end;
 end;
 
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
@@ -24975,10 +24979,7 @@ begin
                       'name is already in use');
                 end
                 // not in local function - make it global
-                else if IsVariableNameAlreadyInUse(Expressionstr) then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'name is already in use')
-                else
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
                   // do it
                   VarList.Add(lowercase(Expressionstr));
@@ -25022,10 +25023,7 @@ begin
                       'name is already in use');
                 end
                 // not in local function - make it global
-                else if IsVariableNameAlreadyInUse(Expressionstr) then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'name is already in use')
-                else
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
                   // do it
                   listOfStringLists.Add(lowercase(Expressionstr));
