@@ -505,6 +505,7 @@ type
       var Remaining: string; const Expressionstr: string; linecounter: integer;
       var InfoSyntaxError: string; var NestLevel: integer);
     function CheckDirectVariableInitialization(const Remaining: string): boolean;
+    function IsVariableNameAlreadyInUse(VariableName: string): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
@@ -20985,6 +20986,16 @@ begin
     Result := True;
 end;
 
+
+function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string): boolean;
+begin
+  if ((VarList.IndexOf(lowercase(VariableName)) >= 0) or
+    (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
+    Result := True
+  else
+    Result := False;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -24950,9 +24961,7 @@ begin
                       'name is already in use');
                 end
                 // not in local function - make it global
-                // already existing ?
-                else if ((VarList.IndexOf(lowercase(Expressionstr)) >= 0) or
-                  (listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0)) then
+                else if IsVariableNameAlreadyInUse(Expressionstr) then
                   reportError(Sektion, linecounter, Expressionstr,
                     'name is already in use')
                 else
@@ -25002,9 +25011,7 @@ begin
                       'name is already in use');
                 end
                 // not in local function - make it global
-                // already existing ?
-                else if ((VarList.IndexOf(lowercase(Expressionstr)) >= 0) or
-                  (listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0)) then
+                else if IsVariableNameAlreadyInUse(Expressionstr) then
                   reportError(Sektion, linecounter, Expressionstr,
                     'name is already in use')
                 else
