@@ -24992,7 +24992,6 @@ begin
 
               tsDefineStringList:
               begin
-                tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
@@ -25010,8 +25009,7 @@ begin
                     lowercase(Expressionstr), dfpStringlist, False) then
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name +
-                      ' with value: ' + tmplist.Text, LLDebug2)
+                      definedFunctionArray[funcindex].Name, LLDebug2)
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
@@ -25023,19 +25021,9 @@ begin
                   listOfStringLists.Add(lowercase(Expressionstr));
                   // create the list object needed to store list items
                   ContentOfStringLists.Add(TStringList.Create);
-                  // if there is content then store it
-                  if tmplist.Count > 0 then
-                  begin
-                    VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
-                    TStringList(ContentOfStringLists.Items[VarIndex]).Text :=
-                      tmplist.Text;
-                  end;
-                  LogDatei.log('', leveldebug);
                   LogDatei.log('defined global string list ' +
-                    Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
+                    Expressionstr, LLDebug);
                 end;
-                if Assigned(tmplist) then
-                  FreeAndNil(tmplist);
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);;
