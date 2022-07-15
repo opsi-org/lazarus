@@ -24994,10 +24994,6 @@ begin
 
               tsDefineStringList:
               begin
-                LogDatei.log_prog('Start definestringlist', LLdebug2);
-                //if tmplist <> nil then
-                //if Assigned(tmplist) then FreeAndNil(tmplist);
-                LogDatei.log_prog('definestringlist: init tmplist', LLdebug2);
                 tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
