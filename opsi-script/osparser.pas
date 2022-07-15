@@ -24951,7 +24951,6 @@ begin
 
               tsDefineVar:
               begin
-                s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
 
@@ -24969,10 +24968,9 @@ begin
                   begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name + ' with value: ' +
-                      s1, LLDebug2);
+                      definedFunctionArray[funcindex].Name, LLDebug2);
                     definedFunctionArray[funcindex].setLocalVarValueString(
-                      lowercase(Expressionstr), s1);
+                      lowercase(Expressionstr), '');
                   end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
@@ -24983,9 +24981,9 @@ begin
                 begin
                   // do it
                   VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add(s1);
+                  ValuesList.Add('');
                   LogDatei.log('Defined global local string var: ' +
-                    lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
+                    lowercase(Expressionstr), LLDebug2);
                 end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
