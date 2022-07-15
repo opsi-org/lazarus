@@ -505,6 +505,9 @@ type
       var Remaining: string; const Expressionstr: string; linecounter: integer;
       var InfoSyntaxError: string; var NestLevel: integer);
     function CheckDirectVariableInitialization(const Remaining: string): boolean;
+    function IsVariableNameReserved(const VariableName: string;
+      var SectionSpecifier: TSectionSpecifier; const call: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
     function IsVariableNameAlreadyInUse(VariableName: string): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
@@ -20987,6 +20990,20 @@ begin
 end;
 
 
+function TuibInstScript.IsVariableNameReserved(const VariableName: string;
+  var SectionSpecifier: TSectionSpecifier; const call: string; const Sektion: TWorkSection;
+  const linecounter: integer): boolean;
+begin
+  Result := False;
+  if findKindOfStatement(VariableName, SectionSpecifier, call) <>
+    tsNotDefined then
+    begin
+      Result := True;
+      reportError(Sektion, linecounter, VariableName,
+        'Reserved name, must not be used in a variable definition');
+    end;
+end;
+
 function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string): boolean;
 begin
   if ((VarList.IndexOf(lowercase(VariableName)) >= 0) or
@@ -24933,13 +24950,10 @@ begin
                 s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                // given var name reserved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
@@ -24988,13 +25002,10 @@ begin
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                // given var name reserved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
