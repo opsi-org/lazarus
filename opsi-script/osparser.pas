@@ -25211,7 +25211,13 @@ begin
                 begin
                   LogDatei.log('Reload installation sequence.', LLInfo);
                   //StartProgramModes;
+                  logdatei.log('call: ' + Call, LLInfo);
+                  logdatei.log('Expressionstr: ' + ExpressionStr, LLInfo);
+                  //logdatei.log('Actuelle Sektion:' + Script.ActiveSection.Text, LLInfo);
+                  opsidata.setProductActionRequest(tapNull);
+                  //opsidata.setProductStateActionRequest(tpsInstalled,tapNull);
                   BuildPC;
+                  //opsidata.setProductState(tpsInstalled);
                   //if Assigned(Produkte) then FreeAndNil(Produkte);
                   //Produkte := opsidata.getListOfProducts;
                 end
