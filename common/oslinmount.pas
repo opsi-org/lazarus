@@ -39,11 +39,6 @@ function umount(mymountpoint: string): integer;
 procedure transformHex(const hexstring: string; var hexarray: bytearray);
 function decrypt(hexkey, hexpass: string): string;
 function DecryptBlowfish(const myencrypted, mykey: string): string;
-(*
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint): boolean;
-*)
 procedure mount_depotshare(mymountpoint: string; myhostkey: string; myclientId: string);
 
 implementation
