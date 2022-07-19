@@ -872,7 +872,7 @@ begin
 
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    while not (DataModuleOCK.SQLQueryProductData.EOF) and (counter < 30) do
+    while not (DataModuleOCK.SQLQueryProductData.EOF) do
     begin
       ProductID := DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString;
       { Progressbar progress}
