@@ -11,7 +11,9 @@ uses
 type
 
   {TDistribution: distributions which opsi-server supports, add any new supported distribution here }
-  TDistribution = (AlmaLinux_8,
+  TDistribution = (
+    AlmaLinux_8,
+    AlmaLinux_9,
     CentOS_7,
     CentOS_8,
     Debian_8,
@@ -25,7 +27,9 @@ type
     openSUSE_Leap_42_3,
     RHEL_7,
     RHEL_8,
+    RHEL_9,
     RockyLinux_8,
+    RockyLinux_9,
     SLE_12,
     SLE12_SP1,
     SLE12_SP2,
@@ -33,6 +37,8 @@ type
     SLE12_SP4,
     SLE15_SP1,
     SLE15_SP2,
+    SLE15_SP3,
+    SLE15_SP4,
     Univention_4_3,
     Univention_4_4,
     Univention_5_0,
@@ -141,6 +147,7 @@ begin
   end;
   case FDistribution of
     AlmaLinux_8: Result := Result + 'AlmaLinux_8/';
+    AlmaLinux_9: Result := Result + 'AlmaLinux_9/';
     CentOS_7: Result := Result + 'CentOS_7/';
     CentOS_8: Result := Result + 'CentOS_8/';
     Debian_8: Result := Result + 'Debian_8/';
@@ -154,7 +161,9 @@ begin
     openSUSE_Leap_42_3: Result := Result + 'openSUSE_Leap_42.3/';
     RHEL_7: Result := Result + 'RHEL_7/';
     RHEL_8: Result := Result + 'RHEL_8/';
+    RHEL_9: Result := Result + 'RHEL_9/';
     RockyLinux_8: Result := Result + 'RockyLinux_8/';
+    RockyLinux_9: Result := Result + 'RockyLinux_9/';
     SLE_12: Result := Result + 'SLE_12/';
     SLE12_SP1: Result := Result + 'SLE12_SP1/';
     SLE12_SP2: Result := Result + 'SLE12_SP2/';
@@ -162,6 +171,8 @@ begin
     SLE12_SP4: Result := Result + 'SLE12_SP4/';
     SLE15_SP1: Result := Result + 'SLE_15_SP1/';
     SLE15_SP2: Result := Result + 'SLE_15_SP2/';
+    SLE15_SP3: Result := Result + 'SLE_15_SP3/';
+    SLE15_SP4: Result := Result + 'SLE_15_SP4/';
     Univention_4_3: Result := Result + 'Univention_4.3/';
     Univention_4_4: Result := Result + 'Univention_4.4/';
     Univention_5_0: Result := Result + 'Univention_5.0/';
@@ -270,7 +281,8 @@ begin
       AddDebianUbuntu;
     end;
     {CentOS and RedHat}
-    AlmaLinux_8, CentOS_7, CentOS_8, RHEL_7, RHEL_8, RockyLinux_8:
+    AlmaLinux_8, AlmaLinux_9, CentOS_7, CentOS_8, RHEL_7, RHEL_8, RHEL_9,
+    RockyLinux_8, RockyLinux_9:
     begin
       AddCentOSRedHat;
     end;
@@ -283,7 +295,7 @@ begin
   case FDistribution of
     {OpenSuse and SLES}
     openSUSE_Leap_15_1, openSUSE_Leap_15_2, openSUSE_Leap_15_3, openSUSE_Leap_15_4, openSUSE_Leap_42_3,
-    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4, SLE15_SP1, SLE15_SP2:
+    SLE_12, SLE12_SP1, SLE12_SP2, SLE12_SP3, SLE12_SP4, SLE15_SP1, SLE15_SP2, SLE15_SP3, SLE15_SP4:
     begin
       AddOpenSuseSLES(RepoName);
     end;

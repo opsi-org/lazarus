@@ -73,6 +73,12 @@ begin
     begin
       FDistr := AlmaLinux_8;
       FDistrRepoUrlPart := 'AlmaLinux_8/';
+    end
+    else
+    if Pos('9', FDistroRelease) = 1 then
+    begin
+      FDistr := AlmaLinux_9;
+      FDistrRepoUrlPart := 'AlmaLinux_9/';
     end;
   end
   else
@@ -123,6 +129,12 @@ begin
     begin
       FDistr := RHEL_8;
       FDistrRepoUrlPart := 'RHEL_8/';
+    end
+    else
+    if Pos('9', FDistroRelease) = 1 then
+    begin
+      FDistr := RHEL_9;
+      FDistrRepoUrlPart := 'RHEL_9/';
     end;
   end
   else
@@ -132,6 +144,12 @@ begin
     begin
       FDistr := RockyLinux_8;
       FDistrRepoUrlPart := 'RockyLinux_8/';
+    end
+    else
+    if Pos('9', FDistroRelease) = 1 then
+    begin
+      FDistr := RockyLinux_9;
+      FDistrRepoUrlPart := 'RockyLinux_9/';
     end;
   end
   else
@@ -162,6 +180,18 @@ begin
     begin
       FDistr := SLE15_SP2;
       FDistrRepoUrlPart := 'SLE_15_SP1/';
+    end
+    else
+    if FDistroRelease = '15.3' then
+    begin
+      FDistr := SLE15_SP3;
+      FDistrRepoUrlPart := 'SLE_15_SP3/';
+    end
+    else
+    if FDistroRelease = '15.4' then
+    begin
+      FDistr := SLE15_SP4;
+      FDistrRepoUrlPart := 'SLE_15_SP4/';
     end;
   end
   else
