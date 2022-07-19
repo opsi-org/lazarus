@@ -356,7 +356,8 @@ type
 
     procedure parsePowershellCall(var Command: string; AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
-      var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+      var syntaxCheck: boolean; var InfoSyntaxError: string;
+      out HandlePolicyBool: boolean);
     function GetContentOfDefinedFunction(var ReadingSuccessful: boolean;
       var linecounter: integer; var FaktScriptLineNumber: int64;
       var Sektion: TWorksection; SectionSpecifier: TSectionSpecifier;
@@ -3706,31 +3707,34 @@ var
 
     HostsImage := TuibPatchHostsFile.Create;
 
-    if FileExists(HostsLocation) then
-      HostsImage.LoadFromFile(HostsLocation)
-    else
+    if not testSyntax then
     begin
-      ps := LogDatei.LogSIndentPlus(+3) +
-        'Info: This file does not exist and will be created ';
-      LogDatei.log(ps, LLinfo);
-      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
-
-      if CreateTextfile(HostsLocation, ErrorInfo) then
-      begin
-        if ErrorInfo <> '' then
-        begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-          LogDatei.log(ps, LLWarning);
-        end;
-      end
+      if FileExists(HostsLocation) then
+        HostsImage.LoadFromFile(HostsLocation)
       else
       begin
-        ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-        LogDatei.log(ps, LLError);
-        exit; (* ------------------------------  exit *)
+        ps := LogDatei.LogSIndentPlus(+3) +
+          'Info: This file does not exist and will be created ';
+        LogDatei.log(ps, LLinfo);
+        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+
+        if CreateTextfile(HostsLocation, ErrorInfo) then
+        begin
+          if ErrorInfo <> '' then
+          begin
+            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
+            LogDatei.log(ps, LLWarning);
+          end;
+        end
+        else
+        begin
+          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
+          LogDatei.log(ps, LLError);
+          exit; (* ------------------------------  exit *)
+        end;
       end;
+      HostsImage.Text := reencode(HostsImage.Text, 'system');
     end;
-    HostsImage.Text := reencode(HostsImage.Text, 'system');
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
     for i := 1 to Sektion.Count do
@@ -3754,32 +3758,38 @@ var
         if UpperCase(Expressionstr) = UpperCase('SetAddr') then
         begin
           GetWord(Remaining, Hostname, ipAdresse, WordDelimiterSetHosts);
-          HostsImage.SetAddress(Hostname, ipAdresse);
+          if not testSyntax then
+            HostsImage.SetAddress(Hostname, ipAdresse);
         end
         else if UpperCase(Expressionstr) = UpperCase('SetName') then
         begin
           GetWord(Remaining, ipAdresse, Hostname, WordDelimiterSetHosts);
-          HostsImage.SetName(ipAdresse, Hostname);
+          if not testSyntax then
+            HostsImage.SetName(ipAdresse, Hostname);
         end
         else if UpperCase(Expressionstr) = UpperCase('SetAlias') then
         begin
           GetWord(Remaining, Ident, Alias, WordDelimiterSetHosts);
-          HostsImage.SetAlias(Ident, Alias);
+          if not testSyntax then
+            HostsImage.SetAlias(Ident, Alias);
         end
         else if UpperCase(Expressionstr) = UpperCase('DelAlias') then
         begin
           GetWord(Remaining, Ident, Alias, WordDelimiterSetHosts);
-          HostsImage.DelAlias(Ident, Alias);
+          if not testSyntax then
+            HostsImage.DelAlias(Ident, Alias);
         end
         else if UpperCase(Expressionstr) = UpperCase('DelHost') then
         begin
           GetWord(Remaining, Ident, Remaining, WordDelimiterSetHosts);
-          HostsImage.DelHost(Ident);
+          if not testSyntax then
+            HostsImage.DelHost(Ident);
         end
         else if UpperCase(Expressionstr) = UpperCase('SetComment') then
         begin
           GetWord(Remaining, Ident, Remaining, WordDelimiterSetHosts);
-          HostsImage.SetComment(Ident, Remaining);
+          if not testSyntax then
+            HostsImage.SetComment(Ident, Remaining);
         end
 
         else
@@ -3788,7 +3798,8 @@ var
     end;
 
     try
-      HostsImage.SaveToFile(HostsLocation);
+      if not testSyntax then
+        HostsImage.SaveToFile(HostsLocation);
     except
       ps := LogDatei.LogSIndent + 'Error: file ' + HostsLocation +
         ' could not be saved to disk';
@@ -4380,35 +4391,39 @@ begin
   if cacheRequest = tlcrClear then
   begin
     logdatei.log('Clearing cached LDAP search result', LevelComplete);
-    if (ldapResult <> nil) then
-    begin
-      ldapResult.Clear;
-      ldapResult.Free;
-      ldapResult := nil;
-    end;
+    if not testSyntax then
+      if (ldapResult <> nil) then
+      begin
+        ldapResult.Clear;
+        ldapResult.Free;
+        ldapResult := nil;
+      end;
 
   end
   else if cacheRequest = tlcrCached then
   begin
-    if (ldapResult = nil) then
-    begin
-      reportError(Sektion, 0, '(parameter /cached)',
-        'There was probably no (successful) LDAP search');
-      logDatei.log('No cached LDAP search result found', LLError);
-      syntaxCheck := False;
-      errorOccurred := True;
-    end;
+    if not testSyntax then
+      if (ldapResult = nil) then
+      begin
+        reportError(Sektion, 0, '(parameter /cached)',
+          'There was probably no (successful) LDAP search');
+        logDatei.log('No cached LDAP search result found', LLError);
+        syntaxCheck := False;
+        errorOccurred := True;
+      end;
   end
   else //tlcrNone, tlcrCache
   begin
     syntaxCheck := analyzeSection;
-    if syntaxCheck then
-      errorOccurred := not callLDAP;
+    if not testSyntax then
+      if syntaxCheck then
+        errorOccurred := not callLDAP;
     //testLDAP;
   end;
 
-  if syntaxCheck and not errorOccurred and not (cacheRequest = tlcrClear) then
-    buildOutput;
+  if not testSyntax then
+    if syntaxCheck and not errorOccurred and not (cacheRequest = tlcrClear) then
+      buildOutput;
 
   if (cacheRequest = tlcrNone) and (ldapResult <> nil) then
   begin
@@ -4431,7 +4446,8 @@ begin
 end;
 
 {$IFDEF WINDOWS}
-function CheckDWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+function CheckDWord(var ReadValue: string; var Value: string;
+  var ErrorInfo: string): boolean;
 begin
   try
     StrToInt64(ReadValue);
@@ -4446,7 +4462,8 @@ begin
   end;
 end;
 
-function CheckQWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+function CheckQWord(var ReadValue: string; var Value: string;
+  var ErrorInfo: string): boolean;
 begin
   Result := False;
   try
@@ -5130,7 +5147,7 @@ var
       trdInteger:
         Result := CheckDWord(r, Value, ErrorInfo);
       trdInt64:
-          Result := CheckQWord(r, Value, ErrorInfo);
+        Result := CheckQWord(r, Value, ErrorInfo);
       trdBinary:
       begin
         binValue := r;
@@ -6626,7 +6643,6 @@ begin
       inParams := False;
       paramsFound := False;
       paramsValueListFound := False;
-
     end;
 
 
@@ -6817,107 +6833,52 @@ begin
       end;
     end;
 
-
-    if syntaxCheck then
+    if not testSyntax then
     begin
-      LogDatei.log('   "method": "' + methodname + '"', LLInfo);
-      //LogDatei.log_prog('   "params" : "' + jsonParams, LLInfo);
+      if syntaxCheck then
+      begin
+        LogDatei.log('   "method": "' + methodname + '"', LLInfo);
+        //LogDatei.log_prog('   "params" : "' + jsonParams, LLInfo);
 
-      testresult := 'service not initialized';
-      case serviceChoice of
-        tscGlobal:
-        begin
-
-          if opsidata = nil then
+        testresult := 'service not initialized';
+        case serviceChoice of
+          tscGlobal:
           begin
-            errorOccured := True;
-          end
-          else
-            try
-              if opsidata.getOpsiServiceVersion = '4' then
-                local_opsidata := TOpsi4Data(opsidata);
-              LogDatei.log_prog('Calling opsi service at ' +
-                local_opsidata.serviceUrl, LLDebug);
-            except
+
+            if opsidata = nil then
+            begin
               errorOccured := True;
-              testresult := 'not in service mode';
-            end;
-
-        end;
-
-        tscReuse:
-        begin
-          if (local_opsidata = nil) or not (local_opsidata is TOpsi4Data) then
-          begin
-            errorOccured := True;
-            testresult := 'not connected to service';
-          end
-          else
-          begin
-            LogDatei.log_prog('Calling opsi service at ' +
-              local_opsidata.serviceUrl, LLDebug);
-          end;
-        end;
-
-        tscLogin:
-        begin
-          try
-            opsiServiceVersion :=
-              getOpsiServiceVersion(serviceurl, username, password, sessionid);
-            if opsiServiceVersion = '4' then
-            begin
-              local_opsidata := TOpsi4Data.Create;
-              local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
-              //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
-              //OpsiData.setOptions (opsiclientd_serviceoptions);
-
-              //@Detlef: just for testing? I think so therefore I comment that out (Jan):
-                  {omc := TOpsiMethodCall.create ('backend_info',[]);
-                  //omc := TOpsiMethodCall.create ('authenticated',[]);
-                  testresult := local_opsidata.CheckAndRetrieve (omc, errorOccured);
-                  omc.free;}
-
             end
-            else if opsiServiceVersion = '' then
-              LogDatei.log(
-                'opsi service version could not retrieved, perhaps no connection',
-                LLwarning)
             else
-              LogDatei.log('Internal Error: Unkown Opsi Service Version:>' +
-                opsiServiceVersion + '<', LLerror);
-          except
-            on e: Exception do
+              try
+                if opsidata.getOpsiServiceVersion = '4' then
+                  local_opsidata := TOpsi4Data(opsidata);
+                LogDatei.log_prog('Calling opsi service at ' +
+                  local_opsidata.serviceUrl, LLDebug);
+              except
+                errorOccured := True;
+                testresult := 'not in service mode';
+              end;
+
+          end;
+
+          tscReuse:
+          begin
+            if (local_opsidata = nil) or not (local_opsidata is TOpsi4Data) then
             begin
-              LogDatei.log('Exception in doOpsiServicecall: tscLogin: ' +
-                e.message, LLError);
               errorOccured := True;
               testresult := 'not connected to service';
+            end
+            else
+            begin
+              LogDatei.log_prog('Calling opsi service at ' +
+                local_opsidata.serviceUrl, LLDebug);
             end;
           end;
-        end;
 
-        tscInteractiveLogin:
-        begin
-            {$IFDEF GUI}
-          stopIt := False;
-          passwordDialog := TDialogServicePassword.Create(nil);
-
-
-          while not stopIt do
+          tscLogin:
           begin
-            passwordDialog.Visible := False;
-            passwordDialog.EditServiceURL.Text := serviceurl;
-            passwordDialog.EditUsername.Text := username;
-            passwordDialog.EditPassword.Text := '';
-
-            if passwordDialog.showModal = mrOk then
-            begin
-              serviceUrl := passwordDialog.EditServiceURL.Text;
-              username := passwordDialog.EditUsername.Text;
-              password := passwordDialog.EditPassword.Text;
-              LogDatei.log('serviceUrl: ' + serviceUrl, LLconfidential);
-              LogDatei.log('username: ' + username, LLconfidential);
-              LogDatei.log('password: ' + password, LLconfidential);
+            try
               opsiServiceVersion :=
                 getOpsiServiceVersion(serviceurl, username, password, sessionid);
               if opsiServiceVersion = '4' then
@@ -6926,224 +6887,282 @@ begin
                 local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
                 //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                 //OpsiData.setOptions (opsiclientd_serviceoptions);
-                omc := TOpsiMethodCall.Create('backend_info', []);
-                //omc := TOpsiMethodCall.create ('authenticated',[]);
-                testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
-                omc.Free;
+
+                //@Detlef: just for testing? I think so therefore I comment that out (Jan):
+                  {omc := TOpsiMethodCall.create ('backend_info',[]);
+                  //omc := TOpsiMethodCall.create ('authenticated',[]);
+                  testresult := local_opsidata.CheckAndRetrieve (omc, errorOccured);
+                  omc.free;}
+
               end
+              else if opsiServiceVersion = '' then
+                LogDatei.log(
+                  'opsi service version could not retrieved, perhaps no connection',
+                  LLwarning)
               else
+                LogDatei.log('Internal Error: Unkown Opsi Service Version:>' +
+                  opsiServiceVersion + '<', LLerror);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in doOpsiServicecall: tscLogin: ' +
+                  e.message, LLError);
                 errorOccured := True;
-              //LogDatei.log ('Internal Error: Unkown Opsi Service Version:>'+opsiServiceVersion+'<', LLerror);
-
-              stopIt := not errorOccured;
-            end
-
-            else
-            begin
-              stopIt := True;
-              errorOccured := True;
-              testresult := 'Cancelled by user';
+                testresult := 'not connected to service';
+              end;
             end;
-
           end;
 
-          passwordDialog.Free;
+          tscInteractiveLogin:
+          begin
+            {$IFDEF GUI}
+            stopIt := False;
+            passwordDialog := TDialogServicePassword.Create(nil);
+
+
+            while not stopIt do
+            begin
+              passwordDialog.Visible := False;
+              passwordDialog.EditServiceURL.Text := serviceurl;
+              passwordDialog.EditUsername.Text := username;
+              passwordDialog.EditPassword.Text := '';
+
+              if passwordDialog.showModal = mrOk then
+              begin
+                serviceUrl := passwordDialog.EditServiceURL.Text;
+                username := passwordDialog.EditUsername.Text;
+                password := passwordDialog.EditPassword.Text;
+                LogDatei.log('serviceUrl: ' + serviceUrl, LLconfidential);
+                LogDatei.log('username: ' + username, LLconfidential);
+                LogDatei.log('password: ' + password, LLconfidential);
+                opsiServiceVersion :=
+                  getOpsiServiceVersion(serviceurl, username, password, sessionid);
+                if opsiServiceVersion = '4' then
+                begin
+                  local_opsidata := TOpsi4Data.Create;
+                  local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
+                  //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
+                  //OpsiData.setOptions (opsiclientd_serviceoptions);
+                  omc := TOpsiMethodCall.Create('backend_info', []);
+                  //omc := TOpsiMethodCall.create ('authenticated',[]);
+                  testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
+                  omc.Free;
+                end
+                else
+                  errorOccured := True;
+                //LogDatei.log ('Internal Error: Unkown Opsi Service Version:>'+opsiServiceVersion+'<', LLerror);
+
+                stopIt := not errorOccured;
+              end
+
+              else
+              begin
+                stopIt := True;
+                errorOccured := True;
+                testresult := 'Cancelled by user';
+              end;
+
+            end;
+
+            passwordDialog.Free;
 
             {$ELSE GUI}
-          stopIt := False;
-          //passwordDialog := TDialogServicePassword.create(nil);
+            stopIt := False;
+            //passwordDialog := TDialogServicePassword.create(nil);
 
 
-          while not stopIt do
-          begin
-
-            if cmdLineInputDialog(serviceUrl, rsGetServiceUrl, serviceurl, False) and
-              cmdLineInputDialog(username, rsGetUserName, '', False) and
-              cmdLineInputDialog(password, rsGetPassword, '', True) then
+            while not stopIt do
             begin
-              LogDatei.log('serviceUrl: ' + serviceUrl, LLconfidential);
-              LogDatei.log('username: ' + username, LLconfidential);
-              LogDatei.log('password: ' + password, LLconfidential);
-              opsiServiceVersion :=
-                getOpsiServiceVersion(serviceurl, username, password, sessionid);
-              if opsiServiceVersion = '4' then
-              begin
-                local_opsidata := TOpsi4Data.Create;
-                local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
-                omc := TOpsiMethodCall.Create('backend_info', []);
-                testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
-                omc.Free;
-              end
-              else
-                errorOccured := True;
-              stopIt := not errorOccured;
-            end
 
-            else
+              if cmdLineInputDialog(serviceUrl, rsGetServiceUrl, serviceurl, False) and
+                cmdLineInputDialog(username, rsGetUserName, '', False) and
+                cmdLineInputDialog(password, rsGetPassword, '', True) then
+              begin
+                LogDatei.log('serviceUrl: ' + serviceUrl, LLconfidential);
+                LogDatei.log('username: ' + username, LLconfidential);
+                LogDatei.log('password: ' + password, LLconfidential);
+                opsiServiceVersion :=
+                  getOpsiServiceVersion(serviceurl, username, password, sessionid);
+                if opsiServiceVersion = '4' then
+                begin
+                  local_opsidata := TOpsi4Data.Create;
+                  local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
+                  omc := TOpsiMethodCall.Create('backend_info', []);
+                  testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
+                  omc.Free;
+                end
+                else
+                  errorOccured := True;
+                stopIt := not errorOccured;
+              end
+
+              else
+              begin
+                stopIt := True;
+                errorOccured := True;
+                testresult := 'Cancelled by user';
+              end;
+            end;
+            {$ENDIF GUI}
+          end;
+
+          tscOpsiclientd, tscOpsiclientdOnce:
+          begin
+            serviceurl := 'https://localhost:4441/opsiclientd';
+            {$IFDEF WINDOWS}
+            opsiclientd_conf :=
+              getSpecialFolder(CSIDL_PROGRAM_FILES) +
+              '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+            {$ENDIF WINDOWS}
+            {$IFDEF UNIX}
+            opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
+            {$ENDIF LINUX}
+            if FileExists(opsiclientd_conf) then
+            begin
+              myconf := TInifile.Create(opsiclientd_conf);
+              password := myconf.ReadString('global', 'opsi_host_key', '');
+              username := myconf.ReadString('global', 'host_id', '');
+              myconf.Free;
+            end;
+            if password = '' then
             begin
               stopIt := True;
               errorOccured := True;
-              testresult := 'Cancelled by user';
+              testresult := 'Can not get opsi_host_key';
+            end
+            else
+            begin
+              local_opsidata := TOpsi4Data.Create;
+              local_opsidata.initOpsiConf(serviceurl, username, password);
+              omc := TOpsiMethodCall.Create('backend_info', []);
+              testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
+              omc.Free;
             end;
           end;
-            {$ENDIF GUI}
+
         end;
-
-        tscOpsiclientd, tscOpsiclientdOnce:
-        begin
-          serviceurl := 'https://localhost:4441/opsiclientd';
-            {$IFDEF WINDOWS}
-          opsiclientd_conf :=
-            getSpecialFolder(CSIDL_PROGRAM_FILES) +
-            '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
-            {$ENDIF WINDOWS}
-            {$IFDEF UNIX}
-          opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
-            {$ENDIF LINUX}
-          if FileExists(opsiclientd_conf) then
-          begin
-            myconf := TInifile.Create(opsiclientd_conf);
-            password := myconf.ReadString('global', 'opsi_host_key', '');
-            username := myconf.ReadString('global', 'host_id', '');
-            myconf.Free;
-          end;
-          if password = '' then
-          begin
-            stopIt := True;
-            errorOccured := True;
-            testresult := 'Can not get opsi_host_key';
-          end
-          else
-          begin
-            local_opsidata := TOpsi4Data.Create;
-            local_opsidata.initOpsiConf(serviceurl, username, password);
-            omc := TOpsiMethodCall.Create('backend_info', []);
-            testresult := local_opsidata.CheckAndRetrieve(omc, errorOccured);
-            omc.Free;
-          end;
-        end;
-
-      end;
-
-      if errorOccured then
-      begin
-        local_opsidata := nil;
-        LogDatei.log('Error: ' + testresult, LLError);
-      end;
-
-      if local_opsidata = nil then
-      begin
-        errorOccured := True;
-        LogDatei.log('Error: no connection to service', LLError);
-      end;
-
-    end;
-
-    if not errorOccured and syntaxcheck then
-    begin
-      try
-        setlength(parameters, paramList.Count);
-        for j := 0 to paramList.Count - 1 do
-        begin
-          parameters[j] := paramlist.Strings[j];
-          logdatei.log_prog('param[' + IntToStr(j) + ']: ' +
-            paramlist.Strings[j], LLDebug2);
-        end;
-
-        omc := TOpsiMethodCall.Create(methodname, parameters);
-        omc.JSONValueSyntaxInParameterList := True;
-        if timeoutint > 0 then
-          omc.timeout := timeoutint;
-        testresult := '';
-
-        if copy(methodname, length(methodname) - length('_hash') +
-          1, length(methodname)) = '_hash' then
-        begin
-          if output = nil then
-            output := TXStringList.Create;
-          tmplist := local_opsidata.checkAndRetrieveMap(omc, errorOccured);
-          if tmplist <> nil then
-            output.Assign(tmplist);
-          //output.Text := tmplist.Text;
-          if (not errorOccured) and (output <> nil) then
-          begin
-            try
-              if output.Count > 0 then
-                testresult := output.strings[0];
-
-              for j := 0 to output.Count - 1 do
-                testresult := testresult + ', ' + output.strings[j]
-            except
-              LogDatei.log(
-                'Error: exeption after checkAndRetrieveMap in reading the stringlist' +
-                testresult, LLError);
-            end;
-          end
-          else if output = nil then
-            output := TXStringList.Create;
-        end
-        else if copy(methodname, length(methodname) - length('_list') +
-          1, length(methodname)) = '_list' then
-        begin
-          if output = nil then
-            output := TXStringList.Create;
-          tmplist := local_opsidata.checkAndRetrieveStringList(omc, errorOccured);
-          if tmplist <> nil then
-            output.Assign(tmplist);
-          //output.Text := tmplist.Text;
-          if (not errorOccured) and (output <> nil) then
-          begin
-            try
-              if output.Count > 0 then
-                testresult := output.strings[0];
-
-              for j := 1 to output.Count - 1 do
-                testresult := testresult + ', ' + output.strings[j]
-            except
-              LogDatei.log(
-                'Error: exeption after checkAndRetrieveStringList in reading the stringlist'
-                + testresult, LLError);
-            end;
-          end
-          else if output = nil then
-            output := TXStringList.Create;
-        end
-        else
-
-        begin
-          testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
-          output := TXStringList.Create;
-          output.add(testresult);
-        end;
-
-        if Assigned(omc) then
-          FreeAndNil(omc);
 
         if errorOccured then
         begin
+          local_opsidata := nil;
           LogDatei.log('Error: ' + testresult, LLError);
-        end
-        else
-        begin
-          LogDatei.log('JSON result: ' + testresult, LLinfo);
-          //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
         end;
-      except
-        on e: Exception do
+
+        if local_opsidata = nil then
         begin
-          LogDatei.log('Exception in doOpsiServiceCall: do the call: ' +
-            e.message, LLError);
+          errorOccured := True;
+          LogDatei.log('Error: no connection to service', LLError);
+        end;
+
+      end;
+
+      if not errorOccured and syntaxcheck then
+      begin
+        try
+          setlength(parameters, paramList.Count);
+          for j := 0 to paramList.Count - 1 do
+          begin
+            parameters[j] := paramlist.Strings[j];
+            logdatei.log_prog('param[' + IntToStr(j) + ']: ' +
+              paramlist.Strings[j], LLDebug2);
+          end;
+
+          omc := TOpsiMethodCall.Create(methodname, parameters);
+          omc.JSONValueSyntaxInParameterList := True;
+          if timeoutint > 0 then
+            omc.timeout := timeoutint;
+          testresult := '';
+
+          if copy(methodname, length(methodname) - length('_hash') +
+            1, length(methodname)) = '_hash' then
+          begin
+            if output = nil then
+              output := TXStringList.Create;
+            tmplist := local_opsidata.checkAndRetrieveMap(omc, errorOccured);
+            if tmplist <> nil then
+              output.Assign(tmplist);
+            //output.Text := tmplist.Text;
+            if (not errorOccured) and (output <> nil) then
+            begin
+              try
+                if output.Count > 0 then
+                  testresult := output.strings[0];
+
+                for j := 0 to output.Count - 1 do
+                  testresult := testresult + ', ' + output.strings[j]
+              except
+                LogDatei.log(
+                  'Error: exeption after checkAndRetrieveMap in reading the stringlist' +
+                  testresult, LLError);
+              end;
+            end
+            else if output = nil then
+              output := TXStringList.Create;
+          end
+          else if copy(methodname, length(methodname) - length('_list') +
+            1, length(methodname)) = '_list' then
+          begin
+            if output = nil then
+              output := TXStringList.Create;
+            tmplist := local_opsidata.checkAndRetrieveStringList(omc, errorOccured);
+            if tmplist <> nil then
+              output.Assign(tmplist);
+            //output.Text := tmplist.Text;
+            if (not errorOccured) and (output <> nil) then
+            begin
+              try
+                if output.Count > 0 then
+                  testresult := output.strings[0];
+
+                for j := 1 to output.Count - 1 do
+                  testresult := testresult + ', ' + output.strings[j]
+              except
+                LogDatei.log(
+                  'Error: exeption after checkAndRetrieveStringList in reading the stringlist'
+                  + testresult, LLError);
+              end;
+            end
+            else if output = nil then
+              output := TXStringList.Create;
+          end
+          else
+
+          begin
+            testresult := local_opsidata.CheckAndRetrieveString(omc, errorOccured);
+            output := TXStringList.Create;
+            output.add(testresult);
+          end;
+
+          if Assigned(omc) then
+            FreeAndNil(omc);
+
+          if errorOccured then
+          begin
+            LogDatei.log('Error: ' + testresult, LLError);
+          end
+          else
+          begin
+            LogDatei.log('JSON result: ' + testresult, LLinfo);
+            //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
+          end;
+        except
+          on e: Exception do
+          begin
+            LogDatei.log('Exception in doOpsiServiceCall: do the call: ' +
+              e.message, LLError);
+          end;
         end;
       end;
-    end;
 
-    // trigger reset local_opsidata to tscGlobal if tscOpsiclientdOnce
-    if serviceChoice = tscOpsiclientdOnce then
-    begin
-      local_opsidata.Free;
-      //local_opsidata := nil;
-      local_opsidata := opsidata;
-    end;
+      // trigger reset local_opsidata to tscGlobal if tscOpsiclientdOnce
+      if serviceChoice = tscOpsiclientdOnce then
+      begin
+        local_opsidata.Free;
+        //local_opsidata := nil;
+        local_opsidata := opsidata;
+      end;
+
+    end; // testsyntax
 
     // finishing our section
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -7168,7 +7187,6 @@ begin
       LogDatei.log('Exception in doOpsiServiceCall: general' + ex.message, LLError);
     end;
   end;
-
 end;
 
 
@@ -7722,62 +7740,66 @@ var
     nodepath := '';
 
 
-    // Create the XML Patch list
-    PatchListe := TXStringList.Create;
-    PatchListe.Clear;
-    //PatchListe.ItemPointer := -1;
-    if FileExists(myfilename) then
-      PatchListe.loadFromFileWithEncoding(myfilename, flag_encoding)
-    else
+    if not testSyntax then
     begin
-      LogDatei.log('file to patch does not exist and will be created: ' +
-        myfilename, LLinfo);
-      try
-        rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
-        if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
-        begin
-          LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
-          LogDatei.log(
-            'We fall back to <rootnode> but normally this is not what you want',
-            LLWarning);
-          rootnodeOnCreate := 'rootnode';
+      // Create the XML Patch list
+      PatchListe := TXStringList.Create;
+      PatchListe.Clear;
+      //PatchListe.ItemPointer := -1;
+      if FileExists(myfilename) then
+        PatchListe.loadFromFileWithEncoding(myfilename, flag_encoding)
+      else
+      begin
+        LogDatei.log('file to patch does not exist and will be created: ' +
+          myfilename, LLinfo);
+        try
+          rootnodeOnCreate := Sektion.getStringValue('rootnodeOnCreate');
+          if (rootnodeOnCreate = NULL_STRING_VALUE) or (rootnodeOnCreate = '') then
+          begin
+            LogDatei.log('No rootnode given with rootnodeOnCreate = ', LLWarning);
+            LogDatei.log(
+              'We fall back to <rootnode> but normally this is not what you want',
+              LLWarning);
+            rootnodeOnCreate := 'rootnode';
+          end;
+          helperlist := TStringList.Create;
+          PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
+          PatchListe.Add('<' + rootnodeOnCreate + '>');
+          stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
+          PatchListe.Add('</' + helperlist.Strings[0] + '>');
+        finally
+          helperlist.Free;
         end;
-        helperlist := TStringList.Create;
-        PatchListe.Add('<?xml version="1.0" encoding="UTF-8"?>');
-        PatchListe.Add('<' + rootnodeOnCreate + '>');
-        stringsplitByWhiteSpace(rootnodeOnCreate, helperlist);
-        PatchListe.Add('</' + helperlist.Strings[0] + '>');
-      finally
-        helperlist.Free;
       end;
+      //PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
+
+      LogDatei.log('reencoded file: ' + myfilename, LLinfo);
+      LogDatei.log_list(PatchListe, LLDebug);
+
+      //regexMatchList : TStringlist.Create;
+      regexMatchList := getRegexMatchList('encoding="[\w-]*"', PatchListe);
+      if regexMatchList.Count >= 1 then
+        PatchListe.Text := stringReplaceRegexInList(
+          TStringList(PatchListe), 'encoding="[\w-]*"', 'encoding="UTF-8"').Text;
+
+      LogDatei.log('file with changed encoding: ' + myfilename, LLinfo);
+      LogDatei.log_list(PatchListe, LLDebug);
+
+      // createXMLDoc
+      XMLDocObject := TuibXMLDocument.Create;
+      XMLDocObject.debuglevel := oslog.LLinfo;
+
+      // open xmlfile
+      //if XMLDocObject.openXmlFile(myfilename) then
+
+      // open XML file with encoding
+      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
+        LogDatei.log('success: create xmldoc from / for file: ' +
+          myfilename, oslog.LLinfo)
+      else
+        LogDatei.log('failed: create xmldoc from / for file: ' +
+          myfilename, oslog.LLError);
     end;
-    //PatchListe.loadFromFileWithEncoding(ExpandFileName(myfilename), flag_encoding);
-
-    LogDatei.log('reencoded file: ' + myfilename, LLinfo);
-    LogDatei.log_list(PatchListe, LLDebug);
-
-    //regexMatchList : TStringlist.Create;
-    regexMatchList := getRegexMatchList('encoding="[\w-]*"', PatchListe);
-    if regexMatchList.Count >= 1 then
-      PatchListe.Text := stringReplaceRegexInList(
-        TStringList(PatchListe), 'encoding="[\w-]*"', 'encoding="UTF-8"').Text;
-
-    LogDatei.log('file with changed encoding: ' + myfilename, LLinfo);
-    LogDatei.log_list(PatchListe, LLDebug);
-
-    // createXMLDoc
-    XMLDocObject := TuibXMLDocument.Create;
-    XMLDocObject.debuglevel := oslog.LLinfo;
-
-    // open xmlfile
-    //if XMLDocObject.openXmlFile(myfilename) then
-
-    // open XML file with encoding
-    if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
-      LogDatei.log('success: create xmldoc from / for file: ' + myfilename, oslog.LLinfo)
-    else
-      LogDatei.log('failed: create xmldoc from / for file: ' +
-        myfilename, oslog.LLError);
 
     // parse section
     for i := 1 to Sektion.Count do
@@ -7822,112 +7844,6 @@ var
             syntaxCheck := False;
         end;  // StrictMode
 
-          (*
-          if LowerCase (Expressionstr) = LowerCase ('OpenNode')
-          then
-          Begin
-            if nodeOpenCommandExists // i.e., existed already
-            then
-               //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
-            else
-               nodeOpenCommandExists := true;
-            SyntaxCheck := false;
-            if GetStringA (trim(r), nodepath, r, errorinfo, true) then
-            begin
-              LogDatei.log('We will OpenNode : '+nodepath, LLdebug);
-              syntaxCheck := true;
-            end
-            else  syntaxCheck := false;
-            if r = '' then SyntaxCheck := true
-            else ErrorInfo := ErrorRemaining;
-            //else SyntaxCheck := true ;
-            if SyntaxCheck
-            then
-            Begin
-              // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-              if XMLDocObject.nodeExists(nodepath) then
-              begin
-                LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
-                if XMLDocObject.openNode(nodepath, openstrict) then
-                begin
-                  nodeOpened := true;
-                  LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
-                end
-                else
-                begin
-                  nodeOpened := false;
-                  LogDatei.log('failed opend node: '+nodepath,oslog.LLwarning);
-                end
-              end
-              else
-              begin
-                nodeOpened := false;
-                LogDatei.log('failed node exists: '+nodepath,oslog.LLwarning);
-              end
-            End
-            else
-              reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
-          End;   // opnenode
-          *)
-          (*
-          if LowerCase (Expressionstr) = LowerCase ('OpenNode')
-          then
-          Begin
-            if nodeOpenCommandExists // i.e., existed already
-            then
-               //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
-            else
-               nodeOpenCommandExists := true;
-            SyntaxCheck := false;
-            if GetStringA (trim(r), nodepath, r, errorinfo, true) then
-            begin
-              LogDatei.log('We will OpenNode : '+nodepath, LLdebug);
-              syntaxCheck := true;
-            end
-            else  syntaxCheck := false;
-            if r = '' then SyntaxCheck := true
-            else ErrorInfo := ErrorRemaining;
-            //else SyntaxCheck := true ;
-            if SyntaxCheck
-            then
-            Begin
-              // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-              if XMLDocObject.nodeExists(nodepath) then
-              begin
-                LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
-                if XMLDocObject.openNode(nodepath, openstrict) then
-                begin
-                  nodeOpened := true;
-                  LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
-                end
-                else
-                begin
-                    nodeOpened := false;
-                    LogDatei.log('failed opend node: '+nodepath,oslog.LLwarning);
-                end
-              end
-              else
-              begin
-                nodeOpened := false;
-                LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
-                if XMLDocObject.makeNodePathWithTextContent(nodepath,'') then
-                begin
-                  nodeOpened := true;
-                  LogDatei.log('successfully created nodepath: '+nodepath,oslog.LLinfo);
-                end
-                else
-                begin
-                   nodeOpened := false;
-                   LogDatei.log('failed to create nodepath: '+nodepath,oslog.LLError);
-                end;
-              end
-            End
-            else
-              reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
-          End;   // opnenode
-          *)
-
-
         if LowerCase(Expressionstr) = LowerCase('OpenNode') then
         begin
           if nodeOpenCommandExists // i.e., existed already
@@ -7950,31 +7866,34 @@ var
           //else SyntaxCheck := true ;
           if SyntaxCheck then
           begin
-            // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-            if XMLDocObject.openNode(nodepath, openstrict, errorinfo) then
+            if not testSyntax then
             begin
-              nodeOpened := True;
-              LogDatei.log('successfully opend node: ' + nodepath, oslog.LLinfo);
-            end
-            else
-            begin
-              LogDatei.log('nodepath does not exists - try to create: ' +
-                nodepath, oslog.LLinfo);
-              errorinfo := '';
-              if XMLDocObject.makeNodePathWithTextContent(nodepath, '', errorinfo) then
+              // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
+              if XMLDocObject.openNode(nodepath, openstrict, errorinfo) then
               begin
                 nodeOpened := True;
-                LogDatei.log('successfully created nodepath: ' +
-                  nodepath, oslog.LLinfo);
+                LogDatei.log('successfully opend node: ' + nodepath, oslog.LLinfo);
               end
               else
               begin
-                nodeOpened := False;
-                LogDatei.log('failed to create nodepath: ' + nodepath, oslog.LLError);
-                if errorinfo <> '' then
+                LogDatei.log('nodepath does not exists - try to create: ' +
+                  nodepath, oslog.LLinfo);
+                errorinfo := '';
+                if XMLDocObject.makeNodePathWithTextContent(nodepath, '', errorinfo) then
                 begin
-                  syntaxCheck := False;
-                  reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+                  nodeOpened := True;
+                  LogDatei.log('successfully created nodepath: ' +
+                    nodepath, oslog.LLinfo);
+                end
+                else
+                begin
+                  nodeOpened := False;
+                  LogDatei.log('failed to create nodepath: ' + nodepath, oslog.LLError);
+                  if errorinfo <> '' then
+                  begin
+                    syntaxCheck := False;
+                    reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+                  end;
                 end;
               end;
             end;
@@ -8035,14 +7954,17 @@ var
 
             if SyntaxCheck then
             begin
-              try
-                XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
-                LogDatei.log('successfully setNodePair : ' + newname +
-                  ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
+              if not testSyntax then
+              begin
+                try
+                  XMLDocObject.setNodePair(newname, newvalue, newname2, newvalue2);
+                  LogDatei.log('successfully setNodePair : ' + newname +
+                    ' : ' + newvalue + ' with ' + newname2 + ' : ' + newvalue2, LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:setNodePair: ' + e.message, LLError);
+                  end;
                 end;
               end;
             end
@@ -8067,18 +7989,19 @@ var
             ErrorInfo := ErrorRemaining;
           if SyntaxCheck then
           begin
-            try
-              XMLDocObject.delNode(nodepath, openstrict, errorinfo);
-              // After a deleteNode you must use opennode in order to work with open nodes
-              nodeOpened := False;
-              nodeOpenCommandExists := False;
-              LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
+            if not testSyntax then
+              try
+                XMLDocObject.delNode(nodepath, openstrict, errorinfo);
+                // After a deleteNode you must use opennode in order to work with open nodes
+                nodeOpened := False;
+                nodeOpenCommandExists := False;
+                LogDatei.log('successfully deleted node: ' + nodepath, oslog.LLinfo);
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
+                end;
               end;
-            end;
           end
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8108,15 +8031,16 @@ var
 
             if SyntaxCheck then
             begin
-              try
-                XMLDocObject.setNodeTextActNode(newtext);
-                LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+              if not testSyntax then
+                try
+                  XMLDocObject.setNodeTextActNode(newtext);
+                  LogDatei.log('successfully setText node: ' + newtext, oslog.LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8136,17 +8060,18 @@ var
           begin
             if SyntaxCheck then
             begin
-              try
-                LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
-                XMLDocObject.setParentNodeAsActNode();
-                LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:gotoParentNode: ' +
-                    e.message, LLError);
+              if not testSyntax then
+                try
+                  LogDatei.log('We will gotoParentNode : ' + newtext, LLdebug);
+                  XMLDocObject.setParentNodeAsActNode();
+                  LogDatei.log('successfully gotoParentNode ', oslog.LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:gotoParentNode: ' +
+                      e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8178,15 +8103,16 @@ var
 
             if SyntaxCheck then
             begin
-              try
-                XMLDocObject.makeNode(newtext, '', '');
-                LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
+              if not testSyntax then
+                try
+                  XMLDocObject.makeNode(newtext, '', '');
+                  LogDatei.log('successfully addNewNode: ' + newtext, oslog.LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8234,17 +8160,18 @@ var
 
             if SyntaxCheck then
             begin
-              try
-                XMLDocObject.setAttribute(newname, newvalue);
-                LogDatei.log('successfully setAttribute : ' + newname +
-                  ' : ' + newvalue, LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:setAttribute: ' +
-                    e.message, LLError);
+              if not testSyntax then
+                try
+                  XMLDocObject.setAttribute(newname, newvalue);
+                  LogDatei.log('successfully setAttribute : ' + newname +
+                    ' : ' + newvalue, LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:setAttribute: ' +
+                      e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8291,17 +8218,18 @@ var
 
             if SyntaxCheck then
             begin
-              try
-                XMLDocObject.addAttribute(newname, newvalue);
-                LogDatei.log('successfully addAttribute : ' + newname +
-                  ' : ' + newvalue, LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:addAttribute: ' +
-                    e.message, LLError);
+              if not testSyntax then
+                try
+                  XMLDocObject.addAttribute(newname, newvalue);
+                  LogDatei.log('successfully addAttribute : ' + newname +
+                    ' : ' + newvalue, LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:addAttribute: ' +
+                      e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8334,17 +8262,18 @@ var
             if SyntaxCheck then
             begin
               //LogDatei.log('We will delAttribute : '+newname, LLdebug);
-              try
-                XMLDocObject.delAttribute(newname);
-                LogDatei.log('successfully delAttribute node: ' +
-                  newname, oslog.LLinfo);
-              except
-                on e: Exception do
-                begin
-                  LogDatei.log('Exception in xml2:delAttribute: ' +
-                    e.message, LLError);
+              if not testSyntax then
+                try
+                  XMLDocObject.delAttribute(newname);
+                  LogDatei.log('successfully delAttribute node: ' +
+                    newname, oslog.LLinfo);
+                except
+                  on e: Exception do
+                  begin
+                    LogDatei.log('Exception in xml2:delAttribute: ' +
+                      e.message, LLError);
+                  end;
                 end;
-              end;
             end
             else
               reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8358,40 +8287,29 @@ var
       end; // not a comment line
     end; // any line
 
-    // Saving the PatchListe to XML file
-    PatchListe := TPatchList(XMLDocObject.getXmlStrings());
+    if not testSyntax then
+    begin
+      // Saving the PatchListe to XML file
+      PatchListe := TPatchList(XMLDocObject.getXmlStrings());
 
 
-    if regexMatchList.Count >= 1 then
-      PatchListe.Text := stringReplaceRegexInList(PatchListe,
-        'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
-    try
-      FileGetWriteAccess(myfilename, infostr);
-      // call saveToFile with raise_on_error = true - to catch problems
-      PatchListe.SaveToFile(myfilename, flag_encoding, True);
-      LogDatei.log('Successfully saved XML doc to file: ' + myfilename +
-        ' with encoding : ' + flag_encoding, LLinfo)
-    except
-      LogDatei.log('Failed to save XML doc to file: ' + myfilename +
-        ' with encoding : ' + flag_encoding, oslog.LLError);
+      if regexMatchList.Count >= 1 then
+        PatchListe.Text := stringReplaceRegexInList(PatchListe,
+          'encoding="[\w-]*"', regexMatchList.Strings[0]).Text;
+      try
+        FileGetWriteAccess(myfilename, infostr);
+        // call saveToFile with raise_on_error = true - to catch problems
+        PatchListe.SaveToFile(myfilename, flag_encoding, True);
+        LogDatei.log('Successfully saved XML doc to file: ' +
+          myfilename + ' with encoding : ' + flag_encoding, LLinfo)
+      except
+        LogDatei.log('Failed to save XML doc to file: ' + myfilename +
+          ' with encoding : ' + flag_encoding, oslog.LLError);
+      end;
+
+      PatchListe.Free;
+      PatchListe := nil;
     end;
-
-      (*
-      if XMLDocObject.createXmlDocFromStringlist(PatchListe) then
-        LogDatei.log('Successfully saved XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, LLinfo)
-      else
-        LogDatei.log('Failed to save XML doc to file: ' + myfilename + ' with encoding : ' + flag_encoding, oslog.LLError);
-      *)
-    PatchListe.Free;
-    PatchListe := nil;
-
-      (*
-      // save xml back
-      if XMLDocObject.writeXmlAndCloseFile(myfilename) then
-        LogDatei.log('successful written xmldoc to file: ' + myfilename, LLinfo)
-      else
-        LogDatei.log('failed to write xmldoc to file: ' + myfilename, oslog.LLError);
-      *)
 
     XMLDocObject.Destroy;
 
@@ -8582,6 +8500,7 @@ var
             if length(Remaining) > 0 then
               reportError(Sektion, i, Sektion.strings[i - 1], 'end of line expected')
             else
+            if not testSyntax then
               Install.MakePath(TargetDirectory);
 
             if (length(TargetDirectory) > 0) and
@@ -8720,24 +8639,26 @@ var
               'No target directory defined');
           end;
 
-          if SyntaxCheck then
-          begin
-            if Install.MakePath(Target) then
+          if not testSyntax then
+            if SyntaxCheck then
             begin
-              Target := ExpandFileName(Target);
-              Install.AllCopy(Source, Target, cpSpecify, tccmCounting,
-                NoCounted, RebootWanted);
-              Install.AllCopy(Source, Target, cpSpecify, tccmCounted,
-                NoCounted, RebootWanted);
+              if Install.MakePath(Target) then
+              begin
+                Target := ExpandFileName(Target);
+                Install.AllCopy(Source, Target, cpSpecify, tccmCounting,
+                  NoCounted, RebootWanted);
+                Install.AllCopy(Source, Target, cpSpecify, tccmCounted,
+                  NoCounted, RebootWanted);
+              end;
+              if RebootWanted and not (cpSpecify and cpNoExtraReboot =
+                cpNoExtraReboot) then
+              begin
+                PerformExitWindows := txrReboot;
+                // txrRegisterForReboot; bis Version 3.03
+                LogDatei.log('', LLInfo);
+                LogDatei.log('ExitWindows set to Reboot', LLnotice);
+              end;
             end;
-            if RebootWanted and not (cpSpecify and cpNoExtraReboot =
-              cpNoExtraReboot) then
-            begin
-              PerformExitWindows := txrReboot; // txrRegisterForReboot; bis Version 3.03
-              LogDatei.log('', LLInfo);
-              LogDatei.log('ExitWindows set to Reboot', LLnotice);
-            end;
-          end;
 
         end
 
@@ -8861,17 +8782,21 @@ var
             Source := SourceDirectory + Expressionstr;
           Source := ExpandFileName(Source);
 
-          if SyntaxCheck then
+          if not testSyntax then
           begin
-            LogDatei.log('we try to delete: ' + Source, LLDebug2);
-            Install.AllDelete(Source, recursive, ignoreReadOnly,
-              daysback, search4file, RebootWanted, retryOnReboot);
-          end;
-          if RebootWanted and not (cpSpecify and cpNoExtraReboot = cpNoExtraReboot) then
-          begin
-            PerformExitWindows := txrReboot;
-            LogDatei.log('', LLInfo);
-            LogDatei.log('ExitWindows set to Reboot', LLnotice);
+            if SyntaxCheck then
+            begin
+              LogDatei.log('we try to delete: ' + Source, LLDebug2);
+              Install.AllDelete(Source, recursive, ignoreReadOnly,
+                daysback, search4file, RebootWanted, retryOnReboot);
+            end;
+            if RebootWanted and not (cpSpecify and cpNoExtraReboot =
+              cpNoExtraReboot) then
+            begin
+              PerformExitWindows := txrReboot;
+              LogDatei.log('', LLInfo);
+              LogDatei.log('ExitWindows set to Reboot', LLnotice);
+            end;
           end;
         end
 
@@ -8973,36 +8898,37 @@ var
                 ' to mode: ' + strmode +
                 ' : Directory is incorrect', LLerror);
 
-            if SyntaxCheck then
-            begin
-              AllFiles := FindAllFiles(Source, '*.*', True);
-              for j := 0 to AllFiles.Count - 1 do
+            if not testSyntax then
+              if SyntaxCheck then
               begin
-                LogDatei.log('we try to chmod: ' + AllFiles[j] +
-                  ' to mode: ' + strmode, LLDebug2);
-
-                if strmode = 'UGOformat' then
+                AllFiles := FindAllFiles(Source, '*.*', True);
+                for j := 0 to AllFiles.Count - 1 do
                 begin
-                  try
-                    strmode := Install.calcMode(mode, AllFiles[j]);
-                  except
-                    on E: Exception do
-                    begin
-                      LogDatei.log('Exception: Failed to caculate the new mode for: ' +
-                        AllFiles[j] + ' from mode: ' + mode +
-                        ' : ' + E.message, LLError);
+                  LogDatei.log('we try to chmod: ' + AllFiles[j] +
+                    ' to mode: ' + strmode, LLDebug2);
+
+                  if strmode = 'UGOformat' then
+                  begin
+                    try
+                      strmode := Install.calcMode(mode, AllFiles[j]);
+                    except
+                      on E: Exception do
+                      begin
+                        LogDatei.log('Exception: Failed to caculate the new mode for: ' +
+                          AllFiles[j] + ' from mode: ' + mode +
+                          ' : ' + E.message, LLError);
+                      end;
                     end;
                   end;
-                end;
 
-                if not Install.chmod(strmode, AllFiles[j]) then
-                  LogDatei.log('Failed to chmod for : ' + AllFiles[j] +
-                    ' to mode: ' + strmode, LLerror)
-                else
-                  LogDatei.log('Succeeded to chmod for : ' +
-                    AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+                  if not Install.chmod(strmode, AllFiles[j]) then
+                    LogDatei.log('Failed to chmod for : ' + AllFiles[j] +
+                      ' to mode: ' + strmode, LLerror)
+                  else
+                    LogDatei.log('Succeeded to chmod for : ' +
+                      AllFiles[j] + ' to mode: ' + strmode, LLInfo);
+                end;
               end;
-            end;
           end
           else
           begin
@@ -9014,32 +8940,33 @@ var
             Source := ExpandFileName(Source);
             LogDatei.log('Input Source - File : ' + Source, LLInfo);
 
-            if SyntaxCheck then
-            begin
-              LogDatei.log('we try to chmod: ' + Source + ' to mode: ' +
-                strmode, LLDebug2);
-
-              if strmode = 'UGOformat' then
+            if not testSyntax then
+              if SyntaxCheck then
               begin
-                try
-                  strmode := Install.calcMode(mode, Source);
-                except
-                  on E: Exception do
-                  begin
-                    LogDatei.log('Exception: Failed to caculate the new mode for: ' +
-                      Source + ' from mode: ' + mode + ' : ' +
-                      E.message, LLError);
+                LogDatei.log('we try to chmod: ' + Source + ' to mode: ' +
+                  strmode, LLDebug2);
+
+                if strmode = 'UGOformat' then
+                begin
+                  try
+                    strmode := Install.calcMode(mode, Source);
+                  except
+                    on E: Exception do
+                    begin
+                      LogDatei.log('Exception: Failed to caculate the new mode for: ' +
+                        Source + ' from mode: ' + mode + ' : ' +
+                        E.message, LLError);
+                    end;
                   end;
                 end;
-              end;
 
-              if not Install.chmod(strmode, Source) then
-                LogDatei.log('Failed to chmod: ' + Source +
-                  ' to mode: ' + strmode, LLerror)
-              else
-                LogDatei.log('Succeeded to chmod for : ' + Source +
-                  ' to mode: ' + strmode, LLInfo);
-            end;
+                if not Install.chmod(strmode, Source) then
+                  LogDatei.log('Failed to chmod: ' + Source +
+                    ' to mode: ' + strmode, LLerror)
+                else
+                  LogDatei.log('Succeeded to chmod for : ' + Source +
+                    ' to mode: ' + strmode, LLInfo);
+              end;
           end;
 
         end
@@ -9059,54 +8986,59 @@ var
           Source := Expressionstr;
           LogDatei.log('unzip source: ' + Source, lldebug3);
           Source := ExpandFileNameUTF8(Source);
-          if not FileExists(Source) then
+
+          if not testSyntax then
           begin
-            //syntaxcheck := false;
-            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
-            go_on := False;
-            logDatei.log('Error: unzip: source: ' + Source +
-              ' is no existing file', LLError);
-          end;
-
-          if syntaxcheck and go_on then
-          begin
-            if not GetString(Remaining, Target, Remaining, errorinfo, False)
-            then
-              Target := Remaining;
-            LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
-            target := trim(target);
-            Target := opsiUnquoteStr(target, '"');
-            Target := opsiUnquoteStr(target, '''');
-            LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
-            //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
-
-            target := ExpandFileNameUTF8(target);
-
-            if Install.MakePath(Target) then
+            if not FileExists(Source) then
             begin
-              if not (isDirectory(target)) then
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+              go_on := False;
+              logDatei.log('Error: unzip: source: ' + Source +
+                ' is no existing file', LLError);
+            end;
+
+            if syntaxcheck and go_on then
+            begin
+              if not GetString(Remaining, Target, Remaining, errorinfo, False)
+              then
+                Target := Remaining;
+              LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
+              target := trim(target);
+              Target := opsiUnquoteStr(target, '"');
+              Target := opsiUnquoteStr(target, '''');
+              LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
+              //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
+
+              target := ExpandFileNameUTF8(target);
+
+              if Install.MakePath(Target) then
               begin
-                //syntaxcheck := false;
-                //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
-                go_on := False;
-                logDatei.log('Error: unzip: target: ' + target +
-                  ' is not a valid file directory', LLError);
-              end;
+                if not (isDirectory(target)) then
+                begin
+                  //syntaxcheck := false;
+                  //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+                  go_on := False;
+                  logDatei.log('Error: unzip: target: ' + target +
+                    ' is not a valid file directory', LLError);
+                end;
 
 
-              if SyntaxCheck and go_on then
-              begin
-                LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
-                try
-                  if UnzipWithDirStruct(Source, target) then
-                    LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
-                  else
-                    LogDatei.log('Failed to unzip: ' + Source + ' to ' + target, LLError)
-                except
-                  on E: Exception do
-                  begin
-                    LogDatei.log('Exception: Failed to unzip: ' +
-                      Source + ' to ' + target + ' : ' + e.message, LLError);
+                if SyntaxCheck and go_on then
+                begin
+                  LogDatei.log('we try to unzip: ' + Source + ' to ' + target, LLInfo);
+                  try
+                    if UnzipWithDirStruct(Source, target) then
+                      LogDatei.log('unzipped: ' + Source + ' to ' + target, LLInfo)
+                    else
+                      LogDatei.log('Failed to unzip: ' + Source +
+                        ' to ' + target, LLError)
+                  except
+                    on E: Exception do
+                    begin
+                      LogDatei.log('Exception: Failed to unzip: ' +
+                        Source + ' to ' + target + ' : ' + e.message, LLError);
+                    end;
                   end;
                 end;
               end;
@@ -9131,65 +9063,69 @@ var
           Source := Expressionstr;
           LogDatei.log('zip source: ' + Source, lldebug3);
           Source := ExpandFileNameUTF8(Source);
-          if not (FileExists(Source) or DirectoryExists(Source)) then
+          if not testSyntax then
           begin
-            //syntaxcheck := false;
-            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
-            go_on := False;
-            logDatei.log('Error: zip: source: ' + Source +
-              ' is no existing file or directory', LLError);
-          end;
-
-          if syntaxcheck and go_on then
-          begin
-            if not GetString(Remaining, Target, Remaining, errorinfo, False)
-            then
-              Target := Remaining;
-            LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug2);
-            target := trim(target);
-            Target := opsiUnquoteStr(target, '"');
-            Target := opsiUnquoteStr(target, '''');
-            if DirectoryExists(Source) then
-              searchmask := '*.*'
-            else
+            if not (FileExists(Source) or DirectoryExists(Source)) then
             begin
-              searchmask := '';
-              if fileexists(Source) then
-              begin
-                searchmask := ExtractFileName(Source);
-                Source := includeTrailingPathDelimiter(ExtractFilePath(Source));
-              end;
-            end;
-            LogDatei.log('source: ' + Source + ' - mask: ' + searchmask +
-              ' - target: ' + target, LLDebug);
-            if not isAbsoluteFileName(target) then
-              target := targetDirectory + target;
-            target := ExpandFileNameUTF8(target);
-
-            if not (isAbsoluteFileName(target)) then
-            begin
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
               go_on := False;
-              logDatei.log('Error: zip: target: ' + target +
-                ' is not a valid file name', LLError);
-            end;
-            if fileexists(target) then
-            begin
-              DeleteFileUTF8(target);
-              logDatei.log('Info: zip: target: ' + target +
-                ' existed and was removed', LLNotice);
+              logDatei.log('Error: zip: source: ' + Source +
+                ' is no existing file or directory', LLError);
             end;
 
-
-            if SyntaxCheck and go_on then
+            if syntaxcheck and go_on then
             begin
-              //tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
-              LogDatei.log('we try to zip: ' + Source + searchmask +
-                ' to ' + target, LLDebug);
-              if ZipWithDirStruct(Source, searchmask, target) then
-                LogDatei.log('zipped: ' + Source + searchmask + ' to ' + target, LLInfo)
+              if not GetString(Remaining, Target, Remaining, errorinfo, False)
+              then
+                Target := Remaining;
+              LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug2);
+              target := trim(target);
+              Target := opsiUnquoteStr(target, '"');
+              Target := opsiUnquoteStr(target, '''');
+              if DirectoryExists(Source) then
+                searchmask := '*.*'
               else
-                LogDatei.log('Failed zo zip: ' + Source + searchmask +
-                  ' to ' + target, LLError);
+              begin
+                searchmask := '';
+                if fileexists(Source) then
+                begin
+                  searchmask := ExtractFileName(Source);
+                  Source := includeTrailingPathDelimiter(ExtractFilePath(Source));
+                end;
+              end;
+              LogDatei.log('source: ' + Source + ' - mask: ' + searchmask +
+                ' - target: ' + target, LLDebug);
+              if not isAbsoluteFileName(target) then
+                target := targetDirectory + target;
+              target := ExpandFileNameUTF8(target);
+
+              if not (isAbsoluteFileName(target)) then
+              begin
+                go_on := False;
+                logDatei.log('Error: zip: target: ' + target +
+                  ' is not a valid file name', LLError);
+              end;
+              if fileexists(target) then
+              begin
+                DeleteFileUTF8(target);
+                logDatei.log('Info: zip: target: ' + target +
+                  ' existed and was removed', LLNotice);
+              end;
+
+
+              if SyntaxCheck and go_on then
+              begin
+                //tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
+                LogDatei.log('we try to zip: ' + Source + searchmask +
+                  ' to ' + target, LLDebug);
+                if ZipWithDirStruct(Source, searchmask, target) then
+                  LogDatei.log('zipped: ' + Source + searchmask +
+                    ' to ' + target, LLInfo)
+                else
+                  LogDatei.log('Failed zo zip: ' + Source + searchmask +
+                    ' to ' + target, LLError);
+              end;
             end;
           end;
         end
@@ -9244,13 +9180,14 @@ var
                 ' is not a valid file name', LLError);
             end;
 
-
-            if SyntaxCheck and go_on then
-            begin
-              LogDatei.log('we try to hardlink: ' + Source + ' to ' + target, LLDebug2);
-              if Install.hardlink(Source, target) then
-                LogDatei.log('hardlinked: ' + Source + ' to ' + target, LLInfo);
-            end;
+            if not testSyntax then
+              if SyntaxCheck and go_on then
+              begin
+                LogDatei.log('we try to hardlink: ' + Source + ' to ' +
+                  target, LLDebug2);
+                if Install.hardlink(Source, target) then
+                  LogDatei.log('hardlinked: ' + Source + ' to ' + target, LLInfo);
+              end;
           end;
         end
 
@@ -9314,26 +9251,26 @@ var
                 ' is not a valid file name', LLError);
             end;
 
-
-            if SyntaxCheck and go_on then
-            begin
-              LogDatei.log('we try to symlink: ' + Source + ' to ' + target, LLDebug2);
-              if Install.symlink(Source, target) then
-                LogDatei.log('symlinked: ' + Source + ' to ' + target, LLInfo);
+            if not testSyntax then
+              if SyntaxCheck and go_on then
+              begin
+                LogDatei.log('we try to symlink: ' + Source + ' to ' + target, LLDebug2);
+                if Install.symlink(Source, target) then
+                  LogDatei.log('symlinked: ' + Source + ' to ' + target, LLInfo);
              {$IFDEF WINDOWS}
-              LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
-              if Wow64FsRedirectionDisabled then
-                shellcallArchParam := '64'
-              else
-                shellcallArchParam := '32';
-              list1 := TStringList.Create;
-              list1.Clear;
-              list1.Text := execShellCall('dir ' + target, shellcallArchParam,
-                4, False, False).Text;
-              //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-              list1.Free;
+                LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
+                if Wow64FsRedirectionDisabled then
+                  shellcallArchParam := '64'
+                else
+                  shellcallArchParam := '32';
+                list1 := TStringList.Create;
+                list1.Clear;
+                list1.Text := execShellCall('dir ' + target,
+                  shellcallArchParam, 4, False, False).Text;
+                //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
+                list1.Free;
              {$ENDIF WINDOWS}
-            end;
+              end;
           end;
         end
 
@@ -9429,21 +9366,22 @@ var
                 ' is not a valid file name', LLError);
             end;
 
-            if SyntaxCheck and go_on then
-            begin
-              LogDatei.log('we try to rename: ' + Source + ' to ' + target, LLDebug);
-              if Install.rename(Source, target, RebootWanted) then
+            if not testSyntax then
+              if SyntaxCheck and go_on then
               begin
-                LogDatei.log('renamed: ' + Source + ' to ' + target, LLInfo);
-                if RebootWanted and not (cpSpecify and cpNoExtraReboot =
-                  cpNoExtraReboot) then
+                LogDatei.log('we try to rename: ' + Source + ' to ' + target, LLDebug);
+                if Install.rename(Source, target, RebootWanted) then
                 begin
-                  PerformExitWindows := txrReboot;
-                  LogDatei.log('', LLInfo);
-                  LogDatei.log('ExitWindows set to Reboot', LLnotice);
+                  LogDatei.log('renamed: ' + Source + ' to ' + target, LLInfo);
+                  if RebootWanted and not (cpSpecify and cpNoExtraReboot =
+                    cpNoExtraReboot) then
+                  begin
+                    PerformExitWindows := txrReboot;
+                    LogDatei.log('', LLInfo);
+                    LogDatei.log('ExitWindows set to Reboot', LLnotice);
+                  end;
                 end;
               end;
-            end;
           end;
         end
 
@@ -9485,11 +9423,12 @@ var
           else
             Source := SourceDirectory + Remaining;
 
-          if SyntaxCheck then
-          begin
-            Install.MakePath(Target);
-            Install.AllCompress(Source, Target, recursive, True);
-          end;
+          if not testSyntax then
+            if SyntaxCheck then
+            begin
+              Install.MakePath(Target);
+              Install.AllCompress(Source, Target, recursive, True);
+            end;
         end
         {$ENDIF WINDOWS}
         else
@@ -9675,17 +9614,19 @@ var
               reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             end;
 
-            if producecsidlfromName(basefolder, csidl, errorinfo) then
+            if not testSyntax then
             begin
-              csidl_set := True;
-              LogDatei.log('Base folder is ' +
-                ShellLinks.Tell_Systemfolder(csidl), levelComplete);
-            end
-            else
-            begin
-              LogDatei.log('Error: ' + errorinfo, LLError);
+              if producecsidlfromName(basefolder, csidl, errorinfo) then
+              begin
+                csidl_set := True;
+                LogDatei.log('Base folder is ' +
+                  ShellLinks.Tell_Systemfolder(csidl), levelComplete);
+              end
+              else
+              begin
+                LogDatei.log('Error: ' + errorinfo, LLError);
+              end;
             end;
-
           end;
         end
 
@@ -9703,15 +9644,17 @@ var
             reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
           end;
 
-          if csidl_set then
+          if not testSyntax then
           begin
-            ShellLinks.OpenShellFolderPath(csidl, subfoldername);
-            folder_opened := True;
-          end
-          else
-            LogDatei.log('No base folder set, therefore subfolder not set',
-              LLWarning);
-
+            if csidl_set then
+            begin
+              ShellLinks.OpenShellFolderPath(csidl, subfoldername);
+              folder_opened := True;
+            end
+            else
+              LogDatei.log('No base folder set, therefore subfolder not set',
+                LLWarning);
+          end;
         end
         {$IFDEF WIN32}
         else if LowerCase(Expressionstr) = 'delete_subfolder' then
@@ -9730,16 +9673,18 @@ var
             syntaxCheck := False;
           end;
 
-          if csidl_set then
+          if not testSyntax then
           begin
-            LogDatei.LogSIndentLevel := startindentlevel;
-            ShellLinks.DeleteShellFolder(csidl, deletefoldername);
-            //csidl_set := false;
-          end
-          else
-            LogDatei.log('No base folder set, therefore no deletion of subfolder',
-              LLWarning);
-
+            if csidl_set then
+            begin
+              LogDatei.LogSIndentLevel := startindentlevel;
+              ShellLinks.DeleteShellFolder(csidl, deletefoldername);
+              //csidl_set := false;
+            end
+            else
+              LogDatei.log('No base folder set, therefore no deletion of subfolder',
+                LLWarning);
+          end;
         end
         {$ENDIF WIN32}
 
@@ -9758,20 +9703,23 @@ var
             reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxcheck := False;
           end;
-          {$IFDEF WINDOWS}
-          if folder_opened then
+          if not testSyntax then
           begin
-            if syntaxcheck then
-              ShellLinks.DeleteShellLink(s);
+          {$IFDEF WINDOWS}
+            if folder_opened then
+            begin
+              if syntaxcheck then
+                ShellLinks.DeleteShellLink(s);
 
-          end
-          else
-            LogDatei.log('No folder selected, therefore no deletion of "' +
-              s + '"', LLWarning);
+            end
+            else
+              LogDatei.log('No folder selected, therefore no deletion of "' +
+                s + '"', LLWarning);
           {$ENDIF WINDOWS}
           {$IFDEF UNIX}
-          ShellLinks.DeleteShellLink(s);
+            ShellLinks.DeleteShellLink(s);
           {$ENDIF LINUX}
+          end;
         end
 
         else if LowerCase(Expressionstr) = 'set_link' then
@@ -9986,33 +9934,36 @@ var
 
           //InstallItem (Const CommandLine, ItemName, Workdir, IconPath, IconIndex : String);
 
-          {$IFDEF WIN32}
-          if csidl_set then
+          if not testSyntax then
           begin
-            if syntaxCheck then
+          {$IFDEF WIN32}
+            if csidl_set then
             begin
-
-              if not folder_opened then
+              if syntaxCheck then
               begin
-                if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
-                then
-                  folder_opened := True;
+
+                if not folder_opened then
+                begin
+                  if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
+                  then
+                    folder_opened := True;
+                end;
+
+                if ShellLinks.MakeShellLink(link_name, link_target,
+                  link_paramstr, link_working_dir, link_icon_file,
+                  link_icon_index, link_shortcut, link_showwindow) then
+                ;
+
               end;
-
-              if ShellLinks.MakeShellLink(link_name, link_target,
-                link_paramstr, link_working_dir, link_icon_file,
-                link_icon_index, link_shortcut, link_showwindow) then
-              ;
-
             end;
-          end;
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-          if ShellLinks.MakeShellLink(link_name, link_target,
-            link_paramstr, link_working_dir, link_icon_file,
-            link_categories, '', '') then
-          ;
+            if ShellLinks.MakeShellLink(link_name, link_target,
+              link_paramstr, link_working_dir, link_icon_file,
+              link_categories, '', '') then
+            ;
           {$ENDIF UNIX}
+          end;
         end
 
         else
@@ -10286,8 +10237,11 @@ begin
   end;
 
   if SyntaxCheck then
-    Result := execWinBatch(ArbeitsSektion, Remaining, WaitConditions,
-      Ident, WaitSecs, runAs, flag_force64, showoutput, output)
+  begin
+    if not testSyntax then
+      Result := execWinBatch(ArbeitsSektion, Remaining, WaitConditions,
+        Ident, WaitSecs, runAs, flag_force64, showoutput, output);
+  end
   else
     Result := reportError(ArbeitsSektion, linecounter, 'Expressionstr', InfoSyntaxError);
 end;
@@ -12554,10 +12508,10 @@ begin
 
               (*(Tuibiniscript(self)).*)
               //GetSectionLines(s1, list, startlineofsection, True, True, True);
-              if not SearchForSectionLines(self, TWorkSection(section), ActiveSection.ParentSection,
-                      s1, list,
-                      startlineofsection, True, True, False) then
-                      LogDatei.log('Section not found: '+s1,LLInfo);
+              if not SearchForSectionLines(self, TWorkSection(section),
+                ActiveSection.ParentSection, s1, list,
+                startlineofsection, True, True, False) then
+                LogDatei.log('Section not found: ' + s1, LLInfo);
             end;
           end;
     end
@@ -16802,7 +16756,8 @@ begin
               except
                 on e: Exception do
                 begin
-                  LogDatei.log('Error executing :' + s1 + ' : with powershell: ' + e.message,
+                  LogDatei.log('Error executing :' + s1 +
+                    ' : with powershell: ' + e.message,
                     LLError);
                 end
               end;
@@ -21197,7 +21152,8 @@ begin
     if isVisibleLocalVar(VarName, funcindex) then
     begin
       // local var
-      Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
+      Result := definedFunctionArray[FuncIndex].setLocalVarValueString(
+        varname, VarValue);
     end
     else
     begin
@@ -24232,8 +24188,7 @@ begin
                       'Invalid Syntax in Comment. Please correct this error as soon as possible '
                       +
                       'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
-                      +
-                      Sektion.Name + ' (Command in line ' +
+                      + Sektion.Name + ' (Command in line ' +
                       IntToStr(Sektion.StartLineNo + linecounter) +
                       '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
                     Inc(FNumberOfErrors);
@@ -25506,8 +25461,8 @@ begin
                   ' ' + Remaining, LLNotice);
                 GetWordOrStringExpressionstr(Remaining, Filename,
                   Remaining, ErrorInfo);
-                if not testSyntax then
-                  ActionResult := doHostsPatch(ArbeitsSektion, Filename);
+                // testSyntax is done in doHostsPatch
+                ActionResult := doHostsPatch(ArbeitsSektion, Filename);
               end;
 
 
@@ -25527,6 +25482,7 @@ begin
                 EvaluateString(Remaining, Remaining, Parameter, InfoSyntaxError);
                 if Remaining = '' then
                 begin
+                  // no testsyntax done in doXMLPatch (it is a delhi dll and the use is discouraged)
                   if not testSyntax then
                     ActionResult := doXMLPatch(ArbeitsSektion, Parameter, output);
                 end
@@ -25610,8 +25566,8 @@ begin
                     end;
                   end;
                 end;
-                if not testSyntax then
-                  ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
+                // testSyntax is checked in doXMLPatch2
+                ActionResult := doXMLPatch2(ArbeitsSektion, Filename, '', output);
               end;
 
 
@@ -25634,8 +25590,8 @@ begin
                 end
                 else
                 begin
-                  if not testSyntax then
-                    ActionResult := doOpsiServiceCall(ArbeitsSektion, Parameter, output);
+                  // testSyntax is checked in doOpsiServiceCall
+                  ActionResult := doOpsiServiceCall(ArbeitsSektion, Parameter, output);
                 end;
               end;
 
@@ -25644,6 +25600,7 @@ begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
                 Parameter := Remaining;
+                // no testsyntax done in doOpsiServiceHashList (use is discouraged)
                 if not testSyntax then
                   ActionResult :=
                     doOpsiServiceHashList(ArbeitsSektion, Parameter, output);
@@ -25654,6 +25611,7 @@ begin
               begin
                 GetWordOrStringExpressionstr(Remaining, Filename,
                   Remaining, ErrorInfo);
+                // no testsyntax done in doIdapiConfig (use is discouraged)
                 if not testSyntax then
                   ActionResult := doIdapiConfig(ArbeitsSektion, Filename);
                 //ActionResult := doIdapiConfig (ArbeitsSektion, Remaining);
@@ -25668,9 +25626,9 @@ begin
                 if produceLDAPsearchParameters(Remaining, cacheRequest,
                   outputRequest, InfoSyntaxError) then
                 begin
-                  if not testSyntax then
-                    ActionResult :=
-                      doLDAPSearch(ArbeitsSektion, cacheRequest, outputRequest, output);
+                  // testSyntax is checked in doLDAPSearch
+                  ActionResult :=
+                    doLDAPSearch(ArbeitsSektion, cacheRequest, outputRequest, output);
                 end
                 else
                   ActionResult :=
@@ -25690,12 +25648,10 @@ begin
                 // so run registry sections implicit as /Allntuserdats
                 if runProfileActions then
                   flag_all_ntuser := True;
-                if not testSyntax then
-                begin
-                  ActionResult := doFileActions(ArbeitsSektion, Remaining);
-                  logdatei.log('Finished section: ' + ArbeitsSektion.Name +
-                    ' ' + Remaining, LLNotice);
-                end;
+                // testSyntax is checked in doFileActions
+                ActionResult := doFileActions(ArbeitsSektion, Remaining);
+                logdatei.log('Finished section: ' + ArbeitsSektion.Name +
+                  ' ' + Remaining, LLNotice);
               end;
 
               tsLinkFolder:
@@ -25715,8 +25671,8 @@ begin
                       Sektion.strings[linecounter - 1], 'No valid parameter')
                   else
                   begin
-                    if not testSyntax then
-                      doLinkFolderActions(ArbeitsSektion, False);
+                    // testSyntax is checked in doLinkFolderActions
+                    doLinkFolderActions(ArbeitsSektion, False);
                   end;
                 end;
                 //{$ELSE WIN32}
@@ -25727,12 +25683,9 @@ begin
 
               tsWinBatch:
               begin
-                if not testSyntax then
-                begin
-                  ActionResult :=
-                    parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
-                  //parseAndCallWinbatch(ArbeitsSektion,Remaining);
-                end;
+                // testSyntax is checked in parseAndCallWinbatch
+                ActionResult :=
+                  parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
               end;
 
               {$IFDEF WIN32}
