@@ -252,6 +252,7 @@ var
   startupmessages: TStringList;
   //{$ENDIF GUI}
 
+  reloadProductList: boolean = False;
   runUpdate: boolean;
   DontUpdateMemo: boolean = False;
   PerformExitProgram: boolean = False;
@@ -1164,6 +1165,7 @@ begin
     FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
+    reloadProductList := False;
 
 
     //OpsiData.initOpsiConf(pathnamsInfoFilename, profildateiname, ProdukteInfoFilename);
@@ -1263,7 +1265,7 @@ begin
 
       i := 1;
       while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
-        not PerformExitProgram do
+        (not PerformExitProgram) and (not reloadProductList) do
       begin
         processProduct := False;
         Produkt := Produkte.Strings[i - 1];
