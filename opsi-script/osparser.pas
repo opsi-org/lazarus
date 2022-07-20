@@ -122,7 +122,8 @@ uses
   LAZUTF8,
   osnetutil,
   osstrlistutils,
-  oscertificates;
+  oscertificates,
+  osGetRegistryFunctions;
 
 type
   TStatement = (tsNotDefined,
@@ -1785,9 +1786,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10913,8 +10913,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -15025,7 +15025,7 @@ begin
     end
    {$ENDIF WINDOWS}
 
-    {$IFDEF WINDOWS}
+
     else if IsGetRegistryListOrMapFunction(s) then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15034,8 +15034,13 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            {$IFDEF WINDOWS}
             if not testSyntax then
               RunGetRegistryListOrMapFunction(s, s1, '', list);
+            {$ELSE WINDOWS}
+            InfoSyntaxError := 'Only implemented for Winows';
+            LogDatei.log('Error: ' + s + ' only implemented for Winows', LLError);
+            {$ENDIF WINDOWS}
           end
           else
           begin
@@ -15047,8 +15052,14 @@ begin
                   if CheckAccessString(s2) then
                   begin
                     syntaxCheck := True;
+                    {$IFDEF WINDOWS}
                     if not testSyntax then
                       RunGetRegistryListOrMapFunction(s, s1, s2, list);
+                   {$ELSE WINDOWS}
+                    InfoSyntaxError := 'Only implemented for Winows';
+                    LogDatei.log('Error: ' + s +
+                      ' only implemented for Winows', LLError);
+                   {$ENDIF WINDOWS}
                   end
                   else
                   begin
@@ -15062,7 +15073,6 @@ begin
           end;
         end;
     end
-    {$ENDIF WINDOWS}
 
     else if LowerCase(s) = LowerCase('getSlowInfoMap')
     // reads slowinfocache
@@ -15070,7 +15080,6 @@ begin
     //hash key may be: hasname, installsize, lastused, usagefrequency, binaryname
     then
     begin
-    {$IFDEF WINDOWS}
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
@@ -15078,6 +15087,7 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
+                {$IFDEF WINDOWS}
                 if not testSyntax then
                 begin
                   tmpstr := GetSlowInfoCache(s1, 'hasname', s2);
@@ -15100,12 +15110,12 @@ begin
                   //list.add('usagefrequency=' + GetSlowInfoCache(s1, 'usagefrequency', s2));
                   //list.add('binaryname=' + GetSlowInfoCache(s1, 'binaryname', s2));
                 end;
+                {$ELSE WINDOWS}
+                InfoSyntaxError := 'Only implemented for Winows';
+                LogDatei.log('Error: getSlowInfoMap only implemented for Winows',
+                  LLError);
+               {$ENDIF WINDOWS}
               end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
     end
 
     else if LowerCase(s) = LowerCase('getSwauditInfoList')
@@ -15114,7 +15124,6 @@ begin
     //hash key may be: hasname, installsize, lastused, usagefrequency, binaryname
     then
     begin
-    {$IFDEF WINDOWS}
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
@@ -15124,6 +15133,7 @@ begin
                   if Skip(')', r, r, InfoSyntaxError) then
                   begin
                     syntaxCheck := True;
+                    {$IFDEF WINDOWS}
                     if not testSyntax then
                     begin
                       list1 := TXStringList.Create;
@@ -15131,12 +15141,13 @@ begin
                       list.AddStrings(list1);
                       list1.Free;
                     end;
+                    {$ELSE WINDOWS}
+                    SyntaxCheck := True;
+                    InfoSyntaxError := 'Only implemented for Windows';
+                    LogDatei.log('getSwauditInfoList is only implemented for Windows',
+                      LLError);
+                   {$ENDIF WINDOWS}
                   end;
-    {$ELSE WINDOWS}
-      SyntaxCheck := False;
-      InfoSyntaxError := 'Only implemented for Windows';
-      LogDatei.log(s + ' is only implemented for Windows', LLError);
-    {$ENDIF WINDOWS}
     end
 
 
@@ -15176,8 +15187,8 @@ begin
       LogDatei.log('Not implemented for macOS - return empty list', LLError);
       list.Clear;
       {$ELSE}
-      syntaxcheck := True;
-      list.AddStrings(getHwBiosShortlist);
+      if not testSyntax then
+        list.AddStrings(getHwBiosShortlist);
       {$ENDIF}
     end
     else
@@ -15193,7 +15204,6 @@ begin
         LogDatei.log('', LLDebug2);
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
       end;
-
   end;
 
   if syntaxcheck then
@@ -15504,9 +15514,10 @@ begin
           FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
         end;
       end;
-    {$ELSE}
+      {$ELSE}
       StringResult := 'No Windows';
-    {$ENDIF WINDOWS}
+      syntaxCheck := True;
+      {$ENDIF WINDOWS}
     end
 
     else if LowerCase(s) = LowerCase('GetLinuxDistroType') then
@@ -18297,17 +18308,15 @@ begin
 
     //  #### stop xml2 string
 
-
- {$IFDEF WINDOWS}
- {$IFDEF WIN32}
     else if LowerCase(s) = LowerCase('SidToName') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
+            syntaxCheck := True;
+            {$IFDEF WIN32}
             try
-              syntaxCheck := True;
               if not testSyntax then
                 StringResult := StrSIDToName(s1);
             except
@@ -18316,6 +18325,11 @@ begin
                 InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
               end
             end;
+            {$ELSE WIN32}
+            InfoSyntaxError := 'Only implemented for Windows32';
+            StringResult := 'Error';
+            LogDatei.log('Error: SidToName only implemented for Windows32', LLError);
+            {$ENDIF WIN32}
           end;
     end
 
@@ -18325,8 +18339,9 @@ begin
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(')', r, r, InfoSyntaxError) then
           begin
+            syntaxCheck := True;
+            {$IFDEF WIN32}
             try
-              syntaxCheck := True;
               if not testSyntax then
                 StringResult := GetLocalUserSidStr(s1);
             except
@@ -18335,9 +18350,13 @@ begin
                 InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
               end;
             end;
+            {$ELSE WIN32}
+            InfoSyntaxError := 'Only implemented for Windows32';
+            StringResult := 'Error';
+            LogDatei.log('Error: NameToSID only implemented for Windows32', LLError);
+            {$ENDIF WIN32}
           end;
     end
-{$ENDIF WIN32}
 
 
     else if (LowerCase(s) = LowerCase('GetRegistryValue')) then
@@ -18391,6 +18410,7 @@ begin
       end;
       if syntaxCheck then
       begin
+         {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           GetWord(s1, key0, key, ['\']);
@@ -18410,6 +18430,11 @@ begin
           end;
           StringResult := GetRegistrystringvalue(key0 + key, s2, tmpbool);
         end;
+        {$ELSE WINDOWS}
+        InfoSyntaxError := 'Only implemented for Windows';
+        StringResult := 'Error';
+        LogDatei.log('Error: GetRegistryValue only implemented for Windows', LLError);
+        {$ENDIF WINDOWS}
       end;
     end
 
@@ -18453,6 +18478,7 @@ begin
               else
               begin
                 SyntaxCheck := True;
+                {$IFDEF WINDOWS}
                 if not testSyntax then
                 begin
                   GetWord(key, key0, key, ['\']);
@@ -18480,6 +18506,13 @@ begin
                   StringResult :=
                     GetRegistrystringvalue(key0 + '\' + key, ValueName, False);
                 end;
+                {$ELSE WINDOWS}
+                InfoSyntaxError := 'Only implemented for Windows';
+                StringResult := 'Error';
+                LogDatei.log(
+                  'Error: GetRegistryStringValue* only implemented for Windows',
+                  LLError);
+                {$ENDIF WINDOWS}
               end;
             end;
           end;
@@ -18524,6 +18557,7 @@ begin
               else
               begin
                 SyntaxCheck := True;
+                {$IFDEF WINDOWS}
                 if not testSyntax then
                 begin
                   GetWord(key, key0, key, ['\']);
@@ -18554,13 +18588,20 @@ begin
                     StringResult :=
                       GetRegistrystringvalue(key0 + '\' + key, ValueName, True);
                 end;
+                {$ELSE WINDOWS}
+                InfoSyntaxError := 'Only implemented for Windows';
+                StringResult := 'Error';
+                LogDatei.log(
+                  'Error: GetRegistryStringValue* only implemented for Windows',
+                  LLError);
+                {$ENDIF WINDOWS}
               end;
             end;
           end;
         end;
     end
 
-  {$IFDEF WIN32}
+
     else if LowerCase(s) = LowerCase('GetUserSID') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -18572,6 +18613,7 @@ begin
             else
             begin
               SyntaxCheck := True;
+              {$IFDEF WIN32}
               if not testSyntax then
               begin
                 itemlist := TXStringlist.Create;
@@ -18609,61 +18651,15 @@ begin
                 end;
                 FreeAndNil(itemlist);
               end;
+              {$ELSE WIN32}
+              InfoSyntaxError := 'Only implemented for WIN32';
+              StringResult := 'Error';
+              LogDatei.log('Error: GetRegistryStringValue* only implemented for WIN32',
+                LLError);
+              {$ENDIF WIN32}
             end;
           end;
     end
-  {$ENDIF WIN32}
-  {$ELSE WINDOWS}
-    else if LowerCase(s) = LowerCase('SidToName') then
-    begin
-      SyntaxCheck := False;
-      if testSyntax then
-      begin
-        InfoSyntaxError := 'Not implemented for Linux';
-        StringResult := 'Error';
-        LogDatei.log('SyntaxError: SidToName not implemented for Linux', LLError);
-      end;
-    end
-
-    else if LowerCase(s) = LowerCase('NameToSID') then
-    begin
-      SyntaxCheck := False;
-      if testSyntax then
-      begin
-        InfoSyntaxError := 'Not implemented for Linux';
-        StringResult := 'Error';
-        LogDatei.log('SyntaxError: NameToSID not implemented for Linux', LLError);
-      end;
-    end
-
-
-    else if (LowerCase(s) = LowerCase('GetRegistryStringValue')) or
-      (LowerCase(s) = LowerCase('GetRegistryStringValue32')) or
-      (LowerCase(s) = LowerCase('GetRegistryStringValue64')) or
-      (LowerCase(s) = LowerCase('GetRegistryStringValueSysNative')) then
-    begin
-      SyntaxCheck := False;
-      if testSyntax then
-      begin
-        InfoSyntaxError := 'Not implemented for Linux';
-        StringResult := 'Error';
-        LogDatei.log('SyntaxError: GetRegistryStringValue not implemented for Linux',
-          LLError);
-      end;
-    end
-
-
-    else if LowerCase(s) = LowerCase('GetUserSID') then
-    begin
-      SyntaxCheck := False;
-      if testSyntax then
-      begin
-        InfoSyntaxError := 'Not implemented for Linux';
-        StringResult := 'Error';
-        LogDatei.log('SyntaxError: GetUserSID not implemented for Linux', LLError);
-      end;
-    end
-  {$ENDIF WINDOWS}
 
     else if LowerCase(s) = LowerCase('getLastServiceErrorClass') then
     begin
@@ -19258,7 +19254,7 @@ begin
         end;
   end
 
- {$IFDEF WIN32}
+
   else if Skip('FileExists64', Input, r, sx) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -19266,6 +19262,7 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           Syntaxcheck := True;
+          {$IFDEF WIN32}
           if not testSyntax then
           begin
             BooleanResult := handleFileExists64(s1);
@@ -19276,6 +19273,10 @@ begin
             end;
             //syntaxCheck := True;
           end;
+          {$ELSE WIN32}
+          InfoSyntaxError := 'Only implemented for Windows32';
+          LogDatei.log('Error: FileExists32 only implemented for Windows32', LLError);
+          {$ENDIF WIN32}
         end;
   end
 
@@ -19286,6 +19287,7 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           Syntaxcheck := True;
+          {$IFDEF WIN32}
           if not testSyntax then
           begin
             BooleanResult := handleFileExistsSysNative(s1);
@@ -19296,6 +19298,10 @@ begin
             end;
             //syntaxCheck := True;
           end;
+          {$ELSE WIN32}
+          InfoSyntaxError := 'Only implemented for Windows32';
+          LogDatei.log('Error: FileExists32 only implemented for Windows32', LLError);
+          {$ENDIF WIN32}
         end;
   end
 
@@ -19306,6 +19312,7 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           Syntaxcheck := True;
+          {$IFDEF WIN32}
           if not testSyntax then
           begin
             BooleanResult := handleFileExists32(s1);
@@ -19316,9 +19323,13 @@ begin
             end;
             //syntaxCheck := True;
           end;
+          {$ELSE WIN32}
+          InfoSyntaxError := 'Only implemented for Windows32';
+          LogDatei.log('Error: FileExists32 only implemented for Windows32', LLError);
+          {$ENDIF WIN32}
         end;
   end
- {$ENDIF WIN32}
+
 
   else if Skip('FileExists', Input, r, sx) then
   begin
@@ -19329,9 +19340,9 @@ begin
           Syntaxcheck := True;
           if not testSyntax then
           begin
-      {$IFDEF WINDOWS}
+            {$IFDEF WINDOWS}
             BooleanResult := handleFileExists32(s1);
-       {$ELSE WINDOWS}
+           {$ELSE WINDOWS}
             LogDatei.log('Starting query if file exists ...', LLInfo);
             //s2 := TrimAndExpandFilename(s1);
             // call the osfunc.expandfilname to handle quotes
@@ -19345,7 +19356,7 @@ begin
               if (0 = FLastPrivateExitCode) then
                 BooleanResult := True;
             end;
-      {$ENDIF WINDOWS}
+           {$ENDIF WINDOWS}
             if not BooleanResult then
             begin
               RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
@@ -19416,9 +19427,11 @@ begin
             {$ELSE WIN32}
     if s2 <> '' then
     begin
-      Logdatei.log('Error: Second parameter is ignored in 64 bit opsi-script ',
+      Logdatei.log('Error: Second parameter is ignored in non Win32 bit opsi-script ',
         LLError);
       s2 := '';
+      // set remaining (tmpstr) to the part after the second param
+      tmpstr := tmpstr2;
     end;
     if s2 = '' then
     begin
@@ -23034,31 +23047,33 @@ begin
                 then
                 begin
                   {$IFDEF GUI}
-                  CreateSystemInfo;
-                  SystemInfo.Memo1.Lines.Clear;
-                  try
-                    Fname := ExpandFileName(Fname);
-                    SystemInfo.Memo1.Lines.LoadFromFile(FName);
-                    //SystemInfo.Memo1.Lines.Text := reencode(SystemInfo.Memo1.Lines.Text, 'system');
-                    Logdatei.log('', LevelComplete);
-                    Logdatei.log('ShowMessagefile "' + Fname + '"', LevelComplete);
-                    SystemInfo.Showmodal;
-                  except
-                    on E: Exception do
-                    begin
-                      Logdatei.log('ShowMessagefile "' + Fname + '"', LLwarning);
-                      Logdatei.log(
-                        '  File does not exist or cannot be accessed, system message: "'
-                        + E.Message + '"',
-                        LLwarning);
-                    end
+                  if not testsyntax then
+                  begin
+                    CreateSystemInfo;
+                    SystemInfo.Memo1.Lines.Clear;
+                    try
+                      Fname := ExpandFileName(Fname);
+                      SystemInfo.Memo1.Lines.LoadFromFile(FName);
+                      //SystemInfo.Memo1.Lines.Text := reencode(SystemInfo.Memo1.Lines.Text, 'system');
+                      Logdatei.log('', LevelComplete);
+                      Logdatei.log('ShowMessagefile "' + Fname + '"', LevelComplete);
+                      SystemInfo.Showmodal;
+                    except
+                      on E: Exception do
+                      begin
+                        Logdatei.log('ShowMessagefile "' + Fname + '"', LLwarning);
+                        Logdatei.log(
+                          '  File does not exist or cannot be accessed, system message: "'
+                          + E.Message + '"',
+                          LLwarning);
+                      end
+                    end;
+
+                    SystemInfo.Free;
+                    SystemInfo := nil;
+                    FBatchOberflaeche.BringToFront;
                   end;
-
-                  SystemInfo.Free;
-                  SystemInfo := nil;
-                  FBatchOberflaeche.BringToFront;
                   {$ENDIF GUI}
-
                 end
                 else
                   ActionResult :=

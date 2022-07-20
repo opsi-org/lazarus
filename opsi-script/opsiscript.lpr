@@ -51,6 +51,7 @@ uses //lcltranslator,
   lazfileutils,
   osprocesses,
   osversioninfo,
+  osGetRegistryFunctions,
 {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
   //Forms,
@@ -90,7 +91,6 @@ uses //lcltranslator,
   osfuncwin,
   osfuncwin2,
   osregistry,
-  osGetRegistryFunctions,
   osDoRegistryFunctions,
 {$ENDIF WINDOWS}
 

@@ -5,7 +5,11 @@ unit osGetRegistryFunctions;
 interface
 
 uses
-  Classes, SysUtils, osregistry, ostxstringlist, oslog;
+  Classes, SysUtils,
+  {$IFDEF WINDOWS}
+  osregistry,
+  {$ENDIF WINDOWS}
+  ostxstringlist, oslog;
 
 type
   TGetRegistryListOrMapCall = class(TObject)
@@ -34,8 +38,10 @@ type
 
 
 function IsGetRegistryListOrMapFunction(FunctionName: string): boolean;
+{$IFDEF WINDOWS}
 procedure RunGetRegistryListOrMapFunction(FunctionName: string;
   RegistryKey: string; AccessString: string; var list: TXStringList);
+{$ENDIF WINDOWS}
 function CheckAccessString(AccessString: string): boolean;
 
 implementation
@@ -62,6 +68,7 @@ begin
     Result := False;
 end;
 
+{$IFDEF WINDOWS}
 procedure RunGetRegistryListOrMapFunction(FunctionName: string;
   RegistryKey: string; AccessString: string; var list: TXStringList);
 var
@@ -82,6 +89,8 @@ begin
 
   GetRegistryListOrMapCall.Free;
 end;
+{$ENDIF WINDOWS}
+
 
 function CheckAccessString(AccessString: string): boolean;
 var
