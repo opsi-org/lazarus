@@ -148,21 +148,6 @@ begin
     end;
   end
   else
-  if FDistroName = 'Univention' then
-  begin
-    if Pos('4.4', FDistroRelease) = 1 then
-    begin
-      FDistr := Univention_4_4;
-      FDistrRepoUrlPart := 'Univention_4.4/';
-    end
-    else
-    if Pos('10', FDistroRelease) = 1 then //Univention 5.0 Distro Release is 10
-    begin
-      FDistr := Univention_5_0;
-      FDistrRepoUrlPart := 'Univention_5.0/';
-    end;
-  end
-  else
   if FDistroName = 'SUSE' then
   begin
     if FDistroRelease = '15.1' then
@@ -208,6 +193,21 @@ begin
     begin
       FDistr := xUbuntu_22_04;
       FDistrRepoUrlPart := 'xUbuntu_22.04/';
+    end;
+  end
+  else
+  if FDistroName = 'Univention' then
+  begin
+    if Pos('4.4', FDistroRelease) = 1 then
+    begin
+      FDistr := Univention_4_4;
+      FDistrRepoUrlPart := 'Univention_4.4/';
+    end
+    else
+    if Pos('10', FDistroRelease) = 1 then //Univention 5.0 Distro Release is 10
+    begin
+      FDistr := Univention_5_0;
+      FDistrRepoUrlPart := 'Univention_5.0/';
     end;
   end;
 end;
