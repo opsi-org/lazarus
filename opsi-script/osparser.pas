@@ -25209,17 +25209,20 @@ begin
               begin
                 if remaining = '' then
                 begin
-                  LogDatei.log('Reload installation sequence.', LLInfo);
-                  //StartProgramModes;
-                  logdatei.log('call: ' + Call, LLInfo);
-                  logdatei.log('Expressionstr: ' + ExpressionStr, LLInfo);
-                  //logdatei.log('Actuelle Sektion:' + Script.ActiveSection.Text, LLInfo);
-                  opsidata.setProductActionRequest(tapNull);
-                  //opsidata.setProductStateActionRequest(tpsInstalled,tapNull);
-                  BuildPC;
-                  //opsidata.setProductState(tpsInstalled);
-                  //if Assigned(Produkte) then FreeAndNil(Produkte);
-                  //Produkte := opsidata.getListOfProducts;
+                  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
+                  begin
+                    reloadProductList := true;
+                    ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
+                    LogDatei.log('Reload installation sequence.', LLInfo);
+                  end
+                  else
+                  begin
+                    reloadProductList := false;
+                    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
+                    + ' already runned. Do not reload installation sequence.', LLWarning);
+                  end;
+                  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
+                  LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
                 end
                 else
                   ActionResult :=

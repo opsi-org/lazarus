@@ -253,6 +253,10 @@ var
   //{$ENDIF GUI}
 
   reloadProductList: boolean = False;
+  //list used for avoiding an endless loop if products set products to setup again
+  //which used "reloadProducList" and were already runned
+  ProductsRunnedUsingReloadProductList: TStringlist;
+
   runUpdate: boolean;
   DontUpdateMemo: boolean = False;
   PerformExitProgram: boolean = False;
@@ -1265,7 +1269,7 @@ begin
 
       i := 1;
       while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
-        (not PerformExitProgram) and (not reloadProductList) do
+        (not PerformExitProgram) do
       begin
         processProduct := False;
         Produkt := Produkte.Strings[i - 1];
@@ -1513,7 +1517,7 @@ begin
 
 
     LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
-    OpsiData.finishOpsiconf;
+    if not reloadProductList then OpsiData.finishOpsiconf;
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
@@ -1574,6 +1578,7 @@ begin
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
     {$ENDIF WINDOWS}
+    if reloadProductList then BuildPC; //if true reload product list and process list
     TerminateApp;
   except
     on e: Exception do
@@ -3397,6 +3402,7 @@ begin
   initEncoding;
   ProductvarsForPC := TStringList.Create;
   ProductvarsForPC.Clear;
+  if not Assigned(ProductsUsingReloadProductList) then ProductsUsingReloadProductList := TStringList.Create;
 
   {$IFDEF WINDOWS}
   if FileExists(GetWinSystemDirectory + 'w32hupsi.dll') then
