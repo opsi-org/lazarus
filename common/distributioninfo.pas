@@ -214,16 +214,15 @@ end;
 
 procedure TDistributionInfo.SetPackageManagementShellCommand;
 begin
-  {CentOS and RedHat}
-  if (FDistroName = 'CentOS') or (FDistroName = 'RedHatEnterprise') or
+  {RedHat like}
+  if (FDistroName = 'RedHatEnterprise') or
     (FDistroName = 'AlmaLinux') or (FDistroName = 'Rocky') then
     FPackageManagementShellCommand := 'yum -y '
-  {Debian, Ubuntu, Univention}
-  // univention is based on debian
+  {Debian like}
   else if (FDistroName = 'Debian') or (FDistroName = 'Ubuntu') or
     (FDistroName = 'Univention') then
     FPackageManagementShellCommand := 'apt --assume-yes '
-  {OpenSuse and SLES}
+  {Suse}
   else if (FDistroName = 'openSUSE') or (FDistroName = 'SUSE') then
     FPackageManagementShellCommand := 'zypper --non-interactive ';
 end;
