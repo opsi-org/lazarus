@@ -23057,7 +23057,10 @@ begin
             case StatKind of
               tsMessage:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
-                  ActionResult := doInfo(Remaining)
+                begin
+                  ActionResult := doInfo(Remaining);
+                  LogDatei.log('message ' + Remaining, LLnotice);
+                end
                 else if EvaluateString(Remaining, Remaining, Parameter, InfoSyntaxError)
                 then
                 begin
