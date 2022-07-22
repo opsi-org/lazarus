@@ -21845,7 +21845,7 @@ var
   isPlainAscii: boolean;
   varIndex: integer;
 
-{$IFDEF WINDOWS}
+
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
     Remaining: string): TSectionResult;
   begin
@@ -21969,8 +21969,13 @@ var
       reg_specified_basekey := 'HKEY_USERS\' + usercontextSID;
 
 
+
     if syntaxcheck then
     begin
+      ActionResult := tsrPositive;
+      {$IFDEF WINDOWS}
+      if not testSyntax then
+      begin
       if flag_all_ntuser then
       begin
         if registryformat = trfSysdiff then
@@ -21989,7 +21994,6 @@ var
             Sektion.strings[linecounter - 1], '"' + Remaining +
             '": sysdiff format not possible with option "ntuser"')
         else
-        if not testSyntax then
           ActionResult := doRegistryNTUserDat(ArbeitsSektion,
             registryformat, flag_force64, ntuserpath);
       end
@@ -22000,13 +22004,10 @@ var
             Sektion.strings[linecounter - 1], '"' + Remaining +
             '": sysdiff format not possible with option "for all usr classes"')
         else
-        if not testSyntax then
           ActionResult := doRegistryAllUsrClassDats(ArbeitsSektion,
             registryformat, flag_force64);
       end
       else
-      if not testSyntax then
-      begin
         case registryformat of
           trfWinst:
             ActionResult := doRegistryHack(ArbeitsSektion, reg_specified_basekey,
@@ -22019,26 +22020,31 @@ var
           trfRegedit:
             ActionResult := doRegistryHackRegeditFormat(ArbeitsSektion,
               reg_specified_basekey, flag_force64);
-
         end;
       end;
-
+      {$ELSE WINDOWS}
+      logdatei.log('Registry sections are only implemented for Windows.', LLError);
+      {$ENDIF WINDOWS}
     end
     else
       ActionResult := reportError(Sektion, linecounter,
         Sektion.strings[linecounter - 1], ErrorInfo);
+
     parseAndCallRegistry := ActionResult;
   end;
 
+(*
 {$ELSE WINDOWS}
 
   function parseAndCallRegistry(ArbeitsSektion: TWorkSection;
     Remaining: string): TSectionResult;
   begin
+    parseAndCallRegistry := tsrPositive;
     logdatei.log('Registry sections are not implemented for Linux / Mac.', LLWarning);
   end;
 
 {$ENDIF WINDOWS}
+*)
 
 begin
   logdatei.log_prog('Starting doAktionen: ', LLDebug2);
