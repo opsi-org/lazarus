@@ -3402,7 +3402,7 @@ begin
   initEncoding;
   ProductvarsForPC := TStringList.Create;
   ProductvarsForPC.Clear;
-  if not Assigned(ProductsUsingReloadProductList) then ProductsUsingReloadProductList := TStringList.Create;
+  if not Assigned(ProductsRunnedUsingReloadProductList) then ProductsRunnedUsingReloadProductList := TStringList.Create;
 
   {$IFDEF WINDOWS}
   if FileExists(GetWinSystemDirectory + 'w32hupsi.dll') then
