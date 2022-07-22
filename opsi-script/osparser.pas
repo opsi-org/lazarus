@@ -4001,8 +4001,10 @@ var
           begin
             if (length(Remaining) = 0) then
             begin
-              syntaxCheck := False;
-              errorinfo := 'expected targethost name';
+              LogDatei.log('While ldap targethost: expected targethost name empty or not defined', LLError);
+              // this is not a syntax error because the second parameter may be an empty variable
+              // syntaxCheck := False;
+              // errorinfo := 'expected targethost name';
             end
             else
             begin
@@ -4026,9 +4028,11 @@ var
               try
                 StrToInt(targetPort)
               except
+                LogDatei.log('While ldap targetport: targetport is no number', LLError);
+              // this is not a syntax error because the second parameter may be an empty variable
+              // syntaxCheck := False;
                 reportError(Sektion, i, Sektion.Strings[i - 1], '"' +
                   targetport + '" is no number');
-                syntaxcheck := False;
               end;
 
               if length(remaining) > 0 then
@@ -8634,9 +8638,10 @@ var
           LogDatei.log('source: ' + Source + ' - target: ' + target, LLDebug3);
           if Target = '' then
           begin
-            SyntaxCheck := False;
-            reportError(Sektion, i, Sektion.strings[i - 1],
-              'No target directory defined');
+            LogDatei.log('While copy: Target directory empty or not defined', LLError);
+            // this is not a syntax error because the second parameter may be an empty variable
+            // SyntaxCheck := False;
+            // reportError(Sektion, i, Sektion.strings[i - 1],'No target directory defined');
           end;
 
           if not testSyntax then
@@ -14636,12 +14641,11 @@ begin
       end;
     end
 
-  {$IFDEF WINDOWS}
+
     else if LowerCase(s) = LowerCase('getMSVersionMap') then
     begin
-      //if (r = '') or (r=')') then
-      begin
         syntaxcheck := True;
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
@@ -14691,37 +14695,53 @@ begin
             list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
           end;
         end;
-      end;
+       {$ELSE WINDOWS}
+       LogDatei.log('getMSVersionMap is only implemented for Windows',
+                      LLError);
+       {$ENDIF WINDOWS}
     end
-   {$ENDIF WINDOWS}
 
-   {$IFDEF LINUX}
+
     else if LowerCase(s) = LowerCase('getLinuxVersionMap') then
     begin
       begin
         syntaxcheck := True;
+        {$IFDEF LINUX}
         if not testSyntax then
           list.AddStrings(getLinuxVersionMap);
+        {$ELSE LINUX}
+        LogDatei.log('getLinuxVersionMap is only implemented for Linux',
+                      LLError);
+        {$ENDIF LINUX}
       end;
     end
-    {$ENDIF LINUX}
 
-    {$IFDEF DARWIN}
+
+
     else if LowerCase(s) = LowerCase('getMacosVersionMap') then
     begin
       begin
         syntaxcheck := True;
+        {$IFDEF DARWIN}
         if not testSyntax then
           list.AddStrings(getMacosVersionMap);
+        {$ELSE DARWIN}
+        LogDatei.log('getMacosVersionMap is only implemented for macOS',
+                      LLError);
+        {$ENDIF DARWIN}
       end;
     end
-    {$ENDIF DARWIN}
 
 
-   {$IFDEF WINDOWS}
+
+
     else if (LowerCase(s) = LowerCase('getFileInfoMap32')) then
+      {$IFDEF WINDOWS}
       s := 'getFileInfoMap'
-   {$ENDIF WINDOWS}
+      {$ELSE WINDOWS}
+       LogDatei.log('getFileInfoMap32 is only implemented for Windows',
+                      LLError)
+      {$ENDIF WINDOWS}
 
     else if (LowerCase(s) = LowerCase('getFileInfoMap')) then
     begin
@@ -19566,7 +19586,7 @@ begin
   end
 
 
- {$IFDEF WINDOWS}
+
 
   // XMLAddNamespace(Datei:string,ElementName:string,Namespace:string):Boolean
   // True, if Namespace was not present and have to be inserted
@@ -19581,6 +19601,7 @@ begin
                 if Skip(')', r, r, InfoSyntaxError) then
                 begin
                   syntaxCheck := True;
+                  {$IFDEF WINDOWS}
                   if not testSyntax then
                   begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -19598,9 +19619,11 @@ begin
                         LogDatei.log('Error: ' + ex.message, LLError);
                       end;
                     end;
-
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
                   end;
+                  {$ELSE WINDOWS}
+                    LogDatei.log('Error: XMLAddNamespace only implemented for Winows', LLError);
+                  {$ENDIF WINDOWS}
                 end;
   end
 
@@ -19617,6 +19640,7 @@ begin
                 if Skip(')', r, r, InfoSyntaxError) then
                 begin
                   syntaxCheck := True;
+                  {$IFDEF WINDOWS}
                   if not testSyntax then
                   begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -19636,9 +19660,12 @@ begin
                     end;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
                   end;
+                  {$ELSE WINDOWS}
+                    LogDatei.log('Error: XMLAddNamespace only implemented for Winows', LLError);
+                  {$ENDIF WINDOWS}
                 end;
   end
- {$ENDIF WINDOWS}
+
 
   else if Skip('xml2NodeExistsByPathInXMLFile', Input, r, sx) then
   begin
