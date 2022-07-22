@@ -29,7 +29,6 @@ uses
   //JwaTlHelp32,
   registry,
   osregistry,
-  osGetRegistryFunctions,
   osDoRegistryFunctions,
   oskeyboard,
   osfuncwin3,
@@ -17385,7 +17384,8 @@ begin
                           if Skip(')', r, r, InfoSyntaxError) then
                           begin
                             syntaxCheck := True;
-                            if not testSyntax then
+                            // we will do this even in syntax testsyntax mode
+                            //if not testSyntax then
                             begin
                               n1 := StrToInt(s1);
                               n2 := StrToInt(s2);
@@ -22950,9 +22950,10 @@ begin
                           'for - to loop: startvalue: ' + Expressionstr +
                           'is no valid integer';
                         *)
+                        loopstart := 0;
                         LogDatei.log(
                           'for - to loop: startvalue: ' + Expressionstr +
-                          'is no valid integer',
+                          'is no valid integer - setting to zero',
                           LLerror);
                       end;
                     end;
@@ -22974,9 +22975,10 @@ begin
                             'for - to loop: stopvalue: ' + Expressionstr +
                             'is no valid integer';
                             *)
+                          loopstop := 0;
                           LogDatei.log(
                             'for - to loop: stopvalue: ' + Expressionstr +
-                            'is no valid integer',
+                            'is no valid integer - setting to zero',
                             LLerror);
                         end;
                     end;
