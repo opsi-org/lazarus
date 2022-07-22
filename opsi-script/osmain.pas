@@ -1521,56 +1521,59 @@ begin
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
-    opsiclientd := False;
-    if ProcessIsRunning('opsiclientd') then
-      opsiclientd := True;
-    if PerformExitWindows <> txrNoExit then
+    if not reloadProductList then
     begin
-      case PerformExitWindows of
-        txrRegisterForReboot,
-        txrReboot, txrImmediateReboot:
-        begin
-          if opsiclientd then
+      opsiclientd := False;
+      if ProcessIsRunning('opsiclientd') then
+        opsiclientd := True;
+      if PerformExitWindows <> txrNoExit then
+      begin
+        case PerformExitWindows of
+          txrRegisterForReboot,
+          txrReboot, txrImmediateReboot:
           begin
-            LogDatei.log('Reboot via opsiclientd', LLinfo);
-            TheExitMode := txmNoExit;
-            filehandle :=
-              fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
-            fpClose(filehandle);
-          end
-          else
-          begin
-            LogDatei.log('Reboot direct (not via opsiclientd)', LLinfo);
-            if PerformExitWindows <> txrImmediateReboot then
+            if opsiclientd then
             begin
-              LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
-              opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+              LogDatei.log('Reboot via opsiclientd', LLinfo);
+              TheExitMode := txmNoExit;
+              filehandle :=
+                fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
+              fpClose(filehandle);
+            end
+            else
+            begin
+              LogDatei.log('Reboot direct (not via opsiclientd)', LLinfo);
+              if PerformExitWindows <> txrImmediateReboot then
+              begin
+                LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+                opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+              end;
+              TheExitMode := txmReboot;
+              if not ExitSession(TheExitMode, Fehler) then
+                {$IFDEF GUI}
+                MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
+                {$ELSE GUI}
+              writeln('ExitWindows Error ' + LineEnding + Fehler);
+                {$ENDIF GUI}
             end;
-            TheExitMode := txmReboot;
-            if not ExitSession(TheExitMode, Fehler) then
-              {$IFDEF GUI}
-              MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
-              {$ELSE GUI}
-            writeln('ExitWindows Error ' + LineEnding + Fehler);
-              {$ENDIF GUI}
           end;
-        end;
 
-        txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
+          txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
+        end;
       end;
-    end;
-    if PerformShutdown = tsrRegisterForShutdown then
-    begin
-      if opsiclientd then
+      if PerformShutdown = tsrRegisterForShutdown then
       begin
-        LogDatei.log('Shutdown via opsiclientd', LLinfo);
-        filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
-        fpClose(filehandle);
-      end
-      else
-      begin
-        LogDatei.log('Shutdown direct (not via opsiclientd)', LLinfo);
-        os_shutdown();
+        if opsiclientd then
+        begin
+          LogDatei.log('Shutdown via opsiclientd', LLinfo);
+          filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
+          fpClose(filehandle);
+        end
+        else
+        begin
+          LogDatei.log('Shutdown direct (not via opsiclientd)', LLinfo);
+          os_shutdown();
+        end;
       end;
     end;
     {$ENDIF UNIX}
