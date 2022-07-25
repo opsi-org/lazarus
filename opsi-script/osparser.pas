@@ -1785,9 +1785,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -4002,7 +4001,8 @@ var
             if (length(Remaining) = 0) then
             begin
               LogDatei.log(
-                'While ldap targethost: expected targethost name empty or not defined', LLError);
+                'While ldap targethost: expected targethost name empty or not defined',
+                LLError);
               // this is not a syntax error because the second parameter may be an empty variable
               // syntaxCheck := False;
               // errorinfo := 'expected targethost name';
@@ -10262,7 +10262,7 @@ begin
    {$IFNDEF WIN32}
     if onlyWindows then
     begin
-      LogDatei.log(expr + ' is only supported on Win32',LLerror);
+      LogDatei.log(expr + ' is only supported on Win32', LLerror);
       (*
       SyntaxCheck := False;
       InfoSyntaxError := expr + ' is only supported on Windows';
@@ -10951,8 +10951,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -12260,8 +12260,8 @@ begin
           end;
         end;
        {$ELSE WINDOWS}
-          LogDatei.log('powershellcall is only implemented for Windows',
-                      LLError);
+      LogDatei.log('powershellcall is only implemented for Windows',
+        LLError);
        {$ENDIF WINDOWS}
     end
 
@@ -13806,8 +13806,8 @@ begin
                             end;
                           end;
                           {$ELSE WINDOWS}
-          LogDatei.log('RegKeyExists is only implemented for Windows',
-                      LLError);
+                          LogDatei.log('RegKeyExists is only implemented for Windows',
+                            LLError);
                           {$ENDIF WINDOWS}
                         end;
         finally
@@ -16467,7 +16467,7 @@ begin
           begin
             syntaxCheck := True;
             //if not testSyntax then
-              StringResult := IntToStr(length(s1));
+            StringResult := IntToStr(length(s1));
           end;
       if not syntaxCheck then
       begin
@@ -16835,8 +16835,8 @@ begin
           end;
         end;
         {$ELSE WINDOWS}
-          LogDatei.log('powershellcall is only implemented for Windows',
-                      LLError);
+      LogDatei.log('powershellcall is only implemented for Windows',
+        LLError);
         {$ENDIF WINDOWS}
     end
 
@@ -16858,7 +16858,7 @@ begin
               ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
               ArbeitsSektion.Free;
               if not testSyntax then
-              StringResult := IntToStr(FLastExitCodeOfExe);
+                StringResult := IntToStr(FLastExitCodeOfExe);
             end;
           end;
     end
@@ -20623,7 +20623,7 @@ begin
           end;
           {$ELSE WINDOWS}
           LogDatei.log('IsDriveReady is only implemented for Windows',
-                      LLError);
+            LLError);
           {$ENDIF WINDOWS}
         end;
   end
@@ -20655,8 +20655,8 @@ begin
           end;
         end;
         {$ELSE WINDOWS}
-          LogDatei.log('RegKeyExists is only implemented for Windows',
-                      LLError);
+        LogDatei.log('RegKeyExists is only implemented for Windows',
+          LLError);
         {$ENDIF WINDOWS}
       end;
     end
@@ -20682,7 +20682,7 @@ begin
             BooleanResult := RegKeyExists(s1, tmpbool);
           {$ELSE WINDOWS}
           LogDatei.log('RegKeyExists is only implemented for Windows',
-                      LLError);
+            LLError);
           {$ENDIF WINDOWS}
         except
           BooleanResult := False;
@@ -20720,8 +20720,8 @@ begin
           end;
         end;
         {$ELSE WINDOWS}
-          LogDatei.log('RegVarExists is only implemented for Windows',
-                      LLError);
+        LogDatei.log('RegVarExists is only implemented for Windows',
+          LLError);
         {$ENDIF WINDOWS}
       end;
     end
@@ -20747,7 +20747,7 @@ begin
             BooleanResult := RegVarExists(s1, s2, tmpbool);
           {$ELSE WINDOWS}
           LogDatei.log('RegVarExists is only implemented for Windows',
-                      LLError);
+            LLError);
           {$ENDIF WINDOWS}
         except
           BooleanResult := False;
@@ -22087,8 +22087,8 @@ var
         else
           case registryformat of
             trfWinst:
-              ActionResult := doRegistryHack(ArbeitsSektion, reg_specified_basekey,
-                flag_force64);
+              ActionResult := doRegistryHack(ArbeitsSektion,
+                reg_specified_basekey, flag_force64);
 
             trfSysdiff:
               ActionResult := doRegistryHackInfSource(ArbeitsSektion,
@@ -24498,8 +24498,8 @@ begin
                   end;
                 end;
                 {$ELSE WINDOWS}
-          LogDatei.log('powershellcall is only implemented for Windows',
-                      LLError);
+                LogDatei.log('powershellcall is only implemented for Windows',
+                  LLError);
                 {$ENDIF WINDOWS}
               end;
 
@@ -24649,7 +24649,7 @@ begin
                       else
                         LogDatei.log('Failed Blocking Input ...', LLWarning);
                     {$ELSE WIN32}
-          LogDatei.log('BlockInput is only implemented for Win32',
+                    LogDatei.log('BlockInput is only implemented for Win32',
                       LLError);
                     {$ENDIF WIN32}
                   end
@@ -24665,7 +24665,7 @@ begin
                       else
                         LogDatei.log('Failed Unblocking Input ...', LLWarning);
                     {$ELSE WIN32}
-          LogDatei.log('BlockInput is only implemented for Win32',
+                    LogDatei.log('BlockInput is only implemented for Win32',
                       LLError);
                     {$ENDIF WIN32}
                   end;
@@ -27266,6 +27266,11 @@ begin
     if Script.FExtremeErrorLevel < extremeErrorLevel then
       extremeErrorLevel := Script.FExtremeErrorLevel;
 
+    // set exitcode to 1 if script failed why ever
+    if extremeErrorLevel = LevelFatal then
+      if system.ExitCode < 1 then
+        system.ExitCode := 1;
+
 
     ps := ('___________________');
     LogDatei.log(ps, LLessential);
@@ -27284,6 +27289,7 @@ begin
     if Script.NumberOfWarnings <> 1 then
       ps := ps + 's';
     LogDatei.log(ps, LLessential);
+    LogDatei.log('Exitcode will be: ' + IntToStr(system.ExitCode), LLessential);
     ps := '';
     LogDatei.log(ps, LLessential);
     if opsidata <> nil then

@@ -289,7 +289,7 @@ var
   ///connected :   Boolean;
   LogDateiName: string;
   logfileFromCommandLine: boolean;
-///ContinueLog  :   Integer;
+  ///ContinueLog  :   Integer;
   {$IFDEF WINDOWS}
   RegLogOutOptions: TuibRegistry;
   regist: TRegistry;
@@ -625,19 +625,20 @@ begin
       LogDatei := nil;
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end;
     try
-      //TerminateApp;
-      halt(0);
+      // exit uses system.exitcode as exitcode
+      Exit;
+      //halt;
       //Application.Terminate;
     except
       // test
-      Halt(0);
+      Halt;
     end;
   except
     try
-      halt(0);
+      halt;
       //TerminateApp;
       //Application.Terminate;
     except
@@ -2037,7 +2038,8 @@ begin
         '	 Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
         ParamDelim + 'lang langcode] [' + ParamDelim + '[batch|silent]] [' +
         ParamDelim + 'productid] [' + ParamDelim + 'productid <productid> ] [' +
-        ParamDelim + 'parameter ParameterString]',
+        ParamDelim + 'parameter ParameterString] ['+ ParamDelim +
+        'testsyntax ]',
         [mrOk],
         650, 250);
       {$ELSE GUI}
@@ -2063,7 +2065,8 @@ begin
         ' Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
         ParamDelim + '[batch|silent]] [' + ParamDelim + 'productid] [' +
         ParamDelim + 'productid <productid> ] [' + ParamDelim +
-        'parameter ParameterString]');
+        'parameter ParameterString] ['+ ParamDelim +
+        'testsyntax ]');
       {$ENDIF GUI}
 
       TerminateApp;
@@ -2488,7 +2491,8 @@ begin
 
           // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
           if (runningAsAdmin and (not (batchproductid = ''))) or
-            ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
+            ((not (batchproductid = '')) and batchUpdatePOC and not
+            (opsidata = nil)) then
           begin
             try
               if batchUpdatePOC and not (opsidata = nil) then
@@ -2515,20 +2519,20 @@ begin
                 //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
                 //##LINUX
               {$IFDEF WINDOWS}
-              reg := TRegistry.Create;
-              GetHKey(WinstRegHive, rkey);
-              reg.RootKey := rkey;
-              reg.OpenKey(WinstRegKey, True);
-              if extremeErrorLevel <= levelfatal then
-              begin
-                reg.WriteString('with-admin-fatal', 'true');
-              end
-              else
-              begin
-                reg.WriteString('with-admin-fatal', 'false');
-              end;
-              reg.CloseKey;
-              reg.Free;
+                reg := TRegistry.Create;
+                GetHKey(WinstRegHive, rkey);
+                reg.RootKey := rkey;
+                reg.OpenKey(WinstRegKey, True);
+                if extremeErrorLevel <= levelfatal then
+                begin
+                  reg.WriteString('with-admin-fatal', 'true');
+                end
+                else
+                begin
+                  reg.WriteString('with-admin-fatal', 'false');
+                end;
+                reg.CloseKey;
+                reg.Free;
               {$ENDIF WINDOWS}
               end;
             except
@@ -3318,6 +3322,12 @@ begin
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;
           {$ENDIF GUI}
+          Inc(i);
+        end
+
+        else if Lowercase(Parameter) = 'testsyntax' then
+        begin
+          configTestSyntax := True;
           Inc(i);
         end
 

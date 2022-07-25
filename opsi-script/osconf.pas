@@ -169,7 +169,7 @@ var
   configSupressSystemEncodingWarning: boolean = False;
   log_rotation_count: integer = 8;
   configWriteProductLogFile: boolean = False;
-  configTestSyntax : boolean = False;
+  configTestSyntax: boolean = False;
 
 
 implementation
@@ -583,11 +583,13 @@ begin
                           begin
                             osmain.startupmessages.Add(
                               'got testSyntax: ' + tmpstr);
-                            if not TryStrToBool(tmpstr,
-                              configTestSyntax) then
-                              osmain.startupmessages.Add(
-                                'Error: Not a Boolean:  testSyntax: '
-                                + tmpstr);
+                            // do not overwrite cli parameter /testsyntax
+                            if not configTestSyntax then
+                              if not TryStrToBool(tmpstr,
+                                configTestSyntax) then
+                                osmain.startupmessages.Add(
+                                  'Error: Not a Boolean:  testSyntax: '
+                                  + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;

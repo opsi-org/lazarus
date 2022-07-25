@@ -8054,8 +8054,8 @@ begin
   // Docu : https://www.freepascal.org/docs-html/rtl/baseunix/fpstat.html
   if fpStat (FileName, info) <> 0 then
      begin
-       LogDatei.log('fpStat failed : ', LLError);
-       halt (1);
+       LogDatei.log('fpStat failed : ', LLcritical);
+       //halt (1);
      end
   else
      begin
