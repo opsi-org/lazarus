@@ -11,6 +11,7 @@ uses
   osparserhelper,
   osparser,
   ostxstringlist,
+  osconf,
   osfunc;
 
 type
@@ -1600,6 +1601,8 @@ begin
   end
   else
   begin
+ if not (Script.testSyntax and (nestlevel > 20)) then
+  begin
     try
 
       //now set inDefFuncIndex to the called function
@@ -1628,6 +1631,8 @@ begin
       // run the body of the function
       LogDatei.log_prog('prepare run the body of the function ... ', LLDebug2);
       Inc(inDefinedFuncNestCounter);
+      if inDefinedFuncNestCounter < 100 then
+      begin
       section := TWorkSection.Create(Nestlevel, nil);
       callingsection := TWorkSection.Create(0, nil);
       section.Assign(DFcontent);
@@ -1649,6 +1654,11 @@ begin
         //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
         //                end;
       end;
+      end
+      else
+      begin
+        LogDatei.log('Error: recursion depth >= 100 not allowed - stopping recursion',LLerror);
+      end;
       Dec(inDefinedFuncNestCounter);
       definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count - 1);
       // dec var instance counter for recursive calls
@@ -1663,6 +1673,13 @@ begin
         raise;
       end;
     end;
+  end
+  else
+  begin
+    LogDatei.log('Error:In testsyntax mode recursion depth >= 20 not allowed - stopping recursion',LLerror);
+    call := True;
+    //if DFResultType = dfpVoid then remaining := '';
+  end;
   end;
   // we leave a defined function
   if DFVarInstanceIndex = -1 then
@@ -1690,6 +1707,7 @@ begin
   //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
   LogDatei.log('We leave the defined function: ' + DFName +
     ' ; inDefFuncLevel: ' + IntToStr(inDefFuncLevel), LLDebug2);
+
 end;
 
 (*

@@ -1785,8 +1785,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -4000,7 +4001,8 @@ var
           begin
             if (length(Remaining) = 0) then
             begin
-              LogDatei.log('While ldap targethost: expected targethost name empty or not defined', LLError);
+              LogDatei.log(
+                'While ldap targethost: expected targethost name empty or not defined', LLError);
               // this is not a syntax error because the second parameter may be an empty variable
               // syntaxCheck := False;
               // errorinfo := 'expected targethost name';
@@ -4028,8 +4030,8 @@ var
                 StrToInt(targetPort)
               except
                 LogDatei.log('While ldap targetport: targetport is no number', LLError);
-              // this is not a syntax error because the second parameter may be an empty variable
-              // syntaxCheck := False;
+                // this is not a syntax error because the second parameter may be an empty variable
+                // syntaxCheck := False;
                 reportError(Sektion, i, Sektion.Strings[i - 1], '"' +
                   targetport + '" is no number');
               end;
@@ -7813,6 +7815,8 @@ var
       else
       begin
         GetWord(r, Expressionstr, r, WordDelimiterSet1);
+        SyntaxCheck := False;
+        ErrorInfo := 'Not a valid XML2 section command: ' + Expressionstr;
 
         if LowerCase(Expressionstr) = LowerCase('StrictMode') then
         begin
@@ -7909,7 +7913,7 @@ var
         begin
           logdatei.log('Try setNodePair ' + Expressionstr + r, LLDebug);
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8013,7 +8017,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('setNodeText') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8053,7 +8057,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('gotoParentNode') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8085,7 +8089,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('addNewNode') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8126,7 +8130,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('setAttribute') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8184,7 +8188,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('addAttribute') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8243,7 +8247,7 @@ var
         if LowerCase(Expressionstr) = LowerCase('deleteAttribute') then
         begin
           syntaxCheck := True;
-          if not (nodeOpened and nodeOpenCommandExists) then
+          if not ((nodeOpened and nodeOpenCommandExists) or testSyntax) then
           begin
             //SyntaxCheck := false;
             logdatei.log('Error: No open Node. Use OpenNode before ' +
@@ -8283,6 +8287,31 @@ var
           end;
         end;   // delAttribute
 
+        // root node is hre also handled only for testsyntax and syntaxcheck
+        if LowerCase(Expressionstr) = LowerCase('rootnodeOnCreate') then
+        begin
+          SyntaxCheck := False;
+          if Skip('=', r, r, ErrorInfo) then
+          begin
+            Getword(r, newtext, r, WordDelimiterWhiteSpace);
+            if newtext <> '' then
+            begin
+              LogDatei.log('rootnodeOnCreate is set to : ' +
+                newtext, LLdebug);
+              syntaxCheck := True;
+            end
+            else
+            begin
+              LogDatei.log(
+                'Empty Argument to rootnodeOnCreate. We fall back to <rootnode> but normally this is not what you want',
+                LLWarning);
+              //syntaxCheck := False;
+            end;
+          end
+          else
+            syntaxCheck := False;
+        end;  // rootnodeOnCreate
+
 
         if not syntaxcheck then
           reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
@@ -8312,9 +8341,9 @@ var
 
       PatchListe.Free;
       PatchListe := nil;
-    end;
 
-    XMLDocObject.Destroy;
+      XMLDocObject.Destroy;
+    end;
 
     if ExitOnError and (DiffNumberOfErrors > 0) then
       Result := tsrExitProcess;
@@ -10917,8 +10946,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -14643,34 +14672,34 @@ begin
 
     else if LowerCase(s) = LowerCase('getMSVersionMap') then
     begin
-        syntaxcheck := True;
+      syntaxcheck := True;
         {$IFDEF WINDOWS}
-        if not testSyntax then
+      if not testSyntax then
+      begin
+        list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
+        list.add('minor_version=' + GetSystemOSVersionInfoEx('minor_version'));
+        list.add('build_number=' + GetSystemOSVersionInfoEx('build_number'));
+        list.add('platform_id=' + GetSystemOSVersionInfoEx('platform_id'));
+        list.add('csd_version=' + GetSystemOSVersionInfoEx('csd_version'));
+        list.add('service_pack_major=' + GetSystemOSVersionInfoEx(
+          'service_pack_major'));
+        list.add('service_pack_minor=' + GetSystemOSVersionInfoEx(
+          'service_pack_minor'));
+        list.add('suite_mask=' + GetSystemOSVersionInfoEx('suite_mask'));
+        list.add('product_type_nr=' + GetSystemOSVersionInfoEx('product_type_nr'));
+        list.add('2003r2=' + GetSystemOSVersionInfoEx('2003r2'));
+        if GetNTVersionMajor < 6 then
         begin
-          list.add('major_version=' + GetSystemOSVersionInfoEx('major_version'));
-          list.add('minor_version=' + GetSystemOSVersionInfoEx('minor_version'));
-          list.add('build_number=' + GetSystemOSVersionInfoEx('build_number'));
-          list.add('platform_id=' + GetSystemOSVersionInfoEx('platform_id'));
-          list.add('csd_version=' + GetSystemOSVersionInfoEx('csd_version'));
-          list.add('service_pack_major=' + GetSystemOSVersionInfoEx(
-            'service_pack_major'));
-          list.add('service_pack_minor=' + GetSystemOSVersionInfoEx(
-            'service_pack_minor'));
-          list.add('suite_mask=' + GetSystemOSVersionInfoEx('suite_mask'));
-          list.add('product_type_nr=' + GetSystemOSVersionInfoEx('product_type_nr'));
-          list.add('2003r2=' + GetSystemOSVersionInfoEx('2003r2'));
-          if GetNTVersionMajor < 6 then
+          list.add('ReleaseID=');
+          list.add('prodInfoNumber=');
+          list.add('prodInfoText=');
+        end
+        else
+        begin
+          if GetNTVersionMajor >= 10 then
           begin
-            list.add('ReleaseID=');
-            list.add('prodInfoNumber=');
-            list.add('prodInfoText=');
-          end
-          else
-          begin
-            if GetNTVersionMajor >= 10 then
-            begin
-              list.add('ReleaseID=' + getW10Release);
-              //list.add('ReleaseID=' + getW10Release);
+            list.add('ReleaseID=' + getW10Release);
+            //list.add('ReleaseID=' + getW10Release);
             (* moved to funcwin: getW10Release
               if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion',
                 'ReleaseID', True) then
@@ -14686,61 +14715,59 @@ begin
               else
                 list.add('ReleaseID=1507')
                 *)
-            end
-            else
-              list.add('ReleaseID=');
-            tmpint := OSGetProductInfoNum;
-            list.add('prodInfoNumber=' + IntToStr(tmpInt));
-            list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
-          end;
+          end
+          else
+            list.add('ReleaseID=');
+          tmpint := OSGetProductInfoNum;
+          list.add('prodInfoNumber=' + IntToStr(tmpInt));
+          list.add('prodInfoText=' + getProductInfoStrByNum(tmpInt));
         end;
+      end;
        {$ELSE WINDOWS}
-       LogDatei.log('getMSVersionMap is only implemented for Windows',
-                      LLError);
+      LogDatei.log('getMSVersionMap is only implemented for Windows',
+        LLError);
        {$ENDIF WINDOWS}
     end
 
 
     else if LowerCase(s) = LowerCase('getLinuxVersionMap') then
     begin
-      begin
-        syntaxcheck := True;
+      syntaxcheck := True;
         {$IFDEF LINUX}
-        if not testSyntax then
-          list.AddStrings(getLinuxVersionMap);
+      if not testSyntax then
+        list.AddStrings(getLinuxVersionMap);
         {$ELSE LINUX}
-        LogDatei.log('getLinuxVersionMap is only implemented for Linux',
-                      LLError);
+      LogDatei.log('getLinuxVersionMap is only implemented for Linux',
+        LLError);
         {$ENDIF LINUX}
-      end;
     end
 
 
 
     else if LowerCase(s) = LowerCase('getMacosVersionMap') then
     begin
-      begin
-        syntaxcheck := True;
+      syntaxcheck := True;
         {$IFDEF DARWIN}
-        if not testSyntax then
-          list.AddStrings(getMacosVersionMap);
+      if not testSyntax then
+        list.AddStrings(getMacosVersionMap);
         {$ELSE DARWIN}
-        LogDatei.log('getMacosVersionMap is only implemented for macOS',
-                      LLError);
+      LogDatei.log('getMacosVersionMap is only implemented for macOS',
+        LLError);
         {$ENDIF DARWIN}
-      end;
     end
 
 
 
 
     else if (LowerCase(s) = LowerCase('getFileInfoMap32')) then
+    begin
       {$IFDEF WINDOWS}
-      s := 'getFileInfoMap'
+      s := 'getFileInfoMap';
       {$ELSE WINDOWS}
-       LogDatei.log('getFileInfoMap32 is only implemented for Windows',
-                      LLError)
+      LogDatei.log('getFileInfoMap32 is only implemented for Windows',
+        LLError);
       {$ENDIF WINDOWS}
+    end
 
     else if (LowerCase(s) = LowerCase('getFileInfoMap')) then
     begin
@@ -14834,7 +14861,7 @@ begin
           end;
     end
 
-   {$IFDEF WINDOWS}
+
     else if LowerCase(s) = LowerCase('getFileInfoMap64') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -14842,6 +14869,7 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            {$IFDEF WINDOWS}
             if not testSyntax then
             begin
               {$IFDEF WIN32}
@@ -14916,6 +14944,10 @@ begin
               *)
 
             end;
+           {$ELSE WINDOWS}
+            LogDatei.log('getFileInfoMap64 is only implemented for Windows',
+              LLError);
+           {$ENDIF WINDOWS}
           end;
     end
 
@@ -14927,6 +14959,7 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
+            {$IFDEF WINDOWS}
             if not testSyntax then
             begin
               if Is64BitSystem then
@@ -15040,9 +15073,14 @@ begin
                 end;
               end;
             end;
+           {$ELSE WINDOWS}
+            LogDatei.log(
+              'getFileInfoMapSysnative is only implemented for Windows',
+              LLError);
+           {$ENDIF WINDOWS}
           end;
     end
-   {$ENDIF WINDOWS}
+
 
 
     else if IsGetRegistryListOrMapFunction(s) then
@@ -16423,7 +16461,7 @@ begin
           if Skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxCheck := True;
-            if not testSyntax then
+            //if not testSyntax then
               StringResult := IntToStr(length(s1));
           end;
       if not syntaxCheck then
@@ -16806,13 +16844,15 @@ begin
           begin
             syntaxCheck := True;
             StringResult := '';
-            if not testSyntax then
+            //if not testSyntax then
+            // testsyntax is done in parseAndCallWinbatch
             begin
               list1 := TXStringList.Create;
               ArbeitsSektion := TWorkSection.Create(0, nil);
               ArbeitsSektion.Text := s1;
               ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
               ArbeitsSektion.Free;
+              if not testSyntax then
               StringResult := IntToStr(FLastExitCodeOfExe);
             end;
           end;
@@ -16831,7 +16871,7 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              if not testSyntax then
+              //if not testSyntax then
               begin
                 boolresult := strtobool(s1);
                 try
@@ -16859,7 +16899,7 @@ begin
             if Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := True;
-              if not testSyntax then
+              //if not testSyntax then
               begin
                 try
                   StringResult := BoolToStr(boolresult, True);
@@ -19622,7 +19662,8 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
                   end;
                   {$ELSE WINDOWS}
-                    LogDatei.log('Error: XMLAddNamespace only implemented for Winows', LLError);
+                  LogDatei.log('Error: XMLAddNamespace only implemented for Winows',
+                    LLError);
                   {$ENDIF WINDOWS}
                 end;
   end
@@ -19661,7 +19702,8 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
                   end;
                   {$ELSE WINDOWS}
-                    LogDatei.log('Error: XMLAddNamespace only implemented for Winows', LLError);
+                  LogDatei.log('Error: XMLAddNamespace only implemented for Winows',
+                    LLError);
                   {$ENDIF WINDOWS}
                 end;
   end
@@ -21976,51 +22018,51 @@ var
       {$IFDEF WINDOWS}
       if not testSyntax then
       begin
-      if flag_all_ntuser then
-      begin
-        if registryformat = trfSysdiff then
-          ActionResult := reportError(Sektion, linecounter,
-            Sektion.strings[linecounter - 1], '"' + Remaining +
-            '": sysdiff format not possible with option "for all nt user"')
+        if flag_all_ntuser then
+        begin
+          if registryformat = trfSysdiff then
+            ActionResult := reportError(Sektion, linecounter,
+              Sektion.strings[linecounter - 1], '"' + Remaining +
+              '": sysdiff format not possible with option "for all nt user"')
+          else
+          if not testSyntax then
+            ActionResult := doRegistryAllNTUserDats(ArbeitsSektion,
+              registryformat, flag_force64);
+        end
+        else if flag_ntuser then
+        begin
+          if registryformat = trfSysdiff then
+            ActionResult := reportError(Sektion, linecounter,
+              Sektion.strings[linecounter - 1], '"' + Remaining +
+              '": sysdiff format not possible with option "ntuser"')
+          else
+            ActionResult := doRegistryNTUserDat(ArbeitsSektion,
+              registryformat, flag_force64, ntuserpath);
+        end
+        else if flag_all_usrclass then
+        begin
+          if registryformat = trfSysdiff then
+            ActionResult := reportError(Sektion, linecounter,
+              Sektion.strings[linecounter - 1], '"' + Remaining +
+              '": sysdiff format not possible with option "for all usr classes"')
+          else
+            ActionResult := doRegistryAllUsrClassDats(ArbeitsSektion,
+              registryformat, flag_force64);
+        end
         else
-        if not testSyntax then
-          ActionResult := doRegistryAllNTUserDats(ArbeitsSektion,
-            registryformat, flag_force64);
-      end
-      else if flag_ntuser then
-      begin
-        if registryformat = trfSysdiff then
-          ActionResult := reportError(Sektion, linecounter,
-            Sektion.strings[linecounter - 1], '"' + Remaining +
-            '": sysdiff format not possible with option "ntuser"')
-        else
-          ActionResult := doRegistryNTUserDat(ArbeitsSektion,
-            registryformat, flag_force64, ntuserpath);
-      end
-      else if flag_all_usrclass then
-      begin
-        if registryformat = trfSysdiff then
-          ActionResult := reportError(Sektion, linecounter,
-            Sektion.strings[linecounter - 1], '"' + Remaining +
-            '": sysdiff format not possible with option "for all usr classes"')
-        else
-          ActionResult := doRegistryAllUsrClassDats(ArbeitsSektion,
-            registryformat, flag_force64);
-      end
-      else
-        case registryformat of
-          trfWinst:
-            ActionResult := doRegistryHack(ArbeitsSektion, reg_specified_basekey,
-              flag_force64);
+          case registryformat of
+            trfWinst:
+              ActionResult := doRegistryHack(ArbeitsSektion, reg_specified_basekey,
+                flag_force64);
 
-          trfSysdiff:
-            ActionResult := doRegistryHackInfSource(ArbeitsSektion,
-              reg_specified_basekey, flag_force64);
+            trfSysdiff:
+              ActionResult := doRegistryHackInfSource(ArbeitsSektion,
+                reg_specified_basekey, flag_force64);
 
-          trfRegedit:
-            ActionResult := doRegistryHackRegeditFormat(ArbeitsSektion,
-              reg_specified_basekey, flag_force64);
-        end;
+            trfRegedit:
+              ActionResult := doRegistryHackRegeditFormat(ArbeitsSektion,
+                reg_specified_basekey, flag_force64);
+          end;
       end;
       {$ELSE WINDOWS}
       logdatei.log('Registry sections are only implemented for Windows.', LLError);
@@ -24748,7 +24790,7 @@ begin
               tsSetDebug_Prog:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  if not testSyntax then
+                  //if not testSyntax then
                   begin
                     Remaining := opsiunquotestr2(remaining, '""');
                     if UpperCase(Remaining) = 'TRUE' then

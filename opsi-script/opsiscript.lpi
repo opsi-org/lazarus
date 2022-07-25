@@ -697,7 +697,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="70">
+    <Units Count="71">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1011,6 +1011,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osDoRegistryFunctions"/>
       </Unit69>
+      <Unit70>
+        <Filename Value="osdefinedfunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit70>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
