@@ -10182,7 +10182,9 @@ begin
     begin
       onlyWindows := True;
       runAs := traInvoker;
+      {$IFDEF WIN32}
       WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
+      {$ENDIF WIN32}
 
       if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
       begin
@@ -10260,9 +10262,12 @@ begin
    {$IFNDEF WIN32}
     if onlyWindows then
     begin
+      LogDatei.log(expr + ' is only supported on Win32',LLerror);
+      (*
       SyntaxCheck := False;
       InfoSyntaxError := expr + ' is only supported on Windows';
       break;
+      *)
     end;
    {$ENDIF WIN32}
 
@@ -12238,13 +12243,10 @@ begin
 
     else if LowerCase(s) = LowerCase('powershellcall') then
     begin
-      {$IFDEF UNIX}
-      LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
-      {$ENDIF Linux}
-      {$IFDEF WINDOWS}
       parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       list.Text := '';
       if syntaxCheck then
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
@@ -12257,7 +12259,10 @@ begin
             end
           end;
         end;
-      {$ENDIF WINDOWS}
+       {$ELSE WINDOWS}
+          LogDatei.log('powershellcall is only implemented for Windows',
+                      LLError);
+       {$ENDIF WINDOWS}
     end
 
 
@@ -13758,10 +13763,6 @@ begin
 
     else if LowerCase(s) = LowerCase('getListFromWMI') then
     begin
-     {$IFDEF UNIX}
-      LogDatei.log('Error getListFromWMI only implemented for Windows.', LLError);
-      {$ENDIF UNIX}
-      {$IFDEF WINDOWS}
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         try
@@ -13777,6 +13778,7 @@ begin
                         if Skip(')', r, r, InfoSyntaxError) then
                         begin
                           syntaxCheck := True;
+                          {$IFDEF WINDOWS}
                           if not testSyntax then
                           begin
                             list.Clear;
@@ -13803,13 +13805,16 @@ begin
                               end
                             end;
                           end;
+                          {$ELSE WINDOWS}
+          LogDatei.log('RegKeyExists is only implemented for Windows',
+                      LLError);
+                          {$ENDIF WINDOWS}
                         end;
         finally
           list1.Free;
           list1 := nil;
         end;
       end;
-   {$ENDIF WINDOWS}
     end
 
 
@@ -16804,12 +16809,9 @@ begin
 
     else if LowerCase(s) = LowerCase('powershellcall') then
     begin
-  {$IFDEF UNIX}
-      LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
-  {$ENDIF Linux}
-  {$IFDEF WINDOWS}
       parsePowershellCall(s1, s2, s3, s4, r, syntaxCheck, InfoSyntaxError, tmpbool);
       if syntaxCheck then
+      {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
@@ -16832,7 +16834,10 @@ begin
             end;
           end;
         end;
-   {$ENDIF WINDOWS}
+        {$ELSE WINDOWS}
+          LogDatei.log('powershellcall is only implemented for Windows',
+                      LLError);
+        {$ENDIF WINDOWS}
     end
 
 
@@ -17506,6 +17511,7 @@ begin
         EvaluateString(r, r, s2, InfoSyntaxError) and
         Skip(')', r, r, InfoSyntaxError) then
       begin
+        syntaxCheck := True;
         if not testSyntax then
         begin
           if getIP4NetworkByAdrAndMask(s1, s2) = '' then
@@ -20598,7 +20604,7 @@ begin
   end
 
 
- {$IFDEF WINDOWS}
+
   else if Skip('IsDriveReady', Input, r, InfoSyntaxError) then
   begin
     if Skip('(', r, r, InfoSyntaxError) then
@@ -20606,6 +20612,7 @@ begin
         if Skip(')', r, r, InfoSyntaxError) then
         begin
           syntaxCheck := True;
+          {$IFDEF WINDOWS}
           if not testSyntax then
           begin
             try
@@ -20614,6 +20621,10 @@ begin
               BooleanResult := False;
             end;
           end;
+          {$ELSE WINDOWS}
+          LogDatei.log('IsDriveReady is only implemented for Windows',
+                      LLError);
+          {$ENDIF WINDOWS}
         end;
   end
 
@@ -20634,6 +20645,7 @@ begin
       if Skip(')', tmpstr, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
@@ -20642,6 +20654,10 @@ begin
             BooleanResult := False;
           end;
         end;
+        {$ELSE WINDOWS}
+          LogDatei.log('RegKeyExists is only implemented for Windows',
+                      LLError);
+        {$ENDIF WINDOWS}
       end;
     end
     else
@@ -20661,8 +20677,13 @@ begin
             Logdatei.log('Error: unknown modifier: ' + s2 +
               ' expected one of 32bit,64bit,sysnative - fall back to sysnative',
               LLError);
+          {$IFDEF WINDOWS}
           if not testSyntax then
             BooleanResult := RegKeyExists(s1, tmpbool);
+          {$ELSE WINDOWS}
+          LogDatei.log('RegKeyExists is only implemented for Windows',
+                      LLError);
+          {$ENDIF WINDOWS}
         except
           BooleanResult := False;
         end;
@@ -20689,6 +20710,7 @@ begin
       if Skip(')', tmpstr, r, InfoSyntaxError) then
       begin
         syntaxCheck := True;
+        {$IFDEF WINDOWS}
         if not testSyntax then
         begin
           try
@@ -20697,6 +20719,10 @@ begin
             BooleanResult := False;
           end;
         end;
+        {$ELSE WINDOWS}
+          LogDatei.log('RegVarExists is only implemented for Windows',
+                      LLError);
+        {$ENDIF WINDOWS}
       end;
     end
     else
@@ -20716,8 +20742,13 @@ begin
             Logdatei.log('Error: unknown modifier: ' + s3 +
               ' expected one of 32bit,64bit,sysnative - fall back to sysnative',
               LLError);
+          {$IFDEF WINDOWS}
           if not testSyntax then
             BooleanResult := RegVarExists(s1, s2, tmpbool);
+          {$ELSE WINDOWS}
+          LogDatei.log('RegVarExists is only implemented for Windows',
+                      LLError);
+          {$ENDIF WINDOWS}
         except
           BooleanResult := False;
         end;
@@ -20726,7 +20757,7 @@ begin
   end
 
 
- {$ENDIF WINDOWS}
+
 
   else if (Skip('ErrorsOccuredSinceMark ', Input, r, sx) or
     Skip('ErrorsOccurredSinceMark ', Input, r, sx)) then
@@ -21931,6 +21962,7 @@ var
       end
       else if skip(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo) then
       begin
+        {$IFDEF WINDOWS}
         if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
         begin
           // we are on win 2000 which can't handle redirections flags
@@ -21940,6 +21972,7 @@ var
         begin
           flag_force64 := True;
         end;
+        {$ENDIF WINDOWS}
       end
 
 
@@ -21960,6 +21993,7 @@ var
 
       else if skip(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo) then
       begin
+        {$IFDEF WINDOWS}
         if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
         begin
           // we are on win 2000 which can't handle redirections flags
@@ -21969,6 +22003,7 @@ var
         begin
           flag_force64 := True;
         end;
+        {$ENDIF WINDOWS}
       end
 
 
@@ -24446,13 +24481,9 @@ begin
 
               tsPowershellcall:
               begin
-                 {$IFDEF UNIX}
-                LogDatei.log('Error powershellcall not implemented on Linux ',
-                  LLError);
-                  {$ENDIF Linux}
-                  {$IFDEF WINDOWS}
                 parsePowershellCall(s1, s2, s3, s4, Remaining, syntaxCheck,
                   InfoSyntaxError, tmpbool);
+                {$IFDEF WINDOWS}
                 if syntaxCheck and not testSyntax then
                 begin
                   try
@@ -24466,6 +24497,9 @@ begin
                     end
                   end;
                 end;
+                {$ELSE WINDOWS}
+          LogDatei.log('powershellcall is only implemented for Windows',
+                      LLError);
                 {$ENDIF WINDOWS}
               end;
 
@@ -24597,7 +24631,7 @@ begin
               end;
 
 
-              {$IFDEF WIN32}
+
               tsBlockInput:
               begin
                 syntaxCheck := False;
@@ -24608,22 +24642,32 @@ begin
                   begin
                     syntaxCheck := True;
                     ActionResult := tsrPositive;
+                    {$IFDEF WIN32}
                     if not testSyntax then
                       if winBlockInput(True) then
                         LogDatei.log('Blocking Input', LLInfo)
                       else
                         LogDatei.log('Failed Blocking Input ...', LLWarning);
+                    {$ELSE WIN32}
+          LogDatei.log('BlockInput is only implemented for Win32',
+                      LLError);
+                    {$ENDIF WIN32}
                   end
 
                   else if UpperCase(Parameter) = UpperCase('False') then
                   begin
                     syntaxCheck := True;
                     ActionResult := tsrPositive;
+                    {$IFDEF WIN32}
                     if not testSyntax then
                       if winBlockInput(False) then
                         LogDatei.log('Unblocking Input', LLInfo)
                       else
                         LogDatei.log('Failed Unblocking Input ...', LLWarning);
+                    {$ELSE WIN32}
+          LogDatei.log('BlockInput is only implemented for Win32',
+                      LLError);
+                    {$ENDIF WIN32}
                   end;
                 end;
                 if not syntaxCheck then
@@ -24634,7 +24678,6 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-              {$ENDIF WIN32}
 
 
               tsExitWindows:
