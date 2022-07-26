@@ -24090,6 +24090,9 @@ begin
               begin
                 SyntaxCheck := True;
 
+                // if we are at windows check old position parameter
+                // we can not use this on unix because a starting slash
+                // may also be the start ot a file path
                 if PathDelim <> '/' then
                 begin
                   posSlash := pos('/', Remaining);
@@ -24123,9 +24126,14 @@ begin
                        {$ENDIF GUI}
                 end
                 else
+                begin
+                  // we are on unix
+                  // remove not allowed old parameter that starts with slash followed by one numeric
+                  Remaining := stringReplaceRegex(Remaining, '^/\d\h' , '');
                        {$IFDEF GUI}
                   imageNo := centralImageNo;
                       {$ENDIF GUI}
+                end;
 
                 if syntaxCheck then
                 begin
@@ -27245,7 +27253,7 @@ begin
       on e: Exception do
       begin
         LogDatei.log('Exception in CreateAndProcessScript: Handling Aktionsliste: ' +
-          e.message, LLError);
+          e.message, LLcritical);
         extremeErrorLevel := levelFatal;
       end;
     end;

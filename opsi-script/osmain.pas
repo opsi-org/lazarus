@@ -872,7 +872,11 @@ begin
       LogDatei.log('failed telling server to look for productOnClient defaults',
         LLerror);
   if not opsidata.initProduct then
+  begin
     extremeErrorLevel := levelFatal;
+    LogDatei.log(
+        'failed opsidata.initProduct', LLcritical);
+  end;
   if runproductlist then
     if not opsidata.setAddProductOnClientDefaults(False) then
       LogDatei.log(
