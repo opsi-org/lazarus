@@ -629,8 +629,8 @@ begin
     end;
     try
       // exit uses system.exitcode as exitcode
-      Exit;
-      //halt;
+      //Exit;
+      halt(system.ExitCode);
       //Application.Terminate;
     except
       // test
