@@ -5,44 +5,63 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-[Actions]
-requiredOpsiscriptVersion >= "4.12.4.23"
 
+;here we start
+[Actions]
+
+;check if the running opsiscript version is not too old 
+requiredOpsiscriptVersion >= "4.12.5.0
+
+;fetch helper libraries
 importlib "uib_exitcode.opsiscript"
 importlib "osd-lib.opsiscript"
 #@importLibs*#
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $MsiId$
+; ----------------------------------------------------------------
+comment "retrieve infos from script environment" 
+; ----------------------------------------------------------------
+; the values are found automatically when the script is running
+;
+DefStringList $productInfos$ = getProductMap
+DefVar $ProductId$ = getValue("id", $productInfos$)
+DefVar $ProductName$ = getValue("name", $productInfos$)
+
+DefVar $OS$ = GetOS
+; the operating system, in which the interpreter is running
+; supported values are  "Windows_NT", "Linux", "MacOS"
+
+; ----------------------------------------------------------------
+comment "put fixed infos into the script (maybe produced by the setup detector maybe manually)"
+; ----------------------------------------------------------------
+; the values can be manually edited or automatically suggested by the opsi setup detector
+;
+DefVar $InstallDir$ = "#@InstallDir1*#"
+; dependent on the installes software it could be
+; "%ProgramFiles64Dir% [,,,]
+; "%ProgramFilesSysNatives% [,,,]
+DefVar $MinimumSpace$ = "#@MinimumSpace1*#"
+DefVar $MsiId$ = "00000"
 DefVar $UninstallProgram$
+set $UninstallProgram$ ="uninstall.exe"
+
 #@stringVars*#
 
 ; ----------------------------------------------------------------
-; Please edit the following values:
+comment "do settings for license management"
 ; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
-Set $ProductId$		 = "#@productId*#"
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
-; the path were we find the product after the installation
-;Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
-Set $InstallDir$		= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "" 
+; If used the values have be manually set when editing the script
+;
+DefVar $LicenseHandledByScript$ = "#@LicenseRequired*#"
+DefVar $LicenseKey$  = ""
+DefVar $LicensePool$ = "pool-" +  $productId$
+
 ; ----------------------------------------------------------------
-
-set $OS$ = GetOS
-
-if not(($OS$ = "Windows_NT"))
+comment  "check if the script is adequate to the environment"
+; ----------------------------------------------------------------
+if not ($OS$ = "Windows_NT")
 	logError "Installation aborted: wrong OS version: only Windows"
 	isFatalError "wrong OS"
+	; Stop process and set installation status to failed
 endif
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
@@ -51,32 +70,62 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+; ---------------------------------------------------------------
+comment "inform the user at the PC about product installation"
+; ----------------------------------------------------------------
+; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
+; we set a image path which could be as follows  
+DefVar $ImagePath$
+set $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
+ShowBitmap $ImagePath$ $ProductName$
+
 
 #@GetProductProperty*#
+
+; ---------------------------------------------------------------
+comment "uninstall an existing installation if possible"
+; ---------------------------------------------------------------
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
 	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
-Message "Installing " + $ProductId$ + " ..."
+; show  a title for the installation
+Message "Installing " + $ProductId$ + " .."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
+
+; ---------------------------------------------------------------
+comment "handle license management if included "
+; ----------------------------------------------------------------
+if $LicenseHandledByScript$ = "true"
+	comment "we should handle license"
+	;reserve license and get license key
 	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	; here the section or function calls should follow which 
+	; make use of the license key resp the license reservation
 endif
 
-#@preInstallLines*#
-comment "Start setup program"
+; ---------------------------------------------------------------
+comment "run  the setup program"
+; ----------------------------------------------------------------
+
+; the call to a network drive is more stable if we set the path 
 ChangeDirectory "%SCRIPTPATH%"
-;----------------------------------------------
+
+#@preInstallLines*#
+
+; call the setup program
 Winbatch_install  #@installWaitForProc1*#
-;----------------------------------------------
+
+; ---------------------------------------------------------------
+comment "check the result"
+; ----------------------------------------------------------------
+; check the outcome of the call, produce either a "failed" state of the script or log the result
+DefVar $ExitCode$ = ""
+DefVar $ErrorString$ = ""
 set $ExitCode$ = getlastexitcode
 if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
-	#@installErrorHandlingLines1*#
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else
@@ -87,14 +136,27 @@ endif
 
 #@SetupHandleDesktopIcon*#
 
-comment "Copy files"
-Files_install /32Bit
+; ---------------------------------------------------------------
+comment "do tasks  which supplement the installation"
+; ----------------------------------------------------------------
 
-comment "Patch Registry"
-Registry_install /32Bit
+;e.g. copy some files
+Files_install /sysnative
 
-comment "Create shortcuts"
+;e.g. configure some registry entries
+Registry_install /sysnative
+
+;e.g.. supplement or remove start menu or desktop links
 LinkFolder_install
+
+
+; ---------------------------------------------------------------
+; end of  actions section
+; ---------------------------------------------------------------
+; ---------------------------------------------------------------
+; ---------------------------------------------------------------
+
+
 
 [Winbatch_install]
 #@installCommandLine1*#
@@ -174,6 +236,3 @@ LinkFolder_install
 #@SetupDesktopiconSectionLines*#
 
 #@SetupSectionLines1*#
-; ----------------------------------------------------------------
-; ----------------------------------------------------------------
-
