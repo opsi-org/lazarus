@@ -353,7 +353,7 @@ type
     FLastSection: TWorkSection;
 
 
-    procedure parsePowershellCall(var Command: string; AccessString: string;
+    procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string;
       var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string; out HandlePolicyBool:boolean);
     function GetContentOfDefinedFunction(var ReadingSuccessful: boolean; var linecounter: integer;
@@ -20900,7 +20900,7 @@ begin
   end;
 end;
 
-procedure TuibInstScript.parsePowershellCall(var Command: string; AccessString: string; var HandlePolicy: string;
+procedure TuibInstScript.parsePowershellCall(var Command: string; var AccessString: string; var HandlePolicy: string;
   var Option: string; var Remaining: string; var syntaxCheck: boolean;
   var InfoSyntaxError: string; out HandlePolicyBool: boolean);
 begin

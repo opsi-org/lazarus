@@ -9810,6 +9810,7 @@ begin
 
 
   Filemask := ExtractFileName(CompleteName);
+  LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
 
   DeleteStartDir := False;
   DeleteDeeperDir := False;
@@ -9817,19 +9818,31 @@ begin
     DeleteDeeperDir := True;
   if Filemask = '' then
     DeleteStartDir := True;
+  LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
   if (Filemask = '*.*') or (Filemask = '*') or
     (ExtractFileNameOnly(Filemask) = '*') or (ExtractFileExt(Filemask) = '*') then
     testname := ExtractFilePath(CompleteName)
   else
     testname := CompleteName;
-
+  LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
   { Start }
   if not search4file then
   begin
     // FindFirst only finds directories without PathDelim at the end
-    if (testname[length(testname)] = PathDelim) then
-      testname := ExtractFileDir(testname);
+    LogDatei.log_prog('testname: ' + testname + ' ' + {$INCLUDE %LINE%}, LLDebug);
+    LogDatei.log_prog('length(testname): ' + IntToStr(length(testname)) + ' ' + {$INCLUDE %LINE%}, LLDebug);
+    if testname <> '' then
+    begin
+      if (testname[length(testname)] = PathDelim) then
+      begin
+        testname := ExtractFileDir(testname);
+        LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
+      end;
+    end
+    else
+      LogDatei.Log('Please check your script. No file or directory path given', LLWarning);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
+    LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
     if not (FindFirst(testname, faAnyFile and faDirectory, FileFinder) = 0) then
     begin
       { does not exist }
@@ -9839,6 +9852,7 @@ begin
     end
     else
     begin
+      LogDatei.log_prog('Line: ' + {$INCLUDE %LINE%}, LLDebug);
       { does exist as dir or file }
       if isDirectory(ExtractFilePath(CompleteName)) then
       begin

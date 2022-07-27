@@ -1,3 +1,10 @@
+opsi-script (4.12.5.4) urgency=low
+
+  Fixes:  
+    powershellcall with no access string given resulted in an empty modifier instead of the default 'sysnative'
+    
+-- j.werner <j.werner@uib.de> 22 June 2022
+
 opsi-script (4.12.5.3) urgency=low
 
   Changes:
