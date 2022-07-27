@@ -354,7 +354,7 @@ type
     FtestSyntax: boolean;  // default=false ; if true then run syntax check
 
 
-    procedure parsePowershellCall(var Command: string; AccessString: string;
+    procedure parsePowershellCall(var Command: string; var AccessString: string;
       var HandlePolicy: string; var Option: string; var Remaining: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string;
       out HandlePolicyBool: boolean);
@@ -21703,10 +21703,9 @@ begin
   end;
 end;
 
-procedure TuibInstScript.parsePowershellCall(var Command: string;
-  AccessString: string; var HandlePolicy: string; var Option: string;
-  var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string;
-  out HandlePolicyBool: boolean);
+procedure TuibInstScript.parsePowershellCall(var Command: string; var AccessString: string; var HandlePolicy: string;
+  var Option: string; var Remaining: string; var syntaxCheck: boolean;
+  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
 begin
   Command := '';
   AccessString := '';
