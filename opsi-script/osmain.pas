@@ -630,8 +630,17 @@ begin
     try
       // exit uses system.exitcode as exitcode
       //Exit;
-      halt(system.ExitCode);
+      //halt(system.ExitCode);
       //Application.Terminate;
+      {$IFDEF GUI}
+      // Application is visible in GUI mode and exit does not work
+      Application.Terminate;
+      {$ELSE GUI}
+      // Application is not visible in console mode and exit works
+      Exit;
+      {$ENDIF GUI}
+      // fallback if nothing else works:
+      halt(system.ExitCode);
     except
       // test
       Halt;
