@@ -12,6 +12,7 @@ uses
   {$ENDIF WINDOWS}
   oslog,
   contnrs;
+//bgraanimatedgif;
 
 type
 
@@ -40,6 +41,8 @@ type
 
 var
   Nform: TNform;
+  designPPI: integer;
+  screenPPI: integer;
 
 implementation
 
@@ -57,6 +60,8 @@ procedure TNform.FormCreate(Sender: TObject);
 begin
   //objlist := TObjectList.Create;
   // prevents screensaver to start while running: start
+  designPPI := nform.DesignTimePPI;
+  screenPPI := Screen.PixelsPerInch;
   {$IFDEF WINDOWS}
   SystemCritical.IsCritical := True;
 {$ENDIF WINDOWS}

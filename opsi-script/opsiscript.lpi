@@ -25,8 +25,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="5"/>
-      <BuildNr Value="6"/>
+      <RevisionNr Value="6"/>
       <StringTable Comments="Compiled with Lazarus 2.2.0 / FPC 3.2.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="13">
@@ -698,7 +697,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="69">
+    <Units Count="70">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1007,6 +1006,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="osGetRegistryFunctions"/>
       </Unit68>
+      <Unit69>
+        <Filename Value="../common/osdoregistryfunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osDoRegistryFunctions"/>
+      </Unit69>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

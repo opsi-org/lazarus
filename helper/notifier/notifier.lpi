@@ -13,7 +13,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="Per-monitor"/>
+        <DpiAware Value="True/PM_V2"/>
         <TextName Value="uib gmbh, opsi.org, opsi-notifier, (c) AGPLv3 "/>
         <TextDesc Value="opsi-notifier"/>
       </XPManifest>
@@ -29,7 +29,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="7"/>
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="opsi-notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.2.0.0"/>
     </VersionInfo>
     <BuildModes Count="5">
@@ -194,13 +194,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
+        <CommandLineParams Value="-s notifier.d\action.ini --test -l 8 -p 44000"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="-s notifier.d\action.ini --test -l 8"/>
+            <CommandLineParams Value="-s notifier.d\action.ini --test -l 8 -p 44000"/>
           </local>
         </Mode0>
       </Modes>

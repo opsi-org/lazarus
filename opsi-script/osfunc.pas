@@ -121,9 +121,6 @@ type
   TcpSpecify = integer;
   TcpCountModus = (tccmNoCounter, tccmCounting, tccmCounted);
   TExitMode = (txmNoExit, txmLogout, txmReboot);
-  //TuibRegDataType = (trdUnknown, trdDefaultString, trdString,
-  //  trdExpandString, trdInteger,
-  //  trdBinary, trdMultiString);
   TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux, tovMacOS);
   TuibNTVersion = (tntverNONE, tntverNT3, tntverNT4, tntverWIN2K,
     tntverWINVISTA, tntverWINX);
