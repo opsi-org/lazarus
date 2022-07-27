@@ -617,24 +617,23 @@ begin
       LogDatei.LogSIndentLevel := 0;
       LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
-        'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+        'yyyy-mm-dd  hh:mm:ss ', now) + 'Exitcode: '+inttostr(system.ExitCode)+' .', LLessential);
 
       LogDatei.Close;
-      sleep(1000);
-      LogDatei.Free;
-      LogDatei := nil;
+      sleep(500);
+      FreeAndNil(LogDatei);
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
       {$ENDIF WINDOWS}
     end;
     try
-      // exit uses system.exitcode as exitcode
-      //Exit;
-      //halt(system.ExitCode);
-      //Application.Terminate;
       {$IFDEF GUI}
-      // Application is visible in GUI mode and exit does not work
+      // Application is visible in GUI mode and
+      // Application.terminate provides the exitcode
+      // exit uses system.exitcode as exitcode but
+      // exit does not work with Application
       Application.Terminate;
+      halt(system.ExitCode);
       {$ELSE GUI}
       // Application is not visible in console mode and exit works
       Exit;
@@ -642,17 +641,13 @@ begin
       // fallback if nothing else works:
       halt(system.ExitCode);
     except
-      // test
-      Halt;
+      halt(system.ExitCode);
     end;
   except
     try
-      halt;
-      //TerminateApp;
-      //Application.Terminate;
+      halt(system.ExitCode);
     except
-      // test
-      Halt;
+      halt(system.ExitCode);
     end;
   end;
 end;

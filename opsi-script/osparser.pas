@@ -22733,11 +22733,16 @@ begin
             Dec(NestLevel);
             Ifelseendiflevel := Nestlevel;
             try
+              if NestLevel >= 0 then
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
                 IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
                 BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
-                BoolToStr(Conditions[NestLevel], True), LLDebug);
+                BoolToStr(Conditions[NestLevel], True), LLDebug)
+                else
+                logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
+                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+                IntToStr(sektion.NestingLevel) + ' ThenBranch: unknown', LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
