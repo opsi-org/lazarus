@@ -2009,7 +2009,7 @@ begin
     patterns.Add(
       '<description>InstallShield.Setup</description>');
     link :=
-       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm'
+       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
        // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
        // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
       // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
