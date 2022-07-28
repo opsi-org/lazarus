@@ -221,13 +221,13 @@ var
 
 begin
   Result := True;
+  M := TMemoryStream.Create;
+  outpart := TStringList.Create;
+  outlines.Clear;
+  BytesRead := 0;
+  FpcProcess := process.TProcess.Create(nil);
   try
     try
-      M := TMemoryStream.Create;
-      outpart := TStringList.Create;
-      outlines.Clear;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
       InitializeProcess(FpcProcess, cmd);
       if Logdatei <> nil then
         Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug + logleveloffset);
@@ -429,7 +429,6 @@ begin
     S.Free;
     FpcProcess.Free;
     M.Free;
-    {$IFDEF OPSISCRIPT}
     {$IFDEF GUI}
     if showoutput then
     begin
@@ -441,7 +440,6 @@ begin
         LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
     end;
     {$ENDIF GUI}
-    {$ENDIF OPSISCRIPT}
   end;
 end;
 
