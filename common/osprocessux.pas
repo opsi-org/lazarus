@@ -359,15 +359,15 @@ var
 
 begin
   Result := True;
+  M := TMemoryStream.Create;
+  S := TStringList.Create;
+  BytesRead := 0;
+  FpcProcess := process.TProcess.Create(nil);
   try
     try
-      M := TMemoryStream.Create;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
       InitializeProcess(FpcProcess, cmd);
       if Logdatei <> nil then
         Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
-      {$IFDEF OPSISCRIPT}
       {$IFDEF GUI}
       if showoutput then
       begin
@@ -377,7 +377,6 @@ begin
         FBatchOberflaeche.Top := 5;
       end;
       {$ENDIF GUI}
-      {$ENDIF OPSISCRIPT}
 
       while FpcProcess.Running do
       begin
@@ -402,12 +401,10 @@ begin
       exitCode := FpcProcess.ExitCode;
       ReadLastPartOfProcessOutput(M, BytesRead, ReadBufferSize, FpcProcess, n);
 
-      S := TStringList.Create;
       S.LoadFromStream(M);
       for n := 0 to S.Count - 1 do
       begin
         outlines.Add(S[n]);
-        {$IFDEF OPSISCRIPT}
         {$IFDEF GUI}
         if showoutput then
         begin
@@ -416,7 +413,6 @@ begin
         end;
         ProcessMess;
         {$ENDIF GUI}
-        {$ENDIF OPSISCRIPT}
       end;
       // Attention: Exitcode is exitcode of bash
       if Logdatei <> nil then
