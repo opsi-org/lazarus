@@ -530,7 +530,7 @@ begin
     try
       ReleaseInfoFromFile.LoadFromFile(FilePath);
       for i := 0 to Mapping.Count - 1 do
-        ReleaseInfo.Add(Mapping.Names[i] + '=' + AnsiDequotedStr(ReleaseInfoFromFile.Values[Mapping.ValueFromIndex[i]]));
+        ReleaseInfo.Add(Mapping.Names[i] + '=' + AnsiDequotedStr(ReleaseInfoFromFile.Values[Mapping.ValueFromIndex[i]],'"'));
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
       LogDatei.log('', LLDebug2);
       LogDatei.log('output:', LLDebug2);
