@@ -425,7 +425,10 @@ type
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
       var list: TXStringlist; var InfoSyntaxError: string): boolean; overload;
-
+    procedure FillStringList(var ResultList: TXStringList; var r: string;
+      var syntaxCheck: boolean; var InfoSyntaxError: string);
+    procedure EvaluateGenericStringList(const Quotes: TChar; var r: string;
+      var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
       var list: TXStringlist; var InfoSyntaxError: string;
@@ -11964,11 +11967,68 @@ end;
 function TuibInstScript.produceStringList
   (const section: TuibIniScript; const s0: string; var Remaining: string;
   var list: TXStringList; var InfoSyntaxError: string): boolean;
-  //var
-  // NestLevel : integer;
 begin
   Result := produceStringList(section, s0, Remaining, list, InfoSyntaxError,
     IfElseEndifLevel, inDefFuncIndex);
+end;
+
+procedure TuibInstScript.FillStringList(var ResultList: TXStringList; var r: string;
+  var syntaxCheck: boolean; var InfoSyntaxError: string);
+var
+  goOn: boolean = True;
+  EvaluatedStringParameter: string = '';
+begin
+  while syntaxCheck and goOn do
+  begin
+    syntaxCheck := evaluateString(r, r, EvaluatedStringParameter, InfoSyntaxError);
+    if syntaxCheck then
+    begin
+      ResultList.add(EvaluatedStringParameter);
+      logdatei.log_prog('createStringList: add: ' + EvaluatedStringParameter + ' to: ' +
+        ResultList.Text, LLDebug);
+
+      if not Skip(',', r, r, InfoSyntaxError) then
+      begin
+        // list of entries is finished
+        goOn := False;
+        syntaxCheck := True;
+      end;
+    end;
+  end;
+end;
+
+procedure TuibInstScript.EvaluateGenericStringList(const Quotes: TChar; var r: string;
+  var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
+var
+  ListInBrackets: string = '';
+begin
+  syntaxCheck := True;
+  Skip(Quotes, r, r, InfoSyntaxError);
+  // Get the generic stringlist definition part '[...]' and store it in ListInBrackets.
+  // With GetWord we ensure that the outter quotes are not used inside of [...] (otherwise
+  // we would cut [...] somewhere inbetween and run in a syntax error sooner or later.
+  GetWord(r, ListInBrackets, r, [Quotes]);
+  Skip('[', ListInBrackets, ListInBrackets, InfoSyntaxError);
+  if ListInBrackets <> ']' then
+    FillStringList(list, ListInBrackets, syntaxCheck, InfoSyntaxError);
+
+  if syntaxCheck and Skip(']', ListInBrackets, ListInBrackets, InfoSyntaxError) then
+  begin
+    if ListInBrackets <> '' then
+    begin
+      syntaxCheck := False;
+      InfoSyntaxError := 'Remaining char(s) not allowed before the closing quotation mark';
+    end
+    else
+    begin
+      if Skip(Quotes, r, r, InfoSyntaxError) then
+        syntaxCheck := True
+      else
+        syntaxCheck := False;
+    end;
+  end
+  else
+    syntaxCheck := False;
 end;
 
 function TuibInstScript.produceStringList
@@ -12053,47 +12113,16 @@ begin
     logstring := s;
 
 
-    // is json style array literal type 1
-    // expected something like '["ho","hu"]' or special '[]'
-    // json style array literal is normaly quoted with '
-    // string constant delimited by "'" ?
+    // parse generic stringlist '["...", "...", ...]' or empty '[]'
     if (length(s0) > 0) and (pos('''[', s0) = 1) then
     begin
-      r1 := copy(s0, pos(']''', s0) + 2, length(s0));
-      r2 := copy(s0, 2, pos(']''', s0));
-      GetWord(r2, tmpstr, r2, ['''']);
-      if skip('''', r2, r2, InfoSyntaxError) then
-        syntaxCheck := True;
-      if jsonIsArray(tmpstr) then
-      begin
-        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
-        begin
-          syntaxCheck := True;
-          r := r1;
-        end;
-      end;
+      EvaluateGenericStringList('''', r, list, syntaxCheck, InfoSyntaxError);
     end
 
-
-    // is json style array literal type 2
-    // expected only special "[]"
-    // json style array literal is can only be quoted with " in the case "[]"
-    // string constant delimited by '"' ?
+    // parse generic stringlist "['...', '...', ...]" or empty "[]"
     else if (length(s0) > 0) and (pos('"[', s0) = 1) then
     begin
-      r1 := copy(s0, pos(']"', s0) + 2, length(s0));
-      r2 := copy(s0, 2, pos(']"', s0));
-      GetWord(r2, tmpstr, r2, ['"']);
-      if skip('"', r2, r2, InfoSyntaxError) then
-        syntaxCheck := True;
-      if jsonIsArray(tmpstr) then
-      begin
-        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
-        begin
-          syntaxCheck := True;
-          r := r1;
-        end;
-      end;
+      EvaluateGenericStringList('"', r, list, syntaxCheck, InfoSyntaxError);
     end
 
 
@@ -13934,39 +13963,13 @@ begin
         end
         else
         begin
-
-          while syntaxCheck and goon do
-          begin
-            evaluateString(r, r, s1, InfoSyntaxError);
-            // empty strings are allowed elements
-            // so we comment the next two lines (do 10.1.19)
-            //if length(s1) > 0
-            //then
-            list.add(s1);
-            logdatei.log_prog('createStringList: add: ' + s1 + ' to: ' +
-              list.Text, LLDebug);
-
-            if length(r) = 0 then
+          FillStringList(list, r, syntaxCheck, InfoSyntaxError);
+          if syntaxCheck then
+            if not Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := False;
-              InfoSyntaxError := ' Expressionstr not terminated ';
-            end
-            else
-            begin
-              if r[1] = ',' then
-                Skip(',', r, r, InfoSyntaxError) //here is no syntax error possible
-              else if r[1] = ')' then
-              begin
-                goOn := False;
-                Skip(')', r, r, InfoSyntaxError); //consume the ')'
-              end
-              else
-              begin
-                syntaxCheck := False;
-                InfoSyntaxError := ' "," or ")" expected ';
-              end;
+              InfoSyntaxError := ' "," or ")" expected ';
             end;
-          end;
         end;
       end;
     end
