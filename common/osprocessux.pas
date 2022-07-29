@@ -368,15 +368,6 @@ begin
       InitializeProcess(FpcProcess, cmd);
       if Logdatei <> nil then
         Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
-      {$IFDEF GUI}
-      if showoutput then
-      begin
-        CreateSystemInfo;
-        InitializeSystemInfo(SystemInfo, cmd, logleveloffset);
-        FBatchOberflaeche.Left := 5;
-        FBatchOberflaeche.Top := 5;
-      end;
-      {$ENDIF GUI}
 
       while FpcProcess.Running do
       begin
@@ -405,14 +396,6 @@ begin
       for n := 0 to S.Count - 1 do
       begin
         outlines.Add(S[n]);
-        {$IFDEF GUI}
-        if showoutput then
-        begin
-          SystemInfo.Memo1.Lines.Add(S[n]);
-          ProcessMess;
-        end;
-        ProcessMess;
-        {$ENDIF GUI}
       end;
       // Attention: Exitcode is exitcode of bash
       if Logdatei <> nil then
@@ -429,17 +412,6 @@ begin
     S.Free;
     FpcProcess.Free;
     M.Free;
-    {$IFDEF GUI}
-    if showoutput then
-    begin
-      FreeAndNil(SystemInfo);
-      FBatchOberflaeche.BringToFront;
-      FBatchOberflaeche.centerWindow;
-      ProcessMess;
-      if Logdatei <> nil then
-        LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
-    end;
-    {$ENDIF GUI}
   end;
 end;
 
