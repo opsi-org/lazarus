@@ -336,8 +336,9 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  mysetup.installerSourceDir:= '%scriptpath%\files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
-    '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
+    '"$installerSourceDir$\' + mysetup.setupFileName +
     '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
@@ -571,7 +572,7 @@ begin
   if not uninstall_only then
   begin
     mysetup.installCommandLine :=
-      'msiexec /i "%scriptpath%\files' + IntToStr(mysetup.ID) + '\' +
+      'msiexec /i "$installerSourceDir$\' +
       mysetup.setupFileName + '" ' +
       installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;

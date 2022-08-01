@@ -293,6 +293,7 @@ type
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxInstallFromLocal: TTICheckBox;
+    TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
@@ -787,6 +788,8 @@ begin
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
       TIGridProp.ListObject := osdbasedata.aktproduct.properties;
       TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'useCustomDir');
+      TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'installFromLocal');
+      TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'handleLicensekey');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text:= templateChannelList.Text;
@@ -2745,14 +2748,20 @@ begin
 end;
 
 procedure TResultform1.OpenMSTFile(var mysetup: TSetupFile);
+var
+  str : string;
 begin
   OpenDialog1.FilterIndex := 4;
   if OpenDialog1.Execute then
   begin
     mysetup.mstFullFileName := OpenDialog1.FileName;
+    str := ' TRANSFORMS= "$installerSourceDir$\'  + mysetup.mstFileName + '"';
+    mysetup.installCommandLine := mysetup.installCommandLine + str;
+    (*
     mysetup.installCommandLine :=
       mysetup.installCommandLine + ' TRANSFORMS=' + '"%scriptpath%\files' +
       IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
+      *)
   end;
 end;
 

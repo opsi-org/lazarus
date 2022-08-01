@@ -33,7 +33,7 @@ type
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
     analyzeCreateWithUser,gmUnknown);
 
-  TTemplateChannels = (training,default,structured,high_structured);
+  TTemplateChannels = (training,default,structured,custom);
 
   TArchitecture = (a32, a64, aUnknown);
 
@@ -129,6 +129,7 @@ type
     Fanalyze_progess: integer;
     FcopyCompleteDir: boolean;
     FtargetOS: TTargetOS;
+    FinstallerSourceDir: string;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
@@ -180,6 +181,7 @@ type
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     property targetOS: TTargetOS read FtargetOS write FtargetOS;
     property active: boolean read Factive write Factive;
+    property installerSourceDir: string read FinstallerSourceDir write FinstallerSourceDir;
     procedure initValues;
 
   public
@@ -330,6 +332,7 @@ default: ["xenial_bionic"]
     FuseCustomDir : boolean;
     FchannelDir : string;
     FinstallFromLocal : boolean;
+    FhandleLicensekey : boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -355,6 +358,7 @@ default: ["xenial_bionic"]
     property useCustomDir: boolean read FuseCustomDir write FuseCustomDir;
     property channelDir: string read FchannelDir write FchannelDir;
     property installFromLocal: boolean read FinstallFromLocal write FinstallFromLocal;
+    property handleLicensekey: boolean read FhandleLicensekey write FhandleLicensekey;
   public
     { public declarations }
     //constructor Create;
@@ -1001,8 +1005,10 @@ begin
     myprop.Free;
     *)
   propexists := aktProduct.properties.propExists('LicenseOrPool');
-  if myconfiguration.UsePropLicenseOrPool and
-    aktProduct.productdata.licenserequired and not propexists then
+  if ((myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired) or
+    aktProduct.productdata.handleLicensekey)
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1850,6 +1856,7 @@ begin
     targetOSset := [];
     useCustomDir:= false;
     installFromLocal := false;
+    handleLicensekey := false;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
@@ -2382,7 +2389,7 @@ begin
   templateChannelList.Add('training');
   templateChannelList.Add('default');
   templateChannelList.Add('structured');
-  templateChannelList.Add('high_structured');
+  templateChannelList.Add('custom');
 
   // Initialize logging
   LogDatei := TLogInfo.Create;

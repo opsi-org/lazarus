@@ -1,0 +1,4 @@
+; copy installer files to tempdirectory
+Files_copy_installer_to_temp
+; set $installerSourceDir$ to tmpdir
+set $installerSourceDir$ = "%opsitmpdir\$ProductId$"

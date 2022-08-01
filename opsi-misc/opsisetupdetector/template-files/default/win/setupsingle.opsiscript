@@ -55,9 +55,11 @@ if $LicenseRequired$ = "true"
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
+set $installerSourceDir$ = #@installerSourceDir1*#
+
 #@preInstallLines*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------

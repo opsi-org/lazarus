@@ -99,6 +99,7 @@
 {"hash":254747737,"name":"tresultform1.ticheckboxcustomdir.caption","sourcebytes":[83,117,112,112,111,114,116,32,99,117,115,116,111,109,32,100,105,114,101,99,116,111,114,121],"value":"Support custom directory"},
 {"hash":213252890,"name":"tresultform1.labelchannel.caption","sourcebytes":[84,101,109,112,108,97,116,101,32,67,104,97,110,110,101,108,58],"value":"Template Channel:"},
 {"hash":182977922,"name":"tresultform1.ticheckboxinstallfromlocal.caption","sourcebytes":[73,110,115,116,97,108,108,32,102,114,111,109,32,108,111,99,97,108,32,116,101,109,112,32,100,105,114],"value":"Install from local temp dir"},
+{"hash":235105536,"name":"tresultform1.ticheckboxhandlelicenekey.caption","sourcebytes":[72,97,110,100,108,101,32,76,105,99,101,110,115,101,32,75,101,121,32,32],"value":"Handle License Key  "},
 {"hash":127037762,"name":"tresultform1.tabsheetproduct2.caption","sourcebytes":[80,114,111,100,117,99,116,32,67,111,110,102,105,103,117,114,97,116,105,111,110,32,50],"value":"Product Configuration 2"},
 {"hash":151426505,"name":"tresultform1.label76.caption","sourcebytes":[80,114,105,111,114,105,116,121],"value":"Priority"},
 {"hash":194334512,"name":"tresultform1.btproduct2nextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
