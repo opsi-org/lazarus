@@ -1,7 +1,8 @@
 ; copy installer files to tempdirectory
 [Files_copy_installer_to_temp]
-copy -s "$installerSourceDir$\*.*" "%opsiTmpDir\$ProductId$"
+copy -s "$installerSourceDir$\*.*" "%opsiTmpDir%\$ProductId$"
 
+; cleanup installer tempdirectory
 [Files_del_installer_from_temp]
-def -sf "%opsiTmpDir\$ProductId$\"
+del -sf "%opsiTmpDir%\$ProductId$\"
 

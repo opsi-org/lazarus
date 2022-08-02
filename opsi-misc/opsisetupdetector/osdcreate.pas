@@ -115,31 +115,33 @@ end;
 procedure fillPatchList;
 var
   i: integer;
-  str, str2, str3: string;
+  str, str2, str3, defaultstr: string;
   strlist: TStringList;
   preinstalllist: TStringList; // preinstall lines
   postinstalllist: TStringList; // postinstall lines
+  preUnInstalllist: TStringList; // preUnInstall lines
+  postUnInstalllist: TStringList; // postUnInstall lines
   sectionlist: TStringList; // section lines
+  finalUnInstallList: TStringList; // Final uinstall lines (unistall.opsiscript)
   templatePath, filepath: string;
   proptmpstr: string;
   neededspacefor2archinstall: integer = 0;
 
-  procedure readFileToList(myfilename : string; var list : TStringlist);
+  procedure readFileToList(myfilename: string; var list: TStringList);
   var
-    myfilepath : string;
-    mylist : TStringList;
+    myfilepath: string;
+    mylist: TStringList;
   begin
     mylist := TStringList.Create;
-        myfilepath := templatePath + Pathdelim + 'win' + Pathdelim +
-          myfilename;
-        if FileExists(myfilepath) then
-        begin
-          mylist.LoadFromFile(myfilepath);
-          list.AddStrings(mylist);
-        end
-        else
-          LogDatei.log('Error: File not found: ' + myfilepath, LLerror);
-        FreeAndNil(mylist);
+    myfilepath := templatePath + Pathdelim + 'win' + Pathdelim + myfilename;
+    if FileExists(myfilepath) then
+    begin
+      mylist.LoadFromFile(myfilepath);
+      list.AddStrings(mylist);
+    end
+    else
+      LogDatei.log('Error: File not found: ' + myfilepath, LLerror);
+    FreeAndNil(mylist);
   end;
 
 begin
@@ -147,21 +149,26 @@ begin
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim +
     'template-files' + PathDelim + aktProduct.productdata.channelDir;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   // development env
-  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim +
+    'template-files' + PathDelim + aktProduct.productdata.channelDir;
   if not DirectoryExists(templatePath) then
   begin
     LogDatei.log('Template path: ' + templatePath + ' not found. Fallback to unix path',
       LLInfo);
-    templatePath := '/usr/share/opsi-setup-detector/template-files';
+    templatePath := '/usr/share/opsi-setup-detector/template-files' +
+      PathDelim + aktProduct.productdata.channelDir;
   end;
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
   try
     strlist := TStringList.Create;
     preinstalllist := TStringList.Create;
     postinstalllist := TStringList.Create;
     sectionlist := TStringList.Create;
+    preUnInstalllist := TStringList.Create;
+    postUnInstalllist := TStringList.Create;
+    finalUnInstallList := TStringList.Create;
     patchlist.Clear;
     // OSD version
     patchlist.add('#@osdVersion*#=' + myVersion);
@@ -171,19 +178,20 @@ begin
     // form ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      proptmpstr := aktProduct.properties.Items[i].Property_Name;
-      if (proptmpstr = 'SecretLicense_or_Pool') then
+      proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
+      if (proptmpstr = LowerCase('SecretLicense_or_Pool')) then
       begin
         str := str + 'DefVar $LicenseOrPool$' + LineEnding;
         str := str + 'DefVar $Licensekey$' + LineEnding;
+        str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
-
-      else if (proptmpstr = 'DesktopIcon') then
+(*
+      else if (proptmpstr = LowerCase('DesktopIcon')) then
         str := str + 'DefVar $DesktopIcon$' + LineEnding
 
-      else if (proptmpstr = 'install_architecture') then
+      else if (proptmpstr = ('install_architecture')) then
         str := str + 'DefVar $install_architecture$' + LineEnding
-
+      *)
       else
         str := str + 'DefVar $' + proptmpstr + '$' + LineEnding;
     end;
@@ -203,28 +211,29 @@ begin
     // #@GetProductProperty*#:
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      proptmpstr := aktProduct.properties.Items[i].Property_Name;
-      if (proptmpstr = 'SecretLicense_or_Pool') then
+      proptmpstr := LowerCase(aktProduct.properties.Items[i].Property_Name);
+      if (proptmpstr = LowerCase('SecretLicense_or_Pool')) then
       begin
+        str2 := '';
+        if aktProduct.properties.Items[i].GetDefaultLines.Count > 0 then
+          str2 := aktProduct.properties.Items[i].GetDefaultLines[0];
         str := str +
           'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","'
           +
-          aktProduct.properties.Items[i - 1].GetDefaultLines[0] + '")' + LineEnding;
-        //str := str + 'set $LicensePool$ = $LicenseOrPool$' + LineEnding;
+          str2 + '")' + LineEnding;
 
-        readFileToList('SetupHandleLicenseKey.opsiscript', preinstalllist);
+        readFileToList('SetupHandleLicense.opsiscript', preinstalllist);
+        readFileToList('SetupHandleLicenseUninst.opsiscript', finalUnInstallList);
       end
 
-      else if (proptmpstr = 'Install_from_local_tmpdir') then
+      else if (proptmpstr = LowerCase('Install_from_local_tmpdir')) then
       begin
         str := str +
-          'set $InstallFromLocalTmpDir$ = GetProductProperty("Install_from_local_tmpdir","'
+          'set $Install_from_local_tmpdir$ = GetProductProperty("Install_from_local_tmpdir","'
           +
-          aktProduct.properties.Items[i - 1].GetDefaultLines[0] + '")' + LineEnding;
-
-
+          BoolToStr(aktProduct.properties.Items[i].BoolDefault, True) + '")' + LineEnding;
         readFileToList('SetupHandleInstallFromLocal.opsiscript', preinstalllist);
-
+        readFileToList('SetupHandlePostInstallFromLocal.opsiscript', postinstalllist);
         readFileToList('SetupHandleInstallFromLocalSections.opsiscript', sectionlist);
       end
       else
@@ -275,9 +284,12 @@ begin
 
     str := myconfiguration.postUnInstallLines.Text;
     if str <> '' then
+      postUnInstallList.Add(myconfiguration.postUnInstallLines.Text + LineEnding);
+    (*
       str := 'comment "Start Post UnInstall hook :"' + LineEnding +
         myconfiguration.postUnInstallLines.Text;
     patchlist.add('#@postUninstallLines*#=' + str);
+    *)
 
     str := '';
     if aktProduct.properties.propExists('DesktopIcon') then
@@ -286,7 +298,10 @@ begin
       readFileToList('SetupHandleDesktopIcon.opsiscript', preinstalllist);
 
       readFileToList('SetupHandleDesktopIconSections.opsiscript', sectionlist);
+      str := 'comment "Start Remoce Desktop Icon Handling :"' +
+        LineEnding + 'Linkfolder_remove_desktop_icon';
     end;
+    patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
 
       (*
       filepath := templatePath + Pathdelim + 'win' + Pathdelim +
@@ -347,26 +362,10 @@ begin
     if aktProduct.productdata.useCustomDir then
     begin
 
-      readFileToList('SetupHandleCustomDir.opsiscript', preinstalllist);
+      readFileToList('SetupHandleCustomDir.opsiscript', postinstalllist);
 
       readFileToList('SetupHandleCustomDirSections.opsiscript', sectionlist);
     end;
-    (*
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupHandleCustomDir.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@SetupHandleCustomDir*#=' + str);
-
-    str := '';
-    if aktProduct.productdata.useCustomDir then
-    begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'win' + Pathdelim +
-        'SetupHandleCustomDirSectionLines.opsiscript');
-      str := strlist.Text;
-    end;
-    patchlist.add('#@SetupHandleCustomDirSectionLines*#=' + str);
-    *)
 
     // loop over setups
     for i := 0 to 2 do
@@ -424,16 +423,31 @@ begin
       str := aktProduct.SetupFiles[i].installErrorHandlingLines.Text;
       patchlist.add('#@installErrorHandlingLines' + IntToStr(i + 1) + '*#=' + str);
 
+      str := aktProduct.SetupFiles[i].installerSourceDir;
+      patchlist.add('#@installerSourceDir' + IntToStr(i + 1) + '*#=' + str);
+
     end;
 
     patchlist.add('#@MinimumSpace3*#=' +
       IntToStr(neededspacefor2archinstall) + ' MB');
 
-    patchlist.add('#@preInstallLines*#=' + preinstalllist.Text);
+    str := preinstalllist.Text;
+    patchlist.add('#@preInstallLines*#=' + str);
 
-    patchlist.add('#@postInstallLines*#=' + postinstalllist.Text);
+    str := postinstalllist.Text;
+    patchlist.add('#@postInstallLines*#=' + str);
 
-    patchlist.add('#@sectionLines*#=' + sectionlist.Text);
+    str := sectionlist.Text;
+    patchlist.add('#@sectionLines*#=' + str);
+
+    str := preUnInstalllist.Text;
+    patchlist.add('#@preUnInstallLines*#=' + str);
+
+    str := postUnInstalllist.Text;
+    patchlist.add('#@postUnInstallLines*#=' + str);
+
+    str := finalUnInstallList.Text;
+    patchlist.add('#@finalUnInstallLines*#=' + str);
 
     logdatei.log('Here comes the patchlist: ', LLinfo);
     logdatei.log_list(patchlist, LLdebug);
@@ -443,6 +457,9 @@ begin
     FreeAndNil(preinstalllist);
     FreeAndNil(postinstalllist);
     FreeAndNil(sectionlist);
+    FreeAndNil(preUnInstalllist);
+    FreeAndNil(postUnInstalllist);
+    FreeAndNil(finalUnInstallList);
 
   end;
 end;
@@ -500,7 +517,7 @@ begin
         singleAnalyzeCreate:
         begin
           infilelist.Add('setupsingle.opsiscript');
-          infilelist.Add('delsubsingle.opsiscript');
+          infilelist.Add('delincsingle.opsiinc');
           infilelist.Add('uninstallsingle.opsiscript');
           if aktProduct.SetupFiles[0].installerId = stMsi then
             infilelist.Add('delsubmsisingle.opsiscript');
@@ -582,19 +599,17 @@ begin
         end;
       end;
 
-      // additional files for 'structured'
-      if (aktProduct.productdata.channelDir = 'structured') then
+      // additional files for 'default'
+      if (aktProduct.productdata.channelDir = 'default') then
       begin
         case osdsettings.runmode of
           singleAnalyzeCreate:
           begin
             infilelist.Add('declarations.opsiinc');
-            infilelist.Add('sections.opsiinc');
           end;
           twoAnalyzeCreate_1, twoAnalyzeCreate_2:
           begin
             infilelist.Add('declarations.opsiinc');
-            infilelist.Add('sections.opsiinc');
           end;
           createTemplate:
           begin
@@ -604,99 +619,134 @@ begin
           end;
           threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
           begin
+            infilelist.Add('declarations.opsiinc');
           end;
           createMultiTemplate:
           begin
+            infilelist.Add('declarations.opsiinc');
           end;
           analyzeCreateWithUser:
           begin
           end;
         end;
-      end;
 
-      // we did it for analyzeCreateWithUser right now
-      if not (osdsettings.runmode = analyzeCreateWithUser) then
-        for i := 0 to infilelist.Count - 1 do
+        // additional files for 'structured'
+        if (aktProduct.productdata.channelDir = 'structured') then
         begin
-          tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
-          tmpext := ExtractFileExt(infilelist.Strings[i]);
-          tmppref := copy(infilelist.Strings[i], 1, 3);
-          // replace non active setups with template
-          if (tmppref = 'win') and (aktProduct.SetupFiles[0].active = False) then
-          begin
-            infilename := templatePath + Pathdelim + templateChannelDir +
-              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
-              'single', 'templ', []) + tmpext;
-            if not FileExists(infilename) then
+          case osdsettings.runmode of
+            singleAnalyzeCreate:
             begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
+              infilelist.Add('declarations.opsiinc');
+              infilelist.Add('sections.opsiinc');
             end;
-          end
-          else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
-          begin
-            infilename := templatePath + Pathdelim + templateChannelDir +
-              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
-              'single', 'templ', []) + tmpext;
-            if not FileExists(infilename) then
+            twoAnalyzeCreate_1, twoAnalyzeCreate_2:
             begin
-              infilename := templatePath + PathDelim + 'default' +
-                PathDelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
+              infilelist.Add('declarations.opsiinc');
+              infilelist.Add('sections.opsiinc');
             end;
-          end
-          else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
-          begin
-            infilename := templatePath + Pathdelim + templateChannelDir +
-              PathDelim + pre_id + PathDelim + StringReplace(tmpname,
-              'single', 'templ', []) + tmpext;
-            if not FileExists(infilename) then
+            createTemplate:
             begin
-              infilename := templatePath + PathDelim + 'default' +
-                PathDelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
             end;
-          end
-          else
-          begin
-            infilename := templatePath + PathDelim + templateChannelDir +
-              Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-            if not FileExists(infilename) then
+            createMeta:
             begin
-              infilename := templatePath + PathDelim + 'default' +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              logdatei.log('File: ' + infilename +
-                ' not found at template channel: ' + templateChannelDir +
-                ' - fall back to default', LLinfo);
+            end;
+            threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+            begin
+            end;
+            createMultiTemplate:
+            begin
+            end;
+            analyzeCreateWithUser:
+            begin
             end;
           end;
-          tmpname := StringReplace(tmpname, 'single', '', []);
-          tmpname := StringReplace(tmpname, 'double', '', []);
-          tmpname := StringReplace(tmpname, 'templ', '', []);
-          tmpname := StringReplace(tmpname, 'meta', '', []);
-          tmpname := StringReplace(tmpname, 'msi', '', []);
-          if tmpname = 'setup' then
-            outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
-          else if tmpname = 'delsub' then
-            outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
-          else if tmpname = 'uninstall' then
-            outfilename := clientpath + PathDelim +
-              aktProduct.productdata.uninstallscript
-          else
-            outfilename := clientpath + PathDelim + tmpname + tmpext;
-          patchScript(infilename, outfilename);
         end;
 
+        // we did it for analyzeCreateWithUser right now
+        if not (osdsettings.runmode = analyzeCreateWithUser) then
+          for i := 0 to infilelist.Count - 1 do
+          begin
+            tmpname := ExtractFileNameOnly(infilelist.Strings[i]);
+            tmpext := ExtractFileExt(infilelist.Strings[i]);
+            tmppref := copy(infilelist.Strings[i], 1, 3);
+            // replace non active setups with template
+            if (tmppref = 'win') and (aktProduct.SetupFiles[0].active = False) then
+            begin
+              infilename := templatePath + Pathdelim + templateChannelDir +
+                PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+                'single', 'templ', []) + tmpext;
+              if not FileExists(infilename) then
+              begin
+                infilename := templatePath + PathDelim + 'default' +
+                  Pathdelim + pre_id + PathDelim +
+                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+                logdatei.log('File: ' + infilename +
+                  ' not found at template channel: ' + templateChannelDir +
+                  ' - fall back to default', LLinfo);
+              end;
+            end
+            else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
+            begin
+              infilename := templatePath + Pathdelim + templateChannelDir +
+                PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+                'single', 'templ', []) + tmpext;
+              if not FileExists(infilename) then
+              begin
+                infilename := templatePath + PathDelim + 'default' +
+                  PathDelim + pre_id + PathDelim +
+                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+                logdatei.log('File: ' + infilename +
+                  ' not found at template channel: ' + templateChannelDir +
+                  ' - fall back to default', LLinfo);
+              end;
+            end
+            else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
+            begin
+              infilename := templatePath + Pathdelim + templateChannelDir +
+                PathDelim + pre_id + PathDelim + StringReplace(tmpname,
+                'single', 'templ', []) + tmpext;
+              if not FileExists(infilename) then
+              begin
+                infilename := templatePath + PathDelim + 'default' +
+                  PathDelim + pre_id + PathDelim +
+                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
+                logdatei.log('File: ' + infilename +
+                  ' not found at template channel: ' + templateChannelDir +
+                  ' - fall back to default', LLinfo);
+              end;
+            end
+            else
+            begin
+              infilename := templatePath + PathDelim + templateChannelDir +
+                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+              if not FileExists(infilename) then
+              begin
+                infilename := templatePath + PathDelim + 'default' +
+                  Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+                logdatei.log('File: ' + infilename +
+                  ' not found at template channel: ' + templateChannelDir +
+                  ' - fall back to default', LLinfo);
+              end;
+            end;
+            tmpname := StringReplace(tmpname, 'single', '', []);
+            tmpname := StringReplace(tmpname, 'double', '', []);
+            tmpname := StringReplace(tmpname, 'templ', '', []);
+            tmpname := StringReplace(tmpname, 'meta', '', []);
+            tmpname := StringReplace(tmpname, 'msi', '', []);
+            if tmpname = 'setup' then
+              outfilename := clientpath + PathDelim + aktProduct.productdata.setupscript
+            else if tmpname = 'delsub' then
+              outfilename := clientpath + PathDelim + aktProduct.productdata.delsubscript
+            else if tmpname = 'uninstall' then
+              outfilename := clientpath + PathDelim +
+                aktProduct.productdata.uninstallscript
+            else
+              outfilename := clientpath + PathDelim + tmpname + tmpext;
+            patchScript(infilename, outfilename);
+          end;
+      end;
+
+      (*
       // define_vars_multi
       // none at windows template or createMeta
       if not (((osdsettings.runmode = createTemplate) and
@@ -709,10 +759,21 @@ begin
         // none at template channel structured
         (aktProduct.productdata.channelDir = 'structured')) then
       begin
-        infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
+        //infilename := genericTemplatePath + Pathdelim + 'define_vars_multi.opsiscript';
+        infilename := templatePath + PathDelim + templateChannelDir +
+              Pathdelim + pre_id + PathDelim + 'declarations.opsiinc';
+            if not FileExists(infilename) then
+            begin
+              infilename := templatePath + PathDelim + 'default' +
+                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
+              logdatei.log('File: ' + infilename +
+                ' not found at template channel: ' + templateChannelDir +
+                ' - fall back to default', LLinfo);
+            end;
         outfilename := clientpath + PathDelim + 'define_vars_multi.opsiscript';
         patchScript(infilename, outfilename);
       end;
+      *)
 
     (*
     // setup script
@@ -857,8 +918,8 @@ begin
         infilename := genericTemplatePath + Pathdelim + 'customdir_readme.txt';
         outfilename := clientpath + subdir + PathDelim + 'custom' +
           PathDelim + 'readme.txt';
-        copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
-          cffPreserveTime], True);
+        copyfile(infilename, outfilename, [cffOverwriteFile,
+          cffCreateDestDirectory, cffPreserveTime], True);
       end;
 
       // write project file

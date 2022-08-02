@@ -336,10 +336,10 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-  mysetup.installerSourceDir:= '%scriptpath%\files' + IntToStr(mysetup.ID);
+  mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
-    '"$installerSourceDir$\' + mysetup.setupFileName +
-    '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+    '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+    installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -572,21 +572,25 @@ begin
   if not uninstall_only then
   begin
     mysetup.installCommandLine :=
-      'msiexec /i "$installerSourceDir$\' +
-      mysetup.setupFileName + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendedsetup;
+      'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+      '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;
   end;
   mysetup.uninstallCheck.Clear;
-  mysetup.uninstallCheck.Add('set $UninstallList$ = addtolist($UninstallList$,"'+mysetup.SoftwareVersion+'='+mysetup.msiId+'")');
+  mysetup.uninstallCheck.Add('set $UninstallList$ = addtolist($UninstallList$,"' +
+    mysetup.SoftwareVersion + '=' + mysetup.msiId + '")');
   mysetup.uninstallCheck.Add('; you may add later additional msiids to this list');
-  mysetup.uninstallCheck.Add('; set $UninstallList$ = addtolist($UninstallList$,"<version>=<GUID>")');
+  mysetup.uninstallCheck.Add(
+    '; set $UninstallList$ = addtolist($UninstallList$,"<version>=<GUID>")');
   mysetup.uninstallCheck.Add('');
-  mysetup.uninstallCheck.Add('for %uninstallEntry% in $UninstallList$ do sub_uninstall_msi-list');
+  mysetup.uninstallCheck.Add(
+    'for %uninstallEntry% in $UninstallList$ do sub_uninstall_msi-list');
   mysetup.uninstallCheck.Add('');
   mysetup.uninstallCheck.Add('[sub_uninstall_msi-list]');
-  mysetup.uninstallCheck.Add('set $MsiVersion$ = TakeString(0, splitstring("%uninstallEntry%", "="))');
-  mysetup.uninstallCheck.Add('set $MsiId$ = TakeString(1, splitstring("%uninstallEntry%", "="))');
+  mysetup.uninstallCheck.Add(
+    'set $MsiVersion$ = TakeString(0, splitstring("%uninstallEntry%", "="))');
+  mysetup.uninstallCheck.Add(
+    'set $MsiId$ = TakeString(1, splitstring("%uninstallEntry%", "="))');
   mysetup.uninstallCheck.Add('');
   mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
   //mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +mysetup.msiId + '"))');
@@ -596,7 +600,7 @@ begin
   mysetup.uninstallCheck.Add('endif');
 
   mysetup.uninstallCommandLine :=
-  //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
+    //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
     'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
@@ -1210,10 +1214,10 @@ begin
     if setupType = stUnknown then
     begin
       FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
-      for i := 0 to integer(stUnknown)  do
+      for i := 0 to integer(stUnknown) do
         FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
           installerToInstallerstr(TKnownInstaller(i)));
-      FChooseInstallerDlg.ComboBoxChooseInstaller.Text:=
+      FChooseInstallerDlg.ComboBoxChooseInstaller.Text :=
         installerToInstallerstr(stUnknown);
       if FChooseInstallerDlg.ShowModal = mrOk then
       begin

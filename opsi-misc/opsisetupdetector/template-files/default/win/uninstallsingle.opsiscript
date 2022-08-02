@@ -14,15 +14,13 @@ importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
 Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -32,7 +30,6 @@ if not(($OS$ = "Windows_NT"))
 	isFatalError "wrong OS"
 endif
 
-
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
@@ -40,13 +37,19 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Set $tmpstr$ = FreeLicense($LicensePool$)
-endif
+#@FinalUnInstallLines*#
 
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

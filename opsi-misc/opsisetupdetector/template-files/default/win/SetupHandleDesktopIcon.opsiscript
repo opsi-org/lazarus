@@ -1,3 +1,4 @@
+; handle desktop icon
 if $DesktopIcon$ = "true"
 	comment "Create Desktop Icon"
 	Linkfolder_create_desktop_icon

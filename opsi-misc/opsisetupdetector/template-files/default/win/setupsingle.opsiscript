@@ -13,15 +13,13 @@ importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
 Set $ProductId$		= "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "" 
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
@@ -43,19 +41,14 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
-
-set $installerSourceDir$ = #@installerSourceDir1*#
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 comment "Start setup program"
@@ -71,21 +64,20 @@ if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
 else
 	Comment $ErrorString$
 endif
+
 #@postInstallLines*#
 
-#@SetupHandleDesktopIcon*#
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
 
-#@SetupHandleCustomDir*#
+[Files_uninstall]
+del -sf "$InstallDir$\"
 
 [Winbatch_install]
 #@installCommandLine1*#
 
 
-#@SetupDesktopiconSectionLines*#
-
-#@SetupHandleCustomDirSectionLines*#
-
-#@SetupSectionLines1*#
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

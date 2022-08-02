@@ -28,12 +28,12 @@ uses
 type
 
   TRunMode = (//analyzeOnly,
-     singleAnalyzeCreate, twoAnalyzeCreate_1,
+    singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, threeAnalyzeCreate_1,
     threeAnalyzeCreate_2, threeAnalyzeCreate_3, createMultiTemplate, createMeta,
-    analyzeCreateWithUser,gmUnknown);
+    analyzeCreateWithUser, gmUnknown);
 
-  TTemplateChannels = (training,default,structured,custom);
+  TTemplateChannels = (training, default, structured, custom);
 
   TArchitecture = (a32, a64, aUnknown);
 
@@ -181,7 +181,8 @@ type
     property copyCompleteDir: boolean read FcopyCompleteDir write FcopyCompleteDir;
     property targetOS: TTargetOS read FtargetOS write FtargetOS;
     property active: boolean read Factive write Factive;
-    property installerSourceDir: string read FinstallerSourceDir write FinstallerSourceDir;
+    property installerSourceDir: string read FinstallerSourceDir
+      write FinstallerSourceDir;
     procedure initValues;
 
   public
@@ -303,6 +304,7 @@ default: ["xenial_bionic"]
     function Insert(Index: integer): TPProperty;
     property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
     function propExists(propname: string): boolean;
+    procedure propDelete(propname: string);
     //procedure activateImportMode;
   end;
 
@@ -329,10 +331,11 @@ default: ["xenial_bionic"]
     Flicenserequired: boolean;
     FproductImageFullFileName: string;
     FtargetOSset: TTargetOSset;
-    FuseCustomDir : boolean;
-    FchannelDir : string;
-    FinstallFromLocal : boolean;
-    FhandleLicensekey : boolean;
+    FuseCustomDir: boolean;
+    FchannelDir: string;
+    FinstallFromLocal: boolean;
+    FhandleLicensekey: boolean;
+    Fdesktopicon: boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -359,6 +362,7 @@ default: ["xenial_bionic"]
     property channelDir: string read FchannelDir write FchannelDir;
     property installFromLocal: boolean read FinstallFromLocal write FinstallFromLocal;
     property handleLicensekey: boolean read FhandleLicensekey write FhandleLicensekey;
+    property desktopicon: boolean read Fdesktopicon write Fdesktopicon;
   public
     { public declarations }
     //constructor Create;
@@ -414,7 +418,7 @@ default: ["xenial_bionic"]
     FService_user: string;
     FService_pass: string;
     FUseService: boolean;
-    FTemplateChannel : TTemplateChannels;
+    FTemplateChannel: TTemplateChannels;
     //FtargetOS : TTargetOS;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
@@ -422,7 +426,7 @@ default: ["xenial_bionic"]
     procedure SetPreUninstallLines(const AValue: TStrings);
     procedure SetPostUninstallLines(const AValue: TStrings);
     procedure SetProperties(const AValue: TPProperties);
-    procedure SetWorkbench_path(const AValue: String);
+    procedure SetWorkbench_path(const AValue: string);
   published
     property config_version: string read Fconfig_version write Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
@@ -460,7 +464,8 @@ default: ["xenial_bionic"]
     property Service_URL: string read FService_URL write FService_URL;
     property Service_user: string read FService_user write FService_user;
     property Service_pass: string read FService_pass write FService_pass;
-    property templateChannel: TtemplateChannels read FTemplateChannel write FTemplateChannel;
+    property templateChannel: TtemplateChannels
+      read FTemplateChannel write FTemplateChannel;
     //property UseService: boolean read FUseService write FUseService;
 
     procedure writeconfig;
@@ -486,8 +491,8 @@ function cleanOpsiId(opsiid: string): string; // clean up productId
 
 const
   CONFVERSION = '4.2.0.9';
-templChannelStrings : array [TTemplateChannels] of String
-   = ('training','default','structured','high_structured');
+  templChannelStrings: array [TTemplateChannels] of string =
+    ('training', 'default', 'structured', 'high_structured');
 
 var
   aktProduct: TopsiProduct;
@@ -546,18 +551,23 @@ resourcestring
   rsCnfdTitle = 'Edit your configuration here.' + LineEnding +
     'Click on a line to get help ' + LineEnding +
     'in the yellow field at the bottom.';
-   rsService_URL = 'The URL of the opsi webservice (like: https://<opsi-server>:4447)';
+  rsService_URL = 'The URL of the opsi webservice (like: https://<opsi-server>:4447)';
   rsService_user = 'The user name used to connect to the opsi webservice';
-  rsService_pass = 'The password of the given user used to connect to the opsi webservice' + LineEnding +
-    'ATTENTION SECURITY RISK: Even it is stored encrypted,' + LineEnding +
-    'it is easy to decrypt be analyzing the source code.' + LineEnding +
-    'If empty you will be asked if the connection is started.';
+  rsService_pass = 'The password of the given user used to connect to the opsi webservice'
+    + LineEnding + 'ATTENTION SECURITY RISK: Even it is stored encrypted,' +
+    LineEnding + 'it is easy to decrypt be analyzing the source code.' +
+    LineEnding + 'If empty you will be asked if the connection is started.';
   //rsUseService = 'Should this program try to connect to the opsi web service';
   rsConfigVersion = 'Do not change. Version of the config structure.';
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
-  rsUsePropDesktopiconL = 'Should we create a "DektopIcon" property';
+  rsUsePropDesktopicon = 'Should we create a "DektopIcon" property';
+  rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
   rsUsePropLicenseOrPool = 'Should we create a "LicenseOrPool" property';
+  rsPropLicenseOrPoolDescription = 'License key or opsi license pool';
+  rsPropInstallFromLocalDescription =
+    'Determines if the installation files will be copied locally';
+  rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) has to be installed?';
 
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
@@ -918,6 +928,19 @@ begin
       propExists := True;
 end;
 
+procedure TPProperties.propDelete(propname: string);
+var
+  index, i: integer;
+  tmpstr: string;
+begin
+  index := Count;
+  tmpstr := lowercase(propname);
+  for i := index - 1 downto 0 do
+    if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
+      Delete(i);
+end;
+
+
 (*
 procedure TPProperties.activateImportMode;
 var
@@ -964,13 +987,13 @@ begin
     *)
 
   propexists := aktProduct.properties.propExists('DesktopIcon');
-  if myconfiguration.UsePropDesktopicon and not propexists then
+  if (myconfiguration.UsePropDesktopicon or aktProduct.productdata.desktopicon) and
+    not propexists then
   begin
-
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     myprop.Property_Name := lowercase('DesktopIcon');
-    myprop.description := 'Soll es ein Desktop Icon geben ?';
+    myprop.description := rsPropDesktopiconDescription;
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
@@ -979,41 +1002,21 @@ begin
     //myprop.SetDefaultLines(tmpstrlist);
     //FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
-  end;
+  end
+  else if propexists and not (myconfiguration.UsePropDesktopicon or
+    aktProduct.productdata.desktopicon) then
+    aktProduct.properties.propDelete('DesktopIcon');
 
 
-(*
-  if myconfiguration.UsePropLicenseOrPool and
-    aktProduct.productdata.licenserequired and
-    (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
-  begin
-    index := StringGridProp.RowCount;
-    //Inc(index);
-    //StringGridProp.RowCount := index;
-    myprop := TStringList.Create;
-    myprop.Add(IntToStr(index));
-    myprop.Add('SecretLicense_or_Pool');
-    myprop.Add('LicenseKey or opsi-LicensePool');
-    myprop.Add('unicode');  //type
-    myprop.Add('False');      //multivalue
-    myprop.Add('True');      //editable
-    myprop.Add('[]');      //possible values
-    myprop.Add('[""]');      //default values
-    StringGridProp.InsertColRow(False, index);
-    StringGridProp.Rows[index].Clear;
-    StringGridProp.Rows[index].AddStrings(myprop);
-    myprop.Free;
-    *)
-  propexists := aktProduct.properties.propExists('LicenseOrPool');
+  propexists := aktProduct.properties.propExists('SecretLicense_or_Pool');
   if ((myconfiguration.UsePropLicenseOrPool and
     aktProduct.productdata.licenserequired) or
-    aktProduct.productdata.handleLicensekey)
-    and not propexists then
+    aktProduct.productdata.handleLicensekey) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     myprop.Property_Name := lowercase('SecretLicense_or_Pool');
-    myprop.description := 'LicenseKey or opsi-LicensePool';
+    myprop.description := rsPropLicenseOrPoolDescription;
     myprop.Property_Type := unicode;
     myprop.multivalue := False;
     myprop.editable := True;
@@ -1022,7 +1025,26 @@ begin
     myprop.SetDefaultLines(tmpstrlist);
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
-  end;
+  end
+  else if propexists and not
+    ((myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired) or
+    aktProduct.productdata.handleLicensekey) then
+    aktProduct.properties.propDelete('SecretLicense_or_Pool');
+
+  propexists := aktProduct.properties.propExists('Install_from_local_tmpdir');
+  if aktProduct.productdata.installFromLocal and not propexists then
+  begin
+    myprop := TPProperty(aktProduct.properties.add);
+    myprop.init;
+    myprop.Property_Name := lowercase('Install_from_local_tmpdir');
+    myprop.description := rsPropInstallFromLocalDescription;
+    myprop.Property_Type := bool;
+    myprop.multivalue := False;
+    myprop.editable := False;
+    myprop.boolDefault := False;
+  end
+  else if propexists and not aktProduct.productdata.installFromLocal then
+    aktProduct.properties.propDelete('Install_from_local_tmpdir');
 
   propexists := aktProduct.properties.propExists('install_architecture');
   if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
@@ -1030,7 +1052,7 @@ begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     myprop.Property_Name := lowercase('install_architecture');
-    myprop.description := 'Which architecture (32 / 64 Bit) has to be installed?';
+    myprop.description := rsPropInstallArchDescription;
     myprop.Property_Type := unicode;
     myprop.multivalue := False;
     myprop.editable := False;
@@ -1045,7 +1067,9 @@ begin
     myprop.SetDefaultLines(TStrings(tmpstrlist));
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
-  end;
+  end
+  else if propexists and not (osdsettings.runmode = twoAnalyzeCreate_1) then
+    aktProduct.properties.propDelete('install_architecture');
 
   // start 'with-user' properties
 
@@ -1068,7 +1092,8 @@ begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     myprop.Property_Name := lowercase('debug');
-    myprop.description := 'Enables keyboard and mouse input during auto logon and logs passwords if set to true';
+    myprop.description :=
+      'Enables keyboard and mouse input during auto logon and logs passwords if set to true';
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
@@ -1096,7 +1121,8 @@ begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     myprop.Property_Name := lowercase('execution_method');
-    myprop.description := 'Execute the local installation by using local winst, or the event_starter';
+    myprop.description :=
+      'Execute the local installation by using local opsi-script, or the event_starter';
     myprop.Property_Type := unicode;
     myprop.multivalue := False;
     myprop.editable := False;
@@ -1432,7 +1458,7 @@ begin
   FShowCheckEntryWarning := True;
   FShow2StepMacSeletionWarn := True;
   FUsePropDesktopicon := False;
-  FTemplateChannel:= default;
+  FTemplateChannel := default;
   //readconfig;
 end;
 
@@ -1478,7 +1504,7 @@ begin
   FProperties.Assign(AValue);
 end;
 
-procedure TConfiguration.SetWorkbench_path(const AValue: String);
+procedure TConfiguration.SetWorkbench_path(const AValue: string);
 begin
   Fworkbench_Path := IncludeTrailingPathDelimiter(AValue);
 end;
@@ -1554,7 +1580,8 @@ begin
       Fconfig_filled := True;
     Fconfig_version := CONFVERSION;
 
-    FService_pass := encryptStringBlow('opsi-setup-detector' + FService_user, FService_pass);
+    FService_pass := encryptStringBlow('opsi-setup-detector' +
+      FService_user, FService_pass);
     // http://wiki.freepascal.org/Streaming_JSON
     Streamer := TJSONStreamer.Create(nil);
     try
@@ -1792,7 +1819,7 @@ end;
 procedure initaktproduct;
 var
   i: integer;
-  str : string;
+  str: string;
   //newdep: TPDependency;
   //defaultIconFullFileName :string;
 begin
@@ -1823,28 +1850,25 @@ begin
     uninstallscript := 'uninstall.opsiscript';
     delsubscript := 'delsub.opsiscript';
     //channelDir:= 'default';
-    str :=  templChannelStrings[myconfiguration.templateChannel];
-    channelDir:= str;
+    str := templChannelStrings[myconfiguration.templateChannel];
+    channelDir := str;
     licenserequired := False;
     // Application.Params[0] is directory of application as string
     { set productImageFullFileName to full file name of the default icon }
     {$IFDEF WINDOWS}
     defaultIconFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-       PathDelim + 'default'+
-      PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     defaultIconFullFileName :=
       '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
-       PathDelim + 'default'+
-      PathDelim + 'images' + PathDelim + 'template.png';
+      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     // in develop environment
     if not fileexists(defaultIconFullFileName) then
       defaultIconFullFileName :=
         ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-         PathDelim + 'default'+
-        PathDelim + 'images' + PathDelim + 'template.png';
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF UNIX}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
@@ -1854,9 +1878,10 @@ begin
       PathDelim + 'template.png';
     *)
     targetOSset := [];
-    useCustomDir:= false;
-    installFromLocal := false;
-    handleLicensekey := false;
+    useCustomDir := False;
+    installFromLocal := False;
+    handleLicensekey := False;
+    desktopicon := False;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
@@ -2016,10 +2041,10 @@ begin
     patterns.Add(
       '<description>InstallShield.Setup</description>');
     link :=
-       'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
-       // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
-       // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
-      // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+      'https://docs.revenera.com/installshield21helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    // 'https://www.ibm.com/docs/en/personal-communications/12.0?topic=guide-installshield-command-line-parameters'
+    // 'https://www.itninja.com/static/090770319967727eb89b428d77dcac07.pdf'
+    // broken: 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithAnd;

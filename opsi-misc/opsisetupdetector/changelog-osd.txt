@@ -98,7 +98,8 @@ opsi-setup-detector (4.2.1.0-1) stable; urgency=low
    * new option: custom directory support (at_work)
    * new option: Install from Local temp dir (at_work)
    * new option: Handle License key (at_work)
-   * use declare.opsiinc in default and structured (at_work)
+   * new option: Desktopicon key (at_work)
+   * use declarations.opsiinc in default and structured (at_work)
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 

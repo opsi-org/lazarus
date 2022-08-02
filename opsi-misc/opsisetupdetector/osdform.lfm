@@ -8142,8 +8142,8 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 175
-          Top = 358
+          Height = 149
+          Top = 384
           Width = 1028
           Align = alClient
           ControlList = <          
@@ -8161,7 +8161,7 @@ object resultForm1: TresultForm1
             Left = 885
             Height = 58
             Hint = 'Go to the next Step'
-            Top = 107
+            Top = 81
             Width = 133
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8419,7 +8419,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanelCustomDir: TFlowPanel
           Left = 0
-          Height = 47
+          Height = 73
           Top = 311
           Width = 1028
           Align = alTop
@@ -8445,6 +8445,11 @@ object resultForm1: TresultForm1
               Control = TICheckBoxHandleLiceneKey
               WrapAfter = waAuto
               Index = 3
+            end          
+            item
+              Control = TICheckBoxDesktopIcon
+              WrapAfter = waAuto
+              Index = 4
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -8453,28 +8458,28 @@ object resultForm1: TresultForm1
           object TICheckBoxCustomdir: TTICheckBox
             Left = 278
             Height = 21
-            Top = 17
+            Top = 23
             Width = 177
             Anchors = []
             AutoSize = True
-            BorderSpacing.Top = 8
+            BorderSpacing.Top = 14
             BorderSpacing.Around = 9
             Caption = 'Support custom directory'
             PropertyNameAsCaption = False
-            TabOrder = 2
+            TabOrder = 3
             TabStop = True
           end
           object PanelChannel: TPanel
             Left = 0
-            Height = 63
+            Height = 48
             Top = 0
             Width = 269
             Align = alClient
             Anchors = []
             BevelOuter = bvNone
-            ClientHeight = 63
+            ClientHeight = 48
             ClientWidth = 269
-            TabOrder = 3
+            TabOrder = 4
             object LabelChannel: TLabel
               Left = 9
               Height = 18
@@ -8487,12 +8492,11 @@ object resultForm1: TresultForm1
               ParentColor = False
             end
             object TIComboBoxChannel: TTIComboBox
-              Left = 9
-              Height = 44
+              Left = 0
+              Height = 29
               Top = 19
-              Width = 260
+              Width = 269
               Align = alClient
-              BorderSpacing.Left = 9
               HistoryCaseSensitive = False
               MaxHistoryCount = 0
               OnChange = TIComboBoxChannelChange
@@ -8503,28 +8507,46 @@ object resultForm1: TresultForm1
           object TICheckBoxInstallFromLocal: TTICheckBox
             Left = 473
             Height = 21
-            Top = 17
+            Top = 23
             Width = 176
             Anchors = []
             AutoSize = True
-            BorderSpacing.Top = 8
+            BorderSpacing.Top = 14
             BorderSpacing.Around = 9
             Caption = 'Install from local temp dir'
+            OnChange = CallMakeProperties
             PropertyNameAsCaption = False
-            TabOrder = 1
+            TabOrder = 2
             TabStop = True
           end
           object TICheckBoxHandleLiceneKey: TTICheckBox
             Left = 667
             Height = 21
-            Top = 17
+            Top = 23
             Width = 143
             Anchors = []
             AutoSize = True
-            BorderSpacing.Top = 8
+            BorderSpacing.Top = 14
             BorderSpacing.Right = 10
             BorderSpacing.Around = 9
             Caption = 'Handle License Key  '
+            OnChange = CallMakeProperties
+            PropertyNameAsCaption = False
+            TabOrder = 1
+            TabStop = True
+          end
+          object TICheckBoxDesktopIcon: TTICheckBox
+            Left = 838
+            Height = 21
+            Top = 23
+            Width = 100
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Top = 14
+            BorderSpacing.Right = 10
+            BorderSpacing.Around = 9
+            Caption = 'DektopIcon  '
+            OnChange = CallMakeProperties
             PropertyNameAsCaption = False
             TabOrder = 0
             TabStop = True
@@ -9661,15 +9683,15 @@ object resultForm1: TresultForm1
           HorzScrollBar.Page = 53
           VertScrollBar.Page = 18
           Align = alClient
-          ClientHeight = 531
-          ClientWidth = 647
+          ClientHeight = 529
+          ClientWidth = 645
           ParentFont = False
           TabOrder = 0
           object Label1: TLabel
             Left = 0
-            Height = 531
+            Height = 529
             Top = 0
-            Width = 647
+            Width = 645
             Align = alClient
             Alignment = taCenter
             Caption = 'No Icons'

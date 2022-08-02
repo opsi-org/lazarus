@@ -292,6 +292,7 @@ type
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
+    TICheckBoxDesktopIcon: TTICheckBox;
     TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
@@ -429,6 +430,7 @@ type
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
+    procedure CallMakeProperties(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
@@ -679,7 +681,8 @@ begin
     helplist.Append(' --t <os> -> Analyze for target where <os> is on of (win,lin,mac)');
     helplist.Append(' --productID=<id> -> Create product with productID <id>');
     helplist.Append(' --p <id> -> Create product with productID <id>');
-    helplist.Append(' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
+    helplist.Append(
+      ' --mode=<mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     helplist.Append(' --m <mode> -> Define tho run mode <mode> (default=singleAnalyzeCreate)');
     helplist.Append(
       '     possible modes are: singleAnalyzeCreate, createTemplate');
@@ -788,11 +791,13 @@ begin
       TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
       TIGridProp.ListObject := osdbasedata.aktproduct.properties;
       TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'useCustomDir');
-      TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'installFromLocal');
-      TICheckBoxCustomdir.Link.SetObjectAndProperty(productdata, 'handleLicensekey');
+      TICheckBoxInstallFromLocal.Link.SetObjectAndProperty(productdata,
+        'installFromLocal');
+      TICheckBoxHandleLiceneKey.Link.SetObjectAndProperty(productdata,
+        'handleLicensekey');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
-      TIComboBoxChannel.Items.Text:= templateChannelList.Text;
+      TIComboBoxChannel.Items.Text := templateChannelList.Text;
       //TIComboBoxChannel.ItemIndex:= 1;
       //TIComboBoxChannel.Caption:= templChannelStrings[myconfiguration.templateChannel];
       //TIComboBoxChannel.Caption:= templChannelStrings[TTemplateChannels(0)];
@@ -1270,7 +1275,7 @@ begin
           end;
         end;
         *)
-        singleAnalyzeCreate,analyzeCreateWithUser:
+        singleAnalyzeCreate, analyzeCreateWithUser:
         begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
           initaktproduct;
@@ -1888,10 +1893,10 @@ begin
       *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
-    aktProduct.productdata.setupscript:=  'setup.opsiscript';
+    aktProduct.productdata.setupscript := 'setup.opsiscript';
     aktProduct.productdata.uninstallscript := 'localsetup\uninstall-local.opsiscript';
-    aktProduct.productdata.updatescript:= 'localsetup\update-local.opsiscript';
-    aktProduct.productdata.priority:= -20;
+    aktProduct.productdata.updatescript := 'localsetup\update-local.opsiscript';
+    aktProduct.productdata.priority := -20;
     resultform1.updateGUI;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
@@ -2103,7 +2108,7 @@ begin
       Application.ProcessMessages;
     end;
     *)
-    singleAnalyzeCreate,analyzeCreateWithUser:
+    singleAnalyzeCreate, analyzeCreateWithUser:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
@@ -2749,13 +2754,13 @@ end;
 
 procedure TResultform1.OpenMSTFile(var mysetup: TSetupFile);
 var
-  str : string;
+  str: string;
 begin
   OpenDialog1.FilterIndex := 4;
   if OpenDialog1.Execute then
   begin
     mysetup.mstFullFileName := OpenDialog1.FileName;
-    str := ' TRANSFORMS= "$installerSourceDir$\'  + mysetup.mstFileName + '"';
+    str := ' TRANSFORMS= "$installerSourceDir$\' + mysetup.mstFileName + '"';
     mysetup.installCommandLine := mysetup.installCommandLine + str;
     (*
     mysetup.installCommandLine :=
@@ -3781,7 +3786,8 @@ begin
   ;
    {$IFDEF WINDOWS}
   DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
-    PathDelim + 'template-files' + PathDelim + 'default'+  PathDelim + 'images' + PathDelim + 'template.png');
+    PathDelim + 'template-files' + PathDelim + 'default' + PathDelim +
+    'images' + PathDelim + 'template.png');
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   // the first path is in the development environment
@@ -3792,20 +3798,20 @@ begin
   {$IFDEF DARWIN}
   // the first path is in the development environment
   resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../../..';
-  templatePath := resourcedir + PathDelim + 'template-files'  + PathDelim + 'default';
+  templatePath := resourcedir + PathDelim + 'template-files' + PathDelim + 'default';
   if not DirectoryExists(templatePath) then
     //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
     resourcedir := ExtractFileDir(Application.ExeName) + PathDelim + '../Resources';
   {$ENDIF DARWIN}
   filename := resourcedir + PathDelim + 'template-files' + PathDelim +
-  'default' + PathDelim +
-    'images' + PathDelim + 'template.png';
+    'default' + PathDelim + 'images' + PathDelim + 'template.png';
   if fileexists(filename) then
     DefaultIcon.Picture.LoadFromFile(filename)
   else
   begin
     filename := ExtractFileDir(Application.Params[0]) + PathDelim +
-      'template-files'  + PathDelim + 'default'+ PathDelim + 'images' + PathDelim + 'template.png';
+      'template-files' + PathDelim + 'default' + PathDelim + 'images' +
+      PathDelim + 'template.png';
     if fileexists(filename) then
       DefaultIcon.Picture.LoadFromFile(filename)
     else
@@ -3909,6 +3915,11 @@ end;
 procedure TResultform1.TabSheetStartExit(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.CallMakeProperties(Sender: TObject);
+begin
+  makeProperties;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);

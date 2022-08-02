@@ -1,2 +1,2 @@
 [Files_copy_from_custom_dir]
-copy -sf "%scriptPath%\custom\*" "$installdir$"
+copy -s "%scriptPath%\custom\*" "$installdir$"

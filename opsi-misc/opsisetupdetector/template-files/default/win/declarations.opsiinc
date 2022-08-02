@@ -22,10 +22,10 @@ DefVar $installerfile$
 DefVar $minimumspace$
 DefVar $MsiId$
 DefVar $MsiVersion$
-DefVar $ProdVersion$
 DefVar $oldProgFound$
 DefVar $os$
 DefVar $osshort$
+DefVar $ProdVersion$
 DefVar $productid$
 DefVar $targetfile$
 DefVar $tmpstr$
