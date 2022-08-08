@@ -14,7 +14,7 @@ importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; Please edit the following values:
@@ -23,8 +23,6 @@ include_insert "define_vars_multi.opsiscript"
 Set $ProductId$		= "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir$	= "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "" 
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
@@ -42,14 +40,11 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 cleanupPackageSystem()
 #@installCommandLine1*#
@@ -64,7 +59,7 @@ endif
 
 #@postInstallLines*#
 
-#@SetupSectionLines1*#
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

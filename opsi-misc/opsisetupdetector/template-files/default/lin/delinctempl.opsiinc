@@ -5,11 +5,11 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-Message "Uninstalling " + $ProductId$ + " ..."
-
 comment "Start the Uninstall check:"
 set $oldProgFound$ = "false"
-#@uninstallCheckLines1*#
+if stringToBool(isOneInstalled(CreateStringlist('<packageId>')))
+	set $oldProgFound$ = "true"
+endif
 
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
@@ -17,18 +17,21 @@ if $oldProgFound$ = "true"
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
-	#@uninstallCommandLine1*#
+	; Delete an installed  OS package out of a list of names:
+	; set $installSuccess$ = linuxRemoveOneOf('list of packageIDs')
+	; set $exitcode$ = boolToGenericExitcode($installSuccess$)
+	;
+	; Delete one installed  OS package with a known name:
+	; set $exitcode$ = linuxRemoveOnePackage('<packageId>')
 	;----------------------------------------------
-	set $ExitCode$ = getlastexitcode
-	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else
 		Comment $ErrorString$
 	endif
-	
-	#@postUninstallLines*#
+		#@postUninstallLines*#
+	endif
 endif
 
-#@DelsubSectionLines1*#
-;-----------------------------------------------------
+;----------------------------------------------
