@@ -13,7 +13,7 @@ importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 
 Set $arch$ = GetSystemType
@@ -25,8 +25,7 @@ Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
+
 if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
 	Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 else
@@ -57,23 +56,20 @@ comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
 
 if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
-
+	
+	set $installerSourceDir$ = "#@installerSourceDir1*#"
 	#@preInstallLines*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files1"
+	ChangeDirectory $installerSourceDir$
 	;----------------------------------------------
 	Winbatch_install_1  #@installWaitForProc1*#
 	;----------------------------------------------
@@ -89,9 +85,11 @@ if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or
 endif
 
 if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "both") or ($install_architecture$ = "64 only"))
+	
+	set $installerSourceDir$ = "#@installerSourceDir2*#"
 	#@preInstallLines*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files2"
+	ChangeDirectory $installerSourceDir$
 	;----------------------------------------------
 	Winbatch_install_2  #@installWaitForProc2*#
 	;----------------------------------------------
@@ -106,18 +104,23 @@ if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") 
 	#@postInstallLines*#
 endif
 
-#@SetupHandleDesktopIcon*#
-
 [Winbatch_install_1]
 #@installCommandLine1*#
 
 [Winbatch_install_2]
 #@installCommandLine2*#
 
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
 
-#@SetupDesktopiconSectionLines*#
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
 
-#@SetupSectionLines1*#
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

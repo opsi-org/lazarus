@@ -1,3 +1,10 @@
+opsi-script-beautifier (4.2.0.3-1)
+
+ * accept *.opsiinc as opsi-script extension
+
+-- d.oertel <d.oertel@uib.de> Mon , 08 Aug 2022 15:00:00 + 0100
+
+
 opsi-script-beautifier (4.2.0.2-1) stable; urgency=medium
 
  * More Logs on Loglevel 7

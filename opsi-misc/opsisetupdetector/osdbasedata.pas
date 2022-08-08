@@ -957,7 +957,9 @@ var
   index, i: integer;
   propexists: boolean;
   tmpstrlist: TStringList;
+  myrunmode : TRunMode;
 begin
+  myrunmode := osdsettings.runmode;
   (*
   // clear existing props in StringGridProp
   StringGridProp.Clean([gzNormal, gzFixedRows]);
@@ -1047,7 +1049,8 @@ begin
     aktProduct.properties.propDelete('Install_from_local_tmpdir');
 
   propexists := aktProduct.properties.propExists('install_architecture');
-  if (osdsettings.runmode = twoAnalyzeCreate_1) and not propexists then
+  if ((myrunmode = twoAnalyzeCreate_1) or (myrunmode = twoAnalyzeCreate_2))
+    and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1068,13 +1071,15 @@ begin
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
-  else if propexists and not (osdsettings.runmode = twoAnalyzeCreate_1) then
+  else if propexists and
+    not ((myrunmode = twoAnalyzeCreate_1) or (myrunmode = twoAnalyzeCreate_2))
+    then
     aktProduct.properties.propDelete('install_architecture');
 
   // start 'with-user' properties
 
   propexists := aktProduct.properties.propExists('copy_files_locally');
-  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode = analyzeCreateWithUser) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1087,7 +1092,7 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('debug');
-  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode = analyzeCreateWithUser) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1101,7 +1106,7 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if ((osdsettings.runmode = analyzeCreateWithUser) or
+  if ((myrunmode = analyzeCreateWithUser) or
     (aktProduct.productdata.channelDir = 'structured')) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
@@ -1116,7 +1121,7 @@ begin
 
 
   propexists := aktProduct.properties.propExists('execution_method');
-  if (osdsettings.runmode = analyzeCreateWithUser) and not propexists then
+  if (myrunmode = analyzeCreateWithUser) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;

@@ -22,6 +22,7 @@ DefVar $installerfile$
 DefVar $minimumspace$
 DefVar $MsiId$
 DefVar $MsiVersion$
+DefVar $DisplayName$
 DefVar $oldProgFound$
 DefVar $os$
 DefVar $osshort$

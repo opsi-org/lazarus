@@ -3715,13 +3715,13 @@ begin
       CommonButtons := [];
       with TTaskDialogButtonItem(Buttons.Add) do
       begin
-        Caption := rsCopyCompleteDirCap;
-        ModalResult := mrYes;
+        Caption := rsCopyFileOnlyCap;
+        ModalResult := mrNo;
       end;
       with TTaskDialogButtonItem(Buttons.Add) do
       begin
-        Caption := rsCopyFileOnlyCap;
-        ModalResult := mrNo;
+        Caption := rsCopyCompleteDirCap;
+        ModalResult := mrYes;
       end;
       MainIcon := tdiQuestion;
       if Execute then

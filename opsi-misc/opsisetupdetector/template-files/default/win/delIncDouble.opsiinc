@@ -16,7 +16,6 @@ if $oldProgFound$ = "true"
 	Message "Uninstalling 32bit" + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
 	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
 	;----------------------------------------------
@@ -46,7 +45,6 @@ if $oldProgFound$ = "true"
 	Message "Uninstalling 64bit" + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%\files2"
 	;----------------------------------------------
 	Winbatch_uninstall_2  #@uninstallWaitForProc2*#
 	;----------------------------------------------
@@ -63,17 +61,4 @@ if $oldProgFound$ = "true"
 		Files_uninstall
 	endif
 endif
-
-[Winbatch_uninstall_1]
-#@uninstallCommandLine1*#
-
-[Winbatch_uninstall_2]
-#@uninstallCommandLine2*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-#@DelsubDesktopiconSectionLines*#
-
-#@DelsubSectionLines1*#
 ;-----------------------------------------------------

@@ -14,7 +14,7 @@ importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 Set $arch$ = GetSystemType
 
@@ -24,8 +24,6 @@ Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -43,13 +41,20 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Set $tmpstr$ = FreeLicense($LicensePool$)
-endif
+#@FinalUnInstallLines*#
 
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@sectionLines*#

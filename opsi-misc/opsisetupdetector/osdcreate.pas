@@ -109,6 +109,48 @@ begin
     on E: EInOutError do
       logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message, LLError);
   end;
+  {$I-}//end use exceptions
+end;
+
+procedure patchThisList(var targetlist: Tstringlist);
+var
+  aktline: string;
+  i, k, linecounter: integer;
+  aktindentstr: string;
+  aktindentnum: integer;
+  aktReplacestr: string;
+begin
+  try
+
+    for linecounter := 0 to  targetlist.Count -1 do
+    begin
+      aktline := targetlist.Strings[linecounter];
+      for i := 0 to patchlist.Count - 1 do
+      begin
+        if pos(lowercase(patchlist.Names[i]), lowercase(aktline)) > 0 then
+        begin
+          // we have to preserve the indent
+          // check actual indent
+          aktindentnum := length(aktline) - length(trimleft(aktline));
+          aktindentstr := '';
+          // indent with tabs
+          for k := 1 to aktindentnum do
+            aktindentstr := aktindentstr + char(9);
+          // p
+          aktReplacestr := patchlist.ValueFromIndex[i];
+          // patch aktidentstr after each Newline
+          aktReplacestr := StringReplace(aktReplacestr, Lineending,
+            Lineending + aktindentstr, [rfReplaceAll, rfIgnoreCase]);
+          aktline := StringReplace(aktline, patchlist.Names[i],
+            aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
+        end;
+      end;
+      targetlist.Strings[linecounter] := aktline;
+    end;
+  except
+    on E:Exception do
+      logdatei.log('patchList exception error: ' + E.ClassName + '/' + E.Message, LLError);
+  end;
 end;
 
 
@@ -208,6 +250,13 @@ begin
       boolToStr(aktProduct.productdata.licenserequired, True));
     str := '';
 
+    // msi special
+    if length(aktProduct.SetupFiles) > 0 then
+    if aktProduct.SetupFiles[0].installerId = stMsi then
+    begin
+      readFileToList('HandleMsiUninstallSections.opsiscript', sectionlist);
+    end;
+
     // #@GetProductProperty*#:
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
@@ -222,8 +271,8 @@ begin
           +
           str2 + '")' + LineEnding;
 
-        readFileToList('SetupHandleLicense.opsiscript', preinstalllist);
-        readFileToList('SetupHandleLicenseUninst.opsiscript', finalUnInstallList);
+        readFileToList('HandleLicense.opsiscript', preinstalllist);
+        readFileToList('HandleLicenseUninst.opsiscript', finalUnInstallList);
       end
 
       else if (proptmpstr = LowerCase('Install_from_local_tmpdir')) then
@@ -232,9 +281,9 @@ begin
           'set $Install_from_local_tmpdir$ = GetProductProperty("Install_from_local_tmpdir","'
           +
           BoolToStr(aktProduct.properties.Items[i].BoolDefault, True) + '")' + LineEnding;
-        readFileToList('SetupHandleInstallFromLocal.opsiscript', preinstalllist);
-        readFileToList('SetupHandlePostInstallFromLocal.opsiscript', postinstalllist);
-        readFileToList('SetupHandleInstallFromLocalSections.opsiscript', sectionlist);
+        readFileToList('HandleInstallFromLocal.opsiscript', preinstalllist);
+        readFileToList('HandlePostInstallFromLocal.opsiscript', postinstalllist);
+        readFileToList('HandleInstallFromLocalSections.opsiscript', sectionlist);
       end
       else
       begin
@@ -295,9 +344,9 @@ begin
     if aktProduct.properties.propExists('DesktopIcon') then
     begin
 
-      readFileToList('SetupHandleDesktopIcon.opsiscript', preinstalllist);
+      readFileToList('HandleDesktopIcon.opsiscript', preinstalllist);
 
-      readFileToList('SetupHandleDesktopIconSections.opsiscript', sectionlist);
+      readFileToList('HandleDesktopIconSections.opsiscript', sectionlist);
       str := 'comment "Start Remoce Desktop Icon Handling :"' +
         LineEnding + 'Linkfolder_remove_desktop_icon';
     end;
@@ -362,9 +411,9 @@ begin
     if aktProduct.productdata.useCustomDir then
     begin
 
-      readFileToList('SetupHandleCustomDir.opsiscript', postinstalllist);
+      readFileToList('HandleCustomDir.opsiscript', postinstalllist);
 
-      readFileToList('SetupHandleCustomDirSections.opsiscript', sectionlist);
+      readFileToList('HandleCustomDirSections.opsiscript', sectionlist);
     end;
 
     // loop over setups
@@ -431,21 +480,28 @@ begin
     patchlist.add('#@MinimumSpace3*#=' +
       IntToStr(neededspacefor2archinstall) + ' MB');
 
+    // Handle lists
+    patchThisList(preinstalllist);
     str := preinstalllist.Text;
     patchlist.add('#@preInstallLines*#=' + str);
 
+    patchThisList(postinstalllist);
     str := postinstalllist.Text;
     patchlist.add('#@postInstallLines*#=' + str);
 
+    patchThisList(sectionlist);
     str := sectionlist.Text;
     patchlist.add('#@sectionLines*#=' + str);
 
+    patchThisList(preUnInstalllist);
     str := preUnInstalllist.Text;
     patchlist.add('#@preUnInstallLines*#=' + str);
 
+    patchThisList(postUnInstalllist);
     str := postUnInstalllist.Text;
     patchlist.add('#@postUnInstallLines*#=' + str);
 
+    patchThisList(finalUnInstallList);
     str := finalUnInstallList.Text;
     patchlist.add('#@finalUnInstallLines*#=' + str);
 
@@ -525,15 +581,15 @@ begin
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
         begin
           infilelist.Add('setupdouble.opsiscript');
-          infilelist.Add('delsubdouble.opsiscript');
+          infilelist.Add('delincdouble.opsiinc');
           infilelist.Add('uninstalldouble.opsiscript');
           if aktProduct.SetupFiles[0].installerId = stMsi then
-            infilelist.Add('delsubmsidouble.opsiscript');
+            infilelist.Add('delincmsidouble.opsiinc');
         end;
         createTemplate:
         begin
           infilelist.Add('setuptempl.opsiscript');
-          infilelist.Add('delsubtempl.opsiscript');
+          infilelist.Add('delinctempl.opsiinc');
           infilelist.Add('uninstalltempl.opsiscript');
         end;
         createMeta:
@@ -546,13 +602,13 @@ begin
           infilelist.Add('setupsingle.opsiscript');
           infilelist.Add('uninstallsingle.opsiscript');
           infilelist.Add('win_setupsingle.opsiscript');
-          infilelist.Add('win_delsubsingle.opsiscript');
+          infilelist.Add('win_delincsingle.opsiinc');
           infilelist.Add('win_uninstallsingle.opsiscript');
           infilelist.Add('lin_setupsingle.opsiscript');
-          infilelist.Add('lin_delsubsingle.opsiscript');
+          infilelist.Add('lin_delincsingle.opsiinc');
           infilelist.Add('lin_uninstallsingle.opsiscript');
           infilelist.Add('mac_setupsingle.opsiscript');
-          infilelist.Add('mac_delsubsingle.opsiscript');
+          infilelist.Add('mac_delincsingle.opsiinc');
           infilelist.Add('mac_uninstallsingle.opsiscript');
         end;
         createMultiTemplate:
@@ -560,13 +616,13 @@ begin
           infilelist.Add('setuptempl.opsiscript');
           infilelist.Add('uninstalltempl.opsiscript');
           infilelist.Add('win_setuptempl.opsiscript');
-          infilelist.Add('win_delsubtempl.opsiscript');
+          infilelist.Add('win_delinctempl.opsiinc');
           infilelist.Add('win_uninstalltempl.opsiscript');
           infilelist.Add('lin_setuptempl.opsiscript');
-          infilelist.Add('lin_delsubtempl.opsiscript');
+          infilelist.Add('lin_delinctempl.opsiinc');
           infilelist.Add('lin_uninstalltempl.opsiscript');
           infilelist.Add('mac_setuptempl.opsiscript');
-          infilelist.Add('mac_delsubtempl.opsiscript');
+          infilelist.Add('mac_delinctempl.opsiinc');
           infilelist.Add('mac_uninstalltempl.opsiscript');
         end;
         analyzeCreateWithUser:
@@ -613,6 +669,7 @@ begin
           end;
           createTemplate:
           begin
+            infilelist.Add('declarations.opsiinc');
           end;
           createMeta:
           begin
@@ -646,15 +703,21 @@ begin
             end;
             createTemplate:
             begin
+              infilelist.Add('declarations.opsiinc');
+              infilelist.Add('sections.opsiinc');
             end;
             createMeta:
             begin
             end;
             threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
             begin
+              infilelist.Add('declarations.opsiinc');
+              infilelist.Add('sections.opsiinc');
             end;
             createMultiTemplate:
             begin
+              infilelist.Add('declarations.opsiinc');
+              infilelist.Add('sections.opsiinc');
             end;
             analyzeCreateWithUser:
             begin
