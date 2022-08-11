@@ -15,16 +15,10 @@ set $UninstallList$ = addtolist($UninstallList$,"#@productVersion*#=#@MsiId1*#")
 
 ; Variant 2:
 ;-----------------------------------------------------
-; Finding the MsiId by the Displayname using WMI:
+; Finding the MsiId by the Displayname from Registry:
 ; Be sure that the Displayname is set correctly:
-;Set $DisplayName$ = $ProductId$
-
-; Variant 2a (use wmic)
-;Set $UninstallList$ = shellCall('wmic product where "Name like '+ $DisplayName$ + '" get identifyingnumber')
-; Variant 2b (use opsi-script)
-;Set $UninstallList$ = getListFromWMI("","Win32_Product",'["IdentifyingNumber","Name"]',"where Name like '"+$DisplayName$+"'")
-
-;Set $UninstallList$ = getSubListByContaining ("{", $UninstallList$)
+Set $DisplayName$ = $ProductId$
+Set $UninstallList$ = getGuidListByDisplaynameRegex($DisplayName$)
 ;-----------------------------------------------------
 
 if count($UninstallList$) int> "0"

@@ -2,11 +2,65 @@ encoding=utf8
 
 ;@author		detlef oertel
 ;@email			d.oertel@uib.de
-;@date			5.10.2018
+;@date			11.08.2022
 ;@copyright		AGPLv3
 ;@version		1.0
 ;@filedesc		Collection of functions that 
 ;@filedesc		helps opsi-setup-detector
+
+; ###################################################################################################
+DefFunc getGuidListByDisplaynameRegex($DisplayNameRegex$ : string) : stringlist
+	;@author		detlef oertel
+	;@date			11.08.2022
+	;@Description	Returns the list of of Guids that matches $DisplayNameRegxx$
+	;@Returns		Returns the list of of Guids that matches $DisplayNameRegxx$
+	;@OnError		Returns empty list
+	;@SpecialCase	
+	;@References	
+	;@Links			
+	;@Requires
+	;@ParamDesc_$DisplayNameRegex$	  Displayname to search for
+	;@ParamAdvice_$DisplayNameRegex$
+	;@Example	
+
+	DefVar $aktDisplay$
+	DefVar $aktHKLM$
+	DefStringist $list1$
+	DefStringist $list2$
+
+	
+	set $result$ = '[]'
+
+	; collect Guids
+	set $list1$ = getRegistryKeyList32("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\")
+	set $list2$ = getRegistryKeyList64("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\")
+	set $list1$ = addListToList($list2$,$list2$)
+	; filter for Guids
+	set $list1$ =  getRegexMatchList(“^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$”, $list1$)
+	; https://www.geeksforgeeks.org/how-to-validate-guid-globally-unique-identifier-using-regular-expression/
+	; “^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$” 
+	; https://www.codeproject.com/Tips/785466/Use-a-Regex-to-parse-a-GUID-and-keep-it-unchanged
+	; "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$"
+	; see also regex DB: https://rgxdb.com/r/4AK4LRIU
+
+	for %aktkey% in $list1$ do sub_filter_for_displayname
+
+	[sub_filter_for_displayname]
+	set $aktHKLM$ = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\%aktkey%"
+	set $aktDisplay$ =  getRegistryValue ($aktHKLM$, "DisplayName",'32bit')
+	if $aktDisplay$ = "" 
+		set $aktDisplay$ =  getRegistryValue ($aktHKLM$, "DisplayName",'64bit')	
+	endif
+
+	if not ($aktDisplay$ = "")
+		if isRegexMatch($aktDisplay$, $DisplayNameRegex$) 
+			set $result$ = addtolist($result$,"%aktkey%")
+		endif
+	endif
+
+EndFunc
+; ###################################################################################################
+
 
 ; ###################################################################################################
 DefFunc checkForMsiProduct($msiId$ : string) : string
