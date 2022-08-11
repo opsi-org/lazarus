@@ -576,7 +576,7 @@ begin
           infilelist.Add('delincsingle.opsiinc');
           infilelist.Add('uninstallsingle.opsiscript');
           if aktProduct.SetupFiles[0].installerId = stMsi then
-            infilelist.Add('delsubmsisingle.opsiscript');
+            infilelist.Add('delincmsisingle.opsiinc');
         end;
         twoAnalyzeCreate_1, twoAnalyzeCreate_2:
         begin

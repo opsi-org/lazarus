@@ -67,7 +67,7 @@ endif
 
 #@postInstallLines*#
 
-[Winbatch_uninstall]
+[Winbatch_uninstall_1]
 #@uninstallCommandLine1*#
 
 [Files_uninstall]

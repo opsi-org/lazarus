@@ -100,6 +100,9 @@ opsi-setup-detector (4.2.1.0-1) stable; urgency=low
    * new option: Handle License key (at_work)
    * new option: Desktopicon key (at_work)
    * use declarations.opsiinc in default and structured (at_work)
+   * hints for the new options
+   * choose directory buttons for the installdirs
+   * delinc for msi: use new function getGuidListByDisplaynameRegex from osd-lib (instead of wmi)
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 

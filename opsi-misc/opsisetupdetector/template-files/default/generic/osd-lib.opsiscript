@@ -5,8 +5,12 @@ encoding=utf8
 ;@date			11.08.2022
 ;@copyright		AGPLv3
 ;@version		1.0
-;@filedesc		Collection of functions that 
+;@filedesc		Collection of functions that
 ;@filedesc		helps opsi-setup-detector
+
+; History:
+; 20220811: get_licensekey_byPoolOrKey (avoid errors by getting the pool list)  (d.oertel)
+; 20220811: new: getGuidListByDisplaynameRegex($DisplayNameRegex$ : string) : stringlist (d.oertel)
 
 ; ###################################################################################################
 DefFunc getGuidListByDisplaynameRegex($DisplayNameRegex$ : string) : stringlist
@@ -15,49 +19,52 @@ DefFunc getGuidListByDisplaynameRegex($DisplayNameRegex$ : string) : stringlist
 	;@Description	Returns the list of of Guids that matches $DisplayNameRegxx$
 	;@Returns		Returns the list of of Guids that matches $DisplayNameRegxx$
 	;@OnError		Returns empty list
-	;@SpecialCase	
-	;@References	
-	;@Links			
+	;@SpecialCase
+	;@References
+	;@Links
 	;@Requires
 	;@ParamDesc_$DisplayNameRegex$	  Displayname to search for
 	;@ParamAdvice_$DisplayNameRegex$
-	;@Example	
-
+	;@Example
+	
 	DefVar $aktDisplay$
+	DefVar $aktVersion$
 	DefVar $aktHKLM$
-	DefStringist $list1$
-	DefStringist $list2$
-
+	DefStringlist $list1$
+	DefStringlist $list2$
+	
 	
 	set $result$ = '[]'
-
+	
 	; collect Guids
 	set $list1$ = getRegistryKeyList32("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\")
 	set $list2$ = getRegistryKeyList64("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\")
-	set $list1$ = addListToList($list2$,$list2$)
+	set $list1$ = addListToList($list1$,$list2$)
 	; filter for Guids
-	set $list1$ =  getRegexMatchList(“^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$”, $list1$)
+	set $list1$ =  getRegexMatchList("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$", $list1$)
 	; https://www.geeksforgeeks.org/how-to-validate-guid-globally-unique-identifier-using-regular-expression/
-	; “^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$” 
+	; "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$""
 	; https://www.codeproject.com/Tips/785466/Use-a-Regex-to-parse-a-GUID-and-keep-it-unchanged
 	; "^{[A-Z0-9]{8}-([A-Z0-9]{4}-){3}[A-Z0-9]{12}}$"
 	; see also regex DB: https://rgxdb.com/r/4AK4LRIU
-
+	
 	for %aktkey% in $list1$ do sub_filter_for_displayname
-
+	
 	[sub_filter_for_displayname]
 	set $aktHKLM$ = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\%aktkey%"
 	set $aktDisplay$ =  getRegistryValue ($aktHKLM$, "DisplayName",'32bit')
-	if $aktDisplay$ = "" 
-		set $aktDisplay$ =  getRegistryValue ($aktHKLM$, "DisplayName",'64bit')	
+	set $aktVersion$ =  getRegistryValue ($aktHKLM$, "DisplayVersion",'32bit')
+	if $aktDisplay$ = ""
+		set $aktDisplay$ =  getRegistryValue ($aktHKLM$, "DisplayName",'64bit')
+		set $aktVersion$ =  getRegistryValue ($aktHKLM$, "DisplayVersion",'64bit')
 	endif
-
+	
 	if not ($aktDisplay$ = "")
-		if isRegexMatch($aktDisplay$, $DisplayNameRegex$) 
-			set $result$ = addtolist($result$,"%aktkey%")
+		if isRegexMatch($aktDisplay$, $DisplayNameRegex$)
+			set $result$ = addtolist($result$,$aktVersion$+"=%aktkey%")
 		endif
 	endif
-
+	
 EndFunc
 ; ###################################################################################################
 
@@ -70,9 +77,9 @@ DefFunc checkForMsiProduct($msiId$ : string) : string
 	;@Returns		Returns string "true" if the given msiId is found in the Uninstall registry hive
 	;@Returns		Returns string "false" if the given msiId is not found in the Uninstall registry hive
 	;@OnError		Returns string "false"
-	;@SpecialCase	
-	;@References	
-	;@Links			
+	;@SpecialCase
+	;@References
+	;@Links
 	;@Requires
 	;@ParamDesc_$msiId$	  MSI Id in the form {xxxx}
 	;@ParamAdvice_$list1$
@@ -105,9 +112,9 @@ DefFunc get_licensekey_byPoolOrKey($LicenseString$ : string) : string
 	;@Returns			Returns string with a valid licensekey from the opsi license management
 	;@Returns			Returns string with a valid licensekey that was the input string
 	;@OnError			Breaks with isFatalError if no valid license key could be get from the pool
-	;@SpecialCase	  
-	;@References		
-	;@Links			  
+	;@SpecialCase
+	;@References
+	;@Links
 	;@Requires
 	;@ParamDesc_$LicenseString$	  License pool in the opsi license management
 	;@ParamAdvice_$LicenseString$
@@ -117,33 +124,55 @@ DefFunc get_licensekey_byPoolOrKey($LicenseString$ : string) : string
 	DefVar $ServiceErrorClass$
 	DefVar $LicensePool$
 	DefVar $key$
+	DefVar $jsonstr$
+	DefVar $PoolFound$ = 'false'
+	DefStringlist $LPools$
+	DefStringlist $resultlist$
 	
-	set $result$ = ""
+	; Default:  $LicenseString$ is the licensekey
+	Set $result$ = $LicenseString$
 	
 	if $LicenseString$ = ""
 		LogError "Fatal: license required, but no license pool or key in property"
 		isFatalError
 	endif
+	
 	if opsiLicenseManagementEnabled
-		comment "Try property as pool ..."
-		set $LicensePool$ = $LicenseString$
-		comment "License management is enabled and will be used"
-		comment "Trying to get a license key"
-		Set $key$ = demandLicenseKey ($LicensePool$)
-
-		set $ServiceErrorClass$ = getLastServiceErrorClass
-		comment "Error class: " + $ServiceErrorClass$
-		if $ServiceErrorClass$ = "None"
-			Set $result$ = $key$
-			comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
-		else
-			if $ServiceErrorClass$ = "LicenseMissingError"
-				LogError "Fatal: required license is not supplied"
-				isFatalError
+		set $resultlist$ =  getReturnListFromSection("opsiservicecall_getPoolIdents")
+		set $jsonstr$ =  takestring(0,$resultlist$)
+		if  jsonisarray($jsonstr$)
+			set $LPools$ = jsonAsArrayToStringList($jsonstr$)
+			set  $resultlist$ = getListContaining($LPools$,$LicenseString$)
+			if count($resultlist$) > "0"
+				set $PoolFound$ = 'true'
+				set $LicensePool$ = $LicenseString$
+				comment "Given string: "+$LicenseString$+" is a valid license pool."
 			else
-				if ($ServiceErrorClass$ = "LicenseConfigurationError") or ($ServiceErrorClass$ = "ValueError")
-					comment "we assume that we got a license key by property ..."
-					Set $result$ = $LicenseString$
+				LogWarning "License management is enabled but given string: "+$LicenseString$+" is no valid license pool."
+			endif
+		else
+			LogWarning("Unexpected result format from opsiservicecall")
+		endif
+		
+		if $PoolFound$ = 'true'
+			comment "License management is enabled and will be used"
+			comment "Trying to get a license key from pool"
+			Set $key$ = demandLicenseKey ($LicensePool$)
+			
+			set $ServiceErrorClass$ = getLastServiceErrorClass
+			comment "Error class: " + $ServiceErrorClass$
+			if $ServiceErrorClass$ = "None"
+				Set $result$ = $key$
+				comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
+			else
+				if $ServiceErrorClass$ = "LicenseMissingError"
+					LogError "Fatal: required license is not supplied"
+					isFatalError
+				else
+					if ($ServiceErrorClass$ = "LicenseConfigurationError") or ($ServiceErrorClass$ = "ValueError")
+						comment "we assume that we got a license key by property ..."
+						Set $result$ = $LicenseString$
+					endif
 				endif
 			endif
 		endif
@@ -151,6 +180,12 @@ DefFunc get_licensekey_byPoolOrKey($LicenseString$ : string) : string
 		comment "We assume that we got a license key by property..."
 		Set $result$ = $LicenseString$
 	endif
+	
+	[opsiservicecall_getPoolIdents]
+"method": "licensePool_getIdents"
+"params":[
+			]
+	
 EndFunc
 ; ###################################################################################################
 
@@ -165,9 +200,9 @@ DefFunc get_licensekey_byPool($LicensePool$ : string) : string
 	;@Description	  Checks if we can get a license key from the given license pool
 	;@Returns			Returns string with a valid licensekey from the opsi license management
 	;@OnError			Breaks with isFatalError if no valid license key could be get from the pool
-	;@SpecialCase	  
-	;@References		
-	;@Links			  
+	;@SpecialCase
+	;@References
+	;@Links
 	;@Requires
 	;@ParamDesc_$LicensePool$	  License pool in the opsi license management
 	;@ParamAdvice_$LicensePool$
@@ -180,7 +215,7 @@ DefFunc get_licensekey_byPool($LicensePool$ : string) : string
 	
 	if opsiLicenseManagementEnabled
 		comment "License management is enabled and will be used"
-	
+		
 		comment "Trying to get a license key"
 		Set $result$ = demandLicenseKey ($LicensePool$)
 		; If there is an assignment of exactly one licensepool to the product the following call is possible:
@@ -190,7 +225,7 @@ DefFunc get_licensekey_byPool($LicensePool$ : string) : string
 		; DefVar $WindowsSoftwareId$
 		; $WindowsSoftwareId$ = "..."
 		; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
-	
+		
 		
 		set $ServiceErrorClass$ = getLastServiceErrorClass
 		comment "Error class: " + $ServiceErrorClass$
@@ -202,7 +237,7 @@ DefFunc get_licensekey_byPool($LicensePool$ : string) : string
 				LogError "Fatal: license configuration must be corrected"
 				LogError getLastServiceErrorMessage
 				isFatalError
-			else 
+			else
 				if $ServiceErrorClass$ = "LicenseMissingError"
 					LogError "Fatal: required license is not supplied"
 					isFatalError
@@ -223,9 +258,9 @@ DefFunc desktopicon_create($name$ : string, $target$ : string, $param$ : string,
 	;@Description		Create a desktop Icon
 	;@Returns			Nothing
 	;@OnError			Nothing, Error is logged
-	;@SpecialCase	  
-	;@References		
-	;@Links			  
+	;@SpecialCase
+	;@References
+	;@Links
 	;@Requires
 	;@ParamDesc_$name$		Name of desktop icon
 	;@ParamAdvice_$name$
@@ -239,42 +274,42 @@ DefFunc desktopicon_create($name$ : string, $target$ : string, $param$ : string,
 	
 	Linkfolder_create_desktop_icon_infunc
 	
-	[Linkfolder_create_desktop_icon_infunc]
-	set_basefolder common_desktopdirectory
-	set_subfolder ""
-	set_link
-		name: $name$
-		target: $target$
-		parameters: $param$
-		working_dir: $dir$
-		icon_file:
-		icon_index:
-		shortcut:
-	end_link
+[Linkfolder_create_desktop_icon_infunc]
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+	name: $name$
+	target: $target$
+	parameters: $param$
+	working_dir: $dir$
+	icon_file:
+	icon_index:
+	shortcut:
+end_link
 EndFunc
 ; ###################################################################################################
 
 
 ; ###################################################################################################
-DefFunc desktopicon_remove($name$ : string) : void
-	;@author			detlef oertel
-	;@date				16.04.2019
-	;@Description		Delete a desktop Icon
-	;@Returns			Nothing
-	;@OnError			Nothing, Error is logged
-	;@SpecialCase	  
-	;@References		
-	;@Links			  
-	;@Requires
-	;@ParamDesc_$name$	  Desktop icon name to delete
-	;@ParamAdvice_$name$
-	;@Example	  desktopicon_remove('mydesktopicon_name')
-	
-	Linkfolder_remove_desktop_icon_infunc
-	
+	DefFunc desktopicon_remove($name$ : string) : void
+		;@author			detlef oertel
+		;@date				16.04.2019
+		;@Description		Delete a desktop Icon
+		;@Returns			Nothing
+		;@OnError			Nothing, Error is logged
+		;@SpecialCase
+		;@References
+		;@Links
+		;@Requires
+		;@ParamDesc_$name$	  Desktop icon name to delete
+		;@ParamAdvice_$name$
+		;@Example	  desktopicon_remove('mydesktopicon_name')
+		
+		Linkfolder_remove_desktop_icon_infunc
+		
 	[Linkfolder_remove_desktop_icon_infunc]
 	set_basefolder common_desktopdirectory
 	set_subfolder ""
 	delete_element $name$
-EndFunc
+	EndFunc
 ; ###################################################################################################

@@ -561,9 +561,9 @@ resourcestring
   rsConfigVersion = 'Do not change. Version of the config structure.';
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
-  rsUsePropDesktopicon = 'Should we create a "DektopIcon" property';
+  rsUsePropDesktopicon = 'Should we create a "DektopIcon" property and add code to handle dektop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
-  rsUsePropLicenseOrPool = 'Should we create a "LicenseOrPool" property';
+  rsUsePropLicenseOrPool = 'Should we create a "LicenseOrPool" property and add code handle license keys ?';
   rsPropLicenseOrPoolDescription = 'License key or opsi license pool';
   rsPropInstallFromLocalDescription =
     'Determines if the installation files will be copied locally';

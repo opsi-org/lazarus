@@ -63,7 +63,10 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnChooseInstDir2: TBitBtn;
+    BitBtnChooseInstDir3: TBitBtn;
     BitBtnOpenMst3: TBitBtn;
+    BitBtnChooseInstDir1: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplateWin: TBitBtn;
@@ -355,6 +358,9 @@ type
 
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
+    procedure BitBtnChooseInstDir1Click(Sender: TObject);
+    procedure BitBtnChooseInstDir2Click(Sender: TObject);
+    procedure BitBtnChooseInstDir3Click(Sender: TObject);
     procedure BitBtnDelDepClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
@@ -463,6 +469,7 @@ type
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
+    procedure chooseInstallDir(var mysetup: TSetupFile);
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
   public
     { public declarations }
@@ -624,6 +631,10 @@ resourcestring
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
     'Could not connect to the opsi-web-service. Check URL, user and password';
+  rsTemlateChannelHint = 'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
+  rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
+  rsInstallFromLocalHint = 'Should we add code to copy installer to local before installation ?';
+
 
 implementation
 
@@ -727,6 +738,7 @@ begin
   begin
     with aktProduct do
     begin
+      // the links ...
       TILabelInstaller1.Link.SetObjectAndProperty(SetupFiles[0], 'installerid');
       TILabelInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TILabelInstaller3.Link.SetObjectAndProperty(SetupFiles[2], 'installerid');
@@ -801,6 +813,13 @@ begin
       //TIComboBoxChannel.ItemIndex:= 1;
       //TIComboBoxChannel.Caption:= templChannelStrings[myconfiguration.templateChannel];
       //TIComboBoxChannel.Caption:= templChannelStrings[TTemplateChannels(0)];
+
+      // the hints ...
+      TIComboBoxChannel.Hint:= rsTemlateChannelHint;
+      TICheckBoxHandleLiceneKey.Hint:= rsUsePropLicenseOrPool;
+      TICheckBoxInstallFromLocal.Hint:= rsInstallFromLocalHint;
+      TICheckBoxCustomdir.Hint:= rsSupportCustomDirectoryHint;
+      TICheckBoxDesktopIcon.Hint:= rsUsePropDesktopicon;
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -2437,6 +2456,21 @@ begin
   //fetchDepPropFromForm;
 end;
 
+procedure TResultform1.BitBtnChooseInstDir1Click(Sender: TObject);
+begin
+  chooseInstallDir(aktProduct.SetupFiles[0]);
+end;
+
+procedure TResultform1.BitBtnChooseInstDir2Click(Sender: TObject);
+begin
+  chooseInstallDir(aktProduct.SetupFiles[1]);
+end;
+
+procedure TResultform1.BitBtnChooseInstDir3Click(Sender: TObject);
+begin
+  chooseInstallDir(aktProduct.SetupFiles[3]);
+end;
+
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 var
   index: integer;
@@ -2767,6 +2801,14 @@ begin
       mysetup.installCommandLine + ' TRANSFORMS=' + '"%scriptpath%\files' +
       IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
       *)
+  end;
+end;
+
+procedure TResultform1.chooseInstallDir(var mysetup: TSetupFile);
+begin
+  if SelectDirectoryDialog1.Execute then
+  begin
+    mysetup.installDirectory:= SelectDirectoryDialog1.FileName;
   end;
 end;
 
