@@ -1,4 +1,10 @@
 [changelog]
+opsi-notifier  4.2.0.8
+
+  * working also qt5 based
+  * notifierguicontrol: time picker: Do not refresh button list after a reboot time is selected
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 12 Aug 2022:15:00:00 +0200
 
 opsi-notifier  4.2.0.7
 

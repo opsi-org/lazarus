@@ -113,7 +113,8 @@ var
   //mymouseenter: TMethod;
   //mymouseleave: TMethod;
   myRangelistList: TMyRangeList;
-//ConfirmArray: TConfirms;
+  //ConfirmArray: TConfirms;
+  buttonListReloadAllowed: boolean = True;
 
 
   (*
@@ -352,7 +353,7 @@ begin
     // it could be a real button (button_only)
     // or a combobox where every entry has its own choicindex
     // so one buttonindex may have one or more choiceindices
-    //
+
     // get Buttoindex for choiceindex stored in buttonlist
     rangeindex := getIndexFromRangeList(choiceindex, startval, btnindex);
     if rangeindex <> -1 then
@@ -374,33 +375,36 @@ begin
         end
         else
         begin
-          if choiceindex = ButtonArray[btnindex].btn.Tag then
+          if buttonListReloadAllowed then
           begin
-            // if choiceindex = Tag then we startup with list
-            // and so we clear the old
-            ButtonArray[btnindex].cbox.Items.Clear;
-            logdatei.log('Cleared dropdown list because choiceindex = Button.tag',
-              LLinfo);
-          end;
-          tmpint := ButtonArray[btnindex].btn.Tag +
-            ButtonArray[btnindex].cbox.Items.Count;
-          if choiceindex >= tmpint then
-          begin
-            // we need a new entry
-            tmpint := ButtonArray[btnindex].cbox.Items.Add(aktMessage);
-            logdatei.log('Add to dropdown list at: '+inttostr(tmpint), LLinfo);
-            // after adding the first element we set the selection to this first
-            if tmpint = 0 then
-            ButtonArray[buttoncounter].cbox.ItemIndex := 0;
-          end
-          else
-          begin
-            // we should never be here
-            ButtonArray[btnindex].cbox.Items[choiceindex -
-              ButtonArray[btnindex].btn.Tag] :=
-              aktMessage;
-            logdatei.log('Insert in dropdown list at : ' +
-              IntToStr(choiceindex - ButtonArray[btnindex].btn.Tag), LLinfo);
+            if choiceindex = ButtonArray[btnindex].btn.Tag then
+            begin
+              // if choiceindex = Tag then we startup with list
+              // and so we clear the old
+              ButtonArray[btnindex].cbox.Items.Clear;
+              logdatei.log('Cleared dropdown list because choiceindex = Button.tag',
+                LLinfo);
+            end;
+            tmpint := ButtonArray[btnindex].btn.Tag +
+              ButtonArray[btnindex].cbox.Items.Count;
+            if choiceindex >= tmpint then
+            begin
+              // we need a new entry
+              tmpint := ButtonArray[btnindex].cbox.Items.Add(aktMessage);
+              logdatei.log('Add to dropdown list at: ' + IntToStr(tmpint), LLinfo);
+              // after adding the first element we set the selection to this first
+              if tmpint = 0 then
+                ButtonArray[buttoncounter].cbox.ItemIndex := 0;
+            end
+            else
+            begin
+              // we should never be here
+              ButtonArray[btnindex].cbox.Items[choiceindex -
+                ButtonArray[btnindex].btn.Tag] :=
+                aktMessage;
+              logdatei.log('Insert in dropdown list at : ' +
+                IntToStr(choiceindex - ButtonArray[btnindex].btn.Tag), LLinfo);
+            end;
           end;
         end;
         ButtonArray[btnindex].panel.Repaint;
@@ -543,6 +547,7 @@ begin
 
 
       logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLnotice);
+      buttonListReloadAllowed := False;
       buttonPushedToService(choice);
     end;
   end
