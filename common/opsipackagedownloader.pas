@@ -109,7 +109,6 @@ end;
 
 procedure TOpsiPackageDownloader.InstallDownloadPackage;
 begin
-  FDistrInfo.SetPackageManagementShellCommand;
   FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
     'update', Output);
   FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
