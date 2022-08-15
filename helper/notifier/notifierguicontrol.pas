@@ -593,8 +593,10 @@ begin
 
   {$IFDEF LINUX}
   Result := round(num * 0.5);
+  //Result := round(num * 0.8);
   //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
   Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
+  //Result := round(Result * (designPPI / nform.PixelsPerInch));
   //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   if Result < 8 then
     Result := 8;
@@ -1466,11 +1468,11 @@ begin
       else
       begin
         nform.Image1.Picture.LoadFromFile(mytmpstr);
-        {$IFDEF WINDOWS}
+       // {$IFDEF WINDOWS}
         // scale new Picture:
         nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,
           screen.PixelsPerInch, 0, 0);
-        {$ENDIF WINDOWS}
+       // {$ENDIF WINDOWS}
         nform.Image1.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -1726,6 +1728,10 @@ begin
         myini.ReadInteger(aktsection, 'Width', 10);
       ButtonArray[buttoncounter].panel.Height :=
         myini.ReadInteger(aktsection, 'Height', 10);
+      {$IFDEF LINUX}
+        ButtonArray[buttoncounter].panel.Height :=
+        myini.ReadInteger(aktsection, 'Height', 10) + 5;;
+      {$ENDIF LINUX}
 
 
       with ButtonArray[buttoncounter].panel do
