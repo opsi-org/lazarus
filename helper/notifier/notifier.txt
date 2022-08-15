@@ -1,4 +1,14 @@
 [changelog]
+opsi-notifier  4.2.0.9
+
+  * notifierguicontrol: also scale form & co at windows
+  * notifierguicontrol: fontresize: no font scaling on windows (if form is scaled)
+  * notifierguicontrol: time picker: setButtonCaptionById:
+    setting selection to the last element in order to activate scrollbar if needed
+    and back to 0 again
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo, 15 Aug 2022:15:00:00 +0200
+
 opsi-notifier  4.2.0.8
 
   * working also qt5 based
