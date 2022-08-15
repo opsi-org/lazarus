@@ -3,7 +3,7 @@ unit LinuxRepository;
 (*
 Here is an example of how to use this unit in one of the easiest ways:
 
-MyRepo := TLinuxRepository.Create(MyPassword,False,'myrepos.list');
+MyRepo := TLinuxRepository.Create(MyPassword,False,'MyKeyRingName.gpg','myrepos.list');
 MyRepo.Add('Ubuntu','https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/stable/xUbuntu22.04/')
 
 Done :)
@@ -49,13 +49,13 @@ type
       'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
     // Required for adding repos to Debian like distributions
     FSourcesListDirectory = '/etc/apt/sources.list.d/';
-    FKeyRingPath = '/usr/local/share/keyrings';
-    FKeyPath = FKeyRingPath + '/opensuseRepoDefaultKeyName.gpg';
+    FKeyRingsPath = '/usr/local/share/keyrings/';
   var
     FURL: string;
     FRunCommandElevated: TRunCommandElevated;
     FSourcesListFilePath: string;
     FOwnerOfSourcesList: string;
+    FKeyPath: string;
 
     procedure CreateKeyRingAndAddKey;
     procedure ReadOwnerOfExistingSourcesList;
@@ -65,7 +65,7 @@ type
     procedure AddRedhatRepo;
   public
     constructor Create(Password: string; Sudo: boolean = False;
-      RepoListFileName: string = 'opsi.list');
+      KeyRingName: string = 'OpsiQuickInstall.gpg'; RepoListFileName: string = 'opsi.list');
     // Constructs the repository URL based on distribution, opsi version and opsi branch and gives it back as result
     function GetOpsiServerRepoDefaultURL(OpsiVersion: TOpsiVersion; OpsiBranch: TOpsiBranch;
       Distribution: TSupportedDistribution): string;
@@ -90,7 +90,7 @@ procedure TLinuxRepository.CreateKeyRingAndAddKey;
 var
   Output: string;
 begin
-  FRunCommandElevated.Run('mkdir -p ' + FKeyRingPath, Output);
+  FRunCommandElevated.Run('mkdir -p ' + FKeyRingsPath, Output);
   FRunCommandElevated.Run(
     'apt install -y apt-transport-https software-properties-common curl gpg', Output);
 
@@ -159,9 +159,10 @@ end;
 
 {public}
 constructor TLinuxRepository.Create(Password: string; Sudo: boolean = False;
-  RepoListFileName: string = 'opsi.list');
+  KeyRingName: string = 'OpsiQuickInstall.gpg'; RepoListFileName: string = 'opsi.list');
 begin
   FRunCommandElevated := TRunCommandElevated.Create(Password, Sudo);
+  FKeyPath := FKeyRingsPath + KeyRingName;
   FSourcesListFilePath := FSourcesListDirectory + RepoListFileName;
 end;
 
