@@ -21,7 +21,6 @@ include_insert "declarations.opsiinc"
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
 Set $ProductId$		 = "#@productId*#"
-Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 ; enter here names of the package at the supported Distributions / Versions
 Set $ListOfPackageNames$ = CreateStringList("<packagename>")

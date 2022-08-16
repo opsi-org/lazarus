@@ -23,7 +23,6 @@ include_insert "declarations.opsiinc"
 Set $ProductId$		= "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir$	= "#@InstallDir1*#"
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS

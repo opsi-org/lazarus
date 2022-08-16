@@ -60,5 +60,6 @@ if $oldProgFound$ = "true"
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
+	#@DelsubHandleDesktopIcon*#
 endif
 ;-----------------------------------------------------

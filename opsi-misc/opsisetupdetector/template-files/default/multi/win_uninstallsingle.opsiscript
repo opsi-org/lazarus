@@ -24,13 +24,19 @@ endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\win_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\win_delsub.opsiscript"
+if FileExists("%ScriptPath%\win_delinc.opsiinc")
+	comment "Start uninstall part"
+	Sub "%ScriptPath%\win_delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Set $tmpstr$ = FreeLicense($LicensePool$)
-endif
+#@FinalUnInstallLines*#
 
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

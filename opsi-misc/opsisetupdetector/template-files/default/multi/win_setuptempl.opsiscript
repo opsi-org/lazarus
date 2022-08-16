@@ -29,21 +29,18 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-if FileExists("%ScriptPath%\win_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\win_delsub.opsiscript"
+if FileExists("%ScriptPath%\win_delinc.opsiinc")
+	comment "Start uninstall part"
+	Sub "%ScriptPath%\win_delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 Winbatch_install
 ;----------------------------------------------
@@ -56,16 +53,21 @@ else
 endif
 #@postInstallLines*#
 
-#@SetupHandleDesktopIcon*#
 
-comment "Copy files"
-Files_install /32Bit
+[Winbatch_uninstall]
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
 
-comment "Patch Registry"
-Registry_install /32Bit
+[Files_uninstall]
+del -sf "$InstallDir$\"
 
-comment "Create shortcuts"
-LinkFolder_install
 
 [Winbatch_install]
 ; Choose one of the following examples as basis for your installation
@@ -94,56 +96,7 @@ LinkFolder_install
 ; You may use an answer file by the parameter /LOADINF="filename"
 ; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
 
-[Files_install]
-; Example of recursively copying some files into the installation directory:
-;
-; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
-
-[Registry_install]
-; Example of setting some values of an registry key:
-;
-; openkey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
-; set "name1" = "some string value"
-; set "name2" = REG_DWORD:0001
-; set "name3" = REG_BINARY:00 af 99 cd
-
-[LinkFolder_install]
-; Example of deleting a folder from AllUsers startmenu:
-;
-; set_basefolder common_programs
-; delete_subfolder $ProductId$
-;
-; Example of creating a shortcut to the installed exe in AllUsers startmenu:
-;
-; set_basefolder common_programs
-; set_subfolder $ProductId$
-;
-; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters:
-; 	working_dir: $InstallDir$
-; 	icon_file:
-; 	icon_index:
-; end_link
-;
-; Example of creating a shortcut to the installed exe on AllUsers desktop:
-;
-; set_basefolder common_desktopdirectory
-; set_subfolder ""
-;
-; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters: <some_param>
-; 	working_dir: $InstallDir$
-; 	icon_file: <path to icon file>
-; 	icon_index: 2
-; end_link
-
-#@SetupDesktopiconSectionLines*#
-
-#@SetupSectionLines1*#
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

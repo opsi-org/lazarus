@@ -12,7 +12,7 @@ set $oldProgFound$ = "false"
 #@uninstallCheckLines1*#
 
 if $oldProgFound$ = "true"
-	Message "Uninstalling " + $ProductId$ + " " + $ProdVersion$ " ..."
+	Message "Uninstalling " + $ProductId$
 	#@preUninstallLines*#
 	
 	comment "Start uninstall program"

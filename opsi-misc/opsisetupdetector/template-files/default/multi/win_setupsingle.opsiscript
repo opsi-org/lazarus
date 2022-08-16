@@ -9,7 +9,7 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%\osd-lib.opsiscript"
+importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -29,21 +29,18 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-if FileExists("%ScriptPath%\win_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\win_delsub.opsiscript"
+if FileExists("%ScriptPath%\win_delinc.opsiinc")
+	comment "Start uninstall part"
+	Sub "%ScriptPath%\win_delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
@@ -58,14 +55,16 @@ endif
 
 #@postInstallLines*#
 
-#@SetupHandleDesktopIcon*#
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
 
 [Winbatch_install]
 #@installCommandLine1*#
 
-#@SetupDesktopiconSectionLines*#
-
-#@SetupSectionLines1*#
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

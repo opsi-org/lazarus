@@ -14,19 +14,16 @@ importlib "uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; Please edit the following values:
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
 Set $ProductId$		 = "#@productId*#"
-Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 ;Set $InstallDir$	= "/Applications/<product.app>"
 Set $InstallDir$		= "/Applications/<productid.app>"
-Set $LicenseRequired$ = "false"
-Set $LicensePool$	  = "" 
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -41,21 +38,18 @@ ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
 
-if FileExists("%ScriptPath%/delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
-comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%/files1"
+comment "Start installer "
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
 ;----------------------------------------------
@@ -71,13 +65,17 @@ endif
 comment "Copy files"
 Files_install
 
+[Files_uninstall]
+del -sf "$InstallDir$/"
+
+
 [Files_install]
 ; Example of recursively copying some files into the installation directory:
 ;
 ; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
 
 
-#@SetupSectionLines1*#
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

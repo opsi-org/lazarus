@@ -20,7 +20,7 @@ if $oldProgFound$ = "true"
 	Winbatch_uninstall  #@uninstallWaitForProc1*#
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
-	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	if "true" = isMsiExitcodeFatal_short($exitcode$, "true", $ErrorString$ )
 		LogError $ErrorString$
 		isfatalerror $ErrorString$
 	else

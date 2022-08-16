@@ -28,6 +28,4 @@ DefVar $productid$
 DefVar $targetfile$
 DefVar $tmpstr$
 
-DefStringList $ListOfPackageNames$
-
 #@stringVars*#

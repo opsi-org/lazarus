@@ -5,7 +5,6 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-
 [Actions]
 requiredOpsiscriptVersion >= "4.12.4.23"
 
@@ -15,7 +14,7 @@ importlib "uib_macosinstalllib.opsiscript"
 #@importLibs*#
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; Please edit the following values:
@@ -25,8 +24,6 @@ Set $ProductId$		 = "#@productId*#"
 ; the path were we find the product after the installation
 ;Set $InstallDir$	= "/Applications/<product.app>"
 Set $InstallDir$	= "/Applications/<productid.app>"
-Set $LicenseRequired$ = "false"
-Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -43,12 +40,16 @@ ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%/delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Set $tmpstr$ = FreeLicense($LicensePool$)
-endif
+#@FinalUnInstallLines*#
+
+[Files_uninstall]
+del -sf "$InstallDir$/"
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

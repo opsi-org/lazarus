@@ -10,14 +10,12 @@ encoding=utf8
 requiredOpsiscriptVersion >= "4.12.4.23"
 
 ; All variables are defined here:
-include_insert "define_vars_multi.opsiscript"
+include_insert "declarations.opsiinc"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
 Set $ProductId$		= "#@productId*#"
 ; the path where we find the product after the installation
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "" 
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS

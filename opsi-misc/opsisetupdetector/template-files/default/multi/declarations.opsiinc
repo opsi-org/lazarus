@@ -9,25 +9,37 @@
 ; Define all variables here
 ;---------------------------
 DefVar $arch$
+DefVar $distCodeName$
+DefVar $distRelease$
+DefVar $distroName$
+DefVar $distrotype$
 DefVar $errorstring$
 DefVar $exitcode$
 DefVar $iconfile$
-DefVar $installerSourceDir$
 DefVar $installCommand$
 DefVar $installSuccess$
 DefVar $installdir$
 DefVar $installdir1$
 DefVar $installdir2$
 DefVar $installerfile$
+DefVar $licensekey$
+DefVar $licensepool$
+DefVar $licenserequired$
 DefVar $minimumspace$
+DefVar $MsiId$
+DefVar $MsiVersion$
+DefVar $DisplayName$
+DefVar $ProdVersion$
 DefVar $oldProgFound$
 DefVar $os$
 DefVar $osshort$
-DefVar $ProdVersion$
 DefVar $productid$
 DefVar $targetfile$
 DefVar $tmpstr$
+DefVar $uninstallprogram$
 
-DefStringList $ListOfPackageNames$
+DefStringlist $ListOfPackageNames$
+DefStringList $osinfomap$
+DefStringList $UninstallList$
 
 #@stringVars*#

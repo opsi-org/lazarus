@@ -21,10 +21,4 @@ if $oldProgFound$ = "true"
 		endif
 	endif
 endif
-
-
-[Files_uninstall]
-del -sf "$InstallDir$/"
-
-#@DelsubSectionLines1*#
 ;-----------------------------------------------------
