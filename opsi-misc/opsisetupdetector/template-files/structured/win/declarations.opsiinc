@@ -3,58 +3,35 @@
 ; See https://opsi.org    https://uib.de
 ; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
-encoding=utf8
-
-requiredWinstVersion >= "4.12.0.37"
 
 ; -------------------------------------
 ; include file for opsi-setup-detector products
 ; Define all variables here
 ;---------------------------
-
-importlib "uib_exitcode.opsiscript"
-importlib "osd-lib.opsiscript"
-#@importLibs*#
-
-DefVar $OS$
-DefVar $DisplayName$
-DefVar $ErrorString$
-DefVar $ExitCode$
-DefVar $InstallDir$
-DefVar $InstallDir1$
-DefVar $InstallDir2$
-DefVar $Installer$
-DefVar $MinimumSpace$
-;DefVar $MsiGuid$
-DefVar $ProductId$
-DefVar $SystemType$
-DefVar $UninstallCommand$
-DefVar $oldProgFound$
+DefVar $arch$
+DefVar $errorstring$
+DefVar $exitcode$
+DefVar $iconfile$
+DefVar $installerSourceDir$
+DefVar $installCommand$
+DefVar $installSuccess$
+DefVar $installdir$
+DefVar $installdir1$
+DefVar $installdir2$
+DefVar $installerfile$
+DefVar $minimumspace$
 DefVar $MsiId$
 DefVar $MsiVersion$
-DefVar $LicenseRequired$
-DefVar $LicensePool$
+DefVar $DisplayName$
+DefVar $oldProgFound$
+DefVar $os$
+DefVar $osshort$
+DefVar $ProdVersion$
+DefVar $productid$
+DefVar $targetfile$
+DefVar $tmpstr$
+DefVar $uninstallprogram$
 
-#@stringVars*#
-
-DefStringList $ResultList$
-;DefStringList $MsiGuidList$
 DefStringList $UninstallList$
 
-Set $SystemType$ = GetSystemType
-set $OS$ = GetOS
-
-#@GetProductProperty*#
-
-; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "#@productId*#"
-Set $DisplayName$ = "'%%#@productId*#%%'"
-; the path where we find the product after the installation
-Set $InstallDir1$		= "#@InstallDir1*#"
-Set $InstallDir2$		= "#@InstallDir2*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = ""
-; ----------------------------------------------------------------
-
-
+#@stringVars*#

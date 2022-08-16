@@ -8,14 +8,20 @@ encoding=utf8
 comment "Start the Uninstall check:"
 
 ; Variant 1:
+; Use the MsiId found by the opsi-setup detector:
 set $UninstallList$ = addtolist($UninstallList$,"#@productVersion*#=#@MsiId1*#")
 set $UninstallList$ = addtolist($UninstallList$,"#@productVersion*#=#@MsiId2*#")
 ; you may add later aditional msiids to this list
 ; set $msi-list$ = addtolist($msi-list$,"<version>=<GUID>")
 
 ; Variant 2:
-;Set $UninstallList$ = shellCall('wmic product where "Name like '+ $DisplayName$ + '" get identifyingnumber')
-;Set $UninstallList$ = getSubListByContaining ("{", $UninstallList$)
+;-----------------------------------------------------
+; Finding the MsiId by the Displayname from Registry:
+; Be sure that the Displayname is set correctly:
+Set $DisplayName$ = $ProductId$
+; '(?i)' = case insesitive ; '.*' = 0 or more of any thing
+Set $UninstallList$ = getGuidListByDisplaynameRegex('(?i)'+$DisplayName$+'.*')
+;-----------------------------------------------------
 
 if count($UninstallList$) int> "0"
 	#@preUninstallLines*#
@@ -30,6 +36,5 @@ if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
 endif
-#@DelsubHandleDesktopIcon*#
 
 

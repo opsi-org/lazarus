@@ -14,6 +14,9 @@ importlib "osd-lib.opsiscript"
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "sections.opsiinc"
+
 
 
 Set $arch$ = GetSystemType
@@ -104,23 +107,6 @@ if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") 
 	#@postInstallLines*#
 endif
 
-[Winbatch_install_1]
-#@installCommandLine1*#
-
-[Winbatch_install_2]
-#@installCommandLine2*#
-
-[Winbatch_uninstall_1]
-#@uninstallCommandLine1*#
-
-[Winbatch_uninstall_2]
-#@uninstallCommandLine2*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-
-#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

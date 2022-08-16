@@ -1,0 +1,8 @@
+; handle desktop icon
+if $DesktopIcon$ = "true"
+	comment "Create Desktop Icon"
+	Linkfolder_create_desktop_icon
+else
+	comment "Remove Desktop Icon"
+	Linkfolder_remove_desktop_icon
+endif

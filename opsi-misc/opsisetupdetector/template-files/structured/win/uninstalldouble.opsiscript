@@ -7,30 +7,54 @@ encoding=utf8
 
 
 [Actions]
-requiredOpsiscriptVersion >= "4.12.4.37"
+requiredOpsiscriptVersion >= "4.12.4.23"
+
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
-; All sections are defined here:
-include_append "%ScriptPath%\sections.opsiinc"
 
-Comment "Displaying product picture"
-ShowBitmap "%ScriptPath%\%installingProdName%.png" $ProductId$
-Message "Installing " + $ProductId$
+Set $arch$ = GetSystemType
 
-Comment "Checking OS version"
-if NOT(GetOS = "Windows_NT")
-	logError "Installation aborted: Wrong OS version detected. This package works on Windows only"
-	isFatalError "Wrong OS"
-	; Stop process and set installation status to failed
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
+Set $ProductId$		 = "#@productId*#"
+; the path where we find the product after the installation
+Set $InstallDir1$		= "#@InstallDir1*#"
+Set $InstallDir2$		= "#@InstallDir2*#"
+; ----------------------------------------------------------------
+
+set $OS$ = GetOS
+
+if not(($OS$ = "Windows_NT"))
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
 endif
 
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	Comment "Starting the uninstall sub section"
-	Message "Uninstalling " + $ProductId$ + " ..."
-	Sub "%ScriptPath%\delsub.opsiscript"
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-#@LicenseUninstallLines*#
+#@FinalUnInstallLines*#
 
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+#@sectionLines*#

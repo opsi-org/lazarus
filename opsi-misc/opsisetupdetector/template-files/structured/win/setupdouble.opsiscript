@@ -6,83 +6,121 @@
 encoding=utf8
 
 [Actions]
-requiredOpsiscriptVersion >= "4.12.4.37"
+requiredOpsiscriptVersion >= "4.12.4.23"
 
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
-; All sections are defined here:
-include_append "%ScriptPath%\sections.opsiinc"
 
-Comment "Displaying product picture"
-ShowBitmap "%ScriptPath%\%installingProdName%.png" $ProductId$
-Message "Installing " + $ProductId$
 
-Comment "Checking OS version"
-if NOT(GetOS = "Windows_NT")
-	logError "Installation aborted: Wrong OS version detected. This package works on Windows only"
-	isFatalError "Wrong OS"
-	; Stop process and set installation status to failed
-endif
+Set $arch$ = GetSystemType
+#@GetProductProperty*#
 
-Comment "Checking available space"
-if (($SystemType$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
+Set $ProductId$		 = "#@productId*#"
+; the path where we find the product after the installation
+Set $InstallDir1$		= "#@InstallDir1*#"
+Set $InstallDir2$		= "#@InstallDir2*#"
+
+if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
 	Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 else
-	if ($SystemType$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "64 only"))
+	if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "64 only"))
 		Set $MinimumSpace$	 = "#@MinimumSpace2*#"
 	endif
-	if ($SystemType$ = "64 Bit System") and ($install_architecture$ = "both")
+	if ($arch$ = "64 Bit System") and ($install_architecture$ = "both")
 		Set $MinimumSpace$	 = "#@MinimumSpace3*#"
 	endif
 endif
+; ----------------------------------------------------------------
 
-if NOT(HasMinimumSpace("%SystemDrive%", $MinimumSpace$))
-	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% required"
+set $OS$ = GetOS
+
+if not(($OS$ = "Windows_NT"))
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
+endif
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
 	isFatalError "No Space"
+	; Stop process and set installation status to failed
 endif
 
-Comment "Checking if previous versions should be uninstalled"
-if ($uninstall_before_install$ = "true")
-	if FileExists("%ScriptPath%\delsub.opsiscript")
-		Comment "Starting the uninstall sub section"
-		Sub "%ScriptPath%\delsub.opsiscript"
-	endif
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-#@LicenseInstallLines*#
+Message "Installing " + $ProductId$ + " ..."
 
-Comment "Starting the setup program"
-Message "Installing " + $ProductId$
 
-if (($SystemType$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")	
+if (($arch$ = "x86 System") and ($install_architecture$ = "system specific")) or ($install_architecture$ = "both") or ($install_architecture$ = "32 only")
+	
+	set $installerSourceDir$ = "#@installerSourceDir1*#"
 	#@preInstallLines*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files1"
+	ChangeDirectory $installerSourceDir$
 	;----------------------------------------------
 	Winbatch_install_1  #@installWaitForProc1*#
 	;----------------------------------------------
-	Sub_Check_ExitCode_1
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines1*#
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
 	#@postInstallLines*#
 endif
 
-if ($SystemType$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "both") or ($install_architecture$ = "64 only"))
+if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") or ($install_architecture$ = "both") or ($install_architecture$ = "64 only"))
+	
+	set $installerSourceDir$ = "#@installerSourceDir2*#"
 	#@preInstallLines*#
 	comment "Start setup program"
-	ChangeDirectory "%SCRIPTPATH%\files2"
+	ChangeDirectory $installerSourceDir$
 	;----------------------------------------------
 	Winbatch_install_2  #@installWaitForProc2*#
 	;----------------------------------------------
-	Sub_Check_ExitCode_2
+	set $ExitCode$ = getlastexitcode
+	if "true" = #@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ )
+		#@installErrorHandlingLines2*#
+		LogError $ErrorString$
+		isfatalerror $ErrorString$
+	else
+		Comment $ErrorString$
+	endif
 	#@postInstallLines*#
 endif
 
-#@SetupHandleDesktopIcon*#
+[Winbatch_install_1]
+#@installCommandLine1*#
 
-#@SetupHandleCustomDir*#
+[Winbatch_install_2]
+#@installCommandLine2*#
 
-#@Profileconfigurationlines*#
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
 
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

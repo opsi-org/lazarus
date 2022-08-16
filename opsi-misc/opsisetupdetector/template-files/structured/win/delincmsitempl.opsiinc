@@ -1,0 +1,41 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+Message "Check for existing installation of " + $ProductId$ + " ..."
+
+comment "Start the Uninstall check:"
+
+; Variant 1:
+; Use the MsiId found by the opsi-setup detector:
+;set $UninstallList$ = addtolist($UninstallList$,"#@productVersion*#=#@MsiId1*#")
+; you may add later aditional msiids to this list
+; set $msi-list$ = addtolist($msi-list$,"<version>=<GUID>")
+
+; Variant 2:
+;-----------------------------------------------------
+; Finding the MsiId by the Displayname from Registry:
+; Be sure that the Displayname is set correctly:
+Set $DisplayName$ = $ProductId$
+; '(?i)' = case insesitive ; '.*' = 0 or more of any thing
+Set $UninstallList$ = getGuidListByDisplaynameRegex('(?i)'+$DisplayName$+'.*')
+;-----------------------------------------------------
+
+if count($UninstallList$) int> "0"
+	#@preUninstallLines*#
+	Comment "Uninstalling all found versions"
+	for %uninstallEntry% in $UninstallList$ do Sub_Uninstallation_msi
+	#@postUninstallLines*#
+endif
+
+if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+	if directoryexists($InstallDir$)
+		SleepSeconds 5
+		Files_uninstall
+	endif
+endif
+
+;-----------------------------------------------------

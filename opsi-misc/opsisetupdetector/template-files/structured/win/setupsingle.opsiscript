@@ -6,61 +6,69 @@
 encoding=utf8
 
 [Actions]
-requiredOpsiscriptVersion >= "4.12.4.37"
+requiredOpsiscriptVersion >= "4.12.4.23"
 
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
 ; All sections are defined here:
-include_append "%ScriptPath%\sections.opsiinc"
+include_append "sections.opsiinc"
 
-Comment "Displaying product picture"
-ShowBitmap "%ScriptPath%\%installingProdName%.png" $ProductId$
-Message "Installing " + $ProductId$
 
-Comment "Checking OS version"
-if NOT(GetOS = "Windows_NT")
-	logError "Installation aborted: Wrong OS version detected. This package works on Windows only"
-	isFatalError "Wrong OS"
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
+Set $ProductId$		= "#@productId*#"
+; the path where we find the product after the installation
+Set $InstallDir$	= "#@InstallDir1*#"
+Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+; ----------------------------------------------------------------
+
+set $OS$ = GetOS
+
+if not(($OS$ = "Windows_NT"))
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
+endif
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
 	; Stop process and set installation status to failed
 endif
 
-Comment "Checking available space"
-Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
-if NOT(HasMinimumSpace("%SystemDrive%", $MinimumSpace$))
-	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% required"
-	isFatalError "No Space"
+#@GetProductProperty*#
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
-Comment "Checking if previous versions should be uninstalled"
-if ($uninstall_before_install$ = "true")
-	if FileExists("%ScriptPath%\delsub.opsiscript")
-		Comment "Starting the uninstall sub section"
-		Sub "%ScriptPath%\delsub.opsiscript"
-	endif
-endif
+Message "Installing " + $ProductId$ + " ..."
 
-#@LicenseInstallLines*#
-
-Comment "Starting the setup program"
-Message "Installing " + $ProductId$
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files1"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
-Winbatch_install_1  #@installWaitForProc1*#
+Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
-Sub_Check_ExitCode_1
+set $ExitCode$ = getlastexitcode
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	#@installErrorHandlingLines1*#
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
 
 #@postInstallLines*#
-
-#@SetupHandleDesktopIcon*#
-
-#@SetupHandleCustomDir*#
-
-#@Profileconfigurationlines*#
 
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
