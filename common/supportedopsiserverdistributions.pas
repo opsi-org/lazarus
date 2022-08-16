@@ -78,7 +78,7 @@ begin
   end
   else
   // RHEL has releases like 7.x
-  if lowerCase(DistroName) = 'redhatenterprise' then
+  if lowerCase(DistroName) = 'rhel' then
   begin
     if Pos('8', DistroRelease) = 1 then
       Result := RHEL_8
