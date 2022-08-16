@@ -14840,7 +14840,7 @@ begin
         end
         else
         begin
-          // parse case sensitivity parameter
+          // parse access string parameter
           if Skip(',', r, r, InfoSyntaxError) then
             if EvaluateString(r, r, s2, InfoSyntaxError) then
               if Skip(')', r, r, InfoSyntaxError) then
