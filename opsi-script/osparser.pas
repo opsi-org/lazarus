@@ -17154,8 +17154,8 @@ begin
                 syntaxCheck := True;
                 boolresult := StrToBool(s2);
          {$IFDEF GUI}
+              Finputstring := TFinputstring.Create(nil);
               try
-                Finputstring := TFinputstring.Create(nil);
                 if boolresult then
                 begin
                   Finputstring.EditButton1.EchoMode := emPassword;
