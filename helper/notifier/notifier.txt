@@ -7,6 +7,9 @@ opsi-notifier  4.2.0.9
     setting selection to the last element in order to activate scrollbar if needed
     and back to 0 again
   * increase button height at Linux
+  * notifierguicontrol: objectByIndex:
+      // We ignore the font size for buttons and we set it to zero
+      // so it should be sized according the control size
 
 -- Detlef Oertel <d.oertel@uib.de>  Mo, 15 Aug 2022:15:00:00 +0200
 

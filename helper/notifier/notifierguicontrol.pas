@@ -1762,12 +1762,16 @@ begin
       {$ENDIF LINUX}
       end;
       ButtonArray[buttoncounter].panel.Font.Name := mytmpstr;
-      { fontresize makes also hdpi correction for linux}
-      ButtonArray[buttoncounter].panel.Font.Size :=
-        fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
-      tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
-        IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
-      LogDatei.log(tmpstr2, LLinfo);
+      // We ignore the font size for buttons and we set it to zero
+      // so it should be sized according the control size
+      // { fontresize makes also hdpi correction for linux}
+      // ButtonArray[buttoncounter].panel.Font.Size :=
+      //   fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+      // tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
+      //   IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
+      // LogDatei.log(tmpstr2, LLinfo);
+      ButtonArray[buttoncounter].panel.Font.Size := 0;
+      ButtonArray[buttoncounter].panel.Font.Height:= 0;
       //ButtonArray[buttoncounter].Font.Color :=
       //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       ButtonArray[buttoncounter].panel.Font.Bold :=
