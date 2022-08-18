@@ -5,7 +5,7 @@ unit SupportedOpsiServerDistributions;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, StrUtils;
 
 type
   TSupportedDistribution = (
@@ -78,7 +78,7 @@ begin
   end
   else
   // RHEL has releases like 7.x
-  if lowerCase(DistroName) = 'rhel' then
+  if MatchStr(lowerCase(DistroName), ['redhatenterprise', 'rhel']) then
   begin
     if Pos('8', DistroRelease) = 1 then
       Result := RHEL_8
