@@ -16155,8 +16155,9 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
+          list1 := TXStringList.Create;
           try
-            list1 := TXStringList.Create;
+            try
             s1 := ExpandFileName(s1);
             if FileExists(s1) then
               list1.loadfromfile(s1)
@@ -16172,7 +16173,6 @@ begin
             //StringResult := reencode(list1.Strings[0], 'system')
             else
               StringResult := '';
-            list1.Free;
           except
             on e: Exception do
             begin
@@ -16182,6 +16182,9 @@ begin
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
+          end;
+          finally
+            FreeAndNil(list1);
           end;
           if Skip(')', r, r, InfoSyntaxError) then
           begin
@@ -16199,8 +16202,9 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
+                list1 := TXStringList.Create;
                 try
-                  list1 := TXStringList.Create;
+                  try
                   s1 := ExpandFileName(s1);
                   //list1.loadfromfile(s1);
                   if FileExists(s1) then
@@ -16216,7 +16220,6 @@ begin
                   //StringResult := reencode(list1.Strings[0], s2)
                   else
                     StringResult := '';
-                  list1.Free;
                 except
                   on e: Exception do
                   begin
@@ -16227,6 +16230,9 @@ begin
                     FNumberOfErrors := FNumberOfErrors + 1;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
+                end;
+                finally
+                  FreeAndNil(list1)
                 end;
               end;
     end
