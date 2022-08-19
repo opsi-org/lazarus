@@ -2468,7 +2468,7 @@ end;
 
 procedure TResultform1.BitBtnChooseInstDir3Click(Sender: TObject);
 begin
-  chooseInstallDir(aktProduct.SetupFiles[3]);
+  chooseInstallDir(aktProduct.SetupFiles[2]);
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);

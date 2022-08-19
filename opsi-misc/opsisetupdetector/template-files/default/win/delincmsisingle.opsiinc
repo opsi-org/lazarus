@@ -17,7 +17,7 @@ comment "Start the Uninstall check:"
 ;-----------------------------------------------------
 ; Finding the MsiId by the Displayname from Registry:
 ; Be sure that the Displayname is set correctly:
-Set $DisplayName$ = $ProductId$
+Set $DisplayName$ = '#@MsiProductName1*#'
 ; '(?i)' = case insesitive ; '.*' = 0 or more of any thing
 Set $UninstallList$ = getGuidListByDisplaynameRegex('(?i)'+$DisplayName$+'.*')
 ;-----------------------------------------------------

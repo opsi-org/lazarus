@@ -1,4 +1,0 @@
-if $Install_from_local_tmpdir$ = "true"
-    ; cleanup installer tempdirectory
-    Files_del_installer_from_temp
-endif

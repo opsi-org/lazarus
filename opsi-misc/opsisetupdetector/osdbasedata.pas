@@ -105,6 +105,7 @@ type
     FsetupFileSize: cardinal;     // MB
     Farchitecture: TArchitecture;
     FmsiId: string;
+    FmsiProductName: string;
     FmstAllowed: boolean;
     FMstFullFileName: string;
     FmstFileNamePath: string;
@@ -149,6 +150,7 @@ type
     property setupFileSize: cardinal read FsetupFileSize write FsetupFileSize;
     property architecture: TArchitecture read Farchitecture write Farchitecture;
     property msiId: string read FmsiId write FmsiId;
+    property msiProductName: string read FmsiProductName write FmsiProductName;
     property mstAllowed: boolean read FmstAllowed write FmstAllowed;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;

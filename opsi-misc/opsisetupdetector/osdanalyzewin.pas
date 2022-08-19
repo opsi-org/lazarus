@@ -479,9 +479,12 @@ begin
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.productdata.productName :=
+      begin
+        mysetup.msiProductName :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
+        aktProduct.productdata.productName := mysetup.msiProductName;
+      end;
 
       sSearch := 'ProductVersion: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
