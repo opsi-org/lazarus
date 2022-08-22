@@ -28,7 +28,7 @@ type
     FDownloadDir: string;
     FDownloadResult: boolean;
     FOpsiPackageSearch: TSearchRec;
-    FDistrInfo: TDistributionInfo;
+    FPackageManagementShellCommand: string;
     FDownloadedOpsiPackageVersion: string;
     FDefaultOpsiPackageVersion: string;
     FDownloadedOpsiPackageFolder: string;
@@ -52,7 +52,7 @@ type
   const
     //DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     constructor Create(OpsiPackageId: string; DownloadDir: string;
-      OpsiPackageDownloadCommand: TRunCommandElevated; DistrInfo: TDistributionInfo);
+      OpsiPackageDownloadCommand: TRunCommandElevated; PackageManagementShellCommand: string);
       overload;
     procedure DownloadOpsiPackageFromUib;
     function AreOpsiPackageVersionsEqual: boolean;
@@ -67,7 +67,7 @@ function ExtractFileWithCpio(FileName: string): boolean;
 
 function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
   OpsiPackageDownloadCommand: TRunCommandElevated;
-  DistrInfo: TDistributionInfo): boolean;
+  PackageManagementShellCommand: string): boolean;
 
 
 implementation
@@ -96,7 +96,7 @@ end;
 
 constructor TOpsiPackageDownloader.Create(OpsiPackageId: string;
   DownloadDir: string; OpsiPackageDownloadCommand: TRunCommandElevated;
-  DistrInfo: TDistributionInfo);
+  PackageManagementShellCommand: string);
   overload;
 begin
   inherited Create;
@@ -104,14 +104,14 @@ begin
   FOpsiPackageId := OpsiPackageId;
   FDownloadDir := DownloadDir;
   FOpsiPackageDownloadCommand := OpsiPackageDownloadCommand;
-  FDistrInfo := DistrInfo;
+  FPackageManagementShellCommand := PackageManagementShellCommand;
 end;
 
 procedure TOpsiPackageDownloader.InstallDownloadPackage;
 begin
-  FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
+  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'update', Output);
-  FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
+  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'install wget', Output);
 end;
 
@@ -198,9 +198,9 @@ end;
 
 procedure TOpsiPackageDownloader.InstallExtractionPackages;
 begin
-  FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
+  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'install cpio', Output);
-  FOpsiPackageDownloadCommand.Run(FDistrInfo.PackageManagementShellCommand +
+  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'install gzip', Output);
 end;
 
@@ -272,7 +272,7 @@ end;
 
 function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
   OpsiPackageDownloadCommand: TRunCommandElevated;
-  DistrInfo: TDistributionInfo): boolean;
+  PackageManagementShellCommand: string): boolean;
 var
   OpsiPackageDownloader: TOpsiPackageDownloader;
 begin
@@ -281,7 +281,7 @@ begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
 
   OpsiPackageDownloader := TOpsiPackageDownloader.Create(OpsiPackageId,
-    DownloadDir, OpsiPackageDownloadCommand, DistrInfo);
+    DownloadDir, OpsiPackageDownloadCommand, PackageManagementShellCommand);
   OpsiPackageDownloader.DownloadOpsiPackageFromUib;
 
   // Compare the downloaded package with an already existing package:
