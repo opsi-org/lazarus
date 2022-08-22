@@ -51,10 +51,10 @@ function GetPackageManagementShellCommand(DistroName: string): string;
 begin
   Result := '';
   {RedHat like}
-  if MatchStr(lowerCase(DistroName), ['almalinux', 'redhatenterprise', 'rocky']) then
+  if MatchStr(lowerCase(DistroName), ['almalinux', 'redhatenterprise', 'rhel', 'rocky']) then
     Result := 'yum -y '
   {Debian like}
-  else if MatchStr(lowerCase(DistroName), ['debian', 'ubuntu', 'univention']) then
+  else if MatchStr(lowerCase(DistroName), ['debian', 'ubuntu', 'univention', 'linuxmint']) then
     Result := 'apt --assume-yes '
   {Suse}
   else if MatchStr(lowerCase(DistroName), ['opensuse', 'suse']) then
