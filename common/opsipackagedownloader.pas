@@ -52,7 +52,8 @@ type
   const
     //DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     constructor Create(OpsiPackageId: string; DownloadDir: string;
-      OpsiPackageDownloadCommand: TRunCommandElevated; PackageManagementShellCommand: string);
+      OpsiPackageDownloadCommand: TRunCommandElevated;
+      PackageManagementShellCommand: string);
       overload;
     procedure DownloadOpsiPackageFromUib;
     function AreOpsiPackageVersionsEqual: boolean;
@@ -109,8 +110,7 @@ end;
 
 procedure TOpsiPackageDownloader.InstallDownloadPackage;
 begin
-  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
-    'update', Output);
+  FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand + 'update', Output);
   FOpsiPackageDownloadCommand.Run(FPackageManagementShellCommand +
     'install wget', Output);
 end;
@@ -131,8 +131,8 @@ begin
     FDownloadedOpsiPackageVersion := FOpsiPackageSearch.Name;
     Delete(FDownloadedOpsiPackageVersion, 1, Pos('_', FDownloadedOpsiPackageVersion));
     Delete(FDownloadedOpsiPackageVersion, Pos('.opsi', FDownloadedOpsiPackageVersion),
-      FDownloadedOpsiPackageVersion.Length - Pos('.opsi',
-      FDownloadedOpsiPackageVersion) + 1);
+      FDownloadedOpsiPackageVersion.Length -
+      Pos('.opsi', FDownloadedOpsiPackageVersion) + 1);
     FDownloadedOpsiPackageFolder :=
       'downloaded_' + FOpsiPackageId + '_' + FDownloadedOpsiPackageVersion;
   end
