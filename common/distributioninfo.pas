@@ -7,7 +7,7 @@ interface
 uses
   // Use e.g. the following commented code instead of the line below it if you
   // have client specific repos and you wrote a unit SupportedOpsiClientDistributions
-  (*
+ (*
   {$IF defined(TARGETOPSISERVER)}
   SupportedOpsiServerDistributions,
   {$ELSEIF defined(TARGETOPSICLIENT)}
@@ -15,7 +15,6 @@ uses
   {$ENDIF}
   *)
   SupportedOpsiServerDistributions,
-
   Classes, SysUtils, StrUtils,
   oslog;
 
@@ -33,7 +32,7 @@ type
     procedure SetPackageManagementShellCommand;
     procedure FillDistributionInfo(DistroName: string; DistroRelease: string);
   public
-    constructor Create(DistroName: string; DistroRelease: string);overload;
+    constructor Create(DistroName: string; DistroRelease: string); overload;
     procedure CorrectDistribution(DistroName: string; DistroRelease: string);
 
     property DistroName: string read FDistroName;
@@ -42,8 +41,25 @@ type
     property PackageManagementShellCommand: string read FPackageManagementShellCommand;
   end;
 
+function GetPackageManagementShellCommand(DistroName: string): string;
 
 implementation
+
+// A general public function for getting only the package management shell command for a linux distribution name.
+// Use TDistributionInfo instead if you also like to check and/or edit a distribution.
+function GetPackageManagementShellCommand(DistroName: string): string;
+begin
+  Result := '';
+  {RedHat like}
+  if MatchStr(lowerCase(DistroName), ['almalinux', 'redhatenterprise', 'rocky']) then
+    Result := 'yum -y '
+  {Debian like}
+  else if MatchStr(lowerCase(DistroName), ['debian', 'ubuntu', 'univention']) then
+    Result := 'apt --assume-yes '
+  {Suse}
+  else if MatchStr(lowerCase(DistroName), ['opensuse', 'suse']) then
+    Result := 'zypper --non-interactive ';
+end;
 
 {private}
 procedure TDistributionInfo.SetDistribution;
@@ -53,37 +69,32 @@ end;
 
 procedure TDistributionInfo.SetPackageManagementShellCommand;
 begin
-  {RedHat like}
-  if MatchStr(lowerCase(FDistroName), ['almalinux', 'redhatenterprise', 'rocky']) then
-    FPackageManagementShellCommand := 'yum -y '
-  {Debian like}
-  else if MatchStr(lowerCase(FDistroName), ['debian', 'ubuntu', 'univention']) then
-    FPackageManagementShellCommand := 'apt --assume-yes '
-  {Suse}
-  else if MatchStr(lowerCase(FDistroName), ['opensuse', 'suse']) then
-    FPackageManagementShellCommand := 'zypper --non-interactive ';
+  FPackageManagementShellCommand := GetPackageManagementShellCommand(FDistroName);
 end;
 
-procedure TDistributionInfo.FillDistributionInfo(DistroName: string; DistroRelease: string);
+procedure TDistributionInfo.FillDistributionInfo(DistroName: string;
+  DistroRelease: string);
 begin
   FDistroName := DistroName;
   FDistroRelease := DistroRelease;
   LogDatei.log(FDistroName + ' ' + FDistroRelease,
-      LLessential);
+    LLessential);
   SetDistribution;
   if (FDistribution <> other) then SetPackageManagementShellCommand;
 end;
 
 {public}
-constructor TDistributionInfo.Create(DistroName: string; DistroRelease: string);overload;
+constructor TDistributionInfo.Create(DistroName: string; DistroRelease: string);
+  overload;
 begin
   inherited Create;
-  FillDistributionInfo(DistroName, DistroRelease)
+  FillDistributionInfo(DistroName, DistroRelease);
 end;
 
-procedure TDistributionInfo.CorrectDistribution(DistroName: string; DistroRelease: string);
+procedure TDistributionInfo.CorrectDistribution(DistroName: string;
+  DistroRelease: string);
 begin
-  FillDistributionInfo(DistroName, DistroRelease)
+  FillDistributionInfo(DistroName, DistroRelease);
 end;
 
 
