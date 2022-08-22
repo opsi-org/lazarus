@@ -1,3 +1,4 @@
+
 ; copy installer files to tempdirectory
 [Files_copy_installer_to_temp]
 copy -s "$installerSourceDir$\*.*" "%opsiTmpDir%\$ProductId$"

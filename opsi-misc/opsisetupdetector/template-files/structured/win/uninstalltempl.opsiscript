@@ -23,6 +23,8 @@ Set $ProductId$		 = "#@productId*#"
 Set $InstallDir$	= "#@InstallDir1*#"
 ; ----------------------------------------------------------------
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
@@ -34,8 +36,6 @@ comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
-
-Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delinc.opsiiinc")
 	comment "Start uninstall part"

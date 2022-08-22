@@ -467,6 +467,14 @@ begin
       readFileToList('HandleCustomDirSections.opsiscript', sectionlist);
     end;
 
+    if aktProduct.productdata.customizeProfile then
+    begin
+
+      readFileToList('HandleCustomizeProfile.opsiscript', postinstalllist);
+
+      readFileToList('HandleCustomizeProfilesSections.opsiscript', sectionlist);
+    end;
+
     // loop over setups
     for i := 0 to 2 do
     begin
@@ -1144,7 +1152,11 @@ begin
     textlist.Add('alwaysScript: ');
     textlist.Add('onceScript: ');
     textlist.Add('customScript: ');
-    textlist.Add('userLoginScript: ');
+    if aktProduct.productdata.customizeProfile then
+      textlist.Add('userLoginScript: ')
+    else
+      textlist.Add('userLoginScript: '+ aktProduct.productdata.setupscript);
+
 
     //dependencies
     for i := 0 to aktProduct.dependencies.Count - 1 do

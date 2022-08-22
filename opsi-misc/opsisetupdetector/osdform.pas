@@ -171,6 +171,7 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label56: TLabel;
     Label6: TLabel;
     Label86: TLabel;
     Label87: TLabel;
@@ -184,6 +185,8 @@ type
     Label95: TLabel;
     Label96: TLabel;
     Label97: TLabel;
+    Label98: TLabel;
+    Label99: TLabel;
     LabelChannel: TLabel;
     LabelNumber: TLabel;
     LabelNumIcons: TLabel;
@@ -296,6 +299,7 @@ type
     TabSheetAnalyze: TTabSheet;
     TICheckBoxCustomdir: TTICheckBox;
     TICheckBoxDesktopIcon: TTICheckBox;
+    TICheckBoxCustomizeProfile: TTICheckBox;
     TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
@@ -307,6 +311,9 @@ type
     TIEditInstallDir3: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMsiId3: TTIEdit;
+    TIEditMsiName1: TTIEdit;
+    TIEditMsiName2: TTIEdit;
+    TIEditMsiName3: TTIEdit;
     TIEditMstFile2: TTIEdit;
     TIEditMstFile3: TTIEdit;
     TIEditSoftVersion1: TTIEdit;
@@ -634,6 +641,7 @@ resourcestring
   rsTemlateChannelHint = 'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
   rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
   rsInstallFromLocalHint = 'Should we add code to copy installer to local before installation ?';
+  rsCustomizeProfileHint = 'Should we add code to customize the installation in user profiles ?';
 
 
 implementation
@@ -758,6 +766,9 @@ begin
       TIEditMsiId1.Link.SetObjectAndProperty(SetupFiles[0], 'msiId');
       TIEditMsiId2.Link.SetObjectAndProperty(SetupFiles[1], 'msiId');
       TIEditMsiId3.Link.SetObjectAndProperty(SetupFiles[2], 'msiId');
+      TIEditMsiName1.Link.SetObjectAndProperty(SetupFiles[0], 'msiProductName');
+      TIEditMsiName2.Link.SetObjectAndProperty(SetupFiles[1], 'msiProductName');
+      TIEditMsiName3.Link.SetObjectAndProperty(SetupFiles[2], 'msiProductName');
       TIEditSoftVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
       TIEditSoftVersion2.Link.SetObjectAndProperty(SetupFiles[1], 'SoftwareVersion');
       TIEditSoftVersion3.Link.SetObjectAndProperty(SetupFiles[2], 'SoftwareVersion');
@@ -807,6 +818,8 @@ begin
         'installFromLocal');
       TICheckBoxHandleLiceneKey.Link.SetObjectAndProperty(productdata,
         'handleLicensekey');
+      TICheckBoxCustomizeProfile.Link.SetObjectAndProperty(productdata,
+        'customizeProfile');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
       // initialize drop down
       TIComboBoxChannel.Items.Text := templateChannelList.Text;
@@ -820,6 +833,8 @@ begin
       TICheckBoxInstallFromLocal.Hint:= rsInstallFromLocalHint;
       TICheckBoxCustomdir.Hint:= rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint:= rsUsePropDesktopicon;
+      TICheckBoxCustomizeProfile.Hint:= rsCustomizeProfileHint;
+
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of

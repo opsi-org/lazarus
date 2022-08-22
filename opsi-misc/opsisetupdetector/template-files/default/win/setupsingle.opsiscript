@@ -23,6 +23,8 @@ Set $InstallDir$	= "#@InstallDir1*#"
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
+Message "Installing " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
@@ -67,7 +69,7 @@ endif
 
 #@postInstallLines*#
 
-[Winbatch_uninstall]
+[Winbatch_uninstall_1]
 #@uninstallCommandLine1*#
 
 [Files_uninstall]

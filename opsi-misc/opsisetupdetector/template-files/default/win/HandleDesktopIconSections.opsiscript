@@ -1,3 +1,4 @@
+
 [Linkfolder_remove_desktop_icon]
 ; check delete_element
 set_basefolder common_desktopdirectory

@@ -338,6 +338,7 @@ default: ["xenial_bionic"]
     FinstallFromLocal: boolean;
     FhandleLicensekey: boolean;
     Fdesktopicon: boolean;
+    FcustomizeProfile: boolean;
     procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
@@ -365,6 +366,8 @@ default: ["xenial_bionic"]
     property installFromLocal: boolean read FinstallFromLocal write FinstallFromLocal;
     property handleLicensekey: boolean read FhandleLicensekey write FhandleLicensekey;
     property desktopicon: boolean read Fdesktopicon write Fdesktopicon;
+    property customizeProfile: boolean read FcustomizeProfile write FcustomizeProfile;
+
   public
     { public declarations }
     //constructor Create;

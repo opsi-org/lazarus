@@ -38,6 +38,8 @@ else
 endif
 ; ----------------------------------------------------------------
 
+Message "Installing " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
@@ -104,23 +106,6 @@ if ($arch$ = "64 Bit System") and (($install_architecture$ = "system specific") 
 	#@postInstallLines*#
 endif
 
-[Winbatch_install_1]
-#@installCommandLine1*#
-
-[Winbatch_install_2]
-#@installCommandLine2*#
-
-[Winbatch_uninstall_1]
-#@uninstallCommandLine1*#
-
-[Winbatch_uninstall_2]
-#@uninstallCommandLine2*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-
-#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

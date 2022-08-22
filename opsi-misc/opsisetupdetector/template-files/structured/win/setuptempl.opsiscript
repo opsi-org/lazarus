@@ -23,6 +23,8 @@ Set $InstallDir$	= "#@InstallDir1*#"
 Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
+Message "Installing " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))

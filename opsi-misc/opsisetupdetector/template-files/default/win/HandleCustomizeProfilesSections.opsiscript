@@ -1,0 +1,39 @@
+
+[ProfileActions]
+; all section that called from [ProfileActions]
+; will be executed for all user profiles
+;
+; if this script runs as loginscript 
+; only the [ProfileActions] will be executed
+
+; copy some files to every user profile
+Files_copy_to_user_profiles
+
+; make entries in every currentuser hive
+Registry_current_user
+
+; modify or create ini files in all user profiles
+;Patches_in_user_profiles  "%UserProfileDir%\Appdata\Roaming\<path_to_ini_file>"
+Patches_in_user_profiles  "%UserProfileDir%\Appdata\Roaming\osd_profile_example\osd_profile_example.ini"
+
+[Files_copy_to_user_profiles]
+; example structure:
+;copy "%Scriptpath%\profile_files\*.*" "%UserProfileDir%\Appdata\Roaming\<path_to_application_dir>"
+; example:
+copy "%Scriptpath%\profile_files\*.*" "%UserProfileDir%\Appdata\Roaming\osd_profile_example"
+
+[Registry_current_user]
+; example structure:
+openkey [HKCU\Software\<application key>]
+;set "<var name>" = "<var value>"
+; example:
+openkey [HKCU\Software\osd_profile_example]
+set "osd_profile_example_entry" = "example_value"
+
+[Patches_in_user_profiles]
+; example structure:
+; set [<section name>] <key name>=<value>
+; example:
+set [example_section] example_key=example_value
+
+

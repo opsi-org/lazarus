@@ -26,6 +26,8 @@ Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
 ; ----------------------------------------------------------------
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
@@ -33,13 +35,10 @@ if not(($OS$ = "Windows_NT"))
 	isFatalError "wrong OS"
 endif
 
-
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
-
-Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delinc.opsiinc")
 	comment "Start uninstall part"

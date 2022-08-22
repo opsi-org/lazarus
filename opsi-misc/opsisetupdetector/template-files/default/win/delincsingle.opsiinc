@@ -17,7 +17,7 @@ if $oldProgFound$ = "true"
 	
 	comment "Start uninstall program"
 	;----------------------------------------------
-	Winbatch_uninstall  #@uninstallWaitForProc1*#
+	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
 	;----------------------------------------------
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
