@@ -64,7 +64,7 @@ type
   end;
 
 
-function ExtractFileWithCpio(FileName: string): boolean;
+function ExtractFileWithCpio(ExtractionCommand: TRunCommandElevated; FileName: string): boolean;
 
 function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
   OpsiPackageDownloadCommand: TRunCommandElevated;
@@ -73,18 +73,15 @@ function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
 
 implementation
 
-function ExtractFileWithCpio(FileName: string): boolean;
+function ExtractFileWithCpio(ExtractionCommand: TRunCommandElevated; FileName: string): boolean;
 var
   Output: string;
 begin
   Result := True;
-  // cpio only works with bash not with sh
-  if RunCommand('/bin/bash', ['-c', 'cpio --extract < ' + FileName], Output) then
+  ExtractionCommand.Shell := '/bin/bash';
+  if ExtractionCommand.Run('cpio --extract < ' + FileName, Output) then
   begin
-    // if extraction works, Output should be something like '89 Blöcke'
-    // if Output = '' then we don't know whether extraction worked -> no log entry
-    if not (Output = '') then
-      LogDatei.log(FileName + ' successfully extracted', LLInfo);
+    LogDatei.log(FileName + ' successfully extracted', LLInfo);
   end
   else
   begin
@@ -192,7 +189,7 @@ end;
 
 procedure TOpsiPackageDownloader.ExtractCpioFile(FileName: string);
 begin
-  if not ExtractFileWithCpio(FileName) then
+  if not ExtractFileWithCpio(FOpsiPackageDownloadCommand, FileName) then
     FDownloadResult := False;
 end;
 
