@@ -16155,6 +16155,7 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
+          if Assigned(list1) then FreeAndNil(list1);
           list1 := TXStringList.Create;
           try
             try
@@ -16202,6 +16203,7 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
+                if Assigned(list1) then FreeAndNil(list1);
                 list1 := TXStringList.Create;
                 try
                   try
