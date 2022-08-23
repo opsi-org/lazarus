@@ -22,16 +22,18 @@ type
     PanelRights: TPanel;
     RadioBtnRoot: TRadioButton;
     RadioBtnSudo: TRadioButton;
+    procedure FormActivate(Sender: TObject); virtual;
     procedure BtnBackClick(Sender: TObject); virtual; abstract;
     procedure BtnFinishClick(Sender: TObject); virtual; abstract;
-    procedure FormActivate(Sender: TObject); virtual;
+
     procedure EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
     function IsPasswordCorrect(MessageWrongPassword: string): boolean;
-    procedure FormClose(Sender: TObject); virtual; abstract;
-    procedure showResult; virtual; abstract;
 
-  public
+    procedure ShowResultOfWholeInstallationProcess; virtual; abstract;
+    procedure CloseProject; virtual; abstract;
+    procedure FormClose(Sender: TObject); virtual; abstract;
+  protected
   var
     clientDataDir, Output: string;
     btnFinishClicked: boolean;
@@ -48,9 +50,16 @@ type
     FFileText: TStringList;
     FMessage: string;
     procedure ShowMessageOnForm; virtual; abstract;
+
     procedure DefineDirClientData;
+    procedure WritePropertiesToFile; virtual;
+
     procedure GetOpsiScript; virtual; abstract;
     procedure ExecuteInstallationScript; virtual; abstract;
+    function DidNewerVersionOfTwoVersionsFail: boolean; virtual; abstract;
+    procedure TryOlderVersion; virtual; abstract;
+    procedure LogResultOfLastInstallationAttempt; virtual; abstract;
+
     procedure InstallOpsiProduct; virtual;
   public
     constructor Create(password: string; sudo: boolean;
@@ -141,11 +150,23 @@ begin
   {$ENDIF DARWIN}
 end;
 
+procedure TOpsiLinuxInstallerThread.WritePropertiesToFile;
+begin
+  DefineDirClientData;
+end;
+
 procedure TOpsiLinuxInstallerThread.InstallOpsiProduct;
 begin
   Synchronize(@GetOpsiScript);
   FTwoVersionsToTest := True;
   FOneInstallationFailed := False;
+
+  WritePropertiesToFile;
+  ExecuteInstallationScript;
+  if DidNewerVersionOfTwoVersionsFail then
+    TryOlderVersion;
+
+  LogResultOfLastInstallationAttempt
 end;
 
 procedure TOpsiLinuxInstallerThread.Execute;
