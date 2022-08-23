@@ -7,7 +7,6 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   MaskEdit, LCLType, cthreads,
-  osLinuxRepository,
   osRunCommandElevated;
 
 type
@@ -32,22 +31,23 @@ type
   end;
 
   TOpsiLinuxInstallerThread = class(TThread)
-  public
+  protected
     FInstallRunCommand: TRunCommandElevated;
-    FShellCommand, FClientDataDir, Output: string;
-    procedure prepareInstallation; virtual; abstract;
-    procedure addRepo; virtual; abstract;
-    procedure installConfiged; virtual; abstract;
+    FPackageManagementShellCommand, FClientDataDir, Output: string;
+    FFileText: TStringList;
+    //procedure prepareInstallation; virtual; abstract;
+    procedure GetOpsiScript; virtual; abstract;
+    procedure Install; virtual; abstract;
   public
-    constructor Create(password: string; sudo: boolean; shellCommand: string);
+    constructor Create(password: string; sudo: boolean; PackageManagementShellCommand: string);
   end;
 
 implementation
 
-constructor TOpsiLinuxInstallerThread.Create(password: string; sudo: boolean; shellCommand: string);
+constructor TOpsiLinuxInstallerThread.Create(password: string; sudo: boolean; PackageManagementShellCommand: string);
 begin
   FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
-  FShellCommand := shellCommand;
+  FPackageManagementShellCommand := PackageManagementShellCommand;
 
   FreeOnTerminate := True;
   inherited Create(True);
