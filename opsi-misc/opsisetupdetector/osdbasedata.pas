@@ -705,6 +705,8 @@ begin
   Finstall_waitforprocess := '';
   FcopyCompleteDir := False;
   FinstallErrorHandlingLines.Clear;
+  FmsiProductName:= '';
+  FinstallerSourceDir:= '';
 end;
 
 // TPProperty **********************************
@@ -1892,6 +1894,7 @@ begin
     installFromLocal := False;
     handleLicensekey := False;
     desktopicon := False;
+    customizeProfile := False;
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

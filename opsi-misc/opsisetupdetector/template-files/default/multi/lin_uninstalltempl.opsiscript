@@ -9,8 +9,8 @@ encoding=utf8
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
-importlib "%scriptpath%/osd-lib.opsiscript"
-importlib "%scriptpath%/uib_lin_install.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
@@ -25,19 +25,11 @@ endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%/lin_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/lin_delsub.opsiscript"
+if FileExists("%ScriptPath%/lin_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/lin_delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Sub_free_license
-endif
+#@FinalUnInstallLines*#
 
-[Sub_free_license]
-comment "License management is enabled and will be used"
-
-comment "Trying to free license used for the product"
-DefVar $result$
-Set $result$ = FreeLicense($LicensePool$)
+#@sectionLines*#

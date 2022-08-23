@@ -25,20 +25,16 @@ endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%/mac_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/mac_delsub.opsiscript"
+if FileExists("%ScriptPath%/mac_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/mac_delinc.opsiinc"
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Sub_free_license
-endif
+#@FinalUnInstallLines*#
 
-[Sub_free_license]
-comment "License management is enabled and will be used"
+[Files_uninstall]
+del -sf "$InstallDir$/"
 
-comment "Trying to free license used for the product"
-DefVar $result$
-Set $result$ = FreeLicense($LicensePool$)
-
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

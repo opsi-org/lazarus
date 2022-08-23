@@ -28,6 +28,8 @@ Set $InstallDir$	= "<none>"
 Set $ListOfPackageNames$ = CreateStringList("<packagename>")
 ; ----------------------------------------------------------------
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "linux"))
@@ -39,8 +41,6 @@ comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
-
-Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delinc.opsiinc")
 	comment "Start uninstall part"

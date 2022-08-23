@@ -26,6 +26,8 @@ Set $ProductId$		 = "#@productId*#"
 Set $InstallDir$	= "/Applications/<productid.app>"
 ; ----------------------------------------------------------------
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "macos"))
@@ -37,8 +39,6 @@ comment "Show product picture"
 ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
-
-Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delinc.opsiinc")
 	comment "Start uninstall part"

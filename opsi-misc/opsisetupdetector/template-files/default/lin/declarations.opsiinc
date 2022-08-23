@@ -27,6 +27,7 @@ DefVar $ProdVersion$
 DefVar $productid$
 DefVar $targetfile$
 DefVar $tmpstr$
+DefVar $PackageName$
 
 DefStringList $ListOfPackageNames$
 

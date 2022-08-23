@@ -25,6 +25,8 @@ Set $ProductId$		= "#@productId*#"
 Set $InstallDir$	= "#@InstallDir1*#"
 ; ----------------------------------------------------------------
 
+Message "Installing " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 if not(($OS$ = "linux"))
@@ -36,8 +38,6 @@ comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 #@GetProductProperty*#
-
-Message "Installing " + $ProductId$ + " ..."
 
 set $installerSourceDir$ = "#@installerSourceDir1*#"
 

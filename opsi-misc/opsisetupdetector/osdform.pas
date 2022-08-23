@@ -303,7 +303,6 @@ type
     TICheckBoxInstallFromLocal: TTICheckBox;
     TICheckBoxHandleLiceneKey: TTICheckBox;
     TICheckBoxS1Mst: TTICheckBox;
-    TICheckBoxlicenseRequired: TTICheckBox;
     TICheckBoxS2Mst: TTICheckBox;
     TICheckBoxS3Mst: TTICheckBox;
     TIComboBoxChannel: TTIComboBox;
@@ -803,8 +802,7 @@ begin
       TIEditProdName.Link.SetObjectAndProperty(productdata, 'productName');
       TIMemoAdvice.Link.SetObjectAndProperty(productdata, 'advice');
       TIMemoDesc.Link.SetObjectAndProperty(productdata, 'description');
-      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata,
-        'licenserequired');
+      //TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata, 'licenserequired');
       //TIGridDep.ListObject := dependencies;
       TITrackBarPrio.Link.SetObjectAndProperty(productdata, 'priority');
       TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');

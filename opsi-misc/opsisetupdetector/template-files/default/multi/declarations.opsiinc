@@ -37,6 +37,7 @@ DefVar $productid$
 DefVar $targetfile$
 DefVar $tmpstr$
 DefVar $uninstallprogram$
+DefVar $PackageName$
 
 DefStringlist $ListOfPackageNames$
 DefStringList $osinfomap$

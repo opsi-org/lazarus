@@ -18,6 +18,8 @@ Set $ProductId$		= "#@productId*#"
 ; the path where we find the product after the installation
 ; ----------------------------------------------------------------
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
 set $OS$ = GetOS
 
 comment "Show product picture"

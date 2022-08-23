@@ -97,11 +97,11 @@ object resultForm1: TresultForm1
       Height = 601
       Top = 1
       Width = 1095
-      ActivePage = TabSheetSetup3
+      ActivePage = TabSheetProduct
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 5
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -8249,11 +8249,6 @@ object resultForm1: TresultForm1
               Control = TISpinEditPackageVers
               WrapAfter = waAuto
               Index = 3
-            end          
-            item
-              Control = TICheckBoxlicenseRequired
-              WrapAfter = waAuto
-              Index = 4
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -8297,7 +8292,7 @@ object resultForm1: TresultForm1
             Constraints.MinWidth = 201
             OnChange = genRttiEditChange
             ParentFont = False
-            TabOrder = 1
+            TabOrder = 0
           end
           object TISpinEditPackageVers: TTISpinEdit
             Left = 508
@@ -8308,21 +8303,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
             MinValue = 1
-            TabOrder = 2
-          end
-          object TICheckBoxlicenseRequired: TTICheckBox
-            Left = 620
-            Height = 26
-            Top = 8
-            Width = 140
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Around = 4
-            BorderSpacing.InnerBorder = 2
-            Caption = 'License required'
-            OnChange = TICheckBoxlicenseRequiredChange
-            PropertyNameAsCaption = False
-            TabOrder = 0
+            TabOrder = 1
           end
         end
         object FlowPanel10: TFlowPanel
@@ -8417,8 +8398,8 @@ object resultForm1: TresultForm1
         end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 169
-          Top = 404
+          Height = 117
+          Top = 456
           Width = 1087
           Align = alClient
           ControlList = <          
@@ -8436,7 +8417,7 @@ object resultForm1: TresultForm1
             Left = 928
             Height = 54
             Hint = 'Go to the next Step'
-            Top = 105
+            Top = 53
             Width = 149
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -8694,7 +8675,7 @@ object resultForm1: TresultForm1
         end
         object FlowPanelCustomDir: TFlowPanel
           Left = 0
-          Height = 77
+          Height = 129
           Top = 327
           Width = 1087
           Align = alTop
