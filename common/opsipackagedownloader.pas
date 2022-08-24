@@ -18,8 +18,7 @@ uses
   Classes, SysUtils,
   osRunCommandElevated,
   osLog,
-  Process,
-  DistributionInfo;
+  Process;
 
 type
   TOpsiPackageDownloader = class(TObject)
