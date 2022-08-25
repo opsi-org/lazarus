@@ -24,21 +24,18 @@ if not("true" = "false")
 	isFatalError "wrong OS"
 endif
 
-if FileExists("%ScriptPath%/mac_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/mac_delsub.opsiscript"
+if FileExists("%ScriptPath%/mac_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/mac_delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir3*#"
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%/files3"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files3/<my macos install file>") 
 ;----------------------------------------------
@@ -48,22 +45,6 @@ Sub_check_installSuccess
 comment "Copy files"
 Files_install
 
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "Installation failed"
-	isfatalerror "Installation failed"
-else
-	Comment "Installation success"
-endif
-
-
-[Files_install]
-; Example of recursively copying some files into the installation directory:
-;
-; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
-
-
-#@SetupSectionLines3*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

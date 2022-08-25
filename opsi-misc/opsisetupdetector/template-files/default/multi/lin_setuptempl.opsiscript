@@ -50,7 +50,7 @@ cleanupPackageSystem()
 ;----------------------------------------------
 cleanupPackageSystem()
 ;----------------------------------------------
-Sub_check_exitcode
+Sub_check_generic_exitcode
 
 #@postInstallLines*#
 
@@ -58,23 +58,6 @@ comment "Copy files"
 Files_install
 
 
-[sub_check_exitcode]
-if stringtobool(isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ ))
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
-
-
-
-[Files_install]
-; Example of recursively copying some files into the installation directory:
-;
-; copy -s "%ScriptPath%/files/*.*" "$InstallDir$"
-
-
-#@SetupSectionLines2*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

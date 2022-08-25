@@ -16,7 +16,6 @@ if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%/files2"
 	;----------------------------------------------
 	; Delete an installed  OS package out of a list of names:
 	; set $installSuccess$ = linuxRemoveOneOf('list of packageIDs')
@@ -24,27 +23,10 @@ if $oldProgFound$ = "true"
 	;
 	; Delete one installed  OS package with a known name:
 	; set $exitcode$ = linuxRemoveOnePackage('<packageId>')
-	; Sub_check_exitcode_del
+	; Sub_check_generic_exitcode
 	;----------------------------------------------
 	
 	#@postUninstallLines*#
 endif
 
-[Sub_check_exitcode_del]
-if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
-	LogError $ErrorString$
-	isfatalerror $ErrorString$
-else
-	Comment $ErrorString$
-endif
-
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "DeInstallation failed"
-	isfatalerror "DeInstallation failed"
-else
-	Comment "Installation success"
-endif
-
-#@DelsubSectionLines2*#
 ;----------------------------------------------

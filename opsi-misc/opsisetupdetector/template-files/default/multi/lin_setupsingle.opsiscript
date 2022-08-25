@@ -27,23 +27,16 @@ endif
 
 Message "Installing " + $ProductId$ + " ..."
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
-endif
+set $installerSourceDir$ = "#@installerSourceDir2*#"
 
 #@preInstallLines*#
 comment "Start setup "
-ChangeDirectory "%SCRIPTPATH%/files2"
+ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
 cleanupPackageSystem()
 #@installCommandLine2*#
 cleanupPackageSystem()
 ;----------------------------------------------
-Sub_check_exitcode
-#@postInstallLines*#
-
-[sub_check_exitcode]
 if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
@@ -51,7 +44,8 @@ else
 	Comment $ErrorString$
 endif
 
-#@SetupSectionLines2*#
+#@postInstallLines*#
+
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

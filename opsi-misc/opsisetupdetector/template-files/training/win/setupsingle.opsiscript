@@ -5,12 +5,11 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-
 ;here we start
 [Actions]
 
 ;check if the running opsiscript version is not too old 
-requiredOpsiscriptVersion >= "4.12.5.0
+requiredOpsiscriptVersion >= "4.12.5.0"
 
 ;fetch helper libraries
 importlib "uib_exitcode.opsiscript"
@@ -55,6 +54,8 @@ DefVar $LicenseHandledByScript$ = "#@LicenseRequired*#"
 DefVar $LicenseKey$  = ""
 DefVar $LicensePool$ = "pool-" +  $productId$
 
+Message "Installing " + $ProductId$ + " ..."
+
 ; ----------------------------------------------------------------
 comment  "check if the script is adequate to the environment"
 ; ----------------------------------------------------------------
@@ -86,14 +87,15 @@ ShowBitmap $ImagePath$ $ProductName$
 comment "uninstall an existing installation if possible"
 ; ---------------------------------------------------------------
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
 
 ; show  a title for the installation
 Message "Installing " + $ProductId$ + " .."
 
+set $installerSourceDir$ = "#@installerSourceDir1*#"
 
 ; ---------------------------------------------------------------
 comment "handle license management if included "
@@ -106,14 +108,14 @@ if $LicenseHandledByScript$ = "true"
 	; make use of the license key resp the license reservation
 endif
 
+#@preInstallLines*#
+
 ; ---------------------------------------------------------------
 comment "run  the setup program"
 ; ----------------------------------------------------------------
 
-; the call to a network drive is more stable if we set the path 
-ChangeDirectory "%SCRIPTPATH%"
-
-#@preInstallLines*#
+; the call to the installer is more stable if we set the path 
+ChangeDirectory $installerSourceDir$
 
 ; call the setup program
 Winbatch_install  #@installWaitForProc1*#
@@ -133,8 +135,6 @@ else
 endif
 
 #@postInstallLines*#
-
-#@SetupHandleDesktopIcon*#
 
 ; ---------------------------------------------------------------
 comment "do tasks  which supplement the installation"
@@ -233,6 +233,21 @@ LinkFolder_install
 ; 	icon_index: 2
 ; end_link
 
-#@SetupDesktopiconSectionLines*#
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
 
-#@SetupSectionLines1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+#@SectionLines*#

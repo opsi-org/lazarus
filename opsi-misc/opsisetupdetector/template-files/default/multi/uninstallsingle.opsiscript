@@ -38,3 +38,28 @@ switch $OS$
 		sub "mac_uninstall.opsiscript"
 	endcase
 endswitch
+
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Files_uninstall]
+del -sf "$InstallDir$/"
+
+[Sub_check_generic_exitcode]
+if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+[Sub_check_installSuccess]
+if $installSuccess$  = "false"
+	LogError "DeInstallation failed"
+	isfatalerror "DeInstallation failed"
+else
+	Comment "Installation success"
+endif
+
+
+#@sectionLines*#

@@ -31,12 +31,5 @@ endif
 
 #@FinalUnInstallLines*#
 
-[Winbatch_uninstall]
-#@uninstallCommandLine1*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------

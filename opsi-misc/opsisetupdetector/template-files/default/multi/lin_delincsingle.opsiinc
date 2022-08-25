@@ -15,7 +15,6 @@ if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
-	ChangeDirectory "%SCRIPTPATH%/files2"
 	;----------------------------------------------
 	#@uninstallCommandLine2*#
 	;----------------------------------------------
@@ -27,7 +26,4 @@ if $oldProgFound$ = "true"
 	endif
 	#@postUninstallLines*#
 endif
-
-
-#@DelsubSectionLines2*#
 ;-----------------------------------------------------

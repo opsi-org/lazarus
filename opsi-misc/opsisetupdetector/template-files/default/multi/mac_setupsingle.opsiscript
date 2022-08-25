@@ -24,9 +24,9 @@ if not("true" = "#@install3*#")
 	isFatalError "wrong OS"
 endif
 
-if FileExists("%ScriptPath%/mac_delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%/mac_delsub.opsiscript"
+if FileExists("%ScriptPath%/mac_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/mac_delinc.opsiinc"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
@@ -45,16 +45,6 @@ ChangeDirectory "%SCRIPTPATH%/files3"
 Sub_check_installSuccess
 #@postInstallLines*#
 
-
-[Sub_check_installSuccess]
-if $installSuccess$  = "false"
-	LogError "Installation failed"
-	isfatalerror "Installation failed"
-else
-	Comment "Installation success"
-endif
-
-#@SetupSectionLines3*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

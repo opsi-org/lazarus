@@ -1,6 +1,7 @@
 ; ----------------------------------------------------------------
 ; This is an opsi-script file.
 ; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
 ; ----------------------------------------------------------------
 encoding=utf8
 
@@ -8,7 +9,7 @@ encoding=utf8
 [Actions]
 
 ;check if the running opsiscript version is not too old 
-requiredOpsiscriptVersion >= "4.12.4.23"
+requiredOpsiscriptVersion >= "4.12.5.0"
 
 ;fetch helper libraries
 importlib "uib_exitcode.opsiscript"
@@ -19,12 +20,9 @@ comment "retrieve infos from script environment"
 ; ----------------------------------------------------------------
 ; the values are found automatically when the script is running
 ;
-DefStringList $productInfos$
-set $productInfos$ = getProductMap
-DefVar $ProductId$
-set $ProductId$ = getValue("id", $productInfos$)
-DefVAr $ProductName$
-set $ProductName$ = getValue("name", $productInfos$)
+DefStringList $productInfos$ = getProductMap
+DefVar $ProductId$ = getValue("id", $productInfos$)
+DefVar $ProductName$ = getValue("name", $productInfos$)
 
 DefVar $OS$ 
 set $OS$= GetOS
