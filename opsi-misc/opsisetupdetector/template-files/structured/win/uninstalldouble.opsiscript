@@ -15,6 +15,9 @@ importlib "osd-lib.opsiscript"
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "sections.opsiinc"
+
 
 Set $arch$ = GetSystemType
 
@@ -48,13 +51,3 @@ endif
 
 #@FinalUnInstallLines*#
 
-[Winbatch_uninstall_1]
-#@uninstallCommandLine1*#
-
-[Winbatch_uninstall_2]
-#@uninstallCommandLine2*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-#@sectionLines*#

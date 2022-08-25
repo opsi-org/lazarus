@@ -15,6 +15,8 @@ importlib "osd-lib.opsiscript"
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "sections.opsiinc"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
@@ -44,21 +46,6 @@ endif
 
 #@FinalUnInstallLines*#
 
-[Winbatch_uninstall]
-; Choose one of the following examples as basis for program uninstall
-;
-; === Nullsoft Scriptable Install System ================================================================
-; maybe better called as
-; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
-; "$UninstallProgram$" /S
-;
-; === Inno Setup ========================================================================================
-; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

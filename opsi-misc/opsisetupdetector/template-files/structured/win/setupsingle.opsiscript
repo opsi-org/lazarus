@@ -59,7 +59,7 @@ set $installerSourceDir$ = "#@installerSourceDir1*#"
 comment "Start setup program"
 ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
-Winbatch_install	#@installWaitForProc1*#
+Winbatch_install_1	#@installWaitForProc1*#
 ;----------------------------------------------
 set $ExitCode$ = getlastexitcode
 if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )

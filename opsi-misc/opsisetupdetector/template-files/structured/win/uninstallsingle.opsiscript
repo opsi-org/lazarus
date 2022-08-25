@@ -15,6 +15,9 @@ importlib "osd-lib.opsiscript"
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "sections.opsiinc"
+
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
@@ -43,13 +46,5 @@ if FileExists("%ScriptPath%\delinc.opsiiinc")
 endif
 
 #@FinalUnInstallLines*#
-
-[Winbatch_uninstall]
-#@uninstallCommandLine1*#
-
-[Files_uninstall]
-del -sf "$InstallDir$\"
-
-#@sectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
