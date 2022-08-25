@@ -54,10 +54,11 @@ type
     procedure DefineDirClientData;
     procedure WritePropertiesToFile; virtual;
 
-    procedure GetOpsiScript; virtual; abstract;
+    procedure GetOpsiScript; virtual;
     procedure ExecuteInstallationScript; virtual; abstract;
     function DidNewerVersionOfTwoVersionsFail: boolean; virtual; abstract;
     procedure TryOlderVersion; virtual; abstract;
+    procedure RemoveOpsiScript;
     procedure LogResultOfLastInstallationAttempt; virtual; abstract;
 
     procedure InstallOpsiProduct; virtual;
@@ -155,9 +156,29 @@ begin
   DefineDirClientData;
 end;
 
+procedure TOpsiLinuxInstallerThread.GetOpsiScript;
+begin
+  // Get opsi-script_*.tar.gz from download.opensuse.org and extract it
+  //FPackageManagementShellCommand :=
+  //  GetPackageManagementShellCommand(Data.DistrInfo.DistroName);
+  FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
+  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget', Output);
+  FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
+    'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
+    + ' -nd -P ../', Output);
+  FInstallRunCommand.Run('rm ../robots.*', Output);
+  FInstallRunCommand.Run('tar -xvf ../opsi-script_*.tar.gz', Output);
+  FInstallRunCommand.Run('rm ../opsi-script_*.tar.gz', Output);
+end;
+
+procedure TOpsiLinuxInstallerThread.RemoveOpsiScript;
+begin
+  FInstallRunCommand.Run('rm -r BUILD/', Output);
+end;
+
 procedure TOpsiLinuxInstallerThread.InstallOpsiProduct;
 begin
-  Synchronize(@GetOpsiScript);
+  GetOpsiScript;
   FTwoVersionsToTest := True;
   FOneInstallationFailed := False;
 
@@ -166,7 +187,8 @@ begin
   if DidNewerVersionOfTwoVersionsFail then
     TryOlderVersion;
 
-  LogResultOfLastInstallationAttempt
+  RemoveOpsiScript;
+  LogResultOfLastInstallationAttempt;
 end;
 
 procedure TOpsiLinuxInstallerThread.Execute;
@@ -207,7 +229,8 @@ begin
     EditPassword.EchoMode := emPassword;
 end;
 
-function TOpsiLinuxInstallerPasswordForm.IsPasswordCorrect(MessageWrongPassword: string): boolean;
+function TOpsiLinuxInstallerPasswordForm.IsPasswordCorrect(
+  MessageWrongPassword: string): boolean;
 var
   TestCommand: TRunCommandElevated;
 begin
