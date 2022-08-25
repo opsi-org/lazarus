@@ -252,7 +252,7 @@ var
   startupmessages: TStringList;
   //{$ENDIF GUI}
 
-  reloadProductList: boolean = False;
+  ReloadProductList: boolean = False;
   //list used for avoiding an endless loop if products set products to setup again
   //which used "reloadProducList" and were already runned
   ProductsRunnedUsingReloadProductList: TStringlist;
@@ -617,6 +617,7 @@ end;
 procedure TerminateApp;
 begin
   try
+    if Assigned(ProductsRunnedUsingReloadProductList) then FreeAndNil(ProductsRunnedUsingReloadProductList);
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
@@ -629,8 +630,8 @@ begin
       LogDatei.Free;
       LogDatei := nil;
       {$IFDEF WINDOWS}
-      SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+        SystemCritical.IsCritical := False;
+      {$ENDIF WINDOWS}
     end;
     try
       //TerminateApp;
@@ -1169,7 +1170,7 @@ begin
     FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
-    reloadProductList := False;
+    ReloadProductList := False;
 
 
     //OpsiData.initOpsiConf(pathnamsInfoFilename, profildateiname, ProdukteInfoFilename);
@@ -1517,7 +1518,7 @@ begin
 
 
     LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
-    if not reloadProductList then OpsiData.finishOpsiconf;
+    if not ReloadProductList then OpsiData.finishOpsiconf;
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
@@ -1581,7 +1582,7 @@ begin
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
     {$ENDIF WINDOWS}
-    if reloadProductList then BuildPC; //if true reload product list and process list
+    if ReloadProductList then BuildPC; //if true reload product list and process list
     TerminateApp;
   except
     on e: Exception do

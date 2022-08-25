@@ -3812,6 +3812,24 @@ begin
   end;
 end;
 
+procedure InitReloadProductList;
+begin
+  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
+  begin
+    ReloadProductList := true;
+    ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
+    LogDatei.log('Reload installation sequence.', LLInfo);
+  end
+  else
+  begin
+    ReloadProductList := false;
+    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
+    + ' already runned. Do not reload installation sequence.', LLWarning);
+  end;
+  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
+  LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
+end;
+
 function produceLDAPsearchParameters
   (const LDAPparameter: string; var cacheRequest: TLDAPsearchCacheRequest;
   var outputRequest: TLDAPsearchOutputRequest; var errorinfo: string): boolean;
@@ -25209,20 +25227,7 @@ begin
               begin
                 if remaining = '' then
                 begin
-                  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
-                  begin
-                    reloadProductList := true;
-                    ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
-                    LogDatei.log('Reload installation sequence.', LLInfo);
-                  end
-                  else
-                  begin
-                    reloadProductList := false;
-                    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
-                    + ' already runned. Do not reload installation sequence.', LLWarning);
-                  end;
-                  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
-                  LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
+                  InitReloadProductList;
                 end
                 else
                   ActionResult :=
