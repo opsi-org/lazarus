@@ -802,7 +802,7 @@ begin
           createTemplate:
           begin
             infilelist.Add('declarations.opsiinc');
-            infilelist.Add('sections.opsiinc');
+            infilelist.Add('sectionstempl.opsiinc');
           end;
           createMeta:
           begin
