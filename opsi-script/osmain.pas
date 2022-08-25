@@ -252,9 +252,14 @@ var
   startupmessages: TStringList;
   //{$ENDIF GUI}
 
-  reloadProductList: boolean = False;
-  //list used for avoiding an endless loop if products set products to setup again
-  //which used "reloadProducList" and were already runned
+  {If the command "reloadProductList" is called within a script the variable FlagReloadProductList
+   is set to true. If FlagReloadProductList is true the product list is reloaded from the server
+   after the end of the script and the list is processed again i.e. the procedure BuildPC is called again.
+   As default this flag must be set to false.}
+  FlagReloadProductList: boolean = False;
+
+  {The list ProductsRunnedUsingReloadProductList is used for avoiding an endless loop
+   if products set products to "setup" again which used "reloadProducList" and were already runned}
   ProductsRunnedUsingReloadProductList: TStringlist;
 
   runUpdate: boolean;
@@ -617,6 +622,7 @@ end;
 procedure TerminateApp;
 begin
   try
+    if Assigned(ProductsRunnedUsingReloadProductList) then FreeAndNil(ProductsRunnedUsingReloadProductList);
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
@@ -629,8 +635,8 @@ begin
       LogDatei.Free;
       LogDatei := nil;
       {$IFDEF WINDOWS}
-      SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+        SystemCritical.IsCritical := False;
+      {$ENDIF WINDOWS}
     end;
     try
       //TerminateApp;
@@ -1169,16 +1175,10 @@ begin
     FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
-    reloadProductList := False;
-
-
-    //OpsiData.initOpsiConf(pathnamsInfoFilename, profildateiname, ProdukteInfoFilename);
-    //if not Assigned(OpsiData) then OpsiData := TOpsi4Data.Create;
+    FlagReloadProductList := False;
     OpsiData.setActualClient(computername);
-    if Produkte <> nil then
-      Produkte.Free;
+    if Produkte <> nil then Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
-
     if runprocessproducts then
     begin
       scriptlist.Delimiter := ',';
@@ -1195,26 +1195,20 @@ begin
       excludedProducts.Free;
       productscopy.Free;
     end;
-
     LogDatei.log('Computername:' + computername, LLessential);
-
     if computername <> ValueOfEnvVar('computername') then
       LogDatei.log('Computername according to Environment Variable :' +
         ValueOfEnvVar('computername'),
         LLessential);
-
     if opsiserviceURL <> '' then
       LogDatei.log('opsi service URL ' + opsiserviceurl,
         LLessential);
-
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
     LogDatei.log('', LLinfo);
     {$IFDEF GUI}
     FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
     {$ENDIF GUI}
     ProcessMess;
-
-
     getBootmode(bootmode, bootmodeFromRegistry);
     LogDatei.log('Bootmode: ' + bootmode, LLinfo);
   except
@@ -1517,7 +1511,7 @@ begin
 
 
     LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
-    if not reloadProductList then OpsiData.finishOpsiconf;
+    if not FlagReloadProductList then OpsiData.finishOpsiconf;
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
@@ -1581,7 +1575,7 @@ begin
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
     {$ENDIF WINDOWS}
-    if reloadProductList then BuildPC; //if true reload product list and process list
+    if FlagReloadProductList then BuildPC; //if true reload product list and process list
     TerminateApp;
   except
     on e: Exception do
