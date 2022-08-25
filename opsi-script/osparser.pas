@@ -3812,7 +3812,7 @@ begin
   end;
 end;
 
-procedure InitReloadProductList;
+procedure SetReloadProductList;
 begin
   if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
   begin
@@ -25227,7 +25227,7 @@ begin
               begin
                 if remaining = '' then
                 begin
-                  InitReloadProductList;
+                  SetReloadProductList;
                 end
                 else
                   ActionResult :=

@@ -1515,7 +1515,7 @@ begin
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
-    if not reloadProductList then
+    if not FlagReloadProductList then
     begin
       opsiclientd := False;
       if ProcessIsRunning('opsiclientd') then
