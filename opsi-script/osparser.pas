@@ -23421,7 +23421,9 @@ begin
                 if syntaxCheck then
                 begin
                   LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
-                  Sleep(1000 * sleepSecs);
+                  //Sleep(1000 * sleepSecs);
+                  // noLockSleep does not completly stop the thread
+                  noLockSleep(1000 * sleepSecs);
                 end
                 else
                   ActionResult :=
