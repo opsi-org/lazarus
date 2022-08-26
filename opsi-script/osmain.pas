@@ -252,9 +252,9 @@ var
   startupmessages: TStringList;
   //{$ENDIF GUI}
 
-  {If the command "reloadProductList" is called within a script the variable FlagReloadProductList
-   is set to true. If FlagReloadProductList is true the product list is reloaded from the server
-   after the end of the script and the list is processed again i.e. the procedure BuildPC is called again.
+  {If the command "reloadProductList" is called within a script, the variable FlagReloadProductList
+   is set to true. If FlagReloadProductList is true, the product list is reloaded from the server
+   after the end of the script and the list is processed again, i.e. the procedure BuildPC is called again.
    As default this flag must be set to false.}
   FlagReloadProductList: boolean = False;
 
