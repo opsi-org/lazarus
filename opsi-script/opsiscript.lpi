@@ -231,6 +231,15 @@
 -dGUI
 -dSYNAPSE
 -dSSLPATH"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSLOG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="SSLPATH"/>
+              <Define6 Value="OSDEBUG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>
@@ -1057,6 +1066,15 @@
 -dOSLOG
 -dSYNAPSE
 -dSSLPATH"/>
+      <OtherDefines Count="7">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="OPSISCRIPT"/>
+        <Define2 Value="GUI"/>
+        <Define3 Value="OSLOG"/>
+        <Define4 Value="SYNAPSE"/>
+        <Define5 Value="SSLPATH"/>
+        <Define6 Value="OSDEBUG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

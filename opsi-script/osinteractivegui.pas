@@ -878,6 +878,7 @@ begin
   initEncoding;
   ProductvarsForPC := TStringList.Create;
   ProductvarsForPC.Clear;
+  if not Assigned(ProductsRunnedUsingReloadProductList) then ProductsRunnedUsingReloadProductList := TStringList.Create;
 
   {$IFDEF WINDOWS}
   (*

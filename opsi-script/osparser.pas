@@ -197,6 +197,7 @@ type
     tsImportCertToSystem,
     tsRemoveCertFromSystem,
     tsisCertInstalledInSystem,
+    tsReloadProductList,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -3812,6 +3813,24 @@ begin
     tlorAttributes: Result := 'Attributes';
     tlorValues: Result := 'Values';
   end;
+end;
+
+procedure SetFlagReloadProductList;
+begin
+  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
+  begin
+    FlagReloadProductList := true;
+    ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
+    LogDatei.log('Reload installation sequence.', LLInfo);
+  end
+  else
+  begin
+    FlagReloadProductList := false;
+    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
+    + ' already runned. Do not reload installation sequence.', LLWarning);
+  end;
+  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
+  LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
 end;
 
 function produceLDAPsearchParameters
@@ -25230,7 +25249,17 @@ begin
                     end;
               end;
 
-
+              tsReloadProductList:
+              begin
+                if remaining = '' then
+                begin
+                  SetFlagReloadProductList;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    ' end of line expected');
+              end;
 
               tsSetVar:
               begin
@@ -26478,6 +26507,7 @@ begin
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
   PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
 
+  PStatNames^ [tsReloadProductList] := 'reloadProductList';
 
   runProfileActions := False;
   runLoginScripts := False;
