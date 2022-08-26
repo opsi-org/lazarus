@@ -620,6 +620,7 @@ function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
 function GetFQDN: string;
+procedure noLockSleep(const Milliseconds: DWord);
 
 const
 
@@ -10728,6 +10729,20 @@ begin
   {$ENDIF UNIX}
   if not isValidFQDN(Result) then
     LogDatei.log('"' + Result + '"' + ' is no valid fqdn', LLNotice);
+end;
+
+procedure noLockSleep(const Milliseconds: DWord);
+// from
+// https://www.delphi-treff.de/tipps-tricks/system/prozesse/anwendung-fuer-eine-bestimmte-zeit-pausieren/
+var
+  FirstTickCount: DWord;
+begin
+  FirstTickCount := GetTickCount;
+  while ((GetTickCount - FirstTickCount) < Milliseconds) do
+  begin
+    ProcessMess;
+    Sleep(0);
+  end;
 end;
 
 (*
