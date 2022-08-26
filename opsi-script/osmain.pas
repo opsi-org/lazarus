@@ -259,7 +259,7 @@ var
   FlagReloadProductList: boolean = False;
 
   {The list ProductsRunnedUsingReloadProductList is used for avoiding an endless loop
-   if products set products to "setup" again which used "reloadProducList" and were already runned}
+   if different products which use "reloadProducList" set each other to "setup"}
   ProductsRunnedUsingReloadProductList: TStringlist;
 
   runUpdate: boolean;
