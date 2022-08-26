@@ -111,6 +111,7 @@ uses
   osjson,
   osTOML,
   oscrypt,
+  oshash,
   DOM,
   osxmlsections,
   osxml,
@@ -16407,6 +16408,28 @@ begin
                   ExpandFileName(s1), LLError)
               end;
           end;
+    end
+
+    else if LowerCase(s) = LowerCase('HashFromFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                s1 := ExpandFileName(trim(s1));
+                StringResult := '';
+                if not FileExistsUTF8(s1) then
+                  LogDatei.log('Error: HashFromFile: ' + s1 + ' is no valid file', LLError)
+                else
+                  try
+                    StringResult := HashFromFile(s1, s2);
+                  except
+                    LogDatei.log('Error: Exception at HashFromFile: ' + s1, LLError)
+                  end;
+              end;
     end
 
     else if LowerCase(s) = LowerCase('shellcall') then
