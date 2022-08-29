@@ -9838,7 +9838,7 @@ begin
     else
       LogDatei.Log('Files section "del" command. No file or directory path given in the script. Please check your script', LLWarning);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
-    if not (FindFirst(testname, faAnyFile and faDirectory, FileFinder) = 0) then
+    if not (FindFirst(testname, faAnyFile, FileFinder) = 0) then
     begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
