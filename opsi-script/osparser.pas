@@ -510,6 +510,11 @@ type
       var Remaining: string; const Expressionstr: string; linecounter: integer;
       var InfoSyntaxError: string; var NestLevel: integer);
     function CheckDirectVariableInitialization(const Remaining: string): boolean;
+    function IsVariableNameReserved(const VariableName: string;
+      var SectionSpecifier: TSectionSpecifier; const call: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
+    function IsVariableNameAlreadyInUse(VariableName: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
@@ -21038,6 +21043,33 @@ begin
     Result := True;
 end;
 
+
+function TuibInstScript.IsVariableNameReserved(const VariableName: string;
+  var SectionSpecifier: TSectionSpecifier; const call: string; const Sektion: TWorkSection;
+  const linecounter: integer): boolean;
+begin
+  Result := False;
+  if findKindOfStatement(VariableName, SectionSpecifier, call) <>
+    tsNotDefined then
+    begin
+      Result := True;
+      reportError(Sektion, linecounter, VariableName,
+        'Reserved name, must not be used in a variable definition');
+    end;
+end;
+
+function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string;
+  const Sektion: TWorkSection; const linecounter: integer): boolean;
+begin
+  Result := False;
+  if ((VarList.IndexOf(lowercase(VariableName)) >= 0) or
+    (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
+  begin
+    Result := True;
+    reportError(Sektion, linecounter, VariableName, 'name is already in use')
+  end;
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -24974,16 +25006,12 @@ begin
 
               tsDefineVar:
               begin
-                s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                // given var name reseved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
@@ -24995,27 +25023,22 @@ begin
                   begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name + ' with value: ' +
-                      s1, LLDebug2);
+                      definedFunctionArray[funcindex].Name, LLDebug2);
                     definedFunctionArray[funcindex].setLocalVarValueString(
-                      lowercase(Expressionstr), s1);
+                      lowercase(Expressionstr), '');
                   end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
-                // already existing ?
-                else if VarList.IndexOf(lowercase(Expressionstr)) >= 0 then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'name is already in use')
-                else
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
                   // do it
                   VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add(s1);
+                  ValuesList.Add('');
                   LogDatei.log('Defined global local string var: ' +
-                    lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
+                    lowercase(Expressionstr), LLDebug2);
                 end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
@@ -25024,22 +25047,14 @@ begin
 
               tsDefineStringList:
               begin
-                LogDatei.log_prog('Start definestringlist', LLdebug2);
-                //if tmplist <> nil then
-                //if Assigned(tmplist) then FreeAndNil(tmplist);
-                LogDatei.log_prog('definestringlist: init tmplist', LLdebug2);
-                tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                // given var name reseved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
@@ -25047,39 +25062,27 @@ begin
                     definedFunctionsCallStack.Count - 1]);
                   if definedFunctionArray[funcindex].addLocalVar(
                     lowercase(Expressionstr), dfpStringlist, False) then
+                    begin
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name +
-                      ' with value: ' + tmplist.Text, LLDebug2)
+                      definedFunctionArray[funcindex].Name, LLDebug2);
+                    definedFunctionArray[funcindex].setLocalVarValueList(
+                      lowercase(Expressionstr), TStringList.Create);
+                    end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
-
-                else if VarList.IndexOf(lowercase(Expressionstr)) or
-                  listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Name already in use')
-                else
-
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
+                  // do it
                   listOfStringLists.Add(lowercase(Expressionstr));
                   // create the list object needed to store list items
                   ContentOfStringLists.Add(TStringList.Create);
-                  // if there is content then store it
-                  if tmplist.Count > 0 then
-                  begin
-                    VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
-                    TStringList(ContentOfStringLists.Items[VarIndex]).Text :=
-                      tmplist.Text;
-                  end;
-                  LogDatei.log('', leveldebug);
                   LogDatei.log('defined global string list ' +
-                    Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
+                    Expressionstr, LLDebug);
                 end;
-                if Assigned(tmplist) then
-                  FreeAndNil(tmplist);
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);;
