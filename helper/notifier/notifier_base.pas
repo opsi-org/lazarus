@@ -161,6 +161,12 @@ begin
   DataModule1.createNform;
   openSkinIni(myconfigfile);
   DataModule1.ProcessMess;
+  if myport <= 0 then
+  begin
+    if Assigned(LogDatei) then
+      LogDatei.log('Given port not > 0 : ' + IntToStr(myport) +
+        ' - Starting thread anyway.', LLWarning);
+  end;
   if showtest then
   begin
     {show notifier 10 seconds (for tests only) }
@@ -172,28 +178,18 @@ begin
       Sleep(1000);
       LogDatei.log('show test: ' + IntToStr(i), LLnotice);
     end;
-    if myport > 0 then
-    begin
-      mythread := Tmythread.Create(False);
-      sleep(1000);
-    end;
+    mythread := Tmythread.Create(False);
+    sleep(1000);
     if Assigned(LogDatei) then
       LogDatei.log('shutdown after show test', LLnotice);
     shutdownNotifier;
   end
   else
   begin
-    if myport > 0 then
-    begin
-      mythread := Tmythread.Create(False);
-      //mythread.FreeOnTerminate:= true;
-      mythread.WaitFor;
-      LogDatei.log('Thread ended.', LLnotice);
-    end
-    else
-    if Assigned(LogDatei) then
-      LogDatei.log('Critical Error: given port not > 0 : ' +
-        IntToStr(myport), LLcritical);
+    mythread := Tmythread.Create(False);
+    //mythread.FreeOnTerminate:= true;
+    mythread.WaitFor;
+    LogDatei.log('Thread ended.', LLnotice);
   end;
 end;
 

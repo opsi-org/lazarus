@@ -1,4 +1,11 @@
 [changelog]
+opsi-notifier  4.2.0.10
+
+  * notifierbase: main: Starting thread even if no port given (port <=0)
+    fix for blocklogin notifier
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo, 29 Aug 2022:15:00:00 +0200
+
 opsi-notifier  4.2.0.9
 
   * notifierguicontrol: also scale form & co at windows
