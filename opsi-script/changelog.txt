@@ -3,15 +3,26 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.6.0) unreleased; urgency=low
+opsi-script (4.12.6.0) unreleased; urgency=medium
 
-* [fix] oscrypt: function md5fromFile, loop through array caused an index out of bounds error (j.werner)
-* [fix] osstartproc_cp: at Ux use waitForProcEndTimer to avoid zombies (d.oertel, 15.7.2022)
-* [new] osparser: Implementation of copy -u for Linux (#4739, !71, j.laajili)
-* [fix] osparser: Adding new optional encoding parameter to function GetValueFromIniFile (#3071, !68, j.laajili)
-* [new] osparser: New platform-independant HashFromFile function + HashLib4Pascal library supporting 80 hashing algorithms (#4743, !74, j.laajili)
+  * [new] osparser: Implementation of copy -u for Linux (#4739, !71, j.laajili)
+  * [new] osregistry, osparser: new data type QWord added as trdInt64 to normal registry section and regedit format (QWord is not supported in AddReg format) (#4746, !67, a.schmitz)
+  * [new] osparser: new script command deleteListEntries to remove entries from list variables in the windows registry (#4541, !57, a.schmitz)
+  * [new] osDoRegistryFunctions: new unit to outsource code from the doRegistry functions in the osparser (a.schmitz)
+  * [new] osparser: New platform-independant HashFromFile function + HashLib4Pascal library supporting 80 hashing algorithms (#4743, !74, j.laajili)
+  * [change] osparser: parse direct initialization of variables (string and stringlist) equal to 'set', i.e. for example logging is the same now (#4747, !65, a.schmitz)
+  * [change] osregistry: synchronize data type handling with the documentation, i.e. supp does not change data types (!59, a.schmitz)
+  * [change] osprocessux, osfuncwin: revise code of RunCommandAndCaptureOut (#4764, !73, a.schmitz)
+  * [fix] osparser: Adding new optional encoding parameter to function GetValueFromIniFile (#3071, !68, j.laajili)
+  * [fix] osparser: parse and evaluate generic stringlist equal to createStringList for correct functionality (#4770, !77, a.schmitz)
+  * [fix] oscrypt: function md5fromFile, loop through array caused an index out of bounds error (j.werner)
+  * [fix] osstartproc_cp: at Ux use waitForProcEndTimer to avoid zombies (d.oertel, 15.7.2022)
+  * [fix] osparser: throw error if a script variable is defined twice (only works outside defined functions so far) (#4769, !76, a.schmitz)
+  * [remove] osparser: remove undocumented script function getStringFromListAtIndex since takeString already exists and is more mature (#4738, !64, a.schmitz)
+  * [remove] osparser: remove script statement LocalAdmin (tsLocalAdmin) because it is deprecated and has never been documented (!69, a.schmitz)
   
 -- j.werner <j.werner@uib.de> 23 Mai 2022
+
 
 opsi-script (4.12.5.6) stable; urgency=low
 
