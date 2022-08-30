@@ -15088,6 +15088,7 @@ var
   parameters: array of string;
   omc: TOpsiMethodCall;
   IniFile: TIniFile;
+  uibInifile: TuibIniFile;
   //tempchar : char;
   //tempansistr : ansistring;
   //tempansistrp : Pansichar;
@@ -15722,6 +15723,7 @@ begin
           end;
     end
 
+    (*
     else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15764,6 +15766,86 @@ begin
                         end;
 
                       end;
+    end
+  *)
+
+  else if LowerCase(s) = LowerCase('GetValueFromInifile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(')', r, r, InfoSyntaxError) then
+                        begin
+                          syntaxCheck := True;
+                          try
+                            s1 := ExpandFileName(s1);
+                            Inifile := TInifile.Create(s1);
+                            LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log
+                            ('    reading the value to the key "' + s3 +
+                              '" in section "' + s2 + '"  from inifile  "' +
+                              s1 + '", default value  "' + s4 + '"',
+                              LevelComplete);
+                            s2enc := UTF8ToWinCP(s2);
+                            s3enc := UTF8ToWinCP(s3);
+                            s4enc := UTF8ToWinCP(s4);
+                            StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
+                            StringResult := WinCPToUTF8(StringResult);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+                            Inifile.Free;
+                            Inifile := nil;
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.log('Error in creating inifile "' +
+                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                              StringResult := s4;
+                            end;
+                          end;
+                        end
+                      else
+                        if Skip(',', r, r, InfoSyntaxError) then
+                          if EvaluateString(r, r, s5, InfoSyntaxError) then
+                            if Skip(')', r, r, InfoSyntaxError) then
+                            begin
+                              syntaxCheck := True;
+                              try
+                                s1 := ExpandFileName(s1);
+                                LogDatei.log
+                                (' Trying to read the value to the key "' + s3 +
+                                  '" in section "' + s2 + '"  from inifile "' + s1 +
+                                  '", default value "' + s4 +
+                                  '" in encoding "' + s5 + '"', LevelComplete);
+                                uibInifile := TuibIniFile.Create(s1);
+                                uibInifile.Clear;
+                                uibInifile.loadFromFileWithEncoding(s1,s5);
+                                LogDatei.log_prog('Inifile: ' + uibInifile.Text, LLDebug);
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                                LogDatei.log
+                                ('    reading the value to the key "' + s3 +
+                                  '" in section "' + s2 + '"  from inifile "' + s1 +
+                                  '", default value "' + s4 +
+                                  '" in encoding "' + s5 + '"',
+                                  LevelComplete);
+                                StringResult := uibInifile.ReadString(s2, s3, s4);
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                              except
+                                on e: Exception do
+                                begin
+                                  LogDatei.log('Error in GetValueFromInifile : "' +
+                                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                                  StringResult := s4;
+                                end;
+                              end;
+                              uibInifile.Free;
+                            end;
     end
 
   (*

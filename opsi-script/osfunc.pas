@@ -6286,7 +6286,7 @@ function TuibIniScript.FindSectionheaderIndex(const Sectionname: string): intege
 var
   found: boolean;
   i: integer = 0;
-  s: string = '';
+  s : string = '';
 begin
   if Count = 0 then
     Result := -1
@@ -6297,7 +6297,8 @@ begin
     while not found and (i <= Count) do
     begin
       s := KappeBlanks(Strings[i - 1]);
-      if AnsiUpperCase(s) = '[' + AnsiUpperCase(Sectionname) + ']' then
+      //if AnsiUpperCase(s) = '[' + AnsiUpperCase(Sectionname) + ']' then  //unuseful
+      if LowerCase(s) = '[' + LowerCase(Sectionname) + ']' then
         found := True
       else
       // look for old german Aktionen sections
