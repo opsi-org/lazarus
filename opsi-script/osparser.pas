@@ -429,7 +429,7 @@ type
       var list: TXStringlist; var InfoSyntaxError: string): boolean; overload;
     procedure FillStringList(var ResultList: TXStringList; var r: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string);
-    procedure EvaluateGenericStringList(const Quotes: TChar; var r: string;
+    procedure EvaluateGenericStringList(const Quotes: Char; var r: string;
       var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
@@ -12022,7 +12022,7 @@ begin
   end;
 end;
 
-procedure TuibInstScript.EvaluateGenericStringList(const Quotes: TChar; var r: string;
+procedure TuibInstScript.EvaluateGenericStringList(const Quotes: Char; var r: string;
   var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
 var
   ListInBrackets: string = '';
