@@ -121,9 +121,6 @@ type
   TcpSpecify = integer;
   TcpCountModus = (tccmNoCounter, tccmCounting, tccmCounted);
   TExitMode = (txmNoExit, txmLogout, txmReboot);
-  //TuibRegDataType = (trdUnknown, trdDefaultString, trdString,
-  //  trdExpandString, trdInteger,
-  //  trdBinary, trdMultiString);
   TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux, tovMacOS);
   TuibNTVersion = (tntverNONE, tntverNT3, tntverNT4, tntverWIN2K,
     tntverWINVISTA, tntverWINX);
@@ -623,6 +620,7 @@ function isNumeric(s: string): boolean;
 function isBoolean(s: string): boolean;
 
 function GetFQDN: string;
+procedure noLockSleep(const Milliseconds: DWord);
 
 const
 
@@ -6288,7 +6286,7 @@ function TuibIniScript.FindSectionheaderIndex(const Sectionname: string): intege
 var
   found: boolean;
   i: integer = 0;
-  s: string = '';
+  s : string = '';
 begin
   if Count = 0 then
     Result := -1
@@ -6299,7 +6297,8 @@ begin
     while not found and (i <= Count) do
     begin
       s := KappeBlanks(Strings[i - 1]);
-      if AnsiUpperCase(s) = '[' + AnsiUpperCase(Sectionname) + ']' then
+      //if AnsiUpperCase(s) = '[' + AnsiUpperCase(Sectionname) + ']' then  //unuseful
+      if LowerCase(s) = '[' + LowerCase(Sectionname) + ']' then
         found := True
       else
       // look for old german Aktionen sections
@@ -9825,15 +9824,22 @@ begin
     testname := ExtractFilePath(CompleteName)
   else
     testname := CompleteName;
-
+  LogDatei.log_prog('testname: ' + testname + ' ' + {$INCLUDE %LINE%}, LLDebug);
   { Start }
   if not search4file then
   begin
     // FindFirst only finds directories without PathDelim at the end
-    if (testname[length(testname)] = PathDelim) then
-      testname := ExtractFileDir(testname);
+    if testname <> '' then
+    begin
+      if (testname[length(testname)] = PathDelim) then
+      begin
+        testname := ExtractFileDir(testname);
+      end;
+    end
+    else
+      LogDatei.Log('Files section "del" command. No file or directory path given in the script. Please check your script', LLWarning);
     { new del syntax: "del -s c:\not-existing" will do nothing (if not existing) }
-    if not (FindFirst(testname, faAnyFile and faDirectory, FileFinder) = 0) then
+    if not (FindFirst(testname, faAnyFile, FileFinder) = 0) then
     begin
       { does not exist }
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
@@ -10724,6 +10730,20 @@ begin
   {$ENDIF UNIX}
   if not isValidFQDN(Result) then
     LogDatei.log('"' + Result + '"' + ' is no valid fqdn', LLNotice);
+end;
+
+procedure noLockSleep(const Milliseconds: DWord);
+// from
+// https://www.delphi-treff.de/tipps-tricks/system/prozesse/anwendung-fuer-eine-bestimmte-zeit-pausieren/
+var
+  FirstTickCount: DWord;
+begin
+  FirstTickCount := GetTickCount;
+  while ((GetTickCount - FirstTickCount) < Milliseconds) do
+  begin
+    ProcessMess;
+    Sleep(0);
+  end;
 end;
 
 (*

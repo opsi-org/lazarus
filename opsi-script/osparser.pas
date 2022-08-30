@@ -30,6 +30,7 @@ uses
   registry,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
   oskeyboard,
   osfuncwin3,
   oswmi,
@@ -110,6 +111,7 @@ uses
   osjson,
   osTOML,
   oscrypt,
+  oshash,
   DOM,
   osxmlsections,
   osxml,
@@ -163,7 +165,6 @@ type
     tsLogWarning, tsLogError, tsSetSkinDir,
     tsStop, tsExitWindows,
     tsBlockInput,
-    tsLocalAdmin,
     tsChangeDirectory,
     tsAddConnection,
     tsSetOldLogLevel,
@@ -197,6 +198,7 @@ type
     tsImportCertToSystem,
     tsRemoveCertFromSystem,
     tsisCertInstalledInSystem,
+    tsReloadProductList,
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
@@ -404,18 +406,20 @@ type
     property LastExitCodeOfExe: longint read FLastExitCodeOfExe;
 
 
-    (* Infofunktionen *)
+    (* Info functions *)
     function doInfo(Meldung: string): TSectionResult;
     function doLogEntries(const Lines: string; EntryLevel: integer): TSectionResult;
     function reportError(const Sektion: TWorkSection; LineNo: integer;
       const Content: string; Comment: string): TSectionResult;
 
 
-    (* Skriptvariable setzen, Ausdruecke analysieren und auswerten *)
-    function doSetVar(const section: TuibIniScript; const Expressionstr: string;
-      var Remaining: string; var InfoSyntaxError: string): boolean;
-      overload;
-
+    (* set script variables, analyze and evaluate expressions *)
+    function SetStringListVariable(const section: TuibIniScript;
+      var Remaining: string; var r: string; const VarName: string;
+      var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+    function SetStringVariable(var Remaining: string; var r: string;
+      const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+      var NestLevel: integer): boolean;
     function doSetVar(const section: TuibIniScript; const Expressionstr: string;
       var Remaining: string; var InfoSyntaxError: string;
       var NestLevel: integer): boolean; overload;
@@ -423,7 +427,10 @@ type
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
       var list: TXStringlist; var InfoSyntaxError: string): boolean; overload;
-
+    procedure FillStringList(var ResultList: TXStringList; var r: string;
+      var syntaxCheck: boolean; var InfoSyntaxError: string);
+    procedure EvaluateGenericStringList(const Quotes: TChar; var r: string;
+      var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
       var list: TXStringlist; var InfoSyntaxError: string;
@@ -490,22 +497,30 @@ type
     procedure registerSectionOrigins(mylist: TStringList; filename: string;
       secname: string); overload;
 
-    (* Sektionsbearbeitungsmethoden *)
-    (* Hilfsmethoden *)
+    (* functions for working on sections *)
+    (* helper functions *)
     function initSection(const Sektion: TWorkSection;
       var SaveErrorNumber, SaveWarningNumber: integer): boolean;
     procedure finishSection(const Sektion: TWorkSection;
       const SaveErrorNumber, SaveWarningNumber: integer;
       var DiffNumberOfErrors, DiffNumberOfWarnings: integer);
 
-    (* fuer primaere Sektionen *)
+    (* for primary sections *)
+    procedure SetVariableWithErrors(const Sektion: TWorkSection;
+      var Remaining: string; const Expressionstr: string; linecounter: integer;
+      var InfoSyntaxError: string; var NestLevel: integer);
+    function CheckDirectVariableInitialization(const Remaining: string): boolean;
+    function IsVariableNameReserved(const VariableName: string;
+      var SectionSpecifier: TSectionSpecifier; const call: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
+    function IsVariableNameAlreadyInUse(VariableName: string;
+      const Sektion: TWorkSection; const linecounter: integer): boolean;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
-    (* fuer andere Sektionen *)
 
+    (* for other sections *)
     function doTextpatch(const Sektion: TWorkSection; Filename: string;
       PatchParameter: string): TSectionResult;
-
 
     function doTests(const Sektion: TWorkSection;
       TestParameter: string): TSectionResult;
@@ -3806,6 +3821,24 @@ begin
   end;
 end;
 
+procedure SetFlagReloadProductList;
+begin
+  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
+  begin
+    FlagReloadProductList := true;
+    ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
+    LogDatei.log('Reload installation sequence.', LLInfo);
+  end
+  else
+  begin
+    FlagReloadProductList := false;
+    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
+    + ' already runned. Do not reload installation sequence.', LLWarning);
+  end;
+  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
+  LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
+end;
+
 function produceLDAPsearchParameters
   (const LDAPparameter: string; var cacheRequest: TLDAPsearchCacheRequest;
   var outputRequest: TLDAPsearchOutputRequest; var errorinfo: string): boolean;
@@ -4367,6 +4400,37 @@ begin
 end;
 
 {$IFDEF WINDOWS}
+function CheckDWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+begin
+  try
+    StrToInt64(ReadValue);
+    Value := ReadValue;
+    ReadValue := '';
+    Result := True;
+  except
+    on EConvertError do
+      ErrorInfo := ReadValue + ' is no valid DWORD';
+    on E: Exception do
+      ErrorInfo := E.Message;
+  end;
+end;
+
+function CheckQWord(var ReadValue: string; var Value: string; var ErrorInfo: string): boolean;
+begin
+  Result := False;
+  try
+    StrToQWord(ReadValue);
+    Value := ReadValue;
+    ReadValue := '';
+    Result := True;
+  except
+    on EConvertError do
+      ErrorInfo := ReadValue + ' is no valid QWORD';
+    on E: Exception do
+      ErrorInfo := E.Message;
+  end;
+end;
+
 function TuibInstScript.doRegistryHackInfSource(const Sektion: TWorkSection;
   const RegParameter: string; const flag_force64: boolean): TSectionResult;
 var
@@ -4391,7 +4455,6 @@ var
   begin
     Result := False;
     syntaxCheck := True;
-
     GetWord(r, key0, r, [',']);
     if not Skip(',"', r, r, error) then
     begin
@@ -4422,7 +4485,6 @@ var
       Syntaxcheck := False;
       exit;
     end;
-
     try
       regTInt := StrToInt64(regTStr);
     except
@@ -4435,6 +4497,8 @@ var
 
     Value := '';
 
+    // for the comparisons to integer values see the flags on
+    // https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-addreg-directive
     if regTInt = 0 then
     begin
       regtype := trdString;
@@ -4459,7 +4523,7 @@ var
         exit;
       end;
       GetWord(r, Value, r, ['"']);
-      (* Beispiel: 131072,"C:\Programme\wiz\wiz.exe %1" *)
+      // Beispiel: 131072,"C:\Programme\wiz\wiz.exe %1"
     end
     else if regTInt = 196609 then
     begin
@@ -4617,6 +4681,11 @@ var
       if uppercase(regtypeinfo) = uppercase('dword') then
         regtype := trdInteger
       else
+      if uppercase(regtypeinfo) = uppercase('qword') then
+      begin
+        regtype := trdInt64;
+      end
+      else
       begin
         Result := False;
         ErrorInfo := regtypeinfo + ' is a not supported type of a registry entry';
@@ -4678,18 +4747,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        try
-          r := '$' + r;
-          StrToInt64(r);
-          Value := r;
-          r := '';
-          Result := True;
-        except
-          on EConvertError do
-            ErrorInfo := r + ' is no valid number';
-          on E: Exception do
-            ErrorInfo := E.Message;
-        end;
+        Result := CheckDWord(r, Value, ErrorInfo);
+      trdInt64:
+        Result := CheckQWord(r, Value, ErrorInfo);
       trdBinary:
       begin
         binValue := StringReplace(r, ',', ' ');
@@ -4717,7 +4777,6 @@ begin
       exit;
     StartIndentLevel := LogDatei.LogSIndentLevel;
 
-
     if flag_force64 then
       Regist := TuibRegistry.Create(True)
     else
@@ -4725,10 +4784,7 @@ begin
     keyOpened := False;
     keyOpenCommandExists := False;
 
-
-
     // Sektion has ini file format, therefore we may do
-
     registrykeys := TXStringlist.Create;
     Sektion.GetSectionTitles(registrykeys);
 
@@ -4901,7 +4957,6 @@ begin
 
     end;
 
-
     Regist.Free;
     Regist := nil;
 
@@ -4996,14 +5051,16 @@ var
         regtype := trdMultiString
       else if upperCase(regtypeinfo) = uppercase('REG_Binary') then
         regtype := trdBinary
-      else if uppercase(regtypeinfo) = uppercase('REG_DWord') then
+      else if uppercase(regtypeinfo) = uppercase('REG_DWORD') then
         regtype := trdInteger
+      else if uppercase(regtypeinfo) = uppercase('REG_QWORD') then
+        regtype := trdInt64
       //else if uppercase (regtypeinfo) =  uppercase ('REG_NONE')
       //then regtype := trdUnknown
       else
       begin
         Result := False;
-        ErrorInfo := regtypeinfo + ' is a unknown or not implemented registry type';
+        ErrorInfo := regtypeinfo + ' is an unknown or not implemented registry type';
         exit;
       end;
     end
@@ -5020,7 +5077,6 @@ var
         exit;
       end;
     end;
-
 
     Result := False;
     case regtype of
@@ -5041,17 +5097,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        try
-          StrToInt64(r);
-          Value := r;
-          r := '';
-          Result := True;
-        except
-          on EConvertError do
-            ErrorInfo := r + ' is no valid number';
-          on E: Exception do
-            ErrorInfo := E.Message;
-        end;
+        Result := CheckDWord(r, Value, ErrorInfo);
+      trdInt64:
+          Result := CheckQWord(r, Value, ErrorInfo);
       trdBinary:
       begin
         binValue := r;
@@ -5507,34 +5555,18 @@ begin
 
         else if LowerCase(Expressionstr) = 'supp' then
         begin
-          SyntaxCheck := False;
-          if Skip('"', r, r, ErrorInfo) then
-          begin
-            GetWord(r, field, r, ['"']);
-            if Skip('"', r, r, ErrorInfo) then
-            begin
-              if (length(r) = 0) then
-                ErrorInfo := 'Separator expected'
-              else
-              begin
-                if r[1] = '"' then
-                  Separator := #0
-                else
-                begin
-                  Separator := r[1];
-                  Skip(Separator, r, r, ErrorInfo);
-                end;
-                if Skip('"', r, r, ErrorInfo) then
-                begin
-                  GetWord(r, Value, r, ['"']);
-                  if Skip('"', r, r, ErrorInfo) then
-                    SyntaxCheck := True;
-                end;
-              end;
-            end;
-          end;
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
           if SyntaxCheck then
             Regist.SupplementItems(Separator, field, Value)
+          else
+            reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
+        end
+
+        else if LowerCase(Expressionstr) = LowerCase('deleteListEntries') then
+        begin
+          SyntaxCheck := ParseRegistryListVariableCommand(Separator, field, Value, r, ErrorInfo);
+          if SyntaxCheck then
+            Regist.DeleteListEntries(Separator, field, Value)
           else
             reportError(Sektion, i, Sektion.strings[i - 1], ErrorInfo);
         end
@@ -8570,11 +8602,11 @@ var
               end
               else if Expressionstr[j] = 'u' then
               begin
-                {$IFDEF WINDOWS}
+                //{$IFDEF WINDOWS}
                 cpSpecify := cpSpecify or cpUpdate;
-                {$ELSE}
-                LogDatei.log('The copy -u Option is Windows only', LLWarning);
-                {$ENDIF WINDOWS}
+                //{$ELSE}
+                //LogDatei.log('The copy -u Option is Windows only', LLWarning);
+                //{$ENDIF WINDOWS}
               end
               else if Expressionstr[j] = 'w' then
                 cpSpecify := cpSpecify or cpDontForceOverwrite
@@ -11960,11 +11992,68 @@ end;
 function TuibInstScript.produceStringList
   (const section: TuibIniScript; const s0: string; var Remaining: string;
   var list: TXStringList; var InfoSyntaxError: string): boolean;
-  //var
-  // NestLevel : integer;
 begin
   Result := produceStringList(section, s0, Remaining, list, InfoSyntaxError,
     IfElseEndifLevel, inDefFuncIndex);
+end;
+
+procedure TuibInstScript.FillStringList(var ResultList: TXStringList; var r: string;
+  var syntaxCheck: boolean; var InfoSyntaxError: string);
+var
+  goOn: boolean = True;
+  EvaluatedStringParameter: string = '';
+begin
+  while syntaxCheck and goOn do
+  begin
+    syntaxCheck := evaluateString(r, r, EvaluatedStringParameter, InfoSyntaxError);
+    if syntaxCheck then
+    begin
+      ResultList.add(EvaluatedStringParameter);
+      logdatei.log_prog('createStringList: add: ' + EvaluatedStringParameter + ' to: ' +
+        ResultList.Text, LLDebug);
+
+      if not Skip(',', r, r, InfoSyntaxError) then
+      begin
+        // list of entries is finished
+        goOn := False;
+        syntaxCheck := True;
+      end;
+    end;
+  end;
+end;
+
+procedure TuibInstScript.EvaluateGenericStringList(const Quotes: TChar; var r: string;
+  var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
+var
+  ListInBrackets: string = '';
+begin
+  syntaxCheck := True;
+  Skip(Quotes, r, r, InfoSyntaxError);
+  // Get the generic stringlist definition part '[...]' and store it in ListInBrackets.
+  // With GetWord we ensure that the outter quotes are not used inside of [...] (otherwise
+  // we would cut [...] somewhere inbetween and run in a syntax error sooner or later.
+  GetWord(r, ListInBrackets, r, [Quotes]);
+  Skip('[', ListInBrackets, ListInBrackets, InfoSyntaxError);
+  if ListInBrackets <> ']' then
+    FillStringList(list, ListInBrackets, syntaxCheck, InfoSyntaxError);
+
+  if syntaxCheck and Skip(']', ListInBrackets, ListInBrackets, InfoSyntaxError) then
+  begin
+    if ListInBrackets <> '' then
+    begin
+      syntaxCheck := False;
+      InfoSyntaxError := 'Remaining char(s) not allowed before the closing quotation mark';
+    end
+    else
+    begin
+      if Skip(Quotes, r, r, InfoSyntaxError) then
+        syntaxCheck := True
+      else
+        syntaxCheck := False;
+    end;
+  end
+  else
+    syntaxCheck := False;
 end;
 
 function TuibInstScript.produceStringList
@@ -12049,47 +12138,16 @@ begin
     logstring := s;
 
 
-    // is json style array literal type 1
-    // expected something like '["ho","hu"]' or special '[]'
-    // json style array literal is normaly quoted with '
-    // string constant delimited by "'" ?
+    // parse generic stringlist '["...", "...", ...]' or empty '[]'
     if (length(s0) > 0) and (pos('''[', s0) = 1) then
     begin
-      r1 := copy(s0, pos(']''', s0) + 2, length(s0));
-      r2 := copy(s0, 2, pos(']''', s0));
-      GetWord(r2, tmpstr, r2, ['''']);
-      if skip('''', r2, r2, InfoSyntaxError) then
-        syntaxCheck := True;
-      if jsonIsArray(tmpstr) then
-      begin
-        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
-        begin
-          syntaxCheck := True;
-          r := r1;
-        end;
-      end;
+      EvaluateGenericStringList('''', r, list, syntaxCheck, InfoSyntaxError);
     end
 
-
-    // is json style array literal type 2
-    // expected only special "[]"
-    // json style array literal is can only be quoted with " in the case "[]"
-    // string constant delimited by '"' ?
+    // parse generic stringlist "['...', '...', ...]" or empty "[]"
     else if (length(s0) > 0) and (pos('"[', s0) = 1) then
     begin
-      r1 := copy(s0, pos(']"', s0) + 2, length(s0));
-      r2 := copy(s0, 2, pos(']"', s0));
-      GetWord(r2, tmpstr, r2, ['"']);
-      if skip('"', r2, r2, InfoSyntaxError) then
-        syntaxCheck := True;
-      if jsonIsArray(tmpstr) then
-      begin
-        if jsonAsArrayToStringList(tmpstr, TStringList(list)) then
-        begin
-          syntaxCheck := True;
-          r := r1;
-        end;
-      end;
+      EvaluateGenericStringList('"', r, list, syntaxCheck, InfoSyntaxError);
     end
 
 
@@ -13930,39 +13988,13 @@ begin
         end
         else
         begin
-
-          while syntaxCheck and goon do
-          begin
-            evaluateString(r, r, s1, InfoSyntaxError);
-            // empty strings are allowed elements
-            // so we comment the next two lines (do 10.1.19)
-            //if length(s1) > 0
-            //then
-            list.add(s1);
-            logdatei.log_prog('createStringList: add: ' + s1 + ' to: ' +
-              list.Text, LLDebug);
-
-            if length(r) = 0 then
+          FillStringList(list, r, syntaxCheck, InfoSyntaxError);
+          if syntaxCheck then
+            if not Skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxCheck := False;
-              InfoSyntaxError := ' Expressionstr not terminated ';
-            end
-            else
-            begin
-              if r[1] = ',' then
-                Skip(',', r, r, InfoSyntaxError) //here is no syntax error possible
-              else if r[1] = ')' then
-              begin
-                goOn := False;
-                Skip(')', r, r, InfoSyntaxError); //consume the ')'
-              end
-              else
-              begin
-                syntaxCheck := False;
-                InfoSyntaxError := ' "," or ")" expected ';
-              end;
+              InfoSyntaxError := ' "," or ")" expected ';
             end;
-          end;
         end;
       end;
     end
@@ -14833,7 +14865,7 @@ begin
         end
         else
         begin
-          // parse case sensitivity parameter
+          // parse access string parameter
           if Skip(',', r, r, InfoSyntaxError) then
             if EvaluateString(r, r, s2, InfoSyntaxError) then
               if Skip(')', r, r, InfoSyntaxError) then
@@ -15056,6 +15088,7 @@ var
   parameters: array of string;
   omc: TOpsiMethodCall;
   IniFile: TIniFile;
+  uibInifile: TuibIniFile;
   //tempchar : char;
   //tempansistr : ansistring;
   //tempansistrp : Pansichar;
@@ -15690,6 +15723,7 @@ begin
           end;
     end
 
+    (*
     else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
@@ -15732,6 +15766,86 @@ begin
                         end;
 
                       end;
+    end
+  *)
+
+  else if LowerCase(s) = LowerCase('GetValueFromInifile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(',', r, r, InfoSyntaxError) then
+                if EvaluateString(r, r, s3, InfoSyntaxError) then
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s4, InfoSyntaxError) then
+                      if Skip(')', r, r, InfoSyntaxError) then
+                        begin
+                          syntaxCheck := True;
+                          try
+                            s1 := ExpandFileName(s1);
+                            Inifile := TInifile.Create(s1);
+                            LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log
+                            ('    reading the value to the key "' + s3 +
+                              '" in section "' + s2 + '"  from inifile  "' +
+                              s1 + '", default value  "' + s4 + '"',
+                              LevelComplete);
+                            s2enc := UTF8ToWinCP(s2);
+                            s3enc := UTF8ToWinCP(s3);
+                            s4enc := UTF8ToWinCP(s4);
+                            StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
+                            StringResult := WinCPToUTF8(StringResult);
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+
+                            Inifile.Free;
+                            Inifile := nil;
+                          except
+                            on e: Exception do
+                            begin
+                              LogDatei.log('Error in creating inifile "' +
+                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                              StringResult := s4;
+                            end;
+                          end;
+                        end
+                      else
+                        if Skip(',', r, r, InfoSyntaxError) then
+                          if EvaluateString(r, r, s5, InfoSyntaxError) then
+                            if Skip(')', r, r, InfoSyntaxError) then
+                            begin
+                              syntaxCheck := True;
+                              try
+                                s1 := ExpandFileName(s1);
+                                LogDatei.log
+                                (' Trying to read the value to the key "' + s3 +
+                                  '" in section "' + s2 + '"  from inifile "' + s1 +
+                                  '", default value "' + s4 +
+                                  '" in encoding "' + s5 + '"', LevelComplete);
+                                uibInifile := TuibIniFile.Create(s1);
+                                uibInifile.Clear;
+                                uibInifile.loadFromFileWithEncoding(s1,s5);
+                                LogDatei.log_prog('Inifile: ' + uibInifile.Text, LLDebug);
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                                LogDatei.log
+                                ('    reading the value to the key "' + s3 +
+                                  '" in section "' + s2 + '"  from inifile "' + s1 +
+                                  '", default value "' + s4 +
+                                  '" in encoding "' + s5 + '"',
+                                  LevelComplete);
+                                StringResult := uibInifile.ReadString(s2, s3, s4);
+                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                              except
+                                on e: Exception do
+                                begin
+                                  LogDatei.log('Error in GetValueFromInifile : "' +
+                                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                                  StringResult := s4;
+                                end;
+                              end;
+                              uibInifile.Free;
+                            end;
     end
 
   (*
@@ -16148,8 +16262,10 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
         begin
+          if Assigned(list1) then FreeAndNil(list1);
+          list1 := TXStringList.Create;
           try
-            list1 := TXStringList.Create;
+            try
             s1 := ExpandFileName(s1);
             if FileExists(s1) then
               list1.loadfromfile(s1)
@@ -16165,7 +16281,6 @@ begin
             //StringResult := reencode(list1.Strings[0], 'system')
             else
               StringResult := '';
-            list1.Free;
           except
             on e: Exception do
             begin
@@ -16175,6 +16290,9 @@ begin
               FNumberOfErrors := FNumberOfErrors + 1;
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
             end
+          end;
+          finally
+            FreeAndNil(list1);
           end;
           if Skip(')', r, r, InfoSyntaxError) then
           begin
@@ -16192,8 +16310,10 @@ begin
               if Skip(')', r, r, InfoSyntaxError) then
               begin
                 syntaxCheck := True;
+                if Assigned(list1) then FreeAndNil(list1);
+                list1 := TXStringList.Create;
                 try
-                  list1 := TXStringList.Create;
+                  try
                   s1 := ExpandFileName(s1);
                   //list1.loadfromfile(s1);
                   if FileExists(s1) then
@@ -16209,7 +16329,6 @@ begin
                   //StringResult := reencode(list1.Strings[0], s2)
                   else
                     StringResult := '';
-                  list1.Free;
                 except
                   on e: Exception do
                   begin
@@ -16220,6 +16339,9 @@ begin
                     FNumberOfErrors := FNumberOfErrors + 1;
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
+                end;
+                finally
+                  FreeAndNil(list1)
                 end;
               end;
     end
@@ -16373,6 +16495,28 @@ begin
                   ExpandFileName(s1), LLError)
               end;
           end;
+    end
+
+    else if LowerCase(s) = LowerCase('HashFromFile') then
+    begin
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s1, InfoSyntaxError) then
+          if Skip(',', r, r, InfoSyntaxError) then
+            if EvaluateString(r, r, s2, InfoSyntaxError) then
+              if Skip(')', r, r, InfoSyntaxError) then
+              begin
+                syntaxCheck := True;
+                s1 := ExpandFileName(trim(s1));
+                StringResult := '';
+                if not FileExistsUTF8(s1) then
+                  LogDatei.log('Error: HashFromFile: ' + s1 + ' is no valid file', LLError)
+                else
+                  try
+                    StringResult := HashFromFile(s1, s2);
+                  except
+                    LogDatei.log('Error: Exception at HashFromFile: ' + s1, LLError)
+                  end;
+              end;
     end
 
     else if LowerCase(s) = LowerCase('shellcall') then
@@ -17147,8 +17291,8 @@ begin
                 syntaxCheck := True;
                 boolresult := StrToBool(s2);
          {$IFDEF GUI}
+              Finputstring := TFinputstring.Create(nil);
               try
-                Finputstring := TFinputstring.Create(nil);
                 if boolresult then
                 begin
                   Finputstring.EditButton1.EchoMode := emPassword;
@@ -20410,13 +20554,72 @@ begin
     TypeInfo(TRunAs), Ord(runAs)), LLDebug);
 end;
 
-function TuibInstScript.doSetVar(const section: TuibIniScript;
-  const Expressionstr: string; var Remaining: string;
-  var InfoSyntaxError: string): boolean;
-  //var
-  // NestLevel : integer = 0;
+
+function TuibInstScript.SetStringListVariable(const section: TuibIniScript;
+  var Remaining: string; var r: string; const VarName: string;
+  var funcindex: integer; var InfoSyntaxError: string; var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+  list: TXStringList;
 begin
-  Result := doSetVar(section, Expressionstr, Remaining, InfoSyntaxError, NestingLevel);
+  Result := False;
+  if produceStringList(section, r, Remaining, list, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
+  end
+  else
+  begin
+    try
+      VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
+      ContentOfStringLists.Items[VarIndex] := list;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+    LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
+    LogDatei.log_list(list, LLDebug);
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
+end;
+
+function TuibInstScript.SetStringVariable(var Remaining: string; var r: string;
+  const VarName: string; var funcindex: integer; var InfoSyntaxError: string;
+  var NestLevel: integer): boolean;
+var
+  VarValue: string = '';
+  VarIndex: integer = 0;
+begin
+  Result := False;
+  if EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
+    Nestlevel, inDefFuncIndex) then
+  if isVisibleLocalVar(VarName, funcindex) then
+  begin
+    // local var
+    Result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname, VarValue);
+  end
+  else
+  begin
+    try
+      VarIndex := VarList.IndexOf(LowerCase(VarName));
+      ValuesList[VarIndex] := VarValue;
+      Result := True;
+    except
+    end;
+  end;
+  if Result then
+  begin
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  LogDatei.log ('The value of the variable "' + Varname + '" is now: "' +
+    VarValue + '"', LLInfo);
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+  end;
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
@@ -20424,10 +20627,7 @@ function TuibInstScript.doSetVar(const section: TuibIniScript;
   var NestLevel: integer): boolean;
 var
   VarName: string = '';
-  VarValue: string = '';
   r: string = '';
-  VarIndex: integer = 0;
-  list: TXStringList;
   funcindex: integer = 0;
 
   function isStringlistVar(varname: string): boolean;
@@ -20460,70 +20660,24 @@ begin
     InfoSyntaxError := 'variable expected'
   else
   begin
-    //VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-    if isStringlistVar(Varname) // we should get a StringList
-    then
+    if not Skip('=', r, r, InfoSyntaxError) then
     begin
-      if Skip('=', r, r, InfoSyntaxError) and
-        produceStringList(section, r, Remaining, list, InfoSyntaxError,
-        Nestlevel, inDefFuncIndex) then
-        if isVisibleLocalVar(VarName, funcindex) then
-        begin
-          // local var
-          Result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname, list);
-        end
-        else
-        begin
-          try
-            VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-            ContentOfStringLists.Items[VarIndex] := list;
-            Result := True;
-          except
-          end;
-        end;
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log('The value of the variable "' + Varname + '" is now:', LLDebug);
-        LogDatei.log_list(list, LLDebug);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-      end;
+      InfoSyntaxError := '"=" expected';
     end
     else
-    begin // it must be a string value
-      if not isStringVar(varname) then
-        InfoSyntaxError := 'Unknown variable name: ' + VarName
+    begin
+      if isStringlistVar(Varname) then
+      begin
+        Result := SetStringListVariable(section, Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel);
+      end
       else
       begin
-        if Skip('=', r, r, InfoSyntaxError) and
-          EvaluateString(r, Remaining, VarValue, InfoSyntaxError,
-          Nestlevel, inDefFuncIndex) then
-        begin
-          if isVisibleLocalVar(VarName, funcindex) then
-          begin
-            // local var
-            Result := definedFunctionArray[FuncIndex].setLocalVarValueString(
-              varname, VarValue);
-          end
-          else
-          begin
-            try
-              VarIndex := VarList.IndexOf(LowerCase(VarName));
-              ValuesList[VarIndex] := VarValue;
-              Result := True;
-            except
-            end;
-          end;
-        end;
-      end;
-
-      if Result then
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        LogDatei.log
-        ('The value of the variable "' + Varname + '" is now: "' +
-          VarValue + '"', LLInfo);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+        if isStringVar(varname) then
+          Result := SetStringVariable(Remaining, r, VarName, funcindex,
+           InfoSyntaxError, NestLevel)
+        else
+          InfoSyntaxError := 'Unknown variable name: ' + VarName;
       end;
     end;
   end;
@@ -20947,6 +21101,54 @@ begin
       SyntaxCheck := True
     else
       SyntaxCheck := False;
+  end;
+end;
+
+procedure TuibInstScript.SetVariableWithErrors(const Sektion: TWorkSection;
+  var Remaining: string; const Expressionstr: string; linecounter: integer;
+  var InfoSyntaxError: string; var NestLevel: integer);
+begin
+  if doSetVar(sektion, Expressionstr, Remaining,
+     InfoSyntaxError, NestLevel) then
+  begin
+    if Remaining <> '' then
+      reportError(Sektion, linecounter, Remaining, 'Remaining char(s) not allowed here');
+  end
+  else
+    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+end;
+
+function TuibInstScript.CheckDirectVariableInitialization(const Remaining: string): boolean;
+begin
+  Result := False;
+  if Remaining <> '' then
+    Result := True;
+end;
+
+
+function TuibInstScript.IsVariableNameReserved(const VariableName: string;
+  var SectionSpecifier: TSectionSpecifier; const call: string; const Sektion: TWorkSection;
+  const linecounter: integer): boolean;
+begin
+  Result := False;
+  if findKindOfStatement(VariableName, SectionSpecifier, call) <>
+    tsNotDefined then
+    begin
+      Result := True;
+      reportError(Sektion, linecounter, VariableName,
+        'Reserved name, must not be used in a variable definition');
+    end;
+end;
+
+function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string;
+  const Sektion: TWorkSection; const linecounter: integer): boolean;
+begin
+  Result := False;
+  if ((VarList.IndexOf(lowercase(VariableName)) >= 0) or
+    (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
+  begin
+    Result := True;
+    reportError(Sektion, linecounter, VariableName, 'name is already in use')
   end;
 end;
 
@@ -23356,7 +23558,9 @@ begin
                 if syntaxCheck then
                 begin
                   LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
-                  Sleep(1000 * sleepSecs);
+                  //Sleep(1000 * sleepSecs);
+                  // noLockSleep does not completly stop the thread
+                  noLockSleep(1000 * sleepSecs);
                 end
                 else
                   ActionResult :=
@@ -23738,200 +23942,7 @@ begin
                   LogDatei.log('Error at Blockinput: trailing parameter: ' +
                     Parameter + ' ignored', LLWarning);
               end;
-
-
-              tsLocalAdmin:
-              begin
-                if UpperCase(Remaining) = UpperCase('/Create1') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLNotice);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdmin) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLInfo);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create2') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfile) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create3') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Create4') then
-                begin
-                  LogDatei.log('Creating temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
-                  begin
-                    LogDatei.log('Created temporary local admin ...', LLNotice);
-
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')]
-                    := GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentDesktopDir%')]
-                    := GetDesktopPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentStartupDir%')]
-                    := GetStartupPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentProgramsDir%')] := GetProgramsPath;
-                    FConstValuesList.Strings[FConstList.IndexOf(
-                      '%CurrentSendToDir%')] :=
-                      GetSendToPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%CurrentProfileDir%')]
-                    := getUserProfilePath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-                    FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                      GetAppDataPath;
-
-                    ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                  end
-                  else
-                    LogDatei.log('Failed creating temporary local admin ...', LLWarning);
-                end
-
-                else if UpperCase(Remaining) = UpperCase('/Delete') then
-                begin
-                  LogDatei.log('Deleting temporary local admin ...', LLInfo);
-                  ActionResult := tsrPositive;
-                  if opsiSetupAdmin_created then
-                    if DeleteTemporaryLocalAdmin then
-                    begin
-                      LogDatei.log('Deleted temporary local admin ...', LLNotice);
-
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentAppDataDir%')] := GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartmenuDir%')] := GetStartmenuPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentDesktopDir%')] := GetDesktopPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentStartupDir%')] := GetStartupPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProgramsDir%')] := GetProgramsPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentSendToDir%')] := GetSendToPath;
-                      FConstValuesList.Strings[FConstList.IndexOf(
-                        '%CurrentProfileDir%')] := getUserProfilePath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-                      FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] :=
-                        GetAppDataPath;
-
-                      ApplyTextConstants(TXStringList(ArbeitsSektion), False);
-                    end
-                    else
-                      LogDatei.log('Failed deleting temporary local admin ...',
-                        LLWarning);
-                end
-                else if Remaining = '' then
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'Parameter needed')
-                else
-                  ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    'not an allowed Parameter');
-              end;
-                {$ENDIF WIN32}
+              {$ENDIF WIN32}
 
 
               tsExitWindows:
@@ -25077,29 +25088,12 @@ begin
 
               tsDefineVar:
               begin
-                s1 := ''; //initial value
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not EvaluateString(remaining, remaining, s1, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringexpression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
-                // given var name reseved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
@@ -25111,62 +25105,38 @@ begin
                   begin
                     LogDatei.log('Defined local string var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name + ' with value: ' +
-                      s1, LLDebug2);
+                      definedFunctionArray[funcindex].Name, LLDebug2);
                     definedFunctionArray[funcindex].setLocalVarValueString(
-                      lowercase(Expressionstr), s1);
+                      lowercase(Expressionstr), '');
                   end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
-                // already existing ?
-                else if VarList.IndexOf(lowercase(Expressionstr)) >= 0 then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'name is already in use')
-                else
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
                   // do it
                   VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add(s1);
+                  ValuesList.Add('');
                   LogDatei.log('Defined global local string var: ' +
-                    lowercase(Expressionstr) + ' with value: ' + s1, LLDebug2);
+                    lowercase(Expressionstr), LLDebug2);
                 end;
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineStringList:
               begin
-                LogDatei.log_prog('Start definestringlist', LLdebug2);
-                //if tmplist <> nil then
-                //if Assigned(tmplist) then FreeAndNil(tmplist);
-                LogDatei.log_prog('definestringlist: init tmplist', LLdebug2);
-                tmplist := TXStringlist.Create;
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
-                if Remaining <> '' then
-                begin
-                  // setting inital value ?
-                  if skip('=', remaining, remaining, InfoSyntaxError) then
-                  begin
-                    if not produceStringList(Sektion, remaining,
-                      remaining, tmplist, InfoSyntaxError) then
-                      reportError(Sektion, linecounter, call,
-                        'not a stringlist expression after "="');
-                  end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'not allowed char following variable name');
-                end;
-                // given var name reseved ?
-                if findKindOfStatement(Expressionstr, SectionSpecifier, call) <>
-                  tsNotDefined then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Reserved name, must not be used in a variable definition')
+
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
                 // in local function ?
-                else if inDefinedFuncNestCounter > 0 then
+                if inDefinedFuncNestCounter > 0 then
                 begin
                   // get the function we are in
                   funcindex :=
@@ -25174,39 +25144,30 @@ begin
                     definedFunctionsCallStack.Count - 1]);
                   if definedFunctionArray[funcindex].addLocalVar(
                     lowercase(Expressionstr), dfpStringlist, False) then
+                    begin
                     LogDatei.log('Defined local stringlist var: ' +
                       lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name +
-                      ' with value: ' + tmplist.Text, LLDebug2)
+                      definedFunctionArray[funcindex].Name, LLDebug2);
+                    definedFunctionArray[funcindex].setLocalVarValueList(
+                      lowercase(Expressionstr), TStringList.Create);
+                    end
                   else
                     reportError(Sektion, linecounter, Expressionstr,
                       'name is already in use');
                 end
                 // not in local function - make it global
-
-                else if VarList.IndexOf(lowercase(Expressionstr)) or
-                  listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
-                  reportError(Sektion, linecounter, Expressionstr,
-                    'Name already in use')
-                else
-
+                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
                 begin
+                  // do it
                   listOfStringLists.Add(lowercase(Expressionstr));
                   // create the list object needed to store list items
                   ContentOfStringLists.Add(TStringList.Create);
-                  // if there is content then store it
-                  if tmplist.Count > 0 then
-                  begin
-                    VarIndex := listOfStringLists.IndexOf(LowerCase(Expressionstr));
-                    TStringList(ContentOfStringLists.Items[VarIndex]).Text :=
-                      tmplist.Text;
-                  end;
-                  LogDatei.log('', leveldebug);
                   LogDatei.log('defined global string list ' +
-                    Expressionstr + ' with value: ' + tmplist.Text, LLDebug);
+                    Expressionstr, LLDebug);
                 end;
-                if Assigned(tmplist) then
-                  FreeAndNil(tmplist);
+                if CheckDirectVariableInitialization(Remaining) then
+                  SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
+                    linecounter, InfoSyntaxError, NestLevel);;
               end;
 
               tsDefineFunction:
@@ -25398,25 +25359,25 @@ begin
                     end;
               end;
 
-
+              tsReloadProductList:
+              begin
+                if remaining = '' then
+                begin
+                  SetFlagReloadProductList;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    ' end of line expected');
+              end;
 
               tsSetVar:
               begin
                 LogDatei.log_prog('Start tsSetVar with expr: ' + Remaining, LLdebug);
-                //writeln('set');
                 Expressionstr := Remaining;
-                doLogEntries(PStatNames^ [tsSetVar] + '  ' + Expressionstr, LLInfo);
-                if doSetVar(sektion, Expressionstr, Remaining,
-                  InfoSyntaxError, NestLevel) then
-                begin
-                  if Remaining <> '' then
-                    reportError(Sektion, linecounter, Remaining,
-                      'Remaining char(s) not allowed here');
-                end
-                else
-                  reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                SetVariableWithErrors(Sektion, Remaining, Expressionstr, linecounter,
+                  InfoSyntaxError, NestLevel);
               end
-
               else
                 ActionResult :=
                   reportError(Sektion, linecounter, Expressionstr, 'undefined');
@@ -25704,9 +25665,19 @@ begin
       end;
       //Scriptdatei := ExpandFileName(Scriptdatei);
       // this will read with encoding from system to utf8
-      Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+      try
+        Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+      except
+        on e: Exception do
+        begin
+          LogDatei.log('Exception in CreateAndProcessScript: Script.loadFromUnicodeFile: ' +
+          e.message, LLError);
+          extremeErrorLevel := levelFatal;
+        end;
+      end;
       if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
       begin
+        try
         logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
           ')', LLinfo);
         Encoding2use := searchencoding(Script.Text, isPlainAscii);
@@ -25785,6 +25756,14 @@ begin
           //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
         end;
         Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
+        except
+          on e: Exception do
+          begin
+            LogDatei.log('Exception in CreateAndProcessScript: loading Scriptfile: ' +
+            e.message, LLError);
+            extremeErrorLevel := levelFatal;
+          end;
+        end;
       end
       else
       begin
@@ -26495,6 +26474,8 @@ begin
     on e: Exception do
     begin
       LogDatei.log('Exception in CreateAndProcessScript: General' + e.message, LLError);
+      extremeErrorLevel := levelFatal;
+      opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
       LogDatei.Close;
     end;
   end;
@@ -26584,7 +26565,6 @@ begin
 
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
-  PStatNames^ [tsLocalAdmin] := 'LocalAdmin';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
 
@@ -26637,6 +26617,7 @@ begin
   PStatNames^ [tsImportCertToSystem] := 'importCertToSystem';
   PStatNames^ [tsRemoveCertFromSystem] := 'removeCertFromSystem';
 
+  PStatNames^ [tsReloadProductList] := 'reloadProductList';
 
   runProfileActions := False;
   runLoginScripts := False;

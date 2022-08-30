@@ -809,7 +809,7 @@ begin
             else
             if not (definedFunctionArray[scopeindex] = self) then
             begin
-              // points to a other func
+              // points to another func
               definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
             end
             else
@@ -823,7 +823,7 @@ begin
               scriptstopped := True;
             end;
           end
-          else // points to a other func
+          else // points to another func
             definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
         end
         else

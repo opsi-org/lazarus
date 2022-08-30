@@ -14,7 +14,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   OnDestroy = FormDestroy
   OnResize = FormResize
   Position = poScreenCenter
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.2.0'
   object PanelToolbar: TPanel
     Left = 0
     Height = 45
@@ -1049,6 +1049,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Font.Quality = fqDraft
       Font.Style = [fsBold]
       Layout = tlCenter
+      ParentColor = False
       ParentFont = False
     end
     object ImageLogo: TImage
@@ -1315,6 +1316,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               AutoSize = False
               BorderSpacing.Around = 5
               Caption = 'Description:  '
+              ParentColor = False
             end
             object LabelAdvice: TLabel
               Left = 5
@@ -1326,6 +1328,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               AutoSize = False
               BorderSpacing.Around = 5
               Caption = 'Advice:  '
+              ParentColor = False
             end
             object LabelVerstr: TLabel
               Left = 5
@@ -1336,6 +1339,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Alignment = taRightJustify
               BorderSpacing.Around = 5
               Caption = 'Version at Server'
+              ParentColor = False
             end
             object LabelClientVerstr: TLabel
               Left = 5
@@ -1346,6 +1350,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Alignment = taRightJustify
               BorderSpacing.Around = 5
               Caption = 'Version at Client'
+              ParentColor = False
             end
           end
           object PanelDetailsDBText: TPanel
@@ -1368,6 +1373,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               BorderSpacing.Around = 5
               DataField = 'VersionStr'
               DataSource = DataSourceProductData
+              ParentColor = False
             end
             object DBMemoDescription: TDBMemo
               Left = 5
@@ -1406,6 +1412,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               BorderSpacing.Around = 5
               DataField = 'InstalledVerSTr'
               DataSource = DataSourceProductData
+              ParentColor = False
             end
           end
         end
@@ -1431,6 +1438,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Width = 44
               BorderSpacing.Around = 5
               Caption = 'Priority: '
+              ParentColor = False
             end
             object DBTextPriority: TDBText
               Left = 108
@@ -1439,6 +1447,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Width = 73
               BorderSpacing.Around = 5
               DataField = 'priority'
+              ParentColor = False
             end
           end
           object PanelDependencies: TPanel
@@ -1616,6 +1625,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object ButtonSoftwareInstall: TButton
@@ -1644,6 +1654,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object LabelSoftwareAdvice: TLabel
@@ -1661,6 +1672,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object PanelSoftwareScreenshot: TPanel
@@ -1697,6 +1709,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderSpacing.Around = 5
             DataField = 'VersionStr'
             DataSource = DataSourceProductData
+            ParentColor = False
           end
           object DBTextSoftwareClientVerStr: TDBText
             Left = 15
@@ -1706,6 +1719,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderSpacing.Around = 5
             DataField = 'InstalledVerStr'
             DataSource = DataSourceProductData
+            ParentColor = False
           end
           object LabelSoftwareInstalledVersion: TLabel
             Left = 15
@@ -1714,6 +1728,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 91
             Caption = 'Installed version'
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object LabelSoftwareRecentVersion: TLabel
@@ -1723,6 +1738,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 84
             Caption = 'Recent version'
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object ButtonSoftwareUpdate: TButton
@@ -1760,6 +1776,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 112
             DataField = 'ActionRequest'
             DataSource = DataSourceProductData
+            ParentColor = False
           end
           object LabelSoftwareActionRequest: TLabel
             Left = 15
@@ -1768,6 +1785,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 36
             Caption = 'Action'
             Font.Style = [fsBold]
+            ParentColor = False
             ParentFont = False
           end
           object DBMemoProductDescription: TDBMemo
@@ -1818,6 +1836,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           AutoSize = False
           Caption = 'Please wait. Installing/uninstalling products.'
           Font.Height = -16
+          ParentColor = False
           ParentFont = False
         end
         object ProgressBarPleaseWait: TProgressBar

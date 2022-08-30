@@ -109,11 +109,12 @@ var
   MemoArray: Tmemos;
   labelcounter, memocounter: integer;
   buttoncounter: integer = -1;
-  designPPI: integer;
+  //designPPI: integer;
   //mymouseenter: TMethod;
   //mymouseleave: TMethod;
   myRangelistList: TMyRangeList;
-//ConfirmArray: TConfirms;
+  //ConfirmArray: TConfirms;
+  buttonListReloadAllowed: boolean = True;
 
 
   (*
@@ -253,24 +254,35 @@ begin
 end;
 
 procedure shutdownNotifier;
+var
+  loopcounter: integer = 0;
 begin
-  logdatei.log('Terminate Thread', LLInfo);
-  if Assigned(mythread) then
-    mythread.Terminate;
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
   Nform.Close;
   logdatei.log('Wait a scond', LLInfo);
   DataModule1.ProcessMess;
-  sleep(1000);
+  logdatei.log('Terminate Thread', LLInfo);
+  if Assigned(mythread) then
+  begin
+    mythread.Terminate;
+    while (not stopped) and (loopcounter < 100) do
+    begin
+      logdatei.log('waiting for thread to end ..', LLnotice);
+      sleep(500);
+      Inc(loopcounter);
+    end;
+  end;
+  // this will end main ... and then terminate
+  //sleep(1000);
   //logdatei.log('free_runtime_objects', LLnotice);
   //free_runtime_objects;
   //DataModule1.DataModuleDestroy(nil);
-  logdatei.log('terminate', LLnotice);
+  //logdatei.log('terminate', LLnotice);
   //Application.Terminate;
-  DataModule1.DataModuleDestroy(nil);
-  logdatei.log('Program halted (2)', LLnotice);
-  Halt(0);
+  //DataModule1.DataModuleDestroy(nil);
+  //logdatei.log('Program halted (2)', LLnotice);
+  //Halt(0);
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string): boolean;
@@ -337,36 +349,69 @@ begin
     '" the caption: "' + aktMessage + '"', LLInfo);
   try
     btnfound := False;
-    // get ButtonArray index for aktid stored in buttonlist
-    //indexstr := buttonlist.Values[IntToStr(choiceindex)];
+    // choiceindex is a index for a virtual button list
+    // it could be a real button (button_only)
+    // or a combobox where every entry has its own choicindex
+    // so one buttonindex may have one or more choiceindices
+
+    // get Buttoindex for choiceindex stored in buttonlist
     rangeindex := getIndexFromRangeList(choiceindex, startval, btnindex);
     if rangeindex <> -1 then
     begin
       if btnindex < length(ButtonArray) then
       begin
         logdatei.log('Found Button index: ' + IntToStr(btnindex) +
-          ' for id: "' + IntToStr(choiceindex) + '"', LLDebug2);
+          ' for id: "' + IntToStr(choiceindex) + '"', LLinfo);
+        logdatei.log('Button tag: ' + IntToStr(ButtonArray[btnindex].btn.Tag) +
+          ' Items.count: ' + IntToStr(ButtonArray[btnindex].cbox.Items.Count), LLDebug);
         if startval <> ButtonArray[btnindex].btn.Tag then
           logdatei.log('Button tag: ' + IntToStr(ButtonArray[btnindex].btn.Tag) +
             ' differs from startval: ' + IntToStr(startval), LLerror);
         logdatei.log('Button name by index: Found index: ' +
-          ButtonArray[btnindex].panel.Name, LLDebug2);
+          ButtonArray[btnindex].panel.Name, LLDebug);
         if ButtonArray[btnindex].button_only then
         begin
           ButtonArray[btnindex].btn.Caption := aktMessage;
         end
         else
         begin
-          tmpint := ButtonArray[btnindex].btn.Tag +
-            ButtonArray[btnindex].cbox.Items.Count;
-          if choiceindex > tmpint then
-            // we need a new entry
-            ButtonArray[btnindex].cbox.Items.Add(aktMessage)
-          else
-
-            ButtonArray[btnindex].cbox.Items[choiceindex -
-              ButtonArray[btnindex].btn.Tag] :=
-              aktMessage;
+          if buttonListReloadAllowed then
+          begin
+            if choiceindex = ButtonArray[btnindex].btn.Tag then
+            begin
+              // if choiceindex = Tag then we startup with list
+              // and so we clear the old
+              ButtonArray[btnindex].cbox.Items.Clear;
+              logdatei.log('Cleared dropdown list because choiceindex = Button.tag',
+                LLinfo);
+            end;
+            tmpint := ButtonArray[btnindex].btn.Tag +
+              ButtonArray[btnindex].cbox.Items.Count;
+            if choiceindex >= tmpint then
+            begin
+              // we need a new entry
+              tmpint := ButtonArray[btnindex].cbox.Items.Add(aktMessage);
+              logdatei.log('Add to dropdown list at: ' + IntToStr(tmpint), LLinfo);
+              // setting selection to the last element in order to activate scrollbar if needed
+              ButtonArray[buttoncounter].cbox.ItemIndex := tmpint;
+              ButtonArray[btnindex].panel.Repaint;
+              Application.ProcessMessages;
+              // setting back to first element
+              ButtonArray[buttoncounter].cbox.ItemIndex := 0;
+              // after adding the first element we set the selection to this first
+              if tmpint = 0 then
+                ButtonArray[buttoncounter].cbox.ItemIndex := 0;
+            end
+            else
+            begin
+              // we should never be here
+              ButtonArray[btnindex].cbox.Items[choiceindex -
+                ButtonArray[btnindex].btn.Tag] :=
+                aktMessage;
+              logdatei.log('Insert in dropdown list at : ' +
+                IntToStr(choiceindex - ButtonArray[btnindex].btn.Tag), LLinfo);
+            end;
+          end;
         end;
         ButtonArray[btnindex].panel.Repaint;
         Application.ProcessMessages;
@@ -377,48 +422,7 @@ begin
     end
     else
       LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLerror);
-    (*
-    if indexstr = '' then
-    begin
-      // we did not found the button in the buttonlist - is it a combo field ?
-      if (choiceindex > buttonlist.Count -1) and
-        not ButtonArray[buttonlist.Count -1].button_only then
-       begin
-        index := buttonlist.Count -1;
-        btnfound := true;
-       end
-       else
-      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLDebug2);
-     end
-     else
-     begin
-       // we did found the button in the buttonlist
-       index := StrToInt(indexstr);
-       btnfound := true;
-     end;
-     if btnfound = true then
-     begin
-      logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
-        IntToStr(choiceindex) + '"', LLDebug2);
-      logdatei.log('Button name by index: Found index: ' +
-        ButtonArray[index].panel.Name, LLDebug2);
-      if ButtonArray[index].button_only then
-      ButtonArray[index].btn.Caption := aktMessage
-      end
-      else
-      begin
-        tmpint := ButtonArray[index].btn.Tag
-            + ButtonArray[index].cbox.Items.Count;
-        if choiceindex > tmpint then
-        // we need a new entry
-        ButtonArray[index].cbox.Items.Add(aktMessage)
-        else
-        //
-        ButtonArray[index].cbox.Items[choiceindex - ButtonArray[index].btn.Tag] := aktMessage;
-      end;
-      ButtonArray[index].panel.Repaint;
-      Application.ProcessMessages;
-      *)
+
     logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
       '" the message: "' + aktMessage + '"', LLInfo);
 
@@ -467,49 +471,49 @@ begin
     if ButtonArray[btnindex].confirmshow then
     begin
       with TTaskDialog.Create(NForm) do
-    try
-      Title := ButtonArray[btnindex].confirmtitle;
-      Caption := 'opsi-setup-detector';
-      Text := ButtonArray[btnindex].confirmtext;
-      CommonButtons := [];
+        try
+          Title := ButtonArray[btnindex].confirmtitle;
+          Caption := 'opsi-setup-detector';
+          Text := ButtonArray[btnindex].confirmtext;
+          CommonButtons := [];
       (*
       CommonButtons := [tcbYes, tcbNo];
       DefaultButton := tcbNo;
       Buttons.Items[0].Caption:= ButtonArray[btnindex].confirmYesText;
       *)
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := ButtonArray[btnindex].confirmNoText;
-        ModalResult := mrNo;
-      end;
-      with TTaskDialogButtonItem(Buttons.Add) do
-      begin
-        Caption := ButtonArray[btnindex].confirmYesText;
-        ModalResult := mrYes;
-      end;
-      Buttons.DefaultButton := Buttons.FindButton(mrNo);
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := ButtonArray[btnindex].confirmNoText;
+            ModalResult := mrNo;
+          end;
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := ButtonArray[btnindex].confirmYesText;
+            ModalResult := mrYes;
+          end;
+          Buttons.DefaultButton := Buttons.FindButton(mrNo);
       (*
        // to confirm is not the default
       Buttons.Items[0].Default:= false;
       Buttons.Items[1].Default:= true;
       *)
-      MainIcon := tdiQuestion;
-      Flags := [tfUseCommandLinks, tfAllowDialogCancellation];
-      if Execute then
-      begin
-        if ModalResult <> mrYes then
-       begin
-        confirmed := False;
-        LogDatei.log('Button action aborted by user-confirm: ' +
-          ButtonArray[btnindex].confirmtext, LLwarning);
-      end
-      else
-        LogDatei.log('Button action confirmed by user,  text: ' +
-          ButtonArray[btnindex].confirmtext, LLnotice);
-      end;
-    finally
-      Free;
-    end;
+          MainIcon := tdiQuestion;
+          Flags := [tfUseCommandLinks, tfAllowDialogCancellation];
+          if Execute then
+          begin
+            if ModalResult <> mrYes then
+            begin
+              confirmed := False;
+              LogDatei.log('Button action aborted by user-confirm: ' +
+                ButtonArray[btnindex].confirmtext, LLwarning);
+            end
+            else
+              LogDatei.log('Button action confirmed by user,  text: ' +
+                ButtonArray[btnindex].confirmtext, LLnotice);
+          end;
+        finally
+          Free;
+        end;
       (*
       if MessageDlg(ButtonArray[btnindex].confirmtitle,
         ButtonArray[btnindex].confirmtext, mtConfirmation,
@@ -549,6 +553,7 @@ begin
 
 
       logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLnotice);
+      buttonListReloadAllowed := False;
       buttonPushedToService(choice);
     end;
   end
@@ -566,15 +571,50 @@ end;
 
 
 function fontresize(num: integer): integer;
+var
+  fheight : integer;
 begin
-  Result := round(num * 0.5);
+  {$IFDEF WINDOWS}
+  // It seems that we do not to scale the fonst at windows
+  // so we adjust here anly a little bit
+  //Result := round(num * 0.5);
+  //Result := round(num * 0.6);
+  //Result := round(num * 0.7);
+  Result := round(num * 0.8);
+  //Result := num;
+
+  if Result < 5 then
+    Result := 5;
+  if Result > 20 then
+    Result := 20;
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
+  {$ENDIF WINDOWS}
 
   {$IFDEF LINUX}
+  Result := round(num * 0.5);
+  //Result := round(num * 0.8);
   //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
-  Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
-  {$ENDIF LINUX}
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
+  //Result := round(Result * (designPPI / nform.PixelsPerInch));
+  //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
   if Result < 8 then
     Result := 8;
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
+  {$ENDIF LINUX}
+
+  {$IFDEF DARWIN}
+  Result := round(num * 0.5);
+  //Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  Result := trunc(Result * (designPPI / nform.PixelsPerInch)) - 1;
+  //Result := round(Result * ((Screen.PixelsPerInch / Nform.DesignTimePPI) + 0.0));
+  if Result < 8 then
+    Result := 8;
+  LogDatei.log('fontresize in: ' + IntToStr(num) + ' out:  ' +
+    IntToStr(Result), LLinfo);
+  {$ENDIF DARWIN}
+
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -765,6 +805,8 @@ end;
 procedure showNForm;
 var
   startx, starty, stopy, x, y, i: integer;
+  tempHeight: integer;
+  tmpstr2: string;
 begin
   // position
 
@@ -821,6 +863,29 @@ begin
     //DataModule1.ProcessMess;
   end;
   *)
+  (*
+      tmpstr2 := 'Form initial: ';
+      with nform do
+      begin
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+      end;
+      LogDatei.log(tmpstr2, LLDebug);
+    {$IFNDEF WINDOWS}
+      // scale new scrollbox:
+      nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
+        screen.PixelsPerInch, 0, 0);
+      //nform.Repaint;
+      //Application.ProcessMessages;
+    {$ENDIF WINDOWS}
+      tmpstr2 := 'Form rescale: ';
+      with nform do
+      begin
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+      end;
+      LogDatei.log(tmpstr2, LLDebug);
+     *)
 
   // show with appearmode
 
@@ -828,12 +893,21 @@ begin
     fapNone: LogDatei.log('Will not show: fapNone', LLWarning);
     fapStd:
     begin
+      LogDatei.log('Will show with appearmode : fapStd', LLinfo);
       nform.Top := starty;
       nform.Left := startx;
       nform.Show;
     end;
     fapFade:
     begin
+      LogDatei.log('Will show with appearmode : fapFade', LLinfo);
+      with nform do
+      begin
+        tmpstr2 := 'Initial : ';
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLDebug);
+      end;
       nform.Top := starty;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -849,14 +923,40 @@ begin
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        with nform do
+        begin
+          tmpstr2 := 'Form step: ' + IntToStr(i);
+          tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+          tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+          LogDatei.log(tmpstr2, LLdebug);
+        end;
         i := i + appearStepSize;
+      end;
+      //final
+      begin
+        //sleep(1);
+        //nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
       end;
     end;
     fapFadeUp:
     begin
+      LogDatei.log('Will show with appearmode : fapFadeUp', LLinfo);
+      with nform do
+      begin
+        tmpstr2 := 'Initial : ';
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLdebug);
+      end;
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
+      tempHeight := 0;
       y := screen.WorkAreaHeight;
       {$IFDEF LINUX}
       { no valid control toolbar detection on Linux - so guess }
@@ -875,27 +975,40 @@ begin
         nform.AlphaBlendValue := i;
         //y := screen.WorkAreaHeight;
         nform.Top := y - i;
-        nform.Height := nform.Height + appearStepSize;
+        tempHeight := tempHeight + appearStepSize;
+        // do not use this because nform.Height is not always what we expect (timing)
+        // nform.Height := nform.Height + appearStepSize;
+        nform.Height := tempHeight;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        with nform do
+        begin
+          tmpstr2 := 'Form step: ' + IntToStr(i);
+          tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+          tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+          LogDatei.log(tmpstr2, LLdebug);
+        end;
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= 255 do
+      //while i <= 255 do
+      //final
       begin
         //sleep(1);
-        nform.AlphaBlendValue := i;
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
-        i := i + appearStepSize;
+        //i := i + appearStepSize;
       end;
       nform.Refresh;
       DataModule1.ProcessMess;
     end;
     fapFadeDown:
     begin
+      LogDatei.log('Will show with appearmode : fapFadeDown', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -918,18 +1031,20 @@ begin
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= 255 do
+      //final
       begin
-        sleep(1);
-        nform.AlphaBlendValue := i;
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
-        i := i + appearStepSize;
+        //i := i + appearStepSize;
       end;
     end;
     fapUp:
     begin
+      LogDatei.log('Will show with appearmode : fapUp', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -954,9 +1069,20 @@ begin
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      //final
+      begin
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
+      end;
     end;
     fapDown:
     begin
+      LogDatei.log('Will show with appearmode : fapDown', LLinfo);
       x := screen.Width;
       stopy := nform.Height;
       nform.Height := 0;
@@ -975,6 +1101,16 @@ begin
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      //final
+      begin
+        //sleep(1);
+        nform.Height := stopy;
+        nform.AlphaBlendValue := 255;
+        nform.BringToFront;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+        //i := i + appearStepSize;
+      end;
     end;
   end;
   if mynotifierkind = 'event' then
@@ -983,6 +1119,19 @@ begin
     logdatei.log('FormStyle := fsNormal', LLDebug);
     nform.Repaint;
     DataModule1.ProcessMess;
+  end;
+
+  nform.BringToFront;
+  nform.Repaint;
+  DataModule1.ProcessMess;
+
+  //final
+  with nform do
+  begin
+    tmpstr2 := 'Form final Position: ';
+    tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+    tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+    LogDatei.log(tmpstr2, LLinfo);
   end;
 end;
 
@@ -1102,8 +1251,6 @@ end;
 
 procedure objectByIndex(myIni: TIniFile; aktsection: string);
 var
-  //myLabel: TLabel;
-  //myButton: TButton;
   mytmpstr, tmpstr2, tmpstr3: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
@@ -1112,11 +1259,8 @@ var
   choiceArrayEnd: integer;
   tmpinistr: string;
   tmpbool: boolean;
-  //myscreen : TScreen;
-  //myconfirm : TConfirmRecord;
 begin
   try
-    //myscreen := TScreen.Create(Application);
     if aktsection = 'Form' then
     begin
       nform.Color := myStringToTColor(myini.ReadString(aktsection, 'color', 'clWhite'));
@@ -1134,16 +1278,16 @@ begin
         if mynotifierkind = 'event' then
         begin
           nform.FormStyle := fsSystemStayOnTop;
-          logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
+          logdatei.log('FormStyle := fsSystemStayOnTop', LLinfo);
         end
         else
         begin
           nform.FormStyle := fsSystemStayOnTop;
-          logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
+          logdatei.log('FormStyle := fsSystemStayOnTop', LLinfo);
         end;
       end
       else
-        logdatei.log('FormStyle := fsNormal', LLDebug);
+        logdatei.log('FormStyle := fsNormal', LLinfo);
 
       //Frame = false
       tmpinistr := myini.ReadString(aktsection, 'Frame', 'false');
@@ -1156,7 +1300,7 @@ begin
       begin
         nform.BorderStyle := bsNone;
         logdatei.log('Frame=false - so we ignore Resizable,Closeable,Minimizable ',
-          LLDebug);
+          LLinfo);
       end
       else
       begin // with frame
@@ -1174,11 +1318,11 @@ begin
         if not tmpbool then  // no Resizable
         begin
           nform.BorderStyle := bsSingle;
-          logdatei.log('Resizable=false ', LLDebug);
+          logdatei.log('Resizable=false ', LLinfo);
         end
         else
         begin
-          logdatei.log('Resizable=true ', LLDebug);
+          logdatei.log('Resizable=true ', LLinfo);
           nform.BorderStyle := bsSizeable;
         end;
 
@@ -1191,10 +1335,10 @@ begin
             tmpinistr, LLError);
         end;
         if not tmpbool then  // no Closeable
-          logdatei.log('Closeable=false ', LLDebug)
+          logdatei.log('Closeable=false ', LLinfo)
         else
         begin
-          logdatei.log('Closeable=True ', LLDebug);
+          logdatei.log('Closeable=True ', LLinfo);
           nform.BorderIcons := nform.BorderIcons + [biSystemMenu];
         end;
 
@@ -1207,10 +1351,10 @@ begin
             tmpinistr, LLError);
         end;
         if not tmpbool then  // no Minimizable
-          logdatei.log('Minimizable=false ', LLDebug)
+          logdatei.log('Minimizable=false ', LLinfo)
         else
         begin
-          logdatei.log('Minimizable=True ', LLDebug);
+          logdatei.log('Minimizable=True ', LLinfo);
           nform.BorderIcons := nform.BorderIcons + [biMinimize];
         end;
       end;
@@ -1241,30 +1385,27 @@ begin
         nform.Top := mytmpint2;
       end;
 
+      with nform do
+      begin
+        tmpstr2 := 'nform before scale';
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top := round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'nform after scale';
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+
     {$IFDEF DARWIN}
       // at bottom we have the dock
       if nformpos = fpBottomRight then
         nformpos := fpTopRight;
     {$ENDIF DARWIN}
-      tmpstr2 := 'Form initial: ';
-      with nform do
-      begin
-        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
-        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
-      end;
-      LogDatei.log(tmpstr2, LLDebug);
-    {$IFNDEF DARWIN}
-      // scale new scrollbox:
-      nform.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,
-        screen.PixelsPerInch, 0, 0);
-    {$ENDIF DARWIN}
-      tmpstr2 := 'Form rescale: ';
-      with nform do
-      begin
-        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
-        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
-      end;
-      LogDatei.log(tmpstr2, LLDebug);
       //Hidden = false
       tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
       if not TryStrToBool(tmpinistr, hidden) then
@@ -1327,9 +1468,11 @@ begin
       else
       begin
         nform.Image1.Picture.LoadFromFile(mytmpstr);
-        //nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
+       // {$IFDEF WINDOWS}
+        // scale new Picture:
         nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, designPPI,
           screen.PixelsPerInch, 0, 0);
+       // {$ENDIF WINDOWS}
         nform.Image1.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -1337,7 +1480,7 @@ begin
     else
     if aktsection = 'LabelMessage' then
     begin
-      LogDatei.log('Start reading: ' + aktsection, LLDebug);
+      LogDatei.log('Start reading: ' + aktsection, LLinfo);
       Inc(memocounter);
       SetLength(memoarray, memocounter + 1);
       memoarray[memocounter] := TTransparentMemo.Create(nform);
@@ -1349,6 +1492,23 @@ begin
       memoarray[memocounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
       memoarray[memocounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
       memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+
+      with memoarray[memocounter] do
+      begin
+        tmpstr2 := 'Memo before scale' + IntToStr(memocounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top := round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Memo after scale' + IntToStr(memocounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+
       //memoarray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
       memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
 
@@ -1382,18 +1542,7 @@ begin
       memoarray[memocounter].Tag := memocounter;
       memoarray[memocounter].scrolllabel.Caption :=
         myini.ReadString(aktsection, 'Text', '');
-      //memoarray[memocounter].scrolllabel.Caption := 'test'+#10+#13+
-      //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+
-      //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
-      //memoarray[memocounter].ReadOnly:=true;
-      //memoarray[memocounter].ScrollBars:=ssAutoVertical;
-      //{$IFDEF WINDOWS}
-      // scale new scrollbox:
-      //memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, screen.PixelsPerInch, 0, 0);
-      memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, screen.PixelsPerInch, 0, 0);
 
-      //{$ENDIF WINDOWS}
       // make transparent
       memoarray[memocounter].ControlStyle :=
         memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
@@ -1402,8 +1551,8 @@ begin
       // feed memolist: id = index of memoarray ; id = aktsection striped by 'Label'
       memolist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(memocounter));
       logdatei.log('memolist add: ' + copy(aktsection, 6, 100) + '=' +
-        IntToStr(memocounter), LLDebug2);
-      LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+        IntToStr(memocounter), LLinfo);
+      LogDatei.log('Finished reading: ' + aktsection, LLinfo);
     end
     else
     if pos('Label', aktsection) > 0 then
@@ -1416,19 +1565,30 @@ begin
       LabelArray[labelcounter].AutoSize := True;
       LabelArray[labelcounter].Name := aktsection;
       LabelArray[labelcounter].WordWrap := True;
-    (*
-    {$IFDEF LINUX}
-    LabelArray[labelcounter].AutoSize := False;
-    LabelArray[labelcounter].WordWrap := False;
-    LabelArray[labelcounter].AdjustFontForOptimalFill;
-    {$ENDIF LINUX}
-    *)
+      //LabelArray[labelcounter].WordWrap := False;
       LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
       LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
       LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
       LabelArray[labelcounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
-      //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
+
+      with LabelArray[labelcounter] do
+      begin
+        tmpstr2 := 'Label before scale' + IntToStr(labelcounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top := round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Label after scale' + IntToStr(labelcounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+      end;
+
       LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
+
 
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
@@ -1436,15 +1596,20 @@ begin
       {$IFDEF WINDOWS}
         mytmpstr := 'Arial';
       {$ENDIF WINDOWS}
-        //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
       {$IFDEF LINUX}
         mytmpstr := 'Liberation Sans';
       {$ENDIF LINUX}
       end;
       LabelArray[labelcounter].Font.Name := mytmpstr;
-      { fontresize makes also hdpi correction for linux}
-      LabelArray[labelcounter].Font.Size :=
-        fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+
+      if not LabelArray[labelcounter].OptimalFill then
+      begin
+        mytmpint1 := myini.ReadInteger(aktsection, 'FontSize', 10);
+        mytmpint2 := fontresize(mytmpint1);
+        LabelArray[labelcounter].Font.Size := mytmpint2;
+        LogDatei.log('Fontsize from ini: ' + IntToStr(mytmpint1) +
+          ' - using Fontsize:  ' + IntToStr(mytmpint2), LLinfo);
+      end;
       LabelArray[labelcounter].Font.Color :=
         myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       LabelArray[labelcounter].Font.Bold :=
@@ -1459,26 +1624,17 @@ begin
         strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
       LabelArray[labelcounter].Tag := labelcounter;
       LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
-      //LabelArray[labelcounter].AdjustSize;
-      //{$IFDEF WINDOWS}
-      // scale new Label:
-      //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      //  96, nform.PixelsPerInch, 0, 0);
-      //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
-      LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, nform.PixelsPerInch, 0, 0);
 
-      //{$ENDIF WINDOWS}
       // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
       labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
       logdatei.log('labellist add: ' + copy(aktsection, 6, 100) +
-        '=' + IntToStr(labelcounter), LLDebug2);
-      LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+        '=' + IntToStr(labelcounter), LLinfo);
+      LogDatei.log('Finished reading: ' + aktsection, LLinfo);
     end
     else
     if pos('Button', aktsection) > 0 then
     begin
-      LogDatei.log('Start reading: ' + aktsection, LLDebug);
+      LogDatei.log('Start reading: ' + aktsection, LLinfo);
       Inc(buttoncounter);
       LogDatei.log('buttoncounter: ' + IntToStr(buttoncounter), LLinfo);
       SetLength(ButtonArray, buttoncounter + 1);
@@ -1499,7 +1655,7 @@ begin
       begin
         choiceindex := 0;
         mytmpstr := trim(copy(choiceindexstr, 1, Pos(':', choiceindexstr) - 1));
-        LogDatei.log('choiceindex array will start with: ' + mytmpstr, LLdebug);
+        LogDatei.log('choiceindex array will start with: ' + mytmpstr, LLinfo);
         if not TryStrToInt(mytmpstr, choiceindex) then
         begin
           LogDatei.log('choiceindex from file: ' + choiceindexstr +
@@ -1512,7 +1668,7 @@ begin
           // get the array end
           mytmpstr := trim(copy(choiceindexstr, Pos(':', choiceindexstr) + 1,
             length(choiceindexstr)));
-          LogDatei.log('choiceindex array will end with: ' + mytmpstr, LLdebug);
+          LogDatei.log('choiceindex array will end with: ' + mytmpstr, LLinfo);
           if mytmpstr = '' then // Array ends never
             choiceArrayEnd := MaxInt
           else
@@ -1572,13 +1728,27 @@ begin
         myini.ReadInteger(aktsection, 'Width', 10);
       ButtonArray[buttoncounter].panel.Height :=
         myini.ReadInteger(aktsection, 'Height', 10);
-      tmpstr2 := 'Button' + IntToStr(buttoncounter);
+      {$IFDEF LINUX}
+        ButtonArray[buttoncounter].panel.Height :=
+        myini.ReadInteger(aktsection, 'Height', 10) + 5;;
+      {$ENDIF LINUX}
+
+
       with ButtonArray[buttoncounter].panel do
       begin
+        tmpstr2 := 'Button before scale' + IntToStr(buttoncounter);
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
+        Top := round(top * (screenPPI / designPPI));
+        Left := round(left * (screenPPI / designPPI));
+        Width := round(Width * (screenPPI / designPPI));
+        Height := round(Height * (screenPPI / designPPI));
+        tmpstr2 := 'Button after scale' + IntToStr(buttoncounter);
+        tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
+        tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
+        LogDatei.log(tmpstr2, LLinfo);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
 
       mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
       if screen.Fonts.IndexOf(mytmpstr) = -1 then
@@ -1592,12 +1762,16 @@ begin
       {$ENDIF LINUX}
       end;
       ButtonArray[buttoncounter].panel.Font.Name := mytmpstr;
-      { fontresize makes also hdpi correction for linux}
-      ButtonArray[buttoncounter].panel.Font.Size :=
-        fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
-      tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
-        IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
-      LogDatei.log(tmpstr2, LLDebug);
+      // We ignore the font size for buttons and we set it to zero
+      // so it should be sized according the control size
+      // { fontresize makes also hdpi correction for linux}
+      // ButtonArray[buttoncounter].panel.Font.Size :=
+      //   fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+      // tmpstr2 := 'Font: ' + mytmpstr + ' Size:' +
+      //   IntToStr(ButtonArray[buttoncounter].panel.Font.Size);
+      // LogDatei.log(tmpstr2, LLinfo);
+      ButtonArray[buttoncounter].panel.Font.Size := 0;
+      ButtonArray[buttoncounter].panel.Font.Height:= 0;
       //ButtonArray[buttoncounter].Font.Color :=
       //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
       ButtonArray[buttoncounter].panel.Font.Bold :=
@@ -1631,21 +1805,13 @@ begin
         ButtonArray[buttoncounter].cbox.OnClick := @nform.cboxClick;
         ButtonArray[buttoncounter].cbox.OnEditingDone := @nform.cboxEditdone;
       end;
-      //{$IFDEF WINDOWS}
-      // scale new Button:
-      //ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, nform.DesignTimePPI, nform.PixelsPerInch, 0, 0);
-      ButtonArray[buttoncounter].panel.AutoAdjustLayout(lapAutoAdjustForDPI,
-        designPPI, nform.PixelsPerInch, 0, 0);
-      //mytmpint1 := ButtonArray[buttoncounter].Height;
-      //ButtonArray[buttoncounter].Height := trunc(mytmpint1 * (nform.PixelsPerInch / designPPI));
       tmpstr2 := 'After ReScale: Button' + IntToStr(buttoncounter);
       with ButtonArray[buttoncounter].panel do
       begin
         tmpstr2 := tmpstr2 + ' L:' + IntToStr(Left) + ' T:' + IntToStr(Top);
         tmpstr2 := tmpstr2 + ' W:' + IntToStr(Width) + ' H:' + IntToStr(Height);
       end;
-      LogDatei.log(tmpstr2, LLDebug);
-      //{$ENDIF WINDOWS}
+      LogDatei.log(tmpstr2, LLinfo);
       // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
       //buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
       ButtonArray[buttoncounter].panel.Repaint;
@@ -1712,6 +1878,7 @@ var
 begin
   LogDatei.log('screen.PixelsPerInch: ' + IntToStr(screen.PixelsPerInch), LLInfo);
   LogDatei.log('nform.PixelsPerInch: ' + IntToStr(nform.PixelsPerInch), LLInfo);
+  LogDatei.log('Font.PixelsPerInch: ' + IntToStr(nform.Font.PixelsPerInch), LLInfo);
   //LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
   LogDatei.log('designPPI: ' + IntToStr(designPPI), LLInfo);
 
@@ -1780,7 +1947,7 @@ begin
   myRangelistList := TMyRangelist.Create(True);
   sectionlist := TStringList.Create;
   memolist := TStringList.Create;
-  designPPI := 96;
+  //designPPI := nform.DesignTimePPI;
   Randomize;
   (*
   mymouseenter.Code := @onmouseenter;

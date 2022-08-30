@@ -28,9 +28,9 @@ program opsiscript;
 
 uses //lcltranslator,
 {$IFDEF UNIX}
-  {$IFDEF UseCThreads}
+ // {$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}
+ // {$ENDIF}
 {$ENDIF}
   Classes,
   SysUtils,
@@ -91,6 +91,7 @@ uses //lcltranslator,
   osfuncwin2,
   osregistry,
   osGetRegistryFunctions,
+  osDoRegistryFunctions,
 {$ENDIF WINDOWS}
 
   lazutf8,

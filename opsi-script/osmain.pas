@@ -252,6 +252,16 @@ var
   startupmessages: TStringList;
   //{$ENDIF GUI}
 
+  {If the command "reloadProductList" is called within a script, the variable FlagReloadProductList
+   is set to true. If FlagReloadProductList is true, the product list is reloaded from the server
+   after the end of the script and the list is processed again, i.e. the procedure BuildPC is called again.
+   As default this flag must be set to false.}
+  FlagReloadProductList: boolean = False;
+
+  {The list ProductsRunnedUsingReloadProductList is used for avoiding an endless loop
+   if different products which use "reloadProducList" set each other to "setup"}
+  ProductsRunnedUsingReloadProductList: TStringlist;
+
   runUpdate: boolean;
   DontUpdateMemo: boolean = False;
   PerformExitProgram: boolean = False;
@@ -569,7 +579,7 @@ begin
       end
       else
       if logdatei <> nil then
-        logdatei.log('Succseeded: Testing as temp path: ' + mytemppath +
+        logdatei.log('Succeeded: Testing as temp path: ' + mytemppath +
           ' (' + DateTimeToStr(Now) + ')', LLdebug);
     end;
     teststr := '';
@@ -612,6 +622,7 @@ end;
 procedure TerminateApp;
 begin
   try
+    if Assigned(ProductsRunnedUsingReloadProductList) then FreeAndNil(ProductsRunnedUsingReloadProductList);
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
@@ -624,8 +635,8 @@ begin
       LogDatei.Free;
       LogDatei := nil;
       {$IFDEF WINDOWS}
-      SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+        SystemCritical.IsCritical := False;
+      {$ENDIF WINDOWS}
     end;
     try
       //TerminateApp;
@@ -1164,14 +1175,10 @@ begin
     FBatchOberflaeche.SetForceStayOnTop(False);
     {$ENDIF GUI}
     DontUpdateMemo := True;
-
-
-    //OpsiData.initOpsiConf(pathnamsInfoFilename, profildateiname, ProdukteInfoFilename);
+    FlagReloadProductList := False;
     OpsiData.setActualClient(computername);
-    if Produkte <> nil then
-      Produkte.Free;
+    if Produkte <> nil then Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
-
     if runprocessproducts then
     begin
       scriptlist.Delimiter := ',';
@@ -1188,26 +1195,20 @@ begin
       excludedProducts.Free;
       productscopy.Free;
     end;
-
     LogDatei.log('Computername:' + computername, LLessential);
-
     if computername <> ValueOfEnvVar('computername') then
       LogDatei.log('Computername according to Environment Variable :' +
         ValueOfEnvVar('computername'),
         LLessential);
-
     if opsiserviceURL <> '' then
       LogDatei.log('opsi service URL ' + opsiserviceurl,
         LLessential);
-
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
     LogDatei.log('', LLinfo);
     {$IFDEF GUI}
     FBatchOberflaeche.SetMessageText(rsProductCheck, mInfo);
     {$ENDIF GUI}
     ProcessMess;
-
-
     getBootmode(bootmode, bootmodeFromRegistry);
     LogDatei.log('Bootmode: ' + bootmode, LLinfo);
   except
@@ -1262,7 +1263,7 @@ begin
 
       i := 1;
       while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
-        not PerformExitProgram do
+        (not PerformExitProgram) do
       begin
         processProduct := False;
         Produkt := Produkte.Strings[i - 1];
@@ -1510,60 +1511,63 @@ begin
 
 
     LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
-    OpsiData.finishOpsiconf;
+    if not FlagReloadProductList then OpsiData.finishOpsiconf;
     LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
-    opsiclientd := False;
-    if ProcessIsRunning('opsiclientd') then
-      opsiclientd := True;
-    if PerformExitWindows <> txrNoExit then
+    if not FlagReloadProductList then
     begin
-      case PerformExitWindows of
-        txrRegisterForReboot,
-        txrReboot, txrImmediateReboot:
-        begin
-          if opsiclientd then
+      opsiclientd := False;
+      if ProcessIsRunning('opsiclientd') then
+        opsiclientd := True;
+      if PerformExitWindows <> txrNoExit then
+      begin
+        case PerformExitWindows of
+          txrRegisterForReboot,
+          txrReboot, txrImmediateReboot:
           begin
-            LogDatei.log('Reboot via opsiclientd', LLinfo);
-            TheExitMode := txmNoExit;
-            filehandle :=
-              fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
-            fpClose(filehandle);
-          end
-          else
-          begin
-            LogDatei.log('Reboot direct (not via opsiclientd)', LLinfo);
-            if PerformExitWindows <> txrImmediateReboot then
+            if opsiclientd then
             begin
-              LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
-              opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+              LogDatei.log('Reboot via opsiclientd', LLinfo);
+              TheExitMode := txmNoExit;
+              filehandle :=
+                fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
+              fpClose(filehandle);
+            end
+            else
+            begin
+              LogDatei.log('Reboot direct (not via opsiclientd)', LLinfo);
+              if PerformExitWindows <> txrImmediateReboot then
+              begin
+                LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+                opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+              end;
+              TheExitMode := txmReboot;
+              if not ExitSession(TheExitMode, Fehler) then
+                {$IFDEF GUI}
+                MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
+                {$ELSE GUI}
+              writeln('ExitWindows Error ' + LineEnding + Fehler);
+                {$ENDIF GUI}
             end;
-            TheExitMode := txmReboot;
-            if not ExitSession(TheExitMode, Fehler) then
-              {$IFDEF GUI}
-              MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
-              {$ELSE GUI}
-            writeln('ExitWindows Error ' + LineEnding + Fehler);
-              {$ENDIF GUI}
           end;
-        end;
 
-        txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
+          txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
+        end;
       end;
-    end;
-    if PerformShutdown = tsrRegisterForShutdown then
-    begin
-      if opsiclientd then
+      if PerformShutdown = tsrRegisterForShutdown then
       begin
-        LogDatei.log('Shutdown via opsiclientd', LLinfo);
-        filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
-        fpClose(filehandle);
-      end
-      else
-      begin
-        LogDatei.log('Shutdown direct (not via opsiclientd)', LLinfo);
-        os_shutdown();
+        if opsiclientd then
+        begin
+          LogDatei.log('Shutdown via opsiclientd', LLinfo);
+          filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
+          fpClose(filehandle);
+        end
+        else
+        begin
+          LogDatei.log('Shutdown direct (not via opsiclientd)', LLinfo);
+          os_shutdown();
+        end;
       end;
     end;
     {$ENDIF UNIX}
@@ -1571,6 +1575,7 @@ begin
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
     {$ENDIF WINDOWS}
+    if FlagReloadProductList then BuildPC; //if true reload product list and process list
     TerminateApp;
   except
     on e: Exception do
@@ -3394,6 +3399,7 @@ begin
   initEncoding;
   ProductvarsForPC := TStringList.Create;
   ProductvarsForPC.Clear;
+  if not Assigned(ProductsRunnedUsingReloadProductList) then ProductsRunnedUsingReloadProductList := TStringList.Create;
 
   {$IFDEF WINDOWS}
   if FileExists(GetWinSystemDirectory + 'w32hupsi.dll') then

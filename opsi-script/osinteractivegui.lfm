@@ -1,7 +1,7 @@
 object CentralForm: TCentralForm
-  Left = 353
+  Left = 600
   Height = 541
-  Top = 196
+  Top = 224
   Width = 966
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
@@ -20,7 +20,7 @@ object CentralForm: TCentralForm
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.2.0'
   object LabelWinstVersion: TLabel
     Left = 177
     Height = 9
@@ -32,6 +32,7 @@ object CentralForm: TCentralForm
     Font.Height = 9
     Font.Name = 'Arial'
     Font.Pitch = fpVariable
+    ParentColor = False
     ParentFont = False
   end
   object Label6: TLabel
@@ -45,6 +46,7 @@ object CentralForm: TCentralForm
     Font.Height = 9
     Font.Name = 'Arial'
     Font.Pitch = fpVariable
+    ParentColor = False
     ParentFont = False
   end
   object Memo1: TMemo
@@ -87,6 +89,7 @@ object CentralForm: TCentralForm
       Alignment = taCenter
       AutoSize = False
       Caption = 'Label1'
+      ParentColor = False
     end
     object Label2: TLabel
       Left = 1
@@ -102,6 +105,7 @@ object CentralForm: TCentralForm
       Font.Name = 'Times New Roman'
       Font.Pitch = fpVariable
       Font.Style = [fsItalic]
+      ParentColor = False
       ParentFont = False
     end
     object Label3: TLabel
@@ -110,6 +114,7 @@ object CentralForm: TCentralForm
       Top = 1
       Width = 964
       Align = alTop
+      ParentColor = False
       OnClick = Label3Click
     end
   end
@@ -132,6 +137,7 @@ object CentralForm: TCentralForm
       Top = 16
       Width = 5
       Caption = '-'
+      ParentColor = False
     end
     object zipfiles: TListBox
       Left = 543
@@ -311,6 +317,7 @@ object CentralForm: TCentralForm
       Width = 63
       AutoSize = False
       Caption = 'Script:'
+      ParentColor = False
     end
     object Edit1: TEdit
       Left = 92
@@ -377,6 +384,7 @@ object CentralForm: TCentralForm
       Width = 75
       AutoSize = False
       Caption = 'Logfile:'
+      ParentColor = False
     end
     object Edit2: TEdit
       Left = 93
