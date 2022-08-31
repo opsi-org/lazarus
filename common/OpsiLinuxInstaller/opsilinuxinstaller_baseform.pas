@@ -14,15 +14,13 @@ type
     BtnNext: TButton;
     procedure SetConstantFormSize;
     procedure FormCreate(Sender: TObject); virtual;
-    procedure SetBackgroundImage;
+    procedure SetBackgroundImageLayout;
+    procedure SetPanelLayout(Panel: TPanel);
     procedure FormActivate(Sender: TObject); virtual;
     procedure BtnNextClick(Sender: TObject); virtual; abstract;
-    // make Panel settings and load background and info images
-    procedure SetLayoutBasics(Sender: TForm);
-    // make InfoImage settings
-    procedure SetInfoBasics(InfoImage: TImage);
+    procedure SetLayout(Sender: TForm);
+    procedure SetInfoImageLayout(InfoImage: TImage);
     // show hint on click of InfoImage
-    // (used with '@' and therefore must be defined in TConfigedInstaller)
     procedure ShowHintOnClick(Sender: TObject);
   private
   public
@@ -43,14 +41,26 @@ type
 implementation
 
 // show hint on click of InfoImage
-// (used with '@' and therefore must be defined in TConfigedInstaller)
 procedure TOpsiLinuxInstallerBaseForm.ShowHintOnClick(Sender: TObject);
 begin
   Application.ActivateHint(TWinControl(Sender).ClientToScreen(Point(1, 1)), True);
 end;
 
-// make InfoImage settings
-procedure TOpsiLinuxInstallerBaseForm.SetInfoBasics(InfoImage: TImage);
+procedure TOpsiLinuxInstallerBaseForm.SetBackgroundImageLayout;
+begin
+  BackgroundImage.Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) +
+    BackgroundImageFileName);
+  BackgroundImage.BorderSpacing.Top := 10;
+end;
+
+procedure TOpsiLinuxInstallerBaseForm.SetPanelLayout(Panel: TPanel);
+begin
+  Panel.Left := panelLeft;
+  Panel.Width := panelWidth;
+  Panel.Color := clForm;
+end;
+
+procedure TOpsiLinuxInstallerBaseForm.SetInfoImageLayout(InfoImage: TImage);
 begin
   InfoImage.Width := infoSize;
   InfoImage.Height := infoSize;
@@ -62,23 +72,20 @@ begin
   InfoImage.OnClick := @ShowHintOnClick;
 end;
 
-// make Panel settings and load background and info images
-procedure TOpsiLinuxInstallerBaseForm.SetLayoutBasics(Sender: TForm);
+procedure TOpsiLinuxInstallerBaseForm.SetLayout(Sender: TForm);
 var
   compIndex: integer;
 begin
+  SetBackgroundImageLayout;
+
   for compIndex := 0 to Sender.ComponentCount - 1 do
   begin
     if (Sender.Components[compIndex].ClassName = 'TPanel') then
-    begin
-      (Sender.Components[compIndex] as TPanel).Left := panelLeft;
-      (Sender.Components[compIndex] as TPanel).Width := panelWidth;
-      (Sender.Components[compIndex] as TPanel).Color := clForm;
-    end
+      SetPanelLayout(Sender.Components[compIndex] as TPanel)
     else
     if (Sender.Components[compIndex].ClassName = 'TImage') and
       (Pos('Info', Sender.Components[compIndex].Name) = 1) then
-      SetInfoBasics(Sender.Components[compIndex] as TImage); // load info icon
+      SetInfoImageLayout(Sender.Components[compIndex] as TImage); // load info icon
   end;
 
   DecorateForm(Sender);
@@ -96,17 +103,9 @@ begin
   SetConstantFormSize;
 end;
 
-procedure TOpsiLinuxInstallerBaseForm.SetBackgroundImage;
-begin
-  BackgroundImage.Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) +
-    BackgroundImageFileName);
-  BackgroundImage.BorderSpacing.Top := 10;
-end;
-
 procedure TOpsiLinuxInstallerBaseForm.FormActivate(Sender: TObject);
 begin
-  SetBackgroundImage;
-  SetLayoutBasics(Sender as TForm);
+  SetLayout(Sender as TForm);
 end;
 
 end.
