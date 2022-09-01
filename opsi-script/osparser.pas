@@ -1785,8 +1785,9 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
-            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask,
+            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
+            VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -10951,8 +10952,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter, pos('winst ',
-        lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter,
+        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -21703,9 +21704,10 @@ begin
   end;
 end;
 
-procedure TuibInstScript.parsePowershellCall(var Command: string; var AccessString: string; var HandlePolicy: string;
-  var Option: string; var Remaining: string; var syntaxCheck: boolean;
-  var InfoSyntaxError: string; out HandlePolicyBool: boolean);
+procedure TuibInstScript.parsePowershellCall(var Command: string;
+  var AccessString: string; var HandlePolicy: string; var Option: string;
+  var Remaining: string; var syntaxCheck: boolean; var InfoSyntaxError: string;
+  out HandlePolicyBool: boolean);
 begin
   Command := '';
   AccessString := '';
@@ -22733,15 +22735,15 @@ begin
             Ifelseendiflevel := Nestlevel;
             try
               if NestLevel >= 0 then
-              logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
-                BoolToStr(Conditions[NestLevel], True), LLDebug)
-                else
                 logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
-                ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                IntToStr(sektion.NestingLevel) + ' ThenBranch: unknown', LLDebug);
+                  ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+                  IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
+                  BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
+                  BoolToStr(Conditions[NestLevel], True), LLDebug)
+              else
+                logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
+                  ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
+                  IntToStr(sektion.NestingLevel) + ' ThenBranch: unknown', LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
@@ -24133,7 +24135,7 @@ begin
                 begin
                   // we are on unix
                   // remove not allowed old parameter that starts with slash followed by one numeric
-                  Remaining := stringReplaceRegex(Remaining, '^/\d\h' , '');
+                  Remaining := stringReplaceRegex(Remaining, '^/\d\h', '');
                        {$IFDEF GUI}
                   imageNo := centralImageNo;
                       {$ENDIF GUI}
@@ -25849,12 +25851,14 @@ begin
                   else
                     InfoSyntaxError := 'unexpected chars after "';
                 if SyntaxCheck then
+                begin
                   if not testSyntax then
                     while FindWindowEx(0, 0, nil, PChar(ident)) <> 0 do
-                      ProcessMess
-                  else
-                    ActionResult :=
-                      reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                      ProcessMess;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
               end;
                {$ENDIF WIN32}
 

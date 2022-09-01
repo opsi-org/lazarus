@@ -208,7 +208,7 @@ begin
     myconf.WriteString('global', 'log_rotation_count', IntToStr(log_rotation_count));
     myconf.WriteString('global', 'writeProductLogFile',
       BoolToStr(configWriteProductLogFile, False));
-    myconf.WriteString('global', 'writeProductLogFile',
+    myconf.WriteString('global', 'testSyntax',
       BoolToStr(configTestSyntax, False));
     myconf.Free;
   except
@@ -257,8 +257,11 @@ begin
     log_rotation_count := myconf.ReadInteger('global', 'log_rotation_count',
       log_rotation_count);
     configWriteProductLogFile :=
-      strToBool(myconf.ReadString('global', 'testSyntax',
+      strToBool(myconf.ReadString('global', 'writeProductLogFile',
       boolToStr(configWriteProductLogFile, False)));
+    configTestSyntax :=
+      strToBool(myconf.ReadString('global', 'testSyntax',
+      boolToStr(configTestSyntax, False)));
     myconf.Free;
 
 
