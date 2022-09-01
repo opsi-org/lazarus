@@ -5,7 +5,7 @@ unit LogFileFunctions;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils,
   oslog;
 
 procedure InitializeLogFile(logFileName: string);
