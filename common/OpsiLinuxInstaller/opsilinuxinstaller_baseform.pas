@@ -12,26 +12,27 @@ type
   TOpsiLinuxInstallerBaseForm = class(TForm)
     BackgroundImage: TImage;
     BtnNext: TButton;
-    procedure SetConstantFormSize;
     procedure FormCreate(Sender: TObject); virtual;
-    procedure SetBackgroundImageLayout;
-    procedure SetPanelLayout(Panel: TPanel);
     procedure FormActivate(Sender: TObject); virtual;
     procedure BtnNextClick(Sender: TObject); virtual; abstract;
-    procedure SetLayout(Sender: TForm);
     procedure SetInfoImageLayout(InfoImage: TImage);
-    // show hint on click of InfoImage
-    procedure ShowHintOnClick(Sender: TObject);
-  private
   public
   const
-    // same width for all panels
-    panelWidth = 460;
     // position Panels with twice as much space to the left than to the right of the form
     //panelLeft := Round((Width - panelWidth) * 2 / 3);
     panelLeft = 143;
+  private
+    procedure SetConstantFormSize;
+    procedure SetBackgroundImageLayout;
+    procedure SetPanelLayout(Panel: TPanel);
+    procedure SetLayout(Sender: TForm);
+    // show hint on click of InfoImage
+    procedure ShowHintOnClick(Sender: TObject);
+  const
+    // same width for all panels
+    panelWidth = 460;
     // same size for all info images (squares)
-    infoSize = 22;
+    InfoImageSize = 22;
     // same background image for all forms
     BackgroundImageFileName = 'opsi.png';
     // same image for all infos
@@ -62,8 +63,8 @@ end;
 
 procedure TOpsiLinuxInstallerBaseForm.SetInfoImageLayout(InfoImage: TImage);
 begin
-  InfoImage.Width := infoSize;
-  InfoImage.Height := infoSize;
+  InfoImage.Width := InfoImageSize;
+  InfoImage.Height := InfoImageSize;
   // set info image
   InfoImage.Picture.LoadFromFile(
     ExtractFilePath(ParamStr(0)) + InfoImageFileName);

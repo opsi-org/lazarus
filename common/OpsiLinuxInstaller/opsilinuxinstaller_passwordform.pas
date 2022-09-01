@@ -40,6 +40,9 @@ type
   end;
 
   TOpsiLinuxInstallerThread = class(TThread)
+  private
+    procedure DefineDirClientData;
+    procedure RemoveOpsiScript;
   protected
     FInstallRunCommand: TRunCommandElevated;
     FPackageManagementShellCommand, FClientDataDir, Output: string;
@@ -51,16 +54,12 @@ type
     FMessage: string;
     procedure ShowMessageOnForm; virtual; abstract;
 
-    procedure DefineDirClientData;
     procedure WritePropertiesToFile; virtual;
-
     procedure GetOpsiScript; virtual;
     procedure ExecuteInstallationScript; virtual; abstract;
     function DidNewerVersionOfTwoVersionsFail: boolean; virtual; abstract;
     procedure TryOlderVersion; virtual; abstract;
-    procedure RemoveOpsiScript;
     procedure LogResultOfLastInstallationAttempt; virtual; abstract;
-
     procedure InstallOpsiProduct; virtual;
   public
     constructor Create(password: string; sudo: boolean;
