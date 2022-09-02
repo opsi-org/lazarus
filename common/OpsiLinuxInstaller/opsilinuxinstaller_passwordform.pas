@@ -7,8 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   MaskEdit, LCLType, cthreads,
-  osRunCommandElevated,
-  OpsiPackageDownloader;
+  osRunCommandElevated;
 
 type
   TOpsiLinuxInstallerPasswordForm = class(TForm)
@@ -33,174 +32,15 @@ type
     procedure ShowResultOfWholeInstallationProcess; virtual; abstract;
     procedure CloseProject; virtual; abstract;
     procedure FormClose(Sender: TObject); virtual; abstract;
+  public
+    clientDataDir: string;
   protected
-  var
-    clientDataDir, Output: string;
+    Output: string;
     btnFinishClicked: boolean;
   end;
 
-  TOpsiLinuxInstallerThread = class(TThread)
-  private
-    procedure DefineDirClientData;
-    procedure RemoveOpsiScript;
-  protected
-    FInstallRunCommand: TRunCommandElevated;
-    FPackageManagementShellCommand, FClientDataDir, Output: string;
-    FProductID, FDownloadPath: string;
-    FTwoVersionsToTest, FOneInstallationFailed: boolean;
-    FDefaultVersionName, FDownloadedVersionName, FCurrentVersionName: string;
-    FDefaultVersion, FDownloadedVersion: string;
-    FFileText: TStringList;
-    FMessage: string;
-    procedure ShowMessageOnForm; virtual; abstract;
-
-    procedure WritePropertiesToFile; virtual;
-    procedure GetOpsiScript; virtual;
-    procedure ExecuteInstallationScript; virtual; abstract;
-    function DidNewerVersionOfTwoVersionsFail: boolean; virtual; abstract;
-    procedure TryOlderVersion; virtual; abstract;
-    procedure LogResultOfLastInstallationAttempt; virtual; abstract;
-    procedure InstallOpsiProduct; virtual;
-  public
-    constructor Create(password: string; sudo: boolean;
-      PackageManagementShellCommand: string; ProductID: string; DownloadPath: string);
-    procedure Execute; override;
-  end;
 
 implementation
-
-constructor TOpsiLinuxInstallerThread.Create(password: string;
-  sudo: boolean; PackageManagementShellCommand: string; ProductID: string;
-  DownloadPath: string);
-begin
-  FInstallRunCommand := TRunCommandElevated.Create(password, sudo);
-  FPackageManagementShellCommand := PackageManagementShellCommand;
-  FProductID := ProductID;
-  FDownloadPath := DownloadPath;
-
-  FreeOnTerminate := True;
-  inherited Create(True);
-end;
-
-procedure TOpsiLinuxInstallerThread.DefineDirClientData;
-var
-  DefaultVersionSearch, DownloadedVersionSearch: TSearchRec;
-begin
-  FClientDataDir := ExtractFilePath(ParamStr(0));
-  {$IFDEF DARWIN}
-  FClientDataDir := FClientDataDir + '../../../../CLIENT_DATA/';
-  {$ELSE DARWIN}
-  Delete(FClientDataDir, Length(FClientDataDir), 1);
-  FClientDataDir := ExtractFilePath(FClientDataDir);
-
-  // try downloading latest configed and set FClientDataDir for the latest version
-  if FTwoVersionsToTest and DownloadOpsiPackage(FProductID, FDownloadPath,
-    FInstallRunCommand, FPackageManagementShellCommand) then
-  begin
-    // extract and compare version numbers of default and downloaded version
-    if (FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
-      DefaultVersionSearch) = 0) and
-      (FindFirst('../downloaded_' + FProductID + '_*', faAnyFile and
-      faDirectory, DownloadedVersionSearch) = 0) then
-    begin
-      FDefaultVersionName := DefaultVersionSearch.Name;
-      FDownloadedVersionName := DownloadedVersionSearch.Name;
-      // extract version numbers
-      FDefaultVersion := DefaultVersionSearch.Name;
-      Delete(FDefaultVersion, 1, Pos('_', FDefaultVersion));
-      FDownloadedVersion := DownloadedVersionSearch.Name;
-      Delete(FDownloadedVersion, 1, Pos('_', FDownloadedVersion));
-      Delete(FDownloadedVersion, 1, Pos('_', FDownloadedVersion));
-      // compare and use latest configed version
-      if FDownloadedVersion > FDefaultVersion then
-        FCurrentVersionName := FDownloadedVersionName
-      else
-      begin
-        FCurrentVersionName := FDefaultVersionName;
-        if FDownloadedVersion = FDefaultVersion then
-          FTwoVersionsToTest := False;
-      end;
-    end;
-  end
-  else
-  if FOneInstallationFailed then
-  begin
-    // if there is a downloaded version but the latest version failed to install,
-    // switch between FDefaultVersionName and FDownloadedVersionName to get the directory of
-    // the older version
-    if FDownloadedVersion > FDefaultVersion then
-      FCurrentVersionName := FDefaultVersionName
-    else
-      FCurrentVersionName := FDownloadedVersionName;
-  end
-  else
-  // otherwise, in the case that downloading the latest configed failed,
-  // use the default one
-  if FindFirst('../' + FProductID + '_*', faAnyFile and faDirectory,
-    DefaultVersionSearch) = 0 then
-  begin
-    FDefaultVersionName := DefaultVersionSearch.Name;
-    // extract version numbers
-    FDefaultVersion := DefaultVersionSearch.Name;
-    Delete(FDefaultVersion, 1, Pos('_', FDefaultVersion));
-    FCurrentVersionName := FDefaultVersionName;
-    FTwoVersionsToTest := False;
-  end;
-  FClientDataDir += FCurrentVersionName + '/CLIENT_DATA/';
-  {$ENDIF DARWIN}
-end;
-
-procedure TOpsiLinuxInstallerThread.WritePropertiesToFile;
-begin
-  DefineDirClientData;
-end;
-
-procedure TOpsiLinuxInstallerThread.GetOpsiScript;
-begin
-  // Get opsi-script_*.tar.gz from download.opensuse.org and extract it
-  //FPackageManagementShellCommand :=
-  //  GetPackageManagementShellCommand(Data.DistrInfo.DistroName);
-  FInstallRunCommand.Run(FPackageManagementShellCommand + 'update', Output);
-  FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget', Output);
-  FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
-    'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
-    + ' -nd -P ../', Output);
-  FInstallRunCommand.Run('rm ../robots.*', Output);
-  FInstallRunCommand.Run('tar -xvf ../opsi-script_*.tar.gz', Output);
-  FInstallRunCommand.Run('rm ../opsi-script_*.tar.gz', Output);
-end;
-
-procedure TOpsiLinuxInstallerThread.RemoveOpsiScript;
-begin
-  FInstallRunCommand.Run('rm -r BUILD/', Output);
-end;
-
-procedure TOpsiLinuxInstallerThread.InstallOpsiProduct;
-begin
-  GetOpsiScript;
-  FTwoVersionsToTest := True;
-  FOneInstallationFailed := False;
-
-  WritePropertiesToFile;
-  ExecuteInstallationScript;
-  if DidNewerVersionOfTwoVersionsFail then
-    TryOlderVersion;
-
-  RemoveOpsiScript;
-  LogResultOfLastInstallationAttempt;
-end;
-
-procedure TOpsiLinuxInstallerThread.Execute;
-begin
-  // sleep to ensure that TWait is shown before GetOpsiScript is executed and blocks TWait
-  Sleep(100);
-
-  FFileText := TStringList.Create;
-  InstallOpsiProduct;
-
-  FFileText.Free;
-  FInstallRunCommand.Free;
-end;
 
 procedure TOpsiLinuxInstallerPasswordForm.FormActivate(Sender: TObject);
 begin
