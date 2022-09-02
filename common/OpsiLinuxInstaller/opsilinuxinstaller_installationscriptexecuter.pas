@@ -8,7 +8,8 @@ uses
   Classes, SysUtils,
   osRunCommandElevated,
   OpsiPackageDownloader,
-  oslog;
+  oslog,
+  IndependentMessageDisplayer;
 
 type
 
@@ -24,9 +25,7 @@ type
     FDefaultVersionName, FDownloadedVersionName, FCurrentVersionName: string;
     FDefaultVersion, FDownloadedVersion: string;
     FFileText: TStringList;
-    FMessage: string;
-    procedure ShowMessageOnForm; virtual; abstract;
-
+    FMessageDisplayer: TIndependentMessageDisplayer;
     procedure WritePropertiesToFile; virtual;
     procedure GetOpsiScript;
     procedure ExecuteInstallationScript; virtual; abstract;
@@ -36,14 +35,15 @@ type
   public
     procedure InstallOpsiProduct;
     constructor Create(password: string; sudo: boolean;
-      PackageManagementShellCommand: string; ProductID: string; DownloadPath: string);
+      PackageManagementShellCommand: string; ProductID: string; DownloadPath: string;
+      MessageDisplayer: TIndependentMessageDisplayer);
   end;
 
 implementation
 
 constructor TInstallationScriptExecuter.Create(password: string;
   sudo: boolean; PackageManagementShellCommand: string; ProductID: string;
-  DownloadPath: string);
+  DownloadPath: string; MessageDisplayer: TIndependentMessageDisplayer);
 begin
   inherited Create;
   FFileText := TStringList.Create;
@@ -51,6 +51,7 @@ begin
   FPackageManagementShellCommand := PackageManagementShellCommand;
   FProductID := ProductID;
   FDownloadPath := DownloadPath;
+  FMessageDisplayer := MessageDisplayer;
 end;
 
 procedure TInstallationScriptExecuter.DefineDirClientData;
