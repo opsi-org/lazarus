@@ -47,24 +47,6 @@ requiredWinstVersion >= "4.12.0.37"
 
 ;--- generated uninstall sections
 
-[Sub_Uninstallation_msi]
-set $MsiVersion$ = TakeString(0, splitstring('%uninstallEntry%', "="))
-set $MsiId$ = TakeString(1, splitstring('%uninstallEntry%', "="))
-
-if stringtobool(checkForMsiProduct($MsiId$))
-	Message "Uninstalling :"  + $ProductId$ + " " + $MsiVersion$+ "..."
-	Winbatch_Uninstall_1
-	Set $ExitCode$ = getlastexitcode
-	if stringtobool(#@isExitcodeFatalFunction1*#($ExitCode$, "true", $ErrorString$ ))
-		LogError $ErrorString$
-		isfatalerror $ErrorString$
-	else
-		Comment $ErrorString$
-	endif
-else
-	Comment "No previously installed " + $ProductId$ + " version found"
-endif
-
 [Winbatch_uninstall_1]
 ; Choose one of the following examples as basis for program uninstall
 ;

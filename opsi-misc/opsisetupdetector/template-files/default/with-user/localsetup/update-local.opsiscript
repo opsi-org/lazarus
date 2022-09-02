@@ -16,7 +16,7 @@ include_insert "%ScriptPath%\declarations-local.opsiinc"
 
 
 Comment "Displaying product picture"
-	ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
 
 Message "Re-enabling keyboard and mouse input"
 	Registry_Enable_Input /SysNative

@@ -14,12 +14,12 @@ if directoryExists($InstallDir$)
 endif
 
 f $oldProgFound$ = "true"
-	comment "Is the Installdir in the Applications directory ?"
-	if "1" = strPos(lower($InstallDir$),lower("/Applications/"))
-		comment "Do not delete the whole /Applications dir ..."
-		if not(lower($InstallDir$) = lower('/Applications/'))
-			Message "Uninstalling " + $ProductId$ + " ..."
-			Files_uninstall
-		endif
+comment "Is the Installdir in the Applications directory ?"
+if "1" = strPos(lower($InstallDir$),lower("/Applications/"))
+	comment "Do not delete the whole /Applications dir ..."
+	if not(lower($InstallDir$) = lower('/Applications/'))
+		Message "Uninstalling " + $ProductId$ + " ..."
+		Files_uninstall
 	endif
+endif
 endif;-----------------------------------------------------

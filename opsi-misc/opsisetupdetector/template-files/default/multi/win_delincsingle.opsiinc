@@ -14,7 +14,7 @@ set $oldProgFound$ = "false"
 if $oldProgFound$ = "true"
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines*#
-
+	
 	comment "Start uninstall program"
 	;----------------------------------------------
 	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
@@ -26,12 +26,12 @@ if $oldProgFound$ = "true"
 	else
 		Comment $ErrorString$
 	endif
-
+	
 	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
-
+	
 	#@DelsubHandleDesktopIcon*#
 endif
 ;-----------------------------------------------------

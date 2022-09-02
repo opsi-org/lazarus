@@ -14,10 +14,6 @@ importlib "osd-lib.opsiscript"
 
 ; All variables are defined here:
 include_insert "declarations.opsiinc"
-; All sections are defined here:
-include_append "sections.opsiinc"
-
-
 
 Set $arch$ = GetSystemType
 #@GetProductProperty*#

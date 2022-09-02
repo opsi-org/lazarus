@@ -21,7 +21,7 @@ Set $InstallDir$	= "<none>"
 if not("true" = "false")
 	logError "No Deinstallation for Linux in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

@@ -5,62 +5,116 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
-
+;here we start
 [Actions]
-requiredOpsiscriptVersion >= "4.12.4.23"
 
+;check if the running opsiscript version is not too old
+requiredOpsiscriptVersion >= "4.12.5.0"
+
+;fetch helper libraries
 importlib "uib_exitcode.opsiscript"
 importlib "osd-lib.opsiscript"
 #@importLibs*#
 
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $MinimumSpace$
-DefVar $ExitCode$
-DefVar $ErrorString$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
-DefVar $OS$
-DefVar $MsiId$
-DefVar $UninstallProgram$
+; ----------------------------------------------------------------
+comment "retrieve infos from script environment"
+; ----------------------------------------------------------------
+; the values are found automatically when the script is running
+;
+DefStringList $productInfos$ = getProductMap
+DefVar $ProductId$ = getValue("id", $productInfos$)
+DefVar $ProductName$ = getValue("name", $productInfos$)
+
+DefVar $OS$ = GetOS
+; the operating system, in which the interpreter is running
+; supported values are  "Windows_NT", "Linux", "MacOS"
+
+; ----------------------------------------------------------------
+comment "put fixed infos into the script (maybe produced by the setup detector maybe manually)"
+; ----------------------------------------------------------------
+; the values can be manually edited or automatically suggested by the opsi setup detector
+;
+DefVar $InstallDir$ = "#@InstallDir1*#"
+; dependent on the installes software it could be
+; "%ProgramFiles64Dir% [,,,]
+; "%ProgramFilesSysNatives% [,,,]
+DefVar $MinimumSpace$ = "#@MinimumSpace1*#"
+DefVar $MsiId$ = "00000"
+DefVar $UninstallProgram$ = "uninstall.exe"
+
 #@stringVars*#
 
+; ---------------------------------------------------------------
+comment "inform the user at the PC about product installation"
 ; ----------------------------------------------------------------
-; Please edit the following values:
-; ----------------------------------------------------------------
-; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
-Set $ProductId$		 = "#@productId*#"
-; the path were we find the product after the installation
-;Set $InstallDir$	= "%ProgramFiles32Dir%\<path to the product>"
-Set $InstallDir$	= "unknown"
-Set $LicenseRequired$ = "false"
-Set $LicensePool$	  = ""
-; ----------------------------------------------------------------
-
-set $OS$ = GetOS
-
-if not(($OS$ = "Windows_NT"))
-	logError "Installation aborted: wrong OS version: only Windows"
-	isFatalError "wrong OS"
-endif
-
-
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
-
-#@GetProductProperty*#
+; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
+; we set a image path which could be as follows
+DefVar $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
+ShowBitmap $ImagePath$ $ProductName$
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
-if FileExists("%ScriptPath%\delsub.opsiscript")
-	comment "Start uninstall sub section"
-	Sub "%ScriptPath%\delsub.opsiscript"
+; ----------------------------------------------------------------
+comment  "check if the script is adequate to the environment"
+; ----------------------------------------------------------------
+if not ($OS$ = "Windows_NT")
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
+	; Stop process and set installation status to failed
 endif
 
-if $LicenseRequired$ = "true"
-	comment "Licensing required, free license used"
-	Set $tmpstr$ = FreeLicense($LicensePool$)
+#@GetProductProperty*#
+
+; ---------------------------------------------------------------
+comment "uninstall an existing installation if possible"
+; ---------------------------------------------------------------
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
 endif
+
+#@FinalUnInstallLines*#
+
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+[Winbatch_uninstall_msi]
+msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
+
+[Files_uninstall]
+; Example for recursively deleting the installation directory:
+;
+; del -sf "$InstallDir$\"
+
+[Registry_uninstall]
+; Example of deleting a registry key:
+;
+; deletekey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
+
+[LinkFolder_uninstall]
+; Example of deleting a folder from AllUsers startmenu:
+;
+; set_basefolder common_programs
+; delete_subfolder $ProductId$
+;
+; Example of deleting a shortcut from AllUsers desktop:
+;
+; set_basefolder common_desktopdirectory
+; set_subfolder ""
+; delete_element $ProductId$
+
+#@SectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
 
 

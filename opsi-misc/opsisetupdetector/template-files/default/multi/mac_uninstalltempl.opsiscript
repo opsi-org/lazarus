@@ -21,7 +21,7 @@ Set $InstallDir$	= "/Applications/<productid>.app"
 if not("true" = "false")
 	logError "No Deinstallation for MacOS in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

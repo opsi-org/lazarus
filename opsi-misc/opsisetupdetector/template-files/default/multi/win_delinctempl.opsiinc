@@ -26,12 +26,12 @@ if $oldProgFound$ = "true"
 	else
 		Comment $ErrorString$
 	endif
-
+	
 	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
-
+	
 	#@DelsubHandleDesktopIcon*#
 endif
 

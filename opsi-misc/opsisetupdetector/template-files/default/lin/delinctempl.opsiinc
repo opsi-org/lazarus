@@ -30,8 +30,7 @@ if $oldProgFound$ = "true"
 	else
 		Comment $ErrorString$
 	endif
-		#@postUninstallLines*#
-	endif
+	#@postUninstallLines*#
 endif
 
 ;----------------------------------------------

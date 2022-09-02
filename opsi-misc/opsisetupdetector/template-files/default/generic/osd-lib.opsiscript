@@ -274,23 +274,23 @@ DefFunc desktopicon_create($name$ : string, $target$ : string, $param$ : string,
 	
 	Linkfolder_create_desktop_icon_infunc
 	
-[Linkfolder_create_desktop_icon_infunc]
-set_basefolder common_desktopdirectory
-set_subfolder ""
-set_link
-	name: $name$
-	target: $target$
-	parameters: $param$
-	working_dir: $dir$
-	icon_file:
-	icon_index:
-	shortcut:
-end_link
-EndFunc
-; ###################################################################################################
-
-
-; ###################################################################################################
+	[Linkfolder_create_desktop_icon_infunc]
+	set_basefolder common_desktopdirectory
+	set_subfolder ""
+	set_link
+		name: $name$
+		target: $target$
+		parameters: $param$
+		working_dir: $dir$
+		icon_file:
+		icon_index:
+		shortcut:
+	end_link
+	EndFunc
+	; ###################################################################################################
+	
+	
+	; ###################################################################################################
 	DefFunc desktopicon_remove($name$ : string) : void
 		;@author			detlef oertel
 		;@date				16.04.2019

@@ -8,7 +8,7 @@ encoding=utf8
 ;here we start
 [Actions]
 
-;check if the running opsiscript version is not too old 
+;check if the running opsiscript version is not too old
 requiredOpsiscriptVersion >= "4.12.5.0"
 
 ;fetch helper libraries
@@ -17,7 +17,7 @@ importlib "osd-lib.opsiscript"
 #@importLibs*#
 
 ; ----------------------------------------------------------------
-comment "retrieve infos from script environment" 
+comment "retrieve infos from script environment"
 ; ----------------------------------------------------------------
 ; the values are found automatically when the script is running
 ;
@@ -40,19 +40,18 @@ DefVar $InstallDir$ = "#@InstallDir1*#"
 ; "%ProgramFilesSysNatives% [,,,]
 DefVar $MinimumSpace$ = "#@MinimumSpace1*#"
 DefVar $MsiId$ = "00000"
-DefVar $UninstallProgram$
-set $UninstallProgram$ ="uninstall.exe"
-
+DefVar $UninstallProgram$ = "uninstall.exe"
+DefVar $ExitCode$
+DefVar $ErrorString$
 #@stringVars*#
 
+; ---------------------------------------------------------------
+comment "inform the user at the PC about product installation"
 ; ----------------------------------------------------------------
-comment "do settings for license management"
-; ----------------------------------------------------------------
-; If used the values have be manually set when editing the script
-;
-DefVar $LicenseHandledByScript$ = "#@LicenseRequired*#"
-DefVar $LicenseKey$  = ""
-DefVar $LicensePool$ = "pool-" +  $productId$
+; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
+; we set a image path which could be as follows
+DefVar $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
+ShowBitmap $ImagePath$ $ProductName$
 
 Message "Installing " + $ProductId$ + " ..."
 
@@ -71,16 +70,6 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-; ---------------------------------------------------------------
-comment "inform the user at the PC about product installation"
-; ----------------------------------------------------------------
-; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
-; we set a image path which could be as follows  
-DefVar $ImagePath$
-set $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
-ShowBitmap $ImagePath$ $ProductName$
-
-
 #@GetProductProperty*#
 
 ; ---------------------------------------------------------------
@@ -95,18 +84,7 @@ endif
 ; show  a title for the installation
 Message "Installing " + $ProductId$ + " .."
 
-set $installerSourceDir$ = "#@installerSourceDir1*#"
-
-; ---------------------------------------------------------------
-comment "handle license management if included "
-; ----------------------------------------------------------------
-if $LicenseHandledByScript$ = "true"
-	comment "we should handle license"
-	;reserve license and get license key
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
-	; here the section or function calls should follow which 
-	; make use of the license key resp the license reservation
-endif
+DefVar $installerSourceDir$ = "#@installerSourceDir1*#"
 
 #@preInstallLines*#
 
@@ -114,7 +92,7 @@ endif
 comment "run  the setup program"
 ; ----------------------------------------------------------------
 
-; the call to the installer is more stable if we set the path 
+; the call to the installer is more stable if we set the path
 ChangeDirectory $installerSourceDir$
 
 ; call the setup program
@@ -124,8 +102,6 @@ Winbatch_install  #@installWaitForProc1*#
 comment "check the result"
 ; ----------------------------------------------------------------
 ; check the outcome of the call, produce either a "failed" state of the script or log the result
-DefVar $ExitCode$ = ""
-DefVar $ErrorString$ = ""
 set $ExitCode$ = getlastexitcode
 if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
 	LogError $ErrorString$
@@ -133,8 +109,6 @@ if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
 else
 	Comment $ErrorString$
 endif
-
-#@postInstallLines*#
 
 ; ---------------------------------------------------------------
 comment "do tasks  which supplement the installation"
@@ -149,7 +123,7 @@ Registry_install /sysnative
 ;e.g.. supplement or remove start menu or desktop links
 LinkFolder_install
 
-
+#@postInstallLines*#
 ; ---------------------------------------------------------------
 ; end of  actions section
 ; ---------------------------------------------------------------
@@ -211,12 +185,12 @@ LinkFolder_install
 ; set_subfolder $ProductId$
 ;
 ; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters:
-; 	working_dir: $InstallDir$
-; 	icon_file:
-; 	icon_index:
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters:
+	; 	working_dir: $InstallDir$
+	; 	icon_file:
+	; 	icon_index:
 ; end_link
 ;
 ; Example of creating a shortcut to the installed exe on AllUsers desktop:
@@ -225,12 +199,12 @@ LinkFolder_install
 ; set_subfolder ""
 ;
 ; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters: <some_param>
-; 	working_dir: $InstallDir$
-; 	icon_file: <path to icon file>
-; 	icon_index: 2
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters: <some_param>
+	; 	working_dir: $InstallDir$
+	; 	icon_file: <path to icon file>
+	; 	icon_index: 2
 ; end_link
 
 [Winbatch_uninstall_1]

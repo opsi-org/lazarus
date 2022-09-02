@@ -20,7 +20,7 @@ Set $InstallDir$	= "#@InstallDir1*#"
 if not("true" = "#@install1*#")
 	logError "No Deinstallation for Windows in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

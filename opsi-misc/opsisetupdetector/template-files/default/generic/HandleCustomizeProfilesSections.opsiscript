@@ -3,7 +3,7 @@
 ; all section that called from [ProfileActions]
 ; will be executed for all user profiles
 ;
-; if this script runs as loginscript 
+; if this script runs as loginscript
 ; only the [ProfileActions] will be executed
 
 ; copy some files to every user profile

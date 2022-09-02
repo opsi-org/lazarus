@@ -21,7 +21,7 @@ Set $InstallDir$	= "#@InstallDir3*#"
 if not("true" = "#@install3*#")
 	logError "No Deinstallation for MacOS in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

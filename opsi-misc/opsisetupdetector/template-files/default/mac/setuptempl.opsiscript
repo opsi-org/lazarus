@@ -53,7 +53,7 @@ set $installerSourceDir$ = "#@installerSourceDir1*#"
 comment "Start installer "
 ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
-set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>") 
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>")
 ;----------------------------------------------
 if $installSuccess$  = "false"
 	LogError "Installation failed"

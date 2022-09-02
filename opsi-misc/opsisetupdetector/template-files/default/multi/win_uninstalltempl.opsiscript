@@ -20,7 +20,7 @@ Set $InstallDir$	= "%Programfiles32dir%\<productId>"
 if not("true" = "false")
 	logError "No Deinstallation for Windows in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

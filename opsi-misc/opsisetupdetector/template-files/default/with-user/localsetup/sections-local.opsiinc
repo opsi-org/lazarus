@@ -9,20 +9,13 @@ encoding=utf8
 #@installCommandLine1*#
 
 
-#@SetupDesktopiconSectionLines*#
-
-#@SetupSectionLines1*#
-
 [Winbatch_uninstall]
 #@uninstallCommandLine1*#
 
 [Files_uninstall]
 del -sf "$InstallDir$\"
 
-#@DelsubDesktopiconSectionLines*#
-
-#@DelsubSectionLines1*#
-
+#@SectionLines*#
 
 ;;############################### Files sections ###############################
 ;[Files_Copy]

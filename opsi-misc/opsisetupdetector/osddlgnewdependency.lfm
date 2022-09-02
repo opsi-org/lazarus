@@ -1,14 +1,14 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 364
+  Left = 365
   Height = 420
-  Top = 181
+  Top = 182
   Width = 444
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 420
   ClientWidth = 444
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -71,6 +71,7 @@ object FNewDepDlg: TFNewDepDlg
       Alignment = taCenter
       BorderSpacing.Around = 7
       Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
+      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
@@ -84,6 +85,7 @@ object FNewDepDlg: TFNewDepDlg
       BorderSpacing.Around = 11
       Caption = 'LabelConnect'
       Font.Style = [fsBold]
+      ParentColor = False
       ParentFont = False
     end
   end
@@ -183,6 +185,7 @@ object FNewDepDlg: TFNewDepDlg
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'productid'#10'of the dependent product'
+        ParentColor = False
         ParentFont = False
       end
       object ComboBoxproductIds: TComboBox
@@ -242,6 +245,7 @@ object FNewDepDlg: TFNewDepDlg
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Action or State'
+        ParentColor = False
         ParentFont = False
       end
     end
@@ -293,6 +297,7 @@ object FNewDepDlg: TFNewDepDlg
         Anchors = []
         BorderSpacing.Around = 5
         Caption = 'Requirement Type'
+        ParentColor = False
         ParentFont = False
       end
     end

@@ -21,7 +21,7 @@ Set $InstallDir$	= "#@InstallDir2*#"
 if not("true" = "#@install2*#")
 	logError "No Deinstallation for Linux in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

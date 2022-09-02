@@ -21,7 +21,7 @@ Set $MinimumSpace$	 = "1MB"
 if not("true" = "false")
 	logError "No installation for Windows in this opsi product"
 	isFatalError "wrong OS"
-endif	
+endif
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$

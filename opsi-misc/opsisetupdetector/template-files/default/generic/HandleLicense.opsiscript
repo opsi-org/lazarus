@@ -6,6 +6,6 @@ if $LicenseHandledByScript$ = "true"
 	comment "we should handle license"
 	;reserve license and get license key
 	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicenseOrPool$)
-	; here the section or function calls should follow which 
+	; here the section or function calls should follow which
 	; make use of the license key resp the license reservation
 endif

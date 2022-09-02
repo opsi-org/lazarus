@@ -5,8 +5,10 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
+; ---------------------------------------------------------------
+comment "check if there is something to uninstall"
+; ----------------------------------------------------------------
 Message "Check for existing installation of " + $ProductId$ + " ..."
-
 comment "Start the Uninstall check:"
 
 ; Variant 1:
@@ -19,10 +21,14 @@ comment "Start the Uninstall check:"
 ;-----------------------------------------------------
 ; Finding the MsiId by the Displayname from Registry:
 ; Be sure that the Displayname is set correctly:
-Set $DisplayName$ = $ProductId$
+Set $DisplayName$ = '#@MsiProductName1*#'
 ; '(?i)' = case insesitive ; '.*' = 0 or more of any thing
 Set $UninstallList$ = getGuidListByDisplaynameRegex('(?i)'+$DisplayName$+'.*')
 ;-----------------------------------------------------
+
+; ---------------------------------------------------------------
+comment "run the uninstallation "
+; ----------------------------------------------------------------
 
 if count($UninstallList$) int> "0"
 	#@preUninstallLines*#
@@ -31,11 +37,13 @@ if count($UninstallList$) int> "0"
 	#@postUninstallLines*#
 endif
 
+; ---------------------------------------------------------------
+comment "cleanup installation directory"
+; ----------------------------------------------------------------
+
 if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 	if directoryexists($InstallDir$)
 		SleepSeconds 5
 		Files_uninstall
 	endif
 endif
-
-;-----------------------------------------------------

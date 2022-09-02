@@ -8,7 +8,7 @@ encoding=utf8
 ;here we start
 [Actions]
 
-;check if the running opsiscript version is not too old 
+;check if the running opsiscript version is not too old
 requiredOpsiscriptVersion >= "4.12.5.0"
 
 ;fetch helper libraries
@@ -16,7 +16,7 @@ importlib "uib_exitcode.opsiscript"
 importlib "osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
-comment "retrieve infos from script environment" 
+comment "retrieve infos from script environment"
 ; ----------------------------------------------------------------
 ; the values are found automatically when the script is running
 ;
@@ -24,8 +24,7 @@ DefStringList $productInfos$ = getProductMap
 DefVar $ProductId$ = getValue("id", $productInfos$)
 DefVar $ProductName$ = getValue("name", $productInfos$)
 
-DefVar $OS$ 
-set $OS$= GetOS
+DefVar $OS$ = GetOS
 ; the operating system, in which the interpreter is running
 ; supported values are  "Windows_NT", "Linux", "MacOS"
 
@@ -34,29 +33,26 @@ comment "put fixed infos into the script (maybe produced by the setup detector m
 ; ----------------------------------------------------------------
 ; the values can be manually edited or automatically suggested by the opsi setup detector
 ;
-DefVar $InstallDir$
-set $InstallDir$ = "%ProgramFiles32Dir%\<path to the product files>"
+DefVar $InstallDir$ = "%ProgramFiles32Dir%\<path to the product files>"
 ; dependent on the installes software it could be
 ; "%ProgramFiles64Dir% [,,,]
 ; "%ProgramFilesSysNatives% [,,,]
-DefVar $MinimumSpace$ 
-set $MinimumSpace$ = "5 MB"
-DefVar $MsiId$ 
-set $MsiId$ = "00000"
-DefVar $UninstallProgram$
-set $UninstallProgram$ ="uninstall.exe"
+DefVar $MinimumSpace$ = "5 MB"
+DefVar $MsiId$ = "00000"
+DefVar $UninstallProgram$ = "uninstall.exe"
+DefVar $ExitCode$
+DefVar $ErrorString$
+#@stringVars*#
 
+; ---------------------------------------------------------------
+comment "inform the user at the PC about product installation"
 ; ----------------------------------------------------------------
-comment "do settings for license management"
-; ----------------------------------------------------------------
-; If used the values have be manually set when editing the script
-;
-DefVar $LicenseHandledByScript$ 
-set $LicenseHandledByScript$ = "false"
-DefVar $LicenseKey$ 
-set  $LicenseKey$  = ""
-DefVar $LicensePool$
-set $LicensePool$ = "pool-" +  $productId$
+; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
+; we set a image path which could be as follows
+DefVar $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
+ShowBitmap $ImagePath$ $ProductName$
+
+Message "Installing " + $ProductId$ + " ..."
 
 ; ----------------------------------------------------------------
 comment  "check if the script is adequate to the environment"
@@ -73,15 +69,7 @@ if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	; Stop process and set installation status to failed
 endif
 
-; ---------------------------------------------------------------
-comment "inform the user at the PC about product installation"
-; ----------------------------------------------------------------
-; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
-; we set a image path which could be as follows  
-DefVar $ImagePath$
-set $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
-ShowBitmap $ImagePath$ $ProductName$
-
+#@GetProductProperty*#
 
 ; ---------------------------------------------------------------
 comment "uninstall an existing installation if possible"
@@ -95,24 +83,16 @@ endif
 ; show  a title for the installation
 Message "Installing " + $ProductId$ + " .."
 
+DefVar $installerSourceDir$ = "%SCRIPTPATH%"
 
-; ---------------------------------------------------------------
-comment "handle license management if included "
-; ----------------------------------------------------------------
-if $LicenseHandledByScript$ = "true"
-	comment "we should handle license"
-	;reserve license and get license key
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
-	; here the section or function calls should follow which 
-	; make use of the license key resp the license reservation
-endif
+#@preInstallLines*#
 
 ; ---------------------------------------------------------------
 comment "run  the setup program"
 ; ----------------------------------------------------------------
 
-; the call to a network drive is more stable if we set the path 
-ChangeDirectory "%SCRIPTPATH%"
+; the call to the installer is more stable if we set the path
+ChangeDirectory $installerSourceDir$
 
 ; call the setup program
 Winbatch_install
@@ -121,8 +101,6 @@ Winbatch_install
 comment "check the result"
 ; ----------------------------------------------------------------
 ; check the outcome of the call, produce either a "failed" state of the script or log the result
-DefVar $ExitCode$ = ""
-DefVar $ErrorString$ = ""
 set $ExitCode$ = getlastexitcode
 if "true" = isMsiExitcodeFatal_short($exitcode$, "true", $ErrorString$ )
 	LogError $ErrorString$
@@ -145,7 +123,7 @@ Registry_install /sysnative
 ;e.g.. supplement or remove start menu or desktop links
 LinkFolder_install
 
-
+#@postInstallLines*#
 ; ---------------------------------------------------------------
 ; end of  actions section
 ; ---------------------------------------------------------------
@@ -206,12 +184,12 @@ LinkFolder_install
 ; set_subfolder $ProductId$
 ;
 ; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters:
-; 	working_dir: $InstallDir$
-; 	icon_file:
-; 	icon_index:
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters:
+	; 	working_dir: $InstallDir$
+	; 	icon_file:
+	; 	icon_index:
 ; end_link
 ;
 ; Example of creating a shortcut to the installed exe on AllUsers desktop:
@@ -220,12 +198,30 @@ LinkFolder_install
 ; set_subfolder ""
 ;
 ; set_link
-; 	name: $ProductId$
-; 	target: <path to the program>
-; 	parameters: <some_param>
-; 	working_dir: $InstallDir$
-; 	icon_file: <path to icon file>
-; 	icon_index: 2
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters: <some_param>
+	; 	working_dir: $InstallDir$
+	; 	icon_file: <path to icon file>
+	; 	icon_index: 2
 ; end_link
 
 
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+#@SectionLines*#

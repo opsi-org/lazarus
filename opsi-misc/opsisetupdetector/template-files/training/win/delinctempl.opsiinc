@@ -10,18 +10,22 @@ Message "Check for existing installation of " + $ProductId$ + " ..."
 Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
 Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
 
+; ---------------------------------------------------------------
+comment "run the uninstall program"
+; ----------------------------------------------------------------
+
 if FileExists($UninstallProgram$)
 	#@preUninstallLines*#
 	comment "Uninstall program found, starting uninstall"
 	Winbatch_uninstall
-	Sub_check_exitcode_del
+	Sub_check_exitcode_generic
 	#@postUninstallLines*#
 endif
 if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
 	#@preUninstallLines*#
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
-	Sub_check_exitcode_del
+	Sub_check_exitcode_generic
 	#@postUninstallLines*#
 endif
 
@@ -73,16 +77,14 @@ msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
 ; set_subfolder ""
 ; delete_element $ProductId$
 
-[Sub_check_exitcode_del]
+[Sub_check_exitcode_generic]
 set $ExitCode$ = getlastexitcode
-if "true" = isMsiExitcodeFatal_short($exitcode$, "true", $ErrorString$ )
+if "true" = isGenericExitcodeFatal($exitcode$, "true", $ErrorString$ )
 	LogError $ErrorString$
 	isfatalerror $ErrorString$
 else
 	Comment $ErrorString$
 endif
 
-#@DelsubDesktopiconSectionLines*#
-
-#@DelsubSectionLines1*#
+#@SectionLines*#
 ;-----------------------------------------------------

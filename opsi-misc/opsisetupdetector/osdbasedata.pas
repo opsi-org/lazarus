@@ -566,9 +566,11 @@ resourcestring
   rsConfigVersion = 'Do not change. Version of the config structure.';
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
-  rsUsePropDesktopicon = 'Should we create a "DektopIcon" property and add code to handle dektop icons ?';
+  rsUsePropDesktopicon =
+    'Should we create a "DektopIcon" property and add code to handle dektop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
-  rsUsePropLicenseOrPool = 'Should we create a "LicenseOrPool" property and add code handle license keys ?';
+  rsUsePropLicenseOrPool =
+    'Should we create a "LicenseOrPool" property and add code handle license keys ?';
   rsPropLicenseOrPoolDescription = 'License key or opsi license pool';
   rsPropInstallFromLocalDescription =
     'Determines if the installation files will be copied locally';
@@ -705,8 +707,8 @@ begin
   Finstall_waitforprocess := '';
   FcopyCompleteDir := False;
   FinstallErrorHandlingLines.Clear;
-  FmsiProductName:= '';
-  FinstallerSourceDir:= '';
+  FmsiProductName := '';
+  FinstallerSourceDir := '';
 end;
 
 // TPProperty **********************************
@@ -964,7 +966,7 @@ var
   index, i: integer;
   propexists: boolean;
   tmpstrlist: TStringList;
-  myrunmode : TRunMode;
+  myrunmode: TRunMode;
 begin
   myrunmode := osdsettings.runmode;
   (*
@@ -1035,8 +1037,8 @@ begin
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
-  else if propexists and not
-    ((myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired) or
+  else if propexists and not ((myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired) or
     aktProduct.productdata.handleLicensekey) then
     aktProduct.properties.propDelete('SecretLicense_or_Pool');
 
@@ -1056,8 +1058,8 @@ begin
     aktProduct.properties.propDelete('Install_from_local_tmpdir');
 
   propexists := aktProduct.properties.propExists('install_architecture');
-  if ((myrunmode = twoAnalyzeCreate_1) or (myrunmode = twoAnalyzeCreate_2))
-    and not propexists then
+  if ((myrunmode = twoAnalyzeCreate_1) or (myrunmode = twoAnalyzeCreate_2)) and
+    not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1078,9 +1080,8 @@ begin
     FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
-  else if propexists and
-    not ((myrunmode = twoAnalyzeCreate_1) or (myrunmode = twoAnalyzeCreate_2))
-    then
+  else if propexists and not ((myrunmode = twoAnalyzeCreate_1) or
+    (myrunmode = twoAnalyzeCreate_2)) then
     aktProduct.properties.propDelete('install_architecture');
 
   // start 'with-user' properties
@@ -1890,10 +1891,17 @@ begin
       PathDelim + 'template.png';
     *)
     targetOSset := [];
+
     useCustomDir := False;
     installFromLocal := False;
-    handleLicensekey := False;
-    desktopicon := False;
+    if myconfiguration.UsePropLicenseOrPool then
+      handleLicensekey := True
+    else
+      handleLicensekey := False;
+    if myconfiguration.UsePropDesktopicon then
+      desktopicon := True
+    else
+      desktopicon := False;
     customizeProfile := False;
   end;
   // Create Dependencies

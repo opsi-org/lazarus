@@ -5,20 +5,32 @@
 ; ----------------------------------------------------------------
 encoding=utf8
 
+; ---------------------------------------------------------------
+comment "check if there is something to uninstall"
+; ----------------------------------------------------------------
 Message "Check for existing installation of " + $ProductId$ + " ..."
-
 comment "Start the Uninstall check:"
-set $oldProgFound$ = "false"
+
+DefVar $oldProgFound$ = "false"
 #@uninstallCheckLines1*#
 
 if $oldProgFound$ = "true"
+	; ---------------------------------------------------------------
+	comment "run the uninstall program"
+	; ----------------------------------------------------------------
+	
 	Message "Uninstalling " + $ProductId$ + " ..."
 	#@preUninstallLines*#
 	comment "Start uninstall program"
 	ChangeDirectory "%SCRIPTPATH%\files1"
 	;----------------------------------------------
-	Winbatch_uninstall  #@uninstallWaitForProc1*#
+	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
 	;----------------------------------------------
+	
+	; ---------------------------------------------------------------
+	comment "check the result"
+	; ----------------------------------------------------------------
+	; check the outcome of the call, produce either a "failed" state of the script or log the result
 	set $ExitCode$ = getlastexitcode
 	if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
 		#@installErrorHandlingLines1*#
@@ -27,6 +39,10 @@ if $oldProgFound$ = "true"
 	else
 		Comment $ErrorString$
 	endif
+	
+	; ---------------------------------------------------------------
+	comment "do tasks  which supplement the uninstallation"
+	; ----------------------------------------------------------------
 	
 	#@postUninstallLines*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
@@ -42,42 +58,3 @@ if $oldProgFound$ = "true"
 	#@DelsubHandleDesktopIcon*#
 endif
 
-
-[Winbatch_uninstall]
-#@uninstallCommandLine1*#
-; Choose one of the following examples as basis for program uninstall
-;
-; === Nullsoft Scriptable Install System ================================================================
-; maybe better called as
-; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
-; "$UninstallProgram$" /S
-;
-; === Inno Setup ========================================================================================
-; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
-
-
-[Files_uninstall]
-; Example for recursively deleting the installation directory:
-;
-; del -sf "$InstallDir$\"
-
-[Registry_uninstall]
-; Example of deleting a registry key:
-;
-; deletekey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
-
-[LinkFolder_uninstall]
-; Example of deleting a folder from AllUsers startmenu:
-;
-; set_basefolder common_programs
-; delete_subfolder $ProductId$
-;
-; Example of deleting a shortcut from AllUsers desktop:
-;
-; set_basefolder common_desktopdirectory
-; set_subfolder ""
-; delete_element $ProductId$
-
-#@DelsubDesktopiconSectionLines*#
-
-#@DelsubSectionLines1*#

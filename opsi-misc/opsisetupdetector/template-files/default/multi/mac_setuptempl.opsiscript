@@ -37,7 +37,7 @@ set $installerSourceDir$ = "#@installerSourceDir3*#"
 comment "Start setup "
 ChangeDirectory $installerSourceDir$
 ;----------------------------------------------
-set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files3/<my macos install file>") 
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files3/<my macos install file>")
 ;----------------------------------------------
 Sub_check_installSuccess
 #@postInstallLines*#

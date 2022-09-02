@@ -39,7 +39,7 @@ ChangeDirectory "%SCRIPTPATH%/files2"
 cleanupPackageSystem()
 ;----------------------------------------------
 ; To create a new repo: described in the opsi-script manual (Linux)
-; 
+;
 ; install packages from a existing repo:
 ; set $ListOfPackageNames$ = createStringList('msitools','dpkg','rpm')
 ; set $installSuccess$ = genericLinInstall($ListOfPackageNames$)

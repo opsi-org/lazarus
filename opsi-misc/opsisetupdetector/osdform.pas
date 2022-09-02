@@ -65,6 +65,9 @@ type
   TResultform1 = class(TForm)
     BitBtnChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir3: TBitBtn;
+    BitBtnChooseUninstFile1: TBitBtn;
+    BitBtnChooseUninstFile2: TBitBtn;
+    BitBtnChooseUninstFile3: TBitBtn;
     BitBtnOpenMst3: TBitBtn;
     BitBtnChooseInstDir1: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
@@ -367,6 +370,9 @@ type
     procedure BitBtnChooseInstDir1Click(Sender: TObject);
     procedure BitBtnChooseInstDir2Click(Sender: TObject);
     procedure BitBtnChooseInstDir3Click(Sender: TObject);
+    procedure BitBtnChooseUninstFile1Click(Sender: TObject);
+    procedure BitBtnChooseUninstFile2Click(Sender: TObject);
+    procedure BitBtnChooseUninstFile3Click(Sender: TObject);
     procedure BitBtnDelDepClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
@@ -476,6 +482,7 @@ type
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure chooseInstallDir(var mysetup: TSetupFile);
+    procedure chooseUninstaller(var mysetup: TSetupFile);
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
   public
     { public declarations }
@@ -816,6 +823,8 @@ begin
         'installFromLocal');
       TICheckBoxHandleLiceneKey.Link.SetObjectAndProperty(productdata,
         'handleLicensekey');
+      TICheckBoxDesktopIcon.Link.SetObjectAndProperty(productdata,
+        'desktopicon');
       TICheckBoxCustomizeProfile.Link.SetObjectAndProperty(productdata,
         'customizeProfile');
       TIComboBoxChannel.Link.SetObjectAndProperty(productdata, 'channelDir');
@@ -2484,17 +2493,38 @@ begin
   chooseInstallDir(aktProduct.SetupFiles[2]);
 end;
 
+procedure TResultform1.BitBtnChooseUninstFile1Click(Sender: TObject);
+begin
+  chooseUninstaller(aktProduct.SetupFiles[0]);
+end;
+
+procedure TResultform1.BitBtnChooseUninstFile2Click(Sender: TObject);
+begin
+  chooseUninstaller(aktProduct.SetupFiles[1]);
+end;
+
+procedure TResultform1.BitBtnChooseUninstFile3Click(Sender: TObject);
+begin
+  chooseUninstaller(aktProduct.SetupFiles[2]);
+end;
+
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 var
-  index: integer;
+  index, count : integer;
 begin
-  //StringGridDep.DeleteRow(StringGridDep.Row);
+  // delete dependency
   if TIGridDep.SelectedRangeCount > 0 then
   begin
     index := TIGridDep.SelectedRange[0].Top;
-    aktProduct.dependencies.Delete(index - 1);
-    //fetchDepPropFromForm;
-    TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
+    count := aktProduct.dependencies.Count;
+    // deleting the first entry leads to an access violation
+    // to avoid this we move the item to delete to the end of the collection
+    aktProduct.dependencies.Exchange(index - 1, count-1);
+    // then we have to sync with the grid
+    TIGridProp.ReloadTIList;
+    // now we delete the last element
+    aktProduct.dependencies.Delete(count-1);
+    // and now we can resync without access violation
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
   end
@@ -2505,16 +2535,23 @@ end;
 
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
 var
-  index: integer;
+  index, count : integer;
+  propname : string;
 begin
   // delete property
-  //StringGridProp.DeleteRow(StringGridProp.Row);
   if TIGridProp.SelectedRangeCount > 0 then
   begin
     index := TIGridProp.SelectedRange[0].Top;
-    aktProduct.properties.Delete(index - 1);
-    //fetchDepPropFromForm;
-    TIGridProp.ListObject := osdbasedata.aktproduct.properties;
+    count := aktProduct.properties.Count;
+    // deleting the first entry leads to an access violation
+    // to avoid this we move the item to delete to the end of the collection
+    aktProduct.properties.Exchange(index - 1, count-1);
+    // then we have to sync with the grid
+    TIGridProp.ReloadTIList;
+    // now we delete the last element
+    aktProduct.properties.Delete(count-1);
+    index := aktProduct.properties.Count;
+    // and now we can resync without access violation
     TIGridProp.ReloadTIList;
     TIGridProp.Update;
   end
@@ -2824,6 +2861,16 @@ begin
     mysetup.installDirectory:= SelectDirectoryDialog1.FileName;
   end;
 end;
+
+procedure TResultform1.chooseUninstaller(var mysetup: TSetupFile);
+begin
+  OpenDialog1.FilterIndex := 1;
+  if OpenDialog1.Execute then
+  begin
+    mysetup.uninstallProg := ExtractFileName(OpenDialog1.FileName);
+  end;
+end;
+
 
 procedure TResultform1.SetTICheckBoxesMST(Installer: TKnownInstaller);
 begin

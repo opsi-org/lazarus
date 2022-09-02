@@ -7,147 +7,147 @@ encoding=utf8
 
 ;############################### Files sections ###############################
 [Files_Copy_Setup_Files]
-	copy -s "%ScriptPath%\*.*" "$SetupFilesPath$"
+copy -s "%ScriptPath%\*.*" "$SetupFilesPath$"
 
 [Files_Delete_Setup_Files]
-	del -sf $SetupFilesPath$\
+del -sf $SetupFilesPath$\
 
 
 
 ;############################### opsiServiceCall sections ###############################
 [opsiServiceCall_loginOpsiSetupUser]
-	"method": "loginOpsiSetupUser",
-	"params":	[
-				'true',
-				'true'
-				]
+"method": "loginOpsiSetupUser",
+"params":	[
+			'true',
+			'true'
+			]
 
 [opsiServiceCall_removeOpsiSetupUser]
-	"method": "removeOpsiSetupUser",
-	"params":	[
-				]
+"method": "removeOpsiSetupUser",
+"params":	[
+			]
 
 [opsiServiceCall_runAsOpsiSetupUser]
-	"timeout" : 3600
-	"method": "runAsOpsiSetupUser",
-	"params":	[
-				'$OpsiScriptInterpreter$ $LocalSetupScript$ /batch /productid %installingProdName%',
-				'true',
-				'true'
-				]
+"timeout" : 3600
+"method": "runAsOpsiSetupUser",
+"params":	[
+			'$OpsiScriptInterpreter$ $LocalSetupScript$ /batch /productid %installingProdName%',
+			'true',
+			'true'
+			]
 
 [opsiServiceCall_runOpsiScriptAsOpsiSetupUser]
-	"timeout" : 3600
-	"method": "runOpsiScriptAsOpsiSetupUser",
-	"params":	[
-				'$ServiceCallPath$\\localsetup\\setup-local.opsiscript',
-				'%installingProdName%',
-				'true',
-				'true',
-				'true'
-				]
+"timeout" : 3600
+"method": "runOpsiScriptAsOpsiSetupUser",
+"params":	[
+			'$ServiceCallPath$\\localsetup\\setup-local.opsiscript',
+			'%installingProdName%',
+			'true',
+			'true',
+			'true'
+			]
 
 [opsiServiceCall_switchDesktop]
-	"method": "switchDesktop",
-	"params":	[
-				'winlogon'
-				]
+"method": "switchDesktop",
+"params":	[
+			'winlogon'
+			]
 
 
 
 ;############################### Sub sections ###############################
 [Sub_Scan_ProfileList]
-	Set $SID$ = "%SID%"
-	if contains(lower(GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\" + $SID$ , "ProfileImagePath", "SysNative")), "opsisetupuser")
-		Comment "Deleting " + $SID$ + " from ProfileList"
-			Registry_Delete_From_ProfileList /SysNative
-	endif
+Set $SID$ = "%SID%"
+if contains(lower(GetRegistryValue("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\" + $SID$ , "ProfileImagePath", "SysNative")), "opsisetupuser")
+	Comment "Deleting " + $SID$ + " from ProfileList"
+	Registry_Delete_From_ProfileList /SysNative
+endif
 
 
 
 ;############################### Registry sections ###############################
 [Registry_Backup_Last_Logon]
-	OpenKey [$ProductSettingsKey$]
-		Set "LastLoggedOnUser"		= REG_SZ:"$LastLoggedOnUser$"
-		Set "LastLoggedOnSAMUser"	= REG_SZ:"$LastLoggedOnSAMUser$"
+OpenKey [$ProductSettingsKey$]
+Set "LastLoggedOnUser"		= REG_SZ:"$LastLoggedOnUser$"
+Set "LastLoggedOnSAMUser"	= REG_SZ:"$LastLoggedOnSAMUser$"
 
 [Registry_Restore_Last_Logon]
-	OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI]
-		Set "LastLoggedOnUser"		= REG_SZ:"$LastLoggedOnUser$"
-		Set "LastLoggedOnSAMUser"	= REG_SZ:"$LastLoggedOnSAMUser$"
+OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI]
+Set "LastLoggedOnUser"		= REG_SZ:"$LastLoggedOnUser$"
+Set "LastLoggedOnSAMUser"	= REG_SZ:"$LastLoggedOnSAMUser$"
 
 [Registry_Backup_UAC]
-	OpenKey [$ProductSettingsKey$]
-		Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:$BackupConsentPromptBehaviorAdmin$
-		Set "EnableInstallerDetection"		= REG_DWORD:$BackupEnableInstallerDetection$
-		Set "EnableLUA"						= REG_DWORD:$BackupEnableLUA$
-		Set "EnableVirtualization"			= REG_DWORD:$BackupEnableVirtualization$
-		Set "PromptOnSecureDesktop"			= REG_DWORD:$BackupPromptOnSecureDesktop$
+OpenKey [$ProductSettingsKey$]
+Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:$BackupConsentPromptBehaviorAdmin$
+Set "EnableInstallerDetection"		= REG_DWORD:$BackupEnableInstallerDetection$
+Set "EnableLUA"						= REG_DWORD:$BackupEnableLUA$
+Set "EnableVirtualization"			= REG_DWORD:$BackupEnableVirtualization$
+Set "PromptOnSecureDesktop"			= REG_DWORD:$BackupPromptOnSecureDesktop$
 
 [Registry_Disable_UAC]
-	OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
-		Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:00000000
-		Set "EnableInstallerDetection"		= REG_DWORD:00000001
-		Set "EnableLUA"						= REG_DWORD:00000000
-		Set "EnableVirtualization"			= REG_DWORD:00000001
-		Set "PromptOnSecureDesktop"			= REG_DWORD:00000000
+OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
+Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:00000000
+Set "EnableInstallerDetection"		= REG_DWORD:00000001
+Set "EnableLUA"						= REG_DWORD:00000000
+Set "EnableVirtualization"			= REG_DWORD:00000001
+Set "PromptOnSecureDesktop"			= REG_DWORD:00000000
 
 [Registry_Restore_UAC]
-	OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
-		Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:$BackupConsentPromptBehaviorAdmin$
-		Set "EnableInstallerDetection"		= REG_DWORD:$BackupEnableInstallerDetection$
-		Set "EnableLUA"						= REG_DWORD:$BackupEnableLUA$
-		Set "EnableVirtualization"			= REG_DWORD:$BackupEnableVirtualization$
-		Set "PromptOnSecureDesktop"			= REG_DWORD:$BackupPromptOnSecureDesktop$
+OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
+Set "ConsentPromptBehaviorAdmin"	= REG_DWORD:$BackupConsentPromptBehaviorAdmin$
+Set "EnableInstallerDetection"		= REG_DWORD:$BackupEnableInstallerDetection$
+Set "EnableLUA"						= REG_DWORD:$BackupEnableLUA$
+Set "EnableVirtualization"			= REG_DWORD:$BackupEnableVirtualization$
+Set "PromptOnSecureDesktop"			= REG_DWORD:$BackupPromptOnSecureDesktop$
 
 [Registry_Disable_Input]
-	OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass]
-		Set "Start" = REG_DWORD:0x00000004
+OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass]
+Set "Start" = REG_DWORD:0x00000004
 
-	OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Mouclass]
-		Set "Start" = REG_DWORD:0x00000004
+OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Mouclass]
+Set "Start" = REG_DWORD:0x00000004
 
 [Registry_Enable_Input]
-	OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass]
-		Set "Start" = REG_DWORD:0x00000003
+OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Kbdclass]
+Set "Start" = REG_DWORD:0x00000003
 
-	OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Mouclass]
-		Set "Start" = REG_DWORD:0x00000003
+OpenKey [HKLM\SYSTEM\CurrentControlSet\Services\Mouclass]
+Set "Start" = REG_DWORD:0x00000003
 
 [Registry_Delete_ProductSettingsKey]
-	DeleteKey [$ProductSettingsKey$]
+DeleteKey [$ProductSettingsKey$]
 
 [Registry_Delete_From_ProfileList]
-		DeleteKey [HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\$SID$]
+DeleteKey [HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\$SID$]
 
 [Registry_Disable_First_Logon_Animation]
-	OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
-		Set "EnableFirstLogonAnimation" = REG_DWORD:0x00000000
+OpenKey [HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
+Set "EnableFirstLogonAnimation" = REG_DWORD:0x00000000
 
-	OpenKey [HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon]
-		Set "EnableFirstLogonAnimation" = REG_DWORD:0x00000000
+OpenKey [HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon]
+Set "EnableFirstLogonAnimation" = REG_DWORD:0x00000000
 
 [Registry_Disable_FirstRunPage]
-	OpenKey [HKEY_USERS\.Default\Software\Policies\Microsoft\MicrosoftEdge\Main]
-		Set "PreventFirstRunPage" = REG_DWORD:0x00000001
+OpenKey [HKEY_USERS\.Default\Software\Policies\Microsoft\MicrosoftEdge\Main]
+Set "PreventFirstRunPage" = REG_DWORD:0x00000001
 
-	OpenKey [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager]
-		Set "SubscribedContent-310093Enabled" = REG_DWORD:0x00000000
+OpenKey [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager]
+Set "SubscribedContent-310093Enabled" = REG_DWORD:0x00000000
 
 [Registry_Disable_Privacy_Experience]
-	OpenKey [HKLM\SOFTWARE\Policies\Microsoft\Windows\OOBE]
-		Set "DisablePrivacyExperience" = REG_DWORD:0x00000001
+OpenKey [HKLM\SOFTWARE\Policies\Microsoft\Windows\OOBE]
+Set "DisablePrivacyExperience" = REG_DWORD:0x00000001
 
 [Registry_Disable_Support_Warning]
-	OpenKey [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\EOSNotify]
-		Set "DiscontinueEOS" = REG_DWORD:0x00000001
+OpenKey [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\EOSNotify]
+Set "DiscontinueEOS" = REG_DWORD:0x00000001
 
 [Registry_Save_Fatal_Flag]
-	OpenKey [$ProductSettingsKey$]
-		Set "ErrorFlag"	= REG_SZ:"$ErrorFlag$"
-		Set "FatalFlag"	= REG_SZ:"true"
-		Set "Stage"		= REG_SZ:"4"
+OpenKey [$ProductSettingsKey$]
+Set "ErrorFlag"	= REG_SZ:"$ErrorFlag$"
+Set "FatalFlag"	= REG_SZ:"true"
+Set "Stage"		= REG_SZ:"4"
 
 [Registry_Save_Stage]
-	OpenKey [$ProductSettingsKey$]
+OpenKey [$ProductSettingsKey$]
 		Set "Stage" = REG_SZ:'$Stage$'

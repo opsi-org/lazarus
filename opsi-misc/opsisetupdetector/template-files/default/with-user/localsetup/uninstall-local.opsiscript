@@ -19,10 +19,10 @@ endif
 
 
 Comment "Displaying product picture"
-	ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
 
 Message "Uninstalling " + $ProductId$
-	if FileExists("%ScriptPath%\delsub-local.opsiinc")
-		Comment "Starting the uninstall sub section"
-			Sub "%ScriptPath%\delsub-local.opsiinc"
+if FileExists("%ScriptPath%\delsub-local.opsiinc")
+	Comment "Starting the uninstall sub section"
+	Sub "%ScriptPath%\delsub-local.opsiinc"
 	endif
