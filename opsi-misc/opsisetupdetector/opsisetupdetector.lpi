@@ -205,7 +205,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="29">
+    <Units Count="30">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -344,6 +344,13 @@
         <Filename Value="notarize_osd.bash"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
+      <Unit29>
+        <Filename Value="..\..\common\osmessagedialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MyMessageDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit29>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

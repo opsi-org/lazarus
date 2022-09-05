@@ -20,20 +20,20 @@ Patches_in_user_profiles  "%UserProfileDir%\Appdata\Roaming\osd_profile_example\
 ; example structure:
 ;copy "%Scriptpath%\profile_files\*.*" "%UserProfileDir%\Appdata\Roaming\<path_to_application_dir>"
 ; example:
-copy "%Scriptpath%\profile_files\*.*" "%UserProfileDir%\Appdata\Roaming\osd_profile_example"
+;copy "%Scriptpath%\profile_files\*.*" "%UserProfileDir%\Appdata\Roaming\osd_profile_example"
 
 [Registry_current_user]
 ; example structure:
-openkey [HKCU\Software\<application key>]
+;openkey [HKCU\Software\<application key>]
 ;set "<var name>" = "<var value>"
 ; example:
-openkey [HKCU\Software\osd_profile_example]
-set "osd_profile_example_entry" = "example_value"
+;openkey [HKCU\Software\osd_profile_example]
+;set "osd_profile_example_entry" = "example_value"
 
 [Patches_in_user_profiles]
 ; example structure:
 ; set [<section name>] <key name>=<value>
 ; example:
-set [example_section] example_key=example_value
+;set [example_section] example_key=example_value
 
 

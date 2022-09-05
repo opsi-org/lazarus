@@ -34,7 +34,7 @@
 {"hash":138953029,"name":"tresultform1.tabsheetanalyze.caption","sourcebytes":[65,110,97,108,121,122,101],"value":"Analyze"},
 {"hash":194334512,"name":"tresultform1.btanalyzenextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
 {"hash":258342400,"name":"tresultform1.btanalyzenextstep.caption","sourcebytes":[78,101,120,116,32,83,116,101,112],"value":"Next Step"},
-{"hash":142379231,"name":"tresultform1.labelloginfo.caption","sourcebytes":[76,97,98,101,108,76,111,103,73,110,102,111],"value":"LabelLogInfo"},
+{"hash":51401823,"name":"tresultform1.editloginfo.text","sourcebytes":[69,100,105,116,76,111,103,73,110,102,111],"value":"EditLogInfo"},
 {"hash":5884032,"name":"tresultform1.tabsheetsetup1.caption","sourcebytes":[49,46,32,83,101,116,117,112],"value":"1. Setup"},
 {"hash":143287130,"name":"tresultform1.label62.caption","sourcebytes":[68,101,116,101,99,116,101,100,32,83,101,116,117,112,32,116,121,112,101,58],"value":"Detected Setup type:"},
 {"hash":142732244,"name":"tresultform1.ticheckboxs1mst.caption","sourcebytes":[77,83,84,32,97,108,108,111,119,101,100],"value":"MST allowed"},

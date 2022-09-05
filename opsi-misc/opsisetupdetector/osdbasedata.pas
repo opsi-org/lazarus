@@ -585,6 +585,12 @@ resourcestring
 
 implementation
 
+{$IFDEF OSDGUI}
+uses
+  osdform;
+
+{$ENDIF OSDGUI}
+
 var
   FileVerInfo: TFileVersionInfo;
 
@@ -939,16 +945,51 @@ end;
 
 procedure TPProperties.propDelete(propname: string);
 var
-  index, i: integer;
+  index, i, delindex, numberItems: integer;
   tmpstr: string;
 begin
+  delindex := -1;
   index := Count;
   tmpstr := lowercase(propname);
   for i := index - 1 downto 0 do
     if lowercase(tmpstr) = lowercase(Items[i].Property_Name) then
-      Delete(i);
-end;
+    begin
+      delindex := i;
+      (*
+      // deleting the first entry leads to an access violation
+    // to avoid this we move the item to delete to the end of the collection
+    // then we have to sync with the grid
+    // now we delete the last element
+    // and now we can resync without access violation
+      Exchange(i , count-1);
+      Application.ProcessMessages;
+      Delete(count-1);
+      Application.ProcessMessages;
+      *)
+    end;
 
+  // now let us delete with soft handling of the GUI components
+  // this is (i think) a bug workaround
+  if delindex >= 0 then
+  begin
+    numberItems := aktProduct.properties.Count;
+    // deleting the first entry leads to an access violation
+    // to avoid this we move the item to delete to the end of the collection
+    aktProduct.properties.Exchange(delindex, numberItems - 1);
+  {$IFDEF OSDGUI}
+    // then we have to sync with the grid
+    resultForm1.TIGridProp.ReloadTIList;
+  {$ENDIF OSDGUI}
+    // now we delete the last element
+    aktProduct.properties.Delete(numberItems - 1);
+  {$IFDEF OSDGUI}
+    // and now we can resync without access violation
+    resultForm1.TIGridProp.ReloadTIList;
+    resultForm1.TIGridProp.Update;
+  {$ENDIF OSDGUI}
+  end;
+
+end;
 
 (*
 procedure TPProperties.activateImportMode;

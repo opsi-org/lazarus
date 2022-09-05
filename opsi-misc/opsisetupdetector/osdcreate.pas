@@ -1000,8 +1000,8 @@ begin
             begin
               // setup file
               if FileExists(infilename) then
-                if not copyfile(infilename, clientpath + subdir + PathDelim +
-                  'files' + IntToStr(i + 1) + PathDelim +
+                if not copyfile(infilename, clientpath + subdir +
+                  PathDelim + 'files' + IntToStr(i + 1) + PathDelim +
                   aktProduct.SetupFiles[i].setupFileName,
                   [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True) then
                   LogDatei.log('Failed to copy: ' + infilename, LLError);
@@ -1153,9 +1153,9 @@ begin
     textlist.Add('onceScript: ');
     textlist.Add('customScript: ');
     if aktProduct.productdata.customizeProfile then
-      textlist.Add('userLoginScript: ')
+      textlist.Add('userLoginScript: ' + aktProduct.productdata.setupscript)
     else
-      textlist.Add('userLoginScript: '+ aktProduct.productdata.setupscript);
+      textlist.Add('userLoginScript: ');
 
 
     //dependencies

@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 575
+  Left = 681
   Height = 686
-  Top = 155
+  Top = 373
   Width = 1103
   Caption = 'opsi Setup Detector'
   ClientHeight = 666
@@ -97,11 +97,11 @@ object resultForm1: TresultForm1
       Height = 601
       Top = 1
       Width = 1095
-      ActivePage = TabSheetProduct2
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 6
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -5381,18 +5381,19 @@ object resultForm1: TresultForm1
           ClientWidth = 1087
           ParentFont = False
           TabOrder = 2
-          object LabelLogInfo: TLabel
+          object EditLogInfo: TEdit
             Left = 19
             Height = 22
             Top = 10
-            Width = 79
+            Width = 892
             Align = alLeft
+            AutoSelect = False
             BorderSpacing.Left = 9
             BorderSpacing.Around = 9
-            Caption = 'LabelLogInfo'
-            Font.Height = -14
-            ParentColor = False
-            ParentFont = False
+            BorderStyle = bsNone
+            ReadOnly = True
+            TabOrder = 0
+            Text = 'EditLogInfo'
           end
         end
         object Panel13: TPanel
@@ -9504,10 +9505,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  144
-                  144
-                  144
-                  147
+                  140
+                  140
+                  140
+                  142
                 )
               end
             end
@@ -9771,10 +9772,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  254
-                  254
-                  254
-                  255
+                  250
+                  250
+                  250
+                  250
                 )
               end
             end

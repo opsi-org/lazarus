@@ -48,6 +48,7 @@ uses
   osddatamod,
   osdcheckentriesdlg,
   Contnrs,
+  osmessagedialog,
   oswebservice;
 //openfiledirdlg;
 
@@ -106,6 +107,7 @@ type
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
+    EditLogInfo: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
@@ -199,7 +201,6 @@ type
     LabelIconPreview: TLabel;
     Label63: TLabel;
     Label69: TLabel;
-    LabelLogInfo: TLabel;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -644,10 +645,13 @@ resourcestring
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
     'Could not connect to the opsi-web-service. Check URL, user and password';
-  rsTemlateChannelHint = 'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
+  rsTemlateChannelHint =
+    'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
   rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
-  rsInstallFromLocalHint = 'Should we add code to copy installer to local before installation ?';
-  rsCustomizeProfileHint = 'Should we add code to customize the installation in user profiles ?';
+  rsInstallFromLocalHint =
+    'Should we add code to copy installer to local before installation ?';
+  rsCustomizeProfileHint =
+    'Should we add code to customize the installation in user profiles ?';
 
 
 implementation
@@ -835,12 +839,12 @@ begin
       //TIComboBoxChannel.Caption:= templChannelStrings[TTemplateChannels(0)];
 
       // the hints ...
-      TIComboBoxChannel.Hint:= rsTemlateChannelHint;
-      TICheckBoxHandleLiceneKey.Hint:= rsUsePropLicenseOrPool;
-      TICheckBoxInstallFromLocal.Hint:= rsInstallFromLocalHint;
-      TICheckBoxCustomdir.Hint:= rsSupportCustomDirectoryHint;
-      TICheckBoxDesktopIcon.Hint:= rsUsePropDesktopicon;
-      TICheckBoxCustomizeProfile.Hint:= rsCustomizeProfileHint;
+      TIComboBoxChannel.Hint := rsTemlateChannelHint;
+      TICheckBoxHandleLiceneKey.Hint := rsUsePropLicenseOrPool;
+      TICheckBoxInstallFromLocal.Hint := rsInstallFromLocalHint;
+      TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
+      TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
+      TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -885,7 +889,8 @@ begin
     //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
     //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
     {$ENDIF LINUX}
-    LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
+    //LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
+    EditLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
   LogDatei.log('Finished initGUI ... ', LLInfo);
@@ -962,6 +967,10 @@ begin
   TIGridDep.ListObject := osdbasedata.aktproduct.dependencies;
   TIGridDep.ReloadTIList;
   TIGridDep.Update;
+  TIGridProp.ListObject := nil;
+  TIGridProp.ReloadTIList;
+  TIGridProp.Update;
+  Application.ProcessMessages;
   TIGridProp.ListObject := osdbasedata.aktproduct.properties;
   TIGridProp.ReloadTIList;
   TIGridProp.Update;
@@ -1503,6 +1512,8 @@ end;
 procedure TResultform1.MenuItemOpenProjClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 8;   // project file
+  if DirectoryExists(myconfiguration.workbench_Path) then
+    OpenDialog1.InitialDir := myconfiguration.workbench_Path;
   if OpenDialog1.Execute then
   begin
     LogDatei.log('Start import Project file from: ' + OpenDialog1.FileName, LLnotice);
@@ -1934,6 +1945,7 @@ begin
       *)
     aktProduct.SetupFiles[0].copyCompleteDir := showCompleteDirDlg;
     makeProperties;
+    resultform1.updateGUI;
     aktProduct.productdata.setupscript := 'setup.opsiscript';
     aktProduct.productdata.uninstallscript := 'localsetup\uninstall-local.opsiscript';
     aktProduct.productdata.updatescript := 'localsetup\update-local.opsiscript';
@@ -2510,20 +2522,20 @@ end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 var
-  index, count : integer;
+  index, Count: integer;
 begin
   // delete dependency
   if TIGridDep.SelectedRangeCount > 0 then
   begin
     index := TIGridDep.SelectedRange[0].Top;
-    count := aktProduct.dependencies.Count;
+    Count := aktProduct.dependencies.Count;
     // deleting the first entry leads to an access violation
     // to avoid this we move the item to delete to the end of the collection
-    aktProduct.dependencies.Exchange(index - 1, count-1);
+    aktProduct.dependencies.Exchange(index - 1, Count - 1);
     // then we have to sync with the grid
-    TIGridProp.ReloadTIList;
+    TIGridDep.ReloadTIList;
     // now we delete the last element
-    aktProduct.dependencies.Delete(count-1);
+    aktProduct.dependencies.Delete(Count - 1);
     // and now we can resync without access violation
     TIGridDep.ReloadTIList;
     TIGridDep.Update;
@@ -2535,21 +2547,21 @@ end;
 
 procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
 var
-  index, count : integer;
-  propname : string;
+  index, Count: integer;
+  propname: string;
 begin
   // delete property
   if TIGridProp.SelectedRangeCount > 0 then
   begin
     index := TIGridProp.SelectedRange[0].Top;
-    count := aktProduct.properties.Count;
+    Count := aktProduct.properties.Count;
     // deleting the first entry leads to an access violation
     // to avoid this we move the item to delete to the end of the collection
-    aktProduct.properties.Exchange(index - 1, count-1);
+    aktProduct.properties.Exchange(index - 1, Count - 1);
     // then we have to sync with the grid
     TIGridProp.ReloadTIList;
     // now we delete the last element
-    aktProduct.properties.Delete(count-1);
+    aktProduct.properties.Delete(Count - 1);
     index := aktProduct.properties.Count;
     // and now we can resync without access violation
     TIGridProp.ReloadTIList;
@@ -2844,7 +2856,7 @@ begin
   if OpenDialog1.Execute then
   begin
     mysetup.mstFullFileName := OpenDialog1.FileName;
-    str := ' TRANSFORMS= "$installerSourceDir$\' + mysetup.mstFileName + '"';
+    str := ' TRANSFORMS="$installerSourceDir$\' + mysetup.mstFileName + '"';
     mysetup.installCommandLine := mysetup.installCommandLine + str;
     (*
     mysetup.installCommandLine :=
@@ -2854,11 +2866,72 @@ begin
   end;
 end;
 
-procedure TResultform1.chooseInstallDir(var mysetup: TSetupFile);
+{$IFDEF WINDOWS}
+// from https://wiki.freepascal.org/Detect_Windows_x32-x64_example
+// modified to work with auto format (Ctrl-D) (d.oertel 05.09.2022)
+//function IsWindows64: boolean;
+  {
+  Detect if we are running on 64 bit Windows or 32 bit Windows,
+  independently of bitness of this program.
+  Original source:
+  http://www.delphipraxis.net/118485-ermitteln-ob-32-bit-oder-64-bit-betriebssystem.html
+  modified for FreePascal in German Lazarus forum:
+  http://www.lazarusforum.de/viewtopic.php?f=55&t=5287
+  }
+{$ifdef WIN32}//Modified KpjComp for 64bit compile mode
+function IsWindows64: boolean;
+type
+  TIsWow64Process = function( // Type of IsWow64Process API fn
+      Handle: Windows.THandle; var Res: Windows.BOOL): Windows.BOOL; stdcall;
+var
+  IsWow64Result: Windows.BOOL; // Result from IsWow64Process
+  IsWow64Process: TIsWow64Process; // IsWow64Process fn reference
 begin
+  // Try to load required function from kernel32
+  IsWow64Process := TIsWow64Process(Windows.GetProcAddress(
+    Windows.GetModuleHandle('kernel32'), 'IsWow64Process'));
+  if Assigned(IsWow64Process) then
+  begin
+    // Function is implemented: call it
+    if not IsWow64Process(Windows.GetCurrentProcess, IsWow64Result) then
+      raise SysUtils.Exception.Create('IsWindows64: bad process handle');
+    // Return result of function
+    Result := IsWow64Result;
+  end
+  else
+    // Function not implemented: can't be running on Wow64
+    Result := False;
+end;
+
+{$else}//if were running 64bit code, OS must be 64bit :)
+function IsWindows64: boolean;
+begin
+  Result := True;
+end;
+
+{$endif}
+{$ENDIF WINDOWS}
+
+procedure TResultform1.chooseInstallDir(var mysetup: TSetupFile);
+var
+  installdir: string;
+begin
+  {$IFDEF WINDOWS}
+  SelectDirectoryDialog1.InitialDir := 'c:\';
+  {$ELSE WINDOWS}
+  SelectDirectoryDialog1.InitialDir := '/';
+  {$ENDIF WINDOWS}
   if SelectDirectoryDialog1.Execute then
   begin
-    mysetup.installDirectory:= SelectDirectoryDialog1.FileName;
+    installdir := SelectDirectoryDialog1.FileName;
+    {$IFDEF WINDOWS}
+    installdir := ReplaceText(installdir, 'c:\program files (x86)', '%ProgramFiles32Dir%');
+    if IsWindows64 then
+      installdir := ReplaceText(installdir, 'c:\program files', '%ProgramFiles64Dir%')
+    else
+      installdir := ReplaceText(installdir, 'c:\program files', '%ProgramFiles32Dir%');
+    {$ENDIF WINDOWS}
+    mysetup.installDirectory := installdir;
   end;
 end;
 
@@ -3780,7 +3853,8 @@ begin
   list.Add(aktconfigfile);
   list.Add('Log: ');
   list.Add(logdatei.FileName);
-  ShowMessage(list.Text);
+  MyMessageDlg.showMessage('opsi-setup-detector',list.Text,[mrOK]);
+  //ShowMessage(list.Text);
   list.Free;
 end;
 
@@ -4022,6 +4096,7 @@ end;
 procedure TResultform1.CallMakeProperties(Sender: TObject);
 begin
   makeProperties;
+  resultform1.updateGUI;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
@@ -4062,6 +4137,7 @@ procedure TResultform1.TIComboBoxChannelChange(Sender: TObject);
 begin
   Application.ProcessMessages;
   makeProperties;
+  resultform1.updateGUI;
   TIGridProp.Refresh;
 end;
 

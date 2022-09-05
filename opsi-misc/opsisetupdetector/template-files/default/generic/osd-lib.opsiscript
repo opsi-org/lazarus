@@ -149,6 +149,7 @@ DefFunc get_licensekey_byPoolOrKey($LicenseString$ : string) : string
 				comment "Given string: "+$LicenseString$+" is a valid license pool."
 			else
 				LogWarning "License management is enabled but given string: "+$LicenseString$+" is no valid license pool."
+				LogWarning "We will use the by property given string as license key ..."
 			endif
 		else
 			LogWarning("Unexpected result format from opsiservicecall")
