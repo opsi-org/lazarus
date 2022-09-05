@@ -45,12 +45,15 @@ begin
   begin
     FThread.FMessage := Message;
     FThread.Synchronize(@FThread.DisplayMessageDialog);
-     //ShowMessage(Message);
   end;
   {$ENDIF GUI}
 
   {$IFDEF NOGUI}
-  writeln(Message);
+  // For a generalized procedure we need the DisplayOnForm parameter since there
+  // are two ways in a gui program to display a message but for console applications
+  // the parameter doesn't play any role.
+  if DisplayOnForm or not DisplayOnForm then
+    writeln(Message);
   {$ENDIF NOGUI}
 end;
 
