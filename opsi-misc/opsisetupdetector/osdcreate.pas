@@ -1351,60 +1351,73 @@ begin
   goon := True;
   if DirectoryExists(prodpath) then
   begin
-    LogDatei.log('Target directory exists. Ask what to do.', LLinfo);
-    task := '';
-    // https://specials.rejbrand.se/TTaskDialog/
-    with TTaskDialog.Create(resultForm1) do
-      try
-        Title := rsDirectory + ' ' + prodpath + ' ' + rsStillExitsWarningDeleteOverwrite;
-        Caption := 'opsi-setup-detector';
-        Text := rsConfirmBackupOrRemovalTitle;
-        CommonButtons := [];
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsConfirmBackupCaption;
-          //CommandLinkHint := rsConfirmBackupHint;
-          ModalResult := mrYes;
-        end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsConfirmDeleteCaption;
-          //CommandLinkHint := rsConfirmDeleteHint;
-          ModalResult := mrNo;
-        end;
-        with TTaskDialogButtonItem(Buttons.Add) do
-        begin
-          Caption := rsConfirmAbortCaption;
-          //CommandLinkHint := rsConfirmAbortHint;
-          ModalResult := mrAbort;
-        end;
-        MainIcon := tdiQuestion;
-        //include(Flags,[tfExpandFooterArea]);
-        Flags := [tfUseCommandLinks, tfAllowDialogCancellation, tfExpandFooterArea];
-        ExpandButtonCaption := rsConfirmExpandButton;
-        ExpandedText := rsConfirmExpandedText;
-        if Execute then
-        begin
-          if ModalResult = mrYes then
+    if showgui then
+    begin
+      LogDatei.log('Target directory exists. Ask what to do.', LLinfo);
+      task := '';
+      // https://specials.rejbrand.se/TTaskDialog/
+      with TTaskDialog.Create(resultForm1) do
+        try
+          Title := rsDirectory + ' ' + prodpath + ' ' + rsStillExitsWarningDeleteOverwrite;
+          Caption := 'opsi-setup-detector';
+          Text := rsConfirmBackupOrRemovalTitle;
+          CommonButtons := [];
+          with TTaskDialogButtonItem(Buttons.Add) do
           begin
-            task := 'bak';
-            LogDatei.log('Choosed to make backups', LLinfo);
-          end
-          else if ModalResult = mrNo then
-          begin
-            task := 'del';
-            LogDatei.log('Choosed to make no backups', LLinfo);
-          end
-          else
-            //if ModalResult = mrAbort then
-          begin
-            task := 'abort';
-            LogDatei.log('Choosed to abort', LLinfo);
+            Caption := rsConfirmBackupCaption;
+            //CommandLinkHint := rsConfirmBackupHint;
+            ModalResult := mrYes;
           end;
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := rsConfirmDeleteCaption;
+            //CommandLinkHint := rsConfirmDeleteHint;
+            ModalResult := mrNo;
+          end;
+          with TTaskDialogButtonItem(Buttons.Add) do
+          begin
+            Caption := rsConfirmAbortCaption;
+            //CommandLinkHint := rsConfirmAbortHint;
+            ModalResult := mrAbort;
+          end;
+          MainIcon := tdiQuestion;
+          //include(Flags,[tfExpandFooterArea]);
+          Flags := [tfUseCommandLinks, tfAllowDialogCancellation, tfExpandFooterArea];
+          ExpandButtonCaption := rsConfirmExpandButton;
+          ExpandedText := rsConfirmExpandedText;
+          if Execute then
+          begin
+            if ModalResult = mrYes then
+            begin
+              task := 'bak';
+              LogDatei.log('Choosed to make backups', LLinfo);
+            end
+            else if ModalResult = mrNo then
+            begin
+              task := 'del';
+              LogDatei.log('Choosed to make no backups', LLinfo);
+            end
+            else
+              //if ModalResult = mrAbort then
+            begin
+              task := 'abort';
+              LogDatei.log('Choosed to abort', LLinfo);
+            end;
+          end;
+        finally
+          Free;
         end;
-      finally
-        Free;
+    end
+    else
+    begin
+      // nogui mode
+      if forceProductId <> '' then
+      begin
+        LogDatei.log('forceProductId is: ' + forceProductId, LLinfo);
+        task := 'del';
+        LogDatei.log('Choosed to make no backups (overwrite)', LLinfo);
       end;
+    end;
 
     if task = 'abort' then
       goon := False;
@@ -1531,7 +1544,8 @@ begin
   buildCallparams := TStringList.Create;
   OpsiBuilderProcess := process.TProcess.Create(nil);
   buildCallbinary := '"' + myconfiguration.PathToOpsiPackageBuilder + '"';
-  ParamStr := ' -p=' + myconfiguration.workbench_Path;
+  ParamStr := ' -–log=c:\opsi.org\applog\opb-call.log';
+  ParamStr := ParamStr + ' -p=' + myconfiguration.workbench_Path;
   if AnsiLastChar(ParamStr) <> DirectorySeparator then
     ParamStr := ParamStr + DirectorySeparator;
   ParamStr := ParamStr + aktProduct.productdata.productId;
@@ -1545,11 +1559,11 @@ begin
     ParamStr := ParamStr + ' --quiet';
     if resultForm1.radioBuildModebuildOnly.Checked = True then
     begin
-      ParamStr := ParamStr + ' ' + '--build=rebuild';
+      ParamStr := ParamStr + ' ' + ' --build=rebuild';
     end;
     if resultForm1.radioBuildModebuildInstall.Checked = True then
     begin
-      ParamStr := ParamStr + '--build=rebuild --install';
+      ParamStr := ParamStr + ' --build=rebuild --install';
     end;
     OpsiBuilderProcess.ShowWindow := swoMinimize;
   end;
@@ -1580,7 +1594,8 @@ begin
       errorstate := True;
       LogDatei.log('Exception while calling ' + buildCallbinary +
         ' Message: ' + E.message, LLerror);
-      ShowMessage(sErrOpsiPackageBuilderStart);
+      if showgui then
+        ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;
 
@@ -1594,10 +1609,13 @@ begin
     begin
       LogDatei.log('Error while calling ' + buildCallbinary +
         ' with exitcode: ' + IntToStr(OpsiBuilderProcess.ExitStatus), LLerror);
-      ShowMessage(sErrOpsiPackageBuilderStart);
+      if showgui then
+        ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;
-  logdatei.log('Finished callOpsiPackageBuilder', LLDebug2);
+  logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
+  logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50,'utf8');
+  logdatei.log('Finished callOpsiPackageBuilder', LLinfo);
 end;   // execute OPSIPackageBuilder
 
 

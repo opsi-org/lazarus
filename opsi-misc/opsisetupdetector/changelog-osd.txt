@@ -80,6 +80,12 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+opsi-setup-detector (4.2.1.2-1) stable; urgency=low
+
+   * fix on cli call for opsi-setup-detector-test
+   * fixes in  callOpsiPackageBuilder
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  06 Sep 2022 : 15:00:00 +0200
 
 opsi-setup-detector (4.2.1.0-1) stable; urgency=low
 

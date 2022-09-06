@@ -675,9 +675,11 @@ begin
   if showgui then
   begin
     resultform1.memoadd(line);
-  end
+  end;
+  (*
   else
     writeln(line);
+  *)
   LogDatei.log(line, loglevel);
 end;
 
@@ -1143,7 +1145,7 @@ begin
   optionlist.Append('nogui');
   optionlist.Append('lang::');
   optionlist.Append('targetOS::');
-  optionlist.Append('productid::');
+  optionlist.Append('productId::');
   optionlist.Append('mode::');
 
   // quick check parameters
@@ -1198,7 +1200,17 @@ begin
 
 
   if Application.HasOption('n', 'nogui') then
+  begin
     showgui := False;
+     {$IFDEF WINDOWS}
+    // initate console while windows gui
+    // https://stackoverflow.com/questions/20134421/can-a-windows-gui-program-written-in-lazarus-create-a-console-and-write-to-it-at
+    //AllocConsole;      // in Windows unit
+    //IsConsole := True; // in System unit
+    //SysInitStdIO;      // in System unit
+    // Now you can do Writeln, DebugLn,
+  {$ENDIF WINDOWS}
+  end;
 
   if showgui then
   begin
@@ -1267,6 +1279,7 @@ begin
   if Application.HasOption('p', 'productId') then
   begin
     forceProductId := trim(Application.GetOptionValue('p', 'productId'));
+    LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
     forceProductId := cleanOpsiId(forceProductId);
     LogDatei.log('Will use as productId: ' + forceProductId, LLInfo);
   end;
@@ -1313,6 +1326,7 @@ begin
     end
     else
     begin
+      LogDatei.log('Start NOGUI mode: ', LLnotice);
       case osdsettings.runmode of
         (*
         analyzeOnly:
@@ -1327,7 +1341,7 @@ begin
         *)
         singleAnalyzeCreate, analyzeCreateWithUser:
         begin
-          LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLInfo);
+          LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLnotice);
           initaktproduct;
           aktProduct.SetupFiles[0].copyCompleteDir := False;
           makeProperties;
@@ -1353,11 +1367,13 @@ begin
               AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
             end;
           end;
+          if forceProductId <> '' then
+            aktProduct.productdata.productId := forceProductId;
           createProductStructure;
         end;
         createTemplate:
         begin
-          LogDatei.log('Start createTemplate in NOGUI mode: ', LLInfo);
+          LogDatei.log('Start createTemplate in NOGUI mode: ', LLnotice);
           case forceTargetOS of
             osWin:
             begin
@@ -1375,10 +1391,22 @@ begin
               aktProduct.SetupFiles[0].targetOS := osMac;
             end;
           end;
+          LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
           createProductStructure;
         end;
       end;
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
+      //if (not resultForm1.RadioButtonCreateOnly.Checked) then
+      //if false then
+      begin
+        LogDatei.log('Start OpsiPackageBuilder in NOGUI mode: ', LLnotice);
+        LogDatei.log('Start OpsiPackageBuilder with build + install: ', LLnotice);
+        resultForm1.radioBuildModebuildInstall.Checked := True;
+        resultForm1.RadioButtonBuildPackage.Checked := True;
+        callOpsiPackageBuilder;
+      end;
+      //LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
+      //Application.Terminate;
     end;
   end
   else
@@ -1402,6 +1430,7 @@ begin
   if not showgui then
   begin
     //resultForm1.Destroy;
+    LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
     freebasedata;
     Application.Terminate;
   end;
@@ -2925,7 +2954,8 @@ begin
   begin
     installdir := SelectDirectoryDialog1.FileName;
     {$IFDEF WINDOWS}
-    installdir := ReplaceText(installdir, 'c:\program files (x86)', '%ProgramFiles32Dir%');
+    installdir := ReplaceText(installdir, 'c:\program files (x86)',
+      '%ProgramFiles32Dir%');
     if IsWindows64 then
       installdir := ReplaceText(installdir, 'c:\program files', '%ProgramFiles64Dir%')
     else
@@ -3853,7 +3883,7 @@ begin
   list.Add(aktconfigfile);
   list.Add('Log: ');
   list.Add(logdatei.FileName);
-  MyMessageDlg.showMessage('opsi-setup-detector',list.Text,[mrOK]);
+  MyMessageDlg.ShowMessage('opsi-setup-detector', list.Text, [mrOk]);
   //ShowMessage(list.Text);
   list.Free;
 end;
