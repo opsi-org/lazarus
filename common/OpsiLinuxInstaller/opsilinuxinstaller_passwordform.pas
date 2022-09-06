@@ -29,7 +29,6 @@ type
     procedure CheckBoxShowPasswordChange(Sender: TObject);
     function IsPasswordCorrect(MessageWrongPassword: string): boolean;
 
-    procedure ShowResultOfWholeInstallationProcess; virtual; abstract;
     procedure CloseProject; virtual; abstract;
     procedure FormClose(Sender: TObject); virtual; abstract;
   public
