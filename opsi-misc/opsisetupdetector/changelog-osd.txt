@@ -84,6 +84,9 @@ opsi-setup-detector (4.2.1.2-1) stable; urgency=low
 
    * fix on cli call for opsi-setup-detector-test
    * fixes in  callOpsiPackageBuilder
+   * more HighDPI fixes
+   * analyzeOnly activated again
+   * create on --nogui 'c:\opsi.org\applog\osd-analyze-result.txt'
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  06 Sep 2022 : 15:00:00 +0200
 

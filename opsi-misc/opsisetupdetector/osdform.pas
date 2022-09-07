@@ -680,7 +680,7 @@ begin
   (*
   else
     writeln(line);
-  *)
+    *)
   LogDatei.log(line, loglevel);
 end;
 
@@ -1100,6 +1100,7 @@ var
   myparamcount: integer;
   allowedOS: TStringList;
   tmpstr: string;
+  anaoutfile: Text;
 begin
   startupfinished := True; //avoid calling main on every show event
 
@@ -1299,7 +1300,7 @@ begin
     LogDatei.log('Got command line parameter filename with existing: ' +
       myfilename, LLInfo);
     if osdsettings.runmode = gmUnknown then
-      osdsettings.runmode := singleAnalyzeCreate;
+      osdsettings.runmode := analyzeOnly;
     LogDatei.log('Will use as mode: ' + GetEnumName(TypeInfo(TRunMode),
       Ord(osdsettings.runmode)), LLInfo);
     LogDatei.log('Will use as targetOS: ' + GetEnumName(
@@ -1329,7 +1330,7 @@ begin
     begin
       LogDatei.log('Start NOGUI mode: ', LLnotice);
       case osdsettings.runmode of
-        (*
+
         analyzeOnly:
         begin
           LogDatei.log('Start Analyze in NOGUI mode: ', LLInfo);
@@ -1339,7 +1340,6 @@ begin
             osMac: AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
           end;
         end;
-        *)
         singleAnalyzeCreate, analyzeCreateWithUser:
         begin
           LogDatei.log('Start Analyze + Create in NOGUI mode: ', LLnotice);
@@ -1392,13 +1392,33 @@ begin
               aktProduct.SetupFiles[0].targetOS := osMac;
             end;
           end;
-          LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
-          createProductStructure;
         end;
       end;
+      // write osd-analyze-result.txt
+      AssignFile(anaoutfile, 'c:\opsi.org\applog\osd-analyze-result.txt');
+      Rewrite(anaoutfile);
+      writeln(anaoutfile, 'installertype=' + installerToInstallerstr(
+        aktProduct.SetupFiles[0].installerId));
+      writeln(anaoutfile, 'SoftwareVersion=' +
+        aktProduct.SetupFiles[0].SoftwareVersion);
+      writeln(anaoutfile, 'installCommandLine=' +
+        aktProduct.SetupFiles[0].installCommandLine);
+      writeln(anaoutfile, '');
+      writeln(anaoutfile, '');
+      writeln(anaoutfile, '');
+      writeln(anaoutfile, '');
+      writeln(anaoutfile, '');
+      writeln(anaoutfile, '');
+      CloseFile(anaoutfile);
+      if osdsettings.runmode <> analyzeOnly then
+      begin
+        LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
+        createProductStructure;
+      end;
+
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
       //if (not resultForm1.RadioButtonCreateOnly.Checked) then
-      //if false then
+      if False then
       begin
         LogDatei.log('Start OpsiPackageBuilder in NOGUI mode: ', LLnotice);
         LogDatei.log('Start OpsiPackageBuilder with build + install: ', LLnotice);
@@ -1445,7 +1465,7 @@ end;
 procedure TResultform1.setRunMode;
 begin
   case osdsettings.runmode of
-    (*
+
     analyzeOnly:
     begin
       TabSheetStart.Enabled := True;
@@ -1459,7 +1479,6 @@ begin
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := False;
     end;
-    *)
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
       TabSheetStart.Enabled := True;
@@ -2184,13 +2203,11 @@ procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
 begin
   showCheckEntriesWarning;
   case osdsettings.runmode of
-    (*
     analyzeOnly:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
-    *)
     singleAnalyzeCreate, analyzeCreateWithUser:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
@@ -3224,14 +3241,12 @@ end;
 procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
-    (*
     analyzeOnly:
     begin
       //we should never be here
       logdatei.log(
         'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
-    *)
     createTemplate,
     createMultiTemplate,
     singleAnalyzeCreate,
@@ -3278,14 +3293,12 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
-      (*
       analyzeOnly:
       begin
         //we should never be here
         logdatei.log(
           'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
       end;
-      *)
       analyzeCreateWithUser,
       createMeta,
       createTemplate,
@@ -3314,13 +3327,11 @@ end;
 procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
 begin
   case osdsettings.runmode of
-    (*
     analyzeOnly:
     begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
     end;
-    *)
     analyzeCreateWithUser,
     createTemplate,
     createMultiTemplate,
@@ -3366,12 +3377,10 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
-      (*
       analyzeOnly:
       begin
         Application.Terminate;
       end;
-      *)
       singleAnalyzeCreate, analyzeCreateWithUser:
       begin
         PageControl1.ActivePage := resultForm1.TabSheetProduct;
@@ -3470,13 +3479,11 @@ begin
   if checkok then
   begin
     case osdsettings.runmode of
-      (*
       analyzeOnly:
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
       end;
-      *)
       singleAnalyzeCreate:
       begin
         // we should never be here
@@ -3595,13 +3602,11 @@ begin
   begin
 
     case osdsettings.runmode of
-      (*
       analyzeOnly:
       begin
         // we should never be here
         logdatei.log('Error: in BtSetup2NextStepClick RunMode: analyzeOnly', LLError);
       end;
-      *)
       singleAnalyzeCreate:
       begin
         // we should never be here
@@ -3799,7 +3804,7 @@ procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
 var
   i: integer;
 begin
-  (*
+
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
@@ -3814,7 +3819,7 @@ begin
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
-  *)
+
 end;
 
 

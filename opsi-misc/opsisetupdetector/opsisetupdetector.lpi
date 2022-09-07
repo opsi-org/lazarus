@@ -188,9 +188,16 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <CommandLineParams Value="--nogui --productId=dummy --targetOS=win --filename=E:\_#_#_#_Setup-examples-by-installer\inno\audacity-win-2.0.6.exe"/>
+      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
-        <Mode0 Name="default"/>
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="--nogui --productId=dummy --targetOS=win --filename=E:\_#_#_#_Setup-examples-by-installer\inno\audacity-win-2.0.6.exe"/>
+          </local>
+        </Mode0>
       </Modes>
     </RunParams>
     <RequiredPackages Count="3">

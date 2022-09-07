@@ -2817,7 +2817,7 @@ object resultForm1: TresultForm1
               Left = 5
               Height = 53
               Hint = 'Create a empty '#10'opsi Product Directory Structure'
-              Top = 210
+              Top = 153
               Width = 528
               Align = alTop
               Anchors = []
@@ -2964,13 +2964,12 @@ object resultForm1: TresultForm1
               Left = 5
               Height = 53
               Hint = 'Analyze a single existing Setupfile '
-              Top = 153
+              Top = 267
               Width = 528
               Align = alTop
               Anchors = []
               BorderSpacing.Around = 4
               Caption = 'Only analyze single File '
-              Enabled = False
               Font.Height = -17
               Glyph.Data = {
                 B60E0000424DB60E00000000000036000000280000001D000000200000000100
@@ -3100,7 +3099,7 @@ object resultForm1: TresultForm1
               Left = 5
               Height = 53
               Hint = 'Analyze a single existing Setupfile '#13#10'and create an opsi Product '#13#10'based on ''with loggedon user'''
-              Top = 267
+              Top = 210
               Width = 528
               Align = alTop
               Anchors = []
