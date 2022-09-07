@@ -64,27 +64,27 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir3: TBitBtn;
     BitBtnChooseUninstFile1: TBitBtn;
     BitBtnChooseUninstFile2: TBitBtn;
     BitBtnChooseUninstFile3: TBitBtn;
+    BitBtnDelDep: TBitBtn;
+    BitBtnEditDep: TBitBtn;
     BitBtnOpenMst3: TBitBtn;
     BitBtnChooseInstDir1: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
-    BtCreateEmptyTemplateWin: TBitBtn;
-    BtCreateEmptyTemplateMulti: TBitBtn;
     BtCreateEmptyTemplateLin: TBitBtn;
     BtCreateEmptyTemplateMac: TBitBtn;
+    BtCreateEmptyTemplateMulti: TBitBtn;
+    BtCreateEmptyTemplateWin: TBitBtn;
     BtCreateMeta: TBitBtn;
     BtnOpenIconFolder: TBitBtn;
-    BitBtnAddDep: TBitBtn;
     BitBtnAddProp: TBitBtn;
-    BitBtnDelDep: TBitBtn;
     BitBtnDelProp: TBitBtn;
     BitBtnEditProp: TBitBtn;
-    BitBtnEditDep: TBitBtn;
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
@@ -99,10 +99,10 @@ type
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
     BtSetup3NextStep: TBitBtn;
-    BtSingleAnalyzeAndCreateWin: TBitBtn;
-    BtSingleAnalyzeAndCreateMulti: TBitBtn;
     BtSingleAnalyzeAndCreateLin: TBitBtn;
     BtSingleAnalyzeAndCreateMac: TBitBtn;
+    BtSingleAnalyzeAndCreateMulti: TBitBtn;
+    BtSingleAnalyzeAndCreateWin: TBitBtn;
     BtSingleAnalyzeAndCreateWithUser: TBitBtn;
     CheckBoxDefaultIcon: TCheckBox;
     CheckBoxNoIcon: TCheckBox;
@@ -120,7 +120,6 @@ type
     FlowPanel18: TFlowPanel;
     FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
-    FlowPanel20: TFlowPanel;
     FlowPanel21: TFlowPanel;
     FlowPanel22: TFlowPanel;
     FlowPanel23: TFlowPanel;
@@ -130,17 +129,15 @@ type
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
-    FlowPanelMacosTitle: TFlowPanel;
-    FlowPanelLinuxTitle2: TFlowPanel;
-    FlowPanelOsIndendentTitle: TFlowPanel;
+    FlowPanelLinuxTitle: TFlowPanel;
     FlowPanelCustomDir: TFlowPanel;
-    FlowPanelGeneric: TFlowPanel;
+    FlowPanelLinuxTitle2: TFlowPanel;
+    FlowPanelMacosTitle: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMsiId2: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
     FlowPanelMST2: TFlowPanel;
-    FlowPanelWindowsTitle: TFlowPanel;
-    FlowPanelLinuxTitle: TFlowPanel;
+    FlowPanelOsIndendentTitle: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
     FlowPanel5: TFlowPanel;
@@ -158,10 +155,7 @@ type
     FlowPanelSetup41: TFlowPanel;
     FlowPanelSetup42: TFlowPanel;
     FlowPanelSetup43: TFlowPanel;
-    FlowPanelWin: TFlowPanel;
-    FlowPanelMulti: TFlowPanel;
-    FlowPanelLin: TFlowPanel;
-    FlowPanelMac: TFlowPanel;
+    FlowPanelWindowsTitle: TFlowPanel;
     GroupBox2: TGroupBox;
     Image1: TImage;
     Image2: TImage;
@@ -254,6 +248,12 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    TaskPanelMulti: TPanel;
+    TaskPanelMac: TPanel;
+    PanelDepBtns: TPanel;
+    TaskPanelWin: TPanel;
+    TaskPanelLinux: TPanel;
+    TaskPanelIndep: TPanel;
     PanelChannel: TPanel;
     PanelNumIcons: TPanel;
     PanelIconPreview: TPanel;
@@ -450,6 +450,7 @@ type
     procedure TabSheetIconsShow(Sender: TObject);
     procedure TabSheetStartExit(Sender: TObject);
     procedure CallMakeProperties(Sender: TObject);
+    procedure TaskPanelWinClick(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
@@ -4127,6 +4128,11 @@ procedure TResultform1.CallMakeProperties(Sender: TObject);
 begin
   makeProperties;
   resultform1.updateGUI;
+end;
+
+procedure TResultform1.TaskPanelWinClick(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
