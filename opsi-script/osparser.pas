@@ -21148,7 +21148,12 @@ begin
     (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
   begin
     Result := True;
-    reportError(Sektion, linecounter, VariableName, 'name is already in use')
+    //reportError(Sektion, linecounter, VariableName, 'name is already in use');
+    LogDatei.log('Syntax Error: Double variable definition. Please correct this error as soon as possible '
+      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
+      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
+      + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
+    Inc(FNumberOfErrors);
   end;
 end;
 
