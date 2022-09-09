@@ -15,9 +15,6 @@ type
     FDistrInfo: TDistributionInfo;
     // TODO: Add fields of query properties
   public
-  const
-    RepoBaseUrl = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
-
     constructor Create;
     property DistrInfo: TDistributionInfo read FDistrInfo write FDistrInfo;
     // TODO: Add query properties
