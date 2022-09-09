@@ -429,7 +429,7 @@ type
       var list: TXStringlist; var InfoSyntaxError: string): boolean; overload;
     procedure FillStringList(var ResultList: TXStringList; var r: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string);
-    procedure EvaluateGenericStringList(const Quotes: TChar; var r: string;
+    procedure EvaluateGenericStringList(const Quotes: Char; var r: string;
       var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
@@ -12022,7 +12022,7 @@ begin
   end;
 end;
 
-procedure TuibInstScript.EvaluateGenericStringList(const Quotes: TChar; var r: string;
+procedure TuibInstScript.EvaluateGenericStringList(const Quotes: Char; var r: string;
   var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
 var
   ListInBrackets: string = '';
@@ -21148,7 +21148,12 @@ begin
     (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
   begin
     Result := True;
-    reportError(Sektion, linecounter, VariableName, 'name is already in use')
+    //reportError(Sektion, linecounter, VariableName, 'name is already in use');
+    LogDatei.log('Syntax Error: Double variable definition. Please correct this error as soon as possible '
+      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
+      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
+      + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
+    Inc(FNumberOfErrors);
   end;
 end;
 

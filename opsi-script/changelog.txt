@@ -3,7 +3,7 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.6.0) unreleased; urgency=medium
+opsi-script (4.12.6.1) unreleased; urgency=medium
 
   * [new] osparser: Implementation of copy -u for Linux (#4739, !71, j.laajili)
   * [new] osregistry, osparser: new data type QWord added as trdInt64 to normal registry section and regedit format (QWord is not supported in AddReg format) (#4746, !67, a.schmitz)
@@ -24,7 +24,7 @@ opsi-script (4.12.6.0) unreleased; urgency=medium
   * [remove] osparser: remove undocumented script function getStringFromListAtIndex since takeString already exists and is more mature (#4738, !64, a.schmitz)
   * [remove] osparser: remove script statement LocalAdmin (tsLocalAdmin) because it is deprecated and has never been documented (!69, a.schmitz)
   
--- j.werner <j.werner@uib.de> 30 August 2022
+-- j.werner <j.werner@uib.de> 31 August 2022
 
 
 opsi-script (4.12.5.6) stable; urgency=low
