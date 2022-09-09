@@ -29,17 +29,6 @@ uses
   osdanalyzegeneral,
   osparserhelper;
 
-(*
-const
-
-  SetupType_AdvancedMSI = 'AdvancedMSI';
-  SetupType_Inno = 'Inno';
-  SetupType_InstallShield = 'InstallShield';
-  SetupType_InstallShieldMSI = 'InstallShieldMSI';
-  SetupType_MSI = 'MSI';
-  SetupType_NSIS = 'NSIS';
-  SetupType_7zip = '7zip';
-*)
 
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;
@@ -50,108 +39,11 @@ procedure get_deb_info(myfilename: string; var mysetup: TSetupFile);
 
 procedure AnalyzeLin(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 
-//function getPacketIDfromFilename(str: string): string;
-//function getPacketIDShort(str: string): string;
-
-
-(*
-// marker for add installers
-//procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-*)
-
-(*
-procedure grepmsi(instring: string);
-//procedure grepmarker(instring: string);
-function analyze_binary(myfilename: string; verbose, skipzero: boolean;
-  var mysetup: TSetupFile): TKnownInstaller;
-function getPacketIDfromFilename(str: string): string;
-function getPacketIDShort(str: string): string;
-function ExtractVersion(str: string): string;
-function getProductInfoFromResource(infokey: string; filename: string): string;
-
-resourcestring
-  sWarnMultipleMsi =
-    'Multiple (more than one) msi files found. Look to log file and directory: ';
-*)
 implementation
 
 uses
   osdform;
 
-(*
-function getPacketIDfromFilename(str: string): string;
-var
-  strnew: string;
-  i: integer;
-  myChar: char;
-begin
-  strnew := '';
-  for i := 1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['A'..'Z', 'a'..'z', '0'..'9', '_', '-'] then
-      strnew := strnew + myChar
-    else
-    if (myChar <> #195) then
-      strnew := strnew + '-';
-  end;
-  Result := strnew;
-end;
-
-
-function getPacketIDShort(str: string): string;
-var
-  strnew: string;
-  i: integer;
-  myChar: char;
-  preChar: char = ' ';
-begin
-  strnew := '';
-  str := lowercase(str);
-  for i := 1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['a'..'z', '0'..'9', '_', '-'] then
-    begin
-      strnew := strnew + myChar;
-      preChar := myChar;
-    end
-    else
-    begin
-      if ((myChar <> #195) and (i > 1) and (strnew[Length(strnew) - 1] <> '_') and
-        (strnew[Length(strnew) - 1] <> '-') and (i < Length(str))) then
-        if (preChar <> '-') then
-        begin
-          strnew := strnew + '-';
-          preChar := '-';
-        end;
-    end;
-  end;
-  Result := strnew;
-end;
-
-function ExtractVersionFromFilename(str: string): string;
-var
-  i: integer;
-  outstr: string = '';
-begin
-  // try to strip productId from filename
-  str := copy(str, pos('-', str), length(str));
-  str := StringReplace(str, '_', '.', [rfReplaceAll, rfIgnoreCase]);
-  for i := 1 to Length(str) do
-  begin
-    if str[i] in ['0'..'9', '.'] then
-    begin
-      if (Length(outstr) > 0) and (not (str[i - 1] in ['0'..'9', '.'])) then
-        outstr := '';
-      outstr := outstr + str[i];
-    end
-    else;
-  end;
-  Result := outstr;
-end;
-
-*)
 
 
 procedure get_aktProduct_general_info_lin(installerId: TKnownInstaller;

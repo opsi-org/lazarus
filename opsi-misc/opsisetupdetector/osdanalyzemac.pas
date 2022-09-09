@@ -80,11 +80,6 @@ function getPacketIDShort(str: string): string;
 //function ExtractVersion(str: string): string;
 //function getProductInfoFromResource(infokey: string; filename: string): string;
 
-(*
-resourcestring
-  sWarnMultipleMsi =
-    'Multiple (more than one) msi files found. Look to log file and directory: ';
-*)
 
 implementation
 

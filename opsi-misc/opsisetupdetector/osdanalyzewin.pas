@@ -888,6 +888,7 @@ begin
   end
   else
   begin
+    //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
@@ -897,6 +898,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
+          if showgui then
           ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
@@ -976,6 +978,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
+          if showgui then
           ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
@@ -1118,6 +1121,7 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
+          if showgui then
           ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
