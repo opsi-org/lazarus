@@ -21,6 +21,7 @@ type
     FThread: TMessageThread;
     constructor Create(Thread: TMessageThread = nil);
     procedure DisplayMessage(Message: string; DisplayOnForm: boolean = False);
+    destructor Destroy; override;
   end;
 
 
@@ -55,6 +56,12 @@ begin
   if DisplayOnForm or not DisplayOnForm then
     writeln(Message);
   {$ENDIF NOGUI}
+end;
+
+destructor TIndependentMessageDisplayer.Destroy;
+begin
+  if Assigned(FThread) then FreeAndNil(FThread);
+  inherited Destroy;
 end;
 
 end.

@@ -35,8 +35,9 @@ type
   public
     procedure InstallOpsiProduct;
     constructor Create(password: string; sudo: boolean;
-      PackageManagementShellCommand: string; ProductID: string; DownloadPath: string;
-      MessageDisplayer: TIndependentMessageDisplayer);
+      PackageManagementShellCommand: string; ProductID: string;
+      DownloadPath: string; MessageDisplayer: TIndependentMessageDisplayer);
+    destructor Destroy; override;
   end;
 
 implementation
@@ -163,5 +164,11 @@ begin
   LogResultOfLastInstallationAttempt;
 end;
 
+destructor TInstallationScriptExecuter.Destroy;
+begin
+  if Assigned(FInstallRunCommand) then FreeAndNil(FInstallRunCommand);
+  if Assigned(FFileText) then FreeAndNil(FFileText);
+  if Assigned(FMessageDisplayer) then FreeAndNil(FMessageDisplayer);
+end;
 
 end.

@@ -16,12 +16,12 @@ type
     // TODO: Add fields of query properties
   public
   const
-    OpsiVersion = 'Opsi 4.2';
-    Repo = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
+    RepoBaseUrl = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
 
     constructor Create;
     property DistrInfo: TDistributionInfo read FDistrInfo write FDistrInfo;
     // TODO: Add query properties
+    destructor Destroy; override;
   end;
 
 
@@ -31,6 +31,12 @@ constructor TOpsiLinuxInstallerData.Create;
 begin
   FDistrInfo := TDistributionInfo.Create;
   // TODO: Set initial values of query properties
+end;
+
+destructor TOpsiLinuxInstallerData.Destroy;
+begin
+  if Assigned(FDistrInfo) then FreeAndNil(FDistrInfo);
+  inherited Destroy;
 end;
 
 end.
