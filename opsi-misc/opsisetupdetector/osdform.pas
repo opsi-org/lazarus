@@ -1018,16 +1018,19 @@ begin
   if not Assigned(osdbasedata.aktProduct.SetupFiles[0]) then
   begin
     LogDatei.log('Error: setupfile1 not initalized', LLCritical);
+    system.ExitCode:=1;
     Result := False;
   end;
   if not Assigned(osdbasedata.aktProduct.SetupFiles[1]) then
   begin
     LogDatei.log('Error: setupfile2 not initalized', LLCritical);
+    system.ExitCode:=1;
     Result := False;
   end;
   if not Assigned(osdbasedata.aktProduct.productdata) then
   begin
     LogDatei.log('Error: productdata not initalized', LLCritical);
+    system.ExitCode:=1;
     Result := False;
   end;
   if Result = False then
@@ -1157,6 +1160,7 @@ begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
     ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
     LogDatei.log(ErrorMsg, LLcritical);
+    system.ExitCode:=1;
     Application.ShowException(Exception.Create(ErrorMsg));
     Application.Terminate;
     Exit;
@@ -1228,6 +1232,7 @@ begin
     begin
       myerror := 'Error: Given targetOS: ' + tmpstr +
         ' is not valid. Should be on of win,lin,mac';
+      system.ExitCode:=1;
       {$IFNDEF WINDOWS}
       writeln(myerror);
       {$ENDIF WINDOWS}
@@ -1244,6 +1249,7 @@ begin
       writeln(myerror);
       {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
+      system.ExitCode:=1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1268,6 +1274,7 @@ begin
       writeln(myerror);
       {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
+      system.ExitCode:=1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1293,6 +1300,7 @@ begin
     begin
       myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
       LogDatei.log(myerror, LLCritical);
+      system.ExitCode:=1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1368,9 +1376,6 @@ begin
               AnalyzeMac(myfilename, aktProduct.SetupFiles[0], False);
             end;
           end;
-          if forceProductId <> '' then
-            aktProduct.productdata.productId := forceProductId;
-          createProductStructure;
         end;
         createTemplate:
         begin
@@ -1410,6 +1415,8 @@ begin
       writeln(anaoutfile, '');
       writeln(anaoutfile, '');
       CloseFile(anaoutfile);
+      if forceProductId <> '' then
+            aktProduct.productdata.productId := forceProductId;
       if osdsettings.runmode <> analyzeOnly then
       begin
         LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
@@ -1441,6 +1448,7 @@ begin
     begin
       myerror := 'Error: No filename given but nogui';
       LogDatei.log(myerror, LLCritical);
+      system.ExitCode:=1;
       WriteHelp;
       Application.Terminate;
       Exit;

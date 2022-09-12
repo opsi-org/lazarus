@@ -212,6 +212,7 @@ begin
     begin
       LogDatei.log('Exception in analyze_markerlist', LLcritical);
       LogDatei.log('Error: Message: ' + E.message, LLcritical);
+      system.ExitCode:=1;
     end;
   end;
 end;

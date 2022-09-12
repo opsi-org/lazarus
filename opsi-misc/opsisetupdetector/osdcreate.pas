@@ -1425,12 +1425,14 @@ begin
       if not delOldProductDir then
       begin
         LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
+        system.ExitCode:=1;
         goon := False;
       end;
     if task = 'bak' then
       if not bakupOldProductDir then
       begin
         LogDatei.log('Could not inernally backup dir: ' + prodpath, LLCritical);
+        system.ExitCode:=1;
         goon := False;
       end;
   end;
@@ -1441,6 +1443,8 @@ begin
       if not ForceDirectories(prodpath) then
       begin
         Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
+        system.ExitCode:=1;
+        if showgui then
         MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
           prodpath, mtError, [mbOK], '');
         goon := False;
@@ -1451,6 +1455,8 @@ begin
       if not ForceDirectories(clientpath) then
       begin
         Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
+        system.ExitCode:=1;
+        if showgui then
         MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
           clientpath, mtError, [mbOK], '');
         goon := False;
@@ -1461,6 +1467,8 @@ begin
       if not ForceDirectories(opsipath) then
       begin
         Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
+        system.ExitCode:=1;
+        if showgui then
         MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
           opsipath, mtError, [mbOK], '');
         goon := False;
@@ -1481,6 +1489,7 @@ begin
   if not createProductdirectory then
   begin
     Logdatei.log('createProductdirectory failed', LLCritical);
+    system.ExitCode:=1;
     goon := False;
   end
   else
@@ -1489,6 +1498,7 @@ begin
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
+    system.ExitCode:=1;
     goon := False;
   end
   else
@@ -1497,6 +1507,7 @@ begin
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
+    system.ExitCode:=1;
     goon := False;
   end
   else
