@@ -11,7 +11,7 @@ type
   TSupportedDistribution = (
     AlmaLinux_8,
     AlmaLinux_9,
-    Debian_9,
+    Debian_9_0,
     Debian_10,
     Debian_11,
     openSUSE_Leap_15_3,
@@ -20,10 +20,10 @@ type
     RHEL_9,
     RockyLinux_8,
     RockyLinux_9,
-    SLE15_SP1,
-    SLE15_SP2,
-    SLE15_SP3,
-    SLE15_SP4,
+    SLE_15_SP1,
+    SLE_15_SP2,
+    SLE_15_SP3,
+    SLE_15_SP4,
     Univention_4_4,
     Univention_5_0,
     xUbuntu_18_04,
@@ -60,7 +60,7 @@ begin
   if lowerCase(DistroName) = 'debian' then
   begin
     if Pos('9', DistroRelease) = 1 then
-      Result := Debian_9
+      Result := Debian_9_0
     else
     if Pos('10', DistroRelease) = 1 then
       Result := Debian_10
@@ -99,16 +99,16 @@ begin
   if lowerCase(DistroName) = 'suse' then
   begin
     if DistroRelease = '15.1' then
-      Result := SLE15_SP1
+      Result := SLE_15_SP1
     else
     if DistroRelease = '15.2' then
-      Result := SLE15_SP2
+      Result := SLE_15_SP2
     else
     if DistroRelease = '15.3' then
-      Result := SLE15_SP3
+      Result := SLE_15_SP3
     else
     if DistroRelease = '15.4' then
-      Result := SLE15_SP4;
+      Result := SLE_15_SP4;
   end
   else
   if lowerCase(DistroName) = 'ubuntu' then
