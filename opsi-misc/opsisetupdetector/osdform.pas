@@ -507,6 +507,7 @@ procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
 procedure procmess;
+function startOpsiServiceConnection : boolean;
 
 
 var
@@ -550,6 +551,7 @@ var
   productIds: TStringList;
   passwordToUse: string;
 //myFont : string;
+  opsiserviceversion: string;
 
 
 resourcestring
@@ -899,12 +901,12 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
-procedure startOpsiServiceConnection;
+function startOpsiServiceConnection : boolean;
 var
-  serviceversion: string;
   i: integer;
   //passwordToUse: string; is a global var
   strlist: TStringList;
+  sessionid : string;
 begin
   if localservicedata = nil then
   begin
@@ -925,13 +927,17 @@ begin
         localservicedata.initOpsiConf(myconfiguration.Service_URL,
           myconfiguration.Service_user,
           passwordToUse);
-        serviceversion := localservicedata.getOpsiServiceVersion;
+        opsiserviceversion := oswebservice.getOpsiServerVersion(myconfiguration.Service_URL,
+          myconfiguration.Service_user,
+          passwordToUse,sessionid);
         if localservicedata.isConnected then
         begin
           LogDatei.log('Service connection initialized to :' +
-            myconfiguration.Service_URL + ' version: ' + serviceversion, LLinfo);
+            myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
           FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
+          resultForm1.StatusBar1.Panels.Items[1].Text:=
+               'Connected to opsi server: '+myconfiguration.Service_URL;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
           for i := 0 to strlist.Count - 1 do
@@ -947,6 +953,8 @@ begin
             LLwarning);
           FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clRed;
+          resultForm1.StatusBar1.Panels.Items[1].Text:= 'Not connected to opsi server';
+          FreeAndNil(localservicedata);
         end;
       end
       else
@@ -955,9 +963,11 @@ begin
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
         FNewDepDlg.LabelConnect.Font.Color := clRed;
+        resultForm1.StatusBar1.Panels.Items[1].Text:= 'Not connected to opsi server';
+        FreeAndNil(localservicedata);
       end;
     finally
-      FreeAndNil(localservicedata);
+
       FreeAndNil(strlist);
       Screen.Cursor := crDefault;
       ;
@@ -1425,13 +1435,14 @@ begin
 
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
       //if (not resultForm1.RadioButtonCreateOnly.Checked) then
-      if False then
+      //if False then
+      if osdsettings.runmode <> analyzeOnly then
       begin
-        LogDatei.log('Start OpsiPackageBuilder in NOGUI mode: ', LLnotice);
-        LogDatei.log('Start OpsiPackageBuilder with build + install: ', LLnotice);
+        LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
+        LogDatei.log('Start callServiceOrPackageBuilder with build + install: ', LLnotice);
         resultForm1.radioBuildModebuildInstall.Checked := True;
         resultForm1.RadioButtonBuildPackage.Checked := True;
-        callOpsiPackageBuilder;
+        callServiceOrPackageBuilder;
       end;
       //LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
       //Application.Terminate;
@@ -2416,7 +2427,7 @@ begin
       exists := properties.propExists(FNewPropDlg.EditPropName.Text);
       if exists then
         MessageDlg(rsPropEditErrorHead,
-          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +
+          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +' '+
           rsPropEditErrorDoubleMsgFinish,
           mtError, [mbOK], '')
       else
@@ -3207,8 +3218,12 @@ begin
     procmess;
     done := createProductStructure;
     procmess;
-    if (not RadioButtonCreateOnly.Checked) then
-      callOpsiPackageBuilder;
+    if RadioButtonCreateOnly.Checked then
+      ; // do nothing else
+  if RadioButtonBuildPackage.Checked then
+    callServiceOrPackageBuilder;
+  if RadioButtonPackageBuilder.Checked then
+    callOpsiPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
     if done then

@@ -1039,7 +1039,7 @@ begin
     *)
 
   propexists := aktProduct.properties.propExists('DesktopIcon');
-  if (myconfiguration.UsePropDesktopicon or aktProduct.productdata.desktopicon) and
+  if (aktProduct.productdata.desktopicon) and
     not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
@@ -1055,8 +1055,7 @@ begin
     //FreeAndNil(tmpstrlist);
     myprop.boolDefault := False;
   end
-  else if propexists and not (myconfiguration.UsePropDesktopicon or
-    aktProduct.productdata.desktopicon) then
+  else if propexists and not (aktProduct.productdata.desktopicon) then
     aktProduct.properties.propDelete('DesktopIcon');
 
 

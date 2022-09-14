@@ -24,10 +24,12 @@ uses
   osparserhelper,
   osjson,
   dateutils,
-  osfilehelper;
+  osfilehelper,
+  oswebservice;
 
 function createProductStructure: boolean;
 procedure callOpsiPackageBuilder;
+procedure callServiceOrPackageBuilder;
 
 resourcestring
   // new for 4.1.0.2 ******************************************************************
@@ -1358,7 +1360,8 @@ begin
       // https://specials.rejbrand.se/TTaskDialog/
       with TTaskDialog.Create(resultForm1) do
         try
-          Title := rsDirectory + ' ' + prodpath + ' ' + rsStillExitsWarningDeleteOverwrite;
+          Title := rsDirectory + ' ' + prodpath + ' ' +
+            rsStillExitsWarningDeleteOverwrite;
           Caption := 'opsi-setup-detector';
           Text := rsConfirmBackupOrRemovalTitle;
           CommonButtons := [];
@@ -1425,14 +1428,14 @@ begin
       if not delOldProductDir then
       begin
         LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
-        system.ExitCode:=1;
+        system.ExitCode := 1;
         goon := False;
       end;
     if task = 'bak' then
       if not bakupOldProductDir then
       begin
         LogDatei.log('Could not inernally backup dir: ' + prodpath, LLCritical);
-        system.ExitCode:=1;
+        system.ExitCode := 1;
         goon := False;
       end;
   end;
@@ -1443,10 +1446,10 @@ begin
       if not ForceDirectories(prodpath) then
       begin
         Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
-        system.ExitCode:=1;
+        system.ExitCode := 1;
         if showgui then
-        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-          prodpath, mtError, [mbOK], '');
+          MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+            prodpath, mtError, [mbOK], '');
         goon := False;
       end;
     end;
@@ -1455,10 +1458,10 @@ begin
       if not ForceDirectories(clientpath) then
       begin
         Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
-        system.ExitCode:=1;
+        system.ExitCode := 1;
         if showgui then
-        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-          clientpath, mtError, [mbOK], '');
+          MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+            clientpath, mtError, [mbOK], '');
         goon := False;
       end;
     end;
@@ -1467,10 +1470,10 @@ begin
       if not ForceDirectories(opsipath) then
       begin
         Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
-        system.ExitCode:=1;
+        system.ExitCode := 1;
         if showgui then
-        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-          opsipath, mtError, [mbOK], '');
+          MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+            opsipath, mtError, [mbOK], '');
         goon := False;
       end;
     end;
@@ -1489,7 +1492,7 @@ begin
   if not createProductdirectory then
   begin
     Logdatei.log('createProductdirectory failed', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     goon := False;
   end
   else
@@ -1498,7 +1501,7 @@ begin
   if not (goon and createOpsiFiles) then
   begin
     Logdatei.log('createOpsiFiles failed', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     goon := False;
   end
   else
@@ -1507,7 +1510,7 @@ begin
   if not (goon and createClientFiles) then
   begin
     Logdatei.log('createClientFiles failed', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     goon := False;
   end
   else
@@ -1549,17 +1552,23 @@ var
   errorstate: boolean = False;
   notused: string = '(not used)';
   output: string;
+  paramlist : TStringlist;
 
 begin
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
   OpsiBuilderProcess := process.TProcess.Create(nil);
   buildCallbinary := '"' + myconfiguration.PathToOpsiPackageBuilder + '"';
-  ParamStr := ' -–log=c:\opsi.org\applog\opb-call.log';
-  ParamStr := ParamStr + ' -p=' + myconfiguration.workbench_Path;
+  paramlist := TStringlist.Create;
+  //paramlist.Add('-–log=c:\opsi.org\applog\opb-call.log');
+  //ParamStr := ' -–log=c:\opsi.org\applog\opb-call.log';
+
+  //ParamStr := ParamStr + ' -p=' + myconfiguration.workbench_Path;
+  ParamStr := '-p=' + myconfiguration.workbench_Path;
   if AnsiLastChar(ParamStr) <> DirectorySeparator then
     ParamStr := ParamStr + DirectorySeparator;
   ParamStr := ParamStr + aktProduct.productdata.productId;
+   paramlist.Add(ParamStr);
   if resultForm1.RadioButtonPackageBuilder.Checked = True then
   begin
     OpsiBuilderProcess.ShowWindow := swoShowNormal;
@@ -1567,21 +1576,27 @@ begin
   else  // build
   if resultForm1.RadioButtonBuildPackage.Checked = True then
   begin
-    ParamStr := ParamStr + ' --quiet';
+    //ParamStr := ParamStr + ' --quiet';
+    paramlist.Add('--quiet');
     if resultForm1.radioBuildModebuildOnly.Checked = True then
     begin
-      ParamStr := ParamStr + ' ' + ' --build=rebuild';
+      paramlist.Add('--build=rebuild');
+      //ParamStr := ParamStr + ' ' + ' --build=rebuild';
     end;
     if resultForm1.radioBuildModebuildInstall.Checked = True then
     begin
-      ParamStr := ParamStr + ' --build=rebuild --install';
+      paramlist.Add('--build=rebuild');
+      paramlist.Add('--install');
+      //ParamStr := ParamStr + ' --build=rebuild --install';
     end;
     OpsiBuilderProcess.ShowWindow := swoMinimize;
   end;
-  buildCallparams.Add(ParamStr);
+  //buildCallparams.Add(ParamStr);
 
   LogDatei.log('Try to call opsi packagebuilder', LLnotice);
-  OpsiBuilderProcess.CommandLine := buildCallbinary + ParamStr;
+  //OpsiBuilderProcess.CommandLine := buildCallbinary + ParamStr;
+  OpsiBuilderProcess.Executable:= buildCallbinary;
+  OpsiBuilderProcess.Parameters.Assign(paramlist);
   OpsiBuilderProcess.Options := OpsiBuilderProcess.Options + [poWaitOnExit];
   LogDatei.log('Call: ' + OpsiBuilderProcess.Executable + ' with: ' +
     OpsiBuilderProcess.Parameters.Text, LLInfo);
@@ -1609,6 +1624,7 @@ begin
         ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;
+  FreeAndNil(paramlist);
 
   resultForm1.PanelProcess.Visible := False;
   begin
@@ -1625,11 +1641,84 @@ begin
     end;
   end;
   logdatei.log('Here comes the OpsiPackageBuilder log', LLnotice);
-  logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50,'utf8');
+  logdatei.includelogtail('c:\opsi.org\applog\opb-call.log', 50, 'utf8');
   logdatei.log('Finished callOpsiPackageBuilder', LLinfo);
 end;   // execute OPSIPackageBuilder
 
+procedure buildWithOpsiService;
+var
+  omc: TOpsiMethodCall;
+  params: array of string;
+  packagedir, packagefile, serviceresult: string;
+  errorOccured: boolean;
 
+  function servicecall(method, param: string): boolean;
+  begin
+    result := false;
+    setlength(params, 1);
+    params[0] := param;
+    omc := TOpsiMethodCall.Create(method, params);
+    serviceresult := osdform.localservicedata.CheckAndRetrieveString(omc,
+      errorOccured);
+    if Assigned(omc) then
+      FreeAndNil(omc);
+    if errorOccured then
+    begin
+      LogDatei.log('Error: ' + serviceresult, LLError);
+    end
+    else
+    begin
+      LogDatei.log('JSON result: ' + serviceresult, LLinfo);
+      result := true;
+    end;
+  end;
 
+begin
+  LogDatei.log('Try to call opsi service', LLnotice);
+  resultForm1.PanelProcess.Visible := True;
+      resultForm1.processStatement.Caption := 'invoke opsi service ...';
+      procmess;
+  //packagedir := '/var/lib/opsi/workbench/';
+  // packagedir may be relative to workbench
+  packagedir := '';
+  packagedir := packagedir + aktProduct.productdata.productId;
+  packagefile := packagedir + '/' + aktProduct.productdata.productId;
+  packagefile := packagefile + '_' + aktProduct.productdata.productversion;
+  packagefile := packagefile + '-' + IntToStr(aktProduct.productdata.packageversion);
+  packagefile := packagefile + '.opsi';
+  if resultForm1.radioBuildModebuildOnly.Checked = True then
+  begin
+    if servicecall('workbench_buildPackage', packagedir) then
+      LogDatei.log('Package '+packagefile+' successful build', LLnotice)
+    else
+      LogDatei.log('Package '+packagefile+' failed to build', LLerror);
+
+  end;
+
+  if resultForm1.radioBuildModebuildInstall.Checked = True then
+  begin
+
+      if servicecall('workbench_installPackage', packagedir) then
+        LogDatei.log('Package '+packagefile+' successful build + installed', LLnotice)
+      else
+        LogDatei.log('Package '+packagefile+' failed to build +install', LLerror);
+
+  end;
+  resultForm1.PanelProcess.Visible := False;
+end;
+
+procedure callServiceOrPackageBuilder;
+var
+  callOpB: boolean = False;
+begin
+  if startOpsiServiceConnection then
+  begin
+    if CompareDotSeparatedNumbers(osdform.opsiserviceversion, '<', '4.2.0.287') then
+      callOpB := true;
+  end;
+  if callOpB then callOpsiPackageBuilder
+  else
+    buildWithOpsiService;
+end;
 
 end.

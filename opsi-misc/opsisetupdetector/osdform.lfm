@@ -9232,10 +9232,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  139
-                  139
-                  139
-                  142
+                  144
+                  144
+                  144
+                  144
                 )
               end
               object PanelDepBtns: TPanel
@@ -9659,10 +9659,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  253
-                  253
-                  253
-                  253
+                  257
+                  257
+                  257
+                  258
                 )
               end
             end
@@ -11021,8 +11021,16 @@ object resultForm1: TresultForm1
     Height = 23
     Top = 697
     Width = 1115
-    Panels = <>
+    Panels = <    
+      item
+        Width = 10
+      end    
+      item
+        Text = 'Not Connected to opsi-server'
+        Width = 350
+      end>
     ParentFont = False
+    SimplePanel = False
   end
   object OpenDialog1: TOpenDialog
     OnClose = OpenDialog1Close
