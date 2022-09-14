@@ -1,4 +1,4 @@
-unit OpsiLinuxInstaller_Data;
+unit OpsiLinuxInstaller_QueryData;
 
 {$mode ObjFPC}{$H+}
 
