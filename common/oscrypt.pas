@@ -17,6 +17,7 @@ interface
 uses
   Classes,
   SysUtils,
+  osHash,
   blowfish,
   DCPblowfish,
   DCPcrypt2,
@@ -33,7 +34,7 @@ procedure transformHex(const hexstring: string; var hexarray: bytearray);
 function decrypt_hex_blow(hexkey, hexpass: string): string;
 function encrypt_hex_blow(hexkey, hexpass: string): string;
 function DecryptBlowfish(const myencrypted, mykey: string): string;
-function md5fromFile(filename: string): string;
+function MD5fromFile(filename: string): string;
 
 implementation
 
@@ -167,38 +168,11 @@ begin
   Result := Data;
 end;
 
-// from dcpcrypt/Docs/Hashes.html#Example1
-function md5fromFile(filename: string): string;
-var
-  Hash: TDCP_md5;
-  //Digest: array[0..19] of byte;  // RipeMD-160 produces a 160bit digest (20bytes)
-  Digest: array[0..15] of byte;  // MD5 produces a 128bit digest (16bytes)
-  Source: TFileStream;
-  i: integer;
-  s: string;
+
+function MD5fromFile(filename: string): string;
 begin
-   {$RANGECHECKS OFF}
-  Result := '';
-  Source := nil;
-  try
-    Source := TFileStream.Create(filename, fmOpenRead);
-    // open the file specified by Edit1
-  except
-    //MessageDlg('Unable to open file',mtError,[mbOK],0);
-  end;
-  if Source <> nil then
-  begin
-    Hash := TDCP_md5.Create(nil);          // create the hash
-    Hash.Init;                                   // initialize it
-    Hash.UpdateStream(Source, Source.Size);       // hash the stream contents
-    Hash.Final(Digest);                          // produce the digest
-    Source.Free;
-    s := '';
-    for i := 0 to 19 do
-      s := s + IntToHex(Digest[i], 2);
-    Result := s;                              // return the digest
-  end;
-   {$RANGECHECKS ON}
+  Result := HashFromFile(filename, 'MD5');
 end;
+
 
 end.

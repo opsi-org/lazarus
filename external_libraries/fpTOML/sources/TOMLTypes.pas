@@ -29,7 +29,7 @@
 unit TOMLTypes;
 interface
 uses
-  FGL, FPJSON, Classes, SysUtils;
+  FGL, FPJSON, Classes, SysUtils, strUtils;
 
 type
   TTOMLStringType = AnsiString;
@@ -193,6 +193,7 @@ type
       function Contains(const key: TTOMLKeyType; dataType: TTOMLDataClass = nil): boolean;
       function AsJSON: TJSONData; override;
       function Count: integer; override;
+      procedure AssignTable(const table: TTOMLTable);
 
       property Header : string read GetHeader;
       property Name: string read m_name;
@@ -462,6 +463,9 @@ begin
              or (TTOMLValue(list[i]).TypeString = 'UnicodeString') then
                result:= result +'"'+TTOMLValue(list[i]).ToString +'"'
           else
+            if (TTOMLValue(list[i]).TypeString = 'Double') then
+                 result:= result + ReplaceStr(TTOMLValue(list[i]).ToString, ',', '.')
+          else
             result:= result + (TTOMLValue(list[i]).ToString);
     if i<>Count-1 then
       result:= result + ', ';
@@ -614,11 +618,23 @@ begin
           if (TTOMLValue(map.Data[i]).TypeString = 'Dynamic string')
              or (TTOMLValue(map.Data[i]).TypeString = 'UnicodeString') then
                line := String(map.Keys[i])+' = "'+map.Data[i].ToString +'"'
-          else
+           else
+            if (TTOMLValue(map.Data[i]).TypeString = 'Double') then
+               line := String(map.Keys[i])+' = '+ReplaceStr(map.Data[i].ToString, ',', '.')
+           else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
         tomlStringList.Add(line);
-        end;
+        end
+      else
+        if (map.Data[i].ToString = 'TTOMLTable')  then
+          begin
+            tomlTable := TTOMLTable(map.Data[i]);
+            tableHeader := '[' + tomlTable.Header +  ']';
+            tomlStringList.Add(tableHeader);
+            tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
+          end;
     end;
+  (*
   for i := 0 to map.Count-1 do
     begin
       if (map.Data[i].ToString = 'TTOMLTable')  then
@@ -629,9 +645,10 @@ begin
             tomlStringList.AddStrings(tomlTable.AsTOMLStringList);
           end;
     end;
+    *)
   //result.AddStrings(tomlStringList);
   result.Assign(tomlStringList);
-  //tomlStringList.Free;
+  tomlStringList.Free;
   //tomlArray.Free;
   //tomlTable.Free;
 end;
@@ -714,6 +731,20 @@ begin
     result := data
   else
     result := nil;
+end;
+
+procedure TTOMLTable.AssignTable(const table: TTOMLTable);
+var
+  i : integer;
+begin
+  //self.map.Assign(table.map);
+  for i := 0 to table.map.Count - 1 do
+    begin
+      //self.map.Delete(i);
+      //map.Add(table.map.Keys[i], table.map.Data[i]);
+      //self.map.InsertKeyData(i, table.map.Keys[i], table.map.Data[i]);
+      map.InsertKeyData(i, table.GetKey(i) , table.GetItem(i));
+    end;
 end;
 
 constructor TTOMLTable.Create(name: string);

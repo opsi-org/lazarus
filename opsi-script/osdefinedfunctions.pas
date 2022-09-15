@@ -809,7 +809,7 @@ begin
             else
             if not (definedFunctionArray[scopeindex] = self) then
             begin
-              // points to a other func
+              // points to another func
               definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
             end
             else
@@ -823,7 +823,7 @@ begin
               scriptstopped := True;
             end;
           end
-          else // points to a other func
+          else // points to another func
             definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
         end
         else
@@ -1290,19 +1290,15 @@ function TOsDefinedFunction.parseCallParameter(paramline: string;
   var remaining: string; var errorstr: string; NestLevel: integer;
   inDefFuncIndex: integer): boolean;
 var
-  paramname: string;
   ParamStr: string;
-  paramtype, calltype: string;
-  paramstrvalue: string;
+  paramstrvalue: string = '';
   paramboolvalue: boolean;
   paramlistvalue: TXStringlist;
   paramcounter: integer;
   syntax_ok, endOfParamlist: boolean;
-  //remaining,
-  r: string;
   section: TuibIniScript;
   NestingLevel: integer = 0;
-  varindex: integer;
+  varindex: integer = 0;
   inputstr: string;
 
 begin
@@ -1333,34 +1329,24 @@ begin
       begin
         if remaining = '' then
         begin
-          errorstr := errorstr + ': <paramtype> expected after Parameter Name';
+          errorstr := errorstr + ' Parameter and ")" expected';
           syntax_ok := False;
         end
         else
         begin
           Inc(paramcounter);
           inputstr := remaining;
-          // check if this should be the last parameter and we expect a ')' at the end
-          if paramcounter = DFparamCount - 1 then
-          begin
-            // remove the trailing ) - if there is any
-            //GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
-            GetWordOrStringConstant(inputstr, ParamStr, remaining, [')'], True, True);
-            inputstr := ParamStr;
-            ParamStr := '';
-            GetOuterFunctionOrExp(inputstr, ParamStr, remaining);
-            // paramstr may now be: var, string or function
-            // if the last is ) and there is no ( : so that is not a function
-            //if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
-            //  GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
-          end
-          else // this should be not the last parameter and we expect a ','
-            GetWordOrStringConstant(inputstr, ParamStr, remaining, [',']);
-          ParamStr := trim(ParamStr);
-          LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
-            ParamStr, LLDebug2);
+          ParamStr := inputstr;
           if DFparamList[paramcounter].callByReference then
           begin
+            // check if this should be the last parameter and we expect a ')' at the end
+            if paramcounter = DFparamCount - 1 then
+              GetWord(inputstr, ParamStr, remaining, [')'])
+            else // this should be not the last parameter and we expect a ','
+              GetWord(inputstr, ParamStr, remaining, [',']);
+
+            ParamStr := Trim(ParamStr);
+
             // call by reference
             case DFparamList[paramcounter].paramDataType of
               dfpString:
@@ -1370,8 +1356,8 @@ begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: String variable expected, but: ' +
-                    ParamStr + ' is not a visible string variable';
+                    errorstr + 'Error: String variable expected, but: "' +
+                    ParamStr + '" is not a visible string variable';
                 end
                 else
                 begin
@@ -1411,7 +1397,6 @@ begin
               end;
               dfpStringlist:
               begin
-                //if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
                 if not isVisibleStringlistVar(ParamStr) then
                 begin
                   // parameter type mismatch
@@ -1464,7 +1449,7 @@ begin
             case DFparamList[paramcounter].paramDataType of
               dfpString:
               begin
-                if not Script.EvaluateString(ParamStr, r,
+                if not Script.EvaluateString(ParamStr, remaining,
                   paramstrvalue, errorstr, NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
@@ -1486,8 +1471,10 @@ begin
               end;
               dfpStringlist:
               begin
+                section := TuibIniScript.Create;
+                paramlistvalue := TXStringlist.Create;
                 if not Script.produceStringList(
-                  section, ParamStr, r, paramlistvalue, errorstr,
+                  section, ParamStr, remaining, paramlistvalue, errorstr,
                   NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
@@ -1505,6 +1492,8 @@ begin
                   LogDatei.log('Paramnr: ' + IntToStr(
                     paramcounter) + ' is a stringlist', LLDebug2);
                 end;
+                FreeAndNil(section);
+                FreeAndNil(paramlistvalue);
               end;
               (*
               dfpBoolean :    begin
@@ -1599,7 +1588,6 @@ begin
   DFActive := True;
   //inc(inDefinedFuncNestCounter);
   //definedFunctionsCallStack.Append(InttoStr(DFIndex));
-
 
 
   //parse parameter

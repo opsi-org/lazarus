@@ -1,4 +1,40 @@
 [changelog]
+opsi-notifier  4.2.0.10
+
+  * notifierbase: main: Starting thread even if no port given (port <=0)
+    fix for blocklogin notifier
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo, 29 Aug 2022:15:00:00 +0200
+
+opsi-notifier  4.2.0.9
+
+  * notifierguicontrol: also scale form & co at windows
+  * notifierguicontrol: fontresize: no font scaling on windows (if form is scaled)
+  * notifierguicontrol: time picker: setButtonCaptionById:
+    setting selection to the last element in order to activate scrollbar if needed
+    and back to 0 again
+  * increase button height at Linux
+  * notifierguicontrol: objectByIndex:
+      // We ignore the font size for buttons and we set it to zero
+      // so it should be sized according the control size
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo, 15 Aug 2022:15:00:00 +0200
+
+opsi-notifier  4.2.0.8
+
+  * working also qt5 based
+  * notifierguicontrol: time picker: Do not refresh button list after a reboot time is selected
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 12 Aug 2022:15:00:00 +0200
+
+opsi-notifier  4.2.0.7
+
+  * working on highdpi scaling
+  * redesign program termination
+  * update to lazarus 2.2.2
+  * notifierguicontrol: time picker: clear dropdown on new index 0    (fixes double entries)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 01 June 2022:15:00:00 +0200
 
 opsi-notifier  4.2.0.6
 
@@ -32,7 +68,9 @@ opsi-notifier  4.2.0.4
 
 opsi-notifier  4.2.0.2
 
- * oslog: FStandardPartLogFilename is now initialized, thus log files will not more be deleted because of an empty FStandardPartLogFilename
+ * oslog: FStandardPartLogFilename is now initialized,
+   thus log files will not more be deleted because of
+   an empty FStandardPartLogFilename
 
 -- Jan Werner <j.werner@uib.de>  Mon, 25 Oct 2021:12:45:00 +0200
 

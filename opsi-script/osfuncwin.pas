@@ -39,7 +39,8 @@ uses
   osfuncwin3,
   strutils,
   cTypes,
-  DynLibs;
+  DynLibs,
+  Process;
 
 (*
 type
@@ -55,19 +56,11 @@ type
   TPGetFirmwareType = function(var aFirmwareType: TFirmwareType): cbool;
     stdcall; //function pointer
 
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint): boolean; overload;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput: boolean): boolean; overload;
-
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput: boolean; logleveloffset: integer): boolean; overload;
+  showoutput: boolean = False; logleveloffset: integer = 0): boolean;
 
 
 function getMyHostEnt(var myHostEnt: THostEnt): boolean;
@@ -114,25 +107,8 @@ procedure  Treadthread.execute;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint): boolean;
-begin
-  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
-    showcmd, ExitCode, False);
-end;
-
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput: boolean): boolean;
-begin
-  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
-    showcmd, ExitCode, showoutput, 0);
-end;
-
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput: boolean; logleveloffset: integer): boolean;
+  showoutput: boolean = False; logleveloffset: integer = 0): boolean;
 
 const
   ReadBufferSize = 2048;
