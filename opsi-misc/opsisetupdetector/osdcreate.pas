@@ -269,6 +269,9 @@ begin
     str := '';
 
     // variables
+    str := '';
+    // have to be allways present:
+    str := str + 'DefVar $targetprogram$' + LineEnding;
     // form ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
@@ -397,7 +400,7 @@ begin
     if aktProduct.properties.propExists('DesktopIcon') then
     begin
 
-      readFileToList('HandleDesktopIcon.opsiscript', preinstalllist);
+      readFileToList('HandleDesktopIcon.opsiscript', postinstalllist);
 
       readFileToList('HandleDesktopIconSections.opsiscript', sectionlist);
       str := 'comment "Start Remoce Desktop Icon Handling :"' +
@@ -538,6 +541,9 @@ begin
 
       str := aktProduct.SetupFiles[i].installerSourceDir;
       patchlist.add('#@installerSourceDir' + IntToStr(i + 1) + '*#=' + str);
+
+      str := aktProduct.SetupFiles[i].targetProg;
+      patchlist.add('#@targetprogram' + IntToStr(i + 1) + '*#=' + str);
 
     end;
 

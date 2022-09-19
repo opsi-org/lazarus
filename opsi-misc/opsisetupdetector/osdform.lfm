@@ -6052,6 +6052,21 @@ object resultForm1: TresultForm1
               Control = BitBtnChooseUninstFile1
               WrapAfter = waAuto
               Index = 2
+            end          
+            item
+              Control = Label100
+              WrapAfter = waAuto
+              Index = 3
+            end          
+            item
+              Control = TIEditSetup1TargetProgram
+              WrapAfter = waAuto
+              Index = 4
+            end          
+            item
+              Control = BitBtnChooseTargetProg1
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -6081,6 +6096,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditSetup1UnProgramEditingDone
             ParentFont = False
             TabOrder = 0
           end
@@ -6132,6 +6148,82 @@ object resultForm1: TresultForm1
             OnClick = BitBtnChooseUninstFile1Click
             ParentFont = False
             TabOrder = 1
+          end
+          object Label100: TLabel
+            Left = 493
+            Height = 21
+            Top = 8
+            Width = 107
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'Target Program'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup1TargetProgram: TTIEdit
+            Left = 615
+            Height = 27
+            Top = 6
+            Width = 267
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 267
+            OnChange = genRttiEditChange
+            ParentFont = False
+            TabOrder = 2
+          end
+          object BitBtnChooseTargetProg1: TBitBtn
+            Left = 887
+            Height = 30
+            Top = 4
+            Width = 50
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Left = 3
+            BorderSpacing.InnerBorder = 2
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000000000004C92DEE95698
+              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+            }
+            OnClick = BitBtnChooseTargetProg1Click
+            ParentFont = False
+            TabOrder = 3
           end
         end
         object FlowPanel17: TFlowPanel
@@ -7039,6 +7131,21 @@ object resultForm1: TresultForm1
               Control = BitBtnChooseUninstFile2
               WrapAfter = waAuto
               Index = 2
+            end          
+            item
+              Control = Label101
+              WrapAfter = waAuto
+              Index = 3
+            end          
+            item
+              Control = TIEditSetup2TargetProgram
+              WrapAfter = waAuto
+              Index = 4
+            end          
+            item
+              Control = BitBtnChooseTargetProg2
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -7068,6 +7175,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditSetup2UnProgramEditingDone
             ParentFont = False
             TabOrder = 0
           end
@@ -7119,6 +7227,82 @@ object resultForm1: TresultForm1
             OnClick = BitBtnChooseUninstFile2Click
             ParentFont = False
             TabOrder = 1
+          end
+          object Label101: TLabel
+            Left = 493
+            Height = 21
+            Top = 8
+            Width = 107
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'Target Program'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup2TargetProgram: TTIEdit
+            Left = 615
+            Height = 27
+            Top = 6
+            Width = 267
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 267
+            OnChange = genRttiEditChange
+            ParentFont = False
+            TabOrder = 2
+          end
+          object BitBtnChooseTargetProg2: TBitBtn
+            Left = 887
+            Height = 30
+            Top = 4
+            Width = 50
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Left = 3
+            BorderSpacing.InnerBorder = 2
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000000000004C92DEE95698
+              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+            }
+            OnClick = BitBtnChooseTargetProg2Click
+            ParentFont = False
+            TabOrder = 3
           end
         end
         object FlowPanel13: TFlowPanel
@@ -8025,6 +8209,21 @@ object resultForm1: TresultForm1
               Control = BitBtnChooseUninstFile3
               WrapAfter = waAuto
               Index = 2
+            end          
+            item
+              Control = Label102
+              WrapAfter = waAuto
+              Index = 3
+            end          
+            item
+              Control = TIEditSetup3TargetProgram
+              WrapAfter = waAuto
+              Index = 4
+            end          
+            item
+              Control = BitBtnChooseTargetProg3
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -8054,6 +8253,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditSetup3UnProgramEditingDone
             ParentFont = False
             TabOrder = 0
           end
@@ -8105,6 +8305,82 @@ object resultForm1: TresultForm1
             OnClick = BitBtnChooseUninstFile3Click
             ParentFont = False
             TabOrder = 1
+          end
+          object Label102: TLabel
+            Left = 493
+            Height = 21
+            Top = 8
+            Width = 107
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 4
+            Caption = 'Target Program'
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup3TargetProgram: TTIEdit
+            Left = 615
+            Height = 27
+            Top = 6
+            Width = 267
+            Anchors = []
+            BorderSpacing.Left = 9
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 267
+            OnChange = genRttiEditChange
+            ParentFont = False
+            TabOrder = 2
+          end
+          object BitBtnChooseTargetProg3: TBitBtn
+            Left = 887
+            Height = 30
+            Top = 4
+            Width = 50
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Left = 3
+            BorderSpacing.InnerBorder = 2
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000000000004C92DEE95698
+              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+            }
+            OnClick = BitBtnChooseTargetProg3Click
+            ParentFont = False
+            TabOrder = 3
           end
         end
         object FlowPanel25: TFlowPanel
@@ -9232,10 +9508,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  144
-                  144
-                  144
-                  144
+                  139
+                  139
+                  139
+                  142
                 )
               end
               object PanelDepBtns: TPanel
@@ -9659,10 +9935,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  257
-                  257
-                  257
-                  258
+                  253
+                  253
+                  253
+                  253
                 )
               end
             end

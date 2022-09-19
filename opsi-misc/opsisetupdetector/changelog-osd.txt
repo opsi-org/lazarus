@@ -81,6 +81,18 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+   opsi-setup-detector (4.2.1.4-1) stable; urgency=low
+
+   * fix desktopicon creation -> postinstalllist
+   * add target program to setup-files (prop targetprog)
+   * add target program to setup tabs
+   * add  #@targetprogram[123]*# to patch list
+   * add stringvar $targetprogram$ to #@stringvars*#
+   * add  $targetprogram$  to templates
+   * update uninstall program relevant data after choosing the uninstall program
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  19 Sep 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.3-1) stable; urgency=low
 
    * exitcode <> 0 (1) on failed

@@ -122,6 +122,7 @@ type
     FinstallCommandLine: string;
     FuninstallCommandLine: string;
     FuninstallProg: string;
+    FtargetProg: string;
     FuninstallCheck: TStrings;
     FisExitcodeFatalFunction: string;
     Funinstall_waitforprocess: string;
@@ -172,6 +173,7 @@ type
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
     property uninstallProg: string read FuninstallProg write FuninstallProg;
+    property targetProg: string read FtargetProg write FtargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
@@ -706,6 +708,7 @@ begin
   FinstallCommandLine := '';
   FuninstallCommandLine := '';
   FuninstallProg := '';
+  FtargetProg := '';
   FuninstallCheck.Clear;
   Fanalyze_progess := 0;
   FisExitcodeFatalFunction := 'isGenericExitcodeFatal';

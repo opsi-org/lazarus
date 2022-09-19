@@ -67,9 +67,12 @@ type
     BitBtnAddDep: TBitBtn;
     BitBtnChooseInstDir2: TBitBtn;
     BitBtnChooseInstDir3: TBitBtn;
+    BitBtnChooseTargetProg2: TBitBtn;
+    BitBtnChooseTargetProg3: TBitBtn;
     BitBtnChooseUninstFile1: TBitBtn;
     BitBtnChooseUninstFile2: TBitBtn;
     BitBtnChooseUninstFile3: TBitBtn;
+    BitBtnChooseTargetProg1: TBitBtn;
     BitBtnDelDep: TBitBtn;
     BitBtnEditDep: TBitBtn;
     BitBtnOpenMst3: TBitBtn;
@@ -166,6 +169,9 @@ type
     Image7: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
+    Label100: TLabel;
+    Label101: TLabel;
+    Label102: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -319,6 +325,9 @@ type
     TIEditMsiName3: TTIEdit;
     TIEditMstFile2: TTIEdit;
     TIEditMstFile3: TTIEdit;
+    TIEditSetup1TargetProgram: TTIEdit;
+    TIEditSetup3TargetProgram: TTIEdit;
+    TIEditSetup2TargetProgram: TTIEdit;
     TIEditSoftVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditSoftVersion2: TTIEdit;
@@ -371,6 +380,9 @@ type
     procedure BitBtnChooseInstDir1Click(Sender: TObject);
     procedure BitBtnChooseInstDir2Click(Sender: TObject);
     procedure BitBtnChooseInstDir3Click(Sender: TObject);
+    procedure BitBtnChooseTargetProg1Click(Sender: TObject);
+    procedure BitBtnChooseTargetProg2Click(Sender: TObject);
+    procedure BitBtnChooseTargetProg3Click(Sender: TObject);
     procedure BitBtnChooseUninstFile1Click(Sender: TObject);
     procedure BitBtnChooseUninstFile2Click(Sender: TObject);
     procedure BitBtnChooseUninstFile3Click(Sender: TObject);
@@ -460,6 +472,9 @@ type
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
     procedure TIEditProdVersion3Change(Sender: TObject);
     procedure TIEditProdVersion3Exit(Sender: TObject);
+    procedure TIEditSetup1UnProgramEditingDone(Sender: TObject);
+    procedure TIEditSetup2UnProgramEditingDone(Sender: TObject);
+    procedure TIEditSetup3UnProgramEditingDone(Sender: TObject);
     procedure TIGridDepPropertiesCreated(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
@@ -485,7 +500,9 @@ type
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure chooseInstallDir(var mysetup: TSetupFile);
     procedure chooseUninstaller(var mysetup: TSetupFile);
+    procedure updateUninstaller(var mysetup: TSetupFile);
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
+    procedure chooseTargetProgram(var mysetup: TSetupFile);
   public
     { public declarations }
     // create a FlowPanel dynamically to be able to free it before selecting a
@@ -808,6 +825,9 @@ begin
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
       TIEditSetup3UnProgram.Link.SetObjectAndProperty(SetupFiles[2], 'uninstallProg');
+      TIEditSetup1TargetProgram.Link.SetObjectAndProperty(SetupFiles[0], 'targetProg');
+      TIEditSetup2TargetProgram.Link.SetObjectAndProperty(SetupFiles[1], 'targetProg');
+      TIEditSetup3TargetProgram.Link.SetObjectAndProperty(SetupFiles[2], 'targetProg');
       TIS1Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
       TIS2Url.Link.SetObjectAndProperty(SetupFiles[1], 'link');
       TIS3Url.Link.SetObjectAndProperty(SetupFiles[2], 'link');
@@ -2571,6 +2591,21 @@ begin
   chooseInstallDir(aktProduct.SetupFiles[2]);
 end;
 
+procedure TResultform1.BitBtnChooseTargetProg1Click(Sender: TObject);
+begin
+  chooseTargetProgram(aktProduct.SetupFiles[0]);
+end;
+
+procedure TResultform1.BitBtnChooseTargetProg2Click(Sender: TObject);
+begin
+  chooseTargetProgram(aktProduct.SetupFiles[1]);
+end;
+
+procedure TResultform1.BitBtnChooseTargetProg3Click(Sender: TObject);
+begin
+  chooseTargetProgram(aktProduct.SetupFiles[2]);
+end;
+
 procedure TResultform1.BitBtnChooseUninstFile1Click(Sender: TObject);
 begin
   chooseUninstaller(aktProduct.SetupFiles[0]);
@@ -3002,12 +3037,43 @@ begin
   end;
 end;
 
+procedure TResultform1.updateUninstaller(var mysetup: TSetupFile);
+begin
+  // update uninstall program relevant data
+  if mysetup.uninstallProg <> '' then
+  begin
+    mysetup.uninstallCheck.Clear;
+    mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
+      mysetup.uninstallProg + '")');
+    mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+    mysetup.uninstallCheck.Add('endif');
+    mysetup.uninstallCommandLine :=
+      '"$Installdir$\' + mysetup.uninstallProg + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  end
+  else
+  begin
+    // no known uninstall program
+    mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
+  end;
+end;
+
 procedure TResultform1.chooseUninstaller(var mysetup: TSetupFile);
 begin
   OpenDialog1.FilterIndex := 1;
   if OpenDialog1.Execute then
   begin
     mysetup.uninstallProg := ExtractFileName(OpenDialog1.FileName);
+  end;
+  updateUninstaller(mysetup);
+end;
+
+procedure TResultform1.chooseTargetProgram(var mysetup: TSetupFile);
+begin
+  OpenDialog1.FilterIndex := 1;
+  if OpenDialog1.Execute then
+  begin
+    mysetup.targetProg := ExtractFileName(OpenDialog1.FileName);
   end;
 end;
 
@@ -4228,6 +4294,21 @@ end;
 procedure TResultform1.TIEditProdVersion3Exit(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.TIEditSetup1UnProgramEditingDone(Sender: TObject);
+begin
+  updateUninstaller(aktProduct.SetupFiles[0]);
+end;
+
+procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
+begin
+  updateUninstaller(aktProduct.SetupFiles[1]);
+end;
+
+procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);
+begin
+  updateUninstaller(aktProduct.SetupFiles[2]);
 end;
 
 procedure TResultform1.TIGridDepPropertiesCreated(Sender: TObject);
