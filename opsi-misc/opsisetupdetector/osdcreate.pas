@@ -1697,8 +1697,10 @@ begin
     if servicecall('workbench_buildPackage', packagedir) then
       LogDatei.log('Package '+packagefile+' successful build', LLnotice)
     else
+    begin
       LogDatei.log('Package '+packagefile+' failed to build', LLerror);
-
+      system.ExitCode := 1;
+    end;
   end;
 
   if resultForm1.radioBuildModebuildInstall.Checked = True then
@@ -1707,7 +1709,10 @@ begin
       if servicecall('workbench_installPackage', packagedir) then
         LogDatei.log('Package '+packagefile+' successful build + installed', LLnotice)
       else
+      begin
         LogDatei.log('Package '+packagefile+' failed to build +install', LLerror);
+        system.ExitCode := 1;
+      end;
 
   end;
   resultForm1.PanelProcess.Visible := False;

@@ -1897,7 +1897,7 @@ begin
     advice := '';
     productId := '';
     productName := '';
-    productversion := '';
+    productversion := '1.0.0';
     packageversion := 1;
     versionstr := '';
     priority := 0;

@@ -604,6 +604,8 @@ resourcestring
   //sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
   sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
   sInfoFinished = 'Create opsi package finished.';
+  sInfoFailedBuild = 'Opsi package files created but build / install package failed';
+  sInfoFailedCreate = 'Create opsi package files failed';
   //sWarnInstDirEmptyNoDeinstall =
   //  'Warning: Install Directory is empty, deinstall script cannot be patched!';
 
@@ -1460,8 +1462,8 @@ begin
       begin
         LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
         LogDatei.log('Start callServiceOrPackageBuilder with build + install: ', LLnotice);
-        resultForm1.radioBuildModebuildInstall.Checked := True;
-        resultForm1.RadioButtonBuildPackage.Checked := True;
+        //resultForm1.radioBuildModebuildInstall.Checked := True;
+        //resultForm1.RadioButtonBuildPackage.Checked := True;
         callServiceOrPackageBuilder;
       end;
       //LogDatei.log('Finished and terminate regular in NOGUI mode. ', LLnotice);
@@ -3292,8 +3294,12 @@ begin
     callOpsiPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
-    if done then
-      ShowMessage(sInfoFinished);
+    if done and (system.ExitCode = 0) then
+      ShowMessage(sInfoFinished)
+    else if done and (system.ExitCode = 1) then
+      ShowMessage(sInfoFailedBuild)
+    else
+      ShowMessage(sInfoFailedCreate);
   finally
     PanelProcess.Visible := False;
     procmess;
