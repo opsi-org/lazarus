@@ -1,0 +1,22 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: WelcomeResourceStrings.rscarryout
+msgctxt "WelcomeResourceStrings.rscarryout"
+msgid "To carry out the remaining installation automatically, we need some information first."
+msgstr "Para continuar la restante instalación automáticamente, necesitamos información primero."
+
+#: WelcomeResourceStrings.rsnext
+msgctxt "WelcomeResourceStrings.rsnext"
+msgid " next > "
+msgstr " siguiente > "
+
+#: WelcomeResourceStrings.rssellanguage
+msgctxt "WelcomeResourceStrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr "Por favor seleccione un lenguaje para el programa de setup:"
+
+#: WelcomeResourceStrings.rswelcome
+msgctxt "WelcomeResourceStrings.rswelcome"
+msgid "Welcome to the installation of opsi-server on this computer!"
+msgstr "Bienvenido/a a la instalación del servidor en esta computadora!"
