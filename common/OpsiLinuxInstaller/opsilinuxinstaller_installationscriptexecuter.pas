@@ -9,7 +9,8 @@ uses
   osRunCommandElevated,
   OpsiPackageDownloader,
   oslog,
-  IndependentMessageDisplayer;
+  IndependentMessageDisplayer,
+  OpsiLinuxInstaller_LanguageObject;
 
 type
 
@@ -28,10 +29,12 @@ type
     FMessageDisplayer: TIndependentMessageDisplayer;
     procedure WritePropertiesToFile; virtual;
     procedure GetOpsiScript;
-    procedure ExecuteInstallationScript; virtual; abstract;
+    procedure ExecuteInstallationScript; virtual;
     function DidNewerVersionOfTwoVersionsFail: boolean; virtual; abstract;
-    procedure TryOlderVersion; virtual; abstract;
-    procedure LogResultOfLastInstallationAttempt; virtual; abstract;
+    procedure TryOlderVersion;
+    procedure LogResultOfLastInstallationAttempt(InstallationResult: string;
+      ProductName: string; LogPath: string); overload;
+    procedure LogResultOfLastInstallationAttempt; virtual; abstract; overload;
   public
     procedure InstallOpsiProduct;
     constructor Create(password: string; sudo: boolean;
@@ -39,6 +42,26 @@ type
       DownloadPath: string; MessageDisplayer: TIndependentMessageDisplayer);
     destructor Destroy; override;
   end;
+
+const
+  {$IFDEF GUI}
+  LongMessageSeperator = #10;
+  {$ENDIF GUI}
+  {$IFDEF NOGUI}
+  LongMessageSeperator = '';
+  {$ENDIF NOGUI}
+
+resourcestring
+  rsInstall = 'Installing ';
+  rsWait = 'Please wait for the installation to start... ';
+  rsDownloadLatest = 'Downloading latest ';
+  rsSomeMin = '(This may take some minutes)';
+  rsTryOlderVersion = 'Try older version of l-opsi-server';
+  rsInstallation = 'Installation ';
+  rsInstallationOf = 'Installation of ';
+  rsFailed = 'failed';
+  rsSuccess = 'successful';
+  rsLog = 'You can find the log files here:';
 
 implementation
 
@@ -53,6 +76,9 @@ begin
   FProductID := ProductID;
   FDownloadPath := DownloadPath;
   FMessageDisplayer := MessageDisplayer;
+
+  Language.TranslateCommonResourceStrings('OpsiLinuxInstaller_InstallationScriptExecuter',
+    'InstallationScriptExecuter.' + Language.Abbreviation + '.po');
 end;
 
 procedure TInstallationScriptExecuter.DefineDirClientData;
@@ -125,6 +151,8 @@ end;
 
 procedure TInstallationScriptExecuter.WritePropertiesToFile;
 begin
+  FMessageDisplayer.DisplayMessage(rsDownloadLatest + FProductID +
+    '... ' + LongMessageSeperator + rsSomeMin, True);
   DefineDirClientData;
   // TODO: Use FFileText to write the property values from the query to the file properties.conf in FClientDataDir
 end;
@@ -144,6 +172,25 @@ begin
   FInstallRunCommand.Run('rm ../opsi-script_*.tar.gz', Output);
 end;
 
+procedure TInstallationScriptExecuter.ExecuteInstallationScript;
+begin
+  FMessageDisplayer.DisplayMessage(rsInstall + FCurrentVersionName +
+    '... ' + LongMessageSeperator + rsSomeMin, True);
+  // TODO: Use opsi-script to execute the installation script for the opsi product
+end;
+
+procedure TInstallationScriptExecuter.TryOlderVersion;
+begin
+  FMessageDisplayer.DisplayMessage(rsInstallation + rsFailed + '.' +
+    #10 + rsTryOlderVersion + '.', True);
+  LogDatei.log('Installation failed: ' + FCurrentVersionName, LLessential);
+  LogDatei.log('Try older version of ' + FProductID + ':', LLnotice);
+  FTwoVersionsToTest := False;
+  FOneInstallationFailed := True;
+  WritePropertiesToFile;
+  ExecuteInstallationScript;
+end;
+
 procedure TInstallationScriptExecuter.RemoveOpsiScript;
 begin
   FInstallRunCommand.Run('rm -r BUILD/', Output);
@@ -151,6 +198,9 @@ end;
 
 procedure TInstallationScriptExecuter.InstallOpsiProduct;
 begin
+  FMessageDisplayer.DisplayMessage(rsInstall + FProductID + ':' +
+    #10 + rsWait + LongMessageSeperator + rsSomeMin, True);
+
   GetOpsiScript;
   FTwoVersionsToTest := True;
   FOneInstallationFailed := False;
@@ -162,6 +212,31 @@ begin
 
   RemoveOpsiScript;
   LogResultOfLastInstallationAttempt;
+end;
+
+procedure TInstallationScriptExecuter.LogResultOfLastInstallationAttempt(
+  InstallationResult: string; ProductName: string; LogPath: string);
+var
+  ResultOfWholeInstallationProcess: string = '';
+begin
+  if InstallationResult = 'failed' then
+  begin
+    ResultOfWholeInstallationProcess := rsFailed;
+    FMessageDisplayer.DisplayMessage(rsInstallation + rsFailed + '.', True);
+    LogDatei.log('Installation failed: ' + FCurrentVersionName, LLessential);
+    LogDatei.log(ProductName + ' installation failed', LLessential);
+    ExitCode := 1;
+  end
+  else
+  begin
+    ResultOfWholeInstallationProcess := rsSuccess;
+    LogDatei.log('Installation successful: ' + FCurrentVersionName, LLessential);
+    LogDatei.log(ProductName + ' installation successful', LLessential);
+  end;
+
+  FMessageDisplayer.DisplayMessage(rsInstallationOf + ProductName +
+    ' ' + ResultOfWholeInstallationProcess + '!' + #10 + #10 + rsLog +
+    #10 + LogPath + #10 + StringReplace(LogDatei.FileName, '//', '/', [rfReplaceAll]));
 end;
 
 destructor TInstallationScriptExecuter.Destroy;

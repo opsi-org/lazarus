@@ -1,0 +1,42 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: opsilinuxinstaller_installationscriptexecuter.rsdownloadlatest
+msgid "Downloading latest "
+msgstr "Descargando el último "
+
+#: opsilinuxinstaller_installationscriptexecuter.rsfailed
+msgid "failed"
+msgstr "fallida"
+
+#: opsilinuxinstaller_installationscriptexecuter.rsinstall
+msgid "Installing "
+msgstr "Instalando"
+
+#: opsilinuxinstaller_installationscriptexecuter.rsinstallation
+msgid "Installation "
+msgstr "Instalación "
+
+#: opsilinuxinstaller_installationscriptexecuter.rsinstallationof
+msgid "Installation of "
+msgstr "Instalación de "
+
+#: opsilinuxinstaller_installationscriptexecuter.rslog
+msgid "You can find the log files here:"
+msgstr "Puede encontrar los archivos de log aqui:"
+
+#: opsilinuxinstaller_installationscriptexecuter.rssomemin
+msgid "(This may take some minutes)"
+msgstr "(Estoy podría tomar algunos minutos)"
+
+#: opsilinuxinstaller_installationscriptexecuter.rssuccess
+msgid "successful"
+msgstr "exitosa"
+
+#: opsilinuxinstaller_installationscriptexecuter.rstryolderversion
+msgid "Try older version of l-opsi-server"
+msgstr "Prueba la versión anterior de l-opsi-server"
+
+#: opsilinuxinstaller_installationscriptexecuter.rswait
+msgid "Please wait for the installation to start... "
+msgstr "Por favor aguarde para que la instalación se inicie... "
