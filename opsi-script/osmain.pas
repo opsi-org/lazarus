@@ -299,7 +299,7 @@ var
   ///connected :   Boolean;
   LogDateiName: string;
   logfileFromCommandLine: boolean;
-///ContinueLog  :   Integer;
+  ///ContinueLog  :   Integer;
   {$IFDEF WINDOWS}
   RegLogOutOptions: TuibRegistry;
   regist: TRegistry;
@@ -628,32 +628,37 @@ begin
       LogDatei.LogSIndentLevel := 0;
       LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
-        'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+        'yyyy-mm-dd  hh:mm:ss ', now) + 'Exitcode: '+inttostr(system.ExitCode)+' .', LLessential);
 
       LogDatei.Close;
-      sleep(1000);
-      LogDatei.Free;
-      LogDatei := nil;
+      sleep(500);
+      FreeAndNil(LogDatei);
       {$IFDEF WINDOWS}
         SystemCritical.IsCritical := False;
       {$ENDIF WINDOWS}
     end;
     try
-      //TerminateApp;
-      halt(0);
-      //Application.Terminate;
+      {$IFDEF GUI}
+      // Application is visible in GUI mode and
+      // Application.terminate provides the exitcode
+      // exit uses system.exitcode as exitcode but
+      // exit does not work with Application
+      Application.Terminate;
+      halt(system.ExitCode);
+      {$ELSE GUI}
+      // Application is not visible in console mode and exit works
+      Exit;
+      {$ENDIF GUI}
+      // fallback if nothing else works:
+      halt(system.ExitCode);
     except
-      // test
-      Halt(0);
+      halt(system.ExitCode);
     end;
   except
     try
-      halt(0);
-      //TerminateApp;
-      //Application.Terminate;
+      halt(system.ExitCode);
     except
-      // test
-      Halt;
+      halt(system.ExitCode);
     end;
   end;
 end;
@@ -882,7 +887,11 @@ begin
       LogDatei.log('failed telling server to look for productOnClient defaults',
         LLerror);
   if not opsidata.initProduct then
+  begin
     extremeErrorLevel := levelFatal;
+    LogDatei.log(
+        'failed opsidata.initProduct', LLcritical);
+  end;
   if runproductlist then
     if not opsidata.setAddProductOnClientDefaults(False) then
       LogDatei.log(
@@ -2042,7 +2051,8 @@ begin
         '	 Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
         ParamDelim + 'lang langcode] [' + ParamDelim + '[batch|silent]] [' +
         ParamDelim + 'productid] [' + ParamDelim + 'productid <productid> ] [' +
-        ParamDelim + 'parameter ParameterString]',
+        ParamDelim + 'parameter ParameterString] ['+ ParamDelim +
+        'testsyntax ]',
         [mrOk],
         650, 250);
       {$ELSE GUI}
@@ -2068,7 +2078,8 @@ begin
         ' Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
         ParamDelim + '[batch|silent]] [' + ParamDelim + 'productid] [' +
         ParamDelim + 'productid <productid> ] [' + ParamDelim +
-        'parameter ParameterString]');
+        'parameter ParameterString] ['+ ParamDelim +
+        'testsyntax ]');
       {$ENDIF GUI}
 
       TerminateApp;
@@ -2493,7 +2504,8 @@ begin
 
           // Are we in batch with /productid (opsi-template-with-admin) ?  or /ServiceBatch
           if (runningAsAdmin and (not (batchproductid = ''))) or
-            ((not (batchproductid = '')) and batchUpdatePOC and not (opsidata = nil)) then
+            ((not (batchproductid = '')) and batchUpdatePOC and not
+            (opsidata = nil)) then
           begin
             try
               if batchUpdatePOC and not (opsidata = nil) then
@@ -2520,20 +2532,20 @@ begin
                 //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
                 //##LINUX
               {$IFDEF WINDOWS}
-              reg := TRegistry.Create;
-              GetHKey(WinstRegHive, rkey);
-              reg.RootKey := rkey;
-              reg.OpenKey(WinstRegKey, True);
-              if extremeErrorLevel <= levelfatal then
-              begin
-                reg.WriteString('with-admin-fatal', 'true');
-              end
-              else
-              begin
-                reg.WriteString('with-admin-fatal', 'false');
-              end;
-              reg.CloseKey;
-              reg.Free;
+                reg := TRegistry.Create;
+                GetHKey(WinstRegHive, rkey);
+                reg.RootKey := rkey;
+                reg.OpenKey(WinstRegKey, True);
+                if extremeErrorLevel <= levelfatal then
+                begin
+                  reg.WriteString('with-admin-fatal', 'true');
+                end
+                else
+                begin
+                  reg.WriteString('with-admin-fatal', 'false');
+                end;
+                reg.CloseKey;
+                reg.Free;
               {$ENDIF WINDOWS}
               end;
             except
@@ -3323,6 +3335,12 @@ begin
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;
           {$ENDIF GUI}
+          Inc(i);
+        end
+
+        else if Lowercase(Parameter) = 'testsyntax' then
+        begin
+          configTestSyntax := True;
           Inc(i);
         end
 
