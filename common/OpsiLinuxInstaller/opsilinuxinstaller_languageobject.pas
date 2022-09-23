@@ -13,14 +13,14 @@ uses
 type
   TLanguageObject = class(TObject)
   private
-    FPathToLazarusRepo: string;
+    FPathToCommonLocaleFolder: string;
+    FPathToProjectLocaleFolder: string;
   public
     Abbreviation: string;
-    constructor Create(PathToLazarusRepo: string);
-    procedure TranslateCommonResourceStrings(NameOfResourceStringsUnit: string;
+    constructor Create(PathToCommonLocaleFolder: string;
+      PathToProjectLocaleFolder: string);
+    procedure TranslateResourceStrings(NameOfResourceStringsUnit: string;
       NameOfTranslationFile: string);
-    procedure TranslateProjectResourceStrings(
-      NameOfResourceStringsUnit: string; PathOfTranslationFile: string);
   end;
 
 var
@@ -28,37 +28,33 @@ var
 
 implementation
 
-constructor TLanguageObject.Create(PathToLazarusRepo: string);
+constructor TLanguageObject.Create(PathToCommonLocaleFolder: string;
+  PathToProjectLocaleFolder: string);
 begin
-  FPathToLazarusRepo := PathToLazarusRepo;
+  FPathToCommonLocaleFolder := PathToCommonLocaleFolder;
+  FPathToProjectLocaleFolder := PathToProjectLocaleFolder;
   Abbreviation := 'en';
 end;
 
-procedure TLanguageObject.TranslateCommonResourceStrings(
-  NameOfResourceStringsUnit: string; NameOfTranslationFile: string);
+procedure TLanguageObject.TranslateResourceStrings(NameOfResourceStringsUnit: string;
+  NameOfTranslationFile: string);
 begin
-  if not FileExists(FPathToLazarusRepo + 'common/OpsiLinuxInstaller/locale/' +
-    NameOfTranslationFile) then
+  if FileExists(FPathToCommonLocaleFolder + NameOfTranslationFile) then
   begin
-    LogDatei.log('Translations file "' + FPathToLazarusRepo +
+    TranslateUnitResourceStrings(NameOfResourceStringsUnit,
+      FPathToCommonLocaleFolder + NameOfTranslationFile);
+  end
+  else if FileExists(FPathToProjectLocaleFolder + NameOfTranslationFile) then
+  begin
+    TranslateUnitResourceStrings(NameOfResourceStringsUnit,
+      FPathToProjectLocaleFolder + NameOfTranslationFile);
+  end
+  else
+  begin
+    LogDatei.log('Translations file "' + FPathToCommonLocaleFolder +
       'common/OpsiLinuxInstaller/locale/' + NameOfTranslationFile +
       '" not found', LLWarning);
   end;
-
-  TranslateUnitResourceStrings(NameOfResourceStringsUnit,
-    FPathToLazarusRepo + '/common/OpsiLinuxInstaller/locale/' + NameOfTranslationFile);
-end;
-
-procedure TLanguageObject.TranslateProjectResourceStrings(
-  NameOfResourceStringsUnit: string; PathOfTranslationFile: string);
-begin
-  if not FileExists(PathOfTranslationFile) then
-  begin
-    LogDatei.log('Translations file "' + PathOfTranslationFile + '" not found',
-      LLWarning);
-  end;
-
-  TranslateUnitResourceStrings(NameOfResourceStringsUnit, PathOfTranslationFile);
 end;
 
 end.

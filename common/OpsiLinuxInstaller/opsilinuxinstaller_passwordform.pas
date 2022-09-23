@@ -50,7 +50,7 @@ begin
   // display password as dots
   EditPassword.EchoMode := emPassword;
 
-  Language.TranslateCommonResourceStrings('PasswordFormResourceStrings',
+  Language.TranslateResourceStrings('PasswordFormResourceStrings',
     'PasswordForm.' + Language.Abbreviation + '.po');
 
   // text by resourcestrings
