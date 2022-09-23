@@ -1,7 +1,7 @@
 object CentralForm: TCentralForm
-  Left = 892
+  Left = 566
   Height = 541
-  Top = 198
+  Top = 246
   Width = 1084
   HorzScrollBar.Range = 519
   HorzScrollBar.Visible = False
