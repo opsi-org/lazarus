@@ -128,6 +128,7 @@ var
   tmpstr, tmpstr2: string;
   threetabs: boolean;
   openif: array[0..250] of integer;
+  codeline : string;
 begin
   //Initialize openif array
   for i := 0 to 250 do
@@ -140,6 +141,7 @@ begin
     trimLine := True;
 
     relPos := 0;
+    codeline := code[k];
     if AnsiStartsStr(';', UpperCase(code[k]).trim) then
     begin
       // 05/2021 - indentation also on comments
@@ -158,7 +160,9 @@ begin
       // how many chars to indent additionally
       repeat
         Inc(k);
-        code[k] := createBlockIndent(relPos) + code[k].trim;
+        code[k] := indentation(indentlevel + relPos) + code[k].trim;
+        //code[k] := createBlockIndent(relPos) + code[k].trim;
+        codeline := code[k];
         if code[k].Contains('param') then
         begin
           relPos := relPos + 3;
@@ -243,8 +247,8 @@ begin
         while not ((AnsiStartsStr('[', code[k].trim) and
             AnsiEndsStr(']', code[k].trim)) or
             AnsiStartsStr(UpperCase('deffunc'), UpperCase(code[k].trim)) or
-            AnsiStartsStr('endfunc', code[k].trim) or
-            AnsiStartsStr('exit $?', code[k].trim)) and (k < code.Count - 1) do
+            AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim)) or
+            AnsiStartsStr(UpperCase('exit $?'), UpperCase(code[k].trim))) and (k < code.Count - 1) do
         begin
           if dontTouch then // don't touch
           begin

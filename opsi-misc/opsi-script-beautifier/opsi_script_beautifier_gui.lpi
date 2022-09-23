@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable CompanyName="uib gmbh" FileDescription="opsi-script-beautifier gui" InternalName="opsi-script-beautifier gui" LegalCopyright="AGPLv3+" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -53,7 +53,6 @@
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
-              <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
@@ -71,8 +70,8 @@
             <OtherDefines Count="4">
               <Define0 Value="OPSI_AS_APP"/>
               <Define1 Value="OPSI"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OPSI_AS_USER"/>
+              <Define2 Value="OPSI_AS_USER"/>
+              <Define3 Value="GUI"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
