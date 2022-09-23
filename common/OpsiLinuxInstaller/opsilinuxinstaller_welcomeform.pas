@@ -27,8 +27,8 @@ implementation
 
 procedure TOpsiLinuxInstallerWelcomeForm.SetTextsByResourceStrings;
 begin
-  Language.TranslateCommonResourceStrings('WelcomeResourceStrings',
-    'Welcome.' + Language.Abbreviation + '.po');
+  Language.TranslateProjectResourceStrings('WelcomeResourceStrings',
+    '../locale/Welcome.' + Language.Abbreviation + '.po');
 
   LabelWelcome.Caption := rsWelcome;
   LabelSelLanguage.Caption := rsSelLanguage;

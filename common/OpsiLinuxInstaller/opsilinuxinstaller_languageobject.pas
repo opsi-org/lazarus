@@ -12,13 +12,9 @@ uses
 
 type
   TLanguageObject = class(TObject)
-  private
-    FPathToLazarusRepo: string;
   public
     Abbreviation: string;
-    constructor Create(PathToLazarusRepo: string);
-    procedure TranslateCommonResourceStrings(NameOfResourceStringsUnit: string;
-      NameOfTranslationFile: string);
+    constructor Create;
     procedure TranslateProjectResourceStrings(
       NameOfResourceStringsUnit: string; PathOfTranslationFile: string);
   end;
@@ -28,25 +24,10 @@ var
 
 implementation
 
-constructor TLanguageObject.Create(PathToLazarusRepo: string);
+constructor TLanguageObject.Create;
 begin
-  FPathToLazarusRepo := PathToLazarusRepo;
+  inherited Create;
   Abbreviation := 'en';
-end;
-
-procedure TLanguageObject.TranslateCommonResourceStrings(
-  NameOfResourceStringsUnit: string; NameOfTranslationFile: string);
-begin
-  if not FileExists(FPathToLazarusRepo + 'common/OpsiLinuxInstaller/locale/' +
-    NameOfTranslationFile) then
-  begin
-    LogDatei.log('Translations file "' + FPathToLazarusRepo +
-      'common/OpsiLinuxInstaller/locale/' + NameOfTranslationFile +
-      '" not found', LLWarning);
-  end;
-
-  TranslateUnitResourceStrings(NameOfResourceStringsUnit,
-    FPathToLazarusRepo + '/common/OpsiLinuxInstaller/locale/' + NameOfTranslationFile);
 end;
 
 procedure TLanguageObject.TranslateProjectResourceStrings(

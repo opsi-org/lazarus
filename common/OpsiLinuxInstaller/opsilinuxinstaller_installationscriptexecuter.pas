@@ -77,8 +77,8 @@ begin
   FDownloadPath := DownloadPath;
   FMessageDisplayer := MessageDisplayer;
 
-  Language.TranslateCommonResourceStrings('OpsiLinuxInstaller_InstallationScriptExecuter',
-    'InstallationScriptExecuter.' + Language.Abbreviation + '.po');
+  Language.TranslateProjectResourceStrings('OpsiLinuxInstaller_InstallationScriptExecuter',
+    '../locale/InstallationScriptExecuter.' + Language.Abbreviation + '.po');
 end;
 
 procedure TInstallationScriptExecuter.DefineDirClientData;
