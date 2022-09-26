@@ -15,7 +15,7 @@ resourcestring
   rsFinish = ' finish ';
 
   {Password}
-  rsRights = 'Authentication is required to install opsi-server. Who are you logged in as?';
+  rsRights = 'Authentication is required for the installation. Are you identified as root or per sudo?';
   rsPassword = 'Password';
   rsShowPassword = 'Show password';
   rsWrongPassword = 'Authentication failed.' + #10 + 'Please check your password!';
