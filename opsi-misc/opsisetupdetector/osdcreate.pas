@@ -403,7 +403,7 @@ begin
       readFileToList('HandleDesktopIcon.opsiscript', postinstalllist);
 
       readFileToList('HandleDesktopIconSections.opsiscript', sectionlist);
-      str := 'comment "Start Remoce Desktop Icon Handling :"' +
+      str := 'comment "Start Remove Desktop Icon Handling :"' +
         LineEnding + 'Linkfolder_remove_desktop_icon';
     end;
     patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
