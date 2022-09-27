@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   MaskEdit, LCLType, cthreads,
-  osRunCommandElevated;
+  osRunCommandElevated,
+  OpsiLinuxInstaller_LanguageObject;
 
 type
   TOpsiLinuxInstallerPasswordForm = class(TForm)
@@ -27,10 +28,12 @@ type
 
     procedure EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
-    function IsPasswordCorrect(MessageWrongPassword: string): boolean;
+    function IsPasswordCorrect: boolean;
 
     procedure CloseProject; virtual; abstract;
     procedure FormClose(Sender: TObject); virtual; abstract;
+
+
   public
     clientDataDir: string;
   protected
@@ -39,12 +42,33 @@ type
   end;
 
 
+resourcestring
+  rsBack = ' < back ';
+  rsFinish = ' finish ';
+
+  rsRights = 'Authentication is required for the installation. Are you identified as root or per sudo?';
+  rsPassword = 'Password';
+  rsShowPassword = 'Show password';
+  rsWrongPassword = 'Authentication failed.' + #10 + 'Please check your password!';
+
+
 implementation
 
 procedure TOpsiLinuxInstallerPasswordForm.FormActivate(Sender: TObject);
 begin
   // display password as dots
   EditPassword.EchoMode := emPassword;
+
+  Language.TranslateResourceStrings('OpsiLinuxInstaller_PasswordForm',
+    'PasswordForm.' + Language.Abbreviation + '.po');
+
+  // text by resourcestrings
+  Caption := rsPassword;
+  LabelRights.Caption := rsRights;
+  LabelPassword.Caption := rsPassword + ':';
+  CheckBoxShowPassword.Caption := rsShowPassword;
+  BtnBack.Caption := rsBack;
+  BtnFinish.Caption := rsFinish;
 end;
 
 procedure TOpsiLinuxInstallerPasswordForm.EditPasswordUTF8KeyPress(Sender: TObject;
@@ -67,8 +91,7 @@ begin
     EditPassword.EchoMode := emPassword;
 end;
 
-function TOpsiLinuxInstallerPasswordForm.IsPasswordCorrect(
-  MessageWrongPassword: string): boolean;
+function TOpsiLinuxInstallerPasswordForm.IsPasswordCorrect: boolean;
 var
   TestCommand: TRunCommandElevated;
 begin
@@ -78,7 +101,7 @@ begin
   TestCommand.Run('mkdir /root/testDir', Output);
   if (Pos('Error', Output) >= 0) and (Output <> '') then
   begin
-    ShowMessage(MessageWrongPassword);
+    ShowMessage(rsWrongPassword);
     Result := False;
   end
   else
