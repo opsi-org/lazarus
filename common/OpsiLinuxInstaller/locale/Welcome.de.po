@@ -18,5 +18,5 @@ msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
 
 #: WelcomeResourceStrings.rswelcome
 msgctxt "WelcomeResourceStrings.rswelcome"
-msgid "Welcome to the installation of opsi-server on this computer!"
-msgstr "Willkommen zur Installation von Opsi-Server auf diesem Computer!"
+msgid "Welcome to the installation of the [] on this computer!"
+msgstr "Willkommen zur Installation des [] auf diesem Computer!"
