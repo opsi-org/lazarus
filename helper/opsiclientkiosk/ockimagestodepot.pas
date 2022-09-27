@@ -200,7 +200,11 @@ end;
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
    //InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
-   SetDefaultLang(GetDefaultLang);
+   {$IFDEF DARWIN}
+     SetDefaultLang(GetDefaultLang, '../Resources/locale');
+   {$ELSE}
+    SetDefaultLang(GetDefaultLang);
+   {$ENDIF DARWIN}
 end;
 
 (*

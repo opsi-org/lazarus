@@ -2295,12 +2295,21 @@ begin
     end;
     if Application.HasOption('lang') then
     begin
+    {$IFDEF DARWIN}
+      SetDefaultLang(Application.GetOptionValue('lang'), '../Resources/locale');
+    {$ELSE}
       SetDefaultLang(Application.GetOptionValue('lang'));
+    {$ENDIF DARWIN}
     end
     else
     begin
       GetDefaultLang;
       LogDatei.log('GetDefaultLang: ' + GetDefaultLang, LLEssential);
+   {$IFDEF DARWIN}
+      SetDefaultLang(GetDefaultLang, '../Resources/locale');
+   {$ELSE}
+      SetDefaultLang(GetDefaultLang);
+   {$ENDIF DARWIN}
     end;
   finally
     ListOptions.free;
