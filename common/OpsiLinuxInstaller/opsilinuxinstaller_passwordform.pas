@@ -8,8 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   MaskEdit, LCLType, cthreads,
   osRunCommandElevated,
-  OpsiLinuxInstaller_LanguageObject,
-  PasswordFormResourceStrings;
+  OpsiLinuxInstaller_LanguageObject;
 
 type
   TOpsiLinuxInstallerPasswordForm = class(TForm)
@@ -43,6 +42,16 @@ type
   end;
 
 
+resourcestring
+  rsBack = ' < back ';
+  rsFinish = ' finish ';
+
+  rsRights = 'Authentication is required for the installation. Are you identified as root or per sudo?';
+  rsPassword = 'Password';
+  rsShowPassword = 'Show password';
+  rsWrongPassword = 'Authentication failed.' + #10 + 'Please check your password!';
+
+
 implementation
 
 procedure TOpsiLinuxInstallerPasswordForm.FormActivate(Sender: TObject);
@@ -50,7 +59,7 @@ begin
   // display password as dots
   EditPassword.EchoMode := emPassword;
 
-  Language.TranslateResourceStrings('PasswordFormResourceStrings',
+  Language.TranslateResourceStrings('OpsiLinuxInstaller_PasswordForm',
     'PasswordForm.' + Language.Abbreviation + '.po');
 
   // text by resourcestrings
