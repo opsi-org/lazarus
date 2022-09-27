@@ -81,6 +81,14 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.1.6-1) stable; urgency=low
+
+   * no uninstall_before_install prop on structured channel
+   * typos
+   * template fixes
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  27 Sep 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.5-1) stable; urgency=low
 
    * do not set build mode on nogui

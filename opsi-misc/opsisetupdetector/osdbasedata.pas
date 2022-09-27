@@ -1157,8 +1157,7 @@ begin
   end;
 
   propexists := aktProduct.properties.propExists('uninstall_before_install');
-  if ((myrunmode = analyzeCreateWithUser) or
-    (aktProduct.productdata.channelDir = 'structured')) and not propexists then
+  if (myrunmode = analyzeCreateWithUser) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
