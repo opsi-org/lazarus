@@ -26429,7 +26429,8 @@ begin
               begin
                 if remaining = '' then
                 begin
-                  SetFlagReloadProductList;
+                  syntaxCheck := True;
+                  if not testsyntax then SetFlagReloadProductList;
                 end
                 else
                   ActionResult :=
