@@ -524,7 +524,7 @@ procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
 procedure procmess;
-function startOpsiServiceConnection : boolean;
+function startOpsiServiceConnection: boolean;
 
 
 var
@@ -567,7 +567,7 @@ var
   localservicedata: TOpsi4Data = nil;
   productIds: TStringList;
   passwordToUse: string;
-//myFont : string;
+  //myFont : string;
   opsiserviceversion: string;
 
 
@@ -667,6 +667,11 @@ resourcestring
   rsMacSelectionRememberMe = 'Do not show this Message again';
   rsServiceConnectionFailed =
     'Could not connect to the opsi-web-service. Check URL, user and password';
+  rsCreateWithUserProductAdvice =
+    'Use Property "Debug = true" to disable ' + 'mouse and keyboard blocking.' +
+    LineEnding + 'If mouse and keyboard are accidentally blocked after the installation is finished,'
+    + LineEnding + 'use action request "update" to enable mouse and keyboard again.';
+  // Hints
   rsTemlateChannelHint =
     'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
   rsSupportCustomDirectoryHint = 'Should we add code to support "custom" directories ?';
@@ -900,17 +905,26 @@ begin
     TabSheetIcons.ImageIndex := 3;
     TabSheetCreate.ImageIndex := 4;
     TimerFirstconfig.Enabled := True;
+    // check if we may call package builder
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
     begin
-      RadioButtonBuildPackage.Enabled := True;
       RadioButtonPackageBuilder.Enabled := True;
+    end
+    else
+    begin
+      RadioButtonPackageBuilder.Enabled := False;
+    end;
+    // check if we may build and install
+    if fileexists(myconfiguration.PathToOpsiPackageBuilder) or
+      ((myconfiguration.Service_URL <> '') and (myconfiguration.Service_user <> '')) then
+    begin
+      RadioButtonBuildPackage.Enabled := True;
       CheckGroupBuildMode.Enabled := True;
     end
     else
     begin
       RadioButtonBuildPackage.Enabled := False;
-      RadioButtonPackageBuilder.Enabled := False;
-      CheckGroupBuildMode.Enabled := False;
+      CheckGroupBuildMode.Enabled := True;
     end;
     {$IFDEF LINUX}
     //BtSingleAnalyzeAndCreateWin.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
@@ -923,12 +937,12 @@ begin
   LogDatei.log('Finished initGUI ... ', LLInfo);
 end;
 
-function startOpsiServiceConnection : boolean;
+function startOpsiServiceConnection: boolean;
 var
   i: integer;
   //passwordToUse: string; is a global var
   strlist: TStringList;
-  sessionid : string;
+  sessionid: string;
 begin
   if localservicedata = nil then
   begin
@@ -949,17 +963,17 @@ begin
         localservicedata.initOpsiConf(myconfiguration.Service_URL,
           myconfiguration.Service_user,
           passwordToUse);
-        opsiserviceversion := oswebservice.getOpsiServerVersion(myconfiguration.Service_URL,
-          myconfiguration.Service_user,
-          passwordToUse,sessionid);
+        opsiserviceversion := oswebservice.getOpsiServerVersion(
+          myconfiguration.Service_URL, myconfiguration.Service_user,
+          passwordToUse, sessionid);
         if localservicedata.isConnected then
         begin
           LogDatei.log('Service connection initialized to :' +
             myconfiguration.Service_URL + ' version: ' + opsiserviceversion, LLinfo);
           FNewDepDlg.LabelConnect.Caption := 'Connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clGreen;
-          resultForm1.StatusBar1.Panels.Items[1].Text:=
-               'Connected to opsi server: '+myconfiguration.Service_URL;
+          resultForm1.StatusBar1.Panels.Items[1].Text :=
+            'Connected to opsi server: ' + myconfiguration.Service_URL;
           // fetch produtIds from service
           strlist.Text := localservicedata.getLocalbootProductIds.Text;
           for i := 0 to strlist.Count - 1 do
@@ -975,7 +989,7 @@ begin
             LLwarning);
           FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
           FNewDepDlg.LabelConnect.Font.Color := clRed;
-          resultForm1.StatusBar1.Panels.Items[1].Text:= 'Not connected to opsi server';
+          resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
           FreeAndNil(localservicedata);
         end;
       end
@@ -985,7 +999,7 @@ begin
         LogDatei.log('Service connection not possible: Url or user missing.', LLwarning);
         FNewDepDlg.LabelConnect.Caption := 'Not connected to opsi server';
         FNewDepDlg.LabelConnect.Font.Color := clRed;
-        resultForm1.StatusBar1.Panels.Items[1].Text:= 'Not connected to opsi server';
+        resultForm1.StatusBar1.Panels.Items[1].Text := 'Not connected to opsi server';
         FreeAndNil(localservicedata);
       end;
     finally
@@ -1050,19 +1064,19 @@ begin
   if not Assigned(osdbasedata.aktProduct.SetupFiles[0]) then
   begin
     LogDatei.log('Error: setupfile1 not initalized', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     Result := False;
   end;
   if not Assigned(osdbasedata.aktProduct.SetupFiles[1]) then
   begin
     LogDatei.log('Error: setupfile2 not initalized', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     Result := False;
   end;
   if not Assigned(osdbasedata.aktProduct.productdata) then
   begin
     LogDatei.log('Error: productdata not initalized', LLCritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     Result := False;
   end;
   if Result = False then
@@ -1192,7 +1206,7 @@ begin
     LogDatei.log('Exception while handling parameters.', LLcritical);
     ErrorMsg := ErrorMsg + ' with params: ' + myparamstring;
     LogDatei.log(ErrorMsg, LLcritical);
-    system.ExitCode:=1;
+    system.ExitCode := 1;
     Application.ShowException(Exception.Create(ErrorMsg));
     Application.Terminate;
     Exit;
@@ -1264,7 +1278,7 @@ begin
     begin
       myerror := 'Error: Given targetOS: ' + tmpstr +
         ' is not valid. Should be on of win,lin,mac';
-      system.ExitCode:=1;
+      system.ExitCode := 1;
       {$IFNDEF WINDOWS}
       writeln(myerror);
       {$ENDIF WINDOWS}
@@ -1281,7 +1295,7 @@ begin
       writeln(myerror);
       {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1306,7 +1320,7 @@ begin
       writeln(myerror);
       {$ENDIF WINDOWS}
       LogDatei.log(myerror, LLCritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1332,7 +1346,7 @@ begin
     begin
       myerror := 'Error: Given filename: ' + myfilename + ' does not exist.';
       LogDatei.log(myerror, LLCritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -1448,7 +1462,7 @@ begin
       writeln(anaoutfile, '');
       CloseFile(anaoutfile);
       if forceProductId <> '' then
-            aktProduct.productdata.productId := forceProductId;
+        aktProduct.productdata.productId := forceProductId;
       if osdsettings.runmode <> analyzeOnly then
       begin
         LogDatei.log('Start createProductStructure in NOGUI mode: ', LLnotice);
@@ -1461,7 +1475,8 @@ begin
       if osdsettings.runmode <> analyzeOnly then
       begin
         LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
-        LogDatei.log('Start callServiceOrPackageBuilder with build + install: ', LLnotice);
+        LogDatei.log('Start callServiceOrPackageBuilder with build + install: ',
+          LLnotice);
         //resultForm1.radioBuildModebuildInstall.Checked := True;
         //resultForm1.RadioButtonBuildPackage.Checked := True;
         callServiceOrPackageBuilder;
@@ -1481,7 +1496,7 @@ begin
     begin
       myerror := 'Error: No filename given but nogui';
       LogDatei.log(myerror, LLCritical);
-      system.ExitCode:=1;
+      system.ExitCode := 1;
       WriteHelp;
       Application.Terminate;
       Exit;
@@ -2040,6 +2055,7 @@ begin
     aktProduct.productdata.uninstallscript := 'localsetup\uninstall-local.opsiscript';
     aktProduct.productdata.updatescript := 'localsetup\update-local.opsiscript';
     aktProduct.productdata.priority := -20;
+    aktProduct.productdata.advice := rsCreateWithUserProductAdvice;
     resultform1.updateGUI;
     Application.ProcessMessages;
     aktProduct.SetupFiles[0].active := True;
@@ -2449,7 +2465,7 @@ begin
       exists := properties.propExists(FNewPropDlg.EditPropName.Text);
       if exists then
         MessageDlg(rsPropEditErrorHead,
-          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +' '+
+          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text + ' ' +
           rsPropEditErrorDoubleMsgFinish,
           mtError, [mbOK], '')
       else
@@ -3287,11 +3303,11 @@ begin
     done := createProductStructure;
     procmess;
     if RadioButtonCreateOnly.Checked then
-      ; // do nothing else
-  if RadioButtonBuildPackage.Checked then
-    callServiceOrPackageBuilder;
-  if RadioButtonPackageBuilder.Checked then
-    callOpsiPackageBuilder;
+    ; // do nothing else
+    if RadioButtonBuildPackage.Checked then
+      callServiceOrPackageBuilder;
+    if RadioButtonPackageBuilder.Checked then
+      callOpsiPackageBuilder;
     procmess;
     PanelProcess.Visible := False;
     if done and (system.ExitCode = 0) then
@@ -3975,9 +3991,9 @@ begin
   msg := progname + ' Version: ' + myVersion;
   list.Add(msg);
   list.Add('(c) uib gmbh under AGPLv3');
-  list.Add('This is a part of the opsi.org Project: https://opsi.org');
+  list.Add('This is a part of the opsi.org project: https://opsi.org');
   list.Add('');
-  list.add('Icons from Iconic (https://useiconic.com/) under MIT Licnse.');
+  list.add('Icons from Iconic (https://useiconic.com/) under MIT License.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
   list.Add('');
   list.Add('Configuration: ');

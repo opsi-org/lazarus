@@ -81,6 +81,14 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.1.7-1) stable; urgency=low
+
+   * allow build radio buttons on service data in configuration
+   * typos
+   * new rsCreateWithUserProductAdvice
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  30 Sep 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.6-1) stable; urgency=low
 
    * no uninstall_before_install prop on structured channel
