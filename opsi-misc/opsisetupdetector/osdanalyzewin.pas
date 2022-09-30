@@ -642,6 +642,44 @@ var
   ArchitecturesAllowed: string = '';
   ArchitecturesInstallIn64BitMode: string = '';
 
+  function translateInnoConstants(myline: string; arch: string): string;
+  var
+    innoToOpsi: TStringList;
+    i: integer;
+  begin
+    // arch has to be '32' or '64'
+    innoToOpsi := TStringList.Create;
+    // https://jrsoftware.org/ishelp/index.php?topic=consts
+    innoToOpsi.Add('{cf}=%ProgramFiles' + arch + 'Dir%\Common Files');
+    innoToOpsi.Add('{cf32}=%ProgramFiles32Dir%\Common Files');
+    innoToOpsi.Add('{cf64}=%ProgramFiles6Dir%\Common Files');
+    innoToOpsi.Add('{pf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{pf32}=%ProgramFiles32Dir%');
+    innoToOpsi.Add('{pf64}=%ProgramFiles64Dir%');
+    innoToOpsi.Add('{commoncf}=%ProgramFiles' + arch + 'Dir%\Common Files');
+    innoToOpsi.Add('{commoncf32}=%ProgramFiles32Dir%\Common Files');
+    innoToOpsi.Add('{commoncf64}=%ProgramFiles64Dir%\Common Files');
+    innoToOpsi.Add('{commonpf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{commonpf32}=%ProgramFiles32Dir%');
+    innoToOpsi.Add('{commonpf64}=%ProgramFiles64Dir%');
+    innoToOpsi.Add('{autopf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{code:DefDirRoot}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{code:installDir}=%ProgramFiles' + arch + 'Dir%\<unknown>');
+    innoToOpsi.Add('{win}=%Systemroot%');
+    innoToOpsi.Add('{sys}=%System%');
+    innoToOpsi.Add('{sysnative}=%System%');
+    innoToOpsi.Add('{syswow64}=%System%');
+    innoToOpsi.Add('{sd}=%Systemdrive%');
+
+    for i := 0 to innoToOpsi.Count - 1 do
+    begin
+      myline := StringReplace(myline, innoToOpsi.Names[i], innoToOpsi.ValueFromIndex[i],
+        [rfIgnoreCase]);
+    end;
+    Result := myline;
+    innoToOpsi.Free;
+  end;
+
 begin
   Mywrite('Analyzing Inno-Setup:');
   AppName := '';
@@ -710,6 +748,7 @@ begin
       while (not EOF(fISS)) and (Length(issLine) > 0) and (issLine[1] <> '[') do
       begin
         LogDatei.log(issLine, LLDebug);
+
         if (0 < pos('appname=', lowercase(issLine))) then
           AppName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('appversion=', lowercase(issLine))) then
@@ -753,6 +792,8 @@ begin
       if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
+        DefaultDirName := translateInnoConstants(DefaultDirName, '64');
+        (*
         if pos('{pf}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
@@ -778,9 +819,12 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
             '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
+        *)
       end
       else
       begin
+        DefaultDirName := translateInnoConstants(DefaultDirName, '32');
+         (*
         if pos('{pf}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
@@ -806,9 +850,12 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
             '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
+        *)
       end;
+      (*
       DefaultDirName := StringReplace(DefaultDirName, '{sd}',
         '%Systemdrive%', [rfReplaceAll, rfIgnoreCase]);
+        *)
       mysetup.installDirectory := DefaultDirName;
       aktProduct.productdata.comment := AppVerName;
       with mysetup do
@@ -899,7 +946,7 @@ begin
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
           if showgui then
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
@@ -979,7 +1026,7 @@ begin
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
           if showgui then
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
@@ -1122,7 +1169,7 @@ begin
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
           if showgui then
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
