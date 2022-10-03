@@ -87,6 +87,7 @@ opsi-setup-detector (4.2.1.7-1) stable; urgency=low
    * typos
    * new rsCreateWithUserProductAdvice
    * more (and better) inno constant translations to opsi constants
+   * template fixes
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  30 Sep 2022 : 15:00:00 +0200
 
