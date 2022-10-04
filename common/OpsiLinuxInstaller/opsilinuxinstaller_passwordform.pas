@@ -98,15 +98,14 @@ begin
   Result := True;
   {$IFNDEF DARWIN}
   TestCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-  TestCommand.Run('mkdir /root/testDir', Output);
-  if (Pos('Error', Output) >= 0) and (Output <> '') then
+  if TestCommand.Run('mkdir /root/testDir', Output) then
   begin
-    ShowMessage(rsWrongPassword);
-    Result := False;
+    TestCommand.Run('rm -rf /root/testDir', Output);
   end
   else
   begin
-    TestCommand.Run('rm -rf /root/testDir', Output);
+    ShowMessage(rsWrongPassword);
+    Result := False;
   end;
   FreeAndNil(TestCommand);
   {$ENDIF}
