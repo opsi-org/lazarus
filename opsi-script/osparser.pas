@@ -21949,12 +21949,16 @@ begin
     (listOfStringLists.IndexOf(lowercase(VariableName)) >= 0)) then
   begin
     Result := True;
-    //reportError(Sektion, linecounter, VariableName, 'name is already in use');
+    if testSyntax then
+      reportError(Sektion, linecounter, VariableName, 'name is already in use')
+    else
+    begin
     LogDatei.log('Syntax Error: Double variable definition. Please correct this error as soon as possible '
       + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
       Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
       + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
     Inc(FNumberOfErrors);
+    end;
   end;
 end;
 
@@ -24491,7 +24495,10 @@ begin
                     syntaxCheck := True
                   else
                   begin
-                    //reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError);
+                    if testSyntax then
+                      reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError)
+                    else
+                    begin
                     LogDatei.log(
                       'Invalid Syntax in Comment. Please correct this error as soon as possible '
                       +
@@ -24500,6 +24507,7 @@ begin
                       IntToStr(Sektion.StartLineNo + linecounter) +
                       '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
                     Inc(FNumberOfErrors);
+                    end;
                   end;
                 end;
 
@@ -26171,7 +26179,6 @@ begin
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
-                ;
               end;
 
               tsDefineStringList:
