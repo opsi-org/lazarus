@@ -469,6 +469,7 @@ type
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
+    procedure TIEditProdIDExit(Sender: TObject);
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
     procedure TIEditProdVersion3Change(Sender: TObject);
     procedure TIEditProdVersion3Exit(Sender: TObject);
@@ -669,8 +670,10 @@ resourcestring
     'Could not connect to the opsi-web-service. Check URL, user and password';
   rsCreateWithUserProductAdvice =
     'Use Property "Debug = true" to disable ' + 'mouse and keyboard blocking.' +
-    LineEnding + 'If mouse and keyboard are accidentally blocked after the installation is finished,'
-    + LineEnding + 'use action request "update" to enable mouse and keyboard again.';
+    LineEnding +
+    'If mouse and keyboard are accidentally blocked after the installation is finished,'
+    +
+    LineEnding + 'use action request "update" to enable mouse and keyboard again.';
   // Hints
   rsTemlateChannelHint =
     'Choose what kind of templates should be used. If templates are not found, is default the fallback.';
@@ -2465,8 +2468,8 @@ begin
       exists := properties.propExists(FNewPropDlg.EditPropName.Text);
       if exists then
         MessageDlg(rsPropEditErrorHead,
-          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text + ' ' +
-          rsPropEditErrorDoubleMsgFinish,
+          rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +
+          ' ' + rsPropEditErrorDoubleMsgFinish,
           mtError, [mbOK], '')
       else
       begin
@@ -4303,6 +4306,14 @@ begin
 
 end;
 
+procedure TResultform1.TIEditProdIDExit(Sender: TObject);
+begin
+  {$IFDEF DARWIN}
+  // lower case and replace special chars by _
+  TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
+  {$ENDIF DARWIN}
+end;
+
 procedure TResultform1.TIEditProdIDSizeConstraintsChange(Sender: TObject);
 begin
 
@@ -4347,12 +4358,15 @@ begin
   if Sender.ClassType = TTIEdit then
     if TTIEdit(Sender).Name = 'TIEditProdID' then
     begin
+      {$IFNDEF DARWIN}
+      // seems not to work at macOS: we get a last-to-first sequence of chars
       aktCaretPos := TTIEdit(Sender).CaretPos;
       col := aktCaretPos.X;
       // lower case and replace special chars by _
       TTIEdit(Sender).Caption := cleanOpsiId(TTIEdit(Sender).Caption);
       // restore the caret position
       TTIEdit(Sender).SelStart := col;
+      {$ENDIF DARWIN}
     end;
   TControl(Sender).EditingDone;
 end;

@@ -1042,8 +1042,7 @@ begin
     *)
 
   propexists := aktProduct.properties.propExists('DesktopIcon');
-  if (aktProduct.productdata.desktopicon) and
-    not propexists then
+  if (aktProduct.productdata.desktopicon) and not propexists then
   begin
     myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
@@ -1915,7 +1914,7 @@ begin
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
       PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     {$ENDIF WINDOWS}
-    {$IFDEF UNIX}
+    {$IFDEF LINUX}
     defaultIconFullFileName :=
       '/usr/share/opsi-setup-detector' + PathDelim + 'template-files' +
       PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
@@ -1924,14 +1923,19 @@ begin
       defaultIconFullFileName :=
         ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
         PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
-    {$ENDIF UNIX}
+    {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+    // the first path is in the development environment
+    defaultIconFullFileName := ExtractFileDir(Application.ExeName) +
+      PathDelim + 'template-files' + PathDelim + 'default' + PathDelim +
+      'images' + PathDelim + 'template.png';
+    if not DirectoryExists(defaultIconFullFileName) then
+      defaultIconFullFileName :=
+        ExtractFileDir(Application.ExeName) + PathDelim + '../Resources/template-files' +
+        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+  {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;
-    (*
-    productImageFullFileName :=
-      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
-      PathDelim + 'template.png';
-    *)
     targetOSset := [];
 
     useCustomDir := False;

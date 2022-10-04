@@ -238,7 +238,6 @@ begin
   // the first path is in the development environment
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
-    //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
     templatePath := ExtractFileDir(Application.ExeName) + PathDelim +
       '../Resources/template-files';
   {$ENDIF DARWIN}
@@ -648,7 +647,6 @@ begin
   // the first path is in the development environment
   templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
   if not DirectoryExists(templatePath) then
-    //templatePath := '/usr/local/share/opsi-setup-detector/template-files';
     templatePath := ExtractFileDir(Application.ExeName) + PathDelim +
       '../Resources/template-files';
   {$ENDIF DARWIN}
@@ -1718,15 +1716,18 @@ begin
   resultForm1.PanelProcess.Visible := False;
 end;
 
+
 procedure callServiceOrPackageBuilder;
 var
   callOpB: boolean = False;
 begin
   if startOpsiServiceConnection then
   begin
-    if CompareDotSeparatedNumbers(osdform.opsiserviceversion, '<', '4.2.0.287') then
+    if CompareDotSeparatedNumbers(osdform.opsiserviceversion, '<', '4.2.0.311') then
       callOpB := true;
-  end;
+  end
+  else callOpB := true;
+
   if callOpB then callOpsiPackageBuilder
   else
     buildWithOpsiService;
