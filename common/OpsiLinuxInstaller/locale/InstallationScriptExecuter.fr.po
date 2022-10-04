@@ -11,7 +11,7 @@ msgstr "a échoué"
 
 #: opsilinuxinstaller_installationscriptexecuter.rsinstall
 msgid "Installing "
-msgstr "En cours d'installation"
+msgstr "En cours d'installation "
 
 #: opsilinuxinstaller_installationscriptexecuter.rsinstallation
 msgid "Installation "
