@@ -501,8 +501,8 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    if aktproduct.productdata.productversion = '' then
-      aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+    //if aktproduct.productdata.productversion = '' then
+    aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
   {$ENDIF WINDOWS}
@@ -567,8 +567,8 @@ begin
       end;
 
     end;
-    if aktproduct.productdata.productversion = '' then
-      aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+    //if aktproduct.productdata.productversion = '' then
+    aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
   {$ENDIF LINUX}
@@ -579,6 +579,8 @@ begin
       '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;
   end;
+  (*
+  Now part of the delincmsi templates
   mysetup.uninstallCheck.Clear;
   mysetup.uninstallCheck.Add('set $UninstallList$ = addtolist($UninstallList$,"' +
     mysetup.SoftwareVersion + '=' + mysetup.msiId + '")');
@@ -601,6 +603,7 @@ begin
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('	set $ProdVersion$ = $MsiVersion$');
   mysetup.uninstallCheck.Add('endif');
+  *)
 
   mysetup.uninstallCommandLine :=
     //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
