@@ -5,6 +5,7 @@ mac getIpByName liefert name von IPnum
 opsi-script (4.12.7.0) unreleased; urgency=medium
 
   * [fix] osparser: testsyntax, retrieveSection: use SearchForSectionLines
+  * [fix] osparser: fix in OpsiServiceCall section (#4790, !691, a.schmitz)
 
 -- j.werner <j.werner@uib.de> 21 September 2022
 
