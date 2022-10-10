@@ -6574,7 +6574,7 @@ var
   const Lines: TStrings);
   begin
     line := trim(Lines[lineno - 1]);
-    while (lineno <= Lines.Count) and (line = '') or (line[1] = LineIsCommentChar) do
+    while (lineno <= Lines.Count) and ((line = '') or (line[1] = LineIsCommentChar)) do
     begin
       Inc(lineno);
       if lineno <= Lines.Count then
@@ -7270,7 +7270,7 @@ var
   const Lines: TStrings);
   begin
     line := trim(Lines[lineno - 1]);
-    while (lineno <= Lines.Count) and (line = '') or (line[1] = LineIsCommentChar) do
+    while (lineno <= Lines.Count) and ((line = '') or (line[1] = LineIsCommentChar)) do
     begin
       Inc(lineno);
       if lineno <= Lines.Count then
