@@ -166,10 +166,10 @@ begin
   FInstallRunCommand.Run(FPackageManagementShellCommand + 'install wget', Output);
   FInstallRunCommand.Run('wget -A opsi-script_*.tar.gz -r -l 1 ' +
     'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/testing/xUbuntu_22.04/'
-    + ' -nd -P ../', Output);
-  FInstallRunCommand.Run('rm ../robots.*', Output);
-  FInstallRunCommand.Run('tar -xvf ../opsi-script_*.tar.gz', Output);
-  FInstallRunCommand.Run('rm ../opsi-script_*.tar.gz', Output);
+    + ' -nd', Output);
+  FInstallRunCommand.Run('rm robots.*', Output);
+  FInstallRunCommand.Run('tar -xvf opsi-script_*.tar.gz', Output);
+  FInstallRunCommand.Run('rm opsi-script_*.tar.gz', Output);
 end;
 
 procedure TInstallationScriptExecuter.ExecuteInstallationScript;
