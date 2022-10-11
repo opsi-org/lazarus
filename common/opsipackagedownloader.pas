@@ -7,7 +7,7 @@ newly created folder [BinaryDirectory]/../downloaded_[OpsiPackageId]_[PackageVer
 }
 
 {
-This unit is only tested under Linux so far!
+This unit is only for Linux so far!
 }
 
 {$mode ObjFPC}{$H+}
@@ -35,10 +35,10 @@ type
     procedure InstallDownloadPackage;
     procedure ReadDownloadedOpsiPackageVersion;
     procedure ReadDefaultOpsiPackageVersion;
+    procedure RemoveDownloadedOpsiPackage;
     procedure RemoveOldDownloadedOpsiPackageFolder;
     procedure InstallExtractionPackages;
     procedure CreateNewOpsiPackageFolderDir;
-    procedure MoveOpsiPackageToCurrentDir;
     procedure ExtractCpioFile(fileName: string);
     procedure ExtractCpioFilesFromOpsiPackage;
     procedure CheckOutputForError;
@@ -49,14 +49,12 @@ type
   public
     Output: string;
   const
-    //DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     constructor Create(OpsiPackageId: string; DownloadDir: string;
       OpsiPackageDownloadCommand: TRunCommandElevated;
       PackageManagementShellCommand: string);
       overload;
     procedure DownloadOpsiPackageFromUib;
     function AreOpsiPackageVersionsEqual: boolean;
-    procedure RemoveDownloadedOpsiPackageFolder;
     procedure LogDownloadResult;
 
     property DownloadResult: boolean read FDownloadResult;
@@ -139,20 +137,20 @@ procedure TOpsiPackageDownloader.DownloadOpsiPackageFromUib;
 begin
   InstallDownloadPackage;
   RunShellCommandWithoutSpecialRights('wget -A ' + FOpsiPackageId +
-    '_*.opsi -r -l 1 https://' + FDownloadDir + ' -P ../', Output);
+    '_*.opsi -r -l 1 https://' + FDownloadDir + ' -nd', Output);
 end;
 
 
 procedure TOpsiPackageDownloader.ReadDownloadedOpsiPackageVersion;
 begin
-  if FindFirst('../' + FDownloadDir + FOpsiPackageId + '_*.opsi',
-    faAnyFile and faDirectory, FOpsiPackageSearch) = 0 then
+  if FindFirst(FOpsiPackageId + '_*.opsi', faAnyFile and faDirectory,
+    FOpsiPackageSearch) = 0 then
   begin
     FDownloadedOpsiPackageVersion := FOpsiPackageSearch.Name;
     Delete(FDownloadedOpsiPackageVersion, 1, Pos('_', FDownloadedOpsiPackageVersion));
     Delete(FDownloadedOpsiPackageVersion, Pos('.opsi', FDownloadedOpsiPackageVersion),
-      FDownloadedOpsiPackageVersion.Length - Pos('.opsi',
-      FDownloadedOpsiPackageVersion) + 1);
+      FDownloadedOpsiPackageVersion.Length -
+      Pos('.opsi', FDownloadedOpsiPackageVersion) + 1);
     FDownloadedOpsiPackageFolder :=
       'downloaded_' + FOpsiPackageId + '_' + FDownloadedOpsiPackageVersion;
   end
@@ -179,11 +177,10 @@ begin
     Result := True;
 end;
 
-procedure TOpsiPackageDownloader.RemoveDownloadedOpsiPackageFolder;
+procedure TOpsiPackageDownloader.RemoveDownloadedOpsiPackage;
 begin
-  if FindFirst('../download.uib.de', faAnyFile and faDirectory,
-    FOpsiPackageSearch) = 0 then
-    RunShellCommandWithoutSpecialRights('rm -rf ../download.uib.de', Output);
+  RunShellCommandWithoutSpecialRights('rm ' + FOpsiPackageId + '_' +
+    FDownloadedOpsiPackageVersion, Output);
 end;
 
 procedure TOpsiPackageDownloader.RemoveOldDownloadedOpsiPackageFolder;
@@ -202,13 +199,6 @@ begin
     '/CLIENT_DATA', Output);
   RunShellCommandWithoutSpecialRights('mkdir ../' + FDownloadedOpsiPackageFolder +
     '/OPSI', Output);
-end;
-
-procedure TOpsiPackageDownloader.MoveOpsiPackageToCurrentDir;
-begin
-  RunShellCommandWithoutSpecialRights('mv ../' + FDownloadDir +
-    FOpsiPackageId + '_*.opsi ./', Output);
-  RemoveDownloadedOpsiPackageFolder;
 end;
 
 procedure TOpsiPackageDownloader.ExtractCpioFile(FileName: string);
@@ -273,7 +263,6 @@ procedure TOpsiPackageDownloader.ExtractOpsiPackage;
 begin
   RemoveOldDownloadedOpsiPackageFolder;
   CreateNewOpsiPackageFolderDir;
-  MoveOpsiPackageToCurrentDir;
   ExtractCpioFilesFromOpsiPackage;
   MoveCpioFilesToOpsiPackageFolder;
   ExtractFoldersFromCpioFiles;
@@ -315,7 +304,7 @@ begin
     LogDatei.log('Downloaded and default ' + OpsiPackageId +
       ' are equal: Remove downloaded ' + OpsiPackageId + ' again',
       LLnotice);
-    OpsiPackageDownloader.RemoveDownloadedOpsiPackageFolder;
+    OpsiPackageDownloader.RemoveDownloadedOpsiPackage;
     Result := False;
   end
   else
