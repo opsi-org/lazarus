@@ -180,7 +180,7 @@ end;
 procedure TOpsiPackageDownloader.RemoveDownloadedOpsiPackage;
 begin
   RunShellCommandWithoutSpecialRights('rm ' + FOpsiPackageId + '_' +
-    FDownloadedOpsiPackageVersion, Output);
+    FDownloadedOpsiPackageVersion + '.opsi', Output);
 end;
 
 procedure TOpsiPackageDownloader.RemoveOldDownloadedOpsiPackageFolder;
