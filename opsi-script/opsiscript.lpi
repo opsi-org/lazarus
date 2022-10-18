@@ -40,7 +40,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\fpTOML\sources;..\external_libraries\HashLib4Pascal;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Include;..\external_libraries\HashLib4Pascal\HashLib\src\Packages;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -73,6 +73,15 @@
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
             <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG -dSYNAPSE"/>
+            <OtherDefines Count="7">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="OPSISCRIPT"/>
+              <Define2 Value="GUI"/>
+              <Define3 Value="OSDEBUG"/>
+              <Define4 Value="SYNAPSE"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -227,10 +236,10 @@
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="OPSISCRIPT"/>
               <Define2 Value="GUI"/>
-              <Define3 Value="OSLOG"/>
+              <Define3 Value="OSDEBUG"/>
               <Define4 Value="SYNAPSE"/>
-              <Define5 Value="SSLPATH"/>
-              <Define6 Value="OSDEBUG"/>
+              <Define5 Value="APP_BUNDLE"/>
+              <Define6 Value="SSLPATH"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -569,7 +578,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Include;..\external_libraries\HashLib4Pascal\HashLib\src\Packages;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
             <UnitOutputDirectory Value="compiler_out\units\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -1021,7 +1030,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\fpTOML\sources;..\external_libraries\synapse;..\external_libraries\HashLib4Pascal\HashLib\src\Base;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces;..\external_libraries\HashLib4Pascal\HashLib\src\Utils;..\external_libraries\HashLib4Pascal\HashLib\src\KDF;..\external_libraries\HashLib4Pascal\HashLib\src\Nullable;..\external_libraries\HashLib4Pascal\HashLib\src\NullDigest;..\external_libraries\HashLib4Pascal\HashLib\src\Checksum;..\external_libraries\HashLib4Pascal\HashLib\src\Hash32;..\external_libraries\HashLib4Pascal\HashLib\src\Hash64;..\external_libraries\HashLib4Pascal\HashLib\src\Hash128;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2BParams;..\external_libraries\HashLib4Pascal\HashLib\src\Interfaces\IBlake2SParams;..\external_libraries\HashLib4Pascal\HashLib\src\Crypto\Blake2SParams"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -1061,10 +1070,10 @@
         <Define0 Value="OPSIWINST"/>
         <Define1 Value="OPSISCRIPT"/>
         <Define2 Value="GUI"/>
-        <Define3 Value="OSLOG"/>
+        <Define3 Value="OSDEBUG"/>
         <Define4 Value="SYNAPSE"/>
-        <Define5 Value="SSLPATH"/>
-        <Define6 Value="OSDEBUG"/>
+        <Define5 Value="APP_BUNDLE"/>
+        <Define6 Value="SSLPATH"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
