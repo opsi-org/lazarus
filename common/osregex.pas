@@ -341,8 +341,8 @@ begin
   Result := TStringList.Create;
   for linecounter := 0 to inputlist.Count - 1 do
   begin
-    currentline := trim(inputlist.Strings[linecounter]);
-    if currentline <> '' then
+    currentline := inputlist.Strings[linecounter];
+    if trim(currentline) <> '' then
       currentline := ReplaceRegExpr(expr, currentline, replacetext, True);
     Result.Add(currentline);
   end;
