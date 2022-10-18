@@ -26454,7 +26454,8 @@ begin
               end
               else
                 ActionResult :=
-                  reportError(Sektion, linecounter, Expressionstr, 'undefined');
+                  reportError(Sektion, linecounter, Expressionstr, 'Undefined statement! Please check the spelling of your statement.'
+                  + ' If you try to call a secondary section, check also that the section kind at the beginning matches one of the existing sections in the opsi-script manual.');
 
             end (* case *);
           end;
