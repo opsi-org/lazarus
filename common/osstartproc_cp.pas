@@ -207,7 +207,7 @@ begin
       //  IntToStr (FProcessEntry32.th32ProcessID) + #9 + 'parent process ' + #9 +
       //  IntToStr (FProcessEntry32.th32ParentProcessID), LevelComplete);
     end;
-    ContinueLoop := Found and Process32Next(FSnapshotHandle, FProcessEntry32);
+    ContinueLoop := (not Found) and Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
   CloseHandle(FSnapshotHandle);
 
@@ -774,9 +774,8 @@ begin
                   LLinfo);
                 //running := False;
               end;
-              ProcessMess
+              ProcessMess;
               {$ENDIF WINDOWS}
-              ;
             end;
           end;
 
