@@ -207,7 +207,7 @@ begin
       //  IntToStr (FProcessEntry32.th32ProcessID) + #9 + 'parent process ' + #9 +
       //  IntToStr (FProcessEntry32.th32ParentProcessID), LevelComplete);
     end;
-    ContinueLoop := (not Found) and Process32Next(FSnapshotHandle, FProcessEntry32);
+    ContinueLoop := Found and Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
   CloseHandle(FSnapshotHandle);
 
@@ -762,7 +762,7 @@ begin
               DecodeTime((nowtime - starttime), hhword, mmword, seconds, msword);
               if seconds > seccounter then
               begin
-                logdatei.log('Waiting ' + FpcProcess.Executable + ' (ident: '+ ident +') for ending at ' +
+                logdatei.log('Waiting for ending at ' +
                   DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode) +
                   ' output bytes read: ' + IntToStr(totalbytes), LLDebug2);
                 seccounter := seconds;
@@ -796,7 +796,6 @@ begin
             if Buffer <> '' then
               output.Add(Buffer);
           end;
-        end;
           {$IFDEF WINDOWS}
           ProcessMess;
           {$ENDIF WINDOWS}
@@ -805,6 +804,16 @@ begin
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
         end;
+        (*
+        {$IFDEF WINDOWS}
+        ProcessMess;
+        {$ENDIF WINDOWS}
+
+        exitCode := FpcProcess.ExitCode;
+        Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
+          CmdLinePasStr + '"';
+        *)
+      end;
     except
       on e: Exception do
       begin
