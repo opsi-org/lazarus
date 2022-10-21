@@ -9803,14 +9803,14 @@ begin
               Skip(':', Remaining, Remaining, errorInfo);
 
               if LowerCase(Expressionstr) = 'name' then
-                link_name := GetLinkFeature(Remaining, 'Link_name', False)
+                link_name := GetLinkFeature(Remaining, 'link_name', False)
               else if LowerCase(Expressionstr) = 'target' then
                 link_target := GetLinkFeature(Remaining, 'link_target', True)
               else if LowerCase(Expressionstr) = 'parameters' then
-                link_paramstr := GetLinkFeature(Remaining, 'link_paramstr', True)
+                link_paramstr := GetLinkFeature(Remaining, 'link_parameters', True)
               else if (LowerCase(Expressionstr) = 'working_dir') or
                 (LowerCase(Expressionstr) = 'working_directory') then
-                link_working_dir := GetLinkFeature(Remaining, 'link_working_dir', False)
+                link_working_dir := GetLinkFeature(Remaining, 'link_working_directory', False)
               else if LowerCase(Expressionstr) = 'icon_file' then
                 link_icon_file := GetLinkFeature(Remaining, 'link_icon_file', False)
               else if LowerCase(Expressionstr) = 'icon_index' then
