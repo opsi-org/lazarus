@@ -94,15 +94,7 @@ TuibLinuxDesktopFiles = class (TObject)
   public
     constructor Create;
     destructor Destroy; override;
-    (*
-    function GetSpecialFolderPath(const desktop: integer;
-                                  const Systemfolder : Integer) : String;
-//    function ShowShellFolderWindow : Boolean;
-    function OpenShellFolderPath (const Systemfolder: Integer; const foldername, iconPath : String) : Boolean;
-    function MakeShellLink
-      (const description, thePath, commandline_arguments, working_directory,
-      iconPath: string; const icon_index: integer): boolean;
-      *)
+
     function OpenShellFolderPath (const Systemfolder: Integer; const subfoldername): Boolean;
     function Tell_SystemFolder (const Systemfolder : Integer) : String;
     function MakeShellLink
@@ -319,8 +311,10 @@ begin
   myLinkname := DelChars(myLinkname,'/'); // delete slashes, filename must not contain slashes
   myLinkname := DelSpace(myLinkname);// delete whitespaces, filename must not contain whitespaces
   myLinkname := trim(myLinkname);
-  if dirpath = '' then mydirpath := '/tmp'
-  else mydirpath := dirpath;
+  if dirpath = '' then
+    mydirpath := '/tmp'
+  else
+    mydirpath := dirpath;
   Filename := mydirpath+'/'+myLinkname;
   if FileExists(Filename) then LinkExisted := true
   else LinkExisted := false;
@@ -417,8 +411,10 @@ begin
   createdir := '';
   if FolderOpened then
   begin
-    if MySystemfolder = CSIDL_COMMON_PROGRAMS then createdir := '/tmp'
-    else createdir := GetSpecialFolderPath(MySystemfolder);
+    if MySystemfolder = CSIDL_COMMON_PROGRAMS then
+      createdir := '/tmp'
+    else
+      createdir := GetSpecialFolderPath(MySystemfolder);
     LogDatei.log ('Given base directory is: '+Tell_SystemFolder(MySystemfolder), LLNotice);
   end
   else
@@ -432,7 +428,7 @@ begin
   if FileExists(iconPath) then
   begin
     if installIcon(iconpath) then
-      myicon :=  ChangeFileExt(ExtractFileName(iconPath),'');
+      myicon := ChangeFileExt(ExtractFileName(iconPath),'');
   end;
   dfilename := MakeDesktopFile(createdir,'', typeOf, categories, name, genericName,
                      thePath, commandline_arguments, working_directory, myicon, false, false);
@@ -592,11 +588,9 @@ end;
 function TuibLinuxDesktopFiles.DeleteShellFolder
    (const SystemFolder: Integer; const foldername: String)
    : Boolean;
-
-  var
+var
   newDir, FolderPath : String;
   runningDesktop : integer;
-
 begin
   result := false;
   (*

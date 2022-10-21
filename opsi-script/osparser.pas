@@ -9654,12 +9654,11 @@ begin
 
         if LowerCase(Expressionstr) = 'set_basefolder' then
         begin
-
           syntaxcheck := True;
           if (length(Remaining) = 0) then
           begin
             syntaxCheck := False;
-            UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1], 'folder name  expected');
+            UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1], 'folder name expected');
           end
           else
           begin
@@ -9771,7 +9770,6 @@ begin
             begin
               if syntaxcheck then
                 ShellLinks.DeleteShellLink(s);
-
             end
             else
               LogDatei.log('No folder selected, therefore no deletion of "' +
