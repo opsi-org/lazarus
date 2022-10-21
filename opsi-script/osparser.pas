@@ -9617,7 +9617,6 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     link_shortcut: word = 0;
     link_showwindow: integer = 0;
 
-    stack: TStringList;
     Expressionstr: string = '';
     {$IFDEF WINDOWS}
     ShellLinks: TuibShellLinks;
@@ -9636,8 +9635,6 @@ begin
     {$IFDEF UNIX}
     ShellLinks:= TuibLinuxDesktopFiles.Create;
     {$ENDIF LINUX}
-
-    stack := TStringList.Create;
 
     csidl := 0;
     csidl_set := False;
