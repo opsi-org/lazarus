@@ -465,8 +465,8 @@ begin
   else if MySystemfolder = CSIDL_COMMON_PROGRAMS then
     if not InstallDesktopFile(dfilename) then  LogDatei.log ('Could not uninstall desktop file', LLError)
     else result := true;
-  // try hard
-  dfilename := '/usr/share/applications/'+linkname+'.desktop';
+
+  dfilename := GetSpecialFolderPath(MySystemfolder) + '/' + linkname + '.desktop';
   LogDatei.log ('Try to delet desktop file: '+dfilename, LLDebug);
   if not sysutils.DeleteFile(dfilename) then
   begin
