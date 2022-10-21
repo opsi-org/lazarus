@@ -202,9 +202,6 @@ type
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
-
-
-
   TStatementNames = array [TStatement] of string [50];
   TPStatementNames = ^TStatementNames;
 
@@ -233,8 +230,6 @@ type
   TShutdownRequest = (tsrNoShutdown, tsrRegisterForShutdown);
 
   TScriptMode = (tsmMachine, tsmLogin);
-
-
 
 
 const
@@ -288,7 +283,6 @@ type
 
 {$IFDEF FPC}
 {$ELSE}
-
   TuibXMLNodeDescription = class(TObject)
   private
     Fxmldoc: TuibXMLDocument;
@@ -309,10 +303,7 @@ type
     procedure evaluateAttribute;
     procedure evaluateText;
   end;
-
 {$ENDIF}
-
-
 
 
   { TuibInstScript }
@@ -1804,9 +1795,7 @@ begin
   end;
 {$ENDIF}
 end;
-
 {$ELSE}
-
 function GetMACAddress2: string;
 var
   NCB: PNCB;
@@ -1870,7 +1859,6 @@ begin
   FreeMem(Lenum);
   GetMacAddress2 := _SystemID;
 end;
-
 {$ENDIF}
 
 
@@ -9588,6 +9576,20 @@ begin
 end;
 
 
+function GetLinkFeature(var ScriptLineRemaining: string; FeatureNameForLogging: string;
+  StringInStringAllowed: boolean): string;
+var
+  UnusedErrorInfo: string = '';
+begin
+  Result := '';
+  if not getString(ScriptLineRemaining, Result, ScriptLineRemaining, UnusedErrorInfo, StringInStringAllowed)
+  then
+  begin
+    Result := ScriptLineRemaining;
+    ScriptLineRemaining := '';
+    end;
+  LogDatei.log_prog(FeatureNameForLogging + ': ' + Result, LLDebug);
+end;
 
 procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
   var
@@ -9605,8 +9607,8 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     deletefoldername: string = '';
     s: string = '';
 
-    in_link_features: boolean;
-    regular_end: boolean;
+    in_link_features: boolean = True;
+    regular_end: boolean = False;
     link_name: string = '';
     link_target: string = '';
     link_paramstr: string = '';
@@ -9791,16 +9793,6 @@ begin
             syntaxCheck := False;
           end;
           Inc(i);
-          in_link_features := True;
-          regular_end := False;
-          link_name := '';
-          link_target := '';
-          link_paramstr := '';
-          link_working_dir := '';
-          link_icon_file := '';
-          link_icon_index := 0;
-          link_shortcut := 0;
-          link_showwindow := 0;
 
           while (i <= Sektion.Count) and in_link_features do
           begin
@@ -9813,61 +9805,16 @@ begin
               Skip(':', Remaining, Remaining, errorInfo);
 
               if LowerCase(Expressionstr) = 'name' then
-              begin
-                if not getString(Remaining, link_name, Remaining, errorinfo, False)
-                then
-                begin
-                  link_name := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('Link_name: ' + link_name, LLDebug);
-              end
-
+                link_name := GetLinkFeature(Remaining, 'Link_name', False)
               else if LowerCase(Expressionstr) = 'target' then
-              begin
-                if not getString(Remaining, link_target, Remaining, errorinfo, True)
-                then
-                begin
-                  link_target := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_target: ' + link_target, LLDebug);
-              end
-
+                link_target := GetLinkFeature(Remaining, 'link_target', True)
               else if LowerCase(Expressionstr) = 'parameters' then
-              begin
-                if not getString(Remaining, link_paramstr, Remaining, errorinfo, True)
-                then
-                begin
-                  link_paramstr := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_paramstr: ' + link_paramstr, LLDebug);
-              end
-
+                link_paramstr := GetLinkFeature(Remaining, 'link_paramstr', True)
               else if (LowerCase(Expressionstr) = 'working_dir') or
                 (LowerCase(Expressionstr) = 'working_directory') then
-              begin
-                if not getString(Remaining, link_working_dir, Remaining,
-                  errorinfo, False) then
-                begin
-                  link_working_dir := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_working_dir: ' + link_working_dir, LLDebug);
-              end
-
+                link_working_dir := GetLinkFeature(Remaining, 'link_working_dir', False)
               else if LowerCase(Expressionstr) = 'icon_file' then
-              begin
-                if not getString(Remaining, link_icon_file, Remaining, errorinfo, False)
-                then
-                begin
-                  link_icon_file := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_icon_file: ' + link_icon_file, LLDebug);
-              end
-
+                link_icon_file := GetLinkFeature(Remaining, 'link_icon_file', False)
               else if LowerCase(Expressionstr) = 'icon_index' then
               begin
                 if not getString(Remaining, s, Remaining, errorinfo, False)
@@ -9946,8 +9893,7 @@ begin
               begin
                 if not getString(Remaining, s, Remaining, errorinfo, False)
                 then
-                  s := Remaining;
-                link_categories := s;
+                  link_categories := Remaining;
                 {$IFDEF WIN32}
                 logdatei.log('Option link_categories is ignored at WIN32', LLWarning);
                 {$ENDIF WIN32}
