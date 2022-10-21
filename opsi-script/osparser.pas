@@ -576,7 +576,7 @@ type
     function doFileActions(const Sektion: TWorkSection;
       CopyParameter: string): TSectionResult;
 
-
+    procedure linkActionsMain(const Sektion: TWorkSection);
     function doLinkFolderActions(const Sektion: TWorkSection;
       common: boolean): TSectionResult;
 
@@ -9588,21 +9588,8 @@ begin
 end;
 
 
-function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
-  common: boolean): TSectionResult;
-var
-   {$IFDEF WINDOWS}
-  ShellLinks: TuibShellLinks;
-{$ENDIF WINDOWS}
-   {$IFDEF UNIX}
-  ShellLinks: TuibLinuxDesktopFiles;
-{$ENDIF LINUX}
-  stack: TStringList;
-  startindentlevel: integer;
-  Expressionstr: string = '';
-  ///remaining : String;
 
-  procedure linkActionsMain();
+procedure TuibInstScript.linkActionsMain(const Sektion: TWorkSection);
   var
     i: integer = 0;
     SyntaxCheck: boolean;
@@ -9630,7 +9617,21 @@ var
     link_shortcut: word = 0;
     link_showwindow: integer = 0;
 
-  begin
+    stack: TStringList;
+    Expressionstr: string = '';
+    {$IFDEF WINDOWS}
+    ShellLinks: TuibShellLinks;
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    ShellLinks: TuibLinuxDesktopFiles;
+    {$ENDIF LINUX}
+begin
+{$IFDEF WINDOWS}
+  ShellLinks:= TuibShellLinks.Create;
+{$ENDIF WINDOWS}
+{$IFDEF UNIX}
+  ShellLinks:= TuibLinuxDesktopFiles.Create;
+{$ENDIF LINUX}
 
     i := 1;
     if Sektion.Count = 0 then
@@ -10035,8 +10036,13 @@ var
       end;
 
     end;
-  end;
+    FreeAndNil(ShellLinks);
+end;
 
+function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
+  common: boolean): TSectionResult;
+var
+  startindentlevel: integer;
 begin
   Result := tsrPositive;
 
@@ -10046,7 +10052,7 @@ begin
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   startindentlevel := LogDatei.LogSIndentLevel;
 
-  begin  // doLinkFolder main
+  // doLinkFolder main
     {$IFDEF WIN32}
     //Install := TuibFileInstall.create;
     if runLoginScripts then
@@ -10054,9 +10060,7 @@ begin
       if Impersonate2User(usercontextDomain, usercontextUser, usercontextsid) then
       begin
         try
-          ShellLinks := TuibShellLinks.Create;
-          linkActionsMain;
-          ShellLinks.Free;
+          linkActionsMain(Sektion);
         finally
           RevertToSelf;
         end;
@@ -10067,20 +10071,14 @@ begin
     end
     else
     begin
-      ShellLinks := TuibShellLinks.Create;
-      linkActionsMain;
-      ShellLinks.Free;
+      linkActionsMain(Sektion);
     end;
     {$ENDIF WIN32}
     {$IFDEF UNIX}
     begin
-      ShellLinks := TuibLinuxDesktopFiles.Create;
-      linkActionsMain;
-      ShellLinks.Free;
+      linkActionsMain(Sektion);
     end;
     {$ENDIF LINUX}
-
-  end;  // eigentliche Verarbeitung
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
