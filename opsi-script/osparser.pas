@@ -10041,8 +10041,6 @@ end;
 
 function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
   common: boolean): TSectionResult;
-var
-  startindentlevel: integer;
 begin
   Result := tsrPositive;
 
@@ -10050,7 +10048,6 @@ begin
     exit;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  startindentlevel := LogDatei.LogSIndentLevel;
 
   // doLinkFolder main
     {$IFDEF WIN32}
