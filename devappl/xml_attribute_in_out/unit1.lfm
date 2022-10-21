@@ -1,0 +1,102 @@
+object Form1: TForm1
+  Left = 534
+  Height = 375
+  Top = 268
+  Width = 907
+  Caption = 'Form1'
+  ClientHeight = 375
+  ClientWidth = 907
+  DesignTimePPI = 91
+  OnCreate = FormCreate
+  LCLVersion = '2.2.4.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 47
+    Top = 0
+    Width = 907
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 47
+    ClientWidth = 907
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 24
+      Height = 28
+      Top = 8
+      Width = 71
+      Caption = 'open'
+      OnClick = BitBtn1Click
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 144
+      Height = 28
+      Top = 8
+      Width = 71
+      Caption = 'convert'
+      OnClick = BitBtn2Click
+      TabOrder = 1
+    end
+    object BitBtn3: TBitBtn
+      Left = 251
+      Height = 28
+      Top = 15
+      Width = 71
+      Caption = 'convert2'
+      OnClick = BitBtn3Click
+      TabOrder = 2
+    end
+  end
+  object PairSplitter1: TPairSplitter
+    Left = 0
+    Height = 328
+    Top = 47
+    Width = 907
+    Align = alClient
+    Position = 450
+    object PairSplitterSide1: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 328
+      Top = 0
+      Width = 450
+      ClientWidth = 450
+      ClientHeight = 328
+      object Memo1: TMemo
+        Left = 0
+        Height = 328
+        Top = 0
+        Width = 450
+        Align = alClient
+        Lines.Strings = (
+          'Memo1'
+        )
+        TabOrder = 0
+      end
+    end
+    object PairSplitterSide2: TPairSplitterSide
+      Cursor = crArrow
+      Left = 455
+      Height = 328
+      Top = 0
+      Width = 452
+      ClientWidth = 452
+      ClientHeight = 328
+      object Memo2: TMemo
+        Left = 0
+        Height = 328
+        Top = 0
+        Width = 452
+        Align = alClient
+        Lines.Strings = (
+          'Memo2'
+        )
+        TabOrder = 0
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 814
+    Top = 13
+  end
+end
