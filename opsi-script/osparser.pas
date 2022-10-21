@@ -576,7 +576,7 @@ type
     function doFileActions(const Sektion: TWorkSection;
       CopyParameter: string): TSectionResult;
 
-    procedure linkActionsMain(const Sektion: TWorkSection);
+
     function doLinkFolderActions(const Sektion: TWorkSection;
       common: boolean): TSectionResult;
 
@@ -9589,7 +9589,7 @@ end;
 
 
 
-procedure TuibInstScript.linkActionsMain(const Sektion: TWorkSection);
+procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
   var
     i: integer = 0;
     SyntaxCheck: boolean;
@@ -9661,7 +9661,7 @@ begin
           if (length(Remaining) = 0) then
           begin
             syntaxCheck := False;
-            reportError(Sektion, i, Sektion.strings[i - 1], 'folder name  expected');
+            UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1], 'folder name  expected');
           end
           else
           begin
@@ -9674,7 +9674,7 @@ begin
 
             if length(Remaining) > 0 then
             begin
-              reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+              UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             end;
 
             if not testSyntax then
@@ -9704,7 +9704,7 @@ begin
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
           end;
 
           if not testSyntax then
@@ -9763,7 +9763,7 @@ begin
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxcheck := False;
           end;
           if not testSyntax then
@@ -9791,7 +9791,7 @@ begin
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxCheck := False;
           end;
           Inc(i);
@@ -9977,21 +9977,18 @@ begin
 
               else
               begin
-                reportError(Sektion, i, Sektion.Strings[i - 1], 'unknown Option');
+                UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'unknown Option');
                 syntaxCheck := False;
               end;
-
 
               if in_link_features then
                 Inc(i);
             end;
           end;
 
-
-
           if not regular_end then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end_link missing');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end_link missing');
             syntaxCheck := False;
           end;
 
@@ -10030,7 +10027,7 @@ begin
         end
 
         else
-          reportError(Sektion, i, Expressionstr, 'is not a defined command');
+          UibInstScript.reportError(Sektion, i, Expressionstr, 'is not a defined command');
 
         Inc(i);
       end;
@@ -10057,7 +10054,7 @@ begin
       if Impersonate2User(usercontextDomain, usercontextUser, usercontextsid) then
       begin
         try
-          linkActionsMain(Sektion);
+          linkActionsMain(Sektion, self, testSyntax);
         finally
           RevertToSelf;
         end;
@@ -10068,12 +10065,12 @@ begin
     end
     else
     begin
-      linkActionsMain(Sektion);
+      linkActionsMain(Sektion, self, testSyntax);
     end;
     {$ENDIF WIN32}
     {$IFDEF UNIX}
     begin
-      linkActionsMain(Sektion);
+      linkActionsMain(Sektion, self, testSyntax);
     end;
     {$ENDIF LINUX}
 
