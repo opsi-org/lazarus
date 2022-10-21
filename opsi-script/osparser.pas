@@ -9626,16 +9626,16 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     ShellLinks: TuibLinuxDesktopFiles;
     {$ENDIF LINUX}
 begin
-{$IFDEF WINDOWS}
-  ShellLinks:= TuibShellLinks.Create;
-{$ENDIF WINDOWS}
-{$IFDEF UNIX}
-  ShellLinks:= TuibLinuxDesktopFiles.Create;
-{$ENDIF LINUX}
-
     i := 1;
     if Sektion.Count = 0 then
       exit;
+
+    {$IFDEF WINDOWS}
+    ShellLinks:= TuibShellLinks.Create;
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    ShellLinks:= TuibLinuxDesktopFiles.Create;
+    {$ENDIF LINUX}
 
     stack := TStringList.Create;
 
@@ -9652,7 +9652,6 @@ begin
       else
       begin
         GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
-
 
         if LowerCase(Expressionstr) = 'set_basefolder' then
         begin
@@ -9849,19 +9848,8 @@ begin
                 LogDatei.log_prog('link_paramstr: ' + link_paramstr, LLDebug);
               end
 
-              else if LowerCase(Expressionstr) = 'working_dir' then
-              begin
-                if not getString(Remaining, link_working_dir, Remaining,
-                  errorinfo, False) then
-                begin
-                  link_working_dir := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_working_dir: ' + link_working_dir, LLDebug);
-              end
-
-
-              else if LowerCase(Expressionstr) = 'working_directory' then
+              else if (LowerCase(Expressionstr) = 'working_dir') or
+                (LowerCase(Expressionstr) = 'working_directory') then
               begin
                 if not getString(Remaining, link_working_dir, Remaining,
                   errorinfo, False) then
@@ -9882,7 +9870,6 @@ begin
                 end;
                 LogDatei.log_prog('link_icon_file: ' + link_icon_file, LLDebug);
               end
-
 
               else if LowerCase(Expressionstr) = 'icon_index' then
               begin
@@ -9992,8 +9979,6 @@ begin
             syntaxCheck := False;
           end;
 
-          //InstallItem (Const CommandLine, ItemName, Workdir, IconPath, IconIndex : String);
-
           if not testSyntax then
           begin
           {$IFDEF WIN32}
@@ -10001,7 +9986,6 @@ begin
             begin
               if syntaxCheck then
               begin
-
                 if not folder_opened then
                 begin
                   if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
@@ -10009,23 +9993,19 @@ begin
                     folder_opened := True;
                 end;
 
-                if ShellLinks.MakeShellLink(link_name, link_target,
+                ShellLinks.MakeShellLink(link_name, link_target,
                   link_paramstr, link_working_dir, link_icon_file,
-                  link_icon_index, link_shortcut, link_showwindow) then
-                ;
-
+                  link_icon_index, link_shortcut, link_showwindow);
               end;
             end;
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-            if ShellLinks.MakeShellLink(link_name, link_target,
+            ShellLinks.MakeShellLink(link_name, link_target,
               link_paramstr, link_working_dir, link_icon_file,
-              link_categories, '', '') then
-            ;
+              link_categories, '', '');
           {$ENDIF UNIX}
           end;
         end
-
         else
           UibInstScript.reportError(Sektion, i, Expressionstr, 'is not a defined command');
 
