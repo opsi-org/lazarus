@@ -8,11 +8,11 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, PairSplitter,
   StdCtrls,
   oslog,
-  dom,
-  xmlread,
-  xmlwrite,
+  laz2_dom,
+  laz2_xmlread,
+  laz2_xmlwrite,
   osxmltdom,
-  osxml,
+  //osxml,
   osxmlsections,
   Buttons;
 
@@ -91,7 +91,7 @@ var
 begin
   list := TStringList.Create;
   mynode := TDOMNode.Create(nil);
-  myattributes := TDOMNamedNodeMap.Create(nil);
+  myattributes := TDOMNamedNodeMap.Create(nil,ATTRIBUTE_NODE);
   list.AddStrings(Memo1.Lines);
   if xml.createXmlDocFromStringlist(list) then
   begin

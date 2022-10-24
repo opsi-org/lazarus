@@ -18,10 +18,10 @@ interface
 uses
   SysUtils,
   Classes,
-  DOM,
-  XMLRead,
+  laz2_DOM,
+  laz2_XMLRead,
   xmlreader,
-  XMLWrite,
+  laz2_XMLWrite,
   //Dialogs,
   StrUtils,
   //ExtCtrls,
@@ -483,7 +483,9 @@ function TuibXMLDocument.isValidXML(xmlString: TStringList): boolean;
 var
   nodestream: TStringStream;
   Parser: TDOMParser;
-  Src: TXMLInputSource;
+  //Src: TXMLInputSource;
+  Src: LAZ2_XMLREAD.TXMLInputSource;
+  //osxmlsections.pas(498,23) Error: Incompatible type for arg no. 1: Got "XMLREADER.TXMLInputSource", expected "LAZ2_XMLREAD.TXMLInputSource"
   TheDoc: TXMLDocument;
 begin
   isValidXML := False;
@@ -492,9 +494,9 @@ begin
       Parser := TDOMParser.Create;
       nodestream := TStringStream.Create(stringlistWithoutBreaks(xmlString).Text);
       nodestream.Position := 0;
-      Src := TXMLInputSource.Create(nodestream);
+      Src := LAZ2_XMLREAD.TXMLInputSource.Create(nodestream);
       Parser.Options.Validate := True;
-      Parser.OnError := @ErrorHandler;
+      //Parser.OnError := @ErrorHandler;
       Parser.Parse(Src, TheDoc);
       isValidXML := True;
     except
