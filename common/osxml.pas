@@ -17,7 +17,11 @@ uses
   {$IFDEF OPSISCRIPT}
   oslog,
   {$ENDIF OPSISCRIPT}
-  Classes, SysUtils, DOM, osxmltdom, XMLRead, XMLWrite;
+  Classes, SysUtils,
+  laz2_DOM,
+  osxmltdom,
+  laz2_XMLRead,
+  laz2_XMLWrite;
 
 (*
 type
@@ -252,8 +256,8 @@ begin
   if createXmlDocFromStringlist(docstrlist) then
   begin
     Result.Add('version=' + getXMLDoc.XMLVersion);
-    Result.Add('encoding=' + getXMLDoc.XMLEncoding);
-    Result.Add('standalone=' + boolToStr(getXMLDoc.XMLStandalone, True));
+    //Result.Add('encoding=' + getXMLDoc.XMLEncoding);
+    //Result.Add('standalone=' + boolToStr(getXMLDoc.XMLStandalone, True));
   end;
   freeXmlDoc();
 end;

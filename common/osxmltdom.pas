@@ -19,7 +19,10 @@ uses
   {$IFDEF OPSISCRIPT}
   oslog,
   {$ENDIF OPSISCRIPT}
-  Classes, SysUtils, DOM, XMLRead, XMLWrite;
+  Classes, SysUtils,
+  laz2_DOM,
+  laz2_XMLRead,
+  laz2_XMLWrite;
 
 
 //******************************************************************************
