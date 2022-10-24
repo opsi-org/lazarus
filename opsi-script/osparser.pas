@@ -7915,7 +7915,7 @@ var
                 LogDatei.log('nodepath does not exists - try to create: ' +
                   nodepath, oslog.LLinfo);
                 errorinfo := '';
-                if XMLDocObject.makeNodePathWithTextContent(nodepath, '', errorinfo) then
+                if XMLDocObject.makeNodePathWithTextContent(nodepath, '',openstrict, errorinfo) then
                 begin
                   nodeOpened := True;
                   LogDatei.log('successfully created nodepath: ' +
