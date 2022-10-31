@@ -9716,6 +9716,7 @@ begin
                 LLWarning);
           end;
         end
+
         {$IFDEF WIN32}
         else if LowerCase(Expressionstr) = 'delete_subfolder' then
         begin
@@ -9729,7 +9730,7 @@ begin
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxCheck := False;
           end;
 
@@ -9829,7 +9830,7 @@ begin
                     link_icon_index := StrToInt(s);
                     Remaining := s;
                   except
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to an integer.');
                   end;
                 LogDatei.log_prog('link_icon_index: ' + s, LLDebug);
@@ -9852,7 +9853,7 @@ begin
                     link_shortcut := ShortCutStringToWinApiWord(s);
                     Remaining := s;
                   except
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to a shortcut key.');
                   end;
                 LogDatei.log_prog('link_shortcut: ' + s, LLDebug);
@@ -9880,7 +9881,7 @@ begin
                   else if s = 'max' then
                     link_showwindow := 3
                   else
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to a window_state key.');
                   LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
                 end;
