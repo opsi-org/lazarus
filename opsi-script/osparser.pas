@@ -12071,7 +12071,9 @@ begin
   while syntaxCheck and goOn do
   begin
     syntaxCheck := evaluateString(r, r, EvaluatedStringParameter, InfoSyntaxError);
-    if syntaxCheck and not testsyntax then
+    //if syntaxCheck and not testsyntax then
+    // we run this even in syntaxcheck (no persistant changes done here)
+    if syntaxCheck then
     begin
       ResultList.add(EvaluatedStringParameter);
       logdatei.log_prog('createStringList: add: ' + EvaluatedStringParameter + ' to: ' +
