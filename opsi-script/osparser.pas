@@ -202,9 +202,6 @@ type
     // tsSetVar should be the last here for loop in FindKindOfStatement
     tsSetVar);
 
-
-
-
   TStatementNames = array [TStatement] of string [50];
   TPStatementNames = ^TStatementNames;
 
@@ -233,8 +230,6 @@ type
   TShutdownRequest = (tsrNoShutdown, tsrRegisterForShutdown);
 
   TScriptMode = (tsmMachine, tsmLogin);
-
-
 
 
 const
@@ -288,7 +283,6 @@ type
 
 {$IFDEF FPC}
 {$ELSE}
-
   TuibXMLNodeDescription = class(TObject)
   private
     Fxmldoc: TuibXMLDocument;
@@ -309,10 +303,7 @@ type
     procedure evaluateAttribute;
     procedure evaluateText;
   end;
-
 {$ENDIF}
-
-
 
 
   { TuibInstScript }
@@ -1804,9 +1795,7 @@ begin
   end;
 {$ENDIF}
 end;
-
 {$ELSE}
-
 function GetMACAddress2: string;
 var
   NCB: PNCB;
@@ -1870,7 +1859,6 @@ begin
   FreeMem(Lenum);
   GetMacAddress2 := _SystemID;
 end;
-
 {$ENDIF}
 
 
@@ -9588,21 +9576,22 @@ begin
 end;
 
 
-function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
-  common: boolean): TSectionResult;
+function GetLinkFeature(var ScriptLineRemaining: string; FeatureNameForLogging: string;
+  StringInStringAllowed: boolean): string;
 var
-   {$IFDEF WINDOWS}
-  ShellLinks: TuibShellLinks;
-{$ENDIF WINDOWS}
-   {$IFDEF UNIX}
-  ShellLinks: TuibLinuxDesktopFiles;
-{$ENDIF LINUX}
-  stack: TStringList;
-  startindentlevel: integer;
-  Expressionstr: string = '';
-  ///remaining : String;
+  UnusedErrorInfo: string = '';
+begin
+  Result := '';
+  if not getString(ScriptLineRemaining, Result, ScriptLineRemaining, UnusedErrorInfo, StringInStringAllowed)
+  then
+  begin
+    Result := ScriptLineRemaining;
+    ScriptLineRemaining := '';
+    end;
+  LogDatei.log_prog(FeatureNameForLogging + ': ' + Result, LLDebug);
+end;
 
-  procedure linkActionsMain();
+procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
   var
     i: integer = 0;
     SyntaxCheck: boolean;
@@ -9618,8 +9607,8 @@ var
     deletefoldername: string = '';
     s: string = '';
 
-    in_link_features: boolean;
-    regular_end: boolean;
+    in_link_features: boolean = True;
+    regular_end: boolean = False;
     link_name: string = '';
     link_target: string = '';
     link_paramstr: string = '';
@@ -9630,13 +9619,24 @@ var
     link_shortcut: word = 0;
     link_showwindow: integer = 0;
 
-  begin
-
+    Expressionstr: string = '';
+    {$IFDEF WINDOWS}
+    ShellLinks: TuibShellLinks;
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    ShellLinks: TuibLinuxDesktopFiles;
+    {$ENDIF LINUX}
+begin
     i := 1;
     if Sektion.Count = 0 then
       exit;
 
-    stack := TStringList.Create;
+    {$IFDEF WINDOWS}
+    ShellLinks:= TuibShellLinks.Create;
+    {$ENDIF WINDOWS}
+    {$IFDEF UNIX}
+    ShellLinks:= TuibLinuxDesktopFiles.Create;
+    {$ENDIF LINUX}
 
     csidl := 0;
     csidl_set := False;
@@ -9652,15 +9652,13 @@ var
       begin
         GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
 
-
         if LowerCase(Expressionstr) = 'set_basefolder' then
         begin
-
           syntaxcheck := True;
           if (length(Remaining) = 0) then
           begin
             syntaxCheck := False;
-            reportError(Sektion, i, Sektion.strings[i - 1], 'folder name  expected');
+            UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1], 'folder name expected');
           end
           else
           begin
@@ -9673,7 +9671,7 @@ var
 
             if length(Remaining) > 0 then
             begin
-              reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+              UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             end;
 
             if not testSyntax then
@@ -9703,7 +9701,7 @@ var
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
           end;
 
           if not testSyntax then
@@ -9718,6 +9716,7 @@ var
                 LLWarning);
           end;
         end
+
         {$IFDEF WIN32}
         else if LowerCase(Expressionstr) = 'delete_subfolder' then
         begin
@@ -9731,7 +9730,7 @@ var
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxCheck := False;
           end;
 
@@ -9762,7 +9761,7 @@ var
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxcheck := False;
           end;
           if not testSyntax then
@@ -9772,7 +9771,6 @@ var
             begin
               if syntaxcheck then
                 ShellLinks.DeleteShellLink(s);
-
             end
             else
               LogDatei.log('No folder selected, therefore no deletion of "' +
@@ -9790,20 +9788,10 @@ var
 
           if length(Remaining) > 0 then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
             syntaxCheck := False;
           end;
           Inc(i);
-          in_link_features := True;
-          regular_end := False;
-          link_name := '';
-          link_target := '';
-          link_paramstr := '';
-          link_working_dir := '';
-          link_icon_file := '';
-          link_icon_index := 0;
-          link_shortcut := 0;
-          link_showwindow := 0;
 
           while (i <= Sektion.Count) and in_link_features do
           begin
@@ -9816,73 +9804,16 @@ var
               Skip(':', Remaining, Remaining, errorInfo);
 
               if LowerCase(Expressionstr) = 'name' then
-              begin
-                if not getString(Remaining, link_name, Remaining, errorinfo, False)
-                then
-                begin
-                  link_name := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('Link_name: ' + link_name, LLDebug);
-              end
-
+                link_name := GetLinkFeature(Remaining, 'link_name', False)
               else if LowerCase(Expressionstr) = 'target' then
-              begin
-                if not getString(Remaining, link_target, Remaining, errorinfo, True)
-                then
-                begin
-                  link_target := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_target: ' + link_target, LLDebug);
-              end
-
+                link_target := GetLinkFeature(Remaining, 'link_target', True)
               else if LowerCase(Expressionstr) = 'parameters' then
-              begin
-                if not getString(Remaining, link_paramstr, Remaining, errorinfo, True)
-                then
-                begin
-                  link_paramstr := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_paramstr: ' + link_paramstr, LLDebug);
-              end
-
-              else if LowerCase(Expressionstr) = 'working_dir' then
-              begin
-                if not getString(Remaining, link_working_dir, Remaining,
-                  errorinfo, False) then
-                begin
-                  link_working_dir := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_working_dir: ' + link_working_dir, LLDebug);
-              end
-
-
-              else if LowerCase(Expressionstr) = 'working_directory' then
-              begin
-                if not getString(Remaining, link_working_dir, Remaining,
-                  errorinfo, False) then
-                begin
-                  link_working_dir := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_working_dir: ' + link_working_dir, LLDebug);
-              end
-
+                link_paramstr := GetLinkFeature(Remaining, 'link_parameters', True)
+              else if (LowerCase(Expressionstr) = 'working_dir') or
+                (LowerCase(Expressionstr) = 'working_directory') then
+                link_working_dir := GetLinkFeature(Remaining, 'link_working_directory', False)
               else if LowerCase(Expressionstr) = 'icon_file' then
-              begin
-                if not getString(Remaining, link_icon_file, Remaining, errorinfo, False)
-                then
-                begin
-                  link_icon_file := Remaining;
-                  Remaining := '';
-                end;
-                LogDatei.log_prog('link_icon_file: ' + link_icon_file, LLDebug);
-              end
-
-
+                link_icon_file := GetLinkFeature(Remaining, 'link_icon_file', False)
               else if LowerCase(Expressionstr) = 'icon_index' then
               begin
                 if not getString(Remaining, s, Remaining, errorinfo, False)
@@ -9899,7 +9830,7 @@ var
                     link_icon_index := StrToInt(s);
                     Remaining := s;
                   except
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to an integer.');
                   end;
                 LogDatei.log_prog('link_icon_index: ' + s, LLDebug);
@@ -9922,7 +9853,7 @@ var
                     link_shortcut := ShortCutStringToWinApiWord(s);
                     Remaining := s;
                   except
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to a shortcut key.');
                   end;
                 LogDatei.log_prog('link_shortcut: ' + s, LLDebug);
@@ -9950,7 +9881,7 @@ var
                   else if s = 'max' then
                     link_showwindow := 3
                   else
-                    reportError(Sektion, i, Sektion.Strings[i - 1],
+                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
                       '"' + s + '" could not converted to a window_state key.');
                   LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
                 end;
@@ -9961,8 +9892,7 @@ var
               begin
                 if not getString(Remaining, s, Remaining, errorinfo, False)
                 then
-                  s := Remaining;
-                link_categories := s;
+                  link_categories := Remaining;
                 {$IFDEF WIN32}
                 logdatei.log('Option link_categories is ignored at WIN32', LLWarning);
                 {$ENDIF WIN32}
@@ -9976,25 +9906,20 @@ var
 
               else
               begin
-                reportError(Sektion, i, Sektion.Strings[i - 1], 'unknown Option');
+                UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'unknown Option');
                 syntaxCheck := False;
               end;
-
 
               if in_link_features then
                 Inc(i);
             end;
           end;
 
-
-
           if not regular_end then
           begin
-            reportError(Sektion, i, Sektion.Strings[i - 1], 'end_link missing');
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end_link missing');
             syntaxCheck := False;
           end;
-
-          //InstallItem (Const CommandLine, ItemName, Workdir, IconPath, IconIndex : String);
 
           if not testSyntax then
           begin
@@ -10003,7 +9928,6 @@ var
             begin
               if syntaxCheck then
               begin
-
                 if not folder_opened then
                 begin
                   if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
@@ -10011,32 +9935,31 @@ var
                     folder_opened := True;
                 end;
 
-                if ShellLinks.MakeShellLink(link_name, link_target,
+                ShellLinks.MakeShellLink(link_name, link_target,
                   link_paramstr, link_working_dir, link_icon_file,
-                  link_icon_index, link_shortcut, link_showwindow) then
-                ;
-
+                  link_icon_index, link_shortcut, link_showwindow);
               end;
             end;
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-            if ShellLinks.MakeShellLink(link_name, link_target,
+            ShellLinks.MakeShellLink(link_name, link_target,
               link_paramstr, link_working_dir, link_icon_file,
-              link_categories, '', '') then
-            ;
+              link_categories, '', '');
           {$ENDIF UNIX}
           end;
         end
-
         else
-          reportError(Sektion, i, Expressionstr, 'is not a defined command');
+          UibInstScript.reportError(Sektion, i, Expressionstr, 'is not a defined command');
 
         Inc(i);
       end;
 
     end;
-  end;
+    FreeAndNil(ShellLinks);
+end;
 
+function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
+  common: boolean): TSectionResult;
 begin
   Result := tsrPositive;
 
@@ -10044,9 +9967,8 @@ begin
     exit;
 
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-  startindentlevel := LogDatei.LogSIndentLevel;
 
-  begin  // doLinkFolder main
+  // doLinkFolder main
     {$IFDEF WIN32}
     //Install := TuibFileInstall.create;
     if runLoginScripts then
@@ -10054,9 +9976,7 @@ begin
       if Impersonate2User(usercontextDomain, usercontextUser, usercontextsid) then
       begin
         try
-          ShellLinks := TuibShellLinks.Create;
-          linkActionsMain;
-          ShellLinks.Free;
+          linkActionsMain(Sektion, self, testSyntax);
         finally
           RevertToSelf;
         end;
@@ -10067,20 +9987,14 @@ begin
     end
     else
     begin
-      ShellLinks := TuibShellLinks.Create;
-      linkActionsMain;
-      ShellLinks.Free;
+      linkActionsMain(Sektion, self, testSyntax);
     end;
     {$ENDIF WIN32}
     {$IFDEF UNIX}
     begin
-      ShellLinks := TuibLinuxDesktopFiles.Create;
-      linkActionsMain;
-      ShellLinks.Free;
+      linkActionsMain(Sektion, self, testSyntax);
     end;
     {$ENDIF LINUX}
-
-  end;  // eigentliche Verarbeitung
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
     DiffNumberOfErrors, DiffNumberOfWarnings);
