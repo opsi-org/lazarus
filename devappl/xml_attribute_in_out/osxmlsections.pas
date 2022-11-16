@@ -183,10 +183,8 @@ type
     // create new node, append to actNode, actNode is kept
 
 
-    //function makeNodePathWithTextContent(nodePath: string; Text: string;
-    //  var errorinfo: string): boolean;
-    function makeNodePathWithTextContent(nodePath: string;
-  Text: string; attributes_strict : boolean; var errorinfo: string): boolean;
+    function makeNodePathWithTextContent(nodePath: string; Text: string;
+      var errorinfo: string): boolean;
     // create note path with textcontent
     // in nodepath all attributes have to fit or they will be created
     // actNode will be last created node, text will be set as TextContent
@@ -1388,7 +1386,7 @@ begin
 end;
 
 function TuibXMLDocument.makeNodePathWithTextContent(nodePath: string;
-  Text: string; attributes_strict : boolean; var errorinfo: string): boolean;
+  Text: string; var errorinfo: string): boolean;
 var
   nodesInPath: array[0..50] of TDOMNode;
   attributesSL, pathes: TStringList;
@@ -1487,15 +1485,10 @@ begin
 
         if found then
         begin
-          if attributes_strict then
-            found := getNodeStrict(nodesInPath[i], nodesInPath[i - 1],
-            thisnodeName, attributeList)
-          else
-            found := getNodeByName(nodesInPath[i], nodesInPath[i - 1],
-            thisnodeName);
-          if (not found) then
+          if (not getNodeStrict(nodesInPath[i], nodesInPath[i - 1],
+            thisnodeName, attributeList)) then
           begin
-            //found := False;
+            found := False;
             actNode := nodesInPath[i - 1];
             LogDatei.log('makeNodePathWithTextContent: node not found ' +
               IntToStr(i) + ': nodename: ' + thisnodeName +
@@ -1511,7 +1504,7 @@ begin
           end
           else
           begin
-            //found := True;
+            found := True;
             if actnode <> nil then
               logdatei.log('Found node ' + IntToStr(i) + ': nodename: ' +
                 actNode.NodeName, LLinfo)

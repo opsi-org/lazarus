@@ -1,0 +1,101 @@
+object Form1: TForm1
+  Left = 534
+  Height = 396
+  Top = 268
+  Width = 957
+  Caption = 'Form1'
+  ClientHeight = 396
+  ClientWidth = 957
+  OnCreate = FormCreate
+  LCLVersion = '2.2.4.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 957
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 50
+    ClientWidth = 957
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 25
+      Height = 30
+      Top = 8
+      Width = 75
+      Caption = 'open'
+      OnClick = BitBtn1Click
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 152
+      Height = 30
+      Top = 8
+      Width = 75
+      Caption = 'convert'
+      OnClick = BitBtn2Click
+      TabOrder = 1
+    end
+    object BitBtn3: TBitBtn
+      Left = 265
+      Height = 30
+      Top = 16
+      Width = 75
+      Caption = 'convert2'
+      OnClick = BitBtn3Click
+      TabOrder = 2
+    end
+  end
+  object PairSplitter1: TPairSplitter
+    Left = 0
+    Height = 346
+    Top = 50
+    Width = 957
+    Align = alClient
+    Position = 475
+    object PairSplitterSide1: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 346
+      Top = 0
+      Width = 475
+      ClientWidth = 475
+      ClientHeight = 346
+      object Memo1: TMemo
+        Left = 0
+        Height = 346
+        Top = 0
+        Width = 475
+        Align = alClient
+        Lines.Strings = (
+          'Memo1'
+        )
+        TabOrder = 0
+      end
+    end
+    object PairSplitterSide2: TPairSplitterSide
+      Cursor = crArrow
+      Left = 480
+      Height = 346
+      Top = 0
+      Width = 477
+      ClientWidth = 477
+      ClientHeight = 346
+      object Memo2: TMemo
+        Left = 0
+        Height = 346
+        Top = 0
+        Width = 477
+        Align = alClient
+        Lines.Strings = (
+          'Memo2'
+        )
+        TabOrder = 0
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 859
+    Top = 14
+  end
+end
