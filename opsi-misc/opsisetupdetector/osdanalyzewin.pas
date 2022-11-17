@@ -336,9 +336,10 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
-    '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.setupFileName +
-    '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+    '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+    installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -478,9 +479,12 @@ begin
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.productdata.productName :=
+      begin
+        mysetup.msiProductName :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
+        aktProduct.productdata.productName := mysetup.msiProductName;
+      end;
 
       sSearch := 'ProductVersion: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
@@ -497,8 +501,8 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    if aktproduct.productdata.productversion = '' then
-      aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+    //if aktproduct.productdata.productversion = '' then
+    aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
   {$ENDIF WINDOWS}
@@ -563,27 +567,47 @@ begin
       end;
 
     end;
-    if aktproduct.productdata.productversion = '' then
-      aktproduct.productdata.productversion := trim(mysetup.softwareversion);
+    //if aktproduct.productdata.productversion = '' then
+    aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
   {$ENDIF LINUX}
   if not uninstall_only then
   begin
     mysetup.installCommandLine :=
-      'msiexec /i "%scriptpath%\files' + IntToStr(mysetup.ID) + '\' +
-      mysetup.setupFileName + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendedsetup;
+      'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+      '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;
   end;
+  (*
+  Now part of the delincmsi templates
   mysetup.uninstallCheck.Clear;
-  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +
-    mysetup.msiId + '"))');
+  mysetup.uninstallCheck.Add('set $UninstallList$ = addtolist($UninstallList$,"' +
+    mysetup.SoftwareVersion + '=' + mysetup.msiId + '")');
+  mysetup.uninstallCheck.Add('; you may add later additional msiids to this list');
+  mysetup.uninstallCheck.Add(
+    '; set $UninstallList$ = addtolist($UninstallList$,"<version>=<GUID>")');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add(
+    'for %uninstallEntry% in $UninstallList$ do sub_uninstall_msi-list');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add('[sub_uninstall_msi-list]');
+  mysetup.uninstallCheck.Add(
+    'set $MsiVersion$ = TakeString(0, splitstring("%uninstallEntry%", "="))');
+  mysetup.uninstallCheck.Add(
+    'set $MsiId$ = TakeString(1, splitstring("%uninstallEntry%", "="))');
+  mysetup.uninstallCheck.Add('');
+  mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
+  //mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +mysetup.msiId + '"))');
+  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct($MsiId$))');
   mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('	set $ProdVersion$ = $MsiVersion$');
   mysetup.uninstallCheck.Add('endif');
+  *)
 
   mysetup.uninstallCommandLine :=
-    'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
+    //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
+    'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
   LogDatei.log('get_MSI_info finished', LLInfo);
@@ -621,6 +645,44 @@ var
   ArchitecturesAllowed: string = '';
   ArchitecturesInstallIn64BitMode: string = '';
 
+  function translateInnoConstants(myline: string; arch: string): string;
+  var
+    innoToOpsi: TStringList;
+    i: integer;
+  begin
+    // arch has to be '32' or '64'
+    innoToOpsi := TStringList.Create;
+    // https://jrsoftware.org/ishelp/index.php?topic=consts
+    innoToOpsi.Add('{cf}=%ProgramFiles' + arch + 'Dir%\Common Files');
+    innoToOpsi.Add('{cf32}=%ProgramFiles32Dir%\Common Files');
+    innoToOpsi.Add('{cf64}=%ProgramFiles6Dir%\Common Files');
+    innoToOpsi.Add('{pf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{pf32}=%ProgramFiles32Dir%');
+    innoToOpsi.Add('{pf64}=%ProgramFiles64Dir%');
+    innoToOpsi.Add('{commoncf}=%ProgramFiles' + arch + 'Dir%\Common Files');
+    innoToOpsi.Add('{commoncf32}=%ProgramFiles32Dir%\Common Files');
+    innoToOpsi.Add('{commoncf64}=%ProgramFiles64Dir%\Common Files');
+    innoToOpsi.Add('{commonpf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{commonpf32}=%ProgramFiles32Dir%');
+    innoToOpsi.Add('{commonpf64}=%ProgramFiles64Dir%');
+    innoToOpsi.Add('{autopf}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{code:DefDirRoot}=%ProgramFiles' + arch + 'Dir%');
+    innoToOpsi.Add('{code:installDir}=%ProgramFiles' + arch + 'Dir%\<unknown>');
+    innoToOpsi.Add('{win}=%Systemroot%');
+    innoToOpsi.Add('{sys}=%System%');
+    innoToOpsi.Add('{sysnative}=%System%');
+    innoToOpsi.Add('{syswow64}=%System%');
+    innoToOpsi.Add('{sd}=%Systemdrive%');
+
+    for i := 0 to innoToOpsi.Count - 1 do
+    begin
+      myline := StringReplace(myline, innoToOpsi.Names[i], innoToOpsi.ValueFromIndex[i],
+        [rfIgnoreCase]);
+    end;
+    Result := myline;
+    innoToOpsi.Free;
+  end;
+
 begin
   Mywrite('Analyzing Inno-Setup:');
   AppName := '';
@@ -635,7 +697,7 @@ begin
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'INNO';
   if not DirectoryExists(destDir) then
-    CreateDir(destDir);
+    ForceDirectories(destDir);
   destfile := ExtractFileName(myfilename);
   destfile := ExtractFileName(destfile);
   installScriptISS := destDir + DirectorySeparator + 'install_script.iss';
@@ -689,6 +751,7 @@ begin
       while (not EOF(fISS)) and (Length(issLine) > 0) and (issLine[1] <> '[') do
       begin
         LogDatei.log(issLine, LLDebug);
+
         if (0 < pos('appname=', lowercase(issLine))) then
           AppName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('appversion=', lowercase(issLine))) then
@@ -732,6 +795,8 @@ begin
       if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) and
         (0 = pos('x86', lowercase(ArchitecturesInstallIn64BitMode))) then
       begin
+        DefaultDirName := translateInnoConstants(DefaultDirName, '64');
+        (*
         if pos('{pf}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
@@ -757,9 +822,12 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
             '%ProgramFiles64Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
+        *)
       end
       else
       begin
+        DefaultDirName := translateInnoConstants(DefaultDirName, '32');
+         (*
         if pos('{pf}', DefaultDirName) > 0 then
         begin
           DefaultDirName := StringReplace(DefaultDirName, '{pf}',
@@ -785,9 +853,12 @@ begin
           DefaultDirName := StringReplace(DefaultDirName, '{code:DefaultDirName}',
             '%ProgramFiles32Dir%\<unknown>', [rfReplaceAll, rfIgnoreCase]);
         end;
+        *)
       end;
+      (*
       DefaultDirName := StringReplace(DefaultDirName, '{sd}',
         '%Systemdrive%', [rfReplaceAll, rfIgnoreCase]);
+        *)
       mysetup.installDirectory := DefaultDirName;
       aktProduct.productdata.comment := AppVerName;
       with mysetup do
@@ -842,7 +913,7 @@ begin
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-    createdir(opsitmp);
+    ForceDirectories(opsitmp);
   if not DirectoryExists(opsitmp) then
     LogDatei.log('Error: could not create directory: ' + opsitmp, LLError);
   {$IFDEF WINDOWS}
@@ -867,6 +938,7 @@ begin
   end
   else
   begin
+    //stopped := KillProcessbyname(ExtractFileName(myfilename), found);
     smask := opsitmp + '*.msi';
     LogDatei.log('Looking for: ' + smask, LLInfo);
     try
@@ -876,7 +948,8 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+          if showgui then
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
@@ -935,7 +1008,7 @@ begin
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-    createdir(opsitmp);
+    ForceDirectories(opsitmp);
   if not DirectoryExists(opsitmp) then
     mywrite('Error: could not create directory: ' + opsitmp);
 
@@ -955,7 +1028,8 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+          if showgui then
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
@@ -1059,7 +1133,7 @@ begin
   destDir := GetTempDir(False);
   destDir := destDir + DirectorySeparator + 'wixbundle';
   if not DirectoryExists(destDir) then
-    CreateDir(destDir);
+    ForceDirectories(destDir);
 
   LogDatei.log('extract files from ' + myfilename + ' to' + destDir, LLInfo);
   myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
@@ -1097,7 +1171,8 @@ begin
         if mymsilist.Count > 1 then
         begin
           LogDatei.log('Found multiple msi files: ' + mymsilist.Text, LLWarning);
-          ShowMessage(sWarnMultipleMsi + opsitmp);
+          if showgui then
+            ShowMessage(sWarnMultipleMsi + opsitmp);
           mymsifilename := mymsilist.Strings[0];
           LogDatei.log('Analyzing msi file: ' + mymsifilename, LLInfo);
         end
@@ -1196,10 +1271,10 @@ begin
     if setupType = stUnknown then
     begin
       FChooseInstallerDlg.ComboBoxChooseInstaller.Clear;
-      for i := 0 to integer(stUnknown)  do
+      for i := 0 to integer(stUnknown) do
         FChooseInstallerDlg.ComboBoxChooseInstaller.Items.Add(
           installerToInstallerstr(TKnownInstaller(i)));
-      FChooseInstallerDlg.ComboBoxChooseInstaller.Text:=
+      FChooseInstallerDlg.ComboBoxChooseInstaller.Text :=
         installerToInstallerstr(stUnknown);
       if FChooseInstallerDlg.ShowModal = mrOk then
       begin

@@ -1,0 +1,40 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+requiredWinstVersion >= "4.12.0.37"
+
+; -------------------------------------
+; include file for opsi-setup-detector products
+; Define all sections here
+;---------------------------
+
+;--- generated setup sections
+
+[Winbatch_install_1]
+#@installCommandLine1*#
+
+[Winbatch_install_2]
+#@installCommandLine2*#
+
+;--- generated uninstall sections
+
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+
+[Winbatch_uninstall_2]
+#@uninstallCommandLine2*#
+
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+;--- addtional sections
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

@@ -26,10 +26,10 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure TIPropertyGrid1Click(Sender: TObject);
     procedure TIPropertyGrid1Exit(Sender: TObject);
-    procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
+    procedure TIPropertyGrid1KeyDown(Sender: TObject; var Key: word;
       Shift: TShiftState);
     procedure TIPropertyGrid1KeyPress(Sender: TObject; var Key: char);
-    procedure TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
+    procedure TIPropertyGrid1KeyUp(Sender: TObject; var Key: word;
       Shift: TShiftState);
     procedure TIPropertyGrid1Modified(Sender: TObject);
   private
@@ -108,7 +108,7 @@ begin
   myconfigurationhints.Add('Readme_txt_templ=' + rsReadme_txt_templ);
   myconfigurationhints.Add('Show2StepMacSeletionWarn=' + rsInternalSet);
   myconfigurationhints.Add('ShowCheckEntryWarning=' + rsInternalSet);
-  myconfigurationhints.Add('UsePropDesktopicon=' + rsUsePropDesktopiconL);
+  myconfigurationhints.Add('UsePropDesktopicon=' + rsUsePropDesktopicon);
   myconfigurationhints.Add('UsePropLicenseOrPool=' + rsUsePropLicenseOrPool);
 
   myconfigurationhints.Add('Service_URL=' + rsService_URL);
@@ -152,20 +152,19 @@ begin
 
 end;
 
-procedure TFOSDConfigdlg.TIPropertyGrid1KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyDown(Sender: TObject;
+  var Key: word; Shift: TShiftState);
 begin
 
 end;
 
-procedure TFOSDConfigdlg.TIPropertyGrid1KeyPress(Sender: TObject; var Key: char
-  );
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyPress(Sender: TObject; var Key: char);
 begin
 
 end;
 
-procedure TFOSDConfigdlg.TIPropertyGrid1KeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFOSDConfigdlg.TIPropertyGrid1KeyUp(Sender: TObject;
+  var Key: word; Shift: TShiftState);
 var
   activeprop: string;
 begin

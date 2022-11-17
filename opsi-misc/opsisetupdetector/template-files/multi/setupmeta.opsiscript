@@ -1,9 +1,0 @@
-; ----------------------------------------------------------------
-; This is a opsi-script file.
-; See https://opsi.org    https://uib.de
-; This code was originally created by opsi-setup-detector #@osdVersion*#
-; ----------------------------------------------------------------
-encoding=utf8
-
-; This is the template for a opsi meta product setup file.
-; A opsi meta product installs nothing, so this file is empty.

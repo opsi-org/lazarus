@@ -2,7 +2,6 @@ program opsisetupdetector;
 
 {$mode delphi}{$H+}
 
-
 //{$DEFINE debug}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
@@ -15,7 +14,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   winpeimagereader, lcltranslator, runtimetypeinfocontrols, osdanalyzewin,
   osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency,
   oscheckbinarybitness, osencoding, osddlgnewproperty, osddatamod,
-  osjson, oswebservice, oscrypt,
+  osjson, oswebservice, oscrypt, osmessagedialog,
   osdanalyzegeneral, ChooseInstallerDlg;
 
 
@@ -44,6 +43,7 @@ begin
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.CreateForm(TFChooseInstallerDlg, FChooseInstallerDlg);
+  Application.CreateForm(TMyMessageDlg, MyMessageDlg);
   Application.Run;
 end.
 

@@ -1,0 +1,73 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+requiredWinstVersion >= "4.12.0.37"
+
+; -------------------------------------
+; include file for opsi-setup-detector products
+; Define all sections here
+;---------------------------
+
+;--- generated setup sections
+
+[Winbatch_install_1]
+; Choose one of the following examples as basis for your installation
+; You can use $LicenseKey$ var to pass a license key to the installer
+;
+; === Nullsoft Scriptable Install System ================================================================
+; "%ScriptPath%\Setup.exe" /S
+;
+; === MSI package =======================================================================================
+; You may use the parameter PIDKEY=$Licensekey$
+; msiexec /i "%ScriptPath%\some.msi" /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress
+;
+; === InstallShield + MSI=====================================================================================
+; Attention: The path to the log file should not contain any whitespaces
+; "%ScriptPath%\setup.exe" /s /v" /l* %opsiLogDir%\$ProductId$.install_log.txt /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+; "%ScriptPath%\setup.exe" /s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+;
+; === InstallShield =====================================================================================
+; Create setup.iss answer file by running: setup.exe /r /f1"c:\setup.iss"
+; You may use an answer file by the parameter /f1"c:\setup.iss"
+; "%ScriptPath%\setup.exe" /s /sms /f2"%opsiLogDir%\$ProductId$.install_log.txt"
+;
+; === Inno Setup ========================================================================================
+; http://unattended.sourceforge.net/InnoSetup_Switches_ExitCodes.html
+; You may create setup answer file by: setup.exe /SAVEINF="filename"
+; You may use an answer file by the parameter /LOADINF="filename"
+; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
+
+
+[Winbatch_install_2]
+; see: [Winbatch_install_1]
+
+;--- generated uninstall sections
+
+[Winbatch_uninstall_1]
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+[Winbatch_uninstall_2]
+; see: [Winbatch_uninstall_1]
+
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+;--- addtional sections
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

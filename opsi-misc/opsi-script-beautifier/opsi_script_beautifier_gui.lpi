@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="opsi_script_beautifier_gui"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -18,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="2"/>
+      <BuildNr Value="4"/>
       <StringTable CompanyName="uib gmbh" FileDescription="opsi-script-beautifier gui" InternalName="opsi-script-beautifier gui" LegalCopyright="AGPLv3+" ProductName="opsi" ProductVersion="4.2"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -51,7 +53,6 @@
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
-              <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
@@ -69,8 +70,8 @@
             <OtherDefines Count="4">
               <Define0 Value="OPSI_AS_APP"/>
               <Define1 Value="OPSI"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OPSI_AS_USER"/>
+              <Define2 Value="OPSI_AS_USER"/>
+              <Define3 Value="GUI"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -124,7 +125,6 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>

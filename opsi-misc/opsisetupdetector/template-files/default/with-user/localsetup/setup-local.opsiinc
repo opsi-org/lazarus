@@ -1,0 +1,81 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+if $ExecutionMethod$ = "loginOpsiSetupUser"
+	include_insert "%ScriptPath%\localsetup\declarations-local.opsiinc"
+	set $myScriptPath$ = "%ScriptPath%\localsetup"
+else
+	include_insert "%ScriptPath%\declarations-local.opsiinc"
+	set $myScriptPath$ = "%ScriptPath%"
+endif
+
+include_append $myScriptPath$+"\sections-local.opsiinc"
+
+
+importlib "uib_exitcode.opsiscript"
+importlib $myScriptPath$+"\osd-lib.opsiscript"
+#@importLibs*#
+
+Message "Stage 3 - Installing " + $ProductId$
+setActionProgress "Stage 3 - Installing " + $ProductId$
+
+Comment "Checking if previously installed versions should be uninstalled"
+if GetProductProperty("uninstall_before_install", "false") = "true"
+	if FileExists($myScriptPath$+"\delsub-local.opsiinc")
+		Comment "Starting the uninstall sub section"
+		Sub $myScriptPath$+"\delsub-local.opsiinc"
+	else
+		Set $ErrorFlag$ = $myScriptPath$+"\delsub-local.opsiinc not found"
+		Registry_Save_Fatal_Flag /32Bit
+		ExitWindows /ImmediateReboot
+	endif
+endif
+
+Message "Installing " + $ProductId$
+
+Comment "License handling"
+if NOT($LicenseRequired$ = "false")
+	Comment "Retrieving license key"
+	Sub_Get_License
+endif
+
+#@preInstallLines*#
+comment "Start setup program"
+ChangeDirectory $myScriptPath$+"\files1"
+;----------------------------------------------
+Winbatch_install	#@installWaitForProc1*#
+;----------------------------------------------
+set $ExitCode$ = getlastexitcode
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	#@installErrorHandlingLines1*#
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+#@postInstallLines*#
+
+#@SetupHandleDesktopIcon*#
+
+
+;Comment "Starting the setup program"
+;	Message "Installing "
+;	ChangeDirectory "%ScriptPath%\localsetup\files"
+;		Winbatch_Install /SysNative
+;		Sub_Check_ExitCode
+
+;Comment "Copying files"
+;	Files_Copy /SysNative
+
+;Comment "Creating registry entries"
+;	Registry_Create /SysNative
+
+;Comment "Creating shortcuts"
+;	LinkFolder_Create
+
+Comment "Rebooting"
+	ExitWindows /ImmediateReboot

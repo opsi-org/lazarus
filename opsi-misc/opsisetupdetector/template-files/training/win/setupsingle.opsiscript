@@ -1,0 +1,227 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+;here we start
+[Actions]
+
+;check if the running opsiscript version is not too old
+requiredOpsiscriptVersion >= "4.12.5.0"
+
+;fetch helper libraries
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+comment "retrieve infos from script environment"
+; ----------------------------------------------------------------
+; the values are found automatically when the script is running
+;
+DefStringList $productInfos$ = getProductMap
+DefVar $ProductId$ = getValue("id", $productInfos$)
+DefVar $ProductName$ = getValue("name", $productInfos$)
+
+DefVar $OS$ = GetOS
+; the operating system, in which the interpreter is running
+; supported values are  "Windows_NT", "Linux", "MacOS"
+
+; ----------------------------------------------------------------
+comment "put fixed infos into the script (maybe produced by the setup detector maybe manually)"
+; ----------------------------------------------------------------
+; the values can be manually edited or automatically suggested by the opsi setup detector
+;
+DefVar $InstallDir$ = "#@InstallDir1*#"
+; dependent on the installes software it could be
+; "%ProgramFiles64Dir% [,,,]
+; "%ProgramFilesSysNatives% [,,,]
+DefVar $MinimumSpace$ = "#@MinimumSpace1*#"
+DefVar $MsiId$ = "00000"
+DefVar $UninstallProgram$ = "uninstall.exe"
+DefVar $ExitCode$
+DefVar $ErrorString$
+#@stringVars*#
+
+; ---------------------------------------------------------------
+comment "inform the user at the PC about product installation"
+; ----------------------------------------------------------------
+; for a better visual appearance, show some graphic (at most of size 160x160 [px] )
+; we set a image path which could be as follows
+DefVar $ImagePath$ = "%ScriptPath%\" + $ProductId$ + ".png"
+ShowBitmap $ImagePath$ $ProductName$
+
+Message "Installing " + $ProductId$ + " ..."
+
+; ----------------------------------------------------------------
+comment  "check if the script is adequate to the environment"
+; ----------------------------------------------------------------
+if not ($OS$ = "Windows_NT")
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
+	; Stop process and set installation status to failed
+endif
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
+endif
+
+#@GetProductProperty*#
+
+; ---------------------------------------------------------------
+comment "uninstall an existing installation if possible"
+; ---------------------------------------------------------------
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
+endif
+
+; show  a title for the installation
+Message "Installing " + $ProductId$ + " .."
+
+DefVar $installerSourceDir$ = "#@installerSourceDir1*#"
+
+#@preInstallLines*#
+
+; ---------------------------------------------------------------
+comment "run  the setup program"
+; ----------------------------------------------------------------
+
+; the call to the installer is more stable if we set the path
+ChangeDirectory $installerSourceDir$
+
+; call the setup program
+Winbatch_install  #@installWaitForProc1*#
+
+; ---------------------------------------------------------------
+comment "check the result"
+; ----------------------------------------------------------------
+; check the outcome of the call, produce either a "failed" state of the script or log the result
+set $ExitCode$ = getlastexitcode
+if "true" = #@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ )
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
+else
+	Comment $ErrorString$
+endif
+
+; ---------------------------------------------------------------
+comment "do tasks  which supplement the installation"
+; ----------------------------------------------------------------
+
+;e.g. copy some files
+Files_install /sysnative
+
+;e.g. configure some registry entries
+Registry_install /sysnative
+
+;e.g.. supplement or remove start menu or desktop links
+LinkFolder_install
+
+#@postInstallLines*#
+; ---------------------------------------------------------------
+; end of  actions section
+; ---------------------------------------------------------------
+; ---------------------------------------------------------------
+; ---------------------------------------------------------------
+
+
+
+[Winbatch_install]
+#@installCommandLine1*#
+; Choose one of the following examples as basis for your installation
+; You can use $LicenseKey$ var to pass a license key to the installer
+;
+; === Nullsoft Scriptable Install System ================================================================
+; "%ScriptPath%\Setup.exe" /S
+;
+; === MSI package =======================================================================================
+; You may use the parameter PIDKEY=$Licensekey$
+; msiexec /i "%ScriptPath%\some.msi" /l* "%opsiLogDir%\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress
+;
+; === InstallShield + MSI=====================================================================================
+; Attention: The path to the log file should not contain any whitespaces
+; "%ScriptPath%\setup.exe" /s /v" /l* %opsiLogDir%\$ProductId$.install_log.txt /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+; "%ScriptPath%\setup.exe" /s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+;
+; === InstallShield =====================================================================================
+; Create setup.iss answer file by running: setup.exe /r /f1"c:\setup.iss"
+; You may use an answer file by the parameter /f1"c:\setup.iss"
+; "%ScriptPath%\setup.exe" /s /sms /f2"%opsiLogDir%\$ProductId$.install_log.txt"
+;
+; === Inno Setup ========================================================================================
+; http://unattended.sourceforge.net/InnoSetup_Switches_ExitCodes.html
+; You may create setup answer file by: setup.exe /SAVEINF="filename"
+; You may use an answer file by the parameter /LOADINF="filename"
+; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+
+[Registry_install]
+; Example of setting some values of an registry key:
+;
+; openkey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
+; set "name1" = "some string value"
+; set "name2" = REG_DWORD:0001
+; set "name3" = REG_BINARY:00 af 99 cd
+
+[LinkFolder_install]
+; Example of deleting a folder from AllUsers startmenu:
+;
+; set_basefolder common_programs
+; delete_subfolder $ProductId$
+;
+; Example of creating a shortcut to the installed exe in AllUsers startmenu:
+;
+; set_basefolder common_programs
+; set_subfolder $ProductId$
+;
+; set_link
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters:
+	; 	working_dir: $InstallDir$
+	; 	icon_file:
+	; 	icon_index:
+; end_link
+;
+; Example of creating a shortcut to the installed exe on AllUsers desktop:
+;
+; set_basefolder common_desktopdirectory
+; set_subfolder ""
+;
+; set_link
+	; 	name: $ProductId$
+	; 	target: <path to the program>
+	; 	parameters: <some_param>
+	; 	working_dir: $InstallDir$
+	; 	icon_file: <path to icon file>
+	; 	icon_index: 2
+; end_link
+
+[Winbatch_uninstall_1]
+#@uninstallCommandLine1*#
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+
+#@SectionLines*#

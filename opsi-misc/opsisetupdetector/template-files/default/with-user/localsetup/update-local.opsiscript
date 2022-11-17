@@ -1,0 +1,22 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Actions]
+
+encoding=utf8
+include_append "%ScriptPath%\..\sections.opsiinc"
+include_append "%ScriptPath%\sections-local.opsiinc"
+include_insert "%ScriptPath%\..\declarations.opsiinc"
+include_insert "%ScriptPath%\declarations-local.opsiinc"
+
+
+
+Comment "Displaying product picture"
+ShowBitmap "%ScriptPath%\%installingProdName%.png" "%installingProdName%"
+
+Message "Re-enabling keyboard and mouse input"
+	Registry_Enable_Input /SysNative

@@ -1,0 +1,34 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file uninstall.opsiscript
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_lin_install.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+Set $InstallDir$	= "#@InstallDir2*#"
+; ----------------------------------------------------------------
+
+; switch to "true" ="true" if this product supports Linux
+if not("true" = "#@install2*#")
+	logError "No Deinstallation for Linux in this opsi product"
+	isFatalError "wrong OS"
+endif
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if FileExists("%ScriptPath%/lin_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/lin_delinc.opsiinc"
+endif
+
+#@FinalUnInstallLines*#
+
