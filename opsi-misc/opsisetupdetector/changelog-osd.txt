@@ -79,7 +79,106 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
 
 todo:
-   * newmain task create product with logged in admin
+   *
+opsi-setup-detector (4.2.1.9-1) stable; urgency=low
+
+   * fixes for msi product version
+   *
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  05 Oct 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.8-1) stable; urgency=low
+
+   * fixes for macOS
+   * opsi-service version with new methods (4.2.0.311)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  04 Oct 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.7-1) stable; urgency=low
+
+   * allow build radio buttons on service data in configuration
+   * typos
+   * new rsCreateWithUserProductAdvice
+   * more (and better) inno constant translations to opsi constants
+   * template fixes
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  30 Sep 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.6-1) stable; urgency=low
+
+   * no uninstall_before_install prop on structured channel
+   * typos
+   * template fixes
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  27 Sep 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.5-1) stable; urgency=low
+
+   * do not set build mode on nogui
+   * set exitcode = 1 if build service failed
+   * initialize productversion to 1.0
+   * fixed messages on create failures
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  21 Sep 2022 : 15:00:00 +0200
+
+   opsi-setup-detector (4.2.1.4-1) stable; urgency=low
+
+   * fix desktopicon creation -> postinstalllist
+   * add target program to setup-files (prop targetprog)
+   * add target program to setup tabs
+   * add  #@targetprogram[123]*# to patch list
+   * add stringvar $targetprogram$ to #@stringvars*#
+   * add  $targetprogram$  to templates
+   * update uninstall program relevant data after choosing the uninstall program
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  19 Sep 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.3-1) stable; urgency=low
+
+   * exitcode <> 0 (1) on failed
+   * fix double creation
+   * integrate servicecall  workbench_buildPackage(package_dir)
+     and workbench_installPackage(package_file_or_dir) if opsiservice is >=  4.2.0.287
+   * fixes property edit
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  12 Sep 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.2-1) stable; urgency=low
+
+   * fix on cli call for opsi-setup-detector-test
+   * fixes in  callOpsiPackageBuilder
+   * more HighDPI fixes
+   * analyzeOnly activated again
+   * create on --nogui 'c:\opsi.org\applog\osd-analyze-result.txt'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  06 Sep 2022 : 15:00:00 +0200
+
+opsi-setup-detector (4.2.1.0-1) stable; urgency=low
+
+   * template channels (training,default,structured,custom)
+   * new task: with-loggedin-user (AnalyzeCreateWithUser)
+   * osdbasedata: fixed stMSI link
+   * no msi log on uninstall
+   * osdform: 'macOS' instead of 'MacOS', fixes  #4732
+   * osdform: startOpsiServiceConnection: dependency:productid Auswahl: netbootprodukte rausnehmen , fixes  #4730
+   * oswebservice: add: TOpsi4Data.getLocalbootProductIds: TStringList;
+   * oswebservice: add: TOpsi4Data.getNetbootProductIds: TStringList;
+   * osdform: fixes for HighDPI: TitlePanels
+   * singleAnalyzeCreate is now default / analyzeOnly removed ; fixes #4729
+   * IncludeTrailingPathDelimiter for worbench_path ; fixes #4262  #4236
+   * use of uncpath is allowed for workbench, installer and icon ; fixes
+   * new option: custom directory support
+   * new option: Install from Local temp dir
+   * new option: Handle License key
+   * new option: Desktopicon
+   * new option: customizeProfile
+   * use declarations.opsiinc in default and structured
+   * hints for the new options
+   * choose directory buttons for the installdirs
+   * delinc for msi: use new function getGuidListByDisplaynameRegex from osd-lib (instead of wmi)
+   * osdforms: fix msi: for adding TRANSFORMS
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  19 Apr 2022 : 15:00:00 +0200
 
 opsi-setup-detector (4.2.0.10-1) stable; urgency=low
 

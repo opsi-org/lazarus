@@ -273,16 +273,17 @@ const
   LLdebug3 = 9;
   LLconfidential = LLdebug3;
 
-
-
-
-  LevelFatal = 1; //not yet used;
+  // old Levels:
   BaseLevel = LLinfo;
   LevelError = LLerror;
   LevelWarnings = LLinfo;
   LevelInfo = LLinfo;
   LevelComplete = LLinfo;
   LevelDebug = LLdebug;
+
+
+  // ExtremeErrorLevels:
+  LevelFatal = 1;
   Level_not_initialized = 9;
 
   passwordFiller = '***(confidential)***';

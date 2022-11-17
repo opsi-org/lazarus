@@ -383,15 +383,17 @@ var
   NetworkDetails, request: string;
   i, index: integer;
 begin
+  // for each request store the answer at the respective position in array of string 'Result'
+  SetLength(Result, Length(Requests));
+  for i := 0 to Length(Requests) - 1 do
+    Result[i] := '';
+
   // get network details with console command 'nmcli dev show' (requires unit "process")
   if RunCommand('/bin/sh', ['-c', 'echo | nmcli dev show'], NetworkDetails) then
   begin
-    // for each request store the answer at the respective position in array of string 'Result'
-    SetLength(Result, Length(Requests));
     // go through requests
     for i := 0 to Length(Requests) - 1 do
     begin
-      Result[i] := '';
       // find request in NetworkDetails
       request := Requests[i] + ':';
       index := NetworkDetails.IndexOf(request);

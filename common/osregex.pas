@@ -44,7 +44,7 @@ begin
     if expr <> '' then
       try
         regexobj.Expression := expr;
-        if inputtext <> '' then
+        if trim(inputtext) <> '' then
         begin
           if regexobj.Exec(inputtext) then //exception if string is empty
             Result := True;
@@ -76,8 +76,8 @@ begin
       Result := TStringList.Create;
       for linecounter := 0 to inputlist.Count - 1 do
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
+        currentline := inputlist.Strings[linecounter];
+        if trim(currentline) <> '' then
           if regexobj.Exec(currentline) then
             Result.Add(currentline);
       end;
@@ -118,8 +118,8 @@ begin
 
       for linecounter := 0 to inputlist.Count - 1 do
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
+        currentline := inputlist.Strings[linecounter];
+        if trim(currentline) <> '' then
           if regexobj.Exec(currentline) then
           begin
             Result.Add(currentline);
@@ -150,7 +150,7 @@ begin
         regexobj := TRegExpr.Create;
         regexobj.Expression := expr;
 
-          if inputstring <> '' then
+          if trim(inputstring) <> '' then
             if regexobj.Exec(inputstring) then
             begin
               Result := regexobj.Match[0];
@@ -186,8 +186,8 @@ begin
 
         for linecounter := 0 to inputlist.Count - 1 do
         begin
-          currentline := trim(inputlist.Strings[linecounter]);
-          if currentline <> '' then
+          currentline := inputlist.Strings[linecounter];
+          if trim(currentline) <> '' then
             if regexobj.Exec(currentline) then
             begin
               Result.Add(regexobj.Match[0]);
@@ -233,8 +233,8 @@ begin
 
       for linecounter := 0 to inputlist.Count - 1 do
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
+        currentline := inputlist.Strings[linecounter];
+        if trim(currentline) <> '' then
           if regexobj.Exec(currentline) then
           begin
             Result.Add(regexobj.Match[0]);
@@ -270,8 +270,8 @@ begin
 
       for linecounter := 0 to inputlist.Count - 1 do
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
+        currentline := inputlist.Strings[linecounter];
+        if trim(currentline) <> '' then
           if not regexobj.Exec(currentline) then
           begin
             Result.Add(currentline);
@@ -306,8 +306,8 @@ begin
 
       for linecounter := 0 to inputlist.Count - 1 do
       begin
-        currentline := trim(inputlist.Strings[linecounter]);
-        if currentline <> '' then
+        currentline := inputlist.Strings[linecounter];
+        if trim(currentline) <> '' then
           if not regexobj.Exec(currentline) then
             Result.Add(currentline);
       end;
@@ -341,12 +341,9 @@ begin
   Result := TStringList.Create;
   for linecounter := 0 to inputlist.Count - 1 do
   begin
-    currentline := trim(inputlist.Strings[linecounter]);
-    if currentline <> '' then
+    currentline := inputlist.Strings[linecounter];
+    if trim(currentline) <> '' then
       currentline := ReplaceRegExpr(expr, currentline, replacetext, True);
-
-
-
     Result.Add(currentline);
   end;
 end;

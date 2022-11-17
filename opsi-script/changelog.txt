@@ -1,16 +1,27 @@
-﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.6.2) unreleased; urgency=high
+opsi-script (4.12.7.0) unreleased; urgency=medium
 
-  * [fix] osstartproc_cp.pas: function FindFirstTask fix condition for ContinueLoop (j.werner)
-   
--- j.werner <j.werner@uib.de> 18 October 2022
+  * [new] testsyntax: if testsyntax ist set to true only the syntax of the script is tested. The script is not excecuted. (!81, !95, d.oertel)
+  * [fix] osparser: testsyntax, retrieveSection: use SearchForSectionLines
+  * [fix] osparser: fix in OpsiServiceCall section (#4790, !91, a.schmitz)
+  * [fix] xml2 attribute sequence:
+          in (common) osxml, osxmlsections, osxmltdom
+          instead of (fcl) DOM, XMLRead, XMLWrite
+          now (LCL) az2_DOM, laz2_XMLRead, laz2_XMLWrite
+          additional changes to make to run the units with these libraries (references: #4791, , d.oertel)
+  * [fix] xml2: osxmlsections: makeNodePathWithTextContent: additional parameter for strictmode
+          xml2: osxmlsections: makeNodePathWithTextContent:
+          use strictmode parameter for node creation (references: #4794, , d.oertel)
+  * [fix] LinkFolder: oslindesktopfiles: In DeleteShellLink use GetSpecialFolderPath instead of hard-coded path to handle all kinds of base folders (#4792, !97, a.schmitz)
 
 
-opsi-script (4.12.6.1) released; urgency=medium
+-- j.werner <j.werner@uib.de> 17 November 2022
+
+
+opsi-script (4.12.6.1) unreleased; urgency=medium
 
   * [new] osparser: Implementation of copy -u for Linux (#4739, !71, j.laajili)
   * [new] osregistry, osparser: new data type QWord added as trdInt64 to normal registry section and regedit format (QWord is not supported in AddReg format) (#4746, !67, a.schmitz)
@@ -30,7 +41,7 @@ opsi-script (4.12.6.1) released; urgency=medium
   * [fix] osparser: product was successful even if the script could not be loaded (#4763, !75, j.werner)
   * [remove] osparser: remove undocumented script function getStringFromListAtIndex since takeString already exists and is more mature (#4738, !64, a.schmitz)
   * [remove] osparser: remove script statement LocalAdmin (tsLocalAdmin) because it is deprecated and has never been documented (!69, a.schmitz)
-  
+
 -- j.werner <j.werner@uib.de> 31 August 2022
 
 
@@ -2887,7 +2898,7 @@ opsi-winst (4.10.3.0-1) experimental; urgency=low
                 9 = confidential (passwords and other security relevant data)
                 *)
         * new command <setLogLevel=>
-        * <LogLevel=> is depricated and now implemented as loglevel := loglevel+4 for backward compatibility
+        * <LogLevel=> is deprecated and now implemented as loglevel := loglevel+4 for backward compatibility
         * GetSystemtype now using windows api wrapper DSiIsWow64
         * New: Parameter '/64Bit' for Files-Sections (disables file redirection)
                 using: DSiDisableWow64FsRedirection and DSiRevertWow64FsRedirection

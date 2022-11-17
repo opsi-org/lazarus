@@ -80,11 +80,6 @@ function getPacketIDShort(str: string): string;
 //function ExtractVersion(str: string): string;
 //function getProductInfoFromResource(infokey: string; filename: string): string;
 
-(*
-resourcestring
-  sWarnMultipleMsi =
-    'Multiple (more than one) msi files found. Look to log file and directory: ';
-*)
 
 implementation
 
@@ -375,9 +370,10 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  mysetup.installerSourceDir := '%scriptpath%/files' + IntToStr(mysetup.ID);
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_generic(' + '"%scriptpath%\files' +
-    IntToStr(mysetup.ID) + '\' + mysetup.setupFileName + '") ';
+    'set $installSuccess$ = install_macos_generic($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
   str1 := '';
   (*
   mysetup.isExitcodeFatalFunction :=
@@ -473,30 +469,30 @@ begin
     //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[0],LLerror);
     //LogDatei.log('Found count: '+inttostr(namelist.Count)+' first: '+namelist.Strings[1],LLerror);
     mysetup.installCommandLine :=
-      'set $installSuccess$ = install_macos_zip(' + '"%scriptpath%/files' +
-      IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+      'set $installSuccess$ = install_macos_zip($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
   end;
 end;
 
 procedure get_dmg_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_dmg(' + '"%scriptpath%/files' +
-    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+    'set $installSuccess$ = install_macos_dmg($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
 end;
 
 procedure get_pkg_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_pkg(' + '"%scriptpath%/files' +
-    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+    'set $installSuccess$ = install_macos_pkg($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
 end;
 
 procedure get_app_info(myfilename: string; var mysetup: TSetupFile);
 begin
   mysetup.installCommandLine :=
-    'set $installSuccess$ = install_macos_app(' + '"%scriptpath%/files' +
-    IntToStr(mysetup.ID) + '/' + mysetup.setupFileName + '") ';
+    'set $installSuccess$ = install_macos_app($installerSourceDir$ + ' +
+    '"/' + mysetup.setupFileName + '") ';
   mysetup.installDirectory:= '/Applications/'+ExtractFileName(myfilename);
 end;
 

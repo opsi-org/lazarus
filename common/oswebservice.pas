@@ -464,6 +464,8 @@ type
     function getOpsiServiceConfigs: string;
     function getLogSize: int64;
     function getProductIds: TStringList;
+    function getLocalbootProductIds: TStringList;
+    function getNetbootProductIds: TStringList;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
@@ -865,6 +867,8 @@ begin
   action := getProductAction;
 
   newActionRequest := tapNull;
+
+
 
   if extremeErrorLevel > levelfatal then
   begin
@@ -5521,6 +5525,47 @@ begin
   end;
 end;
 
+function TOpsi4Data.getLocalbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+begin
+  omc := TOpsiMethodCall.Create('getProductIds_list', ['localboot']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    testresult := SO('"' + testresult + '"').AsJSon(False, False);
+    Result.add(testresult);
+  end;
+end;
+
+function TOpsi4Data.getNetbootProductIds: TStringList;
+var
+  objectlist: TStringList;
+  omc: TOpsiMethodCall;
+  i: integer;
+begin
+  omc := TOpsiMethodCall.Create('getProductIds_list', ['netboot']);
+  objectlist := FjsonExecutioner.getListResult(omc);
+  omc.Free;
+
+  Result := TStringList.Create;
+
+  for i := 0 to objectlist.Count - 1 do
+  begin
+    testresult := objectlist.Strings[i];
+    testresult := SO('"' + testresult + '"').AsJSon(False, False);
+    Result.add(testresult);
+  end;
+end;
+
+
 
 function TOpsi4Data.getProductRequirements(productname: string;
   requirementType: string): TStringList;
@@ -5948,6 +5993,7 @@ var
   ///i : integer;
   ActionStr: string;
   str: string;
+  testsyntaxmode: boolean = False;
 begin
   try
     Result := True;
@@ -5955,140 +6001,290 @@ begin
     str := FProductOnClient_aktobject.asJson(False, False);
     ActionStr := FProductOnClient_aktObject.AsObject.S['actionRequest'];
     LogDatei.log('In opsi4data.UpdateSwitches, Actionstr: ' + Actionstr, LLDebug2);
-    if extremeErrorLevel > levelfatal then
+
+    {$IFDEF OPSISCRIPT}
+    if osconf.configTestSyntax then
+      testsyntaxmode := True;
+    {$ENDIF OPSISCRIPT}
+
+    if testsyntaxmode then
     begin
-      if ActionStr = 'setup' then
+      // testsyntax mode
+      Progress := 'testsyntax';
+      if extremeErrorLevel > levelfatal then
       begin
-        //successful after setup
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Installed);
+        Progress := 'ok: testsyntax';
+        if ActionStr = 'setup' then
+        begin
+          //successful after setup
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //successful after update
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //successful after uninstall
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //successful after always
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //successful after Once
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //successful after Custom
+          ProductOnClient_update(Progress,
+            tar4Successful,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
       end
-      else if ActionStr = 'update' then
+      else //failed
       begin
-        //successful after update
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Installed);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //successful after uninstall
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Not_installed);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //successful after always
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Installed);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //successful after Once
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Not_installed);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //successful after Custom
-        ProductOnClient_update('',
-          tar4Successful,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
+        if ActionStr = 'setup' then
+        begin
+          //failed after setup
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //failed after update
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //failed after uninstall
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //failed after always
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //failed after Once
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //failed after Custom
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
+      end; // failed
     end
-    else //failed
+    else
     begin
-      if ActionStr = 'setup' then
+      // normal (no testsyntax) mode
+      if extremeErrorLevel > levelfatal then
       begin
-        //failed after setup
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Setup,
-          tps4Unkown);
+        if ActionStr = 'setup' then
+        begin
+          //successful after setup
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Installed);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //successful after update
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Installed);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //successful after uninstall
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Not_installed);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //successful after always
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Installed);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //successful after Once
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Not_installed);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //successful after Custom
+          ProductOnClient_update('',
+            tar4Successful,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
       end
-      else if ActionStr = 'update' then
+      else //failed
       begin
-        //failed after update
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Installed,
-          tac4Update,
-          tps4Unkown);
-      end
-      else if ActionStr = 'uninstall' then
-      begin
-        //failed after uninstall
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Uninstall,
-          tps4Unkown);
-      end
-      else if ActionStr = 'always' then
-      begin
-        //failed after always
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4Always,
-          ttc4Always,
-          tac4Always,
-          tps4Unkown);
-      end
-      else if ActionStr = 'once' then
-      begin
-        //failed after Once
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4Forbidden,
-          tac4Once,
-          tps4Unkown);
-      end
-      else if ActionStr = 'custom' then
-      begin
-        //failed after Custom
-        ProductOnClient_update(Progress,
-          tar4Failed,
-          tac4None,
-          ttc4undefined,
-          tac4Custom,
-          tps4Unkown);
-      end
-      else
-      begin
-        //unknown combination
-      end;
-    end; // failed
+        if ActionStr = 'setup' then
+        begin
+          //failed after setup
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Setup,
+            tps4Unkown);
+        end
+        else if ActionStr = 'update' then
+        begin
+          //failed after update
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Installed,
+            tac4Update,
+            tps4Unkown);
+        end
+        else if ActionStr = 'uninstall' then
+        begin
+          //failed after uninstall
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Uninstall,
+            tps4Unkown);
+        end
+        else if ActionStr = 'always' then
+        begin
+          //failed after always
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4Always,
+            ttc4Always,
+            tac4Always,
+            tps4Unkown);
+        end
+        else if ActionStr = 'once' then
+        begin
+          //failed after Once
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4Forbidden,
+            tac4Once,
+            tps4Unkown);
+        end
+        else if ActionStr = 'custom' then
+        begin
+          //failed after Custom
+          ProductOnClient_update(Progress,
+            tar4Failed,
+            tac4None,
+            ttc4undefined,
+            tac4Custom,
+            tps4Unkown);
+        end
+        else
+        begin
+          //unknown combination
+        end;
+      end; // failed
+    end;
   except
     LogDatei.log('Error in opsi4data.UpdateSwitches, Actionstr: ' +
       Actionstr, LLerror);

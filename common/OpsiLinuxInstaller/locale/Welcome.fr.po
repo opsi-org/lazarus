@@ -1,0 +1,22 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: WelcomeResourceStrings.rscarryout
+msgctxt "WelcomeResourceStrings.rscarryout"
+msgid "To carry out the remaining installation automatically, we need some information first."
+msgstr "Pour effectuer automatiquement le restant de l'installation, nous avons d'abord besoin de quelques informations."
+
+#: WelcomeResourceStrings.rsnext
+msgctxt "WelcomeResourceStrings.rsnext"
+msgid " next > "
+msgstr " Suivant > "
+
+#: WelcomeResourceStrings.rssellanguage
+msgctxt "WelcomeResourceStrings.rssellanguage"
+msgid "Please choose a language for this setup program:"
+msgstr "Veuillez choisir une langue pour ce programme d'installation:"
+
+#: WelcomeResourceStrings.rswelcome
+msgctxt "WelcomeResourceStrings.rswelcome"
+msgid "Welcome to the installation of the [] on this computer!"
+msgstr "Bienvenu à l'installation du [] sur cet ordinateur!"

@@ -18,9 +18,10 @@ interface
 uses
   SysUtils,
   Classes,
-  DOM,
-  XMLRead,
-  XMLWrite,
+  laz2_DOM,
+  laz2_XMLRead,
+  xmlreader,
+  laz2_XMLWrite,
   //Dialogs,
   StrUtils,
   //ExtCtrls,
@@ -182,8 +183,10 @@ type
     // create new node, append to actNode, actNode is kept
 
 
-    function makeNodePathWithTextContent(nodePath: string; Text: string;
-      var errorinfo: string): boolean;
+    //function makeNodePathWithTextContent(nodePath: string; Text: string;
+    //  var errorinfo: string): boolean;
+    function makeNodePathWithTextContent(nodePath: string;
+  Text: string; attributes_strict : boolean; var errorinfo: string): boolean;
     // create note path with textcontent
     // in nodepath all attributes have to fit or they will be created
     // actNode will be last created node, text will be set as TextContent
@@ -433,11 +436,17 @@ begin
 end;
 
 
+
+
 //*************  XML Handling ***********************************
 function TuibXMLDocument.createXmlDocFromStringlist(docstrlist: TStringList): boolean;
 var
   mystream: TStringStream;
+  settings: TXMLReaderSettings;
 begin
+  settings:= TXMLReaderSettings.Create;
+  LogDatei.log('CanonicalForm: '+BoolToStr(settings.CanonicalForm,true),5);
+  settings.CanonicalForm:=true;
   createXmlDocFromStringlist := False;
   LogDatei.log('begin to create XMLDoc ', oslog.LLinfo);
   mystream := TStringStream.Create(docstrlist.Text);
@@ -446,6 +455,7 @@ begin
   try
     try
       ReadXMLFile(XML, mystream);
+      //ReadXMLFile(XML, mystream,'stream:',settings);
       LogDatei.log('XMLDoc created from Stringlist', LLinfo);
       createXmlDocFromStringlist := True;
     except
@@ -475,7 +485,9 @@ function TuibXMLDocument.isValidXML(xmlString: TStringList): boolean;
 var
   nodestream: TStringStream;
   Parser: TDOMParser;
-  Src: TXMLInputSource;
+  //Src: TXMLInputSource;
+  Src: LAZ2_XMLREAD.TXMLInputSource;
+  //osxmlsections.pas(498,23) Error: Incompatible type for arg no. 1: Got "XMLREADER.TXMLInputSource", expected "LAZ2_XMLREAD.TXMLInputSource"
   TheDoc: TXMLDocument;
 begin
   isValidXML := False;
@@ -484,9 +496,9 @@ begin
       Parser := TDOMParser.Create;
       nodestream := TStringStream.Create(stringlistWithoutBreaks(xmlString).Text);
       nodestream.Position := 0;
-      Src := TXMLInputSource.Create(nodestream);
+      Src := LAZ2_XMLREAD.TXMLInputSource.Create(nodestream);
       Parser.Options.Validate := True;
-      Parser.OnError := @ErrorHandler;
+      //Parser.OnError := @ErrorHandler;
       Parser.Parse(Src, TheDoc);
       isValidXML := True;
     except
@@ -1376,7 +1388,7 @@ begin
 end;
 
 function TuibXMLDocument.makeNodePathWithTextContent(nodePath: string;
-  Text: string; var errorinfo: string): boolean;
+  Text: string; attributes_strict : boolean; var errorinfo: string): boolean;
 var
   nodesInPath: array[0..50] of TDOMNode;
   attributesSL, pathes: TStringList;
@@ -1475,10 +1487,15 @@ begin
 
         if found then
         begin
-          if (not getNodeStrict(nodesInPath[i], nodesInPath[i - 1],
-            thisnodeName, attributeList)) then
+          if attributes_strict then
+            found := getNodeStrict(nodesInPath[i], nodesInPath[i - 1],
+            thisnodeName, attributeList)
+          else
+            found := getNodeByName(nodesInPath[i], nodesInPath[i - 1],
+            thisnodeName);
+          if (not found) then
           begin
-            found := False;
+            //found := False;
             actNode := nodesInPath[i - 1];
             LogDatei.log('makeNodePathWithTextContent: node not found ' +
               IntToStr(i) + ': nodename: ' + thisnodeName +
@@ -1494,7 +1511,7 @@ begin
           end
           else
           begin
-            found := True;
+            //found := True;
             if actnode <> nil then
               logdatei.log('Found node ' + IntToStr(i) + ': nodename: ' +
                 actNode.NodeName, LLinfo)

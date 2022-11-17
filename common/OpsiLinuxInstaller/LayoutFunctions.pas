@@ -5,7 +5,7 @@ unit LayoutFunctions;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls;
 
 procedure DrawBigBlueLine(Sender: TForm);
 procedure DrawSmallRedLine(Sender: TForm);

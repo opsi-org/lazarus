@@ -7,7 +7,7 @@ newly created folder [BinaryDirectory]/../downloaded_[OpsiPackageId]_[PackageVer
 }
 
 {
-This unit is only tested under Linux so far!
+This unit is only for Linux so far!
 }
 
 {$mode ObjFPC}{$H+}
@@ -35,10 +35,10 @@ type
     procedure InstallDownloadPackage;
     procedure ReadDownloadedOpsiPackageVersion;
     procedure ReadDefaultOpsiPackageVersion;
+    procedure RemoveDownloadedOpsiPackage;
     procedure RemoveOldDownloadedOpsiPackageFolder;
     procedure InstallExtractionPackages;
     procedure CreateNewOpsiPackageFolderDir;
-    procedure MoveOpsiPackageToCurrentDir;
     procedure ExtractCpioFile(fileName: string);
     procedure ExtractCpioFilesFromOpsiPackage;
     procedure CheckOutputForError;
@@ -49,21 +49,22 @@ type
   public
     Output: string;
   const
-    //DownloadDir = 'download.uib.de/opsi4.2/testing/packages/linux/localboot/';
     constructor Create(OpsiPackageId: string; DownloadDir: string;
       OpsiPackageDownloadCommand: TRunCommandElevated;
       PackageManagementShellCommand: string);
       overload;
     procedure DownloadOpsiPackageFromUib;
     function AreOpsiPackageVersionsEqual: boolean;
-    procedure RemoveDownloadedOpsiPackageFolder;
     procedure LogDownloadResult;
 
     property DownloadResult: boolean read FDownloadResult;
   end;
 
 
-function ExtractFileWithCpio(ExtractionCommand: TRunCommandElevated; FileName: string): boolean;
+function RunShellCommandWithoutSpecialRights(CommandLine: string;
+  out Output: string; Shell: string = '/bin/sh'): boolean;
+
+function ExtractFileWithCpio(FileName: string): boolean;
 
 function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
   OpsiPackageDownloadCommand: TRunCommandElevated;
@@ -72,13 +73,34 @@ function DownloadOpsiPackage(OpsiPackageId: string; DownloadDir: string;
 
 implementation
 
-function ExtractFileWithCpio(ExtractionCommand: TRunCommandElevated; FileName: string): boolean;
+function RunShellCommandWithoutSpecialRights(CommandLine: string;
+  out Output: string; Shell: string = '/bin/sh'): boolean;
+begin
+  LogDatei.log('Shell command: ' + CommandLine, LLInfo);
+  if RunCommand(Shell, ['-c', CommandLine], Output,
+    [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
+  begin
+    LogDatei.log('Shell output: ' + Output, LLDebug);
+    Result := True;
+  end
+  else
+  begin
+    if Length(Output) > 1000 then
+      LogDatei.log('Error in RunCommand: ' + Copy(Output, 1, 1000) + '...', LLInfo)
+    else
+      LogDatei.log('Error in RunCommand: ' + Output, LLInfo);
+
+    Result := False;
+  end;
+end;
+
+function ExtractFileWithCpio(FileName: string): boolean;
 var
   Output: string;
 begin
   Result := True;
-  ExtractionCommand.Shell := '/bin/bash';
-  if ExtractionCommand.Run('cpio --extract < ' + FileName, Output) then
+  if RunShellCommandWithoutSpecialRights('cpio --extract < ' + FileName,
+    Output, '/bin/bash') then
   begin
     LogDatei.log(FileName + ' successfully extracted', LLInfo);
   end
@@ -114,15 +136,15 @@ end;
 procedure TOpsiPackageDownloader.DownloadOpsiPackageFromUib;
 begin
   InstallDownloadPackage;
-  FOpsiPackageDownloadCommand.Run('wget -A ' + FOpsiPackageId +
-    '_*.opsi -r -l 1 https://' + FDownloadDir + ' -P ../', Output);
+  RunShellCommandWithoutSpecialRights('wget -A ' + FOpsiPackageId +
+    '_*.opsi -r -l 1 https://' + FDownloadDir + ' -nd', Output);
 end;
 
 
 procedure TOpsiPackageDownloader.ReadDownloadedOpsiPackageVersion;
 begin
-  if FindFirst('../' + FDownloadDir + FOpsiPackageId + '_*.opsi',
-    faAnyFile and faDirectory, FOpsiPackageSearch) = 0 then
+  if FindFirst(FOpsiPackageId + '_*.opsi', faAnyFile and faDirectory,
+    FOpsiPackageSearch) = 0 then
   begin
     FDownloadedOpsiPackageVersion := FOpsiPackageSearch.Name;
     Delete(FDownloadedOpsiPackageVersion, 1, Pos('_', FDownloadedOpsiPackageVersion));
@@ -155,40 +177,33 @@ begin
     Result := True;
 end;
 
-procedure TOpsiPackageDownloader.RemoveDownloadedOpsiPackageFolder;
+procedure TOpsiPackageDownloader.RemoveDownloadedOpsiPackage;
 begin
-  if FindFirst('../download.uib.de', faAnyFile and faDirectory,
-    FOpsiPackageSearch) = 0 then
-    FOpsiPackageDownloadCommand.Run('rm -rf ../download.uib.de', Output);
+  RunShellCommandWithoutSpecialRights('rm ' + FOpsiPackageId + '_' +
+    FDownloadedOpsiPackageVersion + '.opsi', Output);
 end;
 
 procedure TOpsiPackageDownloader.RemoveOldDownloadedOpsiPackageFolder;
 begin
   if FindFirst('../downloaded_' + FOpsiPackageId + '_*', faAnyFile and
     faDirectory, FOpsiPackageSearch) = 0 then
-    FOpsiPackageDownloadCommand.Run('rm -rf ../downloaded_' +
+    RunShellCommandWithoutSpecialRights('rm -rf ../downloaded_' +
       FOpsiPackageId + '_*', Output);
 end;
 
 procedure TOpsiPackageDownloader.CreateNewOpsiPackageFolderDir;
 begin
-  FOpsiPackageDownloadCommand.Run('mkdir ../' + FDownloadedOpsiPackageFolder, Output);
-  FOpsiPackageDownloadCommand.Run('mkdir ../' + FDownloadedOpsiPackageFolder +
+  RunShellCommandWithoutSpecialRights('mkdir ../' +
+    FDownloadedOpsiPackageFolder, Output);
+  RunShellCommandWithoutSpecialRights('mkdir ../' + FDownloadedOpsiPackageFolder +
     '/CLIENT_DATA', Output);
-  FOpsiPackageDownloadCommand.Run('mkdir ../' + FDownloadedOpsiPackageFolder +
+  RunShellCommandWithoutSpecialRights('mkdir ../' + FDownloadedOpsiPackageFolder +
     '/OPSI', Output);
-end;
-
-procedure TOpsiPackageDownloader.MoveOpsiPackageToCurrentDir;
-begin
-  FOpsiPackageDownloadCommand.Run('mv ../' + FDownloadDir + FOpsiPackageId +
-    '_*.opsi ./', Output);
-  RemoveDownloadedOpsiPackageFolder;
 end;
 
 procedure TOpsiPackageDownloader.ExtractCpioFile(FileName: string);
 begin
-  if not ExtractFileWithCpio(FOpsiPackageDownloadCommand, FileName) then
+  if not ExtractFileWithCpio(FileName) then
     FDownloadResult := False;
 end;
 
@@ -204,7 +219,7 @@ procedure TOpsiPackageDownloader.ExtractCpioFilesFromOpsiPackage;
 begin
   InstallExtractionPackages;
   ExtractCpioFile(FOpsiPackageId + '_*.opsi');
-  FOpsiPackageDownloadCommand.Run('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
+  RunShellCommandWithoutSpecialRights('gunzip CLIENT_DATA.cpio.gz OPSI.cpio.gz', Output);
 end;
 
 procedure TOpsiPackageDownloader.CheckOutputForError;
@@ -215,11 +230,11 @@ end;
 
 procedure TOpsiPackageDownloader.MoveCpioFilesToOpsiPackageFolder;
 begin
-  FOpsiPackageDownloadCommand.Run('mv CLIENT_DATA.cpio ../' +
+  RunShellCommandWithoutSpecialRights('mv CLIENT_DATA.cpio ../' +
     FDownloadedOpsiPackageFolder + '/CLIENT_DATA/', Output);
   CheckOutputForError;
-  FOpsiPackageDownloadCommand.Run('mv OPSI.cpio ../' + FDownloadedOpsiPackageFolder +
-    '/OPSI/', Output);
+  RunShellCommandWithoutSpecialRights('mv OPSI.cpio ../' +
+    FDownloadedOpsiPackageFolder + '/OPSI/', Output);
   CheckOutputForError;
 end;
 
@@ -234,12 +249,12 @@ end;
 
 procedure TOpsiPackageDownloader.RemoveDownloadLeftovers;
 begin
-  FOpsiPackageDownloadCommand.Run('rm ' + FOpsiPackageId + '_*.opsi', Output);
+  RunShellCommandWithoutSpecialRights('rm ' + FOpsiPackageId + '_*.opsi', Output);
   CheckOutputForError;
-  FOpsiPackageDownloadCommand.Run(
+  RunShellCommandWithoutSpecialRights(
     'rm ../' + FDownloadedOpsiPackageFolder + '/CLIENT_DATA/CLIENT_DATA.cpio', Output);
   CheckOutputForError;
-  FOpsiPackageDownloadCommand.Run(
+  RunShellCommandWithoutSpecialRights(
     'rm ../' + FDownloadedOpsiPackageFolder + '/OPSI/OPSI.cpio', Output);
   CheckOutputForError;
 end;
@@ -248,7 +263,6 @@ procedure TOpsiPackageDownloader.ExtractOpsiPackage;
 begin
   RemoveOldDownloadedOpsiPackageFolder;
   CreateNewOpsiPackageFolderDir;
-  MoveOpsiPackageToCurrentDir;
   ExtractCpioFilesFromOpsiPackage;
   MoveCpioFilesToOpsiPackageFolder;
   ExtractFoldersFromCpioFiles;
@@ -290,7 +304,7 @@ begin
     LogDatei.log('Downloaded and default ' + OpsiPackageId +
       ' are equal: Remove downloaded ' + OpsiPackageId + ' again',
       LLnotice);
-    OpsiPackageDownloader.RemoveDownloadedOpsiPackageFolder;
+    OpsiPackageDownloader.RemoveDownloadedOpsiPackage;
     Result := False;
   end
   else

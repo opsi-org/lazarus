@@ -9,14 +9,14 @@ uses
   utilwmi,
   contnrs;
 
-function osGetWMI(WMINamespace : String ;WMIClass: string; WMIPropertyList: TStrings;
-  WMICondition: string; var WMIResultList: TStringList;
+function osGetWMI(WMINamespace: string; WMIClass: string;
+  WMIPropertyList: TStrings; WMICondition: string; var WMIResultList: TStringList;
   var ErrorMsg: string): boolean;
 
 implementation
 
-function osGetWMI(WMINamespace : String ;WMIClass: string; WMIPropertyList: TStrings;
-  WMICondition: string; var WMIResultList: TStringList;
+function osGetWMI(WMINamespace: string; WMIClass: string;
+  WMIPropertyList: TStrings; WMICondition: string; var WMIResultList: TStringList;
   var ErrorMsg: string): boolean;
 var
   WMIResult: TFPObjectList;
@@ -33,9 +33,9 @@ begin
         PropNames[i] := WMIPropertyList.strings[i];
       end;
       if (WMICondition = '') and (WMIPropertyList.Count = 0) then
-        WMIResult := GetWMIInfoClass(WMINamespace,WMIClass)
+        WMIResult := GetWMIInfoClass(WMINamespace, WMIClass)
       else
-        WMIResult := GetWMIInfo(WMINamespace,WMIClass,PropNames,WMICondition,Request);
+        WMIResult := GetWMIInfo(WMINamespace, WMIClass, PropNames, WMICondition, Request);
       WMIResultList.Clear;
       for i := 0 to Pred(WMIResult.Count) do
       begin
@@ -46,8 +46,8 @@ begin
     except
       on E: Exception do
       begin
-        ErrorMsg := ErrorMsg + 'Exception while calling WMI: ' + Request +
-          ' Message: ' + E.Message;
+        ErrorMsg := ErrorMsg + 'Exception while calling WMI: ' +
+          Request + ' Message: ' + E.Message;
         WMIResult := nil;
       end;
     end;

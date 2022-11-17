@@ -1,0 +1,50 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+; This file should be included by main file setup.opsiscript
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_macosinstalllib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+; the path where we find the product after the installation
+Set $InstallDir$	= "/Applications/<productid>.app"
+; ----------------------------------------------------------------
+
+; switch to "true" ="true" if this product supports MacOS
+if not("true" = "false")
+	logError "No installation for MacOS in this opsi product"
+	isFatalError "wrong OS"
+endif
+
+if FileExists("%ScriptPath%/mac_delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%/mac_delinc.opsiinc"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+set $installerSourceDir$ = "#@installerSourceDir3*#"
+
+#@preInstallLines*#
+comment "Start setup "
+ChangeDirectory $installerSourceDir$
+;----------------------------------------------
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files3/<my macos install file>")
+;----------------------------------------------
+Sub_check_installSuccess
+#@postInstallLines*#
+
+comment "Copy files"
+Files_install
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

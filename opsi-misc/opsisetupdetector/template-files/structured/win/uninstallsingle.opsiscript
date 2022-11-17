@@ -1,0 +1,50 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+
+[Actions]
+requiredOpsiscriptVersion >= "4.12.4.23"
+
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+#@importLibs*#
+
+; All variables are defined here:
+include_insert "declarations.opsiinc"
+; All sections are defined here:
+include_append "sections.opsiinc"
+
+
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
+Set $ProductId$		 = "#@productId*#"
+; the path where we find the product after the installation
+Set $InstallDir$	= "#@InstallDir1*#"
+; ----------------------------------------------------------------
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+set $OS$ = GetOS
+
+if not(($OS$ = "Windows_NT"))
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
+endif
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
+
+if FileExists("%ScriptPath%\delinc.opsiiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
+endif
+
+#@FinalUnInstallLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

@@ -94,15 +94,7 @@ TuibLinuxDesktopFiles = class (TObject)
   public
     constructor Create;
     destructor Destroy; override;
-    (*
-    function GetSpecialFolderPath(const desktop: integer;
-                                  const Systemfolder : Integer) : String;
-//    function ShowShellFolderWindow : Boolean;
-    function OpenShellFolderPath (const Systemfolder: Integer; const foldername, iconPath : String) : Boolean;
-    function MakeShellLink
-      (const description, thePath, commandline_arguments, working_directory,
-      iconPath: string; const icon_index: integer): boolean;
-      *)
+
     function OpenShellFolderPath (const Systemfolder: Integer; const subfoldername): Boolean;
     function Tell_SystemFolder (const Systemfolder : Integer) : String;
     function MakeShellLink
@@ -319,8 +311,10 @@ begin
   myLinkname := DelChars(myLinkname,'/'); // delete slashes, filename must not contain slashes
   myLinkname := DelSpace(myLinkname);// delete whitespaces, filename must not contain whitespaces
   myLinkname := trim(myLinkname);
-  if dirpath = '' then mydirpath := '/tmp'
-  else mydirpath := dirpath;
+  if dirpath = '' then
+    mydirpath := '/tmp'
+  else
+    mydirpath := dirpath;
   Filename := mydirpath+'/'+myLinkname;
   if FileExists(Filename) then LinkExisted := true
   else LinkExisted := false;
@@ -417,8 +411,10 @@ begin
   createdir := '';
   if FolderOpened then
   begin
-    if MySystemfolder = CSIDL_COMMON_PROGRAMS then createdir := '/tmp'
-    else createdir := GetSpecialFolderPath(MySystemfolder);
+    if MySystemfolder = CSIDL_COMMON_PROGRAMS then
+      createdir := '/tmp'
+    else
+      createdir := GetSpecialFolderPath(MySystemfolder);
     LogDatei.log ('Given base directory is: '+Tell_SystemFolder(MySystemfolder), LLNotice);
   end
   else
@@ -432,7 +428,7 @@ begin
   if FileExists(iconPath) then
   begin
     if installIcon(iconpath) then
-      myicon :=  ChangeFileExt(ExtractFileName(iconPath),'');
+      myicon := ChangeFileExt(ExtractFileName(iconPath),'');
   end;
   dfilename := MakeDesktopFile(createdir,'', typeOf, categories, name, genericName,
                      thePath, commandline_arguments, working_directory, myicon, false, false);
@@ -452,8 +448,7 @@ end;
 function TuibLinuxDesktopFiles.DeleteShellLink (const linkname: String)
    : Boolean;
  var
- dfilename, newDir : String;
- runningDesktop : integer;
+ dfilename : String;
 begin
   result :=  false;
   //if 0 = RunCommandCaptureOutGetExitcode('xdg-desktop-menu uninstall '+ linkname) then result :=  true;
@@ -469,8 +464,8 @@ begin
   else if MySystemfolder = CSIDL_COMMON_PROGRAMS then
     if not InstallDesktopFile(dfilename) then  LogDatei.log ('Could not uninstall desktop file', LLError)
     else result := true;
-  // try hard
-  dfilename := '/usr/share/applications/'+linkname+'.desktop';
+
+  dfilename := GetSpecialFolderPath(MySystemfolder) + '/' + linkname + '.desktop';
   LogDatei.log ('Try to delet desktop file: '+dfilename, LLDebug);
   if not sysutils.DeleteFile(dfilename) then
   begin
@@ -478,202 +473,13 @@ begin
     result := false;
   end
   else result := true;
-  (*
-  if not FolderOpened
-  then
-  Begin
-    LogS := 'Error: no folder opened ';
-    LogDatei.DependentAddError (LogS, BaseLevel);
-    result := false;
-  End
-  else
-  Begin
-   result := true;
-   //first: doit for the freedesktop standard (if possible)
-   newDir := GetSpecialFolderPath(DESK_FREE,mySystemfolder);
-   if newDir <> '' then
-   begin
-    newDir := newDir+'/'+mySubfolder;
-    if DirectoryExists(newDir) then
-    begin
-     filename := newDir+'/'+linkname;
-     if not sysutils.FileExists (Filename)
-     then
-     Begin
-      LogS := 'Info: Link ' + Linkname + ' does not exist';
-      LogDatei.DependentAdd (LogS, LevelInfo);
-      LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-      result := false;
-     End;
-
-     if result then
-     Begin
-       if DeleteFile (Filename)
-       then
-       Begin
-         LogS := 'Link ' + Linkname +  ' deleted';
-         LogDatei.DependentAdd (LogS, LevelComplete);
-       End
-       else
-       Begin
-         LogS := 'Error: ' + Linkname +  ' could not be deleted, Errorno. '
-                 + IntToStr (GetLastError) + ' ("' + SysErrorMessage (GetLastError) + '")';
-         LogDatei.DependentAddError (LogS, BaseLevel);
-         result := false;
-       End;
-     End;
-    end
-    else
-    begin
-     result := false;
-     LogS := 'Error: Directory "' + newDir + '"  doesnt exist (internal Error)';
-     LogDatei.DependentAddError (LogS, BaseLevel);
-    end;
-   end
-   else
-   begin
-    LogS := 'Warning: '+mySystemfolderName+' is not defined by the freedesktop.org standard';
-    result := false;
-    LogDatei.DependentAdd(LogS, BaseLevel);
-   end;
-
-    //second: doit in oldstyle for the running desktop
-   runningDesktop := getRunningDesktop;
-   newDir := GetSpecialFolderPath(runningDesktop,mySystemfolder);
-   if newDir <> '' then
-   begin
-    newDir := newDir+'/'+mySubfolder;
-    if DirectoryExists(newDir) then
-    begin
-     filename := newDir+'/'+linkname;
-     if not sysutils.FileExists (Filename)
-     then
-     Begin
-      LogS := 'Info: Link ' + Linkname + ' does not exist';
-      LogDatei.DependentAdd (LogS, LevelInfo);
-      LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-      result := false;
-     End;
-
-     if result then
-     Begin
-       if DeleteFile (Filename)
-       then
-       Begin
-         LogS := 'Link ' + Linkname +  ' deleted';
-         LogDatei.DependentAdd (LogS, LevelComplete);
-       End
-       else
-       Begin
-         LogS := 'Error: ' + Linkname +  ' could not be deleted, Errorno. '
-                 + IntToStr (GetLastError) + ' ("' + SysErrorMessage (GetLastError) + '")';
-         LogDatei.DependentAddError (LogS, BaseLevel);
-         result := false;
-       End;
-     End;
-    end
-    else
-    begin
-     result := false;
-     LogS := 'Error: Directory "' + newDir + '"  doesnt exist (internal Error)';
-     LogDatei.DependentAddError (LogS, BaseLevel);
-    end;
-   end
-   else
-   begin
-    LogS := 'Warning: '+mySystemfolderName+' is not defined by the running desktop standard';
-    result := false;
-    LogDatei.DependentAdd(LogS, BaseLevel);
-   end;
-  End;
-  *)
 end;
 
 function TuibLinuxDesktopFiles.DeleteShellFolder
    (const SystemFolder: Integer; const foldername: String)
    : Boolean;
-
-  var
-  newDir, FolderPath : String;
-  runningDesktop : integer;
-
 begin
   result := false;
-  (*
-
-  //first: doit for the freedesktop standard (if possible)
-  newDir := GetSpecialFolderPath(DESK_FREE,mySystemfolder);
-  if newDir = '' then
-  begin
-   LogS := 'Warning: '+mySystemfolderName+' is not defined by the freedesktop.org standard';
-   result := false;
-   LogDatei.DependentAdd(LogS, BaseLevel);
-  end
-  else
-  begin
-    FolderPath := newDir + '/' + foldername;
-    if not DirectoryExists (FolderPath)
-    then
-    Begin
-      LogS := 'Folder "' + foldername + '" in ' + Tell_SystemFolder (SystemFolder) + ' does not exist, nothing to delete';
-      LogDatei.DependentAdd (LogS, LevelComplete);
-      result := true;
-    End
-    else
-    Begin
-      LogS := 'Delete folder "' + foldername + '" in ' + Tell_SystemFolder (SystemFolder);
-      LogDatei.DependentAdd (LogS, LevelComplete);
-
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-      if MyFiles.AllDelete (FolderPath, true, true, 0)
-      then
-      Begin
-         result := true;
-         if FolderOpened and (FolderPath = MyFolderPath)
-         then FolderOpened := false;
-      End;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    End;
-  end;
-
-  //second: doit in oldstyle for the running desktop
-  runningDesktop := getRunningDesktop;
-  newDir := GetSpecialFolderPath(runningDesktop,mySystemfolder);
-  if newDir = '' then
-  begin
-   LogS := 'Warning: '+mySystemfolderName+' is not defined by the running desktop standard';
-   result := false;
-   LogDatei.DependentAdd(LogS, BaseLevel);
-  end
-  else
-  begin
-    FolderPath := newDir + '/' + foldername;
-    if not DirectoryExists (FolderPath)
-    then
-    Begin
-      LogS := 'Folder "' + foldername + '" in ' + Tell_SystemFolder (SystemFolder) + ' does not exist, nothing to delete';
-      LogDatei.DependentAdd (LogS, LevelComplete);
-      result := true;
-    End
-    else
-    Begin
-      LogS := 'Delete folder "' + foldername + '" in ' + Tell_SystemFolder (SystemFolder);
-      LogDatei.DependentAdd (LogS, LevelComplete);
-
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
-      if MyFiles.AllDelete (FolderPath, true, true, 0)
-      then
-      Begin
-         result := true;
-         if FolderOpened and (FolderPath = MyFolderPath)
-         then FolderOpened := false;
-      End;
-      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    End;
-  end;
-  *)
 end;
 
 

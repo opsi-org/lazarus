@@ -194,6 +194,7 @@ begin
     if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
       exists := True;
   *)
+  (*
   exists := aktProduct.properties.propExists(tmpstr);
   if exists then
   begin
@@ -202,6 +203,7 @@ begin
       mtError, [mbOK], '');
     valid := False;
   end;
+  *)
 end;
 
 procedure TFNewPropDlg.FormCreate(Sender: TObject);

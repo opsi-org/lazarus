@@ -169,6 +169,7 @@ var
   configSupressSystemEncodingWarning: boolean = False;
   log_rotation_count: integer = 8;
   configWriteProductLogFile: boolean = False;
+  configTestSyntax: boolean = False;
 
 
 implementation
@@ -207,6 +208,8 @@ begin
     myconf.WriteString('global', 'log_rotation_count', IntToStr(log_rotation_count));
     myconf.WriteString('global', 'writeProductLogFile',
       BoolToStr(configWriteProductLogFile, False));
+    myconf.WriteString('global', 'testSyntax',
+      BoolToStr(configTestSyntax, False));
     myconf.Free;
   except
     Result := False;
@@ -256,6 +259,9 @@ begin
     configWriteProductLogFile :=
       strToBool(myconf.ReadString('global', 'writeProductLogFile',
       boolToStr(configWriteProductLogFile, False)));
+    configTestSyntax :=
+      strToBool(myconf.ReadString('global', 'testSyntax',
+      boolToStr(configTestSyntax, False)));
     myconf.Free;
 
 
@@ -567,6 +573,26 @@ begin
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  writeProductLogFile: '
                                 + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.testSyntax') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got testSyntax: ' + tmpstr);
+                            // do not overwrite cli parameter /testsyntax
+                            if not configTestSyntax then
+                              if not TryStrToBool(tmpstr,
+                                configTestSyntax) then
+                                osmain.startupmessages.Add(
+                                  'Error: Not a Boolean:  testSyntax: '
+                                  + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;

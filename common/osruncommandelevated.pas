@@ -67,14 +67,18 @@ begin
   else
     LogDatei.log('Shell command: ' + aCommandLine, LLDebug);
   if RunCommand(FShell, [FShellOption, 'echo ' +'"'+ FPassword + '" | ' + aCommandLine],
-    Output, [poWaitOnExit, poUsePipes], swoShow) then
+    Output, [poWaitOnExit, poUsePipes, poStderrToOutPut], swoShow) then
   begin
     LogDatei.log('Shell output: ' + Output, LLDebug);
     Result := True;
   end
   else
   begin
-    LogDatei.log('Error in RunCommand ' + Output, LLInfo);
+    if Length(Output) > 1000 then
+      LogDatei.log('Error in RunCommand: ' + Copy(Output, 1, 1000) + '...', LLInfo)
+    else
+      LogDatei.log('Error in RunCommand: ' + Output, LLInfo);
+
     Output := 'Error in RunCommand: ' + Output;
     Result := False;
   end;

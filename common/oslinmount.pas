@@ -389,7 +389,7 @@ begin
       opsidata.setAddConfigStateDefaults(False);
     end;
     (*
-      depricated: getGeneralConfigValue    (do 04.01.2022)
+      deprecated: getGeneralConfigValue    (do 04.01.2022)
     resultstring := MyOpsiMethodCall('getGeneralConfigValue',
       ['clientconfig.depot.user', myclientid]);
     mydepotuser := trim(SO(resultstring).S['result']);

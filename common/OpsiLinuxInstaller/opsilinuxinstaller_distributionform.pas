@@ -20,7 +20,6 @@ type
     procedure FormActivate(Sender: TObject); virtual; abstract;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject); virtual;
-  private
   public
   var
     // GoOn tells the WelcomeForm whether the next or the back button was

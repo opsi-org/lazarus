@@ -11,8 +11,6 @@ uses
 type
   TOpsiLinuxInstallerQueryForm = class(TOpsiLinuxInstallerBaseForm)
     BtnBack: TButton;
-  private
-  public
     procedure BtnBackClick(Sender: TObject); virtual; abstract;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction); virtual; abstract;
   end;

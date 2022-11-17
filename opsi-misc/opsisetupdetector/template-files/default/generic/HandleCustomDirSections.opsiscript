@@ -1,0 +1,2 @@
+[Files_copy_from_custom_dir]
+copy -s "%scriptPath%\custom\*" "$installdir$"

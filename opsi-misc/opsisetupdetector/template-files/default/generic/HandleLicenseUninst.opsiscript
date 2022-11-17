@@ -1,0 +1,9 @@
+
+; ---------------------------------------------------------------
+comment "handle license "
+; ----------------------------------------------------------------
+if $LicenseHandledByScript$ = "true"
+	comment "we should free license used"
+	Set $tmpstr$ = FreeLicense($LicenseOrPool$)
+endif
+

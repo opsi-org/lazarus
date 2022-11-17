@@ -1,0 +1,83 @@
+; ----------------------------------------------------------------
+; This is a opsi-script file.
+; See https://opsi.org    https://uib.de
+; This code was originally created by opsi-setup-detector #@osdVersion*#
+; ----------------------------------------------------------------
+encoding=utf8
+
+[Actions]
+requiredOpsiscriptVersion >= "4.12.4.23"
+
+importlib "uib_exitcode.opsiscript"
+importlib "osd-lib.opsiscript"
+importlib "uib_macosinstalllib.opsiscript"
+#@importLibs*#
+
+; All variables are defined here:
+include_insert "declarations.opsiinc"
+
+; ----------------------------------------------------------------
+; Please edit the following values:
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a separator
+Set $ProductId$		 = "#@productId*#"
+; the path were we find the product after the installation
+;Set $InstallDir$	= "/Applications/<product.app>"
+Set $InstallDir$		= "/Applications/<productid.app>"
+; ----------------------------------------------------------------
+
+Message "Installing " + $ProductId$ + " ..."
+
+set $OS$ = GetOS
+
+if not(($OS$ = "macos"))
+	logError "Installation aborted: wrong OS version: only MacOS"
+	isFatalError "wrong OS"
+endif
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%/" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
+
+if FileExists("%ScriptPath%\delinc.opsiinc")
+	comment "Start uninstall part"
+	include_insert "%ScriptPath%\delinc.opsiinc"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+set $installerSourceDir$ = "#@installerSourceDir1*#"
+
+#@preInstallLines*#
+comment "Start installer "
+ChangeDirectory $installerSourceDir$
+;----------------------------------------------
+set $installSuccess$ = install_macos_generic("%SCRIPTPATH%/files1/<my macos install file>")
+;----------------------------------------------
+if $installSuccess$  = "false"
+	LogError "Installation failed"
+	isfatalerror "Installation failed"
+else
+	Comment "Installation success"
+endif
+
+#@postInstallLines*#
+
+comment "Copy files"
+Files_install
+
+[Files_uninstall]
+del -sf "$InstallDir$/"
+
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+
+
+#@sectionLines*#
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+
