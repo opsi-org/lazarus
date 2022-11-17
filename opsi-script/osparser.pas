@@ -9738,7 +9738,7 @@ begin
           begin
             if csidl_set then
             begin
-              LogDatei.LogSIndentLevel := startindentlevel;
+              //LogDatei.LogSIndentLevel := startindentlevel;
               ShellLinks.DeleteShellFolder(csidl, deletefoldername);
               //csidl_set := false;
             end
