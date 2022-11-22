@@ -19492,7 +19492,7 @@ begin
     if Skip('(', r, r, InfoSyntaxError) then
       if EvaluateString(r, tmpstr, s1, InfoSyntaxError) then
         if Skip(',', tmpstr, tmpstr1, tmpstr3) then
-          if EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3) then;
+          EvaluateString(tmpstr1, tmpstr2, s2, tmpstr3);
 
             {$IFDEF WIN32}
     if s2 = '' then
@@ -19520,21 +19520,24 @@ begin
         try
           tmpbool := True;
           if lowercase(s2) = '32bit' then
-            if not testSyntax then
-              BooleanResult := handleFileExists32(s1)
-            else if lowercase(s2) = '64bit' then
-              if not testSyntax then
-                BooleanResult := handleFileExists64(s1)
-              else if lowercase(s2) = 'sysnative' then
-                if not testSyntax then
-                  BooleanResult := handleFileExistsSysNative(s1)
-                else
-                begin
-                  InfoSyntaxError :=
-                    'Error: unknown parameter: ' + s2 +
-                    ' expected one of 32bit,64bit,sysnative';
-                  BooleanResult := False;
-                end;
+          begin
+            if not testSyntax then BooleanResult := handleFileExists32(s1);
+          end
+          else if lowercase(s2) = '64bit' then
+          begin
+            if not testSyntax then BooleanResult := handleFileExists64(s1);
+          end
+          else if lowercase(s2) = 'sysnative' then
+          begin
+            if not testSyntax then BooleanResult := handleFileExistsSysNative(s1);
+          end
+          else
+          begin
+            InfoSyntaxError :=
+              'Error: unknown parameter: ' + s2 +
+              ' expected one of 32bit,64bit,sysnative';
+            BooleanResult := False;
+          end;
         except
           Logdatei.log('Error: Exception in FileOrFolderExists: ', LLError);
           BooleanResult := False;
