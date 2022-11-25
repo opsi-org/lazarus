@@ -80,10 +80,16 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 todo:
    *
+
+opsi-setup-detector (4.2.1.10-1) stable; urgency=low
+
+   *
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  25 Nov 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.9-1) stable; urgency=low
 
    * fixes for msi product version
-   *
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  05 Oct 2022 : 15:00:00 +0200
 
