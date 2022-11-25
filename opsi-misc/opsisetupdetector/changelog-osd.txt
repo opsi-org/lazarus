@@ -83,7 +83,20 @@ todo:
 
 opsi-setup-detector (4.2.1.10-1) stable; urgency=low
 
-   *
+   * osparserhelper:
+      function opsiquotestr(s1, s2: string): string;
+      // returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
+      // s2 may be two chars long. Then the first char is the start mark
+      // and the second char is the end mark
+      // used by opsiquotelist
+
+      procedure opsiquotelist(var list1 : TStringlist; s2: string);
+      // returns list1 with every element quoted with s2 (if it is quoted right now, nothing will be changed)
+      // s2 may be two chars long. Then the first char is the start mark
+      // and the second char is the end mark
+
+   * osdcreate: createopsifiles: use opsiquotelist before stringListToJsonArray
+     because quoting is removed from stringListToJsonArray
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  25 Nov 2022 : 15:00:00 +0200
 

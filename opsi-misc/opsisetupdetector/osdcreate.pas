@@ -1125,7 +1125,7 @@ end;
 
 function createOpsiFiles: boolean;
 var
-  textlist: TStringList;
+  textlist, helplist: TStringList;
   i: integer;
   mydep: TPDependency;
   myprop: TPProperty;
@@ -1135,6 +1135,7 @@ var
 begin
   Result := False;
   try
+    helplist := TStringList.Create;
     textlist := TStringList.Create;
     textlist.Add('[Package]');
     textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
@@ -1211,9 +1212,13 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        if stringListToJsonArray(TStringList(myprop.GetValueLines), tmpstr) then
+        helplist.Text:= myprop.GetValueLines.Text;
+        opsiquotelist(helplist,'"');
+        if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('values: ' + tmpstr);
-        if stringListToJsonArray(TStringList(myprop.GetDefaultLines), tmpstr) then
+        helplist.Text:= myprop.GetDefaultLines.Text;
+        opsiquotelist(helplist,'"');
+        if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('default: ' + tmpstr);
       end;
     end;
