@@ -362,15 +362,14 @@ begin
     jsonstring := '[';
     Result := False;
     if (strlist <> nil) and (strlist.Count > 0) then
+    begin
       for j := 0 to strlist.Count - 1 do
       begin
-        if EndsStr(strlist.Strings[j], '"') and Startsstr(strlist.Strings[j], '"') then
-          AppendStr(jsonstring, strlist.Strings[j])
-        else
-          AppendStr(jsonstring, '"' + strlist.Strings[j] + '"');
+        AppendStr(jsonstring, strlist.Strings[j]);
         if (j < strlist.Count - 1) then
           AppendStr(jsonstring, ',');
       end;
+    end;
     AppendStr(jsonstring, ']');
     new_obj := SO(jsonstring);
     if new_obj.IsType(stArray) then
