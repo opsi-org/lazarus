@@ -9607,7 +9607,7 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     deletefoldername: string = '';
     s: string = '';
 
-    in_link_features: boolean = True;
+    in_link_features: boolean;
     regular_end: boolean = False;
     link_name: string = '';
     link_target: string = '';
@@ -9625,7 +9625,7 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     ShellLinks: TuibLinuxDesktopFiles;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
 begin
     i := 1;
     if Sektion.Count = 0 then
@@ -9636,7 +9636,7 @@ begin
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     ShellLinks:= TuibLinuxDesktopFiles.Create;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
 
     csidl := 0;
     csidl_set := False;
@@ -9792,6 +9792,7 @@ begin
             syntaxCheck := False;
           end;
           Inc(i);
+          in_link_features := True;
 
           while (i <= Sektion.Count) and in_link_features do
           begin
@@ -9821,7 +9822,7 @@ begin
                   s := Remaining;
                 {$IFDEF UNIX}
                 logdatei.log('Option icon_index is ignored at Linux', LLWarning);
-                {$ENDIF LINUX}
+                {$ENDIF UNIX}
                 {$IFDEF WIN32}
                 if s = '' then
                   link_icon_index := 0
@@ -9844,7 +9845,7 @@ begin
                   s := Remaining;
                 {$IFDEF UNIX}
                 logdatei.log('Option shurtcut is ignored at Linux', LLWarning);
-                {$ENDIF LINUX}
+                {$ENDIF UNIX}
                 {$IFDEF WIN32}
                 if s = '' then
                   link_shortcut := 0
@@ -9867,7 +9868,7 @@ begin
                   s := Remaining;
                 {$IFDEF UNIX}
                 logdatei.log('Option window_state is ignored at Linux', LLWarning);
-                {$ENDIF LINUX}
+                {$ENDIF UNIX}
                 {$IFDEF WIN32}
                 if s = '' then
                   link_showwindow := 0
