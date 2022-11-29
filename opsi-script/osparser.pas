@@ -303,6 +303,7 @@ type
     procedure evaluateAttribute;
     procedure evaluateText;
   end;
+
 {$ENDIF}
 
 
@@ -424,7 +425,7 @@ type
       var list: TXStringlist; var InfoSyntaxError: string): boolean; overload;
     procedure FillStringList(var ResultList: TXStringList; var r: string;
       var syntaxCheck: boolean; var InfoSyntaxError: string);
-    procedure EvaluateGenericStringList(const Quotes: Char; var r: string;
+    procedure EvaluateGenericStringList(const Quotes: char; var r: string;
       var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
     function produceStringList
       (const section: TuibIniScript; const s0: string; var Remaining: string;
@@ -1786,15 +1787,15 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
   end;
 {$ENDIF}
 end;
+
 {$ELSE}
 function GetMACAddress2: string;
 var
@@ -1859,6 +1860,7 @@ begin
   FreeMem(Lenum);
   GetMacAddress2 := _SystemID;
 end;
+
 {$ENDIF}
 
 
@@ -3881,19 +3883,20 @@ end;
 
 procedure SetFlagReloadProductList;
 begin
-  if (ProductsRunnedUsingReloadProductList.IndexOf(opsidata.getActualProductId) = -1) then
+  if (ProductsRunnedUsingReloadProductList.IndexOf(
+    opsidata.getActualProductId) = -1) then
   begin
-    FlagReloadProductList := true;
+    FlagReloadProductList := True;
     ProductsRunnedUsingReloadProductList.Add(opsidata.getActualProductId);
     LogDatei.log('Reload installation sequence.', LLInfo);
   end
   else
   begin
-    FlagReloadProductList := false;
-    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId
-    + ' already runned. Do not reload installation sequence.', LLWarning);
+    FlagReloadProductList := False;
+    LogDatei.log('Circularity. Product ' + opsidata.getActualProductId +
+      ' already runned. Do not reload installation sequence.', LLWarning);
   end;
-  LogDatei.log('Products runned using "ReloadProductList":',LLDebug2);
+  LogDatei.log('Products runned using "ReloadProductList":', LLDebug2);
   LogDatei.log_list(ProductsRunnedUsingReloadProductList, LLDebug2);
 end;
 
@@ -7903,7 +7906,8 @@ var
                 LogDatei.log('nodepath does not exists - try to create: ' +
                   nodepath, oslog.LLinfo);
                 errorinfo := '';
-                if XMLDocObject.makeNodePathWithTextContent(nodepath, '',openstrict, errorinfo) then
+                if XMLDocObject.makeNodePathWithTextContent(nodepath,
+                  '', openstrict, errorinfo) then
                 begin
                   nodeOpened := True;
                   LogDatei.log('successfully created nodepath: ' +
@@ -9576,387 +9580,398 @@ begin
 end;
 
 
-function GetLinkFeature(var ScriptLineRemaining: string; FeatureNameForLogging: string;
-  StringInStringAllowed: boolean): string;
+function GetLinkFeature(var ScriptLineRemaining: string;
+  FeatureNameForLogging: string; StringInStringAllowed: boolean): string;
 var
   UnusedErrorInfo: string = '';
 begin
   Result := '';
-  if not getString(ScriptLineRemaining, Result, ScriptLineRemaining, UnusedErrorInfo, StringInStringAllowed)
-  then
+  if not getString(ScriptLineRemaining, Result, ScriptLineRemaining,
+    UnusedErrorInfo, StringInStringAllowed) then
   begin
     Result := ScriptLineRemaining;
     ScriptLineRemaining := '';
-    end;
+  end;
   LogDatei.log_prog(FeatureNameForLogging + ': ' + Result, LLDebug);
 end;
 
-procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: TuibInstScript; const testSyntax: boolean);
-  var
-    i: integer = 0;
-    SyntaxCheck: boolean;
-    Remaining: string = '';
-    errorInfo: string = '';
+procedure linkActionsMain(const Sektion: TWorkSection;
+  const UibInstScript: TuibInstScript; const testSyntax: boolean);
+var
+  i: integer = 0;
+  SyntaxCheck: boolean;
+  Remaining: string = '';
+  errorInfo: string = '';
 
-    csidl: integer = 0;
-    csidl_set: boolean;
-    folder_opened: boolean;
+  csidl: integer = 0;
+  csidl_set: boolean;
+  folder_opened: boolean;
 
-    basefolder: string = '';
-    subfoldername: string = '';
-    deletefoldername: string = '';
-    s: string = '';
+  basefolder: string = '';
+  subfoldername: string = '';
+  deletefoldername: string = '';
+  s: string = '';
 
-    in_link_features: boolean;
-    regular_end: boolean = False;
-    link_name: string = '';
-    link_target: string = '';
-    link_paramstr: string = '';
-    link_working_dir: string = '';
-    link_icon_file: string = '';
-    link_icon_index: integer = 0;
-    link_categories: string = '';
-    link_shortcut: word = 0;
-    link_showwindow: integer = 0;
+  in_link_features: boolean;
+  regular_end: boolean = False;
+  link_name: string = '';
+  link_target: string = '';
+  link_paramstr: string = '';
+  link_working_dir: string = '';
+  link_icon_file: string = '';
+  link_icon_index: integer = 0;
+  link_categories: string = '';
+  link_shortcut: word = 0;
+  link_showwindow: integer = 0;
 
-    Expressionstr: string = '';
+  Expressionstr: string = '';
     {$IFDEF WINDOWS}
-    ShellLinks: TuibShellLinks;
+  ShellLinks: TuibShellLinks;
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
-    ShellLinks: TuibLinuxDesktopFiles;
+  ShellLinks: TuibLinuxDesktopFiles;
     {$ENDIF UNIX}
 begin
-    i := 1;
-    if Sektion.Count = 0 then
-      exit;
+  i := 1;
+  if Sektion.Count = 0 then
+    exit;
 
     {$IFDEF WINDOWS}
-    ShellLinks:= TuibShellLinks.Create;
+  ShellLinks := TuibShellLinks.Create;
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
-    ShellLinks:= TuibLinuxDesktopFiles.Create;
+  ShellLinks := TuibLinuxDesktopFiles.Create;
     {$ENDIF UNIX}
 
-    csidl := 0;
-    csidl_set := False;
-    folder_opened := False;
-    subfoldername := '';
+  csidl := 0;
+  csidl_set := False;
+  folder_opened := False;
+  subfoldername := '';
 
-    while i <= Sektion.Count do
+  while i <= Sektion.Count do
+  begin
+    Remaining := trim(Sektion.strings[i - 1]);
+    if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
+      Inc(i)
+    else
     begin
-      Remaining := trim(Sektion.strings[i - 1]);
-      if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
-        Inc(i)
-      else
-      begin
-        GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
+      GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet0);
 
-        if LowerCase(Expressionstr) = 'set_basefolder' then
+      if LowerCase(Expressionstr) = 'set_basefolder' then
+      begin
+        syntaxcheck := True;
+        if (length(Remaining) = 0) then
         begin
-          syntaxcheck := True;
-          if (length(Remaining) = 0) then
+          syntaxCheck := False;
+          UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1],
+            'folder name expected');
+        end
+        else
+        begin
+          if not GetString(Remaining, basefolder, Remaining, errorinfo, False)
+          then
           begin
-            syntaxCheck := False;
-            UibInstScript.reportError(Sektion, i, Sektion.strings[i - 1], 'folder name expected');
+            basefolder := Remaining;
+            Remaining := '';
+          end;
+
+          if length(Remaining) > 0 then
+          begin
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+              'end of line expected');
+          end;
+
+          if not testSyntax then
+          begin
+            if producecsidlfromName(basefolder, csidl, errorinfo) then
+            begin
+              csidl_set := True;
+              LogDatei.log('Base folder is ' +
+                ShellLinks.Tell_Systemfolder(csidl), levelComplete);
+            end
+            else
+            begin
+              LogDatei.log('Error: ' + errorinfo, LLError);
+            end;
+          end;
+        end;
+      end
+
+      else if LowerCase(Expressionstr) = 'set_subfolder' then
+      begin
+        if not getString(Remaining, subfoldername, Remaining, errorinfo, False)
+        then
+        begin
+          subfoldername := Remaining;
+          Remaining := '';
+        end;
+
+        if length(Remaining) > 0 then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+        end;
+
+        if not testSyntax then
+        begin
+          if csidl_set then
+          begin
+            ShellLinks.OpenShellFolderPath(csidl, subfoldername);
+            folder_opened := True;
           end
           else
-          begin
-            if not GetString(Remaining, basefolder, Remaining, errorinfo, False)
-            then
-            begin
-              basefolder := Remaining;
-              Remaining := '';
-            end;
-
-            if length(Remaining) > 0 then
-            begin
-              UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-            end;
-
-            if not testSyntax then
-            begin
-              if producecsidlfromName(basefolder, csidl, errorinfo) then
-              begin
-                csidl_set := True;
-                LogDatei.log('Base folder is ' +
-                  ShellLinks.Tell_Systemfolder(csidl), levelComplete);
-              end
-              else
-              begin
-                LogDatei.log('Error: ' + errorinfo, LLError);
-              end;
-            end;
-          end;
-        end
-
-        else if LowerCase(Expressionstr) = 'set_subfolder' then
-        begin
-          if not getString(Remaining, subfoldername, Remaining, errorinfo, False)
-          then
-          begin
-            subfoldername := Remaining;
-            Remaining := '';
-          end;
-
-          if length(Remaining) > 0 then
-          begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-          end;
-
-          if not testSyntax then
-          begin
-            if csidl_set then
-            begin
-              ShellLinks.OpenShellFolderPath(csidl, subfoldername);
-              folder_opened := True;
-            end
-            else
-              LogDatei.log('No base folder set, therefore subfolder not set',
-                LLWarning);
-          end;
-        end
+            LogDatei.log('No base folder set, therefore subfolder not set',
+              LLWarning);
+        end;
+      end
 
         {$IFDEF WIN32}
-        else if LowerCase(Expressionstr) = 'delete_subfolder' then
+      else if LowerCase(Expressionstr) = 'delete_subfolder' then
+      begin
+
+        if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
+        then
         begin
+          deletefoldername := Remaining;
+          Remaining := '';
+        end;
 
-          if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
-          then
-          begin
-            deletefoldername := Remaining;
-            Remaining := '';
-          end;
+        if length(Remaining) > 0 then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+          syntaxCheck := False;
+        end;
 
-          if length(Remaining) > 0 then
+        if not testSyntax then
+        begin
+          if csidl_set then
           begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-            syntaxCheck := False;
-          end;
-
-          if not testSyntax then
-          begin
-            if csidl_set then
-            begin
-              //LogDatei.LogSIndentLevel := startindentlevel;
-              ShellLinks.DeleteShellFolder(csidl, deletefoldername);
-              //csidl_set := false;
-            end
-            else
-              LogDatei.log('No base folder set, therefore no deletion of subfolder',
-                LLWarning);
-          end;
-        end
+            //LogDatei.LogSIndentLevel := startindentlevel;
+            ShellLinks.DeleteShellFolder(csidl, deletefoldername);
+            //csidl_set := false;
+          end
+          else
+            LogDatei.log('No base folder set, therefore no deletion of subfolder',
+              LLWarning);
+        end;
+      end
         {$ENDIF WIN32}
 
-        else
-        if LowerCase(Expressionstr) = 'delete_element' then
+      else
+      if LowerCase(Expressionstr) = 'delete_element' then
+      begin
+        syntaxcheck := True;
+        if not getString(Remaining, s, Remaining, errorinfo, False) then
         begin
-          syntaxcheck := True;
-          if not getString(Remaining, s, Remaining, errorinfo, False) then
-          begin
-            s := Remaining;
-            Remaining := '';
-          end;
+          s := Remaining;
+          Remaining := '';
+        end;
 
-          if length(Remaining) > 0 then
-          begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-            syntaxcheck := False;
-          end;
-          if not testSyntax then
-          begin
+        if length(Remaining) > 0 then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+          syntaxcheck := False;
+        end;
+        if not testSyntax then
+        begin
           {$IFDEF WINDOWS}
-            if folder_opened then
-            begin
-              if syntaxcheck then
-                ShellLinks.DeleteShellLink(s);
-            end
-            else
-              LogDatei.log('No folder selected, therefore no deletion of "' +
-                s + '"', LLWarning);
+          if folder_opened then
+          begin
+            if syntaxcheck then
+              ShellLinks.DeleteShellLink(s);
+          end
+          else
+            LogDatei.log('No folder selected, therefore no deletion of "' +
+              s + '"', LLWarning);
           {$ENDIF WINDOWS}
           {$IFDEF UNIX}
-            ShellLinks.DeleteShellLink(s);
+          ShellLinks.DeleteShellLink(s);
           {$ENDIF LINUX}
-          end;
-        end
+        end;
+      end
 
-        else if LowerCase(Expressionstr) = 'set_link' then
+      else if LowerCase(Expressionstr) = 'set_link' then
+      begin
+        syntaxcheck := True;
+
+        if length(Remaining) > 0 then
         begin
-          syntaxcheck := True;
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end of line expected');
+          syntaxCheck := False;
+        end;
+        Inc(i);
+        in_link_features := True;
 
-          if length(Remaining) > 0 then
+        while (i <= Sektion.Count) and in_link_features do
+        begin
+          Remaining := trim(Sektion.strings[i - 1]);
+          if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
+            Inc(i)
+          else
           begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end of line expected');
-            syntaxCheck := False;
-          end;
-          Inc(i);
-          in_link_features := True;
+            GetWord(Remaining, Expressionstr, Remaining, [':']);
+            Skip(':', Remaining, Remaining, errorInfo);
 
-          while (i <= Sektion.Count) and in_link_features do
-          begin
-            Remaining := trim(Sektion.strings[i - 1]);
-            if (Remaining = '') or (Remaining[1] = LineIsCommentChar) then
-              Inc(i)
-            else
+            if LowerCase(Expressionstr) = 'name' then
+              link_name := GetLinkFeature(Remaining, 'link_name', False)
+            else if LowerCase(Expressionstr) = 'target' then
+              link_target := GetLinkFeature(Remaining, 'link_target', True)
+            else if LowerCase(Expressionstr) = 'parameters' then
+              link_paramstr := GetLinkFeature(Remaining, 'link_parameters', True)
+            else if (LowerCase(Expressionstr) = 'working_dir') or
+              (LowerCase(Expressionstr) = 'working_directory') then
+              link_working_dir :=
+                GetLinkFeature(Remaining, 'link_working_directory', False)
+            else if LowerCase(Expressionstr) = 'icon_file' then
+              link_icon_file := GetLinkFeature(Remaining, 'link_icon_file', False)
+            else if LowerCase(Expressionstr) = 'icon_index' then
             begin
-              GetWord(Remaining, Expressionstr, Remaining, [':']);
-              Skip(':', Remaining, Remaining, errorInfo);
-
-              if LowerCase(Expressionstr) = 'name' then
-                link_name := GetLinkFeature(Remaining, 'link_name', False)
-              else if LowerCase(Expressionstr) = 'target' then
-                link_target := GetLinkFeature(Remaining, 'link_target', True)
-              else if LowerCase(Expressionstr) = 'parameters' then
-                link_paramstr := GetLinkFeature(Remaining, 'link_parameters', True)
-              else if (LowerCase(Expressionstr) = 'working_dir') or
-                (LowerCase(Expressionstr) = 'working_directory') then
-                link_working_dir := GetLinkFeature(Remaining, 'link_working_directory', False)
-              else if LowerCase(Expressionstr) = 'icon_file' then
-                link_icon_file := GetLinkFeature(Remaining, 'link_icon_file', False)
-              else if LowerCase(Expressionstr) = 'icon_index' then
-              begin
-                if not getString(Remaining, s, Remaining, errorinfo, False)
-                then
-                  s := Remaining;
+              if not getString(Remaining, s, Remaining, errorinfo, False)
+              then
+                s := Remaining;
                 {$IFDEF UNIX}
-                logdatei.log('Option icon_index is ignored at Linux', LLWarning);
+              logdatei.log('Option icon_index is ignored at Linux', LLWarning);
                 {$ENDIF UNIX}
                 {$IFDEF WIN32}
-                if s = '' then
-                  link_icon_index := 0
-                else
-                  try
-                    link_icon_index := StrToInt(s);
-                    Remaining := s;
-                  except
-                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                      '"' + s + '" could not converted to an integer.');
-                  end;
-                LogDatei.log_prog('link_icon_index: ' + s, LLDebug);
-                {$ENDIF WIN32}
-              end
-
-              else if LowerCase(Expressionstr) = 'shortcut' then
-              begin
-                if not getString(Remaining, s, Remaining, errorinfo, False)
-                then
-                  s := Remaining;
-                {$IFDEF UNIX}
-                logdatei.log('Option shurtcut is ignored at Linux', LLWarning);
-                {$ENDIF UNIX}
-                {$IFDEF WIN32}
-                if s = '' then
-                  link_shortcut := 0
-                else
-                  try
-                    link_shortcut := ShortCutStringToWinApiWord(s);
-                    Remaining := s;
-                  except
-                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                      '"' + s + '" could not converted to a shortcut key.');
-                  end;
-                LogDatei.log_prog('link_shortcut: ' + s, LLDebug);
-                {$ENDIF WIN32}
-              end
-
-              else if LowerCase(Expressionstr) = 'window_state' then
-              begin
-                if not getString(Remaining, s, Remaining, errorinfo, False)
-                then
-                  s := Remaining;
-                {$IFDEF UNIX}
-                logdatei.log('Option window_state is ignored at Linux', LLWarning);
-                {$ENDIF UNIX}
-                {$IFDEF WIN32}
-                if s = '' then
-                  link_showwindow := 0
-                else
-                begin
-                  s := trim(LowerCase(s));
-                  if s = 'normal' then
-                    link_showwindow := 1
-                  else if s = 'min' then
-                    link_showwindow := 7
-                  else if s = 'max' then
-                    link_showwindow := 3
-                  else
-                    UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-                      '"' + s + '" could not converted to a window_state key.');
-                  LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
+              if s = '' then
+                link_icon_index := 0
+              else
+                try
+                  link_icon_index := StrToInt(s);
+                  Remaining := s;
+                except
+                  UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                    '"' + s + '" could not converted to an integer.');
                 end;
+              LogDatei.log_prog('link_icon_index: ' + s, LLDebug);
                 {$ENDIF WIN32}
-              end
+            end
 
-              else if LowerCase(Expressionstr) = 'link_categories' then
-              begin
-                if not getString(Remaining, s, Remaining, errorinfo, False)
-                then
-                  link_categories := Remaining;
+            else if LowerCase(Expressionstr) = 'shortcut' then
+            begin
+              if not getString(Remaining, s, Remaining, errorinfo, False)
+              then
+                s := Remaining;
+                {$IFDEF UNIX}
+              logdatei.log('Option shurtcut is ignored at Linux', LLWarning);
+                {$ENDIF UNIX}
                 {$IFDEF WIN32}
-                logdatei.log('Option link_categories is ignored at WIN32', LLWarning);
+              if s = '' then
+                link_shortcut := 0
+              else
+                try
+                  link_shortcut := ShortCutStringToWinApiWord(s);
+                  Remaining := s;
+                except
+                  UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                    '"' + s + '" could not converted to a shortcut key.');
+                end;
+              LogDatei.log_prog('link_shortcut: ' + s, LLDebug);
                 {$ENDIF WIN32}
-              end
+            end
 
-              else if LowerCase(Expressionstr) = 'end_link' then
-              begin
-                in_link_features := False;
-                regular_end := True;
-              end
-
+            else if LowerCase(Expressionstr) = 'window_state' then
+            begin
+              if not getString(Remaining, s, Remaining, errorinfo, False)
+              then
+                s := Remaining;
+                {$IFDEF UNIX}
+              logdatei.log('Option window_state is ignored at Linux', LLWarning);
+                {$ENDIF UNIX}
+                {$IFDEF WIN32}
+              if s = '' then
+                link_showwindow := 0
               else
               begin
-                UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'unknown Option');
-                syntaxCheck := False;
+                s := trim(LowerCase(s));
+                if s = 'normal' then
+                  link_showwindow := 1
+                else if s = 'min' then
+                  link_showwindow := 7
+                else if s = 'max' then
+                  link_showwindow := 3
+                else
+                  UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                    '"' + s + '" could not converted to a window_state key.');
+                LogDatei.log_prog('link_showwindow: ' + s, LLDebug);
               end;
+                {$ENDIF WIN32}
+            end
 
-              if in_link_features then
-                Inc(i);
-            end;
-          end;
-
-          if not regular_end then
-          begin
-            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1], 'end_link missing');
-            syntaxCheck := False;
-          end;
-
-          if not testSyntax then
-          begin
-          {$IFDEF WIN32}
-            if csidl_set then
+            else if LowerCase(Expressionstr) = 'link_categories' then
             begin
-              if syntaxCheck then
-              begin
-                if not folder_opened then
-                begin
-                  if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
-                  then
-                    folder_opened := True;
-                end;
+              if not getString(Remaining, s, Remaining, errorinfo, False)
+              then
+                link_categories := Remaining;
+                {$IFDEF WIN32}
+              logdatei.log('Option link_categories is ignored at WIN32', LLWarning);
+                {$ENDIF WIN32}
+            end
 
-                ShellLinks.MakeShellLink(link_name, link_target,
-                  link_paramstr, link_working_dir, link_icon_file,
-                  link_icon_index, link_shortcut, link_showwindow);
-              end;
+            else if LowerCase(Expressionstr) = 'end_link' then
+            begin
+              in_link_features := False;
+              regular_end := True;
+            end
+
+            else
+            begin
+              UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+                'unknown Option');
+              syntaxCheck := False;
             end;
+
+            if in_link_features then
+              Inc(i);
+          end;
+        end;
+
+        if not regular_end then
+        begin
+          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+            'end_link missing');
+          syntaxCheck := False;
+        end;
+
+        if not testSyntax then
+        begin
+          {$IFDEF WIN32}
+          if csidl_set then
+          begin
+            if syntaxCheck then
+            begin
+              if not folder_opened then
+              begin
+                if ShellLinks.OpenShellFolderPath(csidl, subfoldername)
+                then
+                  folder_opened := True;
+              end;
+
+              ShellLinks.MakeShellLink(link_name, link_target,
+                link_paramstr, link_working_dir, link_icon_file,
+                link_icon_index, link_shortcut, link_showwindow);
+            end;
+          end;
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-            ShellLinks.MakeShellLink(link_name, link_target,
-              link_paramstr, link_working_dir, link_icon_file,
-              link_categories, '', '');
+          ShellLinks.MakeShellLink(link_name, link_target,
+            link_paramstr, link_working_dir, link_icon_file,
+            link_categories, '', '');
           {$ENDIF UNIX}
-          end;
-        end
-        else
-          UibInstScript.reportError(Sektion, i, Expressionstr, 'is not a defined command');
+        end;
+      end
+      else
+        UibInstScript.reportError(Sektion, i, Expressionstr,
+          'is not a defined command');
 
-        Inc(i);
-      end;
-
+      Inc(i);
     end;
-    FreeAndNil(ShellLinks);
+
+  end;
+  FreeAndNil(ShellLinks);
 end;
 
 function TuibInstScript.doLinkFolderActions(const Sektion: TWorkSection;
@@ -9971,30 +9986,30 @@ begin
 
   // doLinkFolder main
     {$IFDEF WIN32}
-    //Install := TuibFileInstall.create;
-    if runLoginScripts then
+  //Install := TuibFileInstall.create;
+  if runLoginScripts then
+  begin
+    if Impersonate2User(usercontextDomain, usercontextUser, usercontextsid) then
     begin
-      if Impersonate2User(usercontextDomain, usercontextUser, usercontextsid) then
-      begin
-        try
-          linkActionsMain(Sektion, self, testSyntax);
-        finally
-          RevertToSelf;
-        end;
-      end
-      else
-        LogDatei.log('Error: could not impersonate for user:' +
-          usercontextDomain + '\' + usercontextUser, LLError);
+      try
+        linkActionsMain(Sektion, self, testSyntax);
+      finally
+        RevertToSelf;
+      end;
     end
     else
-    begin
-      linkActionsMain(Sektion, self, testSyntax);
-    end;
+      LogDatei.log('Error: could not impersonate for user:' +
+        usercontextDomain + '\' + usercontextUser, LLError);
+  end
+  else
+  begin
+    linkActionsMain(Sektion, self, testSyntax);
+  end;
     {$ENDIF WIN32}
     {$IFDEF UNIX}
-    begin
-      linkActionsMain(Sektion, self, testSyntax);
-    end;
+  begin
+    linkActionsMain(Sektion, self, testSyntax);
+  end;
     {$ENDIF LINUX}
 
   finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -10895,8 +10910,8 @@ begin
 
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
-      winstparam := trim(copy(BatchParameter,
-        pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
+      winstparam := trim(copy(BatchParameter, pos('winst ',
+        lowercase(BatchParameter)) + 5, length(BatchParameter)));
       BatchParameter := trim(copy(BatchParameter, 0,
         pos('winst ', lowercase(BatchParameter)) - 1));
     end;
@@ -11977,8 +11992,8 @@ begin
     IfElseEndifLevel, inDefFuncIndex);
 end;
 
-procedure TuibInstScript.FillStringList(var ResultList: TXStringList; var r: string;
-  var syntaxCheck: boolean; var InfoSyntaxError: string);
+procedure TuibInstScript.FillStringList(var ResultList: TXStringList;
+  var r: string; var syntaxCheck: boolean; var InfoSyntaxError: string);
 var
   goOn: boolean = True;
   EvaluatedStringParameter: string = '';
@@ -11991,8 +12006,8 @@ begin
     if syntaxCheck then
     begin
       ResultList.add(EvaluatedStringParameter);
-      logdatei.log_prog('createStringList: add: ' + EvaluatedStringParameter + ' to: ' +
-        ResultList.Text, LLDebug);
+      logdatei.log_prog('createStringList: add: ' + EvaluatedStringParameter +
+        ' to: ' + ResultList.Text, LLDebug);
 
       if not Skip(',', r, r, InfoSyntaxError) then
       begin
@@ -12004,8 +12019,9 @@ begin
   end;
 end;
 
-procedure TuibInstScript.EvaluateGenericStringList(const Quotes: Char; var r: string;
-  var list: TXStringList; var syntaxCheck: boolean; var InfoSyntaxError: string);
+procedure TuibInstScript.EvaluateGenericStringList(const Quotes: char;
+  var r: string; var list: TXStringList; var syntaxCheck: boolean;
+  var InfoSyntaxError: string);
 var
   ListInBrackets: string = '';
 begin
@@ -12024,7 +12040,8 @@ begin
     if ListInBrackets <> '' then
     begin
       syntaxCheck := False;
-      InfoSyntaxError := 'Remaining char(s) not allowed before the closing quotation mark';
+      InfoSyntaxError :=
+        'Remaining char(s) not allowed before the closing quotation mark';
     end
     else
     begin
@@ -16025,7 +16042,7 @@ begin
     end
   *)
 
-  else if LowerCase(s) = LowerCase('GetValueFromInifile') then
+    else if LowerCase(s) = LowerCase('GetValueFromInifile') then
     begin
       if Skip('(', r, r, InfoSyntaxError) then
         if EvaluateString(r, r, s1, InfoSyntaxError) then
@@ -16036,72 +16053,74 @@ begin
                   if Skip(',', r, r, InfoSyntaxError) then
                     if EvaluateString(r, r, s4, InfoSyntaxError) then
                       if Skip(')', r, r, InfoSyntaxError) then
-                        begin
-                          syntaxCheck := True;
-                          try
-                            s1 := ExpandFileName(s1);
-                            Inifile := TInifile.Create(s1);
-                            LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                            LogDatei.log
-                            ('    reading the value to the key "' + s3 +
-                              '" in section "' + s2 + '"  from inifile  "' +
-                              s1 + '", default value  "' + s4 + '"',
-                              LevelComplete);
-                            s2enc := UTF8ToWinCP(s2);
-                            s3enc := UTF8ToWinCP(s3);
-                            s4enc := UTF8ToWinCP(s4);
-                            StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
-                            StringResult := WinCPToUTF8(StringResult);
-                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                      begin
+                        syntaxCheck := True;
+                        try
+                          s1 := ExpandFileName(s1);
+                          Inifile := TInifile.Create(s1);
+                          LogDatei.log_prog('Inifile: ' + Inifile.ToString, LLDebug);
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                          LogDatei.log
+                          ('    reading the value to the key "' +
+                            s3 + '" in section "' + s2 + '"  from inifile  "' +
+                            s1 + '", default value  "' + s4 + '"',
+                            LevelComplete);
+                          s2enc := UTF8ToWinCP(s2);
+                          s3enc := UTF8ToWinCP(s3);
+                          s4enc := UTF8ToWinCP(s4);
+                          StringResult := Inifile.ReadString(s2enc, s3enc, s4enc);
+                          StringResult := WinCPToUTF8(StringResult);
+                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
 
-                            Inifile.Free;
-                            Inifile := nil;
-                          except
-                            on e: Exception do
-                            begin
-                              LogDatei.log('Error in creating inifile "' +
-                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                              StringResult := s4;
-                            end;
+                          Inifile.Free;
+                          Inifile := nil;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Error in creating inifile "' +
+                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                            StringResult := s4;
                           end;
-                        end
+                        end;
+                      end
                       else
-                        if Skip(',', r, r, InfoSyntaxError) then
-                          if EvaluateString(r, r, s5, InfoSyntaxError) then
-                            if Skip(')', r, r, InfoSyntaxError) then
-                            begin
-                              syntaxCheck := True;
-                              try
-                                s1 := ExpandFileName(s1);
-                                LogDatei.log
-                                (' Trying to read the value to the key "' + s3 +
-                                  '" in section "' + s2 + '"  from inifile "' + s1 +
-                                  '", default value "' + s4 +
-                                  '" in encoding "' + s5 + '"', LevelComplete);
-                                uibInifile := TuibIniFile.Create(s1);
-                                uibInifile.Clear;
-                                uibInifile.loadFromFileWithEncoding(s1,s5);
-                                LogDatei.log_prog('Inifile: ' + uibInifile.Text, LLDebug);
-                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                                LogDatei.log
-                                ('    reading the value to the key "' + s3 +
-                                  '" in section "' + s2 + '"  from inifile "' + s1 +
-                                  '", default value "' + s4 +
-                                  '" in encoding "' + s5 + '"',
-                                  LevelComplete);
-                                StringResult := uibInifile.ReadString(s2, s3, s4);
-                                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                              except
-                                on e: Exception do
-                                begin
-                                  LogDatei.log('Error in GetValueFromInifile : "' +
-                                    s1 + '", message: "' + e.Message + '"', LevelWarnings);
-                                  StringResult := s4;
-                                end;
+                      if Skip(',', r, r, InfoSyntaxError) then
+                        if EvaluateString(r, r, s5, InfoSyntaxError) then
+                          if Skip(')', r, r, InfoSyntaxError) then
+                          begin
+                            syntaxCheck := True;
+                            try
+                              s1 := ExpandFileName(s1);
+                              LogDatei.log
+                              (' Trying to read the value to the key "' +
+                                s3 + '" in section "' + s2 +
+                                '"  from inifile "' + s1 + '", default value "' +
+                                s4 + '" in encoding "' + s5 + '"', LevelComplete);
+                              uibInifile := TuibIniFile.Create(s1);
+                              uibInifile.Clear;
+                              uibInifile.loadFromFileWithEncoding(s1, s5);
+                              LogDatei.log_prog('Inifile: ' +
+                                uibInifile.Text, LLDebug);
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                              LogDatei.log
+                              ('    reading the value to the key "' +
+                                s3 + '" in section "' + s2 +
+                                '"  from inifile "' + s1 + '", default value "' +
+                                s4 + '" in encoding "' + s5 + '"',
+                                LevelComplete);
+                              StringResult := uibInifile.ReadString(s2, s3, s4);
+                              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                            except
+                              on e: Exception do
+                              begin
+                                LogDatei.log('Error in GetValueFromInifile : "' +
+                                  s1 + '", message: "' + e.Message +
+                                  '"', LevelWarnings);
+                                StringResult := s4;
                               end;
-                              uibInifile.Free;
                             end;
+                            uibInifile.Free;
+                          end;
     end
 
   (*
@@ -16555,31 +16574,31 @@ begin
           list1 := TXStringList.Create;
           try
             try
-            s1 := ExpandFileName(s1);
-            if FileExists(s1) then
-              list1.loadfromfile(s1)
-            else
-            begin
-              LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
-                s1, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
+              s1 := ExpandFileName(s1);
+              if FileExists(s1) then
+                list1.loadfromfile(s1)
+              else
+              begin
+                LogDatei.log('Error in strLoadTextFile on loading file (not found): ' +
+                  s1, LLError);
+                FNumberOfErrors := FNumberOfErrors + 1;
+              end;
+              //list1.loadfromfile(s1);
+              if list1.Count > 0 then
+                StringResult := list1.Strings[0]
+              //StringResult := reencode(list1.Strings[0], 'system')
+              else
+                StringResult := '';
+            except
+              on e: Exception do
+              begin
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                LogDatei.log('Exception in strLoadTextFile on loading file: ' +
+                  s1 + ' with msg: ' + e.message, LLError);
+                FNumberOfErrors := FNumberOfErrors + 1;
+                LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+              end
             end;
-            //list1.loadfromfile(s1);
-            if list1.Count > 0 then
-              StringResult := list1.Strings[0]
-            //StringResult := reencode(list1.Strings[0], 'system')
-            else
-              StringResult := '';
-          except
-            on e: Exception do
-            begin
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-              LogDatei.log('Exception in strLoadTextFile on loading file: ' +
-                s1 + ' with msg: ' + e.message, LLError);
-              FNumberOfErrors := FNumberOfErrors + 1;
-              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-            end
-          end;
           finally
             FreeAndNil(list1);
           end;
@@ -16611,7 +16630,8 @@ begin
                         list1.loadFromFileWithEncoding(s1, s2)
                       else
                       begin
-                        LogDatei.log('Error on loading file (not found): ' + s1, LLError);
+                        LogDatei.log('Error on loading file (not found): ' +
+                          s1, LLError);
                         FNumberOfErrors := FNumberOfErrors + 1;
                       end;
                       //list1.loadFromFileWithEncoding(s1, s2);
@@ -16821,7 +16841,8 @@ begin
                 s1 := ExpandFileName(trim(s1));
                 StringResult := '';
                 if not FileExistsUTF8(s1) then
-                  LogDatei.log('Error: HashFromFile: ' + s1 + ' is no valid file', LLError)
+                  LogDatei.log('Error: HashFromFile: ' + s1 +
+                    ' is no valid file', LLError)
                 else
                   try
                     StringResult := HashFromFile(s1, s2);
@@ -21848,17 +21869,16 @@ end;
 
 
 function TuibInstScript.IsVariableNameReserved(const VariableName: string;
-  var SectionSpecifier: TSectionSpecifier; const call: string; const Sektion: TWorkSection;
-  const linecounter: integer): boolean;
+  var SectionSpecifier: TSectionSpecifier; const call: string;
+  const Sektion: TWorkSection; const linecounter: integer): boolean;
 begin
   Result := False;
-  if findKindOfStatement(VariableName, SectionSpecifier, call) <>
-    tsNotDefined then
-    begin
-      Result := True;
-      reportError(Sektion, linecounter, VariableName,
-        'Reserved name, must not be used in a variable definition');
-    end;
+  if findKindOfStatement(VariableName, SectionSpecifier, call) <> tsNotDefined then
+  begin
+    Result := True;
+    reportError(Sektion, linecounter, VariableName,
+      'Reserved name, must not be used in a variable definition');
+  end;
 end;
 
 function TuibInstScript.IsVariableNameAlreadyInUse(VariableName: string;
@@ -21873,11 +21893,12 @@ begin
       reportError(Sektion, linecounter, VariableName, 'name is already in use')
     else
     begin
-    LogDatei.log('Syntax Error: Double variable definition. Please correct this error as soon as possible '
-      + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '+
-      Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo + linecounter)
-      + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
-    Inc(FNumberOfErrors);
+      LogDatei.log(
+        'Syntax Error: Double variable definition. Please correct this error as soon as possible '
+        + 'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
+        + Sektion.Name + ' (Command in line ' + IntToStr(Sektion.StartLineNo +
+        linecounter) + '): ' + VariableName + ' -> ' + 'name is already in use', LLError);
+      Inc(FNumberOfErrors);
     end;
   end;
 end;
@@ -22826,14 +22847,15 @@ begin
             try
               if NestLevel >= 0 then
                 logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
-                  ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                  IntToStr(sektion.NestingLevel) + ' ThenBranch: ' +
-                  BoolToStr(ThenBranch[NestLevel], True) + ' Conditions: ' +
-                  BoolToStr(Conditions[NestLevel], True), LLDebug)
+                  ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: ' + BoolToStr(ThenBranch[NestLevel], True) +
+                  ' Conditions: ' + BoolToStr(Conditions[NestLevel], True), LLDebug)
               else
                 logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
-                  ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
-                  IntToStr(sektion.NestingLevel) + ' ThenBranch: unknown', LLDebug);
+                  ' NestLevel: ' + IntToStr(NestLevel) +
+                  ' sektion.NestingLevel: ' + IntToStr(sektion.NestingLevel) +
+                  ' ThenBranch: unknown', LLDebug);
             except
               logdatei.log_prog('ENDIF: Actlevel: ' + IntToStr(Actlevel) +
                 ' NestLevel: ' + IntToStr(NestLevel) + ' sektion.NestingLevel: ' +
@@ -24358,12 +24380,15 @@ begin
                     remaining + ' -- expected an integer (number of secs) ';
                 end;
 
-                if syntaxCheck and not testsyntax then
+                if syntaxCheck then
                 begin
-                  LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
-                  //Sleep(1000 * sleepSecs);
-                  // noLockSleep does not completly stop the thread
-                  noLockSleep(1000 * sleepSecs);
+                  if not testsyntax then
+                  begin
+                    LogDatei.log('sleep ' + IntToStr(sleepSecs) + ' seconds...', LLDebug2);
+                    //Sleep(1000 * sleepSecs);
+                    // noLockSleep does not completly stop the thread
+                    noLockSleep(1000 * sleepSecs);
+                  end;
                 end
                 else
                   ActionResult :=
@@ -24419,14 +24444,14 @@ begin
                       reportError(Sektion, linecounter, Expressionstr, InfoSyntaxError)
                     else
                     begin
-                    LogDatei.log(
-                      'Invalid Syntax in Comment. Please correct this error as soon as possible '
-                      +
-                      'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
-                      + Sektion.Name + ' (Command in line ' +
-                      IntToStr(Sektion.StartLineNo + linecounter) +
-                      '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
-                    Inc(FNumberOfErrors);
+                      LogDatei.log(
+                        'Invalid Syntax in Comment. Please correct this error as soon as possible '
+                        +
+                        'since it will be turned into a fatal syntax error in one of the next opsi-script versions! Section: '
+                        + Sektion.Name + ' (Command in line ' +
+                        IntToStr(Sektion.StartLineNo + linecounter) +
+                        '): ' + Expressionstr + ' -> ' + InfoSyntaxError, LLError);
+                      Inc(FNumberOfErrors);
                     end;
                   end;
                 end;
@@ -26065,37 +26090,39 @@ begin
                 call := Remaining;
                 GetWord(Remaining, Expressionstr, Remaining, WordDelimiterSet1);
 
-                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
-                // in local function ?
-                if inDefinedFuncNestCounter > 0 then
-                begin
-                  // get the function we are in
-                  funcindex :=
-                    StrToInt(definedFunctionsCallStack.Strings[
-                    definedFunctionsCallStack.Count - 1]);
-                  // try to do it
-                  if definedFunctionArray[funcindex].addLocalVar(
-                    lowercase(Expressionstr), dfpString, False) then
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier,
+                  call, Sektion, linecounter) then
+                  // in local function ?
+                  if inDefinedFuncNestCounter > 0 then
                   begin
-                    LogDatei.log('Defined local string var: ' +
-                      lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2);
-                    definedFunctionArray[funcindex].setLocalVarValueString(
-                      lowercase(Expressionstr), '');
+                    // get the function we are in
+                    funcindex :=
+                      StrToInt(definedFunctionsCallStack.Strings[
+                      definedFunctionsCallStack.Count - 1]);
+                    // try to do it
+                    if definedFunctionArray[funcindex].addLocalVar(
+                      lowercase(Expressionstr), dfpString, False) then
+                    begin
+                      LogDatei.log('Defined local string var: ' +
+                        lowercase(Expressionstr) + ' in local function: ' +
+                        definedFunctionArray[funcindex].Name, LLDebug2);
+                      definedFunctionArray[funcindex].setLocalVarValueString(
+                        lowercase(Expressionstr), '');
+                    end
+                    else
+                      reportError(Sektion, linecounter, Expressionstr,
+                        'name is already in use');
                   end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'name is already in use');
-                end
-                // not in local function - make it global
-                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
-                begin
-                  // do it
-                  VarList.Add(lowercase(Expressionstr));
-                  ValuesList.Add('');
-                  LogDatei.log('Defined global local string var: ' +
-                    lowercase(Expressionstr), LLDebug2);
-                end;
+                  // not in local function - make it global
+                  else if not IsVariableNameAlreadyInUse(Expressionstr,
+                    Sektion, linecounter) then
+                  begin
+                    // do it
+                    VarList.Add(lowercase(Expressionstr));
+                    ValuesList.Add('');
+                    LogDatei.log('Defined global local string var: ' +
+                      lowercase(Expressionstr), LLDebug2);
+                  end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
@@ -26108,37 +26135,39 @@ begin
                 LogDatei.log_prog('definestringlist: ' + Expressionstr +
                   ' -> ' + Remaining, LLdebug2);
 
-                if not IsVariableNameReserved(Expressionstr, SectionSpecifier, call, Sektion, linecounter) then
-                // in local function ?
-                if inDefinedFuncNestCounter > 0 then
-                begin
-                  // get the function we are in
-                  funcindex :=
-                    StrToInt(definedFunctionsCallStack.Strings[
-                    definedFunctionsCallStack.Count - 1]);
-                  if definedFunctionArray[funcindex].addLocalVar(
-                    lowercase(Expressionstr), dfpStringlist, False) then
+                if not IsVariableNameReserved(Expressionstr, SectionSpecifier,
+                  call, Sektion, linecounter) then
+                  // in local function ?
+                  if inDefinedFuncNestCounter > 0 then
+                  begin
+                    // get the function we are in
+                    funcindex :=
+                      StrToInt(definedFunctionsCallStack.Strings[
+                      definedFunctionsCallStack.Count - 1]);
+                    if definedFunctionArray[funcindex].addLocalVar(
+                      lowercase(Expressionstr), dfpStringlist, False) then
                     begin
-                    LogDatei.log('Defined local stringlist var: ' +
-                      lowercase(Expressionstr) + ' in local function: ' +
-                      definedFunctionArray[funcindex].Name, LLDebug2);
-                    definedFunctionArray[funcindex].setLocalVarValueList(
-                      lowercase(Expressionstr), TStringList.Create);
+                      LogDatei.log('Defined local stringlist var: ' +
+                        lowercase(Expressionstr) + ' in local function: ' +
+                        definedFunctionArray[funcindex].Name, LLDebug2);
+                      definedFunctionArray[funcindex].setLocalVarValueList(
+                        lowercase(Expressionstr), TStringList.Create);
                     end
-                  else
-                    reportError(Sektion, linecounter, Expressionstr,
-                      'name is already in use');
-                end
-                // not in local function - make it global
-                else if not IsVariableNameAlreadyInUse(Expressionstr, Sektion, linecounter) then
-                begin
-                  // do it
-                  listOfStringLists.Add(lowercase(Expressionstr));
-                  // create the list object needed to store list items
-                  ContentOfStringLists.Add(TStringList.Create);
-                  LogDatei.log('defined global string list ' +
-                    Expressionstr, LLDebug);
-                end;
+                    else
+                      reportError(Sektion, linecounter, Expressionstr,
+                        'name is already in use');
+                  end
+                  // not in local function - make it global
+                  else if not IsVariableNameAlreadyInUse(Expressionstr,
+                    Sektion, linecounter) then
+                  begin
+                    // do it
+                    listOfStringLists.Add(lowercase(Expressionstr));
+                    // create the list object needed to store list items
+                    ContentOfStringLists.Add(TStringList.Create);
+                    LogDatei.log('defined global string list ' +
+                      Expressionstr, LLDebug);
+                  end;
                 if CheckDirectVariableInitialization(Remaining) then
                   SetVariableWithErrors(Sektion, Remaining, Expressionstr + Remaining,
                     linecounter, InfoSyntaxError, NestLevel);
@@ -26374,8 +26403,9 @@ begin
               end
               else
                 ActionResult :=
-                  reportError(Sektion, linecounter, Expressionstr, 'Undefined statement! Please check the spelling of your statement.'
-                  + ' If you try to call a secondary section, check also that the section kind at the beginning matches one of the existing sections in the opsi-script manual.');
+                  reportError(Sektion, linecounter, Expressionstr,
+                  'Undefined statement! Please check the spelling of your statement.' +
+                  ' If you try to call a secondary section, check also that the section kind at the beginning matches one of the existing sections in the opsi-script manual.');
 
             end (* case *);
           end;
@@ -26669,97 +26699,97 @@ begin
       except
         on e: Exception do
         begin
-          LogDatei.log('Exception in CreateAndProcessScript: Script.loadFromUnicodeFile: ' +
-          e.message, LLError);
+          LogDatei.log('Exception in CreateAndProcessScript: Script.loadFromUnicodeFile: '
+            + e.message, LLError);
           extremeErrorLevel := levelFatal;
         end;
       end;
       if (length(Script.Text) > 0) and (trim(Script.Text) <> '') then
       begin
         try
-        logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
-          ')', LLinfo);
-        Encoding2use := searchencoding(Script.Text, isPlainAscii);
-        if not isPlainAscii then // if isPlainAscii everything else do not matter
-          if Encoding2use = '' then
-            Encoding2use := mysystemEncoding;
-        if not isPlainAscii then // if isPlainAscii everything else do not matter
-          if hasBOM or isEncodingUnicode(Encoding2use) then
-          begin
-            //logdatei.log_prog('file has BOM', LLinfo );
-            //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-            //Encoding2use := searchencoding(Script.Text);
-            if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+          logdatei.log_prog('searchencoding of script (' + DateTimeToStr(Now) +
+            ')', LLinfo);
+          Encoding2use := searchencoding(Script.Text, isPlainAscii);
+          if not isPlainAscii then // if isPlainAscii everything else do not matter
+            if Encoding2use = '' then
+              Encoding2use := mysystemEncoding;
+          if not isPlainAscii then // if isPlainAscii everything else do not matter
+            if hasBOM or isEncodingUnicode(Encoding2use) then
             begin
-              logdatei.log('The encoding mentioned in the file :' +
-                Encoding2use + ', is different that the detected encoding :' +
-                foundEncoding + '!', LLWarning);
-              logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
-              Encoding2use := foundEncoding;
-            end;
-          end
-          else
-          begin
-            Script.LoadFromFile(Scriptdatei);
-            //str := script.Text;
-            logdatei.log_prog('searchencoding of script (' +
-              DateTimeToStr(Now) + ')', LLinfo);
-            //Encoding2use := searchencoding(Script.Text, isPlainAscii);
-            //if (Encoding2use = '') then
-            //  Encoding2use := 'system';
-            if (Encoding2use = 'system') then
-            begin
-              //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-              if (not configSupressSystemEncodingWarning) or isPlainAscii then
-                logdatei.log(
-                  'Encoding=system makes the opsiscript not portable between different OS',
-                  LLWarning);
+              //logdatei.log_prog('file has BOM', LLinfo );
+              //Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+              //Encoding2use := searchencoding(Script.Text);
+              if (Encoding2use <> foundEncoding) and (foundEncoding <> 'ansi') then
+              begin
+                logdatei.log('The encoding mentioned in the file :' +
+                  Encoding2use + ', is different that the detected encoding :' +
+                  foundEncoding + '!', LLWarning);
+                logdatei.log('File will is encoded in: ' + foundEncoding, LLinfo);
+                Encoding2use := foundEncoding;
+              end;
             end
             else
             begin
-              if (Lowercase(copy(Encoding2use, length(Encoding2use) -
-                2, length(Encoding2use))) = 'bom') then
+              Script.LoadFromFile(Scriptdatei);
+              //str := script.Text;
+              logdatei.log_prog('searchencoding of script (' +
+                DateTimeToStr(Now) + ')', LLinfo);
+              //Encoding2use := searchencoding(Script.Text, isPlainAscii);
+              //if (Encoding2use = '') then
+              //  Encoding2use := 'system';
+              if (Encoding2use = 'system') then
               begin
-                //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
-                if isEncodingUnicode(copy(Encoding2use, 0,
-                  length(Encoding2use) - 3)) then
-                begin
-                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                  Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
-                end
-                else
-                begin
-                  logdatei.log_prog(
-                    'the encoding mentioned in the file is not unicode)', LLWarning);
-                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                  Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
-                end;
+                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                if (not configSupressSystemEncodingWarning) or isPlainAscii then
+                  logdatei.log(
+                    'Encoding=system makes the opsiscript not portable between different OS',
+                    LLWarning);
               end
               else
               begin
-                //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
-                Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                if (Lowercase(copy(Encoding2use, length(Encoding2use) -
+                  2, length(Encoding2use))) = 'bom') then
+                begin
+                  //Encoding2use := copy(Encoding2use, 0, length(Encoding2use)-3);
+                  if isEncodingUnicode(copy(Encoding2use, 0,
+                    length(Encoding2use) - 3)) then
+                  begin
+                    //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                    Script.loadFromUnicodeFile(Scriptdatei, hasBOM, foundEncoding);
+                  end
+                  else
+                  begin
+                    logdatei.log_prog(
+                      'the encoding mentioned in the file is not unicode)', LLWarning);
+                    //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                    Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                  end;
+                end
+                else
+                begin
+                  //logdatei.log_prog('the file is going to be encoded in : ' + Encoding2use, LLinfo );
+                  Script.loadFromFileWithEncoding(Scriptdatei, Encoding2use);
+                end;
               end;
             end;
-          end;
-        //str := script.Text;
-        usedEncoding := Encoding2use;
-        //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
+          //str := script.Text;
+          usedEncoding := Encoding2use;
+          //Script.Text := reencode(Script.Text, Encoding2use, usedEncoding);
 
-        Script.FFilename := Scriptdatei;
-        for i := 0 to script.Count - 1 do
-        begin
-          str := Script.Strings[i];
-          script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
-          script.FLibList.Append('false');
-          //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
-        end;
-        Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
+          Script.FFilename := Scriptdatei;
+          for i := 0 to script.Count - 1 do
+          begin
+            str := Script.Strings[i];
+            script.FLinesOriginList.Append(script.FFilename + ' line: ' + IntToStr(i + 1));
+            script.FLibList.Append('false');
+            //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
+          end;
+          Script.registerSectionOrigins(TStringList(Script), Scriptdatei);
         except
           on e: Exception do
           begin
             LogDatei.log('Exception in CreateAndProcessScript: loading Scriptfile: ' +
-            e.message, LLError);
+              e.message, LLError);
             extremeErrorLevel := levelFatal;
           end;
         end;
