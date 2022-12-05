@@ -9607,7 +9607,7 @@ procedure linkActionsMain(const Sektion: TWorkSection; const UibInstScript: Tuib
     deletefoldername: string = '';
     s: string = '';
 
-    in_link_features: boolean;
+    in_link_features: boolean = False;
     regular_end: boolean = False;
     link_name: string = '';
     link_target: string = '';
@@ -9792,7 +9792,17 @@ begin
             syntaxCheck := False;
           end;
           Inc(i);
+          // reset variables here for every link in one LinkFolder section
           in_link_features := True;
+          regular_end := False;
+          link_name := '';
+          link_target := '';
+          link_paramstr := '';
+          link_working_dir := '';
+          link_icon_file := '';
+          link_icon_index := 0;
+          link_shortcut := 0;
+          link_showwindow := 0;
 
           while (i <= Sektion.Count) and in_link_features do
           begin
