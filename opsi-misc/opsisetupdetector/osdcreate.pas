@@ -732,7 +732,10 @@ begin
           infilelist.Add('sections.opsiinc');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('localsetup\declarations-local.opsiinc');
-          infilelist.Add('localsetup\delsub-local.opsiinc');
+          if aktProduct.SetupFiles[0].installerId = stMsi then
+            infilelist.Add('localsetup\delsubmsi-local.opsiinc')
+          else
+            infilelist.Add('localsetup\delsub-local.opsiinc');
           infilelist.Add('localsetup\sections-local.opsiinc');
           infilelist.Add('localsetup\setup-local.opsiinc');
           infilelist.Add('localsetup\setup-local.opsiscript');
@@ -753,6 +756,7 @@ begin
                 ' - fall back to default', LLinfo);
             end; *)
             outfilename := clientpath + PathDelim + infilelist.Strings[i];
+            outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
           end;
         end;
