@@ -2,6 +2,23 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
+opsi-script (4.12.7.2) unreleased; urgency=medium
+
+  * [fix] osparser: linkActionsMain: fix default values for multiple links in one LinkFolder section (!105, a.schmitz)
+  * [fix] testsyntax: exitcode reset to zero on interactive testsyntax or start button; fixes #4808 (!104, d.oertel)
+  * [fix] testsyntax: fix testsyntax for sleepsecond (tsSleep) (!104, d.oertel)
+  * [fix] osinteractivegui: fix IFDEF for jedi code formatting, Ctrl-D (!104, d.oertel)
+
+-- j.werner <j.werner@uib.de> 05 December 2022
+
+
+opsi-script (4.12.7.1) unreleased; urgency=medium
+
+  * [fix] osparser: linkActionsMain: fix multiple links in one LinkFolder section (!103, a.schmitz)
+  * [fix] osjson.pas: function stringListToJsonArray: remove adding quotes if string is not quoted because this former behaviour is problematic e.g it could lead to invalid json. (!101, j.werner)
+
+-- j.werner <j.werner@uib.de> 27 November 2022
+
 opsi-script (4.12.7.0) unreleased; urgency=medium
 
   * [new] testsyntax: if testsyntax ist set to true only the syntax of the script is tested. The script is not excecuted. (!81, !95, d.oertel)

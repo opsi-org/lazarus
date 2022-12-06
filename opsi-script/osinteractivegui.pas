@@ -65,7 +65,7 @@ uses
 {$IFDEF WIN32}
   osfuncwin2,
   osfuncwin3,
-//osshowlog {ShowTextFile},
+  //osshowlog {ShowTextFile},
 {$ENDIF WIN32}
   shellapi,
   wispecfolder,
@@ -265,7 +265,7 @@ implementation
 
 uses osshowsysinfo
 {$IFDEF WIN32}
-//, osshowlog
+  //, osshowlog
 {$ENDIF};
 
 var
@@ -275,7 +275,7 @@ var
   ///connected :   Boolean;
   LogDateiName: string;
   logfileFromCommandLine: boolean;
-///ContinueLog  :   Integer;
+  ///ContinueLog  :   Integer;
   {$IFDEF WINDOWS}
   RegLogOutOptions: TuibRegistry;
   regist: TRegistry;
@@ -577,8 +577,8 @@ begin
   SystemInfo := TSystemInfo.Create(Application);
 end;
 
-procedure writeLogFileOptions(const RegHive: string; const info: string);
 {$IFDEF WINDOWS}
+procedure writeLogFileOptions(const RegHive: string; const info: string);
 var
   rkey: HKEY;
   RegLogfileOptions: TRegistry;
@@ -598,7 +598,9 @@ begin
     Free;
   end;
 end;
+
 {$ELSE WINDOWS}
+procedure writeLogFileOptions(const RegHive: string; const info: string);
 begin
 
 end;
@@ -700,6 +702,7 @@ procedure TCentralForm.BtnTestSyntaxClick(Sender: TObject);
 var
   dummyErrorLevel: TErrorLevel;
 begin
+  system.ExitCode := 0;
   //FBatchOberflaeche.Show;
   //ShowWindow(HWND(FBatchOberflaeche.Handle), SW_SHOW);
   //ProcessMess;
@@ -725,28 +728,30 @@ begin
     //Logdatei.Free;
     if Logdatei = nil then
       Logdatei := TLogInfo.Create;
-    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+    Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     if LogDateiName = '' then
-      LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
+      LogDateiName := LogPath + logdatei.StandardLogFilename +
+        logdatei.StandardLogFileext;
     LogDatei.CreateTheLogfile(LogDateiName, False);
   end
   else
   begin
-    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+    Logdatei.StandardPartLogPath := ExtractFileDir(Logdateiname);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.DependentAdd('', LLessential);
     LogDatei.DependentAdd('', LLessential);
-    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr,
+    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion +
+      ' started at ' + starttimestr,
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
   end;
 
   NestingLevel := 0;
-  configTestSyntax:= true;
+  configTestSyntax := True;
   CreateAndProcessScript(SkriptDatei, NestingLevel, False, dummyErrorLevel);
   LogDatei.Close;
-  configTestSyntax:= false;
+  configTestSyntax := False;
 end;
 
 procedure TCentralForm.TerminateInteractive;
@@ -763,7 +768,9 @@ begin
     TakeToSaveList(ComboBox1.Text);
 
   try
-    {$IFDEF WINDOWS}writeLogFileOptions(WinstRegHive, Edit2.Text);{$ENDIF}
+    {$IFDEF WINDOWS}
+    writeLogFileOptions(WinstRegHive, Edit2.Text);
+{$ENDIF}
   except
      { try
       writeLogFileOptions ('HKCU', Edit2.Text)
@@ -817,6 +824,7 @@ procedure TCentralForm.Button_ExecuteClick(Sender: TObject);
 var
   dummyErrorLevel: TErrorLevel;
 begin
+  system.ExitCode := 0;
   //FBatchOberflaeche.Show;
   //ShowWindow(HWND(FBatchOberflaeche.Handle), SW_SHOW);
   //ProcessMess;
@@ -932,7 +940,8 @@ begin
   initEncoding;
   ProductvarsForPC := TStringList.Create;
   ProductvarsForPC.Clear;
-  if not Assigned(ProductsRunnedUsingReloadProductList) then ProductsRunnedUsingReloadProductList := TStringList.Create;
+  if not Assigned(ProductsRunnedUsingReloadProductList) then
+    ProductsRunnedUsingReloadProductList := TStringList.Create;
 
   {$IFDEF WINDOWS}
   (*
@@ -972,11 +981,11 @@ begin
   {$ENDIF WINDOWS}
   {$IFDEF DARWIN}
   // set locale path to the resource/locale dir of the .app bundle
-  localedir := NSStringToString(NSBundle.mainBundle.resourcePath)
-    + PathDelim+ 'locale' + PathDelim;
+  localedir := NSStringToString(NSBundle.mainBundle.resourcePath) +
+    PathDelim + 'locale' + PathDelim;
   //lang := GetDefaultLang;
   lang := '';
-  SetDefaultLang(lang,localedir);
+  SetDefaultLang(lang, localedir);
   {$ENDIF DARWIN}
   {$IFDEF LINUX}
   // set locale path to the resource/locale dir of the .app bundle
@@ -985,8 +994,9 @@ begin
     localedir := '';
   //lang := GetDefaultLang;
   lang := '';
-  SetDefaultLang(lang,localedir);
-  startupmessages.Append('Detected Language is:'+GetDefaultLang+' for: '+ExtractFileName(ParamStrUTF8(0))+' from dir: '+localedir);
+  SetDefaultLang(lang, localedir);
+  startupmessages.Append('Detected Language is:' + GetDefaultLang +
+    ' for: ' + ExtractFileName(ParamStrUTF8(0)) + ' from dir: ' + localedir);
   {$ENDIF LINUX}
 
 
@@ -1088,14 +1098,15 @@ begin
   *)
   {$ENDIF WIN32}
   {$IFDEF WINDOWS}
-    PathOpsiLogViewer := 'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
+  PathOpsiLogViewer :=
+    'C:\Program Files (x86)\opsi.org\opsi-logviewer\opsi-logviewer.exe';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-    PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
+  PathOpsiLogViewer := '/usr/share/opsi-logviewer/logviewer'; // '/usr/bin/logviewer'
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
-    //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
-    ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
+  //PathOpsiLogViewer := '/Applications/opsi-logviewer.app/Contents/MacOS/opsi-logviewer';
+  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
   {$ELSE}
   if FileExists(PathOpsiLogViewer) then
   begin
@@ -1118,14 +1129,18 @@ end;
 
 procedure TCentralForm.Button_show_guiClick(Sender: TObject);
 begin
-  {$IFDEF WINDOWS}ShowWindow(HWND(FBatchOberflaeche.Handle), SW_SHOW);{$ENDIF}
+  {$IFDEF WINDOWS}
+  ShowWindow(HWND(FBatchOberflaeche.Handle), SW_SHOW);
+{$ENDIF}
   FBatchOberflaeche.Visible := True;
   toggle := False;
 end;
 
 procedure TCentralForm.SpeedButton4Click(Sender: TObject);
 begin
-  {$IFDEF WINDOWS}ShowWindow(HWND(FBatchOberflaeche.Handle), SW_Hide);{$ENDIF}
+  {$IFDEF WINDOWS}
+  ShowWindow(HWND(FBatchOberflaeche.Handle), SW_Hide);
+{$ENDIF}
   FBatchOberflaeche.Visible := False;
 end;
 
