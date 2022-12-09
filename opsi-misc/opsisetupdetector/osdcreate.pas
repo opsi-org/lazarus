@@ -279,6 +279,7 @@ begin
       begin
         str := str + 'DefVar $LicenseOrPool$' + LineEnding;
         str := str + 'DefVar $Licensekey$' + LineEnding;
+        str := str + 'DefVar $LicenseError$' + LineEnding;
         str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
 (*

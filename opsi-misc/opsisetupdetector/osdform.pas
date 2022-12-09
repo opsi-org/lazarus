@@ -3291,6 +3291,8 @@ var
   //checkok: boolean = True;
   done: boolean = False;
 begin
+  // reset exitcode before (repeated) build:
+  system.ExitCode := 0;
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin

@@ -81,6 +81,13 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+   opsi-setup-detector (4.2.1.12-1) stable; urgency=low
+
+   * osdcreate: add 'DefVar $LicenseError$' on property 'SecretLicense_or_Pool'
+   * osdform: BtCreateProductClick: reset exitcode before (repeated) build
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  9 Dec 2022 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.11-1) stable; urgency=low
 
    * osdcreate: createClientFiles: with user:
