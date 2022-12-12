@@ -97,11 +97,11 @@ object resultForm1: TresultForm1
       Height = 655
       Top = 1
       Width = 1107
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetSetup1
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -5871,6 +5871,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -6173,6 +6174,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -6898,6 +6900,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -7252,6 +7255,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -7976,6 +7980,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -8330,6 +8335,7 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
+            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -9147,13 +9153,13 @@ object resultForm1: TresultForm1
             Left = 782
             Height = 19
             Top = 24
-            Width = 87
+            Width = 92
             Anchors = []
             AutoSize = True
             BorderSpacing.Top = 15
             BorderSpacing.Right = 11
             BorderSpacing.Around = 9
-            Caption = 'DektopIcon  '
+            Caption = 'DesktopIcon  '
             OnChange = CallMakeProperties
             ParentShowHint = False
             PropertyNameAsCaption = False
@@ -9162,7 +9168,7 @@ object resultForm1: TresultForm1
             TabStop = True
           end
           object TICheckBoxCustomizeProfile: TTICheckBox
-            Left = 898
+            Left = 903
             Height = 19
             Top = 24
             Width = 113
@@ -9509,10 +9515,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  144
-                  144
-                  144
-                  144
+                  139
+                  139
+                  139
+                  142
                 )
               end
               object PanelDepBtns: TPanel
@@ -9935,10 +9941,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  257
-                  257
-                  257
-                  258
+                  253
+                  253
+                  253
+                  253
                 )
               end
             end

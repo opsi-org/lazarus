@@ -468,6 +468,7 @@ type
     procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
+    procedure TIEditDirEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdIDExit(Sender: TObject);
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
@@ -3047,6 +3048,7 @@ begin
   begin
     installdir := SelectDirectoryDialog1.FileName;
     {$IFDEF WINDOWS}
+    // use constants if possible
     installdir := ReplaceText(installdir, 'c:\program files (x86)',
       '%ProgramFiles32Dir%');
     if IsWindows64 then
@@ -3059,17 +3061,24 @@ begin
 end;
 
 procedure TResultform1.updateUninstaller(var mysetup: TSetupFile);
+var
+  str: string;
 begin
   // update uninstall program relevant data
   if mysetup.uninstallProg <> '' then
   begin
+    str := mysetup.uninstallProg;
+    str := opsiunquotestr2(str, '"');
+    str := opsiunquotestr2(str, '''');
+    mysetup.uninstallProg := str;
+
     mysetup.uninstallCheck.Clear;
     mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
       mysetup.uninstallProg + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine :=
-      '"$Installdir$\' + mysetup.uninstallProg + '" ' +
+      '"' + mysetup.uninstallProg + '" ' +
       installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
@@ -3080,11 +3089,26 @@ begin
 end;
 
 procedure TResultform1.chooseUninstaller(var mysetup: TSetupFile);
+var
+  uninstfile, uninstdir: string;
 begin
   OpenDialog1.FilterIndex := 1;
   if OpenDialog1.Execute then
   begin
-    mysetup.uninstallProg := ExtractFileName(OpenDialog1.FileName);
+    uninstfile := ExtractFileName(OpenDialog1.FileName);
+    uninstdir := ExtractFileDir(OpenDialog1.FileName);
+    {$IFDEF WINDOWS}
+    // use constants if possible
+    uninstdir := ReplaceText(uninstdir, 'c:\program files (x86)',
+      '%ProgramFiles32Dir%');
+    if IsWindows64 then
+      uninstdir := ReplaceText(uninstdir, 'c:\program files', '%ProgramFiles64Dir%')
+    else
+      uninstdir := ReplaceText(uninstdir, 'c:\program files', '%ProgramFiles32Dir%');
+    {$ENDIF WINDOWS}
+    // use $installdir$ if possible
+    uninstdir := ReplaceText(uninstdir, mysetup.installDirectory, '$installdir$');
+    mysetup.uninstallProg := uninstdir + '\' + uninstfile;
   end;
   updateUninstaller(mysetup);
 end;
@@ -4303,6 +4327,16 @@ begin
 
 end;
 
+procedure TResultform1.TIEditDirEditingDone(Sender: TObject);
+var
+  str: string;
+begin
+  str := TTIEdit(Sender).Caption;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  TTIEdit(Sender).Caption := str;
+end;
+
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
 begin
 
@@ -4334,11 +4368,13 @@ end;
 procedure TResultform1.TIEditSetup1UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[0]);
+  TTIEdit(sender).Refresh;
 end;
 
 procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[1]);
+
 end;
 
 procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);

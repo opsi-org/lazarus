@@ -395,12 +395,12 @@ begin
   end;
   if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
   begin
-    mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
+    mysetup.uninstallCheck.Add('if fileexists("' +
       mysetup.uninstallProg + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine :=
-      '"$Installdir$\' + mysetup.uninstallProg + '" ' +
+    mysetup.uninstallCommandLine := '"' +
+      mysetup.uninstallProg + '" ' +
       installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
@@ -1089,8 +1089,8 @@ begin
         str2 := copy(str2, 1, pos2 - 1);
       mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' + str2;
       mysetup.uninstall_waitforprocess := str2;
-      mysetup.uninstallCommandLine :=
-        mysetup.uninstallProg + ' ' +
+      mysetup.uninstallCommandLine := '"' +
+        mysetup.uninstallProg + '" ' +
         installerArray[integer(mysetup.installerId)].unattendeduninstall;
     end;
   end;

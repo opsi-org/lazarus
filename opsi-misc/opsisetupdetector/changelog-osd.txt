@@ -85,6 +85,9 @@ todo:
 
    * osdcreate: add 'DefVar $LicenseError$' on property 'SecretLicense_or_Pool'
    * osdform: BtCreateProductClick: reset exitcode before (repeated) build
+   * osdform: Typo Desktopicon
+   * uninstallProg now holds the complete, absolut path
+   * uninstallProg, Targetfile, installdir should not be quoted
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  9 Dec 2022 : 15:00:00 +0200
 

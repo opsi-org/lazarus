@@ -105,7 +105,7 @@
 {"hash":213252890,"name":"tresultform1.labelchannel.caption","sourcebytes":[84,101,109,112,108,97,116,101,32,67,104,97,110,110,101,108,58],"value":"Template Channel:"},
 {"hash":182977922,"name":"tresultform1.ticheckboxinstallfromlocal.caption","sourcebytes":[73,110,115,116,97,108,108,32,102,114,111,109,32,108,111,99,97,108,32,116,101,109,112,32,100,105,114],"value":"Install from local temp dir"},
 {"hash":235105536,"name":"tresultform1.ticheckboxhandlelicenekey.caption","sourcebytes":[72,97,110,100,108,101,32,76,105,99,101,110,115,101,32,75,101,121,32,32],"value":"Handle License Key  "},
-{"hash":5671744,"name":"tresultform1.ticheckboxdesktopicon.caption","sourcebytes":[68,101,107,116,111,112,73,99,111,110,32,32],"value":"DektopIcon  "},
+{"hash":238324480,"name":"tresultform1.ticheckboxdesktopicon.caption","sourcebytes":[68,101,115,107,116,111,112,73,99,111,110,32,32],"value":"DesktopIcon  "},
 {"hash":18744261,"name":"tresultform1.ticheckboxcustomizeprofile.caption","sourcebytes":[67,117,115,116,111,109,105,122,101,32,80,114,111,102,105,108,101],"value":"Customize Profile"},
 {"hash":127037762,"name":"tresultform1.tabsheetproduct2.caption","sourcebytes":[80,114,111,100,117,99,116,32,67,111,110,102,105,103,117,114,97,116,105,111,110,32,50],"value":"Product Configuration 2"},
 {"hash":151426505,"name":"tresultform1.label76.caption","sourcebytes":[80,114,105,111,114,105,116,121],"value":"Priority"},

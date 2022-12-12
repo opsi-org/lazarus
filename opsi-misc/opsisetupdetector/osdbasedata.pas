@@ -569,7 +569,7 @@ resourcestring
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
   rsUsePropDesktopicon =
-    'Should we create a "DektopIcon" property and add code to handle dektop icons ?';
+    'Should we create a "DesktopIcon" property and add code to handle desktop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
   rsUsePropLicenseOrPool =
     'Should we create a "LicenseOrPool" property and add code handle license keys ?';
@@ -2061,7 +2061,7 @@ begin
     unattendeduninstall :=
       '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
     uninstall_waitforprocess := '';
-    uninstallProg := 'unins000.exe';
+    uninstallProg := '$Installdir$\unins000.exe';
     patterns.Add('<description>inno setup</description>');
     patterns.Add('jr.inno.setup');
     link :=
@@ -2080,7 +2080,7 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := 'Au_.exe';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
     patterns.Add('http://nsis.sf.net/');
@@ -2103,7 +2103,7 @@ begin
     silentuninstall := '/s /sms';
     unattendeduninstall := '/s /sms';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('InstallShield');
     patterns.Add(
       '<description>InstallShield.Setup</description>');
@@ -2130,7 +2130,7 @@ begin
     unattendeduninstall :=
       '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('nstallshield');
     patterns.Add('issetup.dll');
     patterns.Add('transforms');
@@ -2176,7 +2176,7 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
@@ -2324,7 +2324,7 @@ begin
     unattendeduninstall := '--mode unattended --unattendedmodeui minimal';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('<description>BitRock Installer</description>');
     patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
@@ -2346,7 +2346,7 @@ begin
     unattendeduninstall := '/a /u:"<product>"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('Self-extracting installation program');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
