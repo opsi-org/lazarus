@@ -4475,7 +4475,8 @@ function CheckDWord(var ReadValue: string; var Value: string;
   var ErrorInfo: string): boolean;
 begin
   try
-    StrToInt64(ReadValue);
+    //if TryStrToInt(ReadValue, Value) then
+    StrToDWord(ReadValue);
     Value := ReadValue;
     ReadValue := '';
     Result := True;
