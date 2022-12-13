@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 650
+  Left = 558
   Height = 740
-  Top = 257
+  Top = 96
   Width = 1115
   Caption = 'opsi Setup Detector'
   ClientHeight = 720
@@ -97,11 +97,11 @@ object resultForm1: TresultForm1
       Height = 655
       Top = 1
       Width = 1107
-      ActivePage = TabSheetSetup1
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -5871,7 +5871,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -6174,7 +6173,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -6900,7 +6898,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -7255,7 +7252,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -7980,7 +7976,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end
@@ -8335,7 +8330,6 @@ object resultForm1: TresultForm1
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
             OnChange = genRttiEditChange
-            OnEditingDone = TIEditDirEditingDone
             ParentFont = False
             TabOrder = 2
           end

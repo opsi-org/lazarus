@@ -468,7 +468,6 @@ type
     procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TIComboBoxChannelChange(Sender: TObject);
     procedure TIComboBoxChannelEditingDone(Sender: TObject);
-    procedure TIEditDirEditingDone(Sender: TObject);
     procedure TIEditProdIDChange(Sender: TObject);
     procedure TIEditProdIDExit(Sender: TObject);
     procedure TIEditProdIDSizeConstraintsChange(Sender: TObject);
@@ -683,6 +682,26 @@ resourcestring
     'Should we add code to copy installer to local before installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
+  rsInstalldirHint =
+    'The (unquoted) directory path where the software will be installed.' +
+    LineEnding +
+    'You may also choose the directory via the selection button on the right (if the product is installed).' +
+    LineEnding +
+    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", ' +
+    LineEnding +
+    'it will be replaced by the matching opsi-script constant (e.g."%ProgramFiles32Dir%").';
+  rsTargetProgHint =
+    'The main program of the software that has to be installed.' +
+    LineEnding +
+    'Will be used for creating desktop icons or start menu entries.' +
+    LineEnding + 'and to check before installaion if the program is running.' +
+    LineEnding +
+    'Will be not detected. You have to choose it via the selection button on the right (if the product is installed).' +
+    LineEnding + 'Unquoted file name.';
+  rsUninstallProgHint =
+    'The unqoted path to the detected uninstall program.' +
+    LineEnding +
+    'You may also choose the file via the selection button on the right (if the product is installed).';
 
 
 implementation
@@ -881,6 +900,24 @@ begin
       TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
       TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
+      TIEditInstallDir1.Hint:= rsInstalldirHint;
+      TIEditInstallDir2.Hint:= rsInstalldirHint;
+      TIEditInstallDir3.Hint:= rsInstalldirHint;
+      TIEditSetup1UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup2UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup3UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup1TargetProgram.Hint:= rsTargetProgHint;
+      TIEditSetup2TargetProgram.Hint:= rsTargetProgHint;
+      TIEditSetup3TargetProgram.Hint:= rsTargetProgHint;
+      TIEditInstallDir1.ShowHint:= true;
+      TIEditInstallDir2.ShowHint:= true;
+      TIEditInstallDir3.ShowHint:= true;
+      TIEditSetup1UnProgram.ShowHint:= true;
+      TIEditSetup2UnProgram.ShowHint:= true;
+      TIEditSetup3UnProgram.ShowHint:= true;
+      TIEditSetup1TargetProgram.ShowHint:= true;
+      TIEditSetup2TargetProgram.ShowHint:= true;
+      TIEditSetup3TargetProgram.ShowHint:= true;
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -3067,10 +3104,12 @@ begin
   // update uninstall program relevant data
   if mysetup.uninstallProg <> '' then
   begin
+    (*
     str := mysetup.uninstallProg;
     str := opsiunquotestr2(str, '"');
     str := opsiunquotestr2(str, '''');
     mysetup.uninstallProg := str;
+    *)
 
     mysetup.uninstallCheck.Clear;
     mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
@@ -4327,15 +4366,6 @@ begin
 
 end;
 
-procedure TResultform1.TIEditDirEditingDone(Sender: TObject);
-var
-  str: string;
-begin
-  str := TTIEdit(Sender).Caption;
-  str := opsiunquotestr2(str, '"');
-  str := opsiunquotestr2(str, '''');
-  TTIEdit(Sender).Caption := str;
-end;
 
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
 begin

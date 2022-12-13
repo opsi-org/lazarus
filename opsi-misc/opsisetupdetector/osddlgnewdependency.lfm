@@ -1,14 +1,14 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 365
+  Left = 367
   Height = 420
-  Top = 182
+  Top = 184
   Width = 444
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 420
   ClientWidth = 444
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '2.2.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 50

@@ -23,7 +23,8 @@ uses
   osjson,
   osregex,
   lcltranslator,
-  oscrypt;
+  oscrypt,
+  osparserhelper;
 
 type
 
@@ -136,6 +137,9 @@ type
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
     procedure SetInstallErrorHandlingLines(const AValue: TStrings);
+    procedure SetUninstallProg(const AValue: String);
+    procedure SetTargetProg(const AValue: String);
+    procedure SetInstallDirectory(const AValue: String);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -159,7 +163,7 @@ type
     property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
-    property installDirectory: string read FinstallDirectory write FinstallDirectory;
+    property installDirectory: string read FinstallDirectory write SetInstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
     property infolist: TStrings read Finfolist write SetInfolist;
     property link: string read Flink write Flink;
@@ -172,8 +176,8 @@ type
       read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
-    property uninstallProg: string read FuninstallProg write FuninstallProg;
-    property targetProg: string read FtargetProg write FtargetProg;
+    property uninstallProg: string read FuninstallProg write SetUninstallProg;
+    property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
@@ -682,6 +686,37 @@ procedure TSetupFile.SetInstallErrorHandlingLines(const AValue: TStrings);
 begin
   FinstallErrorHandlingLines.Assign(AValue);
 end;
+
+procedure TSetupFile.SetUninstallProg(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FuninstallProg := str;
+end;
+
+procedure TSetupFile.SetTargetProg(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FtargetProg := str;
+end;
+
+procedure TSetupFile.SetInstallDirectory(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FinstallDirectory := str;
+end;
+
 
 procedure TSetupFile.initValues;
 begin

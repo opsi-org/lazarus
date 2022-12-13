@@ -87,7 +87,9 @@ todo:
    * osdform: BtCreateProductClick: reset exitcode before (repeated) build
    * osdform: Typo Desktopicon
    * uninstallProg now holds the complete, absolut path
-   * uninstallProg, Targetfile, installdir should not be quoted
+   * osbasedata: TSetupFile: uninstallProg, TargetProg, installDirectory should not be quoted
+     use SetUninstallProg, SetTargetProg, SetInstallDirectory to write property
+   * osdform: setup(1-3): hints for uninstallProg, TargetProg, installDirectory
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  9 Dec 2022 : 15:00:00 +0200
 
