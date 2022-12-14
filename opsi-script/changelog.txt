@@ -4,7 +4,7 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.7.3) unreleased; urgency=medium
 
-  * [fix]  osparser.pas: registry hexdecimal values without leading $ throw no syntax errors anymore (!, j.werner)
+  * [fix]  osparser.pas: registry exportformat hexdecimal values without leading $ throw no syntax errors anymore (!107, j.werner)
 
 -- j.werner <j.werner@uib.de> 14 December 2022
 
