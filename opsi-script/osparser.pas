@@ -4477,14 +4477,14 @@ var
   OutValue: integer;
 begin
   try
-    if TryStrToInt(ReadValue, OutValue) then
-    begin
-      StrToDWord(ReadValue); //decimal value or hex with leading $
-    end
-    else
-    begin
-      ReadValue := '$' + ReadValue; //probably hex value without leading $
-      StrToDWord(ReadValue);
+    try
+      StrToDWord(ReadValue); //decimal value or hex with leading $ or 0x
+    except
+      on EConvertError do
+      begin
+        ReadValue := '$' + ReadValue; //probably hex value without leading $
+        StrToDWord(ReadValue); //try the conversion again
+      end;
     end;
     Value := ReadValue;
     ReadValue := '';
@@ -4504,14 +4504,14 @@ var
 begin
   Result := False;
   try
-    if TryStrToInt64(ReadValue, OutValue) then
-    begin
+    try
       StrToQWord(ReadValue); //decimal value or hex with leading $
-    end
-    else
-    begin
-      ReadValue := '$' + ReadValue; //probably hex value without leading $
-      StrToQWord(ReadValue);
+    except
+      on EConvertError do
+      begin
+        ReadValue := '$' + ReadValue; //probably hex value without leading $ or 0x
+        StrToQWord(ReadValue); //try the conversion again
+      end;
     end;
     Value := ReadValue;
     ReadValue := '';
