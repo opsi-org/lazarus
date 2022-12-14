@@ -4500,11 +4500,11 @@ end;
 function CheckQWord(var ReadValue: string; var Value: string;
   var ErrorInfo: string): boolean;
 var
-  OutValue: integer;
+  OutValue: int64;
 begin
   Result := False;
   try
-    if TryStrToInt(ReadValue, OutValue) then
+    if TryStrToInt64(ReadValue, OutValue) then
     begin
       StrToQWord(ReadValue); //decimal value or hex with leading $
     end
