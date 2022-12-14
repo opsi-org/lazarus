@@ -2,7 +2,14 @@ todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 mac getIpByName liefert name von IPnum
 
-opsi-script (4.12.7.2) unreleased; urgency=medium
+opsi-script (4.12.7.3) unreleased; urgency=medium
+
+  * [fix]  osparser.pas: registry exportformat hexdecimal values without leading $ throw no syntax errors anymore (!107, j.werner)
+
+-- j.werner <j.werner@uib.de> 14 December 2022
+
+
+opsi-script (4.12.7.2) testing; urgency=medium
 
   * [fix] osparser: linkActionsMain: fix default values for multiple links in one LinkFolder section (!105, a.schmitz)
   * [fix] testsyntax: exitcode reset to zero on interactive testsyntax or start button; fixes #4808 (!104, d.oertel)

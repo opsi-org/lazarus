@@ -4473,9 +4473,19 @@ end;
 {$IFDEF WINDOWS}
 function CheckDWord(var ReadValue: string; var Value: string;
   var ErrorInfo: string): boolean;
+var
+  OutValue: integer;
 begin
   try
-    StrToInt64(ReadValue);
+    if TryStrToInt(ReadValue, OutValue) then
+    begin
+      StrToDWord(ReadValue); //decimal value or hex with leading $
+    end
+    else
+    begin
+      ReadValue := '$' + ReadValue; //probably hex value without leading $
+      StrToDWord(ReadValue);
+    end;
     Value := ReadValue;
     ReadValue := '';
     Result := True;
@@ -4489,10 +4499,20 @@ end;
 
 function CheckQWord(var ReadValue: string; var Value: string;
   var ErrorInfo: string): boolean;
+var
+  OutValue: integer;
 begin
   Result := False;
   try
-    StrToQWord(ReadValue);
+    if TryStrToInt(ReadValue, OutValue) then
+    begin
+      StrToQWord(ReadValue); //decimal value or hex with leading $
+    end
+    else
+    begin
+      ReadValue := '$' + ReadValue; //probably hex value without leading $
+      StrToQWord(ReadValue);
+    end;
     Value := ReadValue;
     ReadValue := '';
     Result := True;
