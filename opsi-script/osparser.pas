@@ -2380,9 +2380,6 @@ begin
   SaveErrorNumber := LogDatei.NumberOfErrors;
   SaveWarningNumber := LogDatei.NumberOfWarnings;
 
-  ps := '';
-  LogDatei.log(ps, LLNotice);
-
   ps := Sektion.Name;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
