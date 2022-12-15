@@ -2382,13 +2382,6 @@ begin
 
   ps := '';
   LogDatei.log(ps, LLNotice);
-  if Sektion.Count > 0 then
-  begin
-  end
-  else
-    // this case should be captured beforehand
-    LogDatei.log('Warning: Section  "' + Sektion.Name +
-      '"  does not exist or is empty', LLWarning);
 
   ps := Sektion.Name;
   {$IFDEF GUI}
