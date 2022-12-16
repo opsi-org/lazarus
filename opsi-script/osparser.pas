@@ -2379,28 +2379,11 @@ begin
 
   SaveErrorNumber := LogDatei.NumberOfErrors;
   SaveWarningNumber := LogDatei.NumberOfWarnings;
-  //LogDatei.ErrorNumberMarked := SaveErrorNumber;
 
-  (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
-  ps := '';
-  LogDatei.log(ps, LLNotice);
-  if Sektion.Count > 0 then
-  begin
-    //ps := 'Execution of ' + Sektion.Name;
-    //LogDatei.log (ps, LLNotice);
-  end
-  else
-    // this case should be captured beforehand
-    LogDatei.log('Warning: Section  "' + Sektion.Name +
-      '"  does not exist or is empty', LLWarning);
-
-  //ps := (*  'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [Sektion.fSectionKind]) + 1,
-  //                                length (Sektion.Name));
   ps := Sektion.Name;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
   FBatchOberflaeche.SetMessageText(ps, mDetail);
-  //setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
 end;
 
