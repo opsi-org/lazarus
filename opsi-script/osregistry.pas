@@ -1688,7 +1688,7 @@ begin
     end;
     trdInteger:
     begin
-      iValue := StrToINT64(encvalue);
+      iValue := StrToDWord(encvalue);
       regresult := regSetValueExW(mykey, PWChar(encnameW), 0, REG_Dword, @iValue, 4);
       if datafound then
         compareValue := IntToStr(iValue);

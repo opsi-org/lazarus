@@ -4471,21 +4471,12 @@ begin
 end;
 
 {$IFDEF WINDOWS}
-function CheckDWord(var ReadValue: string; var Value: string;
+function CheckDWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
   var ErrorInfo: string): boolean;
-var
-  OutValue: integer;
 begin
   try
-    try
-      StrToDWord(ReadValue); //decimal value or hex with leading $ or 0x
-    except
-      on EConvertError do
-      begin
-        ReadValue := '$' + ReadValue; //probably hex value without leading $
-        StrToDWord(ReadValue); //try the conversion again
-      end;
-    end;
+    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    StrToDWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
     Result := True;
@@ -4497,22 +4488,13 @@ begin
   end;
 end;
 
-function CheckQWord(var ReadValue: string; var Value: string;
+function CheckQWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
   var ErrorInfo: string): boolean;
-var
-  OutValue: int64;
 begin
   Result := False;
   try
-    try
-      StrToQWord(ReadValue); //decimal value or hex with leading $
-    except
-      on EConvertError do
-      begin
-        ReadValue := '$' + ReadValue; //probably hex value without leading $ or 0x
-        StrToQWord(ReadValue); //try the conversion again
-      end;
-    end;
+    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    StrToQWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
     Result := True;
@@ -4840,9 +4822,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        Result := CheckDWord(r, Value, ErrorInfo);
+        Result := CheckDWord(r, Value, True, ErrorInfo);
       trdInt64:
-        Result := CheckQWord(r, Value, ErrorInfo);
+        Result := CheckQWord(r, Value, True, ErrorInfo);
       trdBinary:
       begin
         binValue := StringReplace(r, ',', ' ');
@@ -5190,9 +5172,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        Result := CheckDWord(r, Value, ErrorInfo);
+        Result := CheckDWord(r, Value, False, ErrorInfo);
       trdInt64:
-        Result := CheckQWord(r, Value, ErrorInfo);
+        Result := CheckQWord(r, Value, False, ErrorInfo);
       trdBinary:
       begin
         binValue := r;
