@@ -4475,7 +4475,7 @@ function CheckDWord(var ReadValue: string; var Value: string; RegeditFormat:bool
   var ErrorInfo: string): boolean;
 begin
   try
-    if RegeditFormat then ReadValue := '$' + ReadValue; //(probably?) hex value without leading $ or 0x
+    if RegeditFormat then ReadValue := '$' + ReadValue; //ReadValue has to be interpreted as an hex value but ReadValue is given without leading $ or 0x in the regedit format (file)
     StrToDWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
@@ -4493,7 +4493,7 @@ function CheckQWord(var ReadValue: string; var Value: string; RegeditFormat:bool
 begin
   Result := False;
   try
-    if RegeditFormat then ReadValue := '$' + ReadValue; //(probably?) hex value without leading $ or 0x
+    if RegeditFormat then ReadValue := '$' + ReadValue; //ReadValue has to be interpreted as an hex value but ReadValue is given without leading $ or 0x in the regedit format (file)
     StrToQWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
