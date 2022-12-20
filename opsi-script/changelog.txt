@@ -4,8 +4,8 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.7.4) unreleased; urgency=medium
 
-  * [fix]  osparser.pas: procedure TuibRegistry.WriteEntry: conversion for large values (DWORD) now works correct (!, j.werner)
-  * [fix]  osparser.pas: registry exportformat: hexdecimal values which can be interpreted as decimal values are now handled correct (!, j.werner)
+  * [fix]  osparser.pas: procedure TuibRegistry.WriteEntry: conversion for large values (DWORD) now works correct (!110, j.werner)
+  * [fix]  osparser.pas: registry exportformat: hexdecimal values which can be interpreted as decimal values are now handled correct (!110, j.werner)
 
 -- j.werner <j.werner@uib.de> 16 December 2022
 
