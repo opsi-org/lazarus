@@ -37,7 +37,7 @@ procedure TForm1.FormShow(Sender: TObject);
 begin
   //Sleep(1000);
   //Application.Terminate;
-   Timer1.Interval:=10000;
+   Timer1.Interval:=250;
    writeln('opsi-laz.gui-test: Version: '+getversioninfo+' : start form / gtk test ...');
    Timer1.Enabled:=true;
 end;
