@@ -23909,7 +23909,8 @@ begin
                     begin
                       LogDatei.log('Error: Could not find include file :' +
                         incfilename, LLCritical);
-                      FExtremeErrorLevel := levelFatal;
+                      if not testSyntax then
+                        FExtremeErrorLevel := levelFatal;
                     end;
                   except
                     on E: Exception do
@@ -24120,7 +24121,8 @@ begin
                     begin
                       LogDatei.log('Error: Could not find include file :' +
                         incfilename, LLCritical);
-                      FExtremeErrorLevel := levelFatal;
+                      if not testSyntax then
+                        FExtremeErrorLevel := levelFatal;
                     end;
                   except
                     on E: Exception do
