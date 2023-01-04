@@ -10115,6 +10115,8 @@ begin
     begin
       WaitConditions := WaitConditions + [ttpWaitTime];
       // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+      // initialize
+      WaitSecs := 0;
 
       GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
       try
@@ -10122,8 +10124,11 @@ begin
       except
         on EConvertError do
         begin
-          InfoSyntaxError := 'Integer number expected';
-          SyntaxCheck := False;
+          if not testSyntax then
+          begin
+            InfoSyntaxError := 'Integer number expected';
+            SyntaxCheck := False;
+          end;
         end
       end;
     end
@@ -10171,6 +10176,8 @@ begin
     begin
       WaitConditions := WaitConditions - [ttpWaitTime];
       WaitConditions := WaitConditions + [ttpWaitTimeout];
+      // initialize
+      WaitSecs := 0;
 
       GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
       try
@@ -10184,8 +10191,11 @@ begin
           except
             on EConvertError do
             begin
-              InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-              SyntaxCheck := False;
+              if not testSyntax then
+              begin
+                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                SyntaxCheck := False;
+              end;
             end;
           end;
         end
@@ -10970,6 +10980,8 @@ begin
         WaitConditions := WaitConditions - [ttpWaitTime];
         WaitConditions := WaitConditions + [ttpWaitTimeout];
         waitsecsAsTimeout := True;
+        // initialize
+        WaitSecs := 0;
 
         GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
         try
@@ -10983,8 +10995,11 @@ begin
             except
               on EConvertError do
               begin
-                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                SyntaxCheck := False;
+                if not testSyntax then
+                begin
+                  InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                  SyntaxCheck := False;
+                end;
               end;
             end;
           end

@@ -6,6 +6,12 @@ opsi-script (4.12.7.5) unreleased; urgency=medium
 
   * [fix]  osparser.pas: tsIncludeInsert: if include file not found: not failed in testsyntax mode
   * [fix]  osparser.pas: tsIncludeAppend: if include file not found: not failed in testsyntax mode
+  * [fix]  osparser.pas: parseAndCallWinbatch:
+                          if timeoutseconds parameter not a integer: not failed in testsyntax mode
+  * [fix]  osparser.pas: parseAndCallWinbatch:
+                          if ParameterWaitSecs parameter not a integer: not failed in testsyntax mode
+  * [fix]  osparser.pas: execDOSBatch:
+                          if timeoutseconds parameter not a integer: not failed in testsyntax mode
 
 -- d.oertel <d.oertel@uib.de> Wed, 04 Jan 2023 15:00
 
