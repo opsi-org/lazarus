@@ -12,6 +12,10 @@ opsi-script (4.12.7.5) unreleased; urgency=medium
                           if ParameterWaitSecs parameter not a integer: not failed in testsyntax mode
   * [fix]  osparser.pas: execDOSBatch:
                           if timeoutseconds parameter not a integer: not failed in testsyntax mode
+  * [fix]  osparser.pas: showbitmap:
+                          a slash in the parameter string without Number: not failed in testsyntax mode
+                          because it could be unix code (with a unix path)
+
 
 -- d.oertel <d.oertel@uib.de> Wed, 04 Jan 2023 15:00
 

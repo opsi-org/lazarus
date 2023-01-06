@@ -24243,6 +24243,7 @@ begin
                   posSlash := pos('/', Remaining);
                   if posSlash > 0 then
                   begin
+                    LogDatei.log('Using "/" to give the position of a bitmap is Windows only and depricated',LLwarning);
                     if (length(Remaining) >= posSlash + 1) and
                       (Remaining[posSlash + 1] in ['1'..'9']) then
                     begin
@@ -24255,14 +24256,18 @@ begin
                         SyntaxCheck := False;
                         InfoSyntaxError := 'only supported 1 .. 4 ';
                       end;
-
                       system.Delete(Remaining, posSlash, 2);
                     end
                     else
                     begin
-                      SyntaxCheck := False;
-                      InfoSyntaxError :=
-                        'after "/", a number between 1 and 9 is expected';
+                      if not testSyntax then
+                      begin
+                        // no syntax error in testsyntax mode because
+                        // a slash in Remaining is expected in code for Unix
+                        SyntaxCheck := False;
+                        InfoSyntaxError :=
+                          'after "/", a number between 1 and 9 is expected';
+                      end;
                     end;
                   end
                   else;
