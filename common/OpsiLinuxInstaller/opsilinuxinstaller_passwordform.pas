@@ -43,8 +43,8 @@ type
 
 
 resourcestring
-  rsBack = ' < back ';
-  rsFinish = ' finish ';
+  rsBack = ' Back ';
+  rsFinish = ' Finish ';
 
   rsRights = 'Authentication is required for the installation. Are you identified as root or per sudo?';
   rsPassword = 'Password';
