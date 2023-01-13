@@ -14,7 +14,7 @@ resourcestring
   rsSelLanguage = 'Please choose a language for this setup program:';
   rsCarryOut =
     'To carry out the remaining installation automatically, we need some information first.';
-  rsNext = ' next > ';
+  rsNext = ' Next ';
 
 implementation
 

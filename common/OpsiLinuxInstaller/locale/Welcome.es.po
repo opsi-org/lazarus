@@ -8,8 +8,8 @@ msgstr "Para continuar la restante instalación automáticamente, necesitamos in
 
 #: WelcomeResourceStrings.rsnext
 msgctxt "WelcomeResourceStrings.rsnext"
-msgid " next > "
-msgstr " siguiente > "
+msgid " Next "
+msgstr " Siguiente "
 
 #: WelcomeResourceStrings.rssellanguage
 msgctxt "WelcomeResourceStrings.rssellanguage"
