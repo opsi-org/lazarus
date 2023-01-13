@@ -3112,7 +3112,7 @@ begin
     *)
 
     mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
+    mysetup.uninstallCheck.Add('if fileexists("' +
       mysetup.uninstallProg + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
