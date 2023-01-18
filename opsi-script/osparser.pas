@@ -73,6 +73,7 @@ uses
   LCLIntf,
   oslistedit,
   osinputstring,
+  CustomMessageBox,
   StdCtrls,
 {$ENDIF GUI}
   TypInfo,
@@ -17749,7 +17750,48 @@ begin
               end;
     end
 
+    else if LowerCase(s) = LowerCase('showmessagebox') then
+    begin
+      list1 := TXStringList.Create;
+      itemlist := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s, InfoSyntaxError) then // s = title
+          if Skip(',', r, r, InfoSyntaxError) then
+            if produceStringList(script, r, r, list1, InfoSyntaxError) then // list1 = message list
+              if Skip(',', r, r, InfoSyntaxError) then
+                if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout
+                      if Skip(')', r, r, InfoSyntaxError) then
+                      begin
+                        syntaxCheck := True;
+                        {$IFDEF GUI}
+                        if itemlist.Count > 3 then
+                        begin
+                          syntaxcheck := False;
+                          InfoSyntaxError := 'You ask for ' + itemlist.Count.ToString +
+                            ' buttons but the MessageBox can only hold up to 3 buttons!';
+                        end;
 
+                        if not TryStrToInt(s1, n1) then
+                        begin
+                          syntaxcheck := False;
+                          InfoSyntaxError := '"' + s1 +
+                            '" is not an integer but we expect an integer for the timeout in seconds!';
+                        end;
+
+                        if syntaxcheck and not testsyntax then
+                        begin
+                          CustomMessageForm := TCustomMessageForm.Create(nil);
+                          CustomMessageForm.ShowBox(s, TStringList(list1), TStringList(itemlist), n1);
+                          StringResult := CustomMessageForm.ButtonResult;
+                          if Assigned(CustomMessageForm) then FreeAndNil(CustomMessageForm);
+                        end;
+                        {$ENDIF GUI}
+                      end;
+      FreeAndNil(list1);
+      FreeAndNil(itemlist);
+    end
 
     else if LowerCase(s) = LowerCase('stringreplace') then
     begin
