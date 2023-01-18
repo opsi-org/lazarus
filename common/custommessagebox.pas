@@ -1,0 +1,232 @@
+unit CustomMessageBox;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  FormAppearanceFunctions;
+
+type
+
+  TCountdownThread = class(TThread)
+  private
+    FTimeout: integer;
+    procedure UpdateCountdown;
+    function IsButtonClicked: boolean;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(Timeout: integer);
+  end;
+
+  { TCustomMessageForm }
+
+  TCustomMessageForm = class(TForm)
+    ButtonLeft: TButton;
+    ButtonMiddle: TButton;
+    ButtonRight: TButton;
+    Countdown: TLabel;
+    MessageMemo: TMemo;
+    procedure ButtonLeftClick(Sender: TObject);
+    procedure ButtonMiddleClick(Sender: TObject);
+    procedure ButtonRightClick(Sender: TObject);
+  private
+    FNumberButtons: integer;
+    FButtonResult: string;
+    procedure InitializeButtons;
+    procedure ShowButtons(Buttons: TStringList);
+    procedure StartCountDown(Timeout: integer);
+    procedure StopCountdown;
+    procedure SetSize(NumberMessageLines: integer);
+  public
+    (*
+    Read the result code of the clicked button from the property ButtonResult.
+    The result code of a button is the number of the button in the button list which
+    is given to the procedure ShowBox (starting with 1).
+    If no button is clicked and the countdown finished, then ButtonResult is 0.
+    *)
+    property ButtonResult: string read FButtonResult;
+    procedure ShowBox(Title: string; Message: TStringList;
+      Buttons: TStringList; Timeout: integer);
+  end;
+
+var
+  CustomMessageForm: TCustomMessageForm;
+  CountdownThread: TCountdownThread;
+
+implementation
+
+{$R *.lfm}
+
+{ TCountdownThread }
+
+constructor TCountdownThread.Create(Timeout: integer);
+begin
+  inherited Create(True);
+  FreeOnTerminate := True;
+  FTimeout := Timeout;
+end;
+
+// This method is executed by the mainthread and can therefore access all GUI elements.
+procedure TCountdownThread.UpdateCountdown;
+begin
+  CustomMessageForm.Countdown.Caption := FTimeout.ToString + 's';
+  // center horizontal position of countdown label on form
+  CustomMessageForm.Countdown.Left := Round((CustomMessageForm.Width - CustomMessageForm.Countdown.Width)/2);
+end;
+
+function TCountdownThread.IsButtonClicked: boolean;
+begin
+  Result := Terminated; // click on a button stops the countdown
+end;
+
+procedure TCountdownThread.Execute;
+begin
+  // count down in seconds
+  while (not IsButtonClicked) and (FTimeout > 0) do
+  begin
+    Synchronize(@UpdateCountdown);
+    Dec(FTimeout);
+    Sleep(1000);
+  end;
+  if not IsButtonClicked then CustomMessageForm.Close;
+end;
+
+
+{ TCustomMessageForm }
+
+// Since the countdown thread accesses GUI elemnts we have to be sure to stop the countdown before closing the form.
+procedure TCustomMessageForm.StopCountdown;
+begin
+  if Assigned(CountdownThread) then CountdownThread.Terminate;
+end;
+
+procedure TCustomMessageForm.ButtonLeftClick(Sender: TObject);
+begin
+  (*
+  The left button is shown when two or three buttons are given.
+  In these cases the left button always represents the first button from the button list.
+  *)
+  FButtonResult := '1';
+  StopCountdown;
+  Close;
+end;
+
+procedure TCustomMessageForm.ButtonMiddleClick(Sender: TObject);
+begin
+  (*
+  The middle button is only shown when three buttons are given.
+  In this case the middle button represents the second button from the button list.
+  *)
+  FButtonResult := '2';
+  StopCountdown;
+  Close;
+end;
+
+procedure TCustomMessageForm.ButtonRightClick(Sender: TObject);
+begin
+  // The right button is always shown when the button list is not empty.
+  case FNumberButtons of
+    1: FButtonResult := '1'; // If only one button is shown, then it is the right one (number 1).
+    2: FButtonResult := '2'; // If two buttons are shown, then the left (number 1) and the right (number 2).
+    3: FButtonResult := '3'; // All three buttons are shown (left is 1, middle is 2, right is 3)
+  end;
+  StopCountdown;
+  Close;
+end;
+
+procedure TCustomMessageForm.InitializeButtons;
+begin
+  ButtonLeft.Visible := False;
+  ButtonMiddle.Visible := False;
+  ButtonRight.Visible := False;
+  ButtonLeft.Caption := '';
+  ButtonMiddle.Caption := '';
+  ButtonRight.Caption := '';
+end;
+
+procedure TCustomMessageForm.ShowButtons(Buttons: TStringList);
+begin
+  InitializeButtons;
+
+  (*
+  The number of buttons in the button list defines which buttons are shown:
+  0 buttons -> none shown
+  1 button -> right one
+  2 buttons -> left and right
+  3 buttons -> all (left, middle, right)
+  *)
+  FNumberButtons := Buttons.Count;
+  if FNumberButtons >= 1 then
+  begin
+    ButtonRight.Visible := True;
+    ButtonRight.Caption := Buttons[FNumberButtons - 1];
+  end;
+  if FNumberButtons >= 2 then
+  begin
+    ButtonLeft.Visible := True;
+    ButtonLeft.Caption := Buttons[0];
+    // The right and left buttons are positioned by left and right anchors,
+    // only the position of the middle button must be set here.
+    ButtonMiddle.Left := Round((Width - ButtonMiddle.Width)/2);
+  end;
+  if FNumberButtons = 3 then
+  begin
+    ButtonMiddle.Visible := True;
+    ButtonMiddle.Caption := Buttons[1];
+  end;
+end;
+
+procedure TCustomMessageForm.StartCountDown(Timeout: integer);
+begin
+  CountdownThread := TCountdownThread.Create(Timeout);
+  CountdownThread.Start;
+end;
+
+procedure TCustomMessageForm.SetSize(NumberMessageLines: integer);
+var
+  MessageMemoHeight: integer;
+begin
+  Width := 500;
+  (*
+  For a nice presentation of the message:
+  - The message memo has a base hight and grows a bit with the number of message lines.
+  - For messages with many lines the memo has scroll bars so that it won't get too big.
+  *)
+  MessageMemoHeight := 50 + 10*NumberMessageLines;
+
+  (*
+  Set required form hight depending on the components sizes:
+  Space form bottom to buttons = 15
+  Height of buttons = 25
+  Space buttons to countdown label = 15
+  Height of countdown label = 15
+  Space countdown label to message Memo = 15
+  *)
+  Height := 15 + 25 + 15 + 15 + 15 + MessageMemoHeight;
+end;
+
+procedure TCustomMessageForm.ShowBox(Title: string;
+  Message: TStringList; Buttons: TStringList; Timeout: integer);
+begin
+  self.SetSize(Message.Count);
+  CenterFormOnScreen(self);
+
+  self.Caption := Title;
+  MessageMemo.Lines.Assign(Message);
+  ShowButtons(Buttons);
+
+  FButtonResult := '0'; // default button result code
+
+  if Timeout = 0 then
+    Countdown.Visible := False
+  else
+    Countdown.Caption := Timeout.ToString + 's';
+
+  if Timeout > 0 then StartCountDown(Timeout);
+  ShowModal;
+end;
+
+end.

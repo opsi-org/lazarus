@@ -1,0 +1,99 @@
+object CustomMessageForm: TCustomMessageForm
+  Left = 1361
+  Height = 232
+  Top = 283
+  Width = 500
+  Caption = 'Message'
+  ClientHeight = 232
+  ClientWidth = 500
+  LCLVersion = '2.2.4.0'
+  object ButtonLeft: TButton
+    AnchorSideLeft.Control = Owner
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 15
+    Height = 25
+    Top = 192
+    Width = 82
+    Anchors = [akLeft, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 15
+    BorderSpacing.Bottom = 15
+    Caption = 'ButtonLeft'
+    OnClick = ButtonLeftClick
+    TabOrder = 0
+  end
+  object ButtonMiddle: TButton
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 136
+    Height = 25
+    Top = 192
+    Width = 99
+    Anchors = [akBottom]
+    AutoSize = True
+    BorderSpacing.Bottom = 15
+    Caption = 'ButtonMiddle'
+    OnClick = ButtonMiddleClick
+    TabOrder = 1
+  end
+  object ButtonRight: TButton
+    AnchorSideLeft.Control = ButtonMiddle
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 395
+    Height = 25
+    Top = 192
+    Width = 90
+    Anchors = [akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 40
+    BorderSpacing.Right = 15
+    BorderSpacing.Bottom = 15
+    Caption = 'ButtonRight'
+    OnClick = ButtonRightClick
+    TabOrder = 2
+  end
+  object Countdown: TLabel
+    AnchorSideBottom.Control = ButtonRight
+    Left = 128
+    Height = 15
+    Top = 162
+    Width = 29
+    Anchors = [akBottom]
+    BorderSpacing.Bottom = 15
+    Caption = '1000s'
+    ParentColor = False
+  end
+  object MessageMemo: TMemo
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Countdown
+    Left = 5
+    Height = 142
+    Top = 5
+    Width = 490
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 5
+    BorderSpacing.Top = 5
+    BorderSpacing.Right = 5
+    BorderSpacing.Bottom = 15
+    Lines.Strings = (
+      'Line1'
+      'Line2'
+      'Line3'
+      'Line4'
+      'Line5'
+    )
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 3
+    WordWrap = False
+  end
+end
