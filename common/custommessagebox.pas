@@ -45,7 +45,7 @@ type
     Read the result code of the clicked button from the property ButtonResult.
     The result code of a button is the number of the button in the button list which
     is given to the procedure ShowBox (starting with 1).
-    If no button is clicked and the countdown finished, then ButtonResult is 0.
+    If no button is clicked and the countdown finished or if the user closed the form, then ButtonResult is 0.
     *)
     property ButtonResult: string read FButtonResult;
     procedure ShowBox(Title: string; Message: TStringList;
