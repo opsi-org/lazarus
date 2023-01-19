@@ -198,14 +198,13 @@ begin
   MessageMemoHeight := 50 + 10*NumberMessageLines;
 
   (*
-  Set required form hight depending on the components sizes:
-  Space form bottom to buttons = 15
-  Height of buttons = 25
-  Space buttons to countdown label = 15
-  Height of countdown label = 15
-  Space countdown label to message Memo = 15
+  Set required form hight depending on the components sizes and distances:
+  Space between form bottom and buttons = 15
+  If buttons are shown, then ButtonRight is always visible and we have to take the button hight into account.
+  Space between buttons and countdown label = 15
+  Space between countdown label and message Memo = 15
   *)
-  Height := 15 + 25 + 15 + 15 + 15 + MessageMemoHeight;
+  Height := 15 + ButtonRight.Height + 15 + Countdown.Height + 15 + MessageMemoHeight;
 end;
 
 procedure TCustomMessageForm.ShowBox(Title: string;
