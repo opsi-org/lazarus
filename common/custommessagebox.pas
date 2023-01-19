@@ -196,9 +196,9 @@ begin
   - For messages with many lines the memo has scroll bars so that it won't get too big.
   *)
   if NumberMessageLines < 20 then
-    MessageMemoHeight := 20 + 15 * NumberMessageLines
+    MessageMemoHeight := 50 + 15 * NumberMessageLines
   else
-    MessageMemoHeight := 320;
+    MessageMemoHeight := 350;
 
   (*
   Set required form hight depending on the components sizes and distances:
