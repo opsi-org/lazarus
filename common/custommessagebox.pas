@@ -45,7 +45,8 @@ type
     Read the result code of the clicked button from the property ExitCode.
     The result code of a button is the number of the button in the button list which
     is given to the procedure ShowBox (starting with 1).
-    If no button is clicked and the countdown finished or if the user closed the form, then ExitCode is 0.
+    If no button is clicked and the countdown finished, then ExitCode is 0.
+    If the user closed the form, then ExitCode is -1.
     *)
     property ExitCode: string read FExitCode;
     procedure ShowBox(Title: string; Message: TStringList;
@@ -90,7 +91,11 @@ begin
     Dec(FTimeout);
     Sleep(1000);
   end;
-  if not IsButtonClicked then CustomMessageForm.Close;
+  if not IsButtonClicked then
+  begin
+    CustomMessageForm.Close;
+    CustomMessageForm.FExitCode := '0';
+  end;
 end;
 
 
@@ -221,7 +226,7 @@ begin
   MessageMemo.Lines.Assign(Message);
   ShowButtons(Buttons);
 
-  FExitCode := '0'; // default exit code
+  FExitCode := '-1'; // default exit code
 
   if Timeout = 0 then
     Countdown.Visible := False
