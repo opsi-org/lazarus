@@ -17768,9 +17768,11 @@ begin
                         {$IFDEF GUI}
                         if itemlist.Count > 3 then
                         begin
-                          syntaxcheck := False;
-                          InfoSyntaxError := 'You ask for ' + itemlist.Count.ToString +
-                            ' buttons but the MessageBox can only hold up to 3 buttons!';
+                          LogDatei.log('You gave ' + itemlist.Count.ToString +
+                            ' buttons to the MessageBox but it can only hold up to 3 buttons! '
+                            + 'Therefore we will use the first tree buttons and ignore the rest.', LLWarning);
+                          // delete unused elements from list to avoid accidental access
+                          while itemlist.Count > 3 do itemlist.Delete(itemlist.Count - 1);
                         end;
 
                         if not TryStrToInt(s1, n1) then
