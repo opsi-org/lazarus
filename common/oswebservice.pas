@@ -365,7 +365,6 @@ type
       requirementType: string): TStringList;
     function getMapOfProductStates: TStringList;
     procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
-    function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: TStringList;
@@ -5158,13 +5157,6 @@ end;
 
 
 function TOpsi4Data.getMapOfProductActionRequests: TStringList;
-begin
-  //result := TStringList.create;
-  //result.AddStrings(productonClients_getObjects__actionrequests);
-  Result := productonClients_getObjects__actionrequests;
-end;
-
-function TOpsi4Data.productonClients_getObjects__actionrequests: TStringList;
 var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
