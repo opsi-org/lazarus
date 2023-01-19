@@ -182,7 +182,7 @@ end;
 procedure TCustomMessageForm.StartCountDown(Timeout: integer);
 begin
   CountdownThread := TCountdownThread.Create(Timeout);
-  CountdownThread.Start;
+  if Timeout > 0 then CountdownThread.Start;
 end;
 
 procedure TCustomMessageForm.SetSize(NumberMessageLines: integer);
@@ -225,7 +225,7 @@ begin
   else
     Countdown.Caption := Timeout.ToString + 's';
 
-  if Timeout > 0 then StartCountDown(Timeout);
+  StartCountDown(Timeout);
   ShowModal;
 end;
 
