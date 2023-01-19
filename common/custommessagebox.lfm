@@ -6,6 +6,7 @@ object CustomMessageForm: TCustomMessageForm
   Caption = 'Message'
   ClientHeight = 232
   ClientWidth = 500
+  OnClose = FormClose
   LCLVersion = '2.2.4.0'
   object ButtonLeft: TButton
     AnchorSideLeft.Control = Owner

@@ -32,13 +32,13 @@ type
     procedure ButtonLeftClick(Sender: TObject);
     procedure ButtonMiddleClick(Sender: TObject);
     procedure ButtonRightClick(Sender: TObject);
+    procedure FormClose(Sender: TObject);
   private
     FNumberButtons: integer;
     FButtonResult: string;
     procedure InitializeButtons;
     procedure ShowButtons(Buttons: TStringList);
     procedure StartCountDown(Timeout: integer);
-    procedure StopCountdown;
     procedure SetSize(NumberMessageLines: integer);
   public
     (*
@@ -65,7 +65,6 @@ implementation
 constructor TCountdownThread.Create(Timeout: integer);
 begin
   inherited Create(True);
-  FreeOnTerminate := True;
   FTimeout := Timeout;
 end;
 
@@ -97,12 +96,6 @@ end;
 
 { TCustomMessageForm }
 
-// Since the countdown thread accesses GUI elemnts we have to be sure to stop the countdown before closing the form.
-procedure TCustomMessageForm.StopCountdown;
-begin
-  if Assigned(CountdownThread) then CountdownThread.Terminate;
-end;
-
 procedure TCustomMessageForm.ButtonLeftClick(Sender: TObject);
 begin
   (*
@@ -110,7 +103,6 @@ begin
   In these cases the left button always represents the first button from the button list.
   *)
   FButtonResult := '1';
-  StopCountdown;
   Close;
 end;
 
@@ -121,7 +113,6 @@ begin
   In this case the middle button represents the second button from the button list.
   *)
   FButtonResult := '2';
-  StopCountdown;
   Close;
 end;
 
@@ -133,8 +124,18 @@ begin
     2: FButtonResult := '2'; // If two buttons are shown, then the left (number 1) and the right (number 2).
     3: FButtonResult := '3'; // All three buttons are shown (left is 1, middle is 2, right is 3)
   end;
-  StopCountdown;
   Close;
+end;
+
+procedure TCustomMessageForm.FormClose(Sender: TObject);
+begin
+  // Since the countdown thread accesses GUI elemnts we have to be sure to stop the countdown before closing the form.
+  if Assigned(CountdownThread) then
+  begin
+    CountdownThread.Terminate;
+    FreeAndNil(CountdownThread);
+  end;
+  inherited Close;
 end;
 
 procedure TCustomMessageForm.InitializeButtons;
@@ -182,7 +183,7 @@ end;
 procedure TCustomMessageForm.StartCountDown(Timeout: integer);
 begin
   CountdownThread := TCountdownThread.Create(Timeout);
-  if Timeout > 0 then CountdownThread.Start;
+  CountdownThread.Start;
 end;
 
 procedure TCustomMessageForm.SetSize(NumberMessageLines: integer);
@@ -227,7 +228,7 @@ begin
   else
     Countdown.Caption := Timeout.ToString + 's';
 
-  StartCountDown(Timeout);
+  if Timeout > 0 then StartCountDown(Timeout);
   ShowModal;
 end;
 
