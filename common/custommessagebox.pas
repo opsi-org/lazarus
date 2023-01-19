@@ -35,19 +35,19 @@ type
     procedure FormClose(Sender: TObject);
   private
     FNumberButtons: integer;
-    FButtonResult: string;
+    FExitCode: string;
     procedure InitializeButtons;
     procedure ShowButtons(Buttons: TStringList);
     procedure StartCountDown(Timeout: integer);
     procedure SetSize(NumberMessageLines: integer);
   public
     (*
-    Read the result code of the clicked button from the property ButtonResult.
+    Read the result code of the clicked button from the property ExitCode.
     The result code of a button is the number of the button in the button list which
     is given to the procedure ShowBox (starting with 1).
-    If no button is clicked and the countdown finished or if the user closed the form, then ButtonResult is 0.
+    If no button is clicked and the countdown finished or if the user closed the form, then ExitCode is 0.
     *)
-    property ButtonResult: string read FButtonResult;
+    property ExitCode: string read FExitCode;
     procedure ShowBox(Title: string; Message: TStringList;
       Buttons: TStringList; Timeout: integer);
   end;
@@ -102,7 +102,7 @@ begin
   The left button is shown when two or three buttons are given.
   In these cases the left button always represents the first button from the button list.
   *)
-  FButtonResult := '1';
+  FExitCode := '1';
   Close;
 end;
 
@@ -112,7 +112,7 @@ begin
   The middle button is only shown when three buttons are given.
   In this case the middle button represents the second button from the button list.
   *)
-  FButtonResult := '2';
+  FExitCode := '2';
   Close;
 end;
 
@@ -120,9 +120,9 @@ procedure TCustomMessageForm.ButtonRightClick(Sender: TObject);
 begin
   // The right button is always shown when the button list is not empty.
   case FNumberButtons of
-    1: FButtonResult := '1'; // If only one button is shown, then it is the right one (number 1).
-    2: FButtonResult := '2'; // If two buttons are shown, then the left (number 1) and the right (number 2).
-    3: FButtonResult := '3'; // All three buttons are shown (left is 1, middle is 2, right is 3)
+    1: FExitCode := '1'; // If only one button is shown, then it is the right one (number 1).
+    2: FExitCode := '2'; // If two buttons are shown, then the left (number 1) and the right (number 2).
+    3: FExitCode := '3'; // All three buttons are shown (left is 1, middle is 2, right is 3)
   end;
   Close;
 end;
@@ -221,7 +221,7 @@ begin
   MessageMemo.Lines.Assign(Message);
   ShowButtons(Buttons);
 
-  FButtonResult := '0'; // default button result code
+  FExitCode := '0'; // default exit code
 
   if Timeout = 0 then
     Countdown.Visible := False
