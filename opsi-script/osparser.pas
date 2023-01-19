@@ -17786,7 +17786,7 @@ begin
                         begin
                           CustomMessageForm := TCustomMessageForm.Create(nil);
                           CustomMessageForm.ShowBox(s, TStringList(list1), TStringList(itemlist), n1);
-                          StringResult := CustomMessageForm.ButtonResult;
+                          StringResult := CustomMessageForm.ExitCode;
                           if Assigned(CustomMessageForm) then FreeAndNil(CustomMessageForm);
                         end;
                         {$ENDIF GUI}
