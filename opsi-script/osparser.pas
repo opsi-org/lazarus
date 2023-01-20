@@ -17769,17 +17769,18 @@ begin
                         if itemlist.Count > 3 then
                         begin
                           LogDatei.log('You gave ' + itemlist.Count.ToString +
-                            ' buttons to the MessageBox but it can only hold up to 3 buttons! '
+                            ' buttons to the message box but it can only hold up to 3 buttons! '
                             + 'Therefore we will use the first tree buttons and ignore the rest.', LLWarning);
                           // delete unused elements from list to avoid accidental access
                           while itemlist.Count > 3 do itemlist.Delete(itemlist.Count - 1);
                         end;
 
-                        if not TryStrToInt(s1, n1) then
+                        if not TryStrToInt(s1, n1) or (n1 < 0) then
                         begin
-                          syntaxcheck := False;
-                          InfoSyntaxError := '"' + s1 +
-                            '" is not an integer but we expect an integer for the timeout in seconds!';
+                          LogDatei.log('"' + s1 +
+                            '" is not a positive integer but we expect a positive integer for the timeout in seconds! '
+                            + 'Therefore we will show the message box without timeout.', LLWarning);
+                          n1 := 0;
                         end;
 
                         if syntaxcheck and not testsyntax then
