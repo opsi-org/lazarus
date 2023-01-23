@@ -34,7 +34,18 @@ uses
   //Sensors, indGnouMeter,
   osencoding,
   typinfo,
+{$IFDEF CPUI386}
+  // it is a Intel x86 architecture
+  {$define CPUINTEL}
+{$ENDIF}
+{$IFDEF CPUX86_64}
+  // it is a Intel x86 architecture
+  {$define CPUINTEL}
+{$ENDIF}
+{$IFDEF CPUINTEL}
+  // QProgBar contains Intel x86 Assembler code and so it cannot be used with other cpu architecture
   QProgBar,
+{$ENDIF CPUINTEL}
   osGUIControl;
 
 type
@@ -157,7 +168,10 @@ var
   timeCommandLabel: boolean;
   timeDetailLabel: boolean;
   timeActivityLabel: boolean;
+
+  {$IFDEF CPUINTEL}
   Progressbar: TQProgressBar;
+  {$ENDIF CPUINTEL}
   //ActivityBar: TQProgressBar;
 
   panelWidth: integer;
@@ -196,6 +210,7 @@ var
   //Alpha: boolean;
 
 begin
+  {$IFDEF CPUINTEL}
   Progressbar := TQProgressBar.Create(nil);
   Progressbar.Position := 0;
   ProgressBar.Visible := False;
@@ -234,6 +249,7 @@ begin
     AutoHint := False;
     ShowPosAsPct := False;
   end;
+  {$ENDIF CPUINTEL}
   (*
   ActivityBar := TQProgressBar.Create(nil);
   ActivityBar.Position := 0;
@@ -714,6 +730,7 @@ begin
       except
       end;
 
+      {$IFDEF CPUINTEL}
       try
         ProgressBar.Left := skinIni.ReadInteger('ProgressBar', 'Left', 96);
         ProgressBar.Top := skinIni.ReadInteger('ProgressBar', 'Top', 235);
@@ -754,6 +771,7 @@ begin
           ProgressBar.RoundCorner := False;
       except
       end;
+      {$ENDIF CPUINTEL}
 
       try
         ActivityBar.Left := skinIni.ReadInteger('ActivityBar', 'Left', 60);
@@ -908,6 +926,7 @@ end;
 
 procedure TFBatchOberflaeche.ProgressBarActive(YesNo: boolean);
 begin
+  {$IFDEF CPUINTEL}
   if YesNo then
   begin
     Progressbar.Visible := True;
@@ -919,6 +938,7 @@ begin
     Progressbar.Visible := False;
     Progressbar.Enabled := False;
   end;
+  {$ENDIF CPUINTEL}
 end;
 
 procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -937,7 +957,9 @@ end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);
 begin
+  {$IFDEF CPUINTEL}
   Progressbar.Position := Prozente;
+  {$ENDIF CPUINTEL}
   //ProcessMess;
 end;
 

@@ -30,7 +30,7 @@ type
     procedure ShowHintOnClick(Sender: TObject);
   const
     // same width for all panels
-    panelWidth = 460;
+    panelWidth = 440;
     // same size for all info images (squares)
     InfoImageSize = 22;
     // same background image for all forms

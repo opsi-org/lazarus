@@ -8,8 +8,8 @@ msgstr "To carry out the remaining installation automatically, we need some info
 
 #: WelcomeResourceStrings.rsnext
 msgctxt "WelcomeResourceStrings.rsnext"
-msgid " next > "
-msgstr " next > "
+msgid " Next "
+msgstr " Next "
 
 #: WelcomeResourceStrings.rssellanguage
 msgctxt "WelcomeResourceStrings.rssellanguage"

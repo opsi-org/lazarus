@@ -2379,28 +2379,11 @@ begin
 
   SaveErrorNumber := LogDatei.NumberOfErrors;
   SaveWarningNumber := LogDatei.NumberOfWarnings;
-  //LogDatei.ErrorNumberMarked := SaveErrorNumber;
 
-  (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
-  ps := '';
-  LogDatei.log(ps, LLNotice);
-  if Sektion.Count > 0 then
-  begin
-    //ps := 'Execution of ' + Sektion.Name;
-    //LogDatei.log (ps, LLNotice);
-  end
-  else
-    // this case should be captured beforehand
-    LogDatei.log('Warning: Section  "' + Sektion.Name +
-      '"  does not exist or is empty', LLWarning);
-
-  //ps := (*  'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [Sektion.fSectionKind]) + 1,
-  //                                length (Sektion.Name));
   ps := Sektion.Name;
   {$IFDEF GUI}
   CentralForm.Label2.Caption := ps;
   FBatchOberflaeche.SetMessageText(ps, mDetail);
-  //setDetailLabel(CentralForm.Label2.Caption);
   {$ENDIF GUI}
 end;
 
@@ -9724,38 +9707,45 @@ begin
         end;
       end
 
-        {$IFDEF WIN32}
+
       else if LowerCase(Expressionstr) = 'delete_subfolder' then
       begin
-
-        if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
-        then
-        begin
-          deletefoldername := Remaining;
-          Remaining := '';
-        end;
-
-        if length(Remaining) > 0 then
-        begin
-          UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
-            'end of line expected');
-          syntaxCheck := False;
-        end;
-
-        if not testSyntax then
-        begin
-          if csidl_set then
+        {$IFDEF WIN32}
+          if not getString(Remaining, deletefoldername, Remaining, errorinfo, False)
+          then
           begin
-            //LogDatei.LogSIndentLevel := startindentlevel;
-            ShellLinks.DeleteShellFolder(csidl, deletefoldername);
-            //csidl_set := false;
-          end
-          else
-            LogDatei.log('No base folder set, therefore no deletion of subfolder',
-              LLWarning);
-        end;
-      end
+            deletefoldername := Remaining;
+            Remaining := '';
+          end;
+
+          if length(Remaining) > 0 then
+          begin
+            UibInstScript.reportError(Sektion, i, Sektion.Strings[i - 1],
+              'end of line expected');
+            syntaxCheck := False;
+          end;
+
+          if not testSyntax then
+          begin
+            if csidl_set then
+            begin
+              //LogDatei.LogSIndentLevel := startindentlevel;
+              ShellLinks.DeleteShellFolder(csidl, deletefoldername);
+              //csidl_set := false;
+            end
+            else
+            begin
+              LogDatei.log('No base folder set, therefore no deletion of subfolder',
+                LLWarning);
+            end;
+          end;
+        {$ELSE}
+          UibInstScript.reportError(Sektion, i, 'delete_subfolder',
+            'is only defined for win32.');
+          syntaxcheck := False;
         {$ENDIF WIN32}
+      end
+
 
       else
       if LowerCase(Expressionstr) = 'delete_element' then

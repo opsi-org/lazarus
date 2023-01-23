@@ -1,21 +1,20 @@
 object Form1: TForm1
   Left = 580
-  Height = 91
+  Height = 96
   Top = 179
-  Width = 99
+  Width = 127
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Form1'
-  ClientHeight = 91
-  ClientWidth = 99
-  DesignTimePPI = 91
+  ClientHeight = 96
+  ClientWidth = 127
   OnShow = FormShow
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.4.0'
   object Image1: TImage
     Left = 0
-    Height = 91
+    Height = 96
     Top = 0
-    Width = 99
+    Width = 127
     Align = alClient
     Picture.Data = {
       1754506F727461626C654E6574776F726B477261706869636142000089504E47
@@ -556,7 +555,7 @@ object Form1: TForm1
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 18
-    Top = 17
+    Left = 19
+    Top = 18
   end
 end
