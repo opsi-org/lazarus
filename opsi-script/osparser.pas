@@ -4454,11 +4454,12 @@ begin
 end;
 
 {$IFDEF WINDOWS}
-function CheckDWord(var ReadValue: string; var Value: string;
+function CheckDWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
   var ErrorInfo: string): boolean;
 begin
   try
-    StrToInt64(ReadValue);
+    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    StrToDWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
     Result := True;
@@ -4470,12 +4471,13 @@ begin
   end;
 end;
 
-function CheckQWord(var ReadValue: string; var Value: string;
+function CheckQWord(var ReadValue: string; var Value: string; RegeditFormat:boolean;
   var ErrorInfo: string): boolean;
 begin
   Result := False;
   try
-    StrToQWord(ReadValue);
+    if RegeditFormat then ReadValue := '$' + ReadValue; //in regedit format (file) all numbers are hexdecimal without leading $ or 0x
+    StrToQWord(ReadValue); //converts decimal value or hex with leading $ or 0x
     Value := ReadValue;
     ReadValue := '';
     Result := True;
@@ -4803,9 +4805,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        Result := CheckDWord(r, Value, ErrorInfo);
+        Result := CheckDWord(r, Value, True, ErrorInfo);
       trdInt64:
-        Result := CheckQWord(r, Value, ErrorInfo);
+        Result := CheckQWord(r, Value, True, ErrorInfo);
       trdBinary:
       begin
         binValue := StringReplace(r, ',', ' ');
@@ -5153,9 +5155,9 @@ var
           Value := StringReplace(Value, MultiszVisualDelimiter, #10);
         end;
       trdInteger:
-        Result := CheckDWord(r, Value, ErrorInfo);
+        Result := CheckDWord(r, Value, False, ErrorInfo);
       trdInt64:
-        Result := CheckQWord(r, Value, ErrorInfo);
+        Result := CheckQWord(r, Value, False, ErrorInfo);
       trdBinary:
       begin
         binValue := r;
@@ -10103,6 +10105,8 @@ begin
     begin
       WaitConditions := WaitConditions + [ttpWaitTime];
       // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+      // initialize
+      WaitSecs := 0;
 
       GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
       try
@@ -10110,8 +10114,11 @@ begin
       except
         on EConvertError do
         begin
-          InfoSyntaxError := 'Integer number expected';
-          SyntaxCheck := False;
+          if not testSyntax then
+          begin
+            InfoSyntaxError := 'Integer number expected';
+            SyntaxCheck := False;
+          end;
         end
       end;
     end
@@ -10159,6 +10166,8 @@ begin
     begin
       WaitConditions := WaitConditions - [ttpWaitTime];
       WaitConditions := WaitConditions + [ttpWaitTimeout];
+      // initialize
+      WaitSecs := 0;
 
       GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
       try
@@ -10172,8 +10181,11 @@ begin
           except
             on EConvertError do
             begin
-              InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-              SyntaxCheck := False;
+              if not testSyntax then
+              begin
+                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                SyntaxCheck := False;
+              end;
             end;
           end;
         end
@@ -10958,6 +10970,8 @@ begin
         WaitConditions := WaitConditions - [ttpWaitTime];
         WaitConditions := WaitConditions + [ttpWaitTimeout];
         waitsecsAsTimeout := True;
+        // initialize
+        WaitSecs := 0;
 
         GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
         try
@@ -10971,8 +10985,11 @@ begin
             except
               on EConvertError do
               begin
-                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                SyntaxCheck := False;
+                if not testSyntax then
+                begin
+                  InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
+                  SyntaxCheck := False;
+                end;
               end;
             end;
           end
@@ -23897,7 +23914,8 @@ begin
                     begin
                       LogDatei.log('Error: Could not find include file :' +
                         incfilename, LLCritical);
-                      FExtremeErrorLevel := levelFatal;
+                      if not testSyntax then
+                        FExtremeErrorLevel := levelFatal;
                     end;
                   except
                     on E: Exception do
@@ -24108,7 +24126,8 @@ begin
                     begin
                       LogDatei.log('Error: Could not find include file :' +
                         incfilename, LLCritical);
-                      FExtremeErrorLevel := levelFatal;
+                      if not testSyntax then
+                        FExtremeErrorLevel := levelFatal;
                     end;
                   except
                     on E: Exception do
@@ -24214,6 +24233,7 @@ begin
                   posSlash := pos('/', Remaining);
                   if posSlash > 0 then
                   begin
+                    LogDatei.log('Using "/" to give the position of a bitmap is Windows only and depricated',LLwarning);
                     if (length(Remaining) >= posSlash + 1) and
                       (Remaining[posSlash + 1] in ['1'..'9']) then
                     begin
@@ -24226,14 +24246,18 @@ begin
                         SyntaxCheck := False;
                         InfoSyntaxError := 'only supported 1 .. 4 ';
                       end;
-
                       system.Delete(Remaining, posSlash, 2);
                     end
                     else
                     begin
-                      SyntaxCheck := False;
-                      InfoSyntaxError :=
-                        'after "/", a number between 1 and 9 is expected';
+                      if not testSyntax then
+                      begin
+                        // no syntax error in testsyntax mode because
+                        // a slash in Remaining is expected in code for Unix
+                        SyntaxCheck := False;
+                        InfoSyntaxError :=
+                          'after "/", a number between 1 and 9 is expected';
+                      end;
                     end;
                   end
                   else;
