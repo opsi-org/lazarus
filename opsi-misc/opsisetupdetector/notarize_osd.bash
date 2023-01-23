@@ -12,7 +12,10 @@ APPLE_ID_USER=macos@uib.de
 APP_SPECIFIC_PASSWORD=ncyy-meep-bace-ppgc
 BUNDLE_ID=org.opsi.opsisetupdetector
 EXECUTABLE_NAME=opsisetupdetector
-EXECUTABLE_SOURCE=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}
+EXECUTABLE_SOURCE_x86=`pwd`/compiler_out/binarys/x86_64-darwin/${EXECUTABLE_NAME}
+#EXECUTABLE_SOURCE_m1=`pwd`/compiler_out/binarys/aarch64-darwin/${EXECUTABLE_NAME}
+#EXECUTABLE_SOURCE=`pwd`/compiler_out/binarys/universal/${EXECUTABLE_NAME}
+
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.app
 FULLPATHTOEXE=${EXECUTABLE_DIR}/Contents/MacOS/${EXECUTABLE_NAME}
 ENTITLEMENTS="--entitlements opsi-script.entitlements"
@@ -30,10 +33,16 @@ rm -f ${EXECUTABLE_NAME}_macOS.dmg
 rm -f upload_log_file.txt
 rm -f request_log_file.txt
 rm -f log_file.txt
+mkdir -p `pwd`/compiler_out/binarys/universal
+rm -f ${EXECUTABLE_SOURCE}
+## create universal binary
+#lipo -create -output ${EXECUTABLE_SOURCE} ${EXECUTABLE_SOURCE_x86} ${EXECUTABLE_SOURCE_m1}
+#file ${EXECUTABLE_SOURCE}
 mkdir -p ${EXECUTABLE_DIR}/Contents/MacOS
 rm -f ${EXECUTABLE_DIR}/Contents/MacOS/*
 #cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
-cp $EXECUTABLE_SOURCE ${EXECUTABLE_DIR}/Contents/MacOS/
+#cp $EXECUTABLE_SOURCE/ ${EXECUTABLE_DIR}/Contents/MacOS/
+cp ${EXECUTABLE_SOURCE_x86} ${EXECUTABLE_DIR}/Contents/MacOS/
 cp info-osd.plist ${EXECUTABLE_DIR}/Contents/Info.plist
 
 EXECUTABLE_VER=`opsi-getlazbinaryversion --file="${FULLPATHTOEXE}"  | tr -d 'fileversion='`

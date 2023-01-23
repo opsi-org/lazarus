@@ -682,6 +682,26 @@ resourcestring
     'Should we add code to copy installer to local before installation ?';
   rsCustomizeProfileHint =
     'Should we add code to customize the installation in user profiles ?';
+  rsInstalldirHint =
+    'The (unquoted) directory path where the software will be installed.' +
+    LineEnding +
+    'You may also choose the directory via the selection button on the right (if the product is installed).' +
+    LineEnding +
+    'If you there get a path like "C:\program Files" or "C:\program Files (x86)", ' +
+    LineEnding +
+    'it will be replaced by the matching opsi-script constant (e.g."%ProgramFiles32Dir%").';
+  rsTargetProgHint =
+    'The main program of the software that has to be installed.' +
+    LineEnding +
+    'Will be used for creating desktop icons or start menu entries.' +
+    LineEnding + 'and to check before installaion if the program is running.' +
+    LineEnding +
+    'Will be not detected. You have to choose it via the selection button on the right (if the product is installed).' +
+    LineEnding + 'Unquoted file name.';
+  rsUninstallProgHint =
+    'The unqoted path to the detected uninstall program.' +
+    LineEnding +
+    'You may also choose the file via the selection button on the right (if the product is installed).';
 
 
 implementation
@@ -880,6 +900,24 @@ begin
       TICheckBoxCustomdir.Hint := rsSupportCustomDirectoryHint;
       TICheckBoxDesktopIcon.Hint := rsUsePropDesktopicon;
       TICheckBoxCustomizeProfile.Hint := rsCustomizeProfileHint;
+      TIEditInstallDir1.Hint:= rsInstalldirHint;
+      TIEditInstallDir2.Hint:= rsInstalldirHint;
+      TIEditInstallDir3.Hint:= rsInstalldirHint;
+      TIEditSetup1UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup2UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup3UnProgram.Hint:= rsUninstallProgHint;
+      TIEditSetup1TargetProgram.Hint:= rsTargetProgHint;
+      TIEditSetup2TargetProgram.Hint:= rsTargetProgHint;
+      TIEditSetup3TargetProgram.Hint:= rsTargetProgHint;
+      TIEditInstallDir1.ShowHint:= true;
+      TIEditInstallDir2.ShowHint:= true;
+      TIEditInstallDir3.ShowHint:= true;
+      TIEditSetup1UnProgram.ShowHint:= true;
+      TIEditSetup2UnProgram.ShowHint:= true;
+      TIEditSetup3UnProgram.ShowHint:= true;
+      TIEditSetup1TargetProgram.ShowHint:= true;
+      TIEditSetup2TargetProgram.ShowHint:= true;
+      TIEditSetup3TargetProgram.ShowHint:= true;
 
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
@@ -3047,6 +3085,7 @@ begin
   begin
     installdir := SelectDirectoryDialog1.FileName;
     {$IFDEF WINDOWS}
+    // use constants if possible
     installdir := ReplaceText(installdir, 'c:\program files (x86)',
       '%ProgramFiles32Dir%');
     if IsWindows64 then
@@ -3059,17 +3098,26 @@ begin
 end;
 
 procedure TResultform1.updateUninstaller(var mysetup: TSetupFile);
+var
+  str: string;
 begin
   // update uninstall program relevant data
   if mysetup.uninstallProg <> '' then
   begin
+    (*
+    str := mysetup.uninstallProg;
+    str := opsiunquotestr2(str, '"');
+    str := opsiunquotestr2(str, '''');
+    mysetup.uninstallProg := str;
+    *)
+
     mysetup.uninstallCheck.Clear;
-    mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
+    mysetup.uninstallCheck.Add('if fileexists("' +
       mysetup.uninstallProg + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine :=
-      '"$Installdir$\' + mysetup.uninstallProg + '" ' +
+      '"' + mysetup.uninstallProg + '" ' +
       installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
@@ -3080,11 +3128,26 @@ begin
 end;
 
 procedure TResultform1.chooseUninstaller(var mysetup: TSetupFile);
+var
+  uninstfile, uninstdir: string;
 begin
   OpenDialog1.FilterIndex := 1;
   if OpenDialog1.Execute then
   begin
-    mysetup.uninstallProg := ExtractFileName(OpenDialog1.FileName);
+    uninstfile := ExtractFileName(OpenDialog1.FileName);
+    uninstdir := ExtractFileDir(OpenDialog1.FileName);
+    {$IFDEF WINDOWS}
+    // use constants if possible
+    uninstdir := ReplaceText(uninstdir, 'c:\program files (x86)',
+      '%ProgramFiles32Dir%');
+    if IsWindows64 then
+      uninstdir := ReplaceText(uninstdir, 'c:\program files', '%ProgramFiles64Dir%')
+    else
+      uninstdir := ReplaceText(uninstdir, 'c:\program files', '%ProgramFiles32Dir%');
+    {$ENDIF WINDOWS}
+    // use $installdir$ if possible
+    uninstdir := ReplaceText(uninstdir, mysetup.installDirectory, '$installdir$');
+    mysetup.uninstallProg := uninstdir + '\' + uninstfile;
   end;
   updateUninstaller(mysetup);
 end;
@@ -3291,6 +3354,8 @@ var
   //checkok: boolean = True;
   done: boolean = False;
 begin
+  // reset exitcode before (repeated) build:
+  system.ExitCode := 0;
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
@@ -4301,6 +4366,7 @@ begin
 
 end;
 
+
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
 begin
 
@@ -4332,11 +4398,13 @@ end;
 procedure TResultform1.TIEditSetup1UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[0]);
+  TTIEdit(sender).Refresh;
 end;
 
 procedure TResultform1.TIEditSetup2UnProgramEditingDone(Sender: TObject);
 begin
   updateUninstaller(aktProduct.SetupFiles[1]);
+
 end;
 
 procedure TResultform1.TIEditSetup3UnProgramEditingDone(Sender: TObject);

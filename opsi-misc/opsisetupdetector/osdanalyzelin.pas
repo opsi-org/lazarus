@@ -332,12 +332,12 @@ begin
     mysetup.uninstallProg := ExtractFileNameOnly(
       installerArray[integer(mysetup.installerId)].uninstallProg);
     mysetup.uninstallCheck.Clear;
-    str1 := 'if fileexists(''"''+$installdir$+''/' + mysetup.uninstallProg + '"'')';
+    str1 := 'if fileexists(''"'+mysetup.uninstallProg + '"'')';
     mysetup.uninstallCheck.Add(str1);
 
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    str1 := 'set $exitcode$ = shellCall(''"''+$installdir$+''/' +
+    str1 := 'set $exitcode$ = shellCall(''"' +
       mysetup.uninstallProg + '" ' + installerArray[integer(mysetup.installerId)].unattendeduninstall + ''')';
     mysetup.uninstallCommandLine := str1;
   end

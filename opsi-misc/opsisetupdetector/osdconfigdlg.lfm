@@ -1,7 +1,7 @@
 object FOSDConfigdlg: TFOSDConfigdlg
-  Left = 790
+  Left = 793
   Height = 625
-  Top = 222
+  Top = 221
   Width = 534
   Caption = 'opsi-setup-detector Configuration'
   ClientHeight = 625
@@ -10,7 +10,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '2.2.4.0'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
     Height = 409

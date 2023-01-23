@@ -23,7 +23,8 @@ uses
   osjson,
   osregex,
   lcltranslator,
-  oscrypt;
+  oscrypt,
+  osparserhelper;
 
 type
 
@@ -136,6 +137,9 @@ type
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
     procedure SetInstallErrorHandlingLines(const AValue: TStrings);
+    procedure SetUninstallProg(const AValue: String);
+    procedure SetTargetProg(const AValue: String);
+    procedure SetInstallDirectory(const AValue: String);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -159,7 +163,7 @@ type
     property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
-    property installDirectory: string read FinstallDirectory write FinstallDirectory;
+    property installDirectory: string read FinstallDirectory write SetInstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
     property infolist: TStrings read Finfolist write SetInfolist;
     property link: string read Flink write Flink;
@@ -172,8 +176,8 @@ type
       read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
     property uninstallCommandLine: string read FuninstallCommandLine
       write FuninstallCommandLine;
-    property uninstallProg: string read FuninstallProg write FuninstallProg;
-    property targetProg: string read FtargetProg write FtargetProg;
+    property uninstallProg: string read FuninstallProg write SetUninstallProg;
+    property targetProg: string read FtargetProg write SetTargetProg;
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
@@ -569,7 +573,7 @@ resourcestring
   rsReadme_txt_templ = 'Path to the text file that is used as Read-me template';
   rsInternalSet = 'Do not change here - Internally set by a dialog.';
   rsUsePropDesktopicon =
-    'Should we create a "DektopIcon" property and add code to handle dektop icons ?';
+    'Should we create a "DesktopIcon" property and add code to handle desktop icons ?';
   rsPropDesktopiconDescription = 'Should there be a desktop icon ?';
   rsUsePropLicenseOrPool =
     'Should we create a "LicenseOrPool" property and add code handle license keys ?';
@@ -682,6 +686,37 @@ procedure TSetupFile.SetInstallErrorHandlingLines(const AValue: TStrings);
 begin
   FinstallErrorHandlingLines.Assign(AValue);
 end;
+
+procedure TSetupFile.SetUninstallProg(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FuninstallProg := str;
+end;
+
+procedure TSetupFile.SetTargetProg(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FtargetProg := str;
+end;
+
+procedure TSetupFile.SetInstallDirectory(const AValue: String);
+var
+  str: string;
+begin
+  str := AValue;
+  str := opsiunquotestr2(str, '"');
+  str := opsiunquotestr2(str, '''');
+  FinstallDirectory := str;
+end;
+
 
 procedure TSetupFile.initValues;
 begin
@@ -2061,7 +2096,7 @@ begin
     unattendeduninstall :=
       '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
     uninstall_waitforprocess := '';
-    uninstallProg := 'unins000.exe';
+    uninstallProg := '$Installdir$\unins000.exe';
     patterns.Add('<description>inno setup</description>');
     patterns.Add('jr.inno.setup');
     link :=
@@ -2080,7 +2115,7 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := 'Au_.exe';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
     patterns.Add('http://nsis.sf.net/');
@@ -2103,7 +2138,7 @@ begin
     silentuninstall := '/s /sms';
     unattendeduninstall := '/s /sms';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('InstallShield');
     patterns.Add(
       '<description>InstallShield.Setup</description>');
@@ -2130,7 +2165,7 @@ begin
     unattendeduninstall :=
       '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('nstallshield');
     patterns.Add('issetup.dll');
     patterns.Add('transforms');
@@ -2176,7 +2211,7 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
@@ -2324,7 +2359,7 @@ begin
     unattendeduninstall := '--mode unattended --unattendedmodeui minimal';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('<description>BitRock Installer</description>');
     patterns.Add('bitrock-lzma');
     //infopatterns.Add('RunProgram="');
@@ -2346,7 +2381,7 @@ begin
     unattendeduninstall := '/a /u:"<product>"';
     uninstall_waitforprocess := '';
     install_waitforprocess := '';
-    uninstallProg := 'uninstall.exe';
+    uninstallProg := '$installdir$\uninstall.exe';
     patterns.Add('Self-extracting installation program');
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');

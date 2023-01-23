@@ -279,6 +279,7 @@ begin
       begin
         str := str + 'DefVar $LicenseOrPool$' + LineEnding;
         str := str + 'DefVar $Licensekey$' + LineEnding;
+        str := str + 'DefVar $LicenseError$' + LineEnding;
         str := str + 'DefVar $LicenseHandledByScript$ = "true"' + LineEnding;
       end
 (*
@@ -732,7 +733,10 @@ begin
           infilelist.Add('sections.opsiinc');
           infilelist.Add('declarations.opsiinc');
           infilelist.Add('localsetup\declarations-local.opsiinc');
-          infilelist.Add('localsetup\delsub-local.opsiinc');
+          if aktProduct.SetupFiles[0].installerId = stMsi then
+            infilelist.Add('localsetup\delsubmsi-local.opsiinc')
+          else
+            infilelist.Add('localsetup\delsub-local.opsiinc');
           infilelist.Add('localsetup\sections-local.opsiinc');
           infilelist.Add('localsetup\setup-local.opsiinc');
           infilelist.Add('localsetup\setup-local.opsiscript');
@@ -753,6 +757,7 @@ begin
                 ' - fall back to default', LLinfo);
             end; *)
             outfilename := clientpath + PathDelim + infilelist.Strings[i];
+            outfilename := StringReplace(outfilename, 'msi', '', []);
             patchScript(infilename, outfilename);
           end;
         end;
@@ -1125,7 +1130,7 @@ end;
 
 function createOpsiFiles: boolean;
 var
-  textlist: TStringList;
+  textlist, helplist: TStringList;
   i: integer;
   mydep: TPDependency;
   myprop: TPProperty;
@@ -1135,6 +1140,7 @@ var
 begin
   Result := False;
   try
+    helplist := TStringList.Create;
     textlist := TStringList.Create;
     textlist.Add('[Package]');
     textlist.Add('version: ' + IntToStr(aktProduct.productdata.packageversion));
@@ -1211,9 +1217,13 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        if stringListToJsonArray(TStringList(myprop.GetValueLines), tmpstr) then
+        helplist.Text:= myprop.GetValueLines.Text;
+        opsiquotelist(helplist,'"');
+        if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('values: ' + tmpstr);
-        if stringListToJsonArray(TStringList(myprop.GetDefaultLines), tmpstr) then
+        helplist.Text:= myprop.GetDefaultLines.Text;
+        opsiquotelist(helplist,'"');
+        if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('default: ' + tmpstr);
       end;
     end;
