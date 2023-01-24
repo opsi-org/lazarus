@@ -37,7 +37,7 @@ function opsiquotestr(s1, s2: string): string;
 // and the second char is the end mark
 // used by opsiquotelist
 
-procedure opsiquotelist(var list1 : TStringlist; s2: string);
+procedure opsiquotelist(var list1: TStringList; s2: string);
 // returns list1 with every element quoted with s2 (if it is quoted right now, nothing will be changed)
 // s2 may be two chars long. Then the first char is the start mark
 // and the second char is the end mark
@@ -73,10 +73,10 @@ var
   prodpath, clientpath, opsipath: string;
 
 function opsiquotestr(s1, s2: string): string;
-// returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
-// s2 may be two chars long. Then the first char is the start mark
-// and the second char is the end mark
-// used by opsiquotelist
+  // returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
+  // s2 may be two chars long. Then the first char is the start mark
+  // and the second char is the end mark
+  // used by opsiquotelist
 var
   markstr, startmark, endmark: string;
 begin
@@ -96,14 +96,14 @@ begin
   end;
 end;
 
-procedure opsiquotelist(var list1 : TStringlist; s2: string);
+procedure opsiquotelist(var list1: TStringList; s2: string);
 // returns list1 with every element quoted with s2 (if it is quoted right now, nothing will be changed)
 // s2 may be two chars long. Then the first char is the start mark
 // and the second char is the end mark
 var
-  i : integer;
+  i: integer;
 begin
-  for i := 0 to list1.count -1 do
+  for i := 0 to list1.Count - 1 do
   begin
     list1.Strings[i] := opsiquotestr(list1.Strings[i], s2);
   end;
@@ -120,49 +120,54 @@ var
   aktindentnum: integer;
   aktReplacestr: string;
 begin
-  mywrite('creating: ' + outfile + ' from: ' + infile);
-  if not DirectoryExists(ExtractFileDir(outfile)) then
-    ForceDirectories(ExtractFileDir(outfile));
+  if FileExists(infile) then
+  begin
+    mywrite('creating: ' + outfile + ' from: ' + infile);
+    if not DirectoryExists(ExtractFileDir(outfile)) then
+      ForceDirectories(ExtractFileDir(outfile));
 
   {$I+}//use exceptions
-  try
-    AssignFile(infileHandle, infile);
-    AssignFile(outfileHandle, outfile);
-    reset(infileHandle);
-    rewrite(outfileHandle);
+    try
+      AssignFile(infileHandle, infile);
+      AssignFile(outfileHandle, outfile);
+      reset(infileHandle);
+      rewrite(outfileHandle);
 
-    while not EOF(infileHandle) do
-    begin
-      ReadLn(infileHandle, aktline);
-      for i := 0 to patchlist.Count - 1 do
+      while not EOF(infileHandle) do
       begin
-        if pos(lowercase(patchlist.Names[i]), lowercase(aktline)) > 0 then
+        ReadLn(infileHandle, aktline);
+        for i := 0 to patchlist.Count - 1 do
         begin
-          // we have to preserve the indent
-          // check actual indent
-          aktindentnum := length(aktline) - length(trimleft(aktline));
-          aktindentstr := '';
-          // indent with tabs
-          for k := 1 to aktindentnum do
-            aktindentstr := aktindentstr + char(9);
-          // p
-          aktReplacestr := patchlist.ValueFromIndex[i];
-          // patch aktidentstr after each Newline
-          aktReplacestr := StringReplace(aktReplacestr, Lineending,
-            Lineending + aktindentstr, [rfReplaceAll, rfIgnoreCase]);
-          aktline := StringReplace(aktline, patchlist.Names[i],
-            aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
+          if pos(lowercase(patchlist.Names[i]), lowercase(aktline)) > 0 then
+          begin
+            // we have to preserve the indent
+            // check actual indent
+            aktindentnum := length(aktline) - length(trimleft(aktline));
+            aktindentstr := '';
+            // indent with tabs
+            for k := 1 to aktindentnum do
+              aktindentstr := aktindentstr + char(9);
+            // p
+            aktReplacestr := patchlist.ValueFromIndex[i];
+            // patch aktidentstr after each Newline
+            aktReplacestr := StringReplace(aktReplacestr, Lineending,
+              Lineending + aktindentstr, [rfReplaceAll, rfIgnoreCase]);
+            aktline := StringReplace(aktline, patchlist.Names[i],
+              aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
+          end;
         end;
+        writeln(outfileHandle, aktline);
       end;
-      writeln(outfileHandle, aktline);
+      CloseFile(infileHandle);
+      CloseFile(outfileHandle);
+    except
+      on E: EInOutError do
+        logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message, LLError);
     end;
-    CloseFile(infileHandle);
-    CloseFile(outfileHandle)
-  except
-    on E: EInOutError do
-      logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message, LLError);
-  end;
   {$I-}//end use exceptions
+  end
+  else
+    logdatei.log('patchScript file warning: infile for: ' + ExtractFileName(outfile) + ' not found', LLwarning);
 end;
 
 procedure patchThisList(var targetlist: TStringList);
@@ -885,6 +890,44 @@ begin
         end;
       end;
 
+      // additional optional files for 'custom'
+      if (aktProduct.productdata.channelDir = 'custom') then
+      begin
+        case osdsettings.runmode of
+          singleAnalyzeCreate:
+          begin
+            infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
+          end;
+          twoAnalyzeCreate_1, twoAnalyzeCreate_2:
+          begin
+            infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
+          end;
+          createTemplate:
+          begin
+            infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sectionstempl.opsiinc');
+          end;
+          createMeta:
+          begin
+          end;
+          threeAnalyzeCreate_1, threeAnalyzeCreate_2, threeAnalyzeCreate_3:
+          begin
+            infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
+          end;
+          createMultiTemplate:
+          begin
+            infilelist.Add('declarations.opsiinc');
+            infilelist.Add('sections.opsiinc');
+          end;
+          analyzeCreateWithUser:
+          begin
+          end;
+        end;
+      end;
+
       // we did it for analyzeCreateWithUser right now
       if not (osdsettings.runmode = analyzeCreateWithUser) then
         for i := 0 to infilelist.Count - 1 do
@@ -1268,12 +1311,12 @@ begin
       begin
         textlist.Add('multivalue: ' + BoolToStr(myprop.multivalue, True));
         textlist.Add('editable: ' + BoolToStr(myprop.editable, True));
-        helplist.Text:= myprop.GetValueLines.Text;
-        opsiquotelist(helplist,'"');
+        helplist.Text := myprop.GetValueLines.Text;
+        opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('values: ' + tmpstr);
-        helplist.Text:= myprop.GetDefaultLines.Text;
-        opsiquotelist(helplist,'"');
+        helplist.Text := myprop.GetDefaultLines.Text;
+        opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
           textlist.Add('default: ' + tmpstr);
       end;
@@ -1617,14 +1660,14 @@ var
   errorstate: boolean = False;
   notused: string = '(not used)';
   output: string;
-  paramlist : TStringlist;
+  paramlist: TStringList;
 
 begin
   logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams := TStringList.Create;
   OpsiBuilderProcess := process.TProcess.Create(nil);
   buildCallbinary := '"' + myconfiguration.PathToOpsiPackageBuilder + '"';
-  paramlist := TStringlist.Create;
+  paramlist := TStringList.Create;
   //paramlist.Add('-–log=c:\opsi.org\applog\opb-call.log');
   //ParamStr := ' -–log=c:\opsi.org\applog\opb-call.log';
 
@@ -1633,7 +1676,7 @@ begin
   if AnsiLastChar(ParamStr) <> DirectorySeparator then
     ParamStr := ParamStr + DirectorySeparator;
   ParamStr := ParamStr + aktProduct.productdata.productId;
-   paramlist.Add(ParamStr);
+  paramlist.Add(ParamStr);
   if resultForm1.RadioButtonPackageBuilder.Checked = True then
   begin
     OpsiBuilderProcess.ShowWindow := swoShowNormal;
@@ -1660,7 +1703,7 @@ begin
 
   LogDatei.log('Try to call opsi packagebuilder', LLnotice);
   //OpsiBuilderProcess.CommandLine := buildCallbinary + ParamStr;
-  OpsiBuilderProcess.Executable:= buildCallbinary;
+  OpsiBuilderProcess.Executable := buildCallbinary;
   OpsiBuilderProcess.Parameters.Assign(paramlist);
   OpsiBuilderProcess.Options := OpsiBuilderProcess.Options + [poWaitOnExit];
   LogDatei.log('Call: ' + OpsiBuilderProcess.Executable + ' with: ' +
@@ -1719,7 +1762,7 @@ var
 
   function servicecall(method, param: string): boolean;
   begin
-    result := false;
+    Result := False;
     setlength(params, 1);
     params[0] := param;
     omc := TOpsiMethodCall.Create(method, params);
@@ -1734,15 +1777,15 @@ var
     else
     begin
       LogDatei.log('JSON result: ' + serviceresult, LLinfo);
-      result := true;
+      Result := True;
     end;
   end;
 
 begin
   LogDatei.log('Try to call opsi service', LLnotice);
   resultForm1.PanelProcess.Visible := True;
-      resultForm1.processStatement.Caption := 'invoke opsi service ...';
-      procmess;
+  resultForm1.processStatement.Caption := 'invoke opsi service ...';
+  procmess;
   //packagedir := '/var/lib/opsi/workbench/';
   // packagedir may be relative to workbench
   packagedir := '';
@@ -1754,10 +1797,10 @@ begin
   if resultForm1.radioBuildModebuildOnly.Checked = True then
   begin
     if servicecall('workbench_buildPackage', packagedir) then
-      LogDatei.log('Package '+packagefile+' successful build', LLnotice)
+      LogDatei.log('Package ' + packagefile + ' successful build', LLnotice)
     else
     begin
-      LogDatei.log('Package '+packagefile+' failed to build', LLerror);
+      LogDatei.log('Package ' + packagefile + ' failed to build', LLerror);
       system.ExitCode := 1;
     end;
   end;
@@ -1765,13 +1808,13 @@ begin
   if resultForm1.radioBuildModebuildInstall.Checked = True then
   begin
 
-      if servicecall('workbench_installPackage', packagedir) then
-        LogDatei.log('Package '+packagefile+' successful build + installed', LLnotice)
-      else
-      begin
-        LogDatei.log('Package '+packagefile+' failed to build +install', LLerror);
-        system.ExitCode := 1;
-      end;
+    if servicecall('workbench_installPackage', packagedir) then
+      LogDatei.log('Package ' + packagefile + ' successful build + installed', LLnotice)
+    else
+    begin
+      LogDatei.log('Package ' + packagefile + ' failed to build +install', LLerror);
+      system.ExitCode := 1;
+    end;
 
   end;
   resultForm1.PanelProcess.Visible := False;
@@ -1785,9 +1828,10 @@ begin
   if startOpsiServiceConnection then
   begin
     if CompareDotSeparatedNumbers(osdform.opsiserviceversion, '<', '4.2.0.311') then
-      callOpB := true;
+      callOpB := True;
   end
-  else callOpB := true;
+  else
+    callOpB := True;
 
   if callOpB then callOpsiPackageBuilder
   else

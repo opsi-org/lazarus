@@ -87,6 +87,8 @@ opsi-setup-detector (4.2.1.14-1) stable; urgency=low
      use mysetup.uninstallProg un modified for mysetup.uninstallCommandLine (secondary section)
      modify it for mysetup.uninstallCheck in order to resolve the variable (promary section)
    * functions opsiquotestr, opsiquotelist from parserhelper to osdcreate
+   * osdcreate: add declarations.opsiinc and sections.opsiinc to list of infiles at channel custom
+   * osdcreate: patchscript: warning if infile could not be found
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  24 Jan 2023 : 15:00:00 +0200
 
