@@ -31,6 +31,18 @@ function createProductStructure: boolean;
 procedure callOpsiPackageBuilder;
 procedure callServiceOrPackageBuilder;
 
+function opsiquotestr(s1, s2: string): string;
+// returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+// used by opsiquotelist
+
+procedure opsiquotelist(var list1 : TStringlist; s2: string);
+// returns list1 with every element quoted with s2 (if it is quoted right now, nothing will be changed)
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+
+
 resourcestring
   // new for 4.1.0.2 ******************************************************************
   rsDirectory = 'Directory ';
@@ -59,6 +71,45 @@ var
   patchlist: TStringList;
   myExeDir: string;
   prodpath, clientpath, opsipath: string;
+
+function opsiquotestr(s1, s2: string): string;
+// returns s1 quoted with s2 (if it is quoted right now, nothing will be changed)
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+// used by opsiquotelist
+var
+  markstr, startmark, endmark: string;
+begin
+  Result := '';
+  markstr := trim(s2);
+  if (length(s1) >= 1) and (length(markstr) >= 1) then
+  begin
+    startmark := markstr[1];
+    if length(markstr) >= 2 then
+      endmark := markstr[2] // different marks (brackets) at begin and end
+    else
+      endmark := startmark; // the same mark (quote) at begin and end
+    if not (pos(startmark, s1) = 1) and AnsiEndsStr(endmark, s1) then
+      Result := startmark + s1 + endmark
+    else
+      Result := s1;
+  end;
+end;
+
+procedure opsiquotelist(var list1 : TStringlist; s2: string);
+// returns list1 with every element quoted with s2 (if it is quoted right now, nothing will be changed)
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+var
+  i : integer;
+begin
+  for i := 0 to list1.count -1 do
+  begin
+    list1.Strings[i] := opsiquotestr(list1.Strings[i], s2);
+  end;
+end;
+
+
 
 procedure patchScript(infile, outfile: string);
 var

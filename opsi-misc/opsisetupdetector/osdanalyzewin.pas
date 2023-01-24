@@ -326,7 +326,7 @@ var
   myArch: string;
   product: string;
   installerstr: string;
-  str1: string;
+  str1,uninstcheckstr: string;
 
 begin
   installerstr := installerToInstallerstr(installerId);
@@ -395,8 +395,13 @@ begin
   end;
   if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
   begin
+    uninstcheckstr := mysetup.uninstallProg;
+    // the use of the  $installdir$ variable for the promary section function fileexists
+    // will for example result to:
+    // if fileexists(""+$installdir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr , '$installdir$', '"+$installdir$+"', [rfIgnoreCase]);
     mysetup.uninstallCheck.Add('if fileexists("' +
-      mysetup.uninstallProg + '")');
+      uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine := '"' +

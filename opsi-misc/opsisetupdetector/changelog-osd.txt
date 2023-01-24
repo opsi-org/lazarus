@@ -81,6 +81,15 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.1.14-1) stable; urgency=low
+
+   * osdform: fix mysetup.uninstallProg $installdir$ handling:
+     use mysetup.uninstallProg un modified for mysetup.uninstallCommandLine (secondary section)
+     modify it for mysetup.uninstallCheck in order to resolve the variable (promary section)
+   * functions opsiquotestr, opsiquotelist from parserhelper to osdcreate
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  24 Jan 2023 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.13-1) stable; urgency=low
 
    * osdform: fix TResultform1.updateUninstaller: mysetup.uninstallCheck.Add('if fileexists("' +

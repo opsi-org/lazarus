@@ -3099,21 +3099,21 @@ end;
 
 procedure TResultform1.updateUninstaller(var mysetup: TSetupFile);
 var
-  str: string;
+  uninstcheckstr: string;
 begin
   // update uninstall program relevant data
   if mysetup.uninstallProg <> '' then
   begin
-    (*
-    str := mysetup.uninstallProg;
-    str := opsiunquotestr2(str, '"');
-    str := opsiunquotestr2(str, '''');
-    mysetup.uninstallProg := str;
-    *)
 
     mysetup.uninstallCheck.Clear;
+    uninstcheckstr := mysetup.uninstallProg;
+    // the use of the  $installdir$ variable for the promary section function fileexists
+    // will for example result to:
+    // if fileexists(""+$installdir$+"\uninst.exe")
+    uninstcheckstr := StringReplace(uninstcheckstr , '$installdir$', '"+$installdir$+"', [rfIgnoreCase]);
+
     mysetup.uninstallCheck.Add('if fileexists("' +
-      mysetup.uninstallProg + '")');
+      uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
     mysetup.uninstallCommandLine :=
