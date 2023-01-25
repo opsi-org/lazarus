@@ -105,7 +105,7 @@ procedure TCustomMessageForm.ButtonLeftClick(Sender: TObject);
 begin
   (*
   The left button is shown when two or three buttons are given.
-  In these cases the left button always represents the first button from the button list.
+  In these cases the left button always represents the first button from the button list (index 0).
   *)
   FExitCode := '0';
   Close;
@@ -115,7 +115,7 @@ procedure TCustomMessageForm.ButtonMiddleClick(Sender: TObject);
 begin
   (*
   The middle button is only shown when three buttons are given.
-  In this case the middle button represents the second button from the button list.
+  In this case the middle button represents the second button from the button list (index 1).
   *)
   FExitCode := '1';
   Close;
@@ -125,9 +125,9 @@ procedure TCustomMessageForm.ButtonRightClick(Sender: TObject);
 begin
   // The right button is always shown when the button list is not empty.
   case FNumberButtons of
-    1: FExitCode := '0'; // If only one button is shown, then it is the right one (number 1).
-    2: FExitCode := '1'; // If two buttons are shown, then the left (number 1) and the right (number 2).
-    3: FExitCode := '2'; // All three buttons are shown (left is 1, middle is 2, right is 3)
+    1: FExitCode := '0'; // If only one button is shown, then it is the right one (index 0).
+    2: FExitCode := '1'; // If two buttons are shown, then the left (index 0) and the right (index 1).
+    3: FExitCode := '2'; // All three buttons are shown (left is 0, middle is 1, right is 2)
   end;
   Close;
 end;
