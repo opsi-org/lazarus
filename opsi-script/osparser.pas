@@ -13181,7 +13181,7 @@ begin
                   begin
                     if AnsiContainsText(List[k], List1[i]) then
                       List.delete(k)
-                     //after deleting element k, k index the next element
+                     //after deleting element k, k indexes the next element
                     else
                       inc(k); //to index the next element if nothing is deleted
                   end;
