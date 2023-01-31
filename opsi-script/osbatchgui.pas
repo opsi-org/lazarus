@@ -272,10 +272,14 @@ begin
     StartTop := (ScaleDesignToForm(Height) - ScaleDesignToForm(InnerHeight)) div ScaleDesignToForm(2);
   if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
     StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
-  ShowMessage('FormShow ' + IntToStr(ScaleDesignToForm(StartLeft))+',' + IntToStr(ScaleDesignToForm(StartTop))+',' + IntToStr(ScaleDesignToForm(InnerWidth))+',' + IntToStr(ScaleDesignToForm(InnerHeight)));
+
+  //ShowMessage('FormShow ' + IntToStr(ScaleDesignToForm(StartLeft))+','
+  //+ IntToStr(ScaleDesignToForm(StartTop))+',' + IntToStr(ScaleDesignToForm(InnerWidth))
+  //+',' + IntToStr(ScaleDesignToForm(InnerHeight))); //for testing
 
   Panel.SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop), ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
   SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop), ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
+  MoveToDefaultPosition;
 
   Color := clBlue;
   Panel.Color := clBlue;
@@ -311,7 +315,6 @@ begin
   ForceStayOnTop(true);
   {$ENDIF DARWIN}
    LoadSkin('');
-   //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
    ProcessMess;
 end;
 
@@ -387,7 +390,7 @@ var
   end;
 
 begin
-  ShowMessage('LoadSkin');
+  //ShowMessage('LoadSkin'); //for testing
   skinDir := GetSkinDirectory(SkinDirectory);
   startupmessages.Append('Loading skin from: ' + skinDir);
   skinFile := skinDir + PathDelim + 'skin.ini';
@@ -400,10 +403,11 @@ begin
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
       try
-        //Left := skinIni.ReadInteger('Form', 'Left', StartLeft);
-        //Top :=  skinIni.ReadInteger('Form', 'Top', StartTop);
-        //Width := skinIni.ReadInteger('Form', 'Width', 605);
-        //Height := skinIni.ReadInteger('Form', 'Height', 430);
+        //Adaped this code to expand the skin.ini to also set the Form
+        //Left := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Left', StartLeft));
+        //Top :=  ScaleDesignToForm(skinIni.ReadInteger('Form', 'Top', StartTop));
+        //Width := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Width', 605));
+        //Height := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Height', 430));
         //SetBounds(Left, Top, Width, Height);
         //Position := poScreenCenter;
         //MoveToDefaultPosition;
@@ -559,34 +563,6 @@ begin
       except
       end;
 
-      (*
-       try
-        setAlignment(LabelProgress1,
-          skinIni.ReadString('LabelProgress1', 'Alignment', ''));
-        LabelProgress1.Left := skinIni.ReadInteger('LabelProgress1', 'Left', 60);
-        LabelProgress1.Top := skinIni.ReadInteger('LabelProgress1', 'Top', 350);
-        LabelProgress1.Width := skinIni.ReadInteger('LabelProgress1', 'Width', 520);
-        LabelProgress1.Height := skinIni.ReadInteger('LabelProgress1', 'Height', 20);
-        LabelProgress1.Font.Name :=
-          skinIni.ReadString('LabelProgress1', 'FontName', 'Arial');
-        LabelProgress1.Font.Size :=
-          skinIni.ReadInteger('LabelProgress1', 'FontSize', 8);
-        LabelProgress1.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelProgress1', 'FontColor', 'clRed'));
-        LabelProgress1.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProgress1', 'FontBold', 'false'))
-        then
-          LabelProgress1.Font.Style := LabelProgress1.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProgress1', 'FontItalic', 'false'))
-        then
-          LabelProgress1.Font.Style := LabelProgress1.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProgress1', 'FontUnderline', 'false'))
-        then
-          LabelProgress1.Font.Style := LabelProgress1.Font.Style + [fsUnderline];
-      except
-      end;
-      *)
-
       try
         (* temporary disabled do 16.12.20
         ImageBackground.Left := skinIni.ReadInteger('ImageBackground', 'Left', 0);
@@ -722,9 +698,6 @@ begin
         {$IFDEF WINDOWS}
         SendMessage(ActivityBar.Handle, PBM_SETBARCOLOR, 0,
           myStringToTColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
-        //ActivityBar.Perform(PBM_SETBARCOLOR, 0,
-        //  StringToColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
-        //ProgressBarActivity.Brush.Color:= clNone; // Set Background colour
         {$ENDIF WINDOWS}
         ActivityBar.Enabled := True;
         ActivityBar.Position := 50;
@@ -738,8 +711,6 @@ begin
     skinIni.Free;
 
     PanelFillScreen.Color := Panel.Color;
-    //panelLocateInfoPanel.Color := Panel.Color;
-    //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
   end;
 
 end;
@@ -811,7 +782,6 @@ procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
 begin
   ForceStayOnTop(BatchScreenOnTop);
   FOldProgress := 0;
-  //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
 end;
 
 
@@ -859,12 +829,6 @@ begin
   {$ENDIF}
 end;
 
-(*
-procedure TFBatchOberflaeche.WMEraseBkGnd (var t:tmessage);
-begin
-  t.result := LRESULT(TRUE);
-end;
-*)
 
 procedure TFBatchOberflaeche.ProgressBarActive(YesNo: boolean);
 begin
@@ -902,36 +866,26 @@ begin
   {$IFDEF CPUINTEL}
   Progressbar.Position := Prozente;
   {$ENDIF CPUINTEL}
-  //ProcessMess;
 end;
 
 procedure TFBatchOberflaeche.showActivityBar(Show: boolean);
 begin
   ActivityBar.Visible := Show;
-  //ProcessMess;
 end;
 
 
 procedure TFBatchOberflaeche.SetPicture(const BitmapFile: string;
   const theLabel: string);
 var
-  //bitmap, resizedBitmap: TBitmap;
-  //newHeight, newWidth: integer;
-  //stretchRect: TRect;
   BitmapFilename: string = '';
   errorinfo: string = '';
   shorty: string = '';
 begin
-
   if BitmapFile = '' then
     bitmapFilename := bitmapFilenameProductDefault
   else
     bitmapfilename := bitmapfile;
   try
-    //bitmap := TBitmap.create;
-    //resizedBitmap := TBitmap.create;
-    //bitmap.loadFromFile(BitmapFilename);
-
     BitmapFilename := ExpandFileName(BitmapFilename);
     if fileexists(BitmapFilename) then
       ImageProduct.picture.loadFromFile(BitmapFilename)
@@ -945,21 +899,17 @@ begin
     // use optimalfill to decrease the font only on large labels
     If LabelProduct.Font.Size < -32 then
     begin
-      //ShowMessage('LabelProduct.Font.Size = ' + IntToStr(LabelProduct.Font.Size));
+      //ShowMessage('LabelProduct.Font.Size = ' + IntToStr(LabelProduct.Font.Size)); //zum Testen
       LabelProduct.OptimalFill := False;
       LabelProduct.Font.Size := -32;
     end;
-    //Result := True;
   except
     on e: Exception do
     begin
       ErrorInfo := 'Error: ' + e.message;
-      //Result := False;
     end
   end;
-  //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
   processMess;
-
 end;
 
 procedure TFBatchOberflaeche.SetMessageText(MessageText: string; MessageID: TMessageID);
@@ -1008,7 +958,6 @@ begin
   setWindowState(bwmNormalWindow);
   Position := poScreenCenter;
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
-  //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
 end;
 
 procedure TFBatchOberflaeche.FormMouseDown(Sender: TObject;
@@ -1063,9 +1012,7 @@ begin
 
   ImageOpsiBackground.Left := ScaleDesignToForm(Width) - ScaleDesignToForm(ImageOpsiBackground.Width);
   ImageOpsiBackground.Top := ScaleDesignToForm(Height) - ScaleDesignToForm(ImageOpsiBackground.Height);
-  //AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, PixelsPerInch, 0, 0);
   Panel.Repaint;
-  //LabelVersion.BringToFront
 end;
 
 //interface
@@ -1121,15 +1068,6 @@ end;
 
 procedure TFBatchOberflaeche.doInfo(aMessage: string);
 begin
-  //LabelInfo.Font.Size := LableInfoDefaultFontSize;
-  //if LabelInfo.Canvas.TextWidth(aMessage) > (LabelInfo.Width -
-  //  LabelInfo.Width div 5) then
-  //  LabelInfo.OptimalFill := True
-  //else
-  //begin
-  //  LabelInfo.OptimalFill := False;
-  //  LabelInfo.Font.Size := LableInfoDefaultFontSize;
-  //end;
   setInfoLabel(aMessage);
   LabelInfo.OptimalFill := True;
   If LabelInfo.Font.Size < LableInfoDefaultFontSize then
@@ -1158,7 +1096,6 @@ procedure TFBatchOberflaeche.setDetailLabel(s: string);
 begin
   if useDetailLabel and timeDetailLabel then
   begin
-    //if s <> '' then
     labelDetail.Caption := s;
     ProcessMess;
     timeDetailLabel := False;
@@ -1179,22 +1116,10 @@ begin
 end;
 
 
-(*
-procedure TFBatchOberflaeche.setCPUActivityLabel(s: string);
-begin
-    LabelProgress1.Caption := s;
-    ProcessMess;
-end;
-*)
-
 procedure TFBatchOberflaeche.setVersionLabel(s: string);
 begin
   LabelVersion.Caption := s;
 end;
-
-
-
-//procedure TFBatchOberflaeche.setWindowState (BatchWindowMode: TBatchWindowMode);
 
 
 procedure TFBatchOberflaeche.TimerCommandTimer(Sender: TObject);
