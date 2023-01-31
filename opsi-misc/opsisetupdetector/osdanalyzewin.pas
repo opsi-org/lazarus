@@ -326,7 +326,7 @@ var
   myArch: string;
   product: string;
   installerstr: string;
-  str1,uninstcheckstr: string;
+  str1, uninstcheckstr: string;
 
 begin
   installerstr := installerToInstallerstr(installerId);
@@ -337,9 +337,14 @@ begin
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installerSourceDir := '%scriptpath%\files' + IntToStr(mysetup.ID);
-  mysetup.installCommandLine :=
-    '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
-    installerArray[integer(mysetup.installerId)].unattendedsetup;
+  if mysetup.preferSilent then
+    mysetup.installCommandLine :=
+      '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].silentsetup
+  else
+    mysetup.installCommandLine :=
+      '"$installerSourceDir$\' + mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -399,14 +404,19 @@ begin
     // the use of the  $installdir$ variable for the promary section function fileexists
     // will for example result to:
     // if fileexists(""+$installdir$+"\uninst.exe")
-    uninstcheckstr := StringReplace(uninstcheckstr , '$installdir$', '"+$installdir$+"', [rfIgnoreCase]);
-    mysetup.uninstallCheck.Add('if fileexists("' +
-      uninstcheckstr + '")');
+    uninstcheckstr := StringReplace(uninstcheckstr, '$installdir$',
+      '"+$installdir$+"', [rfIgnoreCase]);
+    mysetup.uninstallCheck.Add('if fileexists("' + uninstcheckstr + '")');
     mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
     mysetup.uninstallCheck.Add('endif');
-    mysetup.uninstallCommandLine := '"' +
-      mysetup.uninstallProg + '" ' +
-      installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    if mysetup.preferSilent then
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].silentuninstall
+    else
+      mysetup.uninstallCommandLine :=
+        '"' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].unattendeduninstall;
   end
   else
   begin
@@ -579,9 +589,15 @@ begin
   {$ENDIF LINUX}
   if not uninstall_only then
   begin
-    mysetup.installCommandLine :=
-      'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
-      '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+    if mysetup.preferSilent then
+      mysetup.installCommandLine :=
+        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+        '" ' + installerArray[integer(mysetup.installerId)].silentsetup
+    else
+      mysetup.installCommandLine :=
+        'msiexec /i "$installerSourceDir$\' + mysetup.setupFileName +
+        '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+
     mysetup.mstAllowed := True;
   end;
   (*
@@ -605,13 +621,16 @@ begin
   mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
   //mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +mysetup.msiId + '"))');
   mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct($MsiId$))');
-  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
-  mysetup.uninstallCheck.Add('	set $ProdVersion$ = $MsiVersion$');
+  mysetup.uninstallCheck.Add('  set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('  set $ProdVersion$ = $MsiVersion$');
   mysetup.uninstallCheck.Add('endif');
   *)
 
+  if mysetup.preferSilent then
+    mysetup.uninstallCommandLine :=
+    'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].silentuninstall
+  else
   mysetup.uninstallCommandLine :=
-    //  'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(stMsi)].unattendeduninstall;
     'msiexec /x $MsiId$ ' + installerArray[integer(stMsi)].unattendeduninstall;
 
 
@@ -681,8 +700,8 @@ var
 
     for i := 0 to innoToOpsi.Count - 1 do
     begin
-      myline := StringReplace(myline, innoToOpsi.Names[i], innoToOpsi.ValueFromIndex[i],
-        [rfIgnoreCase]);
+      myline := StringReplace(myline, innoToOpsi.Names[i],
+        innoToOpsi.ValueFromIndex[i], [rfIgnoreCase]);
     end;
     Result := myline;
     innoToOpsi.Free;
@@ -1094,9 +1113,14 @@ begin
         str2 := copy(str2, 1, pos2 - 1);
       mysetup.uninstallProg := 'C:\ProgramData\{<UNKNOWN GUID>}\' + str2;
       mysetup.uninstall_waitforprocess := str2;
-      mysetup.uninstallCommandLine := '"' +
-        mysetup.uninstallProg + '" ' +
-        installerArray[integer(mysetup.installerId)].unattendeduninstall;
+      if mysetup.preferSilent then
+        mysetup.uninstallCommandLine :=
+          '"' + mysetup.uninstallProg + '" ' +
+          installerArray[integer(mysetup.installerId)].silentuninstall
+      else
+        mysetup.uninstallCommandLine :=
+          '"' + mysetup.uninstallProg + '" ' +
+          installerArray[integer(mysetup.installerId)].unattendeduninstall;
     end;
   end;
   mywrite('get_installaware_info finished');

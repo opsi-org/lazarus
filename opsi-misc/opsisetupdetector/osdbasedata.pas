@@ -133,13 +133,14 @@ type
     FcopyCompleteDir: boolean;
     FtargetOS: TTargetOS;
     FinstallerSourceDir: string;
+    FpreferSilent: boolean;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
     procedure SetInstallErrorHandlingLines(const AValue: TStrings);
-    procedure SetUninstallProg(const AValue: String);
-    procedure SetTargetProg(const AValue: String);
-    procedure SetInstallDirectory(const AValue: String);
+    procedure SetUninstallProg(const AValue: string);
+    procedure SetTargetProg(const AValue: string);
+    procedure SetInstallDirectory(const AValue: string);
     //procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
     //  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
   published
@@ -191,6 +192,7 @@ type
     property active: boolean read Factive write Factive;
     property installerSourceDir: string read FinstallerSourceDir
       write FinstallerSourceDir;
+    property preferSilent: boolean read FpreferSilent write FpreferSilent;
     procedure initValues;
 
   public
@@ -416,6 +418,7 @@ default: ["xenial_bionic"]
     FPathToOpsiPackageBuilder: string;
     FCreateRadioIndex: integer;  // Create mode
     FBuildRadioIndex: integer;  // Build mode
+    FpreferSilent: boolean;  // Install mode (unattended / silent)
     //FCreateQuiet: boolean;
     //FCreateBuild: boolean;
     //FCreateInstall: boolean;
@@ -459,6 +462,7 @@ default: ["xenial_bionic"]
       write SetPostUninstallLines;
     property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
     property BuildRadioIndex: integer read FBuildRadioIndex write FBuildRadioIndex;
+    property preferSilent: boolean read FpreferSilent write FpreferSilent;
     //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
     //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
     //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
@@ -581,6 +585,8 @@ resourcestring
   rsPropInstallFromLocalDescription =
     'Determines if the installation files will be copied locally';
   rsPropInstallArchDescription = 'Which architecture (32 / 64 Bit) has to be installed?';
+  rsPreferSilent =
+    'Should really silent installs (with no output) be preferred ? Default is false = unattended is preferred.';
 
     (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
@@ -687,7 +693,7 @@ begin
   FinstallErrorHandlingLines.Assign(AValue);
 end;
 
-procedure TSetupFile.SetUninstallProg(const AValue: String);
+procedure TSetupFile.SetUninstallProg(const AValue: string);
 var
   str: string;
 begin
@@ -697,7 +703,7 @@ begin
   FuninstallProg := str;
 end;
 
-procedure TSetupFile.SetTargetProg(const AValue: String);
+procedure TSetupFile.SetTargetProg(const AValue: string);
 var
   str: string;
 begin
@@ -707,7 +713,7 @@ begin
   FtargetProg := str;
 end;
 
-procedure TSetupFile.SetInstallDirectory(const AValue: String);
+procedure TSetupFile.SetInstallDirectory(const AValue: string);
 var
   str: string;
 begin
@@ -753,6 +759,7 @@ begin
   FinstallErrorHandlingLines.Clear;
   FmsiProductName := '';
   FinstallerSourceDir := '';
+  FpreferSilent := myconfiguration.preferSilent;
 end;
 
 // TPProperty **********************************
@@ -1548,6 +1555,7 @@ begin
   FShow2StepMacSeletionWarn := True;
   FUsePropDesktopicon := False;
   FTemplateChannel := default;
+  FpreferSilent := False; // Unattended
   //readconfig;
 end;
 
@@ -1961,13 +1969,14 @@ begin
     {$ENDIF LINUX}
     {$IFDEF DARWIN}
     // the first path is in the development environment
-    defaultIconFullFileName := ExtractFileDir(Application.ExeName) +
-      PathDelim + 'template-files' + PathDelim + 'default' + PathDelim +
-      'images' + PathDelim + 'template.png';
+    defaultIconFullFileName :=
+      ExtractFileDir(Application.ExeName) + PathDelim + 'template-files' +
+      PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
     if not DirectoryExists(defaultIconFullFileName) then
       defaultIconFullFileName :=
-        ExtractFileDir(Application.ExeName) + PathDelim + '../Resources/template-files' +
-        PathDelim + 'default' + PathDelim + 'images' + PathDelim + 'template.png';
+        ExtractFileDir(Application.ExeName) + PathDelim +
+        '../Resources/template-files' + PathDelim + 'default' + PathDelim +
+        'images' + PathDelim + 'template.png';
   {$ENDIF DARWIN}
     osdbasedata.aktProduct.productdata.productImageFullFileName :=
       defaultIconFullFileName;

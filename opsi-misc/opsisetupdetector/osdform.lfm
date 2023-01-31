@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 558
+  Left = 559
   Height = 740
-  Top = 96
+  Top = 222
   Width = 1115
   Caption = 'opsi Setup Detector'
   ClientHeight = 720
@@ -5341,19 +5341,24 @@ object resultForm1: TresultForm1
               Index = 1
             end          
             item
-              Control = TICheckBoxS1Mst
+              Control = TICheckBoxS1Silent
               WrapAfter = waAuto
               Index = 2
             end          
             item
-              Control = Label63
+              Control = TICheckBoxS1Mst
               WrapAfter = waAuto
               Index = 3
             end          
             item
-              Control = TIS1Url
+              Control = Label63
               WrapAfter = waAuto
               Index = 4
+            end          
+            item
+              Control = TIS1Url
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -5374,7 +5379,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS1Mst: TTICheckBox
-            Left = 337
+            Left = 486
             Height = 23
             Top = 13
             Width = 90
@@ -5390,7 +5395,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label63: TLabel
-            Left = 453
+            Left = 602
             Height = 21
             Top = 13
             Width = 34
@@ -5405,7 +5410,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS1Url: TTILabel
-            Left = 499
+            Left = 648
             Height = 21
             Top = 13
             Width = 51
@@ -5439,6 +5444,21 @@ object resultForm1: TresultForm1
             OnMouseEnter = TIS1UrlMouseEnter
             OnMouseLeave = TIS1UrlMouseLeave
             ParentFont = False
+          end
+          object TICheckBoxS1Silent: TTICheckBox
+            Left = 337
+            Height = 23
+            Top = 13
+            Width = 123
+            Anchors = []
+            BorderSpacing.Left = 20
+            BorderSpacing.Top = 6
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 2
+            Caption = 'Prefer Silent Install'
+            OnChange = TICheckBoxS1SilentChange
+            PropertyNameAsCaption = False
+            TabOrder = 1
           end
         end
         object FlowPanelSetup32: TFlowPanel
@@ -5952,20 +5972,20 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 203
+            Width = 118
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Install Command'
+            Caption = 'Install Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup1Command: TTIEdit
-            Left = 235
+            Left = 150
             Height = 27
             Top = 6
-            Width = 718
+            Width = 708
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 2
@@ -6004,17 +6024,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 223
+            Width = 138
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Uninstall Command'
+            Caption = 'Uninstall Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup1UnCommand: TTIEdit
-            Left = 255
+            Left = 170
             Height = 27
             Top = 6
             Width = 718
@@ -6419,19 +6439,24 @@ object resultForm1: TresultForm1
               Index = 1
             end          
             item
-              Control = TICheckBoxS2Mst
+              Control = TICheckBoxS2Silent
               WrapAfter = waAuto
               Index = 2
             end          
             item
-              Control = Label69
+              Control = TICheckBoxS2Mst
               WrapAfter = waAuto
               Index = 3
             end          
             item
-              Control = TIS2Url
+              Control = Label69
               WrapAfter = waAuto
               Index = 4
+            end          
+            item
+              Control = TIS2Url
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -6452,7 +6477,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS2Mst: TTICheckBox
-            Left = 337
+            Left = 486
             Height = 23
             Top = 13
             Width = 90
@@ -6468,7 +6493,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label69: TLabel
-            Left = 453
+            Left = 602
             Height = 21
             Top = 13
             Width = 34
@@ -6483,7 +6508,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS2Url: TTILabel
-            Left = 499
+            Left = 648
             Height = 21
             Top = 13
             Width = 51
@@ -6517,6 +6542,21 @@ object resultForm1: TresultForm1
             OnMouseEnter = TIS1UrlMouseEnter
             OnMouseLeave = TIS1UrlMouseLeave
             ParentFont = False
+          end
+          object TICheckBoxS2Silent: TTICheckBox
+            Left = 337
+            Height = 23
+            Top = 13
+            Width = 123
+            Anchors = []
+            BorderSpacing.Left = 20
+            BorderSpacing.Top = 6
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 2
+            Caption = 'Prefer Silent Install'
+            OnChange = TICheckBoxS1SilentChange
+            PropertyNameAsCaption = False
+            TabOrder = 1
           end
         end
         object FlowPanelMST1: TFlowPanel
@@ -7031,17 +7071,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 203
+            Width = 118
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Install Command'
+            Caption = 'Install Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup2Command: TTIEdit
-            Left = 235
+            Left = 150
             Height = 27
             Top = 6
             Width = 718
@@ -7083,17 +7123,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 223
+            Width = 138
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Uninstall Command'
+            Caption = 'Uninstall Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup2UnCommand: TTIEdit
-            Left = 255
+            Left = 170
             Height = 27
             Top = 6
             Width = 718
@@ -7497,19 +7537,24 @@ object resultForm1: TresultForm1
               Index = 1
             end          
             item
-              Control = TICheckBoxS3Mst
+              Control = TICheckBoxS3Silent
               WrapAfter = waAuto
               Index = 2
             end          
             item
-              Control = Label87
+              Control = TICheckBoxS3Mst
               WrapAfter = waAuto
               Index = 3
             end          
             item
-              Control = TIS3Url
+              Control = Label87
               WrapAfter = waAuto
               Index = 4
+            end          
+            item
+              Control = TIS3Url
+              WrapAfter = waAuto
+              Index = 5
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -7530,7 +7575,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TICheckBoxS3Mst: TTICheckBox
-            Left = 337
+            Left = 486
             Height = 23
             Top = 13
             Width = 90
@@ -7546,7 +7591,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label87: TLabel
-            Left = 453
+            Left = 602
             Height = 21
             Top = 13
             Width = 34
@@ -7561,7 +7606,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIS3Url: TTILabel
-            Left = 499
+            Left = 648
             Height = 21
             Top = 13
             Width = 51
@@ -7595,6 +7640,21 @@ object resultForm1: TresultForm1
             OnMouseEnter = TIS1UrlMouseEnter
             OnMouseLeave = TIS1UrlMouseLeave
             ParentFont = False
+          end
+          object TICheckBoxS3Silent: TTICheckBox
+            Left = 337
+            Height = 23
+            Top = 13
+            Width = 123
+            Anchors = []
+            BorderSpacing.Left = 20
+            BorderSpacing.Top = 6
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 2
+            Caption = 'Prefer Silent Install'
+            OnChange = TICheckBoxS1SilentChange
+            PropertyNameAsCaption = False
+            TabOrder = 1
           end
         end
         object FlowPanelMST2: TFlowPanel
@@ -8109,17 +8169,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 203
+            Width = 118
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Install Command'
+            Caption = 'Install Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup3Command: TTIEdit
-            Left = 235
+            Left = 150
             Height = 27
             Top = 6
             Width = 718
@@ -8161,17 +8221,17 @@ object resultForm1: TresultForm1
             Left = 17
             Height = 21
             Top = 8
-            Width = 223
+            Width = 138
             Anchors = []
             BorderSpacing.Left = 9
             BorderSpacing.Around = 4
-            Caption = 'Unattended Uninstall Command'
+            Caption = 'Uninstall Command'
             Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
           object TIEditSetup3UnCommand: TTIEdit
-            Left = 255
+            Left = 170
             Height = 27
             Top = 6
             Width = 718
