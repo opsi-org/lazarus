@@ -92,6 +92,7 @@ opsi-setup-detector (4.2.1.15-1) stable; urgency=low
      * osdform: links and hints for TICheckBoxS(x)Silent
      * osdconfigdlg:  hint for preferSilent
      * osdanalyzewin, osdanalyzelin: use property preferSilent to set (un)installcommandline
+   * fix: nogui + singleAnalyzeCreate mode: use radiobutton (from configuration) to decide build bode
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  31 Jan 2023 : 15:00:00 +0200
 

@@ -1528,7 +1528,7 @@ begin
       //analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
       //if (not resultForm1.RadioButtonCreateOnly.Checked) then
       //if False then
-      if osdsettings.runmode <> analyzeOnly then
+      if (osdsettings.runmode <> analyzeOnly) and (not resultForm1.RadioButtonCreateOnly.Checked) then
       begin
         LogDatei.log('Start callServiceOrPackageBuilder in NOGUI mode: ', LLnotice);
         LogDatei.log('Start callServiceOrPackageBuilder with build + install: ',
