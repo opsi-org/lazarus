@@ -22273,9 +22273,7 @@ begin
   {$IFDEF GUI}
   FBatchOberflaeche.SetBatchWindowMode(batchWindowMode);
   // do not overwrite messages in in LabelInfo
-  //FBatchOberflaeche.LoadSkin('', False);
   Application.ProcessMessages;
-  //setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
   linecounter := 1;
@@ -27316,9 +27314,6 @@ begin
 
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
   {$IFDEF GUI}
-    //FBatchOberflaeche.LoadSkin('');
-    //FBatchOberflaeche.setPicture('', '');
-    //FBatchOberflaeche.Repaint;
     Application.ProcessMessages;
   {$ENDIF GUI}
     { initial section  }
