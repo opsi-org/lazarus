@@ -17761,37 +17761,44 @@ begin
               if Skip(',', r, r, InfoSyntaxError) then
                 if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
                   if Skip(',', r, r, InfoSyntaxError) then
-                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout
-                      if Skip(')', r, r, InfoSyntaxError) then
-                      begin
-                        syntaxCheck := True;
-                        {$IFDEF GUI}
-                        if itemlist.Count > 3 then
-                        begin
-                          LogDatei.log('You gave ' + itemlist.Count.ToString +
-                            ' buttons to the message box but it can only hold up to 3 buttons! '
-                            + 'Therefore we will use the first tree buttons and ignore the rest.', LLWarning);
-                          // delete unused elements from list to avoid accidental access
-                          while itemlist.Count > 3 do itemlist.Delete(itemlist.Count - 1);
-                        end;
+                    if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout message
+                      if Skip(',', r, r, InfoSyntaxError) then
+                        if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout
+                          if Skip(')', r, r, InfoSyntaxError) then
+                          begin
+                            syntaxCheck := True;
+                            {$IFDEF GUI}
+                            if itemlist.Count > 3 then
+                            begin
+                              LogDatei.log('You gave ' + itemlist.Count.ToString +
+                                ' buttons to the message box but it can only hold up to 3 buttons! '
+                                +
+                                'Therefore we will use the first tree buttons and ignore the rest.', LLWarning);
+                              // delete unused elements from list to avoid accidental access
+                              while itemlist.Count > 3 do
+                                itemlist.Delete(itemlist.Count - 1);
+                            end;
 
-                        if not TryStrToInt(s1, n1) or (n1 < 0) then
-                        begin
-                          LogDatei.log('"' + s1 +
-                            '" is not a positive integer but we expect a positive integer for the timeout in seconds! '
-                            + 'Therefore we will show the message box without timeout.', LLWarning);
-                          n1 := 0;
-                        end;
+                            if not TryStrToInt(s1, n1) or (n1 < 0) then
+                            begin
+                              LogDatei.log('"' + s1 +
+                                '" is not a positive integer but we expect a positive integer for the timeout in seconds! '
+                                + 'Therefore we will show the message box without timeout.',
+                                LLWarning);
+                              n1 := 0;
+                            end;
 
-                        if syntaxcheck and not testsyntax then
-                        begin
-                          CustomMessageForm := TCustomMessageForm.Create(nil);
-                          CustomMessageForm.ShowBox(s, TStringList(list1), TStringList(itemlist), n1);
-                          StringResult := CustomMessageForm.ExitCode;
-                          if Assigned(CustomMessageForm) then FreeAndNil(CustomMessageForm);
-                        end;
-                        {$ENDIF GUI}
-                      end;
+                            if syntaxcheck and not testsyntax then
+                            begin
+                              CustomMessageForm := TCustomMessageForm.Create(nil);
+                              CustomMessageForm.ShowBox(s, TStringList(list1),
+                                TStringList(itemlist), s2, n1);
+                              StringResult := CustomMessageForm.ExitCode;
+                              if Assigned(CustomMessageForm) then
+                                FreeAndNil(CustomMessageForm);
+                            end;
+                            {$ENDIF GUI}
+                          end;
       FreeAndNil(list1);
       FreeAndNil(itemlist);
     end
