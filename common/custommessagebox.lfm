@@ -65,10 +65,12 @@ object CustomMessageForm: TCustomMessageForm
     Height = 15
     Top = 162
     Width = 29
+    Alignment = taCenter
     Anchors = [akBottom]
     BorderSpacing.Bottom = 15
     Caption = '1000s'
     ParentColor = False
+    WordWrap = True
   end
   object MessageMemo: TMemo
     AnchorSideLeft.Control = Owner
