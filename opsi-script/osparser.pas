@@ -13170,7 +13170,6 @@ begin
             syntaxcheck := True;
             if not testSyntax then
             begin
-              list.Clear;
               try
                 for i := 0 to List1.Count - 1 do
                 begin
