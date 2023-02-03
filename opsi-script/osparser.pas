@@ -20134,9 +20134,9 @@ begin
 
   else if Skip('savetextfile', Input, r, sx) then
   begin
+    BooleanResult := False;
+    list1 := TXStringList.Create;
     try
-      BooleanResult := False;
-      list1 := TXStringList.Create;
       if Skip('(', r, r, InfoSyntaxError) then
         if produceStringList(script, r, r, list1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
@@ -20156,8 +20156,7 @@ begin
                 end;
               end;
     finally
-      list1.Free;
-      list1 := nil;
+      FreeAndNil(list1);
     end;
   end
 
