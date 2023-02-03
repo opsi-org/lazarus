@@ -13216,10 +13216,9 @@ begin
             begin
               list.Clear;
               list.AddStrings(getSubListByContainingRegex(s1, list1));
-              list1.Free;
-              list1 := nil;
             end;
           end;
+          FreeAndNil(list1);
         end
         else
         begin
@@ -13236,13 +13235,11 @@ begin
               begin
                 list.Clear;
                 list.AddStrings(getSubListByContainingRegex(list2, list3));
-                list2.Free;
-                list2 := nil;
-                list3.Free;
-                list3 := nil;
               end;
             end;
+            FreeAndNil(list3);
           end;
+          FreeAndNil(list2);
         end;
       end;
     end
