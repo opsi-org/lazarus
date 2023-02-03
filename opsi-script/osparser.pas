@@ -20118,7 +20118,7 @@ begin
                     begin
                       try
                         s1 := ExpandFileName(s1);
-                        saveUnicodeTextFile(TStrings(list1), s1, s2);
+                        saveUnicodeTextFile(list1, s1, s2);
                         BooleanResult := True;
                       except
                         logdatei.log('Error: Could not save to filename: ' +
