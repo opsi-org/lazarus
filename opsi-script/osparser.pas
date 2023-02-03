@@ -13769,8 +13769,8 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
+        list1 := TXStringList.Create;
         try
-          list1 := TXStringList.Create;
           if EvaluateString(r, r, s1, InfoSyntaxError) then
             if Skip(',', r, r, InfoSyntaxError) then
               if EvaluateString(r, r, s2, InfoSyntaxError) then
