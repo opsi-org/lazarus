@@ -13129,10 +13129,9 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
                 end;
-              list1.Free;
-              list1 := nil;
             end;
           end;
+          FreeAndNil(list1);
         end;
       end;
     end
