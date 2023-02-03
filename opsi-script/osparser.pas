@@ -18291,9 +18291,7 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
-
         list1 := TXStringList.Create;
-
         if produceStringList(script, r, r, list1, InfoSyntaxError) and
           skip(',', r, r, InfoSyntaxError) then
         begin
@@ -18311,8 +18309,8 @@ begin
             end;
           end;
         end;
+        FreeAndNil(list1);
       end;
-      FreeAndNil(list1);
     end
 
     else if LowerCase(s) = LowerCase('ExtractFilePath') then
