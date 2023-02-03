@@ -14080,9 +14080,8 @@ begin
                   end
                 end;
             end;
-            list1.Free;
-            list1 := nil;
           end;
+          FreeAndNil(list1);
         end;
       end;
     end
