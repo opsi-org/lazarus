@@ -13701,6 +13701,7 @@ begin
     begin
       s3 := '';
       tmpstr2 := '';
+      list1 := TXStringList.Create;
       try
         if Skip('(', r, r, InfoSyntaxError) then
         begin
