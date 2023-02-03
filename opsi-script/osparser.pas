@@ -14300,10 +14300,9 @@ begin
                 LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
               end;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
