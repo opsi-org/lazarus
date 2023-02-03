@@ -20182,6 +20182,8 @@ begin
 
   else if Skip('areListsEqual', Input, r, InfoSyntaxError) then
   begin
+    list1 := TXStringList.Create;
+    list2 := TXStringList.Create;
     if Skip('(', r, r, InfoSyntaxError) then
       if produceStringList(script, r, r, list1, InfoSyntaxError) then
         if Skip(',', r, r, InfoSyntaxError) then
@@ -20200,6 +20202,8 @@ begin
                     end;
                   end;
                 end;
+    FreeAndNil(list1);
+    FreeAndNil(list2);
   end
 
   else if Skip('isNumber', Input, r, InfoSyntaxError) then
