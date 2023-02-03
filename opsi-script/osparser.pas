@@ -13309,9 +13309,8 @@ begin
             syntaxcheck := True;
             list.Clear;
             list.AddStrings(removeFromListByContainingRegex(s1, list1));
-            list1.Free;
-            list1 := nil;
           end;
+          FreeAndNil(list1);
         end
         else
         begin
@@ -13326,12 +13325,10 @@ begin
               syntaxcheck := True;
               list.Clear;
               list.AddStrings(removeFromListByContainingRegex(list2, list3));
-              list2.Free;
-              list2 := nil;
-              list3.Free;
-              list3 := nil;
             end;
+            FreeAndNil(list3);
           end;
+          FreeAndNil(list2);
         end;
       end;
     end
