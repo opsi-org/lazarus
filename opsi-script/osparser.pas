@@ -13521,37 +13521,37 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         list1 := TXStringList.Create;
-        if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-        then
-          if Skip(',', r, r, InfoSyntaxError) then
-            if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(',', r, r, InfoSyntaxError) then
-                if EvaluateString(r, r, s3, InfoSyntaxError) then
-                  if Skip(')', r, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    if not testSyntax then
+        try
+          if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+          then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s1, InfoSyntaxError) then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s3, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
                     begin
-                      list.Clear;
-                      try
-                        // s2 is here used source encoding
-                        list.Text := reencode(list1.Text, s1, s2, s3);
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('Error on producing sublist: ' + e.message,
-                            LLerror);
-                          FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                          list1.Free;
-                          list1 := nil;
-                        end
+                      syntaxCheck := True;
+                      if not testSyntax then
+                      begin
+                        list.Clear;
+                        try
+                          // s2 is here used source encoding
+                          list.Text := reencode(list1.Text, s1, s2, s3);
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('Error on producing sublist: ' + e.message,
+                              LLerror);
+                            FNumberOfErrors := FNumberOfErrors + 1;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          end
+                        end;
                       end;
                     end;
-                  end;
-        list1.Free;
-        list1 := nil;
+        finally
+          FreeAndNil(list1);
+        end;
       end;
     end
 
