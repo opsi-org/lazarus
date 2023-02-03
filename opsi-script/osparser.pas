@@ -17466,10 +17466,9 @@ begin
               LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
               stringresult := '';
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
