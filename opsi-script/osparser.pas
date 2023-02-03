@@ -12146,7 +12146,7 @@ begin
     GetWord(s0, funcname, r, WordDelimiterSet5);
     FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
     GetWord(s0, s, r, WordDelimiterSet1);  // getting word s
-    list := TXStringList.Create; //list to return
+    //list := TXStringList.Create; //list to return
     slist := TStringList.Create;  // if we need a real TStringlist
     VarIndex := listOfStringLists.IndexOf(LowerCase(s));
     logstring := s;
@@ -21318,6 +21318,7 @@ var
   list: TXStringList;
 begin
   Result := False;
+  list := TXStringList.Create;
   if produceStringList(section, r, Remaining, list, InfoSyntaxError,
     Nestlevel, inDefFuncIndex) then
     if isVisibleLocalVar(VarName, funcindex) then
