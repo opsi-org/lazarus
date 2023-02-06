@@ -207,8 +207,25 @@ end;
 procedure TCustomMessageForm.SetSize(NumberMessageLines: integer);
 var
   MessageMemoHeight: integer;
+  RequiredBoxWidth: integer;
 begin
   Width := 500;
+
+  // If the buttons are so wide that they would overlap, increase the form width:
+  Show;
+  Visible := False;
+  RequiredBoxWidth := 2 * ButtonLeft.Left + (ButtonLeft.Width +
+    ButtonMiddle.Width + ButtonRight.Width) + 10;
+  if RequiredBoxWidth > self.Width then
+  begin
+    Width := RequiredBoxWidth;
+    Show;
+    Visible := False;
+  end;
+  // Always position the middle button in the middle between the other two buttons:
+  ButtonMiddle.Left := Round((ButtonRight.Left + (ButtonLeft.Left +
+      ButtonLeft.Width) - ButtonMiddle.Width) / 2);
+
   (*
   For a nice presentation of the message:
   - The message memo has a base hight and grows a bit with the number of message lines.
@@ -227,17 +244,20 @@ begin
   Space between countdown label and message Memo = 15
   *)
   Height := 15 + ButtonRight.Height + 15 + Countdown.Height + 15 + MessageMemoHeight;
+
+  CenterFormOnScreen(self);
 end;
 
 procedure TCustomMessageForm.ShowBox(Title: string;
   Message: TStringList; Buttons: TStringList; TimeoutMessage: string; Timeout: integer);
 begin
-  self.SetSize(Message.Count);
   CenterFormOnScreen(self);
 
   self.Caption := Title;
   MessageMemo.Lines.Assign(Message);
   ShowButtons(Buttons);
+
+  self.SetSize(Message.Count);
 
   FExitCode := '-2'; // default exit code (= exit code if user closes the form)
 
