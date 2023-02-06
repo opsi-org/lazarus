@@ -38,7 +38,7 @@ type
     FNumberButtons: integer;
     FExitCode: string;
     procedure InitializeButtons;
-    procedure ShowButtons(Buttons: TStringList);
+    procedure DefineButtons(Buttons: TStringList);
     procedure InitializeCountdown(TimeoutMessage: string; Timeout: integer);
     procedure StartCountDown(TimeoutMessage: string; Timeout: integer);
     procedure SetSize(NumberMessageLines: integer);
@@ -156,7 +156,7 @@ begin
   ButtonRight.Caption := '';
 end;
 
-procedure TCustomMessageForm.ShowButtons(Buttons: TStringList);
+procedure TCustomMessageForm.DefineButtons(Buttons: TStringList);
 begin
   InitializeButtons;
 
@@ -252,7 +252,7 @@ begin
 
   self.Caption := Title;
   MessageMemo.Lines.Assign(Message);
-  ShowButtons(Buttons);
+  DefineButtons(Buttons);
 
   self.SetSize(Message.Count);
 
