@@ -177,9 +177,6 @@ begin
   begin
     ButtonLeft.Visible := True;
     ButtonLeft.Caption := Buttons[0];
-    // The right and left buttons are positioned by left and right anchors,
-    // only the position of the middle button must be set here.
-    ButtonMiddle.Left := Round((Width - ButtonMiddle.Width)/2);
   end;
   if FNumberButtons = 3 then
   begin
