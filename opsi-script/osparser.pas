@@ -17768,28 +17768,7 @@ begin
                           begin
                             syntaxCheck := True;
                             {$IFDEF GUI}
-                            if itemlist.Count > 3 then
-                            begin
-                              LogDatei.log('You gave ' + itemlist.Count.ToString +
-                                ' buttons to the message box but it can only hold up to 3 buttons! '
-                                +
-                                'Therefore we will use the first three buttons and ignore the rest.', LLWarning);
-                              // delete unused elements from list to avoid accidental access
-                              while itemlist.Count > 3 do
-                                itemlist.Delete(itemlist.Count - 1);
-                            end;
-
-                            if not ((s2.Length = 'hh:mm:ss'.Length) and
-                              isRegexMatch(s2, '[0-9][0-9]:[0-5][0-9]:[0-5][0-9]')) then
-                            begin
-                              LogDatei.log('The string "' + s2 +
-                                '" does not match the required time format hh:mm:ss for the timeout! '
-                                + 'Therefore we will show the message box without timeout.',
-                                LLError);
-                              s2 := '00:00:00';
-                            end;
-
-                            if syntaxcheck and not testsyntax then
+                            if not testsyntax then
                             begin
                               CustomMessageForm := TCustomMessageForm.Create(nil);
                               CustomMessageForm.ShowBox(s, TStringList(list1),
