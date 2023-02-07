@@ -12146,7 +12146,6 @@ begin
     GetWord(s0, funcname, r, WordDelimiterSet5);
     FuncIndex := definedFunctionNames.IndexOf(LowerCase(funcname));
     GetWord(s0, s, r, WordDelimiterSet1);  // getting word s
-    list := TXStringList.Create; //list to return
     slist := TStringList.Create;  // if we need a real TStringlist
     VarIndex := listOfStringLists.IndexOf(LowerCase(s));
     logstring := s;
@@ -13063,11 +13062,10 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
                 end;
-              list1.Free;
-              list1 := nil;
             end;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13129,10 +13127,9 @@ begin
                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                   end
                 end;
-              list1.Free;
-              list1 := nil;
             end;
           end;
+          FreeAndNil(list1);
         end;
       end;
     end
@@ -13190,13 +13187,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13216,10 +13211,9 @@ begin
             begin
               list.Clear;
               list.AddStrings(getSubListByContainingRegex(s1, list1));
-              list1.Free;
-              list1 := nil;
             end;
           end;
+          FreeAndNil(list1);
         end
         else
         begin
@@ -13236,13 +13230,11 @@ begin
               begin
                 list.Clear;
                 list.AddStrings(getSubListByContainingRegex(list2, list3));
-                list2.Free;
-                list2 := nil;
-                list3.Free;
-                list3 := nil;
               end;
             end;
+            FreeAndNil(list3);
           end;
+          FreeAndNil(list2);
         end;
       end;
     end
@@ -13263,10 +13255,9 @@ begin
             begin
               list.Clear;
               list.AddStrings(getRegexMatchList(s1, list1));
-              list1.Free;
-              list1 := nil;
             end;
           end;
+          FreeAndNil(list1);
         end
         else
         begin
@@ -13283,13 +13274,11 @@ begin
               begin
                 list.Clear;
                 list.AddStrings(getRegexMatchList(list2, list3));
-                list2.Free;
-                list2 := nil;
-                list3.Free;
-                list3 := nil;
               end;
             end;
+            FreeAndNil(list3);
           end;
+          FreeAndNil(list2);
         end;
       end;
     end
@@ -13309,9 +13298,8 @@ begin
             syntaxcheck := True;
             list.Clear;
             list.AddStrings(removeFromListByContainingRegex(s1, list1));
-            list1.Free;
-            list1 := nil;
           end;
+          FreeAndNil(list1);
         end
         else
         begin
@@ -13326,12 +13314,10 @@ begin
               syntaxcheck := True;
               list.Clear;
               list.AddStrings(removeFromListByContainingRegex(list2, list3));
-              list2.Free;
-              list2 := nil;
-              list3.Free;
-              list3 := nil;
             end;
+            FreeAndNil(list3);
           end;
+          FreeAndNil(list2);
         end;
       end;
     end
@@ -13386,13 +13372,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13445,13 +13429,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13505,13 +13487,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13521,37 +13501,37 @@ begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
         list1 := TXStringList.Create;
-        if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-        then
-          if Skip(',', r, r, InfoSyntaxError) then
-            if EvaluateString(r, r, s1, InfoSyntaxError) then
-              if Skip(',', r, r, InfoSyntaxError) then
-                if EvaluateString(r, r, s3, InfoSyntaxError) then
-                  if Skip(')', r, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    if not testSyntax then
+        try
+          if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+          then
+            if Skip(',', r, r, InfoSyntaxError) then
+              if EvaluateString(r, r, s1, InfoSyntaxError) then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s3, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
                     begin
-                      list.Clear;
-                      try
-                        // s2 is here used source encoding
-                        list.Text := reencode(list1.Text, s1, s2, s3);
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('Error on producing sublist: ' + e.message,
-                            LLerror);
-                          FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                          list1.Free;
-                          list1 := nil;
-                        end
+                      syntaxCheck := True;
+                      if not testSyntax then
+                      begin
+                        list.Clear;
+                        try
+                          // s2 is here used source encoding
+                          list.Text := reencode(list1.Text, s1, s2, s3);
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('Error on producing sublist: ' + e.message,
+                              LLerror);
+                            FNumberOfErrors := FNumberOfErrors + 1;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          end
+                        end;
                       end;
                     end;
-                  end;
-        list1.Free;
-        list1 := nil;
+        finally
+          FreeAndNil(list1);
+        end;
       end;
     end
 
@@ -13616,13 +13596,9 @@ begin
                     syntaxCheck := True;
                     if not testSyntax then
                     begin
-                      //list.clear;
                       try
                         try
-                          //list1 := TXStringList.create;
-                          list := TXStringList(FindAllFiles(s1, s2, StrToBool(s3)));
-                          //if list = '' then list.Add('Datei nicht gefunden');
-                          //list.Text := list1.Text;
+                          FindAllFiles(list, s1, s2, StrToBool(s3));
                         finally
                            {$IFDEF WIN32}
                           if (lowercase(s4) = '64bit') or
@@ -13633,8 +13609,6 @@ begin
                             LogDatei.Log('Revert redirection to SysWOW64', LLInfo);
                           end;
                            {$ENDIF WIN32}
-                          //list1.free;
-                          //list1 := nil;
                         end;
                       except
                         on e: Exception do
@@ -13659,41 +13633,43 @@ begin
       begin
         if EvaluateString(r, r, s1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
+          begin
             list1 := TXStringList.Create;
-        if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-        then
-          if Skip(',', r, r, InfoSyntaxError) then
-            if EvaluateString(r, r, s2, InfoSyntaxError) then
-              if Skip(')', r, r, InfoSyntaxError) then
-              begin
-                syntaxCheck := True;
-                if not testSyntax then
-                begin
-                  list.Clear;
-                  try
-                    if StrToInt(s2) < list1.Count then
-                      list1.Strings[StrToInt(s2)] := s1
-                    else
-                      list1.Add(s1);
-                    list.Text := list1.Text;
-                  except
-                    on e: Exception do
+            try
+              if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+              then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s2, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
                     begin
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                      LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
-                        e.message,
-                        LLerror);
-                      list.Text := '';
-                      FNumberOfErrors := FNumberOfErrors + 1;
-                      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                      list1.Free;
-                      list1 := nil;
-                    end
-                  end;
-                end;
-              end;
-        list1.Free;
-        list1 := nil;
+                      syntaxCheck := True;
+                      if not testSyntax then
+                      begin
+                        list.Clear;
+                        try
+                          if StrToInt(s2) < list1.Count then
+                            list1.Strings[StrToInt(s2)] := s1
+                          else
+                            list1.Add(s1);
+                          list.Text := list1.Text;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
+                              e.message,
+                              LLerror);
+                            list.Text := '';
+                            FNumberOfErrors := FNumberOfErrors + 1;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          end
+                        end;
+                      end;
+                    end;
+            finally
+              FreeAndNil(list1);
+            end;
+          end;
       end;
     end
 
@@ -13701,6 +13677,7 @@ begin
     begin
       s3 := '';
       tmpstr2 := '';
+      list1 := TXStringList.Create;
       try
         if Skip('(', r, r, InfoSyntaxError) then
         begin
@@ -13769,8 +13746,8 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
+        list1 := TXStringList.Create;
         try
-          list1 := TXStringList.Create;
           if EvaluateString(r, r, s1, InfoSyntaxError) then
             if Skip(',', r, r, InfoSyntaxError) then
               if EvaluateString(r, r, s2, InfoSyntaxError) then
@@ -13853,11 +13830,10 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
             end;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13890,13 +13866,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -13931,13 +13905,11 @@ begin
                   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
                 end
               end;
-              list1.Free;
-              list1 := nil;
-              list2.Free;
-              list2 := nil;
             end;
           end;
+          FreeAndNil(list2);
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -14080,9 +14052,8 @@ begin
                   end
                 end;
             end;
-            list1.Free;
-            list1 := nil;
           end;
+          FreeAndNil(list1);
         end;
       end;
     end
@@ -14272,10 +14243,9 @@ begin
                 LogDatei.log('Error on producing getXml2UniqueChildnodeByName', LLerror);
               end;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -14300,10 +14270,9 @@ begin
                 LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
               end;
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -17466,10 +17435,9 @@ begin
               LogDatei.log('Error Exception at jsonStringListToJsonArray ', LLerror);
               stringresult := '';
             end;
-            list1.Free;
-            list1 := nil;
           end;
         end;
+        FreeAndNil(list1);
       end;
     end
 
@@ -18291,9 +18259,7 @@ begin
     begin
       if Skip('(', r, r, InfoSyntaxError) then
       begin
-
         list1 := TXStringList.Create;
-
         if produceStringList(script, r, r, list1, InfoSyntaxError) and
           skip(',', r, r, InfoSyntaxError) then
         begin
@@ -18311,8 +18277,8 @@ begin
             end;
           end;
         end;
+        FreeAndNil(list1);
       end;
-      FreeAndNil(list1);
     end
 
     else if LowerCase(s) = LowerCase('ExtractFilePath') then
@@ -20118,7 +20084,7 @@ begin
                     begin
                       try
                         s1 := ExpandFileName(s1);
-                        saveUnicodeTextFile(TStrings(list1), s1, s2);
+                        saveUnicodeTextFile(list1, s1, s2);
                         BooleanResult := True;
                       except
                         logdatei.log('Error: Could not save to filename: ' +
@@ -20134,9 +20100,9 @@ begin
 
   else if Skip('savetextfile', Input, r, sx) then
   begin
+    BooleanResult := False;
+    list1 := TXStringList.Create;
     try
-      BooleanResult := False;
-      list1 := TXStringList.Create;
       if Skip('(', r, r, InfoSyntaxError) then
         if produceStringList(script, r, r, list1, InfoSyntaxError) then
           if Skip(',', r, r, InfoSyntaxError) then
@@ -20156,8 +20122,7 @@ begin
                 end;
               end;
     finally
-      list1.Free;
-      list1 := nil;
+      FreeAndNil(list1);
     end;
   end
 
@@ -20182,6 +20147,8 @@ begin
 
   else if Skip('areListsEqual', Input, r, InfoSyntaxError) then
   begin
+    list1 := TXStringList.Create;
+    list2 := TXStringList.Create;
     if Skip('(', r, r, InfoSyntaxError) then
       if produceStringList(script, r, r, list1, InfoSyntaxError) then
         if Skip(',', r, r, InfoSyntaxError) then
@@ -20200,6 +20167,8 @@ begin
                     end;
                   end;
                 end;
+    FreeAndNil(list1);
+    FreeAndNil(list2);
   end
 
   else if Skip('isNumber', Input, r, InfoSyntaxError) then
@@ -21318,6 +21287,7 @@ var
   list: TXStringList;
 begin
   Result := False;
+  list := TXStringList.Create;
   if produceStringList(section, r, Remaining, list, InfoSyntaxError,
     Nestlevel, inDefFuncIndex) then
     if isVisibleLocalVar(VarName, funcindex) then
