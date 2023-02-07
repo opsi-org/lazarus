@@ -13596,13 +13596,9 @@ begin
                     syntaxCheck := True;
                     if not testSyntax then
                     begin
-                      //list.clear;
                       try
                         try
-                          //list1 := TXStringList.create;
-                          FindAllFiles(List, s1, s2, StrToBool(s3));
-                          //if list = '' then list.Add('Datei nicht gefunden');
-                          //list.Text := list1.Text;
+                          FindAllFiles(list, s1, s2, StrToBool(s3));
                         finally
                            {$IFDEF WIN32}
                           if (lowercase(s4) = '64bit') or
@@ -13613,8 +13609,6 @@ begin
                             LogDatei.Log('Revert redirection to SysWOW64', LLInfo);
                           end;
                            {$ENDIF WIN32}
-                          //list1.free;
-                          //list1 := nil;
                         end;
                       except
                         on e: Exception do
