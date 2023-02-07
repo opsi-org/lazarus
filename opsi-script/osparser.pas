@@ -13600,7 +13600,7 @@ begin
                       try
                         try
                           //list1 := TXStringList.create;
-                          list := TXStringList(FindAllFiles(s1, s2, StrToBool(s3)));
+                          list.text := FindAllFiles(s1, s2, StrToBool(s3)).Text;
                           //if list = '' then list.Add('Datei nicht gefunden');
                           //list.Text := list1.Text;
                         finally
