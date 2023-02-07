@@ -17761,9 +17761,9 @@ begin
               if Skip(',', r, r, InfoSyntaxError) then
                 if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
                   if Skip(',', r, r, InfoSyntaxError) then
-                    if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout message
+                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout message
                       if Skip(',', r, r, InfoSyntaxError) then
-                        if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout
+                        if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout
                           if Skip(')', r, r, InfoSyntaxError) then
                           begin
                             syntaxCheck := True;
@@ -17773,26 +17773,27 @@ begin
                               LogDatei.log('You gave ' + itemlist.Count.ToString +
                                 ' buttons to the message box but it can only hold up to 3 buttons! '
                                 +
-                                'Therefore we will use the first tree buttons and ignore the rest.', LLWarning);
+                                'Therefore we will use the first three buttons and ignore the rest.', LLWarning);
                               // delete unused elements from list to avoid accidental access
                               while itemlist.Count > 3 do
                                 itemlist.Delete(itemlist.Count - 1);
                             end;
 
-                            if not TryStrToInt(s1, n1) or (n1 < 0) then
+                            if not ((s2.Length = 'hh:mm:ss'.Length) and
+                              isRegexMatch(s2, '[0-9][0-9]:[0-5][0-9]:[0-5][0-9]')) then
                             begin
-                              LogDatei.log('"' + s1 +
-                                '" is not a positive integer but we expect a positive integer for the timeout in seconds! '
+                              LogDatei.log('The string "' + s2 +
+                                '" does not match the required time format hh:mm:ss for the timeout! '
                                 + 'Therefore we will show the message box without timeout.',
-                                LLWarning);
-                              n1 := 0;
+                                LLError);
+                              s2 := '00:00:00';
                             end;
 
                             if syntaxcheck and not testsyntax then
                             begin
                               CustomMessageForm := TCustomMessageForm.Create(nil);
                               CustomMessageForm.ShowBox(s, TStringList(list1),
-                                TStringList(itemlist), s2, n1);
+                                TStringList(itemlist), s1, s2);
                               StringResult := CustomMessageForm.ExitCode;
                               if Assigned(CustomMessageForm) then
                                 FreeAndNil(CustomMessageForm);
