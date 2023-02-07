@@ -13641,39 +13641,40 @@ begin
           if Skip(',', r, r, InfoSyntaxError) then
           begin
             list1 := TXStringList.Create;
-            if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
-            then
-              if Skip(',', r, r, InfoSyntaxError) then
-                if EvaluateString(r, r, s2, InfoSyntaxError) then
-                  if Skip(')', r, r, InfoSyntaxError) then
-                  begin
-                    syntaxCheck := True;
-                    if not testSyntax then
+            try
+              if produceStringList(section, r, r, list1, InfoSyntaxError) //Recursion
+              then
+                if Skip(',', r, r, InfoSyntaxError) then
+                  if EvaluateString(r, r, s2, InfoSyntaxError) then
+                    if Skip(')', r, r, InfoSyntaxError) then
                     begin
-                      list.Clear;
-                      try
-                        if StrToInt(s2) < list1.Count then
-                          list1.Strings[StrToInt(s2)] := s1
-                        else
-                          list1.Add(s1);
-                        list.Text := list1.Text;
-                      except
-                        on e: Exception do
-                        begin
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                          LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
-                            e.message,
-                            LLerror);
-                          list.Text := '';
-                          FNumberOfErrors := FNumberOfErrors + 1;
-                          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                          list1.Free;
-                          list1 := nil;
-                        end
+                      syntaxCheck := True;
+                      if not testSyntax then
+                      begin
+                        list.Clear;
+                        try
+                          if StrToInt(s2) < list1.Count then
+                            list1.Strings[StrToInt(s2)] := s1
+                          else
+                            list1.Add(s1);
+                          list.Text := list1.Text;
+                        except
+                          on e: Exception do
+                          begin
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                            LogDatei.log('Exception: Error on setStringInListAtIndex: ' +
+                              e.message,
+                              LLerror);
+                            list.Text := '';
+                            FNumberOfErrors := FNumberOfErrors + 1;
+                            LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                          end
+                        end;
                       end;
                     end;
-                  end;
-            FreeAndNil(list1);
+            finally
+              FreeAndNil(list1);
+            end;
           end;
       end;
     end
