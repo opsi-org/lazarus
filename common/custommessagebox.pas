@@ -13,13 +13,14 @@ type
   TCountdownThread = class(TThread)
   private
     FTimeoutMessage: string;
-    FTimeout: integer;
+    FTimeout: string;
     procedure UpdateCountdown;
+    procedure CountOneSecondDown;
     function IsButtonClicked: boolean;
   protected
     procedure Execute; override;
   public
-    constructor Create(TimeoutMessage: string; Timeout: integer);
+    constructor Create(TimeoutMessage: string; Timeout: string);
   end;
 
   { TCustomMessageForm }
@@ -39,8 +40,8 @@ type
     FExitCode: string;
     procedure InitializeButtons;
     procedure DefineButtons(Buttons: TStringList);
-    procedure InitializeCountdown(TimeoutMessage: string; Timeout: integer);
-    procedure StartCountDown(TimeoutMessage: string; Timeout: integer);
+    procedure InitializeCountdown(TimeoutMessage: string; Timeout: string);
+    procedure StartCountDown(TimeoutMessage: string; Timeout: string);
     procedure SetSize(NumberMessageLines: integer);
   public
     (*
@@ -52,7 +53,7 @@ type
     *)
     property ExitCode: string read FExitCode;
     procedure ShowBox(Title: string; Message: TStringList;
-      Buttons: TStringList; TimeoutMessage: string; Timeout: integer);
+      Buttons: TStringList; TimeoutMessage: string; Timeout: string);
   end;
 
 var
@@ -65,7 +66,7 @@ implementation
 
 { TCountdownThread }
 
-constructor TCountdownThread.Create(TimeoutMessage: string; Timeout: integer);
+constructor TCountdownThread.Create(TimeoutMessage: string; Timeout: string);
 begin
   inherited Create(True);
   FTimeout := Timeout;
@@ -75,9 +76,53 @@ end;
 // This method is executed by the mainthread and can therefore access all GUI elements.
 procedure TCountdownThread.UpdateCountdown;
 begin
-  CustomMessageForm.Countdown.Caption := FTimeoutMessage + #10 + FTimeout.ToString + 's';
+  CustomMessageForm.Countdown.Caption := FTimeoutMessage + #10 + FTimeout;
   // center horizontal position of countdown label on form
   CustomMessageForm.Countdown.Left := Round((CustomMessageForm.Width - CustomMessageForm.Countdown.Width)/2);
+end;
+
+procedure Decrease(var TimePart: string);
+var
+  CalculatedTime: integer;
+begin
+  CalculatedTime := StrToInt(Copy(TimePart, 1, 1)) * 10 + StrToInt(Copy(TimePart, 2, 1));
+  Dec(CalculatedTime);
+  TimePart := CalculatedTime.ToString;
+  if CalculatedTime < 10 then TimePart := '0' + TimePart;
+end;
+
+// Count FTimeout one second down, the time format (of FTimeout) is hh:mm:ss
+procedure TCountdownThread.CountOneSecondDown;
+var
+  Hours: string;
+  Minutes: string;
+  Seconds: string;
+begin
+  Hours := Copy(FTimeout, 1, 2);
+  Minutes := Copy(FTimeout, 4, 2);
+  Seconds := Copy(FTimeout, 7, 2);
+
+  if Seconds = '00' then
+  begin
+    Seconds := '59';
+    if Minutes = '00' then
+    begin
+      Minutes := '59';
+      Decrease(Hours);
+    end
+    else
+    begin
+      Decrease(Minutes);
+    end;
+  end
+  else
+  begin
+    Decrease(Seconds);
+  end;
+
+  FTimeout := Hours + ':' + Minutes + ':' + Seconds;
+
+  Sleep(1000);
 end;
 
 function TCountdownThread.IsButtonClicked: boolean;
@@ -87,12 +132,10 @@ end;
 
 procedure TCountdownThread.Execute;
 begin
-  // count down in seconds
-  while (not IsButtonClicked) and (FTimeout > 0) do
+  while (not IsButtonClicked) and (FTimeout <> '00:00:00') do
   begin
     Synchronize(@UpdateCountdown);
-    Dec(FTimeout);
-    Sleep(1000);
+    CountOneSecondDown;
   end;
   if not IsButtonClicked then
   begin
@@ -185,17 +228,17 @@ begin
   end;
 end;
 
-procedure TCustomMessageForm.InitializeCountdown(TimeoutMessage: string; Timeout: integer);
+procedure TCustomMessageForm.InitializeCountdown(TimeoutMessage: string; Timeout: string);
 begin
   Countdown.Caption := TimeoutMessage;
 
-  if Timeout <> 0 then
-    Countdown.Caption := Countdown.Caption + #10 + Timeout.ToString + 's';
+  if Timeout <> '00:00:00' then
+    Countdown.Caption := Countdown.Caption + #10 + Timeout;
 
   Countdown.Left := Round((self.Width - Countdown.Width)/2);
 end;
 
-procedure TCustomMessageForm.StartCountDown(TimeoutMessage: string; Timeout: integer);
+procedure TCustomMessageForm.StartCountDown(TimeoutMessage: string; Timeout: string);
 begin
   CountdownThread := TCountdownThread.Create(TimeoutMessage, Timeout);
   CountdownThread.Start;
@@ -246,7 +289,7 @@ begin
 end;
 
 procedure TCustomMessageForm.ShowBox(Title: string;
-  Message: TStringList; Buttons: TStringList; TimeoutMessage: string; Timeout: integer);
+  Message: TStringList; Buttons: TStringList; TimeoutMessage: string; Timeout: string);
 begin
   CenterFormOnScreen(self);
 
@@ -259,7 +302,7 @@ begin
   FExitCode := '-2'; // default exit code (= exit code if user closes the form)
 
   InitializeCountdown(TimeoutMessage, Timeout);
-  if Timeout > 0 then StartCountDown(TimeoutMessage, Timeout);
+  if Timeout <> '00:00:00' then StartCountDown(TimeoutMessage, Timeout);
 
   ShowModal;
 end;
