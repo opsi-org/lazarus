@@ -6,7 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  FormAppearanceFunctions;
+  FormAppearanceFunctions,
+  osregex,
+  oslog;
 
 type
 
@@ -288,9 +290,40 @@ begin
   CenterFormOnScreen(self);
 end;
 
+// This message box can only hold up to three buttons
+procedure CheckNumberOfButtons(Buttons: TStringList);
+begin
+  if Buttons.Count > 3 then
+  begin
+    LogDatei.log('You gave ' + Buttons.Count.ToString +
+      ' buttons to the message box but it can only hold up to 3 buttons! ' +
+      'Therefore we will use the first three buttons and ignore the rest.', LLWarning);
+    // delete unused elements from list to avoid accidental access
+    while Buttons.Count > 3 do
+      Buttons.Delete(Buttons.Count - 1);
+  end;
+end;
+
+// The timeout must have the format hh:mm:ss
+procedure CheckTimeFormat(Timeout: string);
+begin
+  if not ((Timeout.Length = 'hh:mm:ss'.Length) and isRegexMatch(Timeout,
+    '[0-9][0-9]:[0-5][0-9]:[0-5][0-9]')) then
+  begin
+    LogDatei.log('The string "' + Timeout +
+      '" does not match the required time format hh:mm:ss for the timeout! ' +
+      'Therefore we will show the message box without timeout.',
+      LLError);
+    Timeout := '00:00:00';
+  end;
+end;
+
 procedure TCustomMessageForm.ShowBox(Title: string;
   Message: TStringList; Buttons: TStringList; TimeoutMessage: string; Timeout: string);
 begin
+  CheckNumberOfButtons(Buttons);
+  CheckTimeFormat(Timeout);
+
   CenterFormOnScreen(self);
 
   self.Caption := Title;
