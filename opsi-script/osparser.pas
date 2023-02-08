@@ -13161,23 +13161,27 @@ begin
           syntaxcheck := True;   // it was a string list
         if skip(',', r, r, InfoSyntaxError) and syntaxcheck then
         begin
-          list2 := TXStringList.Create;
-          if produceStringList(section, r, r, list2, InfoSyntaxError) //Recursion
+          if produceStringList(section, r, r, list, InfoSyntaxError) //Recursion
             and skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
             if not testSyntax then
             begin
-              list.Clear;
               try
-                // fill list
-                for k := 0 to list2.Count - 1 do
-                  list.add(list2[k]);
-                // remove unwanted entries
-                for i := 0 to list1.Count - 1 do
-                  for k := 0 to list2.Count - 1 do
-                    if AnsiContainsText(list2[k], list1[i]) then
-                      list.Delete(list.IndexOf(list2[k]));
+                for i := 0 to List1.Count - 1 do
+                begin
+                  k := 0;
+                  // using while loop to iterate through List,
+                  // if an element is deleted the index must not be increased
+                  while k < List.Count do
+                  begin
+                    if AnsiContainsText(List[k], List1[i]) then
+                      List.delete(k)
+                     //after deleting element k, k indexes the next element
+                    else
+                      inc(k); //to index the next element if nothing is deleted
+                  end;
+                end;
               except
                 on e: Exception do
                 begin
