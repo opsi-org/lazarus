@@ -21901,7 +21901,7 @@ begin
   // allow only spaces or a comment at line end but nothing else
   Remaining := Trim(Remaining);
   if (Remaining <> '') and (Remaining.Chars[0] <> ';') then
-    Result := reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+    Result := reportError(Sektion, linecounter, Remaining,
       'Only a comment is allowed here before the line end!');
 end;
 
@@ -23719,14 +23719,12 @@ begin
                   begin
                     InfoSyntaxError := '"' + Expressionstr + '" is no valid boolean!';
                     ActionResult :=
-                      reportError(Sektion, linecounter,
-                      Sektion.strings[linecounter - 1], InfoSyntaxError);
+                      reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
                   end;
                 end
                 else
                   ActionResult :=
-                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                    InfoSyntaxError);
+                    reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
 
               tsIncludeInsert:
               begin
