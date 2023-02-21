@@ -511,6 +511,8 @@ type
       const Sektion: TWorkSection; const linecounter: integer): boolean;
     function IsVariableNameAlreadyInUse(VariableName: string;
       const Sektion: TWorkSection; const linecounter: integer): boolean;
+    function SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+      linecounter: integer): integer;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
@@ -21892,6 +21894,17 @@ begin
   end;
 end;
 
+function TuibInstScript.SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+  linecounter: integer): integer;
+begin
+  Result := tsrPositive;
+  // allow only spaces or a comment at line end but nothing else
+  Remaining := Trim(Remaining);
+  if (Remaining <> '') and (Remaining.Chars[0] <> ';') then
+    Result := reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+      'Only a comment is allowed here before the line end!');
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -23686,29 +23699,34 @@ begin
               end; // tsImportLib
 
               tsSetDebug_lib:
-              if skip('=', remaining, remaining, InfoSyntaxError) then
-              begin
-                //if not testSyntax then
+                if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
-                  Remaining := opsiunquotestr2(remaining, '""');
-                  if UpperCase(Remaining) = 'TRUE' then
+                  // change the config 'debug_lib' also in test syntax mode
+                  GetWord(Remaining, Expressionstr, Remaining, [' ', ';']);
+                  Expressionstr := opsiunquotestr2(Expressionstr, '""');
+
+                  if (LowerCase(Expressionstr) = 'true') or
+                    (LowerCase(Expressionstr) = 'false') then
                   begin
-                    LogDatei.log('debug_lib was ' + BoolToStr(
-                      logdatei.debug_lib, True) + ' is set to true', LLInfo);
-                    logdatei.debug_lib := True;
+                    LogDatei.log('debug_lib was ' +
+                      LowerCase(BoolToStr(logdatei.debug_lib, True)) +
+                      ' is set to ' + LowerCase(Expressionstr), LLInfo);
+                    LogDatei.debug_lib := (LowerCase(Expressionstr) = 'true');
+                    ActionResult :=
+                      SkipCommentAtLineEnd(Remaining, Sektion, linecounter);
                   end
                   else
                   begin
-                    LogDatei.log('debug_lib was ' + BoolToStr(
-                      logdatei.debug_lib, True) + ' is set to false', LLInfo);
-                    logdatei.debug_lib := False;
+                    InfoSyntaxError := '"' + Expressionstr + '" is no valid boolean!';
+                    ActionResult :=
+                      reportError(Sektion, linecounter,
+                      Sektion.strings[linecounter - 1], InfoSyntaxError);
                   end;
-                end;
-              end
-              else
-                ActionResult :=
-                  reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
-                  InfoSyntaxError);
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                    InfoSyntaxError);
 
               tsIncludeInsert:
               begin
