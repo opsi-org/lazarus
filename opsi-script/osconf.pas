@@ -158,9 +158,6 @@ var
   debug_lib: boolean = True;
   force_min_loglevel: integer = 4;
   {$ENDIF}
-  //debug_prog: boolean = True;
-  //debug_lib: boolean = False;
-  //debug_lib: boolean = True;
   opsiscriptconf: string;
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
@@ -619,10 +616,6 @@ end;
 
 initialization
   opsiscriptconf := opsiscriptconfinit;
-  {$IFDEF DARWIN}
-  //force_min_loglevel := 8;
-  //debug_prog:= True;
-  {$ENDIF DARWIN}
   initEncoding;
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
