@@ -155,7 +155,7 @@ type
     tsSwitchDefaultOpen, tsSwitchClose,
     tsLoopStringList, tsLoopForTo,
     tsMessage, tsMessageFile, tsShowBitmap,
-    tsImportLib,
+    tsImportLib, tsSetDebug_lib,
     tsIncludeInsert, tsIncludeAppend,
     tsIncludeLog,
     tsShrinkFileToMB,  //internal undocumented
@@ -23685,7 +23685,30 @@ begin
                     InfoSyntaxError);
               end; // tsImportLib
 
-
+              tsSetDebug_lib:
+              if skip('=', remaining, remaining, InfoSyntaxError) then
+              begin
+                //if not testSyntax then
+                begin
+                  Remaining := opsiunquotestr2(remaining, '""');
+                  if UpperCase(Remaining) = 'TRUE' then
+                  begin
+                    LogDatei.log('debug_lib was ' + BoolToStr(
+                      logdatei.debug_lib, True) + ' is set to true', LLInfo);
+                    logdatei.debug_lib := True;
+                  end
+                  else
+                  begin
+                    LogDatei.log('debug_lib was ' + BoolToStr(
+                      logdatei.debug_lib, True) + ' is set to false', LLInfo);
+                    logdatei.debug_lib := False;
+                  end;
+                end;
+              end
+              else
+                ActionResult :=
+                  reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
+                  InfoSyntaxError);
 
               tsIncludeInsert:
               begin
@@ -27587,18 +27610,16 @@ begin
   PStatNames^ [tsSetSkinDir] := 'SetSkinDirectory';
 
   PStatNames^ [tsImportLib] := 'ImportLib';
+  PStatNames^ [tsSetDebug_lib] := 'SetDebug_lib';
   PStatNames^ [tsIncludeInsert] := 'Include_Insert';
   PStatNames^ [tsIncludeAppend] := 'Include_Append';
   PStatNames^ [tsIncludeLog] := 'IncludeLog';
   PStatNames^ [tsShrinkFileToMB] := 'ShrinkFileToMB';
   PStatNames^ [tsChangeDirectory] := 'ChangeDirectory';
 
-
-
   PStatNames^ [tsExitWindows] := 'ExitWindows';
   PStatNames^ [tsBlockInput] := 'BlockInput';
   PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
-
 
   PStatNames^ [tsAddConnection] := 'AddConnection';
   (* nicht dokumentiert *)
