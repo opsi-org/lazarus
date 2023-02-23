@@ -390,7 +390,6 @@ var
   end;
 
 begin
-  //ShowMessage('LoadSkin'); //for testing
   skinDir := GetSkinDirectory(SkinDirectory);
   startupmessages.Append('Loading skin from: ' + skinDir);
   skinFile := skinDir + PathDelim + 'skin.ini';
