@@ -253,7 +253,7 @@ begin
       //ProcessMess;
       {$ENDIF GUI}
 
-      //LogDatei.DependentAdd(copy (cmd, 1, 5) + ' ... :' + output_line, LevelInfo);
+      //LogDatei.DependentAdd(copy (cmd, 1, 5) + ' ... :' + output_line, LLinfo);
 
       // shift remainder of buffer down
 

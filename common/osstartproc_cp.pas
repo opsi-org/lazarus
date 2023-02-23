@@ -185,7 +185,7 @@ var
   Found: boolean = False;
   teststring: string = '';
 begin
-  //Logdatei.DependentAdd ('FindTask for ' + ExeFilename, LevelComplete);
+  //Logdatei.DependentAdd ('FindTask for ' + ExeFilename, LLinfo);
   info := '';
   Result := False;
   Found := False;
@@ -205,7 +205,7 @@ begin
       parentProcessID := FProcessEntry32.th32ParentProcessID;
       //LogDatei.DependentAdd (ExtractFileName(FProcessEntry32.szExeFile) + ', processId ' + #9 +
       //  IntToStr (FProcessEntry32.th32ProcessID) + #9 + 'parent process ' + #9 +
-      //  IntToStr (FProcessEntry32.th32ParentProcessID), LevelComplete);
+      //  IntToStr (FProcessEntry32.th32ParentProcessID), LLinfo);
     end;
     ContinueLoop := (not Found) and Process32Next(FSnapshotHandle, FProcessEntry32);
   end;

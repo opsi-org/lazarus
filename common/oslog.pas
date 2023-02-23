@@ -274,12 +274,7 @@ const
   LLconfidential = LLdebug3;
 
   // old Levels:
-  BaseLevel = LLinfo;
-  LevelError = LLerror;
   LevelWarnings = LLinfo;
-  LevelInfo = LLinfo;
-  LevelComplete = LLinfo;
-  LevelDebug = LLdebug;
 
 
   // ExtremeErrorLevels:

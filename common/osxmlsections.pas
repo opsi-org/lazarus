@@ -1424,7 +1424,7 @@ begin
       found := True;
       leavingPath := nodePath;
       logdatei.log('begin to open nodepath  : ' + nodepath, LLinfo);
-      logdatei.log_prog('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LevelInfo);
+      logdatei.log_prog('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LLinfo);
       while i < pathes.Count + 1 do
       begin
         attributeList.Clear;

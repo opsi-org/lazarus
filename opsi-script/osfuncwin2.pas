@@ -273,7 +273,7 @@ begin
         output := TXStringlist.Create;
         commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
           '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
-        LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
+        LogDatei.DependentAdd('Executing ' + commandline, LLinfo);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, SW_HIDE, longintdummy) then
         begin
@@ -282,15 +282,15 @@ begin
         else
         begin
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-          LogDatei.DependentAdd('', LevelInfo);
-          LogDatei.DependentAdd('output:', LevelInfo);
-          LogDatei.DependentAdd('--------------', LevelInfo);
+          LogDatei.DependentAdd('', LLinfo);
+          LogDatei.DependentAdd('output:', LLinfo);
+          LogDatei.DependentAdd('--------------', LLinfo);
           for i := 0 to output.Count - 1 do
           begin
-            LogDatei.DependentAdd(output.strings[i], LevelInfo);
+            LogDatei.DependentAdd(output.strings[i], LLinfo);
           end;
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-          LogDatei.DependentAdd('', LevelInfo);
+          LogDatei.DependentAdd('', LLinfo);
         end;
         output.Free;
         if not DirectoryExists(profilepath) then
@@ -336,7 +336,7 @@ begin
       output := TXStringlist.Create;
       commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
         '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
-      LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
+      LogDatei.DependentAdd('Executing ' + commandline, LLinfo);
       if not RunCommandAndCaptureOut(commandline, True, output,
         report, SW_HIDE, longintdummy) then
       begin
@@ -345,15 +345,15 @@ begin
       else
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.DependentAdd('', LevelInfo);
-        LogDatei.DependentAdd('output:', LevelInfo);
-        LogDatei.DependentAdd('--------------', LevelInfo);
+        LogDatei.DependentAdd('', LLinfo);
+        LogDatei.DependentAdd('output:', LLinfo);
+        LogDatei.DependentAdd('--------------', LLinfo);
         for i := 0 to output.Count - 1 do
         begin
-          LogDatei.DependentAdd(output.strings[i], LevelInfo);
+          LogDatei.DependentAdd(output.strings[i], LLinfo);
         end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.DependentAdd('', LevelInfo);
+        LogDatei.DependentAdd('', LLinfo);
       end;
       output.Free;
       if not DirectoryExists(profilepath) then
