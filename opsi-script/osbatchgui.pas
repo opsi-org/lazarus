@@ -862,7 +862,6 @@ begin
     // use optimalfill to decrease the font only on large labels
     If LabelProduct.Font.Size < -32 then
     begin
-      //ShowMessage('LabelProduct.Font.Size = ' + IntToStr(LabelProduct.Font.Size)); //zum Testen
       LabelProduct.OptimalFill := False;
       LabelProduct.Font.Size := -32;
     end;
