@@ -277,8 +277,10 @@ begin
   //+ IntToStr(ScaleDesignToForm(StartTop))+',' + IntToStr(ScaleDesignToForm(InnerWidth))
   //+',' + IntToStr(ScaleDesignToForm(InnerHeight))); //for testing
 
-  Panel.SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop), ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
-  SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop), ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
+  Panel.SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
+    ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
+  SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
+    ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
   MoveToDefaultPosition;
 
   Color := clBlue;
@@ -291,7 +293,6 @@ begin
   LabelCommand.Font.Color := clWhite;
   LabelProgress.Font.Color := clWhite;
   //LabelProgress1.Font.Color := clRed;
-
 
 
   LabelVersion.Caption := '';
