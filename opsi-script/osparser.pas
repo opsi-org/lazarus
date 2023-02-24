@@ -21896,10 +21896,11 @@ end;
 function TuibInstScript.SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
   linecounter: integer): integer;
 begin
-  Result := tsrPositive;
   // allow only spaces or a comment at line end but nothing else
   Remaining := Trim(Remaining);
-  if (Remaining <> '') and (Remaining.Chars[0] <> ';') then
+  if (Remaining = '') or (Remaining.Chars[0] = ';') then
+    Result := tsrPositive
+  else
     Result := reportError(Sektion, linecounter, Remaining,
       'Only a comment is allowed here before the line end!');
 end;
@@ -23710,7 +23711,7 @@ begin
                     LogDatei.log('debug_lib was ' +
                       LowerCase(BoolToStr(logdatei.debug_lib, True)) +
                       ' is set to ' + LowerCase(Expressionstr), LLInfo);
-                    LogDatei.debug_lib := (LowerCase(Expressionstr) = 'true');
+                    LogDatei.debug_lib := StrToBool(LowerCase(Expressionstr));
                     ActionResult :=
                       SkipCommentAtLineEnd(Remaining, Sektion, linecounter);
                   end
