@@ -117,6 +117,10 @@ type
     procedure showActivityBar(Show: boolean);
     procedure showProgressBar(b: boolean);
     procedure setActivityLabel(s: string);
+    procedure SetBoundsFromSkinIni(Component: TControl; NameInSkinIni:string;
+      SkinIniFile:TIniFile; DefaultLeft:integer; DefaultTop:integer;
+      DefaultWidth:integer; DefaultHeight:integer);
+
     //Bit: TBitmap32;
     //BlendF: TBlendFunction;
     //P: TPoint;
@@ -1113,6 +1117,22 @@ begin
     TimerActivity.Enabled := True;
     ProcessMess;
   end;
+end;
+
+procedure TFBatchOberflaeche.SetBoundsFromSkinIni(Component: TControl;
+  NameInSkinIni: string; SkinIniFile:TIniFile; DefaultLeft: integer;
+  DefaultTop: integer; DefaultWidth: integer; DefaultHeight: integer);
+begin
+  //This function reads the position (Left,Top) and size (Width, Height) of a component
+  //from the SkinIni-File and set these values for the given component.
+  //It uses ScaleDesignToForm to be compatible with (windows) scaling.
+  //Note: Scaling is usually only relevant for HighDPI screens.
+  Component.SetBounds(
+    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Left', DefaultLeft)),
+    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Top', DefaultTop)),
+    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Width', DefaultWidth)),
+    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Height', DefaultHeight))
+    );
 end;
 
 
