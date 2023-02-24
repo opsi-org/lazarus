@@ -277,10 +277,6 @@ begin
   if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
     StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
 
-  //ShowMessage('FormShow ' + IntToStr(ScaleDesignToForm(StartLeft))+','
-  //+ IntToStr(ScaleDesignToForm(StartTop))+',' + IntToStr(ScaleDesignToForm(InnerWidth))
-  //+',' + IntToStr(ScaleDesignToForm(InnerHeight))); //for testing
-
   Panel.SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
     ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
   SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
