@@ -155,7 +155,7 @@ type
     tsSwitchDefaultOpen, tsSwitchClose,
     tsLoopStringList, tsLoopForTo,
     tsMessage, tsMessageFile, tsShowBitmap,
-    tsImportLib, tsSetDebug_lib,
+    tsImportLib, tsSetDebugLib,
     tsIncludeInsert, tsIncludeAppend,
     tsIncludeLog,
     tsShrinkFileToMB,  //internal undocumented
@@ -177,7 +177,7 @@ type
     tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended,
     tsSetMarkerErrorNumber,
     tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
-    tsSetDebug_Prog,
+    tsSetDebugProg,
     tsFatalOnSyntaxError,
     tsFatalOnRuntimeError,
     tsAutoActivityDisplay,
@@ -23698,7 +23698,7 @@ begin
                     InfoSyntaxError);
               end; // tsImportLib
 
-              tsSetDebug_lib:
+              tsSetDebugLib:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   // change the config 'debug_lib' also in test syntax mode
@@ -24996,7 +24996,7 @@ begin
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
                     InfoSyntaxError);
 
-              tsSetDebug_Prog:
+              tsSetDebugProg:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   //if not testSyntax then
@@ -27626,7 +27626,7 @@ begin
   PStatNames^ [tsSetSkinDir] := 'SetSkinDirectory';
 
   PStatNames^ [tsImportLib] := 'ImportLib';
-  PStatNames^ [tsSetDebug_lib] := 'SetDebug_lib';
+  PStatNames^ [tsSetDebugLib] := 'SetDebug_lib';
   PStatNames^ [tsIncludeInsert] := 'Include_Insert';
   PStatNames^ [tsIncludeAppend] := 'Include_Append';
   PStatNames^ [tsIncludeLog] := 'IncludeLog';
@@ -27635,10 +27635,9 @@ begin
 
   PStatNames^ [tsExitWindows] := 'ExitWindows';
   PStatNames^ [tsBlockInput] := 'BlockInput';
-  PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
+  PStatNames^ [tsSetDebugProg] := 'SetDebug_prog'; // undocumented
 
-  PStatNames^ [tsAddConnection] := 'AddConnection';
-  (* nicht dokumentiert *)
+  PStatNames^ [tsAddConnection] := 'AddConnection'; // undocumented
 
   PStatNames^ [tsSetOldLogLevel] := 'LogLevel';
   PStatNames^ [tsSetLogLevel] := 'SetLogLevel';
