@@ -645,7 +645,7 @@ begin
     end;
   end
   else
-    LogDatei.DependentAddError('Error: could not impersonate for user:' + user, LLError);
+    LogDatei.Log('Error: could not impersonate for user:' + user, LLError);
 end;
 {$ENDIF WIN32}
 
@@ -662,7 +662,7 @@ begin
     end;
   end
   else
-    LogDatei.DependentAddError('Error: could not impersonate for user by token.', LLError);
+    LogDatei.Log('Error: could not impersonate for user by token.', LLError);
 end;
 
 

@@ -387,8 +387,7 @@ begin
       //WSACleanup;
     end
   except
-    Logdatei.DependentAddError('gethostname error ' +
-      IntToStr(wsagetlasterror), LLError);
+    Logdatei.Log('gethostname error ' + IntToStr(wsagetlasterror), LLError);
   end;
 end;
 

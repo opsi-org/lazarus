@@ -153,7 +153,6 @@ type
     function log_list(const list: TStrings; LevelOfLine: integer): boolean;
     function log_exception(E: Exception; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     procedure setLogSIndentLevel(const Value: integer);
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
@@ -1268,12 +1267,6 @@ begin
 end;
 
 
-function TLogInfo.DependentAddError(const S: string; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAdd(s, LLerror);
-end;
-
-
 function TLogInfo.getLine(var S: string): boolean;
 var
   charbuf, pstr: PChar;
@@ -1674,7 +1667,7 @@ begin
   end
   else
   begin
-    DependentAddError('Error writing string list to log: stringlist = nil', LLError);
+    DependentAdd('Error writing string list to log: stringlist = nil', LLError);
     Result := False;
   end;
 end;
