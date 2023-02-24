@@ -154,8 +154,6 @@ type
     function log_exception(E: Exception; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddStringList(const list: TStrings;
-      LevelOfLine: integer): boolean;
     procedure setLogSIndentLevel(const Value: integer);
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
@@ -1658,12 +1656,8 @@ begin
   end;
 end;
 
-function TLogInfo.log_list(const list: TStrings; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAddStringList(list, levelOfLine);
-end;
 
-function TLogInfo.DependentAddStringList(const list: TStrings;
+function TLogInfo.log_list(const list: TStrings;
   LevelOfLine: integer): boolean;
 var
   i: integer;
