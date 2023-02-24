@@ -653,6 +653,7 @@ var
   templatePath, genericTemplatePath, tempstr: string;
   templateChannelDir, pre_id, subdir: string;
   infilelist: TStringList;
+  channelLibraryFilelist: TStringList;
   i: integer;
   infilenotfound: boolean = False;
 
@@ -893,6 +894,23 @@ begin
       // additional optional files for 'custom'
       if (aktProduct.productdata.channelDir = 'custom') then
       begin
+
+        // add existing libraries '*.opsilib'
+        // create list of existing *.opsilib files in channel
+        channelLibraryFilelist :=
+           FindAllFiles(templatePath + PathDelim + templateChannelDir + Pathdelim + pre_id,
+                        '*.opsilib',false);
+        // copy library files to client path
+        for i := 0 to channelLibraryFilelist.Count -1 do
+        begin
+          infilename := channelLibraryFilelist.Strings[i];
+          outfilename := ExtractFileName(infilename);
+          outfilename := clientpath + PathDelim + outfilename;
+          patchScript(infilename, outfilename);
+        end;
+        // free channelLibraryFilelist
+        FreeAndNil(channelLibraryFilelist);
+
         case osdsettings.runmode of
           singleAnalyzeCreate:
           begin
@@ -940,74 +958,20 @@ begin
           begin
             infilename := getFilePath(StringReplace(tmpname, 'single',
               'templ', []) + tmpext);
-              (*
-              infilename := templatePath + Pathdelim + templateChannelDir +
-                PathDelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              if not FileExists(infilename) then
-              begin
-                infilename := templatePath + PathDelim + 'default' +
-                  Pathdelim + pre_id + PathDelim +
-                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-                logdatei.log('File: ' + infilename +
-                  ' not found at template channel: ' + templateChannelDir +
-                  ' - fall back to default', LLinfo);
-              end;
-              *)
           end
           else if (tmppref = 'lin') and (aktProduct.SetupFiles[1].active = False) then
           begin
             infilename := getFilePath(StringReplace(tmpname, 'single',
               'templ', []) + tmpext);
-              (*
-              infilename := templatePath + Pathdelim + templateChannelDir +
-                PathDelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              if not FileExists(infilename) then
-              begin
-                infilename := templatePath + PathDelim + 'default' +
-                  PathDelim + pre_id + PathDelim +
-                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-                logdatei.log('File: ' + infilename +
-                  ' not found at template channel: ' + templateChannelDir +
-                  ' - fall back to default', LLinfo);
-              end;
-              *)
           end
           else if (tmppref = 'mac') and (aktProduct.SetupFiles[2].active = False) then
           begin
             infilename := getFilePath(StringReplace(tmpname, 'single',
               'templ', []) + tmpext);
-              (*
-              infilename := templatePath + Pathdelim + templateChannelDir +
-                PathDelim + pre_id + PathDelim +
-                StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-              if not FileExists(infilename) then
-              begin
-                infilename := templatePath + PathDelim + 'default' +
-                  PathDelim + pre_id + PathDelim +
-                  StringReplace(tmpname, 'single', 'templ', []) + tmpext;
-                logdatei.log('File: ' + infilename +
-                  ' not found at template channel: ' + templateChannelDir +
-                  ' - fall back to default', LLinfo);
-              end;
-              *)
           end
           else
           begin
             infilename := getFilePath(infilelist.Strings[i]);
-              (*
-              infilename := templatePath + PathDelim + templateChannelDir +
-                Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-              if not FileExists(infilename) then
-              begin
-                infilename := templatePath + PathDelim + 'default' +
-                  Pathdelim + pre_id + PathDelim + infilelist.Strings[i];
-                logdatei.log('File: ' + infilename +
-                  ' not found at template channel: ' + templateChannelDir +
-                  ' - fall back to default', LLinfo);
-              end;
-              *)
           end;
           tmpname := StringReplace(tmpname, 'single', '', []);
           tmpname := StringReplace(tmpname, 'double', '', []);
@@ -1131,7 +1095,7 @@ begin
         copyfile(infilename, outfilename, [cffOverwriteFile,
           cffCreateDestDirectory, cffPreserveTime], True);
 
-        // install lib
+        // OS specific install lib
 
         if osMac in aktProduct.productdata.targetOSset then
         begin
@@ -1162,6 +1126,9 @@ begin
           copyfile(infilename, outfilename, [cffOverwriteFile,
             cffCreateDestDirectory, cffPreserveTime], True);
         end;
+
+        // additional *.opsilib  files from channel
+
 
 
         //product png
