@@ -406,8 +406,8 @@ begin
       skinIni := TIniFile.Create(skinFile);
       Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
-      try
-        //Adaped this code to expand the skin.ini to also set the Form
+      //Adaped this code to expand the skin.ini to also set the Form
+      //try
         //Left := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Left', StartLeft));
         //Top :=  ScaleDesignToForm(skinIni.ReadInteger('Form', 'Top', StartTop));
         //Width := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Width', 605));
@@ -415,8 +415,8 @@ begin
         //SetBounds(Left, Top, Width, Height);
         //Position := poScreenCenter;
         //MoveToDefaultPosition;
-      except
-      end;
+      //except
+      //end;
 
       try
         Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
