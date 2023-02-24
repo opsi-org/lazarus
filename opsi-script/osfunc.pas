@@ -6607,10 +6607,10 @@ begin
   else
   begin
     if not Logged then
-      LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+      LogDatei.DependentAdd(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' existed already - nothing to do';
-    LogDatei.DependentAddWarning(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end;
 
 end;
@@ -6657,10 +6657,10 @@ begin
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+        Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
       LogS := 'Warning:  ident  ' + Ident + '  existed already with value ' +
         OldVal + '   - nothing done ';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
     end;
   end;
 
@@ -6689,10 +6689,10 @@ begin
   if FindSectionheaderIndex(Sektion) = -1 then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' not found - nothing to do';
-    LogDatei.DependentAddWarning(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end
   else
   begin
@@ -6719,15 +6719,15 @@ begin
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogS, LevelWarnings);
+        Logged := LogDatei.DependentAdd(LogS, LLinfo);
 
       LogS := 'Warning:  found neither entry ' + Eintrag + 'in section ' +
         Sektion + ' not found';
-      LogDatei.DependentAdd(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLinfo);
 
       LogS := '           nor  ident ' + Eintrag + 'in section ' +
         Sektion + ' not found';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
     end;
   end;
 
@@ -6826,11 +6826,11 @@ begin
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
 
     LogS := 'Warning:  entry ' + Eintrag + ' existed already in ' +
       Sektion + ' - nothing to do';
-    LogDatei.DependentAddWarning(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end;
 
 end;
@@ -6864,10 +6864,10 @@ begin
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
 
     LogS := 'Warning:  section ' + Sektion + ' not found - nothing to do';
-    LogDatei.DependentAddWarning(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLwarning);
 
   end;
 end;
@@ -6902,10 +6902,10 @@ begin
     else
     begin
       if not Logged then
-        Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+        Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
 
       LogS := 'Warning:  entry ' + Eintrag + ' exists - nothing to do';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
 
     end;
 
@@ -6913,11 +6913,11 @@ begin
   else
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd(LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd(LogSCommand, LLinfo);
 
     LogS := 'Warning:  ident ' + Ident + ' in section ' + Sektion +
       ' not found - nothing to do';
-    LogDatei.DependentAddWarning(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end;
 end;
 
@@ -6987,11 +6987,11 @@ begin
   then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd (LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd (LogSCommand, LLinfo);
 
     LogS :=
             'Warning:  groupfile ' + NeueGruppe + ' already contained as ' + 'group' + IntToStr (Gruppennr);
-    LogDatei.DependentAdd (LogS, LevelWarnings);
+    LogDatei.DependentAdd (LogS, LLinfo);
 
     LogDatei.NumberOfWarnings := LogDatei.NumberOfWarnings + 1;
   end
@@ -7059,10 +7059,10 @@ begin
   then
   begin
     if not Logged then
-      Logged := LogDatei.DependentAdd (LogSCommand, LevelWarnings);
+      Logged := LogDatei.DependentAdd (LogSCommand, LLinfo);
 
     LogS := 'Warning:  groupfile ' + AlteGruppe + ' not found';;
-    LogDatei.DependentAdd (LogS, LevelWarnings);
+    LogDatei.DependentAdd (LogS, LLinfo);
 
     LogDatei.NumberOfWarnings := LogDatei.NumberOfWarnings + 1;
   end
@@ -7607,7 +7607,7 @@ begin
     begin
       LogS := 'Warning: "' + Alias +
         '" is not an alias, but the hostname and will not be deleted';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
     end
     else
     begin
@@ -7637,7 +7637,7 @@ begin
   if i = -1 then
   begin
     LogS := 'Info: Host "' + Ident + '" not found ';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLinfo);
     exit;
   end;
 
@@ -7659,7 +7659,7 @@ begin
   if i = -1 then
   begin
     LogS := 'Info: Host "' + Ident + '" not found ';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLinfo);
     exit;
   end;
 
@@ -7690,7 +7690,7 @@ begin
   begin
     Result := False;
     LogS := 'Warning: ipAddress for Host "' + Ident + '"  not found';
-    LogDatei.DependentAddWarning(LogS, LLinfo);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end;
 end;
 
@@ -7716,7 +7716,7 @@ begin
   begin
     Result := False;
     LogS := 'Warning: Name for ipAddress ' + ipAddress + ' not found';
-    LogDatei.DependentAddWarning(LogS, LLinfo);
+    LogDatei.DependentAdd(LogS, LLwarning);
   end;
 
 end;
@@ -8536,7 +8536,7 @@ var
         LogS :=
           'Warning: File not copied - existing ' + AlternativeF +
           ' seems to be newer than source ' + Sourcef;
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.DependentAdd(LogS, LLwarning);
 
         InstallOK := False;
       end
@@ -8545,30 +8545,30 @@ var
         LogS :=
           'Warning: Older or equally old Version of ' + SourceF +
           ' exists in ' + Directory;
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.DependentAdd(LogS, LLwarning);
       end;
 
       if delicate then
       begin
         LogS :=
           'Warning: Ordering of files is dubious: ';
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.DependentAdd(LogS, LLwarning);
       end;
 
       if warning then
       begin
         LogS := 'Warning: File cannot be read';
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.DependentAdd(LogS, LLwarning);
       end;
 
 
 
       LogS := LogDatei.LogSIndentPlus(1) + 'Source     ' + SourceF +
         '  ===  ' + File2Info;
-      LogDatei.DependentAdd(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLinfo);
       LogS := LogDatei.LogSIndentPlus(1) + 'Compare to ' + AlternativeF +
         '  ===  ' + File1Info;
-      LogDatei.DependentAdd(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLinfo);
     end;
   end;
 
@@ -8586,7 +8586,7 @@ begin
       LogS :=
         'Warning: Existing ' + TargetF + ' seems to be newer than Source ' +
         SourceF + ' - no overwrite ';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
 
       InstallOK := False;
     end
@@ -8595,30 +8595,30 @@ begin
       LogS :=
         'Target ' + TargetF +
         ' exists, but seems to be older or equally old than source ' + SourceF;
-      LogDatei.DependentAdd(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLinfo);
     end;
 
     if delicate then
     begin
       LogS :=
         'Warning: Ordering of files is dubious: ';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
     end;
 
     if warning then
     begin
       LogS :=
         'Warning: File cannot be read';
-      LogDatei.DependentAddWarning(LogS, LevelWarnings);
+      LogDatei.DependentAdd(LogS, LLwarning);
     end;
 
 
     LogS := LogDatei.LogSIndentPlus(1) + 'Source ' + SourceF +
       '  ===  ' + File2Info;
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLinfo);
     LogS := LogDatei.LogSIndentPlus(1) + 'Target ' + TargetF +
       '  ===  ' + File1Info;
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.DependentAdd(LogS, LLinfo);
 
   end;
 
@@ -9051,7 +9051,7 @@ var
           then
           begin
             LogS := 'Warning: ' + problem;
-            LogDatei.DependentAddWarning(LogS, LevelWarnings);
+            LogDatei.DependentAdd(LogS, LLwarning);
           end;
 
           zipresult := True;
@@ -9107,7 +9107,7 @@ var
                 packfileinfo.Size, problem) then
               begin
                 LogS := 'Warning: ' + problem;
-                LogDatei.DependentAddWarning(LogS, LevelWarnings);
+                LogDatei.DependentAdd(LogS, LLwarning);
               end;
             end;
           end;
@@ -10029,7 +10029,7 @@ var
       if SourceName = TargetName then
       begin
         LogS := 'Warning: ' + ' Target (' + TargetName + ') = Source ';
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.DependentAdd(LogS, LLwarning);
       end
       else
       begin

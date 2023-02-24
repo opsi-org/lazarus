@@ -1103,7 +1103,7 @@ begin
   Result := False;
   {$IFDEF WIN32}
   if not DSiEnablePrivilege('SE_DEBUG_NAME') then
-    LogDatei.DependentAddWarning(
+    LogDatei.DependentAdd(
       'Warning: Could not get SE_DEBUG_NAME Privelege to kill process -> will try with out',
       LLWarning);
   hProcess := OpenProcess(PROCESS_ALL_ACCESS, False, pid);
@@ -2236,7 +2236,7 @@ begin
   Result := 0;
   try
     if not DSiEnablePrivilege('SE_DEBUG_NAME') then
-      LogDatei.DependentAddWarning(
+      LogDatei.DependentAdd(
         'Warning: Could not get SE_DEBUG_NAME Privilege  -> will try with out',
         LLWarning);
     //Initialize the counter

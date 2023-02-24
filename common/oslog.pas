@@ -154,7 +154,6 @@ type
     function log_exception(E: Exception; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
-    function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
     function DependentAddStringList(const list: TStrings;
       LevelOfLine: integer): boolean;
     procedure setLogSIndentLevel(const Value: integer);
@@ -272,9 +271,6 @@ const
   LLdebug2 = 8;
   LLdebug3 = 9;
   LLconfidential = LLdebug3;
-
-  // old Levels:
-  LevelWarnings = LLinfo;
 
 
   // ExtremeErrorLevels:
@@ -1279,10 +1275,6 @@ begin
   Result := DependentAdd(s, LLerror);
 end;
 
-function TLogInfo.DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
-begin
-  Result := DependentAdd(s, LLwarning);
-end;
 
 function TLogInfo.getLine(var S: string): boolean;
 var

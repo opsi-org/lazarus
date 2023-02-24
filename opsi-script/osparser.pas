@@ -2458,11 +2458,11 @@ var
 
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
+    //LogDatei.log (ps, LLinfo);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
     ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-    LogDatei.log(ps, LevelWarnings);
+    LogDatei.log(ps, LLinfo);
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
@@ -3368,7 +3368,7 @@ begin
         begin
           ps := LogDatei.LogSIndent + 'Warning: File ' + FileName +
             ' does not exist';
-          LogDatei.log(ps, LevelWarnings);
+          LogDatei.log(ps, LLinfo);
           if (length(Comment) > 0) then
             LogDatei.log(LogDatei.LogSIndentPlus(1) + Comment, LLWarning);
         end
@@ -3395,7 +3395,7 @@ begin
           if (length(Comment) > 0) then
           begin
             ps := LogDatei.LogSIndentPlus(1) + Comment;
-            LogDatei.log(ps, LevelWarnings);
+            LogDatei.log(ps, LLinfo);
           end;
         end
         else if FileRecord.Attr and faDirectory = faDirectory then
@@ -3413,7 +3413,7 @@ begin
           if (length(Comment) > 0) then
           begin
             ps := LogDatei.LogSIndentPlus(1) + Comment;
-            LogDatei.log(ps, LevelWarnings);
+            LogDatei.log(ps, LLinfo);
           end;
         end
         else
@@ -3466,7 +3466,7 @@ var
     workingSection: TXStringList;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
-    //LogDatei.log (ps, LevelWarnings);
+    //LogDatei.log (ps, LLinfo);
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchdateiName, LLInfo);
 
@@ -3684,7 +3684,7 @@ var
   begin
     HostsLocation := ExpandFileName(HostsLocation);
     ps := LogDatei.LogSIndentPlus(+2) + 'FILE ' + HostsLocation;
-    LogDatei.log(ps, LevelWarnings);
+    LogDatei.log(ps, LLinfo);
 
     ProcessMess;
 
@@ -6041,8 +6041,8 @@ begin
 
   // Patch HKEY_Current_User
 
-  LogDatei.log('', LevelWarnings);
-  LogDatei.log('Make it for user .DEFAULT', LevelWarnings);
+  LogDatei.log('', LLinfo);
+  LogDatei.log('Make it for user .DEFAULT', LLinfo);
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   case rfSelected of
     trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\.DEFAULT',
@@ -6054,7 +6054,7 @@ begin
   if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    LogDatei.log('', LevelWarnings);
+    LogDatei.log('', LLinfo);
     LogDatei.log('And finally: The current user: ' + GetUserName_ +
       ' : ' + GetLocalUserSidStr(GetUserName_), LLInfo);
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -6308,8 +6308,8 @@ begin
 
   // Patch HKEY_Current_User
 
-  LogDatei.log('', LevelWarnings);
-  LogDatei.log('Make it for user .DEFAULT', LevelWarnings);
+  LogDatei.log('', LLinfo);
+  LogDatei.log('Make it for user .DEFAULT', LLinfo);
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   case rfSelected of
     trfRegedit: doRegistryHackRegeditFormat(Sektion, 'HKEY_USERS\.DEFAULT',
@@ -6321,7 +6321,7 @@ begin
   if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
-    LogDatei.log('', LevelWarnings);
+    LogDatei.log('', LLinfo);
     LogDatei.log('And finally: The current user: ' + GetUserName_ +
       ' : ' + GetLocalUserSidStr(GetUserName_), LLInfo);
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -7721,7 +7721,7 @@ var
     Logdatei.log('', LLInfo);
     Logdatei.log('Patching: ' + PatchFilename, LLInfo);
     ps := LogDatei.LogSIndentPlus(+3) + 'FILE ' + PatchFilename;
-    LogDatei.log(ps, LevelWarnings);
+    LogDatei.log(ps, LLinfo);
 
     //Handling multiple user profiles
     workingSection := TXStringList.Create;
@@ -12483,7 +12483,7 @@ begin
                      on e: Exception do
                      begin
                        LogDatei.log('Error in creating inifile "' +
-                       s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                       s2 + '", message: "' + e.Message + '"', LLinfo);
                      end;
                  end;
                end;
@@ -16021,7 +16021,7 @@ begin
                             on e: Exception do
                             begin
                               LogDatei.log('Error in creating inifile "' +
-                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                                s1 + '", message: "' + e.Message + '"', LLinfo);
                               StringResult := s4;
                             end;
                           end;
@@ -16066,7 +16066,7 @@ begin
                           on e: Exception do
                           begin
                             LogDatei.log('Error in creating inifile "' +
-                              s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                              s1 + '", message: "' + e.Message + '"', LLinfo);
                             StringResult := s4;
                           end;
                         end;
@@ -16103,7 +16103,7 @@ begin
                               begin
                                 LogDatei.log('Error in GetValueFromInifile : "' +
                                   s1 + '", message: "' + e.Message +
-                                  '"', LevelWarnings);
+                                  '"', LLinfo);
                                 StringResult := s4;
                               end;
                             end;
@@ -16139,7 +16139,7 @@ begin
               on e: Exception do
               begin
                 LogDatei.log('Error in creating inifile "' + s2 + '", message: "' +
-                  e.Message + '"', LevelWarnings);
+                  e.Message + '"', LLinfo);
                 StringResult := '';
               end;
             end;
@@ -16167,7 +16167,7 @@ begin
                 on e: Exception do
                 begin
                   LogDatei.log('Error in ReadTOMLFile "' + s1 +
-                    '", message: "' + e.Message + '"', LevelWarnings);
+                    '", message: "' + e.Message + '"', LLinfo);
                   StringResult := '';
                 end;
               end;
@@ -16194,7 +16194,7 @@ begin
                 on e: Exception do
                 begin
                   LogDatei.log('Error in GetTOMLAsString "' + s1 +
-                    '", message: "' + e.Message + '"', LevelWarnings);
+                    '", message: "' + e.Message + '"', LLinfo);
                   StringResult := '';
                 end;
               end;
@@ -16224,7 +16224,7 @@ begin
                     on e: Exception do
                     begin
                       LogDatei.log('Error in GetTOMLTableAsString "' +
-                        s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                        s1 + '", message: "' + e.Message + '"', LLinfo);
                       StringResult := '';
                     end;
                   end;
@@ -16258,7 +16258,7 @@ begin
                         on e: Exception do
                         begin
                           LogDatei.log('Error in GetValueFromTOML "' +
-                            s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                            s1 + '", message: "' + e.Message + '"', LLinfo);
                           StringResult := s3;
                         end;
                       end;
@@ -16293,7 +16293,7 @@ begin
                             on e: Exception do
                             begin
                               LogDatei.log('Error in ModifyTOML "' +
-                                s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                                s1 + '", message: "' + e.Message + '"', LLinfo);
                               StringResult := '';
                             end;
                           end;
@@ -16323,7 +16323,7 @@ begin
                     on e: Exception do
                     begin
                       LogDatei.log('Error in DeleteTableFromTOML "' +
-                        s1 + '", message: "' + e.Message + '"', LevelWarnings);
+                        s1 + '", message: "' + e.Message + '"', LLinfo);
                       StringResult := '';
                     end;
                   end;
@@ -16351,7 +16351,7 @@ begin
                 on e: Exception do
                 begin
                   LogDatei.log('Error in ConvertTOMLtoJSON, message: "' +
-                    e.Message + '"', LevelWarnings);
+                    e.Message + '"', LLinfo);
                   StringResult := '';
                 end;
               end;
@@ -21089,7 +21089,7 @@ begin
                   on e: Exception do
                   begin
                     LogDatei.log('Error in SaveToTOMLFile "' +
-                      s2 + '", message: "' + e.Message + '"', LevelWarnings);
+                      s2 + '", message: "' + e.Message + '"', LLinfo);
                     BooleanResult := False;
                   end;
                 end;
@@ -21123,7 +21123,7 @@ begin
                   begin
                     LogDatei.log('Error in ConvertTOMLfileToJSONfile from "' +
                       s1 + '" to "' + s2 + '", message: "' + e.Message +
-                      '"', LevelWarnings);
+                      '"', LLinfo);
                     BooleanResult := False;
                   end;
                 end;
