@@ -426,11 +426,8 @@ begin
 
       try
         setAlignment(LabelVersion, skinIni.ReadString('LabelVersion', 'Alignment', ''));
-        LabelVersion.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelVersion', 'Left', 76));
-        LabelVersion.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelVersion', 'Top', 16));
-        LabelVersion.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelVersion', 'Width', 85));
-        LabelVersion.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelVersion', 'Height', 16));
-        LabelVersion.Font.Name :=
+        SetBoundsFromSkinIni(LabelVersion, 'LabelVersion', SkinIni, 76, 16, 85, 16);
+         LabelVersion.Font.Name :=
           skinIni.ReadString('LabelVersion', 'FontName', 'Arial');
         LabelVersion.Font.Size := skinIni.ReadInteger('LabelVersion', 'FontSize', 8);
         LabelVersion.Font.Color :=
@@ -449,11 +446,8 @@ begin
       end;
 
       try
-        setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment','') );
-        LabelProduct.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelProduct', 'Left', 144));
-        LabelProduct.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelProduct', 'Top', 207));
-        LabelProduct.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelProduct', 'Width', 313));
-        LabelProduct.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelProduct', 'Height', 41));
+        setAlignment(LabelProduct, skinIni.ReadString('LabelProduct','Alignment',''));
+        SetBoundsFromSkinIni(LabelProduct, 'LabelProduct', SkinIni, 144, 207, 313, 41);
         LabelProduct.Font.Name :=
           skinIni.ReadString('LabelProduct', 'FontName', 'Arial');
         LabelProduct.Font.Size := skinIni.ReadInteger('LabelProduct', 'FontSize', 32);
@@ -473,12 +467,8 @@ begin
       end;
 
       try
-        setAlignment(LabelCommand,
-          skinIni.ReadString('LabelCommand', 'Alignment', ''));
-        LabelCommand.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelCommand', 'Left', 29));
-        LabelCommand.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelCommand', 'Top', 316));
-        LabelCommand.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelCommand', 'Width', 524));
-        LabelCommand.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelCommand', 'Height', 15));
+        setAlignment(LabelCommand, skinIni.ReadString('LabelCommand', 'Alignment', ''));
+        SetBoundsFromSkinIni(LabelCommand, 'LabelCommand', SkinIni, 29, 316, 524, 15);
         LabelCommand.Font.Name :=
           skinIni.ReadString('LabelCommand', 'FontName', 'Arial');
         LabelCommand.Font.Size := skinIni.ReadInteger('LabelCommand', 'FontSize', 8);
@@ -498,10 +488,7 @@ begin
 
       try
         setAlignment(LabelInfo, skinIni.ReadString('LabelInfo', 'Alignment', ''));
-        LabelInfo.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelInfo', 'Left', 29));
-        LabelInfo.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelInfo', 'Top', 272));
-        LabelInfo.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelInfo', 'Width', 524));
-        LabelInfo.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelInfo', 'Height', 20));
+        SetBoundsFromSkinIni(LabelInfo, 'LabelInfo', SkinIni, 29, 272, 524, 20);
         LabelInfo.Font.Name := skinIni.ReadString('LabelInfo', 'FontName', 'Arial');
         LableInfoDefaultFontSize := skinIni.ReadInteger('LabelInfo', 'FontSize', 11);
         LabelInfo.Font.Size := LableInfoDefaultFontSize;
@@ -520,10 +507,7 @@ begin
 
       try
         setAlignment(LabelDetail, skinIni.ReadString('LabelDetail', 'Alignment', ''));
-        LabelDetail.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelDetail', 'Left', 29));
-        LabelDetail.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelDetail', 'Top', 292));
-        LabelDetail.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelDetail', 'Width', 524));
-        LabelDetail.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelDetail', 'Height', 20));
+        SetBoundsFromSkinIni(LabelDetail, 'LabelDetail', SkinIni, 29, 292, 524, 20);
         LabelDetail.Font.Name :=
           skinIni.ReadString('LabelDetail', 'FontName', 'Arial');
         LabelDetail.Font.Size := skinIni.ReadInteger('LabelDetail', 'FontSize', 8);
@@ -542,12 +526,8 @@ begin
       end;
 
       try
-        setAlignment(LabelProgress,
-          skinIni.ReadString('LabelProgress', 'Alignment', ''));
-        LabelProgress.Left := ScaleDesignToForm(skinIni.ReadInteger('LabelProgress', 'Left', 29));
-        LabelProgress.Top := ScaleDesignToForm(skinIni.ReadInteger('LabelProgress', 'Top', 331));
-        LabelProgress.Width := ScaleDesignToForm(skinIni.ReadInteger('LabelProgress', 'Width', 524));
-        LabelProgress.Height := ScaleDesignToForm(skinIni.ReadInteger('LabelProgress', 'Height', 15));
+        setAlignment(LabelProgress, skinIni.ReadString('LabelProgress', 'Alignment', ''));
+        SetBoundsFromSkinIni(LabelProgress, 'LabelProgress', SkinIni, 29, 331, 524, 15);
         LabelProgress.Font.Name :=
           skinIni.ReadString('LabelProgress', 'FontName', 'Arial');
         LabelProgress.Font.Size :=
@@ -587,10 +567,7 @@ begin
 
 
       try
-        ImageProduct.Left := ScaleDesignToForm(skinIni.ReadInteger('ImageProduct', 'Left', 224));
-        ImageProduct.Top := ScaleDesignToForm(skinIni.ReadInteger('ImageProduct', 'Top', 44));
-        ImageProduct.Width := ScaleDesignToForm(skinIni.ReadInteger('ImageProduct', 'Width', 144));
-        ImageProduct.Height := ScaleDesignToForm(skinIni.ReadInteger('ImageProduct', 'Height', 144));
+        SetBoundsFromSkinIni(ImageProduct, 'ImageProduct', SkinIni, 224, 44, 144, 144);
         filename := skinDir + PathDelim + skinIni.ReadString(
           'ImageProduct', 'File', 'product.png');
         FileName := ExpandFileName(FileName);
@@ -600,10 +577,7 @@ begin
       end;
 
       try
-        ImageLogo1.Left := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo1', 'Left', 60));
-        ImageLogo1.Top := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo1', 'Top', 80));
-        ImageLogo1.Width := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo1', 'Width', 160));
-        ImageLogo1.Height := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo1', 'Height', 160));
+        SetBoundsFromSkinIni(ImageLogo1, 'ImageLogo1', SkinIni, 60, 80, 160, 160);
         filename := skinDir + PathDelim + skinIni.ReadString(
           'ImageLogo1', 'File', 'logo1.png');
         FileName := ExpandFileName(FileName);
@@ -613,10 +587,7 @@ begin
       end;
 
       try
-        ImageLogo2.Left := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo2', 'Left', 450));
-        ImageLogo2.Top := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo2', 'Top', 80));
-        ImageLogo2.Width := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo2', 'Width', 531));
-        ImageLogo2.Height := ScaleDesignToForm(skinIni.ReadInteger('ImageLogo2', 'Height', 91));
+        SetBoundsFromSkinIni(ImageLogo2, 'ImageLogo2', SkinIni, 450, 80, 531, 91);
         filename := skinDir + PathDelim + skinIni.ReadString(
           'ImageLogo2', 'File', 'logo2.png');
         FileName := ExpandFileName(FileName);
@@ -626,10 +597,7 @@ begin
       end;
 
       try
-        Image1Over.Left := ScaleDesignToForm(skinIni.ReadInteger('Image1Over', 'Left', 216));
-        Image1Over.Top := ScaleDesignToForm(skinIni.ReadInteger('Image1Over', 'Top', 36));
-        Image1Over.Width := ScaleDesignToForm(skinIni.ReadInteger('Image1Over', 'Width', 160));
-        Image1Over.Height := ScaleDesignToForm(skinIni.ReadInteger('Image1Over', 'Height', 160));
+        SetBoundsFromSkinIni(Image1Over, 'Image1Over', SkinIni, 216, 36, 160, 160);
         filename := skinDir + PathDelim + skinIni.ReadString(
           'Image1Over', 'File', 'over1.png');
         FileName := ExpandFileName(FileName);
@@ -639,10 +607,7 @@ begin
       end;
 
       try
-        Image2Over.Left := ScaleDesignToForm(skinIni.ReadInteger('Image2Over', 'Left', 26));
-        Image2Over.Top := ScaleDesignToForm(skinIni.ReadInteger('Image2Over', 'Top', 267));
-        Image2Over.Width := ScaleDesignToForm(skinIni.ReadInteger('Image2Over', 'Width', 531));
-        Image2Over.Height := ScaleDesignToForm(skinIni.ReadInteger('Image2Over', 'Height', 91));
+        SetBoundsFromSkinIni(Image2Over, 'Image2Over', SkinIni, 26, 267, 531, 91);
         filename := skinDir + PathDelim + skinIni.ReadString(
           'Image2Over', 'File', 'over2.png');
         FileName := ExpandFileName(FileName);
@@ -653,10 +618,7 @@ begin
 
       {$IFDEF CPUINTEL}
       try
-        ProgressBar.Left := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'Left', 96));
-        ProgressBar.Top := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'Top', 235));
-        ProgressBar.Width := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'Width', 401));
-        ProgressBar.Height := ScaleDesignToForm(skinIni.ReadInteger('ProgressBar', 'Height', 17));
+        SetBoundsFromSkinIni(Progressbar, 'ProgressBar', SkinIni, 96, 235, 401, 17);
         ProgressBar.BarColor :=
           myStringToTColor(skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
         ProgressBar.StartColor :=
@@ -695,10 +657,7 @@ begin
       {$ENDIF CPUINTEL}
 
       try
-        ActivityBar.Left := ScaleDesignToForm(skinIni.ReadInteger('ActivityBar', 'Left', 60));
-        ActivityBar.Top := ScaleDesignToForm(skinIni.ReadInteger('ActivityBar', 'Top', 350));
-        ActivityBar.Width := ScaleDesignToForm(skinIni.ReadInteger('ActivityBar', 'Width', 320));
-        ActivityBar.Height := ScaleDesignToForm(skinIni.ReadInteger('ActivityBar', 'Height', 10));
+        SetBoundsFromSkinIni(ActivityBar, 'ActivityBar', SkinIni, 60, 350, 320, 10);
         {$IFDEF WINDOWS}
         SendMessage(ActivityBar.Handle, PBM_SETBARCOLOR, 0,
           myStringToTColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
