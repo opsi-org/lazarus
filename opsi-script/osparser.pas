@@ -148,7 +148,6 @@ type
     // start of other commands  after tsWorkOnStringList
     tsWorkOnStringList,
     tsOpsiServiceCallStat,
-    //tsTestCommand,
     tsStayWhileWindowOpen,
     tsCondOpen, tsCondThen, tsCondElse, tsCondElseIf, tsCondClose,
     tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose,
@@ -27565,7 +27564,6 @@ begin
   PStatNames^ [tsProfileActions] := 'ProfileAction';
   PStatNames^ [tsPatchAnyTextfile] := 'PatchTextFile';
   PStatNames^ [tsTests] := 'Tests';
-  //PStatNames^ [tsTestCommand]         := 'Testcommand';
   PStatNames^ [tsPatchIniFile] := 'Patches';
   PStatNames^ [tsHostsPatch] := 'PatchHosts';
 
