@@ -23703,7 +23703,6 @@ begin
                 begin
                   // change the config 'debug_lib' also in test syntax mode
                   GetWord(Remaining, Expressionstr, Remaining, [' ', ';']);
-                  Expressionstr := opsiunquotestr2(Expressionstr, '""');
 
                   if (LowerCase(Expressionstr) = 'true') or
                     (LowerCase(Expressionstr) = 'false') then
