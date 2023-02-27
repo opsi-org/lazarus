@@ -148,14 +148,13 @@ type
     // start of other commands  after tsWorkOnStringList
     tsWorkOnStringList,
     tsOpsiServiceCallStat,
-    //tsTestCommand,
     tsStayWhileWindowOpen,
     tsCondOpen, tsCondThen, tsCondElse, tsCondElseIf, tsCondClose,
     tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose,
     tsSwitchDefaultOpen, tsSwitchClose,
     tsLoopStringList, tsLoopForTo,
     tsMessage, tsMessageFile, tsShowBitmap,
-    tsImportLib,
+    tsImportLib, tsSetDebugLib,
     tsIncludeInsert, tsIncludeAppend,
     tsIncludeLog,
     tsShrinkFileToMB,  //internal undocumented
@@ -177,7 +176,7 @@ type
     tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended,
     tsSetMarkerErrorNumber,
     tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
-    tsSetDebug_Prog,
+    tsSetDebugProg,
     tsFatalOnSyntaxError,
     tsFatalOnRuntimeError,
     tsAutoActivityDisplay,
@@ -511,6 +510,8 @@ type
       const Sektion: TWorkSection; const linecounter: integer): boolean;
     function IsVariableNameAlreadyInUse(VariableName: string;
       const Sektion: TWorkSection; const linecounter: integer): boolean;
+    function SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+      linecounter: integer): integer;
     function doAktionen(Sektion: TWorkSection;
       const CallingSektion: TWorkSection): TSectionResult;
 
@@ -21892,6 +21893,18 @@ begin
   end;
 end;
 
+function TuibInstScript.SkipCommentAtLineEnd(Remaining: string; Sektion: TWorkSection;
+  linecounter: integer): integer;
+begin
+  // allow only spaces or a comment at line end but nothing else
+  Remaining := Trim(Remaining);
+  if (Remaining = '') or (Remaining.Chars[0] = ';') then
+    Result := tsrPositive
+  else
+    Result := reportError(Sektion, linecounter, Remaining,
+      'Only a comment is allowed here before the line end!');
+end;
+
 function TuibInstScript.doAktionen(Sektion: TWorkSection;
   const CallingSektion: TWorkSection): TSectionResult;
 var
@@ -23685,7 +23698,32 @@ begin
                     InfoSyntaxError);
               end; // tsImportLib
 
+              tsSetDebugLib:
+                if skip('=', remaining, remaining, InfoSyntaxError) then
+                begin
+                  // change the config 'debug_lib' also in test syntax mode
+                  GetWord(Remaining, Expressionstr, Remaining, [' ', ';']);
 
+                  if (LowerCase(Expressionstr) = 'true') or
+                    (LowerCase(Expressionstr) = 'false') then
+                  begin
+                    LogDatei.log('debug_lib was ' +
+                      LowerCase(BoolToStr(logdatei.debug_lib, True)) +
+                      ' is set to ' + LowerCase(Expressionstr), LLInfo);
+                    LogDatei.debug_lib := StrToBool(LowerCase(Expressionstr));
+                    ActionResult :=
+                      SkipCommentAtLineEnd(Remaining, Sektion, linecounter);
+                  end
+                  else
+                  begin
+                    InfoSyntaxError := '"' + Expressionstr + '" is no valid boolean!';
+                    ActionResult :=
+                      reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
+                  end;
+                end
+                else
+                  ActionResult :=
+                    reportError(Sektion, linecounter, Remaining, InfoSyntaxError);
 
               tsIncludeInsert:
               begin
@@ -24957,7 +24995,7 @@ begin
                     reportError(Sektion, linecounter, Sektion.strings[linecounter - 1],
                     InfoSyntaxError);
 
-              tsSetDebug_Prog:
+              tsSetDebugProg:
                 if skip('=', remaining, remaining, InfoSyntaxError) then
                 begin
                   //if not testSyntax then
@@ -27526,7 +27564,6 @@ begin
   PStatNames^ [tsProfileActions] := 'ProfileAction';
   PStatNames^ [tsPatchAnyTextfile] := 'PatchTextFile';
   PStatNames^ [tsTests] := 'Tests';
-  //PStatNames^ [tsTestCommand]         := 'Testcommand';
   PStatNames^ [tsPatchIniFile] := 'Patches';
   PStatNames^ [tsHostsPatch] := 'PatchHosts';
 
@@ -27587,21 +27624,18 @@ begin
   PStatNames^ [tsSetSkinDir] := 'SetSkinDirectory';
 
   PStatNames^ [tsImportLib] := 'ImportLib';
+  PStatNames^ [tsSetDebugLib] := 'SetDebug_lib';
   PStatNames^ [tsIncludeInsert] := 'Include_Insert';
   PStatNames^ [tsIncludeAppend] := 'Include_Append';
   PStatNames^ [tsIncludeLog] := 'IncludeLog';
   PStatNames^ [tsShrinkFileToMB] := 'ShrinkFileToMB';
   PStatNames^ [tsChangeDirectory] := 'ChangeDirectory';
 
-
-
   PStatNames^ [tsExitWindows] := 'ExitWindows';
   PStatNames^ [tsBlockInput] := 'BlockInput';
-  PStatNames^ [tsSetDebug_prog] := 'SetDebug_prog';
+  PStatNames^ [tsSetDebugProg] := 'SetDebug_prog'; // undocumented
 
-
-  PStatNames^ [tsAddConnection] := 'AddConnection';
-  (* nicht dokumentiert *)
+  PStatNames^ [tsAddConnection] := 'AddConnection'; // undocumented
 
   PStatNames^ [tsSetOldLogLevel] := 'LogLevel';
   PStatNames^ [tsSetLogLevel] := 'SetLogLevel';

@@ -1375,32 +1375,18 @@ begin
 
       {$IFDEF OPSISCRIPT}
       // running defined function ?
-      // if Fdebug_prog then
-      //    WriteLogLine(LogMainFileF, '==> Are in definde function; inDefFuncIndex: '+inttostr(inDefFuncIndex));
       if inDefFuncIndex > -1 then
       begin
         orgfilename := definedFunctionArray[inDefFuncIndex].OriginFile;
         mainfilename := ExtractFileName(script.Filename);
-        //sectionFilename := ExtractFileName(aktsection.Filename);
-        //if orgfilename <> mainfilename
-        (*
-        if Fdebug_prog then
-        begin
-        WriteLogLine(LogMainFileF, '==> We are in definde function from file: '+orgfilename);
-        WriteLogLine(LogMainFileF, '==> FNoLogFiles.IndexOf(orgfilename): '+inttostr(FNoLogFiles.IndexOf(orgfilename)));
-        end;
-        *)
         if FNoLogFiles.IndexOf(orgfilename) <> -1 then
         begin
-          //if Fdebug_prog then
-          //WriteLogLine(LogMainFileF, '==> defined function imported from lib: '+orgfilename);
           // defined function imported from lib
           // do we want to debug libraries ?
           if (not debug_lib) then
           begin
             // only Warnings and less
             FUsedLogLevel := LLWarning;
-            //WriteLogLine(LogMainFileF, '==> defined function (debug_lib=false) loglevel: '+inttostr(FUsedLogLevel));
           end;
         end;
 
