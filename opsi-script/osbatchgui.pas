@@ -423,7 +423,7 @@ begin
       try
         setAlignment(LabelVersion, skinIni.ReadString('LabelVersion', 'Alignment', ''));
         SetBoundsFromSkinIni(LabelVersion, 'LabelVersion', SkinIni, 76, 16, 85, 16);
-         LabelVersion.Font.Name :=
+        LabelVersion.Font.Name :=
           skinIni.ReadString('LabelVersion', 'FontName', 'Arial');
         LabelVersion.Font.Size := skinIni.ReadInteger('LabelVersion', 'FontSize', 8);
         LabelVersion.Font.Color :=
@@ -1078,7 +1078,7 @@ procedure TFBatchOberflaeche.SetBoundsFromSkinIni(Component: TControl;
   DefaultTop: integer; DefaultWidth: integer; DefaultHeight: integer);
 begin
   //This function reads the position (Left,Top) and size (Width, Height) of a component
-  //from the SkinIni-File and set these values for the given component.
+  //from the SkinIni file and sets these values for the given component.
   //It uses ScaleDesignToForm to be compatible with (windows) scaling.
   //Note: Scaling is usually only relevant for HighDPI screens.
   Component.SetBounds(
