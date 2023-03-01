@@ -83,47 +83,14 @@ begin
   CustomMessageForm.Countdown.Left := Round((CustomMessageForm.Width - CustomMessageForm.Countdown.Width)/2);
 end;
 
-procedure Decrease(var TimePart: string);
-var
-  CalculatedTime: integer;
-begin
-  CalculatedTime := StrToInt(Copy(TimePart, 1, 1)) * 10 + StrToInt(Copy(TimePart, 2, 1));
-  Dec(CalculatedTime);
-  TimePart := CalculatedTime.ToString;
-  if CalculatedTime < 10 then TimePart := '0' + TimePart;
-end;
-
 // Count FTimeout one second down, the time format (of FTimeout) is hh:mm:ss
 procedure TCountdownThread.CountOneSecondDown;
 var
-  Hours: string;
-  Minutes: string;
-  Seconds: string;
+  TimeStamp: TTimeStamp;
 begin
-  Hours := Copy(FTimeout, 1, 2);
-  Minutes := Copy(FTimeout, 4, 2);
-  Seconds := Copy(FTimeout, 7, 2);
-
-  if Seconds = '00' then
-  begin
-    Seconds := '59';
-    if Minutes = '00' then
-    begin
-      Minutes := '59';
-      Decrease(Hours);
-    end
-    else
-    begin
-      Decrease(Minutes);
-    end;
-  end
-  else
-  begin
-    Decrease(Seconds);
-  end;
-
-  FTimeout := Hours + ':' + Minutes + ':' + Seconds;
-
+  TimeStamp := DateTimeToTimeStamp(StrToTime(FTimeout));
+  Dec(TimeStamp.Time, 1000);
+  FTimeout := TimeToStr(TimeStampToDateTime(TimeStamp));
   Sleep(1000);
 end;
 
