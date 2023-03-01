@@ -272,7 +272,7 @@ begin
 end;
 
 // The timeout must have the format hh:mm:ss
-procedure CheckTimeFormat(Timeout: string);
+procedure CheckTimeFormat(var Timeout: string);
 begin
   if not ((Timeout.Length = 'hh:mm:ss'.Length) and isRegexMatch(Timeout,
     '[0-9][0-9]:[0-5][0-9]:[0-5][0-9]')) then
