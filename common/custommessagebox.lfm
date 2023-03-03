@@ -61,14 +61,14 @@ object CustomMessageForm: TCustomMessageForm
   end
   object Countdown: TLabel
     AnchorSideBottom.Control = ButtonRight
-    Left = 128
+    Left = 121
     Height = 15
     Top = 162
-    Width = 29
+    Width = 42
     Alignment = taCenter
     Anchors = [akBottom]
     BorderSpacing.Bottom = 15
-    Caption = '1000s'
+    Caption = '00:00:00'
     ParentColor = False
     WordWrap = True
   end
