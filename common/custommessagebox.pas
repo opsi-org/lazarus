@@ -91,7 +91,6 @@ begin
   TimeStamp := DateTimeToTimeStamp(StrToTime(FTimeout));
   Dec(TimeStamp.Time, 1000);
   FTimeout := TimeToStr(TimeStampToDateTime(TimeStamp));
-  Sleep(1000);
 end;
 
 function TCountdownThread.IsButtonClicked: boolean;
@@ -101,10 +100,12 @@ end;
 
 procedure TCountdownThread.Execute;
 begin
+  Synchronize(@UpdateCountdown); // show initial value
   while (not IsButtonClicked) and (FTimeout <> '00:00:00') do
   begin
-    Synchronize(@UpdateCountdown);
+    Sleep(1000);
     CountOneSecondDown;
+    Synchronize(@UpdateCountdown);
   end;
   if not IsButtonClicked then
   begin
