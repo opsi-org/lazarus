@@ -1,5 +1,26 @@
 unit CustomMessageBox;
 
+(*
+This unit contains the class TCustomMessageForm. TCustomMessageForm implements a CustomMessageBox which shows a form with a message, up to three buttons, a countdown and an information about the countdown. The form's title is also editable.
+Use the procedure TCustomMessageForm.ShowBox(...) to display the form.
+
+The time format for the timeout is hh:mm:ss. If the given timeout is 00:00:00 then no countdown is shown.
+The countdown is implemented within a thread for not blocking the form while it runs down.
+
+The form closes automatically if a button is pressed or if the countdown expires.
+After showing the form, read the property ExitCode to get the action by which the form was closed:
+The ExitCode of a button is the index of the button in the given button list (starting with 0).
+If no button is clicked and the countdown finished, then ExitCode is -1.
+If the user closed the form, then ExitCode is -2.
+
+Use the TCustomMessageForm similar to the following example:
+
+CustomMessageForm := TCustomMessageForm.Create(nil);
+CustomMessageForm.ShowBox("Form Title", MessageLines, ButtonCaptions, "This window closes in", "00:01:00");
+MessageBoxExitCode := CustomMessageForm.ExitCode;
+if Assigned(CustomMessageForm) then FreeAndNil(CustomMessageForm);
+*)
+
 {$mode objfpc}{$H+}
 
 interface
@@ -47,11 +68,10 @@ type
     procedure SetSize(NumberMessageLines: integer);
   public
     (*
-    Read the result code of the clicked button from the property ExitCode.
-    The result code of a button is the index of the button in the button list which
-    is given to the procedure ShowBox (starting with 0).
-    If no button is clicked and the countdown finished, then ExitCode is -1.
-    If the user closed the form, then ExitCode is -2.
+    Meaning of exit codes: 
+       0..2 = index of the clicked button 
+         -1 = coundown finished
+         -2 = form was closed by user
     *)
     property ExitCode: string read FExitCode;
     procedure ShowBox(Title: string; Message: TStringList;
