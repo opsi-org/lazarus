@@ -27388,6 +27388,16 @@ begin
           { Here do we run the script }
           LogDatei.log('Starting with script...', LLDebug);
           weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+        end
+        else
+        begin
+          LogDatei.log(
+            'We could not find an actions section in your script and therefore your script might not be executed!'
+            + ' Please check if the section head ''[' + NameAktionenSektion +
+            ']'' exists and is written correctly.',
+            LLcritical);
+          Script.FNumberOfErrors := Script.NumberOfErrors + 1;
+          extremeErrorLevel := levelFatal;
         end;
       end;
       try
