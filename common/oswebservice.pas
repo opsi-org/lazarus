@@ -5171,11 +5171,6 @@ var
   ///ptr : pointer;
 begin
   Result := TStringList.Create;
-  // switch on product sorting
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": true}']);
-  //productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-  //omc := TOpsiMethodCall.create ('productOnClient_getObjects', ['','{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'+actualClient+'", "productType": "LocalbootProduct"}']);
   try
     logdatei.log_prog('Starting sorting POC ', LLinfo);
     // get sorted productId list
@@ -5401,80 +5396,6 @@ begin
   FreeAndNil(loginscriptmap);
 end;
 
-(* seems to be not in use do 20190826
-
-procedure TOpsi4Data.productOnClient_getobject_actualclient;
-var
-  ///resultlist : TList;
-  omc: TOpsiMethodCall;
-  ///i : Integer;
-  jo, new_obj, sort_obj: ISuperObject;
-  sort_array, poc_array: TSuperArray;
-  sortlist: TStringList;
-  productid: string;
-  i, k: integer;
-  found: boolean;
-begin
-  //result := TStringList.create;
-  //LogDatei.LogLevel := LLdebug2;
-  // switch off product sorting again
-  // 4.11.6.1 24.5.2016: sorting by server broken
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": true}']);
-  logdatei.log_prog('Starting sorting POC : productOnClient_getobject_actualclient',
-    LLinfo);
-  // getting sorted productIdList
-  omc := TOpsiMethodCall.Create('getProductOrdering', [FDepotId]);
-  jo := FjsonExecutioner.retrieveJSONObject(omc);
-  new_obj := jo.O['result'];
-  sort_array := new_obj.A['sorted'];
-  sortlist := TStringList.Create;
-  //if new_obj.IsType(stArray) then
-  //begin
-  for i := 0 to sort_array.Length - 1 do
-  begin
-    sortlist.Append(sort_array.S[i]);
-    logdatei.log_prog('Sorted productId: ' + sortlist.Strings[i] +
-      ' at pos: ' + IntToStr(i), LLDebug2);
-  end;
-  //end;
-  //else LogDatei.log('Error handling getProductOrdering result', LLError);
-  // getting unsorted POC
-  omc := TOpsiMethodCall.Create('productOnClient_getObjects',
-    ['', '{ "clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
-  // sorting result to  FProductOnClient_objects
-  poc_array := FjsonExecutioner.retrieveJSONArray(omc);
-  sort_array.Clear(True);
-  for i := 0 to sortlist.Count - 1 do
-  begin
-    found := False;
-    k := 0;
-    repeat
-      if sortlist.Strings[i] = poc_array.O[k].S['productId'] then
-        found := True;
-      Inc(k);
-    until found or (k = poc_array.Length);
-    if found then
-    begin
-      sort_array.Add(poc_array.O[k - 1]);
-      logdatei.log_prog('found POC entry with productId: ' +
-        sortlist.Strings[i] + ' with pos: ' + IntToStr(i) + ' / ' +
-        IntToStr(k - 1), LLDebug2);
-    end
-    else
-      logdatei.log('No POC entry with productId: ' + sortlist.Strings[i], LLDebug2);
-  end;
-  logdatei.log_prog('Finished sorting POC ', LLinfo);
-  FProductOnClient_objects := sort_array;
-  // switch off product sorting again
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": false}']);
-  //jo := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-  sortlist.Free;
-  //LogDatei.LogLevel := LLInfo;
-end;
-*)
 
 function TOpsi4Data.getInstallableProducts: TStringList;
 var
