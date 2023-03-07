@@ -484,6 +484,7 @@ type
     procedure finishProduct; override;
     procedure setActualProductActionRequest(request: string);
     procedure setProductActionRequest(newAction: TActionRequest); override;
+    procedure setProductActionRequestWithDependencies(newAction: TActionRequest);
     procedure setProductState(newState: TProductState); override;
     procedure setProductProgress(myprogres: string);
     procedure setProductStateActionRequest(newState: TProductState;
@@ -5688,24 +5689,45 @@ begin
     FProductOnClient_aktobject.AsObject.S['actionRequest'] := request;
 end;
 
-procedure TOpsi4Data.setProductActionRequest(newAction: TActionRequest);
+procedure TOpsi4Data.setProductActionRequestWithDependencies(newAction: TActionRequest);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  arS: string;
+  actionRequest: string;
 
 begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
 
-  arS := actionRequestToString(newAction);
-  omc := TOpsiMethodCall.Create('setProductActionRequest',
-    [actualProduct, actualClient, ars]);
+  actionRequest := actionRequestToString(newAction);
+  omc := TOpsiMethodCall.Create('setProductActionRequestWithDependencies',
+    [actualProduct, actualClient, actionRequest]);
 
   jO := FjsonExecutioner.retrieveJSONObject(omc);
   omc.Free;
   if FProductActionRequests = nil then
     FProductActionRequests := TStringList.Create;
-  FProductActionRequests.Values[actualProduct] := ars;
+  FProductActionRequests.Values[actualProduct] := actionRequest;
+end;
+
+
+procedure TOpsi4Data.setProductActionRequest(newAction: TActionRequest);
+var
+  omc: TOpsiMethodCall;
+  jO: ISuperObject;
+  actionRequest: string;
+
+begin
+  //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
+
+  actionRequest := actionRequestToString(newAction);
+  omc := TOpsiMethodCall.Create('setProductActionRequest',
+    [actualProduct, actualClient, actionRequest]);
+
+  jO := FjsonExecutioner.retrieveJSONObject(omc);
+  omc.Free;
+  if FProductActionRequests = nil then
+    FProductActionRequests := TStringList.Create;
+  FProductActionRequests.Values[actualProduct] := actionRequest;
 end;
 
 procedure TOpsi4Data.setActionProgress(const progress: string);
