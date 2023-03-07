@@ -359,6 +359,7 @@ type
     //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
     FCommunicationMode: integer;
+    FOpsiServerMinorVersion: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
@@ -501,6 +502,7 @@ type
     //property actualclient: string read FactualClient write FactualClient;
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
+    property OpsiServerMinorVersion: integer read FOpsiServerMinorVersion;
   end;
 
 var
@@ -725,34 +727,12 @@ end;
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 var
-  verstr: string;
   sign: integer;
   InfoSyntaxError: string;
 begin
   Result := '4'; //default to opsi 4.x
-  verstr := getOpsiServerVersion(serviceUrl, username, password, sessionid);
-  OpsiVersion := verstr;
-  (*
-  if verstr = '' then
-    Result := ''
-  else
-  begin
-    if getDecimalCompareSign(verstr, '3.5', sign, InfoSyntaxError, False) then
-    begin
-      if sign = 0 then
-        LogDatei.log('Internal Error: Opsi Server Version:>' +
-          verstr + '< is >3.5< which was never released', LLerror);
-      if sign = 1 then
-        Result := '4';
-      if sign = -1 then
-        Result := '3';
-    end
-    else
-      LogDatei.log('Internal Error: Opsi Server Version:>' +
-        verstr + '< is not doted numbers', LLerror);
-    end;
-  end;
-*)
+  OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
+  if assigned(OpsiData) then Opsidata.FOpsiServerMinorversion := ExtractMinorVersion(OpsiVersion);
 end;
 
 function sayActionType(action: TAction): string;
@@ -808,14 +788,15 @@ begin
 end;
 
 function ExtractMinorVersion(Version: string): integer;
+(* extracts the second position from a string in this Format '4.3.2.1. ...' *)
 begin
   try
-    Result := StrToInt(Version.Split('.')[1]);
+    Result := StrToInt(Version.Split('.')[1]);//get second position
   except
     on EConvertError do
     begin
       Result := 0;
-      Logdatei.log('Could not convert minor version to integer',LLerror);
+      Logdatei.log('Could not convert minor version to integer. Set minor version to 0',LLerror);
     end
   else
     Logdatei.log('An unexpected error occured in function ExtractMinorVersion', LLerror);
@@ -3691,6 +3672,7 @@ begin
   FJsonExecutioner := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
+  FOpsiServerMinorVersion := 0;
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
