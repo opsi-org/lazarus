@@ -412,7 +412,6 @@ type
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProducts: TStringList; override;
-    function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
     function setAddConfigStateDefaults(switchon: boolean): boolean;
@@ -4940,31 +4939,6 @@ begin
   end;
 end;
 
-function TOpsi4Data.setAddDependentProductOnClients(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addDependentProductOnClients": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addDependentProductOnClients": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-    //LogDatei.log('Product sequence calculated with dependencies', LLerror);
-  except
-    on E: Exception do
-    begin
-      Logdatei.log('Exception in setAddDependentProductOnClients, system message: "' +
-        E.Message + '"', LLwarning);
-      Result := False;
-    end;
-  end;
-end;
 
 function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
 var
