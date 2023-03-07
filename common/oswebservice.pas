@@ -516,6 +516,7 @@ function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function escapeControlChars(t: string): string;
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
+function ExtractMinorVersion(Version: string):integer;
 
 resourcestring
   rsSendLog = 'Sending log file to server ...';
@@ -803,6 +804,21 @@ begin
       list.Add(iter.key + '=' + iter.Val.AsString);
     until not ObjectFindNext(iter);
     ObjectFindClose(iter);
+  end;
+end;
+
+function ExtractMinorVersion(Version: string): integer;
+begin
+  try
+    Result := StrToInt(Version.Split('.')[1]);
+  except
+    on EConvertError do
+    begin
+      Result := 0;
+      Logdatei.log('Could not convert minor version to integer',LLerror);
+    end
+  else
+    Logdatei.log('An unexpected error occured in function ExtractMinorVersion', LLerror);
   end;
 end;
 
