@@ -732,7 +732,7 @@ var
 begin
   Result := '4'; //default to opsi 4.x
   OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
-  if assigned(OpsiData) then Opsidata.FOpsiServerMinorversion := ExtractMinorVersion(OpsiVersion);
+  if assigned(OpsiData) then OpsiData.FOpsiServerMinorversion := ExtractMinorVersion(OpsiVersion);
 end;
 
 function sayActionType(action: TAction): string;
