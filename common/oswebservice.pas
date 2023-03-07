@@ -5226,41 +5226,44 @@ begin
     end;
 
   except
-    logdatei.log('Failed fetching sorted POC list !', LLError);
-    logdatei.log('No correct calculated installation sequence !', LLError);
-    logdatei.log('Starting fetching unsorted POC list', LLinfo);
-    // switch on old (wrong) product sorting
-    omc := TOpsiMethodCall.Create('backend_setOptions',
-      ['{"processProductOnClientSequence": true}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    omc := TOpsiMethodCall.Create('productOnClient_getObjects',
-      ['', '{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'
-      + actualClient + '", "productType": "LocalbootProduct"}']);
-    resultList := FjsonExecutioner.getListResult(omc);
-    for i := 0 to resultList.Count - 1 do
+    if (getOpsiServiceVersion = '4') and (OpsiServerMinorVersion < 3) then
     begin
-      productEntry := SO(resultlist.Strings[i]);
-      //productEntry := resultList.
-      if (productEntry.O['productId'] <> nil) then
+      logdatei.log('Failed fetching sorted POC list !', LLError);
+      logdatei.log('No correct calculated installation sequence !', LLError);
+      logdatei.log('Starting fetching unsorted POC list', LLinfo);
+      // switch on old (wrong) product sorting
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"processProductOnClientSequence": true}']);
+      productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+      omc := TOpsiMethodCall.Create('productOnClient_getObjects',
+        ['', '{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'
+        + actualClient + '", "productType": "LocalbootProduct"}']);
+      resultList := FjsonExecutioner.getListResult(omc);
+      for i := 0 to resultList.Count - 1 do
       begin
-        Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
-        //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
-        FProductStates.Add(productEntry.S['productId'] + '=' +
-          productEntry.S['installationStatus']);
-        LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
-          '=' + productEntry.S['actionRequest'], LLDebug);
-        LogDatei.log_prog('state entry : ' + productEntry.S['productId'] +
-          '=' + productEntry.S['installationStatus'], LLDebug);
+        productEntry := SO(resultlist.Strings[i]);
+        //productEntry := resultList.
+        if (productEntry.O['productId'] <> nil) then
+        begin
+          Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
+          //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
+          FProductStates.Add(productEntry.S['productId'] + '=' +
+            productEntry.S['installationStatus']);
+          LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
+            '=' + productEntry.S['actionRequest'], LLDebug);
+          LogDatei.log_prog('state entry : ' + productEntry.S['productId'] +
+            '=' + productEntry.S['installationStatus'], LLDebug);
+        end;
+        testresult := Result.Text;
       end;
-      testresult := Result.Text;
+      // switch off product sorting again
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"processProductOnClientSequence": false}']);
+      productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+      logdatei.log_prog('Finished fetching unsorted POC list', LLinfo);
     end;
-    // switch off product sorting again
-    omc := TOpsiMethodCall.Create('backend_setOptions',
-      ['{"processProductOnClientSequence": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    logdatei.log_prog('Finished fetching unsorted POC list', LLinfo);
+    omc.Free;
   end;
-  omc.Free;
 end;
 
 function TOpsi4Data.getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
