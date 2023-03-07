@@ -1092,14 +1092,6 @@ var
         mInfo);
       //FBatchOberflaeche.setInfoLabel('Reloading product list after reinstallation...');
       {$ENDIF GUI}
-      if opsidata.getOpsiServiceVersion = '4' then
-      begin
-        LogDatei.log('telling server to look for dependent products',
-          LLessential);
-        if not TOpsi4Data(opsidata).setAddDependentProductOnClients(True) then
-          LogDatei.log('failed telling server to look for dependent products',
-            LLerror);
-      end;
       LogDatei.log('setting all on-products to setup', LLessential);
       for i := 1 to Produkte.Count do
       begin
@@ -1123,18 +1115,13 @@ var
             opsidata.setProductState(tpsNotInstalled);
             if productActionRequest in [tapNull, tapUpdate] then
             begin
-              opsidata.setProductActionRequest(tapSetup);
+              opsidata.setProductActionRequestWithDependencies(tapSetup);
               LogDatei.log('product "' + Produkt + '" set to setup',
                 LLessential);
             end;
           end;
         end;
       end;
-      if opsidata.getOpsiServiceVersion = '4' then
-        if not TOpsi4Data(opsidata).setAddDependentProductOnClients(False) then
-          LogDatei.log(
-            'failed telling server to look not for dependent products',
-            LLerror);
 
       opsidata.saveOpsiConf;
       // reload the new productlist
