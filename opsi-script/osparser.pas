@@ -73,6 +73,7 @@ uses
   LCLIntf,
   oslistedit,
   osinputstring,
+  CustomMessageBox,
   StdCtrls,
 {$ENDIF GUI}
   TypInfo,
@@ -17739,7 +17740,38 @@ begin
               end;
     end
 
-
+    else if LowerCase(s) = LowerCase('showmessagebox') then
+    begin
+      list1 := TXStringList.Create;
+      itemlist := TXStringList.Create;
+      if Skip('(', r, r, InfoSyntaxError) then
+        if EvaluateString(r, r, s, InfoSyntaxError) then // s = title
+          if Skip(',', r, r, InfoSyntaxError) then
+            if produceStringList(script, r, r, list1, InfoSyntaxError) then // list1 = message list
+              if Skip(',', r, r, InfoSyntaxError) then
+                if produceStringList(script, r, r, itemlist, InfoSyntaxError) then // itemlist = button list
+                  if Skip(',', r, r, InfoSyntaxError) then
+                    if EvaluateString(r, r, s1, InfoSyntaxError) then // s1 = timeout message
+                      if Skip(',', r, r, InfoSyntaxError) then
+                        if EvaluateString(r, r, s2, InfoSyntaxError) then // s2 = timeout
+                          if Skip(')', r, r, InfoSyntaxError) then
+                          begin
+                            syntaxCheck := True;
+                            {$IFDEF GUI}
+                            if not testsyntax then
+                            begin
+                              CustomMessageForm := TCustomMessageForm.Create(nil);
+                              CustomMessageForm.ShowBox(s, TStringList(list1),
+                                TStringList(itemlist), s1, s2);
+                              StringResult := CustomMessageForm.ExitCode;
+                              if Assigned(CustomMessageForm) then
+                                FreeAndNil(CustomMessageForm);
+                            end;
+                            {$ENDIF GUI}
+                          end;
+      FreeAndNil(list1);
+      FreeAndNil(itemlist);
+    end
 
     else if LowerCase(s) = LowerCase('stringreplace') then
     begin
