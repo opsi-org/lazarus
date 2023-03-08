@@ -3519,6 +3519,7 @@ begin
     if jO = nil then
     begin
       LogDatei.log_prog('Got no object from web service', LLWarning);
+      Result.text :=  'Error';
       exit;
     end;
     // we have something like
@@ -3553,23 +3554,23 @@ begin
       end
       else
       begin
-        Logdatei.log('Error in getSubListResult: received object: ' +
-          jO.AsString + ' has empty "result"', LLWarning);
-        Result := nil;
+        Logdatei.log('getSubListResult: received object: ' +
+          jO.AsString + ' has empty "result"', LLDebug2);
+        Result.Text := '';
       end;
     end
     else
     begin
       Logdatei.log('Error in getSubListResult: received object: ' +
         jO.AsString + ' has no key "result"', LLError);
-      Result := nil;
+      Result.Text := 'Error';
     end;
   except
     on E: Exception do
     begin
       Logdatei.log_prog('Exception in getSubListResult, system message: "' +
         E.Message + ' with received object: ' + jO.AsString + '"', LLError);
-      Result := nil;
+      Result.Text := 'Error';
     end
   end;
 end;
@@ -5040,53 +5041,35 @@ function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList; myClientId: string; myProductId: string;
   var usedefault: boolean): TStringList;
 var
-  resultlist: TStringList;
   omc: TOpsiMethodCall;
-  i: integer;
-  propertyEntry: ISuperObject;
 begin
-  Result := TStringList.Create;
   usedefault := False;
+  omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
+    ['', '{"objectId": "' + myClientId + '", "propertyId": "' +
+    myproperty + '", "productId": "' + myProductId + '"}']);
   try
     try
-      if setAddProductPropertyStateDefaults(True) then
+      Result := FjsonExecutioner.getSubListResult(omc, 'values');
+      if (Result.Text = '') then //empty result probaly because of default value
       begin
-        omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
-          ['', '{"objectId": "' + myClientId + '", "propertyId": "' +
-          myproperty + '", "productId": "' + myProductId + '"}']);
-        resultList := FjsonExecutioner.getSubListResult(omc, 'values');
-        omc.Free;
-        if resultList <> nil then
-        begin
-          if resultList.Count > 0 then
-          begin
-            for i := 0 to resultList.Count - 1 do
-            begin
-              LogDatei.log('ProductPropertyList[' + IntToStr(
-                i) + ']: ' + resultList.Strings[i], LLDebug3);
-              Result.add(resultList.Strings[i]);
-            end;
-          end
-          else
-          begin
-            LogDatei.log('Got empty property from service', LLInfo);
-          end;
-        end
-        else
+        if assigned(omc) then omc.Free;
+        //get default value
+        omc := TOpsiMethodCall.Create('productProperty_getObjects',
+        ['', '{", "propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
+        Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
+      end;
+      if (Result.Text = '') then
+      begin
+        LogDatei.log('Got empty property from service', LLInfo);
+      end
+      else
+        if (Result.Text = 'Error') then
         begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
           Result.AddStrings(TStrings(defaultlist));
           usedefault := True;
         end;
-      end
-      else
-      begin
-        LogDatei.log('Could not set backend properties - using defaults.',
-          LLWarning);
-        Result.AddStrings(TStrings(defaultlist));
-        usedefault := True;
-      end;
     except
       on E: Exception do
       begin
@@ -5098,7 +5081,7 @@ begin
       end
     end;
   finally
-    setAddProductPropertyStateDefaults(False);
+    FreeAndNil(omc);
   end;
 end;
 
