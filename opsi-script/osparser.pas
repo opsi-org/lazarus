@@ -643,7 +643,6 @@ const
   NameInitSektion = 'Initial';
   NameAktionenSektion = 'Actions';
   NameProfileActionsSection = 'ProfileActions';
-  //NameAktionenSektion2              = 'Actions';
 
   (* Generic parameters *)
   Parameter_64Bit = '/64Bit';
@@ -740,8 +739,6 @@ var
   // we are between deffunc and endfunc line (even in a not active code)
   cmd64checked: boolean = False;
 
-
-
 //PreDefinedVariableSkinDirectorybinaryName : String;
 //PreDefinedVariableSkinDirectoryValue : String;
 
@@ -751,7 +748,6 @@ resourcestring
   rsGetPassword = 'Please enter opsi service user password:';
   rsReadyToContinue = 'Ready to continue ?';
   rsAbortProgram = 'Abort program ?';
-
 
 
 implementation
@@ -27323,7 +27319,6 @@ begin
     LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
-
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
   {$IFDEF GUI}
     Application.ProcessMessages;
@@ -27429,14 +27424,12 @@ begin
 
     freeDefinedFunctions;
 
-
   {$IFDEF GUI}
     CentralForm.Memo1.SelectAll;
     CentralForm.Memo1.SelStart := CentralForm.Memo1.SelLength;
   {$ENDIF GUI}
 
     // write final messages to log
-
 
     LogDatei.LogSIndentLevel := 0;
 
