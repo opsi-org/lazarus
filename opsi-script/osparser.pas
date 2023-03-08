@@ -27339,7 +27339,13 @@ begin
     try
       { inital section  }
       if Aktionsliste.Count > 0 then
-        weiter := Script.doAktionen(Aktionsliste, Aktionsliste)
+      begin
+        LogDatei.log(
+            'The [Initial] section is deprecated! Please use the [Actions] section for all configurations and actions.',
+            LLWarning);
+        Script.FNumberOfWarnings := Script.FNumberOfWarnings + 1;
+        weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+      end
       else
         weiter := tsrPositive;
 
