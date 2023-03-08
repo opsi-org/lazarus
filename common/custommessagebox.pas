@@ -68,7 +68,7 @@ type
     procedure SetSize(NumberMessageLines: integer);
   public
     (*
-    Meaning of exit codes: 
+    Meaning of exit codes in property ExitCode:
        0..2 = index of the clicked button 
          -1 = coundown finished
          -2 = form was closed by user
