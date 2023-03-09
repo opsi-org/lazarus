@@ -3480,7 +3480,6 @@ var
   jO, jO1: ISuperObject;
   jA: TSuperArray;
   i: integer;
-  testresult: string;
 begin
   Result := TStringList.Create;
   jO := retrieveJSONObject(omc);
@@ -3488,17 +3487,12 @@ begin
   begin
     exit;
   end;
-  testresult := jO.AsJSon(False, False);
   jO1 := jO.O['result'];
   jA := jO.O['result'].AsArray;
-  if jA.Length > 0 then
-    testresult := jA.S[0];
   if jA <> nil then
   begin
-    //testresult := jA.
     for i := 0 to jA.Length - 1 do
     begin
-      testresult := jA.S[i];
       Result.append(jA.S[i]);
     end;
   end;
