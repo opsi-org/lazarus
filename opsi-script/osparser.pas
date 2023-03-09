@@ -644,7 +644,6 @@ const
   NameInitSektion = 'Initial';
   NameAktionenSektion = 'Actions';
   NameProfileActionsSection = 'ProfileActions';
-  //NameAktionenSektion2              = 'Actions';
 
   (* Generic parameters *)
   Parameter_64Bit = '/64Bit';
@@ -741,8 +740,6 @@ var
   // we are between deffunc and endfunc line (even in a not active code)
   cmd64checked: boolean = False;
 
-
-
 //PreDefinedVariableSkinDirectorybinaryName : String;
 //PreDefinedVariableSkinDirectoryValue : String;
 
@@ -752,7 +749,6 @@ resourcestring
   rsGetPassword = 'Please enter opsi service user password:';
   rsReadyToContinue = 'Ready to continue ?';
   rsAbortProgram = 'Abort program ?';
-
 
 
 implementation
@@ -27355,7 +27351,6 @@ begin
     LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
-
     Aktionsliste := TWorkSection.Create(NestingLevel, nil);
   {$IFDEF GUI}
     Application.ProcessMessages;
@@ -27371,7 +27366,13 @@ begin
     try
       { inital section  }
       if Aktionsliste.Count > 0 then
-        weiter := Script.doAktionen(Aktionsliste, Aktionsliste)
+      begin
+        LogDatei.log(
+            'The [Initial] section is deprecated! Please use the [Actions] section for all configurations and actions.',
+            LLWarning);
+        Script.FNumberOfWarnings := Script.FNumberOfWarnings + 1;
+        weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+      end
       else
         weiter := tsrPositive;
 
@@ -27420,6 +27421,16 @@ begin
           { Here do we run the script }
           LogDatei.log('Starting with script...', LLDebug);
           weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
+        end
+        else
+        begin
+          LogDatei.log(
+            'We could not find an actions section in your script and therefore your script might not be executed!'
+            + ' Please check if the section head ''[' + NameAktionenSektion +
+            ']'' exists and is written correctly.',
+            LLcritical);
+          Script.FNumberOfErrors := Script.NumberOfErrors + 1;
+          extremeErrorLevel := levelFatal;
         end;
       end;
       try
@@ -27445,14 +27456,12 @@ begin
 
     freeDefinedFunctions;
 
-
   {$IFDEF GUI}
     CentralForm.Memo1.SelectAll;
     CentralForm.Memo1.SelStart := CentralForm.Memo1.SelLength;
   {$ENDIF GUI}
 
     // write final messages to log
-
 
     LogDatei.LogSIndentLevel := 0;
 
