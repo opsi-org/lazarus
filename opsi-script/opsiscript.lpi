@@ -865,7 +865,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="73">
+    <Units Count="74">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1191,6 +1191,14 @@
         <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
+      <Unit73>
+        <Filename Value="../common/custommessagebox.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CustomMessageForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CustomMessageBox"/>
+      </Unit73>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
