@@ -413,7 +413,6 @@ type
     function getAfterRequirements: TStringList; override;
     function getListOfProducts: TStringList; override;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
-    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
@@ -4915,27 +4914,6 @@ begin
 end;
 
 
-function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-  except
-    Result := False;
-  end;
-end;
-
-
 function TOpsi4Data.setAddProductOnClientDefaults(switchon: boolean): boolean;
 var
   omc: TOpsiMethodCall;
@@ -6191,14 +6169,9 @@ var
   omc: TOpsiMethodCall;
 begin
   Result := '';
-  if setAddConfigStateDefaults(True) then
-  begin
-    parastr := '{"objectId": "' + actualClient + '"}';
-    omc := TOpsiMethodCall.Create('configState_getObjects', ['', parastr]);
-    //jO := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := checkAndRetrieve(omc, errorOccured);
-    setAddConfigStateDefaults(False);
-  end;
+  parastr := '{"objectId": "' + actualClient + '"}';
+  omc := TOpsiMethodCall.Create('configState_getObjects', ['', parastr]);
+  Result := checkAndRetrieve(omc, errorOccured);
   omc.Free;
 end;
 
