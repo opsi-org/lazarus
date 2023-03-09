@@ -197,6 +197,13 @@ type
       read FJSONValueSyntaxInParameterList write FJSONValueSyntaxInParameterList;
   end;
 
+  { TConfigObject }
+
+  TConfigObject = class(TObject)
+  public
+    class function getConfigObjectFromService(ClientID:string; ConfigID: string): TConfigObject;
+  end;
+
   { TJsonThroughHTTPS }
 
   TJsonThroughHTTPS = class(TObject)
@@ -798,6 +805,14 @@ begin
   else
     Logdatei.log('An unexpected error occured in function ExtractMinorVersion', LLerror);
   end;
+end;
+
+{ TConfigObject }
+
+class function TConfigObject.getConfigObjectFromService(ClientID: string;
+  ConfigID: string): TConfigObject;
+begin
+
 end;
 
 
