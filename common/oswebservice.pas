@@ -4481,11 +4481,9 @@ var
   omc: TOpsiMethodCall;
   str: SOString;
   jO: ISuperObject;
-  ite: TSuperObjectIter;
   omcresult: TStringList;
 begin
   Result := True;
-  // reset FProductOnClient_aktobject
   FProductOnClient_aktobject := nil;
   omc := TOpsiMethodCall.Create('getProduct_hash', [actualProduct, FDepotId]);
   omcresult := FjsonExecutioner.getMapResult(omc);
@@ -4494,7 +4492,6 @@ begin
   begin
     LogDatei.log('Error: Opsi4Data.initProduct: getProduct_hash failed: retry',
       LLWarning);
-    //ProcessMess;
     Sleep(500);
     omc := TOpsiMethodCall.Create('getProduct_hash', [actualProduct, FDepotId]);
     omcresult := FJsonExecutioner.getMapResult(omc);
@@ -4523,22 +4520,7 @@ begin
       begin
         jO := SO(mylist.Strings[0]);
         str := jO.AsJSon;
-        //superobject.
-        //FProductOnClient_aktobject := TSuperobject.Create(mylist.Items[0]);
         FProductOnClient_aktobject := SO(str);
-        //FProductOnClient_aktobject := TSuperobject.create(str);
-        //FProductOnClient_aktobject := SO(str);
-        str := FProductOnClient_aktobject.AsJSon(False, False);
-        str := FProductOnClient_aktobject.asJson(False, False);
-        str := FProductOnClient_aktobject.S['"clientId"'];
-        str := FProductOnClient_aktobject.AsObject.S['clientId'];
-        str := FProductOnClient_aktobject.S['"clientId"'];
-        if ObjectFindFirst(FProductOnClient_aktobject, ite) then
-          repeat
-            str := ite.key + ': ' + ite.val.AsJson;
-          until not ObjectFindNext(ite);
-        ObjectFindClose(ite);
-        //FProductOnClient_aktobject := TSuperObject.create(str);
       end
       else
         {$IFDEF OPSISCRIPT}
@@ -4554,7 +4536,6 @@ begin
       else
         LogDatei.log('no productOnClient found for depot: ' +
           actualClient + ' and product: ' + Productvars.Values['productId'], LLerror);
-    //FProductOnClient_aktobject := FjsonExecutioner.retrieveJSONObject(omc);
   end
   else
     LogDatei.log('no product_hash found for client: ' + FDepotId +
