@@ -466,6 +466,9 @@ begin
             if (TTOMLValue(list[i]).TypeString = 'Double') then
                  result:= result + ReplaceStr(TTOMLValue(list[i]).ToString, ',', '.')
           else
+            if (TTOMLValue(list[i]).TypeString = 'Boolean') then
+              result:= result + LowerCase(TTOMLValue(list[i]).ToString)
+          else
             result:= result + (TTOMLValue(list[i]).ToString);
     if i<>Count-1 then
       result:= result + ', ';
@@ -621,6 +624,9 @@ begin
            else
             if (TTOMLValue(map.Data[i]).TypeString = 'Double') then
                line := String(map.Keys[i])+' = '+ReplaceStr(map.Data[i].ToString, ',', '.')
+           else
+            if (TTOMLValue(map.Data[i]).TypeString = 'Boolean') then
+              line := String(map.Keys[i])+' = '+LowerCase(map.Data[i].ToString)
            else
             line := String(map.Keys[i])+' = '+map.Data[i].ToString;
         tomlStringList.Add(line);
