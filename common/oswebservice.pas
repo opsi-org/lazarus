@@ -197,12 +197,6 @@ type
       read FJSONValueSyntaxInParameterList write FJSONValueSyntaxInParameterList;
   end;
 
-  { TConfigObject }
-
-  TConfigObject = class(TObject)
-  public
-    class function getConfigObjectFromService(ClientID:string; ConfigID: string): TConfigObject;
-  end;
 
   { TJsonThroughHTTPS }
 
@@ -366,7 +360,6 @@ type
     //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
     FCommunicationMode: integer;
-    FOpsiServerMinorVersion: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
@@ -508,7 +501,6 @@ type
     //property actualclient: string read FactualClient write FactualClient;
     property CommunicationMode: integer read FCommunicationMode
       write FCommunicationMode;
-    property OpsiServerMinorVersion: integer read FOpsiServerMinorVersion;
   end;
 
 var
@@ -524,7 +516,6 @@ function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 function escapeControlChars(t: string): string;
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
-function ExtractMinorVersion(Version: string):integer;
 
 resourcestring
   rsSendLog = 'Sending log file to server ...';
@@ -738,7 +729,6 @@ var
 begin
   Result := '4'; //default to opsi 4.x
   OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
-  if assigned(OpsiData) then OpsiData.FOpsiServerMinorversion := ExtractMinorVersion(OpsiVersion);
 end;
 
 function sayActionType(action: TAction): string;
@@ -791,30 +781,6 @@ begin
     until not ObjectFindNext(iter);
     ObjectFindClose(iter);
   end;
-end;
-
-function ExtractMinorVersion(Version: string): integer;
-(* extracts the second position from a string in this Format '4.3.2.1. ...' *)
-begin
-  try
-    Result := StrToInt(Version.Split('.')[1]);//get second position
-  except
-    on EConvertError do
-    begin
-      Result := 0;
-      Logdatei.log('Could not convert minor version to integer. Set minor version to 0',LLerror);
-    end
-  else
-    Logdatei.log('An unexpected error occured in function ExtractMinorVersion', LLerror);
-  end;
-end;
-
-{ TConfigObject }
-
-class function TConfigObject.getConfigObjectFromService(ClientID: string;
-  ConfigID: string): TConfigObject;
-begin
-
 end;
 
 
@@ -3681,7 +3647,6 @@ begin
   FJsonExecutioner := nil;
   FSortByServer := False;
   FCommunicationMode := -1;
-  FOpsiServerMinorVersion := 0;
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
