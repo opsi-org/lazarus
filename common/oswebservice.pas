@@ -459,7 +459,7 @@ type
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
     function getOpsiServiceConfigs: string;
-    function getConfigStateObjectsFromService(ClientID:string; ConfigIDsAsJsonArray:string):string;
+    function getConfigStateObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getLogSize: int64;
     function getProductIds: TStringList;
@@ -6157,27 +6157,32 @@ begin
   omc.Free;
 end;
 
-function TOpsi4Data.getConfigStateObjectsFromService(ClientID: string;
+function TOpsi4Data.getConfigStateObjectsFromService(
   ConfigIDsAsJsonArray: string): string;
 var
   params: string;
-  Error : boolean;
+  Error: boolean;
   omc: TOpsiMethodCall;
 begin
   Result := '';
-  params := '{"objectId":"' + ClientID + '" ,' + '"configId":' + ConfigIDsAsJsonArray + '}';
+  params := '{"objectId":"' + actualClient + '" ,' + '"configId":' +
+    ConfigIDsAsJsonArray + '}';
   omc := TOpsiMethodCall.Create('configState_getObjects', ['', params]);
   try
     Result := checkAndRetrieve(omc, Error);
     if Error then
-      Logdatei.Log('Error in oswebservice TOpsi4Data.getConfigStateObjectsFromService', LLError);
+    begin
+      Result := '';
+      Logdatei.Log(
+        'Warning: Could not get config states from service (oswebservice: TOpsi4Data.getConfigStateObjectsFromService)',
+        LLWarning);
+    end;
   finally
     omc.Free;
   end;
 end;
 
-function TOpsi4Data.getConfigObjectsFromService(ConfigIDsAsJsonArray: string
-  ): string;
+function TOpsi4Data.getConfigObjectsFromService(ConfigIDsAsJsonArray: string): string;
 var
   params: string;
   Error: boolean;
@@ -6188,6 +6193,13 @@ begin
   omc := TOpsiMethodCall.Create('config_getObjects', ['', params]);
   try
     Result := checkAndRetrieve(omc, Error);
+    if Error then
+    begin
+      Result := '';
+      Logdatei.Log(
+        'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)',
+        LLWarning);
+    end;
   finally
     omc.Free;
   end;
