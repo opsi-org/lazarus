@@ -466,6 +466,8 @@ type
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
     function getOpsiServiceConfigs: string;
+    function getConfigStateObjectsFromService(ClientID:string; ConfigIDsAsJsonArray:string):string;
+    function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getLogSize: int64;
     function getProductIds: TStringList;
     function getLocalbootProductIds: TStringList;
@@ -6188,6 +6190,42 @@ begin
   omc := TOpsiMethodCall.Create('configState_getObjects', ['', parastr]);
   Result := checkAndRetrieve(omc, errorOccured);
   omc.Free;
+end;
+
+function TOpsi4Data.getConfigStateObjectsFromService(ClientID: string;
+  ConfigIDsAsJsonArray: string): string;
+var
+  params: string;
+  Error : boolean;
+  omc: TOpsiMethodCall;
+begin
+  Result := '';
+  params := '{"objectId":"' + ClientID + '" ,' + '"configId":' + ConfigIDsAsJsonArray + '}';
+  omc := TOpsiMethodCall.Create('configState_getObjects', ['', params]);
+  try
+    Result := checkAndRetrieve(omc, Error);
+    if Error then
+      Logdatei.Log('Error in oswebservice TOpsi4Data.getConfigStateObjectsFromService', LLError);
+  finally
+    omc.Free;
+  end;
+end;
+
+function TOpsi4Data.getConfigObjectsFromService(ConfigIDsAsJsonArray: string
+  ): string;
+var
+  params: string;
+  Error: boolean;
+  omc: TOpsiMethodCall;
+begin
+  Result := '';
+  params := '{"id":' + ConfigIDsAsJsonArray + '}';
+  omc := TOpsiMethodCall.Create('config_getObjects', ['', params]);
+  try
+    Result := checkAndRetrieve(omc, Error);
+  finally
+    omc.Free;
+  end;
 end;
 
 (************************ End of TOpsi4Data ***********************************)
