@@ -45,11 +45,15 @@ uses
   lazfileutils,
   osparserhelper,
   process,
-  osencoding;
+  osencoding,
+  fpjson,
+  jsonparser;
 
 function readConfig: boolean;
 function writeConfig: boolean;
 function readConfigFromService: string;
+function readConfigFromService_old: string;
+
 
 const
 {$IFDEF WINDOWS}
@@ -344,11 +348,301 @@ begin
   end;
 end;
 
-function readConfigFromService: string;
+function readConfigsFromService: string;
+var
+  JsonRpcResponse: string;
+  JsonRpcResult: TJSONArray;
+  configid, values, tmpstr: string;
+  ConfigIDs: TStringList;
+  ConfigIDsAsJsonArray: string;
+  i: integer;
+begin
+  try
+    ConfigIDs := TStringList.Create;
+    ConfigIDs.Clear;
+    ConfigIDs.Append('opsi-script.global.debug_pro');
+    ConfigIDs.Append('opsi-script.global.debug_lib');
+    ConfigIDs.Append('opsi-script.global.default_loglevel');
+    ConfigIDs.Append('opsi-script.global.force_min_loglevel');
+    ConfigIDs.Append('opsi-script.global.ScriptErrorMessages');
+    ConfigIDs.Append('opsi-script.global.AutoActivityDisplay');
+    ConfigIDs.Append('opsi-script.global.w10BitlockerSuspendOnReboot');
+    ConfigIDs.Append('opsi-script.global.ReverseProductOrderByUninstall');
+    ConfigIDs.Append('opsi-script.global.supressSystemEncodingWarning');
+    ConfigIDs.Append('opsi-script.global.log_rotation_count');
+    ConfigIDs.Append('opsi-script.global.writeProductLogFile');
+    ConfigIDs.Append('opsi-script.global.testSyntax');
+
+    if opsidata.isConnected2(startupmessages) then
+    begin
+      try
+        ConfigIDsAsJsonArray := '[';
+        for i:= 0 to ConfigIDs.Count - 2 do
+          ConfigIDsAsJsonArray := ConfigIDsAsJsonArray + '"' + ConfigIDs[i] + '",';
+        ConfigIDsAsJsonArray := ConfigIDsAsJsonArray + '"' + ConfigIDs[ConfigIDs.Count-1] + '"]';
+        JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
+        JsonRpcResult := GetJSON(JsonRpcResponse).FindPath('result');
+      except
+        on e: Exception do
+        begin
+          startupmessages.Append('Exception in readConfigFromService: ' +
+            'opsidata.getOpsiServiceConfigs: ' + e.message + ' ' + DateTimeToStr(Now));
+          serviceresult := '';
+        end;
+      end;
+      //osmain.startupmessages.Add('OpsiServiceConfigs: ' + copy(serviceresult,1,100);
+      Result := serviceresult;
+      if jsonIsValid(serviceresult) then
+      begin
+        //osmain.startupmessages.Add('got valid json object from getOpsiServiceConfigs');
+        if jsonAsObjectGetValueByKey(serviceresult, 'result',
+          serviceresult) then
+          if jsonIsArray(serviceresult) then
+          begin
+            //osmain.startupmessages.Add('got json Array from result');
+            if jsonAsArrayToStringList(serviceresult, configlist) then
+            begin
+              for i := 0 to configlist.Count - 1 do
+              begin
+                if jsonIsObject(configlist.Strings[i]) then
+                begin
+                  if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                    'configId', configid) then
+                  begin
+                    //osmain.startupmessages.Add('got configid: ' + configid);
+                    if pos('opsi-script.', configid) = 1 then
+                    begin
+                      // we got a opsi-script config
+
+                      if LowerCase(configid) = 'opsi-script.global.debug_prog' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, debug_prog) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  debug_prog: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+
+                      if LowerCase(configid) = 'opsi-script.global.debug_lib' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, debug_lib) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  debug_lib: ' +
+                                tmpstr + ' (' + DateTimeToStr(Now) + ')');
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+
+                      if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got default_loglevel: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, default_loglevel) then
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  default_loglevel: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        'opsi-script.global.force_min_loglevel' then
+                      begin
+                        osmain.startupmessages.Add(
+                          'got config: opsi-script.global.force_min_loglevel');
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got force_min_loglevel: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, force_min_loglevel) then
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.ScriptErrorMessages') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got ScriptErrorMessages: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, ScriptErrorMessages) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.AutoActivityDisplay') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got AutoActivityDisplay: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, AutoActivityDisplay) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got w10BitlockerSuspendOnReboot: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, w10BitlockerSuspendOnReboot) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  w10BitlockerSuspendOnReboot: '
+                                + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.ReverseProductOrderByUninstall') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got ReverseProductOrderByUninstall: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configReverseProductOrderByUninstall) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  ReverseProductOrderByUninstall: '
+                                + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.supressSystemEncodingWarning') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got supressSystemEncodingWarning: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configSupressSystemEncodingWarning) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  supressSystemEncodingWarning: '
+                                + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        'opsi-script.global.log_rotation_count' then
+                      begin
+                        osmain.startupmessages.Add(
+                          'got config: opsi-script.global.log_rotation_count');
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got log_rotation_count: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, log_rotation_count) then
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  log_rotation_count: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.writeProductLogFile') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got writeProductLogFile: ' + tmpstr);
+                            if not TryStrToBool(tmpstr,
+                              configWriteProductLogFile) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  writeProductLogFile: '
+                                + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase(
+                        'opsi-script.global.testSyntax') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add(
+                              'got testSyntax: ' + tmpstr);
+                            // do not overwrite cli parameter /testsyntax
+                            if not configTestSyntax then
+                              if not TryStrToBool(tmpstr,
+                                configTestSyntax) then
+                                osmain.startupmessages.Add(
+                                  'Error: Not a Boolean:  testSyntax: '
+                                  + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                    end;
+                  end;
+                end;
+              end;
+            end;
+          end;
+      end;
+    end;
+    configlist.Free;
+  except
+    on e: Exception do
+    begin
+      startupmessages.Append('Exception in readConfigFromService: ' +
+        e.message + ' ' + DateTimeToStr(Now));
+    end;
+  end;
+end;
+
+function readConfigFromService_old: string;
 var
   serviceresult: string;
   configid, values, tmpstr: string;
-  configlist: TStringList;
+  Configlist: TStringList;
+  ConfigIDsAsJsonArray: string;
   i: integer;
 begin
   try
@@ -356,7 +650,22 @@ begin
     if opsidata.isConnected2(startupmessages) then
     begin
       try
-        serviceresult := opsidata.getOpsiServiceConfigs;
+        ConfigIDsAsJsonArray := '[' +
+          '"opsi-script.global.debug_pro",' +
+          '"opsi-script.global.debug_lib",' +
+          '"opsi-script.global.default_loglevel",' +
+          '"opsi-script.global.force_min_loglevel",' +
+          '"opsi-script.global.ScriptErrorMessages",' +
+          '"opsi-script.global.AutoActivityDisplay",' +
+          '"opsi-script.global.w10BitlockerSuspendOnReboot",' +
+          '"opsi-script.global.ReverseProductOrderByUninstall",' +
+          '"opsi-script.global.supressSystemEncodingWarning",' +
+          '"opsi-script.global.log_rotation_count",' +
+          '"opsi-script.global.writeProductLogFile",' +
+          '"opsi-script.global.testSyntax"' +
+          ']';
+        serviceresult := OpsiData.getConfigStateObjectsFromService(
+          actualClientID, ConfigIDsAsJsonArray);
       except
         on e: Exception do
         begin
