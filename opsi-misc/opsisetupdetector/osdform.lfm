@@ -5760,7 +5760,6 @@ object resultForm1: TresultForm1
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
             ParentFont = False
-            ReadOnly = True
             TabOrder = 1
           end
         end
@@ -6755,7 +6754,6 @@ object resultForm1: TresultForm1
             Constraints.MinWidth = 400
             OnChange = genRttiEditChange
             ParentFont = False
-            ReadOnly = True
             TabOrder = 1
           end
         end
@@ -9569,10 +9567,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  139
-                  139
-                  139
-                  142
+                  144
+                  144
+                  144
+                  144
                 )
               end
               object PanelDepBtns: TPanel
@@ -9995,10 +9993,10 @@ object resultForm1: TresultForm1
                 TIOptions = [tgoStartIndexAtOne, tgoShowOnlyProperties]
                 ColWidths = (
                   64
-                  253
-                  253
-                  253
-                  253
+                  257
+                  257
+                  257
+                  258
                 )
               end
             end

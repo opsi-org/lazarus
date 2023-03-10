@@ -81,6 +81,18 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.1.16-1) stable; urgency=low
+
+   * Fix Hint Configuration service url
+   * fix: Make 'MSI Name' editable because it will become the DisplayName
+       * osdform TIEditMsiName1: readonly = false
+       * osdform TIEditMsiName2: readonly = false
+   * Change: Property: 'Install_from_local_tmpdir' now default = True
+       * osdbasedata: makeproperties : myprop.boolDefault := True;
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  10 Mar 2023 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.2.1.15-1) stable; urgency=low
 
    * New: Checkbox and configuration to switch beteen silent and unattended install mode

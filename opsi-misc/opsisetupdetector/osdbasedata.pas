@@ -1136,7 +1136,7 @@ begin
     myprop.Property_Type := bool;
     myprop.multivalue := False;
     myprop.editable := False;
-    myprop.boolDefault := False;
+    myprop.boolDefault := True;
   end
   else if propexists and not aktProduct.productdata.installFromLocal then
     aktProduct.properties.propDelete('Install_from_local_tmpdir');
