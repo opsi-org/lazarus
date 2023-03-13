@@ -2393,20 +2393,26 @@ begin
   FNewDepDlg.ComboBoxActState.Text := '';
   FNewDepDlg.RadioButtonState.Checked := True;
   FNewDepDlg.RadioButtonActionChange(Sender);
+
   // avoid nonsense dependencies in meta product
   if osdsettings.runmode = createMeta then
   begin
-    // allow  action setup for neted meta products
-    // (std is state installed)
-    //FNewDepDlg.GroupBox1.Enabled := False;
-    // ComboBoxActState will be corectly switched by RadioGroupInstallMode
-    FNewDepDlg.ComboBoxActState.Enabled := False;
+    // set required mode to 'state'
+    FNewDepDlg.RadioButtonState.Checked := True;
+    FNewDepDlg.RadioButtonAction.Checked:= False;
+    // fill combobox 'Action or State'
+    FNewDepDlg.RadioButtonActionChange(Sender);
+    // set Requirement type to empty
+    FNewDepDlg.ComboBoxReqType.Text:= '';
     // deny requirement types before / after
     FNewDepDlg.ComboBoxReqType.Enabled := False;
+    // allow  action setup for nested meta products
+    // (std is state installed)
+    FNewDepDlg.ComboBoxActState.Enabled := False;
   end
   else
   begin
-    FNewDepDlg.GroupBox1.Enabled := True;
+    //FNewDepDlg.GroupBox1.Enabled := True;
     FNewDepDlg.ComboBoxActState.Enabled := True;
     FNewDepDlg.ComboBoxReqType.Enabled := True;
   end;

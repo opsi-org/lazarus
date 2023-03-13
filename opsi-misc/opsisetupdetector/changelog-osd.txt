@@ -85,10 +85,18 @@ opsi-setup-detector (4.2.1.16-1) stable; urgency=low
 
    * Fix Hint Configuration service url
    * fix: Make 'MSI Name' editable because it will become the DisplayName
+       * osdform FlowPanelMsiId: enabled = true
+       * osdform FlowPanelMsiId1: enabled = true
        * osdform TIEditMsiName1: readonly = false
        * osdform TIEditMsiName2: readonly = false
+       * osdform TIEditMsiId1: readonly = true
+       * osdform TIEditMsiId1: enabled = false
+       * osdform TIEditMsiId2: readonly = true
+       * osdform TIEditMsiId2: enabled = false
    * Change: Property: 'Install_from_local_tmpdir' now default = True
        * osdbasedata: makeproperties : myprop.boolDefault := True;
+   * Fix: preparation of dependency editor for meta products
+       * osdform: BitBtnAddDepClick
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  10 Mar 2023 : 15:00:00 +0200
 

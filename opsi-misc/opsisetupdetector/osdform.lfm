@@ -5703,7 +5703,6 @@ object resultForm1: TresultForm1
               WrapAfter = waAuto
               Index = 3
             end>
-          Enabled = False
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
@@ -5731,8 +5730,10 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
+            Enabled = False
             OnChange = genRttiEditChange
             ParentFont = False
+            ReadOnly = True
             TabOrder = 0
           end
           object Label56: TLabel
@@ -6697,7 +6698,6 @@ object resultForm1: TresultForm1
               WrapAfter = waAuto
               Index = 3
             end>
-          Enabled = False
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
@@ -6725,8 +6725,10 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
+            Enabled = False
             OnChange = genRttiEditChange
             ParentFont = False
+            ReadOnly = True
             TabOrder = 0
           end
           object Label98: TLabel
