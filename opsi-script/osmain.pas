@@ -2112,7 +2112,7 @@ begin
             //OpsiData.setOptions (opsiclientd_serviceoptions);
             opsidata.setActualClient(computername);
             startupmessages.Append(computername);
-            startupmessages.Append(readConfigFromService);
+            startupmessages.Append(readConfigsFromService);
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
