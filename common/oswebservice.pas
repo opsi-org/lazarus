@@ -5009,14 +5009,11 @@ var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
   productEntry: ISuperObject;
-  jo, new_obj, sort_obj: ISuperObject;
-  sort_array, poc_array: TSuperArray;
+  jo, new_obj: ISuperObject;
+  sort_array: TSuperArray;
   sortlist: TStringList;
-  productid: string;
   i, k: integer;
   found: boolean;
-
-  ///ptr : pointer;
 begin
   Result := TStringList.Create;
   try
@@ -5027,8 +5024,7 @@ begin
     new_obj := jo.O['result'];
     sort_array := new_obj.A['sorted'];
     sortlist := TStringList.Create;
-    //if new_obj.IsType(stArray) then
-    //begin
+
     for i := 0 to sort_array.Length - 1 do
     begin
       sortlist.Append(sort_array.S[i]);
@@ -5040,9 +5036,6 @@ begin
       ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
 
     resultList := FjsonExecutioner.getListResult(omc);
-    //FProductOnClient_objects := FjsonExecutioner.retrieveJSONArray(omc);
-    //resultList := FProductOnClient_objects.toList;
-
 
     if FProductStates = nil then
       FProductStates := TStringList.Create;
@@ -5063,7 +5056,6 @@ begin
         begin
           Result.add(productEntry.S['productId'] + '=' +
             productEntry.S['actionRequest']);
-          //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
           FProductStates.Add(productEntry.S['productId'] + '=' +
             productEntry.S['installationStatus']);
           LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
@@ -5079,34 +5071,17 @@ begin
             sortlist.Strings[i], LLDebug2);
       end;
       logdatei.log_prog('Finished sorting POC  ', LLinfo);
-    (*
-      for i := 0 to resultList.Count - 1 do
-      begin
-        productEntry := SO(resultlist.Strings[i]);
-        //productEntry := resultList.
-        if (productEntry.O['productId'] <> nil) then
-        begin
-          Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
-          //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
-          FProductStates.Add(productEntry.S['productId'] + '=' +
-            productEntry.S['installationStatus']);
-          LogDatei.log('action entry : ' + productEntry.S['productId'] +
-            '=' + productEntry.S['actionRequest'], LLDebug);
-          LogDatei.log('state entry : ' + productEntry.S['productId'] +
-            '=' + productEntry.S['installationStatus'], LLDebug);
-        end;
-        testresult := Result.Text;
-      end;
-      *)
     end;
 
   except
     logdatei.log('Failed fetching sorted POC list !', LLError);
     logdatei.log('No correct calculated installation sequence !', LLError);
     logdatei.log('Starting fetching unsorted POC list', LLinfo);
+
     // switch on old (wrong) product sorting
     omc := TOpsiMethodCall.Create('backend_setOptions',
       ['{"processProductOnClientSequence": true}']);
+
     productEntry := FjsonExecutioner.retrieveJSONObject(omc);
     omc := TOpsiMethodCall.Create('productOnClient_getObjects',
       ['', '{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'
@@ -5115,11 +5090,9 @@ begin
     for i := 0 to resultList.Count - 1 do
     begin
       productEntry := SO(resultlist.Strings[i]);
-      //productEntry := resultList.
       if (productEntry.O['productId'] <> nil) then
       begin
         Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
-        //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
         FProductStates.Add(productEntry.S['productId'] + '=' +
           productEntry.S['installationStatus']);
         LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
@@ -5129,10 +5102,12 @@ begin
       end;
       testresult := Result.Text;
     end;
+
     // switch off product sorting again
     omc := TOpsiMethodCall.Create('backend_setOptions',
       ['{"processProductOnClientSequence": false}']);
     productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+
     logdatei.log_prog('Finished fetching unsorted POC list', LLinfo);
     omc.Free;
   end;
