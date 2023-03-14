@@ -412,7 +412,6 @@ type
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProducts: TStringList; override;
-    function setAddProductOnClientDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
@@ -4895,26 +4894,6 @@ begin
   end;
 end;
 
-
-function TOpsi4Data.setAddProductOnClientDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductOnClientDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductOnClientDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-  except
-    Result := False;
-  end;
-end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList; var usedefault: boolean): TStringList;

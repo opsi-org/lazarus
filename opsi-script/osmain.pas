@@ -882,21 +882,12 @@ begin
     exit;
 
   ProductvarsForPC := opsidata.getProductproperties;
-  if runproductlist then
-    if not opsidata.setAddProductOnClientDefaults(True) then
-      LogDatei.log('failed telling server to look for productOnClient defaults',
-        LLerror);
   if not opsidata.initProduct then
   begin
     extremeErrorLevel := levelFatal;
     LogDatei.log(
         'failed opsidata.initProduct', LLcritical);
   end;
-  if runproductlist then
-    if not opsidata.setAddProductOnClientDefaults(False) then
-      LogDatei.log(
-        'failed telling server to stop looking for productOnClient defaults',
-        LLerror);
   LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
