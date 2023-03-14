@@ -387,11 +387,12 @@ end;
 
 
 procedure SetConfig(const JsonObject: TJSONObject; const SearchKey:string);
-(* function SetConfig set the value for a opsi-script config (Host-Parameter)
-   The value is taken from an JsonObject which contains the value and
-   the corresponding config ID
+(* function SetConfig set the value for a opsi-script Config (Host-Parameter)
+   The value is taken from an json object which contains the value and
+   the corresponding config ID. The search key is "defaultValues" or "values"
+   dependend on if it is a Config or ConfigState object.
 
-   Include here any new opsi-script config *)
+   Include here any new opsi-script Config *)
 var
   configid : string;
   Value: string;
@@ -425,6 +426,11 @@ begin
 end;
 
 procedure SetConfigs(const JsonRpcResponse: string; SearchKey:string);
+(* procedure SetConfigs extracts the values of opsi-script Configs from an JSON-RPC response.
+   Therefore it loops through the result of the response. The expected result is an json array
+   containing different Config or ConfigState objects in json object format.
+   The search key is "defaultValues" or "values" dependend on if it is a Config
+   or ConfigState object *)
 var
   ConfigEnum: TJSONEnum;
   Config: TJSONObject;
@@ -455,7 +461,8 @@ begin
   ConfigIDs := TStringList.Create;
   try
     ConfigIDs.Clear;
-    //Include in this list new opsi-script configs
+    //Include here any new opsi-script configs in the list.
+    //Do not forget to do this for the procedure SetConfig, too.
     ConfigIDs.Append(LowerCase('opsi-script.global.debug_pro'));
     ConfigIDs.Append(LowerCase('opsi-script.global.debug_lib'));
     ConfigIDs.Append(LowerCase('opsi-script.global.default_loglevel'));
