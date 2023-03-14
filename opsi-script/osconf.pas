@@ -412,7 +412,7 @@ begin
   else if LowerCase(configid) = LowerCase('opsi-script.global.AutoActivityDisplay') then
     AutoActivityDisplay := ValueToBool(Value, 'AutoActivityDisplay', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
-    w10BitlockerSuspendOnReboot := ValueToBool(Value, 'AutoActivityDisplay', True)
+    w10BitlockerSuspendOnReboot := ValueToBool(Value, 'w10BitlockerSuspendOnReboot', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
     configReverseProductOrderByUninstall := ValueToBool(Value, 'ReverseProductOrderByUninstall', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.supressSystemEncodingWarning') then
