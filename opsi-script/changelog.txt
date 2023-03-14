@@ -4,8 +4,21 @@ mac getIpByName liefert name von IPnum
 
 opsi-script (4.12.8.0) unreleased; urgency=medium
 
+ * [fix] osparser.pas: fix in produceStringList: remove creating list, this must be done outside of the function (!124, j.werner)
+ * [fix] osparser.pas: removeFromListByContaining: correct removing of the elements from the list (!122, j.werner)
+ * [update] osbatchgui.pas: High DPI support for BatchGUI (#4814, !123, j.werner)
+ * [update] opsi-script for aarch64 (raspi 64 bit) Basic additions to make opsi-script, oposi-script-gui and opsi-laz-gui-test compilable and get it running
+            Also new build modes for raspi (!112, d.oertel)
+ * [update] make synapse compilable for arm (!106, d.oertel)
+ * [update] osparser.pas: delete_subfolder, better error reporting on non win32 systems. (!115, j.werner)
+ * [change] oswebservice.pas: getMapOfProductActionRequests/productonClients_getObjects__actionrequests:
+            the public function getMapOfProductActionRequests just gives back the result of the private
+            function productonClients_getObjects__actionrequests thus:
+             - I deleted the unecessary implementation of getMapOfProductActionRequests
+             - I rename productonClients_getObjects__actionrequests to getMapOfProductActionRequests
+             - I deleted the definition of productonClients_getObjects__actionrequests (!120, j.werner)
 
--- j.werner <j.werner@uib.de> 03 Feb 2023
+-- j.werner <j.werner@uib.de> 14 March 2023
 
 opsi-script (4.12.7.5) unreleased; urgency=medium
 
