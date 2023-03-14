@@ -4942,7 +4942,9 @@ begin
   try
     try
       Result := FjsonExecutioner.getSubListResult(omc, 'values');
-      if (Result.Text = '') then //empty result probaly because of default value
+      //result is probably empty because productPropertyState_getObjects returns
+      //an empty value if the property has the server default value
+      if (Result.Text = '') then
       begin
         if assigned(omc) then omc.Free;
         //get default value

@@ -390,7 +390,7 @@ procedure SetConfig(const JsonObject: TJSONObject; const SearchKey:string);
 (* function SetConfig set the value for a opsi-script Config (Host-Parameter)
    The value is taken from an json object which contains the value and
    the corresponding config ID. The search key is "defaultValues" or "values"
-   dependend on if it is a Config or ConfigState object.
+   dependent on if it is a Config or ConfigState object.
 
    Include here any new opsi-script Config *)
 var
