@@ -1945,6 +1945,13 @@ begin
     producttype := 'localboot';
     setupscript := 'setup.opsiscript';
     uninstallscript := 'uninstall.opsiscript';
+    updatescript := '';
+    (*
+    alwaysScript := '';
+    onceScript := '';
+    customScript := '';
+    userLoginScript := '';
+    *)
     delsubscript := 'delsub.opsiscript';
     //channelDir:= 'default';
     str := templChannelStrings[myconfiguration.templateChannel];

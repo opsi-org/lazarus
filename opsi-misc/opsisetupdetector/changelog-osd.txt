@@ -81,6 +81,16 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 todo:
    *
 
+opsi-setup-detector (4.2.1.17-1) stable; urgency=low
+
+   * Fix writing property values to control file
+       * osdcreate: createopsifiles
+       * osdcreate: opsiquotestr
+   * Fix writing updatescript to control file
+       * osdcreate: initaktproduct
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  15 Mar 2023 : 15:00:00 +0200
+
 opsi-setup-detector (4.2.1.16-1) stable; urgency=low
 
    * Fix Hint Configuration service url

@@ -82,6 +82,7 @@ var
 begin
   Result := '';
   markstr := trim(s2);
+  s1 := trim(s1);
   if (length(s1) >= 1) and (length(markstr) >= 1) then
   begin
     startmark := markstr[1];
@@ -89,7 +90,7 @@ begin
       endmark := markstr[2] // different marks (brackets) at begin and end
     else
       endmark := startmark; // the same mark (quote) at begin and end
-    if not (pos(startmark, s1) = 1) and AnsiEndsStr(endmark, s1) then
+    if not ((pos(startmark, s1) = 1) and AnsiEndsStr(endmark, s1)) then
       Result := startmark + s1 + endmark
     else
       Result := s1;
@@ -108,7 +109,6 @@ begin
     list1.Strings[i] := opsiquotestr(list1.Strings[i], s2);
   end;
 end;
-
 
 
 procedure patchScript(infile, outfile: string);
@@ -1281,11 +1281,15 @@ begin
         helplist.Text := myprop.GetValueLines.Text;
         opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('values: ' + tmpstr);
+          textlist.Add('values: ' + tmpstr)
+        else
+          LogDatei.log('Failed to write property values entry for property: '+myprop.Property_Name,LLerror);
         helplist.Text := myprop.GetDefaultLines.Text;
         opsiquotelist(helplist, '"');
         if stringListToJsonArray(helplist, tmpstr) then
-          textlist.Add('default: ' + tmpstr);
+          textlist.Add('default: ' + tmpstr)
+        else
+          LogDatei.log('Failed to write property default entry for property: '+myprop.Property_Name,LLerror);
       end;
     end;
     textlist.SaveToFile(opsipath + pathdelim + 'control');
