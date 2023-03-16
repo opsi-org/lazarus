@@ -457,6 +457,7 @@ type
     function getMapOfProductActionRequests: TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
+    function getJSONFromService(const method: string; const params: array of string; logErrorMessage: string):string;
     function getOpsiServiceConfigs: string;
     function getConfigStateObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
@@ -758,6 +759,7 @@ begin
   new_obj := SO(str);
   Result := new_obj.asJson;
 end;
+
 
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
 var
@@ -6099,10 +6101,28 @@ begin
   Result := FjsonExecutioner.getFileFromDepot(filename, toStringList, ListResult);
 end;
 
+function TOpsi4Data.getJSONFromService(const method: string;
+  const params: array of string; logErrorMessage: string): string;
+var
+  omc: TOpsiMethodCall;
+  Error: boolean;
+begin
+  omc := TOpsiMethodCall.Create(method, params);
+  try
+    Result := checkAndRetrieve(omc, Error);
+    if Error then
+    begin
+      Result := '';
+      Logdatei.Log(logErrorMessage, LLWarning);
+    end;
+  finally
+    omc.Free;
+  end;
+end;
+
 function TOpsi4Data.getOpsiServiceConfigs: string;
 var
   parastr: string;
-  jO: ISuperObject;
   errorOccured: boolean = False;
   omc: TOpsiMethodCall;
 begin
@@ -6113,53 +6133,38 @@ begin
   omc.Free;
 end;
 
+
 function TOpsi4Data.getConfigStateObjectsFromService(
   ConfigIDsAsJsonArray: string): string;
 var
-  params: string;
-  Error: boolean;
-  omc: TOpsiMethodCall;
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
 begin
   Result := '';
-  params := '{"objectId":"' + actualClient + '" ,' + '"configId":' +
-    ConfigIDsAsJsonArray + '}';
-  omc := TOpsiMethodCall.Create('configState_getObjects', ['', params]);
-  try
-    Result := checkAndRetrieve(omc, Error);
-    if Error then
-    begin
-      Result := '';
-      Logdatei.Log(
-        'Warning: Could not get config states from service (oswebservice: TOpsi4Data.getConfigStateObjectsFromService)',
-        LLWarning);
-    end;
-  finally
-    omc.Free;
-  end;
+  method :=  'configState_getObjects';
+  params := ['', '{"objectId":"' + actualClient + '" ,' + '"configId":' +
+    ConfigIDsAsJsonArray + '}'];
+  LogErrorMessage := 'Warning: Could not get config states from service (oswebservice: TOpsi4Data.getConfigStateObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
 end;
 
-function TOpsi4Data.getConfigObjectsFromService(ConfigIDsAsJsonArray: string): string;
+
+function TOpsi4Data.getConfigObjectsFromService(
+  ConfigIDsAsJsonArray: string): string;
 var
-  params: string;
-  Error: boolean;
-  omc: TOpsiMethodCall;
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
 begin
   Result := '';
-  params := '{"id":' + ConfigIDsAsJsonArray + '}';
-  omc := TOpsiMethodCall.Create('config_getObjects', ['', params]);
-  try
-    Result := checkAndRetrieve(omc, Error);
-    if Error then
-    begin
-      Result := '';
-      Logdatei.Log(
-        'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)',
-        LLWarning);
-    end;
-  finally
-    omc.Free;
-  end;
+  method :=  'config_getObjects';
+  params := ['', '{"id":' + ConfigIDsAsJsonArray + '}'];
+  LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
 end;
+
+
 
 (************************ End of TOpsi4Data ***********************************)
 
