@@ -277,10 +277,14 @@ begin
   if ScaleDesignToForm(Width) < ScaleDesignToForm(InnerWidth) + ScaleDesignToForm(StartLeft) then
     StartLeft := (ScaleDesignToForm(Width) - ScaleDesignToForm(InnerWidth)) div ScaleDesignToForm(2);
 
-  Panel.SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
-    ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
-  SetBounds(ScaleDesignToForm(StartLeft), ScaleDesignToForm(StartTop),
-    ScaleDesignToForm(InnerWidth), ScaleDesignToForm(InnerHeight));
+  Panel.Left := ScaleDesignToForm(StartLeft);
+  Panel.Top := ScaleDesignToForm(StartTop);
+  Panel.Width := ScaleDesignToForm(InnerWidth);
+  Panel.Height := ScaleDesignToForm(InnerHeight);
+  Left := ScaleDesignToForm(StartLeft);
+  Top := ScaleDesignToForm(StartTop);
+  Width := ScaleDesignToForm(InnerWidth);
+  Height := ScaleDesignToForm(InnerHeight);
   MoveToDefaultPosition;
 
   Color := clBlue;
@@ -408,7 +412,6 @@ begin
         //Top :=  ScaleDesignToForm(skinIni.ReadInteger('Form', 'Top', StartTop));
         //Width := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Width', 605));
         //Height := ScaleDesignToForm(skinIni.ReadInteger('Form', 'Height', 430));
-        //SetBounds(Left, Top, Width, Height);
         //Position := poScreenCenter;
         //MoveToDefaultPosition;
       //except
@@ -670,8 +673,8 @@ begin
     skinIni.Free;
 
     PanelFillScreen.Color := Panel.Color;
+    Repaint;
   end;
-
 end;
 
 procedure TFBatchOberflaeche.SetTracingLevel(const Level: integer);
@@ -1081,12 +1084,10 @@ begin
   //from the SkinIni file and sets these values for the given component.
   //It uses ScaleDesignToForm to be compatible with (windows) scaling.
   //Note: Scaling is usually only relevant for HighDPI screens.
-  Component.SetBounds(
-    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Left', DefaultLeft)),
-    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Top', DefaultTop)),
-    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Width', DefaultWidth)),
-    ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Height', DefaultHeight))
-    );
+  Component.Left := ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Left', DefaultLeft));
+  Component.Top := ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Top', DefaultTop));
+  Component.Width := ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Width', DefaultWidth));
+  Component.Height := ScaleDesignToForm(SkinIniFile.ReadInteger(NameInSkinIni, 'Height', DefaultHeight));
 end;
 
 
