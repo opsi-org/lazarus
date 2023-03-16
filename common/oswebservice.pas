@@ -4951,7 +4951,6 @@ begin
         omc := TOpsiMethodCall.Create('productProperty_getObjects',
         ['', '{", "propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
         Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
-      end;
       if (Result.Text = '') then
       begin
         LogDatei.log('Got empty property from service', LLInfo);
@@ -4964,6 +4963,7 @@ begin
           Result.AddStrings(TStrings(defaultlist));
           usedefault := True;
         end;
+      end;
     except
       on E: Exception do
       begin
