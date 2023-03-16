@@ -361,7 +361,7 @@ begin
   Result:=JsonArray;
 end;
 
-function ValueToBool(const Value: string; const ConfigName: string; Default:boolean): boolean;
+function ConfigValueToBool(const Value: string; const ConfigName: string; Default:boolean): boolean;
 begin
   if TryStrToBool(Value, Result) then
     osmain.startupmessages.Add('got ' + ConfigName + ': ' + BoolToStr(Result))
@@ -373,7 +373,7 @@ begin
   end;
 end;
 
-function ValueToInt(const Value: string; const ConfigName: string; Default:integer): integer;
+function ConfigValueToInt(const Value: string; const ConfigName: string; Default:integer): integer;
 begin
   if TryStrToInt(Value, Result) then
     osmain.startupmessages.Add('got ' + ConfigName + ': ' + IntToStr(Result))
@@ -386,8 +386,8 @@ begin
 end;
 
 
-procedure SetConfig(const JsonObject: TJSONObject; const SearchKey:string);
-(* function SetConfig set the value for a opsi-script Config (Host-Parameter)
+procedure SetSingleConfig(const JsonObject: TJSONObject; const SearchKey:string);
+(* function SetsingleConfig set the value for a opsi-script Config (Host-Parameter)
    The value is taken from an json object which contains the value and
    the corresponding config ID. The search key is "defaultValues" or "values"
    dependent on if it is a Config or ConfigState object.
@@ -400,29 +400,29 @@ begin
   configid := JsonObject.FindPath('configId').AsString;
   Value := JsonObject.FindPath(SearchKey).AsString;
   if LowerCase(configid) = LowerCase('opsi-script.global.debug_prog') then
-    debug_prog := ValueToBool(Value, 'debug_prog', False)
+    debug_prog := ConfigValueToBool(Value, 'debug_prog', False)
   else if LowerCase(configid) = LowerCase('opsi-script.global.debug_lib') then
-    debug_lib := ValueToBool(Value, 'debug_lib', False)
+    debug_lib := ConfigValueToBool(Value, 'debug_lib', False)
   else if LowerCase(configid) = LowerCase('opsi-script.global.default_loglevel') then
-    default_loglevel := ValueToInt(Value, 'debug_loglevel', 7)
+    default_loglevel := ConfigValueToInt(Value, 'default_loglevel', 7)
   else if LowerCase(configid) = LowerCase('opsi-script.global.force_min_loglevel') then
-    force_min_loglevel := ValueToInt(Value, 'force_min_loglevel', 0)
+    force_min_loglevel := ConfigValueToInt(Value, 'force_min_loglevel', 0)
   else if LowerCase(configid) = LowerCase('opsi-script.global.ScriptErrorMessages') then
-    ScriptErrorMessages := ValueToBool(Value, 'ScriptErrorMessages', False)
+    ScriptErrorMessages := ConfigValueToBool(Value, 'ScriptErrorMessages', False)
   else if LowerCase(configid) = LowerCase('opsi-script.global.AutoActivityDisplay') then
-    AutoActivityDisplay := ValueToBool(Value, 'AutoActivityDisplay', True)
+    AutoActivityDisplay := ConfigValueToBool(Value, 'AutoActivityDisplay', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
-    w10BitlockerSuspendOnReboot := ValueToBool(Value, 'w10BitlockerSuspendOnReboot', True)
+    w10BitlockerSuspendOnReboot := ConfigValueToBool(Value, 'w10BitlockerSuspendOnReboot', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
-    configReverseProductOrderByUninstall := ValueToBool(Value, 'ReverseProductOrderByUninstall', True)
+    configReverseProductOrderByUninstall := ConfigValueToBool(Value, 'ReverseProductOrderByUninstall', True)
   else if LowerCase(configid) = LowerCase('opsi-script.global.supressSystemEncodingWarning') then
-    configsupressSystemEncodingWarning := ValueToBool(Value, 'supressSystemEncodingWarning', False)
+    configsupressSystemEncodingWarning := ConfigValueToBool(Value, 'supressSystemEncodingWarning', False)
   else if LowerCase(configid) = LowerCase('opsi-script.global.log_rotation_count') then
-    log_rotation_count := ValueToInt(Value, 'log_rotation_count', 32)
+    log_rotation_count := ConfigValueToInt(Value, 'log_rotation_count', 32)
   else if LowerCase(configid) = LowerCase('opsi-script.global.writeProductLogFile') then
-    configwriteProductLogFile := ValueToBool(Value, 'global.writeProductLogFile', False)
+    configwriteProductLogFile := ConfigValueToBool(Value, 'writeProductLogFile', False)
   else if LowerCase(configid) = LowerCase('opsi-script.global.testSyntax') then
-    configtestSyntax := ValueToBool(Value, 'testSyntax', False);
+    configtestSyntax := ConfigValueToBool(Value, 'testSyntax', False);
 end;
 
 procedure SetConfigs(const JsonRpcResponse: string; SearchKey:string);
@@ -433,7 +433,7 @@ procedure SetConfigs(const JsonRpcResponse: string; SearchKey:string);
    or ConfigState object *)
 var
   ConfigEnum: TJSONEnum;
-  Config: TJSONObject;
+  SingleConfig: TJSONObject;
   Configs: TJSONArray;
 begin
   if JsonRpcResponse <> '' then
@@ -445,8 +445,8 @@ begin
       for ConfigEnum in Configs do
       begin
         // Cast the enum value to ConfigObject
-        Config := ConfigEnum.Value as TJSONObject;
-        SetConfig(Config, SearchKey);
+        SingleConfig := ConfigEnum.Value as TJSONObject;
+        SetSingleConfig(SingleConfig, SearchKey);
       end;
     end;
   end;
@@ -463,7 +463,7 @@ begin
     ConfigIDs.Clear;
     //Include here any new opsi-script configs in the list.
     //Do not forget to do this for the procedure SetConfig, too.
-    ConfigIDs.Append(LowerCase('opsi-script.global.debug_pro'));
+    ConfigIDs.Append(LowerCase('opsi-script.global.debug_prog'));
     ConfigIDs.Append(LowerCase('opsi-script.global.debug_lib'));
     ConfigIDs.Append(LowerCase('opsi-script.global.default_loglevel'));
     ConfigIDs.Append(LowerCase('opsi-script.global.force_min_loglevel'));
