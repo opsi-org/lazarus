@@ -124,7 +124,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Width = 337
         Alignment = taCenter
         AutoSize = False
-        Caption = 'LabelProductImage'
+        Caption = 'LabelProduct'
         Font.Color = clBlack
         Font.Height = 42
         Font.Name = 'Arial'
