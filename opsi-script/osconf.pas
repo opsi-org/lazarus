@@ -388,10 +388,11 @@ end;
 
 
 procedure SetSingleConfig(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
-(* function SetsingleConfig set the value for a opsi-script Config (Host-Parameter)
-   The value is taken from an json object which contains the value and
-   the corresponding config ID. The KeyConfigID is "id" or "configID" and the KeyConfigValue is "defaultValues" or "values"
-   dependent on if it is a Config or ConfigState object.
+(* Procedure SetsingleConfig sets the value for an opsi-script config (Host-Parameter).
+   The value is taken from a json object which contains the value and
+   the corresponding config ID.
+   The KeyConfigID is "id" or "configId" and the KeyConfigValue is "defaultValues" or "values"
+   depending on if it is a Config or ConfigState object.
 
    Include here any new opsi-script Config *)
 var
@@ -429,11 +430,12 @@ begin
 end;
 
 procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
-(* procedure SetConfigs extracts the values of opsi-script Configs from an JSON-RPC response.
-   Therefore it loops through the result of the response. The expected result is an json array
+(* Procedure SetConfigs extracts the values of opsi-script configs from a JSON-RPC response.
+   Therefore it loops through the result of the response. The expected result is a json array
    containing different Config or ConfigState objects in json object format.
-   The KeyConfigID is "id" or "configID" and the KeyConfigValue is "defaultValues"
-   or "values" dependend on if it is a Config or ConfigState object *)
+   The KeyConfigID is "id" or "configId" and the KeyConfigValue is "defaultValues"
+   or "values" depending on if it is a Config or ConfigState object *)
+
 var
   ConfigEnum: TJSONEnum;
   SingleConfig: TJSONObject;
