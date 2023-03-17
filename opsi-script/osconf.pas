@@ -179,7 +179,8 @@ uses
   {$IFDEF UNIX}osfunclin,{$ENDIF}
   oswebservice,
   osjson,
-  osmain;
+  osmain,
+  oslog;
 
 function writeConfig: boolean;
 var
@@ -386,51 +387,53 @@ begin
 end;
 
 
-procedure SetSingleConfig(const JsonObject: TJSONObject; const SearchKey:string);
+procedure SetSingleConfig(const JsonObject: TJSONObject; const KeyConfigID:string; const KeyConfigValue:string);
 (* function SetsingleConfig set the value for a opsi-script Config (Host-Parameter)
    The value is taken from an json object which contains the value and
-   the corresponding config ID. The search key is "defaultValues" or "values"
+   the corresponding config ID. The KeyConfigID is "id" or "configID" and the KeyConfigValue is "defaultValues" or "values"
    dependent on if it is a Config or ConfigState object.
 
    Include here any new opsi-script Config *)
 var
-  configid : string;
+  ConfigID : string;
   Value: string;
 begin
-  configid := JsonObject.FindPath('configId').AsString;
-  Value := JsonObject.FindPath(SearchKey).AsString;
-  if LowerCase(configid) = LowerCase('opsi-script.global.debug_prog') then
+  ConfigID := LowerCase(JsonObject.FindPath(KeyConfigID).AsString);
+  Value := JsonObject.FindPath(KeyConfigValue).AsString;
+  if ConfigID = LowerCase('opsi-script.global.debug_prog') then
     debug_prog := ConfigValueToBool(Value, 'debug_prog', False)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.debug_lib') then
+  else if ConfigID = LowerCase('opsi-script.global.debug_lib') then
     debug_lib := ConfigValueToBool(Value, 'debug_lib', False)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.default_loglevel') then
+  else if ConfigID = LowerCase('opsi-script.global.default_loglevel') then
     default_loglevel := ConfigValueToInt(Value, 'default_loglevel', 7)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.force_min_loglevel') then
+  else if ConfigID = LowerCase('opsi-script.global.force_min_loglevel') then
     force_min_loglevel := ConfigValueToInt(Value, 'force_min_loglevel', 0)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.ScriptErrorMessages') then
+  else if ConfigID = LowerCase('opsi-script.global.ScriptErrorMessages') then
     ScriptErrorMessages := ConfigValueToBool(Value, 'ScriptErrorMessages', False)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.AutoActivityDisplay') then
+  else if ConfigID = LowerCase('opsi-script.global.AutoActivityDisplay') then
     AutoActivityDisplay := ConfigValueToBool(Value, 'AutoActivityDisplay', True)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
+  else if ConfigID = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
     w10BitlockerSuspendOnReboot := ConfigValueToBool(Value, 'w10BitlockerSuspendOnReboot', True)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
+  else if ConfigID = LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
     configReverseProductOrderByUninstall := ConfigValueToBool(Value, 'ReverseProductOrderByUninstall', True)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.supressSystemEncodingWarning') then
+  else if ConfigID = LowerCase('opsi-script.global.supressSystemEncodingWarning') then
     configsupressSystemEncodingWarning := ConfigValueToBool(Value, 'supressSystemEncodingWarning', False)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.log_rotation_count') then
+  else if ConfigID = LowerCase('opsi-script.global.log_rotation_count') then
     log_rotation_count := ConfigValueToInt(Value, 'log_rotation_count', 32)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.writeProductLogFile') then
+  else if ConfigID = LowerCase('opsi-script.global.writeProductLogFile') then
     configwriteProductLogFile := ConfigValueToBool(Value, 'writeProductLogFile', False)
-  else if LowerCase(configid) = LowerCase('opsi-script.global.testSyntax') then
-    configtestSyntax := ConfigValueToBool(Value, 'testSyntax', False);
+  else if ConfigID = LowerCase('opsi-script.global.testSyntax') then
+    configtestSyntax := ConfigValueToBool(Value, 'testSyntax', False)
+  else if KeyConfigValue = 'defaultValues' then
+    LogDatei.log('Unknown opsi-script config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)', LLWarning);
 end;
 
-procedure SetConfigs(const JsonRpcResponse: string; SearchKey:string);
+procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
 (* procedure SetConfigs extracts the values of opsi-script Configs from an JSON-RPC response.
    Therefore it loops through the result of the response. The expected result is an json array
    containing different Config or ConfigState objects in json object format.
-   The search key is "defaultValues" or "values" dependend on if it is a Config
-   or ConfigState object *)
+   The KeyConfigID is "id" or "configID" and the KeyConfigValue is "defaultValues"
+   or "values" dependend on if it is a Config or ConfigState object *)
 var
   ConfigEnum: TJSONEnum;
   SingleConfig: TJSONObject;
@@ -446,7 +449,7 @@ begin
       begin
         // Cast the enum value to ConfigObject
         SingleConfig := ConfigEnum.Value as TJSONObject;
-        SetSingleConfig(SingleConfig, SearchKey);
+        SetSingleConfig(SingleConfig, KeyConfigID, KeyConfigValue);
       end;
     end;
   end;
@@ -482,10 +485,10 @@ begin
         ConfigIDsAsJsonArray:=StringListAsJsonArray(ConfigIDs);
         //Get defaults from service and set config default values
         JsonRpcResponse := OpsiData.getConfigObjectsFromService(ConfigIDsAsJsonArray);
-        SetConfigs(JsonRpcResponse, 'defaultValues');
+        SetConfigs(JsonRpcResponse, 'id', 'defaultValues');
         //Get actual values from service and set actual config values
         JsonRpcResponse := OpsiData.getConfigStateObjectsFromService(ConfigIDsAsJsonArray);
-        SetConfigs(JsonRpcResponse, 'values');
+        SetConfigs(JsonRpcResponse, 'configId', 'values');
         Result := 'readConfigFromService: ok';
       except
         on e: Exception do
