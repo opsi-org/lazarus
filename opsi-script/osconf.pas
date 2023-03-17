@@ -125,6 +125,7 @@ var
   depotshare, depotdir: string;
   depotdrive, depotdrive_old: string;
   depotpath: string;
+  DepotUser: string;
   TempPath: string;
   LogPath: string;
   TmpPathFromLogdatei: string;
@@ -425,8 +426,10 @@ begin
     configwriteProductLogFile := ConfigValueToBool(Value, 'writeProductLogFile', False)
   else if ConfigID = LowerCase('opsi-script.global.testSyntax') then
     configtestSyntax := ConfigValueToBool(Value, 'testSyntax', False)
+  else if ConfigID = LowerCase('clientconfig.depot.user') then
+    DepotUser := Value
   else if KeyConfigValue = 'defaultValues' then
-    LogDatei.log('Unknown opsi-script config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)', LLWarning);
+    LogDatei.log('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)', LLWarning);
 end;
 
 procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
@@ -480,6 +483,7 @@ begin
     ConfigIDs.Append(LowerCase('opsi-script.global.log_rotation_count'));
     ConfigIDs.Append(LowerCase('opsi-script.global.writeProductLogFile'));
     ConfigIDs.Append(LowerCase('opsi-script.global.testSyntax'));
+    ConfigIDs.Append(LowerCase('clientconfig.depot.user'));
 
     if opsidata.isConnected2(startupmessages) then
     begin
