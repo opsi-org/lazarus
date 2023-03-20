@@ -339,7 +339,6 @@ begin
     mydepot := opsidata.depotId;
     myuser := 'pcpatch';
     mydomain := '';
-    //writeln('depotId=',mydepot);
     LogDatei.log('Depot user from service: ' + DepotUser, LLNotice);
     if Depotuser <> '' then
     begin
@@ -350,24 +349,6 @@ begin
       end;
     end;
 
-
-    (*
-      deprecated: getGeneralConfigValue    (do 04.01.2022)
-    resultstring := MyOpsiMethodCall('getGeneralConfigValue',
-      ['clientconfig.depot.user', myclientid]);
-    mydepotuser := trim(SO(resultstring).S['result']);
-    LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
-    if mydepotuser <> '' then
-    begin
-      if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
-      begin
-        myuser := mydepotuser;
-        mydomain := '';
-      end
-    end
-    else { we got no clientconfig.depot.user }
-      myuser := 'pcpatch';
-      *)
     LogDatei.log('Will use as domain: ' + mydomain + ' as user: ' + myuser, LLNotice);
     resultstring := MyOpsiMethodCall('user_getCredentials', ['pcpatch', myclientid]);
     myencryptedpass := SO(resultstring).O['result'].S['password'];
@@ -377,13 +358,11 @@ begin
     logdatei.AddToConfidentials(mypass);
     LogDatei.log('Will use as encryptedpass: ' + myencryptedpass +
       ' clear pass: ' + mypass, LLInfo);
-    //writeln('mypass=',mypass);
     resultstring := MyOpsiMethodCall('host_getObjects',
       ['', '{"type":"OpsiDepotserver","id":["' + myDepot + '"]}']);
     myshare := SO(resultstring).S['result'];
     myshare := SO(resultstring).O['result'].AsArray.O[0].S['depotRemoteUrl'];
     myshare := copy(myshare, 5, length(myshare));
-    //writeln('myshare=',myshare);
     umount(mymountpoint);
 
     mounttry := 0;
