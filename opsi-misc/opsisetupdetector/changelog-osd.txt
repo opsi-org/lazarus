@@ -28,11 +28,14 @@ stWixToolset,
 * National Instruments installer
   ** Labview32 in phywe/measure-ct
   ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
+
 * Bitrock Installer
   * setupmspec32bits.exe (Phywe spec)
   * pattern: <description>BitRock Installer</description>
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
   * --mode unattended --unattendedmodeui minimal
+  * was vmware installbuilder
+  * now installBuilder : https://installbuilder.com/
 
 * Astrum astrum-installwizard
   * Firma is dead:
