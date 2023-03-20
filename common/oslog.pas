@@ -1043,6 +1043,7 @@ begin
       FileClose(LogPartFileF);
 
   FreeAndNil(FNoLogFiles);
+  FreeAndNil(FConfidentialStrings);
   inherited Destroy;
 end;
 
