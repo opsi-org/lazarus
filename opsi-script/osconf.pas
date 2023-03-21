@@ -366,12 +366,12 @@ end;
 function ConfigValueToBool(const Value: string; const ConfigName: string; Default:boolean): boolean;
 begin
   if TryStrToBool(Value, Result) then
-    osmain.startupmessages.Add('got ' + ConfigName + ': ' + BoolToStr(Result))
+    osmain.startupmessages.Add('got ' + ConfigName + ': ' + BoolToStr(Result,True))
   else
   begin
     Result := Default;
     osmain.startupmessages.Add('Error: Not a Boolean: ' + ConfigName +
-      ': ' + Value + ' using default value: ' + BoolToStr(Result));
+      ': ' + Value + ' using default value: ' + BoolToStr(Result,True));
   end;
 end;
 
@@ -401,7 +401,7 @@ var
   Value: string;
 begin
   ConfigID := LowerCase(JsonObject.FindPath(KeyConfigID).AsString);
-  Value := JsonObject.FindPath(KeyConfigValue).AsString;
+  Value := (JsonObject.FindPath(KeyConfigValue) as TJSONArray).Items[0].AsString;
   if ConfigID = LowerCase('opsi-script.global.debug_prog') then
     debug_prog := ConfigValueToBool(Value, 'debug_prog', False)
   else if ConfigID = LowerCase('opsi-script.global.debug_lib') then
@@ -427,9 +427,12 @@ begin
   else if ConfigID = LowerCase('opsi-script.global.testSyntax') then
     configtestSyntax := ConfigValueToBool(Value, 'testSyntax', False)
   else if ConfigID = LowerCase('clientconfig.depot.user') then
-    DepotUser := Value
+  begin
+    DepotUser := Value;
+    startupmessages.Append('got ' + ConfigID);
+  end
   else if KeyConfigValue = 'defaultValues' then
-    LogDatei.log('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)', LLWarning);
+    startupmessages.Append('Unknown config: ' + ConfigID + ' (osconf.pas: procedure SetSingleConfig)');
 end;
 
 procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfigValue:string);
@@ -442,13 +445,15 @@ procedure SetConfigs(const JsonRpcResponse: string; KeyConfigID:string; KeyConfi
 var
   ConfigEnum: TJSONEnum;
   SingleConfig: TJSONObject;
+  JSONResult: TJSONData;
   Configs: TJSONArray;
 begin
   if JsonRpcResponse <> '' then
   begin
-    Configs := GetJSON(JsonRpcResponse).FindPath('result') as TJSONArray;
-    if Configs <> nil then
-      begin
+    JSONResult := GetJSON(JsonRpcResponse).FindPath('result');
+    if (JSONResult <> nil) and not(JSONResult is TJSONNull) and (JSONResult.AsJSON <> '[]') then
+    begin
+      Configs:= JSONResult as TJSONArray;
       // Loop using the TJSONEnumerator
       for ConfigEnum in Configs do
       begin
@@ -456,7 +461,9 @@ begin
         SingleConfig := ConfigEnum.Value as TJSONObject;
         SetSingleConfig(SingleConfig, KeyConfigID, KeyConfigValue);
       end;
-    end;
+    end
+    else
+      startupmessages.Append('Got no configs, json result was: '+ JSONResult.AsJSON);
   end;
 end;
 
@@ -499,9 +506,9 @@ begin
       except
         on e: Exception do
         begin
-          startupmessages.Append('Exception in readConfigFromService: ' +
-            'opsidata.getOpsiServiceConfigs: ' + e.message + ' ' + DateTimeToStr(Now));
-          Result := '';
+          startupmessages.Append('Exception in readConfigFromService: '
+            + e.message + ' ' + DateTimeToStr(Now));
+          Result := 'Could not read configs from service';
         end;
       end;
     end;
