@@ -4943,20 +4943,37 @@ begin
     myproperty + '", "productId": "' + myProductId + '"}']);
   try
     try
+      LogDatei.log('Try to get PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') (productPropertyState_getObjects)', LLDebug);
       Result := FjsonExecutioner.getSubListResult(omc, 'values');
-      LogDatei.log('Result for productPropertyState_getObjects from service: ' + Result.Text, LLDebug);
+
       //result is probably empty because productPropertyState_getObjects returns
-      //an empty value if the property has the server default value
+      //an empty value if the property has the depot or server default value
       if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
       begin
-        LogDatei.log('Got no product property state object from service (productPropertyState_getObjects)', LLDebug);
+        LogDatei.log('Got no PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') from service (productPropertyState_getObjects)', LLDebug);
         if assigned(omc) then omc.Free;
-        //get default value
-        LogDatei.log('Try to get product property default value from service (productPropertye_getObjects)', LLDebug);
-        omc := TOpsiMethodCall.Create('productProperty_getObjects',
-        ['', '{"propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
-        Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
+        //get depot default value
+        LogDatei.log('Try to get PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') (productPropertyState_getObjects)', LLDebug);
+        omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
+          ['', '{"objectId": "' + DepotId + '", "propertyId": "' +
+          myproperty + '", "productId": "' + myProductId + '"}']);
+        Result := FjsonExecutioner.getSubListResult(omc, 'values');
+
+        //result is probably empty because productPropertyState_getObjects returns
+        //an empty value if the property has the server default value
+        if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
+        begin
+          LogDatei.log('Got no PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') from service (productPropertyState_getObjects)', LLDebug);
+          if assigned(omc) then omc.Free;
+          //get server default value
+          LogDatei.log('Try to get PRODUCT PROPERTY object (SERVER defaults) from service (productProperty_getObjects)', LLDebug);
+          omc := TOpsiMethodCall.Create('productProperty_getObjects',
+          ['', '{"propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
+          Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
+        end;
       end;
+
+
       if (Result.Text = '') then
       begin
         LogDatei.log('Got empty property value from service', LLWarning);
