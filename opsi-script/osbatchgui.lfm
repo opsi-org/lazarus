@@ -98,7 +98,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
         Height = 16
         Top = 16
         Width = 85
-        Alignment = taRightJustify
         Caption = 'LabelVersion'
         Font.Color = clBlack
         Font.Height = 11
