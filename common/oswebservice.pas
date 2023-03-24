@@ -197,6 +197,7 @@ type
       read FJSONValueSyntaxInParameterList write FJSONValueSyntaxInParameterList;
   end;
 
+
   { TJsonThroughHTTPS }
 
   TJsonThroughHTTPS = class(TObject)
@@ -411,10 +412,6 @@ type
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
     function getListOfProducts: TStringList; override;
-    function setAddDependentProductOnClients(switchon: boolean): boolean;
-    function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
-    function setAddProductOnClientDefaults(switchon: boolean): boolean;
-    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList; var usedefault: boolean): TStringList; overload;
     function getProductPropertyList(myproperty: string;
@@ -460,7 +457,10 @@ type
     function getMapOfProductActionRequests: TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
+    function getJSONFromService(const method: string; const params: array of string; logErrorMessage: string):string;
     function getOpsiServiceConfigs: string;
+    function getConfigStateObjectsFromService(ConfigIDsAsJsonArray:string):string;
+    function getConfigObjectsFromService(ConfigIDsAsJsonArray:string):string;
     function getLogSize: int64;
     function getProductIds: TStringList;
     function getLocalbootProductIds: TStringList;
@@ -484,6 +484,7 @@ type
     procedure finishProduct; override;
     procedure setActualProductActionRequest(request: string);
     procedure setProductActionRequest(newAction: TActionRequest); override;
+    procedure setProductActionRequestWithDependencies(newAction: TActionRequest);
     procedure setProductState(newState: TProductState); override;
     procedure setProductProgress(myprogres: string);
     procedure setProductStateActionRequest(newState: TProductState;
@@ -723,34 +724,11 @@ end;
 function getOpsiServiceVersion(const serviceUrl: string; const username: string;
   const password: string; var sessionid: string): string;
 var
-  verstr: string;
   sign: integer;
   InfoSyntaxError: string;
 begin
   Result := '4'; //default to opsi 4.x
-  verstr := getOpsiServerVersion(serviceUrl, username, password, sessionid);
-  OpsiVersion := verstr;
-  (*
-  if verstr = '' then
-    Result := ''
-  else
-  begin
-    if getDecimalCompareSign(verstr, '3.5', sign, InfoSyntaxError, False) then
-    begin
-      if sign = 0 then
-        LogDatei.log('Internal Error: Opsi Server Version:>' +
-          verstr + '< is >3.5< which was never released', LLerror);
-      if sign = 1 then
-        Result := '4';
-      if sign = -1 then
-        Result := '3';
-    end
-    else
-      LogDatei.log('Internal Error: Opsi Server Version:>' +
-        verstr + '< is not doted numbers', LLerror);
-    end;
-  end;
-*)
+  OpsiVersion := getOpsiServerVersion(serviceUrl, username, password, sessionid);
 end;
 
 function sayActionType(action: TAction): string;
@@ -781,6 +759,7 @@ begin
   new_obj := SO(str);
   Result := new_obj.asJson;
 end;
+
 
 procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
 var
@@ -3484,7 +3463,6 @@ var
   jO, jO1: ISuperObject;
   jA: TSuperArray;
   i: integer;
-  testresult: string;
 begin
   Result := TStringList.Create;
   jO := retrieveJSONObject(omc);
@@ -3492,17 +3470,12 @@ begin
   begin
     exit;
   end;
-  testresult := jO.AsJSon(False, False);
   jO1 := jO.O['result'];
   jA := jO.O['result'].AsArray;
-  if jA.Length > 0 then
-    testresult := jA.S[0];
   if jA <> nil then
   begin
-    //testresult := jA.
     for i := 0 to jA.Length - 1 do
     begin
-      testresult := jA.S[i];
       Result.append(jA.S[i]);
     end;
   end;
@@ -3521,7 +3494,8 @@ begin
     jO := retrieveJSONObject(omc);
     if jO = nil then
     begin
-      LogDatei.log_prog('Got no object from web service', LLWarning);
+      LogDatei.log_prog('Got no JSON object from web service', LLWarning);
+      Result.text :=  'Error';
       exit;
     end;
     // we have something like
@@ -3556,23 +3530,23 @@ begin
       end
       else
       begin
-        Logdatei.log('Error in getSubListResult: received object: ' +
-          jO.AsString + ' has empty "result"', LLWarning);
-        Result := nil;
+        Logdatei.log('getSubListResult: received object: ' +
+          jO.AsString + ' has empty "result"', LLInfo);
+        Result.Text := 'Empty result';
       end;
     end
     else
     begin
       Logdatei.log('Error in getSubListResult: received object: ' +
         jO.AsString + ' has no key "result"', LLError);
-      Result := nil;
+      Result.Text := 'Error';
     end;
   except
     on E: Exception do
     begin
       Logdatei.log_prog('Exception in getSubListResult, system message: "' +
         E.Message + ' with received object: ' + jO.AsString + '"', LLError);
-      Result := nil;
+      Result.Text := 'Error';
     end
   end;
 end;
@@ -4483,11 +4457,9 @@ var
   omc: TOpsiMethodCall;
   str: SOString;
   jO: ISuperObject;
-  ite: TSuperObjectIter;
   omcresult: TStringList;
 begin
   Result := True;
-  // reset FProductOnClient_aktobject
   FProductOnClient_aktobject := nil;
   omc := TOpsiMethodCall.Create('getProduct_hash', [actualProduct, FDepotId]);
   omcresult := FjsonExecutioner.getMapResult(omc);
@@ -4496,7 +4468,6 @@ begin
   begin
     LogDatei.log('Error: Opsi4Data.initProduct: getProduct_hash failed: retry',
       LLWarning);
-    //ProcessMess;
     Sleep(500);
     omc := TOpsiMethodCall.Create('getProduct_hash', [actualProduct, FDepotId]);
     omcresult := FJsonExecutioner.getMapResult(omc);
@@ -4525,22 +4496,7 @@ begin
       begin
         jO := SO(mylist.Strings[0]);
         str := jO.AsJSon;
-        //superobject.
-        //FProductOnClient_aktobject := TSuperobject.Create(mylist.Items[0]);
         FProductOnClient_aktobject := SO(str);
-        //FProductOnClient_aktobject := TSuperobject.create(str);
-        //FProductOnClient_aktobject := SO(str);
-        str := FProductOnClient_aktobject.AsJSon(False, False);
-        str := FProductOnClient_aktobject.asJson(False, False);
-        str := FProductOnClient_aktobject.S['"clientId"'];
-        str := FProductOnClient_aktobject.AsObject.S['clientId'];
-        str := FProductOnClient_aktobject.S['"clientId"'];
-        if ObjectFindFirst(FProductOnClient_aktobject, ite) then
-          repeat
-            str := ite.key + ': ' + ite.val.AsJson;
-          until not ObjectFindNext(ite);
-        ObjectFindClose(ite);
-        //FProductOnClient_aktobject := TSuperObject.create(str);
       end
       else
         {$IFDEF OPSISCRIPT}
@@ -4556,7 +4512,6 @@ begin
       else
         LogDatei.log('no productOnClient found for depot: ' +
           actualClient + ' and product: ' + Productvars.Values['productId'], LLerror);
-    //FProductOnClient_aktobject := FjsonExecutioner.retrieveJSONObject(omc);
   end
   else
     LogDatei.log('no product_hash found for client: ' + FDepotId +
@@ -4941,93 +4896,6 @@ begin
   end;
 end;
 
-function TOpsi4Data.setAddDependentProductOnClients(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addDependentProductOnClients": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addDependentProductOnClients": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-    //LogDatei.log('Product sequence calculated with dependencies', LLerror);
-  except
-    on E: Exception do
-    begin
-      Logdatei.log('Exception in setAddDependentProductOnClients, system message: "' +
-        E.Message + '"', LLwarning);
-      Result := False;
-    end;
-  end;
-end;
-
-function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-  except
-    Result := False;
-  end;
-end;
-
-function TOpsi4Data.setAddProductPropertyStateDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductPropertyStateDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductPropertyStateDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-    //LogDatei.log('Product sequence calculated with dependencies', LLerror);
-  except
-    //LogDatei.log('Product sequence not calculated with dependencies', LLerror);
-    Result := False;
-  end;
-end;
-
-function TOpsi4Data.setAddProductOnClientDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductOnClientDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addProductOnClientDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-  except
-    Result := False;
-  end;
-end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList; var usedefault: boolean): TStringList;
@@ -5067,52 +4935,58 @@ function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList; myClientId: string; myProductId: string;
   var usedefault: boolean): TStringList;
 var
-  resultlist: TStringList;
   omc: TOpsiMethodCall;
-  i: integer;
-  propertyEntry: ISuperObject;
 begin
-  Result := TStringList.Create;
   usedefault := False;
+  omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
+    ['', '{"objectId": "' + myClientId + '", "propertyId": "' +
+    myproperty + '", "productId": "' + myProductId + '"}']);
   try
     try
-      if setAddProductPropertyStateDefaults(True) then
+      LogDatei.log('Try to get PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') (productPropertyState_getObjects)', LLDebug);
+      Result := FjsonExecutioner.getSubListResult(omc, 'values');
+
+      //result is probably empty because productPropertyState_getObjects returns
+      //an empty value if the property has the depot or server default value
+      if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
       begin
+        LogDatei.log('Got no PRODUCT PROPERTY STATE object for CLIENT(' + myClientId + ') from service (productPropertyState_getObjects)', LLDebug);
+        if assigned(omc) then omc.Free;
+        //get depot default value
+        LogDatei.log('Try to get PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') (productPropertyState_getObjects)', LLDebug);
         omc := TOpsiMethodCall.Create('productPropertyState_getObjects',
-          ['', '{"objectId": "' + myClientId + '", "propertyId": "' +
+          ['', '{"objectId": "' + DepotId + '", "propertyId": "' +
           myproperty + '", "productId": "' + myProductId + '"}']);
-        resultList := FjsonExecutioner.getSubListResult(omc, 'values');
-        omc.Free;
-        if resultList <> nil then
+        Result := FjsonExecutioner.getSubListResult(omc, 'values');
+
+        //result is probably empty because productPropertyState_getObjects returns
+        //an empty value if the property has the server default value
+        if (Result[0] = 'Empty result') or (Result[0] = 'Error')  then
         begin
-          if resultList.Count > 0 then
-          begin
-            for i := 0 to resultList.Count - 1 do
-            begin
-              LogDatei.log('ProductPropertyList[' + IntToStr(
-                i) + ']: ' + resultList.Strings[i], LLDebug3);
-              Result.add(resultList.Strings[i]);
-            end;
-          end
-          else
-          begin
-            LogDatei.log('Got empty property from service', LLInfo);
-          end;
-        end
-        else
+          LogDatei.log('Got no PRODUCT PROPERTY STATE object for DEPOT(' + DepotId + ') from service (productPropertyState_getObjects)', LLDebug);
+          if assigned(omc) then omc.Free;
+          //get server default value
+          LogDatei.log('Try to get PRODUCT PROPERTY object (SERVER defaults) from service (productProperty_getObjects)', LLDebug);
+          omc := TOpsiMethodCall.Create('productProperty_getObjects',
+          ['', '{"propertyId": "' + myproperty + '", "productId": "' + myProductId + '"}']);
+          Result := FjsonExecutioner.getSubListResult(omc, 'defaultValues');
+        end;
+      end;
+
+
+      if (Result.Text = '') then
+      begin
+        LogDatei.log('Got empty property value from service', LLWarning);
+      end
+      else
+      begin
+        if (Result[0] = 'Empty result') or (Result[0] = 'Error') then
         begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
           Result.AddStrings(TStrings(defaultlist));
           usedefault := True;
         end;
-      end
-      else
-      begin
-        LogDatei.log('Could not set backend properties - using defaults.',
-          LLWarning);
-        Result.AddStrings(TStrings(defaultlist));
-        usedefault := True;
       end;
     except
       on E: Exception do
@@ -5125,7 +4999,7 @@ begin
       end
     end;
   finally
-    setAddProductPropertyStateDefaults(False);
+    if Assigned(omc)then FreeAndNil(omc);
   end;
 end;
 
@@ -5161,21 +5035,13 @@ var
   resultlist: TStringList;
   omc: TOpsiMethodCall;
   productEntry: ISuperObject;
-  jo, new_obj, sort_obj: ISuperObject;
-  sort_array, poc_array: TSuperArray;
+  jo, new_obj: ISuperObject;
+  sort_array: TSuperArray;
   sortlist: TStringList;
-  productid: string;
   i, k: integer;
   found: boolean;
-
-  ///ptr : pointer;
 begin
   Result := TStringList.Create;
-  // switch on product sorting
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": true}']);
-  //productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-  //omc := TOpsiMethodCall.create ('productOnClient_getObjects', ['','{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'+actualClient+'", "productType": "LocalbootProduct"}']);
   try
     logdatei.log_prog('Starting sorting POC ', LLinfo);
     // get sorted productId list
@@ -5184,8 +5050,7 @@ begin
     new_obj := jo.O['result'];
     sort_array := new_obj.A['sorted'];
     sortlist := TStringList.Create;
-    //if new_obj.IsType(stArray) then
-    //begin
+
     for i := 0 to sort_array.Length - 1 do
     begin
       sortlist.Append(sort_array.S[i]);
@@ -5197,9 +5062,6 @@ begin
       ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
 
     resultList := FjsonExecutioner.getListResult(omc);
-    //FProductOnClient_objects := FjsonExecutioner.retrieveJSONArray(omc);
-    //resultList := FProductOnClient_objects.toList;
-
 
     if FProductStates = nil then
       FProductStates := TStringList.Create;
@@ -5220,7 +5082,6 @@ begin
         begin
           Result.add(productEntry.S['productId'] + '=' +
             productEntry.S['actionRequest']);
-          //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
           FProductStates.Add(productEntry.S['productId'] + '=' +
             productEntry.S['installationStatus']);
           LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
@@ -5236,34 +5097,17 @@ begin
             sortlist.Strings[i], LLDebug2);
       end;
       logdatei.log_prog('Finished sorting POC  ', LLinfo);
-    (*
-      for i := 0 to resultList.Count - 1 do
-      begin
-        productEntry := SO(resultlist.Strings[i]);
-        //productEntry := resultList.
-        if (productEntry.O['productId'] <> nil) then
-        begin
-          Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
-          //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
-          FProductStates.Add(productEntry.S['productId'] + '=' +
-            productEntry.S['installationStatus']);
-          LogDatei.log('action entry : ' + productEntry.S['productId'] +
-            '=' + productEntry.S['actionRequest'], LLDebug);
-          LogDatei.log('state entry : ' + productEntry.S['productId'] +
-            '=' + productEntry.S['installationStatus'], LLDebug);
-        end;
-        testresult := Result.Text;
-      end;
-      *)
     end;
 
   except
     logdatei.log('Failed fetching sorted POC list !', LLError);
     logdatei.log('No correct calculated installation sequence !', LLError);
     logdatei.log('Starting fetching unsorted POC list', LLinfo);
+
     // switch on old (wrong) product sorting
     omc := TOpsiMethodCall.Create('backend_setOptions',
       ['{"processProductOnClientSequence": true}']);
+
     productEntry := FjsonExecutioner.retrieveJSONObject(omc);
     omc := TOpsiMethodCall.Create('productOnClient_getObjects',
       ['', '{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'
@@ -5272,11 +5116,9 @@ begin
     for i := 0 to resultList.Count - 1 do
     begin
       productEntry := SO(resultlist.Strings[i]);
-      //productEntry := resultList.
       if (productEntry.O['productId'] <> nil) then
       begin
         Result.add(productEntry.S['productId'] + '=' + productEntry.S['actionRequest']);
-        //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
         FProductStates.Add(productEntry.S['productId'] + '=' +
           productEntry.S['installationStatus']);
         LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
@@ -5286,13 +5128,15 @@ begin
       end;
       testresult := Result.Text;
     end;
+
     // switch off product sorting again
     omc := TOpsiMethodCall.Create('backend_setOptions',
       ['{"processProductOnClientSequence": false}']);
     productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+
     logdatei.log_prog('Finished fetching unsorted POC list', LLinfo);
+    omc.Free;
   end;
-  omc.Free;
 end;
 
 function TOpsi4Data.getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
@@ -5401,80 +5245,6 @@ begin
   FreeAndNil(loginscriptmap);
 end;
 
-(* seems to be not in use do 20190826
-
-procedure TOpsi4Data.productOnClient_getobject_actualclient;
-var
-  ///resultlist : TList;
-  omc: TOpsiMethodCall;
-  ///i : Integer;
-  jo, new_obj, sort_obj: ISuperObject;
-  sort_array, poc_array: TSuperArray;
-  sortlist: TStringList;
-  productid: string;
-  i, k: integer;
-  found: boolean;
-begin
-  //result := TStringList.create;
-  //LogDatei.LogLevel := LLdebug2;
-  // switch off product sorting again
-  // 4.11.6.1 24.5.2016: sorting by server broken
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": true}']);
-  logdatei.log_prog('Starting sorting POC : productOnClient_getobject_actualclient',
-    LLinfo);
-  // getting sorted productIdList
-  omc := TOpsiMethodCall.Create('getProductOrdering', [FDepotId]);
-  jo := FjsonExecutioner.retrieveJSONObject(omc);
-  new_obj := jo.O['result'];
-  sort_array := new_obj.A['sorted'];
-  sortlist := TStringList.Create;
-  //if new_obj.IsType(stArray) then
-  //begin
-  for i := 0 to sort_array.Length - 1 do
-  begin
-    sortlist.Append(sort_array.S[i]);
-    logdatei.log_prog('Sorted productId: ' + sortlist.Strings[i] +
-      ' at pos: ' + IntToStr(i), LLDebug2);
-  end;
-  //end;
-  //else LogDatei.log('Error handling getProductOrdering result', LLError);
-  // getting unsorted POC
-  omc := TOpsiMethodCall.Create('productOnClient_getObjects',
-    ['', '{ "clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
-  // sorting result to  FProductOnClient_objects
-  poc_array := FjsonExecutioner.retrieveJSONArray(omc);
-  sort_array.Clear(True);
-  for i := 0 to sortlist.Count - 1 do
-  begin
-    found := False;
-    k := 0;
-    repeat
-      if sortlist.Strings[i] = poc_array.O[k].S['productId'] then
-        found := True;
-      Inc(k);
-    until found or (k = poc_array.Length);
-    if found then
-    begin
-      sort_array.Add(poc_array.O[k - 1]);
-      logdatei.log_prog('found POC entry with productId: ' +
-        sortlist.Strings[i] + ' with pos: ' + IntToStr(i) + ' / ' +
-        IntToStr(k - 1), LLDebug2);
-    end
-    else
-      logdatei.log('No POC entry with productId: ' + sortlist.Strings[i], LLDebug2);
-  end;
-  logdatei.log_prog('Finished sorting POC ', LLinfo);
-  FProductOnClient_objects := sort_array;
-  // switch off product sorting again
-  //omc := TOpsiMethodCall.Create('backend_setOptions',
-  //  ['{"processProductOnClientSequence": false}']);
-  //jo := FjsonExecutioner.retrieveJSONObject(omc);
-  omc.Free;
-  sortlist.Free;
-  //LogDatei.LogLevel := LLInfo;
-end;
-*)
 
 function TOpsi4Data.getInstallableProducts: TStringList;
 var
@@ -5767,24 +5537,45 @@ begin
     FProductOnClient_aktobject.AsObject.S['actionRequest'] := request;
 end;
 
-procedure TOpsi4Data.setProductActionRequest(newAction: TActionRequest);
+procedure TOpsi4Data.setProductActionRequestWithDependencies(newAction: TActionRequest);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
-  arS: string;
+  actionRequest: string;
 
 begin
   //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
 
-  arS := actionRequestToString(newAction);
-  omc := TOpsiMethodCall.Create('setProductActionRequest',
-    [actualProduct, actualClient, ars]);
+  actionRequest := actionRequestToString(newAction);
+  omc := TOpsiMethodCall.Create('setProductActionRequestWithDependencies',
+    [actualProduct, actualClient, actionRequest]);
 
   jO := FjsonExecutioner.retrieveJSONObject(omc);
   omc.Free;
   if FProductActionRequests = nil then
     FProductActionRequests := TStringList.Create;
-  FProductActionRequests.Values[actualProduct] := ars;
+  FProductActionRequests.Values[actualProduct] := actionRequest;
+end;
+
+
+procedure TOpsi4Data.setProductActionRequest(newAction: TActionRequest);
+var
+  omc: TOpsiMethodCall;
+  jO: ISuperObject;
+  actionRequest: string;
+
+begin
+  //if FInstallableProducts.IndexOf(actualProduct) = -1 then exit;
+
+  actionRequest := actionRequestToString(newAction);
+  omc := TOpsiMethodCall.Create('setProductActionRequest',
+    [actualProduct, actualClient, actionRequest]);
+
+  jO := FjsonExecutioner.retrieveJSONObject(omc);
+  omc.Free;
+  if FProductActionRequests = nil then
+    FProductActionRequests := TStringList.Create;
+  FProductActionRequests.Values[actualProduct] := actionRequest;
 end;
 
 procedure TOpsi4Data.setActionProgress(const progress: string);
@@ -6332,24 +6123,70 @@ begin
   Result := FjsonExecutioner.getFileFromDepot(filename, toStringList, ListResult);
 end;
 
+function TOpsi4Data.getJSONFromService(const method: string;
+  const params: array of string; logErrorMessage: string): string;
+var
+  omc: TOpsiMethodCall;
+  Error: boolean;
+begin
+  omc := TOpsiMethodCall.Create(method, params);
+  try
+    Result := checkAndRetrieve(omc, Error);
+    if Error then
+    begin
+      Result := '';
+      Logdatei.Log(logErrorMessage, LLWarning);
+    end;
+  finally
+    omc.Free;
+  end;
+end;
+
 function TOpsi4Data.getOpsiServiceConfigs: string;
 var
   parastr: string;
-  jO: ISuperObject;
   errorOccured: boolean = False;
   omc: TOpsiMethodCall;
 begin
   Result := '';
-  if setAddConfigStateDefaults(True) then
-  begin
-    parastr := '{"objectId": "' + actualClient + '"}';
-    omc := TOpsiMethodCall.Create('configState_getObjects', ['', parastr]);
-    //jO := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := checkAndRetrieve(omc, errorOccured);
-    setAddConfigStateDefaults(False);
-  end;
+  parastr := '{"objectId": "' + actualClient + '"}';
+  omc := TOpsiMethodCall.Create('configState_getObjects', ['', parastr]);
+  Result := checkAndRetrieve(omc, errorOccured);
   omc.Free;
 end;
+
+
+function TOpsi4Data.getConfigStateObjectsFromService(
+  ConfigIDsAsJsonArray: string): string;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
+begin
+  Result := '';
+  method :=  'configState_getObjects';
+  params := ['', '{"objectId":"' + actualClient + '" ,' + '"configId":' +
+    ConfigIDsAsJsonArray + '}'];
+  LogErrorMessage := 'Warning: Could not get config states from service (oswebservice: TOpsi4Data.getConfigStateObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
+end;
+
+
+function TOpsi4Data.getConfigObjectsFromService(
+  ConfigIDsAsJsonArray: string): string;
+var
+  method: string;
+  params: array of string;
+  LogErrorMessage: string;
+begin
+  Result := '';
+  method :=  'config_getObjects';
+  params := ['', '{"id":' + ConfigIDsAsJsonArray + '}'];
+  LogErrorMessage := 'Warning: Could not get config defaults from service (oswebservice: TOpsi4Data.getConfigObjectsFromService)';
+  Result := getJSONFromService(method, params, logErrorMessage);
+end;
+
+
 
 (************************ End of TOpsi4Data ***********************************)
 

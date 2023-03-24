@@ -39,7 +39,7 @@ function umount(mymountpoint: string): integer;
 procedure transformHex(const hexstring: string; var hexarray: bytearray);
 function decrypt(hexkey, hexpass: string): string;
 function DecryptBlowfish(const myencrypted, mykey: string): string;
-procedure mount_depotshare(mymountpoint: string; myhostkey: string; myclientId: string);
+procedure mount_depotshare(mymountpoint: string; DepotUser: string; myhostkey: string; myclientId: string);
 
 implementation
 
@@ -326,9 +326,9 @@ begin
 end;
 
 
-procedure mount_depotshare(mymountpoint: string; myhostkey: string; myclientId: string);
+procedure mount_depotshare(mymountpoint: string; DepotUser: string; myhostkey: string; myclientId: string);
 var
-  resultstring, mydepotuser, mydomain, mydepot: string;
+  resultstring, mydomain, mydepot: string;
   myuser, myencryptedpass, myshare, mypass, mountoption: string;
   mounttry, i: integer;
   configlist: TStringList;
@@ -339,72 +339,16 @@ begin
     mydepot := opsidata.depotId;
     myuser := 'pcpatch';
     mydomain := '';
-    //writeln('depotId=',mydepot);
-    if opsidata.setAddConfigStateDefaults(True) then
+    LogDatei.log('Depot user from service: ' + DepotUser, LLNotice);
+    if Depotuser <> '' then
     begin
-      parastr := '{"objectId": "' + myclientid + '","configId":"clientconfig.depot.user"}';
-      resultstring := MyOpsiMethodCall('configState_getObjects', ['', parastr]);
-      if jsonIsValid(resultstring) then
+      if not divideAtFirst('\', DepotUser, mydomain, myuser) then
       begin
-        //'got valid json object from getOpsiServiceConfigs'
-        if jsonAsObjectGetValueByKey(resultstring, 'result', resultstring) then
-          if jsonIsArray(resultstring) then
-          begin
-            //'got json Array from result'
-            if jsonAsArrayToStringList(resultstring, configlist) then
-            begin
-              for i := 0 to configlist.Count - 1 do
-              begin
-                if jsonIsObject(configlist.Strings[i]) then
-                begin
-                  if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                    'configId', configid) then
-                  begin
-                    //'got configid: ' + configid
-
-                    if LowerCase(configid) = 'clientconfig.depot.user' then
-                    begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, mydepotuser) then
-                        begin
-                          LogDatei.log('Got depot user from service: ' +
-                            mydepotuser, LLNotice);
-                          if mydepotuser <> '' then
-                          begin
-                            if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
-                            begin
-                              myuser := mydepotuser;
-                              mydomain := '';
-                            end;
-                          end;
-                        end;
-                    end;
-                  end;
-                end;
-              end;
-            end;
-          end;
-      end;
-      opsidata.setAddConfigStateDefaults(False);
-    end;
-    (*
-      deprecated: getGeneralConfigValue    (do 04.01.2022)
-    resultstring := MyOpsiMethodCall('getGeneralConfigValue',
-      ['clientconfig.depot.user', myclientid]);
-    mydepotuser := trim(SO(resultstring).S['result']);
-    LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
-    if mydepotuser <> '' then
-    begin
-      if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
-      begin
-        myuser := mydepotuser;
+        myuser := DepotUser;
         mydomain := '';
-      end
-    end
-    else { we got no clientconfig.depot.user }
-      myuser := 'pcpatch';
-      *)
+      end;
+    end;
+
     LogDatei.log('Will use as domain: ' + mydomain + ' as user: ' + myuser, LLNotice);
     resultstring := MyOpsiMethodCall('user_getCredentials', ['pcpatch', myclientid]);
     myencryptedpass := SO(resultstring).O['result'].S['password'];
@@ -414,13 +358,11 @@ begin
     logdatei.AddToConfidentials(mypass);
     LogDatei.log('Will use as encryptedpass: ' + myencryptedpass +
       ' clear pass: ' + mypass, LLInfo);
-    //writeln('mypass=',mypass);
     resultstring := MyOpsiMethodCall('host_getObjects',
       ['', '{"type":"OpsiDepotserver","id":["' + myDepot + '"]}']);
     myshare := SO(resultstring).S['result'];
     myshare := SO(resultstring).O['result'].AsArray.O[0].S['depotRemoteUrl'];
     myshare := copy(myshare, 5, length(myshare));
-    //writeln('myshare=',myshare);
     umount(mymountpoint);
 
     mounttry := 0;

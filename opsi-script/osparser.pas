@@ -26737,7 +26737,7 @@ begin
             if not isMounted(depotdir) then
             begin
               logdatei.log('Try remount ...', LLWarning);
-              mount_depotshare(depotDir, opsiservicePassword, osconf.computername);
+              mount_depotshare(depotDir, DepotUser, opsiservicePassword, osconf.computername);
             end;
           end;
         {$ENDIF LINUX}
