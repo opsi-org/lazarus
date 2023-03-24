@@ -1027,7 +1027,6 @@ begin
   FBatchOberflaeche.SetForceStayOnTop(False);
 
   FBatchOberflaeche.SetMessageText(OpsiscriptVersionName, mVersion);
-  //FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 

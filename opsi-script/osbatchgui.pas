@@ -299,7 +299,7 @@ begin
   //LabelProgress1.Font.Color := clRed;
 
 
-  LabelVersion.Caption := '';
+  LabelVersion.Caption := OpsiscriptVersionName;
   LabelProduct.Caption := selfProductName;
   LabelInfo.Caption := rsGetListOfProducts;
   LabelDetail.Caption := '';
