@@ -5992,8 +5992,7 @@ begin
         begin
           if (GetUserNameEx_ <> '') then
           begin
-            hkulist := TStringList.Create;
-            hkulist.AddStrings(GetRegistryKeyList('HKU\', False));
+            hkulist := GetRegistryKeyList('HKU\', False);
             for i := 0 to hkulist.Count - 1 do
               LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
             hkulist.Free;
@@ -6259,8 +6258,7 @@ begin
         begin
           if (GetUserNameEx_ <> '') then
           begin
-            hkulist := TStringList.Create;
-            hkulist.AddStrings(GetRegistryKeyList('HKU\', False));
+            hkulist := GetRegistryKeyList('HKU\', False);
             for i := 0 to hkulist.Count - 1 do
               LogDatei.log('found in hku  ' + hkulist.Strings[i], LLDebug2);
             hkulist.Free;
@@ -12103,6 +12101,7 @@ var
   list2: TXStringList = nil;
   list3: TXStringList = nil;
   slist: TStringList = nil;
+  templist: TStringList = nil;
   inifile: TuibIniScript;
   uibInifile: TuibIniFile;
   localSection: TWorkSection;
@@ -12356,7 +12355,8 @@ begin
               try
                 s1 := ExpandFileName(s1);
                 if FileExists(s1) then
-                  TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
+                  list.loadFromUnicodeFile(s1, tmpbool, tmpstr)
+                  //TStringList(list).Assign(loadUnicodeTextFile(s1, tmpbool, tmpstr))
                 else
                 begin
                   LogDatei.log(
@@ -12766,7 +12766,9 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-              list.AddStrings(parseUrl(s1));
+              templist := parseUrl(s1);
+              list.text := templist.Text;
+              freeandnil(templist);
             end;
           end;
     end
@@ -13212,7 +13214,9 @@ begin
             if not testSyntax then
             begin
               list.Clear;
-              list.AddStrings(getSubListByContainingRegex(s1, list1));
+              templist := getSubListByContainingRegex(s1, list1);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
           end;
           FreeAndNil(list1);
@@ -13230,8 +13234,9 @@ begin
               syntaxcheck := True;
               if not testSyntax then
               begin
-                list.Clear;
-                list.AddStrings(getSubListByContainingRegex(list2, list3));
+                templist := getSubListByContainingRegex(list2, list3);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               end;
             end;
             FreeAndNil(list3);
@@ -13255,8 +13260,9 @@ begin
             syntaxcheck := True;
             if not testSyntax then
             begin
-              list.Clear;
-              list.AddStrings(getRegexMatchList(s1, list1));
+              templist := getRegexMatchList(s1, list1);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
           end;
           FreeAndNil(list1);
@@ -13274,8 +13280,9 @@ begin
               syntaxcheck := True;
               if not testSyntax then
               begin
-                list.Clear;
-                list.AddStrings(getRegexMatchList(list2, list3));
+                templist := getRegexMatchList(list2, list3);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               end;
             end;
             FreeAndNil(list3);
@@ -13298,8 +13305,9 @@ begin
             skip(')', r, r, InfoSyntaxError) then
           begin
             syntaxcheck := True;
-            list.Clear;
-            list.AddStrings(removeFromListByContainingRegex(s1, list1));
+            templist := removeFromListByContainingRegex(s1, list1);
+            list.Text:=templist.Text;
+            FreeAndNil(templist);
           end;
           FreeAndNil(list1);
         end
@@ -13314,8 +13322,9 @@ begin
               skip(')', r, r, InfoSyntaxError) then
             begin
               syntaxcheck := True;
-              list.Clear;
-              list.AddStrings(removeFromListByContainingRegex(list2, list3));
+              templist := removeFromListByContainingRegex(list2, list3);
+              list.Text:=templist.Text;
+              FreeAndNil(templist);
             end;
             FreeAndNil(list3);
           end;
@@ -13552,8 +13561,9 @@ begin
                     syntaxCheck := True;
                     if not testSyntax then
                     begin
-                      list.Clear;
-                      list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+                      templist := stringReplaceRegexInList(list1, s1, s2);
+                      list.Text:=templist.Text;
+                      FreeAndNil(templist);
                     end;
                   end;
         list1.Free;
@@ -14345,8 +14355,9 @@ begin
             begin
               s1 := ExpandFileName(s1);
               try
-                list.Clear;
-                list.AddStrings(LoadTOMLFile(s1));
+                templist := LoadTOMLFile(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14370,8 +14381,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLAsStringList(s1));
+                templist := GetTOMLAsStringList(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14395,8 +14407,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLKeys(s1));
+                templist := GetTOMLKeys(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14420,8 +14433,9 @@ begin
             if not testSyntax then
             begin
               try
-                list.Clear;
-                list.AddStrings(GetTOMLTableNames(s1));
+                templist := GetTOMLTableNames(s1);
+                list.Text:=templist.Text;
+                FreeAndNil(templist);
               except
                 on e: Exception do
                 begin
@@ -14447,8 +14461,9 @@ begin
                 if not testSyntax then
                 begin
                   try
-                    list.Clear;
-                    list.AddStrings(GetTOMLTable(s1, s2));
+                    templist := GetTOMLTable(s1, s2);
+                    list.Text:=templist.Text;
+                    FreeAndNil(templist);
                   except
                     on e: Exception do
                     begin
@@ -14542,7 +14557,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getIpMacHash);
+        begin
+          templist := getIpMacHash;
+          list.Text:=templist.Text;
+          FreeAndNil(templist);
+        end
       end;
     end
    {$ENDIF WIN32}
@@ -14687,7 +14706,11 @@ begin
       syntaxcheck := True;
         {$IFDEF LINUX}
       if not testSyntax then
-        list.AddStrings(getLinuxVersionMap);
+      begin
+        templist := getLinuxVersionMap;
+        list.Text:= templist.Text;
+        FreeAndNil(templist);
+      end;
         {$ELSE LINUX}
       LogDatei.log('getLinuxVersionMap is only implemented for Linux',
         LLError);
@@ -14701,7 +14724,11 @@ begin
       syntaxcheck := True;
         {$IFDEF DARWIN}
       if not testSyntax then
-        list.AddStrings(getMacosVersionMap);
+      begin
+        templist := getMacosVersionMap;
+        list.Text:= templist.Text;
+        FreeAndNil(templist);
+      end;
         {$ELSE DARWIN}
       LogDatei.log('getMacosVersionMap is only implemented for macOS',
         LLError);
@@ -15166,7 +15193,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getProcessList);
+        begin
+          templist := getProcessList;
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15176,7 +15207,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(getProfilesDirList);
+        begin
+          templist := getProfilesDirList;
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15185,7 +15220,11 @@ begin
       begin
         syntaxcheck := True;
         if not testSyntax then
-          list.AddStrings(listCertificatesFromSystemStore());
+        begin
+          templist := listCertificatesFromSystemStore();
+          list.Text := templist.Text;
+          FreeAndNil(templist);
+        end;
       end;
     end
 
@@ -15197,7 +15236,11 @@ begin
       list.Clear;
       {$ELSE}
       if not testSyntax then
-        list.AddStrings(getHwBiosShortlist);
+      begin
+        templist := getHwBiosShortlist;
+        list.Text := templist.Text;
+        FreeAndNil(templist);
+      end;
       {$ENDIF}
     end
     else
@@ -15214,6 +15257,8 @@ begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
       end;
   end;
+
+  if Assigned(slist) then FreeAndNil(slist);
 
   if syntaxcheck then
     Remaining := r
